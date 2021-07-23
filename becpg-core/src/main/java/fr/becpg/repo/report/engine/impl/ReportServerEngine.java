@@ -68,7 +68,9 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	
 	private String instanceName;
 
-	private long reportMaxSize;
+	private long reportImageMaxSizeInBytes;
+	
+	private long reportDatasourceMaxSizeInBytes;
 
 	private static final Tracer tracer = Tracing.getTracer();
 
@@ -94,9 +96,14 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 		this.entityService = entityService;
 	}
 	
-	@Value("${beCPG.report.maxSize}")
-	public void setReportMaxSize(long reportMaxSize) {
-		this.reportMaxSize = reportMaxSize;
+	@Value("${beCPG.report.image.maxSizeInBytes}")
+	public void setReportImageMaxSizeInBytes(long reportImageMaxSizeInBytes) {
+		this.reportImageMaxSizeInBytes = reportImageMaxSizeInBytes;
+	}
+	
+	@Value("${beCPG.report.datasource.maxSizeInBytes}")
+	public void setReportDatasourceMaxSizeInBytes(long reportDatasourceMaxSizeInBytes) {
+		this.reportDatasourceMaxSizeInBytes = reportDatasourceMaxSizeInBytes;
 	}
 
 	public void setInstanceName(String instanceName) {
@@ -153,7 +160,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 					byte[] imageBytes = entityService.getImage(entry.getImageNodeRef());
 					if (imageBytes != null) {
 						
-						if (imageBytes.length > reportMaxSize) {
+						if (imageBytes.length > reportImageMaxSizeInBytes) {
 							reportData.getLogInfos().add(new ReportLogInfo(ReportLogInfoType.WARNING, "Image size exceeds 1024 kB : " + entry, I18NUtil.getMessage("message.report.image.size") + "'" + entry.getName() + "'", tplNodeRef));
 						}
 						
@@ -166,9 +173,12 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				tracer.getCurrentSpan().addAnnotation("sendReportData");
 				reportSession.setFormat(format.toString());
 				reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
-				try (InputStream in = new ByteArrayInputStream(reportData.getXmlDataSource().asXML().getBytes())) {
+				
+				byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
+				
+				try (InputStream in = new ByteArrayInputStream(datasourceBytes)) {
 					
-					if (reportData.getXmlDataSource().asXML().getBytes().length > reportMaxSize) {
+					if (datasourceBytes.length > reportDatasourceMaxSizeInBytes) {
 						reportData.getLogInfos().add(new ReportLogInfo(ReportLogInfoType.WARNING, "Datasource size exceeds 1024 kB : " + params, I18NUtil.getMessage("message.report.datasource.size"), tplNodeRef));
 					}
 					
