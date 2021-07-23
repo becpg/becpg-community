@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo;
 
+
 /**
  * beCPG constants for repository
  *
@@ -261,8 +262,13 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_TARGET_MARKETS = "TargetMarkets";
 	/** Constant <code>PATH_GS1_TARGET_MARKETS="PATH_GS1_DUTY_FEE_TAXES"</code> */
 	public static final String PATH_GS1_DUTY_FEE_TAXES = "DutyFeeTaxes";
-
-
 	
 	
+	public static final String PATH_GS1_DATA_CARRIER_TYPE_CODES = "DataCarrierTypeCode";
+	public static final String PATH_GS1_TRADE_ITEM_UNIT_DESCRIPTOR_CODES = "TradeItemUnitDescriptorCode";
+	public static final String PATH_GS1_PACKAGING_TERMS_AND_CONDITIONS_CODES = "PackagingTermsAndConditionsCode";
+	public static final String PATH_GS1_TRADE_ITEM_TRADE_CHANNELS = "TradeItemTradeChannel";
+	public static final String PATH_GS1_SELLING_UNITS = "SellingUnitOfMeasure";
+
+
 }
