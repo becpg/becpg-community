@@ -187,10 +187,14 @@
 	          <show force="false" id="gs1:descriptionShort"/>
 	          <show force="true" id="cm:title"/>
 	          <show force="false" id="gs1:variantDescription"/>
+
+	          
 	          <show force="false" id="bcpg:productHierarchy1"/>
 	          <show force="false" id="bcpg:productHierarchy2"/>
 	          <show force="false" id="bcpg:legalName"/>
 	          <show force="false" id="bcpg:productComments"/>
+	          <show force="true" id="cm:description"/>
+	          <show force="true" id="bcpg:packagingDescription"/>
 	          <show force="false" id="bcpg:productState"/>
 	          <show force="false" id="bcpg:code"/>
 	          <show force="true" id="bcpg:erpCode"/>
@@ -212,8 +216,7 @@
 	          <show force="false" id="bcpg:suppliers"/>
 	          <show force="true" id="bcpg:entityTplRef"/>
 	          <show force="false" id="bcpg:parentEntityRef"/>
-	          <show force="true" id="cm:description"/>
-	          <show force="true" id="bcpg:packagingDescription"/>
+	        
 	          <show force="false" id="gs1:tradeItemMarketingMessage"/>
 	          <show force="false" id="gs1:tradeItemFeatureBenefit"/>
 	          <show force="false" id="gs1:tradeItemKeyWords"/>
@@ -281,6 +284,9 @@
 	          <show force="false" id="gs1:specialItemCode"/>
 	          <show force="false" id="gs1:isTradeItemAFullDisplayStand"/>
 	          <show force="false" id="gs1:isTradeItemPackedIrregularly"/>
+	          
+	          
+	          
 	          <show force="false" id="gs1:secondaryPackagingTypeCode"/>
 	          <show force="false" id="gs1:secondaryHeight"/>
 	          <show force="false" id="gs1:secondaryWidth"/>
@@ -303,7 +309,9 @@
 	          <show force="false" id="gs1:platformTermsAndConditionsCode"/>
 	          <show force="false" id="gs1:isTradeItemMarkedAsRecyclable"/>
 	          <show force="false" id="gs1:isPackagingMarkedReturnable"/>
+	          <show force="false" id="gs1:packagingTermsAndConditionsCode"/>
 	          <show force="false" id="gs1:packUnitNumber"/>
+	       
 	          <show force="false" id="gs1:sortingInstructions"/>
 	          <show force="false" id="gs1:sortingBonusCriteria"/>
 	          <show force="false" id="gs1:productHierarchy1"/>
@@ -318,16 +326,23 @@
 	          <show force="false" id="gs1:eanCodeWeight"/>
 	          <show force="false" id="gs1:variableTradeItemType"/>
 	          <show force="false" id="bcpg:customsCodeRef"/>
+	          
 	          <show force="false" id="gs1:isTradeItemAPromotionalItem"/>
+	          <show force="false" id="gs1:offerOnPack"/>
+	          <show force="false" id="gs1:promotionTypeCode"/>
 	          <show force="false" id="gs1:promotionalArticleRef"/>
 	          <show force="false" id="gs1:freeQuantityOfProduct"/>
 	          <show force="false" id="gs1:freeQuantityOfProductUnit"/>
-	          <show force="false" id="gs1:promotionTypeCode"/>
-	          <show force="false" id="gs1:offerOnPack"/>
+	         
 	          <show force="false" id="gs1:tradeItemUnitDescriptorCode"/>
+	          <show force="false" id="gs1:isTradeItemAPromotionalUnit"/>
 	          <show force="false" id="gs1:isTradeItemAnInvoiceUnit"/>
 	          <show force="false" id="gs1:isTradeItemAnOrderableUnit"/>
 	          <show force="false" id="gs1:isTradeItemReorderable"/>
+	          
+	          <show force="false" id="gs1:isPriceOnPack"/>
+	          <show force="false" id="gs1:hasBatchNumber"/>
+	          
 	          <show force="false" id="gs1:firstShipDateTime"/>
 	          <show force="false" id="gs1:lastShipDateTime"/>
 	          <show force="false" id="gs1:startAvailabilityDateTime"/>
@@ -383,6 +398,18 @@
 	              <control-param name="maxLength">20000</control-param>
 	            </control>
 	          </field>
+	          <field id="cm:description" mandatory="false" read-only="false" set="mainInfo">
+	            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+	              <control-param name="rows">2</control-param>
+	              <control-param name="maxLength">20000</control-param>
+	            </control>
+	          </field>
+	          <field id="bcpg:packagingDescription" mandatory="false" read-only="false" set="mainInfo">
+	            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+	              <control-param name="rows">2</control-param>
+	              <control-param name="maxLength">20000</control-param>
+	            </control>
+	          </field>
 	          <field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo"/>
 	          <field id="bcpg:code" mandatory="false" read-only="true" set="mainInfo"/>
 	          <field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo"/>
@@ -433,18 +460,7 @@
 	            </control>
 	          </field>
 	          <set appearance="bordered-panel" id="marketing" label-id="becpg.forms.set.marketing.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-	          <field id="cm:description" mandatory="false" read-only="false" set="marketing">
-	            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-	              <control-param name="rows">2</control-param>
-	              <control-param name="maxLength">20000</control-param>
-	            </control>
-	          </field>
-	          <field id="bcpg:packagingDescription" mandatory="false" read-only="false" set="marketing">
-	            <control template="/org/alfresco/components/form/controls/textarea.ftl">
-	              <control-param name="rows">2</control-param>
-	              <control-param name="maxLength">20000</control-param>
-	            </control>
-	          </field>
+	          
 	          <field help-id="becpg.forms.help.gs1.tradeItemMarketingMessage" id="gs1:tradeItemMarketingMessage" mandatory="false" read-only="false" set="marketing"/>
 	          <field help-id="becpg.forms.help.gs1.tradeItemFeatureBenefit" id="gs1:tradeItemFeatureBenefit" mandatory="false" read-only="false" set="marketing"/>
 	          <field help-id="becpg.forms.help.gs1.tradeItemKeyWords" id="gs1:tradeItemKeyWords" mandatory="false" read-only="false" set="marketing"/>
@@ -743,6 +759,7 @@
 	          <field id="gs1:isPackagingMarkedReturnable" mandatory="false" read-only="false" set="packSorting">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
+	          <field help-id="becpg.forms.help.gs1.packagingTermsAndConditionsCode" id="gs1:packagingTermsAndConditionsCode" mandatory="false" read-only="false" set="packSorting"/>
 	          <field help-id="becpg.forms.help.gs1.packUnitNumber" id="gs1:packUnitNumber" mandatory="false" read-only="false" set="packSorting"/>
 	          <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
 	            <control template="/org/alfresco/components/form/controls/textarea.ftl">
@@ -807,6 +824,7 @@
 	          <field help-id="becpg.forms.help.gs1.offerOnPack" id="gs1:offerOnPack" mandatory="false" read-only="false" set="promotionalPanel"/>
 	          <set appearance="bordered-panel" id="commercialPanel" label="Données commerciales" label-id="becpg.forms.set.commercial.label" parent="publicationTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
 	          <field help-id="becpg.forms.help.gs1.tradeItemUnitDescriptorCode" id="gs1:tradeItemUnitDescriptorCode" mandatory="false" read-only="false" set="commercialPanel"/>
+	          <field help-id="becpg.forms.help.gs1.isTradeItemAPromotionalUnit" id="gs1:isTradeItemAPromotionalUnit" mandatory="false" read-only="false" set="commercialPanel"/>
 	          <field help-id="becpg.forms.help.gs1.isTradeItemAnInvoiceUnit" id="gs1:isTradeItemAnInvoiceUnit" mandatory="false" read-only="false" set="commercialPanel">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
@@ -816,6 +834,14 @@
 	          <field help-id="becpg.forms.help.gs1.isTradeItemReorderable" id="gs1:isTradeItemReorderable" mandatory="false" read-only="false" set="commercialPanel">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
+	          
+	           <field help-id="becpg.forms.help.gs1.isPriceOnPack" id="gs1:isPriceOnPack" mandatory="false" read-only="false" set="commercialPanel">
+	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+	          </field>
+	          <field help-id="becpg.forms.help.gs1.hasBatchNumber" id="gs1:hasBatchNumber" mandatory="false" read-only="false" set="commercialPanel">
+	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+	          </field>
+	          
 	          <field help-id="becpg.forms.help.gs1.firstShipDateTime" id="gs1:firstShipDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
 	          <field help-id="becpg.forms.help.gs1.lastShipDateTime" id="gs1:lastShipDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
 	          <field help-id="becpg.forms.help.gs1.startAvailabilityDateTime" id="gs1:startAvailabilityDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
