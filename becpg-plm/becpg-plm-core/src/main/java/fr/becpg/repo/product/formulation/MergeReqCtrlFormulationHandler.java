@@ -90,7 +90,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 				appendChildReq((ProductData)scorableEntity, scorableEntity.getReqCtrlList());
 			}
 
-			scorableEntity.mergeRequirements(true);
+			scorableEntity.merge();
 			
 			if(scorableEntity instanceof ProductData) {
 				updateFormulatedCharactInError((ProductData)scorableEntity, scorableEntity.getReqCtrlList());

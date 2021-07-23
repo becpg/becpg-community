@@ -48,9 +48,7 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.report.engine.impl.ReportServerEngine;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.impl.LazyLoadingDataList;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
@@ -133,9 +131,9 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 				|| (productData.hasProcessListEl(new VariantFilters<>()))) {
 
 			if (productData.getReqCtrlList() != null) {
-				clearReqCltrlList(productData.getReqCtrlList());
+				productData.getReqCtrlList().removeIf(r -> r.getNodeRef() == null);
 			} else {
-				productData.setReqCtrlList(new LinkedList<ReqCtrlListDataItem>());
+				productData.setReqCtrlList(new LinkedList<>());
 			}
 
 			if (formulateChildren) {
@@ -144,38 +142,17 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 
 			checkMissingProperties(productData);
 
-			// Continue
-			return true;
-		}
+		} else {
 
-		// Reset
-		if ((productData.getReqCtrlList() != null)) {
+			// Reset
+			if ((productData.getReqCtrlList() != null)) {
+				productData.getReqCtrlList().removeIf(r -> (r.getNodeRef() == null) || (r.getFormulationChainId() == null)
+						|| r.getFormulationChainId().equals(productData.getFormulationChainId()));
 
-			List<ReqCtrlListDataItem> retainedItems = new ArrayList<>();
-
-			for (ReqCtrlListDataItem item : productData.getReqCtrlList()) {
-				if (ReportServerEngine.REPORT_FORMULATION_CHAIN_ID.equals(item.getFormulationChainId())) {
-					retainedItems.add(item);
-				}
-			}
-
-			productData.getReqCtrlList().clear();
-
-			for (ReqCtrlListDataItem item : retainedItems) {
-				productData.getReqCtrlList().add(item);
-				if (productData.getReqCtrlList() instanceof LazyLoadingDataList) {
-					((LazyLoadingDataList<ReqCtrlListDataItem>) productData.getReqCtrlList()).getDeletedNodes().remove(item);
-				}
 			}
 		}
 
 		return true;
-	}
-
-	private void clearReqCltrlList(List<ReqCtrlListDataItem> reqCtrlList) {
-		if (reqCtrlList != null) {
-			reqCtrlList.removeIf(r -> r.getNodeRef() == null);
-		}
 	}
 
 	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData) throws FormulateException {
@@ -199,9 +176,9 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					for (CompositionDataItem c : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 						if ((c.getComponent() != null)) {
 							ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
-							if (checkShouldFormulateComponents(false, subComponent) || ((productData.getFormulatedDate() == null)
-									|| (subComponent.getFormulatedDate()!=null && 
-										productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime()))) {
+							if (checkShouldFormulateComponents(false, subComponent)
+									|| ((productData.getFormulatedDate() == null) || ((subComponent.getFormulatedDate() != null)
+											&& (productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime())))) {
 								shouldFormulate = true;
 							}
 						}
@@ -211,8 +188,9 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					for (CompositionDataItem c : productData.getPackagingList()) {
 						if ((c.getComponent() != null)) {
 							ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
-							if (checkShouldFormulateComponents(false, subComponent) || ((productData.getFormulatedDate() == null)
-									|| (subComponent.getFormulatedDate()!=null &&  productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime()))) {
+							if (checkShouldFormulateComponents(false, subComponent)
+									|| ((productData.getFormulatedDate() == null) || ((subComponent.getFormulatedDate() != null)
+											&& (productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime())))) {
 								shouldFormulate = true;
 							}
 						}
@@ -222,8 +200,9 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					for (CompositionDataItem c : productData.getProcessList()) {
 						if ((c.getComponent() != null)) {
 							ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
-							if (checkShouldFormulateComponents(false, subComponent) || ((productData.getFormulatedDate() == null)
-									|| (subComponent.getFormulatedDate()!=null &&  productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime()))) {
+							if (checkShouldFormulateComponents(false, subComponent)
+									|| ((productData.getFormulatedDate() == null) || ((subComponent.getFormulatedDate() != null)
+											&& (productData.getFormulatedDate().getTime() < subComponent.getFormulatedDate().getTime())))) {
 								shouldFormulate = true;
 							}
 						}
@@ -294,25 +273,26 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private void checkFormulatedProduct(ProductData formulatedProduct) {
-		
+
 		if (!(formulatedProduct instanceof ResourceProductData)) {
 			ProductUnit productUnit = formulatedProduct.getUnit();
 			if (productUnit == null) {
-				addMessingReq(formulatedProduct.getReqCtrlList(), formulatedProduct.getNodeRef(), MESSAGE_MISSING_UNIT, RequirementDataType.Formulation);
+				addMessingReq(formulatedProduct.getReqCtrlList(), formulatedProduct.getNodeRef(), MESSAGE_MISSING_UNIT,
+						RequirementDataType.Formulation);
 			}
 		}
 	}
 
 	private void checkCompositionItem(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef productNodeRef, CompoListDataItem c) {
 
-		if (productNodeRef!=null && !PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))) {
+		if ((productNodeRef != null) && !PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.isMatch(nodeService.getType(productNodeRef))) {
 
 			ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
-			
+
 			ProductUnit productUnit = subComponent.getUnit();
 			if (c != null) {
-				boolean shouldUseLiter = productUnit!=null && productUnit.isVolume();
-				boolean useLiter = c.getCompoListUnit()!=null && c.getCompoListUnit().isVolume();
+				boolean shouldUseLiter = (productUnit != null) && productUnit.isVolume();
+				boolean useLiter = (c.getCompoListUnit() != null) && c.getCompoListUnit().isVolume();
 				Double density = subComponent.getDensity();
 
 				if ((density == null) && ((shouldUseLiter && !useLiter) || (!shouldUseLiter && useLiter))) {
@@ -320,7 +300,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
 				}
 				Double overrunPerc = c.getOverrunPerc();
-				if ((productUnit!=null && productUnit.isVolume()) || (overrunPerc != null)) {
+				if (((productUnit != null) && productUnit.isVolume()) || (overrunPerc != null)) {
 					if ((density == null) || density.equals(0d)) {
 						addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
 					}
@@ -332,33 +312,33 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	private void checkPackagingItem(List<ReqCtrlListDataItem> reqCtrlListDataItem, PackagingListDataItem p) {
 		NodeRef productNodeRef = p.getProduct();
 		ProductData subComponent = alfrescoRepository.findOne(productNodeRef);
-		
+
 		ProductUnit productUnit = subComponent.getUnit();
 		if (productUnit == null) {
 			addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_UNIT, RequirementDataType.Packaging);
 		} else {
 			boolean wrongUnit = false;
-			if(productUnit.isWeight()) {
-				if(!(p.getPackagingListUnit()!=null && p.getPackagingListUnit().isWeight())) {
+			if (productUnit.isWeight()) {
+				if (!((p.getPackagingListUnit() != null) && p.getPackagingListUnit().isWeight())) {
 					wrongUnit = true;
 				}
-			} else if(productUnit.isVolume()) {
-				if(!(p.getPackagingListUnit()!=null && p.getPackagingListUnit().isWeight())) {
+			} else if (productUnit.isVolume()) {
+				if (!((p.getPackagingListUnit() != null) && p.getPackagingListUnit().isWeight())) {
 					wrongUnit = true;
 				}
 			} else {
-				if( ProductUnit.PP.equals(p.getPackagingListUnit())) {
-					if(!ProductUnit.P.equals(productUnit)) {
+				if (ProductUnit.PP.equals(p.getPackagingListUnit())) {
+					if (!ProductUnit.P.equals(productUnit)) {
 						wrongUnit = true;
 					}
-				} else if(!productUnit.equals(p.getPackagingListUnit())){
+				} else if (!productUnit.equals(p.getPackagingListUnit())) {
 					wrongUnit = true;
 				}
 			}
-			
-			if(wrongUnit) {
+
+			if (wrongUnit) {
 				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT, RequirementDataType.Packaging);
-			}	
+			}
 		}
 
 		if (!nodeService.hasAspect(p.getProduct(), PackModel.ASPECT_PALLET)) {
