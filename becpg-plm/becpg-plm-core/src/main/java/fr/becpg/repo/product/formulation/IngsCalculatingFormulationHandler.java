@@ -177,6 +177,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 		Set<NodeRef> visited = new HashSet<>();
 
 		Double totalQtyUsed = 0d;
+		Double totalQtyUsedWithoutYield = 0d;
 		Double totalVolumeUsed = 0d;
 		if (compoList != null) {
 			for (CompoListDataItem compoItem : compoList) {
@@ -193,6 +194,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 						Double qty = FormulationHelper.getQtyInKg(compoItem);
 						if (qty != null) {
 							totalQtyUsed += qty * FormulationHelper.getYield(compoItem) / 100d;
+							totalQtyUsedWithoutYield += qty ;
 						}
 
 						Double vol = compoItem.getVolume();
@@ -225,7 +227,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					Double qtyPercWithYield = (totalQtyIngWithYield) / (totalQtyUsed * (formulatedProduct.getYield() != null ? formulatedProduct.getYield() / 100d : 1d) );
 					if (formulatedProduct.getYield() != null 
 							&& nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-						qtyPercWithYield = ( (totalQtyIngWithYield/ totalQtyUsed) -  (100 - (formulatedProduct.getYield())) ) /  ( formulatedProduct.getYield() / 100d) ;
+						qtyPercWithYield = ( (totalQtyIngWithYield/ totalQtyUsedWithoutYield) -  (100 - (formulatedProduct.getYield())) ) /  ( formulatedProduct.getYield() / 100d) ;
 					}
 					ingListDataItem.setQtyPercWithYield(qtyPercWithYield);
 				} else {
