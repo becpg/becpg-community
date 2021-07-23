@@ -103,7 +103,7 @@
 		</constraint>
 
 
-		<constraint name="gs1:variableTradeItemTypeCodeList" type="LIST">
+		<constraint name="gs1:variableTradeItemTypeCodes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value>LOOSE</value>
@@ -119,19 +119,6 @@
 					<value>CEL</value>
 					<value>FAH</value>
 					<value>KEL</value>
-				</list>
-			</parameter>
-		</constraint>
-		<constraint name="gs1:tradeItemUnitDescriptorCodeList" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value>BASE_UNIT_OR_EACH</value>
-					<value>CASE</value>
-					<value>DISPLAY_SHIPPER</value>
-					<value>MIXED_MODULE</value>
-					<value>PACK_OR_INNER_PACK</value>
-					<value>PALLET</value>
-					<value>TRANSPORT_LOAD</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -168,7 +155,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
-		<constraint name="gs1:specialItemCodeList" type="LIST">
+		<constraint name="gs1:specialItemCodes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value>DEMONSTRATION_UNIT</value>
@@ -177,7 +164,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="gs1:promotionTypeCodeList" type="LIST">
+		<constraint name="gs1:promotionTypeCodes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
 					<value>BONUS_PACK</value>
@@ -194,6 +181,47 @@
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/DataCarrierTypeCode</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		<constraint name="gs1:tradeItemUnitDescriptorCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/TradeItemUnitDescriptorCode</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		<constraint name="gs1:isTradeItemAPromotionalUnits" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>ASS_PERM</value>
+					<value>ASS_PROMO</value>
+					<value>ASS_SAIS</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="gs1:packagingTermsAndConditionsCodeConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/PackagingTermsAndConditionsCode</value>
 				</list>
 			</parameter>
 			<parameter name="constraintType">
@@ -458,7 +486,7 @@
 				<property name="gs1:variableTradeItemType">
 					<type>d:text</type>
 					<constraints>
-						<constraint ref="gs1:variableTradeItemTypeCodeList" />
+						<constraint ref="gs1:variableTradeItemTypeCodes" />
 					</constraints>
 				</property>
 				<property name="gs1:isTradeItemReorderable">
@@ -485,6 +513,22 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
+				<property name="gs1:isPriceOnPack">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
+				<property name="gs1:hasBatchNumber">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>				
 			</properties>
 			<associations />
 			<overrides />
@@ -745,7 +789,6 @@
 						<constraint ref="gs1:platformTermsAndConditionsCodes" />
 					</constraints>
 				</property>
-
 			</properties>
 			<overrides />
 			<mandatory-aspects />
@@ -802,6 +845,18 @@
 						<constraint ref="gs1:sortingBonusCriteriaConstraint" />
 					</constraints>
 				</property>
+				<property name="gs1:packagingTermsAndConditionsCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:packagingTermsAndConditionsCodeConstraint" />
+					</constraints>
+				</property>
 			</properties>
 		</aspect>
 
@@ -828,7 +883,7 @@
 				<property name="gs1:tradeItemUnitDescriptorCode">
 					<type>d:text</type>
 					<constraints>
-						<constraint ref="gs1:tradeItemUnitDescriptorCodeList" />
+						<constraint ref="gs1:tradeItemUnitDescriptorCodes" />
 					</constraints>
 				</property>
 				<property name="gs1:tradeItemTradeChannel">
@@ -854,7 +909,7 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 					<constraints>
-						<constraint ref="gs1:specialItemCodeList" />
+						<constraint ref="gs1:specialItemCodes" />
 					</constraints>
 				</property>
 				<property name="gs1:sellingUnitOfMeasure">
@@ -948,7 +1003,7 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 					<constraints>
-						<constraint ref="gs1:promotionTypeCodeList" />
+						<constraint ref="gs1:promotionTypeCodes" />
 					</constraints>
 				</property>
 				<property name="gs1:offerOnPack">
@@ -978,6 +1033,18 @@
 						<stored>false</stored>
 						<tokenised>TRUE</tokenised>
 					</index>
+				</property>
+				<property name="gs1:isTradeItemAPromotionalUnit">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:isTradeItemAPromotionalUnits" />
+					</constraints>
 				</property>
 			</properties>
 			<associations>
