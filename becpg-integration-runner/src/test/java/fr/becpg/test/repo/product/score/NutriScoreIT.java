@@ -19,16 +19,19 @@ import fr.becpg.model.GS1Model;
 import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.importer.impl.ImportHelper;
+import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
-import fr.becpg.repo.product.formulation.score.NutriScore;
 import fr.becpg.test.PLMBaseTestCase;
 
 public class NutriScoreIT extends PLMBaseTestCase {
 
+//	@Autowired
+//	private NutriScore nutriScore;
+	
 	@Autowired
-	NutriScore nutriScore;
+	private ProductService productService;
 
 	@Test
 	public void testNutriScore() {
@@ -37,7 +40,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 		NodeRef satFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FASAT");
 		NodeRef totalFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT");
 		NodeRef totalSugarNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR");
-		NodeRef sodiumNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NA");
+		NodeRef saltNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NACL");
 		NodeRef percFruitsAndVetgsNode = findOrCreateNode(PLMModel.TYPE_PHYSICO_CHEM, BeCPGModel.PROP_CHARACT_NAME, "Teneur en fruits et légumes");
 		NodeRef nspFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS");
 		NodeRef aoacFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG");
@@ -47,14 +50,14 @@ public class NutriScoreIT extends PLMBaseTestCase {
 
 		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 2084d, null, null, null, null, energyKjNode, null));
-			nutList.add(new NutListDataItem(null, 2.8d, null, null, null, null, satFatNode, null));
-			nutList.add(new NutListDataItem(null, 22.9d, null, null, null, null, totalFatNode, null));
-			nutList.add(new NutListDataItem(null, 4.73d, null, null, null, null, totalSugarNode, null));
-			nutList.add(new NutListDataItem(null, 672d, null, null, null, null, sodiumNode, null));
-			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, nspFibreNode, null));
-			nutList.add(new NutListDataItem(null, 4.13d, null, null, null, null, aoacFibreNode, null));
-			nutList.add(new NutListDataItem(null, 5.81d, null, null, null, null, proteinNode, null));
+			nutList.add(new NutListDataItem(null, 2084d, null, null, null, null, energyKjNode, true));
+			nutList.add(new NutListDataItem(null, 2.8d, null, null, null, null, satFatNode, true));
+			nutList.add(new NutListDataItem(null, 22.9d, null, null, null, null, totalFatNode, true));
+			nutList.add(new NutListDataItem(null, 4.73d, null, null, null, null, totalSugarNode, true));
+			nutList.add(new NutListDataItem(null, 0.672d * 2.5, null, null, null, null, saltNode, true));
+			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, nspFibreNode, true));
+			nutList.add(new NutListDataItem(null, 4.13d, null, null, null, null, aoacFibreNode, true));
+			nutList.add(new NutListDataItem(null, 5.81d, null, null, null, null, proteinNode, true));
 			
 			List<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
@@ -76,7 +79,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
 			
-			nutriScore.formulateScore(finishedProduct);
+			productService.formulate(finishedProduct);
 			
 			Assert.assertEquals((Double) 12d, finishedProduct.getNutrientScore());
 			
@@ -91,14 +94,14 @@ public class NutriScoreIT extends PLMBaseTestCase {
 		NodeRef finishedProductNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// 2596.0642d, 15.16d, 70.172d, 0.003d, 159d, 0d, 0d, 0d, 0.15d, "Fats"
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
-			nutList.add(new NutListDataItem(null, 2596.0642d, null, null, null, null, energyKjNode, null));
-			nutList.add(new NutListDataItem(null, 15.16d, null, null, null, null, satFatNode, null));
-			nutList.add(new NutListDataItem(null, 70.172d, null, null, null, null, totalFatNode, null));
-			nutList.add(new NutListDataItem(null, 0.003d, null, null, null, null, totalSugarNode, null));
-			nutList.add(new NutListDataItem(null, 159d, null, null, null, null, sodiumNode, null));
-			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, nspFibreNode, null));
-			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, aoacFibreNode, null));
-			nutList.add(new NutListDataItem(null, 0.15d, null, null, null, null, proteinNode, null));
+			nutList.add(new NutListDataItem(null, 2596.0642d, null, null, null, null, energyKjNode, true));
+			nutList.add(new NutListDataItem(null, 15.16d, null, null, null, null, satFatNode, true));
+			nutList.add(new NutListDataItem(null, 70.172d, null, null, null, null, totalFatNode, true));
+			nutList.add(new NutListDataItem(null, 0.003d, null, null, null, null, totalSugarNode, true));
+			nutList.add(new NutListDataItem(null, 0.159d * 2.5, null, null, null, null, saltNode, true));
+			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, nspFibreNode, true));
+			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, aoacFibreNode, true));
+			nutList.add(new NutListDataItem(null, 0.15d, null, null, null, null, proteinNode, true));
 			
 			ArrayList<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
@@ -120,7 +123,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef2);
 			
-			nutriScore.formulateScore(finishedProduct);
+			productService.formulate(finishedProduct);
 			
 			Assert.assertEquals((Double) 10d, finishedProduct.getNutrientScore());
 			
