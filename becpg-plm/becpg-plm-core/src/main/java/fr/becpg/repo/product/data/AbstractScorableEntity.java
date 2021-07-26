@@ -75,8 +75,8 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	}
 
 	@Override
-	public void addError(String msg, String formulationChainId, List<NodeRef> sources) {
-		ReqCtrlListDataItem item = new ReqCtrlListDataItem(null, RequirementType.Forbidden, new MLText(msg), null, sources, null);
+	public void addError(MLText msg, String formulationChainId, List<NodeRef> sources) {
+		ReqCtrlListDataItem item = new ReqCtrlListDataItem(null, RequirementType.Forbidden, msg, null, sources, null);
 		item.setFormulationChainId(formulationChainId);
 		reqCtrlList.add(item);
 	}

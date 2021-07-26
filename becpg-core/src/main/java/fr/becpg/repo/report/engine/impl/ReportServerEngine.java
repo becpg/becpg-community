@@ -32,10 +32,10 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
@@ -160,7 +160,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 					if (imageBytes != null) {
 						
 						if (imageBytes.length > reportImageMaxSizeInBytes) {
-							reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Image size exceeds 1024 kB : " + entry, I18NUtil.getMessage("message.report.image.size") + "'" + entry.getName() + "'", tplNodeRef));
+							reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Image size exceeds 1024 kB : " + entry, MLTextHelper.getI18NMessage("message.report.image.size", entry.getName()), tplNodeRef));
 						}
 						
 						try (InputStream in = new ByteArrayInputStream(imageBytes)) {
@@ -178,13 +178,13 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				try (InputStream in = new ByteArrayInputStream(datasourceBytes)) {
 					
 					if (datasourceBytes.length > reportDatasourceMaxSizeInBytes) {
-						reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Datasource size exceeds 1024 kB : " + params, I18NUtil.getMessage("message.report.datasource.size"), tplNodeRef));
+						reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Datasource size exceeds 1024 kB : " + params, MLTextHelper.getI18NMessage("message.report.datasource.size"), tplNodeRef));
 					}
 					
 					List<String> errors = generateReport(reportSession, in, out);
 					
 					for (String error : errors) {
-						reportData.getLogs().add(new ReportEngineLog(ReportLogType.ERROR, error, I18NUtil.getMessage("message.report.error") + error, tplNodeRef));
+						reportData.getLogs().add(new ReportEngineLog(ReportLogType.ERROR, error, MLTextHelper.getI18NMessage("message.report.error", error), tplNodeRef));
 					}
 				}	
 			});
