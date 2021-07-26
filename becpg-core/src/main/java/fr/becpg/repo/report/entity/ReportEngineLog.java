@@ -1,5 +1,6 @@
 package fr.becpg.repo.report.entity;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 public class ReportEngineLog {
@@ -13,11 +14,11 @@ public class ReportEngineLog {
 	
 	private String logMessage;
 	
-	private String displayMessage;
+	private MLText displayMessage;
 	
 	private NodeRef tplNodeRef;
 	
-	public ReportEngineLog(ReportLogType type, String logMessage, String displayMessage, NodeRef tplNodeRef) {
+	public ReportEngineLog(ReportLogType type, String logMessage, MLText displayMessage, NodeRef tplNodeRef) {
 		this.type = type;
 		this.logMessage = logMessage;
 		this.displayMessage = displayMessage;
@@ -32,7 +33,7 @@ public class ReportEngineLog {
 		return logMessage;
 	}
 	
-	public String getDisplayMessage() {
+	public MLText getDisplayMessage() {
 		return displayMessage;
 	}
 	

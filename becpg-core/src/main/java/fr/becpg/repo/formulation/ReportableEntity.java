@@ -15,7 +15,7 @@ public interface ReportableEntity extends FormulatedEntity {
 
 	void addError(MLText i18nMessage);
 
-	void addError(String msg, String formulationChainId, List<NodeRef> sources);
+	void addError(MLText msg, String formulationChainId, List<NodeRef> sources);
 
 	boolean merge();
 

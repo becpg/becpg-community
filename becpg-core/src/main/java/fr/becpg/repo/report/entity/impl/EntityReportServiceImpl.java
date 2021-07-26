@@ -449,7 +449,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 									String message = "Failed to execute report for template : " + tplNodeRef;
 
 									engineLogs.computeIfAbsent(tplNodeRef, m -> new HashSet<>())
-											.add(new ReportEngineLog(ReportLogType.ERROR, message, message, tplNodeRef));
+											.add(new ReportEngineLog(ReportLogType.ERROR, message, new MLText(message), tplNodeRef));
 
 									logger.error(message, e);
 								} finally {
@@ -1005,7 +1005,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 								String message = "Failed to execute report for template : " + tplNodeRef;
 
 								engineLogs.computeIfAbsent(tplNodeRef, m -> new HashSet<>())
-										.add(new ReportEngineLog(ReportLogType.ERROR, message, message, tplNodeRef));
+										.add(new ReportEngineLog(ReportLogType.ERROR, message, new MLText(message), tplNodeRef));
 
 								logger.error(message, e);
 							} finally {
@@ -1097,7 +1097,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					String message = "Failed to execute report for template : " + templateNodeRef;
 
 					engineLogs.computeIfAbsent(templateNodeRef, m -> new HashSet<>())
-							.add(new ReportEngineLog(ReportLogType.ERROR, message, message, templateNodeRef));
+							.add(new ReportEngineLog(ReportLogType.ERROR, message, new MLText(message), templateNodeRef));
 
 					logger.error(message, e);
 				}
