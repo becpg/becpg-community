@@ -26,9 +26,6 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.test.PLMBaseTestCase;
 
 public class NutriScoreIT extends PLMBaseTestCase {
-
-//	@Autowired
-//	private NutriScore nutriScore;
 	
 	@Autowired
 	private ProductService productService;
