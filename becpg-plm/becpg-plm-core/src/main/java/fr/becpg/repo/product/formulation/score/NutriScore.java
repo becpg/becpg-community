@@ -9,7 +9,6 @@ import java.util.Locale;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +28,7 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.helper.Nutrient5CHelper;
+import fr.becpg.repo.product.helper.Nutrient5C2021Helper;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @Service("nutriScore")
@@ -37,14 +36,10 @@ public class NutriScore implements ScoreCalculatingPlugin {
 
 	private static final Log logger = LogFactory.getLog(NutriScore.class);
 
-	private static final String BCPG_PHYSICO_CHEM = "bcpg:physicoChem";
-	private static final String BCPG_NUT = "bcpg:nut";
-	
 	@Autowired
 	private NodeService nodeService;
 	
 	@Autowired
-	private NamespaceService namespaceService;
 	
 	private static final List<String> NUTRIENT_PROFILE_CLASSES = Arrays.asList("E","D","C","B","A");
 
@@ -73,15 +68,15 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				
 				List<Double> ranges = null;
 				
-				NodeRef energyKjNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "ENER-KJO", nodeService);
-				NodeRef satFatNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "FASAT", nodeService);
-				NodeRef totalFatNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT", nodeService);
-				NodeRef totalSugarNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR", nodeService);
-				NodeRef sodiumNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "NA", nodeService);
-				NodeRef percFruitsAndVetgsNode = ImportHelper.findCharact(QName.createQName(BCPG_PHYSICO_CHEM, namespaceService), BeCPGModel.PROP_CHARACT_NAME, "Teneur en fruits et légumes", nodeService);
-				NodeRef nspFibreNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS", nodeService);
-				NodeRef aoacFibreNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG", nodeService);
-				NodeRef proteinNode = ImportHelper.findCharact(QName.createQName(BCPG_NUT, namespaceService), GS1Model.PROP_NUTRIENT_TYPE_CODE, "PRO-", nodeService);
+				NodeRef energyKjNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "ENER-KJO", nodeService);
+				NodeRef satFatNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FASAT", nodeService);
+				NodeRef totalFatNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT", nodeService);
+				NodeRef totalSugarNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR", nodeService);
+				NodeRef saltNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NACL", nodeService);
+				NodeRef percFruitsAndVetgsNode = ImportHelper.findCharact(PLMModel.TYPE_PHYSICO_CHEM, BeCPGModel.PROP_CHARACT_NAME, "Teneur en fruits et légumes", nodeService);
+				NodeRef nspFibreNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS", nodeService);
+				NodeRef aoacFibreNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG", nodeService);
+				NodeRef proteinNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PRO-", nodeService);
 				
 				switch (nutrientProfileCategory) {
 				
@@ -109,7 +104,7 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				Double satFat = 0d;
 				Double totalFat = 0d;
 				Double totalSugar = 0d;
-				Double sodium = 0d;
+				Double salt = 0d;
 				Double percFruitsAndVetgs = 0d;
 				Double nspFibre = 0d;
 				Double aoacFibre = 0d;
@@ -117,21 +112,21 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				
 				for (NutListDataItem nut : productData.getNutList()) {
 					if (nut.getNut().equals(energyKjNode)) {
-						energyKj = nut.getValue();
+						energyKj = nut.value("EU");
 					} else if (nut.getNut().equals(satFatNode)) {
-						satFat = nut.getValue();
+						satFat = nut.value("EU");
 					} else if (nut.getNut().equals(totalFatNode)) {
-						totalFat = nut.getValue();
+						totalFat = nut.value("EU");
 					} else if (nut.getNut().equals(totalSugarNode)) {
-						totalSugar = nut.getValue();
-					} else if (nut.getNut().equals(sodiumNode)) {
-						sodium = nut.getValue();
+						totalSugar = nut.value("EU");
+					} else if (nut.getNut().equals(saltNode)) {
+						salt = nut.value("EU");
 					} else if (nut.getNut().equals(nspFibreNode)) {
-						nspFibre = nut.getValue();
+						nspFibre = nut.value("EU");
 					} else if (nut.getNut().equals(aoacFibreNode)) {
-						aoacFibre = nut.getValue();
+						aoacFibre = nut.value("EU");
 					} else if (nut.getNut().equals(proteinNode)) {
-						protein = nut.getValue();
+						protein = nut.value("EU");
 					}
 				}
 				
@@ -141,9 +136,9 @@ public class NutriScore implements ScoreCalculatingPlugin {
 					}
 				}
 				
-				int nutriScore = Nutrient5CHelper.compute5CScore(energyKj, satFat, totalFat, totalSugar, sodium, percFruitsAndVetgs, nspFibre, aoacFibre, protein, nutrientProfileCategory.toString());
+				int nutriScore = Nutrient5C2021Helper.compute5CScore(energyKj, satFat, totalFat, totalSugar, salt * 1000 / 2.5, percFruitsAndVetgs, nspFibre, aoacFibre, protein, nutrientProfileCategory.toString());
 				
-				String nutrientClass = Nutrient5CHelper.buildNutrientClass((double) nutriScore, ranges, NUTRIENT_PROFILE_CLASSES);
+				String nutrientClass = Nutrient5C2021Helper.buildNutrientClass((double) nutriScore, ranges, NUTRIENT_PROFILE_CLASSES);
 				
 				productData.setNutrientScore((double) nutriScore);
 				productData.setNutrientClass(nutrientClass);
