@@ -2314,6 +2314,15 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	public boolean isLocalSemiFinished() {
 		return this instanceof LocalSemiFinishedProductData;
 	}
+	
+	/**
+	 * <p>isFinishedProduct.</p>
+	 *
+	 * @return a boolean.
+	 */
+	public boolean isFinishedProduct() {
+		return this instanceof FinishedProductData;
+	}
 
 	
 	/** {@inheritDoc} */
