@@ -314,7 +314,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// MailTemplates
 		contentHelper.addFilesResources(beCPGMailService.getEmailTemplatesFolder(), "classpath*:beCPG/mails/*.ftl");
 		contentHelper.addFilesResources(beCPGMailService.getEmailWorkflowTemplatesFolder(), "classpath*:beCPG/mails/workflow/*.ftl");
-		createRequirementsNotification(systemNodeRef);
+		createNotifications(systemNodeRef);
 		
 		// Reports
 		visitReports(systemNodeRef);
@@ -528,7 +528,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		
 	}
 
-	private void createRequirementsNotification(NodeRef systemNodeRef) {
+	private void createNotifications(NodeRef systemNodeRef) {
 		
 		NodeRef folderNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
 
@@ -536,38 +536,189 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		
 		NodeRef notificationFolder = listContainer == null ? null : nodeService.getChildByName(listContainer, ContentModel.ASSOC_CONTAINS, RepoConsts.PATH_NOTIFICATIONS);
 
-		NodeRef requirementsNotification = notificationFolder == null ? null : nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.FORMULATION_ERRORS_NOTIFICATION);
+		createRequirementsNotification(notificationFolder);
 		
-		if (notificationFolder != null && requirementsNotification == null) {
+		createObsoleteDocumentsNotification(notificationFolder);
+		
+		createInProgressProjectsNotification(notificationFolder);
+		
+		createValidatedProductsNotification(notificationFolder);
+		
+		createValidatedAndUpdatedProductsNotification(notificationFolder);
+		
+		createArchivedProductsNotification(notificationFolder);
+	}
+
+	private void createNotification(NodeRef notificationFolder, Map<QName, Serializable> properties, String mailTemplate, NodeRef notificationAuthorities, NodeRef target) {
+		NodeRef notification = notificationFolder == null ? null : nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, (String) properties.get(ContentModel.PROP_NAME));
+		
+		if (notificationFolder != null && notification == null) {
 			
-			requirementsNotification = nodeService.createNode(notificationFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_NOTIFICATIONRULELIST).getChildRef();
+			notification = nodeService.createNode(notificationFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_NOTIFICATIONRULELIST).getChildRef();
 			
-			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@\\{http\\://www.bcpg.fr/model/becpg/1.0\\}rclDataType:\\\"Formulation\\\"\"}");
-			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "cm:created");
-			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
-			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
-			nodeService.setProperty(requirementsNotification, ContentModel.PROP_NAME, RepoConsts.FORMULATION_ERRORS_NOTIFICATION);
-			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "bcpg:reqCtrlList");
-			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.Before);
-			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
-			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
-			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
-			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 0);
-			nodeService.setProperty(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrSubject"), "Formulation errors");
+			nodeService.setProperties(notification, properties);
+			
+			if (mailTemplate != null) {
+				NodeRef mailTemplateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), mailTemplate);
+				
+				associationService.update(notification, QName.createQName(BeCPGModel.BECPG_URI, "nrEmail"), mailTemplateNodeRef);
+			}
+			
+			associationService.update(notification, QName.createQName(BeCPGModel.BECPG_URI, "nrNotificationAuthorities"), notificationAuthorities);
+			
+			associationService.update(notification, QName.createQName(BeCPGModel.BECPG_URI, "nrTarget"), target);
+		}
+	}
+
+	private void createRequirementsNotification(NodeRef notificationFolder) {
+		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.FORMULATION_ERRORS_NOTIFICATION) == null) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, RepoConsts.FORMULATION_ERRORS_NOTIFICATION);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrSubject"), "Formulation errors");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "bcpg:reqCtrlList");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "cm:created");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.Before);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 0);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@\\{http\\://www.bcpg.fr/model/becpg/1.0\\}rclDataType:\\\"Formulation\\\"\"}");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
 			
 			String mailTemplate = "/app:company_home/app:dictionary/app:email_templates/cm:formulation-errors-notification-rule-list-email.html.ftl";
 			
-			NodeRef mailTemplateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), mailTemplate);
-			
-			associationService.update(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrEmail"), mailTemplateNodeRef);
-			
 			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
-			
-			associationService.update(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrNotificationAuthorities"), adminGroupNodeRef);
 			
 			NodeRef siteRoot = siteService.getSiteRoot();
 			
-			associationService.update(requirementsNotification, QName.createQName(BeCPGModel.BECPG_URI, "nrTarget"), siteRoot);
+			createNotification(notificationFolder, properties, mailTemplate, adminGroupNodeRef, siteRoot);
+		}
+	}
+
+	private void createObsoleteDocumentsNotification(NodeRef notificationFolder) {
+		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.OBSOLETE_DOCUMENTS_NOTIFICATION) == null) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, RepoConsts.OBSOLETE_DOCUMENTS_NOTIFICATION);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrSubject"), "Obsolete documents");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "cm:folder");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "cm:to");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.To);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 90);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
+
+			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
+
+			NodeRef siteRoot = siteService.getSiteRoot();
+
+			createNotification(notificationFolder, properties, null, adminGroupNodeRef, siteRoot);
+		}
+	}
+	
+	private void createInProgressProjectsNotification(NodeRef notificationFolder) {
+		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.IN_PROGRESS_PROJECTS_NOTIFICATION) == null) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, RepoConsts.IN_PROGRESS_PROJECTS_NOTIFICATION);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrSubject"), "In progress projects");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "pjt:project");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "cm:created");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.Before);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 0);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@\\{http://www.bcpg.fr/model/project/1.0\\}projectState:\\\"InProgress\\\"\"}");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
+			
+			String mailTemplate = "/app:company_home/app:dictionary/app:email_templates/cm:notification-rule-projects-list-email.html.ftl";
+			
+			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
+			
+			NodeRef siteRoot = siteService.getSiteRoot();
+			
+			createNotification(notificationFolder, properties, mailTemplate, adminGroupNodeRef, siteRoot);
+		}
+	}
+	
+	private void createValidatedProductsNotification(NodeRef notificationFolder) {
+		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.VALIDATED_PRODUCTS_NOTIFICATION) == null) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, RepoConsts.VALIDATED_PRODUCTS_NOTIFICATION);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrSubject"), "Validated products");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "bcpg:product");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "bcpg:stateActivityModified");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.From);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 7);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@\\{http://www.bcpg.fr/model/becpg/1.0\\}productState:\\\"Valid\\\"\"}");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
+
+			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
+
+			NodeRef siteRoot = siteService.getSiteRoot();
+
+			createNotification(notificationFolder, properties, null, adminGroupNodeRef, siteRoot);
+		}
+	}
+	
+	private void createValidatedAndUpdatedProductsNotification(NodeRef notificationFolder) {
+		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.VALIDATED_AND_UPDATED_PRODUCTS_NOTIFICATION) == null) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, RepoConsts.VALIDATED_AND_UPDATED_PRODUCTS_NOTIFICATION);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrSubject"), "Validated and updated products");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "bcpg:product");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "cm:modified");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.From);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 7);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@\\{http://www.bcpg.fr/model/becpg/1.0\\}productState:\\\"Valid\\\"\"}");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.MAJOR);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
+
+			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
+
+			NodeRef siteRoot = siteService.getSiteRoot();
+
+			createNotification(notificationFolder, properties, null, adminGroupNodeRef, siteRoot);
+		}
+	}
+	
+	private void createArchivedProductsNotification(NodeRef notificationFolder) {
+		if (nodeService.getChildByName(notificationFolder, ContentModel.ASSOC_CONTAINS, RepoConsts.ARCHIVED_PRODUCTS_NOTIFICATION) == null) {
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, RepoConsts.ARCHIVED_PRODUCTS_NOTIFICATION);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrSubject"), "Archived products");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "bcpg:product");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "bcpg:stateActivityModified");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.From);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 7);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@\\{http://www.bcpg.fr/model/becpg/1.0\\}productState:\\\"Archived\\\"\"}");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
+
+			NodeRef adminGroupNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, "GROUP_ALFRESCO_ADMINISTRATORS");
+
+			NodeRef siteRoot = siteService.getSiteRoot();
+
+			createNotification(notificationFolder, properties, null, adminGroupNodeRef, siteRoot);
 		}
 	}
 

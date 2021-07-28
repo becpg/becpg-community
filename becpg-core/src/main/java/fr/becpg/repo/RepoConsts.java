@@ -44,6 +44,16 @@ public class RepoConsts
 	public static final String PATH_NOTIFICATIONS = "Notifications";
 	
 	public static final String FORMULATION_ERRORS_NOTIFICATION = "formulationErrorsNotification";
+	
+	public static final String OBSOLETE_DOCUMENTS_NOTIFICATION = "obsoleteDocumentsNotification";
+	
+	public static final String IN_PROGRESS_PROJECTS_NOTIFICATION = "inProgressProjectsNotification";
+	
+	public static final String VALIDATED_PRODUCTS_NOTIFICATION = "validatedProductsNotification";
+	
+	public static final String VALIDATED_AND_UPDATED_PRODUCTS_NOTIFICATION = "validatedAndUpdatedProductsNotification";
+	
+	public static final String ARCHIVED_PRODUCTS_NOTIFICATION = "archivedProductsNotification";
 			
 	//Security
 	/** Constant <code>PATH_SECURITY="Security"</code> */
