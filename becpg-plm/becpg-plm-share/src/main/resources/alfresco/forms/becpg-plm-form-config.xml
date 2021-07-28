@@ -340,6 +340,9 @@
 	          <show force="false" id="gs1:isTradeItemAnOrderableUnit"/>
 	          <show force="false" id="gs1:isTradeItemReorderable"/>
 	          
+	          <show force="false" id="gs1:orderQuantityMinimum"/>
+	          <show force="false" id="gs1:orderQuantityMultiple"/>
+	          
 	          <show force="false" id="gs1:isPriceOnPack"/>
 	          <show force="false" id="gs1:hasBatchNumber"/>
 	          
@@ -834,6 +837,10 @@
 	          <field help-id="becpg.forms.help.gs1.isTradeItemReorderable" id="gs1:isTradeItemReorderable" mandatory="false" read-only="false" set="commercialPanel">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
+	          
+	           <field help-id="becpg.forms.help.gs1.orderQuantityMinimum" id="gs1:orderQuantityMinimum" mandatory="false" read-only="false" set="commercialPanel"/>
+	           
+	          <field help-id="becpg.forms.help.gs1.orderQuantityMultiple" id="gs1:orderQuantityMultiple" mandatory="false" read-only="false" set="commercialPanel"/>
 	          
 	           <field help-id="becpg.forms.help.gs1.isPriceOnPack" id="gs1:isPriceOnPack" mandatory="false" read-only="false" set="commercialPanel">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
@@ -10288,7 +10295,6 @@
 				<field-visibility>
 				    <show id="bcpg:contactListType" />
 				   <show force="true" id="bcpg:eanCode"/>
-					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
