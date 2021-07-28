@@ -71,7 +71,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 			for (Map.Entry<ProductSpecificationData, List<ForbiddenIngListDataItem>> entry : extractRequirements(specifications).entrySet()) {
 				boolean checkAutorized = false;
-				
+
 				List<ForbiddenIngListDataItem> requirements = entry.getValue();
 				ProductSpecificationData specification = entry.getKey();
 
@@ -98,8 +98,10 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 							// Ings
 							if (!fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
 								if (fil.getIngs().contains(ingListDataItem.getIng())) {
-									if ((ingListDataItem.getQtyPerc() == null)
-											|| ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= ingListDataItem.getQtyPerc()))) {
+
+									Double qtyPerc = computeQtyPerc(productData.getIngList(), ingListDataItem.getIng());
+
+									if ((qtyPerc == null) || ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= qtyPerc))) {
 
 										// req not respected
 										ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
@@ -117,9 +119,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 											reqCtrl.setRegulatoryCode(specification.getName());
 										}
 
-										if ((ingListDataItem.getQtyPerc() != null) && (fil.getQtyPercMaxi() != null)
-												&& (ingListDataItem.getQtyPerc() != 0)) {
-											reqCtrl.setReqMaxQty((fil.getQtyPercMaxi() / ingListDataItem.getQtyPerc()) * 100d);
+										if ((qtyPerc != null) && (fil.getQtyPercMaxi() != null) && (qtyPerc != 0)) {
+											reqCtrl.setReqMaxQty((fil.getQtyPercMaxi() / qtyPerc) * 100d);
 										}
 
 									}
@@ -135,7 +136,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 									ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 									if (reqCtrl == null) {
-										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<NodeRef>(),
+										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<>(),
 												RequirementDataType.Specification);
 										reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
 									} else {
@@ -195,6 +196,22 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		return new LinkedList<>(reqCtrlMap.values());
 	}
 
+	private Double computeQtyPerc(List<IngListDataItem> ingList, NodeRef ing) {
+		Double qtyPerc = 0d;
+		for (IngListDataItem ingListDataItem : ingList) {
+			if ((ingListDataItem.getIng() != null) && ingListDataItem.getIng().equals(ing)) {
+				if (ingListDataItem.getQtyPerc() != null) {
+					qtyPerc += ingListDataItem.getQtyPerc();
+				} else {
+					qtyPerc = null;
+					break;
+				}
+			}
+		}
+
+		return qtyPerc;
+	}
+
 	/**
 	 * check the ingredients of the part according to the specification
 	 *
@@ -217,55 +234,54 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 			if ((componentProductData.getIngList() != null) && !componentProductData.getIngList().isEmpty()) {
 
-				forbiddenIngredientsList.forEach(fil -> {
+				forbiddenIngredientsList.forEach(fil ->
 
-					componentProductData.getIngList().forEach(ingListDataItem -> {
+				componentProductData.getIngList().forEach(ingListDataItem -> {
 
-						if (!RequirementType.Authorized.equals(fil.getReqType()) && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
+					if (!RequirementType.Authorized.equals(fil.getReqType()) && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
 
-							if (checkRuleMatchIng(ingListDataItem, fil)) {
-								// Look for raw material
-								if ((componentProductData.getCompoListView().getCompoList() != null)
-										&& !componentProductData.getCompoListView().getCompoList().isEmpty()) {
-									for (CompoListDataItem c : componentProductData.getCompoListView().getCompoList()) {
-										checkILOfPart(c.getProduct(), declType, (ProductData) alfrescoRepository.findOne(c.getProduct()),
-												forbiddenIngredientsList, specification, reqCtrlMap, visited);
-									}
+						if (checkRuleMatchIng(ingListDataItem, fil)) {
+							// Look for raw material
+							if ((componentProductData.getCompoListView().getCompoList() != null)
+									&& !componentProductData.getCompoListView().getCompoList().isEmpty()) {
+								for (CompoListDataItem c : componentProductData.getCompoListView().getCompoList()) {
+									checkILOfPart(c.getProduct(), declType, (ProductData) alfrescoRepository.findOne(c.getProduct()),
+											forbiddenIngredientsList, specification, reqCtrlMap, visited);
+								}
+							} else {
+								MLText curMessage = fil.getReqMessage();
+								if ((curMessage == null) || curMessage.values().stream().noneMatch(mes -> (mes != null) && !mes.isEmpty())) {
+									curMessage = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ING,
+											mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
+								}
+
+								if (logger.isDebugEnabled()) {
+									logger.debug("Adding not respected for: " + curMessage);
+								}
+
+								ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
+								if (reqCtrl == null) {
+									reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<>(),
+											RequirementDataType.Specification);
+									reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
 								} else {
-									MLText curMessage = fil.getReqMessage();
-									if ((curMessage == null) || curMessage.values().stream().noneMatch(mes -> (mes != null) && !mes.isEmpty())) {
-										curMessage = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ING,
-												mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
-									}
+									reqCtrl.setReqDataType(RequirementDataType.Specification);
+								}
 
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding not respected for: " + curMessage);
-									}
+								if (!reqCtrl.getSources().contains(productNodeRef)) {
+									reqCtrl.getSources().add(productNodeRef);
+								}
 
-									ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
-									if (reqCtrl == null) {
-										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<NodeRef>(),
-												RequirementDataType.Specification);
-										reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
-									} else {
-										reqCtrl.setReqDataType(RequirementDataType.Specification);
-									}
-
-									if (!reqCtrl.getSources().contains(productNodeRef)) {
-										reqCtrl.getSources().add(productNodeRef);
-									}
-
-									if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
-										reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
-									} else {
-										reqCtrl.setRegulatoryCode(specification.getName());
-									}
+								if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
+									reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
+								} else {
+									reqCtrl.setRegulatoryCode(specification.getName());
 								}
 							}
 						}
+					}
 
-					});
-				});
+				}));
 
 			}
 		}
@@ -294,13 +310,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 		// Ings
 		if (!fil.getIngs().isEmpty()) {
-			if (!fil.getIngs().contains(ingListDataItem.getIng())) {
+			if (!fil.getIngs().contains(ingListDataItem.getIng()) || (fil.getQtyPercMaxi() != null)) {
 				return false; // check next rule
-			} else if (fil.getQtyPercMaxi() != null) {
-				return false; // check next rule (we will
-				// check
-				// in
-				// checkILOfFormulatedProduct)
 			}
 		}
 
@@ -368,7 +379,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 		ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(reqNodeRef);
 		if (reqCtrl == null) {
-			reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<NodeRef>(), requirementDataType);
+			reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<>(), requirementDataType);
 			reqCtrlMap.put(reqNodeRef, reqCtrl);
 		} else {
 			reqCtrl.setReqDataType(requirementDataType);
