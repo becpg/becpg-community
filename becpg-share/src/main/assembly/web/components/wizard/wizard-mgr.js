@@ -72,7 +72,7 @@
 					 this.widgets.wizard = jQuery("#" + this.id + "-wizard")
 					 .steps(
 							 {
-								 stepsOrientation : "vertical",
+								 stepsOrientation : "horizontal",
 								 enableCancelButton : true,
 								 showFinishButtonAlways : this.options.draft,
 								 enableKeyNavigation : false,

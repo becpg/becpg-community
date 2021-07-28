@@ -67,37 +67,110 @@ div.wizard-content {
     left: -999em;
     position: absolute;
 }
+
+.wizard > .actions > ul > li {
+    float: left;
+}
+
 .wizard > .steps {
     display: block;
     position: relative;
     width: 100%;
 }
-.wizard.vertical > .steps {
-    display: inline;
-    float: left;
-    width: 20%;
-}
+
 .wizard > .steps .number {
     font-size: 1.429em;
+    text-align: center;
+    display: block;
 }
-.wizard > .steps > ul > li {
-    width: 25%;
+
+.steps > ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding-left: 0;
+    margin-top: 0;
+    margin-bottom: 0;
+    overflow: hidden;
 }
-.wizard > .steps > ul > li, .wizard > .actions > ul > li {
-    float: left;
-}
-.wizard.vertical > .steps > ul > li {
-    float: none;
-    width: 100%;
+ .steps > ul > li {
+   flex-basis: 0;
+    flex-grow: 1;
+    text-align: center;
 }
 .wizard > .steps a, .wizard > .steps a:hover, .wizard > .steps a:active {
-    border-radius: 5px;
     display: block;
-    margin: 0 0.5em 0.5em;
+    margin: 0;
     padding: 1em;
     text-decoration: none;
     width: auto;
+    flex-basis: 0;
+    flex-grow: 1;
+    text-align: center;
+    box-sizing: border-box;
+    position: relative;
+    height: 100%;
+    min-height: 100%;
+    margin-right: 30px;
+    margin-left: -30px;
+    padding: 10px 0px 0px 50px;
 }
+
+.wizard > .steps a::before {
+    content: " ";
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    top: 50%;
+    left: 100%;
+    margin-top: -50px;
+    margin-left: 1px;
+    border-top: 50px solid transparent;
+    border-bottom: 50px solid transparent;
+    border-left: 30px solid white;
+    z-index: 1;
+}
+
+.wizard > .steps a::after {
+    content: "";
+    position: absolute;
+    display: block;
+    width: 0;
+    height: 0;
+    top: 50%;
+    left: 100%;
+    margin-top: -50px;
+    border-top: 50px solid transparent;
+    border-bottom: 50px solid transparent;
+    border-left: 30px solid #f8f8f8;
+    z-index: 2;
+}
+
+ .wizard > .steps .disabled a::after {
+    border-left-color: rgb(238, 238, 238);
+}
+
+ .wizard > .steps .current a::after {
+    border-left-color: rgb(33, 132, 190);
+}
+
+ .wizard > .steps .done a::after {
+    border-left-color: rgb(157, 200, 226);
+}
+
+ .wizard > .steps .error a::after {
+    border-left-color: #5cb85c;
+}
+
+.wizard > .steps .Valid a::after {
+    border-left-color: rgb(123, 209, 72);
+}
+
+.wizard > .steps .Valid.done a::after {
+    border-left-color: #DAFFC5;
+}
+
 .wizard > .steps .disabled a, .wizard > .steps .disabled a:hover, .wizard > .steps .disabled a:active {
     background: none repeat scroll 0 0 rgb(238, 238, 238);
     color: rgb(170, 170, 170);
@@ -123,6 +196,7 @@ div.wizard-content {
 
 .wizard > .steps .Valid.done a, .wizard > .steps .Valid.done a:hover, .wizard > .steps .Valid.done a:active {
     background: none repeat scroll 0 0 #DAFFC5;
+    border-color:  #DAFFC5;
     color: rgb(170, 170, 170);
 }
 
@@ -144,7 +218,7 @@ div.wizard-content {
 }
 .wizard > .content > .body {
     float: left;
-    width: 95%; 
+    width: 100%; 
 }
 
 
