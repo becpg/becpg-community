@@ -23,7 +23,6 @@ import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -124,7 +123,6 @@ public class ImportServiceImpl implements ImportService {
 	@Autowired
 	private RuleService ruleService;
 
-	// TODO could be better with plugin
 	@Autowired
 	@Qualifier("importNodeVisitor")
 	private ImportVisitor importNodeVisitor;
@@ -219,7 +217,7 @@ public class ImportServiceImpl implements ImportService {
 
 		}
 
-		if ((importContext.getLog().size() > 0) && (importContext.getImportFileReader() instanceof ImportExcelFileReader)) {
+		if ((!importContext.getLog().isEmpty()) && (importContext.getImportFileReader() instanceof ImportExcelFileReader)) {
 
 			final ImportContext finalImportContext = importContext;
 
