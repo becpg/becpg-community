@@ -425,6 +425,9 @@ public interface PLMModel {
 	QName PROP_PHYSICO_CHEM_FORMULATED_FROM_VOL = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemFormulatedFromVol");
 	/** Constant <code>PROP_PHYSICO_CHEM_FORMULA</code> */
 	QName PROP_PHYSICO_CHEM_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemFormula");
+	
+	QName PROP_PHYSICO_CHEM_CODE = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemCode");
+
 
 	// supplier aspect
 	/** Constant <code>ASPECT_SUPPLIERS</code> */

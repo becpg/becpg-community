@@ -1160,6 +1160,9 @@
 		<type name="bcpg:physicoChem">
 			<parent>bcpg:charact</parent>
 			<properties>
+				<property name="bcpg:physicoChemCode">
+					<type>d:text</type>
+				</property>
 				<property name="bcpg:physicoChemUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
