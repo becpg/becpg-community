@@ -2296,6 +2296,15 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public boolean isLocalSemiFinished() {
 		return this instanceof LocalSemiFinishedProductData;
 	}
+	
+	/**
+	 * <p>isFinishedProduct.</p>
+	 *
+	 * @return a boolean.
+	 */
+	public boolean isFinishedProduct() {
+		return this instanceof FinishedProductData;
+	}
 
 	
 	/** {@inheritDoc} */
