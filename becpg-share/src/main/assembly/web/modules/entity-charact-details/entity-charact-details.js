@@ -500,14 +500,15 @@
                             if (me.dataSource != null)
                             {
                             	var elWidth = document.getElementById(me.id+"-chartContainer").offsetWidth - 10;
-                            	var elHieght = document.getElementById(me.id+"-chartContainer").offsetHeight;
+                            	var elHeight = document.getElementById(me.id+"-chartContainer").offsetHeight;
+								elHeight = Math.max(elHeight, 500);
                             	
                                 if (me.widgets.chartTypePicker.value == "lineChart")
                                 {
                                 	 new pvc.LineChart({
                                 	        canvas: me.id + "-chart",
                                 	        width:  elWidth,
-                                	        height: elHieght,
+                                	        height: 500,
                                 	        dotsVisible: true,
                                 	        baseAxisSize: 40,
                                 	        baseAxisDomainRoundMode: 'nice',
@@ -536,7 +537,7 @@
                                 	new pvc.BarChart({
                                 	    canvas: me.id + "-chart",
                                 	    width:  elWidth,
-                                	    height: elHieght,
+                                	    height: elHeight,
                                 	    orientation: 'horizontal',
                                 	    axisGrid: true,
                                 	    axisGrid_strokeStyle: '#F7F8F9',
@@ -566,7 +567,7 @@
                                 	 new pvc.BarChart({
                                 		 canvas: me.id + "-chart",
                                 		 width:  elWidth,
-                                		 height: elHieght,
+                                		 height: elHeight,
                                 		 legend: true,
                                 		 legendPosition: 'bottom',
                                 		 legendAlign: 'center',
@@ -591,7 +592,7 @@
                                 	new pvc.PieChart({
                                 	    canvas: me.id + "-chart",
                                 	    width:  elWidth,
-                                	    height: elHieght,
+                                	    height: 500,
                                 	    valuesVisible: true,
                                 	    valuesFont: 'lighter 11px "Open Sans"',
                                 	    explodedSliceRadius: '10%',
