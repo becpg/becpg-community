@@ -73,7 +73,7 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				NodeRef totalFatNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT", nodeService);
 				NodeRef totalSugarNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR", nodeService);
 				NodeRef saltNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NACL", nodeService);
-				NodeRef percFruitsAndVetgsNode = ImportHelper.findCharact(PLMModel.TYPE_PHYSICO_CHEM, BeCPGModel.PROP_CHARACT_NAME, "Teneur en fruits et légumes", nodeService);
+				NodeRef percFruitsAndVetgsNode = ImportHelper.findCharact(PLMModel.TYPE_PHYSICO_CHEM, PLMModel.PROP_PHYSICO_CHEM_CODE, "FRUIT_VEGETABLE", nodeService);
 				NodeRef nspFibreNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS", nodeService);
 				NodeRef aoacFibreNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG", nodeService);
 				NodeRef proteinNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PRO-", nodeService);
