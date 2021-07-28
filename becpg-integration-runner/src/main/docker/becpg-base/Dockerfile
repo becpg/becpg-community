@@ -147,13 +147,13 @@ RUN mkdir -p /opt/cprof && \
 
 RUN set -x && \
     curl --silent --location \
-      https://github.com/becpg/becpg-i18n/releases/download/1.0-69/alfresco-becpg-i18n-1.0-69.jar  \
-      -o webapps/alfresco/WEB-INF/lib/alfresco-becpg-i18n-1.0-67.jar
+      https://github.com/becpg/becpg-i18n/releases/download/1.0-74/alfresco-becpg-i18n-1.0-74.jar  \
+      -o webapps/alfresco/WEB-INF/lib/alfresco-becpg-i18n-1.0-74.jar
 
 RUN set -x && \
    curl --silent --location \
-      https://github.com/becpg/becpg-i18n/releases/download/1.0-69/share-becpg-i18n-1.0-69.jar  \
-     -o webapps/share/WEB-INF/lib/share-becpg-i18n-1.0-67.jar 
+      https://github.com/becpg/becpg-i18n/releases/download/1.0-74/share-becpg-i18n-1.0-74.jar  \
+     -o webapps/share/WEB-INF/lib/share-becpg-i18n-1.0-74.jar 
 
       
       
