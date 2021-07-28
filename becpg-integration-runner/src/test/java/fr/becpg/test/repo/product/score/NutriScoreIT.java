@@ -38,7 +38,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 		NodeRef totalFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT");
 		NodeRef totalSugarNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR");
 		NodeRef saltNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NACL");
-		NodeRef percFruitsAndVetgsNode = findOrCreateNode(PLMModel.TYPE_PHYSICO_CHEM, BeCPGModel.PROP_CHARACT_NAME, "Teneur en fruits et légumes");
+		NodeRef percFruitsAndVetgsNode = findOrCreateNode(PLMModel.TYPE_PHYSICO_CHEM, PLMModel.PROP_PHYSICO_CHEM_CODE, "FRUIT_VEGETABLE");
 		NodeRef nspFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS");
 		NodeRef aoacFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG");
 		NodeRef proteinNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PRO-");
