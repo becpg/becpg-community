@@ -367,6 +367,7 @@ public class FormModelVisitor {
 		}
 		
 		String event = (String) nodeService.getProperty(parameterRef, DesignerModel.PROP_DSG_EVENT);
+		event = event.replace("\"", "'");
 		if (event != null) {
 			constraintParam.setAttribute("event", event);
 		}
@@ -610,11 +611,13 @@ public class FormModelVisitor {
 			ChildAssociationRef childAssociationRef = nodeService.createNode(parentNodeRef, DesignerModel.ASSOC_DSG_CONSTRAINTS, DesignerModel.ASSOC_DSG_CONSTRAINTS,
 					DesignerModel.TYPE_DSG_FORMCONSTRAINT);
 			NodeRef ret = childAssociationRef.getChildRef();
+			nodeService.setProperty(ret, DesignerModel.PROP_DSG_ID, "constraint");
 			NodeList params = elem.getElementsByTagName("constraint");
 			for (int j = 0; j < params.getLength(); j++) {
 				Element param = (Element) params.item(j);
 				childAssociationRef = nodeService.createNode(ret, DesignerModel.ASSOC_DSG_CONSTRAINT_ASSOC, DesignerModel.ASSOC_DSG_CONSTRAINT_ASSOC, DesignerModel.TYPE_DSG_CONSTRAINTPARAMETER);
 				NodeRef paramRef = childAssociationRef.getChildRef();
+				nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_ID, "constraint");
 				nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_TYPE, param.getAttribute("type"));
 				nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_VALIDATION_HANDLER, param.getAttribute("validation-handler"));
 				nodeService.setProperty(paramRef, DesignerModel.PROP_DSG_EVENT, param.getAttribute("event"));
