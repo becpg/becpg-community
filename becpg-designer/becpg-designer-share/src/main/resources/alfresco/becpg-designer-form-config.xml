@@ -270,4 +270,39 @@
 		</forms>
 	</config>
 	
+	<config evaluator="node-type" condition="dsg:constraintParameter">
+		<forms>
+			<form>
+				<edit-form template="/org/alfresco/components/form/tab-edit-form.ftl" />
+				<field-visibility>
+					<show id="dsg:id" />
+					<show id="dsg:event" />
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="panel" label="Informations" label-id="designer.sets.mainInfo" />
+					<field id="dsg:id" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/info.ftl"/>
+					</field>
+					<field id="dsg:event" set="mainInfo"  >
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">		
+		                     <control-param name="style">width: 95%</control-param>
+							<control-param name="rows">25</control-param>
+							<control-param name="maxLength">50000</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="dsg:constraintParameter">
+		<forms>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="dsg:id" />
+					<show id="dsg:event" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
 </alfresco-config>
