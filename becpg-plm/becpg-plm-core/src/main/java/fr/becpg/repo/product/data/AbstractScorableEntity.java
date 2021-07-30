@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -101,6 +102,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 
 			for (ReqCtrlListDataItem dup : duplicates) {
 				reqCtrlList.remove(dup);
+				hasChanged = true;
 			}
 
 			for (Entry<String, ReqCtrlListDataItem> entry : newReqCtrlList.entrySet()) {
@@ -113,44 +115,25 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 			for (Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()) {
 				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
 
-					if ((dbKV.getValue().getFormulationChainId() == null)
-							|| dbKV.getValue().getFormulationChainId().equals(getFormulationChainId())) {
+					if (((dbKV.getValue().getFormulationChainId() == null)
+							&& ((getFormulationChainId() == null) || FormulationService.FAST_FORMULATION_CHAINID.equals(getFormulationChainId())
+									|| FormulationService.DEFAULT_CHAIN_ID.equals(getFormulationChainId())))
+							|| ((dbKV.getValue().getFormulationChainId() != null)
+									&& dbKV.getValue().getFormulationChainId().equals(getFormulationChainId()))) {
 						// remove
 						reqCtrlList.remove(dbKV.getValue());
 						hasChanged = true;
 					}
 				} else {
+
 					// update
 					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
+					dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
+					dbKV.getValue().setReqMaxQty(newReqCtrlListDataItem.getReqMaxQty());
+					dbKV.getValue().setSources(newReqCtrlListDataItem.getSources());
+					dbKV.getValue().setCharact(newReqCtrlListDataItem.getCharact());
+					dbKV.getValue().setReqDataType(newReqCtrlListDataItem.getReqDataType());
 
-					if (((dbKV.getValue().getReqType() != null) || (newReqCtrlListDataItem.getReqType() != null))
-							&& (dbKV.getValue().getReqType() != newReqCtrlListDataItem.getReqType())) {
-						dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
-						hasChanged = true;
-					}
-					if (((dbKV.getValue().getReqMaxQty() != null) && !dbKV.getValue().getReqMaxQty().equals(newReqCtrlListDataItem.getReqMaxQty()))
-							|| ((newReqCtrlListDataItem.getReqMaxQty() != null)
-									&& !newReqCtrlListDataItem.getReqMaxQty().equals(dbKV.getValue().getReqMaxQty()))) {
-						dbKV.getValue().setReqMaxQty(newReqCtrlListDataItem.getReqMaxQty());
-						hasChanged = true;
-					}
-					if (((dbKV.getValue().getSources() != null) && !dbKV.getValue().getSources().equals(newReqCtrlListDataItem.getSources()))
-							|| ((newReqCtrlListDataItem.getSources() != null)
-									&& !newReqCtrlListDataItem.getSources().equals(dbKV.getValue().getSources()))) {
-						dbKV.getValue().setSources(newReqCtrlListDataItem.getSources());
-						hasChanged = true;
-					}
-					if (((dbKV.getValue().getCharact() != null) && !dbKV.getValue().getCharact().equals(newReqCtrlListDataItem.getCharact()))
-							|| ((newReqCtrlListDataItem.getCharact() != null)
-									&& !newReqCtrlListDataItem.getCharact().equals(dbKV.getValue().getCharact()))) {
-						dbKV.getValue().setCharact(newReqCtrlListDataItem.getCharact());
-						hasChanged = true;
-					}
-					if (((dbKV.getValue().getReqDataType() != null) || (newReqCtrlListDataItem.getReqDataType() != null))
-							&& (dbKV.getValue().getReqDataType() != newReqCtrlListDataItem.getReqDataType())) {
-						dbKV.getValue().setReqDataType(newReqCtrlListDataItem.getReqDataType());
-						hasChanged = true;
-					}
 					reqCtrlList.remove(newReqCtrlListDataItem);
 				}
 			}
@@ -175,6 +158,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 			}
 
 		} else {
+
 			reqCtrlList.put(r.getKey(), r);
 		}
 

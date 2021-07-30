@@ -149,7 +149,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 			key+= reqDataType.toString();
 		}
 		if(regulatoryCode!=null){
-			key+= regulatoryCode.toString();
+			key+= regulatoryCode;
 		}
 		
 		return key;
