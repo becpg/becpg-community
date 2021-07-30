@@ -80,7 +80,6 @@ public class ProductColumnDecorator implements ColumnDecorator {
 		NodeRef listNodeRef = null;
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 		if (listContainerNodeRef != null) {
-			System.out.println(" List :  " + QName.createQName(item.getId(), namespaceService));
 			listNodeRef = entityListDAO.getList(listContainerNodeRef, QName.createQName(item.getId(), namespaceService));
 		}
 		return listNodeRef;

@@ -127,29 +127,22 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
+		if (productData.getReqCtrlList() != null) {
+			productData.getReqCtrlList().removeIf(r -> r.getNodeRef() == null);
+		} else {
+			productData.setReqCtrlList(new LinkedList<>());
+		}
+		
 		if ((productData.hasCompoListEl(new VariantFilters<>())) || (productData.hasPackagingListEl(new VariantFilters<>()))
 				|| (productData.hasProcessListEl(new VariantFilters<>()))) {
 
-			if (productData.getReqCtrlList() != null) {
-				productData.getReqCtrlList().removeIf(r -> r.getNodeRef() == null);
-			} else {
-				productData.setReqCtrlList(new LinkedList<>());
-			}
-
+			
 			if (formulateChildren) {
 				checkShouldFormulateComponents(true, productData);
 			}
 
 			checkMissingProperties(productData);
 
-		} else {
-
-			// Reset
-			if ((productData.getReqCtrlList() != null)) {
-				productData.getReqCtrlList().removeIf(r -> (r.getNodeRef() == null) || (r.getFormulationChainId() == null)
-						|| r.getFormulationChainId().equals(productData.getFormulationChainId()));
-
-			}
 		}
 
 		return true;
@@ -158,7 +151,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	private boolean checkShouldFormulateComponents(boolean isRoot, ProductData productData) throws FormulateException {
 		boolean isFormulated = false;
 
-		if (!productData.getIsUpToDate()) {
+		if (!Boolean.TRUE.equals(productData.getIsUpToDate())) {
 
 			// Avoid recheck
 			productData.setIsUpToDate(true);
@@ -290,20 +283,19 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 			ProductData subComponent = alfrescoRepository.findOne(c.getComponent());
 
 			ProductUnit productUnit = subComponent.getUnit();
-			if (c != null) {
-				boolean shouldUseLiter = (productUnit != null) && productUnit.isVolume();
-				boolean useLiter = (c.getCompoListUnit() != null) && c.getCompoListUnit().isVolume();
-				Double density = subComponent.getDensity();
 
-				if ((density == null) && ((shouldUseLiter && !useLiter) || (!shouldUseLiter && useLiter))) {
-					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT, RequirementDataType.Composition);
+			boolean shouldUseLiter = (productUnit != null) && productUnit.isVolume();
+			boolean useLiter = (c.getCompoListUnit() != null) && c.getCompoListUnit().isVolume();
+			Double density = subComponent.getDensity();
+
+			if ((density == null) && ((shouldUseLiter && !useLiter) || (!shouldUseLiter && useLiter))) {
+				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_WRONG_UNIT, RequirementDataType.Composition);
+				addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
+			}
+			Double overrunPerc = c.getOverrunPerc();
+			if (((productUnit != null) && productUnit.isVolume()) || (overrunPerc != null)) {
+				if ((density == null) || density.equals(0d)) {
 					addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
-				}
-				Double overrunPerc = c.getOverrunPerc();
-				if (((productUnit != null) && productUnit.isVolume()) || (overrunPerc != null)) {
-					if ((density == null) || density.equals(0d)) {
-						addMessingReq(reqCtrlListDataItem, productNodeRef, MESSAGE_MISSING_DENSITY, RequirementDataType.Composition);
-					}
 				}
 			}
 		}
