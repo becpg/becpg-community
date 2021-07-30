@@ -3,11 +3,14 @@
  */
 package fr.becpg.repo.importer.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -288,6 +291,25 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						} finally {
 							MLPropertyInterceptor.setMLAware(mlAware);
 						}
+					} else if (ContentModel.PROP_CONTENT.equals(entry.getKey())) {
+						
+						try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream(baos)){
+							oos.writeObject(entry.getValue());
+							InputStream in = new ByteArrayInputStream(baos.toByteArray());
+							
+							String mimetype = mimetypeService.guessMimetype(entry.getValue() != null ? entry.getValue().toString() : null);
+							ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
+							Charset charset = charsetFinder.getCharset(in, mimetype);
+							String encoding = charset.name();
+							
+							ContentWriter writer = contentService.getWriter(nodeRef, entry.getKey(), true);
+							writer.setEncoding(encoding);
+							writer.setMimetype(mimetype);
+							writer.putContent(in);
+						} catch (IOException e) {
+							throw new ImporterException(e.getMessage());
+						}
+
 					} else {
 						nodeService.setProperty(nodeRef, entry.getKey(), entry.getValue());
 					}
