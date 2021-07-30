@@ -90,7 +90,7 @@ public class Nutrient5C2021Helper {
 		int cScore = 0;
 		int score = 10;
 
-//		les arrondis sont déja utilisés
+//		les arrondis sont déja effectués
 		
 		double[][] aCategories = getACategory(NutrientProfileCategory.valueOf(category));
 		double[][] cCategories = getCCategory(NutrientProfileCategory.valueOf(category));

@@ -134,11 +134,17 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 
 					String name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 
+					String versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
+					
+					if (versionLabel == null) {
+						versionLabel = "1.0";
+					}
+					
 					if (logger.isDebugEnabled()) {
 						logger.debug("Creating new impactWUsed change order");
 					}
 					ChangeOrderData changeOrderData = (ChangeOrderData) alfrescoRepository.create(parentNodeRef,
-							new ChangeOrderData(generateEcoName(name), ECOState.Automatic, ChangeOrderType.ImpactWUsed, null));
+							new ChangeOrderData(generateEcoName(name + "_v" + versionLabel), ECOState.Automatic, ChangeOrderType.ImpactWUsed, null));
 
 					changeOrderData.setDescription(description);
 
