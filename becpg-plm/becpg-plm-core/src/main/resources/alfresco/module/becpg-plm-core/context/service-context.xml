@@ -57,6 +57,7 @@
 		<property name="hierarchyService" ref="hierarchyService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="associationService" ref="associationService" />
+		<property name="publicServiceAccessService" ref="publicServiceAccessService" />
 	</bean>
 
 	<bean id="importNodeVisitor" class="fr.becpg.repo.importer.impl.ImportNodeVisitor" parent="parentImportVisitor" />

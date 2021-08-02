@@ -25,6 +25,8 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.node.MLPropertyInterceptor;
+import org.alfresco.repo.security.permissions.AccessDeniedException;
+import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
@@ -37,6 +39,8 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PublicServiceAccessService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.FileUtils;
@@ -115,6 +119,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected Repository repositoryHelper;
 
 	protected AssociationService associationService;
+	
+	protected PublicServiceAccessService publicServiceAccessService;
 
 	/**
 	 * <p>Setter for the field <code>entityListDAO</code>.</p>
@@ -229,6 +235,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
+	
+	public void setPublicServiceAccessService(PublicServiceAccessService publicServiceAccessService) {
+		this.publicServiceAccessService = publicServiceAccessService;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -292,6 +302,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 							MLPropertyInterceptor.setMLAware(mlAware);
 						}
 					} else if (ContentModel.PROP_CONTENT.equals(entry.getKey())) {
+						
+						if (publicServiceAccessService.hasAccess(ServiceRegistry.NODE_SERVICE.getLocalName(), "setProperty", nodeRef, entry.getKey(), entry.getValue()) == AccessStatus.DENIED) {
+							throw new AccessDeniedException("permissions.err_access_denied");
+						}
 						
 						try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream(baos)){
 							oos.writeObject(entry.getValue());
