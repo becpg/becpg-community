@@ -266,6 +266,7 @@
 		<property name="contentService" ref="ContentService" />	
 		<property name="associationService" ref="associationService" />
 		<property name="entityReportService" ref="entityReportService" />
+		<property name="quickShareService" ref="QuickShareService"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.remote.entityReport.get" class="fr.becpg.repo.web.scripts.remote.EntityReportWebScript" parent="abstractEntityWebScript">
