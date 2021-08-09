@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -35,7 +36,8 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 	private EntityReportService entityReportService;
 	private AssociationService associationService;
 	private ContentService contentService;
-
+	private QuickShareService quickShareService;
+	
 	/**
 	 * <p>Setter for the field <code>entityReportService</code>.</p>
 	 *
@@ -62,6 +64,10 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
+	
+	public void setQuickShareService(QuickShareService quickShareService) {
+		this.quickShareService = quickShareService;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -70,22 +76,27 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 			NodeRef documentNodeRef = findEntity(req);
 
 			try (OutputStream out = res.getOutputStream()) {
-
-				if (ReportModel.TYPE_REPORT.equals(nodeService.getType(documentNodeRef))) {
-					List<NodeRef> sourceAssocList = associationService.getSourcesAssocs(documentNodeRef, ReportModel.ASSOC_REPORTS);
-
-					if (!sourceAssocList.isEmpty()) {
-						entityReportService.getOrRefreshReport(sourceAssocList.get(0), documentNodeRef);
+				
+				if ("true".equals(req.getParameter("shareURL"))) {
+					String sharedId = quickShareService.shareContent(documentNodeRef).getId();
+					out.write(sharedId.getBytes());
+				} else {
+					if (ReportModel.TYPE_REPORT.equals(nodeService.getType(documentNodeRef))) {
+						List<NodeRef> sourceAssocList = associationService.getSourcesAssocs(documentNodeRef, ReportModel.ASSOC_REPORTS);
+						
+						if (!sourceAssocList.isEmpty()) {
+							entityReportService.getOrRefreshReport(sourceAssocList.get(0), documentNodeRef);
+						}
 					}
+					
+					// get the content reader
+					ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
+					if ((reader == null) || !reader.exists()) {
+						throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef);
+					}
+					
+					IOUtils.copy(reader.getContentInputStream(), out);
 				}
-
-				// get the content reader
-				ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
-				if ((reader == null) || !reader.exists()) {
-					throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef);
-				}
-
-				IOUtils.copy(reader.getContentInputStream(), out);
 
 			} catch (BeCPGException e) {
 				logger.error("Cannot export content", e);

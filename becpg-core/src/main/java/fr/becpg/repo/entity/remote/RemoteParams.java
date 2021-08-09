@@ -128,11 +128,11 @@ public class RemoteParams {
 	 * @return a boolean.
 	 */
 	protected boolean isValidQNameString(String qName) {
-		String[] qnameArray = qName.split(":");
-		if ((qnameArray.length > 1)) {
-			return true;
+		if (qName.startsWith("/")) {
+			return false;
 		}
-		return false;
+		String[] qnameArray = qName.split(":");
+		return qnameArray.length > 1;
 	}
 
 	@SuppressWarnings("unchecked")
