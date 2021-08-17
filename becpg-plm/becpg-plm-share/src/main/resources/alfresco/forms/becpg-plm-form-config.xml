@@ -7208,9 +7208,12 @@
 		<forms>
 			<form>
 				<field-visibility>
+				    <show id="bcpg:certificationNumber" force="true" />
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:certificationAgency" force="true" />
+					<show id="bcpg:certificationStandard" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
 				</field-visibility>
@@ -7219,6 +7222,16 @@
 						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
 	                       <control-param name="maxLength">10000</control-param>
 	                   </control>
+					</field>
+						<field id="cm:from">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="cm:to">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -7231,18 +7244,30 @@
 			<form>
 
 				<field-visibility>
+					<show id="bcpg:certificationNumber" force="true" />
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:certificationAgency" force="true" />
+					<show id="bcpg:certificationStandard" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
 				</field-visibility>
-
 				<appearance>
 					<field id="cm:description">
 						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
 	                       <control-param name="maxLength">10000</control-param>
 	                   </control>
+					</field>
+					<field id="cm:from">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="cm:to">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -7257,9 +7282,12 @@
 
 			<form id="datagrid">
 				<field-visibility>
+				    <show id="bcpg:certificationNumber" force="true" />
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:certificationStandard" force="true" />
+					<show id="bcpg:certificationAgency" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
 				</field-visibility>

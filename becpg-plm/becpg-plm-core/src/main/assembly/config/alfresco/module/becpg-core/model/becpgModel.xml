@@ -663,7 +663,6 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
-
 	</constraints>
 
 	<types>
@@ -1400,6 +1399,23 @@
 
 		<type name="bcpg:certification">
 			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:certificationAgency">
+						<type>d:text</type>
+						<mandatory>false</mandatory>
+						<index enabled="false" />
+				</property>
+				<property name="bcpg:certificationStandard">
+						<type>d:text</type>
+						<mandatory>false</mandatory>
+						<index enabled="false" />
+				</property>
+				<property name="bcpg:certificationNumber">
+						<type>d:text</type>
+						<mandatory>false</mandatory>
+						<index enabled="false" />
+				</property>
+			</properties>
 		</type>
 
 		<type name="bcpg:approvalNumber">
