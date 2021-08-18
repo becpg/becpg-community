@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG.
+ * Copyright (C) 2010-2020 beCPG.
  *
  * This file is part of beCPG
  *
@@ -422,13 +422,14 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		if (props != null) {
 			for (Map.Entry<QName, Serializable> entry : props.entrySet()) {
 				QName propQName = entry.getKey();
+				QName propName = entry.getKey().getPrefixedQName(namespaceService);
+				String prefix = propName.getPrefixString().split(":")[0];
 				if ((entry.getValue() != null) && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
-						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) && !propQName.equals(ContentModel.PROP_CONTENT)) {
+						&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || params.getFilteredProperties().contains(propName)) && !propQName.equals(ContentModel.PROP_CONTENT)) {
 					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
-						QName propName = entry.getKey().getPrefixedQName(namespaceService);
-						String prefix = propName.getPrefixString().split(":")[0];
+						
 						// filter props
 						if ((params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()
 								&& !params.getFilteredProperties().contains(propName) && (extractLevel == 1)) {
