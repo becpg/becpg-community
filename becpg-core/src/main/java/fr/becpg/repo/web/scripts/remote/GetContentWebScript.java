@@ -13,6 +13,8 @@ import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.io.IOUtils;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
@@ -33,11 +35,13 @@ import io.opencensus.common.Scope;
  */
 public class GetContentWebScript extends AbstractEntityWebScript {
 
+	private static final String PARAM_SHARE = "share";
+
 	private EntityReportService entityReportService;
 	private AssociationService associationService;
 	private ContentService contentService;
 	private QuickShareService quickShareService;
-	
+
 	/**
 	 * <p>Setter for the field <code>entityReportService</code>.</p>
 	 *
@@ -64,7 +68,7 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
-	
+
 	public void setQuickShareService(QuickShareService quickShareService) {
 		this.quickShareService = quickShareService;
 	}
@@ -76,25 +80,29 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 			NodeRef documentNodeRef = findEntity(req);
 
 			try (OutputStream out = res.getOutputStream()) {
-				
-				if ("true".equals(req.getParameter("shareURL"))) {
-					String sharedId = quickShareService.shareContent(documentNodeRef).getId();
-					out.write(sharedId.getBytes());
+
+				if ("true".equalsIgnoreCase(req.getParameter(PARAM_SHARE))) {
+					if (AccessStatus.ALLOWED.equals(permissionService.hasPermission(documentNodeRef, PermissionService.WRITE))) {
+						String sharedId = quickShareService.shareContent(documentNodeRef).getId();
+						out.write(sharedId.getBytes());
+					} else {
+						throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to share this node");
+					}
 				} else {
 					if (ReportModel.TYPE_REPORT.equals(nodeService.getType(documentNodeRef))) {
 						List<NodeRef> sourceAssocList = associationService.getSourcesAssocs(documentNodeRef, ReportModel.ASSOC_REPORTS);
-						
+
 						if (!sourceAssocList.isEmpty()) {
 							entityReportService.getOrRefreshReport(sourceAssocList.get(0), documentNodeRef);
 						}
 					}
-					
+
 					// get the content reader
 					ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
 					if ((reader == null) || !reader.exists()) {
 						throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef);
 					}
-					
+
 					IOUtils.copy(reader.getContentInputStream(), out);
 				}
 
