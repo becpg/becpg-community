@@ -179,7 +179,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 			if (!DeclarationType.Omit.equals(component.getData().getDeclType())) {
 				
 				CompoListDataItem compoListDataItem = component.getData();
-				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+				ProductData componentProduct = alfrescoRepository.findOne(compoListDataItem.getProduct());
 	
 				Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio,FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem));
 
@@ -240,7 +240,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 			} else {
 				CompoListDataItem compoListDataItem = component.getData();
-				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+				ProductData componentProduct = alfrescoRepository.findOne(compoListDataItem.getProduct());
 				
 				value = FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
 				compoListDataItem.setVolume(value);
