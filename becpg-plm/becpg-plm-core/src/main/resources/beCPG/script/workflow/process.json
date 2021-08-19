@@ -14,7 +14,7 @@
 			"condition": "js(items.length > 0 || items.every( (n) =>  n.isSubType(\"bcpg:product\")) )",
 			"formFields": {
 			    "prop_bpm_workflowDescription": "js(bcpg.getMessage(\"plm.script.start-validation-workflow.js.message\",items.map( (n) =>  n.name ).join(\", \")))",
-			    "assoc_bcpgwf_rdQualityApprovalActor": "js(people.getMembers(people.getGroup(\"GROUP_RDMgr\")).map((n) =>  n.nodeRef ).join(\",\"))",
+			    "assoc_bcpgwf_pvRDApprovalActor": "js(people.getMembers(people.getGroup(\"GROUP_RDMgr\")).map((n) =>  n.nodeRef ).join(\",\"))",
 				"assoc_bcpgwf_pvQualityApprovalActor": "js(people.getMembers(people.getGroup(\"GROUP_QualityMgr\")).map((n) =>  n.nodeRef ).join(\",\"))",
 				"assoc_bcpgwf_pvProductionApprovalActor": "js(people.getMembers(people.getGroup(\"GROUP_ProductionMgr\")).map((n) =>  n.nodeRef ).join(\",\"))",
 				"assoc_bcpgwf_pvPackagingApprovalActor": "js(people.getMembers(people.getGroup(\"GROUP_PackagingMgr\")).map((n) =>  n.nodeRef ).join(\",\"))",
