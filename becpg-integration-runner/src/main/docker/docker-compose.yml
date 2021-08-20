@@ -89,7 +89,7 @@ services:
           - "8983:8983"  
 
   becpg-report:
-    image:  ${docker.becpg.url}/becpg-report:3.2.2
+    image:  ${docker.becpg.url}/becpg-report:3.2.3
     user: root
     
 
