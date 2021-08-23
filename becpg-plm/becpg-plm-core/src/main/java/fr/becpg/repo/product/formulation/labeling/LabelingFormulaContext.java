@@ -1411,6 +1411,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		String firstLabel = "";
 		Double firstQtyPerc = 0d;
 		String firstGeo = "";
+		String firstBio = "";
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(lblCompositeContext).entrySet()) {
 
 			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
@@ -1434,7 +1435,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				String subLabel = getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, null,
 						doNotDetailsDeclType ? null : renderLabelingComponent(lblCompositeContext, kv.getValue(), true, 1d, null, true, true),
-						null });
+						null,null });
 
 				if ((subLabel != null) && !subLabel.isEmpty()) {
 
@@ -1444,6 +1445,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						firstLabel = subLabel;
 						firstQtyPerc = qtyPerc;
 						firstGeo = geoOriginsLabel != null ? geoOriginsLabel : "";
+						firstBio = bioOriginsLabel != null ? bioOriginsLabel : "";
 					} else {
 						tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), qtyPerc)
 								.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "",
@@ -1479,7 +1481,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							}
 
 							subLabel = getIngTextFormat(component, qtyPerc).format(new Object[] { ingName, qtyPerc,
-									renderCompositeIng((CompositeLabeling) component, subRatio, null, true, true), null });
+									renderCompositeIng((CompositeLabeling) component, subRatio, null, true, true), null, null});
 
 						} else {
 							logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
@@ -1491,6 +1493,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								firstLabel = subLabel;
 								firstQtyPerc = qtyPerc;
 								firstGeo = geoOriginsLabel != null ? geoOriginsLabel : "";
+								firstBio = bioOriginsLabel != null ? bioOriginsLabel : "";
 							} else {
 								tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), qtyPerc)
 										.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "",
@@ -1521,10 +1524,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					.doubleValue();
 
 			ret.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()))
-					.format(new Object[] { firstLabel, firstQtyPerc, firstGeo }));
+					.format(new Object[] { firstLabel, firstQtyPerc, firstGeo, firstBio }));
 		} else {
 			ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), firstQtyPerc)
-					.format(new Object[] { firstLabel, firstQtyPerc, firstGeo }));
+					.format(new Object[] { firstLabel, firstQtyPerc, firstGeo, firstBio }));
 		}
 
 		ret.append(tableContent);
