@@ -138,7 +138,11 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	@Override
 	public T formulate(NodeRef entityNodeRef, String chainId)  {
 		Locale currentLocal = I18NUtil.getLocale();
+		Locale currentContentLocal = I18NUtil.getContentLocale();
 		try(Scope scope = tracer.spanBuilder("formulationService.Formulate").startScopedSpan()) {
+			
+			I18NUtil.setLocale(Locale.getDefault());
+			I18NUtil.setContentLocale(null);
 			
 			if(entityNodeRef!=null) {
 				tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
@@ -148,7 +152,6 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			}
 			tracer.getCurrentSpan().addAnnotation("findOne");
 			
-			I18NUtil.setLocale(Locale.getDefault());
 			T entity = alfrescoRepository.findOne(entityNodeRef);
 
 			StopWatch watch = null;
@@ -177,6 +180,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			return entity;
 		} finally {
 			I18NUtil.setLocale(currentLocal);
+			I18NUtil.setContentLocale(currentContentLocal);
 		}
 	}
 
