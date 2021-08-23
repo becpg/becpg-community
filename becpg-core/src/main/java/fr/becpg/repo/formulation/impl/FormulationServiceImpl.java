@@ -132,9 +132,11 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	@Override
 	public T formulate(NodeRef entityNodeRef, String chainId) throws FormulateException {
 		Locale currentLocal = I18NUtil.getLocale();
+               Locale currentContentLocal = I18NUtil.getContentLocale();
 		try {
 			I18NUtil.setLocale(Locale.getDefault());
-			T entity = alfrescoRepository.findOne(entityNodeRef);
+			I18NUtil.setContentLocale(null);
+                       T entity = alfrescoRepository.findOne(entityNodeRef);
 
 			StopWatch watch = null;
 			if (logger.isDebugEnabled()) {
@@ -161,6 +163,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			return entity;
 		} finally {
 			I18NUtil.setLocale(currentLocal);
+			I18NUtil.setContentLocale(currentContentLocal);
 		}
 	}
 
