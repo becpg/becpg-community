@@ -49,6 +49,9 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 	private static final Log logger = LogFactory.getLog(ExcelReportSearchRenderer.class);
 	
+	private static final String BACKSLASH = "\\\\";
+
+	
 	@Autowired
 	private ActionService actionService;
 
@@ -268,6 +271,9 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 					String cellValue = headerRow.getCell(i).getStringCellValue();
 					if ((cellValue != null) && !cellValue.isEmpty() && !cellValue.startsWith("#")) {
 						if (cellValue.contains("_") && !cellValue.contains("formula") && !cellValue.startsWith("dyn_")) {
+							if (cellValue.contains(BACKSLASH + "_")) {
+								cellValue = cellValue.replace(BACKSLASH + "_", BACKSLASH + "|");
+							}
 							if (!currentNested.isEmpty() && currentNested.startsWith(cellValue.split("_")[0])) {
 								currentNested += "|" + cellValue.split("_")[1];
 							} else {
@@ -282,6 +288,9 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 									if (MLTextHelper.getSupportedLocalesList().contains(cellValues[cellValues.length-2] + "_" + cellValues[cellValues.length-1])) {
 										int index = cellValue.lastIndexOf("_");
 										currentNested = currentNested.substring(0,index) + "_" + currentNested.substring(index+1);
+									}
+									if (currentNested.contains(BACKSLASH + "|")) {
+										currentNested = currentNested.replace(BACKSLASH + "|", "_");
 									}
 									metadataFields.add(currentNested);
 									currentNested = "";
