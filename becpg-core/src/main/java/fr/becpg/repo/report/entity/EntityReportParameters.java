@@ -80,7 +80,19 @@ XML :
 
 */
 
+/**
+ * <p>EntityReportParameters class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
 public class EntityReportParameters {
+	
+	
+	public static final String PARAM_COMPONENT_DATALISTS_TO_EXTRACT = "componentDatalistsToExtract";
+	public static final String PARAM_ENTITY_DATALISTS_TO_EXTRACT = "entityDatalistsToExtract";
+	public static final String PARAM_EXTRACT_IN_MULTILEVEL = "extractInMultiLevel";
+	public static final String PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT = "maxCompoListLevelToExtract";
 
 	private static Log logger = LogFactory.getLog(EntityReportParameters.class);
 
@@ -194,16 +206,29 @@ public class EntityReportParameters {
 
 	private Map<String, String> preferences = new HashMap<>();
 
+	/**
+	 * <p>Constructor for EntityReportParameters.</p>
+	 *
+	 * @param config a {@link fr.becpg.repo.report.entity.EntityReportParameters} object.
+	 */
 	public EntityReportParameters(EntityReportParameters config) {
 		this.preferences = config.preferences;
 		this.reportNameFormat = config.reportNameFormat;
 		this.reportTitleFormat = config.reportTitleFormat;
 	}
 
+	/**
+	 * <p>Constructor for EntityReportParameters.</p>
+	 */
 	public EntityReportParameters() {
 		super();
 	}
 
+	/**
+	 * <p>Getter for the field <code>preferences</code>.</p>
+	 *
+	 * @return a {@link java.util.Map} object.
+	 */
 	public Map<String, String> getPreferences() {
 		return preferences;
 	}
@@ -214,14 +239,30 @@ public class EntityReportParameters {
 	
 	
 	
+	/**
+	 * <p>Setter for the field <code>reportNameFormat</code>.</p>
+	 *
+	 * @param reportNameFormat a {@link java.lang.String} object.
+	 */
 	public void setReportNameFormat(String reportNameFormat) {
 		this.reportNameFormat = reportNameFormat;
 	}
 
+	/**
+	 * <p>Setter for the field <code>reportTitleFormat</code>.</p>
+	 *
+	 * @param reportTitleFormat a {@link java.lang.String} object.
+	 */
 	public void setReportTitleFormat(String reportTitleFormat) {
 		this.reportTitleFormat = reportTitleFormat;
 	}
 
+	/**
+	 * <p>Getter for the field <code>reportNameFormat</code>.</p>
+	 *
+	 * @param defaultNameFormat a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getReportNameFormat(String defaultNameFormat) {
 		
 		if(reportNameFormat!=null && ! reportNameFormat.isEmpty()) {
@@ -231,6 +272,12 @@ public class EntityReportParameters {
 		return defaultNameFormat;
 	}
 
+	/**
+	 * <p>Getter for the field <code>reportTitleFormat</code>.</p>
+	 *
+	 * @param defaultTitleFormat a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getReportTitleFormat(String defaultTitleFormat) {
 		if(reportTitleFormat!=null && ! reportTitleFormat.isEmpty()) {
 			return reportTitleFormat;
@@ -241,31 +288,66 @@ public class EntityReportParameters {
 
 	private List<EntityReportParameter> parameters = new ArrayList<>();
 
+	/**
+	 * <p>Getter for the field <code>iterationKey</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String getIterationKey() {
 		return iterationKey;
 	}
 
+	/**
+	 * <p>Setter for the field <code>iterationKey</code>.</p>
+	 *
+	 * @param iterationKey a {@link java.lang.String} object.
+	 */
 	public void setIterationKey(String iterationKey) {
 		this.iterationKey = iterationKey;
 	}
 
+	/**
+	 * <p>Getter for the field <code>parameters</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
 	public List<EntityReportParameter> getParameters() {
 		return parameters;
 	}
 
+	/**
+	 * <p>Setter for the field <code>parameters</code>.</p>
+	 *
+	 * @param parameters a {@link java.util.List} object.
+	 */
 	public void setParameters(List<EntityReportParameter> parameters) {
 		this.parameters = parameters;
 	}
 	
+	/**
+	 * <p>isParametersEmpty.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isParametersEmpty() {
 		return parameters.isEmpty() ;
 	}
 	
 
+	/**
+	 * <p>isEmpty.</p>
+	 *
+	 * @return a boolean.
+	 */
 	public boolean isEmpty() {
 		return parameters.isEmpty() && preferences.isEmpty() && (reportNameFormat==null || reportNameFormat.isEmpty()) && (reportTitleFormat==null || reportTitleFormat.isEmpty());
 	}
 
+	/**
+	 * <p>updateDataSource.</p>
+	 *
+	 * @param xmlDataSource a {@link org.dom4j.Element} object.
+	 */
 	public void updateDataSource(Element xmlDataSource) {
 
 		Element entityEl = (Element) xmlDataSource.getDocument().selectSingleNode("entity");
@@ -297,6 +379,12 @@ public class EntityReportParameters {
 
 	}
 
+	/**
+	 * <p>createFromJSON.</p>
+	 *
+	 * @param jsonString a {@link java.lang.String} object.
+	 * @return a {@link fr.becpg.repo.report.entity.EntityReportParameters} object.
+	 */
 	public static EntityReportParameters createFromJSON(String jsonString) {
 		EntityReportParameters ret = new EntityReportParameters();
 
@@ -362,6 +450,11 @@ public class EntityReportParameters {
 		return ret;
 	}
 
+	/**
+	 * <p>toJSONString.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
 	public String toJSONString() {
 		JSONObject ret = new JSONObject();
 		try {
@@ -410,6 +503,12 @@ public class EntityReportParameters {
 		return ret.toString();
 	}
 
+	/**
+	 * <p>match.</p>
+	 *
+	 * @param source a {@link fr.becpg.repo.report.entity.EntityReportParameters} object.
+	 * @return a boolean.
+	 */
 	public boolean match(EntityReportParameters source) {
 
 		for (EntityReportParameter param : source.getParameters()) {
@@ -427,6 +526,7 @@ public class EntityReportParameters {
 		return true;
 	}
 
+	/** {@inheritDoc} */
 	@Override
 	public String toString() {
 		return "EntityReportParameters [iterationKey=" + iterationKey + ", parameters=" + parameters + "]";

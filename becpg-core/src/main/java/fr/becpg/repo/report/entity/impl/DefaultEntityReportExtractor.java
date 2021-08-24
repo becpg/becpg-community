@@ -226,11 +226,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 
 		public boolean prefsContains(String key, String defaultValue, String query) {
-			if ((defaultValue != null) && defaultValue.contains(query)) {
-				return true;
-			}
-
-			if (preferences.containsKey(key) && preferences.get(key).contains(query)) {
+			if (((defaultValue != null) && defaultValue.contains(query)) || (preferences.containsKey(key) && preferences.get(key).contains(query))) {
 				return true;
 			}
 
@@ -238,11 +234,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 
 		public boolean multiPrefsEquals(String key, String defaultValue, String query) {
-			if ((defaultValue != null) && Arrays.asList(defaultValue.split(",")).contains(query)) {
-				return true;
-			}
-
-			if (preferences.containsKey(key) && Arrays.asList(preferences.get(key).split(",")).contains(query)) {
+			if (((defaultValue != null) && Arrays.asList(defaultValue.split(",")).contains(query)) || (preferences.containsKey(key) && Arrays.asList(preferences.get(key).split(",")).contains(query))) {
 				return true;
 			}
 
@@ -250,23 +242,24 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 
 		public boolean isPrefOn(String key, Boolean defaultValue) {
-			if (Boolean.TRUE.equals(defaultValue)) {
-				return true;
-			}
-
-			if (preferences.containsKey(key) && "true".equalsIgnoreCase(preferences.get(key))) {
+			if (Boolean.TRUE.equals(defaultValue) || (preferences.containsKey(key) && "true".equalsIgnoreCase(preferences.get(key)))) {
 				return true;
 			}
 
 			return false;
 		}
 
-		public boolean isNotEmptyPrefs(String key, String defaultValue) {
-			if ((defaultValue != null) && !defaultValue.isEmpty()) {
-				return true;
+		public String getPrefValue(String key, String defaultValue) {
+
+			if (preferences.containsKey(key)) {
+				return preferences.get(key);
 			}
 
-			if (preferences.containsKey(key) && !preferences.get(key).isEmpty()) {
+			return defaultValue;
+		}
+
+		public boolean isNotEmptyPrefs(String key, String defaultValue) {
+			if (((defaultValue != null) && !defaultValue.isEmpty()) || (preferences.containsKey(key) && !preferences.get(key).isEmpty())) {
 				return true;
 			}
 
@@ -343,6 +336,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		loadVersions(entityNodeRef, entityElt);
 	}
 
+	/**
+	 * <p>extractEntityImages.</p>
+	 *
+	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param imgsElt a {@link org.dom4j.Element} object.
+	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
+	 */
 	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, DefaultExtractorContext context) {
 
 		int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
@@ -431,10 +431,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	}
 
 	protected boolean isMultiLinesAttribute(QName attribute, DefaultExtractorContext context) {
-		if (context.prefsContains("multilineProperties", multilineProperties, attribute.toPrefixString(namespaceService))) {
-			return true;
-		}
-		return false;
+		return context.prefsContains("multilineProperties", multilineProperties, attribute.toPrefixString());
 	}
 
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, DefaultExtractorContext context) {
@@ -673,7 +670,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					&& !associationDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER) && !associationDef.getName().equals(ContentModel.ASSOC_ORIGINAL)
 					&& !associationDef.isChild()) {
 
-				if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, context) || (useCData == false)) {
+				if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, context) || !useCData) {
 
 					List<NodeRef> assocNodes = associationService.getTargetAssocs(nodeRef, associationDef.getName());
 
@@ -905,7 +902,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	private void loadCreator(NodeRef entityNodeRef, Element entityElt, Element imgsElt, DefaultExtractorContext context) {
 		String creator = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR);
-		if (creator != null && personService.personExists(creator)) {
+		if ((creator != null) && personService.personExists(creator)) {
 			Element creatorElt = (Element) entityElt.selectSingleNode(ContentModel.PROP_CREATOR.getLocalName());
 			NodeRef creatorNodeRef = personService.getPerson(creator);
 			loadNodeAttributes(creatorNodeRef, creatorElt, true, context);
