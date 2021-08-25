@@ -866,7 +866,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 									maxLevels.add(Integer.parseInt(pref));
 								}
 								
-								int maxLevel = Collections.min(maxLevels);
+								int maxLevel = Collections.max(maxLevels);
 								
 								if (maxLevel < level + 1) {
 									extractNextLevel = false;
