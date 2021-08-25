@@ -857,7 +857,17 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							boolean extractNextLevel = true;
 							
 							if (context.getPreferences().containsKey(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT)) {
-								int maxLevel = Integer.parseInt(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT));
+							
+								List<String> maxLevelPrefs = Arrays.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
+								
+								List<Integer> maxLevels = new ArrayList<>();
+								
+								for (String pref : maxLevelPrefs) {
+									maxLevels.add(Integer.parseInt(pref));
+								}
+								
+								int maxLevel = Collections.min(maxLevels);
+								
 								if (maxLevel < level + 1) {
 									extractNextLevel = false;
 								}
@@ -1334,7 +1344,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				Double purchaseValue = item.getPurchaseValue();
 
-				if ((item.getPurchaseUnit() != null) && (item.getPurchaseUnit() != "")) {
+				if ((item.getPurchaseUnit() != null) && (!item.getPurchaseUnit().isEmpty())) {
 					ProductUnit purchaseUnit = ProductUnit.valueOf(item.getPurchaseUnit());
 
 					if (purchaseValue != null) {
@@ -1439,7 +1449,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		Element partElt = packagingListElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName());
 		loadProductData(entityNodeRef, dataItem.getComponent(), partElt, context, CostType.Packaging);
-		if ((dataItem.getIsRecycle() != null) && dataItem.getIsRecycle()) {
+		if (Boolean.TRUE.equals(dataItem.getIsRecycle())) {
 			partElt.addAttribute("currentCost", Double.toString(0d));
 			partElt.addAttribute("previousCost", Double.toString(0d));
 			partElt.addAttribute("futureCost", Double.toString(0d));
@@ -1638,7 +1648,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (CostListDataItem c : formulatedProduct.getCostList()) {
 
 			Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
-			if ((isFixed == null) || (isFixed == Boolean.FALSE)) {
+			if ((isFixed == null) || Boolean.FALSE.equals(isFixed)) {
 
 				String costType = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTTYPE);
 				String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
