@@ -3,11 +3,14 @@
  */
 package fr.becpg.repo.importer.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.text.ParseException;
@@ -22,6 +25,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.encoding.ContentCharsetFinder;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.node.MLPropertyInterceptor;
+import org.alfresco.repo.security.permissions.AccessDeniedException;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
@@ -34,6 +38,8 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.FileUtils;
@@ -112,6 +118,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected Repository repositoryHelper;
 
 	protected AssociationService associationService;
+	
+	protected PermissionService permissionService;
 
 	/**
 	 * <p>Setter for the field <code>entityListDAO</code>.</p>
@@ -226,6 +234,10 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
+	
+	public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -267,10 +279,16 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 		} else if (importContext.isDoUpdate()) {
 
+			if (!AccessStatus.ALLOWED.equals(permissionService.hasPermission(nodeRef, PermissionService.WRITE_CONTENT))) {
+				throw new AccessDeniedException("permissions.err_access_denied");
+			}
+			
 			if (logger.isDebugEnabled()) {
 				logger.debug("update node. Properties: " + properties);
 			}
-			nodeService.setType(nodeRef, importContext.getType());
+			if(entityDictionaryService.isSubClass(importContext.getType(), nodeService.getType(nodeRef))) {
+				nodeService.setType(nodeRef, importContext.getType());
+			}
 
 			for (Map.Entry<QName, Serializable> entry : properties.entrySet()) {
 				if ((entry.getValue() != null) && ImportHelper.NULL_VALUE.equals(entry.getValue())) {
@@ -286,6 +304,25 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						} finally {
 							MLPropertyInterceptor.setMLAware(mlAware);
 						}
+					} else if (ContentModel.PROP_CONTENT.equals(entry.getKey())) {
+						
+						try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream(baos)){
+							oos.writeObject(entry.getValue());
+							InputStream in = new ByteArrayInputStream(baos.toByteArray());
+							
+							String mimetype = mimetypeService.guessMimetype(entry.getValue() != null ? entry.getValue().toString() : null);
+							ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
+							Charset charset = charsetFinder.getCharset(in, mimetype);
+							String encoding = charset.name();
+							
+							ContentWriter writer = contentService.getWriter(nodeRef, entry.getKey(), true);
+							writer.setEncoding(encoding);
+							writer.setMimetype(mimetype);
+							writer.putContent(in);
+						} catch (IOException e) {
+							throw new ImporterException(e.getMessage());
+						}
+
 					} else {
 						nodeService.setProperty(nodeRef, entry.getKey(), entry.getValue());
 					}
@@ -611,7 +648,6 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		 * - get the targetFolder where files will be stored
 		 */
 		NodeRef targetFolderNodeRef = nodeRef;
-		NodeRef fileNodeRef = null;
 		String fileName = "";
 		List<String> path = new ArrayList<>();
 		for (int z_idx = 0; (z_idx < values.size()) && (z_idx < importContext.getColumns().size()); z_idx++) {
@@ -648,6 +684,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 				}
 
 				String value = values.get(z_idx);
+				NodeRef fileNodeRef = null;
 
 				if ((value != null) && value.startsWith("reg:")) {
 					File docsFolder = new File(importContext.getDocsBasePath());
@@ -705,6 +742,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					}
 					// manage only properties
 					else if (fileMapping.getAttribute() instanceof PropertyDefinition) {
+
 						
 						 if(fileNodeRef == null) {
 							fileNodeRef = nodeService.getChildByName(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS, fileName);
