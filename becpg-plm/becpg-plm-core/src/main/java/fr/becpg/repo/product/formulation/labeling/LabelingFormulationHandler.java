@@ -489,7 +489,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private void applyMeatContentRules(ProductData formulatedProduct, CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext) {
+private void applyMeatContentRules(ProductData formulatedProduct, CompositeLabeling parent, LabelingFormulaContext labelingFormulaContext) {
 
 		if (!labelingFormulaContext.getMeatContentRules().isEmpty() && !formulatedProduct.getMeatContents().isEmpty()) {
 
@@ -499,37 +499,71 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				MeatContentData meatContentData = formulatedProduct.getMeatContents().get(meatContentRule.getMeatType());
 				if ((meatContentData != null) && (meatContentData.getMeatContent() != null) && (meatContentData.getMeatContent() < 100)) {
-					CompositeLabeling meatReplacement = parent.getIngList().get(meatContentRule.getReplacement());
-					if (meatReplacement == null) {
-						RepositoryEntity replacement = alfrescoRepository.findOne(meatContentRule.getReplacement());
+					CompositeLabeling fatReplacement = parent.getIngList().get(meatContentRule.getFatReplacement());
+					if (fatReplacement == null) {
+						RepositoryEntity replacement = alfrescoRepository.findOne(meatContentRule.getFatReplacement());
 						if (replacement instanceof IngItem) {
-							meatReplacement = new IngItem((IngItem) replacement);
-							meatReplacement.setQty(0d);
-							meatReplacement.setVolume(0d);
+							fatReplacement = new IngItem((IngItem) replacement);
+							fatReplacement.setQty(0d);
+							fatReplacement.setVolume(0d);
 
 							if (logger.isTraceEnabled()) {
-								logger.trace("Create new aggregate replacement :" + getName(meatReplacement));
+								logger.trace("Create new fat replacement :" + getName(fatReplacement));
 							}
 						} else {
-							logger.warn("Invalid replacement :" + meatContentRule.getReplacement());
+							logger.warn("Invalid replacement :" + meatContentRule.getFatReplacement());
+						}
+					}
+					
+					CompositeLabeling ctReplacement = null;
+					
+					if(meatContentRule.getCtReplacement()!=null) {
+						ctReplacement = parent.getIngList().get(meatContentRule.getCtReplacement());
+						if (ctReplacement == null) {
+							RepositoryEntity replacement = alfrescoRepository.findOne(meatContentRule.getCtReplacement());
+							if (replacement instanceof IngItem) {
+								ctReplacement = new IngItem((IngItem) replacement);
+								ctReplacement.setQty(0d);
+								ctReplacement.setVolume(0d);
+
+								if (logger.isTraceEnabled()) {
+									logger.trace("Create new collagen replacement :" + getName(ctReplacement));
+								}
+							} else {
+								logger.warn("Invalid replacement :" + meatContentRule.getCtReplacement());
+							}
 						}
 					}
 
 					for (CompositeLabeling component : parent.getIngList().values()) {
 						if (component.getNodeRef().equals(meatContentRule.getComponent())) {
 							if (component.getQty() != null) {
-								meatReplacement.setQty(component.getQty() * (1d - (meatContentData.getMeatContent() / 100d)));
+								if(ctReplacement!=null) {
+									ctReplacement.setQty(component.getQty() * (meatContentData.getExCTPerc() / 100d));
+									fatReplacement.setQty(component.getQty() * (meatContentData.getExFatPerc() / 100d));
+									toAdd.add(ctReplacement);
+								} else {
+									fatReplacement.setQty(component.getQty() * (1d - (meatContentData.getMeatContent() / 100d)));
+								}
 								component.setQty(component.getQty() * (meatContentData.getMeatContent() / 100d));
-								toAdd.add(meatReplacement);
+								toAdd.add(fatReplacement);
 							}
 							if (component.getVolume() != null) {
-								meatReplacement.setVolume(component.getVolume() * (1d - (meatContentData.getMeatContent() / 100d)));
+								if(ctReplacement!=null) {
+									ctReplacement.setVolume(component.getVolume() * (meatContentData.getExCTPerc() / 100d));
+									fatReplacement.setVolume(component.getVolume() * (meatContentData.getExFatPerc() / 100d));
+									toAdd.add(ctReplacement);
+								} else {
+									fatReplacement.setVolume(component.getVolume() * (1d - (meatContentData.getMeatContent() / 100d)));
+								}
+								
 								component.setVolume(component.getVolume() * (meatContentData.getMeatContent() / 100d));
-								toAdd.add(meatReplacement);
+								toAdd.add(fatReplacement);
 							}
 
-							meatReplacement.getAllergens().addAll(component.getAllergens());
-							meatReplacement.getGeoOrigins().addAll(component.getGeoOrigins());
+							fatReplacement.getAllergens().addAll(component.getAllergens());
+							fatReplacement.getGeoOrigins().addAll(component.getGeoOrigins());
+							fatReplacement.getBioOrigins().addAll(component.getBioOrigins());
 
 						} else {
 							applyMeatContentRules(formulatedProduct, component, labelingFormulaContext);
