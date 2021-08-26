@@ -2527,7 +2527,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						.add(new ReqCtrlListDataItem(
 								null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
 										declarationFilter.getRuleName(), e.getLocalizedMessage()),
-								null, new ArrayList<NodeRef>(), RequirementDataType.Labelling));
+								null, new ArrayList<>(), RequirementDataType.Labelling));
 				if (logger.isDebugEnabled()) {
 					logger.debug("Cannot evaluate formula :" + declarationFilter.getFormula() + " on " + declarationFilterContext.toString(), e);
 				}
