@@ -43,7 +43,7 @@ public abstract class RuleParser {
 	protected final List<DeclarationFilter> declarationFilters = new ArrayList<>();
 	protected final List<SeparatorRule> separatorRules = new ArrayList<>();
 	protected final Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
-	protected final List<MeatContentRule> meatContentRules = new ArrayList<>();
+	protected final Map<String, MeatContentRule> meatContentRules = new HashMap<>();
 	protected final Map<NodeRef, RenameRule> renameRules = new HashMap<>();
 	
 	protected final List<ShowRule> showPercRulesByThreshold = new ArrayList<>();
@@ -121,7 +121,7 @@ public abstract class RuleParser {
 	 * @return a {@link java.util.List} object.
 	 */
 	public List<MeatContentRule> getMeatContentRules() {
-		return meatContentRules;
+		return new ArrayList<>(meatContentRules.values());
 	}
 
 	/**
@@ -232,7 +232,7 @@ public abstract class RuleParser {
 							&& (LabelingRuleType.Detail.equals(labeLabelingRuleType) || LabelingRuleType.Group.equals(labeLabelingRuleType)
 									|| LabelingRuleType.DoNotDetails.equals(labeLabelingRuleType)))) {
 				if(MeatType.isMeatType(formula)) {
-					addMeatContentRule( name, components, replacement, formula, locales);
+					addMeatContentRule(components, replacement, formula, locales);
 				} else {
 					aggregate(ruleNodeRef, name, components, replacement, label, formula, labeLabelingRuleType, locales);
 				}
@@ -340,18 +340,23 @@ public abstract class RuleParser {
 		}
 	}
 	
-	private void addMeatContentRule( String name, List<NodeRef> components, List<NodeRef> replacement, String formula,
+	private void addMeatContentRule(List<NodeRef> components, List<NodeRef> replacement, String formula,
 			List<String> locales) {
 		
+		String meatType = formula.replace("-CT", "").replace("-FAT", "");
+		
 		for (NodeRef component : components) {
-			MeatContentRule meatContentRule = new MeatContentRule(formula, locales);
-
+			MeatContentRule meatContentRule = meatContentRules.computeIfAbsent(meatType, a -> new MeatContentRule(meatType, locales));
+					
 			if ((replacement != null) && !replacement.isEmpty()) {
-				meatContentRule.setReplacement(replacement.get(0));
+				if(formula.endsWith("-CT")) {
+					meatContentRule.setCtReplacement(replacement.get(0));
+				} else {
+					meatContentRule.setFatReplacement(replacement.get(0));
+				}
 			}
 			meatContentRule.setComponent(component);
 				
-			meatContentRules.add(meatContentRule);
 
 		}
 	}
