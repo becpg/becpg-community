@@ -20,6 +20,7 @@ package fr.becpg.repo.listvalue;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,6 +38,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
@@ -58,15 +60,16 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
 
 	private static final Log logger = LogFactory.getLog(ProductListValuePlugin.class);
-	
+
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
-	
-	
+
+	@Autowired
+	private AssociationService associationService;
+
 	@Value("${beCPG.product.searchTemplate}")
 	private String productSearchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:legalName)";
-	
-	
+
 	@Autowired
 	private ReportTplService reportTplService;
 
@@ -110,9 +113,9 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 		if (!isAllQuery(query)) {
 			if (query.length() > 2) {
-				ftsQuery.append("("+prepareQuery(query.trim())+") OR ");
+				ftsQuery.append("(" + prepareQuery(query.trim()) + ") OR ");
 			}
-			ftsQuery.append("("+query+")");
+			ftsQuery.append("(" + query + ")");
 
 			ftsQuery.append(")^10 AND +(");
 		}
@@ -131,34 +134,41 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		ftsQuery.append(SystemState.Simulation.toString());
 
 		queryBuilder.andFTSQuery(ftsQuery.toString());
-		
+
 		NodeRef entityNodeRef = null;
-		if(props.get(ListValueService.PROP_NODEREF)!=null){
-			 entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
-			 queryBuilder.andNotID(entityNodeRef);
+		if (props.get(ListValueService.PROP_NODEREF) != null) {
+			entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
+			queryBuilder.andNotID(entityNodeRef);
 		}
-		
 
 		String queryFilter = (String) props.get(ListValueService.PROP_FILTER);
 
-		
 		if ((queryFilter != null) && (!queryFilter.isEmpty())) {
 			String[] splitted = queryFilter.split("\\|");
 
 			String filterValue = splitted[1];
-			if ((filterValue != null) && !filterValue.isEmpty()) {
-				if (filterValue.contains("{")) {	
+			String propQName = splitted[0];
+			if ((filterValue != null) && !filterValue.isEmpty()) {		
+				if (filterValue.contains("{")) {
 					if (entityNodeRef != null) {
-						filterValue = attributeExtractorService.extractExpr(filterValue,entityNodeRef);
+						filterValue = attributeExtractorService.extractExpr(filterValue, entityNodeRef);
 					}
 				}
 				if ((filterValue != null) && !filterValue.isEmpty() && !filterValue.contains("{")) {
-					if(filterValue.contains(",")){
-						for(String tmp : filterValue.split(",")){
-							queryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), tmp);
+					boolean isOrOperand = false;
+					if(propQName.endsWith("_or")) {
+						isOrOperand = true;
+						propQName = propQName.replace("_or", "");
+					}
+					
+					if (filterValue.contains(",")) {
+						if(isOrOperand)  {
+							queryBuilder.andPropQuery(QName.createQName(propQName, namespaceService), filterValue.replace(",", " or "));
+						} else {
+							queryBuilder.andPropQuery(QName.createQName(propQName, namespaceService), filterValue.replace(",", " and "));
 						}
 					} else {
-						queryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), filterValue);
+						queryBuilder.andPropEquals(QName.createQName(propQName, namespaceService), filterValue);
 					}
 				}
 			}
@@ -168,12 +178,39 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		filterByClass(queryBuilder, arrClassNames);
 
 		queryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS);
-		
-		List<NodeRef> ret = new ArrayList<>();
-		try {
-			ret = queryBuilder.list();
-		} catch (LuceneQueryParserException e) {
-			logger.error("Bad list value query:"+queryBuilder.toString());
+
+		List<NodeRef> ret = null;
+
+		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
+		if (extras != null) {
+			String filterByAssoc = extras.get(PROP_FILTER_BY_ASSOC);
+			if ((filterByAssoc != null) && (filterByAssoc.length() > 0) && (entityNodeRef != null)) {
+				QName assocQName = QName.createQName(filterByAssoc, namespaceService);
+
+				List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(entityNodeRef, assocQName);
+
+				if ((targetNodeRefs != null) && !targetNodeRefs.isEmpty()) {
+					List<NodeRef> tmp = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
+					List<NodeRef> nodesToKeep = new ArrayList<>();
+
+					for (NodeRef assocNodeRef : targetNodeRefs) {
+						nodesToKeep.addAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
+					}
+
+					tmp.retainAll(nodesToKeep);
+					if (!RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
+						ret = tmp.subList(0, Math.min(RepoConsts.MAX_SUGGESTIONS, tmp.size()));
+					}
+				}
+			}
+		}
+
+		if (ret == null) {
+			try {
+				ret = queryBuilder.list();
+			} catch (LuceneQueryParserException e) {
+				logger.error("Bad list value query:" + queryBuilder.toString());
+			}
 		}
 
 		return new ListValuePage(ret, pageNum, pageSize, targetAssocValueExtractor);
