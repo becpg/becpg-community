@@ -1466,7 +1466,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 
 					// Case show ings and is empty use legalName instead #2558
-					if (!isMultiLevel && DeclarationType.Declare.equals(declarationType) && !isLocalSemiFinished) {
+					if (!isMultiLevel && (DeclarationType.Declare.equals(declarationType)) && !isLocalSemiFinished) {
 						if (((productData.getIngList() == null) || productData.getIngList().isEmpty())) {
 							declarationType = DeclarationType.DoNotDetails;
 						} else {
@@ -1587,7 +1587,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if (!isMultiLevel && (productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 
 							visitIngList(compositeLabeling, productData, CompositeHelper.getHierarchicalCompoList(productData.getIngList()), null,
-									qty, volume, applyYield && DeclarationType.Detail.equals(declarationType) ? yield : null, labelingFormulaContext,
+									qty, volume, (applyYield && (DeclarationType.Detail.equals(declarationType) || !aggregateRules.isEmpty())) ? yield : null, labelingFormulaContext,
 									compoListDataItem, errors);
 
 						}
