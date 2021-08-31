@@ -245,7 +245,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 					compoProductQty = FormulationHelper.getNetQtyInLorKg(compoListProduct, 1d);
 				}
 
-				visitPart(subProductData.getNodeRef(), compoListProduct, compoListDataItem.getNodeRef(), ret, weightUsed, volUsed, compoProductQty,
+				visitPart(subProductData, compoListProduct, compoListDataItem.getNodeRef(), ret, weightUsed, volUsed, compoProductQty,
 						compoProductQty, currLevel, null);
 				if (((maxLevel < 0) || (currLevel < maxLevel))
 						&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
