@@ -6,7 +6,6 @@ package fr.becpg.repo.product.formulation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,7 +33,6 @@ import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
-import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.helper.SimulationCostHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -621,41 +619,13 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 			calculateValues(templateCostList, costList, null, null);
 		}
 	}
+	
+	
 
 	/** {@inheritDoc} */
 	@Override
 	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem slDataItem) {
-		final Date now = new Date();
-		if ((partProduct.getPriceList() != null) && !partProduct.getPriceList().isEmpty()) {
-			PriceListDataItem item = null;
-			boolean matchPlant = false;
-
-			for (PriceListDataItem priceListDataItem : partProduct.getPriceList()) {
-				if ((priceListDataItem.getPlants().isEmpty() || formulatedProduct.getPlants().containsAll(priceListDataItem.getPlants()))) {
-					matchPlant = true;
-					if ((priceListDataItem.getCost() != null) && priceListDataItem.getCost().equals(slDataItem.getCharactNodeRef())) {
-
-						if (((item == null) || (item.getPrefRank() == null))
-								|| ((priceListDataItem.getPrefRank() != null) && (priceListDataItem.getPrefRank() > item.getPrefRank()))) {
-							if (((priceListDataItem.getStartEffectivity() == null)
-									|| (priceListDataItem.getStartEffectivity().getTime() <= now.getTime()))
-									&& ((priceListDataItem.getEndEffectivity() == null)
-											|| (priceListDataItem.getEndEffectivity().getTime() > now.getTime()))) {
-								item = priceListDataItem;
-							}
-						}
-					}
-				}
-			}
-
-			if ((item != null) && (item.getValue() != null)) {
-				return item.getValue();
-			} else if ((item == null) && matchPlant) {
-				return 0d;
-			}
-		}
-
-		return slDataItem.getValue();
+		return CostCalculatingHelper.extractValue(formulatedProduct, partProduct, slDataItem);
 	}
 
 	private void calculateValues(CostListDataItem templateCostList, CostListDataItem costList, Boolean divide, Double qty) {
@@ -823,5 +793,6 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.Cost;
 	}
+
 
 }

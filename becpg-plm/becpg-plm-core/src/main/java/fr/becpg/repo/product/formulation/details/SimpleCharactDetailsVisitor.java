@@ -171,7 +171,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 					ProductData compoListProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
 
-					visitPart(subProductData.getNodeRef(), compoListProduct, compoListDataItem.getNodeRef(), ret, weightUsed, volUsed, netQty, subWeight, currLevel, null);
+					visitPart(subProductData, compoListProduct, compoListDataItem.getNodeRef(), ret, weightUsed, volUsed, netQty, subWeight, currLevel, null);
 					if (((maxLevel < 0) || (currLevel < maxLevel))
 							&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
 						visitRecur(compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
@@ -222,19 +222,19 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 * @param unitProvider a {@link fr.becpg.repo.product.formulation.details.SimpleCharactDetailsVisitor.SimpleCharactUnitProvider} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	protected void visitPart(NodeRef parent, ProductData productData, NodeRef componentDataList, CharactDetails charactDetails, Double weightUsed, Double volUsed,
+	protected void visitPart(ProductData formulatedProduct, ProductData partProduct, NodeRef componentDataList, CharactDetails charactDetails, Double weightUsed, Double volUsed,
 			Double netQtyInLorKg, Double netWeight, Integer currLevel, SimpleCharactUnitProvider unitProvider) throws FormulateException {
 
-		if (productData == null) {
+		if (partProduct == null) {
 			return;
 		}
 
-		if (!alfrescoRepository.hasDataList(productData, dataListType)) {
-			logger.debug("no datalist for this product, exit. dataListType: " + dataListType + " entity: " + productData.getNodeRef());
+		if (!alfrescoRepository.hasDataList(partProduct, dataListType)) {
+			logger.debug("no datalist for this product, exit. dataListType: " + dataListType + " entity: " + partProduct.getNodeRef());
 			return;
 		}
 
-		List<SimpleCharactDataItem> simpleCharactDataList = alfrescoRepository.getList(productData, dataListType, dataListType);
+		List<SimpleCharactDataItem> simpleCharactDataList = alfrescoRepository.getList(partProduct, dataListType, dataListType);
 
 		for (SimpleCharactDataItem simpleCharact : simpleCharactDataList) {
 			if ((simpleCharact != null) && charactDetails.hasElement(simpleCharact.getCharactNodeRef())) {
@@ -249,7 +249,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				}
 
 				// calculate charact from qty or vol ?
-				boolean formulateInVol = (productData.getUnit() != null) && productData.getUnit().isVolume();
+				boolean formulateInVol = (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
 				boolean forceWeight = false;
 
 				if (simpleCharact instanceof PhysicoChemListDataItem) {
@@ -264,7 +264,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				// calculate charact from qty or vol ?
 				Double qtyUsed = formulateInVol ? volUsed : weightUsed;
 				Double netQty = forceWeight ? netWeight : netQtyInLorKg;
-				Double value = FormulationHelper.calculateValue(0d, qtyUsed, simpleCharact.getValue(), netQty);
+				Double value = FormulationHelper.calculateValue(0d, qtyUsed, extractValue(formulatedProduct, partProduct, simpleCharact), netQty);
 				
 				
 				CharactDetailsValue currentCharactDetailsValue = null;
@@ -277,10 +277,10 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Add new charact detail. Charact: "
 								+ nodeService.getProperty(simpleCharact.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " - entityNodeRef: "
-								+ productData.getName() + " - netQty: " + netQty + " - qty: " + qtyUsed + " - value: " + value);
+								+ partProduct.getName() + " - netQty: " + netQty + " - qty: " + qtyUsed + " - value: " + value);
 					}
 
-					currentCharactDetailsValue = new CharactDetailsValue(parent, productData.getNodeRef(), componentDataList, value, currLevel, unit);
+					currentCharactDetailsValue = new CharactDetailsValue(formulatedProduct.getNodeRef(), partProduct.getNodeRef(), componentDataList, value, currLevel, unit);
 
 					if ((simpleCharact instanceof ForecastValueDataItem) && !charactDetails.isMultiple()) {
 						ForecastValueDataItem forecastValue = (ForecastValueDataItem) simpleCharact;
@@ -319,5 +319,9 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				}
 			}
 		}
+	}
+
+	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
+		return simpleCharact.getValue();
 	}
 }
