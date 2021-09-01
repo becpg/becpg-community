@@ -50,6 +50,7 @@ deploy_fast(){
 	#becpg-share
 	docker cp becpg-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
 	docker cp becpg-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-share/src/main/assembly/config/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	docker cp becpg-designer/becpg-designer-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
 	docker cp becpg-designer/becpg-designer-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	docker cp becpg-project/becpg-project-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
