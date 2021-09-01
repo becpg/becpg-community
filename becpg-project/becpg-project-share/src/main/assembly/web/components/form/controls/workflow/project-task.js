@@ -174,12 +174,17 @@
                             for (j in deliverables)
                             {
                             	var dUrl = deliverables[j].url
+								var hiddenWizard = false;
                             	if(dUrl != null && dUrl.length > 0 && dUrl.indexOf("wizard") > 0 && dUrl.indexOf("catalogId") > 0){
                             	
                             			 
                             	    var wizardNodeRef = YAHOO.util.History.getQueryStringParameter("nodeRef",dUrl);
                              		var catalogId = YAHOO.util.History.getQueryStringParameter("catalogId",dUrl);	 
                             		
+									if(YAHOO.util.History.getQueryStringParameter("id",dUrl) == null){
+										hiddenWizard = true;
+									}
+
                             		if(wizardNodeRef!=null && catalogId!=null){
                             			
                             			countCatalog++;
@@ -217,13 +222,15 @@
 		                    						}
 		                    						
 		                    						if(isValid){
-			                    						var nodes = YAHOO.util.Selector.query("div.delivrable-status-Refused");
-			                    						for(var key in nodes){
-			                    							if(catalogID== null || Dom.hasClass(nodes[key],catalogID)){
-				                    							 Dom.removeClass(nodes[key], "delivrable-status-Refused");
-				                    							 Dom.addClass(nodes[key], "delivrable-status-Completed");
-			                    							}
-			                    						}
+														if(!hiddenWizard){
+				                    						var nodes = YAHOO.util.Selector.query("div.delivrable-status-Refused");
+				                    						for(var key in nodes){
+				                    							if(catalogID== null || Dom.hasClass(nodes[key],catalogID)){
+					                    							 Dom.removeClass(nodes[key], "delivrable-status-Refused");
+					                    							 Dom.addClass(nodes[key], "delivrable-status-Completed");
+				                    							}
+				                    						}
+														}
 			                    						
 			                    						
 			                                        	YAHOO.util.Event.onAvailable(validateButtonId,function(){
@@ -236,8 +243,9 @@
 		                    			}); 
                             		}
                             	}
-                            	
-                                deliverableHtlm += "<li>" + this.getDeliverableTitle(deliverables[j], entityNodeRef) + "</li>";
+								if(!hiddenWizard){
+                                	deliverableHtlm += "<li>" + this.getDeliverableTitle(deliverables[j], entityNodeRef) + "</li>";
+								}
                             }
                             deliverableHtlm += "</ul>";
 
