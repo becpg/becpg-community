@@ -185,6 +185,13 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		if (extras != null) {
 			String filterByAssoc = extras.get(PROP_FILTER_BY_ASSOC);
 			if ((filterByAssoc != null) && (filterByAssoc.length() > 0) && (entityNodeRef != null)) {
+				
+				boolean isOrOperand = false;
+				if(filterByAssoc.endsWith("_or")) {
+					isOrOperand = true;
+					filterByAssoc = filterByAssoc.replace("_or", "");
+				}
+				
 				QName assocQName = QName.createQName(filterByAssoc, namespaceService);
 
 				List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(entityNodeRef, assocQName);
@@ -194,7 +201,11 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 					List<NodeRef> nodesToKeep = new ArrayList<>();
 
 					for (NodeRef assocNodeRef : targetNodeRefs) {
-						nodesToKeep.addAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
+						if(isOrOperand) {
+							nodesToKeep.addAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
+						} else {
+							nodesToKeep.retainAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
+						}
 					}
 
 					tmp.retainAll(nodesToKeep);
