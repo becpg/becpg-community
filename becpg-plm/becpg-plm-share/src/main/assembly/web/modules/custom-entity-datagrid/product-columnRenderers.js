@@ -442,6 +442,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 						var json = JSON.parse(data.value);
 						if (json) {
 							var ret = "", i = 0, refValue = null, className, currValue = null;
+							json.comp.sort(function (a, b) {
+								 return a.name.localeCompare(b.name);
+							});
+							
 							for (i = 0; i < json.comp.length; i++) {
 								if (json.comp[i].value) {
 									if (i == 0) {
@@ -669,6 +673,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 				if (oColumn != null) {
 					var precColumn = obj.entityDatagrid.widgets.dataTable.getColumn(oColumn.getKeyIndex() - 1);
 					var ind = "";
+					scope.entity.compareWithEntities.sort(function (a, b) {
+						return a.name.localeCompare(b.name);
+					});
+					
 					for (var j = 0, jj = scope.entity.compareWithEntities.length; j < jj; j++) {
 						ind +="'";
 						var compareWithEntity = scope.entity.compareWithEntities[j];
@@ -950,6 +958,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 					var json = JSON.parse(data.value);
 					if (json) {
 						var ret = "", z = 0, refValue = null, className, currValue = null;
+						json.comp.sort(function (a, b) {
+						    return a.name.localeCompare(b.name);
+						});
 						for (z = 0; z < json.comp.length; z++) {
 							if (json.comp[z].value) {
 								if (z == 0) {
