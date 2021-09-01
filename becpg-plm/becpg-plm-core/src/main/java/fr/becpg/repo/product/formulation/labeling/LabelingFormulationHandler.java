@@ -499,7 +499,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				MeatContentData meatContentData = formulatedProduct.getMeatContents().get(meatContentRule.getMeatType());
 				if ((meatContentData != null) && (meatContentData.getMeatContent() != null) && (meatContentData.getMeatContent() < 100)) {
-					CompositeLabeling fatReplacement = parent.getIngList().get(meatContentRule.getFatReplacement());
+					CompositeLabeling fatReplacement = null;
+					
+					if(meatContentRule.getFatReplacement()!=null) {
+						fatReplacement = parent.getIngList().get(meatContentRule.getFatReplacement());
 					if (fatReplacement == null) {
 						RepositoryEntity replacement = alfrescoRepository.findOne(meatContentRule.getFatReplacement());
 						if (replacement instanceof IngItem) {
@@ -513,6 +516,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						} else {
 							logger.warn("Invalid replacement :" + meatContentRule.getFatReplacement());
 						}
+					}
 					}
 					
 					CompositeLabeling ctReplacement = null;
@@ -538,27 +542,29 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					for (CompositeLabeling component : parent.getIngList().values()) {
 						if (component.getNodeRef().equals(meatContentRule.getComponent())) {
 							if (component.getQty() != null) {
-								if(ctReplacement!=null) {
+								if(ctReplacement!=null && fatReplacement!=null) {
 									ctReplacement.setQty(component.getQty() * (meatContentData.getExCTPerc() / 100d));
 									fatReplacement.setQty(component.getQty() * (meatContentData.getExFatPerc() / 100d));
 									toAdd.add(ctReplacement);
-								} else {
+								} else if(fatReplacement!=null){
 									fatReplacement.setQty(component.getQty() * (1d - (meatContentData.getMeatContent() / 100d)));
 								}
 								component.setQty(component.getQty() * (meatContentData.getMeatContent() / 100d));
 								toAdd.add(fatReplacement);
 							}
 							if (component.getVolume() != null) {
-								if(ctReplacement!=null) {
+								if(ctReplacement!=null && fatReplacement!=null) {
 									ctReplacement.setVolume(component.getVolume() * (meatContentData.getExCTPerc() / 100d));
 									fatReplacement.setVolume(component.getVolume() * (meatContentData.getExFatPerc() / 100d));
 									toAdd.add(ctReplacement);
-								} else {
+								} else if(fatReplacement!=null){
 									fatReplacement.setVolume(component.getVolume() * (1d - (meatContentData.getMeatContent() / 100d)));
 								}
 								
 								component.setVolume(component.getVolume() * (meatContentData.getMeatContent() / 100d));
-								toAdd.add(fatReplacement);
+								if(fatReplacement!=null){
+									toAdd.add(fatReplacement);
+								}
 							}
 
 							fatReplacement.getAllergens().addAll(component.getAllergens());
