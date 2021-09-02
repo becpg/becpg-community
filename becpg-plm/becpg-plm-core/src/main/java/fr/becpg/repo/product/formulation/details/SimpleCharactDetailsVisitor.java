@@ -271,7 +271,8 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 				if ((value != null) && (simpleCharact.shouldDetailIfZero() || (value != 0d))) {
 					
-					value = FormulationHelper.flatPercValue(value,unit);
+					// Don't flat perc #6797
+					//value = FormulationHelper.flatPercValue(value,unit);
 				
 					
 					if (logger.isDebugEnabled()) {
