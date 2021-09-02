@@ -512,6 +512,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 	}
 
+	@Override
+	public void createInitialVersionWithProps(NodeRef entityNodeRef, Map<QName, Serializable> before) {
+		createInitialVersion(entityNodeRef);
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersion(final NodeRef origNodeRef, Map<String, Serializable> versionProperties) {

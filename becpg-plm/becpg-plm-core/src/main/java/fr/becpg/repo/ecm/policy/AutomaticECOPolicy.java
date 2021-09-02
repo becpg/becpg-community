@@ -108,7 +108,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 					ChangeOrderData changeOrderData = automaticECOService.getCurrentUserChangeOrderData();
 					if (automaticECOService.addAutomaticChangeEntry(nodeRef, changeOrderData) && changeOrderData != null) {
 						logger.debug("Creating new version for nodeRef : " + nodeRef);
-						entityVersionService.createInitialVersion(nodeRef);
+						entityVersionService.createInitialVersionWithProps(nodeRef, before);
 						queueNode(nodeRef);
 					}
 				} finally {
