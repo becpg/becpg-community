@@ -48,6 +48,7 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransacti
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.download.DownloadRequest;
 import org.alfresco.service.cmr.download.DownloadStatus;
 import org.alfresco.service.cmr.download.DownloadStatus.Status;
@@ -91,6 +92,7 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
     private NodeService nodeService;
     private RetryingTransactionHelper transactionHelper;
     private DownloadStatusUpdateService updateService;
+    private DictionaryService dictionaryService;
 
     private long maximumContentSize = -1l;
     
@@ -173,8 +175,15 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
     {
         this.updateService = updateService;
     }
+    
+    
 
-    /**
+    public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+
+
+	/**
      * Create an archive file containing content from the repository.
      * 
      * Uses the {@link ExporterService} with custom exporters to create the
@@ -251,9 +260,10 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
 
     private void createDownload(final NodeRef actionedUponNodeRef, ExporterCrawlerParameters crawlerParameters, SizeEstimator estimator)
     {
+        
         // perform the actual export
         final File tempFile = TempFileProvider.createTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
-        final ZipDownloadExporter handler = new ZipDownloadExporter(tempFile, checkOutCheckInService, nodeService, transactionHelper, updateService, downloadStorage, actionedUponNodeRef, estimator.getSize(), estimator.getFileCount());
+        final ZipDownloadExporter handler = new ZipDownloadExporter(tempFile, checkOutCheckInService, nodeService, transactionHelper, updateService, downloadStorage, dictionaryService, actionedUponNodeRef, estimator.getSize(), estimator.getFileCount());
         
         try {
             exporterService.exportView(handler, crawlerParameters, null);
@@ -267,6 +277,7 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
         {
             tempFile.delete();
         }
+        
     }
 
 

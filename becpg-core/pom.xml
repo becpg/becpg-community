@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>3.2.3</version>
+		<version>4.0.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -66,29 +66,56 @@
 		  <version>0.28.3</version>
 		</dependency>
 		<dependency>
-		  <groupId>io.opencensus</groupId>
-		  <artifactId>opencensus-exporter-trace-stackdriver</artifactId>
-		  <version>0.28.3</version>
+			<groupId>io.opencensus</groupId>
+			<artifactId>opencensus-exporter-trace-stackdriver</artifactId>
+			<version>0.28.3</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.code.gson</groupId>
+					<artifactId>gson</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-core</artifactId>
+				</exclusion>
+				
+				<exclusion>
+  <artifactId>error_prone_annotations</artifactId>
+  <groupId>com.google.errorprone</groupId>
+				</exclusion>
+				<exclusion>
+				 <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+					</exclusion>
+			</exclusions>
+	
 		</dependency>
 		<dependency>
 		  <groupId>io.opencensus</groupId>
 		  <artifactId>opencensus-impl</artifactId>
 		  <version>0.28.3</version>
+		 
 		  <scope>runtime</scope>
+		  <exclusions>
+		 <exclusion>
+				 <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+					</exclusion>
+			</exclusions>
 		</dependency>
        
 		<!-- Common -->
 		
 	    <dependency>
-		    <groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
+		   <groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.11</version>
 			<scope>provided</scope>
 		</dependency>
 		
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
    			<artifactId>commons-csv</artifactId>
-   			<version>20110211</version>
    			<scope>provided</scope>
 		</dependency>
 
@@ -104,7 +131,14 @@
             <artifactId>httpclient</artifactId>
             <scope>provided</scope>
         </dependency>
-
+        
+        <!-- TODO to remove -->
+         <dependency>
+		    <groupId>org.apache.lucene</groupId>
+		    <artifactId>lucene-core</artifactId>
+		    <version>2.9.4</version>
+		</dependency>
+		
 
 		<!-- Image IO  
 		 <dependency>

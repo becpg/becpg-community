@@ -21,13 +21,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
-        
-	<bean id="compress-image" class="fr.becpg.repo.action.ImageCompressorActionExecuter" parent="action-executer">
-      <property name="contentService" ref="contentService" />
-      <property name="imageMagickContentTransformer">
-          <ref bean="transformer.ImageMagick" />
-      </property>   
-    </bean> 
     
     <bean id="classify-by-hierarchy" class="fr.becpg.repo.hierarchy.action.ClassifyByHierarchyActionExecuter" parent="action-executer">
       <property name="hierarchyService" ref="hierarchyService" />      
@@ -54,6 +47,7 @@
 		<property name="publicAction" value="false" />
 		<property name="transactionHelper" ref="retryingTransactionHelper" />
 		<property name="updateService" ref="downloadStatusUpdateService" />
+		<property name="dictionaryService" ref="dictionaryService" />
 	</bean>  
 	
     <!-- Export Search actions -->

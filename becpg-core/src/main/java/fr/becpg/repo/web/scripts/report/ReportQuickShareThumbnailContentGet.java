@@ -117,8 +117,8 @@ public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
 
 	/** {@inheritDoc} */
 	@Override
-	protected void executeImpl(NodeRef nodeRef, Map<String, String> templateVars, WebScriptRequest req, WebScriptResponse res,
-			Map<String, Object> model) throws IOException {
+	protected void executeImpl(NodeRef nodeRef, Map<String, String> templateVars, WebScriptRequest req, WebScriptResponse res, Map<String, Object> model, boolean attach) throws IOException
+	{
 
 		String thumbnailName = templateVars.get("thumbnailname");
 		if (thumbnailName == null) {
@@ -225,7 +225,7 @@ public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
 				}
 			}
 
-			super.executeImpl(thumbnailNodeRef, templateVars, req, res, model);
+			super.executeImpl(thumbnailNodeRef, templateVars, req, res, model, attach);
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("QuickShare - retrieved thumbnail content: " + thumbnailNodeRef + " [" + nodeRef + "," + thumbnailName + "]");

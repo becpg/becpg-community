@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Context crossContext="true">
+	<Resources
+	    cachingAllowed="true"
+	    cacheMaxSize="100000"
+	>
+	</Resources>
+</Context>
