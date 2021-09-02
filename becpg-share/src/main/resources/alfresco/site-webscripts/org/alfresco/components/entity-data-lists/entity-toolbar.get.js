@@ -48,7 +48,6 @@ function main()
                    doclibCommon();
                 }
                 
-                model.syncMode = syncMode.getValue();
 
                 // Widget instantiation metadata...
                 var entityDataListToolbar = {
@@ -62,8 +61,7 @@ function main()
                       rootNode : model.rootNode,
                       replicationUrlMapping : (model.replicationUrlMapping != null) ? model.replicationUrlMapping : "{}",
                       documentDetails : documentDetails,
-                      repositoryBrowsing : (model.rootNode != null),
-                      syncMode : model.syncMode != null ? model.syncMode : ""         
+                      repositoryBrowsing : (model.rootNode != null)       
                    }
                 };
                 

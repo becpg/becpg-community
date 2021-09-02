@@ -18,13 +18,11 @@
 package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.search.impl.lucene.LuceneQueryParserException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -169,14 +167,8 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 		queryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS);
 		
-		List<NodeRef> ret = new ArrayList<>();
-		try {
-			ret = queryBuilder.list();
-		} catch (LuceneQueryParserException e) {
-			logger.error("Bad list value query:"+queryBuilder.toString());
-		}
 
-		return new ListValuePage(ret, pageNum, pageSize, targetAssocValueExtractor);
+		return new ListValuePage(queryBuilder.list(), pageNum, pageSize, targetAssocValueExtractor);
 	}
 
 	/**

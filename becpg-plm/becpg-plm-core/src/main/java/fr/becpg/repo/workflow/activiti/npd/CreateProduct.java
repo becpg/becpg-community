@@ -22,8 +22,6 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.sun.star.lang.NullPointerException;
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.ProjectModel;
@@ -45,7 +43,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
  */
 public class CreateProduct extends BaseJavaDelegate {
 
-	private final static Log logger = LogFactory.getLog(CreateProduct.class);
+	private static final Log logger = LogFactory.getLog(CreateProduct.class);
 
 	/** The node service. */
 	private NodeService nodeService;

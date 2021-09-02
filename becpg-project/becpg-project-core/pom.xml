@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>3.2.3</version>
+		<version>4.0.0</version>
 		<relativePath>../../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -41,8 +41,9 @@
 		</dependency>
 		
  		<dependency>
-		    <groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
+		   <groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.11</version>
 			<scope>provided</scope>
 		</dependency>
 

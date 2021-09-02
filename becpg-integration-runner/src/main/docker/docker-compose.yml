@@ -3,9 +3,10 @@ volumes:
   becpg_data_db:
   solr_data:
   becpg_data:
+  becpg_share_data:
 services:
   becpg:
-    image: ${docker.becpg.url}/becpg-${becpg.dockerbuild.name}:${docker.becpg.tag}
+    image: ${docker.becpg.url}/becpg-${becpg.dockerbuild.name}-core:${docker.becpg.tag}
     environment:
       CATALINA_OPTS: "-Xmx4G -XX:HotswapAgent=external -Duser.language=fr -Duser.country=FR 
                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
@@ -19,9 +20,10 @@ services:
                      -Dcom.sun.management.jmxremote.local.only=false
                      -Djava.rmi.server.hostname=127.0.0.1"
       JAVA_HOME: /usr/java/dcevm-11.0.10+5
+      JAVA_TOOL_OPTIONS: "${keystore.settings}"
     ports:
-      - "8080:8080"
-      - "8888:8888"  
+      - "${acs.port}:8080"
+      - "${acs.debug.port}:8888"
       - "9091:9091"
     volumes:
       - becpg_data:/usr/local/tomcat/data
@@ -29,23 +31,22 @@ services:
       - ../../becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes
       - ../../becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes
       - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes
-      
-#  alfresco-pdf-renderer:
-#      image: alfresco/alfresco-pdf-renderer:latest
-#      environment:
-#          JAVA_OPTS: " -Xms256m -Xmx256m"
-#      ports:
-#          - 8090:8090
+  
+  becpg-share:
+    image: ${docker.becpg.url}/becpg-${becpg.dockerbuild.name}-share:${docker.becpg.tag}
+    environment:
+      CATALINA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888  -Duser.language=fr -Duser.country=FR"
+      REPO_HOST: becpg
+      REPO_PORT: 8080
+    ports:
+      - "${share.port}:8080"
+      - "${share.debug.port}:8888"
+    volumes:
+      - becpg_share_data:/usr/local/tomcat/data
 
-#  imagemagick:
-#      image: alfresco/alfresco-imagemagick:latest
-#      environment:
-#          JAVA_OPTS: " -Xms256m -Xmx256m"
-#      ports:
-#          - 8091:8090
 
-  alfresco-libreoffice:
-      image: alfresco/alfresco-libreoffice:latest
+  alfresco-transform-core-aio:
+      image: alfresco/alfresco-transform-core-aio:latest
       environment:
           JAVA_OPTS: " -Xms256m -Xmx256m"
       ports:
@@ -55,20 +56,7 @@ services:
         interval: 1m30s
         timeout: 10s
         retries: 3
-      
-#  tika:
-#      image: alfresco/alfresco-tika:latest
-#      environment:
-#          JAVA_OPTS: " -Xms256m -Xmx256m"
-#      ports:
-#          - 8093:8090
-
-#  transform-misc:
-#      image: alfresco/alfresco-transform-misc:latest
-#      environment:
-#          JAVA_OPTS: " -Xms256m -Xmx256m"
-#      ports:
-#          - 8094:8090  
+     
             
   becpg-db:
     image: ${docker.becpg.url}/becpg-db:${docker.becpg.tag}

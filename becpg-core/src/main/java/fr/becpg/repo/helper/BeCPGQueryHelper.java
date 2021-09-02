@@ -5,7 +5,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Locale;
 
-import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -180,20 +179,11 @@ public class BeCPGQueryHelper {
 	}
 
 	private static Analyzer getTextAnalyzer(DictionaryService dictionaryService) {
-		if (luceneAnaLyzer == null) {
-			DataTypeDefinition def = dictionaryService.getDataType(DataTypeDefinition.TEXT);
-			try {
-				return (Analyzer) Class.forName(def.resolveAnalyserClassName(Locale.getDefault())).getDeclaredConstructor().newInstance();
-			} catch (Exception e) {
-				logger.error(e, e);
-				if (Locale.FRENCH.equals(Locale.getDefault())) {
-					return new FrenchBeCPGAnalyser();
-				} else {
-					return new EnglishBeCPGAnalyser();
-				}
-			}
+		if (Locale.FRENCH.equals(Locale.getDefault())) {
+			return new FrenchBeCPGAnalyser();
 		}
-		return luceneAnaLyzer;
+		return new EnglishBeCPGAnalyser();
+
 	}
 
 	/**

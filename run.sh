@@ -17,27 +17,27 @@ export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.y
 export MVN_EXEC="${PWD}/mvnw"
 
 start() {
-   	 	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
+   	 	docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
 }
 
 pull() {
-   	 	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
+   	 	docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
 }
 
 pull() {
-   	 	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
+   	 	docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
 }
 
 down() {
-	if [ -d becpg-enterprise ]; then
-	    cd becpg-enterprise
+	if [ -d becpg-enterprise-test ]; then
+	    cd becpg-enterprise-test
 	   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
 	    cd ..
    	else
    	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
     fi 
     if [ -f $COMPOSE_FILE_PATH ]; then
-        docker-compose -f $COMPOSE_FILE_PATH down
+        docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH down
     fi
 }
 
@@ -58,9 +58,9 @@ deploy_fast(){
 	docker cp becpg-plm/becpg-plm-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
 	docker cp becpg-plm/becpg-plm-share/src/main/assembly/config/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	if [ -d becpg-enterprise ]; then
-	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	if [ -d becpg-enterprise-test ]; then
+	  docker cp becpg-enterprise-test/becpg-enterprise-test-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
+	  docker cp becpg-enterprise-test/becpg-enterprise-test-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	fi
 	
 	wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8080/share/page/index
@@ -68,12 +68,12 @@ deploy_fast(){
 }
 
 purge() {
-    docker-compose -f  $COMPOSE_FILE_PATH down -v
+    docker-compose -p becpg_4_0 -f  $COMPOSE_FILE_PATH down -v
 }
 
 build() {
-   if [ -d becpg-enterprise ]; then
-    cd becpg-enterprise
+   if [ -d becpg-enterprise-test ]; then
+    cd becpg-enterprise-test
    	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
     cd ..
    else
@@ -82,8 +82,8 @@ build() {
 }
 
 install() {
-  if [ -d becpg-enterprise ]; then
-    cd becpg-enterprise
+  if [ -d becpg-enterprise-test ]; then
+    cd becpg-enterprise-test
     $MVN_EXEC  install $EXTRA_ENV -DskipTests=true -P full
      cd ..
    else
@@ -92,7 +92,7 @@ install() {
 }
 
 tail() {
-    docker-compose -f $COMPOSE_FILE_PATH logs -f --tail=50 becpg 
+    docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH logs -f --tail=50 becpg becpg-share
 }
 
 test() {
@@ -100,7 +100,7 @@ test() {
 }
 
 reindex() {
-	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
+	docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
 	
 	cd /var/lib/docker/volumes/target_solr_data/_data
 	
@@ -109,7 +109,7 @@ reindex() {
 	rm -rf workspace
 	
 	cd -
-	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml start solr
+	docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml start solr
 }
 
 
