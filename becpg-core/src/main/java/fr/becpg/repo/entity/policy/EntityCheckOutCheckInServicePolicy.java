@@ -132,7 +132,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 
 	/** {@inheritDoc} */
 	@Override
-	//TODO delete in 3.2.3
+	//TODO delete in 4.0.0
 	@Deprecated
 	public void onCheckOut(final NodeRef workingCopyNodeRef) {
 		ruleService.disableRules();

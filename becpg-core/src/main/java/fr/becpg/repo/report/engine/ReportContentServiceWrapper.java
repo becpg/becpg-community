@@ -1,24 +1,20 @@
 package fr.becpg.repo.report.engine;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Date;
 
-import org.alfresco.repo.content.transform.ContentTransformer;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.virtual.VirtualContentModel;
 import org.alfresco.service.cmr.dictionary.InvalidTypeException;
-import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.DirectAccessUrl;
 import org.alfresco.service.cmr.repository.InvalidNodeRefException;
-import org.alfresco.service.cmr.repository.NoTransformerException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.TransformationOptions;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -152,90 +148,10 @@ public class ReportContentServiceWrapper implements ContentService {
 		return contentService.getTempWriter();
 	}
 
-	/** {@inheritDoc} */
 	@Override
-	public void transform(ContentReader reader, ContentWriter writer) throws NoTransformerException, ContentIOException {
-		contentService.transform(reader, writer);
-
+	public DirectAccessUrl getDirectAccessUrl(NodeRef nodeRef, Date expiresAt) {
+		return contentService.getDirectAccessUrl(nodeRef, expiresAt);
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public void transform(ContentReader reader, ContentWriter writer, Map<String, Object> options) throws NoTransformerException, ContentIOException {
-		contentService.transform(reader, writer, options);
-
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void transform(ContentReader reader, ContentWriter writer, TransformationOptions options)
-			throws NoTransformerException, ContentIOException {
-		contentService.transform(reader, writer, options);
-
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public ContentTransformer getTransformer(String sourceMimetype, String targetMimetype) {
-
-		return contentService.getTransformer(sourceMimetype, targetMimetype);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public List<ContentTransformer> getTransformers(String sourceUrl, String sourceMimetype, long sourceSize, String targetMimetype,
-			TransformationOptions options) {
-		return contentService.getTransformers(sourceUrl, sourceMimetype, sourceSize, targetMimetype, options);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public ContentTransformer getTransformer(String sourceUrl, String sourceMimetype, long sourceSize, String targetMimetype,
-			TransformationOptions options) {
-		return contentService.getTransformer(sourceUrl, sourceMimetype, sourceSize, targetMimetype, options);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public ContentTransformer getTransformer(String sourceMimetype, String targetMimetype, TransformationOptions options) {
-		return contentService.getTransformer(sourceMimetype, targetMimetype, options);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public long getMaxSourceSizeBytes(String sourceMimetype, String targetMimetype, TransformationOptions options) {
-		return contentService.getMaxSourceSizeBytes(sourceMimetype, targetMimetype, options);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public List<ContentTransformer> getActiveTransformers(String sourceMimetype, long sourceSize, String targetMimetype,
-			TransformationOptions options) {
-		return contentService.getActiveTransformers(sourceMimetype, sourceSize, targetMimetype, options);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public List<ContentTransformer> getActiveTransformers(String sourceMimetype, String targetMimetype, TransformationOptions options) {
-		return contentService.getActiveTransformers(sourceMimetype, targetMimetype, options);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public ContentTransformer getImageTransformer() {
-		return contentService.getImageTransformer();
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public boolean isTransformable(ContentReader reader, ContentWriter writer) {
-		return contentService.isTransformable(reader, writer);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public boolean isTransformable(ContentReader reader, ContentWriter writer, TransformationOptions options) {
-		return contentService.isTransformable(reader, writer, options);
-	}
-
+	
 }

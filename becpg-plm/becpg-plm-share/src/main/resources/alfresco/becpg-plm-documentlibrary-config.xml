@@ -241,9 +241,7 @@
          <!-- beCPG -->
          <action type="action-link" id="onActionAssignWorkflow" icon="document-assign-workflow" label="menu.selected-items.assign-process"/>
          <action type="action-link" id="onActionDelete" icon="document-delete" permission="Delete" label="menu.selected-items.delete" notAspect="hwf:hybridWorkflow,sys:undeletable,smf:smartFolder" />
-         <action type="action-link" id="onActionCloudSync" asset="document" icon="document-cloud-sync"  permission="CreateChildren" label="menu.selected-items.cloudSync" notAspect="sync:syncSetMemberNode,smf:smartFolder,smf:smartFolderChild" syncMode="ON_PREMISE" />
-         <action type="action-link" id="onActionCloudSyncRequest" icon="document-request-sync" label="menu.selected-items.cloudRequestSync" hasAspect="sync:syncSetMemberNode" notAspect="smf:smartFolder,smf:smartFolderChild" syncMode="ON_PREMISE" />
-     	 <!-- beCPG -->
+         <!-- beCPG -->
      	 <action type="action-link" asset="document" id="onActionAddToBasket" icon="basket-action-16.png" label="menu.selected-items.basket" />
       </multi-select>
 	
