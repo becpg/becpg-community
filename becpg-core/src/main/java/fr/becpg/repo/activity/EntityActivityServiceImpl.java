@@ -1336,6 +1336,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
 					.excludeVersions()
+					.inDB()
+					.ftsLanguage()
 					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED);
 			return queryBuilder.list();
 		}, false, true);
