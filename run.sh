@@ -37,7 +37,7 @@ down() {
    	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
     fi 
     if [ -f $COMPOSE_FILE_PATH ]; then
-        docker-compose -f $COMPOSE_FILE_PATH down
+        docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml  down
     fi
 }
 
