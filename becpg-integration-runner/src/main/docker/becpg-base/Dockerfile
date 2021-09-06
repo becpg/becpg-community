@@ -44,7 +44,7 @@ WORKDIR /usr/local/tomcat/
 
       
 RUN set -x && \
-    curl --silent --location \  
+    curl  --insecure  --silent --location \  
        ${NEXUS}/org/alfresco/alfresco-content-services-community-distribution/${ALF_VERSION}/alfresco-content-services-community-distribution-${ALF_VERSION}.zip \
        -o /root/alfresco-content-services-community-distribution.zip && \
        cd /root && unzip /root/alfresco-content-services-community-distribution.zip && cd /usr/local/tomcat/ && \
@@ -128,7 +128,7 @@ RUN set -x && \
 #AOS    
         	        
 RUN set -x && \
-    curl --silent --location \
+    curl  --insecure  --silent --location \
      ${NEXUS}/org/alfresco/aos-module/alfresco-aos-module/${VTI_VERSION}/alfresco-aos-module-${VTI_VERSION}.amp  \
       -o /root/amp/alfresco-aos-core-${VTI_VERSION}.amp && \
     java -jar /root/alfresco-mmt.jar install /root/amp/ webapps/alfresco -nobackup -directory && \
