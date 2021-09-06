@@ -443,6 +443,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 						if (json) {
 							var ret = "", i = 0, refValue = null, className, currValue = null;
 							json.comp.sort(function (a, b) {
+								if( a.name == null){
+									return -1;
+								} else if(b.name == null){
+									return 1;
+								}
 								 return a.name.localeCompare(b.name);
 							});
 							
@@ -959,6 +964,11 @@ if (beCPG.module.EntityDataGridRenderers) {
 					if (json) {
 						var ret = "", z = 0, refValue = null, className, currValue = null;
 						json.comp.sort(function (a, b) {
+							if( a.name == null){
+									return -1;
+							} else if(b.name == null){
+									return 1;
+							}
 						    return a.name.localeCompare(b.name);
 						});
 						for (z = 0; z < json.comp.length; z++) {
