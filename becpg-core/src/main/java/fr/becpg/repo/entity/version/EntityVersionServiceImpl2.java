@@ -319,6 +319,34 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 		}
 	}
 
+	@Override
+	public void createInitialVersionWithProps(NodeRef entityNodeRef, Map<QName, Serializable> before) {
+		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			// Create the initial-version
+			Map<String, Serializable> versionProperties = new HashMap<>(1);
+			versionProperties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Create initial version : " + I18NUtil.getMessage(MSG_INITIAL_VERSION));
+			}
+
+			versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
+
+			Map<QName, Serializable> aspectProperties = new HashMap<>();
+			aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+			nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+			
+			createVersion(entityNodeRef, versionProperties);
+			
+			NodeRef initialVersion = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, versionService.getVersionHistory(entityNodeRef).getVersion(RepoConsts.INITIAL_VERSION).getFrozenStateNodeRef().getId());
+			
+			nodeService.setProperties(initialVersion, before);
+			
+			nodeService.setProperty(initialVersion, Version2Model.PROP_QNAME_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
+
+		}
+	}
+
 	/**
 	 * {@inheritDoc}
 	 *
