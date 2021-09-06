@@ -65,7 +65,7 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 
 	private static final Log logger = LogFactory.getLog(EntityListValuePlugin.class);
 
-	private static final String PROP_FILTER_BY_ASSOC = "filterByAssoc";
+	protected static final String PROP_FILTER_BY_ASSOC = "filterByAssoc";
 	/** Constant <code>SOURCE_TYPE_TARGET_ASSOC="targetassoc"</code> */
 	protected static final String SOURCE_TYPE_TARGET_ASSOC = "targetassoc";
 	/** Constant <code>SOURCE_TYPE_LINKED_VALUE="linkedvalue"</code> */
