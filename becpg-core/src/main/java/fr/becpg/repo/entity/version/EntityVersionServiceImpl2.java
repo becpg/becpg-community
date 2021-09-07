@@ -340,8 +340,11 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			
 			NodeRef initialVersion = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, versionService.getVersionHistory(entityNodeRef).getVersion(RepoConsts.INITIAL_VERSION).getFrozenStateNodeRef().getId());
 			
+			String name = (String) nodeService.getProperty(initialVersion, ContentModel.PROP_NAME);
+			
 			nodeService.setProperties(initialVersion, before);
 			
+			nodeService.setProperty(initialVersion, ContentModel.PROP_NAME, name);
 			nodeService.setProperty(initialVersion, Version2Model.PROP_QNAME_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
 
 		}
