@@ -25,6 +25,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -92,7 +93,7 @@ public class CompareFormulationIT extends FormulationFullIT {
 			for (DynamicCharactListItem dynamicCharactListItem : formulatedProduct.getCompoListView().getDynamicCharactList()) {
 				String trace = "Dyn charact :" + dynamicCharactListItem.getName() + " value " + dynamicCharactListItem.getValue();
 				logger.info(trace);
-				assertFalse("#Error".equals(dynamicCharactListItem.getValue()));
+				Assert.assertNotEquals("#Error",dynamicCharactListItem.getValue());
 			}
 
 			// assertEquals((String)formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue(),
@@ -109,13 +110,10 @@ public class CompareFormulationIT extends FormulationFullIT {
 			JSONTokener tokener = new JSONTokener((String) formulatedProduct.getCompoListView().getDynamicCharactList().get(0).getValue());
 			JSONObject jsonObject = new JSONObject(tokener);
 			JSONArray array = (JSONArray) jsonObject.get(JsonFormulaHelper.JSON_COMP_ITEMS);
-			assertEquals(2, array.length());
+			Assert.assertEquals(2, array.length());
 
-			assertEquals(2, ((JSONObject) array.get(0)).get(JsonFormulaHelper.JSON_VALUE));
-			assertEquals(finishedProductNodeRef2.toString(), ((JSONObject) array.get(0)).get(JsonFormulaHelper.JSON_NODEREF));
-
-			assertEquals(3, ((JSONObject) array.get(1)).get(JsonFormulaHelper.JSON_VALUE));
-			assertEquals(finishedProductNodeRef2.toString(), ((JSONObject) array.get(1)).get(JsonFormulaHelper.JSON_NODEREF));
+			Assert.assertEquals(3, ((JSONObject) array.get(1)).get(JsonFormulaHelper.JSON_VALUE));
+			Assert.assertEquals(finishedProductNodeRef2.toString(), ((JSONObject) array.get(1)).get(JsonFormulaHelper.JSON_NODEREF));
 
 			return null;
 		}, false, true);
