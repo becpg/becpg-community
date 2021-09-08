@@ -600,6 +600,7 @@
 					<show id="pjt:projectCurrentTasks" />
 				</field-visibility>
 			</form>
+			
 
 
 			<form id="filter">
@@ -608,6 +609,7 @@
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />
+					<show id="bcpg:entityTplRef" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
 					<show id="pjt:projectOrigin" />
@@ -673,6 +675,14 @@
 					</field>
 					<field id="pjt:projectDueDate" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
+					
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
@@ -748,6 +758,31 @@
 						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 				</appearance>
+			</form>
+			
+			<form id="bulk-edit">
+				<field-visibility>
+					<show id="cm:name" force="true" />
+					<show id="bcpg:code" force="true" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="pjt:projectHierarchy1" force="true"/>
+					<show id="pjt:projectHierarchy2" force="true"/>
+					<show id="pjt:projectOrigin" force="true"/>
+					<show id="pjt:projectSponsor" force="true"/>
+					<show id="pjt:projectManager" force="true"/>
+					<show id="pjt:projectObservers" force="true"/>
+					<show id="bcpg:suppliers" force="true" />
+					<show id="pjt:projectObservers" force="true"/>
+					<show id="bcpg:entityTplRef" force="true" />
+					<show id="pjt:projectEntity" force="true"/>
+					<show id="pjt:projectPriority" force="true"/>
+					<show id="pjt:projectState" force="true"/>
+					<show id="pjt:projectStartDate" force="true"/>
+					<show id="pjt:projectCompletionDate" force="true"/>
+					<show id="pjt:projectDueDate" force="true"/>
+					<show id="pjt:projectCurrentTasks" force="true"/>
+				</field-visibility>
 			</form>
 
 		</forms>
