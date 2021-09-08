@@ -569,7 +569,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							fatReplacement.getAllergens().addAll(component.getAllergens());
 							fatReplacement.getGeoOrigins().addAll(component.getGeoOrigins());
-							fatReplacement.getBioOrigins().addAll(component.getBioOrigins());
 
 						} else {
 							applyMeatContentRules(formulatedProduct, component, labelingFormulaContext);
