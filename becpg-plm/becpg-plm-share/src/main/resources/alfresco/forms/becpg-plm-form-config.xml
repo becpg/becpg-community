@@ -7571,6 +7571,30 @@
 					</field>										
 				</appearance>
 			</form>
+			<form id="bulk-edit">
+				<field-visibility>
+					<show id="cm:name" force="true" />
+					<show id="bcpg:code" force="true" />
+					<show id="cm:title" force="true" />
+					<show id="cm:description" force="true" />
+					<show id="pjt:projectHierarchy1" force="true"/>
+					<show id="pjt:projectHierarchy2" force="true"/>
+					<show id="pjt:projectOrigin" force="true"/>
+					<show id="pjt:projectSponsor" force="true"/>
+					<show id="pjt:projectManager" force="true"/>
+					<show id="pjt:projectObservers" force="true"/>
+					<show id="bcpg:suppliers" force="true" />
+					<show id="pjt:projectObservers" force="true"/>
+					<show id="bcpg:entityTplRef" force="true" />
+					<show id="pjt:projectEntity" force="true"/>
+					<show id="pjt:projectPriority" force="true"/>
+					<show id="pjt:projectState" force="true"/>
+					<show id="pjt:projectStartDate" force="true"/>
+					<show id="pjt:projectCompletionDate" force="true"/>
+					<show id="pjt:projectDueDate" force="true"/>
+					<show id="pjt:projectCurrentTasks" force="true"/>
+				</field-visibility>
+			</form>
 		</forms>	
 	</config>
 
@@ -7766,6 +7790,34 @@
 						</control>
 					</field>
 				</appearance>
+			</form>
+			<form id="bulk-edit">
+				<field-visibility>
+
+					<show id="bcpg:code" force="true" />
+					<show id="cm:name" force="true" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:supplierHierarchy1" force="true"/>
+					<show id="bcpg:supplierHierarchy2" force="true"/>
+					<show id="bcpg:supplierState" force="true"/>
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:supplierAccountRef" force="true"/>
+					<show id="bcpg:supplierTel" force="true"/>
+					<show id="bcpg:supplierEmail" force="true"/>
+					<show id="bcpg:supplierFax" force="true"/>
+<!-- 					bcpg:location type -->
+					<show id="bcpg:locationAddress1" force="true"/>
+					<show id="bcpg:locationAddress2" force="true"/>
+					<show id="bcpg:locationAddress3" force="true"/>
+					<show id="bcpg:locationCity" force="true"/>
+					<show id="bcpg:locationZip" force="true"/>
+					<show id="bcpg:locationState" force="true"/>
+					<show id="bcpg:locationCountry" force="true"/>
+
+				</field-visibility>
+				<appearance>
+				</appearance>
+				
 			</form>
 		</forms>
 	</config>
