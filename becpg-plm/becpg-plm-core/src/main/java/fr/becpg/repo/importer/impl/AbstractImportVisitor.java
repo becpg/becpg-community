@@ -744,17 +744,37 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					else if (fileMapping.getAttribute() instanceof PropertyDefinition) {
 
 						
-						 if(fileNodeRef == null) {
-							fileNodeRef = nodeService.getChildByName(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS, fileName);
+						if (value.contains(",")) {
+							int count = 0;
+							for (String fileNameValue : split(value)) {
+								fileNodeRef = nodeService.getChildByName(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS, fixFileNameExtension(fileName, fileNameValue, count));
+								count++;
+								
+								if (fileNodeRef != null) {
+									
+									PropertyDefinition propertyDefinition = (PropertyDefinition) fileMapping.getAttribute();
+									
+									nodeService.setProperty(fileNodeRef, propertyDefinition.getName(),
+											ImportHelper.loadPropertyValue(importContext, values, z_idx));
+								}
+							}
+
+						} else {
+
+							if(fileNodeRef == null) {
+								fileNodeRef = nodeService.getChildByName(targetFolderNodeRef, ContentModel.ASSOC_CONTAINS, fixFileNameExtension(fileName, value, 0));
+							}
+							if (fileNodeRef != null) {
+								
+								PropertyDefinition propertyDefinition = (PropertyDefinition) fileMapping.getAttribute();
+								
+								nodeService.setProperty(fileNodeRef, propertyDefinition.getName(),
+										ImportHelper.loadPropertyValue(importContext, values, z_idx));
+							}
+
 						}
+						
 
-						if (fileNodeRef != null) {
-
-							PropertyDefinition propertyDefinition = (PropertyDefinition) fileMapping.getAttribute();
-
-							nodeService.setProperty(fileNodeRef, propertyDefinition.getName(),
-									ImportHelper.loadPropertyValue(importContext, values, z_idx));
-						}
 					}
 				}
 			}
