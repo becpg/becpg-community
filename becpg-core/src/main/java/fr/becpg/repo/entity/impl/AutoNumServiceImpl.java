@@ -161,7 +161,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 
 	/** {@inheritDoc} */
 	@Override
-	public String getOrCreateCode(NodeRef nodeRef, QName codeQName) {
+	public synchronized String getOrCreateCode(NodeRef nodeRef, QName codeQName) {
 		// check code is already taken. If yes : this object is a copy of an
 		// existing node
 		String code = (String) nodeService.getProperty(nodeRef, codeQName);
