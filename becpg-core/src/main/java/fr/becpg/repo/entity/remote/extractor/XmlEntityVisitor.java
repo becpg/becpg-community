@@ -70,6 +70,7 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
+import fr.becpg.repo.helper.XMLTextHelper;
 
 /**
  * <p>XmlEntityVisitor class.</p>
@@ -483,7 +484,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
 				String code = MLTextHelper.localeKey(mlEntry.getKey());
 				if ((code != null) && !code.isEmpty()) {
-					xmlw.writeAttribute(code.replace(":", "_"), writeCDATA(mlEntry.getValue()));
+					xmlw.writeAttribute(code.replace(":", "_"), XMLTextHelper.stripNonValidXMLCharacters(writeCDATA(mlEntry.getValue())));
 				}
 			}
 		}
@@ -527,7 +528,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
 		} else {
 			if (value != null) {
-				xmlw.writeCData(value.toString());
+				xmlw.writeCData(XMLTextHelper.stripNonValidXMLCharacters(value.toString()));
 			}
 		}
 	}
