@@ -157,6 +157,7 @@ RUN set -x && \
       
 COPY tomcat/share.xml /usr/local/tomcat/conf/Catalina/localhost/
 COPY tomcat/catalina.properties /usr/local/tomcat/conf/catalina.properties
+COPY tomcat/web.xml /usr/local/tomcat/conf/web.xml
 COPY tomcat/server.xml /usr/local/tomcat/conf/server.xml
 COPY tomcat/logging.properties /usr/local/tomcat/conf/logging.properties
 
