@@ -32,6 +32,7 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -46,6 +47,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.listvalue.ListValueExtractor;
@@ -107,6 +109,8 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 	private EntityListDAO entityListDAO;
 	@Autowired
 	protected TargetAssocValueExtractor targetAssocValueExtractor;
+	@Autowired
+	protected AssociationService associationService;
 	
 	/** {@inheritDoc} */
 	@Override
@@ -215,7 +219,39 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 		}
 
 		if ((path != null) && !path.isEmpty()) {
-			queryBuilder.inPath(path);
+			if(!path.contains("/") && props != null) {
+				try {
+					QName assocQname = QName.createQName(path, namespaceService);
+					String strNodeRef = (String) props.get(ListValueService.PROP_NODEREF);
+					if(strNodeRef == null ) {
+						strNodeRef = (String) props.get(ListValueService.PROP_ENTITYNODEREF);
+					}
+					
+					if (strNodeRef != null) {
+						NodeRef	targetAssocNodeRef = associationService.getTargetAssoc(new NodeRef(strNodeRef), assocQname);
+						if(targetAssocNodeRef!=null) {
+							
+							String targetAssocPath = nodeService.getPath(targetAssocNodeRef).toPrefixString(namespaceService);
+							if (logger.isDebugEnabled()) {
+								logger.debug("Filtering by node  path:" + targetAssocPath);
+							}
+
+							queryBuilder.inPath(targetAssocPath + "/");
+						}
+						
+						
+					}
+				
+				} catch (NamespaceException e ) {
+					queryBuilder.inPath(path);
+				}
+			} else {
+				queryBuilder.inPath(path);
+			}
+			
+			
+			
+			
 		}
 
 		// filter by classNames
@@ -319,7 +355,7 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 					entityNodeRef = nodeService.getPrimaryParent(itemIdNodeRef).getParentRef();
 				} else if (extras.get("list") != null) {
 					QName dataListQName = QName.createQName(extras.get("list"), namespaceService);
-					entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
+					entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF));
 					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 					if (listContainerNodeRef != null) {
 						entityNodeRef = entityListDAO.getList(listContainerNodeRef, dataListQName);
