@@ -79,6 +79,7 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.helper.XMLTextHelper;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
@@ -762,6 +763,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 							}
 						}
 					}
+				}
+				
+				if (DataTypeDefinition.MLTEXT.equals(propertyDef.getDataType().getName()) || DataTypeDefinition.TEXT.equals(propertyDef.getDataType().getName())) {
+					value = XMLTextHelper.stripNonValidXMLCharacters(value);
 				}
 
 				if (DataTypeDefinition.NODE_REF.toString().equals(propertyDef.getDataType().toString()) && context.prefsContains("assocsToExtract", assocsToExtract, propertyDef.getName().toPrefixString(namespaceService))) {
