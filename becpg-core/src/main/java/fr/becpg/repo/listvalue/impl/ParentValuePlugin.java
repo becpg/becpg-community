@@ -89,9 +89,9 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 				entityNodeRef = new NodeRef(parent);
 				parent = null;
 			}
-		} else if (((String) props.get(ListValueService.PROP_NODEREF) != null)
-				&& NodeRef.isNodeRef((String) props.get(ListValueService.PROP_NODEREF))) {
-			entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
+		} else if (((String) props.get(ListValueService.PROP_ENTITYNODEREF) != null)
+				&& NodeRef.isNodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF))) {
+			entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF));
 		}
 
 		if (entityNodeRef != null) {
