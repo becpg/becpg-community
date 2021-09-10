@@ -65,20 +65,14 @@ public class EntityVersionsListValuePlugin implements ListValuePlugin {
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
-		String nodeRef = (String) props.get(ListValueService.PROP_NODEREF);
-		if (nodeRef == null) {
-			@SuppressWarnings("unchecked")
-			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
-			if (extras != null) {
-				if (extras.get("itemId") != null) {
-					nodeRef = extras.get("itemId");
-				}
-			}
+		String strNodeRef = (String) props.get(ListValueService.PROP_ENTITYNODEREF);
+		if (strNodeRef == null) {
+			strNodeRef = (String) props.get(ListValueService.PROP_NODEREF);
 		}
 
 		NodeRef entityNodeRef = null;
-		if (nodeRef != null) {
-			entityNodeRef = new NodeRef(nodeRef);
+		if (strNodeRef != null) {
+			entityNodeRef = new NodeRef(strNodeRef);
 		}
 
 		List<NodeRef> branches = Collections.emptyList();

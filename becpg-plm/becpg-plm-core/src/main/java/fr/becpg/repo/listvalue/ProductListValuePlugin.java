@@ -64,8 +64,6 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
-	@Autowired
-	private AssociationService associationService;
 
 	@Value("${beCPG.product.searchTemplate}")
 	private String productSearchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:legalName)";
@@ -136,8 +134,8 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		queryBuilder.andFTSQuery(ftsQuery.toString());
 
 		NodeRef entityNodeRef = null;
-		if (props.get(ListValueService.PROP_NODEREF) != null) {
-			entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
+		if (props.get(ListValueService.PROP_ENTITYNODEREF) != null) {
+			entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF));
 			queryBuilder.andNotID(entityNodeRef);
 		}
 
