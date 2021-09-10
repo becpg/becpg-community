@@ -70,7 +70,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	private static final String CURRENT_ECO_PREF = "fr.becpg.ecm.currentEcmNodeRef";
 
-	private static final Log logger = LogFactory.getLog(AutomaticECOService.class);
+	private static final Log logger = LogFactory.getLog(AutomaticECOServiceImpl.class);
 	
 	private static final Tracer tracer = Tracing.getTracer();
 
@@ -231,78 +231,75 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	public boolean applyAutomaticEco() {
 
 		boolean ret;
-		if (isEnable) {
+		if (Boolean.TRUE.equals(isEnable)) {
 
-			if (autoMergeBranch()) {
+			autoMergeBranch();
 
-				if (withoutRecord) {
-					return reformulateChangedEntities();
-				} else {
+			if (Boolean.TRUE.equals(withoutRecord)) {
+				return reformulateChangedEntities();
+			} else if (Boolean.TRUE.equals(shouldApplyAutomaticECO)) {
 
-					if (shouldApplyAutomaticECO) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Try to apply automatic change order");
+				}
+
+				final NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					NodeRef parentNodeRef = getChangeOrderFolder();
+					return getAutomaticECONoderef(parentNodeRef);
+				}, false, true);
+
+				if (ecoNodeRef != null) {
+
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						ecoService.setInProgress(ecoNodeRef);
+						return true;
+					}, false, true);
+
+					ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
 						if (logger.isDebugEnabled()) {
-							logger.debug("Try to apply automatic change order");
+							logger.debug("Found automatic change order to calculate WUsed :" + ecoNodeRef);
 						}
+						try {
+							ecoService.calculateWUsedList(ecoNodeRef, true);
+						} catch (Exception e) {
+							if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+								throw e;
+							}
+							logger.error(e, e);
+							return false;
+						}
+						return true;
 
-						final NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							NodeRef parentNodeRef = getChangeOrderFolder();
-							return getAutomaticECONoderef(parentNodeRef);
+					}, false, true);
+
+					if (ret) {
+
+						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+							ecoService.setInProgress(ecoNodeRef);
+							return true;
 						}, false, true);
 
-						if (ecoNodeRef != null) {
-
-							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-								ecoService.setInProgress(ecoNodeRef);
-								return true;
-							}, false, true);
-
-							ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-								if (logger.isDebugEnabled()) {
-									logger.debug("Found automatic change order to calculate WUsed :" + ecoNodeRef);
-								}
-								try {
-									ecoService.calculateWUsedList(ecoNodeRef, true);
-								} catch (Exception e) {
-									if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-										 throw e;
-					                }
-									logger.error(e, e);
-									return false;
-								}
-								return true;
-
-							}, false, true);
-
-							if (ret) {
-								
-								transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-									ecoService.setInProgress(ecoNodeRef);
-									return true;
-								}, false, true);
-
-								return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-									if (logger.isDebugEnabled()) {
-										logger.debug("Found automatic change order to apply :" + ecoNodeRef);
-									}
-									try {
-
-										if (ecoService.apply(ecoNodeRef) && deleteOnApply) {
-											logger.debug("It's applied and deleteOnApply is set to true, deleting ECO with NR=" + ecoNodeRef);
-											nodeService.deleteNode(ecoNodeRef);
-										}
-
-									} catch (Exception e) {
-										if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-											 throw e;
-						                }
-										logger.error(e, e);
-										return false;
-									}
-									return true;
-								}, false, true);
+						return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+							if (logger.isDebugEnabled()) {
+								logger.debug("Found automatic change order to apply :" + ecoNodeRef);
 							}
-						}
+							try {
+
+								if (ecoService.apply(ecoNodeRef) && Boolean.TRUE.equals(deleteOnApply)) {
+									logger.debug("It's applied and deleteOnApply is set to true, deleting ECO with NR=" + ecoNodeRef);
+									nodeService.deleteNode(ecoNodeRef);
+								}
+
+							} catch (Exception e) {
+								if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+									throw e;
+								}
+								logger.error(e, e);
+								return false;
+							}
+							return true;
+						}, false, true);
 					}
 				}
 			}
@@ -412,6 +409,12 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			if(logger.isDebugEnabled()) {
 				logger.debug(" - reformulating: " + toReformulates.size() + " entities");
 			}
+			
+			
+			if (toReformulates.isEmpty()) {
+				toReformulates.add(entityNodeRef);
+			}
+			
 			for (NodeRef toReformulate : toReformulates) {
 
 				if (!formulatedEntities.contains(toReformulate)) {
@@ -428,14 +431,14 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
-							L2CacheSupport.doInCacheContext(() -> {
+							L2CacheSupport.doInCacheContext(() -> 
 								AuthenticationUtil.runAsSystem(() -> {
 									formulationService.formulate(toReformulate);
 
 									return true;
-								});
+								})
 
-							}, false, true);
+							, false, true);
 
 						} catch (Exception e) {
 							 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
