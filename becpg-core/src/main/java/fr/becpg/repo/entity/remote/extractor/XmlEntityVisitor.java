@@ -484,7 +484,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
 				String code = MLTextHelper.localeKey(mlEntry.getKey());
 				if ((code != null) && !code.isEmpty()) {
-					xmlw.writeAttribute(code.replace(":", "_"), XMLTextHelper.stripNonValidXMLCharacters(writeCDATA(mlEntry.getValue())));
+					xmlw.writeAttribute(code.replace(":", "_"), XMLTextHelper.writeCData(mlEntry.getValue(), true));
 				}
 			}
 		}
@@ -528,7 +528,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
 		} else {
 			if (value != null) {
-				xmlw.writeCData(XMLTextHelper.stripNonValidXMLCharacters(value.toString()));
+				xmlw.writeCData(XMLTextHelper.writeCData(value.toString(), false));
 			}
 		}
 	}

@@ -765,7 +765,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				}
 				
 				if (DataTypeDefinition.MLTEXT.equals(propertyDef.getDataType().getName()) || DataTypeDefinition.TEXT.equals(propertyDef.getDataType().getName())) {
-					value = XMLTextHelper.stripNonValidXMLCharacters(value);
+					value = XMLTextHelper.writeCData(value, false);
 				}
 
 				if (isDyn || isList) {
