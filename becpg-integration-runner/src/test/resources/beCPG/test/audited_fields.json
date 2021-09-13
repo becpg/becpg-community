@@ -13,10 +13,13 @@
 			"bcpg:legalName",
 			"bcpg:useByDate|bcpg:bestBeforeDate",
 			"bcpg:storageConditionsRef|bcpg:preparationTips",
-			"cm:title"
+			"cm:title",
+			"formula1|isLiquid()",
+			"formula2|spel(false)"
 		],
 		"i18nMessages": {
-			"cm:title": "becpg.forms.field.tradeName"
+			"formula1" : "becpg.forms.field.tradeName",
+			"formula2" : "formula2.missingKey"
 		},
 		"auditedFields": [
 			"bcpg:clients",
