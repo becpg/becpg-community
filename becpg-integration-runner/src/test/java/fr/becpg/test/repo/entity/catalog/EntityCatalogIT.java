@@ -30,9 +30,12 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
+import fr.becpg.repo.formulation.FormulatedEntity;
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -60,6 +63,9 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 	private AssociationService associationService;
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	@Autowired
+	private FormulationService<FormulatedEntity> formulationService;
+	
 
 	@Override
 	public void setUp() throws Exception {
@@ -80,6 +86,74 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 		cacheService.clearCache(EntityCatalogService.class.getName());
 	}
 
+	
+	@Test
+	public void testMissingFields() {
+
+		final NodeRef sfNodeRef = inWriteTx(() -> {
+
+			SemiFinishedProductData sfData = new SemiFinishedProductData();
+			sfData.setName("EntityCatalogServiceIT");
+			List<AllergenListDataItem> allergenList = new ArrayList<>();
+			allergenList.add(new AllergenListDataItem(null, null, true, true, null, null, allergens.get(0), false));
+			allergenList.add(new AllergenListDataItem(null, null, false, true, null, null, allergens.get(1), false));
+			allergenList.add(new AllergenListDataItem(null, null, true, false, null, null, allergens.get(2), false));
+			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergens.get(3), false));
+			sfData.setAllergenList(allergenList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
+
+		});
+
+		final SemiFinishedProductData sampleProduct = (SemiFinishedProductData) inReadTx(() -> alfrescoRepository.findOne(sfNodeRef));
+
+		
+		inWriteTx(() -> {
+			formulationService.formulate(sampleProduct);
+			
+			
+			JSONObject scoresObject = new JSONObject(sampleProduct.getEntityScore());
+			
+			JSONArray missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0).getJSONArray("missingFields");
+			assertNotNull(missingFieldsArray);
+
+			String missingFieldsString = missingFieldsArray.toString();
+			logger.info("Missing fields: " + missingFieldsString);
+			assertTrue(missingFieldsString.contains("bcpg:legalName"));
+			assertTrue(missingFieldsString.contains("bcpg:useByDate|bcpg:bestBeforeDate"));
+			assertTrue(missingFieldsString.contains("bcpg:storageConditionsRef|bcpg:preparationTips"));
+			assertTrue(missingFieldsString.contains("formula1"));
+			assertTrue(missingFieldsString.contains("formula2"));
+			assertTrue(missingFieldsString.contains("Conditions de conservation ou Conseils de préparation et d'utilisation"));
+			assertTrue(missingFieldsString.contains("formula2.missingKey"));
+
+			sampleProduct.setUnit(ProductUnit.L);
+			sampleProduct.setTitle("Sample");
+			sampleProduct.setLegalName("Test");
+			
+			alfrescoRepository.save(sampleProduct);
+			formulationService.formulate(sampleProduct);
+			
+			scoresObject = new JSONObject(sampleProduct.getEntityScore());
+			
+			 missingFieldsArray = scoresObject.getJSONArray("catalogs").getJSONObject(0).getJSONArray("missingFields");
+			assertNotNull(missingFieldsArray);
+
+			 missingFieldsString = missingFieldsArray.toString();
+			logger.info("Missing fields 2: " + missingFieldsString);
+			
+			assertFalse(missingFieldsString.contains("bcpg:legalName"));
+			assertFalse(missingFieldsString.contains("cm:titled"));
+			assertTrue(missingFieldsString.contains("bcpg:storageConditionsRef|bcpg:preparationTips"));
+			assertFalse(missingFieldsString.contains("formula1"));
+			assertTrue(missingFieldsString.contains("formula2"));
+			
+			return true;
+		});
+		
+	}
+	
+	
 	@Test
 	public void testAuditedFields() {
 
