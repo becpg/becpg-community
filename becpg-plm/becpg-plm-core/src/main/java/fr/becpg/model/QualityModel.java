@@ -141,6 +141,8 @@ public interface QualityModel {
 	QName PROP_SDL_FREQUNIT = QName.createQName(QUALITY_URI, "sdlFreqUnit");
 
 	QName TYPE_BATCH_ALLOCATION_LIST = QName.createQName(QUALITY_URI, "batchAllocationList");
+	
+	QName TYPE_STOCK_LIST = QName.createQName(QUALITY_URI, "stockList");
 	/** sampling list **/
 	QName TYPE_SAMPLING_LIST = QName.createQName(QUALITY_URI, "samplingList");
 	/** Constant <code>PROP_SL_DATETIME</code> */

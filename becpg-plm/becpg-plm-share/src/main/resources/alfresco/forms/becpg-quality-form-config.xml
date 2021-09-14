@@ -80,6 +80,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:code" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="qa:batchId"  />
 					<show id="cm:description" force="true" />
 					<show id="qa:product" />
@@ -97,6 +98,15 @@
 				<appearance>
 					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:entityTplRef" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:batch?classNames=bcpg:entityTplAspect
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="qa:batchId" set="mainInfo" />
 					
@@ -107,7 +117,7 @@
 							<control-param name="options">Simulation|status.entity-simulation,Valid|status.entity-valid</control-param>
 						</control>
 					</field>
-					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
+					<set id="product-info" template="/org/alfresco/components/form/3-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
 					<field id="qa:product" set="product-info" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -144,19 +154,31 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="bcpg:code" />
+					<show id="bcpg:entityTplRef" force="true" />
 					<show id="qa:batchId"  />
+					
 					<show id="cm:description" force="true" />
 					<show id="qa:product" />
 					<show id="qa:batchQty"/>
 					<show id="qa:batchQtyUnit"/>
 					<show id="qa:batchState"/>
-
+					
 
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
 					<field id="cm:name" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					
+					<field id="bcpg:entityTplRef" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:batch?classNames=bcpg:entityTplAspect
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
 					<field id="qa:batchId" set="mainInfo" />
 					
 					<field id="cm:description" set="mainInfo" />
@@ -166,7 +188,7 @@
 							<control-param name="options">Simulation|status.entity-simulation,Valid|status.entity-valid</control-param>
 						</control>
 					</field>
-					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
+					<set id="product-info" template="/org/alfresco/components/form/3-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
 					<field id="qa:product" set="product-info" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -186,6 +208,65 @@
 		
 				</appearance>
 			</form>
+			<form id="formulation">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:code" />
+					<show id="bcpg:entityTplRef" force="true" />
+					<show id="qa:batchId"  />
+					
+					<show id="cm:description" force="true" />
+					<show id="qa:product" />
+					<show id="qa:batchQty"/>
+					<show id="qa:batchQtyUnit"/>
+					<show id="qa:batchState"/>
+					
+
+				</field-visibility>
+				<appearance>
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
+					<field id="cm:name" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					
+					<field id="bcpg:entityTplRef" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:batch?classNames=bcpg:entityTplAspect
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
+					<field id="qa:batchId" set="mainInfo" />
+					
+					<field id="cm:description" set="mainInfo" />
+					
+					<field id="qa:batchState" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Simulation|status.entity-simulation,Valid|status.entity-valid</control-param>
+						</control>
+					</field>
+					<set id="product-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
+					<field id="qa:product" set="product-info" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
+					<field id="qa:batchQty" set="product-info" mandatory="true"  />
+					<field id="qa:batchQtyUnit" set="product-info" mandatory="true"  >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
+							</control-param>
+						</control>
+					</field>
+		
+				</appearance>
+			</form>
+			
 				<form id="reports-parameters">
 	         	<field-visibility>
 	         		<show id="rep:reportLocales" force="true" />
@@ -223,7 +304,7 @@
 					<show id="qa:batchQty"/>
 					<show id="qa:batchQtyUnit"/>
 					<show id="qa:batchState"/>
-					<show id="qa:batchId"/>
+					<show id="qa:batchAllocationStockRefs"/>
 				</field-visibility>
 				<appearance>
 					<field id="qa:product" read-only="true" />
@@ -235,7 +316,7 @@
 						</control>
 					</field>
 					<field id="qa:batchState" read-only="true"/>
-					<field id="qa:batchId" read-only="true"/>
+					<field id="qa:batchAllocationStockRefs" read-only="true"/>
 					
 				</appearance>
 				
@@ -251,7 +332,7 @@
 					<show id="qa:batchQty"/>
 					<show id="qa:batchQtyUnit"/>			
 					<show id="qa:batchState"/>
-					<show id="qa:batchId"/>
+					<show id="qa:batchAllocationStockRefs"/>
 				</field-visibility>
 				<appearance>
 					<field id="qa:product" read-only="true" />
@@ -263,7 +344,7 @@
 						</control>
 					</field>
 					<field id="qa:batchState" read-only="true"/>
-					<field id="qa:batchId" read-only="true"/>
+					<field id="qa:batchAllocationStockRefs" read-only="true"/>
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
@@ -273,7 +354,7 @@
 					<show id="qa:batchQty"/>
 					<show id="qa:batchQtyUnit"/>
 					<show id="qa:batchState"/>
-					<show id="qa:batchId"/>
+					<show id="qa:batchAllocationStockRefs"/>
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -286,7 +367,7 @@
 						</control>
 					</field>
 					<field id="qa:batchState" read-only="true"/>
-					<field id="qa:batchId" read-only="true"/>
+					<field id="qa:batchAllocationStockRefs" read-only="true"/>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -303,6 +384,7 @@
 					<show id="qa:batchQtyUnit"/>
 					<show id="qa:batchState"/>
 					<show id="qa:productUseByDate" />
+					<show id="bcpg:suppliers" force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="qa:batchQtyUnit"  >
@@ -330,7 +412,9 @@
 					<show id="qa:batchQty"/>
 					<show id="qa:batchQtyUnit"/>
 					<show id="qa:batchState"/>
+					<show id="bcpg:suppliers"/>
 					<show id="qa:productUseByDate" />
+					<show id="bcpg:suppliers" force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="qa:batchQtyUnit" >
@@ -354,6 +438,7 @@
 					<show id="qa:batchQtyUnit"/>
 					<show id="qa:batchState"/>
 					<show id="qa:productUseByDate" />
+					<show id="bcpg:suppliers" force="true"/>
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
