@@ -79,6 +79,9 @@
 				<#elseif row.item.typeShort == "pjt:taskList" >
 				"name": "${row.item.properties["pjt:tlTaskName"]!""}",
 				"title": "${row.item.properties["pjt:tlTaskName"]!""}",	
+				<#elseif row.item.typeShort == "qa:stockList" >
+				"name": "${row.item.properties["qa:batchId"]!""}",
+				"title": "${row.item.properties["qa:batchId"]!""}",	
 				<#elseif row.item.typeShort == "pjt:budgetList" >
 				"name": "${row.item.properties["pjt:blItem"]!""}",
 				"title": "${row.item.properties["pjt:blItem"]!""}",	
