@@ -17,12 +17,14 @@ private * Copyright (C) 2010-2021 beCPG.
  ******************************************************************************/
 package fr.becpg.repo.quality.data.dataList;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -45,32 +47,27 @@ public class AllocationListDataItem extends BeCPGDataObject implements SortableD
 	 *
 	 */
 	private static final long serialVersionUID = -888800732698611573L;
-	private String batchId;
+
 	private Double batchQty = 0d;
 	private SystemState state = SystemState.Simulation;
 	private ProductUnit unit = ProductUnit.kg;
 	private NodeRef product;
+	private List<NodeRef> stockListItems; 
 	private Integer sort;
 
-	/**
-	 * <p>Getter for the field <code>batchId</code>.</p>
-	 *
-	 * @return a {@link java.lang.String} object.
-	 */
-	@AlfProp
-	@AlfQname(qname = "qa:batchId")
-	public String getBatchId() {
-		return batchId;
+	
+	
+	@AlfMultiAssoc
+	@AlfQname(qname = "qa:batchAllocationStockRefs")
+	public List<NodeRef> getStockListItems() {
+		return stockListItems;
 	}
 
-	/**
-	 * <p>Setter for the field <code>batchId</code>.</p>
-	 *
-	 * @param batchId a {@link java.lang.String} object.
-	 */
-	public void setBatchId(String batchId) {
-		this.batchId = batchId;
+	public void setStockListItems(List<NodeRef> stockListItems) {
+		this.stockListItems = stockListItems;
 	}
+
+	
 
 	/**
 	 * <p>Getter for the field <code>product</code>.</p>
@@ -143,15 +140,15 @@ public class AllocationListDataItem extends BeCPGDataObject implements SortableD
 
 	@Override
 	public String toString() {
-		return "AllocationListDataItem [batchId=" + batchId + ", batchQty=" + batchQty + ", state=" + state + ", unit=" + unit + ", product="
-				+ product + ", sort=" + sort + "]";
+		return "AllocationListDataItem [batchQty=" + batchQty + ", state=" + state + ", unit=" + unit + ", product=" + product + ", stockListItems="
+				+ stockListItems + ", sort=" + sort + "]";
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(batchId, batchQty, product, sort, state, unit);
+		result = prime * result + Objects.hash(batchQty, product, sort, state, stockListItems, unit);
 		return result;
 	}
 
@@ -164,8 +161,8 @@ public class AllocationListDataItem extends BeCPGDataObject implements SortableD
 		if (getClass() != obj.getClass())
 			return false;
 		AllocationListDataItem other = (AllocationListDataItem) obj;
-		return Objects.equals(batchId, other.batchId) && Objects.equals(batchQty, other.batchQty) && Objects.equals(product, other.product)
-				&& Objects.equals(sort, other.sort) && state == other.state && unit == other.unit;
+		return Objects.equals(batchQty, other.batchQty) && Objects.equals(product, other.product) && Objects.equals(sort, other.sort)
+				&& state == other.state && Objects.equals(stockListItems, other.stockListItems) && unit == other.unit;
 	}
 
 }
