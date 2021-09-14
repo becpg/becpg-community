@@ -180,11 +180,24 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "qa:stockList" ],
+		renderer : function(oRecord, data, label, scope) {
+			var url = scope._buildCellUrl(data);
+			if(scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+				url = beCPG.util.entityURL(data.siteId, data.value);
+			}
+			return '<span class="' + data.metadata + '"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+
+		}
+
+	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "qa:clCharacts" ],
 		renderer : function(oRecord, data, label, scope) {
-			var url = scope._buildCellUrl(data);
+			
 			return '<span class="' + data.metadata + '">'+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 
 		}
@@ -212,7 +225,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : [ "bcpg:allergen",  "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin", "bcpg:geo", "bcpg:microbio", "bcpg:organo","bcpg:listValue" ],
 		renderer : function(oRecord, data, label, scope) {
 			var url = null;
-			if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+			if(scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
 			
@@ -232,7 +245,7 @@ if (beCPG.module.EntityDataGridRenderers) {
         renderer : function(oRecord, data, label, scope) {
         	
         	var url = null;
-			if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+			if(scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
             
@@ -264,7 +277,7 @@ if (beCPG.module.EntityDataGridRenderers) {
         renderer : function(oRecord, data, label, scope) {
         	
         	var url = null;
-			if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+			if(scope.datalistMeta  && scope.datalistMeta.name.indexOf("WUsed")>-1){
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
             
@@ -392,7 +405,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       renderer : function(oRecord, data, label, scope) {
           
     	  var url = null;
-			if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+			if(scope.datalistMeta  && scope.datalistMeta.name.indexOf("WUsed")>-1){
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
     	  
@@ -524,7 +537,7 @@ if (beCPG.module.EntityDataGridRenderers) {
         propertyName : "bcpg:rclReqMessage",
         renderer : function(oRecord, data, label, scope) {
             
-            if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+            if(scope.datalistMeta  && scope.datalistMeta.name.indexOf("WUsed")>-1){
                 return data.displayValue;
             } else {
                 var reqType = oRecord.getData("itemData")["prop_bcpg_rclReqType"].value;
