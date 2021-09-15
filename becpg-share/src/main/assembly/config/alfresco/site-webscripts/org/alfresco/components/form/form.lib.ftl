@@ -302,7 +302,7 @@
 				Alfresco.util.useAsButton("${fieldHtmlId}-locale-icon", function (event, fieldId)
 		            {
 		                new Alfresco.module.SimpleDialog("${fieldHtmlId}-${.now?long}-multilingualForm").setOptions({
-		                  templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=${form.arguments.itemId}&label=${field.label?url}&field="+fieldId<#if textarea >+"&textarea=true"</#if><#if field.disabled >+"&readonly=true"</#if><#if htmlEditor >+"&htmlEditor=true"</#if><#if maxLength < 100000>+"&maxLength=${maxLength?string}"</#if>,
+		                  templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=${form.arguments.itemId}&label=${field.label?url}&field="+fieldId<#if textarea >+"&textarea=true"</#if><#if field.disabled >+"&readonly=true"</#if><#if htmlEditor >+"&htmlEditor=true"</#if><#if maxLength < 100000>+"&maxLength=${maxLength?string("###.##")}"</#if>,
 		                  actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/"+fieldId+"?nodeRef=${form.arguments.itemId}",
 		                  validateOnSubmit : false,
 		                  destroyOnHide : false,
