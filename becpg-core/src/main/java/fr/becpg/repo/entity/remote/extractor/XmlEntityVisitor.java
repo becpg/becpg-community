@@ -120,7 +120,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		// Write XML prologue
 		xmlw.writeStartDocument();
 		// Visit node
-		visitNode(entityNodeRef, xmlw, true, true, false);
+		visitNode(entityNodeRef, xmlw, true, true, false, true);
 		// Write document end. This closes all open structures
 		xmlw.writeEndDocument();
 		// Close the writer to flush the output
@@ -150,9 +150,9 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		for (NodeRef nodeRef : entities) {
 			if ((params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()) {
 				entityList = true;
-				visitNode(nodeRef, xmlw, true, true, false);
+				visitNode(nodeRef, xmlw, true, true, false, true);
 			} else {
-				visitNode(nodeRef, xmlw, false, false, false);
+				visitNode(nodeRef, xmlw, false, false, false, false);
 			}
 		}
 
@@ -183,10 +183,10 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		xmlw.writeStartDocument();
 		if ((params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()) {
 			entityList = true;
-			visitNode(entityNodeRef, xmlw, true, true, true);
+			visitNode(entityNodeRef, xmlw, true, true, true, false);
 		} else {
 			// Visit node
-			visitNode(entityNodeRef, xmlw, false, false, true);
+			visitNode(entityNodeRef, xmlw, false, false, true, false);
 		}
 		// Write document end. This closes all open structures
 		xmlw.writeEndDocument();
@@ -195,7 +195,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	private void visitNode(NodeRef nodeRef, XMLStreamWriter xmlw, boolean assocs, boolean props, boolean content) throws XMLStreamException {
+	private void visitNode(NodeRef nodeRef, XMLStreamWriter xmlw, boolean assocs, boolean props, boolean content, boolean siteInfo) throws XMLStreamException {
 		cacheList.add(nodeRef);
 
 		extractLevel++;
@@ -219,7 +219,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 				NodeRef part = associationService.getTargetAssoc(nodeRef, pivotAssoc);
 				if ((part != null)) {
 					isCharact = true;
-					writeStdAttributes(xmlw, part, name, isCharact);
+					writeStdAttributes(xmlw, part, name, isCharact, siteInfo);
 				}
 
 			}
@@ -227,7 +227,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		}
 
 		if (!isCharact) {
-			writeStdAttributes(xmlw, nodeRef, name, false);
+			writeStdAttributes(xmlw, nodeRef, name, false, siteInfo);
 		}
 
 		// Assoc first
@@ -247,7 +247,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		extractLevel--;
 	}
 
-	private void writeStdAttributes(XMLStreamWriter xmlw, NodeRef nodeRef, String name, boolean isCharact) throws XMLStreamException {
+	private void writeStdAttributes(XMLStreamWriter xmlw, NodeRef nodeRef, String name, boolean isCharact, boolean appendSite) throws XMLStreamException {
 		Path path = null;
 
 		if (nodeService.getPrimaryParent(nodeRef) != null) {
@@ -285,7 +285,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			}
 		}
 
-		if ((path != null) && !isCharact) {
+		if (appendSite && (path != null) && !isCharact) {
 			visitSite(xmlw, path);
 		}
 
@@ -360,7 +360,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 					for (ChildAssociationRef assocRef : assocRefs) {
 						if (assocRef.getTypeQName().equals(assocDef.getName())) {
 							NodeRef childRef = assocRef.getChildRef();
-							visitNode(childRef, xmlw, isLight() ? false : true, isLight() ? false : true, false);
+							visitNode(childRef, xmlw, isLight() ? false : true, isLight() ? false : true, false, false);
 						}
 					}
 
@@ -399,10 +399,10 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 						// extract assoc properties
 						if (params.getFilteredAssocProperties().containsKey(nodeType)) {
 							cachedAssocRef = Collections.singletonMap(childRef, params.getFilteredAssocProperties().get((nodeType)));
-							visitNode(childRef, xmlw, true, true, false);
+							visitNode(childRef, xmlw, true, true, false,false);
 
 						} else {
-							visitNode(childRef, xmlw, shouldDumpAll(childRef), shouldDumpAll(childRef), false);
+							visitNode(childRef, xmlw, shouldDumpAll(childRef), shouldDumpAll(childRef), false, false);
 						}
 						cachedAssocRef = null;
 					}
@@ -524,7 +524,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			}
 			xmlw.writeEndElement();
 		} else if (value instanceof NodeRef) {
-			visitNode((NodeRef) value, xmlw, shouldDumpAll((NodeRef) value), shouldDumpAll((NodeRef) value), false);
+			visitNode((NodeRef) value, xmlw, shouldDumpAll((NodeRef) value), shouldDumpAll((NodeRef) value), false, false);
 		} else if (value instanceof Date) {
 			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
 		} else {
