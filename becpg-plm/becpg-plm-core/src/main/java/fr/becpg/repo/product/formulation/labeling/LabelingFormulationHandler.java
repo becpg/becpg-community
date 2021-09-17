@@ -1303,12 +1303,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite, LabelingFormulaContext labelingFormulaContext,
-			Double ratio, Double yield, Double recipeQtyUsed, boolean apply) {
+			final Double ratio,final Double currYield, final Double recipeQtyUsed,final boolean apply) {
 
 		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
 
 		for (Composite<CompoListDataItem> composite : parentComposite.getChildren()) {
 
+			Double yield = currYield;
+			
 			CompoListDataItem compoListDataItem = composite.getData();
 
 			DeclarationType declarationType = getDeclarationType(compoListDataItem, null, labelingFormulaContext);
