@@ -74,13 +74,13 @@
 			<itemType name="bcpg:packagingMaterial" editSelectedFormId="bulk-edit" />
 			<itemType name="bcpg:packagingKit" />
 			<itemType name="bcpg:resourceProduct" />
-			<!-- <itemType name="pjt:project" /> -->
+			<itemType name="pjt:project" editSelectedFormId="bulk-edit"/>
 			<!-- <itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" -->
 			<!-- formId="bulk-edit-2" editSelectedFormId ="bulk-edit" /> -->
 			<!-- <itemType name="bcpg:allergenList" /> -->
 
 			<itemType name="qa:qualityControl" />
-			<itemType name="bcpg:supplier" />
+			<itemType name="bcpg:supplier" editSelectedFormId="bulk-edit"/>
 			<itemType name="bcpg:client" />
 			<itemType name="sec:aclGroup" />
 
