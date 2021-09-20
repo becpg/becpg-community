@@ -7489,6 +7489,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:cstsCode"/>
+					<show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
 				</field-visibility>
@@ -7509,6 +7510,7 @@
 			<form>
 				<field-visibility>
 				    <show id="bcpg:cstsCode"/>
+				    <show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
 				</field-visibility>
@@ -7525,6 +7527,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:cstsCode"/>
+					<show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />				
 				</field-visibility>
 				
@@ -7533,6 +7536,7 @@
 			<form id="datagrid">
 				<field-visibility>
 					 <show id="bcpg:cstsCode"/>
+					 <show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
 				</field-visibility>
@@ -11227,6 +11231,7 @@
 		<forms>
 			<form>
 				<field-visibility>
+				    <show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />												
 				</field-visibility>
@@ -11255,6 +11260,7 @@
 			</form>
 			<form id="datagrid">
 				<field-visibility>
+					<show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />		
 				</field-visibility>			
@@ -11265,6 +11271,7 @@
 		<forms>
 			<form>
 				<field-visibility>
+				    <show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />												
 				</field-visibility>
