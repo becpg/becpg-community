@@ -239,7 +239,12 @@
 
 		<type name="gs1:targetMarket">
 			<parent>bcpg:entityListItem</parent>
-
+			<properties>
+				<property name="gs1:targetMarketCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+				</property>
+			</properties>
 			<associations>
 				<association name="gs1:targetMarketCountries">
 					<source>
