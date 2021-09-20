@@ -4,8 +4,8 @@
 package fr.becpg.test.repo.product.glop;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,11 +20,11 @@ import fr.becpg.repo.glop.GlopService;
 import fr.becpg.repo.glop.GlopTargetSpecification;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
@@ -395,7 +395,6 @@ public class GlopIT extends AbstractFinishedProductTest {
 		}, false, true);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void testSpelFunctions() {
 		
@@ -450,12 +449,26 @@ public class GlopIT extends AbstractFinishedProductTest {
 			
 			List<DynamicCharactListItem> dynamicCharacts = formulatedProduct.getCompoListView().getDynamicCharactList();
 			DynamicCharactListItem dynamicCharact = dynamicCharacts.get(0);
-			Map<String, ?> result = (Map<String, ?>) dynamicCharact.getValue();
-			assertEpsilon(4d + 7d/9d, (double) result.get("value"), 1e-6);
-			Map<String, Double> coefficients = (Map<String, Double>) result.get("coefficients");
-			logger.debug(coefficients);
-			assertEpsilon(4d/3d, coefficients.get("Raw material 1"), 1e-6);
-			assertEpsilon(7d/9d, coefficients.get("Raw material 2"), 1e-6);
+			JSONObject result = new JSONObject((String) dynamicCharact.getValue());
+			assertEpsilon(4d + 7d/9d, (double) result.getDouble("value"), 1e-6);
+			JSONArray components = (JSONArray) result.get("components");
+			logger.debug(components);
+			
+			int check = 0;
+			
+			for (int i = 0; i < components.length(); i++) {
+				JSONObject component = components.getJSONObject(i);
+				
+				if ("Raw material 1".equals(component.getString("name"))) {
+					assertEpsilon(4d/3d, component.getDouble("value"), 1e-6);
+					check++;
+				} else if ("Raw material 2".equals(component.getString("name"))) {
+					assertEpsilon(7d/9d, component.getDouble("value"), 1e-6);
+					check++;
+				}
+			}
+			
+			assertEquals(2, check);
 			
 			return null;
 		}, false, true);
