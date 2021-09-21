@@ -17,7 +17,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PLMWorkflowModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.entity.policy.CodePolicy;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -28,7 +27,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  */
 public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy {
 
-	private static final Log logger = LogFactory.getLog(CodePolicy.class);
+	private static final Log logger = LogFactory.getLog(EntityCopyPolicy.class);
 
 	private NamespaceService namespaceService;
 	

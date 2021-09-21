@@ -47,7 +47,7 @@ public class CompoListValuePluginIT extends AbstractListValuePluginTest {
 
 			Map<String, Serializable> props = new HashMap<>();
 			props.put(ListValueService.PROP_LOCALE, Locale.FRENCH);
-			props.put(ListValueService.PROP_NODEREF, finishedProductNodeRef.toString());
+			props.put(ListValueService.PROP_ENTITYNODEREF, finishedProductNodeRef.toString());
 			props.put(ListValueService.PROP_CLASS_NAME, "bcpg:compoList");
 
 			authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);

@@ -458,6 +458,19 @@
 		
 		<type name="qa:batchAllocationList">
 			<parent>bcpg:entityListItem</parent>
+			<associations>
+					<association name="qa:batchAllocationStockRefs">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>qa:stockList</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 			<mandatory-aspects>
 			    <aspect>qa:batchAspect</aspect>
 				<aspect>bcpg:sortableListAspect</aspect>

@@ -84,7 +84,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
-		NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_NODEREF));
+		NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF));
 		logger.debug("CompoListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
 
 		if (sourceType.equals(SOURCE_TYPE_COMPOLIST_PARENT_LEVEL) && (entityNodeRef != null)) {

@@ -292,7 +292,7 @@
 							entryCount++;
 							entryKey = key;
 						}
-					} else if( key == "prop_bcpg_charactName"){
+					} else if( key == "prop_bcpg_charactName" || key == "prop_qa_batchId"){
 						isCharact = true;
 					}
 			}

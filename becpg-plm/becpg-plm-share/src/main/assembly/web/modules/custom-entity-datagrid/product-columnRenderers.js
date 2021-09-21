@@ -180,11 +180,24 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "qa:stockList" ],
+		renderer : function(oRecord, data, label, scope) {
+			var url = scope._buildCellUrl(data);
+			if(scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+				url = beCPG.util.entityURL(data.siteId, data.value);
+			}
+			return '<span class="' + data.metadata + '"><a href="' + url + '">' + Alfresco.util.encodeHTML(data.displayValue) + '</a></span>';
+
+		}
+
+	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "qa:clCharacts" ],
 		renderer : function(oRecord, data, label, scope) {
-			var url = scope._buildCellUrl(data);
+			
 			return '<span class="' + data.metadata + '">'+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';
 
 		}
@@ -212,7 +225,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : [ "bcpg:allergen",  "bcpg:ing", "bcpg:geoOrigin", "bcpg:bioOrigin", "bcpg:geo", "bcpg:microbio", "bcpg:organo","bcpg:listValue" ],
 		renderer : function(oRecord, data, label, scope) {
 			var url = null;
-			if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+			if(scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
 			
@@ -232,7 +245,7 @@ if (beCPG.module.EntityDataGridRenderers) {
         renderer : function(oRecord, data, label, scope) {
         	
         	var url = null;
-			if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+			if(scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
             
@@ -264,7 +277,7 @@ if (beCPG.module.EntityDataGridRenderers) {
         renderer : function(oRecord, data, label, scope) {
         	
         	var url = null;
-			if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+			if(scope.datalistMeta  && scope.datalistMeta.name.indexOf("WUsed")>-1){
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
             
@@ -392,7 +405,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       renderer : function(oRecord, data, label, scope) {
           
     	  var url = null;
-			if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+			if(scope.datalistMeta  && scope.datalistMeta.name.indexOf("WUsed")>-1){
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
     	  
@@ -442,6 +455,15 @@ if (beCPG.module.EntityDataGridRenderers) {
 						var json = JSON.parse(data.value);
 						if (json) {
 							var ret = "", i = 0, refValue = null, className, currValue = null;
+							json.comp.sort(function (a, b) {
+								if( a.name == null){
+									return -1;
+								} else if(b.name == null){
+									return 1;
+								}
+								 return a.name.localeCompare(b.name);
+							});
+							
 							for (i = 0; i < json.comp.length; i++) {
 								if (json.comp[i].value) {
 									if (i == 0) {
@@ -515,7 +537,7 @@ if (beCPG.module.EntityDataGridRenderers) {
         propertyName : "bcpg:rclReqMessage",
         renderer : function(oRecord, data, label, scope) {
             
-            if(scope.datalistMeta && scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+            if(scope.datalistMeta  && scope.datalistMeta.name.indexOf("WUsed")>-1){
                 return data.displayValue;
             } else {
                 var reqType = oRecord.getData("itemData")["prop_bcpg_rclReqType"].value;
@@ -669,6 +691,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 				if (oColumn != null) {
 					var precColumn = obj.entityDatagrid.widgets.dataTable.getColumn(oColumn.getKeyIndex() - 1);
 					var ind = "";
+					scope.entity.compareWithEntities.sort(function (a, b) {
+						return a.name.localeCompare(b.name);
+					});
+					
 					for (var j = 0, jj = scope.entity.compareWithEntities.length; j < jj; j++) {
 						ind +="'";
 						var compareWithEntity = scope.entity.compareWithEntities[j];
@@ -950,6 +976,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 					var json = JSON.parse(data.value);
 					if (json) {
 						var ret = "", z = 0, refValue = null, className, currValue = null;
+						json.comp.sort(function (a, b) {
+							if( a.name == null){
+									return -1;
+							} else if(b.name == null){
+									return 1;
+							}
+						    return a.name.localeCompare(b.name);
+						});
 						for (z = 0; z < json.comp.length; z++) {
 							if (json.comp[z].value) {
 								if (z == 0) {

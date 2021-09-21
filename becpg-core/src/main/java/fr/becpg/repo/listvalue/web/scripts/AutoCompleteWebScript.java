@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -53,7 +54,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	private static final String PARAM_PAGE_SIZE = "pageSize";
 	private static final String PARAM_PATH = "path";
 	private static final String PARAM_PARENT = "parent";
-	private static final String PARAM_NODEREF = "entityNodeRef";
+	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 	private static final String PARAM_QUERY = "q";
 	private static final String PARAM_PRODUCT_TYPE = "productType";
 	private static final String MODEL_KEY_NAME_SUGGESTIONS = "suggestions";
@@ -100,7 +101,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		// Filters
 		String query = req.getParameter(PARAM_QUERY);
 		String parent = req.getParameter(PARAM_PARENT);
-		String nodeRef = req.getParameter(PARAM_NODEREF);
+		String entityNodeRef = req.getParameter(PARAM_ENTITY_NODEREF);
 
 		String path = templateArgs.get(PARAM_PATH);
 		if(path==null){
@@ -133,7 +134,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 
 		Map<String, Serializable> props = new HashMap<>();
 		props.put(ListValueService.PROP_LOCALE, locale);
-		props.put(ListValueService.PROP_NODEREF, nodeRef);
+		props.put(ListValueService.PROP_ENTITYNODEREF, entityNodeRef);
 		props.put(ListValueService.PROP_PATH, path);
 		props.put(ListValueService.PROP_CLASS_NAME, className);
 		props.put(ListValueService.PROP_CLASS_NAMES, req.getParameter(PARAM_CLASS_NAMES));
@@ -144,6 +145,14 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		props.put(ListValueService.PROP_PARENT, parent);
 		props.put(ListValueService.PROP_PRODUCT_TYPE, productType);
 		props.put(ListValueService.EXTRA_PARAM, getExtraParams(req));
+		
+		
+		HashMap<String, String> extras = getExtraParams(req);
+		if (extras.get("itemId") != null && NodeRef.isNodeRef(extras.get("itemId"))) {
+				props.put(ListValueService.PROP_NODEREF,  extras.get("itemId"));
+		}
+		
+		props.put(ListValueService.EXTRA_PARAM, extras);
 		
 
 		suggestions = listValueService.suggestBySourceType(sourceType, query, pageNum, pageSize, props);

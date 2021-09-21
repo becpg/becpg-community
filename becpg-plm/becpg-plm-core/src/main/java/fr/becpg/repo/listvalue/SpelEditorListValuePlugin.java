@@ -90,7 +90,7 @@ public class SpelEditorListValuePlugin extends EntityListValuePlugin {
 
 		if (type.equals(PLMModel.TYPE_DYNAMICCHARACTLIST)) {
 
-			return suggestDatalistItem(new NodeRef((String) props.get(ListValueService.PROP_NODEREF)), type, PLMModel.PROP_DYNAMICCHARACT_TITLE,
+			return suggestDatalistItem(new NodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF)), type, PLMModel.PROP_DYNAMICCHARACT_TITLE,
 					query, pageNum, pageSize);
 		}
 

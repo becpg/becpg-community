@@ -31,6 +31,7 @@ import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
@@ -38,6 +39,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.QualityModel;
+import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.quality.QualityControlService;
 
@@ -48,13 +51,15 @@ import fr.becpg.repo.quality.QualityControlService;
  * @version $Id: $Id
  */
 public class QualityControlPolicies extends AbstractBeCPGPolicy implements NodeServicePolicies.OnCreateAssociationPolicy,
-NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy,CopyServicePolicies.OnCopyNodePolicy {
+NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy,CopyServicePolicies.OnCopyNodePolicy, EntityVersionPlugin {
 
 	private static final Log logger = LogFactory.getLog(QualityControlPolicies.class);
 
 	private QualityControlService qualityControlService;
 
 	private TransactionService transactionService;
+	
+	private EntityListDAO entityListDAO;
 
 	private String KEY_PREFIX_CTRL_PLAN_ASSOC = QualityControlPolicies.class.getName() + "_CONTROL_PLANS_ASSOC_";
 	private String KEY_PREFIX_PRODUCT_ASSOC = QualityControlPolicies.class.getName() + "_PRODUCT_ASSOC_";
@@ -76,6 +81,12 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 	 */
 	public void setQualityControlService(QualityControlService qualityControlService) {
 		this.qualityControlService = qualityControlService;
+	}
+	
+	
+
+	public void setEntityListDAO(EntityListDAO entityListDAO) {
+		this.entityListDAO = entityListDAO;
 	}
 
 	/** {@inheritDoc} */
@@ -106,6 +117,9 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 				new JavaBehaviour(this, "getCopyCallback"));
 		
 		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"), QualityModel.TYPE_SAMPLING_LIST,
+				new JavaBehaviour(this, "getCopyCallback"));
+		
+		policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "getCopyCallback"), QualityModel.TYPE_STOCK_LIST,
 				new JavaBehaviour(this, "getCopyCallback"));
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, QualityModel.TYPE_SAMPLING_LIST,
@@ -185,5 +199,40 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 			qualityControlService.deleteSamplingListId(nodeRef);
 		}
 
+	}
+
+	@Override
+	public void doAfterCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void doBeforeCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(origNodeRef);
+		if(listContainerNodeRef!=null) {
+			NodeRef stockListNodeRef = entityListDAO.getList(listContainerNodeRef, QualityModel.TYPE_STOCK_LIST);
+			if(stockListNodeRef!=null) {
+				try {
+					policyBehaviourFilter.disableBehaviour( QualityModel.TYPE_STOCK_LIST);
+					entityListDAO.copyDataList(stockListNodeRef, workingCopyNodeRef, true);
+				} finally {
+					policyBehaviourFilter.disableBehaviour( QualityModel.TYPE_STOCK_LIST);
+				}
+			}
+		}
+		
+	}
+
+	@Override
+	public void cancelCheckout(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -1,14 +1,14 @@
 package fr.becpg.repo.glop;
 
-import java.io.Serializable;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +93,7 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 
 	@Autowired
 	private GlopService glopService;
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public boolean match(String beanName) {
@@ -108,6 +108,12 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 
 	public class GlopSpelFunctionsWrapper {
 
+		private static final String COMPONENTS = "components";
+		private static final String STATUS = "status";
+		private static final String VALUE = "value";
+		private static final String NAME = "name";
+		private static final String ID = "id";
+		
 		RepositoryEntity entity;
 
 		public GlopSpelFunctionsWrapper(RepositoryEntity entity) {
@@ -148,23 +154,56 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			throw new IllegalArgumentException("Expected Double, got " + obj.getClass().getName());
 		}
 
-		private Map<String, Serializable> translate(JSONObject obj) throws JSONException {
-			Map<String, Serializable> res = new HashMap<>();
-			res.put("status", obj.getString("status"));
-			res.put("value", obj.getDouble("value"));
-			org.json.JSONObject jsonCoefficients = obj.getJSONObject("coefficients");
-			Map<String, Double> translatedCoefficients = new HashMap<>();
-			for (String ref : org.json.JSONObject.getNames(jsonCoefficients)) {
-				NodeRef node = new NodeRef(ref);
-				translatedCoefficients.put(attributeExtractorService.extractPropName(node), jsonCoefficients.getDouble(ref));
+		private String translate(JSONObject obj) throws JSONException {
+			
+			JSONObject ret = new JSONObject();
+			
+			JSONArray components = new JSONArray();
+			
+			JSONObject coeff = (JSONObject) obj.get("coefficients");
+			
+			@SuppressWarnings("unchecked")
+			Iterator<String> keys = coeff.keys();
+
+			while (keys.hasNext()) {
+				String key = keys.next();
+				
+				JSONObject component = new JSONObject();
+				
+				NodeRef nodeRef = new NodeRef(key);
+				
+				component.put(ID, nodeRef.toString());
+				component.put(NAME, attributeExtractorService.extractPropName(nodeRef));
+				component.put(VALUE, coeff.getDouble(key));
+				
+				components.put(component);
 			}
-			res.put("coefficients", (Serializable) translatedCoefficients);
-			return res;
+			
+			ret.put(COMPONENTS, components);
+			ret.put(VALUE, obj.getString(VALUE));
+			ret.put(STATUS, obj.getString(STATUS));
+
+			return ret.toString();
 		}
 
+		public Double extractValue(NodeRef nodeRef, String in) throws JSONException {
+			
+			JSONObject json = new JSONObject(in);
+			
+			JSONArray comps = json.getJSONArray(COMPONENTS);
+			
+			for (int index = 0; index < comps.length(); index++) {
+				JSONObject comp = (JSONObject) comps.get(index);
+				if (comp.has(ID) && comp.getString(ID).equals(nodeRef.toString())) {
+					return comp.getDouble(VALUE);
+				}
+			}
+			
+			return null;
+		}
+		
 		@SuppressWarnings("unchecked")
-		public Map<String, Serializable> optimize(Map<String, ?> problem) {
-			Map<String, Serializable> errorRet = new HashMap<>();
+		public String optimize(Map<String, ?> problem) {
 			Map<String, ?> target = getTarget(problem);
 			SimpleCharactDataItem targetItem = (SimpleCharactDataItem) target.get("var");
 			String targetTask = (String) target.get("task");
@@ -172,8 +211,7 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 
 			Object objConstraints = problem.get("constraints");
 			if (!(objConstraints instanceof Collection<?>)) {
-				errorRet.put("Error", "constraints must be a collection");
-				return errorRet;
+				return "Error : constraints must be a collection";
 			}
 			Collection<?> constraints = (Collection<?>) objConstraints;
 			List<GlopConstraintSpecification> fullConstraints = new ArrayList<>();
@@ -195,17 +233,13 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 				JSONObject response = glopService.optimize((ProductData) entity, fullConstraints, fullTarget);
 				return translate(response);
 			} catch (GlopException e) {
-				errorRet.put("Error", "Linear program is unfeasible: " + e);
-				return errorRet;
+				return "Error : Linear program is unfeasible: " + e;
 			} catch (JSONException e) {
-				errorRet.put("Error", "Failed to build request to send to the Glop server: " + e);
-				return errorRet;
+				return "Error : Failed to build request to send to the Glop server: " + e;
 			} catch (URISyntaxException e) {
-				errorRet.put("Error", "Glop server URI has a syntax error: " + e);
-				return errorRet;
+				return "Error : Glop server URI has a syntax error: " + e;
 			} catch (RestClientException e) {
-				errorRet.put("Error", "Failed to send reques to the Glop server: " + e);
-				return errorRet;
+				return "Error : Failed to send request to the Glop server: " + e;
 			}
 		}
 	}

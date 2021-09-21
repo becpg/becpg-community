@@ -221,7 +221,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 													JSONArray values = dynamicCharactToTreat.get(dynamicCharactListItem);
 													if (values == null) {
 														values = new JSONArray();
-														values.put(getJSONValue(toCompareWith, dynamicCharactListItem.getValue(), null));
+														values.put(getJSONValue(null, dynamicCharactListItem.getValue(), null));
 													}
 													values.put(getJSONValue(toCompareWith, toCompareDynamicCharactListItem.getValue(), null));
 													dynamicCharactToTreat.put(dynamicCharactListItem, values);
@@ -271,7 +271,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 							JSONArray values = dynamicColumnToTreat.get(new Pair<>(dataListItem, columnName));
 							if (values == null) {
 								values = new JSONArray();
-								values.put(getJSONValue(toCompareWith, dataListItem, columnName, isQty));
+								values.put(getJSONValue(null, dataListItem, columnName, isQty));
 							}
 							values.put(getJSONValue(toCompareWith, toCompareWithCompositionDataItem, columnName, isQty));
 							dynamicColumnToTreat.put(new Pair<>(dataListItem, columnName), values);
@@ -301,9 +301,16 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private JSONObject getJSONValue(ProductData toCompareWith, Object value, NodeRef itemNodeRef) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
-
-		jsonObject.put(JsonFormulaHelper.JSON_NODEREF, toCompareWith.getNodeRef());
-		jsonObject.put("name", toCompareWith.getName());
+		
+		if(toCompareWith!=null) {
+			jsonObject.put(JsonFormulaHelper.JSON_NODEREF, toCompareWith.getNodeRef());
+			jsonObject.put("name", toCompareWith.getName());
+			jsonObject.put("itemType", nodeService.getType(toCompareWith.getNodeRef()).toPrefixString(namespaceService));
+			String siteId = attributeExtractorService.extractSiteId(toCompareWith.getNodeRef());
+			if (siteId != null) {
+				jsonObject.put("siteId", siteId);
+			}
+		}
 
 		if (itemNodeRef != null) {
 			jsonObject.put("itemNodeRef", itemNodeRef);
@@ -311,11 +318,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		jsonObject.put(JsonFormulaHelper.JSON_VALUE, value);
 		jsonObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(value));
-		jsonObject.put("itemType", nodeService.getType(toCompareWith.getNodeRef()).toPrefixString(namespaceService));
-		String siteId = attributeExtractorService.extractSiteId(toCompareWith.getNodeRef());
-		if (siteId != null) {
-			jsonObject.put("siteId", siteId);
-		}
+		
 
 		return jsonObject;
 	}

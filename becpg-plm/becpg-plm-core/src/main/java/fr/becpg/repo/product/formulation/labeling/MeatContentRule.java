@@ -3,6 +3,7 @@ package fr.becpg.repo.product.formulation.labeling;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -17,7 +18,8 @@ import fr.becpg.repo.helper.MLTextHelper;
  */
 public class MeatContentRule {
 
-	NodeRef replacement;
+	NodeRef fatReplacement;
+	NodeRef ctReplacement;
 	String meatType;
 	NodeRef component;
 	
@@ -59,22 +61,22 @@ public class MeatContentRule {
 		this.meatType = meatType;
 	}
 
-	/**
-	 * <p>Getter for the field <code>replacement</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 */
-	public NodeRef getReplacement() {
-		return replacement;
+	public NodeRef getFatReplacement() {
+		return fatReplacement;
 	}
 
-	/**
-	 * <p>Setter for the field <code>replacement</code>.</p>
-	 *
-	 * @param replacement a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 */
-	public void setReplacement(NodeRef replacement) {
-		this.replacement = replacement;
+	public void setFatReplacement(NodeRef fatReplacement) {
+		this.fatReplacement = fatReplacement;
+	}
+
+
+
+	public NodeRef getCtReplacement() {
+		return ctReplacement;
+	}
+
+	public void setCtReplacement(NodeRef ctReplacement) {
+		this.ctReplacement = ctReplacement;
 	}
 
 	/**
@@ -105,19 +107,11 @@ public class MeatContentRule {
 		this.component = component;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((component == null) ? 0 : component.hashCode());
-		result = prime * result + ((locales == null) ? 0 : locales.hashCode());
-		result = prime * result + ((meatType == null) ? 0 : meatType.hashCode());
-		result = prime * result + ((replacement == null) ? 0 : replacement.hashCode());
-		return result;
+		return Objects.hash(component, ctReplacement, fatReplacement, locales, meatType);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -127,30 +121,15 @@ public class MeatContentRule {
 		if (getClass() != obj.getClass())
 			return false;
 		MeatContentRule other = (MeatContentRule) obj;
-		if (component == null) {
-			if (other.component != null)
-				return false;
-		} else if (!component.equals(other.component))
-			return false;
-		if (locales == null) {
-			if (other.locales != null)
-				return false;
-		} else if (!locales.equals(other.locales))
-			return false;
-		if (meatType != other.meatType)
-			return false;
-		if (replacement == null) {
-			if (other.replacement != null)
-				return false;
-		} else if (!replacement.equals(other.replacement))
-			return false;
-		return true;
+		return Objects.equals(component, other.component) && Objects.equals(ctReplacement, other.ctReplacement)
+				&& Objects.equals(fatReplacement, other.fatReplacement) && Objects.equals(locales, other.locales)
+				&& Objects.equals(meatType, other.meatType);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "MeatContentRule [replacement=" + replacement + ", meatType=" + meatType + ", component=" + component + ", locales=" + locales + "]";
+		return "MeatContentRule [fatReplacement=" + fatReplacement + ", ctReplacement=" + ctReplacement + ", meatType=" + meatType + ", component="
+				+ component + ", locales=" + locales + "]";
 	}
 
 	

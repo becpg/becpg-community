@@ -97,18 +97,6 @@ public abstract class AbstractEntityVisitor implements RemoteEntityVisitor {
 	}
 
 	/**
-	 * <p>writeCDATA.</p>
-	 *
-	 * @param attribute a {@link java.lang.String} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-	protected String writeCDATA(String attribute) {
-		return attribute != null
-				? attribute.replace("&", "&amp;").replace("\"", "&quot;").replace("\'", "&apos;").replace("<", "&lt;").replace(">", "&gt;")
-				: "";
-	}
-
-	/**
 	 * <p>shouldDumpAll.</p>
 	 *
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.

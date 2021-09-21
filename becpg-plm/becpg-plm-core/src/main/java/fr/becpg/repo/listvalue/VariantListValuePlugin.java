@@ -63,7 +63,7 @@ public class VariantListValuePlugin extends EntityListValuePlugin {
 		
 		
 		NodeRef entityNodeRef = null;
-		String entityNodeRefStr = (String) props.get(ListValueService.PROP_NODEREF);
+		String entityNodeRefStr = (String) props.get(ListValueService.PROP_ENTITYNODEREF);
 		if(entityNodeRefStr !=null && NodeRef.isNodeRef(entityNodeRefStr)) {
 			entityNodeRef = new NodeRef(entityNodeRefStr);
 		}
