@@ -61,6 +61,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 				String unit = (String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_UNIT);
 
 				n.setUnit(unit);
+		    /* Don't flat perc #6797
 				n.setFormulatedValue(FormulationHelper.flatPercValue(n.getFormulatedValue(), unit));
 				n.setMaxi(FormulationHelper.flatPercValue(n.getMaxi(), unit));
 				n.setMini(FormulationHelper.flatPercValue(n.getMini(), unit));
@@ -68,7 +69,8 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 					for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
 						(n).setValue(FormulationHelper.flatPercValue((n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i), unit), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
 					}
-				}
+				} 
+			  */
 				n.setType((String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_TYPE));
 
 			});

@@ -56,7 +56,7 @@
    <!-- Define elements that are bulk editable -->
 	<config evaluator="string-compare" condition="bulk-edit">
 		<itemTypes>
-			<itemType name="pjt:project" />
+			<itemType name="pjt:project" editSelectedFormId="bulk-edit"/>
 		</itemTypes>
 	</config>
 

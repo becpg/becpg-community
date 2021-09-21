@@ -48,6 +48,24 @@
 </#macro> 
 
 <#macro renderFormContainer formId>
+	 <#if args.showToc?? && args.showToc == "true">
+	 	<nav class="form-toc">
+	 	     <ul class="form-toc-menu">
+			    <#list form.structure as item>
+				  <#if item??>
+				    <#if item.kind == "set">
+				     <#if item.appearance?? && item.appearance == "bordered-panel" >
+				   		 <#if !isHiddenSet(item)>
+							<li class="form-toc-item"><a href="#set-${item.id}"><h2 class="alfresco-twister alfresco-twister-closed">${item.label}</h2></a></li>
+						 </#if>
+				      </#if>
+				     </#if>
+				  </#if>	
+				</#list>
+			 </ul>	
+	 	</nav>
+	 </#if>
+
    <div id="${formId}-container" class="form-container">
       <#if form.showCaption?? && form.showCaption>
          <div id="${formId}-caption" class="caption"><span class="mandatory-indicator">*</span>${msg("form.required.fields")}</div>
@@ -165,7 +183,7 @@
 		      <#if set.appearance == "fieldset">
 		         <fieldset><legend>${set.label}</legend>
 		      <#elseif set.appearance == "bordered-panel">
-		         <div class="set-bordered-panel">
+		         <div class="set-bordered-panel" id="set-${set.id}">
 		            <div class="set-bordered-panel-heading">${set.label}</div>
 		            <div class="set-bordered-panel-body">
 		      <#elseif set.appearance == "panel">
@@ -226,7 +244,7 @@
 		      <#if set.appearance == "fieldset">
 		         <fieldset><legend>${set.label}</legend>
 		      <#elseif set.appearance == "bordered-panel">
-		         <div class="set-bordered-panel">
+		         <div class="set-bordered-panel" id="set-${set.id}">
 		            <div class="set-bordered-panel-heading">${set.label}</div>
 		            <div class="set-bordered-panel-body">
 		      <#elseif set.appearance == "panel">
@@ -302,7 +320,7 @@
 				Alfresco.util.useAsButton("${fieldHtmlId}-locale-icon", function (event, fieldId)
 		            {
 		                new Alfresco.module.SimpleDialog("${fieldHtmlId}-${.now?long}-multilingualForm").setOptions({
-		                  templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=${form.arguments.itemId}&label=${field.label?url}&field="+fieldId<#if textarea >+"&textarea=true"</#if><#if field.disabled >+"&readonly=true"</#if><#if htmlEditor >+"&htmlEditor=true"</#if><#if maxLength < 100000>+"&maxLength=${maxLength?string}"</#if>,
+		                  templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=${form.arguments.itemId}&label=${field.label?url}&field="+fieldId<#if textarea >+"&textarea=true"</#if><#if field.disabled >+"&readonly=true"</#if><#if htmlEditor >+"&htmlEditor=true"</#if><#if maxLength < 100000>+"&maxLength=${maxLength?string("###.##")}"</#if>,
 		                  actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/"+fieldId+"?nodeRef=${form.arguments.itemId}",
 		                  validateOnSubmit : false,
 		                  destroyOnHide : false,

@@ -15,28 +15,14 @@
     float: none;
 }
 
-div.wizard-comments {
-	  margin-top: 20px;
-	  width: 21%;
-	  overflow: hidden;
+.yui-t6 {
+	width: auto !important;
 }
 
-div.wizard-catalog {
-	  margin-top: 20px;
-	  width: 21%;
-	  overflow: hidden;
-}
 
-div.wizard-container{
-	float: left; 
-	clear: none;
-	width: 100%;
-}
-
-div.wizard-content {
-	  float: left;
-	  width: 78%;
-	  overflow: hidden;
+#wizard-side-panel {
+	  margin-top: 15px;
+	  margin-left: 15px; 
 }
 
 .wizard .form-container .form-buttons {

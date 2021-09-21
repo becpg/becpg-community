@@ -37,7 +37,7 @@ down() {
    	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
     fi 
     if [ -f $COMPOSE_FILE_PATH ]; then
-        docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH down
+        docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH  -f docker-compose.override.yml down
     fi
 }
 
@@ -50,6 +50,7 @@ deploy_fast(){
 	#becpg-share
 	docker cp becpg-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
 	docker cp becpg-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-share/src/main/assembly/config/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	docker cp becpg-designer/becpg-designer-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
 	docker cp becpg-designer/becpg-designer-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	docker cp becpg-project/becpg-project-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/

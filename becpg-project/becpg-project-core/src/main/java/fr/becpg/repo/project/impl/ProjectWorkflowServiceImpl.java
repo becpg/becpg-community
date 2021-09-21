@@ -339,6 +339,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 									workflowTask.getProperties(), properties);
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_WORKFLOW_PRIORITY, projectData.getPriority(),
 									workflowTask.getProperties(), properties);
+							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_PRIORITY, projectData.getPriority(),
+									workflowTask.getProperties(), properties);
 							properties = getWorkflowTaskNewProperties(WorkflowModel.PROP_STATUS, WorkflowConstants.TASK_STATUS_IN_PROGRESS,
 									workflowTask.getProperties(), properties);
 

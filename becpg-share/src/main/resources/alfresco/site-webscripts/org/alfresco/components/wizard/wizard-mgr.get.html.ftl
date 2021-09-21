@@ -38,11 +38,11 @@
 </@>
 
 
-
 <@markup id="widgets">
    <@inlineScript group="wizard">
 		    Alfresco.constants.DASHLET_RESIZE = true && YAHOO.env.ua.mobile === null;
    </@>
+   
  <@inlineScript group="comment">
   	Alfresco.CommentsList.prototype.onReady =  function CommentList_onReady()
       {
@@ -74,32 +74,27 @@
 <@markup id="html">
    <@uniqueIdDiv>
 	   	<#assign el=args.htmlid?html>
-	   		  <div id="alf-filters" width="1000px"></div>
-	    	  <#if comments || catalogId??>
-	    	 	<div class="wizard-container">	    	 		
-			         <div  class="wizard-content">
-			  </#if>  
-			  			<div class="clear"></div>
-			   			<div class="wizard-mgr">     
-				          <h1 id="${el}-wizardTitle" class="hidden"></h1>
-				          <div id="${el}-wizard"></div>		
-						</div>          		          
-	         	<#if comments || catalogId??>
-	         		 </div>
-	         		 
-	         		 <#if comments && catalogId??>
+	   	
+	   	<div class="yui-t6" id="wizard">
+           <div id="yui-main">
+              <div class="yui-b" id="alf-content">
+        			<div class="wizard-mgr">     
+				         <h1 id="${el}-wizardTitle" class="hidden"></h1>
+				         <div id="${el}-wizard"></div>		
+					</div>  
+              </div>
+           </div>
+           <div class="yui-b" id="alf-filters">
+        		<#if comments || catalogId??>
+	         	 <div id="wizard-side-panel">
 	         		 	 <div id="${el}-tabview" class="yui-navset wizard-comments">
 									<ul class="yui-nav" >
-								   		<li class="selected" ><a href="#${el}-comments" ><em>${msg("header.comments")}</em></a></li>
-								   		<li ><a href="#${el}-catalogs"><em>${msg("label.property_completion")}</em></a></li>
+								   	 <#if comments ><li class="selected" ><a href="#${el}-comments" ><em>${msg("header.comments")}</em></a></li></#if>
+								   	 <#if  catalogId??>	<li ><a href="#${el}-catalogs"><em>${msg("label.property_completion")}</em></a></li></#if>
 								   	</ul>
 						   <div class="yui-content properties-tab">
 								 <div id="tab_${el}-comments">  	
-	         		 <#else>
-	         		   <#if comments >	 
-	         		 	 <div class="wizard-comments">
-	         			</#if>	 
-	         		 </#if>
+	         		
 	         		 
 			        <#if comments >	 
 			        	 
@@ -134,15 +129,9 @@
 	         		  </div>
 			         </#if> 
 	         		  
-		         		 <#if comments && catalogId??>
+		         		 <#if  catalogId??>
 		         		  <div id="tab_${el}-catlogs">
-		         		  <#else>
-		         		  <#if catalogId?? >	 
-		         		 	<div class="wizard-catalog"> 
-		         		 </#if>
-		         		 </#if>
-			         		 <#if catalogId??>
-				         	 		         	 	
+		         	 	
 				         		 <div id="${el}-step-step1_cat">
 									  <div id="${el}-step-step1_cat-entity-catalog"></div> 
 								 </div>	
@@ -150,12 +139,15 @@
 					  	 </#if>
 					  
 					  
-					   <#if comments && catalogId??>
 					  	</div></div>
-					   </#if>
-					  
-					</div>
+					 </div>
+				</div>
 					
 			</#if>
+			
+          </div>
+	   
+			   			        		          
+	         	
    </@>
 </@>

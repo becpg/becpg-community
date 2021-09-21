@@ -2,8 +2,6 @@ package fr.becpg.repo.product.helper;
 
 import java.util.List;
 
-import fr.becpg.model.NutrientProfileCategory;
-
 /**
  * Helper to compute 5C Nutrient Profile Score
  *
@@ -11,6 +9,11 @@ import fr.becpg.model.NutrientProfileCategory;
  * @version $Id: $Id
  */
 public class Nutrient5C2021Helper {
+	
+
+	enum NutrientCategory {
+		Cheeses, Fats, Beverages, Others
+	}
 
 	private static final double[][] othersACategories = new double[][] { { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
 			{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d }, { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d },
@@ -40,7 +43,7 @@ public class Nutrient5C2021Helper {
 	private static final double[][] beveragesCCategories = new double[][] { { 80d, -1d, -1d, -1d, -1d, -1d, 60d, -1d, 40d, -1d },
 			{ 3.5d, 2.8d, 2.1d, 1.4d, 0.7d }, { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d }, { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
 
-	private static double[][] getACategory(NutrientProfileCategory category) {
+	private static double[][] getACategory(NutrientCategory category) {
 		switch (category) {
 		case Fats:
 			return fatsACategories;
@@ -54,7 +57,7 @@ public class Nutrient5C2021Helper {
 
 	}
 
-	private static double[][] getCCategory(NutrientProfileCategory category) {
+	private static double[][] getCCategory(NutrientCategory category) {
 		switch (category) {
 		case Fats:
 			return fatsCCategories;
@@ -92,8 +95,8 @@ public class Nutrient5C2021Helper {
 
 //		les arrondis sont déja effectués
 		
-		double[][] aCategories = getACategory(NutrientProfileCategory.valueOf(category));
-		double[][] cCategories = getCCategory(NutrientProfileCategory.valueOf(category));
+		double[][] aCategories = getACategory(NutrientCategory.valueOf(category));
+		double[][] cCategories = getCCategory(NutrientCategory.valueOf(category));
 
 		if (energyKj != null) {
 
@@ -106,7 +109,7 @@ public class Nutrient5C2021Helper {
 			aScore += score;
 		}
 
-		if (NutrientProfileCategory.Fats.equals(NutrientProfileCategory.valueOf(category))) {
+		if (NutrientCategory.Fats.equals(NutrientCategory.valueOf(category))) {
 			if ((satFat != null) && (totalFat != null)) {
 				score = 10;
 				for (double val : aCategories[1]) {
@@ -168,9 +171,9 @@ public class Nutrient5C2021Helper {
 			cScore += score;
 		}
 
-		if ((aScore < 11) || NutrientProfileCategory.Cheeses.equals(NutrientProfileCategory.valueOf(category))
-				|| ((aScore >= 11) && (cScore >= 5) && !NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))
-				|| ((aScore >= 11) && (cScore >= 10) && NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))) {
+		if ((aScore < 11) || NutrientCategory.Cheeses.equals(NutrientCategory.valueOf(category))
+				|| ((aScore >= 11) && (cScore >= 5) && !NutrientCategory.Beverages.equals(NutrientCategory.valueOf(category)))
+				|| ((aScore >= 11) && (cScore >= 10) && NutrientCategory.Beverages.equals(NutrientCategory.valueOf(category)))) {
 			if (protein != null) {
 				score = 5;
 				for (double val : cCategories[3]) {
