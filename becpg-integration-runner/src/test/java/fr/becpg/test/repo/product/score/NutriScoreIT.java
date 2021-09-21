@@ -18,6 +18,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GS1Model;
 import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.importer.impl.ImportHelper;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -135,19 +136,34 @@ public class NutriScoreIT extends PLMBaseTestCase {
 
 	private NodeRef findOrCreateNode(QName type, QName property, String value) {
 		NodeRef node = ImportHelper.findCharact(type, property, value, nodeService);
+
 		
 		if (node == null) {
+			NodeRef companyHomeNodeRef = repositoryHelper.getCompanyHome();
+			
+			NodeRef systemNodeRef = repoService.getFolderByPath(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
+			
+			NodeRef charactsNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
+			
+			NodeRef entityListNodeRef = repoService.getFolderByPath(charactsNodeRef, "bcpg:entityLists");;
+			
+			NodeRef parentRef = null;
+			
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, value);
 			properties.put(property, value);
 			if (type.equals(PLMModel.TYPE_NUT)) {
+				parentRef = repoService.getFolderByPath(entityListNodeRef, "cm:Nuts");
 				properties.put(PLMModel.PROP_NUTUNIT, "g");
 			} else if (type.equals(PLMModel.TYPE_PHYSICO_CHEM)) {
+				parentRef = repoService.getFolderByPath(entityListNodeRef, "cm:PhysicoChems");
 				properties.put(PLMModel.PROP_PHYSICO_CHEM_UNIT, "%");
 			}
 			
+			NodeRef finalParentRef = parentRef;
+			
 			node = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+				return nodeService.createNode(finalParentRef, ContentModel.ASSOC_CONTAINS,
 						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 						type, properties).getChildRef();
 			}, false, true);	

@@ -41,7 +41,7 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 	public void testSuggestSupplier() {
 
 		
-		createFinishProductNodeRef();
+		final NodeRef  finishProductNodeRef = createFinishProductNodeRef();
 
 		final String supplierName = "Supplier-" + UUID.randomUUID().toString();
 
@@ -124,6 +124,16 @@ public class ListValueServiceIT extends AbstractListValuePluginTest {
 			}
 
 			assertTrue("2 suggestion", suggestions.size()>=2);
+			
+			props = new HashMap<>();
+			props.put(ListValueService.PROP_NODEREF, finishProductNodeRef.toString());
+			
+			//Suggest supplier plants of supplier 1
+			suggestions = entityListValuePlugin.suggestTargetAssoc(PLMModel.ASSOC_SUPPLIERS.toString(), PLMModel.TYPE_PLANT, "µ", 0, RepoConsts.MAX_RESULTS_UNLIMITED, null, props)
+					.getResults();
+
+			assertEquals("0 suggestion", 0, suggestions.size());
+
 			
 			return null;
 		}, false, true);

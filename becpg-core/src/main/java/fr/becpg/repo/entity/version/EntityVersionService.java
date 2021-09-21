@@ -10,6 +10,7 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionType;
+import org.alfresco.service.namespace.QName;
 
 /**
  * The Interface EntityVersionService.
@@ -204,5 +205,7 @@ public interface EntityVersionService {
 	NodeRef extractVersion(NodeRef entity1);
 	
 	boolean isV2Service();
+
+	void createInitialVersionWithProps(NodeRef entityNodeRef, Map<QName, Serializable> before);
 
 }

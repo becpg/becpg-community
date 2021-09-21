@@ -34,6 +34,7 @@
     <bean id="qualityControlPolicies" class="fr.becpg.repo.quality.policy.QualityControlPolicies" parent="abstractBeCPGPolicy">
 		<property name="qualityControlService" ref="qualityControlService" />
 		<property name="transactionService" ref="transactionService"/>		
+		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 
     <bean id="nonConformityService" class="fr.becpg.repo.quality.impl.NonConformityServiceImpl">
