@@ -5882,7 +5882,6 @@
 		</forms>
 	</config>
 
-
 	<!-- ######### CARACTERISTIQUES ######### -->
 
 	<!-- bcpg:allergen -->
@@ -7579,33 +7578,9 @@
 					</field>										
 				</appearance>
 			</form>
-			<form id="bulk-edit">
-				<field-visibility>
-					<show id="cm:name" force="true" />
-					<show id="bcpg:code" force="true" />
-					<show id="cm:title" force="true" />
-					<show id="cm:description" force="true" />
-					<show id="pjt:projectHierarchy1" force="true"/>
-					<show id="pjt:projectHierarchy2" force="true"/>
-					<show id="pjt:projectOrigin" force="true"/>
-					<show id="pjt:projectSponsor" force="true"/>
-					<show id="pjt:projectManager" force="true"/>
-					<show id="pjt:projectObservers" force="true"/>
-					<show id="bcpg:suppliers" force="true" />
-					<show id="pjt:projectObservers" force="true"/>
-					<show id="bcpg:entityTplRef" force="true" />
-					<show id="pjt:projectEntity" force="true"/>
-					<show id="pjt:projectPriority" force="true"/>
-					<show id="pjt:projectState" force="true"/>
-					<show id="pjt:projectStartDate" force="true"/>
-					<show id="pjt:projectCompletionDate" force="true"/>
-					<show id="pjt:projectDueDate" force="true"/>
-					<show id="pjt:projectCurrentTasks" force="true"/>
-				</field-visibility>
-			</form>
-		</forms>	
+		</forms>
 	</config>
-
+	
 	<!-- bcpg:supplier type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:supplier">
 		<forms>
@@ -7824,6 +7799,28 @@
 
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:supplierHierarchy1">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:supplierHierarchy2">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_supplierHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" />
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
 				</appearance>
 				
 			</form>
