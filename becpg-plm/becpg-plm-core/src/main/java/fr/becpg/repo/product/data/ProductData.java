@@ -89,6 +89,10 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private ProductData entityTpl;
 	private List<NodeRef> plants = new ArrayList<>();
 
+	/* Glop
+	 * 
+	 */
+	private GlopData glopData;
 	/*
 	 * Transformable properties
 	 */
@@ -245,6 +249,18 @@ public class ProductData extends AbstractEffectiveDataItem implements Formulated
 	private String entityScore;
 	private List<String> reportLocales;
 	private List<ProductData> compareWithEntities;
+
+        
+	/** {@inheritDoc} */
+	public GlopData getGlopData() {
+		return glopData;
+	}
+	
+	/** {@inheritDoc} */
+	public void setGlopData(GlopData glopData) {
+		this.glopData = glopData;
+	}
+	
 
 	/**
 	 * <p>Getter for the field <code>productSpecifications</code>.</p>
