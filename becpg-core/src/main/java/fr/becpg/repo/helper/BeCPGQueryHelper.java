@@ -5,7 +5,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Locale;
 
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
@@ -33,7 +32,7 @@ public class BeCPGQueryHelper {
 	private static final String SUFFIX_DOUBLE_QUOTE = "\"";
 	private static final String SUFFIX_SIMPLE_QUOTE = "'";
 
-	private static final Analyzer luceneAnaLyzer = null;
+	private static Analyzer luceneAnaLyzer = null;
 
 	/**
 	 * <p>isQueryMatch.</p>
@@ -43,14 +42,14 @@ public class BeCPGQueryHelper {
 	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
 	 * @return a boolean.
 	 */
-	public static boolean isQueryMatch(String query, String entityName, DictionaryService dictionaryService) {
+	public static boolean isQueryMatch(String query, String entityName) {
 		if (query != null) {
 
 			if (SUFFIX_ALL.equals(query)) {
 				return true;
 			}
 
-			Analyzer analyzer = getTextAnalyzer(dictionaryService);
+			Analyzer analyzer = getTextAnalyzer();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Analyzing " + entityName + " with query " + query + " using analyzer : " + analyzer.getClass().getName());
@@ -102,7 +101,6 @@ public class BeCPGQueryHelper {
 					}
 
 				} catch (IOException e) {
-					// Nothing todo here
 					logger.error(e, e);
 				}
 
@@ -120,14 +118,14 @@ public class BeCPGQueryHelper {
 	 * @param query a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public static String prepareQuery(DictionaryService dictionaryService, String query) {
+	public static String prepareQuery(String query) {
 
 		logger.debug("Query before prepare:" + query);
 		if ((query != null) && !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE)
 				|| query.endsWith(SUFFIX_SIMPLE_QUOTE))) {
 			// Query with wildcard are not getting analyzed by stemmers
 			// so do it manually
-			Analyzer analyzer = getTextAnalyzer(dictionaryService);
+			Analyzer analyzer = getTextAnalyzer();
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Using analyzer : " + analyzer.getClass().getName());
@@ -165,7 +163,6 @@ public class BeCPGQueryHelper {
 					}
 
 				} catch (IOException e) {
-					// Nothing todo here
 					logger.error(e, e);
 				}
 
@@ -178,11 +175,15 @@ public class BeCPGQueryHelper {
 		return query;
 	}
 
-	private static Analyzer getTextAnalyzer(DictionaryService dictionaryService) {
-		if (Locale.FRENCH.equals(Locale.getDefault())) {
-			return new FrenchBeCPGAnalyser();
+	private static Analyzer getTextAnalyzer() {
+		if (luceneAnaLyzer == null) {
+			if (Locale.FRENCH.equals(Locale.getDefault())) {
+				luceneAnaLyzer = new FrenchBeCPGAnalyser();
+			} else {
+				luceneAnaLyzer = new EnglishBeCPGAnalyser();
+			}
 		}
-		return new EnglishBeCPGAnalyser();
+		return luceneAnaLyzer;
 
 	}
 
