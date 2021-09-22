@@ -15,7 +15,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import com.ibm.icu.util.Calendar;
 
-import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.formulation.FormulationBaseHandler;

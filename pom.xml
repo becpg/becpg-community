@@ -121,6 +121,7 @@
 		<alfresco-data-model.version>8.423</alfresco-data-model.version>
 		<alfresco-core.version>8.423</alfresco-core.version>
 	    <spring-webscripts.version>8.18</spring-webscripts.version>
+	    <spring-surf.version>8.9</spring-surf.version>
 	
 
 

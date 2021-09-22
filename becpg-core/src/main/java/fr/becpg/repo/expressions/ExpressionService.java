@@ -11,11 +11,11 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @author matthieu
  *
  */
-public interface ExpressionService<T extends RepositoryEntity> {
+public interface ExpressionService {
 
 	Object eval(String condition, List<NodeRef> nodeRefs);
 
-	Object eval(String condition, T formulatedEntity);
+	<T extends RepositoryEntity> Object eval(String condition, T formulatedEntity);
 
 
 }

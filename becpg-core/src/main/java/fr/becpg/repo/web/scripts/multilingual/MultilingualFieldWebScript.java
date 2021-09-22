@@ -31,7 +31,7 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -94,7 +94,6 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	}
 
 	/** {@inheritDoc} */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
@@ -262,7 +261,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	}
 
 
-	private String getTranslatedText(String defaultValue, String target) throws IOException {
+	private String getTranslatedText(String defaultValue, String target) {
 		if ((googleApiKey != null) && !googleApiKey.isEmpty()) {
 			logger.debug("Try to translate : " + defaultValue + " in " + target);
 

@@ -1,6 +1,6 @@
 package fr.becpg.repo.helper;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 public class XMLTextHelper {
 
@@ -29,7 +29,7 @@ public class XMLTextHelper {
 		}
 		
 		if (escapeXML) {
-			return StringEscapeUtils.escapeXml(out.toString());
+			return StringEscapeUtils.escapeXml11(out.toString());
 		}
 	      
 	      return out.toString();

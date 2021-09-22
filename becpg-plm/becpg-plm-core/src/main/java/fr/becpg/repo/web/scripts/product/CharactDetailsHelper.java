@@ -34,6 +34,7 @@ import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -298,8 +299,10 @@ public class CharactDetailsHelper {
 			int cellnum = 0;
 			Row row = sheet.createRow(rownum++);
 			XSSFCellStyle style = workbook.createCellStyle();
-
-			XSSFColor green = new XSSFColor(new java.awt.Color(0, 102, 0));
+			
+			byte[] rgb = {(byte)  0, (byte) 102, (byte) 0};
+			
+			XSSFColor green = new XSSFColor(rgb, new DefaultIndexedColorMap());
 
 			style.setFillForegroundColor(green);
 			style.setFillPattern(FillPatternType.SOLID_FOREGROUND);

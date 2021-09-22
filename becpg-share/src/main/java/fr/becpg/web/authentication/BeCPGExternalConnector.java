@@ -32,13 +32,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.alfresco.web.site.servlet.MTAuthenticationFilter;
-import org.alfresco.web.site.servlet.SSOAuthenticationFilter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.config.RemoteConfigElement.ConnectorDescriptor;
 import org.springframework.extensions.surf.ServletUtil;
 import org.springframework.extensions.webscripts.RequestCachingConnector;
-import org.springframework.extensions.webscripts.connector.AlfrescoConnector;
 import org.springframework.extensions.webscripts.connector.Connector;
 import org.springframework.extensions.webscripts.connector.ConnectorContext;
 import org.springframework.extensions.webscripts.connector.ConnectorService;
@@ -190,7 +188,7 @@ public class BeCPGExternalConnector extends RequestCachingConnector
         ConnectorSession connectorSession = getConnectorSession();
         if (connectorSession != null)
         {
-            Map<String, String> cookies = new HashMap<String, String>(8);
+            Map<String, String> cookies = new HashMap<>(8);
             for (String cookieName : connectorSession.getCookieNames())
             {
                 cookies.put(cookieName, connectorSession.getCookie(cookieName));
@@ -198,7 +196,7 @@ public class BeCPGExternalConnector extends RequestCachingConnector
             remoteClient.setCookies(cookies);
         }
         
-        Map<String, String> headers = new HashMap<String, String>(8);
+        Map<String, String> headers = new HashMap<>(8);
         if (context != null)
         {
             headers.putAll(context.getHeaders());
