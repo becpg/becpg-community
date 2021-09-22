@@ -29,8 +29,8 @@ pull() {
 }
 
 down() {
-	if [ -d becpg-enterprise-test ]; then
-	    cd becpg-enterprise-test
+	if [ -d becpg-enterprise ]; then
+	    cd becpg-enterprise
 	   	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
 	    cd ..
    	else
@@ -59,9 +59,9 @@ deploy_fast(){
 	docker cp becpg-plm/becpg-plm-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
 	docker cp becpg-plm/becpg-plm-share/src/main/assembly/config/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	if [ -d becpg-enterprise-test ]; then
-	  docker cp becpg-enterprise-test/becpg-enterprise-test-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	  docker cp becpg-enterprise-test/becpg-enterprise-test-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	if [ -d becpg-enterprise ]; then
+	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
+	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	fi
 	
 	wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8080/share/page/index
@@ -73,8 +73,8 @@ purge() {
 }
 
 build() {
-   if [ -d becpg-enterprise-test ]; then
-    cd becpg-enterprise-test
+   if [ -d becpg-enterprise ]; then
+    cd becpg-enterprise
    	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
     cd ..
    else
@@ -83,8 +83,8 @@ build() {
 }
 
 install() {
-  if [ -d becpg-enterprise-test ]; then
-    cd becpg-enterprise-test
+  if [ -d becpg-enterprise ]; then
+    cd becpg-enterprise
     $MVN_EXEC  install $EXTRA_ENV -DskipTests=true -P full
      cd ..
    else

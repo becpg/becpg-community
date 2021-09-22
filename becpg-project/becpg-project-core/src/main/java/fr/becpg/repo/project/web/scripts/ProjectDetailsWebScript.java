@@ -31,7 +31,6 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormatService;
-import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
@@ -159,7 +158,7 @@ public class ProjectDetailsWebScript extends AbstractWebScript {
 				taskObject.put("taskState", task.getState());
 
 				// milestoneDetails
-				if ((task.getIsMilestone() != null) && task.getIsMilestone()) {
+				if (Boolean.TRUE.equals(task.getIsMilestone())) {
 					milestoneSum++;
 					if (((task.getEnd() != null) && task.getEnd().after(today)) || ((task.getStart() != null) && task.getStart().after(today))) {
 						if (nextMilestoneTask == null) {

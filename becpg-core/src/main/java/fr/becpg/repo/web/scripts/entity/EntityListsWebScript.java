@@ -103,8 +103,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private static final String KEY_NAME_DESCRIPTION = "description";
 
 	private static final String KEY_NAME_ENTITY_NAME = "entityName";
-	
-	private static final String KEY_NAME_ENTITY_TYPE = "entityType";
 
 	private static final String KEY_NAME_NODE_REF = "nodeRef";
 

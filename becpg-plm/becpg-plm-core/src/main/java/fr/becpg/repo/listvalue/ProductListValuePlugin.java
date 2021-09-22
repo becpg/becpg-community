@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.search.impl.lucene.LuceneQueryParserException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -38,7 +37,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
@@ -215,11 +213,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		}
 
 		if (ret == null) {
-			try {
 				ret = queryBuilder.list();
-			} catch (LuceneQueryParserException e) {
-				logger.error("Bad list value query:" + queryBuilder.toString());
-			}
 		}
 
 		return new ListValuePage(ret, pageNum, pageSize, targetAssocValueExtractor);

@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.jxls.expression.ExpressionEvaluator;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import fr.becpg.repo.formulation.spel.SpelFormulaService;

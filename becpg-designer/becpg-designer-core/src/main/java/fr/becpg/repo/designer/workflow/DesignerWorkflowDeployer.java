@@ -18,7 +18,6 @@
 package fr.becpg.repo.designer.workflow;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +37,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.xml.sax.SAXException;
@@ -120,10 +118,8 @@ public class DesignerWorkflowDeployer {
 
 		BPMN2XmlParser bpmn2Parser = new BPMN2XmlParser();
 		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-		InputStream in = null;
 		try {
-			in = reader.getContentInputStream();
-			bpmn2Parser.parse(in);
+			bpmn2Parser.parse(reader.getContentInputStream());
 
 			if (bpmn2Parser.isActivitiWf()) {
 
@@ -168,9 +164,7 @@ public class DesignerWorkflowDeployer {
 
 		} catch (IOException | ParserConfigurationException | SAXException e) {
 			logger.error(e, e);
-		} finally {
-			IOUtils.closeQuietly(in);
-		}
+		} 
 
 	}
 

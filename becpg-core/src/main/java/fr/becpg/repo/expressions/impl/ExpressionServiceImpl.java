@@ -25,7 +25,7 @@ import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.repository.RepositoryEntity;
 
 @Service("expressionService")
-public class ExpressionServiceImpl<T extends RepositoryEntity> implements ExpressionService<T> {
+public class ExpressionServiceImpl implements ExpressionService {
 
 	private Log logger = LogFactory.getLog(ExpressionServiceImpl.class);
 
@@ -46,7 +46,7 @@ public class ExpressionServiceImpl<T extends RepositoryEntity> implements Expres
 	private SpelFormulaService spelFormulaService;
 
 	@Override
-	public Object eval(String condition, T formulatedEntity) {
+	public <T extends RepositoryEntity> Object eval(String condition, T formulatedEntity) {
 
 		Matcher match = jsPattern.matcher(condition);
 		try {

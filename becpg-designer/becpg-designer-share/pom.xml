@@ -30,13 +30,6 @@
 			 </comments>
 		</license>
 	</licenses>
-	<!-- <dependencies>
-		<dependency>
-            <groupId>org.alfresco</groupId>
-            <artifactId>alfresco-repository</artifactId>
-             <scope>provided</scope>
-        </dependency>
-	</dependencies> -->
 	<build>
 		<plugins>
 			<plugin>

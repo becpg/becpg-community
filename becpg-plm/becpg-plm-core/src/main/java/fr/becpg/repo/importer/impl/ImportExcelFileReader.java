@@ -9,11 +9,12 @@ import java.util.List;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ContentWriter;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -103,7 +104,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 						 ){
 						throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_FIELD_TYPE, attributeMapping.getAttribute().getName()));
 					} else	
-					if (HSSFDateUtil.isCellDateFormatted(cell) || HSSFDateUtil.isCellInternalDateFormatted(cell)) {
+					if (DateUtil.isCellDateFormatted(cell) || DateUtil.isCellInternalDateFormatted(cell)) {
 						line.add(propertyFormats.formatDate(cell.getDateCellValue()));
 					} else {
 						line.add(propertyFormats.formatDecimal(cell.getNumericCellValue()));
@@ -146,9 +147,9 @@ public class ImportExcelFileReader implements ImportFileReader {
 			if (row != null) {
 				XSSFCellStyle style = workbook.createCellStyle();
 
-				XSSFColor green = new XSSFColor(new java.awt.Color(255, 0, 0));
-
-				style.setFillForegroundColor(green);
+				byte[] rgb = {(byte)  255, (byte) 0, (byte) 0};
+				
+				style.setFillForegroundColor( new XSSFColor(rgb, new DefaultIndexedColorMap()));
 				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 				Cell cell = row.createCell(columnIdx + 1);
@@ -185,9 +186,10 @@ public class ImportExcelFileReader implements ImportFileReader {
 			if (row != null) {
 				XSSFCellStyle style = workbook.createCellStyle();
 
-				XSSFColor green = new XSSFColor(new java.awt.Color(0, 255, 0));
-
-				style.setFillForegroundColor(green);
+				byte[] rgb = {(byte)  0, (byte) 255, (byte) 0};
+				
+				style.setFillForegroundColor( new XSSFColor(rgb, new DefaultIndexedColorMap()));
+				
 				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 				for (int i = 0; i < row.getLastCellNum(); i++) {
