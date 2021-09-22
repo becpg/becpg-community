@@ -138,10 +138,10 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 			loadEFs();
 		}
 
-		String preparedQuery = BeCPGQueryHelper.prepareQuery(entityDictionaryService, query).replace("*", "");
+		String preparedQuery = BeCPGQueryHelper.prepareQuery( query).replace("*", "");
 
 		matches.addAll(environmentalFootprints.values().stream()
-				.filter(res -> BeCPGQueryHelper.isQueryMatch(query, res.value, entityDictionaryService)).limit(100).collect(Collectors.toList()));
+				.filter(res -> BeCPGQueryHelper.isQueryMatch(query, res.value)).limit(100).collect(Collectors.toList()));
 
 		matches.sort((o1, o2) -> {
 
@@ -149,8 +149,8 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 				return o1.getValue().compareTo(o2.getValue());
 			}
 
-			String value = BeCPGQueryHelper.prepareQuery(entityDictionaryService, o1.getValue()).replace("*", "").replace(preparedQuery, "A");
-			String value2 = BeCPGQueryHelper.prepareQuery(entityDictionaryService, o2.getValue()).replace("*", "").replace(preparedQuery, "A");
+			String value = BeCPGQueryHelper.prepareQuery( o1.getValue()).replace("*", "").replace(preparedQuery, "A");
+			String value2 = BeCPGQueryHelper.prepareQuery(o2.getValue()).replace("*", "").replace(preparedQuery, "A");
 
 			return value.compareTo(value2);
 

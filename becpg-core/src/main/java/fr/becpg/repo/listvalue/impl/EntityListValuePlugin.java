@@ -527,7 +527,7 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 	 * @return a {@link java.lang.String} object.
 	 */
 	protected String prepareQuery(String query) {
-		return BeCPGQueryHelper.prepareQuery(dictionaryService, query);
+		return BeCPGQueryHelper.prepareQuery(query);
 	}
 
 	/**
@@ -538,8 +538,7 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 	 * @return a boolean.
 	 */
 	public boolean isQueryMatch(String query, String entityName) {
-
-		return BeCPGQueryHelper.isQueryMatch(query, entityName, dictionaryService);
+		return BeCPGQueryHelper.isQueryMatch(query, entityName);
 	}
 
 	/**
