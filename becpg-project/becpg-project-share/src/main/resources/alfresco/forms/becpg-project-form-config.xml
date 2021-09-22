@@ -783,6 +783,83 @@
 					<show id="pjt:projectDueDate" force="true"/>
 					<show id="pjt:projectCurrentTasks" force="true"/>
 				</field-visibility>
+				<appearance>
+					<set id="mainInfo" appearance="bordered-panel"
+						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="planning" appearance="bordered-panel" label-id="becpg.forms.set.planning.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="categories" appearance="bordered-panel"
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+
+					<field id="cm:name" set="mainInfo" />
+					<field id="cm:title" set="mainInfo" />
+					<field id="cm:description" set="mainInfo" />
+					<field id="bcpg:code" read-only="true" set="mainInfo" />
+					<field id="pjt:projectHierarchy1" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectHierarchy2" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
+							</control-param>
+							<control-param name="parent">pjt_projectHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectOrigin" set="mainInfo" />
+					<field id="pjt:projectSponsor" set="mainInfo" />
+					<field id="pjt:projectManager" set="mainInfo" />
+					<field id="pjt:projectObservers" set="mainInfo" />
+					<field id="pjt:observersEvents"  set="mainInfo" />
+					
+					<field id="bcpg:entityTplRef" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+							<control-param name="showTooltip">false</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectEntity" set="mainInfo" />
+					<field id="pjt:projectPriority" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/workflow/priority.ftl" />
+					</field>
+					<field id="pjt:projectState" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							</control-param>
+						</control>
+					</field>
+
+					<field id="pjt:projectStartDate" set="planning" />
+					<field id="pjt:projectDueDate" set="planning" />
+					<field id="pjt:projectPlanningMode" set="planning" />
+
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 
 		</forms>
