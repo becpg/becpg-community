@@ -152,15 +152,17 @@
 			<version>2.9.4</version>
 		</dependency>
 
-
-		<!-- Image IO <dependency> <groupId>com.twelvemonkeys.imageio</groupId> 
-			<artifactId>imageio-jpeg</artifactId> <version>3.6</version> </dependency> 
-			<dependency> <groupId>com.twelvemonkeys.imageio</groupId> <artifactId>imageio-tiff</artifactId> 
-			<version>3.6</version> </dependency> -->
-
-		<!-- IText PDF <dependency> <groupId>com.itextpdf</groupId> <artifactId>itextpdf</artifactId> 
-			<version>5.0.6</version> <type>jar</type> <exclusions> <exclusion> <groupId>*</groupId> 
-			<artifactId>*</artifactId> </exclusion> </exclusions> </dependency> -->
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-snowball</artifactId>
+			<version>2.9.4</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-analyzers</artifactId>
+			<version>2.9.4</version>
+		</dependency>
 
 	</dependencies>
 	<build>
