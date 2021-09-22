@@ -22,6 +22,7 @@ import org.json.JSONException;
 
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.decernis.DecernisMode;
+import fr.becpg.repo.glop.model.GlopData;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.TareUnit;
@@ -87,7 +88,12 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	protected Date startEffectivity;
 	
 	protected Date endEffectivity;
-
+	
+	/* Glop
+	 * 
+	 */
+	private GlopData glopData;
+	
 	/*
 	 * Transformable properties
 	 */
@@ -244,6 +250,16 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private List<String> reportLocales;
 	private List<ProductData> compareWithEntities;
 
+	
+	/** {@inheritDoc} */
+	public GlopData getGlopData() {
+		return glopData;
+	}
+	
+	/** {@inheritDoc} */
+	public void setGlopData(GlopData glopData) {
+		this.glopData = glopData;
+	}
 	
 	/** {@inheritDoc} */
 	@AlfProp
