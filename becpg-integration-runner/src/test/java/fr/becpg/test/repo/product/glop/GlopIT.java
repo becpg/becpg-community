@@ -430,7 +430,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setNutList(nutList);
 			
 			List<DynamicCharactListItem> dynamicCharactList = new ArrayList<>();
-			dynamicCharactList.add(new DynamicCharactListItem("test1", "@glop.optimize({target: {var: cost['" + cost1 + "'], task: \"min\"}, constraints: {{var: nut['" + nut3 + "'], min: 10, max: \"inf\"}, {var: nut['" + nut4 + "'], min: 4, max: 4}}})"));
+			dynamicCharactList.add(new DynamicCharactListItem("test1", "var glopData = @glop.optimize({target: {var: cost['" + cost1 + "'], task: \"min\"}, constraints: {{var: nut['" + nut3 + "'], min: 10, max: \"inf\"}, {var: nut['" + nut4 + "'], min: 4, max: 4}}}); #glopData.toString();"));
 			finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactList);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
