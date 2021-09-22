@@ -24,10 +24,8 @@ import java.util.Collection;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;

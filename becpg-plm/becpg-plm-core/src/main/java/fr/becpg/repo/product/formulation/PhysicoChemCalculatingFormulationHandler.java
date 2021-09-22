@@ -20,7 +20,6 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
-import fr.becpg.repo.repository.model.VariantAwareDataItem;
 
 /**
  * <p>PhysicoChemCalculatingFormulationHandler class.</p>

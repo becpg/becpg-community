@@ -425,6 +425,7 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Map<String, Object> extractJSON(DataListFilter dataListFilter, JSONObject object, List<AttributeExtractorStructure> metadataFields, AttributeExtractorStructure field) throws JSONException {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -506,10 +507,10 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 					String name = (String) it.next();
 					if (name.startsWith("cm:")) {
 						QName qname = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, name.split("cm:")[1]);
-						propertiesMap.put(qname, (Serializable) properties.get(name).toString());
+						propertiesMap.put(qname, properties.get(name).toString());
 					} else if (name.startsWith(BCPG_PREFIX)) {
 						QName qname = QName.createQName(BeCPGModel.BECPG_URI, name.split(BCPG_PREFIX)[1]);
-						propertiesMap.put(qname, (Serializable) properties.get(name).toString());
+						propertiesMap.put(qname, properties.get(name).toString());
 					}
 				}
 				

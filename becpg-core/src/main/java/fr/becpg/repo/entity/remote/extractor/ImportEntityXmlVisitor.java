@@ -52,6 +52,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.codec.binary.Base64OutputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -410,7 +411,6 @@ public class ImportEntityXmlVisitor {
 										serviceRegistry.getNodeService().createAssociation(curNodeRef.peek(), node, currAssoc.peek());
 									} catch (AssociationExistsException e) {
 										// association already exists
-										//TODO doesn't handle yet association update
 									}
 
 								}
@@ -443,7 +443,7 @@ public class ImportEntityXmlVisitor {
 							locale = MLTextHelper.parseLocale(strLocale);
 							if (!attributes.getValue(i).equals(RemoteEntityService.MLTEXT_TYPE) && (attributes.getQName(i) != null)
 									&& MLTextHelper.isSupportedLocale(locale)) {
-								mltextAttributes.put(locale, org.apache.commons.lang3.StringEscapeUtils.unescapeHtml4(readCDATA(attributes.getValue(i).toString())));
+								mltextAttributes.put(locale, StringEscapeUtils.unescapeHtml4(readCDATA(attributes.getValue(i))));
 							}
 						}
 					}
@@ -887,7 +887,7 @@ public class ImportEntityXmlVisitor {
 						
 						 ret =  serviceRegistry
 								.getNodeService().createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-										QName.resolveToQName(serviceRegistry.getNamespaceService(), name.replaceAll("_x0020_", " ")), ContentModel.TYPE_FOLDER, properties)
+										QName.resolveToQName(serviceRegistry.getNamespaceService(), name.replace("_x0020_", " ")), ContentModel.TYPE_FOLDER, properties)
 								.getChildRef();
 						if(logger.isDebugEnabled()) {
 							logger.debug("Creating path " + parentPath + "  "+ serviceRegistry
