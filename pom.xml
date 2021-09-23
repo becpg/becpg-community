@@ -540,14 +540,14 @@
 			<scope>test</scope>
 		</dependency>
 		
-		
+		<!--
 		<dependency>
 		    <groupId>org.apache.activemq</groupId>
 		    <artifactId>activemq-broker</artifactId>
 		    <version>5.16.1</version>
 		    <scope>test</scope>
 		</dependency>
-		
+		-->
 
 
 		<dependency>

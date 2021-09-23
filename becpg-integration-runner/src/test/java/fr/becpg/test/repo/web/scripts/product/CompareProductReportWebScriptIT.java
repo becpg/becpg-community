@@ -16,6 +16,7 @@ import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -166,6 +167,8 @@ public class CompareProductReportWebScriptIT extends AbstractCompareProductTest 
 
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
 
+		Assert.assertNotNull(response);
+		
 		logger.debug("response: " + response.getContentAsString());
 
 	}
