@@ -10,6 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenStream;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.search.lucene.analysis.AbstractBeCPGAnalyzer;
 import fr.becpg.repo.search.lucene.analysis.EnglishBeCPGAnalyser;
@@ -177,7 +178,7 @@ public class BeCPGQueryHelper {
 
 	private static Analyzer getTextAnalyzer() {
 		if (luceneAnaLyzer == null) {
-			if (Locale.FRENCH.equals(Locale.getDefault())) {
+			if (Locale.FRENCH.equals(I18NUtil.getLocale())) {
 				luceneAnaLyzer = new FrenchBeCPGAnalyser();
 			} else {
 				luceneAnaLyzer = new EnglishBeCPGAnalyser();

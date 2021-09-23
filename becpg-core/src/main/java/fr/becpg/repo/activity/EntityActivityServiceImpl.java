@@ -783,7 +783,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					data.put(PROP_ENTITY_TYPE, nodeService.getType(entityNodeRef));
 					data.put(PROP_TITLE, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 					if (activityEvent.equals(ActivityEvent.Update) && updatedProperties != null) {
-						List<JSONObject> properties = new ArrayList<JSONObject>();
+						List<JSONObject> properties = new ArrayList<>();
 						for (Map.Entry<QName, Pair<List<Serializable>, List<Serializable>>> entry : updatedProperties
 								.entrySet()) {
 							JSONObject property = new JSONObject();
