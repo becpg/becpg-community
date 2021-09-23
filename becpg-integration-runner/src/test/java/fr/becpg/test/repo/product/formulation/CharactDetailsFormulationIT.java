@@ -430,7 +430,7 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 				/*
 				 * SF 1
 				 */
-				ArrayList<Object> tmpResultsArray = (ArrayList<Object>) resultsArray.get(0);
+				JSONArray tmpResultsArray = (JSONArray) resultsArray.getJSONArray(0);
 				Assert.assertEquals("Semi fini 1", tmpResultsArray.get(0));
 				Assert.assertEquals(df.format(0.667d), df.format(tmpResultsArray.get(1)));
 				// Assert.assertEquals(df.format(0.556d),
@@ -448,7 +448,7 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 				/*
 				 * RM 1
 				 */
-				tmpResultsArray = (ArrayList<Object>) resultsArray.get(1);
+				tmpResultsArray = (JSONArray) resultsArray.getJSONArray(1);
 				Assert.assertEquals("Raw material 1", tmpResultsArray.get(0));
 				Assert.assertEquals(df.format(1.333d), df.format(tmpResultsArray.get(1)));
 				// Assert.assertEquals(df.format(1.067d),
@@ -467,7 +467,7 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 				/*
 				 * RM 2
 				 */
-				tmpResultsArray = (ArrayList<Object>) resultsArray.get(2);
+				tmpResultsArray = (JSONArray) resultsArray.getJSONArray(2);
 				Assert.assertEquals("Raw material 2", tmpResultsArray.get(0));
 				Assert.assertEquals(df.format(1d), df.format(tmpResultsArray.get(1)));
 				// Assert.assertEquals(df.format(0.8d),
