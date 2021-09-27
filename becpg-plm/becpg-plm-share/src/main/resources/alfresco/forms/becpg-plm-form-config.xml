@@ -3381,6 +3381,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:servingSizeUnit" force="true" />
 					<show id="bcpg:componentLossPerc" />
 					<show id="bcpg:reconstitutionRate" />
 					<show id="bcpg:reconstitutionPriority" />
@@ -3560,6 +3561,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productDensity" set="consumer" />
+					 <field id="bcpg:servingSizeUnit" set="consumer"/>
 				    <field id="bcpg:componentLossPerc" set="consumer" />
 					
 					<field id="bcpg:reconstitutionRate" set="consumer" />
@@ -4058,6 +4060,7 @@
 					<show id="bcpg:productUnit" />
 					<show id="bcpg:netWeight" force="true" />
 					<show id="bcpg:productDensity" />
+					<show id="bcpg:servingSizeUnit" force="true" />
 					<show id="bcpg:componentLossPerc" />
 					<show id="bcpg:reconstitutionRate" />
 					<show id="bcpg:reconstitutionPriority" />
@@ -4166,6 +4169,7 @@
 						</control>
 					</field>
 					<field id="bcpg:productDensity" set="consumer" />
+					 <field id="bcpg:servingSizeUnit" set="consumer"/>
 					 <field id="bcpg:componentLossPerc" set="consumer" />
 					<field id="bcpg:reconstitutionRate" set="consumer" />
 					<field id="bcpg:reconstitutionPriority" set="consumer" />
