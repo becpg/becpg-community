@@ -636,6 +636,30 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 			return null;
 		}
+		
+		/**
+		 * Helper @beCPG.replaceByFormula($rangeR, formula)
+		 *
+		 * @param <T>
+		 * @param range
+		 * @param formula
+		 * @return for each item return a new item based on formula
+		 */
+		@SuppressWarnings("unchecked")
+		public <T> Collection<T> replaceByFormula(Collection<T> range, String formula) {
+			if (range != null) {
+				ExpressionParser parser = formulaService.getSpelParser();
+				Expression exp = parser.parseExpression(formula);
+
+				return (Collection<T>) range.stream().map(p -> {
+					return exp.getValue(formulaService.createItemSpelContext(entity, p));
+				}).collect(Collectors.toList());
+			}
+			return null;
+		}
+		
+		
+		
 
 		/**
 		 * Helper @beCPG.filterByAssoc($range, $assocQname, $values)
@@ -827,11 +851,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 								}
 							} else if (readMethod.isAnnotationPresent(DataListView.class)) {
-								QName qname = repositoryEntityDefReader.readQName(readMethod);
 
 								for (String listQName1 : listQNames) {
 									QName listQName = QName.createQName(listQName1, namespaceService);
-									if (qname.equals(listQName)) {
 
 										BaseObject fromView = (BaseObject) PropertyUtils.getProperty(from, pd.getName());
 										BaseObject toView = (BaseObject) PropertyUtils.getProperty(to, pd.getName());
@@ -875,7 +897,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 										}
 
-									}
 
 								}
 							}

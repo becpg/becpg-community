@@ -266,6 +266,7 @@
                         			             '@beCPG.formatNumber($number,$format?)',
                         			             '@beCPG.formatDate($date,$format?)',
                         			             '@beCPG.filter($range,$formula)',
+												 '@beCPG.replaceByFormula($range,$formula)',
 												 '@beCPG.filterByAssoc($range, $assocQname, $values)',
 												 '@beCPG.join($pattern, $range)',
 												 '@beCPG.getOrDefault($range, $index, $defaultValue)',
