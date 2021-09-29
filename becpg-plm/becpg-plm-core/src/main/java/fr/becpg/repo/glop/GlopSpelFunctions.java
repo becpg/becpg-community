@@ -162,7 +162,6 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			
 			JSONObject coeff = (JSONObject) obj.get("coefficients");
 			
-			@SuppressWarnings("unchecked")
 			Iterator<String> keys = coeff.keys();
 
 			while (keys.hasNext()) {
@@ -180,8 +179,8 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			}
 			
 			ret.put(COMPONENTS, components);
-			ret.put(VALUE, obj.getString(VALUE));
-			ret.put(STATUS, obj.getString(STATUS));
+			ret.put(VALUE, obj.get(VALUE));
+			ret.put(STATUS, obj.get(STATUS));
 
 			return ret.toString();
 		}
