@@ -4,7 +4,6 @@
 package fr.becpg.test.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -398,7 +397,6 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
-			@SuppressWarnings("unchecked")
 			public NodeRef execute() throws Throwable {
 
 				// formulate Details
@@ -486,7 +484,7 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 				/*
 				 * Totals
 				 */
-				LinkedList<Object> totalArray = (LinkedList<Object>) resultsArray.get(3);
+				JSONArray totalArray = (JSONArray) resultsArray.get(3);
 				// TODO put entity.datalist.item.details.totals language key
 				// instead ?
 				Assert.assertEquals("Totaux ", totalArray.get(0));

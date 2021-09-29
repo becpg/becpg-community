@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -281,19 +280,15 @@ public class ActivityListExtractor extends SimpleExtractor {
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
 			try {
-				if (propertyArray.getString(i).contains("workspace")) {
+				if (propertyArray.get(i).toString().contains("workspace")) {
 					NodeRef nodeRef = null;
-				 	String name = null;
-					if (Pattern.matches("\\(.*,.*\\)", propertyArray.getString(i))) {
-						String nodeRefString = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf("(") + 1,
-								propertyArray.getString(i).indexOf(","));
-						nodeRef = new NodeRef(nodeRefString);
-						name = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf(",") + 1,
-								propertyArray.getString(i).indexOf(")"));
-
-					} else {
-						nodeRef = new NodeRef(propertyArray.getString(i));
-					}
+				 	
+				 	JSONObject prop = (JSONObject) ((JSONObject) propertyArray.get(i)).get("first");
+				 	
+				 	String nodeString = ((JSONObject) prop.get("storeRef")).get("protocol") + "://" + ((JSONObject) prop.get("storeRef")).get("identifier") + "/" +  prop.get("id");
+				 	
+					nodeRef = new NodeRef(nodeString);
+						
 					if (nodeService.exists(nodeRef)) {
 						if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
 							if (propertyDef != null) {
@@ -304,10 +299,6 @@ public class ActivityListExtractor extends SimpleExtractor {
 							}
 						} else {
 							postproperty.put(I18NUtil.getMessage("message.becpg.access.denied"));
-						}
-					} else {
-						if (name != null) {
-							postproperty.put(name);
 						}
 					}
 				} else {
