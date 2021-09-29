@@ -657,7 +657,7 @@ public class ImportEntityJsonVisitor {
 							}
 
 						} else {
-							value = entity.getString(key);
+							value = entity.get(key).toString();
 
 							if (value.startsWith("{") && value.endsWith("}")) {
 
