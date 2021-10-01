@@ -225,6 +225,9 @@ public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
 				}
 			}
 
+	        // determine attachment
+	        attach = Boolean.valueOf(req.getParameter("a"));
+
 			super.executeImpl(thumbnailNodeRef, templateVars, req, res, model, attach);
 
 			if (logger.isDebugEnabled()) {
