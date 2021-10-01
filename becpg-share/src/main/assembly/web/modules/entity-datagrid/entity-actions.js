@@ -235,7 +235,7 @@
 		                     + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}&siteId={siteId}",
 		               {
 		                  itemKind : "node",
-		                  itemId : item.nodeRef.storeRef.protocol + "://" + item.nodeRef.storeRef.identifier + "/" + item.nodeRef.id,
+		                  itemId : item.nodeRef,
 		                  mode : "edit",
 		                  submitType : "json",
 		                  entityNodeRef : this.options.entityNodeRef,

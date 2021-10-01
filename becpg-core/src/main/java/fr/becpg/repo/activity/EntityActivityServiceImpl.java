@@ -488,11 +488,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 							
 							property.put(PROP_TITLE, entry.getKey());
-							property.put(BEFORE, entry.getValue().getFirst());
+							property.put(BEFORE, entry.getValue().getFirst() instanceof Pair ? entry.getValue().getFirst().toString() : entry.getValue().getFirst());
 							if (entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER, data.get(PROP_TITLE));
 							} else {
-								property.put(AFTER, entry.getValue().getSecond());
+								property.put(AFTER, entry.getValue().getSecond() instanceof Pair ? entry.getValue().getSecond().toString() : entry.getValue().getSecond());
 							}
 							properties.add(property);
 						}
@@ -893,12 +893,28 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								}
 							}
 							
-							property.put(BEFORE, entry.getValue().getFirst());
+							List<Serializable> first = entry.getValue().getFirst();
+							
+							List<Serializable> newFirst = new ArrayList<>();
+							if (first != null) {
+								for (Serializable firstItem : first) {
+									newFirst.add(firstItem instanceof Pair ? firstItem.toString() : firstItem);
+								}
+							}
+							
+							property.put(BEFORE, first != null ? newFirst : null);
 							if (data.has(PROP_TITLE) && data.get(PROP_TITLE) != null
 									&& entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER, data.get(PROP_TITLE));
 							} else {
-								property.put(AFTER, entry.getValue().getSecond());
+								List<Serializable> second = entry.getValue().getSecond();
+								List<Serializable> newSecond = new ArrayList<>();
+								if (second != null) {
+									for (Serializable secondItem : second) {
+										newSecond.add(secondItem instanceof Pair ? secondItem.toString() : secondItem);
+									}
+								}
+								property.put(AFTER, second != null ? newSecond : null);
 							}
 							properties.add(property);
 						}

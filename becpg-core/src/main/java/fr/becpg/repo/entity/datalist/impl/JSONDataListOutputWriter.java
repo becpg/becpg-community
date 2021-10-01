@@ -78,7 +78,7 @@ public class JSONDataListOutputWriter implements DataListOutputWriter {
 			if (dataListFilter.isSimpleItem() && !extractedItems.getPageItems().isEmpty()) {
 				Map<String, Object> item = extractedItems.getPageItems().get(0);
 				ret.put("item", new JSONObject(item));
-				ret.put("lastSiblingNodeRef", dataListSortService.getLastChild((NodeRef) item.get(AbstractDataListExtractor.PROP_NODE)));
+				ret.put("lastSiblingNodeRef", dataListSortService.getLastChild(new NodeRef(item.get(AbstractDataListExtractor.PROP_NODE).toString())));
 			} else {
 				ret.put("items", processResults(extractedItems));
 			}
