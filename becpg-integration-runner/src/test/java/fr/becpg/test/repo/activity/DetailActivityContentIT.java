@@ -188,7 +188,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 				if (dataProp != null) {
 					assertEquals("Check client title modification", PLMModel.ASSOC_CLIENTS.toString(), dataProp.getString("title"));
 					assertEquals("Check client before modification", "[]" ,dataProp.getJSONArray("before").toString());
-					assertEquals("Check client after modification","[{\"first\":{\"storeRef\":{\"identifier\":\"SpacesStore\",\"protocol\":\"workspace\"},\"id\":\"" + client2NodeRef.getId() + "\"},\"second\":\"Client2\"}]" ,dataProp.getJSONArray("after").toString());
+					assertEquals("Check client after modification", "[\"("+client2NodeRef+", Client2)\"]",dataProp.getJSONArray("after").toString());
 				}
 			}
 
