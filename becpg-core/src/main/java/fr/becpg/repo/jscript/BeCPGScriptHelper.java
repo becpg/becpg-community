@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -35,6 +36,10 @@ import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
+import org.alfresco.service.cmr.repository.ContentIOException;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -68,6 +73,7 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
+import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.PaginatedSearchCache;
@@ -121,6 +127,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private EntityFormatService entityFormatService;
 	
 	private TenantAdminService tenantAdminService;
+	
+	private ContentService contentService;
+	
+	private EntityReportService entityReportService;
 
 	private boolean useBrowserLocale;
 
@@ -377,6 +387,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	public void setSiteService(SiteService siteService) {
 		this.siteService = siteService;
+	}
+	
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
+	
+	public void setEntityReportService(EntityReportService entityReportService) {
+		this.entityReportService = entityReportService;
 	}
 
 	/**
@@ -1172,5 +1190,20 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			return "The node couldn't be converted";
 		}
 		
+	}
+	
+	public void copyContent(ScriptNode from, ScriptNode to) throws ContentIOException, IOException {
+		
+		ContentReader reader = contentService.getReader(from.getNodeRef(), ContentModel.PROP_CONTENT);
+		ContentWriter writer = contentService.getWriter(to.getNodeRef(), ContentModel.PROP_CONTENT, true);
+		
+		writer.putContent(reader);
+	}
+	
+	public ScriptNode getReportNode(ScriptNode sourceNode) {
+
+		NodeRef sourceNodeRef = sourceNode.getNodeRef();
+
+		return new ScriptNode(entityReportService.getOrRefreshReport(sourceNodeRef, null), serviceRegistry, getScope());
 	}
 }
