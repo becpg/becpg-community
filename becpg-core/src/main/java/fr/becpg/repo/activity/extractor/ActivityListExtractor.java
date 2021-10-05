@@ -194,10 +194,12 @@ public class ActivityListExtractor extends SimpleExtractor {
 										Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
 										if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
 											
-											Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
-											
-											if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
-												adaptProperty((JSONArray) beforeProperty, (JSONArray) afterProperty);
+											if (activityProperty.has(EntityActivityService.AFTER)) {
+												Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
+												
+												if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
+													adaptProperty((JSONArray) beforeProperty, (JSONArray) afterProperty);
+												}
 											}
 											
 											postProperty.put(EntityActivityService.BEFORE, checkProperty((JSONArray) beforeProperty, propertyDef));
@@ -211,10 +213,12 @@ public class ActivityListExtractor extends SimpleExtractor {
 										Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
 										if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
 											
-											Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
-											
-											if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
-												adaptProperty((JSONArray) afterProperty, (JSONArray) beforeProperty);
+											if (activityProperty.has(EntityActivityService.BEFORE)) {
+												Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
+												
+												if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
+													adaptProperty((JSONArray) afterProperty, (JSONArray) beforeProperty);
+												}
 											}
 											
 											postProperty.put(EntityActivityService.AFTER, checkProperty((JSONArray) afterProperty, propertyDef));
@@ -281,18 +285,18 @@ public class ActivityListExtractor extends SimpleExtractor {
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
 			try {
-				if (propertyArray.getString(i).contains("workspace")) {
+				if (propertyArray.get(i).toString().contains("workspace")) {
 					NodeRef nodeRef = null;
 				 	String name = null;
-					if (Pattern.matches("\\(.*,.*\\)", propertyArray.getString(i))) {
-						String nodeRefString = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf("(") + 1,
-								propertyArray.getString(i).indexOf(","));
+					if (Pattern.matches("\\(.*,.*\\)", propertyArray.get(i).toString())) {
+						String nodeRefString = propertyArray.get(i).toString().substring(propertyArray.get(i).toString().indexOf("(") + 1,
+								propertyArray.get(i).toString().indexOf(","));
 						nodeRef = new NodeRef(nodeRefString);
-						name = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf(",") + 1,
-								propertyArray.getString(i).indexOf(")"));
+						name = propertyArray.get(i).toString().substring(propertyArray.get(i).toString().indexOf(",") + 1,
+								propertyArray.get(i).toString().indexOf(")"));
 
 					} else {
-						nodeRef = new NodeRef(propertyArray.getString(i));
+						nodeRef = new NodeRef(propertyArray.get(i).toString());
 					}
 					if (nodeService.exists(nodeRef)) {
 						if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
