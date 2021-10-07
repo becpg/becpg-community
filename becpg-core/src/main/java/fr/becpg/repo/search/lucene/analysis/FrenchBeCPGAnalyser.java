@@ -25,6 +25,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.fr.ElisionFilter;
 import org.apache.lucene.analysis.snowball.SnowballFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
+import org.apache.lucene.util.Version;
 
 /**
  * <p>FrenchBeCPGAnalyser class.</p>
@@ -208,7 +209,7 @@ public class FrenchBeCPGAnalyser extends AbstractBeCPGAnalyzer
     /** {@inheritDoc} */
     public TokenStream tokenStream(String fieldName, Reader reader, boolean disableStopWords)
     {
-        TokenStream result = new StandardTokenizer(reader);
+        TokenStream result = new StandardTokenizer(Version.LUCENE_24, reader);
         result = new ElisionFilter(result, STOP_WORDS);
         result = new AlfrescoStandardFilter(result);
         result = new LowerCaseFilter(result);

@@ -131,7 +131,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 				taskQuery.setActorId(authority);
 			}
 
-			allTasks = workflowService.queryTasks(taskQuery);
+			allTasks = workflowService.queryTasks(taskQuery, false);
 		} else {
 			// default task state to IN_PROGRESS if not supplied
 			if (state == null) {
@@ -191,7 +191,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 				taskQuery.setTaskState(state);
 				taskQuery.setActive(null);
 				taskQuery.setOrderBy(new OrderBy[] { OrderBy.TaskDue_Asc });
-				allTasks = workflowService.queryTasks(taskQuery);
+				allTasks = workflowService.queryTasks(taskQuery, false);
 			}
 		}
 

@@ -243,18 +243,6 @@
 						<many>false</many>
 					</target>
 				</association>
-				<!-- Deprecated -->
-				<association name="ecm:culSourceItems">
-					<source>
-						<mandatory>true</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:entityV2</class>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</target>
-				</association>
 				<association name="ecm:culSimulationItem">
 					<source>
 						<mandatory>true</mandatory>
