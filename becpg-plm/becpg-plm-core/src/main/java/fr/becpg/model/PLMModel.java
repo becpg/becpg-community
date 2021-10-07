@@ -594,9 +594,6 @@ public interface PLMModel {
 	/** Constant <code>PROP_INSTRUCTION</code> */
 	QName PROP_INSTRUCTION = QName.createQName(BeCPGModel.BECPG_URI, "instruction");
 	
-	@Deprecated
-	/** Constant <code>ASPECT_DILUENT</code> */
-	QName ASPECT_DILUENT = QName.createQName(BeCPGModel.BECPG_URI, "diluentAspect");
 	/** Constant <code>ASPECT_RECONSTITUTABLE</code> */
 	QName ASPECT_RECONSTITUTABLE = QName.createQName(BeCPGModel.BECPG_URI, "reconstitutableAspect");
 	/** Constant <code>PROP_RECONSTITUTION_RATE</code> */

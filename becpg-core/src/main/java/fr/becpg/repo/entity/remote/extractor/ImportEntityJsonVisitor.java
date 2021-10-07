@@ -474,7 +474,6 @@ public class ImportEntityJsonVisitor {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private void visitDataLists(NodeRef entityNodeRef, JSONObject datalists, RemoteJSONContext context) throws JSONException {
 
 		boolean replaceExisting = remoteParams.extractParams(RemoteParams.PARAM_REPLACE_EXISTING_LISTS, false);
@@ -529,7 +528,6 @@ public class ImportEntityJsonVisitor {
 
 	}
 
-	@SuppressWarnings("unchecked")
 	private Map<QName, List<NodeRef>> jsonToAssocs(JSONObject entity, RemoteJSONContext context) throws JSONException {
 		Map<QName, List<NodeRef>> assocs = new HashMap<>();
 

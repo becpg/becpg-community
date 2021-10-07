@@ -29,7 +29,6 @@ public class JsonHelper {
 	 * @return a {@link java.util.Map} object.
 	 * @throws org.json.JSONException if any.
 	 */
-	@SuppressWarnings("unchecked")
 	public static Map<String, String> extractCriteria(JSONObject jsonObject) throws JSONException {
 
 		Map<String, String> criteriaMap = new HashMap<>();

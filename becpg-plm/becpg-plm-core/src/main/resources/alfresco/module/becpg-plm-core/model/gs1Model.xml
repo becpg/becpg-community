@@ -610,16 +610,6 @@
 					</index>
 				</property>
 
-				<!-- Deprecated -->
-				<property name="gs1:lastChangeDateTime">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
-				</property>
 			</properties>
 			<associations />
 			<overrides />

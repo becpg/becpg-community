@@ -166,10 +166,6 @@
 		<property name="projectService" ref="projectService" />
 	</bean>
 	
-		<bean id="webscript.fr.becpg.project.projectFormulation.get" class="fr.becpg.repo.project.web.scripts.FormulateProjectWebScript" parent="webscript">
-		<property name="projectService" ref="projectService" />
-	</bean>
-	
 	<bean id="webscript.fr.becpg.project.completeProjectTask.post" class="fr.becpg.repo.project.web.scripts.CompleteProjectTaskWebScript" parent="webscript">
 		<property name="projectService" ref="projectService" />
 	</bean>

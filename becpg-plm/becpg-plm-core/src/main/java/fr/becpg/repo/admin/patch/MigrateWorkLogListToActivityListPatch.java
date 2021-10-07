@@ -70,7 +70,7 @@ public class MigrateWorkLogListToActivityListPatch extends AbstractBeCPGPatch {
 		final Pair<Long, QName> val = getQnameDAO().getQName(QualityModel.TYPE_NC);
 		if (val != null) {
 			Long typeQNameId = val.getFirst();
-			List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, 1L, getPatchDAO().getMaxAdmNodeID());
+			List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, 1L, getNodeDAO().getMaxNodeId());
 			for (Long nodeid : nodeids) {
 				NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
 				if (!status.isDeleted()) {

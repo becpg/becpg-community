@@ -66,9 +66,9 @@ public class AddActivityListPatch extends AbstractBeCPGPatch {
 			List<Long> nodeids = null;
 			
 			if (isAspect) {
-				nodeids = getPatchDAO().getNodesByAspectQNameId(typeQNameId, 1L, getPatchDAO().getMaxAdmNodeID());
+				nodeids = getPatchDAO().getNodesByAspectQNameId(typeQNameId, 1L, getNodeDAO().getMaxNodeId());
 			} else {
-				nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, 1L, getPatchDAO().getMaxAdmNodeID());
+				nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, 1L, getNodeDAO().getMaxNodeId());
 			}
 			
 			for (Long nodeid : nodeids) {
