@@ -973,7 +973,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			boolean lookThreshold = false;
 
-			if (showAllPerc) {
+			if (showAllPerc!=null && showAllPerc.matchLocale(I18NUtil.getLocale())) {
 				if (lblComponent instanceof IngTypeItem) {
 					NodeRef ingItemNodeRef = ((IngTypeItem) lblComponent).getOrigNodeRef() != null ? ((IngTypeItem) lblComponent).getOrigNodeRef()
 							: lblComponent.getNodeRef();
@@ -2016,7 +2016,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private String createGeoOriginsLabel(NodeRef nodeRef, List<LabelingComponent> components) {
 
-		if (showAllGeo || ((nodeRef != null) && showGeoRules.containsKey(nodeRef) && showGeoRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
+		if ((showAllGeo!=null && showAllGeo.matchLocale(I18NUtil.getLocale())) || ((nodeRef != null) && showGeoRules.containsKey(nodeRef) && showGeoRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
 
 			if ((components != null) && !components.isEmpty()) {
 
@@ -2038,7 +2038,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private String createGeoOriginsLabel(NodeRef nodeRef, Set<NodeRef> geoOrigins) {
 
-		if (showAllGeo || ((nodeRef != null) && showGeoRules.containsKey(nodeRef) && showGeoRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
+		if ((showAllGeo!=null && showAllGeo.matchLocale(I18NUtil.getLocale())) || ((nodeRef != null) && showGeoRules.containsKey(nodeRef) && showGeoRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
 
 			if ((geoOrigins != null) && !geoOrigins.isEmpty()) {
 
