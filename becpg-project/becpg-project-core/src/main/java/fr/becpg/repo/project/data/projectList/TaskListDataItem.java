@@ -83,7 +83,6 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private TaskListDataItem parent;
 	private TaskListDataItem refusedTask;
 	private Double fixedCost;
-	private Double budgetedCost;
 	private Double expense;	
 	private Double invoice;
 	private ResourceCost resourceCost;
@@ -724,28 +723,6 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	}
 
 	/**
-	 * <p>Getter for the field <code>budgetedCost</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object.
-	 */
-	@Deprecated
-	@AlfProp
-	@AlfQname(qname = "pjt:tlBudgetedCost")
-	public Double getBudgetedCost() {
-		return budgetedCost;
-	}
-
-	/**
-	 * <p>Setter for the field <code>budgetedCost</code>.</p>
-	 *
-	 * @param budgetedCost a {@link java.lang.Double} object.
-	 */
-	@Deprecated
-	public void setBudgetedCost(Double budgetedCost) {
-		this.budgetedCost = budgetedCost;
-	}	
-
-	/**
 	 * <p>Getter for the field <code>expense</code>.</p>
 	 *
 	 * @return a {@link java.lang.Double} object.
@@ -970,7 +947,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(budgetedCost, capacity, completionPercent, depthLevel, duration, end, expense, fixedCost,
+		result = prime * result + Objects.hash(capacity, completionPercent, depthLevel, duration, end, expense, fixedCost,
 				initialNotification, invoice, isExcludeFromSearch, isGroup, isMilestone, isRefused, lastNotification, loggedTime, manualDate,
 				notificationAuthorities, notificationFrequency, observers, realDuration, resourceCost, resources, start, subProject, taskLegend,
 				taskName, taskState, work, workflowInstance, workflowName, workflowTaskInstance);
@@ -986,7 +963,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 		if (getClass() != obj.getClass())
 			return false;
 		TaskListDataItem other = (TaskListDataItem) obj;
-		return Objects.equals(budgetedCost, other.budgetedCost) && Objects.equals(capacity, other.capacity)
+		return Objects.equals(capacity, other.capacity)
 				&& Objects.equals(completionPercent, other.completionPercent) && Objects.equals(depthLevel, other.depthLevel)
 				&& Objects.equals(duration, other.duration) && Objects.equals(end, other.end) && Objects.equals(expense, other.expense)
 				&& Objects.equals(fixedCost, other.fixedCost) && Objects.equals(initialNotification, other.initialNotification)
@@ -1013,7 +990,7 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 				+ resources + ", observers=" + observers + ", taskLegend=" + taskLegend + ", workflowName="
 				+ workflowName + ", workflowInstance=" + workflowInstance + ", manualDate=" + manualDate
 				+ ", depthLevel=" + depthLevel + ", parent=" + parent + ", refusedTask=" + refusedTask + ", fixedCost="
-				+ fixedCost + ", budgetedCost=" + budgetedCost + ", expense=" + expense + ", invoice=" + invoice
+				+ fixedCost + ", expense=" + expense + ", invoice=" + invoice
 				+ ", resourceCost=" + resourceCost + "]";
 	}
 

@@ -152,7 +152,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
 			final List<NodeRef> result = new ArrayList<>();
 
-			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 1;
 			long maxSearchNodeId = count;
@@ -281,7 +281,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 		new BatchProcessor<>("ProjectActivityPatch2", transactionService.getRetryingTransactionHelper(), new BatchProcessWorkProvider<NodeRef>() {
 			final List<NodeRef> result = new ArrayList<>();
 
-			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 1;
 			long maxSearchNodeId = count;

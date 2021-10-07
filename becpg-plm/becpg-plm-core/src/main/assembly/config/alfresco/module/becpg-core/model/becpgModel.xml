@@ -1053,12 +1053,6 @@
 					<index enabled="false" />
 				</property>
 				
-				<!-- Deprecated To remove in 2.2-->
-				<property name="bcpg:ingTypePluralLegalName">
-					<type>d:mltext</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-				</property>
 			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:legalNameAspect</aspect>
@@ -3046,10 +3040,6 @@
 			</associations>
 		</aspect>	
 		
-		<!-- Deprecated -->
-		<aspect name="bcpg:diluentAspect"></aspect>
-
-
 		<aspect name="bcpg:waterAspect"></aspect>
 		
 		<!-- Aspect used to store the entity type of the template (entityFolderTpl, entityTpl, etc...) -->

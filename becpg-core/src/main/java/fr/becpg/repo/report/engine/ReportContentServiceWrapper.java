@@ -30,7 +30,6 @@ import fr.becpg.repo.report.entity.EntityReportService;
  * @author matthieu
  * @version $Id: $Id
  */
-@SuppressWarnings("deprecation")
 public class ReportContentServiceWrapper implements ContentService {
 
 	private static Log logger = LogFactory.getLog(ReportContentServiceWrapper.class);

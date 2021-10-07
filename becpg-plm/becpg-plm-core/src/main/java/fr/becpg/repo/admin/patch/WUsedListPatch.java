@@ -127,7 +127,7 @@ public class WUsedListPatch extends AbstractBeCPGPatch {
 	
 				}
 	
-				List<Long> nodeids = patchDAO.getNodesByAspectQNameId(val.getFirst(), 1L, patchDAO.getMaxAdmNodeID());
+				List<Long> nodeids = patchDAO.getNodesByAspectQNameId(val.getFirst(), 1L, nodeDAO.getMaxNodeId());
 	
 				for (Long nodeid : nodeids) {
 					NodeRef.Status status = nodeDAO.getNodeIdStatus(nodeid);

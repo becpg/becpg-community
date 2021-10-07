@@ -477,30 +477,6 @@
 			</mandatory-aspects>
 		</type>
 		
-		
-		
-		
-		<!-- Deprecated To remove after 2.2.4 -->
-		<type name="qa:workLog">
-			<parent>qa:qualityListItem</parent>
-			<properties>
-				<property name="qa:wlState">
-					<type>d:text</type>
-					<mandatory>false</mandatory>					
-					<constraints>
-						<constraint ref="qa:ncStates" />
-					</constraints>
-				</property>
-				<property name="qa:wlComment">
-					<type>d:text</type>
-					<mandatory>true</mandatory>
-					<index enabled="false" />
-				</property>
-			</properties>
-			<associations />
-			<overrides />
-			<mandatory-aspects />
-		</type>
 		<type name="qa:samplingDefList">
 			<parent>qa:qualityListItem</parent>
 			<properties>
@@ -785,13 +761,6 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
-				</property>
-				<!-- Deprecated -->
-				<property name="qa:claimTradeContactCheck">
-					<title>Le produit a-t-il été vu par le commercial?</title>
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true" />
 				</property>
 			
 			</properties>
