@@ -488,11 +488,19 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 							
 							property.put(PROP_TITLE, entry.getKey());
-							property.put(BEFORE, entry.getValue().getFirst());
+							if (entry.getValue().getFirst() instanceof List && ((List<?>) entry.getValue().getFirst()).get(0) instanceof Date) {
+								property.put(BEFORE, ISO8601DateFormat.format((Date) ((List<?>) entry.getValue().getFirst()).get(0)));
+							} else {
+								property.put(BEFORE, entry.getValue().getFirst());
+							}
 							if (entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER, data.get(PROP_TITLE));
 							} else {
-								property.put(AFTER, entry.getValue().getSecond());
+								if (entry.getValue().getSecond() instanceof List && ((List<?>) entry.getValue().getSecond()).get(0) instanceof Date) {
+									property.put(AFTER, ISO8601DateFormat.format((Date) ((List<?>) entry.getValue().getSecond()).get(0)));
+								} else {
+									property.put(AFTER, entry.getValue().getSecond());
+								}
 							}
 							properties.add(property);
 						}
@@ -893,12 +901,20 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								}
 							}
 							
-							property.put(BEFORE, entry.getValue().getFirst());
+							if (entry.getValue().getFirst() instanceof List && ((List<?>) entry.getValue().getFirst()).get(0) instanceof Date) {
+								property.put(BEFORE, ISO8601DateFormat.format((Date) ((List<?>) entry.getValue().getFirst()).get(0)));
+							} else {
+								property.put(BEFORE, entry.getValue().getFirst());
+							}
 							if (data.has(PROP_TITLE) && data.get(PROP_TITLE) != null
 									&& entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER, data.get(PROP_TITLE));
 							} else {
-								property.put(AFTER, entry.getValue().getSecond());
+								if (entry.getValue().getSecond() instanceof List && ((List<?>) entry.getValue().getSecond()).get(0) instanceof Date) {
+									property.put(AFTER, ISO8601DateFormat.format((Date) ((List<?>) entry.getValue().getSecond()).get(0)));
+								} else {
+									property.put(AFTER, entry.getValue().getSecond());
+								}
 							}
 							properties.add(property);
 						}
