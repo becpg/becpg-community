@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -18,12 +18,13 @@
 package fr.becpg.repo.activity.extractor;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -31,6 +32,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -158,7 +160,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 						}
 	
 						if (((entityType != null)
-								&& (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityType,
+								&& (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityNodeRef, entityType,
 										postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS)))
 								|| ((charactNodeRef != null) && (permissionService.hasPermission(charactNodeRef, "Read") != AccessStatus.ALLOWED))) {
 	
@@ -180,7 +182,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 								QName propertyName = QName.createQName(activityProperty.getString(EntityActivityService.PROP_TITLE));
 	
 								if ((entityType != null)
-										&& (securityService.computeAccessMode(entityType, propertyName) != SecurityService.NONE_ACCESS)) {
+										&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS)) {
 									// Property Title
 									PropertyDefinition propertyDef = dictionaryService.getProperty(propertyName);
 									ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
@@ -195,15 +197,21 @@ public class ActivityListExtractor extends SimpleExtractor {
 										Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
 										if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
 											
-											Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
-											
-											if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
-												adaptProperty((JSONArray) beforeProperty, (JSONArray) afterProperty);
+											if (activityProperty.has(EntityActivityService.AFTER)) {
+												Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
+												
+												if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
+													adaptProperty((JSONArray) beforeProperty, (JSONArray) afterProperty);
+												}
 											}
 											
 											postProperty.put(EntityActivityService.BEFORE, checkProperty((JSONArray) beforeProperty, propertyDef));
 										} else {
-											postProperty.put(EntityActivityService.BEFORE, beforeProperty);
+											if (beforeProperty instanceof String) {
+												parseDate(postProperty, beforeProperty, EntityActivityService.BEFORE);
+											} else {
+												postProperty.put(EntityActivityService.BEFORE, beforeProperty);
+											}
 										}
 									}
 									
@@ -212,15 +220,22 @@ public class ActivityListExtractor extends SimpleExtractor {
 										Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
 										if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
 											
-											Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
-											
-											if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
-												adaptProperty((JSONArray) afterProperty, (JSONArray) beforeProperty);
+											if (activityProperty.has(EntityActivityService.BEFORE)) {
+												Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
+												
+												if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
+													adaptProperty((JSONArray) afterProperty, (JSONArray) beforeProperty);
+												}
 											}
 											
 											postProperty.put(EntityActivityService.AFTER, checkProperty((JSONArray) afterProperty, propertyDef));
 										} else {
-											postProperty.put(EntityActivityService.AFTER, afterProperty);
+											
+											if (afterProperty instanceof String) {
+												parseDate(postProperty, afterProperty, EntityActivityService.AFTER);
+											} else {
+												postProperty.put(EntityActivityService.AFTER, afterProperty);
+											}
 										}
 									}
 									postActivityProperties.put(postProperty);
@@ -248,6 +263,15 @@ public class ActivityListExtractor extends SimpleExtractor {
 			}
 		}
 
+	}
+
+	private void parseDate(JSONObject postProperty, Object afterProperty, String key) throws JSONException {
+		try {
+			Date date = ISO8601DateFormat.parse((String) afterProperty);
+			postProperty.put(key, date.toString());
+		} catch (AlfrescoRuntimeException e) {
+			postProperty.put(key, afterProperty);
+		}
 	}
 
 	private void adaptProperty(JSONArray propToAdapt, JSONArray propRef) throws JSONException {
