@@ -4,16 +4,15 @@ var entity = projectNode.assocs["pjt:projectEntity"][0];
 
 var docs = entity.childByNamePath('Documents').children;
 
-
-var sign = null;
+var signDeliverable = null;
 
 for (var i = 0; i < docs.length; i++) {
 		
-	if (docs[i].properties['cm:name'] == "Signature.pdf") {
-		sign = docs[i];
+	if (docs[i].properties['cm:name'].endsWith(" - Signed")) {
+		signDeliverable = docs[i];
 		break;
 	}
 
 }
 
-bcpgArtworks.checkinSignature(sign);
+bcpgArtworks.checkinSignature(signDeliverable);
