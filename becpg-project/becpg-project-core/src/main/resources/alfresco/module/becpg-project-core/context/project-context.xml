@@ -178,6 +178,11 @@
 		<property name="propertyFormatService" ref="propertyFormatService"/>
 	</bean>
 	
+	<bean id="webscript.fr.becpg.project.projectTaskEditUrl.get" class="fr.becpg.repo.project.web.scripts.ProjectTaskEditUrlWebScript" parent="webscript">
+    	<property name="nodeService" ref="nodeService" />
+    	<property name="sysAdminParams" ref="sysAdminParams" />
+    </bean>
+	
    <!--                 -->
    <!-- Scheduled tasks -->
    <!--                 -->

@@ -6,7 +6,9 @@ var supplier = projectNode.assocs["bcpg:suppliers"][0].assocs["bcpg:supplierAcco
 
 var report = bcpg.getReportNode(entity);
 
-var copy = report.getParent().createNode("Signature.pdf", "cm:content");
+var reportName = report.properties["cm:name"];
+
+var copy = report.getParent().createNode(reportName + " - Signed", "cm:content");
 
 copy.addAspect("sign:signatureAspect");
 
@@ -16,24 +18,38 @@ bcpg.copyContent(report, copy);
 
 bcpgArtworks.sendForSignature(copy);
 
-var url = bcpgArtworks.getSignatureViewUrl(copy, supplier);
-
 var deliverables = projectNode.childAssocs["bcpg:entityLists"][0].childByNamePath('deliverableList').children;
 
-var sign = null;
+var signDeliverable = null;
 
 for (var i = 0; i < deliverables.length; i++) {
 	
 	if (deliverables[i].properties['pjt:dlDescription'] == "Signature") {
-		sign = deliverables[i];
+		signDeliverable = deliverables[i];
 		break;
 	}
-
+	
 }
 
-sign.properties["pjt:dlUrl"] = url;
+var tasks = projectNode.childAssocs["bcpg:entityLists"][0].childByNamePath('taskList').children;
 
-sign.save();
+var signTask = null;
+
+for (var i = 0; i < tasks.length; i++) {
+	
+	if (tasks[i].properties['pjt:tlTaskName'] == "Signature") {
+		signTask = tasks[i];
+		break;
+	}
+	
+}
+
+
+var signatureUrl = bcpgArtworks.getSignatureViewUrl(copy, supplier, signTask.nodeRef);
+
+signDeliverable.properties["pjt:dlUrl"] = signatureUrl;
+
+signDeliverable.save();
 
 var  projectEntity = null;
 
