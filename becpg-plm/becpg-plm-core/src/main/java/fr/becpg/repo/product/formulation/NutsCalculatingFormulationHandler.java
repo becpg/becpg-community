@@ -45,11 +45,6 @@ import fr.becpg.repo.variant.model.VariantData;
  */
 public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<NutListDataItem> {
 
-	/** Constant <code>UNIT_PER100G="/100g"</code> */
-	public static final String UNIT_PER100G = "/100g";
-
-	/** Constant <code>UNIT_PER100ML="/100mL"</code> */
-	public static final String UNIT_PER100ML = "/100mL";
 
 	/** Constant <code>NUT_FORMULATED="I18NUtil.getMessage(message.formulate.n"{trunked}</code> */
 	public static final String NUT_FORMULATED = I18NUtil.getMessage("message.formulate.nut.formulated");
@@ -315,16 +310,16 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	public static String calculateSuffixUnit(ProductUnit productUnit, ProductUnit servingSizeUnit) {
 		if(servingSizeUnit !=null && !servingSizeUnit.equals(ProductUnit.kg)){
 			if(servingSizeUnit.isVolume()){
-				return UNIT_PER100ML;
+				return NutListDataItem.UNIT_PER100ML;
 			} else {
-				return UNIT_PER100G;
+				return NutListDataItem.UNIT_PER100G;
 			}
 		}
 		else{
 			if (productUnit != null && productUnit.isVolume()) {
-				return UNIT_PER100ML;
+				return NutListDataItem.UNIT_PER100ML;
 			} else {
-				return UNIT_PER100G;
+				return NutListDataItem.UNIT_PER100G;
 			}
 		}
 	}

@@ -96,13 +96,6 @@
 				},
 				fn: function(instance) {
 
-					var styleSheets = document.getElementsByTagName("link");
-					for (var i in styleSheets) {
-						var sheet = styleSheets[i];
-						if(sheet.rel == "stylesheet"){
-							sheet.media = "all";
-						}
-					}
 
 					Dom.addClass("alf-hd", "hidden");
 					Dom.addClass("alf-ft", "hidden");
