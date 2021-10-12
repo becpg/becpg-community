@@ -810,9 +810,8 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 					if (DeliverableState.Planned.equals(deliverable.getState())) {
 						deliverable.setState(DeliverableState.InProgress);
 						
-						String url = (String) nodeService.getProperty(deliverable.getNodeRef(), ProjectModel.PROP_DL_URL);
+						deliverable.setUrl((String) nodeService.getProperty(deliverable.getNodeRef(), ProjectModel.PROP_DL_URL));
 						
-						deliverable.setUrl(projectService.getDeliverableUrl(projectData.getNodeRef(), url));
 						if ((deliverable.getUrl() != null) && deliverable.getUrl().startsWith(DeliverableUrl.CONTENT_URL_PREFIX)
 								&& NodeRef.isNodeRef(deliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length()))) {
 							deliverable.setContent(new NodeRef(deliverable.getUrl().substring(DeliverableUrl.CONTENT_URL_PREFIX.length())));
