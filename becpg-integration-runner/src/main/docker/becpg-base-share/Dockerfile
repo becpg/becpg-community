@@ -15,10 +15,10 @@ ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
 
 #Javascript console
 RUN curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/javascript-console-share-0.6.0.amp  \
-      -o $TOMCAT_DIR/amps_share/javascript-console-share-0.6.0.amp && \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/javascript-console-share-0.7.0.amp  \
+      -o $TOMCAT_DIR/amps_share/javascript-console-share-0.7.0.amp && \
     java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/ webapps/share -nobackup -directory && \
-    rm $TOMCAT_DIR/amps_share/javascript-console-share-0.6.0.amp 
+    rm $TOMCAT_DIR/amps_share/javascript-console-share-0.7.0.amp 
     
 #Support tools
 RUN curl --silent --location \
