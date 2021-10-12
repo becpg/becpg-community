@@ -162,7 +162,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		cacheList.add(nodeRef);
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 
-		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)) {
+		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.CONTENT.equals(type) || JsonVisitNodeType.ASSOC.equals(type)
+				|| (JsonVisitNodeType.CHILD_ASSOC.equals(type) && !ContentModel.TYPE_FOLDER.equals(nodeType))) {
 
 			if (nodeService.getPrimaryParent(nodeRef) != null) {
 				NodeRef parentRef = nodeService.getPrimaryParent(nodeRef).getParentRef();
@@ -199,38 +200,40 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))) {
 				visitPropValue(BeCPGModel.PROP_ERP_CODE, entity, properties.get(BeCPGModel.PROP_ERP_CODE), context);
 			}
-			
-			if (nodeService.hasAspect(nodeRef,BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+
+			if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 				entity.put(RemoteEntityService.ATTR_VERSION, nodeService.getProperty(nodeRef, BeCPGModel.PROP_VERSION_LABEL));
 			} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 				entity.put(RemoteEntityService.ATTR_VERSION, nodeService.getProperty(nodeRef, ContentModel.PROP_VERSION_LABEL));
 			}
-			
+
 			if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
 
 				String nodePath = nodeService.getPath(nodeRef).toPrefixString(namespaceService);
-				
-				if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, Boolean.FALSE)) && nodePath.contains(context.getEntityPath(nodeService, namespaceService))) {
-					
+
+				if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, Boolean.FALSE))
+						&& nodePath.contains(context.getEntityPath(nodeService, namespaceService))) {
+
 					NodeRef currentNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, nodeRef.getId());
-					
+
 					NodeRef newNode = null;
-					
+
 					if (context.getCache().containsKey(currentNode)) {
 						newNode = context.getCache().get(currentNode);
 					} else {
 						newNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, GUID.generate());
 						context.getCache().put(currentNode, newNode);
 					}
-					
+
 					entity.put(RemoteEntityService.ATTR_ID, newNode.getId());
 				} else {
-					
-					if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, Boolean.FALSE)) && nodeService.getPath(nodeRef).toPrefixString(namespaceService).contains(RepoConsts.ENTITIES_HISTORY_XPATH)) {
+
+					if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, Boolean.FALSE))
+							&& nodeService.getPath(nodeRef).toPrefixString(namespaceService).contains(RepoConsts.ENTITIES_HISTORY_XPATH)) {
 						NodeRef parentNode = nodeService.getPrimaryParent(nodeRef).getParentRef();
-						
+
 						String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
-						
+
 						NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
 
 						entity.put(RemoteEntityService.ATTR_ID, originalNode.getId());
@@ -239,15 +242,19 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					}
 				}
 			}
+		} else {
+			if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))
+					&& !ContentModel.TYPE_FOLDER.equals(nodeType)) {
+				entity.put(RemoteEntityService.ATTR_ID, nodeRef.getId());
+			}
 		}
-		
 
 		JSONObject attributes = new JSONObject();
 		if (JsonVisitNodeType.ENTITY.equals(type) || JsonVisitNodeType.DATALIST.equals(type)
 				|| ((JsonVisitNodeType.ENTITY_LIST.equals(type) || JsonVisitNodeType.CONTENT.equals(type)) && (params.getFilteredProperties() != null)
 						&& !params.getFilteredProperties().isEmpty())
 				|| ((nodeType != null) && params.getFilteredAssocProperties().containsKey(nodeType))
-				||  ((assocName!=null) && params.getFilteredAssocProperties().containsKey(assocName))
+				|| ((assocName != null) && params.getFilteredAssocProperties().containsKey(assocName))
 				|| JsonVisitNodeType.CHILD_ASSOC.equals(type)) {
 
 			// Assoc first
@@ -416,14 +423,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						&& !assocDef.isChild() && params.shouldExtractField(assocDef.getName())
 
 				) {
-				
-					
+
 					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
-					
-					if(!matchProp(assocName,nodeType)) {
+
+					if (!matchProp(assocName, nodeType)) {
 						continue;
 					}
-					
+
 					JSONArray jsonAssocs = new JSONArray();
 
 					List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
@@ -454,21 +460,19 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	private boolean matchProp(QName assocName, QName propName) {
-		
+
 		if (((assocName == null) && (params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()
 				&& !params.getFilteredProperties().contains(propName))
-				|| ((assocName != null) && (params.getFilteredAssocProperties() != null)
-						&& !params.getFilteredAssocProperties().isEmpty()
+				|| ((assocName != null) && (params.getFilteredAssocProperties() != null) && !params.getFilteredAssocProperties().isEmpty()
 						&& (!params.getFilteredAssocProperties().containsKey(assocName)
 								|| !params.getFilteredAssocProperties().get(assocName).contains(propName)))
 
 		) {
 			return false;
 		}
-		
-		
+
 		return true;
-		
+
 	}
 
 	private void visitProps(NodeRef nodeRef, JSONObject entity, QName assocName, Map<QName, Serializable> props, RemoteJSONContext context)
@@ -486,7 +490,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						QName propName = entry.getKey().getPrefixedQName(namespaceService);
 
 						// Assoc properties filter
-						if(!matchProp(assocName,propName)) {
+						if (!matchProp(assocName, propName)) {
 							continue;
 						}
 

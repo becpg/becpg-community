@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
 import fr.becpg.repo.formulation.spel.CustomSpelFunctions;
+import fr.becpg.repo.glop.model.GlopData;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -154,9 +155,9 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			throw new IllegalArgumentException("Expected Double, got " + obj.getClass().getName());
 		}
 
-		private String translate(JSONObject obj) throws JSONException {
+		private GlopData translate(JSONObject obj) throws JSONException {
 			
-			JSONObject ret = new JSONObject();
+			GlopData ret = new GlopData();
 			
 			JSONArray components = new JSONArray();
 			
@@ -182,7 +183,7 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			ret.put(VALUE, obj.get(VALUE));
 			ret.put(STATUS, obj.get(STATUS));
 
-			return ret.toString();
+			return ret;
 		}
 
 		public Double extractValue(NodeRef nodeRef, String in) throws JSONException {
@@ -202,7 +203,10 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 		}
 		
 		@SuppressWarnings("unchecked")
-		public String optimize(Map<String, ?> problem) {
+		public GlopData optimize(Map<String, ?> problem) throws JSONException {
+			
+			GlopData errorResult = new GlopData();
+			
 			Map<String, ?> target = getTarget(problem);
 			SimpleCharactDataItem targetItem = (SimpleCharactDataItem) target.get("var");
 			String targetTask = (String) target.get("task");
@@ -210,7 +214,8 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 
 			Object objConstraints = problem.get("constraints");
 			if (!(objConstraints instanceof Collection<?>)) {
-				return "Error : constraints must be a collection";
+				errorResult.put("status", "Error : constraints must be a collection");
+				return errorResult;
 			}
 			Collection<?> constraints = (Collection<?>) objConstraints;
 			List<GlopConstraintSpecification> fullConstraints = new ArrayList<>();
@@ -232,13 +237,17 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 				JSONObject response = glopService.optimize((ProductData) entity, fullConstraints, fullTarget);
 				return translate(response);
 			} catch (GlopException e) {
-				return "Error : Linear program is unfeasible: " + e;
+				errorResult.put("status", "Error : Linear program is unfeasible");
+				return errorResult;
 			} catch (JSONException e) {
-				return "Error : Failed to build request to send to the Glop server: " + e;
+				errorResult.put("status", "Error : Failed to build request to send to the Glop server");
+				return errorResult;
 			} catch (URISyntaxException e) {
-				return "Error : Glop server URI has a syntax error: " + e;
+				errorResult.put("status", "Error : Glop server URI has a syntax error");
+				return errorResult;
 			} catch (RestClientException e) {
-				return "Error : Failed to send request to the Glop server: " + e;
+				errorResult.put("status", "Error : Failed to send request to the Glop server");
+				return errorResult;
 			}
 		}
 	}
