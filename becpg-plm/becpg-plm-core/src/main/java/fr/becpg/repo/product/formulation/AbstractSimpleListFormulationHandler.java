@@ -417,6 +417,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 								formulateInVol = false;
 								forceWeight = true;
 							}
+						} else if(newSimpleListDataItem instanceof  NutListDataItem  && ((NutListDataItem)newSimpleListDataItem).getUnit()!=null
+								 &&((NutListDataItem)newSimpleListDataItem).getUnit().endsWith(NutListDataItem.UNIT_PER100G) ) {
+							formulateInVol = false;
+							forceWeight = true;
 						}
 
 						// calculate charact from qty or vol ?

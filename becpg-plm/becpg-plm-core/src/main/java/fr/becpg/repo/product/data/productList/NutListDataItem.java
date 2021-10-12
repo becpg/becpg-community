@@ -33,6 +33,13 @@ import fr.becpg.repo.repository.model.VariantAwareDataItem;
 public class NutListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem,
 		UnitAwareDataItem, ControlableListDataItem, CompositeDataItem<NutListDataItem> {
 
+
+	/** Constant <code>UNIT_PER100G="/100g"</code> */
+	public static final String UNIT_PER100G = "/100g";
+
+	/** Constant <code>UNIT_PER100ML="/100mL"</code> */
+	public static final String UNIT_PER100ML = "/100mL";
+	
 	/**
 	 *
 	 */

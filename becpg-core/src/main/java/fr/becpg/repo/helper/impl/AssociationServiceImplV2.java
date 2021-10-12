@@ -42,6 +42,7 @@ import org.alfresco.repo.cache.SimpleCache;
 import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.node.NodeServicePolicies.OnRestoreNodePolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantService;
@@ -79,10 +80,10 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * @author matthieu
  * @version $Id: $Id
  */
-public class AssociationServiceImplV2 extends AbstractBeCPGPolicy
-		implements AssociationService, NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnCreateChildAssociationPolicy,
-		NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnDeleteChildAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy,
-		CheckOutCheckInServicePolicies.OnCheckIn, RefreshableCacheListener, NodeServicePolicies.OnUpdatePropertiesPolicy , InitializingBean {
+public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements AssociationService, NodeServicePolicies.OnCreateAssociationPolicy,
+		NodeServicePolicies.OnCreateChildAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy,
+		NodeServicePolicies.OnDeleteChildAssociationPolicy, NodeServicePolicies.OnDeleteNodePolicy, CheckOutCheckInServicePolicies.OnCheckIn,
+		RefreshableCacheListener, NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnRestoreNodePolicy, InitializingBean {
 
 	private static final Log logger = LogFactory.getLog(AssociationServiceImplV2.class);
 
@@ -101,7 +102,6 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy
 	private SimpleCache<AssociationCacheRegion, Set<NodeRef>> assocsCache;
 
 	private AsynchronouslyRefreshedCacheRegistry registry;
-	
 
 	private static Set<QName> ignoredAssocs = new HashSet<>();
 
@@ -112,12 +112,10 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy
 
 	}
 
-
 	public void setRegistry(AsynchronouslyRefreshedCacheRegistry registry) {
 		this.registry = registry;
 	}
 
-	
 	@Override
 	public void setNodeService(NodeService nodeService) {
 		super.setNodeService(nodeService);
@@ -659,14 +657,16 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ContentModel.TYPE_AUTHORITY,
 				new JavaBehaviour(this, "onDeleteNode"));
 
+		policyComponent.bindClassBehaviour(OnRestoreNodePolicy.QNAME, ContentModel.TYPE_CMOBJECT, new JavaBehaviour(this, "onRestoreNode"));
+		policyComponent.bindClassBehaviour(OnRestoreNodePolicy.QNAME, ContentModel.TYPE_AUTHORITY, new JavaBehaviour(this, "onRestoreNode"));
+
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, ContentModel.TYPE_CMOBJECT,
 				new JavaBehaviour(this, "onCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, ContentModel.TYPE_AUTHORITY,
 				new JavaBehaviour(this, "onCheckIn"));
-		
+
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_SORTABLE_LIST,
 				new JavaBehaviour(this, "onUpdateProperties"));
-		
 
 	}
 
@@ -688,6 +688,13 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy
 				removeCachedAssoc(associationRef.getSourceRef(), associationRef.getTypeQName());
 			}
 		}
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void onRestoreNode(ChildAssociationRef associationRef) {
+		removeChildCachedAssoc(associationRef.getParentRef(), associationRef.getTypeQName());
+
 	}
 
 	/** {@inheritDoc} */
@@ -717,15 +724,14 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy
 		removeAllCacheAssocs(nodeRef);
 
 	}
-	
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		Serializable beforeSort =  before.get(BeCPGModel.PROP_SORT);
+		Serializable beforeSort = before.get(BeCPGModel.PROP_SORT);
 		Serializable afterSort = after.get(BeCPGModel.PROP_SORT);
-		
-		if((beforeSort!=null && !beforeSort.equals(afterSort) )|| (beforeSort == null && afterSort!=null)) {
+
+		if (((beforeSort != null) && !beforeSort.equals(afterSort)) || ((beforeSort == null) && (afterSort != null))) {
 			removeChildCachedAssoc(nodeService.getPrimaryParent(nodeRef).getParentRef(), ContentModel.ASSOC_CONTAINS);
 		}
 	}
@@ -806,7 +812,5 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy
 		registry.register(this);
 
 	}
-
-
 
 }

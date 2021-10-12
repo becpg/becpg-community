@@ -45,7 +45,7 @@ public abstract class RuleParser {
 	protected final Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
 	protected final Map<String, MeatContentRule> meatContentRules = new HashMap<>();
 	protected final Map<NodeRef, RenameRule> renameRules = new HashMap<>();
-	
+
 	protected final List<ShowRule> showPercRulesByThreshold = new ArrayList<>();
 	protected final Map<NodeRef, ShowRule> showPercRules = new HashMap<>();
 	protected final Map<NodeRef, ShowRule> showGeoRules = new HashMap<>();
@@ -54,22 +54,19 @@ public abstract class RuleParser {
 	protected String defaultPercFormat = "0.#%";
 	protected RoundingMode defaultRoundingMode = RoundingMode.HALF_DOWN;
 
-	protected boolean showAllPerc = false;
-	protected boolean showAllGeo = false;
-	protected boolean showAllBio = false;
-	
+	protected ShowRule showAllPerc = null;
+	protected ShowRule showAllGeo = null;
+	protected ShowRule showAllBio = null;
 
 	protected List<LabelingDecorator> labelingDecorators = new LinkedList<>();
-	
-	
+
 	{
 		labelingDecorators.add(new CapitalizeDecorator());
 		labelingDecorators.add(new LowerCaseDecorator());
-		labelingDecorators.add(new UppercaseDecorator());		
+		labelingDecorators.add(new UppercaseDecorator());
 		labelingDecorators.add(new FrenchTypoDecorator());
 	}
-	
-	
+
 	/**
 	 * <p>Setter for the field <code>defaultRoundingMode</code>.</p>
 	 *
@@ -94,7 +91,10 @@ public abstract class RuleParser {
 	 * @param showAllPerc a boolean.
 	 */
 	public void setShowAllPerc(boolean showAllPerc) {
-		this.showAllPerc = showAllPerc;
+		if (showAllPerc) {
+			this.showAllPerc = new ShowRule(defaultPercFormat, null);
+		}
+		this.showAllPerc = null;
 	}
 
 	/**
@@ -103,7 +103,10 @@ public abstract class RuleParser {
 	 * @param showAllGeo a boolean.
 	 */
 	public void setShowAllGeo(boolean showAllGeo) {
-		this.showAllGeo = showAllGeo;
+		if (showAllGeo) {
+
+		}
+		this.showAllGeo = new ShowRule("", null);
 	}
 
 	/**
@@ -114,7 +117,7 @@ public abstract class RuleParser {
 	public Map<NodeRef, List<AggregateRule>> getAggregateRules() {
 		return aggregateRules;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>meatContentRules</code>.</p>
 	 *
@@ -187,22 +190,22 @@ public abstract class RuleParser {
 			} else if (LabelingRuleType.Locale.equals(labeLabelingRuleType)) {
 				addLocale(formula, locales);
 			} else if (LabelingRuleType.ShowPerc.equals(labeLabelingRuleType)) {
-				if (components==null || components.isEmpty()) {
+				if (components == null || components.isEmpty()) {
 					if ((formula != null) && !formula.isEmpty()) {
-						if(formula.contains("|")) {
-							if(formula.split("\\|").length > 2) {
+						if (formula.contains("|")) {
+							if (formula.split("\\|").length > 2) {
 								showPercRulesByThreshold.add(new ShowRule(formula, locales));
 							} else {
 								defaultPercFormat = formula.split("\\|")[0];
 								defaultRoundingMode = RoundingMode.valueOf(formula.split("\\|")[1]);
-								showAllPerc = true;
+								showAllPerc = new ShowRule(defaultPercFormat, locales);
 							}
 						} else {
 							defaultPercFormat = formula;
-							showAllPerc = true;
+							showAllPerc = new ShowRule(defaultPercFormat, locales);
 						}
 					} else {
-						showAllPerc = true;
+						showAllPerc = new ShowRule(defaultPercFormat, locales);
 					}
 
 				} else {
@@ -213,7 +216,7 @@ public abstract class RuleParser {
 
 			} else if (LabelingRuleType.ShowGeo.equals(labeLabelingRuleType)) {
 				if (components.isEmpty()) {
-					showAllGeo = true;
+					showAllGeo = new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales);
 				} else {
 					for (NodeRef component : components) {
 						showGeoRules.put(component, new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales));
@@ -221,7 +224,7 @@ public abstract class RuleParser {
 				}
 			} else if (LabelingRuleType.ShowBio.equals(labeLabelingRuleType)) {
 				if (components.isEmpty()) {
-					showAllBio = true;
+					showAllBio = new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales);
 				} else {
 					for (NodeRef component : components) {
 						showBioRules.put(component, new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales));
@@ -231,7 +234,7 @@ public abstract class RuleParser {
 					|| ((((components != null) && (components.size() > 1)) || ((replacement != null) && !replacement.isEmpty()))
 							&& (LabelingRuleType.Detail.equals(labeLabelingRuleType) || LabelingRuleType.Group.equals(labeLabelingRuleType)
 									|| LabelingRuleType.DoNotDetails.equals(labeLabelingRuleType)))) {
-				if(MeatType.isMeatType(formula)) {
+				if (MeatType.isMeatType(formula)) {
 					addMeatContentRule(components, replacement, formula, locales);
 				} else {
 					aggregate(ruleNodeRef, name, components, replacement, label, formula, labeLabelingRuleType, locales);
@@ -260,11 +263,11 @@ public abstract class RuleParser {
 				if ((components != null) && !components.isEmpty()) {
 					for (NodeRef component : components) {
 						List<DeclarationFilter> tmp = new LinkedList<>();
-						if(nodeDeclarationFilters.containsKey(component)) {
+						if (nodeDeclarationFilters.containsKey(component)) {
 							tmp = nodeDeclarationFilters.get(component);
 						}
 						tmp.add(declarationFilter);
-						
+
 						nodeDeclarationFilters.put(component, tmp);
 					}
 				} else {
@@ -323,7 +326,7 @@ public abstract class RuleParser {
 				try {
 					aggregateRule.setQty(Double.valueOf(qtys[i]));
 				} catch (NumberFormatException e) {
-					logger.info("Cannot read double value" +qtys[i]+" for rule: "+ ruleNodeRef);
+					logger.info("Cannot read double value" + qtys[i] + " for rule: " + ruleNodeRef);
 				}
 			}
 			aggregateRule.setComponents(components);
@@ -339,24 +342,22 @@ public abstract class RuleParser {
 
 		}
 	}
-	
-	private void addMeatContentRule(List<NodeRef> components, List<NodeRef> replacement, String formula,
-			List<String> locales) {
-		
+
+	private void addMeatContentRule(List<NodeRef> components, List<NodeRef> replacement, String formula, List<String> locales) {
+
 		String meatType = formula.replace("-CT", "").replace("-FAT", "");
-		
+
 		for (NodeRef component : components) {
 			MeatContentRule meatContentRule = meatContentRules.computeIfAbsent(meatType, a -> new MeatContentRule(meatType, locales));
-					
+
 			if ((replacement != null) && !replacement.isEmpty()) {
-				if(formula.endsWith("-CT")) {
+				if (formula.endsWith("-CT")) {
 					meatContentRule.setCtReplacement(replacement.get(0));
 				} else {
 					meatContentRule.setFatReplacement(replacement.get(0));
 				}
 			}
 			meatContentRule.setComponent(component);
-				
 
 		}
 	}
@@ -372,8 +373,8 @@ public abstract class RuleParser {
 	 * @return a boolean.
 	 */
 	public boolean rename(List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula, List<String> locales) {
-		
-		if(components.isEmpty() && replacement.isEmpty() && formula!=null && formula.matches("-?\\d+(\\.\\d+)?")) {
+
+		if (components.isEmpty() && replacement.isEmpty() && formula != null && formula.matches("-?\\d+(\\.\\d+)?")) {
 			separatorRules.add(new SeparatorRule(label, Double.parseDouble(formula), locales));
 		} else {
 			for (NodeRef component : components) {
@@ -386,13 +387,13 @@ public abstract class RuleParser {
 					mlText = label;
 				} else if (formula != null) {
 					mlText = new MLText();
-	
+
 					Set<Locale> availableLocales = new LinkedHashSet<>(getLocales());
-	
+
 					if (availableLocales.isEmpty()) {
 						availableLocales.add(new Locale(Locale.getDefault().getLanguage()));
 					}
-	
+
 					for (Locale locale : availableLocales) {
 						String val = I18NUtil.getMessage(formula, locale);
 						if (val == null) {

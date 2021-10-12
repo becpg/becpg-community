@@ -415,7 +415,7 @@ public  class FormulaFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		String path = JSON_PATH_SEPARATOR + dataListItem.getNodeRef().getId();
 
-		extractJSONSubList(productData, dataListItem, exp, path, subList, new HashSet<NodeRef>());
+		extractJSONSubList(productData, dataListItem, exp, path, subList, new HashSet<>());
 		jsonObject.put(JsonFormulaHelper.JSON_SUB_VALUES, subList);
 		jsonObject.put(JsonFormulaHelper.JSON_VALUE, value);
 		jsonObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(value));
@@ -490,12 +490,13 @@ public  class FormulaFormulationHandler extends FormulationBaseHandler<ProductDa
 				subObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(subValue));
 				subObject.put(JsonFormulaHelper.JSON_PATH, subPath);
 				subList.put(subObject);
-                 if(!visited.contains(dataListItem.getComponent())) {
+                 if(!visited.contains(composite.getComponent())) {
 					if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
 							|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
 							|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))) {
-						visited.add(dataListItem.getComponent());
+						
 						extractJSONSubList(productData, composite, exp, subPath, subList, visited);
+						visited.add(dataListItem.getComponent());
 					}
                  }
 			} finally {

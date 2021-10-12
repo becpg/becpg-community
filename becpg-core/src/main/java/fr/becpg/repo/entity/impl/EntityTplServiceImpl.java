@@ -105,9 +105,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
 
-	
 	private static final Tracer tracer = Tracing.getTracer();
-	
+
 	private static final Set<QName> isIgnoredAspect = new HashSet<>();
 
 	@Autowired
@@ -166,7 +165,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		isIgnoredAspect.add(TransferModel.ASPECT_TRANSFERRED);
 		isIgnoredAspect.add(RuleModel.ASPECT_RULES);
 		isIgnoredAspect.add(BeCPGModel.ASPECT_ENTITY_TPL);
-	};
+	}
 
 	private boolean ignoreAspect(QName aspect) {
 		return (aspect.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI) || isIgnoredAspect.contains(aspect));
@@ -287,6 +286,21 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			listNodeRef = nodeService.createNode(listContainerNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS,
 					DataListModel.TYPE_DATALIST, properties).getChildRef();
+
+		} else {
+
+			MLText title = (MLText) mlNodeService.getProperty(listNodeRef, ContentModel.PROP_TITLE);
+			MLText description = (MLText) mlNodeService.getProperty(listNodeRef, ContentModel.PROP_DESCRIPTION);
+
+			MLText classTitleMLText = TranslateHelper.getTranslatedKey("entity-datalist-wused-title");
+			MLText classDescritptionMLText = TranslateHelper.getTranslatedKey("entity-datalist-wused-description");
+
+			if ((title != null) && (classTitleMLText != null)) {
+				mlNodeService.setProperty(listNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, classTitleMLText));
+			}
+			if ((description != null) && (classDescritptionMLText != null)) {
+				mlNodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION, MLTextHelper.merge(description, classDescritptionMLText));
+			}
 
 		}
 		return listNodeRef;
@@ -587,7 +601,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		if (lock.tryLock()) {
 			try (Scope scope = tracer.spanBuilder("templateService.Formulate").startScopedSpan()) {
-			
 
 				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
 
@@ -858,6 +871,23 @@ public class EntityTplServiceImpl implements EntityTplService {
 		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, typeActivityList);
 		if (listNodeRef == null) {
 			listNodeRef = entityListDAO.createList(listContainerNodeRef, typeActivityList);
+		} else {
+
+			ClassDefinition classDef = entityDictionaryService.getClass(typeActivityList);
+
+			MLText title = (MLText) mlNodeService.getProperty(listNodeRef, ContentModel.PROP_TITLE);
+			MLText description = (MLText) mlNodeService.getProperty(listNodeRef, ContentModel.PROP_DESCRIPTION);
+
+			MLText classTitleMLText = TranslateHelper.getTemplateTitleMLText(classDef.getName());
+			MLText classDescritptionMLText = TranslateHelper.getTemplateDescriptionMLText(classDef.getName());
+
+			if ((title != null) && (classTitleMLText != null)) {
+				mlNodeService.setProperty(listNodeRef, ContentModel.PROP_TITLE, MLTextHelper.merge(title, classTitleMLText));
+			}
+			if ((description != null) && (classDescritptionMLText != null)) {
+				mlNodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION, MLTextHelper.merge(description, classDescritptionMLText));
+			}
+
 		}
 
 		return listNodeRef;

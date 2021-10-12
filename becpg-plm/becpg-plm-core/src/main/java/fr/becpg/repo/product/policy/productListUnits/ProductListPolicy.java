@@ -187,15 +187,13 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 						NodeRef costListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COSTLIST);
 						if ((costListNodeRef != null) && !nodeService.hasAspect(productNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
 
-							// productsUnit.put(costListNodeRef, productUnit);
-
 							for (NodeRef productListItemNodeRef : entityListDAO.getListItems(costListNodeRef, PLMModel.TYPE_COSTLIST)) {
 
 								NodeRef costNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_COSTLIST_COST);
 								if (costNodeRef != null) {
 									Boolean costFixed = (Boolean) nodeService.getProperty(costNodeRef, PLMModel.PROP_COSTFIXED);
 
-									if ((costFixed == null) || !costFixed) {
+									if (!Boolean.TRUE.equals(costFixed)) {
 
 										String costCurrency = (String) nodeService.getProperty(costNodeRef, PLMModel.PROP_COSTCURRENCY);
 										String costListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_COSTLIST_UNIT);
@@ -213,13 +211,10 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 						// nutList
 						NodeRef nutListNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_NUTLIST);
 						if (nutListNodeRef != null) {
-
-							// productsUnit.put(nutListNodeRef, productUnit);
+							
 							ProductUnit servingSizeUnit = ProductUnit
 									.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT));
-							// productsServingSizeUnit.put(nutListNodeRef,
-							// servingSizeUnit);
-
+							
 							for (NodeRef productListItemNodeRef : entityListDAO.getListItems(nutListNodeRef, PLMModel.TYPE_NUTLIST)) {
 
 								String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
@@ -231,6 +226,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 									if (!((nutListUnit != null) && !nutListUnit.isEmpty() && nutListUnit
 											.endsWith(NutsCalculatingFormulationHandler.calculateSuffixUnit(productUnit, servingSizeUnit)))) {
 
+						
 										nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT,
 												NutsCalculatingFormulationHandler.calculateUnit(productUnit, servingSizeUnit, nutUnit));
 									}
