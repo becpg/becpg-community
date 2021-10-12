@@ -21,10 +21,10 @@ RUN curl --silent --location \
 
 #Javascript console
 RUN curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/javascript-console-repo-0.6.0.amp  \
-      -o $TOMCAT_DIR/amps/javascript-console-repo-0.6.0.amp && \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/javascript-console-repo-0.7.0.amp  \
+      -o $TOMCAT_DIR/amps/javascript-console-repo-0.7.0.amp && \
     java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps/ $TOMCAT_DIR/webapps/alfresco -nobackup -directory && \
-    rm $TOMCAT_DIR/amps/javascript-console-repo-0.6.0.amp  
+    rm $TOMCAT_DIR/amps/javascript-console-repo-0.7.0.amp  
     
     
 #Support tools
