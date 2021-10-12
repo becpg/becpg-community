@@ -156,89 +156,6 @@
       </tree>
 
       <!--
-         Used by "Manage Rules" -> "Add aspect" action.
-
-         If an aspect has been specified without a title element in the content model,
-         or you need to support multiple languages,
-         then an i18n file is needed on the Repo AMP/JAR extension side for the aspect to
-         be visible when creating rules:
-
-          custom_customModel.aspect.custom_myaspect.title=My Aspect
-
-         Used by the "Manage Aspects" action.
-
-         For the aspect to have a localised label add relevant i18n string(s) in a Share AMP/JAR extension:
-
-          aspect.custom_myaspect=My Aspect
-      -->
-      <aspects>
-         <!-- Aspects that a user can see -->
-         <visible>
-            <aspect name="cm:generalclassifiable" />
-            <aspect name="cm:complianceable" />
-            <aspect name="cm:dublincore" />
-            <aspect name="cm:effectivity" />
-            <aspect name="cm:summarizable" />
-            <aspect name="cm:versionable" />
-            <aspect name="cm:templatable" />
-            <aspect name="cm:emailed" />
-            <aspect name="emailserver:aliasable" />
-            <aspect name="cm:taggable" />
-            <aspect name="app:inlineeditable" />
-            <aspect name="cm:geographic" />
-            <aspect name="exif:exif" />
-            <aspect name="audio:audio" />
-            <aspect name="cm:indexControl" />
-            <aspect name="dp:restrictable" />
-            <aspect name="smf:customConfigSmartFolder" />
-            <aspect name="smf:systemConfigSmartFolder" />
-         </visible>
-
-         <!-- Aspects that a user can add. Same as "visible" if left empty -->
-         <addable>
-         </addable>
-
-         <!-- Aspects that a user can remove. Same as "visible" if left empty -->
-         <removeable>
-         </removeable>
-      </aspects>
-
-      <!--
-         Used by "Manage Rules" -> "Specialise type" action.
-
-         If a type has been specified without a title element in the content model,
-         or you need to support multiple languages,
-         then an i18n file is needed on the Repo AMP/JAR extension side for the type to
-         be visible when creating rules:
-
-            custom_customModel.type.custom_mytype.title=My SubType
-
-         Used by the "Change Type" action.
-
-         For the type to have a localised label add relevant i18n string(s) in a Share AMP/JAR extension:
-
-            type.custom_mytype=My SubType
-
-         Define valid subtypes using the following example:
-
-            <type name="cm:content">
-             <subtype name="custom:mytype" />
-            </type>
-      -->
-      <types>
-         <type name="cm:content">
-            <subtype name="smf:smartFolderTemplate" />
-         </type>
-
-          <type name="cm:folder">
-         </type>
-
-         <type name="trx:transferTarget">
-            <subtype name="trx:fileTransferTarget" />
-         </type>
-      </types>
-
-      <!--
          If set, will present a WebDAV link for the current item on the Document and Folder details pages.
          Also used to generate the "View in Alfresco Explorer" action for folders.
       -->
@@ -279,27 +196,6 @@
    </config>
 
 
-   <!-- Custom DocLibActions config section -->
-   <config evaluator="string-compare" condition="DocLibActions">
-      <actionGroups>
-         <actionGroup id="document-browse">
-
-            <!-- Simple Repo Actions -->
-            <!--
-            <action index="340" id="document-extract-metadata" />
-            <action index="350" id="document-increment-counter" />
-            -->
-
-            <!-- Dialog Repo Actions -->
-            <!--
-            <action index="360" id="document-transform" />
-            <action index="370" id="document-transform-image" />
-            <action index="380" id="document-execute-script" />
-            -->
-
-         </actionGroup>
-      </actionGroups>
-   </config>
 
    <!-- Global folder picker config section -->
    <config evaluator="string-compare" condition="GlobalFolder">
