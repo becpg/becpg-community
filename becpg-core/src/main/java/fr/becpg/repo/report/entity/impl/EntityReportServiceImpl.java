@@ -1088,6 +1088,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 				reportParameters.getParameters().add(param1);
 				List<NodeRef> tplsNodeRef = getReportTplsToGenerate(entityNodeRef);
 				preferences = getMergedPreferences(tplsNodeRef);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Merged preferences " + preferences.toString());
+				}
+				
 			} else {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Using reportParameters: " + reportParameters.toString());
