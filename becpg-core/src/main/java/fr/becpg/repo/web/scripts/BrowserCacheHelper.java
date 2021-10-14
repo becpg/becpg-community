@@ -19,6 +19,7 @@ package fr.becpg.repo.web.scripts;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -26,11 +27,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
-import com.ibm.icu.util.Calendar;
 
 public abstract class BrowserCacheHelper   {
 
 	private static final Log logger = LogFactory.getLog(BrowserCacheHelper.class);
+	
+	
+	private  BrowserCacheHelper() {
+		// Empty
+	}
 	
 	public static boolean isBrowserHasInCache(WebScriptRequest req){
 		Calendar cal = Calendar.getInstance();
