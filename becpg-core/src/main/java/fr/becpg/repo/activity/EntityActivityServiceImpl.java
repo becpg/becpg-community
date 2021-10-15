@@ -488,16 +488,38 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 							
 							property.put(PROP_TITLE, entry.getKey());
-							if (entry.getValue().getFirst() instanceof List && ((List<?>) entry.getValue().getFirst()).get(0) instanceof Date) {
-								property.put(BEFORE, ISO8601DateFormat.format((Date) ((List<?>) entry.getValue().getFirst()).get(0)));
+							
+							if (entry.getValue().getFirst() instanceof List) {
+								ArrayList<Object> beforeList = new ArrayList<>();
+								
+								for (Object ent : (List<?>) entry.getValue().getFirst()) {
+									if (ent instanceof Date) {
+										beforeList.add(ISO8601DateFormat.format((Date) ent));
+									} else {
+										beforeList.add(ent);
+									}
+								}
+								
+								property.put(BEFORE, beforeList);
 							} else {
 								property.put(BEFORE, entry.getValue().getFirst());
 							}
+							
 							if (entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER, data.get(PROP_TITLE));
 							} else {
-								if (entry.getValue().getSecond() instanceof List && ((List<?>) entry.getValue().getSecond()).get(0) instanceof Date) {
-									property.put(AFTER, ISO8601DateFormat.format((Date) ((List<?>) entry.getValue().getSecond()).get(0)));
+								if (entry.getValue().getSecond() instanceof List) {
+									ArrayList<Object> afterList = new ArrayList<>();
+									
+									for (Object ent : (List<?>) entry.getValue().getSecond()) {
+										if (ent instanceof Date) {
+											afterList.add(ISO8601DateFormat.format((Date) ent));
+										} else {
+											afterList.add(ent);
+										}
+									}
+									
+									property.put(AFTER, afterList);
 								} else {
 									property.put(AFTER, entry.getValue().getSecond());
 								}
@@ -901,20 +923,43 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								}
 							}
 							
-							if (entry.getValue().getFirst() instanceof List && ((List<?>) entry.getValue().getFirst()).get(0) instanceof Date) {
-								property.put(BEFORE, ISO8601DateFormat.format((Date) ((List<?>) entry.getValue().getFirst()).get(0)));
+							
+							if (entry.getValue().getFirst() != null) {
+								ArrayList<Object> beforeList = new ArrayList<>();
+								
+								for (Serializable ent : entry.getValue().getFirst()) {
+									if (ent instanceof Date) {
+										beforeList.add(ISO8601DateFormat.format((Date) ent));
+									} else {
+										beforeList.add(ent);
+									}
+								}
+								property.put(BEFORE, beforeList);
 							} else {
 								property.put(BEFORE, entry.getValue().getFirst());
 							}
+							
+							
 							if (data.has(PROP_TITLE) && data.get(PROP_TITLE) != null
 									&& entry.getKey().equals(ContentModel.PROP_NAME)) {
 								property.put(AFTER, data.get(PROP_TITLE));
 							} else {
-								if (entry.getValue().getSecond() instanceof List && ((List<?>) entry.getValue().getSecond()).get(0) instanceof Date) {
-									property.put(AFTER, ISO8601DateFormat.format((Date) ((List<?>) entry.getValue().getSecond()).get(0)));
+								
+								if (entry.getValue().getSecond() != null) {
+									ArrayList<Object> afterList = new ArrayList<>();
+									
+									for (Serializable ent : entry.getValue().getSecond()) {
+										if (ent instanceof Date) {
+											afterList.add(ISO8601DateFormat.format((Date) ent));
+										} else {
+											afterList.add(ent);
+										}
+									}
+									property.put(AFTER, afterList);
 								} else {
 									property.put(AFTER, entry.getValue().getSecond());
 								}
+								
 							}
 							properties.add(property);
 						}
