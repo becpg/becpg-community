@@ -302,7 +302,6 @@ public class ActivityListExtractor extends SimpleExtractor {
 	 * @return a {@link org.json.JSONArray} object.
 	 */
 	public JSONArray checkProperty(JSONArray propertyArray, PropertyDefinition propertyDef) {
-		boolean updateProperty = true;
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
 			try {
@@ -336,17 +335,26 @@ public class ActivityListExtractor extends SimpleExtractor {
 						}
 					}
 				} else {
-					updateProperty = false;
-					break;
+					Object prop = propertyArray.get(i);
+					
+					if (prop instanceof String) {
+						try {
+							Date date = ISO8601DateFormat.parse((String) prop);
+							postproperty.put(date.toString());
+						} catch (AlfrescoRuntimeException e) {
+							postproperty.put(prop);
+						}
+					} else {
+						postproperty.put(prop);
+					}
+					
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
 			}
 		}
-		if (updateProperty) {
-			return postproperty;
-		}
-		return propertyArray;
+		
+		return postproperty;
 	}
 
 	/** {@inheritDoc} */
