@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2018 beCPG.
  *
  * This file is part of beCPG
  *
@@ -19,6 +19,7 @@ package fr.becpg.repo.web.scripts;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -26,7 +27,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
-import com.ibm.icu.util.Calendar;
 
 /**
  * <p>Abstract BrowserCacheHelper class.</p>
@@ -38,12 +38,11 @@ public abstract class BrowserCacheHelper   {
 
 	private static final Log logger = LogFactory.getLog(BrowserCacheHelper.class);
 	
-	/**
-	 * <p>isBrowserHasInCache.</p>
-	 *
-	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
-	 * @return a boolean.
-	 */
+	
+	private  BrowserCacheHelper() {
+		// Empty
+	}
+	
 	public static boolean isBrowserHasInCache(WebScriptRequest req){
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.MONTH, -5);
