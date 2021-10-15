@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.version.EntityVersionPlugin;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.ProjectWorkflowService;
@@ -154,7 +155,11 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 			for (final NodeRef projectNodeRef : pendingNodes) {
 				if (nodeService.exists(projectNodeRef)) {
 					logger.debug("doBeforeCommit formulate project : "+projectNodeRef);
-					projectService.formulate(projectNodeRef);
+					try {
+						projectService.formulate(projectNodeRef);
+					} catch(FormulateException e) {
+						logger.error("Cannot formulate project: "+projectNodeRef, e);
+					}
 				}
 			}
 
