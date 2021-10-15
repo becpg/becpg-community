@@ -495,6 +495,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								for (Object ent : (List<?>) entry.getValue().getFirst()) {
 									if (ent instanceof Date) {
 										beforeList.add(ISO8601DateFormat.format((Date) ent));
+									} else if (ent instanceof Pair) {
+										beforeList.add(ent.toString());
 									} else {
 										beforeList.add(ent);
 									}
@@ -514,6 +516,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									for (Object ent : (List<?>) entry.getValue().getSecond()) {
 										if (ent instanceof Date) {
 											afterList.add(ISO8601DateFormat.format((Date) ent));
+										} else if (ent instanceof Pair) {
+											afterList.add(ent.toString());
 										} else {
 											afterList.add(ent);
 										}
@@ -813,7 +817,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					data.put(PROP_ENTITY_TYPE, nodeService.getType(entityNodeRef));
 					data.put(PROP_TITLE, nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 					if (activityEvent.equals(ActivityEvent.Update) && updatedProperties != null) {
-						List<JSONObject> properties = new ArrayList<>();
+						List<JSONObject> properties = new ArrayList<JSONObject>();
 						for (Map.Entry<QName, Pair<List<Serializable>, List<Serializable>>> entry : updatedProperties
 								.entrySet()) {
 							JSONObject property = new JSONObject();
@@ -930,6 +934,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								for (Serializable ent : entry.getValue().getFirst()) {
 									if (ent instanceof Date) {
 										beforeList.add(ISO8601DateFormat.format((Date) ent));
+									} else if (ent instanceof Pair) {
+										beforeList.add(ent.toString());
 									} else {
 										beforeList.add(ent);
 									}
@@ -951,6 +957,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									for (Serializable ent : entry.getValue().getSecond()) {
 										if (ent instanceof Date) {
 											afterList.add(ISO8601DateFormat.format((Date) ent));
+										} else if (ent instanceof Pair) {
+											afterList.add(ent.toString());
 										} else {
 											afterList.add(ent);
 										}
