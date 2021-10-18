@@ -224,7 +224,10 @@
 				<property name="qa:ncType">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:ncTypes" />
 					</constraints>
@@ -232,7 +235,10 @@
 				<property name="qa:ncPriority">
 					<type>d:int</type>
 					<mandatory>true</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:ncPriority" />
 					</constraints>
@@ -240,7 +246,10 @@
 				<property name="qa:ncState">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:ncStates" />
 					</constraints>
@@ -248,12 +257,18 @@
 				<property name="qa:ncQuantityNc">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:ncQuantityNcUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:ncQuantityNcUnit" />
 					</constraints>
@@ -261,12 +276,18 @@
 				<property name="qa:ncCost">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:ncComment">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -317,17 +338,26 @@
 				<property name="qa:qcSamplesCounter">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:qcNextAnalysisDate">
 					<type>d:datetime</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:qcState">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:states" />
 					</constraints>
@@ -360,22 +390,34 @@
 				<property name="qa:cpIsExtLabo">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:cpReleaseInfo">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="qa:cpSendResults">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:cpStoreResults">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations />
@@ -409,6 +451,10 @@
 			<properties >
 				<property name="qa:controlCharactType">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:controlTypes" />
 					</constraints>
@@ -487,7 +533,11 @@
 				</property>
 				<property name="qa:sdlFreq">
 					<type>d:int</type>
-					<mandatory>false</mandatory>					
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>			
 				</property>
 				<property name="qa:sdlFreqUnit">
 					<type>d:text</type>
@@ -499,7 +549,11 @@
 				</property>
 				<property name="qa:sdlFreqText">
 					<type>d:text</type>
-					<mandatory>false</mandatory>					
+					<mandatory>false</mandatory>	
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>				
 				</property>
 			</properties>			
 			<overrides />
@@ -527,7 +581,11 @@
 				</property>
 				<property name="qa:slSampleState">
 					<type>d:text</type>
-					<mandatory>false</mandatory>					
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>		
 					<constraints>
 						<constraint ref="qa:states" />
 					</constraints>
@@ -546,7 +604,11 @@
 					<index enabled="false" />
 				</property>
 				<property name="qa:cdlFreq">
-					<type>d:int</type>				
+					<type>d:int</type>	
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>	
 				</property>
 				<property name="qa:cdlFreqUnit">
 					<type>d:text</type>
@@ -568,6 +630,10 @@
 				<property name="qa:clSampleId">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="qa:clValue">
 					<type>d:double</type>
@@ -576,7 +642,11 @@
 				</property>				
 				<property name="qa:clState">
 					<type>d:text</type>
-					<mandatory>false</mandatory>					
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>		
 					<constraints>
 						<constraint ref="qa:states" />
 					</constraints>
@@ -595,19 +665,33 @@
 				<property name="qa:batchId">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="qa:orderId">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="qa:batchQty">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:batchQtyUnit">
 					<type>d:text</type>
 					<default>kg</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:productUnit" />
 					</constraints>
@@ -616,10 +700,9 @@
 					<type>d:text</type>
 					<default>Simulation</default>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:systemState" />
 					</constraints>
@@ -627,26 +710,34 @@
 				<property name="qa:batchStart">
 					<type>d:datetime</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:batchDuration">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:batchComment">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="qa:productUseByDate">
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -674,12 +765,19 @@
 					<title>Descriptif du problème</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="qa:claimSource">
 					<title>Source de la remontée</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true" />
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:claimSources" />
 					</constraints>
@@ -689,20 +787,18 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="qa:claimTracking">
 					<title>Suivi demandé</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:claimTrackingValues" />
 					</constraints>
@@ -712,10 +808,9 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:claimTypes" />
 					</constraints>
@@ -724,21 +819,28 @@
 					<title>Processus responsable de la réclamation - Famille</title>
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:claimOriginHierarchy2">
 					<title>Processus responsable de la réclamation - Sous famille</title>
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:claimDistributionNetwork">
 					<title>Réseau de distribution</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:claimDistributionNetworks" />
 					</constraints>
@@ -853,6 +955,10 @@
 				<property name="qa:clType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:controlTypes" />
 					</constraints>
@@ -892,11 +998,19 @@
 				</property>
 				<property name="qa:clRequired">
 					<type>d:boolean</type>
-					<mandatory>false</mandatory>					
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>	
 				</property>
 				<property name="qa:clTemperature">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:clTemperatures"/>
 					</constraints>
@@ -953,30 +1067,27 @@
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:claimTreatementDetails">
 					<title>Détails du traitement effectué (analyse des causes, traçabilité)</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="qa:claimTreatementPrevActions">
 					<title>Actions préventives éventuellement lancées</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="qa:claimTreatementComment">
 					<title>Commentaires étape traitement</title>
@@ -1011,20 +1122,18 @@
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:claimResponseState">
 					<title>Etat réponse</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="qa:claimResponseStates" />
 					</constraints>
@@ -1035,10 +1144,9 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="qa:claimResponseComment">
 					<title>Commentaires étape réponse</title>
@@ -1073,10 +1181,9 @@
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="qa:claimClosingComment">
 					<title>Commentaires étape clôture</title>
