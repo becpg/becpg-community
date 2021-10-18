@@ -672,15 +672,18 @@
 			<properties>
 				<property name="bcpg:lvCode">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:lvValue">
 					<type>d:mltext</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</type>
@@ -692,10 +695,9 @@
 					<type>d:mltext</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		              </index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -721,20 +723,31 @@
 			<properties>
 				<property name="bcpg:autoNumClassName">
 					<type>d:qname</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		              </index>
 				</property>
 				<property name="bcpg:autoNumPropertyName">
 					<type>d:qname</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		              </index>
 				</property>
 				<property name="bcpg:autoNumValue">
 					<type>d:long</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		              </index>
 				</property>
 				<property name="bcpg:autoNumPrefix">
 					<type>d:text</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:autoNumPrefix" />
 					</constraints>
@@ -759,6 +772,10 @@
 				<property name="bcpg:alType">
 					<type>d:text</type>
 					<mandatory enforced="true">true</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:activityTypes" />
 					</constraints>
@@ -771,6 +788,10 @@
 				<property name="bcpg:alUserId">
 					<type>d:text</type>
 					<mandatory enforced="true">true</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		              </index>
 				</property>
 			</properties>
 		</type>
@@ -781,9 +802,17 @@
 			<properties>
 				<property name="bcpg:specCompatibilityJobOn">
 					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:specCompatibilityLog">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -814,6 +843,10 @@
 				<property name="bcpg:psclReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>
@@ -845,18 +878,16 @@
 				<property name="bcpg:pmcRegulation">
 					<type>d:mltext</type>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:pmcConcernedProducts">
 					<type>d:mltext</type>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -917,6 +948,10 @@
 			<properties>
 				<property name="bcpg:foodContact">
 					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -946,10 +981,9 @@
 					<type>d:mltext</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -963,15 +997,18 @@
 			<properties>
 				<property name="bcpg:allergenCode">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:allergenType">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:allergenType" />
 					</constraints>
@@ -1003,10 +1040,9 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:currency" />
 					</constraints>
@@ -1014,10 +1050,9 @@
 				<property name="bcpg:costType">
 					<type>d:text</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:costTypes" />
 					</constraints>
@@ -1026,6 +1061,10 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:costFormula">
 					<type>d:text</type>
@@ -1077,10 +1116,9 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:nutGroup" />
 					</constraints>
@@ -1089,10 +1127,9 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:nutType" />
 					</constraints>
@@ -1101,10 +1138,9 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:nutUnit" />
 					</constraints>
@@ -1156,15 +1192,18 @@
 			<properties>
 				<property name="bcpg:physicoChemCode">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:physicoChemUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:physicoChemUnit" />
 					</constraints>
@@ -1173,10 +1212,9 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:physicoChemType" />
 					</constraints>
@@ -1185,10 +1223,18 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:physicoChemFormulatedFromVol">
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:physicoChemFormula">
 					<type>d:text</type>
@@ -1202,12 +1248,24 @@
 			<properties>
 				<property name="bcpg:geoOriginISOCode">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:geoOriginISOCodeThreeLetters">
                     <type>d:text</type>
+                    <index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
                 </property>
                 <property name="bcpg:geoOriginISOCodeNumeric">
                     <type>d:text</type>
+                    <index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
                 </property>
 			</properties>
 		</type>
@@ -1218,10 +1276,9 @@
 				<property name="bcpg:bioOriginType">
 					<type>d:mltext</type>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</type>
@@ -1233,30 +1290,40 @@
 			<properties>
 				<property name="bcpg:supplierHierarchy1">
 					<type>d:noderef</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:supplierHierarchy2">
 					<type>d:noderef</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:supplierState">
 					<type>d:text</type>
 					<default>Simulation</default>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:systemState" />
 					</constraints>
 				</property>
 				<property name="bcpg:supplierTel">
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="bcpg:supplierFax">
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="bcpg:supplierEmail">
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -1273,30 +1340,40 @@
 			<properties>
 				<property name="bcpg:clientHierarchy1">
 					<type>d:noderef</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:clientHierarchy2">
 					<type>d:noderef</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:clientState">
 					<type>d:text</type>
 					<default>Simulation</default>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:systemState" />
 					</constraints>
 				</property>
 				<property name="bcpg:clientTel">
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="bcpg:clientFax">
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="bcpg:clientEmail">
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -1312,12 +1389,21 @@
 			<properties>
 				<property name="bcpg:plantTel">
 					<type>d:text</type>
+					<index enabled="false"/>
 				</property>
 				<property name="bcpg:plantPackerCode">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:plantApprovalNumbers">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -1359,6 +1445,10 @@
 			<properties>
 				<property name="bcpg:trademarkType">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:trademarkTypes" />
 					</constraints>
@@ -1373,9 +1463,17 @@
 				<property name="bcpg:cstsCode">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:cstsCodeType">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -1460,9 +1558,17 @@
 				</property>
 				<property name="bcpg:compoListOverrunPerc">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:compoListVolume">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -1507,6 +1613,10 @@
 				</property>
 				<property name="bcpg:packagingListPkgLevel">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:packagingLevel" />
 					</constraints>
@@ -1515,10 +1625,18 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:packagingListIsRecycle">
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -1553,9 +1671,17 @@
 				</property>
 				<property name="bcpg:allergenListVoluntary">
 					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:allergenListInVoluntary">
 					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:allergenListDecisionTree">
 					<type>d:text</type>
@@ -1606,6 +1732,7 @@
 				<property name="bcpg:costListValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="false"/>
 				</property>
 				<property name="bcpg:costListUnit">
 					<type>d:text</type>
@@ -1648,6 +1775,7 @@
 				<property name="bcpg:costListIsFormulated">
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="false"/>
 				</property>
 				<property name="bcpg:costListFormulaErrorLog">
 					<type>d:text</type>
@@ -1796,14 +1924,17 @@
 				<property name="bcpg:lrLabel">
 					<type>d:mltext</type>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:lrGroup">
 					<type>d:text</type>
 					<multiple>true</multiple>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:lrGroups" />
 					</constraints>
@@ -1815,10 +1946,9 @@
 				<property name="bcpg:lrType">
 					<type>d:text</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:lrTypes" />
 					</constraints>
@@ -1827,10 +1957,18 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>true</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:lrSyncState">
 					<type>d:text</type>
 					<default>Manual</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:synchronisableStates" />
 					</constraints>
@@ -1897,21 +2035,37 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:ingListIsIonized">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:ingListIsProcessingAid">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:ingListIsSupport">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:ingListDeclType">
 					<type>d:text</type>
@@ -1999,6 +2153,10 @@
 				</property>
 				<property name="bcpg:mblControlStep">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:microbioControlSteps" />
 					</constraints>
@@ -2025,6 +2183,7 @@
 				<property name="bcpg:nutListValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:nutListFormulatedValue">
 					<type>d:double</type>
@@ -2073,10 +2232,9 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:nutGroup" />
 					</constraints>
@@ -2085,10 +2243,9 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:nutListMethods" />
 					</constraints>
@@ -2096,6 +2253,7 @@
 				<property name="bcpg:nutListIsFormulated">
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:nutListFormulaErrorLog">
 					<type>d:text</type>
@@ -2151,6 +2309,7 @@
 				<property name="bcpg:pclValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="false"/>
 				</property>
 				<property name="bcpg:pclUnit">
 					<type>d:text</type>
@@ -2161,6 +2320,10 @@
 				</property>
 				<property name="bcpg:pclType">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:physicoChemType" />
 					</constraints>
@@ -2183,6 +2346,7 @@
 				<property name="bcpg:physicoChemIsFormulated">
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="false" />
 				</property>
 				<property name="bcpg:physicoChemFormulaErrorLog">
 					<type>d:text</type>
@@ -2212,10 +2376,9 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>
@@ -2224,10 +2387,9 @@
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:filQtyPercMaxi">
 					<type>d:double</type>
@@ -2306,11 +2468,7 @@
 				<property name="bcpg:rclReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+					<index enabled="false"/>
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
 					</constraints>
@@ -2333,11 +2491,7 @@
 				<property name="bcpg:rclDataType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+					<index enabled="false"/>
 					<constraints>
 						<constraint ref="bcpg:reqDataTypes" />
 					</constraints>
@@ -2376,6 +2530,10 @@
 					<title>Contact type</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:contactTypes" />
 					</constraints>
@@ -2385,11 +2543,19 @@
 					<title>First Name</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:contactListLastName">
 					<title>Last Name</title>
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:contactListEmail">
 					<title>Email Address</title>
@@ -2436,10 +2602,9 @@
 				<property name="bcpg:lclType">
 					<type>d:text</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:labelClaimTypes" />
 					</constraints>
@@ -2447,6 +2612,10 @@
 				<property name="bcpg:lclClaimValue">
 					<type>d:text</type>
 					<default></default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:labelClaimValues"></constraint>
 					</constraints>
@@ -2458,6 +2627,7 @@
 				<property name="bcpg:lclIsFormulated">
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="false"/>
 				</property>
 				<property name="bcpg:lclFormulaErrorLog">
 					<type>d:text</type>
@@ -2496,11 +2666,7 @@
 				<property name="bcpg:dynamicCharactTitle">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+					<index enabled="false"/>
 				</property>
 				<property name="bcpg:dynamicCharactFormula">
 					<type>d:text</type>
@@ -2517,9 +2683,8 @@
 				<property name="bcpg:dynamicCharactColumn">
 					<type>d:text</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
 						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 					<constraints>
 						<constraint ref="bcpg:dynamicCharactColumns" />
@@ -2527,10 +2692,18 @@
 				</property>
 				<property name="bcpg:dynamicCharactGroupColor">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:dynamicCharactSynchronisableState">
 					<type>d:text</type>
 					<default>Template</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:synchronisableStates" />
 					</constraints>
@@ -2539,6 +2712,10 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<default>Post</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:dynamicCharactExecOrders" />
 					</constraints>
@@ -2546,6 +2723,10 @@
 				<property name="bcpg:dynamicCharactMultiLevel">
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 
 			</properties>
@@ -2558,18 +2739,16 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:labelClaimType">
 					<type>d:text</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:labelClaimTypes" />
 					</constraints>
@@ -2586,14 +2765,17 @@
 			<properties>
 				<property name="bcpg:isDefaultVariant">
 					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				 <property name="bcpg:variantColumn">
                     <type>d:text</type>
                     <index enabled="true">
-                        <atomic>false</atomic>
-                        <stored>false</stored>
-                        <tokenised>false</tokenised>
-                    </index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
                     <constraints>
                         <constraint ref="bcpg:variantColumns" />
                     </constraints>
@@ -2607,18 +2789,16 @@
 				<property name="bcpg:storageConditionsMode">
 					<type>d:mltext</type>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:storageConditionsTemperature">
 					<type>d:mltext</type>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</type>
@@ -2633,51 +2813,99 @@
 				<property name="bcpg:nrNodeType">
 					<type>d:text</type>
 					<mandatory enforced="true">true</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:nrDateField">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:nrConditions">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:nrFrequency">
 					<type>d:int</type>
 					<mandatory enforced="true">true</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:nrTimeType">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:nrTimeTypes" />
 					</constraints>
 				</property>
 				<property name="bcpg:nrTimeNumber">
 					<type>d:int</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:nrSubject">
 					<type>d:text</type>
 					<mandatory enforced="true">true</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:nrFrequencyStartDate">
 					<type>d:date</type>
 					<mandatory enforced="true">true</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:nrVersionFilter">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:nrVersionFilterTypes" />
 					</constraints>
 				</property>
 				<property name="bcpg:nrForceNotification">
 					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:nrRecurringTimeType">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:nrRecurringTimeTypes" />
 					</constraints>
 				</property>
 				<property name="bcpg:nrRecurringDay">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:nrRecurringDays" />
 					</constraints>
@@ -2738,9 +2966,17 @@
 			<properties>
 				<property name="bcpg:formulatedDate">
 					<type>d:datetime</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:regulatoryFormulatedDate">
 					<type>d:datetime</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:requirementChecksum">
 					<type>d:text</type>
@@ -2754,12 +2990,24 @@
 			<properties>
 				<property name="bcpg:stateActivityModified">
 					<type>d:datetime</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:stateActivityPreviousState">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:stateActivityModifier">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -2770,18 +3018,16 @@
 				<property name="bcpg:legalName">
 					<type>d:mltext</type>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:pluralLegalName">
 					<type>d:mltext</type>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -2794,10 +3040,18 @@
 				<property name="bcpg:depthLevel">
 					<type>d:int</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<!-- used to store the direct parentLevel node (multi-leve recipe)l -->
 				<property name="bcpg:parentLevel">
 					<type>d:noderef</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -2810,6 +3064,10 @@
 				<property name="bcpg:sort">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -2822,6 +3080,10 @@
 				<property name="bcpg:isManualListItem">
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -2831,6 +3093,10 @@
 				<property name="bcpg:code">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -2841,10 +3107,9 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:entityDataListStates"></constraint>
 					</constraints>
@@ -2863,59 +3128,80 @@
 					<title>Version Label</title>
 					<type>d:text</type>
 					<protected>true</protected>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:versionLabel">
 					<title>Version Label</title>
 					<type>d:text</type>
 					<protected>true</protected>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:frozenCreated">
 					<title>Created</title>
 					<type>d:datetime</type>
 					<protected>true</protected>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:frozenCreator">
 					<title>Creator</title>
 					<type>d:text</type>
 					<protected>true</protected>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:frozenModified">
 					<title>Modified</title>
 					<type>d:datetime</type>
 					<protected>true</protected>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:frozenModifier">
 					<title>Modifier</title>
 					<type>d:text</type>
 					<protected>true</protected>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:frozenAccessed">
 					<title>Accessed</title>
 					<type>d:datetime</type>
 					<protected>true</protected>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:frozenNodeRef">
 					<type>d:text</type>
 					<mandatory enforced="true">false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:frozenNodeDbId">
 					<type>d:long</type>
 					<mandatory enforced="true">false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -2979,9 +3265,17 @@
 			<properties>
 				<property name="bcpg:startEffectivity">
 					<type>d:datetime</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:endEffectivity">
 					<type>d:datetime</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -2992,6 +3286,10 @@
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3000,6 +3298,10 @@
 			<properties>
 				<property name="bcpg:color">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3008,10 +3310,18 @@
 			<properties>
 				<property name="bcpg:reconstitutionRate">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:reconstitutionPriority">
 					<type>d:int</type>
 					<default>0</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -3047,15 +3357,27 @@
 			<properties>
 				<property name="bcpg:entityTplClassName">
 					<type>d:qname</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:entityTplEnabled">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
 					<default>true</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:entityTplIsDefault">
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -3123,6 +3445,10 @@
 			<properties>
 				<property name="bcpg:regulatoryCode">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3185,65 +3511,102 @@
 				<property name="bcpg:productComments">
 					<type>d:mltext</type>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-					</index>
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:productHierarchy1">
 					<type>d:noderef</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:productHierarchy2">
 					<type>d:noderef</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:productCompoQtyUsed">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:productCompoVolumeUsed">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:productQty">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:productUnit">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<default>kg</default>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:productUnit" />
 					</constraints>
 				</property>
 				<property name="bcpg:productDensity">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:productLossPerc">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:componentLossPerc">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:productYield">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:productState">
 					<type>d:text</type>
 					<default>Simulation</default>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:systemState" />
 					</constraints>
 				</property>
 				<property name="bcpg:dropPackagingOfComponents">
 					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			
 			</properties>
@@ -3333,12 +3696,24 @@
 			<properties>
 				<property name="bcpg:eanCode">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:eanCodeLevel2">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:eanCodeLevel3">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3347,24 +3722,52 @@
 			<properties>
 				<property name="bcpg:useByDate">
 					<type>d:int</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:bestBeforeDate">
 					<type>d:int</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:periodAfterOpening">
 					<type>d:int</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:netWeight">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:netVolume">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:drainedWeight">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:servingSize">
 					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:servingSizeByCountry">
 					<type>d:mltext</type>
@@ -3373,21 +3776,41 @@
 				<property name="bcpg:servingSizeUnit">
 					<type>d:text</type>
 					<default>g</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:servingSizeUnit" />
 					</constraints>
 				</property>
 				<property name="bcpg:servingSizeText">
 					<type>d:mltext</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:numberOfServings">
 					<type>d:mltext</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:preparationTips">
 					<type>d:mltext</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:packagingDescription">
 					<type>d:mltext</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -3499,6 +3922,10 @@
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
 					<multiple>true</multiple>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3509,10 +3936,9 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:entityFormat" />
 					</constraints>
@@ -3521,9 +3947,6 @@
 					<type>d:content</type>
 					<mandatory>false</mandatory>
 					<index enabled="false">
-                        <atomic>true</atomic>
-                        <stored>false</stored>
-                        <tokenised>false</tokenised>
                     </index>
 				</property>
 			</properties>
@@ -3551,6 +3974,10 @@
 				<property name="bcpg:erpCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3560,26 +3987,50 @@
 				<property name="bcpg:casNumber">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:ceNumber">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:ecNumber">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:fdaNumber">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:femaNumber">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:flNumber">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3589,16 +4040,19 @@
 				<property name="bcpg:unitPrice">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 
 				<property name="bcpg:priceCurrency">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:currency" />
 					</constraints>
@@ -3606,26 +4060,50 @@
 				<property name="bcpg:breakEven">
 					<type>d:long</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:projectedQty">
 					<type>d:long</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:unitTotalCost">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:previousUnitTotalCost">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:futureUnitTotalCost">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:profitability">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3652,30 +4130,58 @@
 				<property name="bcpg:locationAddress1">
 					<title>Address line 1</title>
 					<type>d:mltext</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:locationAddress2">
 					<title>Address line 2</title>
 					<type>d:mltext</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:locationAddress3">
 					<title>Address line 3</title>
 					<type>d:mltext</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:locationCity">
 					<title>City</title>
 					<type>d:mltext</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:locationZip">
 					<title>Zip/Postal Code</title>
 					<type>d:mltext</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:locationState">
 					<title>State/Province/Region</title>
 					<type>d:mltext</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:locationCountry">
 					<title>Country</title>
 					<type>d:mltext</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3701,6 +4207,10 @@
 				<property name="bcpg:lrLocales">
 					<type>d:text</type>
 					<multiple>true</multiple>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3709,10 +4219,18 @@
 			<properties>
 				<property name="bcpg:ingCEECode">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>				
 				<property name="bcpg:ingTypeV2">
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3721,12 +4239,20 @@
 			<properties>
 				<property name="bcpg:meatType">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:meatTypes"></constraint>
 					</constraints>
 				</property>
 				<property name="bcpg:meatContentData">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3746,6 +4272,10 @@
 			<properties>
 				<property name="bcpg:certificateDate">
 					<type>d:date</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3824,6 +4354,10 @@
 			<properties>
 				<property name="bcpg:instruction">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -3861,6 +4395,10 @@
 					<type>d:text</type>
 					<protected>true</protected>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -3883,19 +4421,35 @@
 			<properties>
 				<property name="bcpg:autoMergeDate">
 					<type>d:date</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:autoMergeVersionType">
 					<type>d:text</type>
 					<default>MINOR</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 					  <constraint ref="bcpg:versionTypes"/>
 					</constraints>
 				</property>
 				<property name="bcpg:autoMergeComments">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:autoMergeImpactWUsed">
 					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -3936,10 +4490,18 @@
 				<property name="bcpg:nutrientProfilingScore">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:nutrientProfilingClass">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 <!-- 				<property name="bcpg:nutrientProfileCategory"> -->
 <!-- 					<type>d:text</type> -->
@@ -3976,14 +4538,26 @@
 				<property name="bcpg:ecoScore">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:ecoScoreClass">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:ecoScoreCategory">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -4257,33 +4831,27 @@
 					<protected>true</protected>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-						<facetable>true</facetable>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:modifiedCatalog2">
 					<type>d:datetime</type>
 					<protected>true</protected>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-						<facetable>true</facetable>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:modifiedCatalog3">
 					<type>d:datetime</type>
 					<protected>true</protected>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>true</atomic>
-						<stored>false</stored>
-						<tokenised>both</tokenised>
-						<facetable>true</facetable>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
