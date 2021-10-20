@@ -9,13 +9,11 @@ import java.util.Locale;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GS1Model;
 import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.PLMModel;
@@ -39,8 +37,6 @@ public class NutriScore implements ScoreCalculatingPlugin {
 	@Autowired
 	private NodeService nodeService;
 	
-	@Autowired
-	
 	private static final List<String> NUTRIENT_PROFILE_CLASSES = Arrays.asList("E","D","C","B","A");
 
 	@Override
@@ -52,9 +48,9 @@ public class NutriScore implements ScoreCalculatingPlugin {
 	public boolean formulateScore(ScorableEntity scorableEntity) {
 		ProductData productData  = (ProductData) scorableEntity;
 		
-		Serializable prop = nodeService.getProperty(productData.getNodeRef(), QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory"));
+		Serializable prop = nodeService.getProperty(productData.getNodeRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY);
 		
-		if (prop != null) {
+		if (prop != null && !prop.equals("")) {
 			
 			try {
 				
@@ -72,23 +68,11 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				NodeRef satFatNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FASAT", nodeService);
 				NodeRef totalFatNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT", nodeService);
 				NodeRef totalSugarNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR", nodeService);
-				NodeRef saltNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NACL", nodeService);
+				NodeRef sodiumNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NA", nodeService);
 				NodeRef percFruitsAndVetgsNode = ImportHelper.findCharact(PLMModel.TYPE_PHYSICO_CHEM, PLMModel.PROP_PHYSICO_CHEM_CODE, "FRUIT_VEGETABLE", nodeService);
 				NodeRef nspFibreNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS", nodeService);
 				NodeRef aoacFibreNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG", nodeService);
 				NodeRef proteinNode = ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PRO-", nodeService);
-				
-				switch (nutrientProfileCategory) {
-				
-				case Beverages:
-					ranges = Arrays.asList(9d, 5d, 1d, 0d);
-					break;
-				case Cheeses:
-				case Fats:
-				case Others:
-					ranges = Arrays.asList(18d, 10d, 2d, -1d);
-					break;
-				}
 				
 				if (NutrientProfileCategory.Beverages.equals(nutrientProfileCategory)) {
 					ranges = Arrays.asList(9d, 5d, 1d, 0d);
@@ -104,39 +88,54 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				Double satFat = 0d;
 				Double totalFat = 0d;
 				Double totalSugar = 0d;
-				Double salt = 0d;
+				Double sodium = 0d;
 				Double percFruitsAndVetgs = 0d;
 				Double nspFibre = 0d;
 				Double aoacFibre = 0d;
 				Double protein = 0d;
 				
+				int check = 0;
+				
 				for (NutListDataItem nut : productData.getNutList()) {
 					if (nut.getNut().equals(energyKjNode)) {
 						energyKj = nut.value("EU");
+						check++;
 					} else if (nut.getNut().equals(satFatNode)) {
 						satFat = nut.value("EU");
+						check++;
 					} else if (nut.getNut().equals(totalFatNode)) {
 						totalFat = nut.value("EU");
+						check++;
 					} else if (nut.getNut().equals(totalSugarNode)) {
 						totalSugar = nut.value("EU");
-					} else if (nut.getNut().equals(saltNode)) {
-						salt = nut.value("EU");
+						check++;
+					} else if (nut.getNut().equals(sodiumNode)) {
+						sodium = nut.value("EU");
+						check++;
 					} else if (nut.getNut().equals(nspFibreNode)) {
 						nspFibre = nut.value("EU");
+						check++;
 					} else if (nut.getNut().equals(aoacFibreNode)) {
 						aoacFibre = nut.value("EU");
+						check++;
 					} else if (nut.getNut().equals(proteinNode)) {
 						protein = nut.value("EU");
+						check++;
+					}
+					
+					if (check == 8) {
+						break;
 					}
 				}
 				
 				for (PhysicoChemListDataItem physico : productData.getPhysicoChemList()) {
 					if (physico.getPhysicoChem().equals(percFruitsAndVetgsNode)) {
 						percFruitsAndVetgs = physico.getValue();
+						break;
 					}
 				}
 				
-				int nutriScore = Nutrient5C2021Helper.compute5CScore(energyKj, satFat, totalFat, totalSugar, salt * 1000 / 2.5, percFruitsAndVetgs, nspFibre, aoacFibre, protein, nutrientProfileCategory.toString());
+				int nutriScore = Nutrient5C2021Helper.compute5CScore(energyKj, satFat, totalFat, totalSugar, sodium * 1000, percFruitsAndVetgs, nspFibre, aoacFibre, protein, nutrientProfileCategory.toString());
 				
 				String nutrientClass = Nutrient5C2021Helper.buildNutrientClass((double) nutriScore, ranges, NUTRIENT_PROFILE_CLASSES);
 				
@@ -159,9 +158,8 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				return false;
 			}
 		} else {
-			// TODO uncomment this when nutriScore is calculated with this class
-//			productData.setNutrientScore(null);
-//			productData.setNutrientClass(null);
+			productData.setNutrientScore(null);
+			productData.setNutrientClass(null);
 		}
 		
 		return true;

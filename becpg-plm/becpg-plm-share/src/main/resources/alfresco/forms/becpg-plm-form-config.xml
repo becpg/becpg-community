@@ -235,7 +235,7 @@
 	          <show for-mode="view" force="false" id="bcpg:ecoScore"/>
 	          <show for-mode="view" force="false" id="bcpg:ecoScoreClass"/>
 	          <show force="false" id="bcpg:ecoScoreCategory"/>
-	          <show force="false" id="bcpg:nutrientProfileRef"/>
+	          <show force="false" id="bcpg:nutrientProfileCategory"/>
 	          <show for-mode="view" force="false" id="bcpg:nutrientProfilingClass"/>
 	          <show for-mode="view" force="false" id="bcpg:nutrientProfilingScore"/>
 	          <show force="true" id="bcpg:useByDate"/>
@@ -520,9 +520,8 @@
 	            </control>
 	          </field>
 	          <set appearance="bordered-panel" id="score" label-id="becpg.forms.set.nutrient.score.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-	          <field id="bcpg:nutrientProfileRef" mandatory="false" read-only="false" set="score">
-	            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-	              <control-param name="showLink">false</control-param>
+	          <field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
+	            <control template="/org/alfresco/components/form/controls/selectone.ftl">
 	            </control>
 	          </field>
 	          <field id="bcpg:nutrientProfilingClass" mandatory="false" read-only="false" set="score">
@@ -1176,7 +1175,7 @@
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:nutrientProfilingScore" force="true" for-mode="view"/>
 					<show id="bcpg:nutrientProfilingClass" force="true" for-mode="view"/>
-					<show id="bcpg:nutrientProfileRef"   force="true"/>
+					<show id="bcpg:nutrientProfileCategory"   force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize"  />
@@ -1193,10 +1192,8 @@
 					<field id="bcpg:nutrientProfilingClass"  >
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
 					</field>
-					<field id="bcpg:nutrientProfileRef">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="showLink">false</control-param>
+					<field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 						</control>
 					</field>
 				</appearance>
@@ -3417,7 +3414,7 @@
 					<!-- Nutrient profiling score -->
 					<show id="bcpg:nutrientProfilingScore"  for-mode="view"/>
 					<show id="bcpg:nutrientProfilingClass"  for-mode="view"/>
-					<show id="bcpg:nutrientProfileRef"   />
+					<show id="bcpg:nutrientProfileCategory"   />
 					
 					
 					<!-- GHS SDS -->
@@ -3656,10 +3653,8 @@
 					<field id="bcpg:nutrientProfilingClass"  set="score">
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
 					</field>
-					<field id="bcpg:nutrientProfileRef" set="score">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="showLink">false</control-param>
+					<field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 						</control>
 					</field>
 					
@@ -4009,17 +4004,15 @@
 				<field-visibility>
 					<show id="bcpg:nutrientProfilingScore" force="true" for-mode="view"/>
 					<show id="bcpg:nutrientProfilingClass" force="true" for-mode="view"/>
-					<show id="bcpg:nutrientProfileRef"   force="true"/>
+					<show id="bcpg:nutrientProfileCategory"   force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:nutrientProfilingScore"  />
 					<field id="bcpg:nutrientProfilingClass"  >
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
 					</field>
-					<field id="bcpg:nutrientProfileRef">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="showLink">false</control-param>
+					<field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 						</control>
 					</field>
 				</appearance>
@@ -4593,7 +4586,7 @@
 					<!-- Nutrient profiling score -->
 					<show id="bcpg:nutrientProfilingScore"  for-mode="view"/>
 					<show id="bcpg:nutrientProfilingClass"  for-mode="view"/>
-					<show id="bcpg:nutrientProfileRef"   />
+					<show id="bcpg:nutrientProfileCategory"   />
 					
 					<!-- GHS SDS -->
 					<show id="ghs:sdsSignalWord" />
@@ -4798,14 +4791,12 @@
 					<field id="bcpg:nutrientProfilingScore"  set="score"/>
 					<field id="bcpg:nutrientProfilingClass"  set="score">
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
-					</field>
-					<field id="bcpg:nutrientProfileRef" set="score">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="showLink">false</control-param>
+						</field>
+					<field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 						</control>
 					</field>
-					
+								
 					<!-- GHS SDS -->
 					<field id="ghs:sdsSignalWord" set="security"/>
 					<field id="ghs:sdsPictograms"  set="security">
@@ -5038,7 +5029,7 @@
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:nutrientProfilingScore" force="true" for-mode="view"/>
 					<show id="bcpg:nutrientProfilingClass" force="true" for-mode="view"/>
-					<show id="bcpg:nutrientProfileRef"   force="true"/>
+					<show id="bcpg:nutrientProfileCategory"   force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:servingSize" help-id="becpg.forms.help.servingSize"  />
@@ -5055,10 +5046,8 @@
 					<field id="bcpg:nutrientProfilingClass"  >
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
 					</field>
-					<field id="bcpg:nutrientProfileRef">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="showLink">false</control-param>
+					<field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 						</control>
 					</field>
 				</appearance>

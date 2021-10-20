@@ -31,6 +31,7 @@
 		<constraint name="bcpg:nutrientProfileCategories" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>Others</value>
 					<value>Fats</value>
 					<value>Beverages</value>
@@ -4503,18 +4504,17 @@
 		                  <facetable>false</facetable>
 		            </index>
 				</property>
-<!-- 				<property name="bcpg:nutrientProfileCategory"> -->
-<!-- 					<type>d:text</type> -->
-<!-- 					<default>Others</default> -->
-<!-- 					<index enabled="true"> -->
-<!-- 						<atomic>false</atomic> -->
-<!-- 						<stored>false</stored> -->
-<!-- 						<tokenised>false</tokenised> -->
-<!-- 					</index> -->
-<!-- 					<constraints> -->
-<!-- 						<constraint ref="bcpg:nutrientProfileCategories" /> -->
-<!-- 					</constraints> -->
-<!-- 				</property> -->
+				<property name="bcpg:nutrientProfileCategory">
+					<type>d:text</type>
+					<default></default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:nutrientProfileCategories" />
+					</constraints>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:nutrientProfileRef">
