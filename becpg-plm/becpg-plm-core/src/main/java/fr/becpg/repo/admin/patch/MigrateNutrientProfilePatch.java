@@ -149,8 +149,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
 				result.clear();
 
-				if(getPatchDAO().getNodesByAspectQNameId(
-						getQnameDAO().getQName(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE)!=null){
+				if(getQnameDAO().getQName(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE)!=null){
 					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
 	
 						
