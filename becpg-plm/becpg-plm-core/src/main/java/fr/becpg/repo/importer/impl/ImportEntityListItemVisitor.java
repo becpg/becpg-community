@@ -1,23 +1,29 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2021 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 package fr.becpg.repo.importer.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,11 +31,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.content.encoding.ContentCharsetFinder;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ContentWriter;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -58,11 +68,10 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	/** Constant <code>MSG_ERROR_NO_MAPPING_FOR="import_service.error.no_mapping_for"</code> */
 	protected static final String MSG_ERROR_NO_MAPPING_FOR = "import_service.error.no_mapping_for";
 
-	
 	private static final Log logger = LogFactory.getLog(ImportEntityListItemVisitor.class);
 
 	private FileFolderService fileFolderService;
-	
+
 	/**
 	 * <p>Setter for the field <code>fileFolderService</code>.</p>
 	 *
@@ -102,7 +111,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		}
 
 		QName entityType = importContext.getEntityType() != null ? importContext.getEntityType() : PLMModel.TYPE_PRODUCT;
-		NodeRef entityNodeRef = findNodeByKeyOrCode(importContext,null, entityType, entityProperties, null);
+		NodeRef entityNodeRef = findNodeByKeyOrCode(importContext, null, entityType, entityProperties, null);
 
 		if (entityNodeRef == null) {
 			throw new ImporterException(I18NUtil.getMessage(MSG_ERROR_FIND_ENTITY, values));
@@ -119,8 +128,8 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			listContainerNodeRef = entityListDAO.createListContainer(entityNodeRef);
 		}
 
-		QName listType = importContext.getListType() !=null ? importContext.getListType() : importContext.getType();
-		
+		QName listType = importContext.getListType() != null ? importContext.getListType() : importContext.getType();
+
 		NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, listType);
 
 		if (listNodeRef == null) {
@@ -163,13 +172,13 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 				} else {
 
 					AssociationDefinition associationDef = entityDictionaryService.getAssociation(qName);
-					List<NodeRef> targetRefs = findTargetNodesByValue(importContext, associationDef.isTargetMany(), associationDef.getTargetClass()
-							.getName(), value, null);
+					List<NodeRef> targetRefs = findTargetNodesByValue(importContext, associationDef.isTargetMany(),
+							associationDef.getTargetClass().getName(), value, null);
 					dataListColumnsAssocs.put(qName, targetRefs);
 				}
 			}
 
-			entityListItemNodeRef = findEntityListItem(importContext,listNodeRef, dataListColumnsProps, dataListColumnsAssocs);
+			entityListItemNodeRef = findEntityListItem(importContext, listNodeRef, dataListColumnsProps, dataListColumnsAssocs);
 		}
 
 		/*
@@ -198,18 +207,50 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		} else if (importContext.isDoUpdate()) {
 
 			logger.debug("update entity list item. Properties: " + entityListItemProperties);
-			if(entityDictionaryService.isSubClass(importContext.getType(), nodeService.getType(entityListItemNodeRef))) {
+			if (entityDictionaryService.isSubClass(importContext.getType(), nodeService.getType(entityListItemNodeRef))) {
 				nodeService.setType(entityListItemNodeRef, importContext.getType());
 			}
-			
 
 			for (Map.Entry<QName, Serializable> entry : entityListItemProperties.entrySet()) {
-				if (entry.getValue() != null && ImportHelper.NULL_VALUE.equals(entry.getValue())) {
+				if ((entry.getValue() != null) && ImportHelper.NULL_VALUE.equals(entry.getValue())) {
 					logger.debug("Remove property: " + entry.getKey());
 					nodeService.removeProperty(entityListItemNodeRef, entry.getKey());
 				} else {
-					nodeService.setProperty(entityListItemNodeRef, entry.getKey(), entry.getValue());
+
+					if ((entry.getValue() instanceof MLText)) {
+						boolean mlAware = MLPropertyInterceptor.isMLAware();
+						MLPropertyInterceptor.setMLAware(true);
+						try {
+							nodeService.setProperty(entityListItemNodeRef, entry.getKey(), ImportHelper.mergeMLText((MLText) entry.getValue(),
+									(MLText) nodeService.getProperty(entityListItemNodeRef, entry.getKey())));
+						} finally {
+							MLPropertyInterceptor.setMLAware(mlAware);
+						}
+					} else if (ContentModel.PROP_CONTENT.equals(entry.getKey())) {
+
+						try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+							oos.writeObject(entry.getValue());
+							InputStream in = new ByteArrayInputStream(baos.toByteArray());
+
+							String mimetype = mimetypeService.guessMimetype(entry.getValue() != null ? entry.getValue().toString() : null);
+							ContentCharsetFinder charsetFinder = mimetypeService.getContentCharsetFinder();
+							Charset charset = charsetFinder.getCharset(in, mimetype);
+							String encoding = charset.name();
+
+							ContentWriter writer = contentService.getWriter(entityListItemNodeRef, entry.getKey(), true);
+							writer.setEncoding(encoding);
+							writer.setMimetype(mimetype);
+							writer.putContent(in);
+						} catch (IOException e) {
+							throw new ImporterException(e.getMessage());
+						}
+
+					} else {
+						nodeService.setProperty(entityListItemNodeRef, entry.getKey(), entry.getValue());
+					}
+
 				}
+
 			}
 		} else {
 			logger.debug("Update mode is not enabled so no update is done.");
@@ -224,8 +265,8 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 	/**
 	 * Look for the entity list item (check props and assocs match)
 	 */
-	private NodeRef findEntityListItem(ImportContext importContext,
-			NodeRef listNodeRef, Map<QName, String> dataListColumnsProps, Map<QName, List<NodeRef>> dataListColumnsAssocs) {
+	private NodeRef findEntityListItem(ImportContext importContext, NodeRef listNodeRef, Map<QName, String> dataListColumnsProps,
+			Map<QName, List<NodeRef>> dataListColumnsAssocs) {
 
 		List<FileInfo> nodes = fileFolderService.list(listNodeRef);
 		NodeRef nodeRef = null;
@@ -240,24 +281,24 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			for (Map.Entry<QName, String> dataListColumnProps : dataListColumnsProps.entrySet()) {
 
 				Serializable s = nodeService.getProperty(nodeRef, dataListColumnProps.getKey());
-				
+
 				String value = dataListColumnProps.getValue();
-				
+
 				if (BeCPGModel.PROP_VARIANTIDS.equals(dataListColumnProps.getKey())) {
 					NodeRef variantNodeRef = getOrCreateVariant(importContext, value, false);
-					if(variantNodeRef!=null){
+					if (variantNodeRef != null) {
 						List<NodeRef> ret = new ArrayList<>();
 						ret.add(variantNodeRef);
 						value = ret.toString();
 					}
 				}
-				
+
 				if (value == null) {
 					if (s != null) {
 						isFound = false;
 						break;
 					}
-				} else if (s==null || !value.equals(s.toString())) {
+				} else if ((s == null) || !value.equals(s.toString())) {
 					isFound = false;
 					break;
 				}
@@ -269,8 +310,9 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 				List<NodeRef> targetRefs1 = dataListColumnAssocs.getValue();
 				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, dataListColumnAssocs.getKey());
 				List<NodeRef> targetRefs2 = new ArrayList<>();
-				for (AssociationRef assocRef : assocRefs)
+				for (AssociationRef assocRef : assocRefs) {
 					targetRefs2.add(assocRef.getTargetRef());
+				}
 
 				if (targetRefs1 == null) {
 					if (targetRefs2 != null) {
@@ -292,21 +334,19 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 		return isFound ? nodeRef : null;
 	}
 
+	private NodeRef getOrCreateVariant(ImportContext importContext, String value, boolean shouldCreate) {
 
-	
-	private NodeRef getOrCreateVariant(ImportContext importContext, String value, boolean shouldCreate){
-		
 		NodeRef entityNodeRef = importContext.getEntityNodeRef();
-		if (entityNodeRef != null && value != null && !value.isEmpty()) {
-			List<NodeRef> variants = new ArrayList<NodeRef>(associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS));
+		if ((entityNodeRef != null) && (value != null) && !value.isEmpty()) {
+			List<NodeRef> variants = new ArrayList<>(associationService.getChildAssocs(entityNodeRef, BeCPGModel.ASSOC_VARIANTS));
 			NodeRef entityTplNodeRef = associationService.getTargetAssoc(entityNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 			if (entityTplNodeRef != null) {
 				List<NodeRef> entityTplVariants = associationService.getChildAssocs(entityTplNodeRef, BeCPGModel.ASSOC_VARIANTS);
-				if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
+				if ((entityTplVariants != null) && !entityTplVariants.isEmpty()) {
 					variants.addAll(entityTplVariants);
 				}
 			}
-			
+
 			boolean isDefault = false;
 			String name = value;
 			if (value.contains("|")) {
@@ -320,15 +360,15 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 					return variant;
 				}
 			}
-			if(shouldCreate){
+			if (shouldCreate) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Create variant : " + name);
 				}
-	
+
 				Map<QName, Serializable> props = new HashMap<>();
 				props.put(ContentModel.PROP_NAME, name);
 				props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, isDefault);
-	
+
 				return nodeService.createNode(entityNodeRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.TYPE_VARIANT, props)
 						.getChildRef();
 			}
@@ -338,23 +378,20 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 			logger.debug("EntityNodeRef not yet set in importContext");
 			return null;
 		}
-		
+
 	}
-	
-	
-	
-	
+
 	/** {@inheritDoc} */
 	@Override
 	protected NodeRef findPropertyTargetNodeByValue(ImportContext importContext, PropertyDefinition propDef,
 			AbstractAttributeMapping attributeMapping, String value, Map<QName, Serializable> properties) throws ImporterException {
 
 		if (BeCPGModel.PROP_VARIANTIDS.equals(propDef.getName())) {
-			return getOrCreateVariant(importContext, value,true);
+			return getOrCreateVariant(importContext, value, true);
 
 		} else if (BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
 			NodeRef entityNodeRef = importContext.getEntityNodeRef();
-			if (entityNodeRef != null && value != null && !value.isEmpty()) {
+			if ((entityNodeRef != null) && (value != null) && !value.isEmpty()) {
 
 				Map<QName, String> dataListColumnsProps = new HashMap<>();
 				Map<QName, List<NodeRef>> dataListColumnsAssocs = new HashMap<>();
@@ -372,11 +409,11 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 					} else {
 
 						AssociationDefinition associationDef = entityDictionaryService.getAssociation(qName);
-						List<NodeRef> targetRefs = findTargetNodesByValue(importContext, associationDef.isSourceMany(), associationDef
-								.getTargetClass().getName(), value, null);
+						List<NodeRef> targetRefs = findTargetNodesByValue(importContext, associationDef.isSourceMany(),
+								associationDef.getTargetClass().getName(), value, null);
 						dataListColumnsAssocs.put(qName, targetRefs);
 					}
-					
+
 					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 					if (listContainerNodeRef == null) {
 						listContainerNodeRef = entityListDAO.createListContainer(entityNodeRef);
@@ -384,7 +421,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, importContext.getType());
 
-					return findEntityListItem(importContext,listNodeRef, dataListColumnsProps, dataListColumnsAssocs);
+					return findEntityListItem(importContext, listNodeRef, dataListColumnsProps, dataListColumnsAssocs);
 				}
 
 			} else {

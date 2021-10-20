@@ -431,6 +431,8 @@ public class ImportHelper {
 					}
 				}
 
+			}  else if (ContentModel.PROP_CONTENT.equals(entry.getKey())) {
+				iterator.remove();
 			}
 		}
 
