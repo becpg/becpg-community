@@ -8,7 +8,7 @@ services:
   becpg:
     image: ${docker.becpg.url}/becpg-${becpg.dockerbuild.name}-core:${docker.becpg.tag}
     environment:
-      CATALINA_OPTS: "-Xmx4G -XX:HotswapAgent=external -Duser.language=fr -Duser.country=FR 
+      JAVA_OPTS: "-Xmx4G -XX:HotswapAgent=external -Duser.language=fr -Duser.country=FR 
                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
                      -XX:+UseG1GC
                      -Dcom.sun.management.jmxremote.rmi.port=9091
@@ -19,7 +19,7 @@ services:
                      -Dcom.sun.management.jmxremote.local.only=false
                      -Djava.rmi.server.hostname=127.0.0.1"
 
-#      CATALINA_OPTS: "-Xmx4G -XX:HotswapAgent=external -Duser.language=fr -Duser.country=FR 
+#      JAVA_OPTS: "-Xmx4G -XX:HotswapAgent=external -Duser.language=fr -Duser.country=FR 
 #                     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
 #                     -XX:HotswapAgent=fatjar
 #                     -XX:+UseG1GC
@@ -46,7 +46,7 @@ services:
   becpg-share:
     image: ${docker.becpg.url}/becpg-${becpg.dockerbuild.name}-share:${docker.becpg.tag}
     environment:
-      CATALINA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888  -Duser.language=fr -Duser.country=FR"
+      JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888  -Duser.language=fr -Duser.country=FR"
       REPO_HOST: becpg
       REPO_PORT: 8080
     ports:
