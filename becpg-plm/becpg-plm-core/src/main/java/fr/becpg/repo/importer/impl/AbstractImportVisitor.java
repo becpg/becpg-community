@@ -795,7 +795,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	private NodeRef importFileContent(String value, NodeRef targetFolderNodeRef, String mappingFileName, String mappingId) throws ImporterException {
 		InputStream in = null;
 		try {
-			if ((value.startsWith("classpath:") || value.startsWith("file:") || value.startsWith("url:") || value.startsWith("http:")
+			if ((value.startsWith("classpath:") || value.startsWith("file:") || value.startsWith("url:") || value.startsWith("http:") || value.startsWith("https:")
 					|| value.startsWith("ftp:"))) {
 
 				try {
