@@ -102,25 +102,32 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 	public void setQnameDAO(QNameDAO qnameDAO) {
 		this.qnameDAO = qnameDAO;
 	}
-	
+
 	/**
-	 * <p>Setter for the field <code>ruleService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>ruleService</code>.
+	 * </p>
 	 *
-	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object.
+	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService}
+	 *                    object.
 	 */
 	public void setRuleService(RuleService ruleService) {
 		this.ruleService = ruleService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>policyBehaviourFilter</code>.</p>
+	 * <p>
+	 * Setter for the field <code>policyBehaviourFilter</code>.
+	 * </p>
 	 *
-	 * @param policyBehaviourFilter a {@link org.alfresco.repo.policy.BehaviourFilter} object.
+	 * @param policyBehaviourFilter a
+	 *                              {@link org.alfresco.repo.policy.BehaviourFilter}
+	 *                              object.
 	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
-	
+
 	@Override
 	protected String applyInternal() throws Exception {
 
@@ -142,20 +149,24 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
 				result.clear();
 
-				while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-
-					List<Long> nodeids = getPatchDAO().getNodesByAspectQNameId(
-							getQnameDAO().getQName(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE).getFirst(),
-							minSearchNodeId, maxSearchNodeId);
-
-					for (Long nodeid : nodeids) {
-						NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
-						if (!status.isDeleted()) {
-							result.add(status.getNodeRef());
+				if(getPatchDAO().getNodesByAspectQNameId(
+						getQnameDAO().getQName(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE)!=null){
+					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
+	
+						
+							List<Long> nodeids = getPatchDAO().getNodesByAspectQNameId(
+									getQnameDAO().getQName(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE).getFirst(),
+									minSearchNodeId, maxSearchNodeId);
+		
+							for (Long nodeid : nodeids) {
+								NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+								if (!status.isDeleted()) {
+									result.add(status.getNodeRef());
+								}
+							}
+							minSearchNodeId = minSearchNodeId + COUNT;
+							maxSearchNodeId = maxSearchNodeId + COUNT;
 						}
-					}
-					minSearchNodeId = minSearchNodeId + COUNT;
-					maxSearchNodeId = maxSearchNodeId + COUNT;
 				}
 
 				return result;
