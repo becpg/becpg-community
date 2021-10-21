@@ -176,13 +176,36 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public void cancelCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
-		 throw new IllegalStateException(NOT_SUPPORTED);
+
+		AuthenticationUtil.runAsSystem(() -> {
+
+			// move files
+			try {
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				entityService.moveFiles(workingCopyNodeRef, origNodeRef);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			}
+
+			return null;
+
+		});
+
+		// Delete initialversion
+		if ((versionService.getVersionHistory(origNodeRef) == null) || (versionService.getVersionHistory(origNodeRef).getAllVersions().size() == 1)) {
+			logger.debug("Deleting initial version");
+			deleteVersionHistory(origNodeRef);
+		}
+
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void afterCancelCheckOut(NodeRef entityNodeRef) {
-		 throw new IllegalStateException(NOT_SUPPORTED);
+		if ((versionService.getVersionHistory(entityNodeRef) == null)
+				|| (versionService.getVersionHistory(entityNodeRef).getAllVersions().size() == 1)) {
+			nodeService.removeAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
+		}
 	}
 
 	/** {@inheritDoc} */
