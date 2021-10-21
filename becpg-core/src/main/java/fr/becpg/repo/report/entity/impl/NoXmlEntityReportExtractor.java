@@ -3,6 +3,7 @@ package fr.becpg.repo.report.entity.impl;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -39,4 +40,9 @@ public class NoXmlEntityReportExtractor extends DefaultEntityReportExtractor{
 		return context.getReportData();
 	}
 	
+	
+	@Override
+	public EntityReportExtractorPriority getMatchPriority(QName type) {
+		return EntityReportExtractorPriority.NONE;
+	}
 }

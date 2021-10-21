@@ -234,7 +234,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 						if (logger.isDebugEnabled()) {
 							logger.debug("Generate reports for entity: " + nodeRefFrom + " - " + nodeService.getProperty(nodeRefFrom, ContentModel.PROP_NAME));
 						}
-						List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo);
+						List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale);
 
 						updateReportsAssoc(nodeRefTo, newReports);
 						
@@ -251,7 +251,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}, false, true);
 	}
 	
-	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo) {
+	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo, Locale defaultLocale) {
 
 
 		tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
