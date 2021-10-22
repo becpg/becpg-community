@@ -272,7 +272,7 @@ public class MLTextHelper {
 	 */
 	public static String localeKey(Locale locale) {
 		String ret = locale.getLanguage();
-		if ((locale.getCountry() != null) && !locale.getCountry().isEmpty()) {
+		if ((locale.getCountry() != null) && !locale.getCountry().isBlank()) {
 			ret += "_" + locale.getCountry();
 		}
 		return ret;
@@ -286,7 +286,7 @@ public class MLTextHelper {
 	 */
 	public static String localeLabel(Locale locale) {
 		String ret = locale.getDisplayLanguage();
-		if ((locale.getCountry() != null) && !locale.getCountry().isEmpty()) {
+		if ((locale.getCountry() != null) && !locale.getCountry().isBlank()) {
 			ret += " - " + locale.getDisplayCountry();
 		}
 		return ret;
