@@ -306,12 +306,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								&& !(partProduct instanceof SemiFinishedProductData)) {
 							newAllergenListDataItem.getVoluntarySources().add(partProduct.getNodeRef());
 						}
-					} else if ( allergenListDataItem.getVoluntary() == null) {
-					
-						if(!Boolean.TRUE.equals(newAllergenListDataItem.getVoluntary())) {
+					} else if (allergenListDataItem.getVoluntary() == null) {
+
+						if (!Boolean.TRUE.equals(newAllergenListDataItem.getVoluntary())) {
 							newAllergenListDataItem.setVoluntary(null);
 						}
-						addEmptyError(errors,ret, partProduct);
+						addEmptyError(errors, ret, partProduct);
 					}
 
 					for (NodeRef p : allergenListDataItem.getVoluntarySources()) {
@@ -327,12 +327,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								&& !(partProduct instanceof SemiFinishedProductData)) {
 							newAllergenListDataItem.getInVoluntarySources().add(partProduct.getNodeRef());
 						}
-					} else if ( allergenListDataItem.getInVoluntary() == null) {
-					
-						if(!Boolean.TRUE.equals(newAllergenListDataItem.getInVoluntary())) {
+					} else if (allergenListDataItem.getInVoluntary() == null) {
+
+						if (!Boolean.TRUE.equals(newAllergenListDataItem.getInVoluntary())) {
 							newAllergenListDataItem.setInVoluntary(null);
 						}
-						addEmptyError(errors,ret, partProduct);
+						addEmptyError(errors, ret, partProduct);
 					}
 
 					for (NodeRef p : allergenListDataItem.getInVoluntarySources()) {
@@ -419,7 +419,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 
 					// Add variants if it adds an allergen
-					if ((variantDataItem.getVariants() != null) && (allergenListDataItem.getVoluntary() || allergenListDataItem.getInVoluntary())) {
+					if ((variantDataItem.getVariants() != null) && (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())
+							|| Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()))) {
 						if (newAllergenListDataItem.getVariants() == null) {
 							newAllergenListDataItem.setVariants(new ArrayList<>());
 						}
@@ -451,11 +452,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			sourceNodeRefs = error.getSources();
 		}
 
-		
 		sourceNodeRefs.add(partProduct.getNodeRef());
 
 		errors.put(message, error);
-		
 
 	}
 
