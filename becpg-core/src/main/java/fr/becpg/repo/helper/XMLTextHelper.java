@@ -1,6 +1,7 @@
 package fr.becpg.repo.helper;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.springframework.lang.NonNull;
 
 public class XMLTextHelper {
 
@@ -34,5 +35,9 @@ public class XMLTextHelper {
 	      
 	      return out.toString();
 	  }
+
+	public static String writeAttributeName(@NonNull String attributeName) {
+		return attributeName.replace(":", "_").replace("\"", "").trim();
+	}
 	
 }
