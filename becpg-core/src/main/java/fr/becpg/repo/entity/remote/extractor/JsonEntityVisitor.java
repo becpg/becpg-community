@@ -486,10 +486,11 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private void visitMltextAttributes(String propType, JSONObject entity, MLText mlValues) throws JSONException {
 		if (mlValues != null) {
 			for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
-				String code = MLTextHelper.localeKey(mlEntry.getKey());
-				if ((code != null) && !code.isEmpty() && (mlEntry.getValue() != null)) {
-					entity.put(propType + "_" + code, mlEntry.getValue());
-
+				if(MLTextHelper.isSupportedLocale(mlEntry.getKey())) {
+					String code = MLTextHelper.localeKey(mlEntry.getKey());
+					if ((code != null) && !code.isBlank() && (mlEntry.getValue() != null)) {
+						entity.put(propType + "_" + code, mlEntry.getValue());
+					}
 				}
 			}
 		}

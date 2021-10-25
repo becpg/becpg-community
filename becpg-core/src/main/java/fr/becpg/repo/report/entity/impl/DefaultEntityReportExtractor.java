@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -337,28 +337,29 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef, Map<String, String> preferences) {
 
-		StopWatch watch = null;
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
+			StopWatch watch = null;
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+			
+			
+			DefaultExtractorContext context = new DefaultExtractorContext(preferences);
+			
+			Document document = DocumentHelper.createDocument();
+			Element entityElt = document.addElement(TAG_ENTITY);
+			
+			extractEntity(entityNodeRef, entityElt, context);
+			
+			context.getReportData().setXmlDataSource(entityElt);
+			
+			if (logger.isDebugEnabled() && (watch != null)) {
+				watch.stop();
+				logger.debug("extract datasource in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
+			}
+			
+			return context.getReportData();
 
-
-		DefaultExtractorContext context = new DefaultExtractorContext(preferences);
-
-		Document document = DocumentHelper.createDocument();
-		Element entityElt = document.addElement(TAG_ENTITY);
-
-		extractEntity(entityNodeRef, entityElt, context);
-
-		context.getReportData().setXmlDataSource(entityElt);
-
-		if (logger.isDebugEnabled() && (watch != null)) {
-			watch.stop();
-			logger.debug("extract datasource in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
-		}
-
-		return context.getReportData();
 	}
 
 	/**
@@ -459,15 +460,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if(entityNodeRef!=null) {
 				imgElt.addAttribute(ATTR_ENTITY_NODEREF, entityNodeRef.toString());
 				imgElt.addAttribute(ATTR_ENTITY_TYPE, nodeService.getType(entityNodeRef).getLocalName());
-				imgElt.addAttribute(ATTR_ENTITY_NAME, (String) nodeService.getProperty(entityNodeRef, 
-						ContentModel.PROP_NAME));
+				imgElt.addAttribute(ATTR_ENTITY_NAME, XMLTextHelper.writeAttribute((String) nodeService.getProperty(entityNodeRef, 
+						ContentModel.PROP_NAME)));
 				if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_CODE)) {
-					imgElt.addAttribute(ATTR_ENTITY_CODE, (String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE));
+					imgElt.addAttribute(ATTR_ENTITY_CODE, XMLTextHelper.writeAttribute((String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE)));
 				}
 			}
 			imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
-			imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), imgInfo.getName());
-			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), imgInfo.getTitle());
+			imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), XMLTextHelper.writeAttribute(imgInfo.getName()));
+			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), XMLTextHelper.writeAttribute(imgInfo.getTitle()));
 			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, imgInfo.getDescription(), null);
 			context.getReportData().getImages().add(imgInfo);
 		}
@@ -669,7 +670,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			for (Map.Entry<QName, Serializable> kv : identAttr.entrySet()) {
 				if ((kv.getValue() instanceof NodeRef) && nodeService.hasAspect((NodeRef) kv.getValue(), BeCPGModel.ASPECT_LEGAL_NAME)) {
 					nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),
-							(String) nodeService.getProperty((NodeRef) kv.getValue(), BeCPGModel.PROP_LEGAL_NAME));
+							XMLTextHelper.writeAttribute((String) nodeService.getProperty((NodeRef) kv.getValue(), BeCPGModel.PROP_LEGAL_NAME)));
 					addCDATA(nodeElt, ContentModel.PROP_DESCRIPTION,
 							(String) nodeService.getProperty((NodeRef) kv.getValue(), ContentModel.PROP_DESCRIPTION), null);
 					break;
@@ -740,7 +741,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					logger.debug("This property doesn't exist. Name: " + property.getKey() + " nodeRef : " + nodeRef);
 					continue;
 				}
-
+				
 				String value = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), false);
 
 				boolean isDyn = false;
@@ -764,34 +765,49 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					}
 				}
 				
-				if (DataTypeDefinition.MLTEXT.equals(propertyDef.getDataType().getName()) || DataTypeDefinition.TEXT.equals(propertyDef.getDataType().getName())) {
-					value = XMLTextHelper.writeCData(value, false);
-				}
-
-				if (isDyn || isList) {
+				if (DataTypeDefinition.NODE_REF.toString().equals(propertyDef.getDataType().toString()) && context.prefsContains("assocsToExtract", assocsToExtract, propertyDef.getName().toPrefixString(namespaceService))) {
+					
+					NodeRef dNodeRef = (NodeRef) property.getValue();
+					
+					if (dNodeRef != null) {
+						Element newElement = nodeElt.addElement(propertyDef.getName().getLocalName());
+						
+						appendPrefix(propertyDef.getName(), newElement);
+						
+						if (entityDictionaryService.isSubClass(propertyDef.getName(), BeCPGModel.TYPE_CHARACT)) {
+							List<QName> hiddentAttributes = new ArrayList<>();
+							hiddentAttributes.addAll(hiddenNodeAttributes);
+							hiddentAttributes.addAll(hiddenDataListItemAttributes);
+							
+							loadAttributes(dNodeRef, newElement, true, hiddentAttributes, context);
+						} else {
+							loadNodeAttributes(dNodeRef, newElement, true, context);
+						}
+					}
+				} else if (isDyn || isList) {
 					String displayValue = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), true);
 					if (useCData) {
 						if (isList) {
 							Element ret = addData(nodeElt, true, propertyDef.getName(), value, null, context);
 							if (ret != null) {
-								ret.addAttribute("translation", displayValue);
+								ret.addAttribute("translation", XMLTextHelper.writeAttribute(displayValue));
 							}
 						} else {
 							Element ret = addData(nodeElt, true, propertyDef.getName(), displayValue, null, context);
 							if (ret != null) {
-								ret.addAttribute("code", value);
+								ret.addAttribute("code", XMLTextHelper.writeAttribute(value));
 							}
 						}
 					} else {
 						if (isList) {
 							Element ret = addData(nodeElt, false, propertyDef.getName(), value, null, context);
 							if (ret != null) {
-								ret.addAttribute(propertyDef.getName().getLocalName() + "Translation", displayValue);
+								ret.addAttribute(propertyDef.getName().getLocalName() + "Translation", XMLTextHelper.writeAttribute(displayValue));
 							}
 						} else {
 							Element ret = addData(nodeElt, false, propertyDef.getName(), displayValue, null, context);
 							if (ret != null) {
-								ret.addAttribute(propertyDef.getName().getLocalName() + "Code", value);
+								ret.addAttribute(propertyDef.getName().getLocalName() + "Code", XMLTextHelper.writeAttribute(value));
 							}
 						}
 					}
@@ -830,17 +846,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 									Element ret = addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code, context);
 									if (isDyn && (ret != null)) {
 										if (useCData) {
-											ret.addAttribute("code", value);
+											ret.addAttribute("code", XMLTextHelper.writeAttribute(value));
 										}
 									}
-
 								}
 							}
 						}
 					}
-
 				}
-
 			}
 		}
 
@@ -861,7 +874,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						&& !associationDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
 						&& !associationDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !associationDef.isChild()) {
 
-					if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, context) || (useCData == false)) {
+					if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, context) || (Boolean.FALSE.equals(useCData))) {
 
 						List<NodeRef> assocNodes = associationService.getTargetAssocs(nodeRef, associationDef.getName());
 
@@ -884,6 +897,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			QName propNameOfType = getPropNameOfType(targetClass);
 
 			if (propNameOfType != null) {
+				
 				return (String) nodeService.getProperty(nodeRef, propNameOfType);
 			}
 
@@ -950,7 +964,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if ((suffix != null) && !suffix.isEmpty()) {
 				localName += "_" + suffix;
 			}
-			nodeElt.addAttribute(localName, value);
+			nodeElt.addAttribute(localName, XMLTextHelper.writeAttribute(value));
 			return nodeElt;
 		}
 	}
@@ -992,9 +1006,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			for (Version version : versionHistory.getAllVersions()) {
 				Element versionElt = versionsElt.addElement(TAG_VERSION);
 				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_LABEL.getLocalName(), version.getVersionLabel());
-				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), version.getDescription());
+				versionElt.addAttribute(Version2Model.PROP_QNAME_VERSION_DESCRIPTION.getLocalName(), XMLTextHelper.writeAttribute(version.getDescription()));
 				versionElt.addAttribute(ContentModel.PROP_CREATOR.getLocalName(),
-						attributeExtractorService.getPersonDisplayName(version.getFrozenModifier()));
+						XMLTextHelper.writeAttribute(attributeExtractorService.getPersonDisplayName(version.getFrozenModifier())));
 				versionElt.addAttribute(ContentModel.PROP_CREATED.getLocalName(), ISO8601DateFormat.format(version.getFrozenModifiedDate()));
 
 			}
@@ -1112,7 +1126,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		Element cDATAElt = nodeElt.addElement(localName);
 		appendPrefix(propertyQName, cDATAElt);
 
-		cDATAElt.addCDATA(eltValue);
+		cDATAElt.addCDATA(XMLTextHelper.writeCData(eltValue));
 
 		return cDATAElt;
 
