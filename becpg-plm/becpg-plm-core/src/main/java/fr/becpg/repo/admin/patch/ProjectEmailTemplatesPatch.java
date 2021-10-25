@@ -23,8 +23,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.repo.admin.patch.AbstractBeCPGPatch;
-
 /**
  * Update claim mail templates
  *
