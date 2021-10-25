@@ -623,10 +623,12 @@ public interface PLMModel {
 	/** Constant <code>PROP_NUTRIENT_PROFILE_CLASS_FORMULA</code> */
 	QName PROP_NUTRIENT_PROFILE_CLASS_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileClassFormula");
 	/** Constant <code>TYPE_NUTRIENT_PROFILE</code> */
+	@Deprecated
 	QName TYPE_NUTRIENT_PROFILE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfile");
 	
 	QName PROP_NUTRIENT_PROFILE_CATEGORY = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory");
 	
+	@Deprecated
 	QName ASSOC_NUTRIENT_PROFILE_REF = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileRef");
 	
 	//Eco score
