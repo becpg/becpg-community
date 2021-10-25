@@ -983,7 +983,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_CUSTOMSCODES, PLMModel.TYPE_CUSTOMSCODE);
 		entityLists.put(PlmRepoConsts.PATH_CERTIFICATIONS, PLMModel.TYPE_CERTIFICATION);
 		entityLists.put(PlmRepoConsts.PATH_LABELCLAIMS, PLMModel.TYPE_LABEL_CLAIM);
-		entityLists.put(PlmRepoConsts.PATH_NUTRIENTPROFILES, PLMModel.TYPE_NUTRIENT_PROFILE);
 		entityLists.put(PlmRepoConsts.PATH_PROCESSSTEPS, MPMModel.TYPE_PROCESSSTEP);
 		entityLists.put(PlmRepoConsts.PATH_RESOURCEPARAMS, MPMModel.TYPE_RESOURCEPARAM);
 		entityLists.put(PlmRepoConsts.PATH_STORAGE_CONDITIONS, PLMModel.TYPE_STORAGE_CONDITIONS);
