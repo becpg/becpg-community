@@ -1,7 +1,6 @@
 package fr.becpg.repo.helper;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.springframework.lang.NonNull;
+import com.google.common.xml.XmlEscapers;
 
 public class XMLTextHelper {
 
@@ -9,7 +8,7 @@ public class XMLTextHelper {
 		//Singleton
 	}
 	
-	public static String writeCData(String in, boolean escapeXML) {
+	public static String writeCData(String in) {
 		StringBuilder out = new StringBuilder(); // Used to hold the output.
 		char current; // Used to reference the current character.
 
@@ -29,15 +28,16 @@ public class XMLTextHelper {
 			}
 		}
 		
-		if (escapeXML) {
-			return StringEscapeUtils.escapeXml(out.toString());
-		}
-	      
-	      return out.toString();
+	     return out.toString();
 	  }
 
-	public static String writeAttributeName(@NonNull String attributeName) {
-		return attributeName.replace(":", "_").replace("\"", "").trim();
+
+	public static String writeAttribute(String in) {
+		return XmlEscapers.xmlAttributeEscaper().escape(writeCData(in));
 	}
 	
+	
+	public static String writeContent(String in) {
+		return XmlEscapers.xmlContentEscaper().escape(writeCData(in));
+	}
 }
