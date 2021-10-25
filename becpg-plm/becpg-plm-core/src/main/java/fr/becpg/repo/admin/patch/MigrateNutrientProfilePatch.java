@@ -12,6 +12,7 @@ import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.apache.commons.logging.Log;
@@ -21,6 +22,8 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.PlmRepoConsts;
+import fr.becpg.repo.RepoConsts;
 
 public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
@@ -148,26 +151,23 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 			public Collection<NodeRef> getNextWork() {
 
 				result.clear();
-
-				if(getQnameDAO().getQName(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE)!=null){
+				
+				if (getQnameDAO().getQName(PLMModel.TYPE_NUTRIENT_PROFILE) != null) {
 					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-	
-						
-							List<Long> nodeids = getPatchDAO().getNodesByAspectQNameId(
-									getQnameDAO().getQName(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE).getFirst(),
-									minSearchNodeId, maxSearchNodeId);
-		
-							for (Long nodeid : nodeids) {
-								NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
-								if (!status.isDeleted()) {
-									result.add(status.getNodeRef());
-								}
-							}
-							minSearchNodeId = minSearchNodeId + COUNT;
-							maxSearchNodeId = maxSearchNodeId + COUNT;
-						}
-				}
 
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(getQnameDAO().getQName(PLMModel.TYPE_NUTRIENT_PROFILE).getFirst(), minSearchNodeId, maxSearchNodeId);
+
+						for (Long nodeid : nodeids) {
+							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
+							if (!status.isDeleted()) {
+								result.add(status.getNodeRef());
+							}
+						}
+						minSearchNodeId = minSearchNodeId + COUNT;
+						maxSearchNodeId = maxSearchNodeId + COUNT;
+					}
+				}
+				
 				return result;
 			}
 		};
@@ -190,32 +190,55 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				return entry.toString();
 			}
 
-			public void process(NodeRef entity) throws Throwable {
+			public void process(NodeRef nutrientProfile) throws Throwable {
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 				policyBehaviourFilter.disableBehaviour();
-
-				if (!nodeService.getTargetAssocs(entity, PLMModel.ASSOC_NUTRIENT_PROFILE_REF).isEmpty()) {
-					NodeRef nutrientProfile = nodeService.getTargetAssocs(entity, PLMModel.ASSOC_NUTRIENT_PROFILE_REF).get(0).getTargetRef();
+				
+				List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(nutrientProfile, PLMModel.ASSOC_NUTRIENT_PROFILE_REF);
+				
+				if (sourceAssocs != null) {
+					
 					String nutrientProfileClass = (String) nodeService.getProperty(nutrientProfile, BeCPGModel.PROP_CHARACT_NAME);
-					if (nutrientProfileClass.contains("Others")) {
-						nodeService.setProperty(entity, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Others.toString());
-					} else if (nutrientProfileClass.contains("Beverages")) {
-						nodeService.setProperty(entity, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Beverages.toString());
-					} else if (nutrientProfileClass.contains("Fats")) {
-						nodeService.setProperty(entity, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Fats.toString());
-					} else if (nutrientProfileClass.contains("Cheeses")) {
-						nodeService.setProperty(entity, PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Cheeses.toString());
+					
+					for (AssociationRef sourceAssoc : sourceAssocs) {
+						
+						if (nutrientProfileClass.contains("Others")) {
+							nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Others.toString());
+						} else if (nutrientProfileClass.contains("Beverages")) {
+							nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Beverages.toString());
+						} else if (nutrientProfileClass.contains("Fats")) {
+							nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Fats.toString());
+						} else if (nutrientProfileClass.contains("Cheeses")) {
+							nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Cheeses.toString());
+						}
+						
+						nodeService.removeAssociation(sourceAssoc.getSourceRef(), nutrientProfile, PLMModel.ASSOC_NUTRIENT_PROFILE_REF);
 					}
-					nodeService.removeAssociation(entity, nutrientProfile, PLMModel.ASSOC_NUTRIENT_PROFILE_REF);
 				}
-
+				
+				nodeService.deleteNode(nutrientProfile);
+				
 				policyBehaviourFilter.enableBehaviour();
 			}
 
 		};
 
 		batchProcessor.process(worker, true);
+		
+		NodeRef companyHomeNodeRef = repository.getCompanyHome();
+		
+		NodeRef systemNodeRef = repoService.getFolderByPath(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
+		
+		NodeRef charactsNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
+		
+		NodeRef entityListNodeRef = repoService.getFolderByPath(charactsNodeRef, "bcpg:entityLists");;
+		
+		NodeRef nutrientProfilesCategoryNodeRef = repoService.getFolderByPath(entityListNodeRef, PlmRepoConsts.PATH_NUTRIENTPROFILES);
+
+		if (nutrientProfilesCategoryNodeRef != null && nodeService.exists(nutrientProfilesCategoryNodeRef)) {
+			nodeService.deleteNode(nutrientProfilesCategoryNodeRef);
+		}
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
