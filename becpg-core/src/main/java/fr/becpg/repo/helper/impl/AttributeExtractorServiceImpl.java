@@ -167,7 +167,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 	
 
-	private AttributeExtractorPlugin getAttributeExtractorPlugin(QName type, NodeRef nodeRef) {
+	private AttributeExtractorPlugin getAttributeExtractorPlugin(QName type) {
 
 		Map<QName, AttributeExtractorPlugin> pluginsCache = beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), "PLUGINS_CACHE",
 				() -> {
@@ -406,12 +406,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			if (!propertyDef.getConstraints().isEmpty()) {
 
 				for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
+					boolean found = false;
 					if (constraint.getConstraint() instanceof DynListConstraint) {
 						dynListConstraint = (DynListConstraint) constraint.getConstraint();
-						break;
+						found = true;
 
 					} else if ("LIST".equals(constraint.getConstraint().getType())) {
 						constraintName = entityDictionaryService.toPrefixString(constraint.getRef()).replace(":", "_");
+						found = true;
+					}
+					if(found) {
 						break;
 					}
 				}
@@ -639,12 +643,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						Matcher maEqual = Pattern.compile("(.*)(\\[(.*)\\s*==\\s*\"(.*)\"\\])").matcher(dlField);
 						if (maEqual.matches()) {
 							fieldQname = QName.createQName(maEqual.group(1), namespaceService);
-							dataListFilter = new AttributeExtractorFilter(maEqual.group(3).replaceAll("#", "|").trim(), maEqual.group(4).trim());
+							dataListFilter = new AttributeExtractorFilter(maEqual.group(3).replace("#", "|").trim(), maEqual.group(4).trim());
 						} else {
 							Matcher maStartsWith = Pattern.compile("(.*)(\\[(.*)\\.startsWith\\(\"(.*)\"\\)\\])").matcher(dlField);
 							if (maStartsWith.matches()) {
 								fieldQname = QName.createQName(maStartsWith.group(1), namespaceService);
-								dataListFilter = new AttributeExtractorFilter(maStartsWith.group(3).replaceAll("#", "|").trim(),
+								dataListFilter = new AttributeExtractorFilter(maStartsWith.group(3).replace("#", "|").trim(),
 										"^" + maStartsWith.group(4).trim());
 							} else {
 								logger.error("Cannot extract datalist filter: " + dlField);
@@ -826,13 +830,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if (ExcelHelper.isExcelType(value)) {
 					return value;
 				} else {
-					// if
-					// (DataTypeDefinition.ANY.toString().equals((((PropertyDefinition)
-					// attribute).getDataType()).toString())
-					// && value instanceof String) {
-					// return JsonFormulaHelper.cleanCompareJSON((String)
-					// value);
-					// }
 					return displayName;
 				}
 
@@ -853,7 +850,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						} else {
 							@SuppressWarnings("unchecked")
 							List<NodeRef> values = (List<NodeRef>) value;
-							if (values != null) {
 								for (NodeRef tempValue : values) {
 									if (tempValue != null) {
 										if (metadata != null) {
@@ -864,7 +860,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 										metadata += extractMetadata(nodeService.getType(tempValue), tempValue);
 									}
 								}
-							}
+							
 						}
 
 						tmp.put("metadata", metadata);
@@ -917,15 +913,15 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				return tmp;
 
 			} else if (FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
-				String ret = "";
+				StringBuilder ret = new StringBuilder();
 				for (NodeRef assocNodeRef : assocRefs) {
 					type = nodeService.getType(assocNodeRef);
 					if (ret.length() > 0) {
-						ret += RepoConsts.LABEL_SEPARATOR;
+						ret.append(RepoConsts.LABEL_SEPARATOR);
 					}
-					ret += extractPropName(type, assocNodeRef);
+					ret.append(extractPropName(type, assocNodeRef));
 				}
-				return ret;
+				return ret.toString();
 
 			} else {
 				List<Map<String, Object>> ret = new ArrayList<>(assocRefs.size());
@@ -978,7 +974,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	@Override
 	public boolean hasAttributeExtractorPlugin(NodeRef nodeRef) {
 		QName type = nodeService.getType(nodeRef);
-		return getAttributeExtractorPlugin(type, nodeRef) != null;
+		return getAttributeExtractorPlugin(type) != null;
 	}
 
 	/** {@inheritDoc} */
@@ -987,7 +983,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		String value;
 
 		if (permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
-			AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type, nodeRef);
+			AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type);
 			if (plugin != null) {
 				value = plugin.extractPropName(type, nodeRef);
 			} else {
@@ -1005,7 +1001,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	public String extractExpr(String format, NodeRef nodeRef) {
 		String value;
 		if (permissionService.hasReadPermission(nodeRef) == AccessStatus.ALLOWED) {
-			value = ((CharactAttributeExtractorPlugin) getAttributeExtractorPlugin(BeCPGModel.TYPE_CHARACT, nodeRef)).extractExpr(nodeRef, format);
+			value = ((CharactAttributeExtractorPlugin) getAttributeExtractorPlugin(BeCPGModel.TYPE_CHARACT)).extractExpr(nodeRef, format);
 		} else {
 			value = I18NUtil.getMessage("message.becpg.access.denied");
 		}
@@ -1018,7 +1014,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		String metadata;
 
-		AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type, nodeRef);
+		AttributeExtractorPlugin plugin = getAttributeExtractorPlugin(type);
 		if (plugin != null) {
 			metadata = plugin.extractMetadata(type, nodeRef);
 		} else if (type.equals(ContentModel.TYPE_FOLDER)) {
@@ -1059,14 +1055,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	public boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
 		Map<String, Object> comp = extractNodeData(nodeRef, nodeService.getType(nodeRef), new ArrayList<>(criteriaMap.keySet()), FormatMode.JSON);
 
-		// Criteria:{bcpg:allergenListAllergen|bcpg:allergenCode=FX1}
-		// Extracted:{dt_bcpg_allergenListAllergen=[{prop_bcpg_allergenCode={displayValue=F257,
-		// metadata=text, value=F257}}]}
+		/** Criteria:{bcpg:allergenListAllergen|bcpg:allergenCode=FX1}
+		 * Extracted:{dt_bcpg_allergenListAllergen=[{prop_bcpg_allergenCode={displayValue=F257,
+		 * metadata=text, value=F257}}]}
 
-		// Criteria:{pack:pmlMaterial=Autres matériaux}
-		// Extracted:{assoc_pack_pmlMaterial=[{displayValue=Autres matériaux -
-		// Bois, siteId=null, metadata=lvValue,
-		// value=workspace://SpacesStore/405f98a1-ebfa-41f0-a3e7-8ac7c7c150ca}]}
+		 * Criteria:{pack:pmlMaterial=Autres matériaux}
+		 * Extracted:{assoc_pack_pmlMaterial=[{displayValue=Autres matériaux -
+		 * Bois, siteId=null, metadata=lvValue,
+		 * value=workspace://SpacesStore/405f98a1-ebfa-41f0-a3e7-8ac7c7c150ca}]}
+		 * 
+		 */
 
 		for (Map.Entry<String, Object> entry : comp.entrySet()) {
 			String critKey = entry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
@@ -1092,6 +1090,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if (data.containsKey("value") && (data.get("value") != null)) {
 					value = data.get("value").toString().toLowerCase();
 				} else {
+					
 
 					for (Map.Entry<String, Object> subEntry : data.entrySet()) {
 						tmp = subEntry.getValue();
@@ -1124,25 +1123,33 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					return false;
 				}
 
-				if (logger.isTraceEnabled()) {
-					logger.trace("Test Match on: " + critKey);
-					logger.trace("Test Match : " + value + " - " + criteriaMap.get(critKey).toLowerCase());
-				}
+				
 
 				String compValue = criteriaMap.get(critKey).toLowerCase();
 				String displayValue = data.get("displayValue").toString().toLowerCase();
 				if (compValue.startsWith("\"") && compValue.endsWith("\"")) {
-					compValue = compValue.replaceAll("\"", "");
+					compValue = compValue.replace("\"", "");
 				}
 
-				if ((compValue != null) && compValue.startsWith("^")) {
-
-					compValue = compValue.replaceAll("\\^", "");
-
-					if (!value.startsWith(compValue.toLowerCase()) && !displayValue.startsWith(compValue)) {
+				if (logger.isTraceEnabled()) {
+					logger.trace("Test Match on: " + critKey);
+					logger.trace("Test Match : " + value + "/" + displayValue   + " - " + compValue);
+				}
+				if((compValue != null) && compValue.contains("*")) {
+					
+					compValue = compValue.replace("*", "");
+					
+					if (!value.contains(compValue) && !displayValue.contains(compValue)) {
 						return false;
 					}
-				} else if ((compValue != null) && !value.equalsIgnoreCase(compValue) && !displayValue.equals(compValue)) {
+				} else if ((compValue != null) && compValue.startsWith("^")) {
+
+					compValue = compValue.replace("^", "");
+
+					if (!value.startsWith(compValue) && !displayValue.startsWith(compValue)) {
+						return false;
+					}
+				} else if ((compValue != null) && (!value.equals(compValue) && !displayValue.equals(compValue))) {
 					return false;
 
 				}
