@@ -223,16 +223,16 @@ public class RepoConsts
 
 	// Sort
 	/** Constant <code>SORT_DEFAULT_STEP=100</code> */
-	public final static int SORT_DEFAULT_STEP = 100;
+	public static final  int SORT_DEFAULT_STEP = 100;
 	/** Constant <code>SORT_INSERTING_STEP=1</code> */
-	public final static int SORT_INSERTING_STEP = 1;
+	public static final  int SORT_INSERTING_STEP = 1;
 	
 	
 	//WUsed
 	/** Constant <code>WUSED_PREFIX="WUsed"</code> */
-	public final static String WUSED_PREFIX = "WUsed";
+	public static final  String WUSED_PREFIX = "WUsed";
 	/** Constant <code>WUSED_SEPARATOR="-"</code> */
-	public final static String WUSED_SEPARATOR = "-";
+	public static final  String WUSED_SEPARATOR = "-";
 	
 	//Smart content
 	/** Constant <code>SMART_CONTENT_PREFIX="SmartContent"</code> */
@@ -240,7 +240,7 @@ public class RepoConsts
 	
 	//View
 	/** Constant <code>CUSTOM_VIEW_PREFIX="View"</code> */
-	public final static String CUSTOM_VIEW_PREFIX = "View";
+	public static final  String CUSTOM_VIEW_PREFIX = "View";
 
 	/** Constant <code>VIEW_PROPERTIES="CUSTOM_VIEW_PREFIX+-properties"</code> */
 	public static final String VIEW_PROPERTIES = CUSTOM_VIEW_PREFIX+"-properties";
