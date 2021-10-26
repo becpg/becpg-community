@@ -246,7 +246,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							logger.debug("Generate reports for entity: " + nodeRefFrom + " - " + nodeService.getProperty(nodeRefFrom, ContentModel.PROP_NAME));
 						}
 
-						List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo);
+						List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale);
 
 						updateReportsAssoc(nodeRefTo, newReports);
 
@@ -263,7 +263,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}, false, true);
 	}
 
-	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo) {
+	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo, Locale defaultLocale) {
 
 		HashMap<NodeRef, Set<ReportEngineLog>> engineLogs = new HashMap<>();
 
@@ -301,9 +301,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 			List<Locale> entityReportLocales = getEntityReportLocales(entityNodeRef);
 
 			final Boolean hideDefaultLocal;
-			if (!entityReportLocales.contains(MLTextHelper.getNearestLocale(Locale.getDefault()))) {
+			if (!entityReportLocales.contains(defaultLocale)) {
 				hideDefaultLocal = true;
-				entityReportLocales.add(MLTextHelper.getNearestLocale(Locale.getDefault()));
+				entityReportLocales.add(defaultLocale);
 			} else {
 				hideDefaultLocal = false;
 			}
