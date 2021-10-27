@@ -12,7 +12,7 @@ fi
 BECPG_CONNECTOR_ID="alfresco"
 BECPG_EXTERNAL_AUTH="false"
 
-if [[ $BECPG_EXTERNAL_AUTH == "true" ]]; then
+if [[ $BECPG_AUTH_EXTERNAL == "true" ]]; then
    BECPG_CONNECTOR_ID="alfrescoHeader"
    BECPG_EXTERNAL_AUTH="true"
 fi
