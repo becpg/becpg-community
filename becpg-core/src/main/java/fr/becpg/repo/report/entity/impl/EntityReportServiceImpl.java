@@ -270,8 +270,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 						I18NUtil.setContentLocale(defaultLocale);
 
 						ruleService.disableRules();
-						//TODO bug here disabling behaviour make association cache not working
-						policyBehaviourFilter.disableBehaviour(nodeRefFrom);
+						policyBehaviourFilter.disableBehaviour(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
 						if (logger.isDebugEnabled()) {
 							logger.debug("Generate reports for entity: " + nodeRefFrom + " - " + nodeService.getProperty(nodeRefFrom, ContentModel.PROP_NAME));
 						}
@@ -895,7 +894,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 						Locale currentLocal = I18NUtil.getLocale();
 						Locale currentContentLocal = I18NUtil.getContentLocale();
 						try {
-							policyBehaviourFilter.disableBehaviour(entityNodeRef);
+							policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 							ruleService.disableRules();
 							if (logger.isDebugEnabled()) {
 								logger.debug(
