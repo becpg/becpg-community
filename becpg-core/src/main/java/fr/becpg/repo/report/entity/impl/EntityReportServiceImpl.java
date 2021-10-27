@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -72,7 +73,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -205,6 +208,23 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Autowired
 	protected AlfrescoRepository<BeCPGDataObject> alfrescoRepository;
 
+	@Autowired
+	private MutexFactory mutexFactory;
+	
+	@Component
+	public class MutexFactory {
+
+	    private ConcurrentReferenceHashMap<String, ReentrantLock> map;
+
+	    public MutexFactory() {
+	        this.map = new ConcurrentReferenceHashMap<>();
+	    }
+
+	    public ReentrantLock getMutex(String key) {
+	        return this.map.compute(key, (k, v) -> v == null ? new ReentrantLock() : v);
+	    }
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public void generateReports(final NodeRef entityNodeRef) {
@@ -213,9 +233,19 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo) {
-		try (Scope scope = tracer.spanBuilder("reportService.GenerateReports").startScopedSpan()) {
-
-			internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo);
+		
+		try {
+			if (mutexFactory.getMutex(nodeRefTo.toString()).tryLock()) {
+					
+				try (Scope scope = tracer.spanBuilder("reportService.GenerateReports").startScopedSpan()) {
+					internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo);
+				}
+				
+			} else {
+				mutexFactory.getMutex(nodeRefTo.toString()).lock();
+			}
+		} finally {
+			mutexFactory.getMutex(nodeRefTo.toString()).unlock();
 		}
 	}
 
@@ -247,7 +277,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 						}
 
 						List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale);
-
 						updateReportsAssoc(nodeRefTo, newReports);
 
 					} finally {
