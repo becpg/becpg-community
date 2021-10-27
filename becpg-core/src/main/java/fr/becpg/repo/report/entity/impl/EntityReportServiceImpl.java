@@ -233,7 +233,20 @@ public class EntityReportServiceImpl implements EntityReportService {
 					Locale currentLocal = I18NUtil.getLocale();
 					Locale currentContentLocal = I18NUtil.getContentLocale();
 					try {
-						List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo);
+						
+						Locale defaultLocale = MLTextHelper.getNearestLocale(Locale.getDefault());
+
+						I18NUtil.setLocale(defaultLocale);
+						I18NUtil.setContentLocale(defaultLocale);
+
+						ruleService.disableRules();
+						//TODO bug here disabling behaviour make association cache not working
+						policyBehaviourFilter.disableBehaviour(nodeRefFrom);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Generate reports for entity: " + nodeRefFrom + " - " + nodeService.getProperty(nodeRefFrom, ContentModel.PROP_NAME));
+						}
+
+						List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale);
 
 						updateReportsAssoc(nodeRefTo, newReports);
 
@@ -250,21 +263,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}, false, true);
 	}
 
-	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo) {
+	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo, Locale defaultLocale) {
 
 		HashMap<NodeRef, Set<ReportEngineLog>> engineLogs = new HashMap<>();
-
-		Locale defaultLocale = MLTextHelper.getNearestLocale(Locale.getDefault());
-
-		I18NUtil.setLocale(defaultLocale);
-		I18NUtil.setContentLocale(defaultLocale);
-
-		ruleService.disableRules();
-		//TODO bug here disabling behaviour make association cache not working
-		policyBehaviourFilter.disableBehaviour(entityNodeRef);
-		if (logger.isDebugEnabled()) {
-			logger.debug("Generate reports for entity: " + entityNodeRef + " - " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
-		}
 
 		tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
 
