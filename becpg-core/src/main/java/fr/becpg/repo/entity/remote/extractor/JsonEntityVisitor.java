@@ -200,11 +200,11 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))) {
 				visitPropValue(BeCPGModel.PROP_ERP_CODE, entity, properties.get(BeCPGModel.PROP_ERP_CODE), context);
 			}
-
-			if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-				entity.put(RemoteEntityService.ATTR_VERSION, nodeService.getProperty(nodeRef, BeCPGModel.PROP_VERSION_LABEL));
-			} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-				entity.put(RemoteEntityService.ATTR_VERSION, nodeService.getProperty(nodeRef, ContentModel.PROP_VERSION_LABEL));
+			
+			if (properties.get( BeCPGModel.PROP_VERSION_LABEL)!=null && !((String)properties.get( BeCPGModel.PROP_VERSION_LABEL)).isBlank()) {
+				entity.put(RemoteEntityService.ATTR_VERSION, properties.get( BeCPGModel.PROP_VERSION_LABEL));
+			} else 	if (properties.get( ContentModel.PROP_VERSION_LABEL)!=null && !((String)properties.get( ContentModel.PROP_VERSION_LABEL)).isBlank()) {
+				entity.put(RemoteEntityService.ATTR_VERSION, properties.get( ContentModel.PROP_VERSION_LABEL));
 			}
 
 			if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {
