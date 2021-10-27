@@ -268,22 +268,20 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		}
 		xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_NODEREF : RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
 
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
-			if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE) != null) {
-				xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_CODE : RemoteEntityService.ATTR_CODE,
-						XMLTextHelper.writeAttribute((String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE)));
-			} else {
-				logger.warn("Node : " + nodeRef + " has null becpg code");
-			}
-
+		String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
+		
+		if (code!=null && !code.isBlank()) {
+			xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_CODE : RemoteEntityService.ATTR_CODE,
+						XMLTextHelper.writeAttribute(code));
 		}
+		
 		// erpCode
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ERP_CODE)) {
-			if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE) != null) {
-				xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_ERP_CODE : RemoteEntityService.ATTR_ERP_CODE,
-						(String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE));
-			}
-		}
+		 code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_ERP_CODE);
+		 if (code!=null && !code.isBlank()) {
+			xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_ERP_CODE : RemoteEntityService.ATTR_ERP_CODE,
+					code);
+		 }
+		
 
 		if (appendSite && (path != null) && !isCharact) {
 			visitSite(xmlw, path);
