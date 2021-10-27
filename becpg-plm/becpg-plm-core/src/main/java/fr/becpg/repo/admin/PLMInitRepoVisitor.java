@@ -581,7 +581,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.Before);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 0);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@\\{http\\://www.bcpg.fr/model/becpg/1.0\\}rclDataType:\\\"Formulation\\\"\"}");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@{http://www.bcpg.fr/model/becpg/1.0}rclDataType:\\\"Formulation\\\"\"}");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
@@ -632,7 +632,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 0);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@\\{http://www.bcpg.fr/model/project/1.0\\}projectState:\\\"InProgress\\\"\"}");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@{http://www.bcpg.fr/model/project/1.0}projectState:\\\"InProgress\\\"\"}");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
@@ -659,7 +659,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@\\{http://www.bcpg.fr/model/becpg/1.0\\}productState:\\\"Valid\\\"\"}");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@{http://www.bcpg.fr/model/becpg/1.0}productState:\\\"Valid\\\"\"}");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
@@ -684,7 +684,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@\\{http://www.bcpg.fr/model/becpg/1.0\\}productState:\\\"Valid\\\"\"}");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@{http://www.bcpg.fr/model/becpg/1.0}productState:\\\"Valid\\\"\"}");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.MAJOR);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
@@ -709,7 +709,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@\\{http://www.bcpg.fr/model/becpg/1.0\\}productState:\\\"Archived\\\"\"}");
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"), "{\"query\":\"+@{http://www.bcpg.fr/model/becpg/1.0}productState:\\\"Archived\\\"\"}");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
