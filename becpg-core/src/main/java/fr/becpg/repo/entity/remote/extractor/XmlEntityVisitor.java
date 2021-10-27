@@ -264,14 +264,14 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 		xmlw.writeAttribute(RemoteEntityService.ATTR_TYPE, RemoteEntityService.NODE_TYPE);
 
 		if (name != null) {
-			xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_NAME : RemoteEntityService.ATTR_NAME, name);
+			xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_NAME : RemoteEntityService.ATTR_NAME, XMLTextHelper.writeAttribute(name));
 		}
 		xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_NODEREF : RemoteEntityService.ATTR_NODEREF, nodeRef.toString());
 
 		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_CODE)) {
 			if (nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE) != null) {
 				xmlw.writeAttribute(isCharact ? RemoteEntityService.CHARACT_ATTR_CODE : RemoteEntityService.ATTR_CODE,
-						(String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE));
+						XMLTextHelper.writeAttribute((String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE)));
 			} else {
 				logger.warn("Node : " + nodeRef + " has null becpg code");
 			}
@@ -483,9 +483,11 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	private void visitMltextAttributes(XMLStreamWriter xmlw, MLText mlValues) throws XMLStreamException {
 		if (mlValues != null) {
 			for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
-				String code = MLTextHelper.localeKey(mlEntry.getKey());
-				if ((code != null) && !code.isEmpty()) {
-					xmlw.writeAttribute(code.replace(":", "_").trim(), XMLTextHelper.writeCData(mlEntry.getValue(), true));
+				if(MLTextHelper.isSupportedLocale(mlEntry.getKey())) {
+					String code = MLTextHelper.localeKey(mlEntry.getKey());
+					if ((code != null) && !code.isBlank() && mlEntry.getValue() != null) {
+						xmlw.writeAttribute(code, XMLTextHelper.writeAttribute(mlEntry.getValue()));
+					}
 				}
 			}
 		}
@@ -529,7 +531,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
 		} else {
 			if (value != null) {
-				xmlw.writeCData(XMLTextHelper.writeCData(value.toString(), false));
+				xmlw.writeCData(XMLTextHelper.writeCData(value.toString()));
 			}
 		}
 	}

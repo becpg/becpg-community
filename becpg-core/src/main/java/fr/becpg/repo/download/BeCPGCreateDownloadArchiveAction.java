@@ -33,7 +33,6 @@ import java.util.List;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.model.RenditionModel;
-import org.alfresco.repo.action.executer.ActionExecuter;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.repo.download.ContentServiceHelper;
 import org.alfresco.repo.download.DownloadCancelledException;
@@ -237,6 +236,7 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
     @Override
     protected void addParameterDefinitions(List<ParameterDefinition> paramList)
     {
+    	//empty
     }
 
 
@@ -275,7 +275,9 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
         }
         finally
         {
-            tempFile.delete();
+            if(!tempFile.delete()) {
+            	log.error("Cannot delete tempFile: {}",tempFile.getAbsolutePath());
+            }
         }
         
     }
