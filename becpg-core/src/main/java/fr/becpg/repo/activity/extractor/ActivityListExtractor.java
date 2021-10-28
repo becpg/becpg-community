@@ -18,7 +18,6 @@
 package fr.becpg.repo.activity.extractor;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +25,7 @@ import java.util.regex.Pattern;
 
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -207,8 +207,8 @@ public class ActivityListExtractor extends SimpleExtractor {
 											
 											postProperty.put(EntityActivityService.BEFORE, checkProperty((JSONArray) beforeProperty, propertyDef));
 										} else {
-											if (beforeProperty instanceof String) {
-												parseDate(postProperty, beforeProperty, EntityActivityService.BEFORE);
+											if (beforeProperty instanceof String && propertyDef != null && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName()) || DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
+												postProperty.put(EntityActivityService.BEFORE, extractDate((String) beforeProperty));
 											} else {
 												postProperty.put(EntityActivityService.BEFORE, beforeProperty);
 											}
@@ -231,8 +231,8 @@ public class ActivityListExtractor extends SimpleExtractor {
 											postProperty.put(EntityActivityService.AFTER, checkProperty((JSONArray) afterProperty, propertyDef));
 										} else {
 											
-											if (afterProperty instanceof String) {
-												parseDate(postProperty, afterProperty, EntityActivityService.AFTER);
+											if (afterProperty instanceof String && propertyDef != null && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName()) || DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
+												postProperty.put(EntityActivityService.AFTER, extractDate((String) afterProperty));
 											} else {
 												postProperty.put(EntityActivityService.AFTER, afterProperty);
 											}
@@ -263,15 +263,6 @@ public class ActivityListExtractor extends SimpleExtractor {
 			}
 		}
 
-	}
-
-	private void parseDate(JSONObject postProperty, Object afterProperty, String key) throws JSONException {
-		try {
-			Date date = ISO8601DateFormat.parse((String) afterProperty);
-			postProperty.put(key, date.toString());
-		} catch (AlfrescoRuntimeException e) {
-			postProperty.put(key, afterProperty);
-		}
 	}
 
 	private void adaptProperty(JSONArray propToAdapt, JSONArray propRef) throws JSONException {
@@ -337,13 +328,8 @@ public class ActivityListExtractor extends SimpleExtractor {
 				} else {
 					Object prop = propertyArray.get(i);
 					
-					if (prop instanceof String) {
-						try {
-							Date date = ISO8601DateFormat.parse((String) prop);
-							postproperty.put(date.toString());
-						} catch (AlfrescoRuntimeException e) {
-							postproperty.put(prop);
-						}
+					if (prop instanceof String && propertyDef != null && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName()) || DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
+						postproperty.put(extractDate((String) prop));
 					} else {
 						postproperty.put(prop);
 					}
@@ -357,6 +343,14 @@ public class ActivityListExtractor extends SimpleExtractor {
 		return postproperty;
 	}
 
+	private Object extractDate(String prop) {
+		try {
+			return ISO8601DateFormat.parse(prop);
+		} catch (AlfrescoRuntimeException e) {
+			return prop;
+		}
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
