@@ -32,6 +32,7 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.CopyService;
+import org.alfresco.service.cmr.repository.DuplicateChildNodeNameException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
@@ -53,6 +54,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -810,9 +812,14 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							entityService.deleteDataLists(internalBranchToNodeRef, true);
 							entityService.deleteFiles(internalBranchToNodeRef, true);
 							
-							
-							entityListDAO.moveDataLists(branchNodeRef, internalBranchToNodeRef);
-							entityService.moveFiles(branchNodeRef, internalBranchToNodeRef);
+							try {
+								entityListDAO.moveDataLists(branchNodeRef, internalBranchToNodeRef);
+								entityService.moveFiles(branchNodeRef, internalBranchToNodeRef);
+							} catch (DuplicateChildNodeNameException e) {
+			                    // This will be rare, but it's not impossible.
+			                    // We have to retry the operation.
+			        			throw new ConcurrencyFailureException("DuplicateChildNodeNameException during mergeBranch");
+			        		}
 
 							// delete files that are not moved (ie: Documents)
 							// otherwise
@@ -1112,7 +1119,17 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 				String newEntityName = repoService.getAvailableName(parentRef,
 						(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME), true);
-				NodeRef branchNodeRef = entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef), newEntityName);
+				
+				NodeRef branchNodeRef = null;
+				
+				try {
+					branchNodeRef = entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef), newEntityName);
+        		} catch (AssociationExistsException e) {
+                    // This will be rare, but it's not impossible.
+                    // We have to retry the operation.
+        			throw new ConcurrencyFailureException("Association already exists for this noderef : " + entityNodeRef);
+        		}
+				
 				if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 					nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
 							nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL));
@@ -1219,94 +1236,102 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 		QName type = dbNodeService.getType(versionNodeRef);
 
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef extracted = null;
+		
+		extracted = transactionService.getRetryingTransactionHelper().doInTransaction(() ->
 
-			NodeRef entity = null;
+		internalExtractVersion(versionNodeRef, actualVersion, finalVersionHistoryRef, type)
 
-			try {
+				, false, false);
+		
+		return extracted;
+	}
 
-				((RuleService) ruleService).disableRules();
+	private NodeRef internalExtractVersion(final NodeRef versionNodeRef, final String actualVersion,
+			final NodeRef finalVersionHistoryRef, QName type) {
+		NodeRef entity = null;
 
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
-				policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+		try {
 
-				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(finalVersionHistoryRef);
+			((RuleService) ruleService).disableRules();
 
-				for (ChildAssociationRef childAssoc : childAssocs) {
-					
-					String version = (String) nodeService.getProperty(childAssoc.getChildRef(), BeCPGModel.PROP_VERSION_LABEL);
-					
-					if (actualVersion.equals(version)) {
-						entity = childAssoc.getChildRef();
-						break;
-					}
-				}
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+			policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(finalVersionHistoryRef);
+
+			for (ChildAssociationRef childAssoc : childAssocs) {
 				
-				// create the temporary mirror node in EntitiesHistory folder
-				if ((entity == null) || !nodeService.exists(entity)) {
-
-					String entityJson = entityFormatService.getEntityData(versionNodeRef);
-
-					Map<QName, Serializable> props = new HashMap<>();
-					props.put(ContentModel.PROP_NAME, versionNodeRef.getId());
-
-					ChildAssociationRef childAssoc = nodeService.createNode(finalVersionHistoryRef, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, versionNodeRef.getId()), type, props);
-
+				String version = (String) nodeService.getProperty(childAssoc.getChildRef(), BeCPGModel.PROP_VERSION_LABEL);
+				
+				if (actualVersion.equals(version)) {
 					entity = childAssoc.getChildRef();
-
-					ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
-
-					Location exportFrom = new Location(versionNodeRef);
-					crawlerParameters.setExportFrom(exportFrom);
-
-					crawlerParameters.setCrawlSelf(true);
-					crawlerParameters.setExcludeChildAssocs(new QName[] { QName.createQName(Version2Model.NAMESPACE_URI, VersionBaseModel.CHILD_VERSIONED_ASSOCS), RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
-
-					crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
-
-					// reconstructs the folder hierarchy
-					exporterService.exportView(new VersionExporter(versionNodeRef, entity, nodeService), crawlerParameters, null);
-
-					entityFormatService.createOrUpdateEntityFromJson(entity, entityJson);
-
-					String name = nodeService.getProperty(entity, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + actualVersion;
-					Map<QName, Serializable> versionAspectProperties = new HashMap<>(2);
-					versionAspectProperties.put(ContentModel.PROP_NAME, name);
-					versionAspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, actualVersion);
-					nodeService.addAspect(entity, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionAspectProperties);
-
-					nodeService.setProperty(entity, ContentModel.PROP_VERSION_LABEL, actualVersion);
-
-					// MNT-11911 fix, add ASPECT_INDEX_CONTROL and property that not create indexes for search and not visible files/folders at 'My Documents' dashlet
-					Map<QName, Serializable> aspectProperties = new HashMap<>(2);
-					aspectProperties.put(ContentModel.PROP_IS_INDEXED, Boolean.FALSE);
-					aspectProperties.put(ContentModel.PROP_IS_CONTENT_INDEXED, Boolean.FALSE);
-					nodeService.addAspect(entity, ContentModel.ASPECT_INDEX_CONTROL, aspectProperties);
-
-					// add temporary aspect in order to delete the node later with VersionCleanerJob
-					nodeService.addAspect(entity, ContentModel.ASPECT_TEMPORARY, null);
-
+					break;
 				}
+			}
+			
+			// create the temporary mirror node in EntitiesHistory folder
+			if ((entity == null) || !nodeService.exists(entity)) {
 
-			} finally {
-				((RuleService) ruleService).enableRules();
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
-				policyBehaviourFilter.enableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+				String entityJson = entityFormatService.getEntityData(versionNodeRef);
+
+				Map<QName, Serializable> props = new HashMap<>();
+				props.put(ContentModel.PROP_NAME, versionNodeRef.getId());
+
+				ChildAssociationRef childAssoc = nodeService.createNode(finalVersionHistoryRef, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, versionNodeRef.getId()), type, props);
+
+				entity = childAssoc.getChildRef();
+
+				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
+
+				Location exportFrom = new Location(versionNodeRef);
+				crawlerParameters.setExportFrom(exportFrom);
+
+				crawlerParameters.setCrawlSelf(true);
+				crawlerParameters.setExcludeChildAssocs(new QName[] { QName.createQName(Version2Model.NAMESPACE_URI, VersionBaseModel.CHILD_VERSIONED_ASSOCS), RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
+
+				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
+
+				// reconstructs the folder hierarchy
+				exporterService.exportView(new VersionExporter(versionNodeRef, entity, nodeService), crawlerParameters, null);
+
+				entityFormatService.createOrUpdateEntityFromJson(entity, entityJson);
+
+				String name = nodeService.getProperty(entity, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + actualVersion;
+				Map<QName, Serializable> versionAspectProperties = new HashMap<>(2);
+				versionAspectProperties.put(ContentModel.PROP_NAME, name);
+				versionAspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, actualVersion);
+				nodeService.addAspect(entity, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionAspectProperties);
+
+				nodeService.setProperty(entity, ContentModel.PROP_VERSION_LABEL, actualVersion);
+
+				// MNT-11911 fix, add ASPECT_INDEX_CONTROL and property that not create indexes for search and not visible files/folders at 'My Documents' dashlet
+				Map<QName, Serializable> aspectProperties = new HashMap<>(2);
+				aspectProperties.put(ContentModel.PROP_IS_INDEXED, Boolean.FALSE);
+				aspectProperties.put(ContentModel.PROP_IS_CONTENT_INDEXED, Boolean.FALSE);
+				nodeService.addAspect(entity, ContentModel.ASPECT_INDEX_CONTROL, aspectProperties);
+
+				// add temporary aspect in order to delete the node later with VersionCleanerJob
+				nodeService.addAspect(entity, ContentModel.ASPECT_TEMPORARY, null);
+
 			}
 
-			return entity;
+		} finally {
+			((RuleService) ruleService).enableRules();
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+			policyBehaviourFilter.enableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+		}
 
-		}, false, false);
-
+		return entity;
 	}
 
 	@Override
