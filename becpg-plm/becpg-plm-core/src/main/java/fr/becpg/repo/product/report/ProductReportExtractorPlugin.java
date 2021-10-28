@@ -164,7 +164,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	 */
 	@Override
 	protected void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, DefaultExtractorContext context) {
-		loadDataLists(entityNodeRef, dataListsElt, context, true);
+		loadDataLists(entityNodeRef, dataListsElt, context, true, 1);
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	 *            extracted product (more info)
 	 */
 	@SuppressWarnings("unchecked")
-	private void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, DefaultExtractorContext context, boolean isExtractedProduct) {
+	private void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, DefaultExtractorContext context, boolean isExtractedProduct, int level) {
 
 		RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
 
@@ -297,7 +297,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) || shouldExtractList(isExtractedProduct,context,type, PLMModel.TYPE_COMPOLIST)) {
-				loadCompoList(productData, dataListsElt, context);
+				loadCompoList(productData, dataListsElt, context, level);
 			}
 
 			if (shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_PACKAGINGLIST)) {
@@ -426,7 +426,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		return true;
 	}
 
-	private void loadCompoList(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
+	private void loadCompoList(ProductData productData, Element dataListsElt, DefaultExtractorContext context, int level) {
 		// compoList
 		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
@@ -442,7 +442,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
 							CostsCalculatingFormulationHandler.keepProductUnit);
 
-					loadCompoListItem(productData.getNodeRef(), null, dataItem, subProductData, compoListElt, 1, qty, qtyForCost, parentLossRatio,
+					loadCompoListItem(productData.getNodeRef(), null, dataItem, subProductData, compoListElt, level, qty, qtyForCost, parentLossRatio,
 							context);
 				}
 			}
@@ -822,6 +822,33 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			extractVariants(dataItem.getVariants(), partElt);
 
+			boolean extractNextDatalist = true;
+			
+			if (context.getPreferences().containsKey(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT)) {
+				
+				List<String> maxLevelPrefs = Arrays.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
+				
+				List<Integer> maxLevels = new ArrayList<>();
+				
+				for (String pref : maxLevelPrefs) {
+					maxLevels.add(Integer.parseInt(pref));
+				}
+				
+				int maxLevel = Collections.min(maxLevels);
+
+				if (maxLevel < level + 1) {
+					extractNextDatalist = false;
+				}
+			}
+			
+			Element dataListsElt = null;
+			if (context.isNotEmptyPrefs(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract)) {
+				if (extractNextDatalist) {
+					dataListsElt = partElt.addElement(TAG_DATALISTS);
+					loadDataLists(dataItem.getProduct(), dataListsElt, context, false, level + 1);
+				}
+			}
+			
 			Integer depthLevel = dataItem.getDepthLevel();
 			if (depthLevel != null) {
 				level = (depthLevel - 1) + level;
@@ -832,11 +859,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				}
 			}
 
-			Element dataListsElt = null;
-			if (context.isNotEmptyPrefs(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract)) {
-				dataListsElt = partElt.addElement(TAG_DATALISTS);
-				loadDataLists(dataItem.getProduct(), dataListsElt, context, false);
-			}
 
 			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel)) {
 
@@ -867,7 +889,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							boolean extractNextLevel = true;
 							
 							if (context.getPreferences().containsKey(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT)) {
-							
 								List<String> maxLevelPrefs = Arrays.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
 								
 								List<Integer> maxLevels = new ArrayList<>();
@@ -877,7 +898,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 								}
 								
 								int maxLevel = Collections.min(maxLevels);
-								
+
 								if (maxLevel < level + 1) {
 									extractNextLevel = false;
 								}
@@ -1143,7 +1164,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						toString((100 * entry.getValue()) / FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT)));
 			}
 			Element rawMaterialDataListsElt = rawMaterialElt.addElement(TAG_DATALISTS);
-			loadDataLists(entry.getKey(), rawMaterialDataListsElt, context, false);
+			loadDataLists(entry.getKey(), rawMaterialDataListsElt, context, false, 1);
 		}
 	}
 
