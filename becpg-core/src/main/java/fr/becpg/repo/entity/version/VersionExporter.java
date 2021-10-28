@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.download.AbstractExporter;
+import org.alfresco.service.cmr.repository.AssociationExistsException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -13,6 +14,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
+import org.springframework.dao.ConcurrencyFailureException;
 
 public class VersionExporter extends AbstractExporter {
 
@@ -99,7 +101,13 @@ public class VersionExporter extends AbstractExporter {
         	AssociationRef assoc = new AssociationRef(targetNode, nodeAssocRef.getTypeQName(), nodeAssocRef.getTargetRef());
         	
         	if (!targetAssocRefs.contains(assoc)) {
-        		dbNodeService.createAssociation(targetNode, nodeAssocRef.getTargetRef(), nodeAssocRef.getTypeQName());
+        		try {
+        			dbNodeService.createAssociation(targetNode, nodeAssocRef.getTargetRef(), nodeAssocRef.getTypeQName());
+        		} catch (AssociationExistsException e) {
+                    // This will be rare, but it's not impossible.
+                    // We have to retry the operation.
+        			throw new ConcurrencyFailureException("Association already exists : " + assoc);
+        		}
         	}
         }
 	}
