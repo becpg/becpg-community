@@ -205,6 +205,7 @@
 	          <show force="false" id="bcpg:femaNumber"/>
 	          <show force="false" id="bcpg:flNumber"/>
 	          <show force="false" id="bcpg:eanCode"/>
+	          <show force="false" id="gs1:eanCodeInnerPack"/>
 	          <show force="false" id="bcpg:eanCodeLevel2"/>
 	          <show force="false" id="bcpg:eanCodeLevel3"/>
 	          <show force="true" id="bcpg:subsidiaryRef"/>
@@ -219,7 +220,16 @@
 	        
 	          <show force="false" id="gs1:tradeItemMarketingMessage"/>
 	          <show force="false" id="gs1:tradeItemFeatureBenefit"/>
+	          <show force="false" id="gs1:specialItemCode"/>
 	          <show force="false" id="gs1:tradeItemKeyWords"/>
+	         <!-- Marketing  "isTradeItemSeasonal",
+				    "seasonalAvailabilityEndDateTime",
+				    "seasonalAvailabilityStartDateTime",
+				    "seasonCalendarYear",
+				    "seasonName",
+				    "seasonParameterCode"  -->
+	          
+	          
 	          <show force="false" id="bcpg:productQty"/>
 	          <show force="false" id="bcpg:productUnit"/>
 	          <show force="true" id="bcpg:netWeight"/>
@@ -244,6 +254,9 @@
 	          <show force="true" id="bcpg:contractDate"/>
 	          <show force="true" id="bcpg:storageConditionsRef"/>
 	          <show force="true" id="bcpg:precautionOfUseRef"/>
+	          <show force="true" id="gs1:preparationType"/>
+	          
+	          
 	          <show force="true" id="bcpg:preparationTips"/>
 	          <show force="false" id="bcpg:productMicrobioCriteriaRef"/>
 	          <show force="false" id="bcpg:meatType"/>
@@ -277,23 +290,33 @@
 	          <show force="false" id="gs1:height"/>
 	          <show force="false" id="gs1:width"/>
 	          <show force="false" id="gs1:depth"/>
+	          <show force="false" id="gs1:diameter" />
 	          <show force="false" id="pack:tare"/>
 	          <show force="false" id="pack:tareUnit"/>
 	          <show force="false" id="gs1:weight"/>
 	          <show force="false" id="bcpg:dropPackagingOfComponents"/>
-	          <show force="false" id="gs1:specialItemCode"/>
-	          <show force="false" id="gs1:isTradeItemAFullDisplayStand"/>
-	          <show force="false" id="gs1:isTradeItemPackedIrregularly"/>
-	          
-	          
+	          <show force="false" id="gs1:handlingInstructionsCodes"/>
+
+	          <show force="false" id="gs1:productPerInnerPack"/>
+	          <show force="false" id="gs1:innerPackPerBox"/>
+	          <show force="false" id="gs1:innerPackHeight"/>
+	          <show force="false" id="gs1:innerPackWidth"/>
+	          <show force="false" id="gs1:innerPackDepth"/>
+	          <show force="false" id="gs1:innerPackNetWeight"/>
+	          <show force="false" id="gs1:innerPackWeight"/>   
 	          
 	          <show force="false" id="gs1:secondaryPackagingTypeCode"/>
+	          <show force="false" id="pack:palletProductsPerBox"/>
+	          <show force="false" id="gs1:tradeItemCompositionDepth"/>
+	          <show force="false" id="gs1:tradeItemCompositionWidth"/>
+	          <show force="false" id="gs1:isTradeItemPackedIrregularly"/> 
 	          <show force="false" id="gs1:secondaryHeight"/>
 	          <show force="false" id="gs1:secondaryWidth"/>
 	          <show force="false" id="gs1:secondaryDepth"/>
 	          <show force="false" id="gs1:secondaryNetWeight"/>
 	          <show force="false" id="gs1:secondaryWeight"/>
-	          <show force="false" id="pack:palletProductsPerBox"/>
+	      
+	      	  <show force="false" id="gs1:palletTypeCode"/>
 	          <show force="false" id="pack:palletLayers"/>
 	          <show force="false" id="pack:palletBoxesPerLayer"/>
 	          <show force="false" id="pack:palletBoxesPerLastLayer"/>
@@ -305,15 +328,19 @@
 	          <show force="false" id="pack:palletStackingMaxWeight"/>
 	          <show force="false" id="gs1:tertiaryNetWeight"/>
 	          <show force="false" id="gs1:tertiaryWeight"/>
-	          <show force="false" id="gs1:palletTypeCode"/>
-	          <show force="false" id="gs1:platformTermsAndConditionsCode"/>
+	         
+	         
+	          <!-- PackagingMarkingModule -->
 	          <show force="false" id="gs1:isTradeItemMarkedAsRecyclable"/>
 	          <show force="false" id="gs1:isPackagingMarkedReturnable"/>
+	          <show force="false" id="gs1:isPriceOnPack"/>
+	          <show force="false" id="gs1:hasBatchNumber"/>
 	          <show force="false" id="gs1:packagingTermsAndConditionsCode"/>
+	          <show force="false" id="gs1:platformTermsAndConditionsCode"/>
 	          <show force="false" id="gs1:packUnitNumber"/>
-	       
 	          <show force="false" id="gs1:sortingInstructions"/>
 	          <show force="false" id="gs1:sortingBonusCriteria"/>
+	          
 	          <show force="false" id="gs1:productHierarchy1"/>
 	          <show force="false" id="gs1:productHierarchy2"/>
 	          <show force="false" id="gs1:productHierarchy3"/>
@@ -321,6 +348,9 @@
 	          <show force="false" id="gs1:productHierarchy5"/>
 	          <show force="false" id="gs1:dataCarrierTypeCode"/>
 	          <show force="false" id="gs1:isTradeItemAVariableUnit"/>
+	          <show force="false" id="gs1:variableWeightAllowableDeviationPercentage"/>
+			  <show force="false" id="gs1:variableWeightRangeMaximum"/>
+			  <show force="false" id="gs1:variableWeightRangeMinimum"/>
 	          <show force="false" id="gs1:eanCodePrice"/>
 	          <show force="false" id="gs1:isTradeItemADivisibleItem"/>
 	          <show force="false" id="gs1:eanCodeWeight"/>
@@ -333,34 +363,36 @@
 	          <show force="false" id="gs1:promotionalArticleRef"/>
 	          <show force="false" id="gs1:freeQuantityOfProduct"/>
 	          <show force="false" id="gs1:freeQuantityOfProductUnit"/>
-	         
+	          <show force="false" id="gs1:freeQuantityOfProductPercent" />
+
+	          <!-- TradeItem -->
 	          <show force="false" id="gs1:tradeItemUnitDescriptorCode"/>
-	          <show force="false" id="gs1:isTradeItemAPromotionalUnit"/>
+	          <show force="false" id="gs1:effectiveDate"/>
+	          <show force="false" id="gs1:publicationDate"/> 
+	          <show force="false" id="gs1:cancelledDateTime"/>
+	          
 	          <show force="false" id="gs1:isTradeItemAnInvoiceUnit"/>
 	          <show force="false" id="gs1:isTradeItemAnOrderableUnit"/>
-	          <show force="false" id="gs1:isTradeItemReorderable"/>
 	          
-	          <show force="false" id="gs1:orderQuantityMinimum"/>
-	          <show force="false" id="gs1:orderQuantityMultiple"/>
-	          
-	          <show force="false" id="gs1:isPriceOnPack"/>
-	          <show force="false" id="gs1:hasBatchNumber"/>
-	          
-	          <show force="false" id="gs1:firstShipDateTime"/>
-	          <show force="false" id="gs1:lastShipDateTime"/>
-	          <show force="false" id="gs1:startAvailabilityDateTime"/>
-	          <show force="false" id="gs1:endAvailabilityDateTime"/>
+	         <!-- DeliveryPurchasingInformationType  -->
+			  <show force="false" id="gs1:firstShipDateTime"/>
+			  <show force="false" id="gs1:startAvailabilityDateTime"/>
+			  <show force="false" id="gs1:endAvailabilityDateTime"/>
+			  <show force="false" id="gs1:lastShipDateTime"/>     
+			  
+			  <show force="false" id="gs1:isTradeItemReorderable"/>
+			  <show force="false" id="gs1:orderQuantityMinimum"/>
+			  <show force="false" id="gs1:orderQuantityMultiple"/>
+			  <show force="false" id="gs1:orderingLeadTime"/>
+              <!-- SalesInformationModuleType -->
 	          <show force="false" id="gs1:sellingUnitOfMeasure"/>
-	          <show force="false" id="gs1:minimumTradeItemLifespanFromTimeOfArrival"/>
+	          <!--  DutyFeeTaxInformationModule -->
 	          <show force="false" id="gs1:dutyFeeTaxes"/>
+	            
+	          <!--  DisplayUnitInformationType -->
+	          <show force="false" id="gs1:isTradeItemAFullDisplayStand"/> 
 	          <show force="false" id="gs1:hasDisplayReadyPackaging"/>
-	          <show force="false" id="gs1:tradeItemCompositionDepth"/>
-	          <show force="false" id="gs1:tradeItemCompositionWidth"/>
-	          <show force="false" id="gs1:isTradeItemACutToOrderItem"/>
-	          <show force="false" id="gs1:isTradeItemABulkItem"/>
-	          <show force="false" id="gs1:effectiveDate"/>
-	          <show force="false" id="gs1:cancelledDateTime"/>
-	          <show force="false" id="gs1:publicationDate"/>
+	         
 	          <show force="false" id="bcpg:autoMergeDate"/>
 	          <show force="false" id="bcpg:autoMergeTo"/>
 	          <show force="false" id="bcpg:autoMergeVersionType"/>
@@ -466,6 +498,7 @@
 	          
 	          <field help-id="becpg.forms.help.gs1.tradeItemMarketingMessage" id="gs1:tradeItemMarketingMessage" mandatory="false" read-only="false" set="marketing"/>
 	          <field help-id="becpg.forms.help.gs1.tradeItemFeatureBenefit" id="gs1:tradeItemFeatureBenefit" mandatory="false" read-only="false" set="marketing"/>
+	          <field help-id="becpg.forms.help.gs1.specialItemCode" id="gs1:specialItemCode" mandatory="false" read-only="false" set="marketing"/>
 	          <field help-id="becpg.forms.help.gs1.tradeItemKeyWords" id="gs1:tradeItemKeyWords" mandatory="false" read-only="false" set="marketing"/>
 	          <set appearance="bordered-panel" id="formulation" label-id="becpg.forms.set.formulation.label" parent="mainTab" template="/org/alfresco/components/form/3-column-set.ftl"/>
 	          <field help-id="becpg.forms.help.productQty" id="bcpg:productQty" mandatory="false" read-only="false" set="formulation"/>
@@ -547,6 +580,9 @@
 	          </field>
 	          <field help-id="becpg.forms.help.storageConditionsRef" id="bcpg:storageConditionsRef" mandatory="false" read-only="false" set="consumer"/>
 	          <field help-id="becpg.forms.help.precautionOfUseRef" id="bcpg:precautionOfUseRef" mandatory="false" read-only="false" set="consumer"/>
+	          <field id="gs1:preparationType" mandatory="false" read-only="false" set="consumer"/>
+	         
+	          
 	          <field help-id="becpg.forms.help.preparationTips" id="bcpg:preparationTips" mandatory="false" read-only="false" set="consumer">
 	            <control template="/org/alfresco/components/form/controls/textarea.ftl">
 	              <control-param name="rows">2</control-param>
@@ -673,6 +709,11 @@
 	              <control-param name="unit">mm</control-param>
 	            </control>
 	          </field>
+	           <field id="gs1:diameter" mandatory="false" read-only="false" set="primaryPackaging">
+	            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+	              <control-param name="unit">mm</control-param>
+	            </control>
+	          </field>
 	          <field id="pack:tare" mandatory="false" read-only="true" set="primaryPackaging"/>
 	          <field id="pack:tareUnit" mandatory="false" read-only="true" set="primaryPackaging"/>
 	          <field help-id="becpg.forms.help.gs1.weight" id="gs1:weight" mandatory="false" read-only="true" set="primaryPackaging">
@@ -681,15 +722,48 @@
 	            </control>
 	          </field>
 	          <field id="bcpg:dropPackagingOfComponents" mandatory="false" read-only="false" set="primaryPackaging"/>
-	          <field help-id="becpg.forms.help.gs1.specialItemCode" id="gs1:specialItemCode" mandatory="false" read-only="false" set="primaryPackaging"/>
+	          <field id="gs1:handlingInstructionsCodes" mandatory="false" read-only="false" set="primaryPackaging"/>
 	          <field help-id="becpg.forms.help.gs1.isTradeItemAFullDisplayStand" id="gs1:isTradeItemAFullDisplayStand" mandatory="false" read-only="false" set="primaryPackaging">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
-	          <field help-id="becpg.forms.help.gs1.isTradeItemPackedIrregularly" id="gs1:isTradeItemPackedIrregularly" mandatory="false" read-only="false" set="primaryPackaging">
+
+	           <set appearance="bordered-panel" id="innerPack" label-id="becpg.forms.set.innerPack.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+	           <field id="gs1:productPerInnerPack" mandatory="false" read-only="false" set="innerPack"/>
+	           <field id="gs1:innerPackPerBox" mandatory="false" read-only="false" set="innerPack"/>
+	           <field id="gs1:innerPackHeight" mandatory="false" read-only="false" set="innerPack">
+	            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+	              <control-param name="unit">mm</control-param>
+	            </control>
+	          </field>
+	            <field id="gs1:innerPackDepth" mandatory="false" read-only="false" set="innerPack">
+	            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+	              <control-param name="unit">mm</control-param>
+	            </control>
+	          </field>
+	            <field id="gs1:innerPackWidth" mandatory="false" read-only="false" set="innerPack">
+	            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+	              <control-param name="unit">mm</control-param>
+	            </control>
+	          </field>
+	           <field id="gs1:innerPackNetWeight" mandatory="false" read-only="true" set="innerPack">
+	            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+	              <control-param name="unit">kg</control-param>
+	            </control>
+	          </field>
+	          <field id="gs1:innerPackWeight" mandatory="false" read-only="true" set="innerPack">
+	            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+	              <control-param name="unit">kg</control-param>
+	            </control>
+	          </field>
+
+	          <set appearance="bordered-panel" id="secondaryPackaging" label-id="becpg.forms.set.secondaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+	          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:secondaryPackagingTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>    
+	          <field id="pack:palletProductsPerBox" mandatory="false" read-only="false" set="secondaryPackaging"/>
+	          <field help-id="becpg.forms.help.gs1.isTradeItemPackedIrregularly" id="gs1:isTradeItemPackedIrregularly" mandatory="false" read-only="false" set="secondaryPackaging">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
-	          <set appearance="bordered-panel" id="secondaryPackaging" label-id="becpg.forms.set.secondaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-	          <field help-id="becpg.forms.help.gs1.packagingTypeCode" id="gs1:secondaryPackagingTypeCode" mandatory="false" read-only="false" set="secondaryPackaging"/>
+	          <field help-id="becpg.forms.help.gs1.tradeItemCompositionDepth" id="gs1:tradeItemCompositionDepth" mandatory="false" read-only="false" set="secondaryPackaging"/>
+	          <field help-id="becpg.forms.help.gs1.tradeItemCompositionWidth" id="gs1:tradeItemCompositionWidth" mandatory="false" read-only="false" set="secondaryPackaging"/>  
 	          <field id="gs1:secondaryHeight" mandatory="false" read-only="false" set="secondaryPackaging">
 	            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
 	              <control-param name="unit">mm</control-param>
@@ -716,7 +790,7 @@
 	            </control>
 	          </field>
 	          <set appearance="bordered-panel" id="tertiaryPackaging" label-id="becpg.forms.set.tertiaryPackaging.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
-	          <field id="pack:palletProductsPerBox" mandatory="false" read-only="false" set="tertiaryPackaging"/>
+	         
 	          <field id="pack:palletLayers" mandatory="false" read-only="false" set="tertiaryPackaging"/>
 	          <field id="pack:palletBoxesPerLayer" mandatory="false" read-only="false" set="tertiaryPackaging"/>
 	          <field id="pack:palletBoxesPerLastLayer" mandatory="false" read-only="false" set="tertiaryPackaging"/>
@@ -753,7 +827,7 @@
 	            </control>
 	          </field>
 	          <field help-id="becpg.forms.help.gs1.palletTypeCode" id="gs1:palletTypeCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
-	          <field help-id="becpg.forms.help.gs1.platformTermsAndConditionsCode" id="gs1:platformTermsAndConditionsCode" mandatory="false" read-only="false" set="tertiaryPackaging"/>
+	      
 	          <set appearance="bordered-panel" id="packSorting" label-id="becpg.forms.set.packSorting.label" parent="conditioningTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
 	          <field help-id="becpg.forms.help.gs1.isTradeItemMarkedAsRecyclable" id="gs1:isTradeItemMarkedAsRecyclable" mandatory="false" read-only="false" set="packSorting">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
@@ -761,7 +835,14 @@
 	          <field id="gs1:isPackagingMarkedReturnable" mandatory="false" read-only="false" set="packSorting">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
+	            <field help-id="becpg.forms.help.gs1.isPriceOnPack" id="gs1:isPriceOnPack" mandatory="false" read-only="false" set="packSorting">
+	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+	          </field>
+	          <field help-id="becpg.forms.help.gs1.hasBatchNumber" id="gs1:hasBatchNumber" mandatory="false" read-only="false" set="packSorting">
+	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+	          </field>
 	          <field help-id="becpg.forms.help.gs1.packagingTermsAndConditionsCode" id="gs1:packagingTermsAndConditionsCode" mandatory="false" read-only="false" set="packSorting"/>
+	          <field help-id="becpg.forms.help.gs1.platformTermsAndConditionsCode" id="gs1:platformTermsAndConditionsCode" mandatory="false" read-only="false" set="packSorting"/>
 	          <field help-id="becpg.forms.help.gs1.packUnitNumber" id="gs1:packUnitNumber" mandatory="false" read-only="false" set="packSorting"/>
 	          <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
 	            <control template="/org/alfresco/components/form/controls/textarea.ftl">
@@ -804,6 +885,22 @@
 	          <field help-id="becpg.forms.help.gs1.isTradeItemAVariableUnit" id="gs1:isTradeItemAVariableUnit" mandatory="false" read-only="false" set="hierarchyPanel">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
+			<field id="gs1:variableWeightAllowableDeviationPercentage" help-id="becpg.forms.help.variableWeightAllowableDeviationPercentage"
+				mandatory="false" read-only="false" set="hierarchyPanel" />
+			<field id="gs1:variableWeightRangeMinimum" help-id="becpg.forms.help.variableWeightRangeMinimum" mandatory="false" read-only="false"
+				set="hierarchyPanel">
+				<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+					<control-param name="unit">kg</control-param>
+				</control>
+			</field>
+		
+			<field id="gs1:variableWeightRangeMinimum" help-id="becpg.forms.help.variableWeightRangeMinimum" mandatory="false" read-only="false"
+				set="hierarchyPanel">
+				<control template="/org/alfresco/components/form/controls/number-unit.ftl">
+					<control-param name="unit">kg</control-param>
+				</control>
+			</field>
+
 	          <field id="gs1:eanCodePrice" mandatory="false" read-only="false" set="hierarchyPanel"/>
 	          <field help-id="becpg.forms.help.gs1.isTradeItemADivisibleItem" id="gs1:isTradeItemADivisibleItem" mandatory="false" read-only="false" set="hierarchyPanel">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
@@ -841,13 +938,7 @@
 	           
 	          <field help-id="becpg.forms.help.gs1.orderQuantityMultiple" id="gs1:orderQuantityMultiple" mandatory="false" read-only="false" set="commercialPanel"/>
 	          
-	           <field help-id="becpg.forms.help.gs1.isPriceOnPack" id="gs1:isPriceOnPack" mandatory="false" read-only="false" set="commercialPanel">
-	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
-	          </field>
-	          <field help-id="becpg.forms.help.gs1.hasBatchNumber" id="gs1:hasBatchNumber" mandatory="false" read-only="false" set="commercialPanel">
-	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
-	          </field>
-	          
+	         
 	          <field help-id="becpg.forms.help.gs1.firstShipDateTime" id="gs1:firstShipDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
 	          <field help-id="becpg.forms.help.gs1.lastShipDateTime" id="gs1:lastShipDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
 	          <field help-id="becpg.forms.help.gs1.startAvailabilityDateTime" id="gs1:startAvailabilityDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
@@ -866,14 +957,7 @@
 	          <field help-id="becpg.forms.help.gs1.hasDisplayReadyPackaging" id="gs1:hasDisplayReadyPackaging" mandatory="false" read-only="false" set="commercialPanel">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
-	          <field help-id="becpg.forms.help.gs1.tradeItemCompositionDepth" id="gs1:tradeItemCompositionDepth" mandatory="false" read-only="false" set="commercialPanel"/>
-	          <field help-id="becpg.forms.help.gs1.tradeItemCompositionWidth" id="gs1:tradeItemCompositionWidth" mandatory="false" read-only="false" set="commercialPanel"/>
-	          <field help-id="becpg.forms.help.gs1.isTradeItemACutToOrderItem" id="gs1:isTradeItemACutToOrderItem" mandatory="false" read-only="false" set="commercialPanel">
-	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
-	          </field>
-	          <field help-id="becpg.forms.help.gs1.isTradeItemABulkItem" id="gs1:isTradeItemABulkItem" mandatory="false" read-only="false" set="commercialPanel">
-	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
-	          </field>
+	      
 	          <field help-id="becpg.forms.help.gs1.effectiveDate" id="gs1:effectiveDate" mandatory="false" read-only="false" set="commercialPanel"/>
 	          <field help-id="becpg.forms.help.gs1.cancelledDateTime" id="gs1:cancelledDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
 	          <field help-id="becpg.forms.help.gs1.publicationDate" id="gs1:publicationDate" mandatory="false" read-only="false" set="commercialPanel"/>
