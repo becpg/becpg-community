@@ -901,6 +901,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_GS1_PLATFORM_TERM_AND_CONDITIONS_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_SORTING_BONUS_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
 		
+		entityLists.put(PlmRepoConsts.PATH_GS1_HANDLING_INSTRUCTIONS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_GS1_PREPARATION_TYPE, BeCPGModel.TYPE_LIST_VALUE);
 		
 		
 		entityLists.put(PlmRepoConsts.PATH_GS1_DATA_CARRIER_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
