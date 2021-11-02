@@ -69,6 +69,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private Boolean addEmptyValue = null;
 
+	public List<String> getPaths() {
+		return paths;
+	}
+	
 	/**
 	 * <p>setPath.</p>
 	 *
@@ -295,19 +299,25 @@ public class DynListConstraint extends ListOfValuesConstraint {
 								for (NodeRef nodeRef : nodeRefs) {
 									if (serviceRegistry.getNodeService().exists(nodeRef)
 											&& serviceRegistry.getNodeService().getType(nodeRef).equals(constraintTypeQname)) {
+										
+
 										MLText mlText = (MLText) serviceRegistry.getNodeService().getProperty(nodeRef, constraintPropQname);
 										if (mlText != null) {
-											String key = null;
 
-											if (constraintCodeQname != null) {
-												key = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintCodeQname);
-
+											Boolean isDeleted = (Boolean) serviceRegistry.getNodeService().getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED);
+											
+											if (isDeleted == null || isDeleted.equals(Boolean.FALSE)) {
+												String key = null;
+												
+												if (constraintCodeQname != null) {
+													key = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintCodeQname);
+													
+												}
+												if ((key == null) || key.isEmpty()) {
+													key = mlText.getClosestValue(Locale.getDefault());
+												}
+												allowedValues.put(key, mlText);
 											}
-											if ((key == null) || key.isEmpty()) {
-												key = mlText.getClosestValue(Locale.getDefault());
-											}
-
-											allowedValues.put(key, mlText);
 										}
 									} else {
 										logger.warn("Node doesn't exist : " + nodeRef);

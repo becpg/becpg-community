@@ -11,6 +11,7 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
@@ -60,7 +61,7 @@ public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
-		queueNode(childAssocRef.getChildRef());
+		throw new IllegalStateException(I18NUtil.getMessage("message.list-value.delete.forbidden"));
 	}
 
 	/** {@inheritDoc} */

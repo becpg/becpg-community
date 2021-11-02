@@ -238,6 +238,7 @@
 				<field-visibility>
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lvCode" read-only="true" />
@@ -253,6 +254,7 @@
 				<field-visibility>
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 
@@ -261,6 +263,7 @@
 				<field-visibility>
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
 
@@ -268,6 +271,7 @@
 				<field-visibility>
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
+					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lvCode" read-only="true" />
