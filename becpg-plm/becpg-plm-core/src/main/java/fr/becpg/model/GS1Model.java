@@ -43,6 +43,10 @@ public interface GS1Model {
 	QName PROP_WEIGHT = QName.createQName(GS1_URI, "weight");
 	/** Constant <code>PROP_SECONDARY_WEIGHT</code> */
 	QName PROP_SECONDARY_WEIGHT = QName.createQName(GS1_URI, "secondaryWeight");
+	
+	QName PROP_INNERPACK_WEIGHT = QName.createQName(GS1_URI, "innerPackWeight");
+	
+	QName PROP_INNERPACK_NET_WEIGHT = QName.createQName(GS1_URI, "innerPackNetWeight");
 	/** Constant <code>PROP_TERTIARY_WEIGHT</code> */
 	QName PROP_TERTIARY_WEIGHT = QName.createQName(GS1_URI, "tertiaryWeight");
 	/** Constant <code>PROP_SECONDARY_NET_WEIGHT</code> */
@@ -73,6 +77,9 @@ public interface GS1Model {
 	/** Constant <code>PROP_SECONDARY_HEIGHT</code> */
 	QName PROP_SECONDARY_HEIGHT = QName.createQName(GS1_URI, "secondaryHeight");
 
+	
+	QName PROP_PRODUCT_PER_INNER_PACK = QName.createQName(GS1_URI, "productPerInnerPack");
+	
 	/** Constant <code>PROP_TERTIARY_WIDTH</code> */
 	QName PROP_TERTIARY_WIDTH = QName.createQName(GS1_URI, "tertiaryWidth");
 
