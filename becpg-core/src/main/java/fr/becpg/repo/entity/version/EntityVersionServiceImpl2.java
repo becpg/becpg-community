@@ -25,7 +25,6 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.repo.version.common.VersionImpl;
-import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.AssociationExistsException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -159,9 +158,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 	@Autowired
 	private EntityFormatService entityFormatService;
-	
-	@Autowired
-	private LockService lockService;
 	
 	/** {@inheritDoc} */
 	@Override
@@ -886,9 +882,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 							entityActivityService.postMergeBranchActivity(branchNodeRef, internalBranchToNodeRef, versionType, description);
 							
-
-							// need to unlock original branch as the working_copy_association does not exist
-							lockService.unlock(internalBranchToNodeRef, false, true);
 							nodeService.removeAspect(internalBranchToNodeRef, ContentModel.ASPECT_CHECKED_OUT);
 
 
