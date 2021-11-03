@@ -68,9 +68,17 @@
 					<constraints>
 						<constraint ref="ecm:ecoStates" />
 					</constraints>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="ecm:effectiveDate">
-					<type>d:date</type>					
+					<type>d:date</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>			
 				</property>
 				<property name="ecm:ecoType">
 					<type>d:text</type>
@@ -79,6 +87,10 @@
 					<constraints>
 						<constraint ref="ecm:ecoTypes" />
 					</constraints>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 			</properties>
 			<associations>				
@@ -112,6 +124,10 @@
 					<constraints>
 						<constraint ref="ecm:revisionTypes" />
 					</constraints>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="ecm:rlQtyPerc">
 					<type>d:int</type>
@@ -157,6 +173,10 @@
 				<property name="ecm:isWUsedImpacted">
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>			
 			</properties>
 			<associations>
@@ -199,13 +219,21 @@
 					<constraints>
 						<constraint ref="ecm:revisionTypes" />
 					</constraints>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>			
 				<property name="ecm:culReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
-					</constraints>					
+					</constraints>			
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>		
 				</property>				
 				<property name="ecm:culReqDetails">
 					<type>d:text</type>				
@@ -218,6 +246,10 @@
 				<property name="ecm:culTreated">
 					<type>d:boolean</type>
 					<default>false</default>		
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>	
 			</properties>		
 			<associations>

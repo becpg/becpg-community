@@ -144,12 +144,20 @@
 					<constraints>
 						<constraint ref="pack:labelTypes" />
 					</constraints>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					 </index>
 				</property>
 				<property name="pack:llPosition">
 					<type>d:text</type>
 					<constraints>
 						<constraint ref="pack:labelingPositions" />
 					</constraints>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					 </index>
 				</property>
 			</properties>
 			<associations>
@@ -183,6 +191,10 @@
 					<constraints>
 						<constraint ref="bcpg:packagingLevel" />
 					</constraints>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					 </index>
 				</property>
 			</properties>
 			
@@ -235,35 +247,67 @@
 			<properties>
 				<property name="pack:palletProductsPerBox">
 					<title>Nombre de produits / colis</title>
-					<type>d:int</type>	
+					<type>d:int</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:palletLayers">
 					<title>Nombre de couches / palette</title>
 					<type>d:int</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:palletBoxesPerLayer">
 					<title>Nombre d'emb / couche</title>
 					<type>d:int</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:palletBoxesPerLastLayer">
 					<title>Nombre d'emb / dernière couche</title>
 					<type>d:int</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:palletBoxesPerPallet">
 					<title>Nombre d'emb / palette</title>
 					<type>d:int</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:palletHeight">
 					<title>Hauteur palette (mm)</title>
 					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:palletNumberOnGround">
 					<title>Stacking capacity</title>
 					<type>d:int</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:palletStackingMaxWeight">
 					<title>Pallet stacking max weight</title>
 					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 			</properties>
 		</aspect>
@@ -276,6 +320,10 @@
 					<title>Tare</title>
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:tareUnit">
 					<title>Unité de tare</title>
@@ -285,6 +333,10 @@
 					<constraints>
 						<constraint ref="pack:tareUnits" />
 					</constraints>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 			</properties>
 			<associations />
@@ -298,14 +350,26 @@
 				<property name="pack:length">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:width">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:height">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 			</properties>
 		</aspect>
@@ -317,12 +381,20 @@
 					<constraints>
 						<constraint ref="pack:labelingPositions" />
 					</constraints>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:labelingType">
 					<type>d:text</type>
 					<constraints>
 						<constraint ref="pack:labelingTypes" />
 					</constraints>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 			</properties>
 			<associations>
@@ -346,19 +418,17 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:pmPaperWeight">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 			</properties>
 		</aspect>
@@ -368,10 +438,9 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					 </index>
 				</property>
 			</properties>
 			<associations>
@@ -396,28 +465,25 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:pmIntWidth">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:pmIntHeight">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 			</properties>
 		</aspect>
@@ -428,19 +494,17 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:pmCoilDiameter">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 			</properties>
 		</aspect>
@@ -451,44 +515,40 @@
 					<type>d:int</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:pmPrintColor">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:pmPrintType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<multiple>true</multiple>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
 					<constraints>
 						<constraint ref="pack:pmPrintTypes" />
 					</constraints>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 				<property name="pack:pmPrintVarnish">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
 					<constraints>
 						<constraint ref="pack:pmPrintVarnishs" />
 					</constraints>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>
 			</properties>
 		</aspect>
