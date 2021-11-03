@@ -93,6 +93,10 @@
 			<properties>
 				<property name="ghs:pictogramCode">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>false</facetable>
+				   </index>
 				</property>
 			</properties>
 		</type>
@@ -102,21 +106,37 @@
 			<properties>
 				<property name="ghs:hazardCode">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>false</facetable>
+				   </index>
 				</property>
 				<property name="ghs:hazardType">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+			  		</index>
 					<constraints>
 						<constraint ref="ghs:hazardTypes" />
 					</constraints>
 				</property>
 				 <property name="ghs:hazardClassCode">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				   </index>
 					<constraints>
 						<constraint ref="ghs:hazardCategories" />
 					</constraints>
 				</property>
 				<property name="ghs:signalWord">
-					<type>d:text</type>
+				  <type>d:text</type>
+				 	<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 					<constraints>
 						<constraint ref="ghs:signalWords" />
 					</constraints>
@@ -129,9 +149,17 @@
 			<properties>
 				<property name="ghs:precautionaryCode">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 				<property name="ghs:precautionaryType">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 					<constraints>
 						<constraint ref="ghs:precautionaryTypes" />
 					</constraints>
@@ -144,6 +172,10 @@
 			<properties>
 				<property name="ghs:onuCodeNumber">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 			</properties>
 		</type>
@@ -153,6 +185,10 @@
 			<properties>
 				<property name="ghs:classCodeNumber">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 			</properties>
 		</type>
@@ -162,6 +198,10 @@
 			<properties>
 				<property name="ghs:packagingGroupCodeNumber">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 			</properties>
 		</type>
@@ -199,6 +239,10 @@
 				</property>
 				<property name="ghs:sdsSignalWord">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 					<constraints>
 						<constraint ref="ghs:signalWords" />
 					</constraints>

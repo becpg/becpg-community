@@ -165,6 +165,10 @@
 			<properties>
 				<property name="mpm:rplParamType">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 					<constraints>
 						<constraint ref="mpm:resourceParamTypes" />
 					</constraints>
@@ -219,6 +223,10 @@
 			<properties>
 				<property name="mpm:resourceType">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 					<constraints>
 						<constraint ref="mpm:resourceTypes" />
 					</constraints>
