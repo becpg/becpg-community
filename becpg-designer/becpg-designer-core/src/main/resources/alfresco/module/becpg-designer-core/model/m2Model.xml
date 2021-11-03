@@ -311,10 +311,6 @@
 			<overrides>
 				<property name="m2:parentName">
 					<mandatory>true</mandatory>
-					<index enabled="true">
-					  <tokenised>both</tokenised>
-					  <facetable>false</facetable>
-				    </index>
 				</property>
 			</overrides>
 		</type>

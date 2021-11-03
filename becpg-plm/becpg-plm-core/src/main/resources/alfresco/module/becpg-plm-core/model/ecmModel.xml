@@ -65,13 +65,13 @@
 					<type>d:text</type>
 					<multiple>false</multiple>
 					<default>ToCalculateWUsed</default>
-					<constraints>
-						<constraint ref="ecm:ecoStates" />
-					</constraints>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					 </index>
+					<constraints>
+						<constraint ref="ecm:ecoStates" />
+					</constraints>
 				</property>
 				<property name="ecm:effectiveDate">
 					<type>d:date</type>
@@ -84,13 +84,13 @@
 					<type>d:text</type>
 					<multiple>false</multiple>
 					<default>Replacement</default>
-					<constraints>
-						<constraint ref="ecm:ecoTypes" />
-					</constraints>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					 </index>
+					<constraints>
+						<constraint ref="ecm:ecoTypes" />
+					</constraints>
 				</property>
 			</properties>
 			<associations>				
@@ -124,10 +124,6 @@
 					<constraints>
 						<constraint ref="ecm:revisionTypes" />
 					</constraints>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					 </index>
 				</property>
 				<property name="ecm:rlQtyPerc">
 					<type>d:int</type>
@@ -216,24 +212,24 @@
 				<property name="ecm:culRevision">
 					<type>d:text</type>
 					<multiple>false</multiple>
-					<constraints>
-						<constraint ref="ecm:revisionTypes" />
-					</constraints>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					 </index>
+					<constraints>
+						<constraint ref="ecm:revisionTypes" />
+					</constraints>
 				</property>			
 				<property name="ecm:culReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<constraints>
-						<constraint ref="bcpg:reqTypes" />
-					</constraints>			
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					 </index>		
+					<constraints>
+						<constraint ref="bcpg:reqTypes" />
+					</constraints>			
 				</property>				
 				<property name="ecm:culReqDetails">
 					<type>d:text</type>				
