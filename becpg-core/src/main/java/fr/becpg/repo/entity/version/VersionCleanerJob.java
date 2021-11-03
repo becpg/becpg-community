@@ -9,6 +9,7 @@ import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
+import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
@@ -50,6 +51,8 @@ public class VersionCleanerJob extends AbstractScheduledLockedJob implements Job
 	private TenantAdminService tenantAdminService;
 
 	private AssociationService associationService;
+	
+	private LockService lockService;
 
 	private static final int MAX_PROCESSED_NDOES = 10;
 
@@ -69,6 +72,7 @@ public class VersionCleanerJob extends AbstractScheduledLockedJob implements Job
 		nodeService = (NodeService) jobData.get("nodeService");
 		tenantAdminService = (TenantAdminService) jobData.get("tenantAdminService");
 		associationService = (AssociationService) jobData.get("associationService");
+		lockService = (LockService) jobData.get("lockService");
 
 		AuthenticationUtil.runAsSystem(this::cleanVersions);
 
@@ -152,6 +156,9 @@ public class VersionCleanerJob extends AbstractScheduledLockedJob implements Job
 
 				if (!nodeService.exists(originalNode)) {
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						if (lockService.isLocked(notConvertedNode)) {
+							lockService.unlock(notConvertedNode);
+						}
 						nodeService.deleteNode(notConvertedNode);
 						return null;
 					}, false, false);
@@ -185,11 +192,17 @@ public class VersionCleanerJob extends AbstractScheduledLockedJob implements Job
 				
 				NodeRef parentNode = nodeService.getPrimaryParent(temporaryNode).getParentRef();
 				
+				if (lockService.isLocked(temporaryNode)) {
+					lockService.unlock(temporaryNode);
+				}
 				nodeService.deleteNode(temporaryNode);
 				long timeElapsed = System.currentTimeMillis() - start;
 				logger.info("deleted node : " + temporaryNode + ", tenant : " + tenantName + ", time elapsed : " + timeElapsed + " ms");
 				
 				if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
+					if (lockService.isLocked(parentNode)) {
+						lockService.unlock(parentNode);
+					}
 					nodeService.deleteNode(parentNode);
 					logger.info("also deleted parent node : " + parentNode + ", tenant : " + tenantName);
 				}
