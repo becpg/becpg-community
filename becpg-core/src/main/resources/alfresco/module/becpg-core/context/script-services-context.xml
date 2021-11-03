@@ -74,6 +74,7 @@
 		<property name="siteService" ref="siteService"/>
 		<property name="entityFormatService" ref="entityFormatService"/>
 		<property name="tenantAdminService" ref="tenantAdminService"/>
+		<property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">

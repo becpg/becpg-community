@@ -343,6 +343,9 @@
 	           <entry key="associationService">
                     <ref bean="associationService" />
                </entry>
+	           <entry key="lockService">
+                    <ref bean="lockService" />
+               </entry>
 			</map>
 		</property>
         
