@@ -115,6 +115,10 @@
 					<type>d:boolean</type>
 					<mandatory>true</mandatory>
 					<default>true</default>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 				</property>
 			</properties>
 			<associations>
@@ -144,18 +148,34 @@
 				<property name="dsg:submissionUrl">
 					<title>Submission Url</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 				<property name="dsg:editFormTemplate">
 					<title>Edit form template path</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 				<property name="dsg:viewFormTemplate">
 					<title>View form template path</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 				<property name="dsg:createFormTemplate">
 					<title>Create form template path</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 			</properties>
 			<overrides>
@@ -180,6 +200,10 @@
 					<constraints>
 						<constraint ref="dsg:setAppearance" />
 					</constraints>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -199,6 +223,10 @@
 					<title>Hide</title>
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 				</property>
 				<property name="dsg:forMode">
 					<title>For mode</title>
@@ -208,37 +236,69 @@
 					<constraints>
 						<constraint ref="dsg:forModeConstraint" />
 					</constraints>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 				</property>
 				<property name="dsg:force">
 					<title>Force</title>
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 				</property>
 				<property name="dsg:description">
 					<title>Description label</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 				<property name="dsg:descriptionId">
 					<title>Description label id</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 				<property name="dsg:help">
 					<title>Help label</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 
 				<property name="dsg:helpId">
 					<title>Help label id</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 				<property name="dsg:readOnly">
 					<title>Read only</title>
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 				</property>
 				<property name="dsg:mandatory">
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 				</property>
 			</properties>
 			<associations>
@@ -307,18 +367,34 @@
 				<property name="dsg:optional">
 					<title>Optional</title>
 					<type>d:boolean</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
 				</property>
 				<property name="dsg:parameterType">
 					<title>Parameter type</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 				<property name="dsg:parameterValue">
 					<title>Parameter value</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 				<property name="dsg:parameterDescription">
 					<title>Parameter description</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 
 			</properties>
@@ -354,14 +430,26 @@
 				<property name="dsg:type">
 					<title>Type</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 				<property name="dsg:event">
 					<title>Event</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 				<property name="dsg:validation-handler">
 					<title>Constraint handler</title>
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 			</properties>
 		</type>
