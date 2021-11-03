@@ -141,23 +141,23 @@
 			<properties>
 				<property name="pack:llType">
 					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					 </index>
 					<constraints>
 						<constraint ref="pack:labelTypes" />
 					</constraints>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>false</facetable>
-					 </index>
 				</property>
 				<property name="pack:llPosition">
 					<type>d:text</type>
-					<constraints>
-						<constraint ref="pack:labelingPositions" />
-					</constraints>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					 </index>
+					<constraints>
+						<constraint ref="pack:labelingPositions" />
+					</constraints>
 				</property>
 			</properties>
 			<associations>
@@ -188,13 +188,13 @@
 				</property>
 				<property name="pack:pmlLevel">
 					<type>d:text</type>
-					<constraints>
-						<constraint ref="bcpg:packagingLevel" />
-					</constraints>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					 </index>
+					<constraints>
+						<constraint ref="bcpg:packagingLevel" />
+					</constraints>
 				</property>
 			</properties>
 			
@@ -330,13 +330,13 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<default>g</default>
-					<constraints>
-						<constraint ref="pack:tareUnits" />
-					</constraints>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					 </index>
+					<constraints>
+						<constraint ref="pack:tareUnits" />
+					</constraints>
 				</property>
 			</properties>
 			<associations />
@@ -378,23 +378,23 @@
 			<properties>
 				<property name="pack:labelingPosition">
 					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 					<constraints>
 						<constraint ref="pack:labelingPositions" />
 					</constraints>
-					<index enabled="true">
-						<tokenised>false</tokenised>
-						<facetable>true</facetable>
-					 </index>
 				</property>
 				<property name="pack:labelingType">
 					<type>d:text</type>
-					<constraints>
-						<constraint ref="pack:labelingTypes" />
-					</constraints>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					 </index>
+					<constraints>
+						<constraint ref="pack:labelingTypes" />
+					</constraints>
 				</property>
 			</properties>
 			<associations>
@@ -531,24 +531,24 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<multiple>true</multiple>
-					<constraints>
-						<constraint ref="pack:pmPrintTypes" />
-					</constraints>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					 </index>
+					<constraints>
+						<constraint ref="pack:pmPrintTypes" />
+					</constraints>
 				</property>
 				<property name="pack:pmPrintVarnish">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<constraints>
-						<constraint ref="pack:pmPrintVarnishs" />
-					</constraints>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					 </index>
+					<constraints>
+						<constraint ref="pack:pmPrintVarnishs" />
+					</constraints>
 				</property>
 			</properties>
 		</aspect>

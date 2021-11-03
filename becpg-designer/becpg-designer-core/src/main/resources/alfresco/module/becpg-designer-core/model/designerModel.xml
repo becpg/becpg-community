@@ -197,13 +197,13 @@
 				<property name="dsg:appearance">
 					<title>Appearance</title>
 					<type>d:text</type>
-					<constraints>
-						<constraint ref="dsg:setAppearance" />
-					</constraints>
 					<index enabled="true">
 					  <tokenised>false</tokenised>
 					  <facetable>true</facetable>
 				    </index>
+					<constraints>
+						<constraint ref="dsg:setAppearance" />
+					</constraints>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -233,13 +233,13 @@
 					<type>d:text</type>
 					<multiple>true</multiple>
 					<default>-</default>
-					<constraints>
-						<constraint ref="dsg:forModeConstraint" />
-					</constraints>
 					<index enabled="true">
 					  <tokenised>false</tokenised>
 					  <facetable>true</facetable>
 				    </index>
+					<constraints>
+						<constraint ref="dsg:forModeConstraint" />
+					</constraints>
 				</property>
 				<property name="dsg:force">
 					<title>Force</title>

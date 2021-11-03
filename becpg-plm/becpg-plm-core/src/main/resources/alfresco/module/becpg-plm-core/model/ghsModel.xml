@@ -93,11 +93,11 @@
 			<properties>
 				<property name="ghs:pictogramCode">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>false</facetable>
+				   </index>
 				</property>
-				<index enabled="true">
-				  <tokenised>false</tokenised>
-				  <facetable>false</facetable>
-			   </index>
 			</properties>
 		</type>
 		
@@ -107,39 +107,39 @@
 				<property name="ghs:hazardCode">
 					<type>d:text</type>
 					<index enabled="true">
-				  <tokenised>false</tokenised>
-				  <facetable>false</facetable>
-			   </index>
+					  <tokenised>false</tokenised>
+					  <facetable>false</facetable>
+				   </index>
 				</property>
 				<property name="ghs:hazardType">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+			  		</index>
 					<constraints>
 						<constraint ref="ghs:hazardTypes" />
 					</constraints>
-					<index enabled="true">
-				  <tokenised>false</tokenised>
-				  <facetable>true</facetable>
-			   </index>
 				</property>
 				 <property name="ghs:hazardClassCode">
 					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				   </index>
 					<constraints>
 						<constraint ref="ghs:hazardCategories" />
 					</constraints>
-					<index enabled="true">
-				  <tokenised>false</tokenised>
-				  <facetable>true</facetable>
-			   </index>
 				</property>
 				<property name="ghs:signalWord">
 				  <type>d:text</type>
-					<constraints>
-						<constraint ref="ghs:signalWords" />
-					</constraints>
 				 	<index enabled="true">
 					  <tokenised>false</tokenised>
 					  <facetable>true</facetable>
 				    </index>
+					<constraints>
+						<constraint ref="ghs:signalWords" />
+					</constraints>
 				</property>
 			</properties>
 		</type>
@@ -156,13 +156,13 @@
 				</property>
 				<property name="ghs:precautionaryType">
 					<type>d:text</type>
-					<constraints>
-						<constraint ref="ghs:precautionaryTypes" />
-					</constraints>
 					<index enabled="true">
 					  <tokenised>false</tokenised>
 					  <facetable>true</facetable>
 				    </index>
+					<constraints>
+						<constraint ref="ghs:precautionaryTypes" />
+					</constraints>
 				</property>
 			</properties>
 		</type>
@@ -239,13 +239,13 @@
 				</property>
 				<property name="ghs:sdsSignalWord">
 					<type>d:text</type>
-					<constraints>
-						<constraint ref="ghs:signalWords" />
-					</constraints>
 					<index enabled="true">
 					  <tokenised>false</tokenised>
 					  <facetable>true</facetable>
 				    </index>
+					<constraints>
+						<constraint ref="ghs:signalWords" />
+					</constraints>
 				</property>
 			</properties>
 			<associations>

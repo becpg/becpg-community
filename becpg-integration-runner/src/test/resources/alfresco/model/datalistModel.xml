@@ -112,13 +112,13 @@
                <title>Status</title>
                <type>d:text</type>
                <default>Not Started</default>
-                <constraints>
-                  <constraint ref="dl:task_status" />
-               </constraints>
                <index enabled="true">
 				  <tokenised>false</tokenised>
 				  <facetable>false</facetable>
 			   </index>
+                <constraints>
+                  <constraint ref="dl:task_status" />
+               </constraints>
             </property>
             <property name="dl:todoNotes">
                <title>Notes</title>
@@ -176,25 +176,25 @@
                <title>Priority</title>
                <type>d:text</type>
                <default>Normal</default>
-               <constraints>
-                  <constraint ref="dl:priority_value" />
-               </constraints>
                <index enabled="true">
 				  <tokenised>false</tokenised>
 				  <facetable>false</facetable>
 			   </index>
+               <constraints>
+                  <constraint ref="dl:priority_value" />
+               </constraints>
             </property>
             <property name="dl:simpletaskStatus">
                <title>Status</title>
                <type>d:text</type>
                <default>Not Started</default>
-               <constraints>
-                  <constraint ref="dl:task_status" />
-               </constraints>
                <index enabled="true">
 				  <tokenised>false</tokenised>
 				  <facetable>false</facetable>
 			   </index>
+               <constraints>
+                  <constraint ref="dl:task_status" />
+               </constraints>
             </property>
             <property name="dl:simpletaskComments">
                <title>Comments</title>
@@ -220,25 +220,25 @@
                <title>Priority</title>
                <type>d:text</type>
                <default>Normal</default>
-               <constraints>
-                  <constraint ref="dl:priority_value" />
-               </constraints>
                <index enabled="true">
 				  <tokenised>false</tokenised>
 				  <facetable>false</facetable>
 			   </index>
+               <constraints>
+                  <constraint ref="dl:priority_value" />
+               </constraints>
             </property>
             <property name="dl:taskStatus">
                <title>Status</title>
                <type>d:text</type>
                <default>Not Started</default>
-               <constraints>
-                  <constraint ref="dl:task_status" />
-               </constraints>
                <index enabled="true">
 				  <tokenised>false</tokenised>
 				  <facetable>false</facetable>
 			   </index>
+               <constraints>
+                  <constraint ref="dl:task_status" />
+               </constraints>
             </property>
             <property name="dl:taskComments">
                <title>Comments</title>
@@ -364,25 +364,25 @@
                <title>Status</title>
                <type>d:text</type>
                <default>Not Started</default>
-               <constraints>
-                  <constraint ref="dl:task_status" />
-               </constraints>
                <index enabled="true">
 				  <tokenised>false</tokenised>
 				  <facetable>false</facetable>
 			   </index>
+               <constraints>
+                  <constraint ref="dl:task_status" />
+               </constraints>
             </property>
             <property name="dl:issuePriority">
                <title>Priority</title>
                <type>d:text</type>
                <default>Normal</default>
-               <constraints>
-                  <constraint ref="dl:priority_value" />
-               </constraints>
                <index enabled="true">
 				  <tokenised>false</tokenised>
 				  <facetable>false</facetable>
 			   </index>
+               <constraints>
+                  <constraint ref="dl:priority_value" />
+               </constraints>
             </property>
             <property name="dl:issueDueDate">
                <title>Due Date</title>
@@ -670,13 +670,13 @@
                <type>d:int</type>
                <mandatory>true</mandatory>
                <default>0</default>
-               <constraints>
-                  <constraint ref="dl:percentage" />
-               </constraints>
                <index enabled="true">
 				  <tokenised>false</tokenised>
 				  <facetable>true</facetable>
 			   </index>
+               <constraints>
+                  <constraint ref="dl:percentage" />
+               </constraints>
             </property>
          </properties>
       </aspect>
