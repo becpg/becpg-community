@@ -886,9 +886,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 							entityActivityService.postMergeBranchActivity(branchNodeRef, internalBranchToNodeRef, versionType, description);
 							
-
-							// need to unlock original branch as the working_copy_association does not exist
-							lockService.unlock(internalBranchToNodeRef, false, true);
 							nodeService.removeAspect(internalBranchToNodeRef, ContentModel.ASPECT_CHECKED_OUT);
 
 
@@ -1302,6 +1299,10 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 				entityFormatService.createOrUpdateEntityFromJson(entity, entityJson);
 
+				if (lockService.isLocked(entity)) {
+					lockService.unlock(entity);
+				}
+				
 				String name = nodeService.getProperty(entity, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + actualVersion;
 				Map<QName, Serializable> versionAspectProperties = new HashMap<>(2);
 				versionAspectProperties.put(ContentModel.PROP_NAME, name);
