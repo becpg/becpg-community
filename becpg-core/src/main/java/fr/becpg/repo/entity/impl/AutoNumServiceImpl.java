@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -64,6 +65,9 @@ public class AutoNumServiceImpl implements AutoNumService {
 
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
+	
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
 
 	/**
 	 * {@inheritDoc}
@@ -162,29 +166,37 @@ public class AutoNumServiceImpl implements AutoNumService {
 	/** {@inheritDoc} */
 	@Override
 	public synchronized String getOrCreateCode(NodeRef nodeRef, QName codeQName) {
-		// check code is already taken. If yes : this object is a copy of an
-		// existing node
-		String code = (String) nodeService.getProperty(nodeRef, codeQName);
-		boolean generateCode = true;
-		QName typeQName = nodeService.getType(nodeRef);
-
-		if ((code != null) && !code.isEmpty()) {
-
-			generateCode = BeCPGQueryBuilder.createQuery().ofType(typeQName).andPropEquals(codeQName, code).andNotID(nodeRef).inDB()
-					.singleValue() != null;
-
+		
+		try {
+			
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			
+			// check code is already taken. If yes : this object is a copy of an
+			// existing node
+			String code = (String) nodeService.getProperty(nodeRef, codeQName);
+			boolean generateCode = true;
+			QName typeQName = nodeService.getType(nodeRef);
+			
+			if ((code != null) && !code.isEmpty()) {
+				
+				generateCode = BeCPGQueryBuilder.createQuery().ofType(typeQName).andPropEquals(codeQName, code).andNotID(nodeRef).inDB()
+						.singleValue() != null;
+				
+			}
+			
+			// generate a new code
+			if (generateCode) {
+				code = getAutoNumValue(typeQName, codeQName);
+				nodeService.setProperty(nodeRef, codeQName, code);
+			} else {
+				// store autoNum in db
+				createOrUpdateAutoNumValue(typeQName, codeQName, code);
+			}
+			return code;
+		} finally {
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 		}
 
-		// generate a new code
-		if (generateCode) {
-			code = getAutoNumValue(typeQName, codeQName);
-			nodeService.setProperty(nodeRef, codeQName, code);
-		} else {
-			// store autoNum in db
-			createOrUpdateAutoNumValue(typeQName, codeQName, code);
-		}
-
-		return code;
 	}
 
 	/** {@inheritDoc} */
