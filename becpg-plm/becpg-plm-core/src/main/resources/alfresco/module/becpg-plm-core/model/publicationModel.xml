@@ -65,6 +65,10 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<multiple>true</multiple>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 			</properties>
 
@@ -78,6 +82,10 @@
 					<title>Product catalog identifier</title>
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+					  <tokenised>both</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 			</properties>
 
