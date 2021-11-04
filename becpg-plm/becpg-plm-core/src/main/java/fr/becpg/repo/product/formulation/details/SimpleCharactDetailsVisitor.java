@@ -38,6 +38,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -202,9 +203,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 			}
 		}
 
-		CharactDetails ret = new CharactDetails(tmp);
-
-		return ret;
+		return new CharactDetails(tmp);
 	}
 
 	/**
@@ -259,6 +258,16 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 						formulateInVol = false;
 						forceWeight = true;
 					}
+				}  else if(simpleCharact instanceof  NutListDataItem  ) {
+					if (formulateInVol && (partProduct.getServingSizeUnit() != null) && partProduct.getServingSizeUnit().isWeight()) {
+						if ((formulatedProduct.getServingSizeUnit() != null) && formulatedProduct.getServingSizeUnit().isWeight()) {
+							formulateInVol = false;
+							forceWeight = true;
+						} else {
+							formulateInVol = false;
+						}
+					}
+
 				}
 
 				// calculate charact from qty or vol ?
