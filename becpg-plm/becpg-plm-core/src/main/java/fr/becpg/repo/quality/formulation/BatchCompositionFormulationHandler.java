@@ -105,7 +105,16 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 
 				Double productNetWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 
-				Double ratio =  productNetWeight / batchQty;
+				// 500 product of 5 Kg
+				
+				Double ratio = 1d;
+				if(batchData.getUnit() != null && batchData.getUnit().isP()) {
+					ratio = batchQty;
+				} else if(batchData.getUnit() != null && batchData.getUnit().isPerc()) {
+					ratio = batchQty / 100;
+				} else {
+					ratio = batchQty / productNetWeight;
+				}
 
 				for (CompoListDataItem compoListItem : productData
 						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
