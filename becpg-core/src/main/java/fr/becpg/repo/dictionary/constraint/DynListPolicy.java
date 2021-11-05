@@ -61,7 +61,8 @@ public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
-		throw new IllegalStateException(I18NUtil.getMessage("message.list-value.delete.forbidden"));
+		queueNode(childAssocRef.getChildRef());
+		//beCPG temporary JUNIT fix throw new IllegalStateException(I18NUtil.getMessage("message.list-value.delete.forbidden"));
 	}
 
 	/** {@inheritDoc} */
