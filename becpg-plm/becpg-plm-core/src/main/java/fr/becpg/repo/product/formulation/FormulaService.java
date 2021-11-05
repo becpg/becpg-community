@@ -288,7 +288,6 @@ public class FormulaService {
 			if ((scriptNode != null) && nodeService.exists(scriptNode)
 					&& nodeService.getPath(scriptNode).toPrefixString(namespaceService).startsWith(RepoConsts.SCRIPTS_FULL_PATH)) {
 
-				System.out.println(nodeService.getPath(scriptNode).toPrefixString(namespaceService));
 				String userName = AuthenticationUtil.getFullyAuthenticatedUser();
 
 				Map<String, Object> model = new HashMap<>();
