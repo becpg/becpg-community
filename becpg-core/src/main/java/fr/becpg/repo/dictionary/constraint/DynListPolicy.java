@@ -9,6 +9,7 @@ import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -28,8 +29,10 @@ public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 	private static final Log logger = LogFactory.getLog(DynListPolicy.class);
 
+
+	private BeCPGCacheService beCPGCacheService;
 	
-	BeCPGCacheService beCPGCacheService;
+	private NamespaceService namespaceService;
 	
 	/**
 	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
@@ -38,6 +41,10 @@ public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	 */
 	public void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		this.beCPGCacheService = beCPGCacheService;
+	}
+	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
 	}
 
 	/**
@@ -61,8 +68,12 @@ public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
+		
+		if (DynListConstraint.getPathRegistry().contains(nodeService.getPath(childAssocRef.getParentRef()).toPrefixString(namespaceService))) {
+			throw new IllegalStateException(I18NUtil.getMessage("message.constraint.list-value.delete.forbidden"));
+		}
+		
 		queueNode(childAssocRef.getChildRef());
-		//beCPG temporary JUNIT fix throw new IllegalStateException(I18NUtil.getMessage("message.list-value.delete.forbidden"));
 	}
 
 	/** {@inheritDoc} */
@@ -80,5 +91,5 @@ public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		}
 		return true;
 	}
-
+	
 }
