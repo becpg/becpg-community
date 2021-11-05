@@ -98,7 +98,7 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
-		String userName = AuthenticationUtil.getFullyAuthenticatedUser();
+		String userName = AuthenticationUtil.getSystemUserName();
 
 		if (tenantAdminService.isEnabled()) {
 			userName = tenantAdminService.getDomainUser(userName, tenantAdminService.getCurrentUserDomain());
