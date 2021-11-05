@@ -19,19 +19,14 @@ package fr.becpg.repo.jscript;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
@@ -39,7 +34,6 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -59,7 +53,6 @@ import org.springframework.extensions.webscripts.ScriptValueConverter;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.EntityListState;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -77,9 +70,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.PaginatedSearchCache;
-import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
 
 /**
  * Utility script methods
@@ -131,18 +122,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	private TenantAdminService tenantAdminService;
 
-	private BehaviourFilter policyBehaviourFilter;
-
 	private boolean useBrowserLocale;
 
 	private boolean showEntitiesInTree = false;
 
 	private boolean showUnauthorizedWarning = true;
 
-	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
-		this.policyBehaviourFilter = policyBehaviourFilter;
-	}
-	
 	public void setEntityFormatService(EntityFormatService entityFormatService) {
 		this.entityFormatService = entityFormatService;
 	}
@@ -1186,102 +1171,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			return "The node couldn't be converted";
 		}
 		
-	}
-	
-	public Map<NodeRef, List<QName>> getListValueWhereUsed(ScriptNode listValue, String type) {
-		
-		Map<NodeRef, List<QName>> results = new HashMap<>();
-		
-		if (!BeCPGModel.TYPE_LIST_VALUE.equals(nodeService.getType(listValue.getNodeRef()))) {
-			return results;
-		}
-		
-		List<NodeRef> nodes = BeCPGQueryBuilder.createQuery().ofType(QName.resolveToQName(namespaceService, type)).inDB().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
-		
-		String parentPath = nodeService.getPath(nodeService.getPrimaryParent(listValue.getNodeRef()).getParentRef()).toPrefixString(namespaceService);
-		
-		for (NodeRef nodeRef : nodes) {
-			QName nodeTypeQName = nodeService.getType(nodeRef);
-			TypeDefinition typeDef = dictionaryService.getType(nodeTypeQName);
-			Collection<PropertyDefinition> propertyDefs = typeDef.getProperties().values();
-
-			Map<QName, Serializable> nodeProperties = nodeService.getProperties(nodeRef);
-
-			for (PropertyDefinition propertyDef : propertyDefs) {
-				QName propertyQName = propertyDef.getName();
-				if (propertyDef.isMandatory() && propertyDef.isMandatoryEnforced()
-						&& (!nodeProperties.containsKey(propertyQName) || null == nodeProperties.get(propertyQName))) {
-					// next one
-					continue;
-				}
-
-				List<ConstraintDefinition> constraintDefs = propertyDef.getConstraints();
-				for (ConstraintDefinition constraintDef : constraintDefs) {
-					if (constraintDef.getConstraint() instanceof DynListConstraint) {
-						DynListConstraint constraint = (DynListConstraint) constraintDef.getConstraint();
-
-
-						for (String path : constraint.getPaths()) {
-
-							String xPath = "/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(path);
-
-							if (xPath.equals(parentPath)) {
-								
-								String nodeProperty = (String) nodeService.getProperty(nodeRef, propertyQName);
-								String checkProperty = (String) nodeService.getProperty(listValue.getNodeRef(), BeCPGModel.PROP_LV_VALUE);
-								
-								if (nodeProperty != null && nodeProperty.equals(checkProperty)) {
-									if (results.get(nodeRef) == null) {
-										results.put(nodeRef, new ArrayList<>());
-									}
-									results.get(nodeRef).add(propertyQName);
-									break;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		return results;
-	}
-	
-	public String deleteListValue(ScriptNode listValue) {
-
-		if (!BeCPGModel.TYPE_LIST_VALUE.equals(nodeService.getType(listValue.getNodeRef()))) {
-			return "The ScriptNode parameter must be of type 'bcpg:listValue'";
-		}
-		
-		int deletedProps = 0;
-
-		Map<NodeRef, List<QName>> contentWhereUsed = getListValueWhereUsed(listValue, "cm:content");
-
-		for (Entry<NodeRef, List<QName>> entry : contentWhereUsed.entrySet()) {
-			for (QName propWhereUsed : entry.getValue()) {
-				nodeService.removeProperty(entry.getKey(), propWhereUsed);
-				deletedProps++;
-			}
-		}
-
-		Map<NodeRef, List<QName>> folderWhereUsed = getListValueWhereUsed(listValue, "cm:folder");
-
-		for (Entry<NodeRef, List<QName>> entry : folderWhereUsed.entrySet()) {
-			for (QName propWhereUsed : entry.getValue()) {
-				nodeService.removeProperty(entry.getKey(), propWhereUsed);
-				deletedProps++;
-			}
-		}
-
-		policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_LIST_VALUE);
-		
-		try {
-			nodeService.deleteNode(listValue.getNodeRef());
-		} finally {
-			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_LIST_VALUE);
-		}
-
-		return "Success of value deletion, deleted " + deletedProps + " property(s) associated";
 	}
 	
 }
