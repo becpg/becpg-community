@@ -530,16 +530,6 @@
 		                  <facetable>false</facetable>
 		            </index>
 				</property>
-				<property name="gs1:variableTradeItemType">
-					<type>d:text</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-					<constraints>
-						<constraint ref="gs1:variableTradeItemTypeCodes" />
-					</constraints>
-				</property>
 
 				<property name="gs1:variableWeightAllowableDeviationPercentage">
 					<type>d:double</type>
@@ -652,6 +642,7 @@
 
 
         <aspect name="gs1:innerPack">
+         <properties>
          
 				<property name="gs1:eanCodeInnerPack">
 					<type>d:text</type>
@@ -719,6 +710,8 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
+         
+         </properties>
 				
         
         </aspect>
