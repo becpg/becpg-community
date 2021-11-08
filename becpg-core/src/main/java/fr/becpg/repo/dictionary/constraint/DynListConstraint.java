@@ -4,11 +4,13 @@
 package fr.becpg.repo.dictionary.constraint;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.node.MLPropertyInterceptor;
@@ -57,7 +59,9 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	private static ServiceRegistry serviceRegistry;
 
 	private static BeCPGCacheService beCPGCacheService;
-
+	
+	private static Set<String> pathRegistry = new HashSet<>();
+	
 	private List<String> paths = null;
 
 	private String constraintType = null;
@@ -69,6 +73,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private Boolean addEmptyValue = null;
 
+	public List<String> getPaths() {
+		return paths;
+	}
+	
 	/**
 	 * <p>setPath.</p>
 	 *
@@ -84,6 +92,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			throw new DictionaryException(ERR_NO_VALUES);
 		}
 		this.paths = paths;
+		
+		for (String path : paths) {
+			pathRegistry.add("/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(path));
+		}
 	}
 
 	/**
@@ -103,7 +115,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	public static void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		DynListConstraint.beCPGCacheService = beCPGCacheService;
 	}
-
+	
 	/**
 	 * <p>Setter for the field <code>constraintType</code>.</p>
 	 *
@@ -157,6 +169,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	public void setAddEmptyValue(Boolean addEmptyValue) {
 		this.addEmptyValue = addEmptyValue;
 	}
+	
+	public static Set<String> getPathRegistry() {
+		return pathRegistry;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -174,8 +190,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	/** {@inheritDoc} */
 	@Override
 	public List<String> getAllowedValues() {
+		return getAllowedValues(false);
+	}
 
-		Map<String, MLText> values = getMLAwareAllowedValues();
+	public List<String> getAllowedValues(boolean includeDeletedValues) {
+
+		Map<String, MLText> values = getMLAwareAllowedValuesInternal(includeDeletedValues);
 
 		if (values.isEmpty()) {
 			return Collections.singletonList(UNDIFINED_CONSTRAINT_VALUE);
@@ -184,6 +204,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		}
 
 	}
+	
 
 	/** {@inheritDoc} */
 	@Override
@@ -196,7 +217,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			throw new ConstraintException(ERR_NON_STRING, value);
 		}
 
-		if (!getAllowedValues().contains(valueStr)) {
+		if (!getAllowedValues(true).contains(valueStr)) {
 			throw new ConstraintException(ERR_INVALID_VALUE, value);
 		}
 
@@ -245,7 +266,11 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 * @return a {@link java.util.Map} object.
 	 */
 	public Map<String, MLText> getMLAwareAllowedValues() {
-		return beCPGCacheService.getFromCache(DynListConstraint.class.getName(), getShortName(),
+		return getMLAwareAllowedValuesInternal(false);
+	}
+
+	private Map<String, MLText> getMLAwareAllowedValuesInternal(boolean includeDeletedValues) {
+		return beCPGCacheService.getFromCache(DynListConstraint.class.getName(), getShortName() + includeDeletedValues,
 				() -> serviceRegistry.getRetryingTransactionHelper().doInTransaction(() -> {
 
 					logger.debug("Fill allowedValues  for :" + TenantUtil.getCurrentDomain());
@@ -295,19 +320,22 @@ public class DynListConstraint extends ListOfValuesConstraint {
 								for (NodeRef nodeRef : nodeRefs) {
 									if (serviceRegistry.getNodeService().exists(nodeRef)
 											&& serviceRegistry.getNodeService().getType(nodeRef).equals(constraintTypeQname)) {
+										
 										MLText mlText = (MLText) serviceRegistry.getNodeService().getProperty(nodeRef, constraintPropQname);
 										if (mlText != null) {
-											String key = null;
 
-											if (constraintCodeQname != null) {
-												key = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintCodeQname);
-
+											if (includeDeletedValues || !Boolean.TRUE.equals(serviceRegistry.getNodeService().getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED))) {
+												String key = null;
+												
+												if (constraintCodeQname != null) {
+													key = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintCodeQname);
+													
+												}
+												if ((key == null) || key.isEmpty()) {
+													key = mlText.getClosestValue(Locale.getDefault());
+												}
+												allowedValues.put(key, mlText);
 											}
-											if ((key == null) || key.isEmpty()) {
-												key = mlText.getClosestValue(Locale.getDefault());
-											}
-
-											allowedValues.put(key, mlText);
 										}
 									} else {
 										logger.warn("Node doesn't exist : " + nodeRef);

@@ -326,6 +326,16 @@
 								}
 							} else if(name.indexOf("assoc_") != 0){
 								element.value = savedValue;
+								
+								if (element.type === "hidden" ) {
+									var cleanElementId = element.id.split("-")[0];
+									
+									if(Dom.get(cleanElementId + "-autocomplete") != null){
+											Bubbling.fire(cleanElementId + "refreshContent", savedValue, this );
+									}			
+								}
+										
+								
 							}
 							
 
@@ -356,9 +366,14 @@
 										// potentially
 										// others following
 										// the same pattern
+												
 										cntrl.value = savedValue;
 										break;
 									}
+								} else {
+									
+									
+									
 								}
 							}
 						}

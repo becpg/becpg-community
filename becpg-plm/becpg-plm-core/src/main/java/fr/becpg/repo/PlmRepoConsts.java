@@ -270,6 +270,8 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_PACKAGING_TERMS_AND_CONDITIONS_CODES = "PackagingTermsAndConditionsCode";
 	public static final String PATH_GS1_TRADE_ITEM_TRADE_CHANNELS = "TradeItemTradeChannel";
 	public static final String PATH_GS1_SELLING_UNITS = "SellingUnitOfMeasure";
+	public static final String PATH_GS1_HANDLING_INSTRUCTIONS = "HandlingInstructions";
+	public static final String PATH_GS1_PREPARATION_TYPE ="PreparationType";
 
 
 }

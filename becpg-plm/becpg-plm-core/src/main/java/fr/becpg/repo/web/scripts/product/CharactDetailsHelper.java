@@ -64,6 +64,11 @@ public class CharactDetailsHelper {
 	private static final String LEVEL_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_depthLevel.title");
 	private static final String PRODUCT_TYPE_KEY = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_productType.title");
 
+	
+	private CharactDetailsHelper() {
+		//Do NoThing
+	}
+	
 	/**
 	 * <p>toJSONObject.</p>
 	 *

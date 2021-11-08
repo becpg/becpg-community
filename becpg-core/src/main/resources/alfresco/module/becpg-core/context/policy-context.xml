@@ -39,6 +39,7 @@
 	
 	<bean id="dynListPolicy" class="fr.becpg.repo.dictionary.constraint.DynListPolicy" parent="abstractBeCPGPolicy">
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
+		<property name="namespaceService" ref="namespaceService" />
 	</bean>
 	
 	
