@@ -32,7 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,9 +72,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
@@ -110,6 +107,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
+import fr.becpg.util.MutexFactory;
 import io.opencensus.common.Scope;
 import io.opencensus.trace.Annotation;
 import io.opencensus.trace.AttributeValue;
@@ -210,20 +208,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Autowired
 	private MutexFactory mutexFactory;
-	
-	@Component
-	public class MutexFactory {
-
-	    private ConcurrentReferenceHashMap<String, ReentrantLock> map;
-
-	    public MutexFactory() {
-	        this.map = new ConcurrentReferenceHashMap<>();
-	    }
-
-	    public ReentrantLock getMutex(String key) {
-	        return this.map.compute(key, (k, v) -> v == null ? new ReentrantLock() : v);
-	    }
-	}
 	
 	/** {@inheritDoc} */
 	@Override

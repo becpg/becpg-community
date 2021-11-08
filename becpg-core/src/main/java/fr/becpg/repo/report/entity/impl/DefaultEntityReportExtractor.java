@@ -88,6 +88,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.CompositionDataItem;
 
 /**
  * <p>DefaultEntityReportExtractor class.</p>
@@ -659,6 +660,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 */
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes) {
+		loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, true);
+	}
+	
+	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
+			List<QName> hiddentAttributes, boolean addDescription) {
 		hiddentAttributes.addAll(hiddenNodeAttributes);
 		hiddentAttributes.addAll(hiddenDataListItemAttributes);
 
@@ -671,8 +677,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				if ((kv.getValue() instanceof NodeRef) && nodeService.hasAspect((NodeRef) kv.getValue(), BeCPGModel.ASPECT_LEGAL_NAME)) {
 					nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),
 							XMLTextHelper.writeAttribute((String) nodeService.getProperty((NodeRef) kv.getValue(), BeCPGModel.PROP_LEGAL_NAME)));
-					addCDATA(nodeElt, ContentModel.PROP_DESCRIPTION,
-							(String) nodeService.getProperty((NodeRef) kv.getValue(), ContentModel.PROP_DESCRIPTION), null);
+					
+					if (addDescription || !(dataListItem instanceof CompositionDataItem)) {
+						addCDATA(nodeElt, ContentModel.PROP_DESCRIPTION,
+								(String) nodeService.getProperty((NodeRef) kv.getValue(), ContentModel.PROP_DESCRIPTION), null);
+					}
+					
 					break;
 				}
 			}

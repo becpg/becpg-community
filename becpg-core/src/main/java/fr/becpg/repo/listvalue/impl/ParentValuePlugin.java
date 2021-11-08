@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,7 +38,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValuePage;
@@ -63,9 +63,6 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 	private EntityListDAO entityListDAO;
 
 	@Autowired
-	private AssociationService associationService;
-
-	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
 	/** {@inheritDoc} */
@@ -74,7 +71,33 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		return new String[] { SOURCE_TYPE_PARENT_VALUE, SOURCE_TYPE_DATA_LIST_CHARACT };
 	}
 
-	/** {@inheritDoc} */
+	/**
+	 * Suggest current entity list
+	 *
+	 *   <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control>
+	 *
+	 * Suggest entity list where entity in assoc bcpg:clients
+	 *   <control-param name="ds">becpg/autocomplete/DataListCharact?path=bcpg:clients&amp;className=bcpg:plant&amp;attributeName=cm:name
+	 *
+	 *
+	 *  Suggest entity list where entity in html field bcpg_clients
+	 *
+	 *  <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:contactList&amp;attributeName=bcpg:contactListFirstName,bcpg:contactListLastName&amp;filter=parentAsEntity</control-param>
+	    <control-param name="parentAssoc">bcpg_clients</control-param>
+
+	    <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity</control-param>
+	    <control-param name="parentAssoc">bcpg_clients</control-param>
+	 *
+	 *
+	 *  Suggest current entity list exclude current item
+	 *
+	 * 	<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost</control-param>
+		<control-param name="urlParamsToPass">itemId</control-param>
+
+		<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut</control-param>
+		<control-param name="urlParamsToPass">itemId</control-param>
+	 *
+	 */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
@@ -90,17 +113,41 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 				parent = null;
 			}
 		} else if (((String) props.get(ListValueService.PROP_ENTITYNODEREF) != null)
+
 				&& NodeRef.isNodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF))) {
 			entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF));
 		}
 
 		if (entityNodeRef != null) {
-			logger.debug("ParentValue sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
+			String listName = null;
+			String path = (String) props.get(ListValueService.PROP_PATH);
+			if ((path != null) && !path.isEmpty()) {
+				if (path.contains(":") || path.contains("{")) {
+					try {
+						QName assocQname = QName.createQName(path, namespaceService);
 
+						NodeRef targetAssocNodeRef = associationService.getTargetAssoc(entityNodeRef, assocQname);
+						if (targetAssocNodeRef != null) {
+							entityNodeRef = targetAssocNodeRef;
+						}
+						
+
+					} catch (NamespaceException e) {
+						logger.warn("Wrong path assoc:" + path);
+					}
+				} else {
+					listName = path;
+				}
+			}
+
+			if(logger.isDebugEnabled()) {
+				logger.debug("ParentValue sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
+			}
+			
 			String className = (String) props.get(ListValueService.PROP_CLASS_NAME);
 			QName type = QName.createQName(className, namespaceService);
 
-			String listName = (String) props.get(ListValueService.PROP_PATH);
+			
 
 			String attributeNames = (String) props.get(ListValueService.PROP_ATTRIBUTE_NAME);
 			Set<QName> attributeQNames = new HashSet<>();
@@ -130,33 +177,36 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 				}
 				if (dataListNodeRef != null) {
 					if (dictionaryService.getProperty(attributeQNames.iterator().next()) != null) {
-						return suggestFromProp(sourceType, dataListNodeRef, itemId, type, attributeQNames, query, queryFilter, parent, pageNum,
-								pageSize, props);
+						return suggestFromProp(dataListNodeRef, itemId, type, attributeQNames, query, queryFilter, parent, pageNum, pageSize, props);
 					} else {
-						return suggestFromAssoc(sourceType, dataListNodeRef, itemId, type, attributeQNames.iterator().next(), query, queryFilter,
-								pageNum, pageSize, props);
+						return suggestFromAssoc(sourceType, dataListNodeRef, itemId, type, attributeQNames.iterator().next(), query, pageNum,
+								pageSize);
 					}
+				} else {
+					logger.warn("No datalists found for type: "+(listName!=null ? listName: type));
 				}
 			}
 		}
 		return new ListValuePage(new ArrayList<>(), pageNum, pageSize, null);
 	}
 
-	private ListValuePage suggestFromProp(String sourceType, NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, Set<QName> propertyQNames,
-			String query, String queryFilter, String parent, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+	private ListValuePage suggestFromProp(NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, Set<QName> propertyQNames, String query,
+			String queryFilter, String parent, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).parent(dataListNodeRef);
 
 		if (propertyQNames.size() == 1) {
 			beCPGQueryBuilder.andPropQuery(propertyQNames.iterator().next(), prepareQuery(query));
 		} else {
-			String searchTemplate = "%(";
+			StringBuilder searchTemplate = new StringBuilder();
+			searchTemplate.append("%(");
 			for (QName propertyQName : propertyQNames) {
-				searchTemplate += " " + entityDictionaryService.toPrefixString(propertyQName);
+				searchTemplate.append(" " + entityDictionaryService.toPrefixString(propertyQName));
 			}
-			searchTemplate += ")";
+			searchTemplate.append(")");
 
-			beCPGQueryBuilder.excludeDefaults().inSearchTemplate(searchTemplate).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
+			beCPGQueryBuilder.excludeDefaults().inSearchTemplate(searchTemplate.toString()).locale(I18NUtil.getContentLocale()).andOperator()
+					.ftsLanguage();
 
 			if (!isAllQuery(query)) {
 				StringBuilder ftsQuery = new StringBuilder();
@@ -185,14 +235,15 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		if (itemId != null) {
 			beCPGQueryBuilder.andNotID(itemId);
 		}
-
-		logger.debug("suggestDatalistItem for query : " + beCPGQueryBuilder.toString());
+		if(logger.isDebugEnabled()) {
+			logger.debug("suggestDatalistItem for query : " + beCPGQueryBuilder.toString());
+		}
 		List<NodeRef> ret = beCPGQueryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS).list();
 		return new ListValuePage(ret, pageNum, pageSize, new NodeRefListValueExtractor(propertyQNames, nodeService));
 	}
 
 	private ListValuePage suggestFromAssoc(String sourceType, NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName associationQName,
-			String query, String queryFilter, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+			String query, Integer pageNum, Integer pageSize) {
 
 		List<ListValueEntry> result = new ArrayList<>();
 		for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, datalistType)) {

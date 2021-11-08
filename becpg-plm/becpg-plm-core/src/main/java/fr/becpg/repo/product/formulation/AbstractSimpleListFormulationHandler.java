@@ -309,7 +309,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					tmpCompoItem = tmpCompoItem.getParent();
 				}
 
-				if ((weight != null) && !omit  && compoItem!=null) {
+				if ((weight != null) && !omit && (compoItem != null)) {
 
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
 					Double vol = FormulationHelper.getNetVolume(compoItem, partProduct);
@@ -400,32 +400,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 				logger.debug("simpleListDataList  is null or empty");
 
-				mandatoryCharacts.keySet().forEach(charactNodeRef -> 
-					addMissingMandatoryCharact(mandatoryCharacts, charactNodeRef, partProduct.getNodeRef()));
+				mandatoryCharacts.keySet()
+						.forEach(charactNodeRef -> addMissingMandatoryCharact(mandatoryCharacts, charactNodeRef, partProduct.getNodeRef()));
 			} else {
 
 				simpleListDataList.forEach(newSimpleListDataItem -> {
 					if ((newSimpleListDataItem.getCharactNodeRef() != null) && isCharactFormulated(newSimpleListDataItem)) {
-
-						boolean formulateInVol = (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
-						boolean forceWeight = false;
-
-						if (newSimpleListDataItem instanceof PhysicoChemListDataItem) {
-							if (FormulationHelper.isCharactFormulatedFromVol(nodeService, newSimpleListDataItem)) {
-								formulateInVol = true;
-							} else {
-								formulateInVol = false;
-								forceWeight = true;
-							}
-						} else if(newSimpleListDataItem instanceof  NutListDataItem  && ((NutListDataItem)newSimpleListDataItem).getUnit()!=null
-								 &&((NutListDataItem)newSimpleListDataItem).getUnit().endsWith(NutListDataItem.UNIT_PER100G) ) {
-							formulateInVol = false;
-							forceWeight = true;
-						}
-
-						// calculate charact from qty or vol ?
-						Double qtyUsed = formulateInVol ? volUsed : weightUsed;
-						Double netQty = forceWeight ? netWeight : netQtyInLorKg;
 
 						// look for charact in component
 						SimpleListDataItem slDataItem = componentSimpleListDataList.stream()
@@ -439,18 +419,46 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							}
 						}
 
-						// Calculate values
-						if ((slDataItem != null) && (qtyUsed != null)) {
+						if (slDataItem != null) {
+							boolean formulateInVol = (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
+							boolean forceWeight = false;
 
-							calculate(formulatedProduct, partProduct, newSimpleListDataItem, slDataItem, qtyUsed, netQty, isGenericRawMaterial,
-									variant);
-
-							if ((totalQtiesValue != null) && (slDataItem.getValue() != null)) {
-								Double currentQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
-								if (currentQty == null) {
-									currentQty = 0d;
+							if (newSimpleListDataItem instanceof PhysicoChemListDataItem) {
+								if (FormulationHelper.isCharactFormulatedFromVol(nodeService, newSimpleListDataItem)) {
+									formulateInVol = true;
+								} else {
+									formulateInVol = false;
+									forceWeight = true;
 								}
-								totalQtiesValue.put(newSimpleListDataItem.getCharactNodeRef(), currentQty + qtyUsed);
+							} else if (newSimpleListDataItem instanceof NutListDataItem) {
+								if (formulateInVol && (partProduct.getServingSizeUnit() != null) && partProduct.getServingSizeUnit().isWeight()) {
+									if ((formulatedProduct.getServingSizeUnit() != null) && formulatedProduct.getServingSizeUnit().isWeight()) {
+										formulateInVol = false;
+										forceWeight = true;
+									} else {
+										formulateInVol = false;
+									}
+								}
+
+							}
+
+							// calculate charact from qty or vol ?
+							Double qtyUsed = formulateInVol ? volUsed : weightUsed;
+							Double netQty = forceWeight ? netWeight : netQtyInLorKg;
+
+							// Calculate values
+							if ((qtyUsed != null)) {
+
+								calculate(formulatedProduct, partProduct, newSimpleListDataItem, slDataItem, qtyUsed, netQty, isGenericRawMaterial,
+										variant);
+
+								if ((totalQtiesValue != null) && (slDataItem.getValue() != null)) {
+									Double currentQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
+									if (currentQty == null) {
+										currentQty = 0d;
+									}
+									totalQtiesValue.put(newSimpleListDataItem.getCharactNodeRef(), currentQty + qtyUsed);
+								}
 							}
 						}
 					}
@@ -498,18 +506,17 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			}
 			if (slDataItem instanceof MinMaxValueDataItem) {
 				Double newMini = ((MinMaxValueDataItem) newSimpleListDataItem).getMini();
-				if(newSimpleListDataItem instanceof NutListDataItem) {
+				if (newSimpleListDataItem instanceof NutListDataItem) {
 					newMini = ((NutListDataItem) newSimpleListDataItem).getFormulatedMini();
 				}
-				
-				
+
 				Double miniValue = ((MinMaxValueDataItem) slDataItem).getMini();
 				Double newMaxi = ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi();
-				
-				if(newSimpleListDataItem instanceof NutListDataItem) {
+
+				if (newSimpleListDataItem instanceof NutListDataItem) {
 					newMaxi = ((NutListDataItem) newSimpleListDataItem).getFormulatedMaxi();
 				}
-				
+
 				Double maxiValue = ((MinMaxValueDataItem) slDataItem).getMaxi();
 				if (isGenericRawMaterial) {
 					if ((miniValue != null) && ((newMini == null) || ((newMini != null) && (newMini > miniValue)))) {
@@ -540,7 +547,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			}
 
 			if (logger.isDebugEnabled()) {
-				logger.debug("valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
+				logger.debug(partProduct.getName() + " - valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
 				if (newSimpleListDataItem.getNodeRef() != null) {
 					logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
 							+ " - newValue : " + newSimpleListDataItem.getValue());
@@ -732,7 +739,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					formulatedCharactDataItem.setErrorLog(error);
 
 					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-							MLTextHelper.getI18NMessage(errorKey, mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error),
+							MLTextHelper.getI18NMessage(errorKey,
+									mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error),
 							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<>(), getRequirementDataType());
 					formulatedProduct.getReqCtrlList().add(rclDataItem);
 				}

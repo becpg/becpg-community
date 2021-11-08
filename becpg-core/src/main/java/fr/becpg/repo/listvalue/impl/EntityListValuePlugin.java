@@ -137,9 +137,10 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 			return suggestLinkedValue(path, query, pageNum, pageSize, props, true);
 		case SOURCE_TYPE_LIST_VALUE:
 			return suggestListValue(path, query, pageNum, pageSize);
+		default:
+			return null;
 		}
 
-		return null;
 	}
 
 	/**

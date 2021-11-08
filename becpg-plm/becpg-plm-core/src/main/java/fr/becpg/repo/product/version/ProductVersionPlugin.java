@@ -5,7 +5,6 @@ import java.io.Serializable;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.lock.LockService;
-import org.alfresco.service.cmr.lock.LockType;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionType;
@@ -64,7 +63,6 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	}
 
 	/** {@inheritDoc} */
-	@SuppressWarnings("deprecation")
 	@Override
 	public void doBeforeCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef) {
 		if(entityDictionaryService.isSubClass(nodeService.getType(origNodeRef), PLMModel.TYPE_PRODUCT)){
@@ -82,19 +80,12 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 		        }
 	        }
 
-                if(!nodeService.hasAspect(workingCopyNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
-	        	try {
-	        		policyBehaviourFilter.disableBehaviour();
-	        		  if (nodeService.hasAspect(origNodeRef, ContentModel.ASPECT_LOCKABLE))
-	                    {
-	                        // Release the lock on the original node
-	                        lockService.unlock(origNodeRef, false, true);
-	                    }
-	                   	nodeService.removeAspect(origNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
-	        	} finally {
-	        		  policyBehaviourFilter.enableBehaviour();
-	        		  lockService.lock(origNodeRef, LockType.READ_ONLY_LOCK);
-	        	}
+			if (!nodeService.hasAspect(workingCopyNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
+				if (nodeService.hasAspect(origNodeRef, ContentModel.ASPECT_LOCKABLE)) {
+					// Release the lock on the original node
+					lockService.unlock(origNodeRef, false, true);
+				}
+				nodeService.removeAspect(origNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT);
 	        }
 	        
 		} else if (nodeService.getProperty(origNodeRef, PLMModel.PROP_SUPPLIER_STATE) != null) {

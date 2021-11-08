@@ -210,6 +210,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+		
 		<constraint name="gs1:packagingTermsAndConditionsCodeConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -226,7 +227,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
-		<constraint name="gs1:handlingInstructions" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+               <constraint name="gs1:handlingInstructions" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/HandlingInstructions</value>
@@ -285,6 +286,7 @@
 						<many>true</many>
 					</target>
 				</association>
+
 			</associations>
 		</type>
 
@@ -312,6 +314,7 @@
 						<many>false</many>
 					</target>
 				</association>
+
 			</associations>
 		</type>
 	</types>
@@ -474,7 +477,6 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
-				
 				<property name="gs1:isTradeItemAService">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
@@ -483,7 +485,6 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
-			
 				<property name="gs1:isTradeItemAModel">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
@@ -508,7 +509,6 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
-
 				<property name="gs1:isTradeItemAVariableUnit">
 					<type>d:boolean</type>
 					<index enabled="true">
@@ -530,7 +530,16 @@
 		                  <facetable>false</facetable>
 		            </index>
 				</property>
-
+				<property name="gs1:variableTradeItemType">
+					<type>d:text</type>
+                                       <index enabled="true">
+		                                <tokenised>false</tokenised>
+		                                <facetable>true</facetable>
+		                        </index>
+					<constraints>
+						<constraint ref="gs1:variableTradeItemTypeCodes" />
+					</constraints>
+				</property>
 				<property name="gs1:variableWeightAllowableDeviationPercentage">
 					<type>d:double</type>
 					<index enabled="true">
@@ -553,17 +562,6 @@
 		                  <tokenised>false</tokenised>
 		                  <facetable>false</facetable>
 		            </index>
-				</property>
-
-				<property name="gs1:variableTradeItemType">
-					<type>d:text</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-					<constraints>
-						<constraint ref="gs1:variableTradeItemTypeCodes" />
-					</constraints>
 				</property>
 				
 				<property name="gs1:isTradeItemReorderable">
@@ -628,12 +626,6 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
-				<property name="gs1:minimumTradeItemLifespanFromTimeOfArrival">
-					<type>d:float</type>
-					<mandatory>false</mandatory>
-	 			</property>
- 		             
-								
 			</properties>
 			<associations />
 			<overrides />
@@ -641,9 +633,8 @@
 		</aspect>
 
 
-        <aspect name="gs1:innerPack">
+        <aspect name="gs1:innerPackAspect">
          <properties>
-         
 				<property name="gs1:eanCodeInnerPack">
 					<type>d:text</type>
 					<index enabled="true">
@@ -710,12 +701,8 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
-         
-         </properties>
-				
-        
+			</properties>	  
         </aspect>
-
 		<aspect name="gs1:datesAspect">
 			<title>GS1 Dates Aspect</title>
 			<properties>
@@ -743,6 +730,8 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
+
+
 				<property name="gs1:publicationDate">
 					<type>d:date</type>
 					<mandatory>false</mandatory>
@@ -776,6 +765,16 @@
 		            </index>
 				</property>
 
+				<!-- Deprecated -->
+				<property name="gs1:lastChangeDateTime">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
 			</properties>
 			<associations />
 			<overrides />
@@ -810,7 +809,7 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
-				<property name="gs1:diameter">
+                                <property name="gs1:diameter">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
@@ -898,6 +897,7 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
+
 				<property name="gs1:packagingTypeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -961,7 +961,6 @@
 				<property name="gs1:preparationType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<default>READY_TO_EAT</default>
 					<index enabled="true">
 		                  <tokenised>false</tokenised>
 		                  <facetable>true</facetable>
@@ -1076,6 +1075,7 @@
 						<constraint ref="gs1:tradeItemTradeChannelConstraint" />
 					</constraints>
 				</property>
+
 				<property name="gs1:specialItemCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1197,7 +1197,6 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
-				
 				<property name="gs1:orderQuantityMinimum">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
@@ -1241,7 +1240,10 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
-				
+				<property name="gs1:minimumTradeItemLifespanFromTimeOfArrival">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+				</property>
 			</properties>
 			<associations>
 
