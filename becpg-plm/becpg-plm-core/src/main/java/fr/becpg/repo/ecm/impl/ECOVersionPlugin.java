@@ -9,6 +9,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionType;
@@ -67,7 +68,9 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 
 	@Value("${beCPG.eco.automatic.deleteOnApply}")
 	private Boolean deleteOnApply = false;
-	
+
+	@Autowired
+	TenantAdminService tenantAdminService;
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -95,8 +98,11 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 	/** {@inheritDoc} */
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
-		String userName = AuthenticationUtil.getFullyAuthenticatedUser();
+		String userName = AuthenticationUtil.getSystemUserName();
 
+		if (tenantAdminService.isEnabled()) {
+			userName = tenantAdminService.getDomainUser(userName, tenantAdminService.getCurrentUserDomain());
+		}
 
 		Runnable command = new AsyncECOGenerator(entityNodeRef, versionType, description, userName);
 		if (!threadExecuter.getQueue().contains(command)) {
@@ -173,6 +179,12 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 						}, false, true);
 
 						if (ret) {
+							
+							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								ecoService.setInProgress(ecoNodeRef);
+								return true;
+							}, false, true);
+
 							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 								if (ecoService.apply(ecoNodeRef) && Boolean.TRUE.equals(deleteOnApply)) {
 									logger.debug("It's applied and deleteOnApply is set to true, deleting ECO with NR=" + ecoNodeRef);
