@@ -425,6 +425,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 		return true;
 	}
+	
+	@Override
+	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
+			List<QName> hiddentAttributes) {
+		// for CompositionDataItem, description is already added
+		loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, false);
+	}
 
 	private void loadCompoList(ProductData productData, Element dataListsElt, DefaultExtractorContext context, int level) {
 		// compoList
