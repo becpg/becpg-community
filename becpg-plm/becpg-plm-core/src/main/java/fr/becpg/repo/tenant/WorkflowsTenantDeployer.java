@@ -10,9 +10,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service("beCPGWorkflowsTenantDeployer")
 public class WorkflowsTenantDeployer implements TenantDeployer {
 
 	private static Log logger = LogFactory.getLog(WorkflowsTenantDeployer.class);
