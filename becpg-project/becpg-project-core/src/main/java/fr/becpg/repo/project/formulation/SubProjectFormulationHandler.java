@@ -117,6 +117,9 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 
 				task.setStart(subProject.getStartDate());
 				task.setEnd(subProject.getCompletionDate());
+				task.setDue(subProject.getDueDate());
+				task.setTargetStart(subProject.getTargetStartDate());
+				task.setTargetEnd(ProjectHelper.calculateEndDate(subProject.getTargetStartDate(),subProject.getRealDuration()));
 				task.setDuration(ProjectHelper.calculateTaskDuration(subProject.getStartDate(), subProject.getCompletionDate()));
 				task.setCompletionPercent(subProject.getCompletionPercent());
 				task.setTaskName(subProject.getName());

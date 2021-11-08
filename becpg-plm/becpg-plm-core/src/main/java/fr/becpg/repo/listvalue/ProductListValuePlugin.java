@@ -64,7 +64,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 
 	@Value("${beCPG.product.searchTemplate}")
-	private String productSearchTemplate = "%(cm:name  bcpg:erpCode bcpg:code bcpg:legalName)";
+	private String productSearchTemplate = "%(cm:name bcpg:erpCode bcpg:code bcpg:legalName)";
 
 	@Autowired
 	private ReportTplService reportTplService;
