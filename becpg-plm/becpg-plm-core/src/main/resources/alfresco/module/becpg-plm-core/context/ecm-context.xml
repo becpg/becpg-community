@@ -36,7 +36,7 @@
    	
    	<!--  Policies -->
    	<bean id="automaticECOPolicy" class="fr.becpg.repo.ecm.policy.AutomaticECOPolicy"
-		parent="abstractBeCPGPolicy" >
+		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="automaticECOService" ref="automaticECOService"/>
 		<property name="entityVersionService" ref="entityVersionService"></property>
 		<property name="enable" value="${beCPG.eco.automatic.enable}"/>

@@ -31,7 +31,7 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="sampleIdPattern" value="${beCPG.quality.sampleId.format}"></property>
     </bean>    
-    <bean id="qualityControlPolicies" class="fr.becpg.repo.quality.policy.QualityControlPolicies" parent="abstractBeCPGPolicy">
+    <bean id="qualityControlPolicies" class="fr.becpg.repo.quality.policy.QualityControlPolicies" parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="qualityControlService" ref="qualityControlService" />
 		<property name="transactionService" ref="transactionService"/>		
 		<property name="entityListDAO" ref="entityListDAO"/>
@@ -42,7 +42,7 @@
 		<property name="repositoryHelper" ref="repositoryHelper" />		
 		<property name="workflowService" ref="WorkflowService"/>		
 	</bean>
-    <bean id="nonConformityPolicies"  class="fr.becpg.repo.quality.policy.NonConformityPolicies" parent="abstractBeCPGPolicy">
+    <bean id="nonConformityPolicies"  class="fr.becpg.repo.quality.policy.NonConformityPolicies" parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="nonConformityService" ref="nonConformityService" />					
 	</bean>	
 
