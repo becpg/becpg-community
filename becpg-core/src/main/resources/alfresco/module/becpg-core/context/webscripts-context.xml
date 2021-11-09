@@ -315,11 +315,6 @@
           <property name="attributeExtractorService" ref="attributeExtractorService" />
     </bean>
     
-   	<!-- Variant -->
 
-	<bean id="variantPolicy" class="fr.becpg.repo.variant.policy.VariantPolicy" parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
-		<property name="copyService" ref="copyService" />
-		<property name="entityListDAO" ref="entityListDAO" />
-	</bean>
     
 </beans>
