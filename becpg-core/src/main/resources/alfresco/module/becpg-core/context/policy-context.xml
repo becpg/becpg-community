@@ -25,7 +25,7 @@
 
 
 	<!-- Entity Policies -->
-	<bean id="abstractBeCPGPolicy" abstract="true" class="fr.becpg.repo.policy.AbstractBeCPGPolicy" init-method="init">
+	<bean id="abstractBeCPGPolicy" abstract="true" class="fr.becpg.repo.policy.AbstractBeCPGPolicy" init-method="init" depends-on="bcpg.dictionaryBootstrap">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="nodeService" ref="nodeService" />
@@ -95,5 +95,11 @@
 		<property name="repoService" ref="repoService" />
 	</bean>
 
+
+   	<!-- Variant -->
+	<bean id="variantPolicy" class="fr.becpg.repo.variant.policy.VariantPolicy" parent="abstractBeCPGPolicy" >
+		<property name="copyService" ref="copyService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+	</bean>
 
 </beans>

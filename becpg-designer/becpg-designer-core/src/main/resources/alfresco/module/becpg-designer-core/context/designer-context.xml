@@ -98,7 +98,7 @@
 	</bean>
 	
 	<bean id="designerContentUpdatePolicy" class="fr.becpg.repo.designer.policy.DesignerContentUpdatePolicy"
-		parent="abstractBeCPGPolicy">
+		parent="abstractBeCPGPolicy" depends-on="bcpg.designer.dictionaryBootstrap">
 		<property name="designerService" ref="designerService" />
 	</bean>
 
