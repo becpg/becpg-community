@@ -741,6 +741,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		if (primaryParentNodeRef != null) {
 			do {
 				tmp = associationService.getTargetAssoc(primaryParentNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
+				
+				if (primaryParentNodeRef.equals(tmp)) {
+					break;
+				}
+				
 				if (tmp != null) {
 					primaryParentNodeRef = tmp;
 				}
