@@ -115,9 +115,6 @@
 			<nodeColumnKey attribute="bcpg:lvCode" />
 			<nodeColumnKey attribute="bcpg:lvValue" />
 		</nodeColumnKeys>
-		<columns>
-			<column id="bcpg:lvValue_fr" attribute="bcpg:lvValue" type="MLText" />
-		</columns>
 	</mapping>
 
 	<mapping name="bcpg:linkedValue">
