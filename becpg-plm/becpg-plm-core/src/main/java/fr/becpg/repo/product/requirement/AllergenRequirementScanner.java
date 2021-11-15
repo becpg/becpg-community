@@ -40,12 +40,12 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 				requirements.forEach(specDataItem -> {
 					formulatedProduct.getAllergenList().forEach(listDataItem -> {
 						if (listDataItem.getAllergen().equals(specDataItem.getAllergen())) {
-							if ((listDataItem.getInVoluntary() || listDataItem.getVoluntary())) {
+							if ((Boolean.TRUE.equals(listDataItem.getInVoluntary()) || Boolean.TRUE.equals(listDataItem.getVoluntary()))) {
 
 								boolean isAllergenAllowed = false;
-								if (specDataItem.getVoluntary() && listDataItem.getVoluntary()) {
-									isAllergenAllowed = true;
-								} else if (specDataItem.getInVoluntary() && listDataItem.getInVoluntary()) {
+								if ((Boolean.TRUE.equals(specDataItem.getVoluntary()) && Boolean.TRUE.equals(listDataItem.getVoluntary()))
+										|| (Boolean.TRUE.equals(specDataItem.getInVoluntary())
+												&& Boolean.TRUE.equals(listDataItem.getInVoluntary()))) {
 									isAllergenAllowed = true;
 								}
 
@@ -54,7 +54,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 									ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
 											listDataItem.getAllergen(), new ArrayList<>(), RequirementDataType.Specification);
 
-									if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
+									if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 										rclDataItem.setRegulatoryCode(specification.getRegulatoryCode());
 									} else {
 										rclDataItem.setRegulatoryCode(specification.getName());
