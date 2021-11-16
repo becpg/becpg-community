@@ -99,13 +99,7 @@
 					<type>d:double</type>
 					<index enabled="false"/>
 				</property>
-				
 				<property name="mpm:plRateProduct">
-					<type>d:double</type>
-					<index enabled="false"/>
-				</property>
-				<!-- Deprecated -->
-				<property name="mpm:plRateProcess">
 					<type>d:double</type>
 					<index enabled="false"/>
 				</property>

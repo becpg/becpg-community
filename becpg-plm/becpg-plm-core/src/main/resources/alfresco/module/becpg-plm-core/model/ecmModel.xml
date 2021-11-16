@@ -271,17 +271,7 @@
 						<many>false</many>
 					</target>
 				</association>
-				<association name="ecm:culSimulationItem">
-					<source>
-						<mandatory>true</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:entityV2</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
+			
 				
 			</associations>	
 		</type>
