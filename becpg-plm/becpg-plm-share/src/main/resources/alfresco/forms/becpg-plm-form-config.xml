@@ -1392,8 +1392,6 @@
 					<set id="product-criteria" appearance="bordered-panel"
 						label-id="becpg.forms.set.product-criteria.label"  />
 					<set parent="product-criteria" id="2-col-product-criteria"  template="/org/alfresco/components/form/2-column-set.ftl" />	
-					<set parent="product-criteria" id="3-col-product-criteria" template="/org/alfresco/components/form/3-column-set.ftl"  />
-					<set parent="product-criteria" id="1-col-product-criteria"  />
 					<set id="allergens-claims" appearance="bordered-panel"
 						label-id="becpg.forms.set.allergens-claims.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="ings-criteria" appearance="bordered-panel"
@@ -1478,12 +1476,24 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 
-					<field id="bcpg:packagingListProduct" set="3-col-product-criteria">
+					<field id="bcpg:packagingListProduct" set="2-col-product-criteria">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit
 							</control-param>
 						</control>
+					</field>
+					
+					
+					<!-- modified -->
+					<field id="cm:modifier" set="2-col-product-criteria">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					
+					<field id="cm:modified" set="2-col-product-criteria">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 					
 					
@@ -1509,16 +1519,6 @@
 					</field>
 
 
-					<!-- modified -->
-					<field id="cm:modifier" set="1-col-product-criteria">
-						<control>
-							<control-param name="forceEditable">true</control-param>
-						</control>
-					</field>
-					
-					<field id="cm:modified" set="1-col-product-criteria">
-						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
-					</field>
 
 					<!-- ing information -->
 					<field id="bcpg:advIlIngAnd" set="ings-criteria" >
