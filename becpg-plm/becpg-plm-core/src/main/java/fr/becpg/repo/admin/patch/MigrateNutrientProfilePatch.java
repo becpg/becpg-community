@@ -15,6 +15,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -22,23 +23,24 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
 
 public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
 	private static final Log logger = LogFactory.getLog(MigrateNutrientProfilePatch.class);
 	private static final String MSG_SUCCESS = "patch.bcpg.plm.MigrateNutrientProfilePatch.result";
+	
+	private static final  QName TYPE_NUTRIENT_PROFILE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfile");
+	
+	private static final  QName ASSOC_NUTRIENT_PROFILE_REF = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileRef");
+	
+	private static final String PATH_NUTRIENTPROFILES = "NutrientProfiles";
 
 	private NodeDAO nodeDAO;
 	private PatchDAO patchDAO;
 	private QNameDAO qnameDAO;
 	private RuleService ruleService;
 	private BehaviourFilter policyBehaviourFilter;
-
-	private static final int BATCH_THREADS = 3;
-	private static final int BATCH_SIZE = 40;
-	private static final long COUNT = BATCH_THREADS * (long) BATCH_SIZE;
 
 	/**
 	 * <p>
@@ -142,7 +144,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 0;
-			long maxSearchNodeId = COUNT;
+			long maxSearchNodeId = INC;
 
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
@@ -152,10 +154,10 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
 				result.clear();
 				
-				if (getQnameDAO().getQName(PLMModel.TYPE_NUTRIENT_PROFILE) != null) {
+				if (getQnameDAO().getQName(TYPE_NUTRIENT_PROFILE) != null) {
 					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
 
-						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(getQnameDAO().getQName(PLMModel.TYPE_NUTRIENT_PROFILE).getFirst(), minSearchNodeId, maxSearchNodeId);
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(getQnameDAO().getQName(TYPE_NUTRIENT_PROFILE).getFirst(), minSearchNodeId, maxSearchNodeId);
 
 						for (Long nodeid : nodeids) {
 							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -163,8 +165,8 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + COUNT;
-						maxSearchNodeId = maxSearchNodeId + COUNT;
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
 				}
 				
@@ -173,7 +175,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("MigrateNutrientProfilePatch",
-				transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE,
+				transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREAD, BATCH_SIZE,
 				applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
@@ -195,7 +197,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
 				policyBehaviourFilter.disableBehaviour();
 				
-				List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(nutrientProfile, PLMModel.ASSOC_NUTRIENT_PROFILE_REF);
+				List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
 				
 				if (sourceAssocs != null) {
 					
@@ -213,7 +215,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 							nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Cheeses.toString());
 						}
 						
-						nodeService.removeAssociation(sourceAssoc.getSourceRef(), nutrientProfile, PLMModel.ASSOC_NUTRIENT_PROFILE_REF);
+						nodeService.removeAssociation(sourceAssoc.getSourceRef(), nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
 					}
 				}
 				
@@ -232,9 +234,9 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 		
 		NodeRef charactsNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
 		
-		NodeRef entityListNodeRef = repoService.getFolderByPath(charactsNodeRef, "bcpg:entityLists");;
+		NodeRef entityListNodeRef = repoService.getFolderByPath(charactsNodeRef, "bcpg:entityLists");
 		
-		NodeRef nutrientProfilesCategoryNodeRef = repoService.getFolderByPath(entityListNodeRef, PlmRepoConsts.PATH_NUTRIENTPROFILES);
+		NodeRef nutrientProfilesCategoryNodeRef = repoService.getFolderByPath(entityListNodeRef, PATH_NUTRIENTPROFILES);
 
 		if (nutrientProfilesCategoryNodeRef != null && nodeService.exists(nutrientProfilesCategoryNodeRef)) {
 			nodeService.deleteNode(nutrientProfilesCategoryNodeRef);
