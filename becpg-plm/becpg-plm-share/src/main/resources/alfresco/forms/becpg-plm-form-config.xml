@@ -8133,7 +8133,7 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:nutGroup" />
 					<show id="bcpg:nutType" />
-					<show id="bcpg:isDeleted" />
+					<show id="bcpg:isDeleted" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 				</field-visibility>
 				<appearance>
@@ -12437,7 +12437,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true" />
-					<show id="bcpg:isDeleted" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -12455,7 +12455,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true"  />
-					<show id="bcpg:isDeleted" />
+					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 			</form>
 
@@ -12465,7 +12465,7 @@
 					<show id="bcpg:lvValue" />
 					<show id="bcpg:ingTypeDecThreshold" />
 					<show id="bcpg:regulatoryCode" force="true"  />
-					<show id="bcpg:isDeleted" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 			</form>
 
@@ -12478,7 +12478,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true" />
-					<show id="bcpg:isDeleted" />
+					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 			</form>
 		</forms>

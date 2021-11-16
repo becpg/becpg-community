@@ -38,6 +38,9 @@ public interface GS1Model {
 
 	/** Constant <code>ASPECT_MEASURES_ASPECT</code> */
 	QName ASPECT_MEASURES_ASPECT = QName.createQName(GS1_URI, "measuresAspect");
+	
+	QName ASPECT_GS1_ASPECT = QName.createQName(GS1_URI, "gs1Aspect");
+	
 
 	/** Constant <code>PROP_WEIGHT</code> */
 	QName PROP_WEIGHT = QName.createQName(GS1_URI, "weight");
