@@ -120,8 +120,6 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_MAPPING="Mapping"</code> */
 	public static final String PATH_MAPPING = "Mapping";
 	/** Constant <code>PATH_NUTRIENTPROFILES="NutrientProfiles"</code> */
-	@Deprecated
-	public static final String PATH_NUTRIENTPROFILES = "NutrientProfiles";
 	/** Constant <code>PATH_RESOURCE_PARAM_TYPES="ResourceParamTypes"</code> */
 	public static final String PATH_RESOURCE_PARAM_TYPES = "ResourceParamTypes";
 	//Quality
