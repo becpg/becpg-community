@@ -159,6 +159,13 @@
 		<property name="reportTplService" ref="reportTplService"/>
 	</bean>
 
+	<bean id="webscript.fr.becpg.entity.revertEntityVersion.get" class="fr.becpg.repo.web.scripts.entity.RevertEntityVersionWebScript" parent="webscript">
+		<property name="entityVersionService" ref="entityVersionService" />
+		<property name="siteService" ref="siteService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+
 	<bean id="webscript.fr.becpg.entity.entityVersion.get" class="fr.becpg.repo.web.scripts.entity.EntityVersionWebScript" parent="webscript">
 		<property name="entityVersionService" ref="entityVersionService" />
 		<property name="nodeService" ref="nodeService" />
