@@ -148,6 +148,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				return result.size();
 			}
 
+			@SuppressWarnings("deprecation")
 			public Collection<NodeRef> getNextWork() {
 
 				result.clear();
