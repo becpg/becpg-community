@@ -1292,4 +1292,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return false;
 	}
 
+	@Override
+	public NodeRef revertVersion(NodeRef versionNodeRef) throws IllegalAccessException {
+		return null;
+	}
+
 }

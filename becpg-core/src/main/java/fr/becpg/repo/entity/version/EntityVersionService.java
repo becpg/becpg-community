@@ -208,4 +208,6 @@ public interface EntityVersionService {
 
 	void createInitialVersionWithProps(NodeRef entityNodeRef, Map<QName, Serializable> before);
 
+	NodeRef revertVersion(NodeRef versionNodeRef) throws IllegalAccessException;
+
 }

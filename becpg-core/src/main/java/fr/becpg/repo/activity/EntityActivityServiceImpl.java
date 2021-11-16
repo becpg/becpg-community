@@ -758,7 +758,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			} finally {
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
-		}
+		} 
 
 		return false;
 	}
@@ -774,10 +774,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				NodeRef activityListNodeRef = getActivityList(fromNodeRef);
 				if (activityListNodeRef != null) {
 
-					for (NodeRef listItem : entityListDAO.getListItems(activityListNodeRef,
-							BeCPGModel.TYPE_ACTIVITY_LIST)) {
-						nodeService.moveNode(listItem, toActivityListNodeRef, ContentModel.ASSOC_CONTAINS,
-								ContentModel.ASSOC_CONTAINS);
+					for (NodeRef listItem : entityListDAO.getListItems(activityListNodeRef,BeCPGModel.TYPE_ACTIVITY_LIST)) {
+						
+						String activityName = (String) nodeService.getProperty(listItem, ContentModel.PROP_NAME);
+						if (nodeService.getChildByName(toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, activityName) == null) {
+							nodeService.moveNode(listItem, toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+						}
 					}
 				}
 			}
