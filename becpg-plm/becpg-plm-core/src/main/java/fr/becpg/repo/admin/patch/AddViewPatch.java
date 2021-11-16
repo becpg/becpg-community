@@ -70,7 +70,7 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
 			final List<NodeRef> result = new ArrayList<>();
 
-			final long maxNodeId = getPatchDAO().getMaxAdmNodeID();
+			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 0;
 			long maxSearchNodeId = count;
