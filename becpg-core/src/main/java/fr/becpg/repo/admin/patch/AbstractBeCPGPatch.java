@@ -44,12 +44,13 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	private static final Log logger = LogFactory.getLog(AbstractBeCPGPatch.class);
 
 	protected Repository repository;
-	
 	protected RepoService repoService;
-	
 	protected EntitySystemService entitySystemService;
-
 	protected ContentHelper contentHelper;
+	
+	protected static final int BATCH_THREAD = 3;
+	protected static final int BATCH_SIZE = 40;
+	protected static final int INC = BATCH_THREAD * BATCH_SIZE;
 	
 	/**
 	 * <p>Setter for the field <code>repository</code>.</p>
