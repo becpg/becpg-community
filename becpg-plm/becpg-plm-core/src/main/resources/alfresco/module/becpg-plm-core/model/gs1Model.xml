@@ -106,6 +106,7 @@
 		<constraint name="gs1:variableTradeItemTypeCodes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+					<value></value>
 					<value>LOOSE</value>
 					<value>PRE_PACKED</value>
 				</list>
@@ -158,6 +159,7 @@
 		<constraint name="gs1:specialItemCodes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
+				    <value></value>
 					<value>DEMONSTRATION_UNIT</value>
 					<value>GIFT_WITH_PURCHASE</value>
 					<value>LIMITED_PRODUCTION</value>
