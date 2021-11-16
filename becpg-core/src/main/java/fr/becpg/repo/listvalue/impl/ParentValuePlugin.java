@@ -58,6 +58,7 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 	private static final String SOURCE_TYPE_PARENT_VALUE = "ParentValue";
 	private static final String SOURCE_TYPE_DATA_LIST_CHARACT = "DataListCharact";
 	private static final String FILTER_PARENT_AS_ENTITY = "parentAsEntity";
+	private static final String FILTER_ITEM_AS_ENTITY = "itemAsEntity";;
 
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -79,6 +80,10 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 	 * Suggest entity list where entity in assoc bcpg:clients
 	 *   <control-param name="ds">becpg/autocomplete/DataListCharact?path=bcpg:clients&amp;className=bcpg:plant&amp;attributeName=cm:name
 	 *
+	 *  Suggest entity list where entity in assoc qa:product and entity is the dataListitem
+	 *  
+	 * <control-param name="ds">becpg/autocomplete/DataListCharact?path=qa:product&amp;className=qa:stockList&amp;attributeName=qa:batchId&amp;filter=itemAsEntity</control-param>
+		<control-param name="urlParamsToPass">itemId</control-param>
 	 *
 	 *  Suggest entity list where entity in html field bcpg_clients
 	 *
@@ -102,6 +107,17 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		NodeRef entityNodeRef = null;
+		
+		NodeRef itemId = null;
+
+		@SuppressWarnings("unchecked")
+		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
+		if (extras != null) {
+			if (extras.get("itemId") != null) {
+				itemId = new NodeRef(extras.get("itemId"));
+			}
+		}
+
 
 		String parent = (String) props.get(ListValueService.PROP_PARENT);
 
@@ -112,6 +128,10 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 				entityNodeRef = new NodeRef(parent);
 				parent = null;
 			}
+		} else if ((queryFilter != null) && FILTER_ITEM_AS_ENTITY.equals(queryFilter) && (itemId != null)) {
+			entityNodeRef = itemId;
+			itemId = null;
+			queryFilter = null;
 		} else if (((String) props.get(ListValueService.PROP_ENTITYNODEREF) != null)
 
 				&& NodeRef.isNodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF))) {
@@ -157,16 +177,7 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 				}
 			}
 
-			NodeRef itemId = null;
-
-			@SuppressWarnings("unchecked")
-			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
-			if (extras != null) {
-				if (extras.get("itemId") != null) {
-					itemId = new NodeRef(extras.get("itemId"));
-				}
-			}
-
+			
 			NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 			if (listsContainerNodeRef != null) {
 				NodeRef dataListNodeRef;

@@ -1614,7 +1614,7 @@
 							    });
 							};
 							
-							var popupKind = "bulk-edit",  li = '', colCount = 0;
+							var popupKind = "bulk-edit",  li = '';
 							var html = '<div class="hd">' + this.msg("header." + popupKind + ".picker") + '</div>';
 				       		html += '<div class="bd">';
 				       		html += '<form  class="form-container">';
@@ -1630,7 +1630,7 @@
 				       			}
 				       		}
 				       		
-				       		html += '<span>'+this.msg("label.edit-columns.title") + '</span><br/><br/><ul style="width:' + ((colCount + 1) * 20) + 'em;">'+ li +'</ul>';	
+				       		html += '<span>'+this.msg("label.edit-columns.title") + '</span><br/><br/><ul style="width:30em;">'+ li +'</ul>';	
 				       		
 				       		html += '          </div>';
 				       		html += '       </div>';
