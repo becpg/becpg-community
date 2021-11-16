@@ -419,220 +419,9 @@
 			<overrides />
 			<mandatory-aspects />
 		</aspect>
-		<aspect name="gs1:indicatorsAspect">
-			<properties>
-				<property name="gs1:isPublicated">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemABaseUnit">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemAConsumerUnit">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemADespatchUnit">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemAnInvoiceUnit">
-					<description />
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemAnOrderableUnit">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-
-				<property name="gs1:isTradeItemAFullDisplayStand">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemAService">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemAModel">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemADivisibleItem">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemAPromotionalItem">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemAVariableUnit">
-					<type>d:boolean</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:eanCodePrice">
-					<type>d:text</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
-				</property>
-				<property name="gs1:eanCodeWeight">
-					<type>d:text</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
-				</property>
-				<property name="gs1:variableTradeItemType">
-					<type>d:text</type>
-                                       <index enabled="true">
-		                                <tokenised>false</tokenised>
-		                                <facetable>true</facetable>
-		                        </index>
-					<constraints>
-						<constraint ref="gs1:variableTradeItemTypeCodes" />
-					</constraints>
-				</property>
-				<property name="gs1:variableWeightAllowableDeviationPercentage">
-					<type>d:double</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
-				</property>
-
-				<property name="gs1:variableWeightRangeMaximum">
-					<type>d:double</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
-				</property>
-
-				<property name="gs1:variableWeightRangeMinimum">
-					<type>d:double</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
-				</property>
-				
-				<property name="gs1:isTradeItemReorderable">
-					<type>d:boolean</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:hasDisplayReadyPackaging">
-					<type>d:boolean</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemPackedIrregularly">
-					<type>d:boolean</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isPriceOnPack">
-					<type>d:boolean</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:hasBatchNumber">
-					<type>d:boolean</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				
-				
-			    <!-- Deprecated -->
-				<property name="gs1:isTradeItemABulkItem">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemAReturnableItem">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:isTradeItemACutToOrderItem">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-			</properties>
-			<associations />
-			<overrides />
-			<mandatory-aspects />
-		</aspect>
+		
+		
+  		
 
 
         <aspect name="gs1:innerPackAspect">
@@ -705,85 +494,7 @@
 				</property>
 			</properties>	  
         </aspect>
-		<aspect name="gs1:datesAspect">
-			<title>GS1 Dates Aspect</title>
-			<properties>
-				<property name="gs1:effectiveDate">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:startAvailabilityDateTime">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:endAvailabilityDateTime">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-
-
-				<property name="gs1:publicationDate">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:firstShipDateTime">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:lastShipDateTime">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="gs1:cancelledDateTime">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-
-				<!-- Deprecated -->
-				<property name="gs1:lastChangeDateTime">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
-				</property>
-			</properties>
-			<associations />
-			<overrides />
-			<mandatory-aspects />
-		</aspect>
-
-
+      
 
 		<aspect name="gs1:packagingAspect">
 			<properties>
@@ -934,6 +645,16 @@
 						<constraint ref="gs1:palletTypeCodeConstraint" />
 					</constraints>
 				</property>
+				
+				
+				<property name="gs1:isTradeItemPackedIrregularly">
+					<type>d:boolean</type>
+					<index enabled="true">
+		                          <tokenised>false</tokenised>
+		                          <facetable>true</facetable>
+		                    </index>
+				</property>
+				
 
 				<property name="gs1:platformTermsAndConditionsCode">
 					<type>d:text</type>
@@ -947,36 +668,12 @@
 					</constraints>
 				</property>
 				
-				<property name="gs1:handlingInstructionsCodes">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<multiple>true</multiple>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-					<constraints>
-						<constraint ref="gs1:handlingInstructions" />
-					</constraints>
-				</property>
-				
-				<property name="gs1:preparationType">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-					<constraints>
-						<constraint ref="gs1:preparationTypes" />
-					</constraints>
-				</property>
-				
 			</properties>
 			<overrides />
 			<mandatory-aspects />
 		</aspect>
-
+		
+		 <!-- PackagingMarkingModule -->
 		<aspect name="gs1:packSortingAspect">
 			<properties>
 				<property name="gs1:isPackagingMarkedReturnable">
@@ -995,6 +692,20 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
+				<property name="gs1:isPriceOnPack">
+					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:hasBatchNumber">
+					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>	
 				<property name="gs1:packUnitNumber">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1076,15 +787,38 @@
 					<constraints>
 						<constraint ref="gs1:tradeItemTradeChannelConstraint" />
 					</constraints>
+				</property>	
+				<property name="gs1:handlingInstructionsCodes">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="gs1:handlingInstructions" />
+					</constraints>
 				</property>
-
-				<property name="gs1:specialItemCode">
+				<property name="gs1:preparationType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 		                  <tokenised>false</tokenised>
 		                  <facetable>true</facetable>
 		            </index>
+					<constraints>
+						<constraint ref="gs1:preparationTypes" />
+					</constraints>
+				</property>
+				<property name="gs1:specialItemCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
 					<constraints>
 						<constraint ref="gs1:specialItemCodes" />
 					</constraints>
@@ -1232,20 +966,213 @@
 		            </index>
 				</property>
 				
-				<!-- Deprecated -->
-				
-				<property name="gs1:isTradeItemAPromotionalUnit">
-					<type>d:text</type>
+				<property name="gs1:effectiveDate">
+					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 		                  <tokenised>false</tokenised>
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
-				<property name="gs1:minimumTradeItemLifespanFromTimeOfArrival">
-					<type>d:float</type>
+				<property name="gs1:startAvailabilityDateTime">
+					<type>d:date</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
+				<property name="gs1:endAvailabilityDateTime">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+
+
+				<property name="gs1:publicationDate">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:firstShipDateTime">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:lastShipDateTime">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:cancelledDateTime">
+					<type>d:date</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				
+			   <property name="gs1:isPublicated">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:isTradeItemABaseUnit">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:isTradeItemAConsumerUnit">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:isTradeItemADespatchUnit">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:isTradeItemAnInvoiceUnit">
+					<description />
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:isTradeItemAnOrderableUnit">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+
+				<property name="gs1:isTradeItemAFullDisplayStand">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:isTradeItemAService">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:isTradeItemAModel">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:isTradeItemADivisibleItem">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:isTradeItemAPromotionalItem">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:isTradeItemAVariableUnit">
+					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:eanCodePrice">
+					<type>d:text</type>
+				</property>
+				<property name="gs1:eanCodeWeight">
+					<type>d:text</type>
+				</property>
+				<property name="gs1:variableTradeItemType">
+					<type>d:text</type>
+					<constraints>
+						<constraint ref="gs1:variableTradeItemTypeCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:variableWeightAllowableDeviationPercentage">
+					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
+				</property>
+
+				<property name="gs1:variableWeightRangeMaximum">
+					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
+				</property>
+
+				<property name="gs1:variableWeightRangeMinimum">
+					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
+				</property>
+				
+				<property name="gs1:isTradeItemReorderable">
+					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="gs1:hasDisplayReadyPackaging">
+					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+			
 			</properties>
 			<associations>
 
@@ -1289,8 +1216,6 @@
 			<overrides />
 			<mandatory-aspects>
 				<aspect>gs1:measuresAspect</aspect>
-				<aspect>gs1:indicatorsAspect</aspect>
-				<aspect>gs1:datesAspect</aspect>
 				<aspect>gs1:packagingAspect</aspect>
 				<aspect>gs1:packSortingAspect</aspect>
 			</mandatory-aspects>
@@ -1307,5 +1232,8 @@
 				</property>
 			</properties>
 		</aspect>
+		
+		
+		
 	</aspects>
 </model>
