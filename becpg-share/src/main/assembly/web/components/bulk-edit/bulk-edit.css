@@ -10,9 +10,10 @@
 }
 
 .bulk-edit .bulk-edit-props-container  td {
- padding: 2px 20px;
- }
- .bulk-edit .bulk-edit-props-container  td label {
+  padding: 2px;
+}
+
+.bulk-edit .bulk-edit-props-container  td label {
    margin-left: 2px;
 }
 
