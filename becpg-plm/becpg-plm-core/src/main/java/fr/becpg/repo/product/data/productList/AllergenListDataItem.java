@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.Nullable;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
@@ -95,6 +97,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:allergenListVoluntary")
+	@Nullable
 	public Boolean getVoluntary() {
 		return voluntary;
 	}
@@ -117,6 +120,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:allergenListInVoluntary")
+	@Nullable
 	public Boolean getInVoluntary() {
 		return inVoluntary;
 	}

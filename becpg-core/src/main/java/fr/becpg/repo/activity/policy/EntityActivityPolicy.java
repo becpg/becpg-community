@@ -530,14 +530,20 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 						logger.debug("Action upon comment, post activity");
 						entityActivityService.postCommentActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
 					} else if (ContentModel.TYPE_CONTENT.equals(type)) {
-						logger.debug("Action upon content, post activity");
+						if(logger.isDebugEnabled()) {
+							logger.debug("Action upon content, post activity for: "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+						}
 						entityActivityService.postContentActivity(entityNodeRef, actionedUponNodeRef, activityEvent);
 					} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-						logger.debug("Action upon datalist, post activity");
+						if(logger.isDebugEnabled()) {
+							logger.debug("Action upon datalist, post activity for: "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)+ " ("+nodeService.getType(actionedUponNodeRef)+")");
+						}
 						entityActivityService.postDatalistActivity(entityNodeRef, actionedUponNodeRef, activityEvent,
 								TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + actionedUponNodeRef.toString()));
 					} else if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
-						logger.debug("Action upon entity, post activity");
+						if(logger.isDebugEnabled()) {
+							logger.debug("Action upon entity, post activity for: "+nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+						}
 						entityActivityService.postEntityActivity(actionedUponNodeRef, ActivityType.Entity, activityEvent,
 								TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + actionedUponNodeRef.toString()));
 					}

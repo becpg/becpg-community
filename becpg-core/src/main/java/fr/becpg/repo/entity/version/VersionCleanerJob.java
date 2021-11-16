@@ -108,7 +108,11 @@ public class VersionCleanerJob extends AbstractScheduledLockedJob implements Job
 		}
 
 		for (NodeRef temporaryNode : temporaryNodes) {
-			deleteTemporaryNode(tenantName, temporaryNode);
+			try {
+				deleteTemporaryNode(tenantName, temporaryNode);
+			} catch (Exception e) {
+				logger.error("An exception occurred while deleting " + temporaryNode + ", tenant : " + tenantName, e);
+			}
 		}
 
 		int processedNodes = 0;
@@ -125,57 +129,63 @@ public class VersionCleanerJob extends AbstractScheduledLockedJob implements Job
 
 			for (NodeRef notConvertedNode : notConvertedNodes) {
 
-				long start = System.currentTimeMillis();
-
-				String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
-
-				boolean convertNode = true;
-				
-				for (NodeRef source : associationService.getSourcesAssocs(notConvertedNode, QName.createQName(BeCPGModel.BECPG_URI, "compoListProduct"))) {
-					NodeRef datalistFolder = nodeService.getPrimaryParent(source).getParentRef();
-					NodeRef entitylistFolder = nodeService.getPrimaryParent(datalistFolder).getParentRef();
-					NodeRef parentProduct = nodeService.getPrimaryParent(entitylistFolder).getParentRef();
-
-					if (nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-							&& !nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_ENTITY_FORMAT)
-							&& !nodeService.hasAspect(parentProduct, ContentModel.ASPECT_TEMPORARY)) {
+				try {
+					long start = System.currentTimeMillis();
+					
+					String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
+					
+					boolean convertNode = true;
+					
+					for (NodeRef source : associationService.getSourcesAssocs(notConvertedNode, QName.createQName(BeCPGModel.BECPG_URI, "compoListProduct"))) {
+						NodeRef datalistFolder = nodeService.getPrimaryParent(source).getParentRef();
+						NodeRef entitylistFolder = nodeService.getPrimaryParent(datalistFolder).getParentRef();
+						NodeRef parentProduct = nodeService.getPrimaryParent(entitylistFolder).getParentRef();
 						
-						String parentName = (String) nodeService.getProperty(parentProduct, ContentModel.PROP_NAME);
-						logger.info("Couldn't convert entity '" + name + "' because it is used by entity '" + parentName + "' which needs to be converted first.");
-					}
-					
-					convertNode = false;
-					skippedNodes++;
-				}
-				
-				NodeRef parentNode = nodeService.getPrimaryParent(notConvertedNode).getParentRef();
-				
-				String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
-				
-				NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
-
-				if (!nodeService.exists(originalNode)) {
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						if (lockService.isLocked(notConvertedNode)) {
-							lockService.unlock(notConvertedNode);
+						if (nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+								&& !nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_ENTITY_FORMAT)
+								&& !nodeService.hasAspect(parentProduct, ContentModel.ASPECT_TEMPORARY)) {
+							
+							String parentName = (String) nodeService.getProperty(parentProduct, ContentModel.PROP_NAME);
+							logger.info("Couldn't convert entity '" + name + "' because it is used by entity '" + parentName + "' which needs to be converted first.");
 						}
-						nodeService.deleteNode(notConvertedNode);
-						return null;
-					}, false, false);
-					
-					processedNodes++;
-					convertNode = false;
-					logger.info("deleted version history node : '" + name + "' because the original node doesn't exist anymore");
-				}
-				
-				if (convertNode) {
-					NodeRef convertedNode = entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
-					if (convertedNode != null) {
-						processedNodes++;
-						long timeElapsed = System.currentTimeMillis() - start;
-						logger.info("Converted entity '" + name + "', from " + notConvertedNode + " to " + convertedNode + ", tenant : " + tenantName
-								+ ", time elapsed : " + timeElapsed + " ms");
+						
+						convertNode = false;
+						skippedNodes++;
 					}
+					
+					NodeRef parentNode = nodeService.getPrimaryParent(notConvertedNode).getParentRef();
+					
+					String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
+					
+					NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
+					
+					if (!nodeService.exists(originalNode)) {
+						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+							if (lockService.isLocked(notConvertedNode)) {
+								lockService.unlock(notConvertedNode);
+							}
+							nodeService.deleteNode(notConvertedNode);
+							return null;
+						}, false, false);
+						
+						processedNodes++;
+						convertNode = false;
+						logger.info("deleted version history node : '" + name + "' because the original node doesn't exist anymore");
+					}
+					
+					if (convertNode) {
+						logger.info("Converting node " + notConvertedNode + ", tenant : " + tenantName);
+						NodeRef convertedNode = entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
+						if (convertedNode != null) {
+							processedNodes++;
+							long timeElapsed = System.currentTimeMillis() - start;
+							logger.info("Converted entity '" + name + "', from " + notConvertedNode + " to " + convertedNode + ", tenant : " + tenantName
+									+ ", time elapsed : " + timeElapsed + " ms");
+						}
+					}
+				} catch (Exception e) {
+					logger.error("An exception occurred while converting " + notConvertedNode + ", tenant : " + tenantName, e);
+					processedNodes++;
 				}
 				
 			}

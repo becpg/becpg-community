@@ -67,18 +67,12 @@
 	<!-- Define elements that are bulk editable -->
 	<config evaluator="string-compare" condition="bulk-edit">
 		<itemTypes>
-			<itemType name="bcpg:finishedProduct" />
-			<itemType name="bcpg:semiFinishedProduct" />
-
-			<itemType name="bcpg:rawMaterial" />
+			<itemType name="bcpg:finishedProduct" editSelectedFormId="bulk-edit"/>
+			<itemType name="bcpg:semiFinishedProduct" editSelectedFormId="bulk-edit"/>
+			<itemType name="bcpg:rawMaterial" editSelectedFormId="bulk-edit"/>
 			<itemType name="bcpg:packagingMaterial" editSelectedFormId="bulk-edit" />
-			<itemType name="bcpg:packagingKit" />
+			<itemType name="bcpg:packagingKit" editSelectedFormId="bulk-edit" />
 			<itemType name="bcpg:resourceProduct" />
-<!-- 			<itemType name="pjt:project" editSelectedFormId="bulk-edit"/> -->
-			<!-- <itemType name="bcpg:finishedProduct" label="Produit fini avec aspect" -->
-			<!-- formId="bulk-edit-2" editSelectedFormId ="bulk-edit" /> -->
-			<!-- <itemType name="bcpg:allergenList" /> -->
-
 			<itemType name="qa:qualityControl" />
 			<itemType name="bcpg:supplier" editSelectedFormId="bulk-edit"/>
 			<itemType name="bcpg:client" />

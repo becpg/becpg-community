@@ -33,6 +33,7 @@ import fr.becpg.repo.quality.data.BatchData;
 import fr.becpg.repo.quality.data.dataList.AllocationListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
@@ -40,9 +41,9 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 
 	private static final String MESSAGE_MISSING_STOCK = "message.formulate.missing.stock";
 
-	private AlfrescoRepository<ProductData> alfrescoRepository;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
-	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
@@ -66,7 +67,7 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 					Double qty = FormulationHelper.getQtyInKg(compoList);
 
 					if (qty != null) {
-						ProductData subProductData = alfrescoRepository.findOne(productNodeRef);
+						ProductData subProductData = (ProductData) alfrescoRepository.findOne(productNodeRef);
 						if (!(subProductData instanceof LocalSemiFinishedProductData)) {
 							if (!DeclarationType.Declare.equals(compoList.getDeclType()) || (subProductData instanceof RawMaterialData)) {
 
@@ -87,110 +88,158 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 			// sort
 			List<Map.Entry<NodeRef, Double>> sortedRawMaterials = new LinkedList<>(rawMaterials.entrySet());
 			Collections.sort(sortedRawMaterials, (r1, r2) -> r2.getValue().compareTo(r1.getValue()));
-			
-			if(batchData.getAllocationList()!=null && alfrescoRepository.hasDataList(batchData, QualityModel.TYPE_BATCH_ALLOCATION_LIST)) {
+
+			if ((batchData.getAllocationList() != null) && alfrescoRepository.hasDataList(batchData, QualityModel.TYPE_BATCH_ALLOCATION_LIST)) {
 
 				List<AllocationListDataItem> toRetain = new LinkedList<>();
-	
+
 				boolean canApply = true;
 				int sort = 0;
 				for (Map.Entry<NodeRef, Double> entry : sortedRawMaterials) {
-	
-					AllocationListDataItem item = batchData.getAllocationList().stream().filter(a -> entry.getKey().equals(a.getProduct())).findFirst()
-							.orElse(null);
-	
+
+					AllocationListDataItem item = batchData.getAllocationList().stream().filter(a -> entry.getKey().equals(a.getProduct()))
+							.findFirst().orElse(null);
+
 					if (item == null) {
 						item = new AllocationListDataItem();
 						item.setProduct(entry.getKey());
 						batchData.getAllocationList().add(item);
 					}
-	
+
 					item.setSort(sort++);
-	
+
 					toRetain.add(item);
-	
-					if (!SystemState.Valid.equals(item.getState())) {
-						ProductData rawMaterialData = alfrescoRepository.findOne(entry.getKey());
-						Double totalStockInKgOrL = computeTotalStock(rawMaterialData);
-	
-						item.setBatchQty(entry.getValue());
-						item.setUnit(isVolume ? ProductUnit.L : ProductUnit.kg);
+
+					//Revert batch order
+					if (SystemState.Valid.equals(item.getState()) && SystemState.Simulation.equals(batchData.getState())) {
+						item.setStockListItems(increaseInventory(item.getStockListItems(), item.getBatchQty(), item.getUnit()));
 						item.setState(SystemState.Simulation);
-	
+					}
+
+					if (!SystemState.Valid.equals(item.getState())) {
+						ProductData rawMaterialData = (ProductData) alfrescoRepository.findOne(entry.getKey());
+						Double totalStockInKgOrL = computeTotalStock(rawMaterialData, item.getStockListItems());
+
+						ProductUnit unit = isVolume ? ProductUnit.L : ProductUnit.kg;
+						Double value = entry.getValue();
+						if (value < 0.0001 && !isVolume) {
+							value = entry.getValue() * 1000000;
+							unit = ProductUnit.mg;
+						} else if (value < 1) {
+							value = entry.getValue() * 1000;
+							unit = isVolume ? ProductUnit.mL : ProductUnit.g;
+						}
+
+						item.setBatchQty(value);
+						item.setUnit(unit);
+						item.setState(SystemState.Simulation);
+
 						if (logger.isDebugEnabled()) {
 							logger.debug("Compare asked qty " + entry.getValue() + " vs stock " + totalStockInKgOrL);
 						}
-	
+
 						if (totalStockInKgOrL < entry.getValue()) {
 							item.setState(SystemState.Refused);
-	
+
 							if (reqCtrl == null) {
-								reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, new MLText(I18NUtil.getMessage(MESSAGE_MISSING_STOCK)),
-										null, new ArrayList<>(), RequirementDataType.Formulation);
+								reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+										new MLText(I18NUtil.getMessage(MESSAGE_MISSING_STOCK)), null, new ArrayList<>(),
+										RequirementDataType.Formulation);
 								batchData.getReqCtrlList().add(reqCtrl);
 							}
-	
+
 							if (!reqCtrl.getSources().contains(entry.getKey())) {
 								reqCtrl.getSources().add(entry.getKey());
 							}
-	
+
 							canApply = false;
 						} else {
 							item.setState(SystemState.Simulation);
 						}
-	
+
 					} else {
 						canApply = false;
+
 					}
-	
+
 				}
-	
+
 				batchData.getAllocationList().retainAll(toRetain);
-	
+
 				if (canApply && SystemState.Valid.equals(batchData.getState())) {
-	
+
 					for (AllocationListDataItem item : batchData.getAllocationList()) {
-						ProductData rawMaterialData = alfrescoRepository.findOne(item.getProduct());
-						item.setStockListItems(decreaseInventory(rawMaterialData, item.getBatchQty(), item.getUnit()));
+						ProductData rawMaterialData = (ProductData) alfrescoRepository.findOne(item.getProduct());
+						item.setStockListItems(decreaseInventory(rawMaterialData, item.getStockListItems(), item.getBatchQty(), item.getUnit()));
 						item.setState(SystemState.Valid);
 					}
-	
+
 				}
 			}
 
 		}
-			
 
 		return true;
 	}
 
-	private List<NodeRef> decreaseInventory(ProductData rawMaterialData, Double batchQty, ProductUnit batchUnit) {
+	private List<NodeRef> increaseInventory(List<NodeRef> stockListItems, Double batchQty, ProductUnit batchUnit) {
+		List<NodeRef> stockRefs = new ArrayList<>();
+		if ((stockListItems != null) && !stockListItems.isEmpty()) {
+			StockListDataItem item = (StockListDataItem) alfrescoRepository.findOne(stockListItems.get(0));
+
+			if ((batchUnit != null) && (batchUnit.isVolume() || batchUnit.isWeight())) {
+				batchQty = batchQty / batchUnit.getUnitFactor();
+			}
+
+			ProductUnit stockUnit = item.getUnit();
+			if (stockUnit == null) {
+				stockUnit = ProductUnit.kg;
+			}
+
+			Double newQty = item.getBatchQty() + (batchQty * stockUnit.getUnitFactor());
+			item.setBatchQty(newQty);
+			alfrescoRepository.save(item);
+			stockRefs.add(item.getNodeRef());
+		}
+		return stockRefs;
+	}
+
+	private List<NodeRef> decreaseInventory(ProductData rawMaterialData, List<NodeRef> stockListItems, Double batchQty, ProductUnit batchUnit) {
 		List<NodeRef> stockRefs = new ArrayList<>();
 
 		if ((batchUnit != null) && (batchUnit.isVolume() || batchUnit.isWeight())) {
 			batchQty = batchQty / batchUnit.getUnitFactor();
 		}
 
-		for (StockListDataItem item : rawMaterialData.getStockList()) {
+		List<StockListDataItem> tmp = rawMaterialData.getStockList();
 
-			if (batchQty <= 0) {
-				break;
-			}
+		tmp.sort((item1, item2) -> {
+			Long time1 = item1.getUseByDate() != null ? item1.getUseByDate().getTime() : Long.MAX_VALUE;
+			Long time2 = item2.getUseByDate() != null ? item2.getUseByDate().getTime() : Long.MAX_VALUE;
+			return time1.compareTo(time2);
+		});
 
-			if (accept(item)) {
+		for (StockListDataItem item : tmp) {
 
-				ProductUnit stockUnit = item.getUnit();
-				if (stockUnit == null) {
-					stockUnit = ProductUnit.kg;
+			if ((stockListItems == null) || stockListItems.isEmpty() || stockListItems.contains(item.getNodeRef())) {
+				if (batchQty <= 0) {
+					break;
 				}
 
-				Double newQty = Math.max(item.getBatchQty() - (batchQty * stockUnit.getUnitFactor()), 0);
-				batchQty -= (item.getBatchQty() / stockUnit.getUnitFactor());
-				item.setBatchQty(newQty);
+				if (accept(item)) {
 
-				stockRefs.add(item.getNodeRef());
+					ProductUnit stockUnit = item.getUnit();
+					if (stockUnit == null) {
+						stockUnit = ProductUnit.kg;
+					}
+
+					Double newQty = Math.max(item.getBatchQty() - (batchQty * stockUnit.getUnitFactor()), 0);
+					batchQty -= (item.getBatchQty() / stockUnit.getUnitFactor());
+					item.setBatchQty(newQty);
+
+					stockRefs.add(item.getNodeRef());
+				}
 			}
-
 		}
 
 		alfrescoRepository.save(rawMaterialData);
@@ -203,9 +252,20 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 				&& ((item.getUseByDate() == null) || (item.getUseByDate().getTime() >= Calendar.getInstance().getTimeInMillis()));
 	}
 
-	private Double computeTotalStock(ProductData rawMaterialData) {
+	private Double computeTotalStock(ProductData rawMaterialData, List<NodeRef> stockListItems) {
 		double total = 0d;
-		for (StockListDataItem item : rawMaterialData.getStockList()) {
+
+		List<StockListDataItem> tmp = new ArrayList<>();
+
+		if ((stockListItems != null) && !stockListItems.isEmpty()) {
+			for (NodeRef item : stockListItems) {
+				tmp.add((StockListDataItem) alfrescoRepository.findOne(item));
+			}
+		} else {
+			tmp = rawMaterialData.getStockList();
+		}
+
+		for (StockListDataItem item : tmp) {
 			if (accept(item)) {
 				Double qty = item.getBatchQty();
 				if (qty != null) {
@@ -239,7 +299,7 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 				if ((qty != null) && (netWeight != 0d)) {
 					qty = (parentQty * qty * FormulationHelper.getYield(compoList)) / (100 * netWeight);
 
-					ProductData subProductData = alfrescoRepository.findOne(productNodeRef);
+					ProductData subProductData = (ProductData) alfrescoRepository.findOne(productNodeRef);
 
 					if (subProductData instanceof RawMaterialData) {
 
