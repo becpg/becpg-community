@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201806261756</property>
     <simple-property-list name="includeResource">
         <value>./CompareEntities-messages</value>
         <value>./ProductReport</value>
@@ -1429,6 +1429,179 @@ function convert ( qty, value, isVolume ) {
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">id</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">id</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">entityName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityName</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">name</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">name</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">entityType</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityType</text-property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr" type="javascript">row["entityType"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"trademark"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">id</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">entityName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">entityType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">id</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">entityName</property>
+                    <property name="nativeName">entityName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">entityType</property>
+                    <property name="nativeName">entityType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{id;STRING;/@id},{entityName;STRING;/@entityName},{name;STRING;/@name},{entityType;STRING;/@entityType}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>id</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>id</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>entityName</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>entityName</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>name</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>entityType</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>entityType</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="StructComparison" id="1640">
             <list-property name="computedColumns">
                 <structure>
@@ -1941,12 +2114,12 @@ if ( row["properties2"] != null ) {
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="2">
             <property name="orientation">landscape</property>
+            <property name="bottomMargin">0.15in</property>
             <property name="headerHeight">1in</property>
             <property name="footerHeight">1.4in</property>
             <page-header>
                 <grid id="1308">
                     <property name="height">1in</property>
-                    <property name="width">100%</property>
                     <list-property name="boundDataColumns">
                         <structure>
                             <property name="name">Column Binding</property>
@@ -1957,21 +2130,71 @@ if ( row["properties2"] != null ) {
                     </list-property>
                     <column id="766">
                         <property name="repeat">1</property>
-                        <property name="width">1.40625in</property>
                     </column>
                     <column id="1310"/>
-                    <column id="1311">
-                        <property name="width">1.2857142857142858in</property>
-                    </column>
+                    <column id="1311"/>
                     <row id="1312">
                         <property name="height">0.7678571428571429in</property>
                         <cell id="770">
-                            <property name="backgroundImage">./logo.png</property>
                             <property name="backgroundRepeat">no-repeat</property>
                             <property name="backgroundSizeHeight">cover</property>
                             <property name="backgroundSizeWidth">cover</property>
                             <property name="paddingLeft">1pt</property>
                             <property name="textAlign">left</property>
+                            <image id="12188">
+                                <property name="height">80%</property>
+                                <property name="width">80%</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["img"]==null ||row["img"]==""</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">expr</property>
+                                <expression name="valueExpr">row["img"]</expression>
+                            </image>
+                            <image id="12189">
+                                <property name="height">0.7083333333333334in</property>
+                                <property name="width">0.9375in</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["img"]!=null</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <text-property name="displayName">id</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">embed</property>
+                                <property name="imageName">logo.png</property>
+                            </image>
                         </cell>
                         <cell id="1314">
                             <property name="textAlign">left</property>
@@ -2039,7 +2262,7 @@ if ( row["properties2"] != null ) {
                                 <property name="fontSize">7pt</property>
                                 <property name="fontStyle">italic</property>
                                 <property name="color">black</property>
-                                <property name="marginTop">6pt</property>
+                                <property name="marginTop">0pt</property>
                                 <property name="marginLeft">0pt</property>
                                 <property name="marginBottom">0pt</property>
                                 <property name="paddingLeft">20pt</property>
