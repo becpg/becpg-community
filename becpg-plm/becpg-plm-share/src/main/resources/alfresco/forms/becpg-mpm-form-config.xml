@@ -382,6 +382,8 @@
 					<show id="mpm:plRateResource" />
 					<show id="mpm:plUnit" />
 					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 					<show id="bcpg:instruction" force="true"/>
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
@@ -415,6 +417,16 @@
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
+					<field id="bcpg:startEffectivity"  set="2-col" >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+				    </field>
 					<field id="bcpg:instruction" set="1-col-2" >
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
