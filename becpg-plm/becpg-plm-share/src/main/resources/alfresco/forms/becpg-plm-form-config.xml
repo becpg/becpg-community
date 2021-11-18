@@ -8354,9 +8354,10 @@
 					<show id="bcpg:compoListLossPerc" />
 					<show id="bcpg:compoListDeclType" />
 					<show id="bcpg:variantIds" force="true" />					
-				
-					
+			        <show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 					<show id="bcpg:instruction" force="true" />
+					
 				</field-visibility>
 
 				<appearance>
@@ -8402,6 +8403,18 @@
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:startEffectivity"  set="2-col-2" >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" set="2-col-2" >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+				    </field>
+					
 					
 					<field id="bcpg:instruction"   set="1-col-3">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
@@ -8647,6 +8660,8 @@
 					<show id="bcpg:packagingListIsMaster" />
 					<show id="bcpg:packagingListIsRecycle" />
 					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 					<show id="pack:labelingPosition" />
 					<show id="pack:labelingType" />
 					<show id="pack:labelingLabelingTemplate" />
@@ -8656,6 +8671,7 @@
 				<appearance>
 					<set id="1-col-1"  />
 					<set id="2-col"  template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="2-col-2"  template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="1-col-2"  />
 				
 					<field id="bcpg:packagingListProduct" help-id="becpg.forms.help.packagingListProduct" set="1-col-1">
@@ -8682,8 +8698,18 @@
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
-					<field id="pack:labelingPosition"  set="2-col"/>
-					<field id="pack:labelingType"  set="2-col"/>
+						<field id="bcpg:startEffectivity"  set="2-col-2" >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" set="2-col-2" >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+				    </field>
+					<field id="pack:labelingPosition"  set="2-col-2"/>
+					<field id="pack:labelingType"  set="2-col-2"/>
 					<field id="pack:labelingLabelingTemplate" set="1-col-2"/>
 					
 					<field id="bcpg:instruction"  set="1-col-2">
