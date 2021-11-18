@@ -1,0 +1,70 @@
+/*
+ *
+ */
+package fr.becpg.repo.web.scripts.admin;
+
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.extensions.webscripts.WebScriptRequest;
+import org.springframework.extensions.webscripts.WebScriptResponse;
+
+
+import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
+
+/**
+ * <p>BatchQueueServiceWebScript class.</p>
+ *
+ * @author matthieu
+ * @version $Id: $Id
+ */
+public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
+
+	private static final Log logger = LogFactory.getLog(BatchQueueServiceWebScript.class);
+	
+	private BatchQueueService batchQueueService;
+	
+	
+
+	public void setBatchQueueService(BatchQueueService batchQueueService) {
+		this.batchQueueService = batchQueueService;
+	}
+
+
+	/** {@inheritDoc} */
+	@Override
+	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
+		
+		List<BatchInfo> batches = batchQueueService.getBatchesInQueue();
+			
+		JSONObject ret = new JSONObject();
+		try {
+			JSONArray jsonBatches = new JSONArray();
+			for(BatchInfo batch : batches) {
+				JSONObject jsonBatch = new JSONObject();
+				jsonBatch.put("batchId", batch.getBatchId());
+				jsonBatch.put("batchUser", batch.getBatchUser());
+				String label = I18NUtil.getMessage(batch.getBatchDescId());
+				
+				jsonBatch.put("batchDesc",label!=null ? label :  batch.getBatchDescId());
+				jsonBatches.put(jsonBatch);
+			}
+			ret.put("batches", jsonBatches);
+
+			resp.setContentType("application/json");
+			resp.setContentEncoding("UTF-8");
+			ret.write(resp.getWriter());
+		} catch (JSONException e) {
+			logger.error(e,e);
+		}
+		
+	}
+}
