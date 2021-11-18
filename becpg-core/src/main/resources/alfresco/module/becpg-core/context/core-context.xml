@@ -365,6 +365,14 @@
 	</bean>
   
    
+   	<bean id="batchThreadPoolExecutor" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+      <property name="poolName" value="beCPGImportThreadPoolExecutor" />
+      <property name="corePoolSize" value="1" />
+      <property name="maximumPoolSize" value="1" />
+      <property name="threadPriority" value="4" />
+    </bean>
+   
+   
    <!-- 
     <bean id="search.fts.alfresco.db" class="org.alfresco.repo.search.impl.solr.DbAftsQueryLanguage" >
         <property name="dictionaryService" ref="cachedDictionaryService" />

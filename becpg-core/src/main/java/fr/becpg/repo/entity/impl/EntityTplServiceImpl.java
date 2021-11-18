@@ -24,16 +24,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.batch.BatchProcessWorkProvider;
+import org.alfresco.repo.batch.BatchProcessor;
+import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.repo.rule.RuntimeRuleService;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
-import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.transfer.TransferModel;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.InvalidAspectException;
@@ -51,7 +49,6 @@ import org.alfresco.service.cmr.rule.Rule;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,24 +56,23 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import com.google.common.collect.Lists;
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.EntityTplPlugin;
 import fr.becpg.repo.entity.EntityTplService;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.TranslateHelper;
-import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -84,9 +80,6 @@ import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.Synchronisable;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * <p>
@@ -99,13 +92,11 @@ import io.opencensus.trace.Tracing;
 @Service("entityTplService")
 public class EntityTplServiceImpl implements EntityTplService {
 
-	private static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=View-properties&nodeRef=";
-
+	private static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=View-properties&nodeRef=%s";
+	
 	private static final String ENTITY_DATALIST_KEY_PREFIX = "entity-datalist-";
 
 	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
-
-	private static final Tracer tracer = Tracing.getTracer();
 
 	private static final Set<QName> isIgnoredAspect = new HashSet<>();
 
@@ -132,9 +123,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 	private RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
 
 	@Autowired
-	private TransactionService transactionService;
-
-	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 
 	@Autowired
@@ -153,9 +141,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 	private FileFolderService fileFolderService;
 
 	@Autowired
-	BeCPGMailService beCPGMailService;
-
-	private ReentrantLock lock = new ReentrantLock();
+	private BatchQueueService batchQueueService;
 
 	static {
 		isIgnoredAspect.add(ContentModel.ASPECT_VERSIONABLE);
@@ -357,8 +343,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			try {
 				if (!nodeService.hasAspect(tpl, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-						&& (Boolean) nodeService.getProperty(tpl, BeCPGModel.PROP_ENTITY_TPL_ENABLED)
-						&& (Boolean) nodeService.getProperty(tpl, BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT)) {
+						&& Boolean.TRUE.equals(nodeService.getProperty(tpl, BeCPGModel.PROP_ENTITY_TPL_ENABLED))
+						&& Boolean.TRUE.equals(nodeService.getProperty(tpl, BeCPGModel.PROP_ENTITY_TPL_IS_DEFAULT))) {
 					return tpl;
 				}
 			} catch (InvalidNodeRefException | InvalidAspectException e) {
@@ -374,165 +360,184 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@SuppressWarnings("unchecked")
 	public void synchronizeEntities(NodeRef tplNodeRef) {
 
-		boolean runWithSuccess = false;
-		StopWatch watch = new StopWatch();
-		watch.start();
+		BatchInfo batchInfo = new BatchInfo( String.format("synchronizeEntities-%s",tplNodeRef.getId()), "becpg.batch.entityTpl.synchronizeEntities");
+		batchInfo.enableNotifyByMail("entitiesTemplate.synchronize", String.format(ASYNC_ACTION_URL_PREFIX,tplNodeRef.toString()));
 
-		if (lock.tryLock()) {
-			try {
+		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(tplNodeRef);
 
+		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+
+			@Override
+			public void beforeProcess() throws Throwable {
+				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			}
+
+			@Override
+			public void afterProcess() throws Throwable {
+				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			}
+
+			@Override
+			public void process(NodeRef entityNodeRef) throws Throwable {
 				RepositoryEntity entityTpl = alfrescoRepository.findOne(tplNodeRef);
 
-				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
-				if (logger.isInfoEnabled()) {
-					logger.info("Launch synchronizeEntities, size " + entityNodeRefs.size());
+				final Map<QName, List<? extends RepositoryEntity>> datalistsTpl = repositoryEntityDefReader.getDataLists(entityTpl);
+
+				Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews(entityTpl);
+
+				for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
+					Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
+					datalistsTpl.putAll(tmp);
+
 				}
 
-				runWithSuccess = doInBatch(entityNodeRefs, 10, entityNodeRef -> {
+				if ((datalistsTpl != null) && !datalistsTpl.isEmpty()) {
 
-					final Map<QName, List<? extends RepositoryEntity>> datalistsTpl = repositoryEntityDefReader.getDataLists(entityTpl);
-
-					Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews(entityTpl);
-
-					for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
+					RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
+					Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
+					Map<QName, ?> datalistViews1 = repositoryEntityDefReader.getDataListViews(entity);
+					for (Map.Entry<QName, ?> dataListViewEntry : datalistViews1.entrySet()) {
 						Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
-						datalistsTpl.putAll(tmp);
-
+						datalists.putAll(tmp);
 					}
 
-					if ((datalistsTpl != null) && !datalistsTpl.isEmpty()) {
+					NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
 
-						RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
-						Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
-						Map<QName, ?> datalistViews1 = repositoryEntityDefReader.getDataListViews(entity);
-						for (Map.Entry<QName, ?> dataListViewEntry : datalistViews1.entrySet()) {
-							Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
-							datalists.putAll(tmp);
+					for (Map.Entry<QName, List<? extends RepositoryEntity>> entry : datalistsTpl.entrySet()) {
+						QName dataListQName = entry.getKey();
+
+						List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
+
+						boolean update = false;
+
+						for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
+							if (entityTplPlugin.shouldSynchronizeDataList(entity, dataListQName)) {
+								entityTplPlugin.synchronizeDataList(entity, dataListItems, (List<BeCPGDataObject>) datalistsTpl.get(dataListQName));
+								update = true;
+							}
 						}
 
-						NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
+						if (!update) {
 
-						for (Map.Entry<QName, List<? extends RepositoryEntity>> entry : datalistsTpl.entrySet()) {
-							QName dataListQName = entry.getKey();
+							for (RepositoryEntity dataListItemTpl : entry.getValue()) {
+								Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
 
-							List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
+								if (!identAttrTpl.isEmpty()) {
+									boolean isFound = false;
+									// look on instance
+									for (RepositoryEntity dataListItem : dataListItems) {
 
-							boolean update = false;
+										Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
+										if (identAttrTpl.equals(identAttr)) {
 
-							for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
-								if (entityTplPlugin.shouldSynchronizeDataList(entity, dataListQName)) {
-									entityTplPlugin.synchronizeDataList(entity, dataListItems,
-											(List<BeCPGDataObject>) datalistsTpl.get(dataListQName));
-									update = true;
-								}
-							}
-
-							if (!update) {
-
-								for (RepositoryEntity dataListItemTpl : entry.getValue()) {
-									Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
-
-									if (!identAttrTpl.isEmpty()) {
-										boolean isFound = false;
-										// look on instance
-										for (RepositoryEntity dataListItem : dataListItems) {
-
-											Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
-											if (identAttrTpl.equals(identAttr)) {
-
-												isFound = true;
-												break;
-											}
-										}
-
-										if (!isFound) {
-											dataListItemTpl.setName(null);
-											dataListItemTpl.setNodeRef(null);
-											dataListItemTpl.setParentNodeRef(null);
-
-											if ((dataListItemTpl instanceof CompositeDataItem)
-													&& (((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent() != null)) {
-												((CompositeDataItem<RepositoryEntity>) dataListItemTpl).setParent(findCompositeParent(
-														((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent(), dataListItems));
-											}
-
-											if (dataListItemTpl instanceof Synchronisable) {
-												if (((Synchronisable) dataListItemTpl).isSynchronisable()) {
-													dataListItems.add((BeCPGDataObject) dataListItemTpl);
-													update = true;
-												}
-											} else {
-												// Synchronize always
-												dataListItems.add((BeCPGDataObject) dataListItemTpl);
-												update = true;
-											}
+											isFound = true;
+											break;
 										}
 									}
 
+									if (!isFound) {
+										dataListItemTpl.setName(null);
+										dataListItemTpl.setNodeRef(null);
+										dataListItemTpl.setParentNodeRef(null);
+
+										if ((dataListItemTpl instanceof CompositeDataItem)
+												&& (((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent() != null)) {
+											((CompositeDataItem<RepositoryEntity>) dataListItemTpl).setParent(findCompositeParent(
+													((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent(), dataListItems));
+										}
+
+										if (dataListItemTpl instanceof Synchronisable) {
+											if (((Synchronisable) dataListItemTpl).isSynchronisable()) {
+												dataListItems.add((BeCPGDataObject) dataListItemTpl);
+												update = true;
+											}
+										} else {
+											// Synchronize always
+											dataListItems.add((BeCPGDataObject) dataListItemTpl);
+											update = true;
+										}
+									}
 								}
-							}
 
-							if (update) {
-								alfrescoRepository.saveDataList(listContainerNodeRef, dataListQName, dataListQName, dataListItems);
 							}
-
 						}
 
-						synchronizeTitle(entityTpl, entity);
+						if (update) {
+							alfrescoRepository.saveDataList(listContainerNodeRef, dataListQName, dataListQName, dataListItems);
+						}
 
 					}
 
-					// synchronize folders
-					// remove empty folders that are not in the template
-					for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
-						if ((!"DataLists".equals(folder.getName())) && folder.getType().equals(ContentModel.TYPE_FOLDER)
-								&& (nodeService.getChildByName(tplNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null)
-								&& (fileFolderService.list(folder.getNodeRef()).isEmpty())) {
+					synchronizeTitle(entityTpl, entity);
 
-							if (logger.isDebugEnabled()) {
-								logger.debug("Remove folder " + folder.getName() + " of node " + entityNodeRef);
-							}
-							fileFolderService.delete(folder.getNodeRef());
+				}
+
+				// synchronize folders
+				// remove empty folders that are not in the template
+				for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
+					if ((!"DataLists".equals(folder.getName())) && folder.getType().equals(ContentModel.TYPE_FOLDER)
+							&& (nodeService.getChildByName(tplNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null)
+							&& (fileFolderService.list(folder.getNodeRef()).isEmpty())) {
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Remove folder " + folder.getName() + " of node " + entityNodeRef);
+						}
+						fileFolderService.delete(folder.getNodeRef());
+					}
+				}
+
+				// copy folders of template that are not in the entity
+				for (FileInfo folder : fileFolderService.listFolders(tplNodeRef)) {
+					if ((!"DataLists".equals(folder.getName())) && folder.getType().equals(ContentModel.TYPE_FOLDER)
+							&& (nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null)) {
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Copying folder " + folder.getName() + " to node " + entityNodeRef);
+						}
+
+						try {
+							fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
+						} catch (FileExistsException | FileNotFoundException e) {
+							logger.warn("Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
 						}
 					}
+				}
 
-					// copy folders of template that are not in the entity
-					for (FileInfo folder : fileFolderService.listFolders(tplNodeRef)) {
-						if ((!"DataLists".equals(folder.getName())) && folder.getType().equals(ContentModel.TYPE_FOLDER)
-								&& (nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null)) {
-
-							if (logger.isDebugEnabled()) {
-								logger.debug("Copying folder " + folder.getName() + " to node " + entityNodeRef);
-							}
-
-							try {
-								fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
-							} catch (FileExistsException | FileNotFoundException e) {
-								logger.warn("Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
-							}
-						}
+				// synchronize aspects
+				// copy missing aspects
+				Set<QName> aspects = nodeService.getAspects(tplNodeRef);
+				for (QName aspect : aspects) {
+					if (!nodeService.hasAspect(entityNodeRef, aspect) && !ignoreAspect(aspect)) {
+						nodeService.addAspect(entityNodeRef, aspect, null);
 					}
-
-					// synchronize aspects
-					// copy missing aspects
-					Set<QName> aspects = nodeService.getAspects(tplNodeRef);
-					for (QName aspect : aspects) {
-						if (!nodeService.hasAspect(entityNodeRef, aspect) && !ignoreAspect(aspect)) {
-							nodeService.addAspect(entityNodeRef, aspect, null);
-						}
-					}
-
-				});
-
-			} finally {
-				lock.unlock();
-				watch.stop();
-				beCPGMailService.sendMailOnAsyncAction(AuthenticationUtil.getFullyAuthenticatedUser(), "entitiesTemplate.synchronize",
-						ASYNC_ACTION_URL_PREFIX + tplNodeRef, runWithSuccess, watch.getTotalTimeSeconds());
+				}
 			}
-		} else {
-			logger.error("Only one massive operation at a time");
+
+		};
+
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker);
+
+	}
+
+	private BatchProcessWorkProvider<NodeRef> createWorkProcessWorkProvider(NodeRef tplNodeRef) {
+		List<NodeRef> entityNodeRefs = new ArrayList<>();
+
+		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+
+		for (AssociationRef assocRef : assocRefs) {
+			if (!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					&& !tplNodeRef.equals(assocRef.getSourceRef())) {
+				entityNodeRefs.add(assocRef.getSourceRef());
+			}
 		}
+		
+		return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
 	}
 
 	private void synchronizeTitle(RepositoryEntity entityTpl, RepositoryEntity entity) {
@@ -595,122 +600,43 @@ public class EntityTplServiceImpl implements EntityTplService {
 	/** {@inheritDoc} */
 	@Override
 	public void formulateEntities(NodeRef tplNodeRef) {
-		boolean runWithSuccess = false;
-		StopWatch watch = new StopWatch();
-		watch.start();
 
-		if (lock.tryLock()) {
-			try (Scope scope = tracer.spanBuilder("templateService.Formulate").startScopedSpan()) {
+		BatchInfo batchInfo = new BatchInfo( String.format("formulateEntities-%s",tplNodeRef.getId()), "becpg.batch.entityTpl.formulateEntities");
+		batchInfo.enableNotifyByMail("entitiesTemplate.formulate", String.format(ASYNC_ACTION_URL_PREFIX,tplNodeRef.toString()));
+		batchInfo.setRunAsSystem(true);
 
-				List<NodeRef> entityNodeRefs = getEntitiesToUpdate(tplNodeRef);
+		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(tplNodeRef);
 
-				if (logger.isInfoEnabled()) {
-					logger.info("Launch formulateEntities, size " + entityNodeRefs.size());
-				}
+		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
-				runWithSuccess = doInBatch(entityNodeRefs, 5, entityNodeRef -> {
-					try {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Formulate : " + entityNodeRef);
-						}
-						formulationService.formulate(entityNodeRef);
-					} catch (FormulateException e) {
+			@Override
+			public void beforeProcess() throws Throwable {
+				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			}
 
-						logger.error(e, e);
+			@Override
+			public void afterProcess() throws Throwable {
+				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			}
+
+			@Override
+			public void process(NodeRef entityNodeRef) throws Throwable {
+				L2CacheSupport.doInCacheContext(() -> {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Formulate : " + entityNodeRef);
 					}
+					formulationService.formulate(entityNodeRef);
+				}, false, true);
 
-				});
-
-			} finally {
-				lock.unlock();
-				watch.stop();
-				beCPGMailService.sendMailOnAsyncAction(AuthenticationUtil.getFullyAuthenticatedUser(), "entitiesTemplate.formulate",
-						ASYNC_ACTION_URL_PREFIX + tplNodeRef, runWithSuccess, watch.getTotalTimeSeconds());
 			}
-		} else {
-			logger.error("Only one massive operation at a time");
-		}
+		};
 
-	}
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker);
 
-	private interface BatchCallBack {
-		void run(NodeRef entityNodeRef);
-	}
-
-	private boolean doInBatch(final List<NodeRef> entityNodeRefs, final int batchSize, final BatchCallBack batchCallBack) {
-
-		StopWatch watch = null;
-		if (logger.isInfoEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-		}
-		AtomicInteger batchCount = new AtomicInteger(0);
-		AtomicInteger errorCount = new AtomicInteger(0);
-		int total = entityNodeRefs.size() / batchSize;
-
-		L2CacheSupport.doInCacheContext(() -> {
-
-			for (final List<NodeRef> subList : Lists.partition(entityNodeRefs, batchSize)) {
-
-				RunAsWork<Object> actionRunAs = () -> {
-					RetryingTransactionCallback<Object> actionCallback = () -> {
-
-						for (final NodeRef entityNodeRef : subList) {
-							try {
-
-								policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
-								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-
-								batchCallBack.run(entityNodeRef);
-
-							} finally {
-								policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-								policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-								policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
-								policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-							}
-						}
-						return null;
-
-					};
-					return transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
-				};
-
-				try {
-
-					logger.info(" - Run batch:" + (batchCount.getAndIncrement()) + " over " + total);
-					AuthenticationUtil.runAsSystem(actionRunAs);
-				} catch (Exception e) {
-					errorCount.incrementAndGet();
-					logger.error("Error running batch: " + batchCount.get(), e);
-
-				}
-			}
-
-		}, false, true);
-
-		if (logger.isInfoEnabled() && (watch != null)) {
-			watch.stop();
-			logger.info("Batch takes " + watch.getTotalTimeSeconds() + " seconds");
-		}
-
-		return errorCount.get() == 0;
-	}
-
-	private List<NodeRef> getEntitiesToUpdate(NodeRef tplNodeRef) {
-
-		List<NodeRef> entityNodeRefs = new ArrayList<>();
-		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
-
-		for (AssociationRef assocRef : assocRefs) {
-			if (!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION) && !tplNodeRef.equals(assocRef.getSourceRef())) {
-				entityNodeRefs.add(assocRef.getSourceRef());
-			}
-		}
-
-		return entityNodeRefs;
 	}
 
 	/** {@inheritDoc} */
@@ -815,48 +741,45 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@Override
 	public void removeDataListOnEntities(NodeRef entityTplNodeRef, String entityListName) {
 
-		boolean runWithSuccess = false;
-		StopWatch watch = new StopWatch();
-		watch.start();
+		BatchInfo batchInfo = new BatchInfo( String.format("removeDataList-%s",entityTplNodeRef.getId()), "becpg.batch.entityTpl.removeDataList");
+		batchInfo.enableNotifyByMail("entitiesTemplate.removeDataList", String.format(ASYNC_ACTION_URL_PREFIX,entityTplNodeRef.toString()));
 
-		if (lock.tryLock()) {
-			try {
+		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(entityTplNodeRef);
 
-				List<NodeRef> entities = getEntitiesToUpdate(entityTplNodeRef);
+		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
-				runWithSuccess = doInBatch(entities, 10, entityNodeRef -> {
+			@Override
+			public void beforeProcess() throws Throwable {
+				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			}
 
-					NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityListName);
+			@Override
+			public void afterProcess() throws Throwable {
+				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			}
 
-					if (listNodeRef != null) {
-						logger.debug("Deleting list with node: " + listNodeRef + " on entity: " + entityNodeRef + " ("
-								+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ")");
-						nodeService.addAspect(listNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-						nodeService.deleteNode(listNodeRef);
-					}
+			@Override
+			public void process(NodeRef entityNodeRef) throws Throwable {
+				NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityListName);
 
-				});
-
-				NodeRef tplListContainerNodeRef = entityListDAO.getListContainer(entityTplNodeRef);
-				NodeRef tplListNodeRef = entityListDAO.getList(tplListContainerNodeRef, entityListName);
-
-				if (tplListNodeRef != null) {
-					logger.debug("Deleting list with node: " + tplListNodeRef + " on template: " + entityTplNodeRef + " ("
-							+ nodeService.getProperty(entityTplNodeRef, ContentModel.PROP_NAME) + ")");
-					nodeService.addAspect(tplListNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-					nodeService.deleteNode(tplListNodeRef);
+				if (listNodeRef != null) {
+					logger.debug("Deleting list with node: " + listNodeRef + " on entity: " + entityNodeRef + " ("
+							+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ")");
+					nodeService.addAspect(listNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+					nodeService.deleteNode(listNodeRef);
 				}
 
-			} finally {
-				lock.unlock();
-				watch.stop();
-				beCPGMailService.sendMailOnAsyncAction(AuthenticationUtil.getFullyAuthenticatedUser(), "entitiesTemplate.removeDataList",
-						ASYNC_ACTION_URL_PREFIX + entityTplNodeRef, runWithSuccess, watch.getTotalTimeSeconds());
 			}
-		} else {
-			logger.error("Only one massive operation at a time");
-		}
+		};
+
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker);
 
 	}
 
