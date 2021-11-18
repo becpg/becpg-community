@@ -19,6 +19,7 @@
 	<shortname>Migrate the repository</shortname>
 	<description>Migrate the repository</description>	
 	<url>/becpg/migrate/{action}</url>
+	<url>/becpg/migrate/{action}/{number}</url>
 	<format default="json">argument</format>
 	<authentication>admin</authentication>
 	<transaction allow="readwrite" >required</transaction>

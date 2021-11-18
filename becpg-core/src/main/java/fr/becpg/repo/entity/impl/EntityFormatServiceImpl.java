@@ -451,10 +451,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		if (versionHistory != null) {
 			NodeRef versionNode = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, versionHistory.getVersion(versionLabel).getFrozenStateNodeRef().getId());
 			
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				convert(node, versionNode, EntityFormat.JSON);
-				return null;
-			}, false, false);
+			convert(node, versionNode, EntityFormat.JSON);
 			
 			return versionNode;
 		}
