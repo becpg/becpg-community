@@ -127,7 +127,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			
 		};
 		
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker);
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
 	
 	}
 
@@ -210,7 +210,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			
 		};
 		
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker);
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
 	
 	}
 
@@ -255,7 +255,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			
 		};
 		
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker);
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
 	
 	}
 

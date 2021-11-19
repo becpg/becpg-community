@@ -34,8 +34,8 @@ public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkPr
 
 	@Override
 	public Collection<T> getNextWork() {
-		Collection<T> results = new ArrayList<>(BatchQueueService.BATCH_SIZE);
-		while ((results.size() < BatchQueueService.BATCH_SIZE) && iterator.hasNext()) {
+		Collection<T> results = new ArrayList<>(BatchInfo.BATCH_SIZE);
+		while ((results.size() < BatchInfo.BATCH_SIZE) && iterator.hasNext()) {
 			results.add(iterator.next());
 		}
 		return results;

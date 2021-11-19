@@ -358,7 +358,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 	/** {@inheritDoc} */
 	@Override
 	@SuppressWarnings("unchecked")
-	public void synchronizeEntities(NodeRef tplNodeRef) {
+	public BatchInfo synchronizeEntities(NodeRef tplNodeRef) {
 
 		BatchInfo batchInfo = new BatchInfo( String.format("synchronizeEntities-%s",tplNodeRef.getId()), "becpg.batch.entityTpl.synchronizeEntities");
 		batchInfo.enableNotifyByMail("entitiesTemplate.synchronize", String.format(ASYNC_ACTION_URL_PREFIX,tplNodeRef.toString()));
@@ -521,8 +521,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 		};
 
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker);
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
 
+		return batchInfo;
 	}
 
 	private BatchProcessWorkProvider<NodeRef> createWorkProcessWorkProvider(NodeRef tplNodeRef) {
@@ -599,7 +600,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 	/** {@inheritDoc} */
 	@Override
-	public void formulateEntities(NodeRef tplNodeRef) {
+	public BatchInfo formulateEntities(NodeRef tplNodeRef) {
 
 		BatchInfo batchInfo = new BatchInfo( String.format("formulateEntities-%s",tplNodeRef.getId()), "becpg.batch.entityTpl.formulateEntities");
 		batchInfo.enableNotifyByMail("entitiesTemplate.formulate", String.format(ASYNC_ACTION_URL_PREFIX,tplNodeRef.toString()));
@@ -635,8 +636,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 			}
 		};
 
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker);
-
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
+		return batchInfo;
 	}
 
 	/** {@inheritDoc} */
@@ -779,7 +780,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 			}
 		};
 
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker);
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
 
 	}
 
