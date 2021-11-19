@@ -48,16 +48,28 @@
 					 			<td>
 					 			<div class="infos">
 					 				<label>${msg("label.freeMemory")}</label>
-									<span class="info">${systemInfo.freeMemory?string("0")} Mo</span><br/>
+									<span class="info">${freeMem?string("0")} Mo</span><br/>
 									<label>${msg("label.totalMemory")}</label>
 									<span class="info">${systemInfo.totalMemory?string("0")} Mo</span><br/>
-									<label>${msg("label.nonHeapMemory")}</label>
-									<span class="info">${systemInfo.nonHeapMemoryUsage?string("0")} Mo</span><br/>
+									<label>${msg("label.maxMemory")}</label>
+									<span class="info">${systemInfo.maxMemory?string("0")} Mo</span><br/>
+									<label>${msg("label.diskPerc")}</label>
+									<meter min="0"
+											low="10"
+											high="70"
+											optimum="50"
+											value="${diskPerc?string("0")}"
+											max="100"
+											title="${diskPerc?string("0")} %"></meter><br/>
 									<label>${msg("label.becpgSchema")}</label>
 									<#if versionDate??>
 										<span class="info">${version?string} - <a href="https://www.becpg.fr/hg/becpg/rev/${schema?string}">${versionDate?datetime}</a></span><br/>
 									<#else>
 										<span class="info">${systemInfo.becpgSchema}</span><br/>
+									</#if>
+									<#if systemInfo.withoutLicenseUsers?? &&  systemInfo.withoutLicenseUsers &gt; 0>
+									  <label>${msg("label.withoutLicenseUsers")}</label>
+									  <span class="error">${systemInfo.withoutLicenseUsers?string("0")}</span><br/>
 									</#if>
 									<label>${msg("label.connectedUsers")}</label>
 									<span class="info">${systemInfo.connectedUsers}</span><br/>

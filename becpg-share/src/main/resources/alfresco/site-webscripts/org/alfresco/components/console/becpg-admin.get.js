@@ -53,10 +53,12 @@ function main()
           model.systemEntities = obj.systemEntities;
           model.systemFolders = obj.systemFolders;
           model.systemInfo = obj.systemInfo;
+          model.diskPerc = Math.round((obj.systemInfo.diskTotalSpace-obj.systemInfo.diskFreeSpace)/obj.systemInfo.diskTotalSpace*100);
+          model.freeMem = model.systemInfo.maxMemory - (model.systemInfo.totalMemory) + model.systemInfo.freeMemory;
           var adminConsole = {
                 id : "AdminConsole", 
                 name : "beCPG.component.AdminConsole",
-                options : { memory :Math.round((model.systemInfo.totalMemory-model.systemInfo.freeMemory)/model.systemInfo.totalMemory*100)}
+                options : { memory :Math.round((model.systemInfo.totalMemory-model.systemInfo.freeMemory)/model.systemInfo.maxMemory*100)}
              };
           
           model.widgets = [adminConsole];

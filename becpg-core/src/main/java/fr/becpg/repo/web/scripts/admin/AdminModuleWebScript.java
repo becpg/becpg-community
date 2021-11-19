@@ -15,6 +15,7 @@ import java.util.Set;
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.security.AuthorityService;
@@ -53,7 +54,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private static final String ACTION_RELOAD_MODEL = "reload-model";
 	private static final String ACTION_GET_SYSTEM_ENTITIES = "system-entities";
 	private static final String ACTION_GET_CONNECTED_USERS = "show-users";
-		
+
 	private InitVisitorService initVisitorService;
 
 	private Repository repository;
@@ -65,7 +66,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private DictionaryDAO dictionaryDAO;
 
 	private EntitySystemService entitySystemService;
-	
+
 	private BeCPGLicenseManager licenseManager;
 
 	private AbstractAuthenticationService authenticationService;
@@ -73,9 +74,9 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private TenantAdminService tenantAdminService;
 
 	private String becpgSchema;
-	
+
 	private AuthorityService authorityService;
-	
+
 	private ContentService contentService;
 
 	/**
@@ -167,7 +168,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	public void setAuthenticationService(AbstractAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>licenseManager</code>.</p>
 	 *
@@ -204,33 +205,35 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		long concurrentWriteUsers = 0;
 		long namedReadUsers = 0;
 		long namedWriteUsers = 0;
-		
+		long withoutLicenseUsers = 0;
+
 		Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
 		for (Iterator<String> iterator = users.iterator(); iterator.hasNext();) {
 			String user = iterator.next();
-			if ("guest".equals(user) || "system".equals(user)) {
+			if ((AuthenticationUtil.getGuestUserName().equals(user) || AuthenticationUtil.getSystemUserName().equals(user))
+					|| (tenantAdminService.isEnabled()
+							&& !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user)))) {
 				iterator.remove();
-			} else if (tenantAdminService.isEnabled() && !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user))) {
-				iterator.remove();
-			} 
+			}
 		}
-		
-		
-		for(String user : users) {
-			if(!"admin".equals(user)) {
+
+		for (String user : users) {
+			if (!AuthenticationUtil.getAdminUserName().equals(user)) {
 				Set<String> userAuthorities = authorityService.getAuthoritiesForUser(user);
-				if(userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser) 
+				if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser)
 						&& userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent)) {
 					concurrentSupplierUsers++;
-				}else if(userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed)) {
+				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed)) {
 					namedWriteUsers++;
-				}else if(userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed)) {
+				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed)) {
 					namedReadUsers++;
-				}else if(userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteConcurrent)) {
+				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteConcurrent)) {
 					concurrentWriteUsers++;
-				}else if(userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent)) {
+				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent)) {
 					concurrentReadUsers++;
-				} 
+				} else {
+					withoutLicenseUsers++;
+				}
 			}
 		}
 
@@ -243,7 +246,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			switch (action) {
 			case ACTION_INIT_REPO:
 				logger.debug("Init repository");
-				ret.put("sites",initVisitorService.run(repository.getCompanyHome()));
+				ret.put("sites", initVisitorService.run(repository.getCompanyHome()));
 				break;
 			case ACTION_RELOAD_CACHE:
 				beCPGCacheService.printCacheInfos();
@@ -257,7 +260,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			case ACTION_RELOAD_MODEL:
 				logger.debug("Reload models");
 				beCPGCacheService.clearCache(DynListConstraint.class.getName());
-				//TODO Cluster cache ? 
+				//TODO Cluster cache ?
 				dictionaryDAO.reset();
 				break;
 			case ACTION_GET_SYSTEM_ENTITIES:
@@ -278,14 +281,9 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 			I18NUtil.setContentLocale(currentContentLocal);
 		}
 
-		// Add status
-
 		ret.put("status", "SUCCESS");
 
-		// Add system infos
-
 		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-		
 
 		Runtime runtime = Runtime.getRuntime();
 
@@ -305,11 +303,11 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		ret.put("allowedConcurrentWrite", licenseManager.getAllowedConcurrentWrite());
 		ret.put("allowedConcurrentSupplier", licenseManager.getAllowedConcurrentSupplier());
 		ret.put("allowedNamedWrite", licenseManager.getAllowedNamedWrite());
-		ret.put("allowedNamedRead",  licenseManager.getAllowedNamedRead());
-		ret.put("licenseName",  licenseManager.getLicenseName());
-		
+		ret.put("allowedNamedRead", licenseManager.getAllowedNamedRead());
+		ret.put("licenseName", licenseManager.getLicenseName());
+		ret.put("withoutLicenseUsers", withoutLicenseUsers);
+
 		ret.put("becpgSchema", becpgSchema);
-		
 
 		return ret;
 
