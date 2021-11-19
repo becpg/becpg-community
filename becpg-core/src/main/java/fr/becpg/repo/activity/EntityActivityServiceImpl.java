@@ -1061,7 +1061,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	/** {@inheritDoc} */
 	@Override
-	public void cleanActivities() {
+	public BatchInfo cleanActivities() {
 
 		BatchInfo batchInfo = new BatchInfo("cleanActivities", "becpg.batch.activity.cleanActivities");
 		batchInfo.setRunAsSystem(true);
@@ -1171,8 +1171,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			}
 		};
 
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker);
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker,null);
 
+		return batchInfo;
 	}
 
 	/** {@inheritDoc} */

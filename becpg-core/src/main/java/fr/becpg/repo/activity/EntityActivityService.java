@@ -13,6 +13,7 @@ import org.json.JSONObject;
 
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.batch.BatchInfo;
 
 /**
  * <p>EntityActivityService interface.</p>
@@ -171,7 +172,7 @@ public interface EntityActivityService {
 	/**
 	 * <p>cleanActivities.</p>
 	 */
-	void cleanActivities();
+	BatchInfo cleanActivities();
 
 	/**
 	 * <p>mergeActivities.</p>

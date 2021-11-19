@@ -976,24 +976,15 @@ public class ECOServiceImpl implements ECOService {
 
 	/** {@inheritDoc} */
 	@Override
-	public Boolean setInError(NodeRef ecoNodeRef, Exception e) {
+	public Boolean setInError(NodeRef ecoNodeRef, String errorTxt) {
 
 		List<String> errors = new ArrayList<>();
 
 		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 
 		errors.add("OM in error ");
-		errors.add("Error message: " + e.getMessage());
+		errors.add("Error message: " + errorTxt);
 
-		try (StringWriter buffer = new StringWriter()) {
-			try (PrintWriter printer = new PrintWriter(buffer)) {
-				e.printStackTrace(printer);
-			}
-			errors.add("StackTrace : " + buffer.toString());
-		} catch (IOException e1) {
-			// Nothing can be done here
-
-		}
 
 		if (!ECOState.InError.equals(ecoData.getEcoState())) {
 			ecoData.setEcoState(ECOState.InError);

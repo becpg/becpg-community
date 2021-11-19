@@ -31,6 +31,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.admin.InitVisitorService;
+import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntitySystemService;
@@ -78,6 +79,8 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private AuthorityService authorityService;
 
 	private ContentService contentService;
+	
+	private BatchQueueService batchQueueService;
 
 	/**
 	 * <p>Setter for the field <code>authorityService</code>.</p>
@@ -306,8 +309,8 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		ret.put("allowedNamedRead", licenseManager.getAllowedNamedRead());
 		ret.put("licenseName", licenseManager.getLicenseName());
 		ret.put("withoutLicenseUsers", withoutLicenseUsers);
-
 		ret.put("becpgSchema", becpgSchema);
+		ret.put("batchCounts", 0);
 
 		return ret;
 
