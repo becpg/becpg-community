@@ -69,7 +69,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
-import org.graalvm.compiler.lir.constopt.ConstantTreeAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -233,6 +232,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		} finally {
 			if ((lock.isHeldByCurrentThread())) {
 				lock.unlock();
+				mutexFactory.removeMutex(nodeRefTo.toString(), lock);
 			}
 		}
 	}

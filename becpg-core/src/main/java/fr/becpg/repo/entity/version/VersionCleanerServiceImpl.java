@@ -93,44 +93,6 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		return true;
 	}
 
-	private void cleanOrphanVersions(int maxProcessedNodes) {
-		
-		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions", "becpg.batch.versionCleaner.cleanOhpanVersions");
-		batchInfo.setRunAsSystem(true);
-	
-		BatchProcessWorkProvider<NodeRef> workProvider = createCleanOrphanVersionsProcessWorkProvider(maxProcessedNodes);
-		
-		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
-	
-			@Override
-			public void process(NodeRef entityNodeRef) throws Throwable {
-				String tenantName = "default";
-				
-				if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
-					tenantName = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
-				}
-	
-				String name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-				NodeRef nodeToTest = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore", name);
-	
-				if (nodeService.getChildAssocs(entityNodeRef).isEmpty()) {
-					logger.info("delete folder because it is empty : " + entityNodeRef);
-				} else if (!nodeService.exists(nodeToTest)) {
-					logger.info("reference node  doesn't exist : " + nodeToTest + ", delete version folder :" + entityNodeRef);
-				} else if(nodeService.hasAspect(nodeToTest, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
-					logger.info("Removing unneeded version folder :" + entityNodeRef + " for Composite version : " + nodeToTest);
-				}
-				
-				deleteNode(tenantName, entityNodeRef);
-				
-			}
-			
-		};
-		
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
-	
-	}
-
 	private BatchProcessWorkProvider<NodeRef> createCleanOrphanVersionsProcessWorkProvider(int maxProcessedNodes) {
 		List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			NodeRef versionRootNode = nodeService.getRootNode(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID));
@@ -188,6 +150,60 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	}
 
+	private void cleanOrphanVersions(int maxProcessedNodes) {
+		
+		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions", "becpg.batch.versionCleaner.cleanOrphanVersions");
+		batchInfo.setRunAsSystem(true);
+	
+		BatchProcessWorkProvider<NodeRef> workProvider = createCleanOrphanVersionsProcessWorkProvider(maxProcessedNodes);
+		
+		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+	
+			@Override
+			public void process(NodeRef entityNodeRef) throws Throwable {
+				String tenantName = "default";
+				
+				if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
+					tenantName = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
+				}
+	
+				String name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+				NodeRef nodeToTest = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore", name);
+	
+				if (nodeService.getChildAssocs(entityNodeRef).isEmpty()) {
+					logger.info("delete folder because it is empty : " + entityNodeRef);
+				} else if (!nodeService.exists(nodeToTest)) {
+					logger.info("reference node  doesn't exist : " + nodeToTest + ", delete version folder :" + entityNodeRef);
+				} else if(nodeService.hasAspect(nodeToTest, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+					logger.info("Removing unneeded version folder :" + entityNodeRef + " for Composite version : " + nodeToTest);
+				}
+				
+				deleteNode(tenantName, entityNodeRef);
+				
+			}
+			
+		};
+		
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
+	
+	}
+
+	private BatchProcessWorkProvider<NodeRef> createCleanTemporaryNodesProcessWorkProvider(int maxProcessedNodes) {
+				
+				Calendar cal = Calendar.getInstance();
+				cal.add(Calendar.DAY_OF_YEAR, -1);
+			
+				List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					return BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
+							.withAspect(ContentModel.ASPECT_TEMPORARY).inDB().ftsLanguage().maxResults(maxProcessedNodes)
+							.andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'")
+							.list();
+				}, false, true);
+			
+				return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
+		
+			}
+
 	private void cleanTemporaryNodes(int maxProcessedNodes) {
 		
 		BatchInfo batchInfo = new BatchInfo("cleanTemporaryNodes", "becpg.batch.versionCleaner.cleanTemporaryNodes");
@@ -214,20 +230,34 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	}
 
-	private BatchProcessWorkProvider<NodeRef> createCleanTemporaryNodesProcessWorkProvider(int maxProcessedNodes) {
+	private BatchProcessWorkProvider<NodeRef> createConvertOldVersionsProcessWorkProvider(int maxProcessedNodes) {
 			
 			Calendar cal = Calendar.getInstance();
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 		
 			List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				return BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
-						.withAspect(ContentModel.ASPECT_TEMPORARY).inDB().ftsLanguage().maxResults(maxProcessedNodes)
+				
+				List<NodeRef> result = new ArrayList<>();
+				
+				List<NodeRef> queryResult = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
+						.excludeAspect(BeCPGModel.ASPECT_ENTITY_FORMAT).excludeAspect(ContentModel.ASPECT_TEMPORARY).inDB().ftsLanguage()
 						.andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'")
 						.list();
+				
+					for (NodeRef node : queryResult) {
+						if (result.size() >= maxProcessedNodes) {
+							break;
+						}
+						if (isReadyToBeConverted(node)) {
+							result.add(node);
+						}
+					}
+				
+					return result;
 			}, false, true);
 		
 			return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
-	
+		
 		}
 
 	private void convertOldVersions(int maxProcessedNodes) {
@@ -235,7 +265,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		BatchInfo batchInfo = new BatchInfo("convertOldVersions", "becpg.batch.versionCleaner.convertOldVersions");
 		batchInfo.setRunAsSystem(true);
 	
-		BatchProcessWorkProvider<NodeRef> workProvider = createCovnertOldVersionsProcessWorkProvider(maxProcessedNodes);
+		BatchProcessWorkProvider<NodeRef> workProvider = createConvertOldVersionsProcessWorkProvider(maxProcessedNodes);
 		
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 	
@@ -256,36 +286,6 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		};
 		
 		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
-	
-	}
-
-	private BatchProcessWorkProvider<NodeRef> createCovnertOldVersionsProcessWorkProvider(int maxProcessedNodes) {
-		
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_YEAR, -1);
-	
-		List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
-			List<NodeRef> result = new ArrayList<>();
-			
-			List<NodeRef> queryResult = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
-					.excludeAspect(BeCPGModel.ASPECT_ENTITY_FORMAT).excludeAspect(ContentModel.ASPECT_TEMPORARY).inDB().ftsLanguage()
-					.andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'")
-					.list();
-			
-				for (NodeRef node : queryResult) {
-					if (result.size() >= maxProcessedNodes) {
-						break;
-					}
-					if (isReadyToBeConverted(node)) {
-						result.add(node);
-					}
-				}
-			
-				return result;
-		}, false, true);
-	
-		return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
 	
 	}
 

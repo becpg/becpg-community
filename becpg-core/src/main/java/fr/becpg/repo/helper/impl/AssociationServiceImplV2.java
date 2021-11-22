@@ -47,6 +47,7 @@ import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.transaction.TransactionalResourceHelper;
+import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -104,12 +105,14 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	private AsynchronouslyRefreshedCacheRegistry registry;
 
 	private static Set<QName> ignoredAssocs = new HashSet<>();
+	
+	private static Set<StoreRef> ignoredStoreRefs = new HashSet<>();
 
 	private QNameDAO qnameDAO;
 
 	static {
 		ignoredAssocs.add(ContentModel.ASSOC_ORIGINAL);
-
+		ignoredStoreRefs.add(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID));
 	}
 
 	public void setRegistry(AsynchronouslyRefreshedCacheRegistry registry) {
@@ -674,7 +677,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	@Override
 	public void onDeleteAssociation(AssociationRef associationRef) {
 		if (TransactionalResourceHelper.getCount(UPDATE_ASSOC_COUNT) == 0) {
-			if (!ignoredAssocs.contains(associationRef.getTypeQName())) {
+			if (!ignoredAssocs.contains(associationRef.getTypeQName()) && !ignoredStoreRefs.contains(tenantService.getBaseName(associationRef.getSourceRef().getStoreRef()))) {
 				removeCachedAssoc(associationRef.getSourceRef(), associationRef.getTypeQName());
 			}
 		}
@@ -684,7 +687,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	@Override
 	public void onCreateAssociation(AssociationRef associationRef) {
 		if (TransactionalResourceHelper.getCount(UPDATE_ASSOC_COUNT) == 0) {
-			if (!ignoredAssocs.contains(associationRef.getTypeQName())) {
+			if (!ignoredAssocs.contains(associationRef.getTypeQName()) && !ignoredStoreRefs.contains(tenantService.getBaseName(associationRef.getSourceRef().getStoreRef()))) {
 				removeCachedAssoc(associationRef.getSourceRef(), associationRef.getTypeQName());
 			}
 		}
@@ -771,9 +774,13 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		childsAssocsCache.remove(new AssociationCacheRegion(nodeRef, ContentModel.ASSOC_CONTAINS));
 
 	}
-
+	
 	public <T> T getFromCache(SimpleCache<AssociationCacheRegion, T> cache, AssociationCacheRegion cacheKey, Supplier<T> callback) {
 		if (ignoredAssocs.contains(cacheKey.getAssocQName())) {
+			return callback.get();
+		}
+		
+		if (ignoredStoreRefs.contains(tenantService.getBaseName(cacheKey.getNodeRef().getStoreRef()))) {
 			return callback.get();
 		}
 
