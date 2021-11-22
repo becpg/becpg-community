@@ -13,6 +13,7 @@ import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -43,8 +44,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	@Autowired
 	@Qualifier("batchThreadPoolExecutor")
 	private ThreadPoolExecutor threadExecuter;
-	
-	private BatchMonitor lastRunningBatch;  
+
+	@Autowired
+	private TenantAdminService tenantAdminService;
+
+	private BatchMonitor lastRunningBatch;
 
 	@Override
 	public <T> Boolean queueBatch(@NonNull BatchInfo batchInfo, @NonNull BatchProcessWorkProvider<T> workProvider,
@@ -61,14 +65,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 		return false;
 	}
-	
-	
-	
+
 	@Override
 	public BatchMonitor getLastRunningBatch() {
 		return lastRunningBatch;
 	}
-
 
 	@Override
 	public List<BatchInfo> getBatchesInQueue() {
@@ -84,13 +85,12 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		return batchInfos;
 
 	}
-	
-	
+
 	@Override
 	public boolean removeBatchFromQueue(String batchId) {
 		BatchCommand<?> command = null;
 		for (Runnable batch : threadExecuter.getQueue()) {
-			if (batch instanceof BatchCommand && batchId.equals(((BatchCommand<?>) batch).getBatchId())) {
+			if ((batch instanceof BatchCommand) && batchId.equals(((BatchCommand<?>) batch).getBatchId())) {
 				command = (BatchCommand<?>) batch;
 				break;
 			}
@@ -139,7 +139,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 			boolean hasError = batchProcessor.getTotalErrors() > 0;
 
-			if (hasError && this.errorCallback != null) {
+			if (hasError && (this.errorCallback != null)) {
 
 				AuthenticationUtil.runAs(() -> {
 					return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -164,7 +164,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					}, true, false);
 				}, batchInfo.getBatchUser());
 			}
-			
+
 			batchInfo.setIsCompleted(true);
 
 		}
@@ -180,17 +180,19 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				@Override
 				public void beforeProcess() throws Throwable {
 					AuthenticationUtil.pushAuthentication();
-					
-					//		String userName = AuthenticationUtil.getSystemUserName();
-					//
-					//		if (tenantAdminService.isEnabled()) {
-					//			userName = tenantAdminService.getDomainUser(userName, tenantAdminService.getCurrentUserDomain());
-					//		}
+
+					String username = batchInfo.getBatchUser();
 					if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-						AuthenticationUtil.setRunAsUserSystem();
-					} else {
-						AuthenticationUtil.setFullyAuthenticatedUser(batchInfo.getBatchUser());
+
+						username = AuthenticationUtil.getSystemUserName();
+						if (tenantAdminService.isEnabled()) {
+							username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
+
+						}
+
 					}
+					AuthenticationUtil.setFullyAuthenticatedUser(username);
+
 					processWorker.beforeProcess();
 
 				}
@@ -203,8 +205,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				@Override
 				public void afterProcess() throws Throwable {
-					AuthenticationUtil.popAuthentication();
 					processWorker.afterProcess();
+					AuthenticationUtil.popAuthentication();
 				}
 
 			};
@@ -217,22 +219,23 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + getEnclosingInstance().hashCode();
-			result = prime * result + Objects.hash(batchId);
+			result = (prime * result) + getEnclosingInstance().hashCode();
+			result = (prime * result) + Objects.hash(batchId);
 			return result;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if ((obj == null) || (getClass() != obj.getClass())) {
 				return false;
-			if (getClass() != obj.getClass())
-				return false;
+			}
 			BatchCommand<?> other = (BatchCommand<?>) obj;
-			if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+			if (!getEnclosingInstance().equals(other.getEnclosingInstance())) {
 				return false;
+			}
 			return Objects.equals(batchId, other.batchId);
 		}
 

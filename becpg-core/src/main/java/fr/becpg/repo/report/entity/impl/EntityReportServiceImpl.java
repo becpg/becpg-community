@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,6 +69,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
+import org.graalvm.compiler.lir.constopt.ConstantTreeAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -208,7 +210,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Autowired
 	private MutexFactory mutexFactory;
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void generateReports(final NodeRef entityNodeRef) {
@@ -217,19 +219,21 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo) {
-		
+
+		ReentrantLock lock = mutexFactory.getMutex(nodeRefTo.toString());
+
 		try {
-			if (mutexFactory.getMutex(nodeRefTo.toString()).tryLock()) {
-					
+			if (lock.tryLock()) {
 				try (Scope scope = tracer.spanBuilder("reportService.GenerateReports").startScopedSpan()) {
 					internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo);
 				}
-				
 			} else {
-				mutexFactory.getMutex(nodeRefTo.toString()).lock();
+				lock.lock();
 			}
 		} finally {
-			mutexFactory.getMutex(nodeRefTo.toString()).unlock();
+			if ((lock.isHeldByCurrentThread())) {
+				lock.unlock();
+			}
 		}
 	}
 
@@ -247,7 +251,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					Locale currentLocal = I18NUtil.getLocale();
 					Locale currentContentLocal = I18NUtil.getContentLocale();
 					try {
-						
+
 						Locale defaultLocale = MLTextHelper.getNearestLocale(Locale.getDefault());
 
 						I18NUtil.setLocale(defaultLocale);
@@ -256,7 +260,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 						ruleService.disableRules();
 						policyBehaviourFilter.disableBehaviour(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
 						if (logger.isDebugEnabled()) {
-							logger.debug("Generate reports for entity: " + nodeRefFrom + " - " + nodeService.getProperty(nodeRefFrom, ContentModel.PROP_NAME));
+							logger.debug("Generate reports for entity: " + nodeRefFrom + " - "
+									+ nodeService.getProperty(nodeRefFrom, ContentModel.PROP_NAME));
 						}
 
 						List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale);
@@ -1183,7 +1188,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Merged preferences " + preferences.toString());
 				}
-				
+
 			} else {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Using reportParameters: " + reportParameters.toString());
