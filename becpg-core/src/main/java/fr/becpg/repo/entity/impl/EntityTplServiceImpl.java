@@ -93,7 +93,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 public class EntityTplServiceImpl implements EntityTplService {
 
 	private static final String ASYNC_ACTION_URL_PREFIX = "page/entity-data-lists?list=View-properties&nodeRef=%s";
-	
+
 	private static final String ENTITY_DATALIST_KEY_PREFIX = "entity-datalist-";
 
 	private static final Log logger = LogFactory.getLog(EntityTplServiceImpl.class);
@@ -360,8 +360,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@SuppressWarnings("unchecked")
 	public BatchInfo synchronizeEntities(NodeRef tplNodeRef) {
 
-		BatchInfo batchInfo = new BatchInfo( String.format("synchronizeEntities-%s",tplNodeRef.getId()), "becpg.batch.entityTpl.synchronizeEntities");
-		batchInfo.enableNotifyByMail("entitiesTemplate.synchronize", String.format(ASYNC_ACTION_URL_PREFIX,tplNodeRef.toString()));
+		BatchInfo batchInfo = new BatchInfo(String.format("synchronizeEntities-%s", tplNodeRef.getId()), "becpg.batch.entityTpl.synchronizeEntities");
+		batchInfo.enableNotifyByMail("entitiesTemplate.synchronize", String.format(ASYNC_ACTION_URL_PREFIX, tplNodeRef.toString()));
 
 		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(tplNodeRef);
 
@@ -385,140 +385,147 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
-				RepositoryEntity entityTpl = alfrescoRepository.findOne(tplNodeRef);
-
-				final Map<QName, List<? extends RepositoryEntity>> datalistsTpl = repositoryEntityDefReader.getDataLists(entityTpl);
-
-				Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews(entityTpl);
-
-				for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
-					Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
-					datalistsTpl.putAll(tmp);
-
-				}
-
-				if ((datalistsTpl != null) && !datalistsTpl.isEmpty()) {
-
-					RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
-					Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
-					Map<QName, ?> datalistViews1 = repositoryEntityDefReader.getDataListViews(entity);
-					for (Map.Entry<QName, ?> dataListViewEntry : datalistViews1.entrySet()) {
-						Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
-						datalists.putAll(tmp);
+				L2CacheSupport.doInCacheContext(() -> {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Formulate : " + entityNodeRef);
 					}
 
-					NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
+					RepositoryEntity entityTpl = alfrescoRepository.findOne(tplNodeRef);
 
-					for (Map.Entry<QName, List<? extends RepositoryEntity>> entry : datalistsTpl.entrySet()) {
-						QName dataListQName = entry.getKey();
+					final Map<QName, List<? extends RepositoryEntity>> datalistsTpl = repositoryEntityDefReader.getDataLists(entityTpl);
 
-						List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
+					Map<QName, ?> datalistViews = repositoryEntityDefReader.getDataListViews(entityTpl);
 
-						boolean update = false;
+					for (Map.Entry<QName, ?> dataListViewEntry : datalistViews.entrySet()) {
+						Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
+						datalistsTpl.putAll(tmp);
 
-						for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
-							if (entityTplPlugin.shouldSynchronizeDataList(entity, dataListQName)) {
-								entityTplPlugin.synchronizeDataList(entity, dataListItems, (List<BeCPGDataObject>) datalistsTpl.get(dataListQName));
-								update = true;
-							}
+					}
+
+					if ((datalistsTpl != null) && !datalistsTpl.isEmpty()) {
+
+						RepositoryEntity entity = alfrescoRepository.findOne(entityNodeRef);
+						Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(entity);
+						Map<QName, ?> datalistViews1 = repositoryEntityDefReader.getDataListViews(entity);
+						for (Map.Entry<QName, ?> dataListViewEntry : datalistViews1.entrySet()) {
+							Map<QName, List<? extends RepositoryEntity>> tmp = repositoryEntityDefReader.getDataLists(dataListViewEntry.getValue());
+							datalists.putAll(tmp);
 						}
 
-						if (!update) {
+						NodeRef listContainerNodeRef = alfrescoRepository.getOrCreateDataListContainer(entity);
 
-							for (RepositoryEntity dataListItemTpl : entry.getValue()) {
-								Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
+						for (Map.Entry<QName, List<? extends RepositoryEntity>> entry : datalistsTpl.entrySet()) {
+							QName dataListQName = entry.getKey();
 
-								if (!identAttrTpl.isEmpty()) {
-									boolean isFound = false;
-									// look on instance
-									for (RepositoryEntity dataListItem : dataListItems) {
+							List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
 
-										Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
-										if (identAttrTpl.equals(identAttr)) {
+							boolean update = false;
 
-											isFound = true;
-											break;
+							for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
+								if (entityTplPlugin.shouldSynchronizeDataList(entity, dataListQName)) {
+									entityTplPlugin.synchronizeDataList(entity, dataListItems,
+											(List<BeCPGDataObject>) datalistsTpl.get(dataListQName));
+									update = true;
+								}
+							}
+
+							if (!update) {
+
+								for (RepositoryEntity dataListItemTpl : entry.getValue()) {
+									Map<QName, Serializable> identAttrTpl = repositoryEntityDefReader.getIdentifierAttributes(dataListItemTpl);
+
+									if (!identAttrTpl.isEmpty()) {
+										boolean isFound = false;
+										// look on instance
+										for (RepositoryEntity dataListItem : dataListItems) {
+
+											Map<QName, Serializable> identAttr = repositoryEntityDefReader.getIdentifierAttributes(dataListItem);
+											if (identAttrTpl.equals(identAttr)) {
+
+												isFound = true;
+												break;
+											}
 										}
-									}
 
-									if (!isFound) {
-										dataListItemTpl.setName(null);
-										dataListItemTpl.setNodeRef(null);
-										dataListItemTpl.setParentNodeRef(null);
+										if (!isFound) {
+											dataListItemTpl.setName(null);
+											dataListItemTpl.setNodeRef(null);
+											dataListItemTpl.setParentNodeRef(null);
 
-										if ((dataListItemTpl instanceof CompositeDataItem)
-												&& (((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent() != null)) {
-											((CompositeDataItem<RepositoryEntity>) dataListItemTpl).setParent(findCompositeParent(
-													((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent(), dataListItems));
-										}
+											if ((dataListItemTpl instanceof CompositeDataItem)
+													&& (((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent() != null)) {
+												((CompositeDataItem<RepositoryEntity>) dataListItemTpl).setParent(findCompositeParent(
+														((CompositeDataItem<RepositoryEntity>) dataListItemTpl).getParent(), dataListItems));
+											}
 
-										if (dataListItemTpl instanceof Synchronisable) {
-											if (((Synchronisable) dataListItemTpl).isSynchronisable()) {
+											if (dataListItemTpl instanceof Synchronisable) {
+												if (((Synchronisable) dataListItemTpl).isSynchronisable()) {
+													dataListItems.add((BeCPGDataObject) dataListItemTpl);
+													update = true;
+												}
+											} else {
+												// Synchronize always
 												dataListItems.add((BeCPGDataObject) dataListItemTpl);
 												update = true;
 											}
-										} else {
-											// Synchronize always
-											dataListItems.add((BeCPGDataObject) dataListItemTpl);
-											update = true;
 										}
 									}
-								}
 
+								}
+							}
+
+							if (update) {
+								alfrescoRepository.saveDataList(listContainerNodeRef, dataListQName, dataListQName, dataListItems);
+							}
+
+						}
+
+						synchronizeTitle(entityTpl, entity);
+
+					}
+
+					// synchronize folders
+					// remove empty folders that are not in the template
+					for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
+						if ((!"DataLists".equals(folder.getName())) && folder.getType().equals(ContentModel.TYPE_FOLDER)
+								&& (nodeService.getChildByName(tplNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null)
+								&& (fileFolderService.list(folder.getNodeRef()).isEmpty())) {
+
+							if (logger.isDebugEnabled()) {
+								logger.debug("Remove folder " + folder.getName() + " of node " + entityNodeRef);
+							}
+							fileFolderService.delete(folder.getNodeRef());
+						}
+					}
+
+					// copy folders of template that are not in the entity
+					for (FileInfo folder : fileFolderService.listFolders(tplNodeRef)) {
+						if ((!"DataLists".equals(folder.getName())) && folder.getType().equals(ContentModel.TYPE_FOLDER)
+								&& (nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null)) {
+
+							if (logger.isDebugEnabled()) {
+								logger.debug("Copying folder " + folder.getName() + " to node " + entityNodeRef);
+							}
+
+							try {
+								fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
+							} catch (FileExistsException | FileNotFoundException e) {
+								logger.warn("Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
 							}
 						}
-
-						if (update) {
-							alfrescoRepository.saveDataList(listContainerNodeRef, dataListQName, dataListQName, dataListItems);
-						}
-
 					}
 
-					synchronizeTitle(entityTpl, entity);
-
-				}
-
-				// synchronize folders
-				// remove empty folders that are not in the template
-				for (FileInfo folder : fileFolderService.listFolders(entityNodeRef)) {
-					if ((!"DataLists".equals(folder.getName())) && folder.getType().equals(ContentModel.TYPE_FOLDER)
-							&& (nodeService.getChildByName(tplNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null)
-							&& (fileFolderService.list(folder.getNodeRef()).isEmpty())) {
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Remove folder " + folder.getName() + " of node " + entityNodeRef);
-						}
-						fileFolderService.delete(folder.getNodeRef());
-					}
-				}
-
-				// copy folders of template that are not in the entity
-				for (FileInfo folder : fileFolderService.listFolders(tplNodeRef)) {
-					if ((!"DataLists".equals(folder.getName())) && folder.getType().equals(ContentModel.TYPE_FOLDER)
-							&& (nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, folder.getName()) == null)) {
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Copying folder " + folder.getName() + " to node " + entityNodeRef);
-						}
-
-						try {
-							fileFolderService.copy(folder.getNodeRef(), entityNodeRef, null);
-						} catch (FileExistsException | FileNotFoundException e) {
-							logger.warn("Unable to synchronize folder " + folder.getName() + " of node " + entityNodeRef + ": " + e.getMessage());
+					// synchronize aspects
+					// copy missing aspects
+					Set<QName> aspects = nodeService.getAspects(tplNodeRef);
+					for (QName aspect : aspects) {
+						if (!nodeService.hasAspect(entityNodeRef, aspect) && !ignoreAspect(aspect)) {
+							nodeService.addAspect(entityNodeRef, aspect, null);
 						}
 					}
-				}
 
-				// synchronize aspects
-				// copy missing aspects
-				Set<QName> aspects = nodeService.getAspects(tplNodeRef);
-				for (QName aspect : aspects) {
-					if (!nodeService.hasAspect(entityNodeRef, aspect) && !ignoreAspect(aspect)) {
-						nodeService.addAspect(entityNodeRef, aspect, null);
-					}
-				}
+				}, false, true);
 			}
-
 		};
 
 		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
@@ -532,12 +539,11 @@ public class EntityTplServiceImpl implements EntityTplService {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
 
 		for (AssociationRef assocRef : assocRefs) {
-			if (!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION)
-					&& !tplNodeRef.equals(assocRef.getSourceRef())) {
+			if (!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION) && !tplNodeRef.equals(assocRef.getSourceRef())) {
 				entityNodeRefs.add(assocRef.getSourceRef());
 			}
 		}
-		
+
 		return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
 	}
 
@@ -602,8 +608,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@Override
 	public BatchInfo formulateEntities(NodeRef tplNodeRef) {
 
-		BatchInfo batchInfo = new BatchInfo( String.format("formulateEntities-%s",tplNodeRef.getId()), "becpg.batch.entityTpl.formulateEntities");
-		batchInfo.enableNotifyByMail("entitiesTemplate.formulate", String.format(ASYNC_ACTION_URL_PREFIX,tplNodeRef.toString()));
+		BatchInfo batchInfo = new BatchInfo(String.format("formulateEntities-%s", tplNodeRef.getId()), "becpg.batch.entityTpl.formulateEntities");
+		batchInfo.enableNotifyByMail("entitiesTemplate.formulate", String.format(ASYNC_ACTION_URL_PREFIX, tplNodeRef.toString()));
 		batchInfo.setRunAsSystem(true);
 
 		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(tplNodeRef);
@@ -742,8 +748,8 @@ public class EntityTplServiceImpl implements EntityTplService {
 	@Override
 	public void removeDataListOnEntities(NodeRef entityTplNodeRef, String entityListName) {
 
-		BatchInfo batchInfo = new BatchInfo( String.format("removeDataList-%s",entityTplNodeRef.getId()), "becpg.batch.entityTpl.removeDataList");
-		batchInfo.enableNotifyByMail("entitiesTemplate.removeDataList", String.format(ASYNC_ACTION_URL_PREFIX,entityTplNodeRef.toString()));
+		BatchInfo batchInfo = new BatchInfo(String.format("removeDataList-%s", entityTplNodeRef.getId()), "becpg.batch.entityTpl.removeDataList");
+		batchInfo.enableNotifyByMail("entitiesTemplate.removeDataList", String.format(ASYNC_ACTION_URL_PREFIX, entityTplNodeRef.toString()));
 
 		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(entityTplNodeRef);
 
