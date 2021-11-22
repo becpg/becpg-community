@@ -88,7 +88,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		
 		cleanTemporaryNodes(maxProcessedNodes);
 		
-		covnertOldVersions(maxProcessedNodes);
+		convertOldVersions(maxProcessedNodes);
 		
 		return true;
 	}
@@ -230,9 +230,9 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 		}
 
-	private void covnertOldVersions(int maxProcessedNodes) {
+	private void convertOldVersions(int maxProcessedNodes) {
 		
-		BatchInfo batchInfo = new BatchInfo("covnertOldVersions", "becpg.batch.versionCleaner.covnertOldVersions");
+		BatchInfo batchInfo = new BatchInfo("convertOldVersions", "becpg.batch.versionCleaner.convertOldVersions");
 		batchInfo.setRunAsSystem(true);
 	
 		BatchProcessWorkProvider<NodeRef> workProvider = createCovnertOldVersionsProcessWorkProvider(maxProcessedNodes);
