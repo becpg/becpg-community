@@ -66,6 +66,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
@@ -162,6 +163,10 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	
 	@Autowired
 	private LockService lockService;
+	
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
+
 	
 	/** {@inheritDoc} */
 	@Override
@@ -990,7 +995,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				
 				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
 				
-				exporterService.exportView(new VersionExporter(entityNodeRef, versionNode, dbNodeService), crawlerParameters,
+				exporterService.exportView(new VersionExporter(entityNodeRef, versionNode, dbNodeService, entityDictionaryService), crawlerParameters,
 						null);
 				
 				entityFormatService.setEntityFormat(versionNode, EntityFormat.JSON);
@@ -1295,7 +1300,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
 
 				// reconstructs the folder hierarchy
-				exporterService.exportView(new VersionExporter(versionNodeRef, entity, nodeService), crawlerParameters, null);
+				exporterService.exportView(new VersionExporter(versionNodeRef, entity, nodeService, entityDictionaryService), crawlerParameters, null);
 
 				entityFormatService.createOrUpdateEntityFromJson(entity, entityJson);
 

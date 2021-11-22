@@ -5,12 +5,15 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.model.RenditionModel;
 import org.alfresco.repo.content.MimetypeMap;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -41,6 +44,7 @@ import fr.becpg.model.BeCPGModel.EntityFormat;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
@@ -49,6 +53,7 @@ import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.entity.version.VersionExporter;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service("entityFormatService")
 public class EntityFormatServiceImpl implements EntityFormatService {
@@ -87,6 +92,12 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	
 	@Autowired
 	private NodeService nodeService;
+	
+	@Autowired
+	private IntegrityChecker integrityChecker;
+	
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
 	
 	private static final Log logger = LogFactory.getLog(EntityFormatServiceImpl.class);
 
@@ -307,59 +318,65 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	@Override
 	public void convert(final NodeRef from, final NodeRef to, EntityFormat toFormat) {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
-			ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
-			
-			Location exportFrom = new Location(from);
-			crawlerParameters.setExportFrom(exportFrom);
-			
-			crawlerParameters.setCrawlSelf(true);
-			crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION,
-					BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS });
-			
-			crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
-			
-			exporterService.exportView(new VersionExporter(from, to, dbNodeService), crawlerParameters, null);
-			
-			return null;
-		}, false, true);
+		integrityChecker.setEnabled(false);
 		
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		try {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				
+				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
+				
+				Location exportFrom = new Location(from);
+				crawlerParameters.setExportFrom(exportFrom);
+				
+				crawlerParameters.setCrawlSelf(true);
+				crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION,
+						BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS });
+				
+				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
+				
+				exporterService.exportView(new VersionExporter(from, to, dbNodeService, entityDictionaryService), crawlerParameters, null);
+				
+				return null;
+			}, false, true);
 			
-			String fromName = (String) dbNodeService.getProperty(from, ContentModel.PROP_NAME);
-			dbNodeService.setProperty(to, ContentModel.PROP_NAME, fromName);
-			
-			String versionLabel = (String) dbNodeService.getProperty(to, BeCPGModel.PROP_VERSION_LABEL);
-			dbNodeService.setProperty(to, ContentModel.PROP_VERSION_LABEL, versionLabel);
-			
-			setEntityData(to, extractEntityData(from, toFormat));
-			
-			setEntityFormat(to, toFormat);
-			
-			return null;
-			
-		}, false, true);
-		
-		AuthenticationUtil.runAs(() -> {
 			
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				
-				entityReportService.generateReports(from, to);
+				String fromName = (String) dbNodeService.getProperty(from, ContentModel.PROP_NAME);
+				dbNodeService.setProperty(to, ContentModel.PROP_NAME, fromName);
+				
+				String versionLabel = (String) dbNodeService.getProperty(to, BeCPGModel.PROP_VERSION_LABEL);
+				dbNodeService.setProperty(to, ContentModel.PROP_VERSION_LABEL, versionLabel);
+				
+				setEntityData(to, extractEntityData(from, toFormat));
+				
+				setEntityFormat(to, toFormat);
 				
 				return null;
 				
 			}, false, true);
-			return null;
-		}, AuthenticationUtil.getAdminUserName());
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			dbNodeService.deleteNode(from);
-			return null;
-
-		}, false, true);
+			
+			AuthenticationUtil.runAs(() -> {
+				
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					
+					entityReportService.generateReports(from, to);
+					
+					return null;
+					
+				}, false, true);
+				return null;
+			}, AuthenticationUtil.getAdminUserName());
+			
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				
+				dbNodeService.deleteNode(from);
+				return null;
+				
+			}, false, true);
+		} finally {
+			integrityChecker.setEnabled(true);
+		}
 
 	}
 
@@ -438,6 +455,28 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			}
 		}
 		
+		for (NodeRef source : associationService.getSourcesAssocs(node, QName.createQName(BeCPGModel.BECPG_URI, "packagingListProduct"))) {
+			NodeRef datalistFolder = nodeService.getPrimaryParent(source).getParentRef();
+			NodeRef entitylistFolder = nodeService.getPrimaryParent(datalistFolder).getParentRef();
+			NodeRef parentProduct = nodeService.getPrimaryParent(entitylistFolder).getParentRef();
+			
+			if (nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					&& !nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_ENTITY_FORMAT)
+					&& !nodeService.hasAspect(parentProduct, ContentModel.ASPECT_TEMPORARY)) {
+				return null;
+			}
+		}
+		
+		for (NodeRef toMove : getContainedEntities(node)) {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				NodeRef rootNode = nodeService.getRootNode(RepoConsts.SPACES_STORE);
+				NodeRef importToDoNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode,RemoteEntityService.FULL_PATH_IMPORT_TO_DO);
+				NodeRef parent = nodeService.createNode(importToDoNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER).getChildRef();
+				
+				return nodeService.moveNode(toMove, parent, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+			}, false, true);
+		}
+		
 		String versionLabel = (String) dbNodeService.getProperty(node, BeCPGModel.PROP_VERSION_LABEL);
 		
 		NodeRef parentNode = dbNodeService.getPrimaryParent(node).getParentRef();
@@ -458,6 +497,20 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		return null;
 
+	}
+
+	private Set<NodeRef> getContainedEntities(NodeRef node) {
+		
+		Set<NodeRef> result = new HashSet<>();
+		
+		for (NodeRef assocNodeRef : associationService.getChildAssocs(node, ContentModel.ASSOC_CONTAINS)) {
+			if (entityDictionaryService.isSubClass(nodeService.getType(assocNodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+				result.add(assocNodeRef);
+			}
+			result.addAll(getContainedEntities(assocNodeRef));
+		}
+		
+		return result;
 	}
 
 }
