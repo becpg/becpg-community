@@ -19,12 +19,16 @@ package fr.becpg.repo.entity.policy;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.batch.BatchProcessWorkProvider;
+import org.alfresco.repo.batch.BatchProcessor;
+import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.node.NodeArchiveServicePolicies;
 import org.alfresco.repo.node.NodeArchiveServicePolicies.BeforePurgeNodePolicy;
@@ -45,9 +49,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
+import fr.becpg.repo.report.entity.EntityReportService;
 
 /**
  * <p>EntityCheckOutCheckInServicePolicy class.</p>
@@ -64,7 +71,9 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 
 	private EntityVersionService entityVersionService;
 
-	private EntityReportAsyncGenerator entityReportAsyncGenerator;
+	private EntityReportService entityReportService;
+	
+	private BatchQueueService batchQueueService;
 
 	private RuleService ruleService;
 	
@@ -86,13 +95,14 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		this.entityVersionService = entityVersionService;
 	}
 
-	/**
-	 * <p>Setter for the field <code>entityReportAsyncGenerator</code>.</p>
-	 *
-	 * @param entityReportAsyncGenerator a {@link fr.becpg.repo.report.entity.EntityReportAsyncGenerator} object.
-	 */
-	public void setEntityReportAsyncGenerator(EntityReportAsyncGenerator entityReportAsyncGenerator) {
-		this.entityReportAsyncGenerator = entityReportAsyncGenerator;
+	
+
+	public void setEntityReportService(EntityReportService entityReportService) {
+		this.entityReportService = entityReportService;
+	}
+
+	public void setBatchQueueService(BatchQueueService batchQueueService) {
+		this.batchQueueService = batchQueueService;
 	}
 
 	/**
@@ -201,7 +211,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 			// If we are permanently deleting the node then we need to
 			// remove
 			// the associated version history
-			if (isNodeArchived == false)
+			if (!isNodeArchived )
 	        {
 				entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
 	        }
@@ -245,7 +255,32 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 	/** {@inheritDoc} */
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
-		entityReportAsyncGenerator.queueNodes(new ArrayList<>(pendingNodes), false);
+		
+
+		BatchInfo batchInfo = new BatchInfo(String.format("generateVersionReports-%s", Calendar.getInstance().getTimeInMillis()),
+				"becpg.batch.entityVersion.generateReports");
+		batchInfo.setRunAsSystem(true);
+
+		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList(pendingNodes));
+
+		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+
+			@Override
+			public void process(NodeRef entityNodeRef) throws Throwable {
+
+				NodeRef extractedNode = entityNodeRef;
+				if (entityVersionService.isVersion(entityNodeRef)
+						&& (nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
+					extractedNode = entityVersionService.extractVersion(entityNodeRef);
+				}
+
+				entityReportService.generateReports(extractedNode, entityNodeRef);
+
+			}
+		};
+
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
+		
 	}
 
 	/** {@inheritDoc} */

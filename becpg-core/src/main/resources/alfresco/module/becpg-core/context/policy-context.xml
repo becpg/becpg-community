@@ -21,11 +21,12 @@
 <beans>
 
    <!-- Override Alfresco bean -->
-   <bean id="incompleteNodeTagger" class="org.alfresco.repo.node.integrity.IncompleteNodeTagger" ></bean>
+	<bean id="incompleteNodeTagger" class="org.alfresco.repo.node.integrity.IncompleteNodeTagger" />
 
 
 	<!-- Entity Policies -->
-	<bean id="abstractBeCPGPolicy" abstract="true" class="fr.becpg.repo.policy.AbstractBeCPGPolicy" init-method="init" depends-on="bcpg.dictionaryBootstrap">
+	<bean id="abstractBeCPGPolicy" abstract="true" class="fr.becpg.repo.policy.AbstractBeCPGPolicy" init-method="init"
+		depends-on="bcpg.dictionaryBootstrap">
 		<property name="policyComponent" ref="policyComponent" />
 		<property name="policyBehaviourFilter" ref="policyBehaviourFilter" />
 		<property name="nodeService" ref="nodeService" />
@@ -36,18 +37,18 @@
 	<bean id="codePolicy" class="fr.becpg.repo.entity.policy.CodePolicy" parent="abstractBeCPGPolicy">
 		<property name="autoNumService" ref="autoNumService" />
 	</bean>
-	
+
 	<bean id="dynListPolicy" class="fr.becpg.repo.dictionary.constraint.DynListPolicy" parent="abstractBeCPGPolicy">
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
-	
-	
+
+
 	<bean id="emailAliasablePolicy" class="fr.becpg.repo.entity.policy.EmailAliasablePolicy" parent="abstractBeCPGPolicy" />
-	
+
 	<bean id="docLinkedEntitiesPolicy" class="fr.becpg.repo.entity.policy.DocLinkedEntitiesPolicy" parent="abstractBeCPGPolicy">
 		<property name="entityService" ref="entityService" />
-		<property name="associationService" ref="associationService"/>
+		<property name="associationService" ref="associationService" />
 	</bean>
 
 
@@ -60,22 +61,25 @@
 		<property name="entityDictionaryService" ref="cachedDictionaryService" />
 	</bean>
 
-	<bean id="entityCheckOutCheckInServicePolicy" class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy" parent="abstractBeCPGPolicy">
+	<bean id="entityCheckOutCheckInServicePolicy" class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy"
+		parent="abstractBeCPGPolicy">
 		<property name="entityVersionService" ref="entityVersionService" />
-		<property name="entityReportAsyncGenerator" ref="entityReportAsyncGenerator" />
-		<property name="ruleService" ref="ruleService"/>
+		<property name="entityReportService" ref="entityReportService" />
+		<property name="batchQueueService" ref="batchQueueService" />
+		<property name="ruleService" ref="ruleService" />
 	</bean>
 
 
-	<bean id="deleteAndRestoreEntityPolicy" class="fr.becpg.repo.entity.policy.DeleteAndRestoreEntityPolicy" init-method="init" parent="abstractBeCPGPolicy">
+	<bean id="deleteAndRestoreEntityPolicy" class="fr.becpg.repo.entity.policy.DeleteAndRestoreEntityPolicy" init-method="init"
+		parent="abstractBeCPGPolicy">
 		<property name="remoteEntityService" ref="remoteEntityService" />
 		<property name="contentService" ref="contentService" />
-		<property name="nodeDAO" ref="nodeDAO"/>
-		<property name="entityDictionaryService" ref="entityDictionaryService"/>
-		<property name="dictionaryService" ref="cachedDictionaryService"/>
-		<property name="attributeExtractorService" ref="attributeExtractorService"/>
-		<property name="entityListDAO" ref="entityListDAO"/>
-		<property name="tenantService" ref="tenantService"/>
+		<property name="nodeDAO" ref="nodeDAO" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+		<property name="dictionaryService" ref="cachedDictionaryService" />
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="tenantService" ref="tenantService" />
 	</bean>
 
 
@@ -97,7 +101,7 @@
 
 
    	<!-- Variant -->
-	<bean id="variantPolicy" class="fr.becpg.repo.variant.policy.VariantPolicy" parent="abstractBeCPGPolicy" >
+	<bean id="variantPolicy" class="fr.becpg.repo.variant.policy.VariantPolicy" parent="abstractBeCPGPolicy">
 		<property name="copyService" ref="copyService" />
 		<property name="entityListDAO" ref="entityListDAO" />
 	</bean>

@@ -6,6 +6,7 @@ package fr.becpg.repo.web.scripts.admin;
 import java.io.IOException;
 import java.util.List;
 
+import org.alfresco.repo.batch.BatchMonitor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -57,7 +58,16 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 				jsonBatch.put("batchDesc",label!=null ? label :  batch.getBatchDescId());
 				jsonBatches.put(jsonBatch);
 			}
-			ret.put("batches", jsonBatches);
+			ret.put("queue", jsonBatches);
+			
+			BatchMonitor lastRunningBatch = batchQueueService.getLastRunningBatch();
+			
+			if(lastRunningBatch!=null) {
+				JSONObject last = new JSONObject();
+				last.put("batchId", lastRunningBatch.getProcessName());
+				last.put("percentCompleted", lastRunningBatch.getPercentComplete());
+				ret.put("last", last);
+			}
 
 			resp.setContentType("application/json");
 			resp.setContentEncoding("UTF-8");
