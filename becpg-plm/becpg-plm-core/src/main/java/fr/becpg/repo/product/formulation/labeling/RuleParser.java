@@ -222,14 +222,6 @@ public abstract class RuleParser {
 						showGeoRules.put(component, new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales));
 					}
 				}
-			} else if (LabelingRuleType.ShowBio.equals(labeLabelingRuleType)) {
-				if (components.isEmpty()) {
-					showAllBio = new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales);
-				} else {
-					for (NodeRef component : components) {
-						showBioRules.put(component, new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales));
-					}
-				}
 			} else if (LabelingRuleType.Type.equals(labeLabelingRuleType)
 					|| ((((components != null) && (components.size() > 1)) || ((replacement != null) && !replacement.isEmpty()))
 							&& (LabelingRuleType.Detail.equals(labeLabelingRuleType) || LabelingRuleType.Group.equals(labeLabelingRuleType)
