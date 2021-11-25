@@ -529,7 +529,7 @@ public class EntityReportParameters {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "EntityReportParameters [iterationKey=" + iterationKey + ", parameters=" + parameters + "]";
+		return "EntityReportParameters [iterationKey=" + iterationKey + ", parameters=" + parameters + ", preferences=" + preferences + "]";
 	}
 
 	

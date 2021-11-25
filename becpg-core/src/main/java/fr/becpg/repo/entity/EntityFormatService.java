@@ -46,5 +46,7 @@ public interface EntityFormatService {
 
 	public NodeRef convertVersionHistoryNodeRef(NodeRef from);
 
+	public boolean checkWhereUsedBeforeConversion(NodeRef notConvertedNode);
+
 
 }

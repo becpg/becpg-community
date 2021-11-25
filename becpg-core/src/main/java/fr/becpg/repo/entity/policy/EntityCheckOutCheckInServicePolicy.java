@@ -35,12 +35,11 @@ import org.alfresco.repo.node.NodeArchiveServicePolicies.BeforePurgeNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionServicePolicies;
+import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.namespace.NamespaceService;
@@ -261,7 +260,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 				"becpg.batch.entityVersion.generateReports");
 		batchInfo.setRunAsSystem(true);
 
-		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList(pendingNodes));
+		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(pendingNodes));
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
@@ -299,7 +298,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 	@Override
 	public void afterCreateVersion(NodeRef versionableNode, Version version) {
 		if (entityVersionService.isV2Service()) {
-			queueNode(new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, version.getFrozenStateNodeRef().getId()));
+			queueNode(VersionUtil.convertNodeRef(version.getFrozenStateNodeRef()));
 		}
 	}
 

@@ -1625,18 +1625,20 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Boolean isDefault = null;
 			String variantNames = "";
 			for (NodeRef variantNodeRef : variantNodeRefs) {
-				if (isDefault != null) {
-					variantNames += ",";
-				}
-
-				variantNames += ((String) nodeService.getProperty(variantNodeRef, ContentModel.PROP_NAME));
-
-				if ((isDefault == null) || !isDefault) {
-					isDefault = (Boolean) nodeService.getProperty(variantNodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT);
-				}
-
-				if (isDefault == null) {
-					isDefault = false;
+				if (nodeService.exists(variantNodeRef)) {
+					if (isDefault != null) {
+						variantNames += ",";
+					}
+					
+					variantNames += ((String) nodeService.getProperty(variantNodeRef, ContentModel.PROP_NAME));
+					
+					if ((isDefault == null) || !isDefault) {
+						isDefault = (Boolean) nodeService.getProperty(variantNodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT);
+					}
+					
+					if (isDefault == null) {
+						isDefault = false;
+					}
 				}
 
 			}

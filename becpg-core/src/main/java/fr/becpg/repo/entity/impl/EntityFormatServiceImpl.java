@@ -15,7 +15,7 @@ import org.alfresco.model.RenditionModel;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -443,28 +443,8 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	@Override
 	public NodeRef convertVersionHistoryNodeRef(NodeRef node) {
 		
-		for (NodeRef source : associationService.getSourcesAssocs(node, QName.createQName(BeCPGModel.BECPG_URI, "compoListProduct"))) {
-			NodeRef datalistFolder = nodeService.getPrimaryParent(source).getParentRef();
-			NodeRef entitylistFolder = nodeService.getPrimaryParent(datalistFolder).getParentRef();
-			NodeRef parentProduct = nodeService.getPrimaryParent(entitylistFolder).getParentRef();
-
-			if (nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-					&& !nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_ENTITY_FORMAT)
-					&& !nodeService.hasAspect(parentProduct, ContentModel.ASPECT_TEMPORARY)) {
-				return null;
-			}
-		}
-		
-		for (NodeRef source : associationService.getSourcesAssocs(node, QName.createQName(BeCPGModel.BECPG_URI, "packagingListProduct"))) {
-			NodeRef datalistFolder = nodeService.getPrimaryParent(source).getParentRef();
-			NodeRef entitylistFolder = nodeService.getPrimaryParent(datalistFolder).getParentRef();
-			NodeRef parentProduct = nodeService.getPrimaryParent(entitylistFolder).getParentRef();
-			
-			if (nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-					&& !nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_ENTITY_FORMAT)
-					&& !nodeService.hasAspect(parentProduct, ContentModel.ASPECT_TEMPORARY)) {
-				return null;
-			}
+		if (!checkWhereUsedBeforeConversion(node)) {
+			return null;
 		}
 		
 		for (NodeRef toMove : getContainedEntities(node)) {
@@ -488,7 +468,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		VersionHistory versionHistory = dbNodeService.exists(originalNode) ? versionService.getVersionHistory(originalNode) : null;
 		
 		if (versionHistory != null) {
-			NodeRef versionNode = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, versionHistory.getVersion(versionLabel).getFrozenStateNodeRef().getId());
+			NodeRef versionNode = VersionUtil.convertNodeRef(versionHistory.getVersion(versionLabel).getFrozenStateNodeRef());
 			
 			convert(node, versionNode, EntityFormat.JSON);
 			
@@ -511,6 +491,34 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		}
 		
 		return result;
+	}
+	
+	@Override
+	public boolean checkWhereUsedBeforeConversion(NodeRef notConvertedNode) {
+		return checkWhereUsed(notConvertedNode, QName.createQName(BeCPGModel.BECPG_URI, "compoListProduct"))
+				&& checkWhereUsed(notConvertedNode, QName.createQName(BeCPGModel.BECPG_URI, "packagingListProduct"))
+				&& checkWhereUsed(notConvertedNode, QName.createQName("http://www.bcpg.fr/model/mpm/1.0", "plResource"));
+	}
+
+	private boolean checkWhereUsed(NodeRef notConvertedNode, QName assocSourceName) {
+		
+		for (NodeRef source : associationService.getSourcesAssocs(notConvertedNode, assocSourceName)) {
+			NodeRef datalistFolder = nodeService.getPrimaryParent(source).getParentRef();
+			NodeRef entitylistFolder = nodeService.getPrimaryParent(datalistFolder).getParentRef();
+			NodeRef parentProduct = nodeService.getPrimaryParent(entitylistFolder).getParentRef();
+			
+			if (nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					&& !nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_ENTITY_FORMAT)
+					&& !nodeService.hasAspect(parentProduct, ContentModel.ASPECT_TEMPORARY)) {
+				
+				String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
+				String parentName = (String) nodeService.getProperty(parentProduct, ContentModel.PROP_NAME);
+				logger.info("Couldn't convert entity '" + name + "' because it is used by entity '" + parentName + "' which needs to be converted first.");
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 }
