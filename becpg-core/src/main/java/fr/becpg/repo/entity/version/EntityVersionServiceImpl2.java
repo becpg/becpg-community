@@ -25,6 +25,7 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.repo.version.common.VersionImpl;
+import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.AssociationExistsException;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -339,8 +340,14 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			Map<QName, Serializable> aspectProperties = new HashMap<>();
 			aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 			nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-			createVersion(entityNodeRef, versionProperties);
-
+			NodeRef versionNode = createVersion(entityNodeRef, versionProperties);
+			
+			// we need to retrieve the AUDITABLE properties because Version2ServiceImpl only freezes these properties
+			nodeService.setProperty(versionNode, ContentModel.PROP_CREATED, nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
+			nodeService.setProperty(versionNode, ContentModel.PROP_CREATOR, nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR));
+			nodeService.setProperty(versionNode, ContentModel.PROP_MODIFIED, nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED));
+			nodeService.setProperty(versionNode, ContentModel.PROP_MODIFIER, nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIER));
+			nodeService.setProperty(versionNode, ContentModel.PROP_ACCESSED, nodeService.getProperty(entityNodeRef, ContentModel.PROP_ACCESSED));
 		}
 	}
 
@@ -363,7 +370,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			
 			createVersion(entityNodeRef, versionProperties);
 			
-			NodeRef initialVersion = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, versionService.getVersionHistory(entityNodeRef).getVersion(RepoConsts.INITIAL_VERSION).getFrozenStateNodeRef().getId());
+			NodeRef initialVersion = VersionUtil.convertNodeRef(versionService.getVersionHistory(entityNodeRef).getVersion(RepoConsts.INITIAL_VERSION).getFrozenStateNodeRef());
 			
 			String name = (String) nodeService.getProperty(initialVersion, ContentModel.PROP_NAME);
 			
@@ -463,7 +470,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityVersion(Version version) {
-		return new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, version.getFrozenStateNodeRef().getId());
+		return VersionUtil.convertNodeRef(version.getFrozenStateNodeRef());
 	}
 
 	/** {@inheritDoc} */
@@ -1021,7 +1028,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 				entityActivityService.postVersionActivity(entityNodeRef, newVersion.getVersionedNodeRef(), newVersion.getVersionLabel());
 
-				return newVersion.getVersionedNodeRef();
+				return VersionUtil.convertNodeRef(newVersion.getFrozenStateNodeRef());
 
 			} finally {
 				if (logger.isDebugEnabled() && (watch != null)) {
