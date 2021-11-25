@@ -201,7 +201,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 			// If we are permanently deleting the node then we need to
 			// remove
 			// the associated version history
-			if (isNodeArchived == false)
+			if (!isNodeArchived )
 	        {
 				entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
 	        }
@@ -264,7 +264,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 	@Override
 	public void afterCreateVersion(NodeRef versionableNode, Version version) {
 		if (entityVersionService.isV2Service()) {
-			queueNode(new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, version.getFrozenStateNodeRef().getId()));
+			queueNode(VersionUtil.convertNodeRef(version.getFrozenStateNodeRef()));
 		}
 	}
 
