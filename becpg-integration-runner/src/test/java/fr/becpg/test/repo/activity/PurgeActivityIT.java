@@ -383,7 +383,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	 *           NB. we talk here about activities after the first page (>50).
 	 */
 	@Test
-	public void mergeActivitiesByDayForTheLastWeekTest() {
+	public void mergeActivitiesByDayForTheLastWeekTest() throws InterruptedException {
 		// Create FP
 		NodeRef finishedProductNodeRef = createFinishedProduct();
 
@@ -446,7 +446,8 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		logger.info("Activities number before clean : " + getActivities(finishedProductNodeRef, null).size());
 
 		// clean activities
-		entityActivityService.cleanActivities();
+		BatchInfo batch = entityActivityService.cleanActivities();
+		waitForBatchEnd(batch);
 
 		List<NodeRef> activityNodeRefs = getActivities(finishedProductNodeRef, SORT_MAP);
 		Collections.reverse(activityNodeRefs);
