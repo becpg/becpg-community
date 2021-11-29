@@ -10,6 +10,7 @@
     <#include "../../modules/entity-datagrid/include/entity-datagrid.js.ftl"/>
     <@script src="${url.context}/res/modules/custom-entity-datagrid/product-columnRenderers.js" group="entity-datalists" />
     <@script src="${url.context}/res/components/form/date-range.js" group="nc-list"/>
+    <@script src="${url.context}/res/js/async-download.js" group="nc-list"/>
 	<@script src="${url.context}/res/components/quality/nc-list.js" group="nc-list"/>
 	<@script src="${url.context}/res/components/comments/comments-list.js" group="comments"/>
 </@>

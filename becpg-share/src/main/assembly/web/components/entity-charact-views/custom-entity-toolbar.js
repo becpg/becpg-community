@@ -37,10 +37,10 @@
                            name : "beCPG.module.EntityDataGrid"
                         })[0];
 
-                        var PAGE_SIZE = 5000;
-                        
-                        document.location.href = dt._getDataUrl(PAGE_SIZE) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
-                              .stringify(dt._buildDataGridParams({"filter":dt.currentFilter})));
+					   var MAX_RESULTS_UNLIMITED = -1;
+							
+ 					   beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx", dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+                              .stringify(dt._buildDataGridParams({"filter":dt.currentFilter}))));  
 
                      }
                   });

@@ -10,7 +10,7 @@
    <#-- JavaScript Dependencies --> 
     <@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/doclib-actions.js" group="entity-datalists"/> 
     <@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/entity-toolbar.js" group="entity-datalists"/>
-    
+    <@script type="text/javascript" src="${url.context}/res/js/async-download.js" group="entity-datalists"/>
 </@>
 
 <@markup id="widgets">

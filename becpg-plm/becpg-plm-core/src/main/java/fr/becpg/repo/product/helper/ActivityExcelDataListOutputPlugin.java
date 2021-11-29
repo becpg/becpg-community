@@ -53,18 +53,19 @@ public class ActivityExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 	/** {@inheritDoc} */
 	@Override
 	public List<Map<String, Object>> decorate(List<Map<String, Object>> items) throws IOException {
-		try {
+		if (items != null) {
+			try {
 
-			Map<String, JSONArray> subCache = new HashMap<>();
+				Map<String, JSONArray> subCache = new HashMap<>();
 
-			for (Map<String, Object> item : items) {
-				decorate(item, subCache);
+				for (Map<String, Object> item : items) {
+					decorate(item, subCache);
+				}
+
+			} catch (JSONException e) {
+				throw new WebScriptException("Unable to parse JSON", e);
 			}
-
-		} catch (JSONException e) {
-			throw new WebScriptException("Unable to parse JSON", e);
 		}
-
 		return items;
 	}
 
@@ -77,38 +78,43 @@ public class ActivityExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 				if (item.getValue() != null) {
 					if (item.getKey().equals("prop_bcpg_alData") && item.getValue() instanceof JSONObject) {
 						JSONObject data = (JSONObject) item.getValue();
-						if(data.has("title") || activityType.equals(I18NUtil.getMessage("entity.activity.type.datalist"))){
+						if (data.has("title") || activityType.equals(I18NUtil.getMessage("entity.activity.type.datalist"))) {
 							String className = data.has("className") ? data.getString("className") : "entity";
 							String title = data.has("title") ? data.getString("title") : "";
 							String activityEvent = data.has("activityEvent") ? data.getString("activityEvent").toLowerCase() : "";
-							if(activityType.equals(I18NUtil.getMessage("entity.activity.type.state"))){
-								title = I18NUtil.getMessage("entity.activity.state.change", title, I18NUtil.getMessage("data.state." +data.getString("beforeState").toLowerCase()), I18NUtil.getMessage("data.state."+data.getString("afterState").toLowerCase()));
-							} else if (activityType.equals(I18NUtil.getMessage("entity.activity.type.datalist"))){
-								if (!data.has("title") || data.getString("title").indexOf(className)>0){
-									title = I18NUtil.getMessage("entity.activity.datalist.simple", I18NUtil.getMessage("data.list."+className));
-								} else{
-									title = I18NUtil.getMessage("entity.activity.datalist."+activityEvent, title, I18NUtil.getMessage("data.list."+className) );
+							if (activityType.equals(I18NUtil.getMessage("entity.activity.type.state"))) {
+								title = I18NUtil.getMessage("entity.activity.state.change", title,
+										I18NUtil.getMessage("data.state." + data.getString("beforeState").toLowerCase()),
+										I18NUtil.getMessage("data.state." + data.getString("afterState").toLowerCase()));
+							} else if (activityType.equals(I18NUtil.getMessage("entity.activity.type.datalist"))) {
+								if (!data.has("title") || data.getString("title").indexOf(className) > 0) {
+									title = I18NUtil.getMessage("entity.activity.datalist.simple", I18NUtil.getMessage("data.list." + className));
+								} else {
+									title = I18NUtil.getMessage("entity.activity.datalist." + activityEvent, title,
+											I18NUtil.getMessage("data.list." + className));
 								}
-							} else if(activityType.equals(I18NUtil.getMessage("entity.activity.type.entity"))){
-								title  = I18NUtil.getMessage("entity.activity.entity", title);
+							} else if (activityType.equals(I18NUtil.getMessage("entity.activity.type.entity"))) {
+								title = I18NUtil.getMessage("entity.activity.entity", title);
 							} else if (activityType.equals(I18NUtil.getMessage("entity.activity.type.formulation"))) {
-								title  = I18NUtil.getMessage("entity.activity.formulation", title);
-							} else if (activityType.equals(I18NUtil.getMessage("entity.activity.type.report"))){
-								title  = I18NUtil.getMessage("entity.activity.report", title);
-							} else if(activityType.equals(I18NUtil.getMessage("entity.activity.type.comment"))){
-								title  = I18NUtil.getMessage("entity.activity.comment."+activityEvent, title)
-										+ (data.has("content") ? " : \"" + data.getString("content") + "\"": "" ) ;
-							} else if(activityType.equals(I18NUtil.getMessage("entity.activity.type.content"))){
-								title  = I18NUtil.getMessage("entity.activity.content."+activityEvent, title);
-							}  else if(activityType.equals(I18NUtil.getMessage("entity.activity.type.merge")) && data.has("branchTitle")){
-								title  = I18NUtil.getMessage("entity.activity.merge", title, data.getString("branchTitle"));
-							} else if(activityType.equals(I18NUtil.getMessage("entity.activity.type.version")) && data.has("versionLabel") && data.has("versionNodeRef")){
-								title  = I18NUtil.getMessage("entity.activity.version", title, data.getString("versionLabel"), data.getString("versionNodeRef"));
+								title = I18NUtil.getMessage("entity.activity.formulation", title);
+							} else if (activityType.equals(I18NUtil.getMessage("entity.activity.type.report"))) {
+								title = I18NUtil.getMessage("entity.activity.report", title);
+							} else if (activityType.equals(I18NUtil.getMessage("entity.activity.type.comment"))) {
+								title = I18NUtil.getMessage("entity.activity.comment." + activityEvent, title)
+										+ (data.has("content") ? " : \"" + data.getString("content") + "\"" : "");
+							} else if (activityType.equals(I18NUtil.getMessage("entity.activity.type.content"))) {
+								title = I18NUtil.getMessage("entity.activity.content." + activityEvent, title);
+							} else if (activityType.equals(I18NUtil.getMessage("entity.activity.type.merge")) && data.has("branchTitle")) {
+								title = I18NUtil.getMessage("entity.activity.merge", title, data.getString("branchTitle"));
+							} else if (activityType.equals(I18NUtil.getMessage("entity.activity.type.version")) && data.has("versionLabel")
+									&& data.has("versionNodeRef")) {
+								title = I18NUtil.getMessage("entity.activity.version", title, data.getString("versionLabel"),
+										data.getString("versionNodeRef"));
 							}
 							item.setValue(title);
 						}
-					} else if (item.getKey().contains("alUserId") && item.getValue() instanceof HashMap<?,?>) {
-						Map<String,Object> user = (HashMap<String, Object>) item.getValue();
+					} else if (item.getKey().contains("alUserId") && item.getValue() instanceof HashMap<?, ?>) {
+						Map<String, Object> user = (HashMap<String, Object>) item.getValue();
 						if (user.containsKey("displayValue")) {
 							item.setValue(user.get("displayValue"));
 						} else if (user.containsKey("value")) {
@@ -122,11 +128,10 @@ public class ActivityExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 		return items;
 	}
 
-
 	/** {@inheritDoc} */
 	@Override
 	public ExcelFieldTitleProvider getExcelFieldTitleProvider(DataListFilter dataListFilter) {
-		return new  ExcelFieldTitleProvider(){
+		return new ExcelFieldTitleProvider() {
 
 			@Override
 			public String getTitle(AttributeExtractorStructure field) {
@@ -144,7 +149,6 @@ public class ActivityExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 	/** {@inheritDoc} */
 	@Override
 	public PaginatedExtractedItems extractExtrasSheet(DataListFilter dataListFilter) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
