@@ -12,10 +12,10 @@
    <#include "../form/form.js.ftl"/>
    <@script src="${url.context}/res/modules/documentlibrary/global-folder.js"  group="bulk-edit"/>
    <@script src="${url.context}/res/modules/entity-datagrid/entity-columnRenderer.js" group="bulk-edit"></@script>
+   <@script src="${url.context}/res/js/async-download.js" group="bulk-edit"/>
    <@script src="${url.context}/res/components/bulk-edit/bulk-edit.js" group="bulk-edit"></@script>
    <@script src="${url.context}/res/modules/custom-entity-datagrid/custom-columnRenderers.js" group="bulk-edit"></@script>
-   
-   
+  
 </@>
 
 <@markup id="widgets">
