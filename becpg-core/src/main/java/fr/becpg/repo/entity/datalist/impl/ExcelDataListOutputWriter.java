@@ -7,10 +7,10 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.download.ContentServiceHelper;
@@ -54,6 +54,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.download.AbstractDownloadExporter;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.AsyncPaginatedExtractorWrapper;
@@ -73,7 +74,7 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  * @version $Id: $Id
  */
 @Service
-public class ExcelDataListOutputWriter  implements DataListOutputWriter {
+public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 	private static final String CREATION_ERROR = "Unexpected error creating file for download";
 
@@ -102,7 +103,10 @@ public class ExcelDataListOutputWriter  implements DataListOutputWriter {
 	@Autowired
 	private DownloadStatusUpdateService updateService;
 	@Autowired
-	protected MimetypeService mimetypeService;
+	private MimetypeService mimetypeService;
+	
+	@Autowired
+	private EntityActivityService entityActivityService;
 
 	private static Log logger = LogFactory.getLog(ExcelDataListOutputWriter.class);
 
@@ -115,9 +119,8 @@ public class ExcelDataListOutputWriter  implements DataListOutputWriter {
 
 			NodeRef downloadNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				return downloadStorage.createDownloadNode(false);
-			},false,true);
-				
-				
+			}, false, true);
+
 			Runnable command = new AsyncExcelDataListOutputWriter((AsyncPaginatedExtractorWrapper) extractedItems, downloadNodeRef);
 			if (!threadExecuter.getQueue().contains(command)) {
 				threadExecuter.execute(command);
@@ -141,14 +144,132 @@ public class ExcelDataListOutputWriter  implements DataListOutputWriter {
 
 			AttachmentHelper.setAttachment(req, res, getFileName(dataListFilter));
 
-			createExcelFile(extractedItems, dataListFilter, res.getOutputStream());
+			createExcelFile(extractedItems, dataListFilter, null, res.getOutputStream());
 
 		}
 	}
 
-	public void createExcelFile(PaginatedExtractedItems extractedItems, DataListFilter dataListFilter, OutputStream outputStream) throws IOException {
+	private class AsyncExcelDataListOutputWriter implements Runnable {
+
+		private AsyncPaginatedExtractorWrapper asynExtractor;
+		private NodeRef downloadNodeRef;
+		private final String userName;
+
+		public AsyncExcelDataListOutputWriter(AsyncPaginatedExtractorWrapper asynExtractor, NodeRef downloadNodeRef) {
+			super();
+			this.asynExtractor = asynExtractor;
+			this.downloadNodeRef = downloadNodeRef;
+			this.userName = AuthenticationUtil.getFullyAuthenticatedUser();
+		}
+
+		@Override
+		public void run() {
+
+			AuthenticationUtil.runAs(() -> {
+
+				final File tempFile = TempFileProvider.createTempFile("export", "xlsx");
+
+				ExcelDataListDownloadExporter handler = new ExcelDataListDownloadExporter(transactionService.getRetryingTransactionHelper(),
+						updateService, downloadStorage, downloadNodeRef, Long.valueOf(asynExtractor.getFullListSize()));
+
+				try {
+
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						return createExcelFile(asynExtractor, asynExtractor.getDataListFilter(), handler, new FileOutputStream(tempFile));
+					}, true, true);
+
+					fileCreationComplete(downloadNodeRef, "xlsx", tempFile, handler);
+
+				} catch (DownloadCancelledException ex) {
+					downloadCancelled(downloadNodeRef, handler);
+				} finally {
+					if (!tempFile.delete()) {
+						logger.error("Cannot delete dir: " + tempFile.getName());
+					}
+				}
+
+				return true;
+
+			}, userName);
+
+		}
+
+		private void fileCreationComplete(final NodeRef actionedUponNodeRef, String format, final File tempFile,
+				final AbstractDownloadExporter handler) {
+			// Update the content and set the status to done.
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				try {
+
+					contentServiceHelper.updateContent(actionedUponNodeRef, tempFile);
+					DownloadStatus status = new DownloadStatus(Status.DONE, handler.getFilesAddedCount(), handler.getFileCount(),
+							handler.getFilesAddedCount(), handler.getFileCount());
+					updateService.update(actionedUponNodeRef, status, handler.getNextSequenceNumber());
+					ContentData contentData = (ContentData) nodeService.getProperty(actionedUponNodeRef, ContentModel.PROP_CONTENT);
+
+					nodeService.setProperty(actionedUponNodeRef, ContentModel.PROP_CONTENT,
+							ContentData.setMimetype(contentData, mimetypeService.getMimetype(format)));
+					return null;
+				} catch (ContentIOException | IOException ex1) {
+					throw new DownloadServiceException(CREATION_ERROR, ex1);
+				}
+			}, false, true);
+
+		}
+
+		private void downloadCancelled(final NodeRef actionedUponNodeRef, final AbstractDownloadExporter handler) {
+			// Update the content and set the status to done.
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				DownloadStatus status = new DownloadStatus(Status.CANCELLED, handler.getFilesAddedCount(), handler.getFileCount(),
+						handler.getFilesAddedCount(), handler.getFileCount());
+				updateService.update(actionedUponNodeRef, status, handler.getNextSequenceNumber());
+
+				return null;
+			}, false, true);
+
+		}
+
+	}
+
+	private String cleanPath(String path) {
+		return path.replace("/app:company_home", "").replace("cm:", "");
+	}
+
+	private String getFileName(DataListFilter dataListFilter) {
+		if (dataListFilter.getEntityNodeRef() != null) {
+			return (String) nodeService.getProperty(dataListFilter.getEntityNodeRef(), ContentModel.PROP_NAME) + "_"
+					+ dataListFilter.getDataListName() + ".xlsx";
+		}
+		return "export.xlsx";
+
+	}
+
+	@Nonnull
+	private ExcelDataListOutputPlugin getPlugin(DataListFilter dataListFilter) {
+		ExcelDataListOutputPlugin ret = null;
+
+		for (ExcelDataListOutputPlugin plugin : plugins) {
+			if (plugin.applyTo(dataListFilter) || (plugin.isDefault() && (ret == null))) {
+				ret = plugin;
+			}
+		}
+
+		if (ret == null) {
+
+			throw new IllegalStateException("No default plugin");
+		}
+
+		return ret;
+
+	}
+
+	public boolean createExcelFile(PaginatedExtractedItems extractedItems, DataListFilter dataListFilter,
+			@Nullable ExcelDataListDownloadExporter handler, OutputStream outputStream) throws IOException {
 
 		try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+
+			ExcelDataListOutputPlugin plugin = getPlugin(dataListFilter);
+			ExcelFieldTitleProvider titleProvider = plugin.getExcelFieldTitleProvider(dataListFilter);
+
 			PaginatedExtractedItems extractedExtrasItems = null;
 			boolean hasExtrasSheet;
 
@@ -156,13 +277,15 @@ public class ExcelDataListOutputWriter  implements DataListOutputWriter {
 				hasExtrasSheet = false;
 				String sheetName = "";
 
-				if (dataListFilter.getDataType() != null) {
-					TypeDefinition typeDef = entityDictionaryService.getType(dataListFilter.getDataType());
+				QName type = dataListFilter.getDataType();
+
+				if (type != null) {
+					TypeDefinition typeDef = entityDictionaryService.getType(type);
 
 					if (typeDef != null) {
 						sheetName = typeDef.getTitle(entityDictionaryService);
 					} else {
-						AspectDefinition aspectDef = entityDictionaryService.getAspect(dataListFilter.getDataType());
+						AspectDefinition aspectDef = entityDictionaryService.getAspect(type);
 						if (aspectDef != null) {
 							sheetName = aspectDef.getTitle(entityDictionaryService);
 						}
@@ -173,6 +296,7 @@ public class ExcelDataListOutputWriter  implements DataListOutputWriter {
 					sheetName = "Values";
 				}
 				XSSFSheet sheet = workbook.createSheet(sheetName);
+
 				XSSFCellStyle style = workbook.createCellStyle();
 
 				byte[] rgb = { (byte) 242, (byte) 247, (byte) 250 };
@@ -189,12 +313,14 @@ public class ExcelDataListOutputWriter  implements DataListOutputWriter {
 				cell = headerRow.createCell(1);
 				cell.setCellValue("Default");
 
-				headerRow = sheet.createRow(rownum++);
-				cell = headerRow.createCell(0);
-				headerRow.setRowStyle(style);
-				cell.setCellValue("TYPE");
-				cell = headerRow.createCell(1);
-				cell.setCellValue(dataListFilter.getDataType().toPrefixString());
+				if (type != null) {
+					headerRow = sheet.createRow(rownum++);
+					cell = headerRow.createCell(0);
+					headerRow.setRowStyle(style);
+					cell.setCellValue("TYPE");
+					cell = headerRow.createCell(1);
+					cell.setCellValue(type.toPrefixString());
+				}
 
 				String nodePath = null;
 				String bcpgCode = null;
@@ -292,36 +418,53 @@ public class ExcelDataListOutputWriter  implements DataListOutputWriter {
 					cell.setCellStyle(headerStyle);
 				}
 
-				ExcelDataListOutputPlugin plugin = getPlugin(dataListFilter);
-				ExcelFieldTitleProvider titleProvider = plugin.getExcelFieldTitleProvider(dataListFilter);
-
 				Row row = null;
 
 				if ((extractedExtrasItems == null) && (extractedItems.getComputedFields() != null)) {
-					List<AttributeExtractorStructure> fields = extractedItems.getComputedFields().stream()
-							.filter(field -> titleProvider.isAllowed(field)).collect(Collectors.toList());
+					List<AttributeExtractorStructure> fields = extractedItems.getComputedFields().stream().filter(titleProvider::isAllowed)
+							.collect(Collectors.toList());
 
 					ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, headerStyle, sheet, cellnum, titleProvider,
 							MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
 
-					for (Map<String, Object> item : plugin.decorate(extractedItems.getPageItems())) {
-						cellnum = 0;
-						row = sheet.createRow(rownum++);
-
-						cell = row.createCell(cellnum++);
-						cell.setCellValue("VALUES");
-						cell.setCellStyle(style);
-
-						if (bcpgCode != null) {
-							cell = row.createCell(cellnum++);
-							cell.setCellValue(bcpgCode);
-						}
-
-						ExcelHelper.appendExcelField(fields, null, item, sheet, row, cellnum, rownum,
-								MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
-
+					List<Map<String, Object>> items = null;
+					if (extractedItems instanceof AsyncPaginatedExtractorWrapper) {
+						items = plugin.decorate(((AsyncPaginatedExtractorWrapper) extractedItems).getNextWork());
+					} else {
+						plugin.decorate(extractedItems.getPageItems());
 					}
 
+					while ((items != null) && !items.isEmpty()) {
+						for (Map<String, Object> item : items) {
+							if (handler != null) {
+								handler.incFilesAddedCount();
+							}
+							cellnum = 0;
+							row = sheet.createRow(rownum++);
+
+							cell = row.createCell(cellnum++);
+							cell.setCellValue("VALUES");
+							cell.setCellStyle(style);
+
+							if (bcpgCode != null) {
+								cell = row.createCell(cellnum++);
+								cell.setCellValue(bcpgCode);
+							}
+
+							ExcelHelper.appendExcelField(fields, null, item, sheet, row, cellnum, rownum,
+									MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
+
+							if (handler != null) {
+								handler.updateStatus();
+							}
+						}
+						if (extractedItems instanceof AsyncPaginatedExtractorWrapper) {
+							items = plugin.decorate(((AsyncPaginatedExtractorWrapper) extractedItems).getNextWork());
+						} else {
+							items = null;
+						}
+
+					}
 				}
 
 				if (row != null) {
@@ -365,365 +508,9 @@ public class ExcelDataListOutputWriter  implements DataListOutputWriter {
 			} while (hasExtrasSheet);
 
 			workbook.write(outputStream);
-		}
-
-	}
-
-	private class AsyncExcelDataListOutputWriter implements Runnable {
-
-		private AsyncPaginatedExtractorWrapper asynExtractor;
-		private NodeRef downloadNodeRef;
-		private final String userName;
-
-		public AsyncExcelDataListOutputWriter(AsyncPaginatedExtractorWrapper asynExtractor, NodeRef downloadNodeRef) {
-			super();
-			this.asynExtractor = asynExtractor;
-			this.downloadNodeRef = downloadNodeRef;
-			this.userName = AuthenticationUtil.getFullyAuthenticatedUser();
-		}
-
-		@Override
-		public void run() {
-				
-			AuthenticationUtil.runAs(() -> {
-
-				final File tempFile = TempFileProvider.createTempFile("export", "xlsx");
-
-				ExcelDataListDownloadExporter handler = new ExcelDataListDownloadExporter(transactionService.getRetryingTransactionHelper(),
-						updateService, downloadStorage, downloadNodeRef, Long.valueOf(asynExtractor.getFullListSize()));
-
-				try {
-
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						return createAsyncExcelFile(handler, tempFile);
-					}, true, true);
-
-					fileCreationComplete(downloadNodeRef, "xlsx", tempFile, handler);
-
-				} catch (DownloadCancelledException ex) {
-					downloadCancelled(downloadNodeRef, handler);
-				} finally {
-					if (!tempFile.delete()) {
-						logger.error("Cannot delete dir: " + tempFile.getName());
-					}
-				}
-
-				return true;
-
-			},userName);
 			
-
+			entityActivityService.postExportActivity(dataListFilter.getEntityNodeRef(), dataListFilter.getDataType(), getFileName(dataListFilter));
 		}
-
-		public boolean createAsyncExcelFile(ExcelDataListDownloadExporter handler, File tempFile) throws IOException {
-
-			DataListFilter dataListFilter = asynExtractor.getDataListFilter();
-
-			try (XSSFWorkbook workbook = new XSSFWorkbook()) {
-
-				ExcelDataListOutputPlugin plugin = getPlugin(dataListFilter);
-				ExcelFieldTitleProvider titleProvider = plugin.getExcelFieldTitleProvider(dataListFilter);
-
-				PaginatedExtractedItems extractedExtrasItems = null;
-				boolean hasExtrasSheet;
-
-				do {
-					hasExtrasSheet = false;
-					String sheetName = "";
-
-					QName type = dataListFilter.getDataType();
-
-					if (type != null) {
-						TypeDefinition typeDef = entityDictionaryService.getType(type);
-
-						if (typeDef != null) {
-							sheetName = typeDef.getTitle(entityDictionaryService);
-						} else {
-							AspectDefinition aspectDef = entityDictionaryService.getAspect(type);
-							if (aspectDef != null) {
-								sheetName = aspectDef.getTitle(entityDictionaryService);
-							}
-						}
-					}
-
-					if ((sheetName == null) || sheetName.isEmpty()) {
-						sheetName = "Values";
-					}
-					XSSFSheet sheet = workbook.createSheet(sheetName);
-
-					XSSFCellStyle style = workbook.createCellStyle();
-
-					byte[] rgb = { (byte) 242, (byte) 247, (byte) 250 };
-
-					style.setFillForegroundColor(new XSSFColor(rgb, new DefaultIndexedColorMap()));
-					style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
-					AtomicInteger rownum = new AtomicInteger();
-
-					Row headerRow = sheet.createRow(rownum.getAndIncrement());
-					headerRow.setRowStyle(style);
-					Cell cell = headerRow.createCell(0);
-					cell.setCellValue("MAPPING");
-					cell = headerRow.createCell(1);
-					cell.setCellValue("Default");
-
-					if (type != null) {
-						headerRow = sheet.createRow(rownum.getAndIncrement());
-						cell = headerRow.createCell(0);
-						headerRow.setRowStyle(style);
-						cell.setCellValue("TYPE");
-						cell = headerRow.createCell(1);
-						cell.setCellValue(type.toPrefixString());
-					}
-
-					String nodePath = null;
-					String bcpgCode = null;
-
-					if (dataListFilter.getEntityNodeRef() != null) {
-						if (entityDictionaryService.isSubClass(nodeService.getType(dataListFilter.getEntityNodeRef()),
-								BeCPGModel.TYPE_SYSTEM_ENTITY)) {
-							nodePath = cleanPath(nodeService.getPath(dataListFilter.getParentNodeRef()).toPrefixString(namespaceService));
-						} else {
-
-							bcpgCode = (String) nodeService.getProperty(dataListFilter.getEntityNodeRef(), BeCPGModel.PROP_CODE);
-
-							nodePath = cleanPath(nodeService.getPath(nodeService.getPrimaryParent(dataListFilter.getEntityNodeRef()).getParentRef())
-									.toPrefixString(namespaceService));
-						}
-
-					} else if (dataListFilter.getParentNodeRef() != null) {
-						nodePath = cleanPath(nodeService.getPath(dataListFilter.getParentNodeRef()).toPrefixString(namespaceService));
-
-					} else if (dataListFilter.getFilterId().equals(DataListFilter.NODE_PATH_FILTER)) {
-						nodePath = cleanPath(nodeService.getPath(new NodeRef(dataListFilter.getFilterData())).toPrefixString(namespaceService));
-					}
-
-					if (nodePath != null) {
-						headerRow = sheet.createRow(rownum.getAndIncrement());
-						headerRow.setRowStyle(style);
-						cell = headerRow.createCell(0);
-						cell.setCellValue("PATH");
-						cell = headerRow.createCell(1);
-						cell.setCellValue(nodePath);
-					}
-
-					if (entityDictionaryService.isSubClass(dataListFilter.getDataType(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-						if ((nodePath != null) && !nodePath.startsWith("/System/")) {
-							headerRow = sheet.createRow(rownum.getAndIncrement());
-							headerRow.setRowStyle(style);
-							cell = headerRow.createCell(0);
-							cell.setCellValue("IMPORT_TYPE");
-							cell = headerRow.createCell(1);
-							cell.setCellValue("EntityListItem");
-						}
-
-						headerRow = sheet.createRow(rownum.getAndIncrement());
-						headerRow.setRowStyle(style);
-						cell = headerRow.createCell(0);
-						cell.setCellValue("DELETE_DATALIST");
-						cell = headerRow.createCell(1);
-						cell.setCellValue("false");
-
-					} else {
-						bcpgCode = null;
-					}
-
-					headerRow = sheet.createRow(rownum.getAndIncrement());
-					headerRow.setRowStyle(style);
-					cell = headerRow.createCell(0);
-					cell.setCellValue("STOP_ON_FIRST_ERROR");
-					cell = headerRow.createCell(1);
-					cell.setCellValue("false");
-
-					headerRow = sheet.createRow(rownum.getAndIncrement());
-					headerRow.setRowStyle(style);
-
-					sheet.groupRow(0, rownum.get());
-					sheet.setRowGroupCollapsed(0, true);
-					if (bcpgCode != null) {
-						sheet.groupColumn(0, 1);
-					} else {
-						sheet.groupColumn(0, 0);
-					}
-					sheet.setColumnGroupCollapsed(0, true);
-
-					Row labelRow = sheet.createRow(rownum.getAndIncrement());
-					int cellnum = 0;
-					cell = headerRow.createCell(cellnum);
-					cell.setCellValue("COLUMNS");
-					cell = labelRow.createCell(cellnum++);
-					cell.setCellValue("#");
-					cell.setCellStyle(style);
-
-					XSSFCellStyle headerStyle = workbook.createCellStyle();
-
-					byte[] rgb2 = { (byte) 0, (byte) 157, (byte) 204 };
-
-					headerStyle.setFillForegroundColor(new XSSFColor(rgb2, new DefaultIndexedColorMap()));
-					headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-					XSSFFont font = workbook.createFont();
-					font.setColor(HSSFColorPredefined.WHITE.getIndex());
-					headerStyle.setFont(font);
-
-					if (bcpgCode != null) {
-						cell = headerRow.createCell(cellnum);
-						cell.setCellValue("bcpg:code");
-						cell = labelRow.createCell(cellnum++);
-						cell.setCellValue(I18NUtil.getMessage("message.becpg.export.entity"));
-						cell.setCellStyle(headerStyle);
-					}
-
-					Row row = null;
-					
-
-					if ((extractedExtrasItems == null) && (asynExtractor.getComputedFields() != null)) {
-						List<AttributeExtractorStructure> fields = asynExtractor.getComputedFields().stream()
-								.filter(titleProvider::isAllowed).collect(Collectors.toList());
-
-						ExcelHelper.appendExcelHeader(fields, null, null, headerRow, labelRow, headerStyle, sheet, cellnum, titleProvider,
-								MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
-
-						final String finalCode = bcpgCode;
-						List<Map<String, Object>> items = plugin.decorate(asynExtractor.getNextWork());
-		
-						
-						while ((items != null) && !items.isEmpty()) {
-							for (Map<String, Object> item : items) {
-								handler.incFilesAddedCount();
-								cellnum = 0;
-								row = sheet.createRow(rownum.getAndIncrement());
-
-								cell = row.createCell(cellnum++);
-								cell.setCellValue("VALUES");
-								cell.setCellStyle(style);
-
-								if (finalCode != null) {
-									cell = row.createCell(cellnum++);
-									cell.setCellValue(finalCode);
-								}
-
-								ExcelHelper.appendExcelField(fields, null, item, sheet, row, cellnum, rownum.get(),
-										MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
-
-								handler.updateStatus();
-
-							}
-							items =  plugin.decorate(asynExtractor.getNextWork());
-
-						}
-					}
-
-					if (row != null) {
-						for (int colNum = 0; colNum < row.getLastCellNum(); colNum++) {
-							sheet.autoSizeColumn(colNum);
-						}
-					}
-
-					// Extract extras sheets
-					if (extractedExtrasItems != null) {
-						ExcelHelper.appendExcelHeader(extractedExtrasItems.getComputedFields(), null, null, headerRow, labelRow, headerStyle, sheet,
-								cellnum, titleProvider, MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
-
-						for (Map<String, Object> item : extractedExtrasItems.getPageItems()) {
-							cellnum = 0;
-							row = sheet.createRow(rownum.getAndIncrement());
-
-							cell = row.createCell(cellnum++);
-							cell.setCellValue("VALUES");
-							cell.setCellStyle(style);
-
-							if (bcpgCode != null) {
-								cell = row.createCell(cellnum++);
-								cell.setCellValue(bcpgCode);
-							}
-
-							ExcelHelper.appendExcelField(extractedExtrasItems.getComputedFields(), null, item, sheet, row, cellnum, rownum.get(),
-									MLTextHelper.shouldExtractMLText() ? MLTextHelper.getSupportedLocales() : null);
-
-						}
-					}
-
-					extractedExtrasItems = plugin.extractExtrasSheet(dataListFilter);
-
-					if ((extractedExtrasItems != null) && !extractedExtrasItems.getPageItems().isEmpty()) {
-						hasExtrasSheet = true;
-					} else {
-						hasExtrasSheet = false;
-					}
-
-				} while (hasExtrasSheet);
-
-				workbook.write(new FileOutputStream(tempFile));
-			}
-			return true;
-		}
-
-		private void fileCreationComplete(final NodeRef actionedUponNodeRef, String format, final File tempFile,
-				final AbstractDownloadExporter handler) {
-			// Update the content and set the status to done.
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				try {
-
-					contentServiceHelper.updateContent(actionedUponNodeRef, tempFile);
-					DownloadStatus status = new DownloadStatus(Status.DONE, handler.getFilesAddedCount(), handler.getFileCount(),
-							handler.getFilesAddedCount(), handler.getFileCount());
-					updateService.update(actionedUponNodeRef, status, handler.getNextSequenceNumber());
-					ContentData contentData = (ContentData) nodeService.getProperty(actionedUponNodeRef, ContentModel.PROP_CONTENT);
-
-					nodeService.setProperty(actionedUponNodeRef, ContentModel.PROP_CONTENT,
-							ContentData.setMimetype(contentData, mimetypeService.getMimetype(format)));
-					return null;
-				} catch (ContentIOException | IOException ex1) {
-					throw new DownloadServiceException(CREATION_ERROR, ex1);
-				}
-			}, false, true);
-
-		}
-
-		private void downloadCancelled(final NodeRef actionedUponNodeRef, final AbstractDownloadExporter handler) {
-			// Update the content and set the status to done.
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				DownloadStatus status = new DownloadStatus(Status.CANCELLED, handler.getFilesAddedCount(), handler.getFileCount(),
-						handler.getFilesAddedCount(), handler.getFileCount());
-				updateService.update(actionedUponNodeRef, status, handler.getNextSequenceNumber());
-
-				return null;
-			}, false, true);
-
-		}
-
+		return true;
 	}
-
-	private String cleanPath(String path) {
-		return path.replace("/app:company_home", "").replace("cm:", "");
-	}
-
-	private String getFileName(DataListFilter dataListFilter) {
-		if (dataListFilter.getEntityNodeRef() != null) {
-			return (String) nodeService.getProperty(dataListFilter.getEntityNodeRef(), ContentModel.PROP_NAME) + "_"
-					+ dataListFilter.getDataListName() + ".xlsx";
-		}
-		return "export.xlsx";
-
-	}
-
-	@Nonnull
-	private ExcelDataListOutputPlugin getPlugin(DataListFilter dataListFilter) {
-		ExcelDataListOutputPlugin ret = null;
-
-		for (ExcelDataListOutputPlugin plugin : plugins) {
-			if (plugin.applyTo(dataListFilter) || (plugin.isDefault() && (ret == null))) {
-				ret = plugin;
-			}
-		}
-
-		if (ret == null) {
-
-			throw new IllegalStateException("No default plugin");
-		}
-
-		return ret;
-
-	}
-
 }
