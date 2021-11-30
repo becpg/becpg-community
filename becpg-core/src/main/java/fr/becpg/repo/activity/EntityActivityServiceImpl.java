@@ -1301,4 +1301,10 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	}
 
+	@Override
+	public void postExportActivity(NodeRef entityNodeRef, QName dataType, String fileName) {
+	   logger.info("Exporting:"+ fileName+ " "+ dataType+ " "+ entityNodeRef+ " "+ AuthenticationUtil.getFullyAuthenticatedUser());
+		
+	}
+
 }

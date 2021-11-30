@@ -37,7 +37,9 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.model.ReportModel;
+import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.report.helpers.ReportUtils;
 import fr.becpg.report.client.ReportFormat;
 
 /**
@@ -67,8 +69,9 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 	protected RetryingTransactionHelper transactionHelper;
 	protected DownloadStatusUpdateService updateService;
 	protected ContentService contentService;
-
 	protected MimetypeService mimetypeService;
+	protected EntityActivityService entityActivityService;
+
 	/**
 	 * <p>
 	 * Setter for the field <code>nodeService</code>.
@@ -161,9 +164,12 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 		this.contentService = contentService;
 	}
 
-	
 	public void setMimetypeService(MimetypeService mimetypeService) {
 		this.mimetypeService = mimetypeService;
+	}
+
+	public void setEntityActivityService(EntityActivityService entityActivityService) {
+		this.entityActivityService = entityActivityService;
 	}
 
 	/**
@@ -179,7 +185,6 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 
 		NodeRef templateNodeRef = (NodeRef) action.getParameterValue(PARAM_TPL_NODEREF);
 		String formatString = (String) action.getParameterValue(PARAM_FORMAT);
-		
 
 		ParameterCheck.mandatory(PARAM_TPL_NODEREF, templateNodeRef);
 		ParameterCheck.mandatory(PARAM_FORMAT, formatString);
@@ -200,25 +205,21 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 			crawlerParameters.setCrawlAssociations(false);
 			crawlerParameters.setCrawlContent(false);
 			crawlerParameters.setExcludeAspects(new QName[] { ContentModel.ASPECT_WORKING_COPY });
-			
-			ReportFormat reportFormat = ReportFormat.valueOf(formatString);
 
+			ReportFormat reportFormat = ReportFormat.valueOf(formatString);
 			String tplName = ((String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME));
+			String extension = ReportUtils.getReportExtension(tplName, reportFormat);
 
 			AbstractSearchDownloadExporter handler = createHandler(actionedUponNodeRef, templateNodeRef, downloadRequest, reportFormat);
-			
-			String format = reportFormat.toString();
-			//TODO better
-			if(ReportFormat.XLSX.equals(reportFormat) && tplName.endsWith(ReportTplService.PARAM_VALUE_XLSMREPORT_EXTENSION)) {
-				format = "xlsm";
-			}
 
-		
-			final File tempFile = TempFileProvider.createTempFile(FilenameUtils.removeExtension(tplName), format);
+			final File tempFile = TempFileProvider.createTempFile(FilenameUtils.removeExtension(tplName), extension);
 			handler.setTempFile(tempFile);
 			try {
 				exporterService.exportView(handler, crawlerParameters, null);
-				fileCreationComplete(actionedUponNodeRef, format, tempFile, handler);
+				fileCreationComplete(actionedUponNodeRef, extension, tempFile, handler);
+				entityActivityService.postExportActivity(null,
+						(QName) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME), tplName);
+
 			} catch (DownloadCancelledException ex) {
 				downloadCancelled(actionedUponNodeRef, handler);
 			} finally {
@@ -231,10 +232,8 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 
 	}
 
-
 	protected abstract AbstractSearchDownloadExporter createHandler(NodeRef actionedUponNodeRef, NodeRef templateNodeRef,
 			DownloadRequest downloadRequest, ReportFormat format);
-
 
 	/** {@inheritDoc} */
 	@Override
@@ -255,8 +254,8 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 				updateService.update(actionedUponNodeRef, status, handler.getNextSequenceNumber());
 				ContentData contentData = (ContentData) nodeService.getProperty(actionedUponNodeRef, ContentModel.PROP_CONTENT);
 
-				
-				nodeService.setProperty(actionedUponNodeRef, ContentModel.PROP_CONTENT,ContentData.setMimetype(contentData,mimetypeService.getMimetype(format)));
+				nodeService.setProperty(actionedUponNodeRef, ContentModel.PROP_CONTENT,
+						ContentData.setMimetype(contentData, mimetypeService.getMimetype(format)));
 				return null;
 			} catch (ContentIOException | IOException ex1) {
 				throw new DownloadServiceException(CREATION_ERROR, ex1);

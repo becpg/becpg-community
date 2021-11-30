@@ -39,7 +39,7 @@
 		</property>
 	</bean>
 
-	<bean id="jsonVersionExtractor" class="fr.becpg.repo.entity.datalist.impl.JsonVersionExtractor" init-method="init">
+	<bean id="jsonVersionExtractor" class="fr.becpg.repo.entity.datalist.impl.JSONVersionExtractor" init-method="init">
 		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 		<property name="paginatedSearchCache" ref="paginatedSearchCache" />

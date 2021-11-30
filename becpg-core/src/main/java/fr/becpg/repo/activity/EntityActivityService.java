@@ -205,9 +205,7 @@ public interface EntityActivityService {
 	 */
 	boolean isIgnoreStateProperty(QName propName);
 
+	void postExportActivity(NodeRef entityNodeRef, QName dataType, String fileName);
 
 
-
-
-	
 }
