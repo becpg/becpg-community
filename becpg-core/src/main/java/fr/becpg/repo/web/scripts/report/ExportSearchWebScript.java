@@ -26,6 +26,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AttachmentHelper;
+import fr.becpg.repo.report.helpers.ReportUtils;
 import fr.becpg.repo.report.search.ExportSearchService;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -108,9 +109,7 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 			Integer searchLimit = (Integer) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_SEARCH_LIMIT);
 			if(searchLimit == null  || searchLimit < 1) {
 				searchLimit = RepoConsts.MAX_RESULTS_5000;
-			} else {
-				searchLimit = Math.min(searchLimit, RepoConsts.MAX_RESULTS_5000);
-			}
+			} 
 
 			List<NodeRef> resultNodeRefs = null;
 			String aftsQuery = (String) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_SEARCH_QUERY);
@@ -138,12 +137,9 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 
 				String name = (String) nodeService.getProperty(templateNodeRef, ContentModel.PROP_NAME);
 
-				String format = reportFormat.toString();
-				if(ReportFormat.XLSX.equals(reportFormat) && name.endsWith(ReportTplService.PARAM_VALUE_XLSMREPORT_EXTENSION)) {
-					format = "xlsm";
-				}
-				
-				String mimeType = mimetypeService.getMimetype(format);
+				String extension = ReportUtils.getReportExtension(name, reportFormat);
+
+				String mimeType = mimetypeService.getMimetype(extension);
 
 				name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
 
