@@ -107,8 +107,8 @@ public class ExportSearchWebScript extends AbstractSearchWebScript {
 			QName datatype = QName.createQName(jsonObject.getString("datatype"), namespaceService);
 			
 			Integer searchLimit = (Integer) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_SEARCH_LIMIT);
-			if(searchLimit == null  || searchLimit < 1) {
-				searchLimit = RepoConsts.MAX_RESULTS_5000;
+			if(searchLimit == null  || searchLimit < 1 ) {
+				searchLimit = RepoConsts.MAX_RESULTS_1000;
 			} 
 
 			List<NodeRef> resultNodeRefs = null;
