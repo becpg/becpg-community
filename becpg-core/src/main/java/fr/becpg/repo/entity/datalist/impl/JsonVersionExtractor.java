@@ -76,7 +76,8 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 	
 	private static final String VERSION = "version";
 	
-	
+	private static final String CM_NAME = "cm:name";
+
 	private static final String[] AL_DATA_PROPS = {"datalistType", "charactType", "entityType", "datalistNodeRef", "entityNodeRef", "className", "title", "charactNodeRef" };
 	
 	private static final String BCPG_PREFIX = "bcpg:";
@@ -367,6 +368,10 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 			} else {
 				displayName = properties.getString(attribute.getName().toPrefixString(namespaceService));
 			}
+		} else if (metadata.equals("noderef")) {
+			
+			displayName = extractJsonNodeRefProp(seri);
+			
 		} else {
 			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
 		}
@@ -376,6 +381,41 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 		tmp.put(METADATA, metadata);
 		return tmp;
 
+	}
+
+	private String extractJsonNodeRefProp(Serializable seri) {
+		
+		StringBuilder sb = null;
+		try {
+			JSONArray jsonArray = new JSONArray(seri.toString());
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject json = jsonArray.getJSONObject(i);
+				if (sb == null) {
+					sb = new StringBuilder();
+				} else {
+					sb.append(RepoConsts.LABEL_SEPARATOR);
+				}
+				
+				if (json.has(CM_NAME)) {
+					sb.append(json.get(CM_NAME));
+				} else {
+					sb.append(seri);
+				}
+			}
+		} catch (JSONException e) {
+			sb = new StringBuilder();
+			try {
+				JSONObject json = new JSONObject(seri.toString());
+				if (json.has(CM_NAME)) {
+					sb.append(json.get(CM_NAME));
+				} else {
+					sb.append(seri);
+				}
+			} catch (JSONException e2) {
+				sb.append(seri);
+			}
+		}
+		return sb == null ? seri.toString() : sb.toString();
 	}
 
 	private HashMap<String, Object> extractAlData(JSONObject value) throws JSONException {
@@ -450,7 +490,7 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 				properties = object.getJSONObject(ATTRIBUTES);
 			}
 			
-			NodeRef nodeRef = new NodeRef("workspace://SpacesStore/" + object.getString("cm:name"));
+			NodeRef nodeRef = new NodeRef("workspace://SpacesStore/" + object.getString(CM_NAME));
 			
 			if (nodeService.exists(nodeRef)) {
 				ret.put(PROP_NODE, nodeRef);
