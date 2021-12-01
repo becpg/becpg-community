@@ -267,7 +267,7 @@
 	             .replace(":/", "") + '/' + encodeURIComponent(doc.label) + '/' + encodeURIComponent(doc.name);
 	         } else {
 	        	 compareURL = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + beCPG.module.getVersionsGraphInstance().options.nodeRef
-	        	 .replace(":/", "") + "/compare?entities="+doc.entityNodeRef;
+	        	 .replace(":/", "") + "/compare?entities="+doc.nodeRef;
 	         }
          }
          
