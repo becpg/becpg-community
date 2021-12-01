@@ -133,6 +133,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
 	private static final Tracer tracer = Tracing.getTracer();
+	private static final String REPORT_KIND_SPLIT_REGEXP = "\\s*,\\s*";
 
 	@Value("${beCPG.report.name.format}")
 	private String reportNameFormat;
@@ -550,7 +551,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 			return;
 		}
 
-		String reportKindCode = "", reportKindNoneCode = "None";
+		String reportKindCode = "";
+		String reportKindNoneCode = "None";
 		if (tplNodeRef != null) {
 			List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
 			if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
@@ -570,7 +572,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 					for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
 						Element itemEl = elIterator.next();
-						String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()).split("\\s*,\\s*");
+						String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()).split(REPORT_KIND_SPLIT_REGEXP);
 
 						if (Arrays.asList(repKindCodes).contains(reportKindNoneCode)) {
 							dlEl.remove(itemEl);
@@ -586,7 +588,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					if (hasReportKindAspect) {
 						for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
 							Element itemEl = elIterator.next();
-							String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()).split("\\s*,\\s*");
+							String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()).split(REPORT_KIND_SPLIT_REGEXP);
 							if (!Arrays.asList(repKindCodes).contains(reportKindCode) || (repKindCodes == null)) {
 								dlEl.remove(itemEl);
 							}
@@ -597,7 +599,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			// get report parameters
 			if (entityEl.getName().equals(ReportModel.PROP_REPORT_PARAMETERS.getLocalName())) {
-				entityParams = entityEl.getStringValue().split("\\s*,\\s*");
+				entityParams = entityEl.getStringValue().split(REPORT_KIND_SPLIT_REGEXP);
 			}
 		}
 

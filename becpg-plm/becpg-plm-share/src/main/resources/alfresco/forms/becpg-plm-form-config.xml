@@ -11392,6 +11392,7 @@
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
 					<show id="bcpg:mblControlStep" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 
 				<appearance>
@@ -11415,6 +11416,7 @@
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
 					<show id="bcpg:mblControlStep" />
+					<show id="rep:reportKinds" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -11436,6 +11438,7 @@
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
 					<show id="bcpg:mblControlStep" />
+					<show id="rep:reportKinds" />
 				</field-visibility>
 
 				<appearance>
