@@ -1258,6 +1258,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 			policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 
 			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(finalVersionHistoryRef);
 
@@ -1330,6 +1331,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 			policyBehaviourFilter.enableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 		}
 
 		return entity;
