@@ -168,7 +168,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
 
-	
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties) {
@@ -1270,6 +1269,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 			policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 
 			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(finalVersionHistoryRef);
 
@@ -1305,7 +1305,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				crawlerParameters.setExcludeChildAssocs(new QName[] { QName.createQName(Version2Model.NAMESPACE_URI, VersionBaseModel.CHILD_VERSIONED_ASSOCS), RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
 
 				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
-
+				
 				// reconstructs the folder hierarchy
 				exporterService.exportView(new VersionExporter(versionNodeRef, entity, nodeService, entityDictionaryService), crawlerParameters, null);
 
@@ -1342,6 +1342,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 			policyBehaviourFilter.enableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 		}
 
 		return entity;
