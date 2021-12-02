@@ -42,7 +42,7 @@ public class BatchInfo {
 		super();
 		this.batchId = batchId;
 		this.batchDescId = batchDescId;
-		this.batchUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		this.batchUser = AuthenticationUtil.getRunAsUser();
 	}
 
 	public String getBatchId() {

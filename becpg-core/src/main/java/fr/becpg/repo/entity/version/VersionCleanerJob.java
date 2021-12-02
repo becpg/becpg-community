@@ -35,7 +35,7 @@ public class VersionCleanerJob extends AbstractScheduledLockedJob implements Job
 
 		VersionCleanerService versionCleanerService = (VersionCleanerService) jobData.get("versionCleanerService");
 
-		versionCleanerService.cleanVersions(VersionCleanerService.MAX_PROCESSED_NODES);
+		versionCleanerService.cleanVersions(VersionCleanerService.MAX_PROCESSED_NODES, false);
 		
 		logger.info("End of Version cleaner Job.");
 	}
