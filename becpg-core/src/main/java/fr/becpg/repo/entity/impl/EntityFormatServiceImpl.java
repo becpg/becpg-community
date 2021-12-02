@@ -15,6 +15,8 @@ import org.alfresco.model.RenditionModel;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -98,6 +100,9 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
+	
+	@Autowired
+	private TenantAdminService tenantAdminService;
 	
 	private static final Log logger = LogFactory.getLog(EntityFormatServiceImpl.class);
 
@@ -457,6 +462,8 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			}, false, true);
 		}
 		
+		String name = (String) nodeService.getProperty(node, ContentModel.PROP_NAME);
+		
 		String versionLabel = (String) dbNodeService.getProperty(node, BeCPGModel.PROP_VERSION_LABEL);
 		
 		NodeRef parentNode = dbNodeService.getPrimaryParent(node).getParentRef();
@@ -472,6 +479,14 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			
 			convert(node, versionNode, EntityFormat.JSON);
 			
+			String tenantName = tenantAdminService.getCurrentUserDomain();
+			
+			if (TenantService.DEFAULT_DOMAIN.equals(tenantName)) {
+				tenantName = "default";
+			}
+
+			logger.debug("Converted entity '" + name + "', from " + node + " to " + versionNode + ", tenant : " + tenantName);
+
 			return versionNode;
 		}
 		
@@ -513,7 +528,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				
 				String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
 				String parentName = (String) nodeService.getProperty(parentProduct, ContentModel.PROP_NAME);
-				logger.info("Couldn't convert entity '" + name + "' because it is used by entity '" + parentName + "' which needs to be converted first.");
+				logger.debug("Couldn't convert entity '" + name + "' because it is used by entity '" + parentName + "' which needs to be converted first.");
 				return false;
 			}
 		}

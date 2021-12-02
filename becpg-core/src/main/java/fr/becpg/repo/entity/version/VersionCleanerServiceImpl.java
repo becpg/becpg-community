@@ -28,11 +28,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.entity.EntityFormatService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service("versionCleanerService")
@@ -60,214 +60,157 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	@Autowired
 	private BatchQueueService batchQueueService;
+	
+	@Autowired
+	private AssociationService associationService;
 
 	@Override
-	public boolean cleanVersions(int maxProcessedNodes) {
-		AuthenticationUtil.runAsSystem(() -> internalCleanVersions(maxProcessedNodes));
-
-		if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
-			@SuppressWarnings("deprecation")
-			List<Tenant> tenants = tenantAdminService.getAllTenants();
-			for (Tenant tenant : tenants) {
-				String tenantDomain = tenant.getTenantDomain();
-				AuthenticationUtil.runAs(() -> internalCleanVersions(maxProcessedNodes), tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+	public boolean cleanVersions(int maxProcessedNodes, boolean cleanOrphanVersions) {
+		
+		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		
+		try {
+			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getSystemUserName());
+			internalCleanVersions(maxProcessedNodes, "default", cleanOrphanVersions);
+			
+			if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
+				@SuppressWarnings("deprecation")
+				List<Tenant> tenants = tenantAdminService.getAllTenants();
+				for (Tenant tenant : tenants) {
+					String tenantDomain = tenant.getTenantDomain();
+					AuthenticationUtil.clearCurrentSecurityContext();
+					AuthenticationUtil.setFullyAuthenticatedUser(tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+					internalCleanVersions(maxProcessedNodes, tenantDomain, cleanOrphanVersions);
+				}
+			}
+		} finally {
+			AuthenticationUtil.clearCurrentSecurityContext();
+			if(currentUser!=null) {
+				AuthenticationUtil.setFullyAuthenticatedUser(currentUser);
 			}
 		}
 		
 		return true;
 	}
 	
-	private boolean internalCleanVersions(int maxProcessedNodes) {
-		
-		String tenantName = "default";
-		
-		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
-			tenantName = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
-		}
+	private boolean internalCleanVersions(int maxProcessedNodes, String tenantDomain, boolean cleanOrphanVersions) {
 
-		cleanOrphanVersions(maxProcessedNodes, tenantName);
-		
-		cleanTemporaryNodes(maxProcessedNodes, tenantName);
-		
-		convertOldVersions(maxProcessedNodes, tenantName);
+		convertAndDeleteVersions(maxProcessedNodes, tenantDomain);
+
+		if (cleanOrphanVersions) {
+			cleanOrphanVersions(tenantDomain);
+		}
 		
 		return true;
 	}
 
-	private BatchProcessWorkProvider<NodeRef> createCleanOrphanVersionsProcessWorkProvider(int maxProcessedNodes) {
+	private void convertAndDeleteVersions(int maxProcessedNodes, String tenantDomain) {
+		BatchInfo batchInfo = new BatchInfo("cleanVersions", "becpg.batch.versionCleaner.cleanVersions." + tenantDomain);
+		batchInfo.setRunAsSystem(true);
+
 		List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			NodeRef versionRootNode = nodeService.getRootNode(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID));
-	
-			List<ChildAssociationRef> versionChildAssocs = nodeService.getChildAssocs(versionRootNode, Version2Model.CHILD_QNAME_VERSION_HISTORIES,
-					RegexQNamePattern.MATCH_ALL);
-			
+			Calendar cal = Calendar.getInstance();
+			cal.add(Calendar.DAY_OF_YEAR, -1);
+
+			List<NodeRef> entitiesHistoryNodes = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					.excludeAspect(BeCPGModel.ASPECT_ENTITY_FORMAT)
+					.andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'")
+					.inDB().ftsLanguage().list();
+
 			List<NodeRef> results = new ArrayList<>();
 			
-			for (ChildAssociationRef childAssoc : versionChildAssocs) {
-				String name = (String) nodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME);
-				NodeRef nodeToTest = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore", name);
-	
-				if (nodeService.getChildAssocs(childAssoc.getChildRef()).isEmpty()) {
-					results.add(childAssoc.getChildRef());
-				} else if (!nodeService.exists(nodeToTest)) {
-					List<ChildAssociationRef> versionAssocs = nodeService.getChildAssocs(childAssoc.getChildRef(), Version2Model.CHILD_QNAME_VERSIONS,
-							RegexQNamePattern.MATCH_ALL);
-					for (ChildAssociationRef versionAssoc : versionAssocs) {
-						if (dictionaryService.isSubClass(nodeService.getType(versionAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
-							results.add(childAssoc.getChildRef());
-							break;
-						}
-					}
-	
-				} else if(nodeService.hasAspect(nodeToTest, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
-					results.add(childAssoc.getChildRef());
-				} 
-				
-				if (results.size() >= maxProcessedNodes) {
-					break;
+			for (NodeRef entitiesHistoryNode : entitiesHistoryNodes) {
+				if (entityFormatService.checkWhereUsedBeforeConversion(entitiesHistoryNode)) {
+					results.add(entitiesHistoryNode);
 				}
-				
-			}
-			
-			NodeRef entityHistoryFolder= BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
-					RepoConsts.ENTITIES_HISTORY_XPATH);
-			
-			List<ChildAssociationRef> entityHistoryChildAssocs = nodeService.getChildAssocs(entityHistoryFolder, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
-			
-			for (ChildAssociationRef childAssoc : entityHistoryChildAssocs) {
-				if (nodeService.getChildAssocs(childAssoc.getChildRef()).isEmpty()) {
-					results.add(childAssoc.getChildRef());
-				}
-				
 				if (results.size() >= maxProcessedNodes) {
 					break;
 				}
 			}
-			
+
 			return results;
-		}, true, true);
-	
-		return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
-	
+			
+		}, false, true);
+
+		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
+
+		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+
+			@Override
+			public void process(NodeRef entityNodeRef) throws Throwable {
+
+				if (nodeService.exists(entityNodeRef)) {
+					if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_TEMPORARY)) {
+						deleteTemporaryNode(entityNodeRef);
+					} else {
+						convertNode(entityNodeRef);
+					}
+				} else {
+					logger.debug("Node already deleted : " + entityNodeRef + ", tenant : " + tenantDomain);
+				}
+
+			}
+
+		};
+
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
+
+		logger.info("Executed version cleaning on tenant " + tenantDomain);
 	}
 
-	private void cleanOrphanVersions(int maxProcessedNodes, String tenantName) {
+	private BatchProcessWorkProvider<NodeRef> createCleanOrphanVersionsProcessWorkProvider() {
 		
-		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions", "becpg.batch.versionCleaner.cleanOrphanVersions." + tenantName);
+		List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			NodeRef versionRootNode = nodeService.getRootNode(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID));
+			
+			return associationService.getChildAssocs(versionRootNode, Version2Model.CHILD_QNAME_VERSION_HISTORIES);
+			
+		}, false, true);
+
+		return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
+		
+	}
+	
+	private void cleanOrphanVersions(String tenantDomain) {
+		
+		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions", "becpg.batch.versionCleaner.cleanOrphanVersions." + tenantDomain);
 		batchInfo.setRunAsSystem(true);
 	
-		BatchProcessWorkProvider<NodeRef> workProvider = createCleanOrphanVersionsProcessWorkProvider(maxProcessedNodes);
+		BatchProcessWorkProvider<NodeRef> workProvider = createCleanOrphanVersionsProcessWorkProvider();
 		
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
-	
+
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
 				String name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 				NodeRef nodeToTest = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore", name);
 	
 				if (nodeService.getChildAssocs(entityNodeRef).isEmpty()) {
-					logger.info("delete folder because it is empty : " + entityNodeRef + ", tenant : " + tenantName);
+					logger.debug("delete folder because it is empty : " + entityNodeRef + ", tenant : " + tenantDomain);
+					deleteNode(entityNodeRef);
 				} else if (!nodeService.exists(nodeToTest)) {
-					logger.info("reference node  doesn't exist : " + nodeToTest + ", delete version folder : " + entityNodeRef + ", tenant : " + tenantName);
-				} else if(nodeService.hasAspect(nodeToTest, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
-					logger.info("Removing unneeded version folder : " + entityNodeRef + " for Composite version : " + nodeToTest + ", tenant : " + tenantName);
-				}
-				
-				deleteNode(entityNodeRef);
-				
-			}
-			
-		};
-		
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
-	
-	}
-
-	private BatchProcessWorkProvider<NodeRef> createCleanTemporaryNodesProcessWorkProvider(int maxProcessedNodes) {
-				
-				Calendar cal = Calendar.getInstance();
-				cal.add(Calendar.DAY_OF_YEAR, -1);
-			
-				List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					return BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
-							.withAspect(ContentModel.ASPECT_TEMPORARY).inDB().ftsLanguage().maxResults(maxProcessedNodes)
-							.andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'")
-							.list();
-				}, false, true);
-			
-				return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
-		
-			}
-
-	private void cleanTemporaryNodes(int maxProcessedNodes, String tenantName) {
-		
-		BatchInfo batchInfo = new BatchInfo("cleanTemporaryNodes", "becpg.batch.versionCleaner.cleanTemporaryNodes." + tenantName);
-		batchInfo.setRunAsSystem(true);
-	
-		BatchProcessWorkProvider<NodeRef> workProvider = createCleanTemporaryNodesProcessWorkProvider(maxProcessedNodes);
-		
-		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
-	
-			@Override
-			public void process(NodeRef entityNodeRef) throws Throwable {
-				deleteTemporaryNode(tenantName, entityNodeRef);
-			}
-			
-		};
-		
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
-	
-	}
-
-	private BatchProcessWorkProvider<NodeRef> createConvertOldVersionsProcessWorkProvider(int maxProcessedNodes) {
-			
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.DAY_OF_YEAR, -1);
-		
-			List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				
-				List<NodeRef> result = new ArrayList<>();
-				
-				List<NodeRef> queryResult = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
-						.excludeAspect(BeCPGModel.ASPECT_ENTITY_FORMAT).excludeAspect(ContentModel.ASPECT_TEMPORARY).inDB().ftsLanguage()
-						.andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'")
-						.list();
-				
-					for (NodeRef node : queryResult) {
-						if (result.size() >= maxProcessedNodes) {
+					List<ChildAssociationRef> versionAssocs = nodeService.getChildAssocs(entityNodeRef, Version2Model.CHILD_QNAME_VERSIONS,
+							RegexQNamePattern.MATCH_ALL);
+					for (ChildAssociationRef versionAssoc : versionAssocs) {
+						if (dictionaryService.isSubClass(nodeService.getType(versionAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
+							logger.debug("reference node  doesn't exist : " + nodeToTest + ", delete version folder : " + entityNodeRef + ", tenant : " + tenantDomain);
+							deleteNode(entityNodeRef);
 							break;
 						}
-						if (entityFormatService.checkWhereUsedBeforeConversion(node)) {
-							result.add(node);
-						}
 					}
-				
-					return result;
-			}, false, true);
-		
-			return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
-		
-		}
-
-	private void convertOldVersions(int maxProcessedNodes, String tenantName) {
-		
-		BatchInfo batchInfo = new BatchInfo("convertOldVersions", "becpg.batch.versionCleaner.convertOldVersions." + tenantName);
-
-		batchInfo.setRunAsSystem(true);
 	
-		BatchProcessWorkProvider<NodeRef> workProvider = createConvertOldVersionsProcessWorkProvider(maxProcessedNodes);
-		
-		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
-	
-			@Override
-			public void process(NodeRef entityNodeRef) throws Throwable {
-				convertNode(tenantName, entityNodeRef);
+				} else if(nodeService.hasAspect(nodeToTest, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
+					logger.debug("Removing unneeded version folder : " + entityNodeRef + " for Composite version : " + nodeToTest + ", tenant : " + tenantDomain);
+					deleteNode(entityNodeRef);
+				} 
 			}
-			
 		};
 		
 		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
 	
+		logger.info("Executed orphan version cleaning on tenant " + tenantDomain);
+
 	}
 
 	private void deleteNode(NodeRef nodeRef) {
@@ -277,8 +220,16 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		}, false, true);
 	}
 	
-	private void deleteTemporaryNode(String tenantName, NodeRef temporaryNode) {
+	private void deleteTemporaryNode(NodeRef temporaryNode) {
 		long start = System.currentTimeMillis();
+		
+		String tenantDomain = "default";
+		
+		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
+			tenantDomain = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
+		}
+		
+		final String finaltenantDomain = tenantDomain;
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			if (nodeService.exists(temporaryNode)) {
@@ -292,14 +243,14 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 				}
 				nodeService.deleteNode(temporaryNode);
 				long timeElapsed = System.currentTimeMillis() - start;
-				logger.info("deleted temporary version node : '" + name + "', tenant : " + tenantName + ", time elapsed : " + timeElapsed + " ms");
+				logger.debug("deleted temporary version node : '" + name + "', tenant : " + finaltenantDomain + ", time elapsed : " + timeElapsed + " ms");
 				
 				if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
 					if (lockService.isLocked(parentNode)) {
 						lockService.unlock(parentNode);
 					}
 					nodeService.deleteNode(parentNode);
-					logger.info("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantName);
+					logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + finaltenantDomain);
 				}
 			}
 			
@@ -308,8 +259,13 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	}
 
-	private void convertNode(String tenantName, NodeRef notConvertedNode) {
-		long start = System.currentTimeMillis();
+	private void convertNode(NodeRef notConvertedNode) {
+		
+		String tenantDomain = "default";
+		
+		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
+			tenantDomain = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
+		}
 		
 		String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
 		
@@ -320,20 +276,20 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
 		
 		if (nodeService.exists(originalNode)) {
-			logger.info("Converting node " + notConvertedNode + ", tenant : " + tenantName);
-			NodeRef convertedNode = entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
-			if (convertedNode != null) {
-				long timeElapsed = System.currentTimeMillis() - start;
-				logger.info("Converted entity '" + name + "', from " + notConvertedNode + " to " + convertedNode + ", tenant : " + tenantName
-						+ ", time elapsed : " + timeElapsed + " ms");
-			}
+			logger.debug("Converting node " + notConvertedNode + ", tenant : " + tenantDomain);
+			entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
 		} else {
-			logger.info("deleting version history node : '" + name + "' because the original node doesn't exist anymore, tenant : " + tenantName);
+			logger.debug("deleting version history node : '" + name + "' because the original node doesn't exist anymore, tenant : " + tenantDomain);
 			if (lockService.isLocked(notConvertedNode)) {
 				lockService.unlock(notConvertedNode);
 			}
 			
 			deleteNode(notConvertedNode);
+		}
+		
+		if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
+			nodeService.deleteNode(parentNode);
+			logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantDomain);
 		}
 	}
 

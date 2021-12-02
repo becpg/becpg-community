@@ -4,6 +4,6 @@ public interface VersionCleanerService {
 	
 	public static final int MAX_PROCESSED_NODES = 100;
 
-	public boolean cleanVersions(int maxProcessedNdoes);
+	public boolean cleanVersions(int maxProcessedNdoes, boolean cleanOrphanVersions);
 	
 }
