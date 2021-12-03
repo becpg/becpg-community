@@ -224,7 +224,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 				maxProcessedNodes = Integer.parseInt(templateArgs.get(PARAM_NUMBER));
 			}
 			
-			versionCleanerService.cleanVersions(maxProcessedNodes);
+			versionCleanerService.cleanVersions(maxProcessedNodes, true);
 		
 		} else if (ACTION_DELETE_MODEL.equals(action)) {
 			NodeRef modelNodeRef = new NodeRef(req.getParameter(PARAM_NODEREF));
