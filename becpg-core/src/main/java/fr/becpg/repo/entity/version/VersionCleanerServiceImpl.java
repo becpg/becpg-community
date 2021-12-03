@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
@@ -115,7 +116,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			List<NodeRef> entitiesHistoryNodes = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
 					.excludeAspect(BeCPGModel.ASPECT_ENTITY_FORMAT)
 					.andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'")
-					.inDB().ftsLanguage().list();
+					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).inDB().ftsLanguage().list();
 
 			List<NodeRef> results = new ArrayList<>();
 			
@@ -132,6 +133,11 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			
 		}, false, true);
 
+		if (entityNodeRefs.isEmpty()) {
+			logger.debug("There is no node to convert, exit");
+			return;
+		}
+		
 		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
@@ -155,10 +161,13 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
 
-		logger.info("Executed version cleaning on tenant " + tenantDomain);
 	}
 
-	private BatchProcessWorkProvider<NodeRef> createCleanOrphanVersionsProcessWorkProvider() {
+	private void cleanOrphanVersions(String tenantDomain) {
+		
+		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions", "becpg.batch.versionCleaner.cleanOrphanVersions." + tenantDomain);
+		batchInfo.setRunAsSystem(true);
+	
 		
 		List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -168,17 +177,8 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			
 		}, false, true);
 
-		return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
-		
-	}
-	
-	private void cleanOrphanVersions(String tenantDomain) {
-		
-		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions", "becpg.batch.versionCleaner.cleanOrphanVersions." + tenantDomain);
-		batchInfo.setRunAsSystem(true);
-	
-		BatchProcessWorkProvider<NodeRef> workProvider = createCleanOrphanVersionsProcessWorkProvider();
-		
+		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
+
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
 			@Override
@@ -209,8 +209,6 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		
 		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
 	
-		logger.info("Executed orphan version cleaning on tenant " + tenantDomain);
-
 	}
 
 	private void deleteNode(NodeRef nodeRef) {
@@ -221,7 +219,6 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	}
 	
 	private void deleteTemporaryNode(NodeRef temporaryNode) {
-		long start = System.currentTimeMillis();
 		
 		String tenantDomain = "default";
 		
@@ -242,8 +239,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 					lockService.unlock(temporaryNode);
 				}
 				nodeService.deleteNode(temporaryNode);
-				long timeElapsed = System.currentTimeMillis() - start;
-				logger.debug("deleted temporary version node : '" + name + "', tenant : " + finaltenantDomain + ", time elapsed : " + timeElapsed + " ms");
+				logger.debug("deleted temporary version node : '" + name + "', tenant : " + finaltenantDomain);
 				
 				if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
 					if (lockService.isLocked(parentNode)) {

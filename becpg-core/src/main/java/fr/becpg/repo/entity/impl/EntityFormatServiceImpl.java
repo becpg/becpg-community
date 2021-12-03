@@ -448,6 +448,8 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	@Override
 	public NodeRef convertVersionHistoryNodeRef(NodeRef node) {
 		
+		long start = System.currentTimeMillis();
+		
 		if (!checkWhereUsedBeforeConversion(node)) {
 			return null;
 		}
@@ -484,8 +486,10 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			if (TenantService.DEFAULT_DOMAIN.equals(tenantName)) {
 				tenantName = "default";
 			}
+			
+			long stop = System.currentTimeMillis();
 
-			logger.debug("Converted entity '" + name + "', from " + node + " to " + versionNode + ", tenant : " + tenantName);
+			logger.debug("Converted entity '" + name + "', from " + node + " to " + versionNode + ", tenant : " + tenantName + ", time elapsed : " + (stop - start) + " ms");
 
 			return versionNode;
 		}
