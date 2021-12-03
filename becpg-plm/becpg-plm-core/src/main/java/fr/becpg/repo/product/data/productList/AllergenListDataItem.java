@@ -36,6 +36,12 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	private Double qtyPerc;
 	private Boolean voluntary = null;
 	private Boolean inVoluntary = null;
+	private Boolean onSite = null;
+	private Boolean onLine = null;
+	private Boolean isCleaned = null;
+	
+
+	
 	private String allergenValue = null; 
 	private List<NodeRef> voluntarySources = new ArrayList<>();
 	private List<NodeRef> inVoluntarySources = new ArrayList<>();
@@ -136,7 +142,39 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	}
 	
 	
-	
+	@AlfProp
+	@AlfQname(qname="bcpg:allergenListOnSite")
+	@Nullable
+	public Boolean getOnSite() {
+		return onSite;
+	}
+
+	public void setOnSite(Boolean onSite) {
+		this.onSite = onSite;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:allergenListOnLine")
+	@Nullable
+	public Boolean getOnLine() {
+		return onLine;
+	}
+
+	public void setOnLine(Boolean onLine) {
+		this.onLine = onLine;
+	}
+
+	@AlfProp
+	@AlfQname(qname="bcpg:allergenListIsCleaned")
+	@Nullable
+	public Boolean getIsCleaned() {
+		return isCleaned;
+	}
+
+	public void setIsCleaned(Boolean isCleaned) {
+		this.isCleaned = isCleaned;
+	}
+
 	@AlfProp
 	@AlfQname(qname="bcpg:allergenValue")
 	public String getAllergenValue() {
@@ -258,7 +296,8 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(allergen, allergenValue, inVoluntary, inVoluntarySources, qtyPerc, voluntary, voluntarySources);
+		result = prime * result + Objects.hash(allergen, allergenValue, inVoluntary, inVoluntarySources, isCleaned, onLine, onSite, qtyPerc,
+				voluntary, voluntarySources);
 		return result;
 	}
 
@@ -273,6 +312,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 		AllergenListDataItem other = (AllergenListDataItem) obj;
 		return Objects.equals(allergen, other.allergen) && Objects.equals(allergenValue, other.allergenValue)
 				&& Objects.equals(inVoluntary, other.inVoluntary) && Objects.equals(inVoluntarySources, other.inVoluntarySources)
+				&& Objects.equals(isCleaned, other.isCleaned) && Objects.equals(onLine, other.onLine) && Objects.equals(onSite, other.onSite)
 				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(voluntary, other.voluntary)
 				&& Objects.equals(voluntarySources, other.voluntarySources);
 	}

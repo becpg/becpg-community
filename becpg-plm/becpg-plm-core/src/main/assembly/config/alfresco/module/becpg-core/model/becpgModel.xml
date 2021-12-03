@@ -1563,6 +1563,27 @@
 				<property name="bcpg:allergenListInVoluntary">
 					<type>d:boolean</type>
 				</property>
+				<property name="bcpg:allergenListOnSite">
+					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="bcpg:allergenListOnLine">
+					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="bcpg:allergenListIsCleaned">
+					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
 				<property name="bcpg:allergenListDecisionTree">
 					<type>d:text</type>
 					<mandatory>false</mandatory>

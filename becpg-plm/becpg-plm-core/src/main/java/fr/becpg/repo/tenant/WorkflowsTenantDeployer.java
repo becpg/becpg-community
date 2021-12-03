@@ -10,9 +10,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
-@Service("beCPGWorkflowsTenantDeployer")
+//@Service("beCPGWorkflowsTenantDeployer")
+//@DependsOn("bcpg.plm.workflowDeployer")
 public class WorkflowsTenantDeployer implements TenantDeployer {
 
 	private static Log logger = LogFactory.getLog(WorkflowsTenantDeployer.class);
@@ -23,10 +23,12 @@ public class WorkflowsTenantDeployer implements TenantDeployer {
 	@Autowired
 	private TenantAdminService tenantAdminService;
 	
+	
 	@Override
 	public void onEnableTenant() {
 		//#11496 Fix a bug in multitenancy cache is not set-up correctly;
 		logger.info("beCPG - Refresh workflow definitions for: "+ TenantUtil.getCurrentDomain());
+		// bootstrap workflows
 		workflowService.getAllDefinitions();	
 	}
 
