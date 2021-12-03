@@ -6,8 +6,6 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -34,13 +32,9 @@ import org.quartz.PersistJobDataAfterExecution;
 @DisallowConcurrentExecution
 public class AutomaticECOJob extends AbstractScheduledLockedJob implements Job {
 
-	private static final Log logger = LogFactory.getLog(AutomaticECOJob.class);
-
 	/** {@inheritDoc} */
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
-		
-		logger.info("Start of AutomaticECOJob.");
 		
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();
 
@@ -63,8 +57,6 @@ public class AutomaticECOJob extends AbstractScheduledLockedJob implements Job {
 				}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
 			}
 		}
-
-		logger.info("End of AutomaticECOJob.");
 
 	}
 
