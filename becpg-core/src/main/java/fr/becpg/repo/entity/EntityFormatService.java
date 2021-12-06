@@ -1,5 +1,8 @@
 package fr.becpg.repo.entity;
 
+import java.util.List;
+import java.util.Set;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -46,7 +49,7 @@ public interface EntityFormatService {
 
 	public NodeRef convertVersionHistoryNodeRef(NodeRef from);
 
-	public boolean checkWhereUsedBeforeConversion(NodeRef notConvertedNode);
+	public Set<NodeRef> findConvertibleRelatives(NodeRef originalEntity, Set<NodeRef> visited, List<NodeRef> nextWork);
 
 
 }

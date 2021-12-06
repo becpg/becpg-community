@@ -2,7 +2,12 @@ package fr.becpg.repo.entity.version;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -21,14 +26,12 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
@@ -38,6 +41,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service("versionCleanerService")
 public class VersionCleanerServiceImpl implements VersionCleanerService {
+
+	private static final String DEFAULT = "default";
 
 	private static final Log logger = LogFactory.getLog(VersionCleanerServiceImpl.class);
 
@@ -64,7 +69,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	@Autowired
 	private AssociationService associationService;
-
+	
 	@Override
 	public boolean cleanVersions(int maxProcessedNodes, boolean cleanOrphanVersions) {
 		
@@ -72,7 +77,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		
 		try {
 			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getSystemUserName());
-			internalCleanVersions(maxProcessedNodes, "default", cleanOrphanVersions);
+			internalCleanVersions(maxProcessedNodes, DEFAULT, cleanOrphanVersions);
 			
 			if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
 				@SuppressWarnings("deprecation")
@@ -104,41 +109,81 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		
 		return true;
 	}
+	
+	private class CleanVersionWorkProvider implements BatchProcessWorkProvider<NodeRef>{
+
+		private int maxProcessedNodes;
+		private List<NodeRef> initialList = null;
+		private Set<NodeRef> toTreat = new LinkedHashSet<>();
+		private Set<NodeRef> treated = new LinkedHashSet<>();
+		private List<NodeRef> nextWork = new ArrayList<>();
+		private Calendar cal = Calendar.getInstance();
+		
+		public CleanVersionWorkProvider(int maxProcessedNodes) {
+			super();
+			this.maxProcessedNodes = maxProcessedNodes;
+			initialList = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION).maxResults(maxProcessedNodes).inDB().ftsLanguage().list();
+			cal.add(Calendar.DAY_OF_YEAR, -1);
+		}
+
+		@Override
+		public int getTotalEstimatedWorkSize() {
+			return initialList.size();
+		}
+		
+		@Override
+		public Collection<NodeRef> getNextWork() {
+			
+			nextWork.clear();
+			
+			for (NodeRef node : toTreat) {
+				if (nextWork.size() >= BatchInfo.BATCH_SIZE) {
+					break;
+				}
+				nextWork.add(node);
+				treated.add(node);
+			}
+			
+			toTreat.removeAll(nextWork);
+			
+			if (nextWork.size() < BatchInfo.BATCH_SIZE) {
+				for (NodeRef initialNode : initialList) {
+					
+					if (nodeService.exists(initialNode)) {
+						
+						Set<NodeRef> convertibleRelatives = entityFormatService.findConvertibleRelatives(initialNode, new HashSet<>(), nextWork);
+						
+						for (NodeRef convertibleRelative : convertibleRelatives) {
+							
+							if (treated.size() + toTreat.size() >= maxProcessedNodes) {
+								break;
+							}
+							
+							if (!toTreat.contains(convertibleRelative) && !treated.contains(convertibleRelative)) {
+								Date modified = (Date) nodeService.getProperty(convertibleRelative, ContentModel.PROP_MODIFIED);
+								if (cal.getTime().compareTo(modified) > 0) {
+									if (nextWork.size() < BatchInfo.BATCH_SIZE) {
+										nextWork.add(convertibleRelative);
+										treated.add(convertibleRelative);
+									} else {
+										toTreat.add(convertibleRelative);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+					
+			return nextWork;
+		}
+	}
+
+
 
 	private void convertAndDeleteVersions(int maxProcessedNodes, String tenantDomain) {
 		BatchInfo batchInfo = new BatchInfo("cleanVersions", "becpg.batch.versionCleaner.cleanVersions." + tenantDomain);
 		batchInfo.setRunAsSystem(true);
-
-		List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			Calendar cal = Calendar.getInstance();
-			cal.add(Calendar.DAY_OF_YEAR, -1);
-
-			List<NodeRef> entitiesHistoryNodes = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
-					.excludeAspect(BeCPGModel.ASPECT_ENTITY_FORMAT)
-					.andBetween(ContentModel.PROP_MODIFIED, "MIN", "'" + ISO8601DateFormat.format(cal.getTime()) + "'")
-					.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).inDB().ftsLanguage().list();
-
-			List<NodeRef> results = new ArrayList<>();
-			
-			for (NodeRef entitiesHistoryNode : entitiesHistoryNodes) {
-				if (entityFormatService.checkWhereUsedBeforeConversion(entitiesHistoryNode)) {
-					results.add(entitiesHistoryNode);
-				}
-				if (results.size() >= maxProcessedNodes) {
-					break;
-				}
-			}
-
-			return results;
-			
-		}, false, true);
-
-		if (entityNodeRefs.isEmpty()) {
-			logger.debug("There is no node to convert, exit");
-			return;
-		}
-		
-		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
@@ -159,7 +204,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 		};
 
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
+		batchQueueService.queueBatch(batchInfo, new CleanVersionWorkProvider(maxProcessedNodes), processWorker, null);
 
 	}
 
@@ -220,15 +265,13 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	private void deleteTemporaryNode(NodeRef temporaryNode) {
 		
-		String tenantDomain = "default";
-		
-		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
-			tenantDomain = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
-		}
-		
-		final String finaltenantDomain = tenantDomain;
-		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			String tenantDomain = DEFAULT;
+			
+			if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
+				tenantDomain = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
+			}
 			if (nodeService.exists(temporaryNode)) {
 				
 				NodeRef parentNode = nodeService.getPrimaryParent(temporaryNode).getParentRef();
@@ -239,54 +282,58 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 					lockService.unlock(temporaryNode);
 				}
 				nodeService.deleteNode(temporaryNode);
-				logger.debug("deleted temporary version node : '" + name + "', tenant : " + finaltenantDomain);
+				logger.debug("deleted temporary version node : '" + name + "', tenant : " + tenantDomain);
 				
 				if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
 					if (lockService.isLocked(parentNode)) {
 						lockService.unlock(parentNode);
 					}
 					nodeService.deleteNode(parentNode);
-					logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + finaltenantDomain);
+					logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantDomain);
 				}
 			}
 			
 			return null;
 		}, false, true);
-	
 	}
 
 	private void convertNode(NodeRef notConvertedNode) {
 		
-		String tenantDomain = "default";
-		
-		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
-			tenantDomain = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
-		}
-		
-		String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
-		
-		NodeRef parentNode = nodeService.getPrimaryParent(notConvertedNode).getParentRef();
-		
-		String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
-		
-		NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
-		
-		if (nodeService.exists(originalNode)) {
-			logger.debug("Converting node " + notConvertedNode + ", tenant : " + tenantDomain);
-			entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
-		} else {
-			logger.debug("deleting version history node : '" + name + "' because the original node doesn't exist anymore, tenant : " + tenantDomain);
-			if (lockService.isLocked(notConvertedNode)) {
-				lockService.unlock(notConvertedNode);
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			String tenantDomain = DEFAULT;
+
+			if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
+				tenantDomain = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
 			}
-			
-			deleteNode(notConvertedNode);
-		}
-		
-		if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
-			nodeService.deleteNode(parentNode);
-			logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantDomain);
-		}
+
+			String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
+
+			NodeRef parentNode = nodeService.getPrimaryParent(notConvertedNode).getParentRef();
+
+			String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
+
+			NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
+
+			if (nodeService.exists(originalNode)) {
+				logger.debug("Converting node " + notConvertedNode + ", tenant : " + tenantDomain);
+				entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
+			} else {
+				logger.debug(
+						"deleting version history node : '" + name + "' because the original node doesn't exist anymore, tenant : " + tenantDomain);
+				if (lockService.isLocked(notConvertedNode)) {
+					lockService.unlock(notConvertedNode);
+				}
+
+				deleteNode(notConvertedNode);
+			}
+
+			if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
+				nodeService.deleteNode(parentNode);
+				logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantDomain);
+			}
+			return null;
+		}, false, true);
 	}
 
 }
