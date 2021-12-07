@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo;
 
+import fr.becpg.repo.admin.SpeciesForFishery;
 
 /**
  * beCPG constants for repository
@@ -271,6 +272,9 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_SELLING_UNITS = "SellingUnitOfMeasure";
 	public static final String PATH_GS1_HANDLING_INSTRUCTIONS = "HandlingInstructions";
 	public static final String PATH_GS1_PREPARATION_TYPE ="PreparationType";
+	public static final String PATH_GS1_SPECIES_FOR_FISHERY = "SpeciesForFishery";
+	public static final String PATH_GS1_CATCH_METHID_CODES = "CatchMethodCodes";
+	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
 
 
 }
