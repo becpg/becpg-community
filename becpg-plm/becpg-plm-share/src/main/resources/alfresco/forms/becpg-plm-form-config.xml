@@ -374,9 +374,10 @@
 	          
 	         <!-- DeliveryPurchasingInformationType  -->
 			  <show force="false" id="gs1:firstShipDateTime"/>
+			  <show force="false" id="gs1:lastShipDateTime"/>     
 			  <show force="false" id="gs1:startAvailabilityDateTime"/>
 			  <show force="false" id="gs1:endAvailabilityDateTime"/>
-			  <show force="false" id="gs1:lastShipDateTime"/>     
+			 
 			  
 			  <show force="false" id="gs1:isTradeItemReorderable"/>
 			  <show force="false" id="gs1:orderQuantityMinimum"/>
@@ -384,9 +385,9 @@
 			  <show force="false" id="gs1:orderingLeadTime"/>
               <!-- SalesInformationModuleType -->
 	          <show force="false" id="gs1:sellingUnitOfMeasure"/>
-	          <!--  DutyFeeTaxInformationModule -->
+	          <!--  DutyFeeTaxInformationModule 
 	          <show force="false" id="gs1:dutyFeeTaxes"/>
-	            
+	           -->
 	          <!--  DisplayUnitInformationType -->
 	          <show force="false" id="gs1:isTradeItemAFullDisplayStand"/> 
 	          <show force="false" id="gs1:hasDisplayReadyPackaging"/>
@@ -884,10 +885,20 @@
 	              <control-param name="parent">gs1_productHierarchy4</control-param>
 	            </control>
 	          </field>
-	          <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:dataCarrierTypeCode" mandatory="false" read-only="false" set="hierarchyPanel"/>
+	           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:dataCarrierTypeCode" mandatory="false" read-only="false" set="hierarchyPanel"/>
 	          <field help-id="becpg.forms.help.gs1.isTradeItemAVariableUnit" id="gs1:isTradeItemAVariableUnit" mandatory="false" read-only="false" set="hierarchyPanel">
+	             <constraint-handlers>
+							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='change@[
+		                  		{"prop":"prop_gs1_variableWeightAllowableDeviationPercentage", "condition" : "|false"},
+		                  	    {"prop":"prop_gs1_variableWeightRangeMinimum", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_variableWeightRangeMaximum", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_variableTradeItemType", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_eanCodeWeight", "condition" : "|false"}
+		                  		]'/>
+		         </constraint-handlers>
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
+	         <field id="gs1:variableTradeItemType" mandatory="false" read-only="false" set="hierarchyPanel"/>
 			<field id="gs1:variableWeightAllowableDeviationPercentage" help-id="becpg.forms.help.variableWeightAllowableDeviationPercentage"
 				mandatory="false" read-only="false" set="hierarchyPanel" />
 			<field id="gs1:variableWeightRangeMinimum" help-id="becpg.forms.help.variableWeightRangeMinimum" mandatory="false" read-only="false"
@@ -909,7 +920,7 @@
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
 	          <field id="gs1:eanCodeWeight" mandatory="false" read-only="false" set="hierarchyPanel"/>
-	          <field id="gs1:variableTradeItemType" mandatory="false" read-only="false" set="hierarchyPanel"/>
+	          
 	          <field id="bcpg:customsCodeRef" mandatory="false" read-only="false" set="hierarchyPanel">
 	            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 	              <control-param name="showLink">false</control-param>
@@ -917,6 +928,16 @@
 	          </field>
 	          <set appearance="bordered-panel" id="promotionalPanel" label-id="becpg.forms.set.promotional.label" parent="publicationTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
 	          <field help-id="becpg.forms.help.gs1.isTradeItemAPromotionalItem" id="gs1:isTradeItemAPromotionalItem" mandatory="false" read-only="false" set="promotionalPanel">
+	             <constraint-handlers>
+							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='change@[
+		                  		{"prop":"assoc_gs1_promotionalArticleRef", "condition" : "|false"},
+		                  	    {"prop":"prop_gs1_freeQuantityOfProduct", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_freeQuantityOfProductUnit", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_freeQuantityOfProductPercent", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_promotionTypeCode", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_offerOnPack", "condition" : "|false"}
+		                  		]'/>
+		         </constraint-handlers>
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
 	          <field id="gs1:promotionalArticleRef" mandatory="false" read-only="false" set="promotionalPanel"/>
@@ -932,6 +953,19 @@
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
 	          <field help-id="becpg.forms.help.gs1.isTradeItemAnOrderableUnit" id="gs1:isTradeItemAnOrderableUnit" mandatory="false" read-only="false" set="commercialPanel">
+	          <constraint-handlers>
+							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='change@[
+		                  		{"prop":"prop_gs1_isTradeItemReorderable", "condition" : "|false"},
+		                  	    {"prop":"prop_gs1_startAvailabilityDateTime", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_endAvailabilityDateTime", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_orderQuantityMinimum", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_orderQuantityMultiple", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_firstShipDateTime", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_lastShipDateTime", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_sellingUnitOfMeasure", "condition" : "|false"},
+		                  		{"prop":"prop_gs1_orderingLeadTime", "condition" : "|false"}
+		                  		]'/>
+		         </constraint-handlers>
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
 	          <field help-id="becpg.forms.help.gs1.isTradeItemReorderable" id="gs1:isTradeItemReorderable" mandatory="false" read-only="false" set="commercialPanel">
@@ -946,18 +980,18 @@
 	          <field help-id="becpg.forms.help.gs1.firstShipDateTime" id="gs1:firstShipDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
 	          <field help-id="becpg.forms.help.gs1.lastShipDateTime" id="gs1:lastShipDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
 	          <field help-id="becpg.forms.help.gs1.startAvailabilityDateTime" id="gs1:startAvailabilityDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
-	          <field id="gs1:endAvailabilityDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
+	          <field help-id="becpg.forms.help.gs1.endAvailabilityDateTime" id="gs1:endAvailabilityDateTime" mandatory="false" read-only="false" set="commercialPanel"/>
 	          <field help-id="becpg.forms.help.gs1.sellingUnitOfMeasure" id="gs1:sellingUnitOfMeasure" mandatory="false" read-only="false" set="commercialPanel"/>
 	          <field help-id="becpg.forms.help.gs1.orderingLeadTime" id="gs1:orderingLeadTime" mandatory="false" read-only="false" set="commercialPanel">
 	            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
 	              <control-param name="unit">d</control-param>
 	            </control>
 	          </field>
-	          <field id="gs1:dutyFeeTaxes" mandatory="false" read-only="false" set="commercialPanel">
+	       <!--<field id="gs1:dutyFeeTaxes" mandatory="false" read-only="false" set="commercialPanel">
 	            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 	              <control-param name="showLink">false</control-param>
 	            </control>
-	          </field>
+	          </field>  -->  
 	          <field help-id="becpg.forms.help.gs1.hasDisplayReadyPackaging" id="gs1:hasDisplayReadyPackaging" mandatory="false" read-only="false" set="commercialPanel">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
@@ -2094,8 +2128,6 @@
 			  <show force="true" id="gs1:orderingLeadTime"/>
               <!-- SalesInformationModuleType -->
 	          <show force="true" id="gs1:sellingUnitOfMeasure"/>
-	          <!--  DutyFeeTaxInformationModule -->
-	          <show force="true" id="gs1:dutyFeeTaxes"/>
 	            
 	          <!--  DisplayUnitInformationType -->
 	          <show force="true" id="gs1:isTradeItemAFullDisplayStand"/> 
@@ -2657,11 +2689,7 @@
 	              <control-param name="unit">d</control-param>
 	            </control>
 	          </field>
-	          <field id="gs1:dutyFeeTaxes" mandatory="false" read-only="false" set="commercialPanel">
-	            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-	              <control-param name="showLink">false</control-param>
-	            </control>
-	          </field>
+	        
 	          <field help-id="becpg.forms.help.gs1.hasDisplayReadyPackaging" id="gs1:hasDisplayReadyPackaging" mandatory="false" read-only="false" set="commercialPanel">
 	            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
 	          </field>
@@ -13055,15 +13083,20 @@
 		</forms>
 	</config>
 	
-	<config evaluator="model-type" condition="gs1:targetMarket">
+		
+	
+	<config evaluator="model-type" condition="gs1:dutyFeeTaxList">
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
-					<show id="gs1:targetMarketCountries" />												
+					<show id="gs1:dutyFeeTaxRef" />
+					<show id="gs1:dutyFeeTaxAmount" />		
+					<show id="gs1:dutyFeeTaxAmountUnit" />	
+					<show id="bcpg:startEffectivity" />	
+				    <show id="bcpg:endEffectivity" />					
 				</field-visibility>
 				<appearance>
-					<field id="gs1:targetMarketCountries">
+					<field id="gs1:dutyFeeTaxRef">
 						<control
 								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 								<control-param name="showLink">false</control-param>							
@@ -13073,45 +13106,191 @@
 			</form>
 			<form id="filter">
 				<field-visibility>
-					<show id="cm:name" />
-					<show id="gs1:targetMarketCountries" />												
+					<show id="gs1:dutyFeeTaxRef" />											
 				</field-visibility>
 				<appearance>
-					<field id="gs1:targetMarketCountries">
+					<field id="gs1:dutyFeeTaxRef">
 						<control
 								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 								<control-param name="showLink">false</control-param>							
 							</control>
 					</field>
+					<field id="bcpg:startEffectivity" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
 				</appearance>					
 			</form>
 			<form id="datagrid">
 				<field-visibility>
-					<show id="cm:name" />
-					<show id="gs1:targetMarketCountries" />		
+					<show id="gs1:dutyFeeTaxRef" />
+					<show id="gs1:dutyFeeTaxAmount" />		
+					<show id="gs1:dutyFeeTaxAmountUnit" />	
+					<show id="bcpg:startEffectivity" />	
+				    <show id="bcpg:endEffectivity" />
 				</field-visibility>			
 			</form>
 		</forms>
 	</config>
-	<config evaluator="node-type" condition="gs1:targetMarket">
+	<config evaluator="node-type" condition="gs1:dutyFeeTaxList">
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="cm:name" />
-					<show id="gs1:targetMarketCountries" />												
+					<show id="gs1:dutyFeeTaxRef" />
+					<show id="gs1:dutyFeeTaxAmount" />		
+					<show id="gs1:dutyFeeTaxAmountUnit" />	
+					<show id="bcpg:startEffectivity" />	
+				    <show id="bcpg:endEffectivity" />					
 				</field-visibility>
 				<appearance>
-					<field id="gs1:targetMarketCountries">
+					<field id="gs1:dutyFeeTaxRef">
 						<control
 								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-								<control-param name="showLink">false</control-param>							
-							</control>
+							<control-param name="showLink">false</control-param>							
+						</control>
+					</field>
+					<field id="bcpg:startEffectivity" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
 					</field>
 				</appearance>							
 			</form>
 		</forms>
 	</config>
 	
-	
+	<config evaluator="model-type" condition="gs1:tradeItemPriceList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="gs1:tradeItemPriceType" />
+					<show id="gs1:tradeItemPrice" />
+					<show id="gs1:tradeItemPriceUnit" />			
+					<show id="gs1:priceBasisQuantity" />	
+					<show id="gs1:priceBasisQuantityUnit" />	
+					<show id="bcpg:startEffectivity" />	
+				    <show id="bcpg:endEffectivity" />			
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:startEffectivity" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+				</appearance>				
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="gs1:tradeItemPriceType" />											
+				</field-visibility>			
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+						<show id="gs1:tradeItemPriceType" />
+					<show id="gs1:tradeItemPrice" />
+					<show id="gs1:tradeItemPriceUnit" />			
+					<show id="gs1:priceBasisQuantity" />	
+					<show id="gs1:priceBasisQuantityUnit" />	
+					<show id="bcpg:startEffectivity" />	
+				    <show id="bcpg:endEffectivity" />	
+				</field-visibility>			
+			</form>
+		</forms>
+	</config>
+	<config evaluator="node-type" condition="gs1:tradeItemPriceList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="gs1:tradeItemPriceType" />
+					<show id="gs1:tradeItemPrice" />
+					<show id="gs1:tradeItemPriceUnit" />			
+					<show id="gs1:priceBasisQuantity" />	
+					<show id="gs1:priceBasisQuantityUnit" />	
+					<show id="bcpg:startEffectivity" />	
+				    <show id="bcpg:endEffectivity" />					
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:startEffectivity" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+				</appearance>				
+			</form>
+		</forms>
+	</config>
+		
+		<config evaluator="model-type" condition="gs1:fishReportingInformationList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="gs1:speciesForFisheryStatisticsPurposesCode" />
+					<show id="gs1:speciesForFisheryStatisticsPurposesName" />
+					<show id="gs1:productionMethodForFishAndSeafoodCode" />			
+					<show id="gs1:storageStateCode" />	
+					<show id="gs1:catchMethodCode" />	
+					<show id="gs1:catchAreaCode" />	
+				    <show id="gs1:fishCatchDateInformation" />				
+				</field-visibility>				
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="gs1:speciesForFisheryStatisticsPurposesCode" />
+					<show id="gs1:speciesForFisheryStatisticsPurposesName" />
+					<show id="gs1:productionMethodForFishAndSeafoodCode" />			
+					<show id="gs1:storageStateCode" />									
+				</field-visibility>			
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="gs1:speciesForFisheryStatisticsPurposesCode" />
+					<show id="gs1:speciesForFisheryStatisticsPurposesName" />
+					<show id="gs1:productionMethodForFishAndSeafoodCode" />			
+					<show id="gs1:storageStateCode" />	
+					<show id="gs1:catchMethodCode" />	
+					<show id="gs1:catchAreaCode" />	
+				    <show id="gs1:fishCatchDateInformation" />			
+				</field-visibility>			
+			</form>
+		</forms>
+	</config>
+	<config evaluator="node-type" condition="gs1:fishReportingInformationList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="gs1:speciesForFisheryStatisticsPurposesCode" />
+					<show id="gs1:speciesForFisheryStatisticsPurposesName" />
+					<show id="gs1:productionMethodForFishAndSeafoodCode" />			
+					<show id="gs1:storageStateCode" />	
+					<show id="gs1:catchMethodCode" />	
+					<show id="gs1:catchAreaCode" />	
+				    <show id="gs1:fishCatchDateInformation" />					
+				</field-visibility>
+							
+			</form>
+		</forms>
+	</config>
+		
 
 </alfresco-config>
