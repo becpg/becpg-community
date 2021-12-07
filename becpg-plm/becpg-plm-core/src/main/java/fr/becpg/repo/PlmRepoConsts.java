@@ -3,8 +3,6 @@
  */
 package fr.becpg.repo;
 
-import fr.becpg.repo.admin.SpeciesForFishery;
-
 /**
  * beCPG constants for repository
  *
