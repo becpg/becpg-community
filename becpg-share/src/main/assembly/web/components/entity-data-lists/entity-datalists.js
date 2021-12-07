@@ -627,6 +627,16 @@
 								};
 
 								var list, el, containerEl = Dom.get(domId);
+								
+								this.options.listTypes.sort(function (a, b){
+										if(a == null){
+											return -1;
+										} 
+										if(b == null){
+											return 1;
+										}
+										return ('' + a.title).localeCompare(b.title);
+									});
 
 								for (var i = 0, ii = this.options.listTypes.length; i < ii; i++) {
 									list = this.options.listTypes[i];
