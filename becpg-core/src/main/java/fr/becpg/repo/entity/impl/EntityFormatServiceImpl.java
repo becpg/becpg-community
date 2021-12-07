@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.version.common.VersionUtil;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -32,6 +34,7 @@ import org.alfresco.service.cmr.view.ExporterService;
 import org.alfresco.service.cmr.view.Location;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -49,6 +52,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
@@ -103,6 +107,9 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	
 	@Autowired
 	private TenantAdminService tenantAdminService;
+	
+	@Autowired
+	private EntityService entityService;
 	
 	private static final Log logger = LogFactory.getLog(EntityFormatServiceImpl.class);
 
@@ -450,8 +457,22 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		long start = System.currentTimeMillis();
 		
-		if (!checkWhereUsedBeforeConversion(node)) {
-			return null;
+		Set<NodeRef> relatives = findConvertibleRelatives(node, new HashSet<>(), null);
+		
+		if (relatives.size() > 1) {
+			String name = (String) nodeService.getProperty(node, ContentModel.PROP_NAME);
+
+			StringBuilder sb = new StringBuilder();
+			
+			sb.append("Couldn't convert entity '" + name + "' because it is used by not converted entities :");
+			
+			for (NodeRef relative : relatives) {
+				if (!relative.equals(node)) {
+					String relativeName = (String) nodeService.getProperty(relative, ContentModel.PROP_NAME);
+					sb.append(" '" + relativeName + "' ");
+				}
+			}
+			logger.debug(sb.toString());
 		}
 		
 		for (NodeRef toMove : getContainedEntities(node)) {
@@ -513,31 +534,50 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	}
 	
 	@Override
-	public boolean checkWhereUsedBeforeConversion(NodeRef notConvertedNode) {
-		return checkWhereUsed(notConvertedNode, QName.createQName(BeCPGModel.BECPG_URI, "compoListProduct"))
-				&& checkWhereUsed(notConvertedNode, QName.createQName(BeCPGModel.BECPG_URI, "packagingListProduct"))
-				&& checkWhereUsed(notConvertedNode, QName.createQName("http://www.bcpg.fr/model/mpm/1.0", "plResource"));
-	}
-
-	private boolean checkWhereUsed(NodeRef notConvertedNode, QName assocSourceName) {
+	public Set<NodeRef> findConvertibleRelatives(NodeRef originalEntity, Set<NodeRef> visited, final List<NodeRef> ignoredItems) {
+		Set<NodeRef> ret = new LinkedHashSet<>();
 		
-		for (NodeRef source : associationService.getSourcesAssocs(notConvertedNode, assocSourceName)) {
-			NodeRef datalistFolder = nodeService.getPrimaryParent(source).getParentRef();
-			NodeRef entitylistFolder = nodeService.getPrimaryParent(datalistFolder).getParentRef();
-			NodeRef parentProduct = nodeService.getPrimaryParent(entitylistFolder).getParentRef();
+		if (visited.contains(originalEntity) || !nodeService.exists(originalEntity)) {
+			return ret;
+		}
+		
+		visited.add(originalEntity);
+		
+		Set<NodeRef> refs = new HashSet<>();
+		
+		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(originalEntity, RegexQNamePattern.MATCH_ALL);
+
+		List<ChildAssociationRef> parentRefs = nodeService.getParentAssocs(originalEntity);
+		
+		for (AssociationRef assocRef : assocRefs) {
+			refs.add(assocRef.getSourceRef());
+		}
+		
+		for (ChildAssociationRef parentRef : parentRefs) {
+			refs.add(parentRef.getParentRef());
+		}
+		
+		for (NodeRef ref : refs) {
 			
-			if (nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_COMPOSITE_VERSION)
-					&& !nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_ENTITY_FORMAT)
-					&& !nodeService.hasAspect(parentProduct, ContentModel.ASPECT_TEMPORARY)) {
+			NodeRef entitySource = entityService.getEntityNodeRef(ref, BeCPGModel.TYPE_ENTITY_V2);
+			
+			if (entitySource != null) {
 				
-				String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
-				String parentName = (String) nodeService.getProperty(parentProduct, ContentModel.PROP_NAME);
-				logger.debug("Couldn't convert entity '" + name + "' because it is used by entity '" + parentName + "' which needs to be converted first.");
-				return false;
+				Set<NodeRef> convertibleRelatives = findConvertibleRelatives(entitySource, visited, ignoredItems);
+				
+				if (ignoredItems != null) {
+					convertibleRelatives.removeAll(ignoredItems);
+				}
+				
+				ret.addAll(convertibleRelatives);
 			}
 		}
 		
-		return true;
+		if ((ignoredItems == null || !ignoredItems.contains(originalEntity)) && nodeService.hasAspect(originalEntity, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+			ret.add(originalEntity);
+		}
+		
+		return ret;
 	}
-
+	
 }
