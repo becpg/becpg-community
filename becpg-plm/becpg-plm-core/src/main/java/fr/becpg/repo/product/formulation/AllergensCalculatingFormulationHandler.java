@@ -331,11 +331,14 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								 &&  partProduct instanceof ResourceProductData)
 								) {
 							newAllergenListDataItem.setInVoluntary(true);
-							if (!newAllergenListDataItem.getInVoluntarySources().contains(partProduct.getNodeRef())
-									&& !(partProduct instanceof SemiFinishedProductData)) {
-								newAllergenListDataItem.getInVoluntarySources().add(partProduct.getNodeRef());
-							}
+							
+						} 
+						
+						if (!newAllergenListDataItem.getInVoluntarySources().contains(partProduct.getNodeRef())
+								&& !(partProduct instanceof SemiFinishedProductData)) {
+							newAllergenListDataItem.getInVoluntarySources().add(partProduct.getNodeRef());
 						}
+						
 					} else if (allergenListDataItem.getInVoluntary() == null) {
 
 						if (!Boolean.TRUE.equals(newAllergenListDataItem.getInVoluntary())) {
