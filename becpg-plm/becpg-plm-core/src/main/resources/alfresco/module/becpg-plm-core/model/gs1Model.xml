@@ -139,8 +139,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
-		<constraint name="gs1:sellingUnitOfMeasureConstraint"
-			type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+		<constraint name="gs1:sellingUnitOfMeasureConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/SellingUnitOfMeasure</value>
@@ -159,7 +158,7 @@
 		<constraint name="gs1:specialItemCodes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-				    <value></value>
+					<value></value>
 					<value>DEMONSTRATION_UNIT</value>
 					<value>GIFT_WITH_PURCHASE</value>
 					<value>LIMITED_PRODUCTION</value>
@@ -169,7 +168,7 @@
 		<constraint name="gs1:promotionTypeCodes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
-				    <value></value>
+					<value></value>
 					<value>BONUS_PACK</value>
 					<value>FREE_COMPONENTS</value>
 					<value>FREE_GIFT_ATTACHED</value>
@@ -212,7 +211,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="gs1:packagingTermsAndConditionsCodeConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -229,7 +228,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
-               <constraint name="gs1:handlingInstructions" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+		<constraint name="gs1:handlingInstructions" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/HandlingInstructions</value>
@@ -244,7 +243,7 @@
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
-		</constraint>	
+		</constraint>
 		<constraint name="gs1:preparationTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -260,7 +259,99 @@
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
-		</constraint>	
+		</constraint>
+		
+		
+		<constraint name="gs1:tradeItemPriceTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				    <value></value>
+					<value>BULK_PRICE</value>
+					<value>INPATIENT_REGULATORY_REIMBURSMENT_PRICE</value>
+					<value>LOOSE_PRICE</value>
+					<value>MINIMUM_ADVERTISED_PRICE</value>
+					<value>OUTPATIENT_REGULATORY_REIMBURSMENT_PRICE</value>
+					<value>RETAIL_PRICE_ON_TRADE_ITEM</value>
+					<value>UMRP</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		
+		<constraint name="gs1:storageStateCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				  <value></value>
+				   <value>NOT_PREVIOUSLY_FROZEN</value>
+				   <value>PREVIOUSLY_FROZEN</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:productionMethodForFishAndSeafoodCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				    <value></value>
+					<value>AQUACULTURE</value>
+					<value>INLAND_FISHERY</value>
+					<value>MARINE_FISHERY</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+
+		<constraint name="gs1:speciesForFisheryStatisticsPurposesCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/SpeciesForFishery</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:catchMethodCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/CatchMethodCodes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:catchAreaCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/CatchAreaCodes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		
+		
 	</constraints>
 	<types>
 
@@ -288,6 +379,8 @@
 			</associations>
 		</type>
 
+
+
 		<type name="gs1:dutyFeeTax">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -311,9 +404,179 @@
 
 			</associations>
 		</type>
+
+
+		<type name="gs1:dutyFeeTaxList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="gs1:dutyFeeTaxAmount">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="gs1:dutyFeeTaxAmountUnit">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:costListUnit" />
+					</constraints>
+				</property>
+
+			</properties>
+			<associations>
+				<association name="gs1:dutyFeeTaxRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>gs1:dutyFeeTax</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:effectivityAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+
+		<type name="gs1:tradeItemPriceList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="gs1:tradeItemPrice">
+					<type>d:double</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="gs1:tradeItemPriceUnit">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:costListUnit" />
+					</constraints>
+				</property>
+				<property name="gs1:priceBasisQuantity">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="gs1:priceBasisQuantityUnit">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:productUnit" />
+					</constraints>
+				</property>
+				<property name="gs1:tradeItemPriceType">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:tradeItemPriceTypes" />
+					</constraints>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:effectivityAspect</aspect>
+			</mandatory-aspects>
+		</type>
+
+
+
+		<type name="gs1:fishReportingInformationList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="gs1:speciesForFisheryStatisticsPurposesCode">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:speciesForFisheryStatisticsPurposesCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:speciesForFisheryStatisticsPurposesName">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>gs1:fishCatchInformationAspect</aspect>
+			</mandatory-aspects>
+		</type>
 	</types>
 
+
 	<aspects>
+		<aspect name="gs1:fishCatchInformationAspect">
+		<properties>
+			<property name="gs1:catchMethodCode">
+				<type>d:text</type>
+				<multiple>true</multiple>
+				<index enabled="true">
+					<tokenised>false</tokenised>
+					<facetable>false</facetable>
+				</index>
+				<constraints>
+					<constraint ref="gs1:catchMethodCodes" />
+				</constraints>
+			</property>
+			<property name="gs1:productionMethodForFishAndSeafoodCode">
+				<type>d:text</type>
+				<index enabled="true">
+					<tokenised>false</tokenised>
+					<facetable>false</facetable>
+				</index>
+				<constraints>
+					<constraint ref="gs1:productionMethodForFishAndSeafoodCodes" />
+				</constraints>
+			</property>
+			<property name="gs1:storageStateCode">
+				<type>d:text</type>
+				<index enabled="true">
+					<tokenised>false</tokenised>
+					<facetable>false</facetable>
+				</index>
+				<constraints>
+					<constraint ref="gs1:storageStateCodes" />
+				</constraints>
+			</property>
+			<property name="gs1:catchAreaCode">
+				<type>d:text</type>
+				<multiple>true</multiple>
+				<index enabled="true">
+					<tokenised>false</tokenised>
+					<facetable>false</facetable>
+				</index>
+				<constraints>
+					<constraint ref="gs1:catchAreaCodes" />
+				</constraints>
+			</property>
+			<property name="gs1:fishCatchDateInformation">
+				<type>d:date</type>
+				<index enabled="true">
+					<tokenised>false</tokenised>
+					<facetable>false</facetable>
+				</index>
+			</property>
+			</properties>
+		</aspect>
+
 
 		<aspect name="gs1:temperatureMeasurementAspect">
 			<properties>
@@ -371,82 +634,82 @@
 			<overrides />
 			<mandatory-aspects />
 		</aspect>
-		
-		
-  		
 
 
-        <aspect name="gs1:innerPackAspect">
-         <properties>
+
+
+
+		<aspect name="gs1:innerPackAspect">
+			<properties>
 				<property name="gs1:eanCodeInnerPack">
 					<type>d:text</type>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
-				
-			   <property name="gs1:innerPackHeight">
+
+				<property name="gs1:innerPackHeight">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:innerPackWidth">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:innerPackDepth">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:innerPackWeight">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:innerPackNetWeight">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
-				
+
 				<property name="gs1:productPerInnerPack">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
-				
+
 				<property name="gs1:innerPackPerBox">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
-			</properties>	  
-        </aspect>
-      
+			</properties>
+		</aspect>
+
 
 		<aspect name="gs1:packagingAspect">
 			<properties>
@@ -477,13 +740,13 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
-                <property name="gs1:diameter">
+				<property name="gs1:diameter">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:weight">
 					<type>d:float</type>
@@ -613,8 +876,8 @@
 						<constraint ref="gs1:palletTypeCodeConstraint" />
 					</constraints>
 				</property>
-				
-				
+
+
 				<property name="gs1:isTradeItemPackedIrregularly">
 					<type>d:boolean</type>
 					<index enabled="true">
@@ -623,7 +886,7 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
-				
+
 
 				<property name="gs1:platformTermsAndConditionsCode">
 					<type>d:text</type>
@@ -633,7 +896,7 @@
 						<constraint ref="gs1:platformTermsAndConditionsCodes" />
 					</constraints>
 				</property>
-				
+
 			</properties>
 			<overrides />
 			<mandatory-aspects />
@@ -675,7 +938,7 @@
 						<stored>false</stored>
 						<tokenised>TRUE</tokenised>
 					</index>
-				</property>	
+				</property>
 				<property name="gs1:packUnitNumber">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -760,15 +1023,15 @@
 					<constraints>
 						<constraint ref="gs1:tradeItemTradeChannelConstraint" />
 					</constraints>
-				</property>	
+				</property>
 				<property name="gs1:handlingInstructionsCodes">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<multiple>true</multiple>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 					<constraints>
 						<constraint ref="gs1:handlingInstructions" />
 					</constraints>
@@ -777,9 +1040,9 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 					<constraints>
 						<constraint ref="gs1:preparationTypes" />
 					</constraints>
@@ -899,7 +1162,7 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
-				
+
 				<property name="gs1:tradeItemCompositionDepth">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
@@ -954,7 +1217,7 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
-				
+
 				<property name="gs1:effectiveDate">
 					<type>d:date</type>
 					<mandatory>false</mandatory>
@@ -1020,8 +1283,8 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
-				
-			   <property name="gs1:isPublicated">
+
+				<property name="gs1:isPublicated">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
@@ -1145,27 +1408,27 @@
 				<property name="gs1:variableWeightAllowableDeviationPercentage">
 					<type>d:double</type>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 
 				<property name="gs1:variableWeightRangeMaximum">
 					<type>d:double</type>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 
 				<property name="gs1:variableWeightRangeMinimum">
 					<type>d:double</type>
 					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>false</facetable>
-		            </index>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
-				
+
 				<property name="gs1:isTradeItemReorderable">
 					<type>d:boolean</type>
 					<index enabled="true">
@@ -1182,7 +1445,7 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
-			
+
 			</properties>
 			<associations>
 
@@ -1209,7 +1472,7 @@
 						<many>true</many>
 					</target>
 				</association>
-				
+
 				<association name="gs1:promotionalArticleRef">
 					<source>
 						<mandatory>false</mandatory>
@@ -1221,7 +1484,7 @@
 						<many>true</many>
 					</target>
 				</association>
-		
+
 			</associations>
 			<overrides />
 			<mandatory-aspects>
@@ -1282,7 +1545,7 @@
 				<property name="gs1:isTradeItemAReturnableItem">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
-					
+
 				</property>
 				<property name="gs1:isTradeItemACutToOrderItem">
 					<type>d:boolean</type>
@@ -1290,6 +1553,6 @@
 				</property>
 			</properties>
 		</aspect>
-		
+
 	</aspects>
 </model>
