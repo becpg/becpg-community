@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -151,7 +152,9 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 					
 					if (nodeService.exists(initialNode)) {
 						
-						Set<NodeRef> convertibleRelatives = entityFormatService.findConvertibleRelatives(initialNode, new HashSet<>(), nextWork);
+						logger.trace("find convertible relatives of " + initialNode);
+						
+						Set<NodeRef> convertibleRelatives = entityFormatService.findConvertibleRelatives(initialNode, new HashSet<>(), nextWork, maxProcessedNodes, new AtomicInteger(treated.size() + toTreat.size()));
 						
 						for (NodeRef convertibleRelative : convertibleRelatives) {
 							
@@ -212,13 +215,14 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		
 		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions", "becpg.batch.versionCleaner.cleanOrphanVersions." + tenantDomain);
 		batchInfo.setRunAsSystem(true);
-	
 		
 		List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
 			NodeRef versionRootNode = nodeService.getRootNode(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID));
 			
-			return associationService.getChildAssocs(versionRootNode, Version2Model.CHILD_QNAME_VERSION_HISTORIES);
+			List<NodeRef> childAssocs = associationService.getChildAssocs(versionRootNode, Version2Model.CHILD_QNAME_VERSION_HISTORIES);
+			
+			return childAssocs.subList(0, Math.min(childAssocs.size(), MAX_PROCESSED_NODES) - 1);
 			
 		}, false, true);
 
