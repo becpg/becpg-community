@@ -80,10 +80,10 @@
                	</#if>
                <#list field.control.params.options?split(optionSeparator) as nameValue>
                   <#if nameValue?index_of(labelSeparator) == -1>
-                     <option value="<#if field.control.params.isSearch?? && nameValue?has_content && "-" != nameValue>&#34;</#if><#if field.control.params.isSearch?? && (!nameValue?has_content || "-" == nameValue)>""<#else>${nameValue?html}</#if><#if field.control.params.isSearch?? && nameValue?has_content && "-" != nameValue>&#34;</#if>"<#if (nameValue == fieldValue?string || (fieldValue?is_number && fieldValue?c == nameValue)) > selected="selected"</#if>>${nameValue?html}</option>
+                     <option value="<#if field.control.params.isSearch?? && nameValue?has_content && "-" != nameValue>=</#if><#if field.control.params.isSearch?? && (!nameValue?has_content || "-" == nameValue)>""<#else><#if field.control.params.isSearch??>${nameValue?string?replace(" ","\\ ")?html}<#else>${nameValue?html}</#if></#if>"<#if (nameValue == fieldValue?string || (fieldValue?is_number && fieldValue?c == nameValue)) > selected="selected"</#if>>${nameValue?html}</option>
                   <#else>
                      <#assign choice=nameValue?split(labelSeparator)>
-                     <option value="<#if field.control.params.isSearch?? && choice[0]?has_content && "-" != choice[0]>&#34;</#if><#if field.control.params.isSearch?? && (!choice[0]?has_content || "-" == choice[0])>""<#else>${choice[0]?html}</#if><#if field.control.params.isSearch?? && choice[0]?has_content && "-" != choice[0]>&#34;</#if>"<#if (choice[0] == fieldValue?string || (fieldValue?is_number && fieldValue?c == choice[0])) > selected="selected"</#if>><#if field.control.params.showCode?? && choice[0]?has_content && "-" != choice[0]>${choice[0]?html} - </#if>${msg(choice[1])?html}</option>
+                     <option value="<#if field.control.params.isSearch?? && choice[0]?has_content && "-" != choice[0]>=</#if><#if field.control.params.isSearch?? && (!choice[0]?has_content || "-" == choice[0])>""<#else><#if field.control.params.isSearch??>${choice[0]?string?replace(" ","\\ ")?html}<#else>${choice[0]?html}</#if></#if>"<#if (choice[0] == fieldValue?string || (fieldValue?is_number && fieldValue?c == choice[0])) > selected="selected"</#if>><#if field.control.params.showCode?? && choice[0]?has_content && "-" != choice[0]>${choice[0]?html} - </#if>${msg(choice[1])?html}</option>
                   </#if>
                </#list>
          </select>
