@@ -76,10 +76,10 @@
                	</#if>
                <#list field.control.params.options?split(optionSeparator) as nameValue>
                   <#if nameValue?index_of(labelSeparator) == -1>
-                     <option value="<#if field.control.params.isSearch?? && nameValue?length &gt; 0 >&#34;</#if>${nameValue?html}<#if field.control.params.isSearch?? && nameValue?length &gt; 0 >&#34;</#if>"<#if (nameValue == fieldValue?string || (fieldValue?is_number && fieldValue?c == nameValue)) > selected="selected"</#if>>${nameValue?html}</option>
+                     <option value="<#if field.control.params.isSearch?? && nameValue?length &gt; 0 >=</#if><#if field.control.params.isSearch??>${nameValue?string?replace(" ","\\ ")?html}<#else>${nameValue?html}</#if>"<#if (nameValue == fieldValue?string || (fieldValue?is_number && fieldValue?c == nameValue)) > selected="selected"</#if>>${nameValue?html}</option>
                   <#else>
                      <#assign choice=nameValue?split(labelSeparator)>
-                     <option value="<#if field.control.params.isSearch?? && choice[0]?length &gt; 0 >&#34;</#if>${choice[0]?html}<#if field.control.params.isSearch?? && choice[0]?length &gt; 0>&#34;</#if>"<#if (choice[0] == fieldValue?string || (fieldValue?is_number && fieldValue?c == choice[0])) > selected="selected"</#if>>${msg(choice[1])?html}</option>
+                     <option value="<#if field.control.params.isSearch?? && choice[0]?length &gt; 0 >=</#if><#if field.control.params.isSearch??>${choice[0]?string?replace(" ","\\ ")?html}<#else>${choice[0]?html}</#if>"<#if (choice[0] == fieldValue?string || (fieldValue?is_number && fieldValue?c == choice[0])) > selected="selected"</#if>>${msg(choice[1])?html}</option>
                   </#if>
                </#list>
          </select>
