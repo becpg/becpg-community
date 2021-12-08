@@ -420,7 +420,7 @@
 					<type>d:text</type>
 					<index enabled="false" />
 					<constraints>
-						<constraint ref="bcpg:costListUnit" />
+						<constraint ref="bcpg:currency" />
 					</constraints>
 				</property>
 
@@ -459,7 +459,7 @@
 					<type>d:text</type>
 					<index enabled="false" />
 					<constraints>
-						<constraint ref="bcpg:costListUnit" />
+						<constraint ref="bcpg:currency" />
 					</constraints>
 				</property>
 				<property name="gs1:priceBasisQuantity">
