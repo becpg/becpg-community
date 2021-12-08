@@ -17,10 +17,11 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
-import fr.becpg.repo.repository.model.VariantAwareDataItem;
 
 /**
  * <p>PhysicoChemCalculatingFormulationHandler class.</p>
@@ -35,7 +36,6 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	/** {@inheritDoc} */
 	@Override
 	protected Class<PhysicoChemListDataItem> getInstanceClass() {
-
 		return PhysicoChemListDataItem.class;
 	}
 
@@ -43,39 +43,56 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	@Override
 	public boolean process(ProductData formulatedProduct) {
 
-		if (accept(formulatedProduct)) {
+		boolean accept = accept(formulatedProduct);
+
+		if (accept) {
 			logger.debug("Physico chemical calculating visitor");
 
 			if (formulatedProduct.getPhysicoChemList() == null) {
 				formulatedProduct.setPhysicoChemList(new LinkedList<>());
 			}
 
-			formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList(),
+			formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList(), new SimpleListQtyProvider() {
+
+				Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+				Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+				
+				@Override
+				public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
+					return FormulationHelper.getQtyInKg(compoListDataItem);
+				}
+				
+				@Override
+				public Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
+					return FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
+				}
+
+				@Override
+				public Double getNetWeight() {
+					return netWeight;
+				}
+
+				@Override
+				public Double getNetQty() {
+					return  netQty;
+				}
+
+				@Override
+				public Boolean omitElement(CompoListDataItem compoListDataItem) {
+					return DeclarationType.Omit.equals(compoListDataItem.getDeclType());
+				}
+
+				
+			},
 					formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
 
 			computeFormulatedList(formulatedProduct, formulatedProduct.getPhysicoChemList(), PLMModel.PROP_PHYSICO_CHEM_FORMULA,
 					"message.formulate.physicoChemList.error");
 
-			formulatedProduct.getPhysicoChemList().forEach(n -> {
+		}
 
-				String unit = (String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_UNIT);
-
-				n.setUnit(unit);
-		    /* Don't flat perc #6797
-				n.setFormulatedValue(FormulationHelper.flatPercValue(n.getFormulatedValue(), unit));
-				n.setMaxi(FormulationHelper.flatPercValue(n.getMaxi(), unit));
-				n.setMini(FormulationHelper.flatPercValue(n.getMini(), unit));
-				if (n instanceof VariantAwareDataItem) {
-					for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
-						(n).setValue(FormulationHelper.flatPercValue((n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i), unit), VariantAwareDataItem.VARIANT_COLUMN_NAME+i);
-					}
-				} 
-			  */
-				n.setType((String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_TYPE));
-
-			});
-
-		} else if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)) {
+		if (accept || formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
+				|| (formulatedProduct instanceof ProductSpecificationData)) {
 			formulatedProduct.getPhysicoChemList().forEach(n -> {
 
 				n.setUnit((String) nodeService.getProperty(n.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_UNIT));
@@ -91,12 +108,9 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	/** {@inheritDoc} */
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
+		return !(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
 				|| ((formulatedProduct.getPhysicoChemList() == null)
-						&& !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_PHYSICOCHEMLIST))) {
-			return false;
-		}
-		return true;
+						&& !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_PHYSICOCHEMLIST)));
 	}
 
 	/** {@inheritDoc} */
@@ -111,8 +125,7 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		if (!super.isCharactFormulated(sl)) {
 			return false;
 		}
-		Boolean isFormulated = (Boolean) nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED);
-		return isFormulated != null ? isFormulated : false;
+		return Boolean.TRUE.equals(nodeService.getProperty(sl.getCharactNodeRef(), PLMModel.PROP_PHYSICO_CHEM_FORMULATED));
 	}
 
 	/** {@inheritDoc} */
