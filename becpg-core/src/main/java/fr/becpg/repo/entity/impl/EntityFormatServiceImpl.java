@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
@@ -457,7 +458,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		long start = System.currentTimeMillis();
 		
-		Set<NodeRef> relatives = findConvertibleRelatives(node, new HashSet<>(), null);
+		Set<NodeRef> relatives = findConvertibleRelatives(node, new HashSet<>(), null, -1, new AtomicInteger(0));
 		
 		if (relatives.size() > 1) {
 			String name = (String) nodeService.getProperty(node, ContentModel.PROP_NAME);
@@ -534,10 +535,10 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	}
 	
 	@Override
-	public Set<NodeRef> findConvertibleRelatives(NodeRef originalEntity, Set<NodeRef> visited, final List<NodeRef> ignoredItems) {
+	public Set<NodeRef> findConvertibleRelatives(NodeRef originalEntity, Set<NodeRef> visited, final List<NodeRef> ignoredItems, final int maxProcessedNodes, AtomicInteger currentCount) {
 		Set<NodeRef> ret = new LinkedHashSet<>();
 		
-		if (visited.contains(originalEntity) || !nodeService.exists(originalEntity)) {
+		if (currentCount.get() >= maxProcessedNodes || visited.contains(originalEntity) || !nodeService.exists(originalEntity)) {
 			return ret;
 		}
 		
@@ -563,7 +564,9 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			
 			if (entitySource != null) {
 				
-				Set<NodeRef> convertibleRelatives = findConvertibleRelatives(entitySource, visited, ignoredItems);
+				logger.trace("findConvertibleRelatives from " + originalEntity + "to " + entitySource);
+				
+				Set<NodeRef> convertibleRelatives = findConvertibleRelatives(entitySource, visited, ignoredItems, maxProcessedNodes, currentCount);
 				
 				if (ignoredItems != null) {
 					convertibleRelatives.removeAll(ignoredItems);
@@ -575,6 +578,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		if ((ignoredItems == null || !ignoredItems.contains(originalEntity)) && nodeService.hasAspect(originalEntity, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			ret.add(originalEntity);
+			currentCount.addAndGet(1);
 		}
 		
 		return ret;
