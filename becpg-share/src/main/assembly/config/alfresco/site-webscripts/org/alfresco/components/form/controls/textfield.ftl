@@ -40,14 +40,19 @@
          <span id="${fieldHtmlId}-${field.id?replace("prop_","")}" class="viewmode-value <#if field.dataType == "mltext">viewmode-mltext</#if>"><#if fieldValue == "">${msg("form.control.novalue")}<#else>${fieldValue}</#if></span>
       </div>
    <#else>
+   
+	   <#assign fieldValue=field.value>
+	   <#if fieldValue?string == "" && field.control.params.defaultValue??>
+           <#assign fieldValue=field.control.params.defaultValue>
+	   </#if>
       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if> <#if field.control.params.maxLength??><@formLib.renderLocaleImage field=field maxLength=field.control.params.maxLength?number/> <#else> <@formLib.renderLocaleImage field=field/></#if></label>
       <input id="${fieldHtmlId}" name="${field.name}" tabindex="0"
              <#if field.control.params.password??>type="password"<#else>type="text"</#if>
              <#if field.control.params.styleClass??>class="${field.control.params.styleClass}"</#if>
              <#if field.control.params.style??>style="${field.control.params.style}"</#if>
-             <#if field.value?is_number>value="${field.value?c}"<#else>value="${field.value?html}"</#if>
+             <#if fieldValue?is_number>value="${fieldValue?c}"<#else>value="${fieldValue?html}"</#if>
              <#if field.description??>title="${field.description}"</#if>
-             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"<#else>maxlength="10000"</#if> 
+             <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"<#else>maxlength="10200"</#if> 
              <#if field.control.params.size??>size="${field.control.params.size}"</#if> 
              <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> />
       <@formLib.renderFieldHelp field=field />

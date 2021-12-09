@@ -44,13 +44,19 @@
 	         <span  id="${fieldHtmlId}-${field.id?replace("prop_","")}" class="viewmode-value <#if field.dataType == "mltext">viewmode-mltext</#if>" ><#if fieldValue == "">${msg("form.control.novalue")}<#else>${fieldValue}</#if></span>
 	      </div>
 	   <#else>
+	   
+	   	   <#assign fieldValue=field.value>
+		   <#if fieldValue?string == "" && field.control.params.defaultValue ??>
+				<#assign fieldValue=field.control.params.defaultValue>
+		   </#if>
+
       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if><#if field.control.params.maxLength??><@formLib.renderLocaleImage field=field textarea=true maxLength=field.control.params.maxLength?number/> <#else><@formLib.renderLocaleImage field=field textarea=true/></#if></label>
 	      <textarea id="${fieldHtmlId}" name="${field.name}" rows="${rows}" cols="${columns}" tabindex="0"
 	                <#if field.description??>title="${field.description}"</#if>
 	                <#if field.control.params.styleClass??>class="${field.control.params.styleClass}"</#if>
 	                <#if field.control.params.style??>style="${field.control.params.style}"</#if>
                     <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"<#else>maxlength="10000"</#if>
-	                <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>>${field.value?html}</textarea>
+	                <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>>${fieldValue?html}</textarea>
 	      <@formLib.renderFieldHelp field=field />
 	   </#if>
    </#if>
