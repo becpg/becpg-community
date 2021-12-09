@@ -13,12 +13,18 @@
       <span class="viewmode-value"><#if field.value == "">${msg("form.control.novalue")}<#else>${field.value?html}</#if></span>
    </div>
    <#else>
+   
+   <#assign fieldValue=field.value>
+	   <#if fieldValue?string == "" && field.control.params.defaultValue ??>
+			<#assign fieldValue=field.control.params.defaultValue>
+	   </#if>
+	   
    <script type="text/javascript">//<![CDATA[
    (function() {
       new Alfresco.RichTextControl("${fieldHtmlId}").setOptions(
       {
          <#if form.mode == "view" || (field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>disabled: true,</#if>
-         currentValue: "${field.value?js_string}",
+         currentValue: "${fieldValue?js_string}",
          mandatory: ${field.mandatory?string},
          <@editorParameters field />
       }).setMessages(${messages});
@@ -33,6 +39,6 @@
       <#if field.description??>title="${field.description}"</#if>
       <#if field.control.params.styleClass??>class="${field.control.params.styleClass}"</#if>
       <#if field.control.params.style??>style="${field.control.params.style}"</#if>
-      <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>>${field.value?html}</textarea>
+      <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>>${fieldValue?html}</textarea>
    </#if>
 </div>

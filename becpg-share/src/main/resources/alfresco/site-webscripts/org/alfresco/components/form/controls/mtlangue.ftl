@@ -1,5 +1,8 @@
 <#include "/org/alfresco/components/form/controls/common/utils.inc.ftl" />
 <#assign fieldValue=field.value>
+<#if fieldValue?string == "" && field.control.params.defaultValue ??>
+	<#assign fieldValue=field.control.params.defaultValue>
+</#if>
 <#if fieldValue?string != "">
    <#assign values=fieldValue?split(",")>
 <#else>
@@ -26,6 +29,7 @@
          </#if>
       </div>
    <#else>
+   
       <label for="${fieldHtmlId}-entry">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
       <input id="${fieldHtmlId}" type="hidden" name="${field.name}" value="${fieldValue?string}" />
          <select id="${fieldHtmlId}-entry" name="-"  <#if !field.control.params.multiple?? || field.control.params.multiple == "true"  > multiple="multiple" size="5" </#if> index="0"
