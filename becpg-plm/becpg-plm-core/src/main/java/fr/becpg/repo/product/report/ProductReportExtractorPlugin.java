@@ -229,7 +229,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 								}
 							}
 						}
-					} else if (!BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListQName) && shouldExtractList(isExtractedProduct, context, type, dataListQName)) {
+					} else if (!BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListQName)
+							&& shouldExtractList(isExtractedProduct, context, type, dataListQName)) {
 						// extract specific datalists
 						loadDataList(dataListsElt, listNodeRef, dataListQName, context);
 					}
@@ -296,7 +297,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				loadAllergenLists(productData, dataListsElt, context);
 			}
 
-			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) || shouldExtractList(isExtractedProduct,context,type, PLMModel.TYPE_COMPOLIST)) {
+			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel)
+					|| shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_COMPOLIST)) {
 				loadCompoList(productData, dataListsElt, context, level);
 			}
 
@@ -425,7 +427,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 		return true;
 	}
-	
+
 	@Override
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes) {
@@ -830,24 +832,25 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			extractVariants(dataItem.getVariants(), partElt);
 
 			boolean extractNextDatalist = true;
-			
+
 			if (context.getPreferences().containsKey(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT)) {
-				
-				List<String> maxLevelPrefs = Arrays.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
-				
+
+				List<String> maxLevelPrefs = Arrays
+						.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
+
 				List<Integer> maxLevels = new ArrayList<>();
-				
+
 				for (String pref : maxLevelPrefs) {
 					maxLevels.add(Integer.parseInt(pref));
 				}
-				
+
 				int maxLevel = Collections.min(maxLevels);
 
-				if (maxLevel < level + 1) {
+				if (maxLevel < (level + 1)) {
 					extractNextDatalist = false;
 				}
 			}
-			
+
 			Element dataListsElt = null;
 			if (context.isNotEmptyPrefs(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract)) {
 				if (extractNextDatalist) {
@@ -855,7 +858,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					loadDataLists(dataItem.getProduct(), dataListsElt, context, false, level + 1);
 				}
 			}
-			
+
 			Integer depthLevel = dataItem.getDepthLevel();
 			if (depthLevel != null) {
 				level = (depthLevel - 1) + level;
@@ -865,7 +868,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					partElt.addAttribute(ATTR_PARENT_NODEREF, parentDataItem.getNodeRef().toString());
 				}
 			}
-
 
 			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel)) {
 
@@ -894,26 +896,27 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							Double newLossPerc = FormulationHelper.getComponentLossPerc(subProductData, subDataItem);
 
 							boolean extractNextLevel = true;
-							
+
 							if (context.getPreferences().containsKey(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT)) {
-								List<String> maxLevelPrefs = Arrays.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
-								
+								List<String> maxLevelPrefs = Arrays
+										.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
+
 								List<Integer> maxLevels = new ArrayList<>();
-								
+
 								for (String pref : maxLevelPrefs) {
 									maxLevels.add(Integer.parseInt(pref));
 								}
-								
+
 								int maxLevel = Collections.min(maxLevels);
 
-								if (maxLevel < level + 1) {
+								if (maxLevel < (level + 1)) {
 									extractNextLevel = false;
 								}
 							}
-							
+
 							if (extractNextLevel) {
-								loadCompoListItem(entityNodeRef, dataItem, subDataItem, subProductData, compoListElt, level + 1, subQty, subQtyForCost,
-										newLossPerc, context);
+								loadCompoListItem(entityNodeRef, dataItem, subDataItem, subProductData, compoListElt, level + 1, subQty,
+										subQtyForCost, newLossPerc, context);
 							}
 
 						}
@@ -1225,7 +1228,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			priceBreakElt.addAttribute("projectedQty", entry.getKey().toString());
 
 			String products = "";
-			Double totalSimulatedValue = 0d;
+			double totalSimulatedValue = 0d;
 
 			for (PriceBreakReportData priceBreakReportData : tmp) {
 
@@ -1299,7 +1302,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				unitTotalCost += (netWeight * totalSimulatedValue);
 			}
 			priceBreakElt.addAttribute("products", products);
-			priceBreakElt.addAttribute("simulatedValue", totalSimulatedValue.toString());
+			priceBreakElt.addAttribute("simulatedValue", Double.toString(totalSimulatedValue));
 			priceBreakElt.addAttribute("unitTotalCost", unitTotalCost.toString());
 
 		}
@@ -1724,42 +1727,44 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		Double totalFutureCost = 0d;
 
 		for (CostListDataItem c : formulatedProduct.getCostList()) {
+			if (c.getCost() != null) {
 
-			Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
-			if ((isFixed == null) || Boolean.FALSE.equals(isFixed)) {
+				Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
+				if ((isFixed == null) || Boolean.FALSE.equals(isFixed)) {
 
-				String costType = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTTYPE);
-				String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
-				String productCurrency = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRICE_CURRENCY);
+					String costType = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTTYPE);
+					String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
+					String productCurrency = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRICE_CURRENCY);
 
-				if ((productCurrency == null) || (costCurrency == null) || productCurrency.equals(costCurrency)) {
+					if ((productCurrency == null) || (costCurrency == null) || productCurrency.equals(costCurrency)) {
 
-					if (c.getValue() != null) {
+						if (c.getValue() != null) {
 
-						if (type.toString().equals(costType)) {
+							if (type.toString().equals(costType)) {
 
-							currentCost += c.getValue();
+								currentCost += c.getValue();
 
-							if (c.getFutureValue() != null) {
-								futureCost += c.getFutureValue();
+								if (c.getFutureValue() != null) {
+									futureCost += c.getFutureValue();
+								}
+
+								if (c.getPreviousValue() != null) {
+									previousCost += c.getPreviousValue();
+								}
+
+							} else if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
+
+								totalCurrentCost += c.getValue();
+
+								if (c.getFutureValue() != null) {
+									totalFutureCost += c.getFutureValue();
+								}
+
+								if (c.getPreviousValue() != null) {
+									totalPreviousCost += c.getPreviousValue();
+								}
+
 							}
-
-							if (c.getPreviousValue() != null) {
-								previousCost += c.getPreviousValue();
-							}
-
-						} else if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
-
-							totalCurrentCost += c.getValue();
-
-							if (c.getFutureValue() != null) {
-								totalFutureCost += c.getFutureValue();
-							}
-
-							if (c.getPreviousValue() != null) {
-								totalPreviousCost += c.getPreviousValue();
-							}
-
 						}
 					}
 				}
@@ -1783,13 +1788,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Override
 	protected boolean isMultiLinesAttribute(QName attribute, DefaultExtractorContext context) {
 		if (attribute != null) {
-			if (attribute.equals(PLMModel.PROP_INSTRUCTION)) {
-				return true;
-			}
-			if (attribute.equals(PLMModel.PROP_PRODUCT_COMMENTS)) {
-				return true;
-			}
-			if (attribute.equals(ContentModel.PROP_DESCRIPTION)) {
+			if (attribute.equals(PLMModel.PROP_INSTRUCTION) || attribute.equals(PLMModel.PROP_PRODUCT_COMMENTS) || attribute.equals(ContentModel.PROP_DESCRIPTION)) {
 				return true;
 			}
 
