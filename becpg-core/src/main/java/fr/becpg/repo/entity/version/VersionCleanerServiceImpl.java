@@ -72,13 +72,13 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	private AssociationService associationService;
 	
 	@Override
-	public boolean cleanVersions(int maxProcessedNodes, boolean cleanOrphanVersions) {
+	public boolean cleanVersions(int maxProcessedNodes) {
 		
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 		
 		try {
 			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getSystemUserName());
-			internalCleanVersions(maxProcessedNodes, DEFAULT, cleanOrphanVersions);
+			convertAndDeleteVersions(maxProcessedNodes, DEFAULT);
 			
 			if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
 				@SuppressWarnings("deprecation")
@@ -87,7 +87,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 					String tenantDomain = tenant.getTenantDomain();
 					AuthenticationUtil.clearCurrentSecurityContext();
 					AuthenticationUtil.setFullyAuthenticatedUser(tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
-					internalCleanVersions(maxProcessedNodes, tenantDomain, cleanOrphanVersions);
+					convertAndDeleteVersions(maxProcessedNodes, tenantDomain);
 				}
 			}
 		} finally {
@@ -95,17 +95,6 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			if(currentUser!=null) {
 				AuthenticationUtil.setFullyAuthenticatedUser(currentUser);
 			}
-		}
-		
-		return true;
-	}
-	
-	private boolean internalCleanVersions(int maxProcessedNodes, String tenantDomain, boolean cleanOrphanVersions) {
-
-		convertAndDeleteVersions(maxProcessedNodes, tenantDomain);
-
-		if (cleanOrphanVersions) {
-			cleanOrphanVersions(tenantDomain);
 		}
 		
 		return true;
@@ -211,6 +200,34 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 	}
 
+	@Override
+	public void cleanVersionStore() {
+		
+		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		
+		try {
+			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getSystemUserName());
+			cleanOrphanVersions(DEFAULT);
+			
+			if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
+				@SuppressWarnings("deprecation")
+				List<Tenant> tenants = tenantAdminService.getAllTenants();
+				for (Tenant tenant : tenants) {
+					String tenantDomain = tenant.getTenantDomain();
+					AuthenticationUtil.clearCurrentSecurityContext();
+					AuthenticationUtil.setFullyAuthenticatedUser(tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+					cleanOrphanVersions(tenantDomain);
+				}
+			}
+		} finally {
+			AuthenticationUtil.clearCurrentSecurityContext();
+			if(currentUser!=null) {
+				AuthenticationUtil.setFullyAuthenticatedUser(currentUser);
+			}
+		}
+		
+	}
+
 	private void cleanOrphanVersions(String tenantDomain) {
 		
 		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions", "becpg.batch.versionCleaner.cleanOrphanVersions." + tenantDomain);
@@ -262,6 +279,9 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 	private void deleteNode(NodeRef nodeRef) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			nodeService.addAspect(nodeRef, ContentModel.ASPECT_TEMPORARY, null);
+
 			nodeService.deleteNode(nodeRef);
 			return null;
 		}, false, true);
@@ -333,7 +353,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			}
 
 			if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
-				nodeService.deleteNode(parentNode);
+				deleteNode(parentNode);
 				logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantDomain);
 			}
 			return null;

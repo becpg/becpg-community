@@ -85,6 +85,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private static final String ACTION_CREATE_GEN_RAWMATERIAL = "createGenRawMaterial";
 	
 	private static final String ACTION_CLEAN_VERSIONS = "cleanVersions";
+	private static final String ACTION_CLEAN_VERSION_STORE = "cleanVersionStore";
 	
 	
 	private static final Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
@@ -224,7 +225,11 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 				maxProcessedNodes = Integer.parseInt(templateArgs.get(PARAM_NUMBER));
 			}
 			
-			versionCleanerService.cleanVersions(maxProcessedNodes, true);
+			versionCleanerService.cleanVersions(maxProcessedNodes);
+		
+		} else if (ACTION_CLEAN_VERSION_STORE.equals(action)) {
+
+			versionCleanerService.cleanVersionStore();
 		
 		} else if (ACTION_DELETE_MODEL.equals(action)) {
 			NodeRef modelNodeRef = new NodeRef(req.getParameter(PARAM_NODEREF));
