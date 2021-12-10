@@ -236,7 +236,7 @@ public class IngTypeItem extends LabelingComponent{
 
 	/** {@inheritDoc} */
 	@Override
-	public IngTypeItem clone() {
+	public IngTypeItem createCopy() {
 		return new IngTypeItem(this);
 	}
 	
