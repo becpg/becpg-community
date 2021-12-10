@@ -46,7 +46,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	private static final String MESSAGE_NOTAUTHORIZED_ING = "message.formulate.notauhorized.ing";
 
 	private static final String MESSAGE_FORBIDDEN_ING = "message.formulate.ingredient.forbidden";
-	
+
 	private Boolean addInfoReqCtrl;
 
 	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -63,13 +63,9 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
-
-
 	public void setAddInfoReqCtrl(Boolean addInfoReqCtrl) {
 		this.addInfoReqCtrl = addInfoReqCtrl;
 	}
-
-
 
 	/** {@inheritDoc} */
 	@Override
@@ -111,13 +107,12 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 									Double qtyPerc = computeQtyPerc(productData.getIngList(), ingListDataItem.getIng());
 
-									if ((qtyPerc == null) || ((fil.getQtyPercMaxi() != null)) ) {
-										
-										if( (fil.getQtyPercMaxi() <= qtyPerc) || Boolean.TRUE.equals(addInfoReqCtrl)) {
+									if ((qtyPerc == null) || ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= qtyPerc)) ||   Boolean.TRUE.equals(addInfoReqCtrl) ) {
 
-											boolean isInfo = (fil.getQtyPercMaxi() > qtyPerc);
-											
-											// req not respected
+
+											boolean isInfo = qtyPerc!=null && fil.getQtyPercMaxi() != null && (fil.getQtyPercMaxi() > qtyPerc);
+
+											// req not respecte
 											ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 											if (reqCtrl == null) {
 												reqCtrl = new ReqCtrlListDataItem(null,isInfo? RequirementType.Info :  fil.getReqType(), fil.getReqMessage(), ingListDataItem.getIng(),
@@ -126,18 +121,17 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 											} else {
 												reqCtrl.setReqDataType(RequirementDataType.Specification);
 											}
-	
+
 											if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 												reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 											} else {
 												reqCtrl.setRegulatoryCode(specification.getName());
 											}
-	
+
 											if (!isInfo && (qtyPerc != null) && (fil.getQtyPercMaxi() != null) && (qtyPerc != 0)) {
 												reqCtrl.setReqMaxQty((fil.getQtyPercMaxi() / qtyPerc) * 100d);
 											}
 										}
-
 									}
 								}
 							} else if ((productData.getCompoListView().getCompoList() == null)
@@ -208,7 +202,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 			}
 		}
 
-		return new LinkedList<>(reqCtrlMap.values());
+	return new LinkedList<>(reqCtrlMap.values());
+
 	}
 
 	private Double computeQtyPerc(List<IngListDataItem> ingList, NodeRef ing) {
