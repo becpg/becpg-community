@@ -107,31 +107,32 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 									Double qtyPerc = computeQtyPerc(productData.getIngList(), ingListDataItem.getIng());
 
-									if ((qtyPerc == null) || ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= qtyPerc)) ||   Boolean.TRUE.equals(addInfoReqCtrl) ) {
+									if ((qtyPerc == null) || ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= qtyPerc))
+											|| Boolean.TRUE.equals(addInfoReqCtrl)) {
 
+										boolean isInfo = qtyPerc != null && fil.getQtyPercMaxi() != null && (fil.getQtyPercMaxi() > qtyPerc);
 
-											boolean isInfo = qtyPerc!=null && fil.getQtyPercMaxi() != null && (fil.getQtyPercMaxi() > qtyPerc);
-
-											// req not respecte
-											ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
-											if (reqCtrl == null) {
-												reqCtrl = new ReqCtrlListDataItem(null,isInfo? RequirementType.Info :  fil.getReqType(), fil.getReqMessage(), ingListDataItem.getIng(),
-														new ArrayList<>(), RequirementDataType.Specification);
-												reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
-											} else {
-												reqCtrl.setReqDataType(RequirementDataType.Specification);
-											}
-
-											if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
-												reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
-											} else {
-												reqCtrl.setRegulatoryCode(specification.getName());
-											}
-
-											if (!isInfo && (qtyPerc != null) && (fil.getQtyPercMaxi() != null) && (qtyPerc != 0)) {
-												reqCtrl.setReqMaxQty((fil.getQtyPercMaxi() / qtyPerc) * 100d);
-											}
+										// req not respecte
+										ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
+										if (reqCtrl == null) {
+											reqCtrl = new ReqCtrlListDataItem(null, isInfo ? RequirementType.Info : fil.getReqType(),
+													fil.getReqMessage(), ingListDataItem.getIng(), new ArrayList<>(),
+													RequirementDataType.Specification);
+											reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
+										} else {
+											reqCtrl.setReqDataType(RequirementDataType.Specification);
 										}
+
+										if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
+											reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
+										} else {
+											reqCtrl.setRegulatoryCode(specification.getName());
+										}
+
+										if (!isInfo && (qtyPerc != null) && (fil.getQtyPercMaxi() != null) && (qtyPerc != 0)) {
+											reqCtrl.setReqMaxQty((fil.getQtyPercMaxi() / qtyPerc) * 100d);
+										}
+
 									}
 								}
 							} else if ((productData.getCompoListView().getCompoList() == null)
@@ -202,7 +203,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 			}
 		}
 
-	return new LinkedList<>(reqCtrlMap.values());
+		return new LinkedList<>(reqCtrlMap.values());
 
 	}
 
