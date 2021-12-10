@@ -383,6 +383,8 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				
+				dbNodeService.addAspect(from, ContentModel.ASPECT_TEMPORARY, null);
+				
 				dbNodeService.deleteNode(from);
 				return null;
 				
@@ -579,6 +581,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		if ((ignoredItems == null || !ignoredItems.contains(originalEntity)) && nodeService.hasAspect(originalEntity, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			ret.add(originalEntity);
 			currentCount.addAndGet(1);
+			logger.trace("found " + currentCount.get() + " items out of " + maxProcessedNodes);
 		}
 		
 		return ret;
