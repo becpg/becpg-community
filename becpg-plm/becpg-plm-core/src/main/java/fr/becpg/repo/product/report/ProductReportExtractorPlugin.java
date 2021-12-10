@@ -1738,6 +1738,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		Double totalFutureCost = 0d;
 
 		for (CostListDataItem c : formulatedProduct.getCostList()) {
+			if (c.getCost() != null) {
 
 			Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
 			if ((isFixed == null) || Boolean.FALSE.equals(isFixed)) {
@@ -1777,6 +1778,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						}
 					}
 				}
+                           }
 			}
 		}
 
