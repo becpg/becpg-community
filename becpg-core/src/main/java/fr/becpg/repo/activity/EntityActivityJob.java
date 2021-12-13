@@ -6,8 +6,6 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
@@ -28,13 +26,9 @@ public class EntityActivityJob  extends AbstractScheduledLockedJob implements Jo
 	private static final String KEY_ENTITY_ACTIVITY_SERVICE = "entityActivityService";
 	private static final String KEY_TENANT_ADMIN_SERVICE = "tenantAdminService";
 
-	private static final Log logger = LogFactory.getLog(EntityActivityJob.class);
-
 	/** {@inheritDoc} */
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
-
-		logger.info("Start of Activity cleaner Job.");
 
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();
 
@@ -58,6 +52,5 @@ public class EntityActivityJob  extends AbstractScheduledLockedJob implements Jo
 			}
 		}
 
-		logger.info("End of Activity cleaner Job.");
 	}
 }

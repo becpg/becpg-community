@@ -16,18 +16,25 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.springframework.dao.ConcurrencyFailureException;
 
+import fr.becpg.common.BeCPGException;
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
+
 public class VersionExporter extends AbstractExporter {
 
 	private NodeService dbNodeService;
+	
+	private EntityDictionaryService entityDictionaryService;
 	
 	private NodeRef parentNodeRef = null;
 	private NodeRef originalNodeRef = null;
 	private NodeRef targetNode = null;
 
-	public VersionExporter(NodeRef originalNodeRef, NodeRef targetNode, NodeService dbNodeService) {
+	public VersionExporter(NodeRef originalNodeRef, NodeRef targetNode, NodeService dbNodeService, EntityDictionaryService entityDictionaryService) {
 		this.originalNodeRef = originalNodeRef;
 		this.targetNode = targetNode;
 		this.dbNodeService = dbNodeService;
+		this.entityDictionaryService = entityDictionaryService;
 	}
 
 	@Override
@@ -37,6 +44,10 @@ public class VersionExporter extends AbstractExporter {
 		
 		if (nodeRef.equals(originalNodeRef)) {
 			return;
+		}
+		
+		if (entityDictionaryService.isSubClass(dbNodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+			throw new BeCPGException("The node contains the entity '" + dbNodeService.getProperty(nodeRef, ContentModel.PROP_NAME) + "' in its subfolders. Please remove it before");
 		}
 		
 		NodeRef currentParent = dbNodeService.getPrimaryParent(nodeRef).getParentRef();

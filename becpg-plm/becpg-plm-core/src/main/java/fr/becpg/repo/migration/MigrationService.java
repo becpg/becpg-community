@@ -75,8 +75,4 @@ public interface MigrationService {
 	 * @param targetAssoc a {@link org.alfresco.service.namespace.QName} object.
 	 */
 	void migrateAssociation(QName classQName, QName sourceAssoc, QName targetAssoc);
-	/**
-	 * <p>cleanOrphanVersion.</p>
-	 */
-	void cleanOrphanVersion();
 }

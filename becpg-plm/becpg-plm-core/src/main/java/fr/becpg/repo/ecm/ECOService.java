@@ -66,7 +66,7 @@ public interface ECOService {
 	 * @param e a {@link java.lang.Exception} object.
 	 * @return a {@link java.lang.Boolean} object.
 	 */
-	Boolean setInError(NodeRef ecoNodeRef, Exception e);
+	Boolean setInError(NodeRef ecoNodeRef, String errorTxt);
 
 
 }

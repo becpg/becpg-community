@@ -19,21 +19,16 @@ package fr.becpg.repo.migration.impl;
 
 import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
-import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.PropertyCheck;
 import org.apache.commons.logging.Log;
@@ -44,7 +39,6 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.migration.MigrationService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -305,40 +299,7 @@ public class MigrationServiceImpl implements MigrationService {
 			}
 		}
 	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void cleanOrphanVersion() {
-
-		NodeRef rootNode = dbNodeService.getRootNode(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID));
-
-		List<ChildAssociationRef> childAssocs = dbNodeService.getChildAssocs(rootNode, Version2Model.CHILD_QNAME_VERSION_HISTORIES,
-				RegexQNamePattern.MATCH_ALL);
-
-		for (ChildAssociationRef childAssoc : childAssocs) {
-			String name = (String) dbNodeService.getProperty(childAssoc.getChildRef(), ContentModel.PROP_NAME);
-			NodeRef nodeToTest = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore", name);
-
-			if (!dbNodeService.exists(nodeToTest)) {
-				List<ChildAssociationRef> versionAssocs = dbNodeService.getChildAssocs(childAssoc.getChildRef(), Version2Model.CHILD_QNAME_VERSIONS,
-						RegexQNamePattern.MATCH_ALL);
-				for (ChildAssociationRef versionAssoc : versionAssocs) {
-					if (dictionaryService.isSubClass(nodeService.getType(versionAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
-						logger.info("version  doesn't exist :" + nodeService.getProperty(versionAssoc.getChildRef(), BeCPGModel.PROP_CODE) + " "
-								+ nodeToTest + " for :" + name);
-							nodeService.deleteNode(childAssoc.getChildRef());
-					}
-					break;
-				}
-
-			} else if(nodeService.hasAspect(nodeToTest, BeCPGModel.ASPECT_COMPOSITE_VERSION)){
-				logger.info("Removing unneeded version for Composite version : "+nodeToTest);
-				nodeService.deleteNode(childAssoc.getChildRef());
-			} 
-
-		}
-
-	}
+	
 //
 //	private Version getVersion(NodeRef versionRef) {
 //		if (versionRef == null) {

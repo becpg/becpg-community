@@ -190,9 +190,9 @@
 										html += "<h3>" + instance.msg("label.non-unique-properties") + "</h3>";
 
 										html += "<ul class=\"catalog-missing-propList\">";
-										for (var field in catalogs[key].nonUniqueFields) {
+										for ( field in catalogs[key].nonUniqueFields) {
 
-											var displayName = catalogs[key].nonUniqueFields[field].displayName;
+											 displayName = catalogs[key].nonUniqueFields[field].displayName;
 											if (catalogs[key].nonUniqueFields[field]["displayName_" + Alfresco.constants.JS_LOCALE]) {
 												displayName = catalogs[key].nonUniqueFields[field]["displayName_" + Alfresco.constants.JS_LOCALE];
 											}
@@ -372,22 +372,24 @@
 											var currentLabel = labels[labelIndex];
 
 											//checks if we're on the right label, and the catalog is not already labelled
-											var hasLocaleIcon = false;
-											if (currentLabel.htmlFor.indexOf(fieldId) != -1 && currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1) {
-												if (currentLabel.childNodes) {
-													for (var child in currentLabel.childNodes) {
-														var currentChildNode = currentLabel.childNodes[child];
-														if (currentChildNode.nodeType == Node.ELEMENT_NODE && currentChildNode.className.indexOf("locale-icon") != -1) {
-															hasLocaleIcon = true;
-															break;
+											if(currentLabel.htmlFor.indexOf(fieldId) == 0 ){
+												var hasLocaleIcon = false;
+												if ( currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1) {
+													if (currentLabel.childNodes) {
+														for (var child in currentLabel.childNodes) {
+															var currentChildNode = currentLabel.childNodes[child];
+															if (currentChildNode.nodeType == Node.ELEMENT_NODE && currentChildNode.className.indexOf("locale-icon") != -1) {
+																hasLocaleIcon = true;
+																break;
+															}
 														}
 													}
-												}
-
-												if (hasLocaleIcon) {
-													currentLabel.appendChild(colorTipElement.cloneNode(false));
-												} else {
-													currentLabel.innerHTML += colorTipElement.outerHTML;
+	
+													if (hasLocaleIcon) {
+														currentLabel.appendChild(colorTipElement.cloneNode(false));
+													} else {
+														currentLabel.innerHTML += colorTipElement.outerHTML;
+													}
 												}
 											}
 										}

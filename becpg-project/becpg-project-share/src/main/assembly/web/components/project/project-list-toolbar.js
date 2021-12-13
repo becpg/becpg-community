@@ -109,7 +109,7 @@
                                           for ( var i in json.reportTpls) {
                                              items.push({
                                                 text : json.reportTpls[i].name,
-                                                value : json.reportTpls[i].nodeRef+"#"+json.reportTpls[i].name + "." + json.reportTpls[i].format.toString().toLowerCase()
+                                                value : json.reportTpls[i].nodeRef+"#"+json.reportTpls[i].name + "." + json.reportTpls[i].format.toString().toLowerCase()+"#"+ json.reportTpls[i].reportTplName
                                              });
                                           }
                                           if(items.length>0){
@@ -158,7 +158,7 @@
                            url += "&site=&repo=true";
                         }
 
-                        document.location.href = url;
+                         beCPG.util.launchAsyncDownload(values[1],values[2], url);  
 
                      }
                   },
@@ -221,7 +221,7 @@
                                  var column = response.json.columns[i], columnName = column.name.replace(":", "_");
                                  if (column.dataType == "nested" && column.columns) {
                                     for ( var j = 0; j < column.columns.length; j++) {                                             
-                                       var col = column.columns[j];                                            
+                                      var col = column.columns[j];                                      
                                        columnName += "|" + col.name.replace(":", "_");                                             
                                     }
                                  }
@@ -229,10 +229,11 @@
                                  requestParams.fields.push(columnName);
                               }
 
-                              var PAGE_SIZE = 5000;
+                              var MAX_RESULTS_UNLIMITED = -1;
+							
+ 							 beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx", dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+                                    .stringify(requestParams)));  
                  
-                              document.location.href = dt._getDataUrl(PAGE_SIZE) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
-                                    .stringify(requestParams));
 
                            },
                            scope : this

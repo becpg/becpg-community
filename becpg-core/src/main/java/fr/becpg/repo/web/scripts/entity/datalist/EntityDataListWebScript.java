@@ -39,6 +39,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.entity.datalist.AsyncPaginatedExtractorWrapper;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
@@ -76,6 +77,8 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	/** Constant <code>PARAM_DATA_LIST_NAME="dataListName"</code> */
 	protected static final String PARAM_DATA_LIST_NAME = "dataListName";
+	
+	protected static final String PARAM_ASYNC = "async";
 
 	/**
 	 * METADATA
@@ -312,6 +315,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		String filterData = req.getParameter(PARAM_FILTER_DATA);
 		String filterParams = req.getParameter(PARAM_FILTER_PARAMS);
 		String extraParams = req.getParameter(PARAM_EXTRA_PARAMS);
+		String async = req.getParameter(PARAM_ASYNC);
 
 		try {
 
@@ -445,8 +449,12 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				cache.setMaxAge(0L);
 				cache.setLastModified(lastModified);
 				res.setCache(cache);
-	
-				 extractedItems = extractor.extract(dataListFilter, metadataFields);
+				
+				if("true".equals(async)) {
+					extractedItems =  new AsyncPaginatedExtractorWrapper(extractor,dataListFilter, metadataFields);
+				} else {
+					extractedItems = extractor.extract(dataListFilter, metadataFields);
+				}
 			} else {
 				extractedItems = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
 			}

@@ -20,6 +20,7 @@ package fr.becpg.repo.entity.datalist;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
@@ -32,13 +33,17 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 public class PaginatedExtractedItems {
 	
 
-	final List<Map<String,Object>> items;
+	protected List<Map<String,Object>> items;
 	
-	List<AttributeExtractorStructure> computedFields;
+	protected List<AttributeExtractorStructure> computedFields;
 	
-	int fullListSize;
+	protected int fullListSize;
 	
 
+	protected PaginatedExtractedItems() {
+		//Do Nothing
+	}
+	
 	/**
 	 * <p>Constructor for PaginatedExtractedItems.</p>
 	 *
@@ -103,6 +108,28 @@ public class PaginatedExtractedItems {
 	 */
 	public void setComputedFields(List<AttributeExtractorStructure> computedFields) {
 		this.computedFields = computedFields;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(computedFields, fullListSize, items);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PaginatedExtractedItems other = (PaginatedExtractedItems) obj;
+		return Objects.equals(computedFields, other.computedFields) && fullListSize == other.fullListSize && Objects.equals(items, other.items);
+	}
+
+	@Override
+	public String toString() {
+		return "PaginatedExtractedItems [items=" + items + ", computedFields=" + computedFields + ", fullListSize=" + fullListSize + "]";
 	}
 	
 

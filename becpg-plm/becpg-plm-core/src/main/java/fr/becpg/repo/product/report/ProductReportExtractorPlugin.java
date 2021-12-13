@@ -1625,18 +1625,20 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			Boolean isDefault = null;
 			String variantNames = "";
 			for (NodeRef variantNodeRef : variantNodeRefs) {
-				if (isDefault != null) {
-					variantNames += ",";
-				}
-
-				variantNames += ((String) nodeService.getProperty(variantNodeRef, ContentModel.PROP_NAME));
-
-				if ((isDefault == null) || !isDefault) {
-					isDefault = (Boolean) nodeService.getProperty(variantNodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT);
-				}
-
-				if (isDefault == null) {
-					isDefault = false;
+				if (nodeService.exists(variantNodeRef)) {
+					if (isDefault != null) {
+						variantNames += ",";
+					}
+					
+					variantNames += ((String) nodeService.getProperty(variantNodeRef, ContentModel.PROP_NAME));
+					
+					if ((isDefault == null) || !isDefault) {
+						isDefault = (Boolean) nodeService.getProperty(variantNodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT);
+					}
+					
+					if (isDefault == null) {
+						isDefault = false;
+					}
 				}
 
 			}
@@ -1736,6 +1738,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		Double totalFutureCost = 0d;
 
 		for (CostListDataItem c : formulatedProduct.getCostList()) {
+			if (c.getCost() != null) {
 
 			Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
 			if ((isFixed == null) || Boolean.FALSE.equals(isFixed)) {
@@ -1775,6 +1778,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						}
 					}
 				}
+                           }
 			}
 		}
 

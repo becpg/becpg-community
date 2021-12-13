@@ -38,13 +38,17 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * @author matthieu
  * @version $Id: $Id
  */
-public abstract class LabelingComponent extends BeCPGDataObject implements RepositoryEntity, Comparable<LabelingComponent>, Cloneable {
+public abstract class LabelingComponent extends BeCPGDataObject implements RepositoryEntity, Comparable<LabelingComponent> {
 
 	private static final long serialVersionUID = 270866664168102414L;
 
 	protected Double qty = 0d;
 
+	protected Double qtyWithYield = 0d;
+
 	protected Double volume = 0d;
+
+	protected Double volumeWithYield = 0d;
 
 	protected MLText legalName;
 
@@ -55,13 +59,13 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	private Set<NodeRef> allergens = new HashSet<>();
 
 	private Set<NodeRef> geoOrigins = new HashSet<>();
-	
+
 	private Set<NodeRef> bioOrigins = new HashSet<>();
 
 	/**
 	 * <p>Constructor for LabelingComponent.</p>
 	 */
-	public LabelingComponent() {
+	protected LabelingComponent() {
 		super();
 	}
 
@@ -70,18 +74,19 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	 *
 	 * @param abstractLabelingComponent a {@link fr.becpg.repo.product.data.ing.LabelingComponent} object.
 	 */
-	public LabelingComponent(LabelingComponent abstractLabelingComponent) {
+	protected LabelingComponent(LabelingComponent abstractLabelingComponent) {
 		super(abstractLabelingComponent);
 		this.pluralLegalName = abstractLabelingComponent.pluralLegalName;
 		this.qty = abstractLabelingComponent.qty;
+		this.qtyWithYield = abstractLabelingComponent.qtyWithYield;
 		this.volume = abstractLabelingComponent.volume;
+		this.volumeWithYield = abstractLabelingComponent.volumeWithYield;
 		this.legalName = abstractLabelingComponent.legalName;
 		this.isPlural = abstractLabelingComponent.isPlural;
 		this.allergens = new HashSet<>(abstractLabelingComponent.allergens);
 		this.geoOrigins = new HashSet<>(abstractLabelingComponent.geoOrigins);
 		this.bioOrigins = new HashSet<>(abstractLabelingComponent.bioOrigins);
 	}
-
 
 	/**
 	 * <p>Getter for the field <code>legalName</code>.</p>
@@ -184,6 +189,10 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		return qty;
 	}
 
+	public Double getQty(boolean withYield) {
+		return withYield ? qtyWithYield : qty;
+	}
+
 	/**
 	 * <p>Setter for the field <code>qty</code>.</p>
 	 *
@@ -191,6 +200,14 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	 */
 	public void setQty(Double qty) {
 		this.qty = qty;
+	}
+
+	public Double getQtyWithYield() {
+		return qtyWithYield;
+	}
+
+	public void setQtyWithYield(Double qtyWithYield) {
+		this.qtyWithYield = qtyWithYield;
 	}
 
 	/**
@@ -202,6 +219,10 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		return volume;
 	}
 
+	public Double getVolume(boolean withYield) {
+		return withYield ? qtyWithYield : volume;
+	}
+
 	/**
 	 * <p>Setter for the field <code>volume</code>.</p>
 	 *
@@ -211,6 +232,23 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.volume = volume;
 	}
 
+	public Double getVolumeWithYield() {
+		return volumeWithYield;
+	}
+
+	public void setVolumeWithYield(Double volumeWithYield) {
+		this.volumeWithYield = volumeWithYield;
+	}
+
+
+	public void setQties(Double value) {
+		this.qty = value;
+		this.qtyWithYield = value;
+		this.volume = value;
+		this.volumeWithYield = value;
+	}
+
+	
 	/**
 	 * <p>Getter for the field <code>allergens</code>.</p>
 	 *
@@ -229,7 +267,6 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.allergens = allergens;
 	}
 
-	
 	/**
 	 * <p>Getter for the field <code>bioOrigins</code>.</p>
 	 *
@@ -247,7 +284,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	public void setBioOrigins(Set<NodeRef> bioOrigins) {
 		this.bioOrigins = bioOrigins;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>geoOrigins</code>.</p>
 	 *
@@ -266,37 +303,37 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.geoOrigins = geoOrigins;
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public abstract LabelingComponent clone();
+	public abstract LabelingComponent createCopy();
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(allergens, bioOrigins, geoOrigins, isPlural, legalName, pluralLegalName, qty, volume);
+		result = (prime * result)
+				+ Objects.hash(allergens, bioOrigins, geoOrigins, isPlural, legalName, pluralLegalName, qty, qtyWithYield, volume, volumeWithYield);
 		return result;
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (!super.equals(obj))
+		}
+		if (!super.equals(obj) || (getClass() != obj.getClass())) {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		}
 		LabelingComponent other = (LabelingComponent) obj;
 		return Objects.equals(allergens, other.allergens) && Objects.equals(bioOrigins, other.bioOrigins)
-				&& Objects.equals(geoOrigins, other.geoOrigins) && isPlural == other.isPlural && Objects.equals(legalName, other.legalName)
-				&& Objects.equals(pluralLegalName, other.pluralLegalName) && Objects.equals(qty, other.qty) && Objects.equals(volume, other.volume);
+				&& Objects.equals(geoOrigins, other.geoOrigins) && (isPlural == other.isPlural) && Objects.equals(legalName, other.legalName)
+				&& Objects.equals(pluralLegalName, other.pluralLegalName) && Objects.equals(qty, other.qty)
+				&& Objects.equals(qtyWithYield, other.qtyWithYield) && Objects.equals(volume, other.volume)
+				&& Objects.equals(volumeWithYield, other.volumeWithYield);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "LabelingComponent [qty=" + qty + ", volume=" + volume + ", legalName=" + legalName + ", nodeRef=" + nodeRef + ", name=" + name
-				+ "]";
+		return "LabelingComponent [qty=" + qty + ", qtyWithYield=" + qtyWithYield + ", volume=" + volume + ", volumeWithYield=" + volumeWithYield
+				+ ", legalName=" + legalName + ", nodeRef=" + nodeRef + ", name=" + name + "]";
 	}
 
 	/** {@inheritDoc} */

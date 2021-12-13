@@ -17,10 +17,8 @@
  *   If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
 /**
- * Asset location helper class.
  * 
- * @namespace Alfresco
- * @class Alfresco.Location
+ * @namespace  beCPG.util
  */
 (function()
 {

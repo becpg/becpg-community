@@ -39,7 +39,7 @@
 		</property>
 	</bean>
 
-	<bean id="jsonVersionExtractor" class="fr.becpg.repo.entity.datalist.impl.JsonVersionExtractor" init-method="init">
+	<bean id="jsonVersionExtractor" class="fr.becpg.repo.entity.datalist.impl.JSONVersionExtractor" init-method="init">
 		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
 		<property name="attributeExtractorService" ref="attributeExtractorService" />
 		<property name="paginatedSearchCache" ref="paginatedSearchCache" />
@@ -319,32 +319,11 @@
         <property name="description" value="Run version cleanup" />
        	<property name="jobDataAsMap">
 			<map>
-				<entry key="jobLockService">
-	               <ref bean="jobLockService" />
-	           </entry>
-				<entry key="entityVersionService">
-	               <ref bean="entityVersionService" />
-	           </entry>
-				<entry key="entityFormatService">
-	               <ref bean="entityFormatService" />
-	           </entry>
-				<entry key="nodeService">
-	               <ref bean="nodeService" />
-	           </entry>
-				<entry key="transactionService">
-	               <ref bean="transactionService" />
-	           </entry>
-				<entry key="entityListDAO">
-	               <ref bean="entityListDAO" />
-	           </entry>
-	           <entry key="tenantAdminService">
-                    <ref bean="tenantAdminService" />
+	           <entry key="jobLockService">
+                    <ref bean="jobLockService" />
                </entry>
-	           <entry key="associationService">
-                    <ref bean="associationService" />
-               </entry>
-	           <entry key="lockService">
-                    <ref bean="lockService" />
+	           <entry key="versionCleanerService">
+                    <ref bean="versionCleanerService" />
                </entry>
 			</map>
 		</property>
@@ -364,6 +343,14 @@
 		<property name="enabled" value="${beCPG.version.cleaner.enabled}" />
 	</bean>
   
+   
+   	<bean id="batchThreadPoolExecutor" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
+      <property name="poolName" value="beCPGImportThreadPoolExecutor" />
+      <property name="corePoolSize" value="1" />
+      <property name="maximumPoolSize" value="1" />
+      <property name="threadPriority" value="4" />
+    </bean>
+   
    
    <!-- 
     <bean id="search.fts.alfresco.db" class="org.alfresco.repo.search.impl.solr.DbAftsQueryLanguage" >

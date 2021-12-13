@@ -148,6 +148,7 @@
 		<property name="transactionService" ref="TransactionService" />
 		<property name="associationService" ref="associationService" />
 		<property name="repoService" ref="repoService" />
+		<property name="versionCleanerService" ref="versionCleanerService" />
 	</bean>
 	
 	<!-- Formulation javascript helper -->

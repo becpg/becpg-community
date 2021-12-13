@@ -20,6 +20,7 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -172,7 +173,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	 * @Results: System will keep the same 50 first activities.
 	 */
 	@Test
-	public void alwaysKeepSameLastFiftyActivitiesTest() {
+	public void alwaysKeepSameLastFiftyActivitiesTest() throws InterruptedException {
 
 		NodeRef finishedProductNodeRef = createFinishedProduct();
 
@@ -206,7 +207,8 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		List<NodeRef> firstPageBeforeClean = activities.subList(0, MAX_PAGE);
 
 		// clean activities
-		entityActivityService.cleanActivities();
+		BatchInfo batch = entityActivityService.cleanActivities();
+		waitForBatchEnd(batch);
 
 		activities = getActivities(finishedProductNodeRef, SORT_MAP);
 		Collections.reverse(activities);
@@ -231,7 +233,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	 *           activity in the second page.
 	 */
 	@Test
-	public void keepOneActivityOfTypeReportAndFormulationPerPageTest() {
+	public void keepOneActivityOfTypeReportAndFormulationPerPageTest() throws InterruptedException {
 
 		// Create FP
 		NodeRef finishedProductNodeRef = createFinishedProduct();
@@ -257,7 +259,8 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		// activities number before clean
 		assertEquals("number activities = 201", 201, getActivities(finishedProductNodeRef, null).size());
 
-		entityActivityService.cleanActivities();
+		BatchInfo batch = entityActivityService.cleanActivities();
+		waitForBatchEnd(batch);
 
 		List<NodeRef> activities = getActivities(finishedProductNodeRef, SORT_MAP);
 
@@ -292,7 +295,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	 *           state activities.
 	 */
 	@Test
-	public void dontMergeCommentAndVersionAndStateAndContentActivitiesTest() {
+	public void dontMergeCommentAndVersionAndStateAndContentActivitiesTest() throws InterruptedException {
 
 		// Create FP
 		NodeRef finishedProductNodeRef = createFinishedProduct();
@@ -345,7 +348,8 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		// Make sure that we have all content activities
 		assertEquals("Content activities number = 2", 2, Collections.frequency(activityTypesBeforeClean, ActivityType.Content));
 
-		entityActivityService.cleanActivities();
+		BatchInfo batch = entityActivityService.cleanActivities();
+		waitForBatchEnd(batch);
 
 		List<ActivityType> activityTypesAfterClean = new ArrayList<>();
 		getActivities(finishedProductNodeRef, null)
@@ -379,7 +383,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	 *           NB. we talk here about activities after the first page (>50).
 	 */
 	@Test
-	public void mergeActivitiesByDayForTheLastWeekTest() {
+	public void mergeActivitiesByDayForTheLastWeekTest() throws InterruptedException {
 		// Create FP
 		NodeRef finishedProductNodeRef = createFinishedProduct();
 
@@ -442,7 +446,8 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		logger.info("Activities number before clean : " + getActivities(finishedProductNodeRef, null).size());
 
 		// clean activities
-		entityActivityService.cleanActivities();
+		BatchInfo batch = entityActivityService.cleanActivities();
+		waitForBatchEnd(batch);
 
 		List<NodeRef> activityNodeRefs = getActivities(finishedProductNodeRef, SORT_MAP);
 		Collections.reverse(activityNodeRefs);
@@ -472,7 +477,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 	@Test
 	@Deprecated
-	public void cleanActivityServiceTest() {
+	public void cleanActivityServiceTest() throws InterruptedException {
 
 		// Create semiFinished product
 		NodeRef semiFinishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -518,7 +523,8 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 		assertEquals("Check generated Activity", MAX_PAGE + 3, getActivities(productNodeRef, null).size());
 
-		entityActivityService.cleanActivities();
+		BatchInfo batch = entityActivityService.cleanActivities();
+		waitForBatchEnd(batch);
 
 		assertEquals("Check generated Activity", MAX_PAGE + 3, getActivities(productNodeRef, null).size());
 
@@ -550,7 +556,8 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 		waitForSolr();
 		// Clean Activities
-		entityActivityService.cleanActivities();
+		 batch = entityActivityService.cleanActivities();
+			waitForBatchEnd(batch);
 
 		int activitiesAfterClean = getActivities(productNodeRef, null).size();
 		assertTrue(activitiesBeforeClean >= activitiesAfterClean);

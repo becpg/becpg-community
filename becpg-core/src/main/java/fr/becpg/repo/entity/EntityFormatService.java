@@ -1,5 +1,9 @@
 package fr.becpg.repo.entity;
 
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
@@ -45,6 +49,8 @@ public interface EntityFormatService {
 	public void createOrUpdateEntityFromJson(NodeRef entityNodeRef, String entityJson);
 
 	public NodeRef convertVersionHistoryNodeRef(NodeRef from);
+
+	public Set<NodeRef> findConvertibleRelatives(NodeRef originalEntity, Set<NodeRef> visited, List<NodeRef> nextWork, int maxProcessedNodes, AtomicInteger currentCount);
 
 
 }

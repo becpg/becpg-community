@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -15,7 +16,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 
-//TODO voir pour faire mieux avec les heritages Composite<LabelingComponent>
 /**
  * <p>CompositeLabeling class.</p>
  *
@@ -34,15 +34,18 @@ public class CompositeLabeling extends LabelingComponent {
 	private Map<NodeRef, CompositeLabeling> ingListAtEnd = new LinkedHashMap<>();
 
 	private Double qtyTotal = 0d;
-	
-	private Double evaporatingLoss = 0d;
+	private Double qtyTotalWithYield = 0d;
+
+	private Double evaporatedQty = 0d;
+	private Double evaporatedVolume = 0d;
 
 	private Double volumeTotal = 0d;
+	private Double volumeTotalWithYield = 0d;
 
 	private IngTypeItem ingType;
 
 	private DeclarationType declarationType;
-	
+
 	/**
 	 * <p>Constructor for CompositeLabeling.</p>
 	 *
@@ -68,11 +71,14 @@ public class CompositeLabeling extends LabelingComponent {
 	public CompositeLabeling(CompositeLabeling compositeLabeling) {
 		super(compositeLabeling);
 		this.ingType = compositeLabeling.ingType;
-		this.ingList = clone(compositeLabeling.ingList);
-		this.ingListAtEnd = clone(compositeLabeling.ingListAtEnd);
+		this.ingList = copy(compositeLabeling.ingList);
+		this.ingListAtEnd = copy(compositeLabeling.ingListAtEnd);
 		this.qtyTotal = compositeLabeling.qtyTotal;
-		this.evaporatingLoss = compositeLabeling.evaporatingLoss;
+		this.qtyTotalWithYield = compositeLabeling.qtyTotalWithYield;
+		this.evaporatedQty = compositeLabeling.evaporatedQty;
+		this.evaporatedVolume = compositeLabeling.evaporatedVolume;
 		this.volumeTotal = compositeLabeling.volumeTotal;
+		this.volumeTotalWithYield = compositeLabeling.volumeTotalWithYield;
 		this.declarationType = compositeLabeling.declarationType;
 	}
 
@@ -101,7 +107,7 @@ public class CompositeLabeling extends LabelingComponent {
 		List<T> ret = new LinkedList<>();
 		if (list != null) {
 			for (T toAdd : list) {
-				ret.add((T) toAdd.clone());
+				ret.add((T) toAdd.createCopy());
 			}
 		}
 		return ret;
@@ -113,17 +119,15 @@ public class CompositeLabeling extends LabelingComponent {
 	 * @param list a {@link java.util.Map} object.
 	 * @return a {@link java.util.Map} object.
 	 */
-	protected Map<NodeRef, CompositeLabeling> clone(Map<NodeRef, CompositeLabeling> list) {
+	protected Map<NodeRef, CompositeLabeling> copy(Map<NodeRef, CompositeLabeling> list) {
 		Map<NodeRef, CompositeLabeling> ret = new LinkedHashMap<>();
 		if (list != null) {
 			for (Map.Entry<NodeRef, CompositeLabeling> toAdd : list.entrySet()) {
-				ret.put(toAdd.getKey(), toAdd.getValue().clone());
+				ret.put(toAdd.getKey(), toAdd.getValue().createCopy());
 			}
 		}
 		return ret;
 	}
-
-	
 
 	/**
 	 * <p>Getter for the field <code>ingType</code>.</p>
@@ -188,22 +192,32 @@ public class CompositeLabeling extends LabelingComponent {
 		this.qtyTotal = qtyTotal;
 	}
 
-	/**
-	 * <p>Getter for the field <code>evaporatingLoss</code>.</p>
-	 *
-	 * @return a {@link java.lang.Double} object.
-	 */
-	public Double getEvaporatingLoss() {
-		return evaporatingLoss;
+	public Double getQtyTotalWithYield() {
+		return qtyTotalWithYield;
 	}
 
-	/**
-	 * <p>Setter for the field <code>evaporatingLoss</code>.</p>
-	 *
-	 * @param evaporatingLoss a {@link java.lang.Double} object.
-	 */
-	public void setEvaporatingLoss(Double evaporatingLoss) {
-		this.evaporatingLoss = evaporatingLoss;
+	public void setQtyTotalWithYield(Double qtyTotalWithYield) {
+		this.qtyTotalWithYield = qtyTotalWithYield;
+	}
+
+	public Double getQtyTotal(boolean withYield) {
+		return withYield ? qtyTotalWithYield : qtyTotal;
+	}
+
+	public Double getEvaporatedQty() {
+		return evaporatedQty;
+	}
+
+	public void setEvaporatedQty(Double evaporatedQty) {
+		this.evaporatedQty = evaporatedQty;
+	}
+
+	public Double getEvaporatedVolume() {
+		return evaporatedVolume;
+	}
+
+	public void setEvaporatedVolume(Double evaporatedVolume) {
+		this.evaporatedVolume = evaporatedVolume;
 	}
 
 	/**
@@ -215,6 +229,10 @@ public class CompositeLabeling extends LabelingComponent {
 		return volumeTotal;
 	}
 
+	public Double getVolumeTotal(boolean withYield) {
+		return withYield ? volumeTotalWithYield : volumeTotal;
+	}
+
 	/**
 	 * <p>Setter for the field <code>volumeTotal</code>.</p>
 	 *
@@ -222,6 +240,14 @@ public class CompositeLabeling extends LabelingComponent {
 	 */
 	public void setVolumeTotal(Double volumeTotal) {
 		this.volumeTotal = volumeTotal;
+	}
+
+	public Double getVolumeTotalWithYield() {
+		return volumeTotalWithYield;
+	}
+
+	public void setVolumeTotalWithYield(Double volumeTotalWithYield) {
+		this.volumeTotalWithYield = volumeTotalWithYield;
 	}
 
 	/**
@@ -319,8 +345,33 @@ public class CompositeLabeling extends LabelingComponent {
 
 	/** {@inheritDoc} */
 	@Override
-	public CompositeLabeling clone() {
+	public CompositeLabeling createCopy() {
 		return new CompositeLabeling(this);
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = (prime * result) + Objects.hash(declarationType, evaporatedQty, evaporatedVolume, ingList, ingListAtEnd, ingType, qtyTotal,
+				qtyTotalWithYield, volumeTotal, volumeTotalWithYield);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj) || (getClass() != obj.getClass())) {
+			return false;
+		}
+		CompositeLabeling other = (CompositeLabeling) obj;
+		return (declarationType == other.declarationType) && Objects.equals(evaporatedQty, other.evaporatedQty)
+				&& Objects.equals(evaporatedVolume, other.evaporatedVolume) && Objects.equals(ingList, other.ingList)
+				&& Objects.equals(ingListAtEnd, other.ingListAtEnd) && Objects.equals(ingType, other.ingType)
+				&& Objects.equals(qtyTotal, other.qtyTotal) && Objects.equals(qtyTotalWithYield, other.qtyTotalWithYield)
+				&& Objects.equals(volumeTotal, other.volumeTotal) && Objects.equals(volumeTotalWithYield, other.volumeTotalWithYield);
 	}
 
 	/** {@inheritDoc} */
@@ -335,8 +386,9 @@ public class CompositeLabeling extends LabelingComponent {
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
 		sb.append(prefix).append(isTail ? "└──[" : "├──[")
 				.append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? ROOT : getLegalName(I18NUtil.getContentLocaleLang()))
-				.append(" ( allergens:" + getAllergens() + ") ").append(" ( plural:" + isPlural() + ") ").append(" - ").append(getQty()).append(" (").append(getQtyTotal()).append(", vol: ")
-				.append(getVolumeTotal()).append(") ").append(declarationType != null ? declarationType.toString() : "").append("]\n");
+				.append(" ( allergens:" + getAllergens() + ") ").append(" ( plural:" + isPlural() + ") ").append(" - ").append(getQty()).append("/").append(getQtyWithYield()).append(" (")
+				.append(getQtyTotal()).append("/").append(getQtyTotalWithYield()).append(") ")
+				.append(declarationType != null ? declarationType.toString() : "").append("]\n");
 		for (Iterator<CompositeLabeling> iterator = ingList.values().iterator(); iterator.hasNext();) {
 			CompositeLabeling labelingComponent = iterator.next();
 			if (labelingComponent instanceof CompositeLabeling) {
@@ -345,7 +397,7 @@ public class CompositeLabeling extends LabelingComponent {
 				sb.append(prefix).append(isTail ? "    " : "│   ").append(!iterator.hasNext() ? "└──[" : "├──[")
 						.append(labelingComponent.getLegalName(I18NUtil.getContentLocaleLang()))
 						.append(" ( plural:" + labelingComponent.isPlural() + " ) ").append(" - ").append(labelingComponent.getQty())
-						.append(" ( vol : ").append(labelingComponent.getVolume()).append(") ]\n");
+						.append("/").append(labelingComponent.getQtyWithYield()).append(" ]\n");
 			}
 
 		}
@@ -356,13 +408,11 @@ public class CompositeLabeling extends LabelingComponent {
 			} else {
 				sb.append(prefix).append(isTail ? "    " : "│   ").append(!iterator.hasNext() ? "*──[" : "├──[")
 						.append(labelingComponent.getLegalName(I18NUtil.getContentLocaleLang()))
-						.append(" ( plural:" + labelingComponent.isPlural() + " ) ")
-						.append(" ]\n");
+						.append(" ( plural:" + labelingComponent.isPlural() + " ) ").append(" ]\n");
 			}
 
 		}
-		
-		
+
 	}
 
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201806261756</property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -141,7 +141,7 @@ function getConvertedCapacityInUsUnit (qty, unit, isVolume) {
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">datasource_get_PF205_fr.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -2108,6 +2108,11 @@ if (row["width"]!= null ) {
                     <property name="aggregateFunction">COUNT</property>
                     <expression name="filterExpr">row["variants"] != null</expression>
                 </structure>
+                <structure>
+                    <property name="name">runningcount</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">RUNNINGCOUNT</property>
+                </structure>
             </list-property>
             <list-property name="columnHints">
                 <structure>
@@ -2330,6 +2335,11 @@ if (row["width"]!= null ) {
                     <structure>
                         <property name="position">20</property>
                         <property name="name">count variant</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">21</property>
+                        <property name="name">runningcount</property>
                         <property name="dataType">integer</property>
                     </structure>
                 </list-property>
@@ -4275,6 +4285,179 @@ row["rplStepRef"];
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">id</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">id</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">entityName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityName</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">name</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">name</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">entityType</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityType</text-property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr" type="javascript">row["entityType"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"trademark"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">id</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">entityName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">entityType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">id</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">entityName</property>
+                    <property name="nativeName">entityName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">entityType</property>
+                    <property name="nativeName">entityType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{id;STRING;/@id},{entityName;STRING;/@entityName},{name;STRING;/@name},{entityType;STRING;/@entityType}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>id</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>id</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>entityName</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>entityName</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>name</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>entityType</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>entityType</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
     </data-sets>
     <styles>
         <style name="report" id="2">
@@ -4366,12 +4549,261 @@ row["rplStepRef"];
                 <property name="category">Unformatted</property>
             </structure>
         </style>
+        <style name="becpg-header-type" id="12190">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">14pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">black</property>
+            <property name="marginBottom">4.5pt</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-meta-grid" id="12191">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">8pt</property>
+            <property name="textAlign">left</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-meta-cell-label" id="12192"/>
+        <style name="becpg-meta-cell-data" id="12193">
+            <property name="fontWeight">bold</property>
+        </style>
+        <style name="becpg-header-table" id="12194">
+            <property name="textAlign">center</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-header-title" id="12195">
+            <property name="marginTop">4.5pt</property>
+        </style>
+        <style name="becpg-header-image" id="12196">
+            <property name="width">1.931in</property>
+        </style>
+        <style name="becpg-header-logo" id="12197">
+            <property name="backgroundRepeat">no-repeat</property>
+            <property name="backgroundSizeWidth">contain</property>
+        </style>
+        <style name="becpg-chapter-header" id="12198">
+            <property name="backgroundColor">#004254</property>
+            <property name="fontSize">12pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#FFFFFF</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-table" id="12199">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-col-header" id="12200">
+            <property name="fontWeight">bold</property>
+            <property name="textAlign">left</property>
+        </style>
+        <style name="becpg-cell-header" id="12201">
+            <property name="fontWeight">bold</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-cell-footer" id="12202">
+            <property name="backgroundColor">#7BB7F7</property>
+            <property name="fontWeight">bold</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-cell-bold" id="12203">
+            <property name="fontWeight">bold</property>
+        </style>
+        <style name="becpg-grid-designation" id="12204">
+            <property name="fontSize">10pt</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-row-header" id="12205">
+            <property name="fontWeight">bold</property>
+            <property name="fontStyle">normal</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">center</property>
+            <property name="verticalAlign">middle</property>
+        </style>
+        <style name="becpg-col-border" id="12206">
+            <property name="borderLeftColor">#000000</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">none</property>
+            <property name="borderRightWidth">medium</property>
+            <property name="borderTopColor">#000000</property>
+        </style>
+        <style name="becpg-row-border" id="12207">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopColor">#000000</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="becpg-row-border-top" id="12208">
+            <property name="borderTopColor">#000000</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="becpg-group-header" id="12209">
+            <property name="backgroundColor">#EEEEEE</property>
+        </style>
+        <style name="becpg-data-unit" id="12210">
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-cell-data-header" id="12211">
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-cell-dynamic-header" id="12212">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-cell-dynamic-header-left" id="12213">
+            <property name="fontWeight">bold</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">left</property>
+        </style>
+        <style name="becpg-cell-data" id="12214">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-cell-data-left" id="12215">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">left</property>
+        </style>
+        <style name="becpg-cell-data-right" id="12216">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">right</property>
+        </style>
+        <style name="becpg-quality-row-header" id="12217">
+            <property name="backgroundColor">#009DCC</property>
+            <property name="fontSize">12pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#FFFFFF</property>
+            <property name="borderBottomColor">#C5C2C2</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftColor">#C5C2C2</property>
+            <property name="borderRightColor">#C5C2C2</property>
+            <property name="borderTopColor">#C5C2C2</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-quality-col-border" id="12218">
+            <property name="borderBottomColor">#C5C2C2</property>
+            <property name="borderLeftColor">#C5C2C2</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightColor">#C5C2C2</property>
+            <property name="borderTopColor">#C5C2C2</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-quality-table" id="12219">
+            <property name="color">#000000</property>
+            <property name="borderBottomColor">#C5C2C2</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftColor">#C5C2C2</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightColor">#C5C2C2</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopColor">#C5C2C2</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-quality-label-header" id="12220">
+            <property name="fontSize">12pt</property>
+        </style>
+        <style name="color-adress-website" id="12221">
+            <property name="color">#126683</property>
+        </style>
+        <style name="becpg-chapter-header1" id="12231">
+            <property name="backgroundColor">#004254</property>
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#FFFFFF</property>
+            <property name="textAlign">center</property>
+        </style>
     </styles>
     <page-setup>
         <simple-master-page name="Simple MasterPage" id="10">
             <property name="topMargin">1cm</property>
             <property name="leftMargin">1.5cm</property>
-            <property name="bottomMargin">1cm</property>
+            <property name="bottomMargin">0.4cm</property>
             <property name="rightMargin">1.5cm</property>
             <property name="style">becpg-default-style</property>
             <property name="headerHeight">1.15in</property>
@@ -4382,34 +4814,99 @@ row["rplStepRef"];
                     <property name="backgroundImageType">url</property>
                     <property name="pageBreakAfter">auto</property>
                     <property name="height">1.3125in</property>
-                    <property name="width">100%</property>
                     <column id="766">
                         <property name="repeat">1</property>
-                        <property name="width">1.40625in</property>
                     </column>
                     <column id="767">
-                        <property name="width">2.9375in</property>
+                        <property name="width">50%</property>
                     </column>
-                    <column id="768">
-                        <property name="width">2.2291666666666665in</property>
-                    </column>
+                    <column id="768"/>
                     <row id="769">
                         <cell id="770">
-                            <property name="backgroundImage">./logo.png</property>
                             <property name="backgroundRepeat">no-repeat</property>
                             <property name="backgroundSizeHeight">cover</property>
                             <property name="backgroundSizeWidth">cover</property>
                             <property name="paddingLeft">1pt</property>
                             <property name="textAlign">left</property>
+                            <image id="12188">
+                                <property name="height">80%</property>
+                                <property name="width">80%</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["img"]==null ||row["img"]==""</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">entityName</property>
+                                        <expression name="expression" type="javascript">dataSetRow["entityName"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">name</property>
+                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">entityType</property>
+                                        <expression name="expression" type="javascript">dataSetRow["entityType"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">expr</property>
+                                <expression name="valueExpr">row["img"]</expression>
+                            </image>
+                            <image id="12189">
+                                <property name="height">0.7083333333333334in</property>
+                                <property name="width">0.9375in</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["img"]!=null</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <text-property name="displayName">id</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">embed</property>
+                                <property name="imageName">logo.png</property>
+                            </image>
                         </cell>
                         <cell id="772">
                             <label id="773">
                                 <property name="style">becpg-header-type</property>
-                                <text-property name="text" key="technicalSheetProd">Fiche Technique Client</text-property>
+                                <text-property name="text" key="technicalSheetProd"></text-property>
                             </label>
                             <data id="3333">
                                 <property name="style">becpg-header-title</property>
-                                <property name="fontWeight">bold</property>
+                                <property name="fontWeight">normal</property>
                                 <property name="dataSet">Product</property>
                                 <list-property name="boundDataColumns">
                                     <structure>
@@ -4432,8 +4929,7 @@ dataSetRow["name"]
                             <grid id="777">
                                 <property name="style">becpg-meta-grid</property>
                                 <property name="borderTopStyle">none</property>
-                                <property name="marginLeft">20%</property>
-                                <property name="width">1.8645833333333333in</property>
+                                <property name="marginLeft">0%</property>
                                 <property name="dataSet">Product</property>
                                 <list-property name="boundDataColumns">
                                     <structure>
@@ -4449,12 +4945,8 @@ dataSetRow["name"]
                                         <property name="dataType">string</property>
                                     </structure>
                                 </list-property>
-                                <column id="778">
-                                    <property name="width">1.1354166666666667in</property>
-                                </column>
-                                <column id="1519">
-                                    <property name="width">0.7291666666666666in</property>
-                                </column>
+                                <column id="778"/>
+                                <column id="1519"/>
                                 <row id="7352">
                                     <cell id="7260">
                                         <property name="style">becpg-meta-cell-label</property>
@@ -4675,7 +5167,7 @@ dataSetRow["name"]
                                 <property name="fontSize">7pt</property>
                                 <property name="fontStyle">italic</property>
                                 <property name="color">black</property>
-                                <property name="marginTop">6pt</property>
+                                <property name="marginTop">0pt</property>
                                 <property name="marginLeft">0pt</property>
                                 <property name="marginBottom">0pt</property>
                                 <property name="paddingLeft">20pt</property>
@@ -4868,7 +5360,7 @@ dataSetRow["name"]
                             <list-property name="visibility">
                                 <structure>
                                     <property name="format">all</property>
-                                    <expression name="valueExpr" type="javascript">(row["clients"]=="" ||row["clients"]==null)</expression>
+                                    <expression name="valueExpr" type="javascript">row["clients"]==null||row["clients"]==""</expression>
                                 </structure>
                             </list-property>
                             <cell id="7270">
@@ -4877,16 +5369,7 @@ dataSetRow["name"]
                                 </label>
                             </cell>
                             <cell id="7290">
-                                <data id="2521">
-                                    <property name="dataSet">Product</property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">clients</property>
-                                            <text-property name="displayName">clients</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["clients"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                    </list-property>
+                                <data id="12232">
                                     <property name="resultSetColumn">clients</property>
                                 </data>
                             </cell>
@@ -4943,7 +5426,7 @@ dataSetRow["name"]
                                         <list-property name="visibility">
                                             <structure>
                                                 <property name="format">all</property>
-                                                <expression name="valueExpr" type="javascript">( row["name"] == null || row["name"] == "" )</expression>
+                                                <expression name="valueExpr" type="javascript">row["name"] == null || row["name"] == ""</expression>
                                             </structure>
                                         </list-property>
                                         <cell id="9139">
@@ -5107,9 +5590,17 @@ else{
             </list-property>
             <column id="6021"/>
             <row id="6022">
+                <property name="style">becpg-chapter-header1</property>
                 <cell id="6023">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
                     <label id="2700">
-                        <property name="style">becpg-chapter-header</property>
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
                         <text-property name="text" key="chapterCompo">COMPOSITION</text-property>
                     </label>
                 </cell>
@@ -5409,9 +5900,17 @@ else{
             </list-property>
             <column id="5997"/>
             <row id="5998">
+                <property name="style">becpg-chapter-header1</property>
                 <cell id="5999">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
                     <label id="2678">
-                        <property name="style">becpg-chapter-header</property>
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
                         <text-property name="text" key="chapterPack">CONDITIONNEMENT</text-property>
                     </label>
                 </cell>
@@ -5465,6 +5964,12 @@ else{
                         <property name="pageBreakInside">avoid</property>
                         <property name="width">100%</property>
                         <property name="dataSet">packFirstAndSecondLevel</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">row["runningcount"]==null||row["runningcount"]==0</expression>
+                            </structure>
+                        </list-property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">packagingListProduct</property>
@@ -5572,6 +6077,42 @@ value = value + " x " + dataSetRow["height"];
                                 <property name="name">count variant</property>
                                 <text-property name="displayName">count variant</text-property>
                                 <expression name="expression" type="javascript">dataSetRow["count variant"]</expression>
+                                <property name="dataType">integer</property>
+                            </structure>
+                            <structure>
+                                <property name="name">packagingListUnit_1</property>
+                                <text-property name="displayName">packagingListUnit</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["packagingListUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">tare_1</property>
+                                <text-property name="displayName">tare</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["tare"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">length_1</property>
+                                <text-property name="displayName">length</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["length"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">width_1</property>
+                                <text-property name="displayName">width</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["width"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">height_1</property>
+                                <text-property name="displayName">height</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["height"]</expression>
+                                <property name="dataType">float</property>
+                            </structure>
+                            <structure>
+                                <property name="name">runningcount</property>
+                                <text-property name="displayName">runningcount</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["runningcount"]</expression>
                                 <property name="dataType">integer</property>
                             </structure>
                         </list-property>
@@ -5694,7 +6235,9 @@ value = value + " x " + dataSetRow["height"];
             </row>
             <row id="6010">
                 <property name="height">0.22916666666666666in</property>
-                <cell id="6011"/>
+                <cell id="6011">
+                    <label id="12230"/>
+                </cell>
             </row>
             <row id="6012">
                 <cell id="6013">
@@ -6234,22 +6777,16 @@ if ( m_size !== null &amp;&amp; m_size !== "" ) {
             </row>
             <row id="6014">
                 <property name="height">0.25in</property>
-                <cell id="6015"/>
+                <cell id="6015">
+                    <label id="12229"/>
+                </cell>
             </row>
             <row id="6016">
                 <cell id="6017">
                     <grid id="2716">
                         <property name="style">becpg-table</property>
                         <property name="pageBreakInside">avoid</property>
-                        <property name="dataSet">packList</property>
-                        <list-property name="boundDataColumns">
-                            <structure>
-                                <property name="name">tableCheck</property>
-                                <text-property name="displayName">tableCheck</text-property>
-                                <expression name="expression" type="javascript">dataSetRow["tableCheck"]</expression>
-                                <property name="dataType">integer</property>
-                            </structure>
-                        </list-property>
+                        <property name="dataSet">Product</property>
                         <structure name="toc"/>
                         <column id="2717"/>
                         <column id="2987">
@@ -6723,12 +7260,7 @@ else{
             <list-property name="visibility">
                 <structure>
                     <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">if ( row["tableCheck"]== null){
-	true
-}
-else{
-	false
-}</expression>
+                    <expression name="valueExpr" type="javascript">row["tableCheck"]==null || row["tableCheck"]==0</expression>
                 </structure>
             </list-property>
             <list-property name="boundDataColumns">
@@ -6741,18 +7273,13 @@ else{
             </list-property>
             <column id="3569"/>
             <row id="3570">
+                <property name="style">becpg-chapter-header1</property>
                 <cell id="3571">
-                    <property name="style">becpg-chapter-header</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
                     <label id="3582">
-                        <property name="style">becpg-chapter-header</property>
                         <property name="borderBottomStyle">none</property>
                         <property name="borderLeftStyle">none</property>
                         <property name="borderRightStyle">none</property>
@@ -6761,18 +7288,17 @@ else{
                     </label>
                 </cell>
             </row>
-            <row id="3572">
-                <property name="height">0.15in</property>
-                <cell id="3573">
-                    <label id="9146">
-                        <property name="fontSize">6pt</property>
-                        <list-property name="visibility">
-                            <structure>
-                                <property name="format">pdf</property>
-                                <expression name="valueExpr" type="javascript">true</expression>
-                            </structure>
-                        </list-property>
-                        <text-property name="text"> </text-property>
+            <row id="12224">
+                <cell id="12225">
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                    <label id="12226">
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
                     </label>
                 </cell>
             </row>
@@ -6782,6 +7308,12 @@ else{
                         <property name="style">becpg-table</property>
                         <property name="width">100%</property>
                         <property name="dataSet">CompoList</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">row["instruction"]==null||row["instruction"]==""</expression>
+                            </structure>
+                        </list-property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">compoListProduct</property>
@@ -6830,6 +7362,7 @@ true
                                     <method name="onRender"><![CDATA[indent_docx (12, this.getRowData().getColumnValue("depthLevel"), this);]]></method>
                                     <property name="style">becpg-cell-dynamic-header-left</property>
                                     <text id="3449">
+                                        <property name="textAlign">center</property>
                                         <property name="contentType">html</property>
                                         <text-property name="content"><![CDATA[<div style="font-size: 1px; display: inline; float: left; width: <VALUE-OF>(row["depthLevel"]-1)*20</VALUE-OF>px;">&amp;nbsp;</div><VALUE-OF>row["compoListProduct"]</VALUE-OF>]]></text-property>
                                     </text>
@@ -6846,26 +7379,18 @@ true
                     </table>
                 </cell>
             </row>
-            <row id="3576">
-                <cell id="3577">
-                    <label id="9147">
-                        <property name="fontSize">6pt</property>
-                        <list-property name="visibility">
-                            <structure>
-                                <property name="format">pdf</property>
-                                <expression name="valueExpr" type="javascript">true</expression>
-                            </structure>
-                        </list-property>
-                        <text-property name="text"> </text-property>
-                    </label>
-                </cell>
-            </row>
             <row id="3578">
                 <cell id="3579">
                     <table id="3344">
                         <property name="style">becpg-table</property>
                         <property name="width">100%</property>
                         <property name="dataSet">processList</property>
+                        <list-property name="visibility">
+                            <structure>
+                                <property name="format">all</property>
+                                <expression name="valueExpr" type="javascript">row["instruction"]==null||row["instruction"]==""</expression>
+                            </structure>
+                        </list-property>
                         <list-property name="boundDataColumns">
                             <structure>
                                 <property name="name">instruction</property>
@@ -6915,6 +7440,7 @@ true
                                     <method name="onRender"><![CDATA[indent_docx (0, 0, this);]]></method>
                                     <property name="style">becpg-cell-dynamic-header-left</property>
                                     <data id="3401">
+                                        <property name="textAlign">center</property>
                                         <property name="resultSetColumn">plStep</property>
                                     </data>
                                 </cell>
@@ -6954,10 +7480,13 @@ true
             </list-property>
             <column id="3584"/>
             <row id="3585">
+                <property name="style">becpg-chapter-header1</property>
                 <cell id="3586">
-                    <property name="style">becpg-chapter-header</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
                     <label id="1009">
-                        <property name="style">becpg-chapter-header</property>
                         <property name="borderBottomStyle">none</property>
                         <property name="borderLeftStyle">none</property>
                         <property name="borderRightStyle">none</property>
@@ -6972,16 +7501,7 @@ true
             </row>
             <row id="3587">
                 <cell id="3588">
-                    <label id="9148">
-                        <property name="fontSize">6pt</property>
-                        <list-property name="visibility">
-                            <structure>
-                                <property name="format">pdf</property>
-                                <expression name="valueExpr" type="javascript">true</expression>
-                            </structure>
-                        </list-property>
-                        <text-property name="text"> </text-property>
-                    </label>
+                    <label id="12227"/>
                 </cell>
             </row>
             <row id="3589">
@@ -7090,6 +7610,7 @@ true
                                     <method name="onPrepare"><![CDATA[indent_docx (0, 0, this);]]></method>
                                     <property name="style">becpg-cell-dynamic-header-left</property>
                                     <data id="3523">
+                                        <property name="textAlign">center</property>
                                         <property name="resultSetColumn">clCharacts</property>
                                     </data>
                                 </cell>
@@ -7145,7 +7666,7 @@ true
             <list-property name="visibility">
                 <structure>
                     <property name="format">all</property>
-                    <expression name="valueExpr" type="javascript">(row["localTableCheck"] == 0 || row["localTableCheck"] == null)</expression>
+                    <expression name="valueExpr" type="javascript">row["localTableCheck"] == null || row["localTableCheck"] == 0</expression>
                 </structure>
             </list-property>
             <list-property name="boundDataColumns">
@@ -7218,22 +7739,24 @@ true
             </column>
             <header>
                 <row id="9125">
-                    <property name="style">becpg-chapter-header</property>
+                    <property name="style">becpg-chapter-header1</property>
                     <property name="fontWeight">bold</property>
-                    <property name="borderBottomStyle">solid</property>
-                    <property name="borderBottomWidth">thin</property>
-                    <property name="borderLeftStyle">solid</property>
-                    <property name="borderLeftWidth">thin</property>
-                    <property name="borderRightStyle">solid</property>
-                    <property name="borderRightWidth">thin</property>
-                    <property name="borderTopStyle">solid</property>
-                    <property name="borderTopWidth">thin</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
                     <cell id="9126">
                         <property name="colSpan">5</property>
                         <property name="rowSpan">1</property>
-                        <property name="borderRightStyle">solid</property>
-                        <property name="borderRightWidth">thin</property>
+                        <property name="borderBottomStyle">none</property>
+                        <property name="borderLeftStyle">none</property>
+                        <property name="borderRightStyle">none</property>
+                        <property name="borderTopStyle">none</property>
                         <label id="9067">
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderTopStyle">none</property>
                             <text-property name="text" key="resourceParam">PARAMÈTRES MACHINE</text-property>
                         </label>
                     </cell>
@@ -7244,20 +7767,10 @@ true
                     <property name="borderLeftStyle">none</property>
                     <property name="borderRightStyle">none</property>
                     <property name="borderTopStyle">none</property>
-                    <property name="height">0.15in</property>
                     <cell id="9120">
                         <property name="colSpan">5</property>
                         <property name="rowSpan">1</property>
-                        <label id="9149">
-                            <property name="fontSize">6pt</property>
-                            <list-property name="visibility">
-                                <structure>
-                                    <property name="format">pdf</property>
-                                    <expression name="valueExpr" type="javascript">true</expression>
-                                </structure>
-                            </list-property>
-                            <text-property name="text"> </text-property>
-                        </label>
+                        <label id="12228"/>
                     </cell>
                 </row>
                 <row id="9045">
@@ -7395,12 +7908,15 @@ true
             <column id="3594"/>
             <column id="3607"/>
             <row id="3595">
+                <property name="style">becpg-chapter-header1</property>
                 <cell id="3596">
                     <property name="colSpan">2</property>
                     <property name="rowSpan">1</property>
-                    <property name="style">becpg-chapter-header</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
                     <label id="2853">
-                        <property name="style">becpg-chapter-header</property>
                         <property name="borderBottomStyle">none</property>
                         <property name="borderLeftStyle">none</property>
                         <property name="borderRightStyle">none</property>
@@ -7647,12 +8163,15 @@ true
             <column id="3609"/>
             <column id="3610"/>
             <row id="3611">
+                <property name="style">becpg-chapter-header1</property>
                 <cell id="3612">
                     <property name="colSpan">2</property>
                     <property name="rowSpan">1</property>
-                    <property name="style">becpg-chapter-header</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
                     <label id="3645">
-                        <property name="style">becpg-chapter-header</property>
                         <property name="borderBottomStyle">none</property>
                         <property name="borderLeftStyle">none</property>
                         <property name="borderRightStyle">none</property>

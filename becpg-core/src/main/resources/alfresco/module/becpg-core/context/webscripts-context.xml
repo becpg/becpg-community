@@ -83,6 +83,13 @@
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="tenantService" ref="tenantService" />
 	</bean>
+	
+	
+   <!-- batch Queue Service -->
+	<bean id="webscript.fr.becpg.admin.batchQueue.get" class="fr.becpg.repo.web.scripts.admin.BatchQueueServiceWebScript" parent="webscript">
+		<property name="batchQueueService" ref="batchQueueService" />
+	</bean>
+	
 
 	<!-- Entity lists -->
 	<bean id="webscript.fr.becpg.entity.entityLists.get" class="fr.becpg.repo.web.scripts.entity.EntityListsWebScript" parent="webscript">
@@ -201,6 +208,7 @@
       <property name="contentService" ref="contentService" />
       <property name="repository" ref="repositoryHelper" />
 	</bean>
+
 
 
 	<!-- Simulation webscript -->

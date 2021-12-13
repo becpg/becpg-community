@@ -58,18 +58,11 @@
 .becpg-chapter-header
 {
 	background-color: #004254;
-	font-size: 12pt;
+	font-size: 10pt;
 	font-weight: bold;
 	color: #FFFFFF;
-	border-bottom-style: solid;
-	border-bottom-width: thin;
-	border-left-style: solid;
-	border-left-width: thin;
-	border-right-style: solid;
-	border-right-width: thin;
-	border-top-style: solid;
-	border-top-width: thin;
 	text-align: center;
+	font-family:sans-serif;
 }
 
 /* table & grid*/

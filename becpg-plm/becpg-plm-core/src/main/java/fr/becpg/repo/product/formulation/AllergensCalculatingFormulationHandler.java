@@ -287,6 +287,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 						newAllergenListDataItem.setInVoluntary(false);
 						newAllergenListDataItem.getInVoluntarySources().clear();
+						
+						newAllergenListDataItem.setOnLine(false);
+						newAllergenListDataItem.setOnSite(false);
 
 						// add detailable aspect
 						if (!newAllergenListDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
@@ -313,6 +316,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 						}
 						addEmptyError(errors, ret, partProduct);
 					}
+					
 
 					for (NodeRef p : allergenListDataItem.getVoluntarySources()) {
 						if (!newAllergenListDataItem.getVoluntarySources().contains(p)) {
@@ -322,11 +326,19 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 					// Define involuntary
 					if (Boolean.TRUE.equals(allergenListDataItem.getInVoluntary())) {
-						newAllergenListDataItem.setInVoluntary(true);
+						
+						if(!(Boolean.TRUE.equals(newAllergenListDataItem.getIsCleaned())
+								 &&  partProduct instanceof ResourceProductData)
+								) {
+							newAllergenListDataItem.setInVoluntary(true);
+							
+						} 
+						
 						if (!newAllergenListDataItem.getInVoluntarySources().contains(partProduct.getNodeRef())
 								&& !(partProduct instanceof SemiFinishedProductData)) {
 							newAllergenListDataItem.getInVoluntarySources().add(partProduct.getNodeRef());
 						}
+						
 					} else if (allergenListDataItem.getInVoluntary() == null) {
 
 						if (!Boolean.TRUE.equals(newAllergenListDataItem.getInVoluntary())) {
@@ -341,6 +353,14 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 						}
 					}
 
+					if (Boolean.TRUE.equals(allergenListDataItem.getOnSite())) {
+						newAllergenListDataItem.setOnSite(true);
+					}
+					
+					if (Boolean.TRUE.equals(allergenListDataItem.getOnLine())) {
+						newAllergenListDataItem.setOnLine(true);
+					}
+					
 					// Add qty
 					if (formulatedProduct instanceof RawMaterialData) {
 						// Generic raw material

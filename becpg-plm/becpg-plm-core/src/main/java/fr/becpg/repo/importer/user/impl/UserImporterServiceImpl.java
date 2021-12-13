@@ -65,7 +65,7 @@ import fr.becpg.repo.mail.BeCPGMailService;
  */
 public class UserImporterServiceImpl implements UserImporterService {
 
-	private static final Log logger = LogFactory.getLog(UserImporterService.class);
+	private static final Log logger = LogFactory.getLog(UserImporterServiceImpl.class);
 
 	/** Constant <code>USERNAME="username"</code> */
 	public static final String USERNAME = "username";
@@ -276,6 +276,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 				} catch (AuthenticationException e) {
 					// Do nothing
+					logger.debug(e,e);
 				}
 
 				if (!personService.personExists(username)) {

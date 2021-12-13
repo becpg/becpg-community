@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.batch.BatchProcessWorkProvider;
+import org.alfresco.repo.batch.BatchProcessor;
+import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -20,8 +23,10 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.report.entity.EntityReportAsyncGenerator;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -52,15 +57,11 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 	private AssociationService associationService;
 
-	private EntityReportAsyncGenerator entityReportAsyncGenerator;
+	private BatchQueueService batchQueueService;
 
-	/**
-	 * <p>Setter for the field <code>entityReportAsyncGenerator</code>.</p>
-	 *
-	 * @param entityReportAsyncGenerator a {@link fr.becpg.repo.report.entity.EntityReportAsyncGenerator} object.
-	 */
-	public void setEntityReportAsyncGenerator(EntityReportAsyncGenerator entityReportAsyncGenerator) {
-		this.entityReportAsyncGenerator = entityReportAsyncGenerator;
+
+	public void setBatchQueueService(BatchQueueService batchQueueService) {
+		this.batchQueueService = batchQueueService;
 	}
 
 	/**
@@ -92,7 +93,7 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 	/** {@inheritDoc} */
 	@Override
-	public void execute(WebScriptRequest req, WebScriptResponse res)  {
+	public void execute(WebScriptRequest req, WebScriptResponse res) {
 		logger.debug("start report webscript");
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		String storeType = templateArgs.get(PARAM_STORE_TYPE);
@@ -139,22 +140,34 @@ public class ReportTplWebScript extends AbstractWebScript {
 		}
 
 		if (refs != null) {
-			logger.info("Refresh reports of " + refs.size() + " entities. action: " + action);
-			if (ACTION_REFRESH.equals(action)) {
-				entityReportAsyncGenerator.queueNodes(refs, true);
-			} else if (ACTION_UPDATE_PERMISSIONS.equals(action)) {
-				for (NodeRef entityNodeRef : refs) {
-					List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
-					for (NodeRef report : reports) {
-						NodeRef tplNodeRef = associationService.getTargetAssoc(report, ReportModel.ASSOC_REPORT_TPL);
-						if (nodeRef.equals(tplNodeRef)) {
-							entityReportService.setPermissions(nodeRef, report);
+
+			BatchInfo batchInfo = new BatchInfo( String.format("generateReports-%s-%s", action, nodeRef.getId()), "becpg.batch.entityTpl.generateReports");
+			batchInfo.enableNotifyByMail("generate-reports", null);
+			batchInfo.setRunAsSystem(true);
+			BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(refs);
+
+			BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+
+				@Override
+				public void process(NodeRef entityNodeRef) throws Throwable {
+
+					if (ACTION_REFRESH.equals(action)) {
+
+						entityReportService.generateReports(entityNodeRef, entityNodeRef);
+					} else if (ACTION_UPDATE_PERMISSIONS.equals(action)) {
+						List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
+						for (NodeRef report : reports) {
+							NodeRef tplNodeRef = associationService.getTargetAssoc(report, ReportModel.ASSOC_REPORT_TPL);
+							if (nodeRef.equals(tplNodeRef)) {
+								entityReportService.setPermissions(nodeRef, report);
+							}
 						}
 					}
 				}
-			}
+			};
 
-			logger.info("Refresh reports done.");
+			batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
+
 		}
 	}
 
@@ -162,17 +175,25 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(nodeRef, ReportModel.ASSOC_REPORT_TPL);
 
-		logger.info("Delete " + assocRefs.size() + " reports.");
+		BatchInfo batchInfo = new BatchInfo( String.format("deleteReports-%s",nodeRef.getId()), "becpg.batch.entityTpl.deleteReports");
+		batchInfo.setRunAsSystem(true);
+		BatchProcessWorkProvider<AssociationRef> workProvider = new EntityListBatchProcessWorkProvider<>(assocRefs);
 
-		for (AssociationRef assocRef : assocRefs) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Delete report " + assocRef.getSourceRef() + " - name: "
-						+ nodeService.getProperty(assocRef.getSourceRef(), ContentModel.PROP_NAME));
+		BatchProcessWorker<AssociationRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+
+			@Override
+			public void process(AssociationRef assocRef) throws Throwable {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Delete report " + assocRef.getSourceRef() + " - name: "
+							+ nodeService.getProperty(assocRef.getSourceRef(), ContentModel.PROP_NAME));
+				}
+				nodeService.addAspect(assocRef.getSourceRef(), ContentModel.ASPECT_TEMPORARY, null);
+				nodeService.deleteNode(assocRef.getSourceRef());
+
 			}
-			nodeService.addAspect(assocRef.getSourceRef(), ContentModel.ASPECT_TEMPORARY, null);
-			nodeService.deleteNode(assocRef.getSourceRef());
-		}
+		};
 
-		logger.info("Reports deleted.");
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
+
 	}
 }

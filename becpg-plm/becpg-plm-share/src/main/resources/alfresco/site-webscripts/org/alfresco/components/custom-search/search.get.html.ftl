@@ -27,6 +27,8 @@
 	<@script type="text/javascript" src="${url.context}/res/modules/documentlibrary/copy-move-to.js" group="search"/>
 	<@script type="text/javascript" src="${url.context}/res/components/people-finder/people-finder.js" group="search"/>
 
+    <@script src="${url.context}/res/js/async-download.js" group="search"/>
+
 	<@script src="${url.context}/res/components/search/search-lib.js" group="search"/>
 	<@script src="${url.context}/res/components/search/search.js" group="search"/>
 

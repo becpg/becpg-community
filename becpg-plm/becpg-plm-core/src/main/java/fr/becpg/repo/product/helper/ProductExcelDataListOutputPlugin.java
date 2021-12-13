@@ -81,16 +81,18 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 	/** {@inheritDoc} */
 	@Override
 	public List<Map<String, Object>> decorate(List<Map<String, Object>> items) throws IOException {
-		try {
+		if (items != null) {
+			try {
 
-			Map<String, JSONArray> subCache = new HashMap<>();
+				Map<String, JSONArray> subCache = new HashMap<>();
 
-			for (Map<String, Object> item : items) {
-				decorate(item, subCache);
+				for (Map<String, Object> item : items) {
+					decorate(item, subCache);
+				}
+
+			} catch (JSONException e) {
+				throw new WebScriptException("Unable to parse JSON", e);
 			}
-
-		} catch (JSONException e) {
-			throw new WebScriptException("Unable to parse JSON", e);
 		}
 
 		return items;
@@ -127,7 +129,7 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 								} else {
 									item.setValue("");
 								}
-								if (jsonObject.has(JsonFormulaHelper.JSON_SUB_VALUES) && subCache!=null) {
+								if (jsonObject.has(JsonFormulaHelper.JSON_SUB_VALUES) && (subCache != null)) {
 									subCache.put(item.getKey(), (JSONArray) jsonObject.get(JsonFormulaHelper.JSON_SUB_VALUES));
 								}
 							}
@@ -181,7 +183,7 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 							nodeService.getProperties(nodeRef).forEach((key, value) -> {
 
 								if (key.equals(PLMModel.PROP_DYNAMICCHARACT_TITLE) || key.equals(PLMModel.PROP_DYNAMICCHARACT_VALUE)) {
-									String mtField = "prop_" + key.toPrefixString(namespaceService).replaceAll(":", "_");
+									String mtField = "prop_" + key.toPrefixString(namespaceService).replace(":", "_");
 									temp.put(mtField, value);
 									if (ret.getComputedFields() == null) {
 										metadataFields.add(key.toPrefixString(namespaceService));
@@ -225,6 +227,5 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 	private boolean isMultiLevel(Map<String, Object> items) {
 		return items.containsKey(MultiLevelExtractor.PROP_IS_MULTI_LEVEL) && (Boolean) items.get(MultiLevelExtractor.PROP_IS_MULTI_LEVEL);
 	}
-
 
 }

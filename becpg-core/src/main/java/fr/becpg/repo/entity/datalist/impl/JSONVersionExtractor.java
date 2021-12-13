@@ -40,9 +40,9 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
-public class JsonVersionExtractor extends ActivityListExtractor {
+public class JSONVersionExtractor extends ActivityListExtractor {
 
-	private static final Log logger = LogFactory.getLog(JsonVersionExtractor.class);
+	private static final Log logger = LogFactory.getLog(JSONVersionExtractor.class);
 	
 	public static final String PROP_ACCESSRIGHT = "accessRight";
 
@@ -76,7 +76,8 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 	
 	private static final String VERSION = "version";
 	
-	
+	private static final String CM_NAME = "cm:name";
+
 	private static final String[] AL_DATA_PROPS = {"datalistType", "charactType", "entityType", "datalistNodeRef", "entityNodeRef", "className", "title", "charactNodeRef" };
 	
 	private static final String BCPG_PREFIX = "bcpg:";
@@ -367,6 +368,10 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 			} else {
 				displayName = properties.getString(attribute.getName().toPrefixString(namespaceService));
 			}
+		} else if (metadata.equals("noderef")) {
+			
+			displayName = extractJsonNodeRefProp(seri);
+			
 		} else {
 			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
 		}
@@ -376,6 +381,41 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 		tmp.put(METADATA, metadata);
 		return tmp;
 
+	}
+
+	private String extractJsonNodeRefProp(Serializable seri) {
+		
+		StringBuilder sb = null;
+		try {
+			JSONArray jsonArray = new JSONArray(seri.toString());
+			for (int i = 0; i < jsonArray.length(); i++) {
+				JSONObject json = jsonArray.getJSONObject(i);
+				if (sb == null) {
+					sb = new StringBuilder();
+				} else {
+					sb.append(RepoConsts.LABEL_SEPARATOR);
+				}
+				
+				if (json.has(CM_NAME)) {
+					sb.append(json.get(CM_NAME));
+				} else {
+					sb.append(seri);
+				}
+			}
+		} catch (JSONException e) {
+			sb = new StringBuilder();
+			try {
+				JSONObject json = new JSONObject(seri.toString());
+				if (json.has(CM_NAME)) {
+					sb.append(json.get(CM_NAME));
+				} else {
+					sb.append(seri);
+				}
+			} catch (JSONException e2) {
+				sb.append(seri);
+			}
+		}
+		return sb == null ? seri.toString() : sb.toString();
 	}
 
 	private HashMap<String, Object> extractAlData(JSONObject value) throws JSONException {
@@ -451,7 +491,7 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 				properties = object.getJSONObject(ATTRIBUTES);
 			}
 			
-			NodeRef nodeRef = new NodeRef("workspace://SpacesStore/" + object.getString("cm:name"));
+			NodeRef nodeRef = new NodeRef("workspace://SpacesStore/" + object.getString(CM_NAME));
 			
 			if (nodeService.exists(nodeRef)) {
 				ret.put(PROP_NODE, nodeRef);
@@ -510,7 +550,7 @@ public class JsonVersionExtractor extends ActivityListExtractor {
 						propertiesMap.put(qname, properties.get(name).toString());
 					} else if (name.startsWith(BCPG_PREFIX)) {
 						QName qname = QName.createQName(BeCPGModel.BECPG_URI, name.split(BCPG_PREFIX)[1]);
-						propertiesMap.put(qname, properties.get(name).toString());
+(??)						propertiesMap.put(qname, (Serializable) properties.get(name).toString());
 					}
 				}
 				

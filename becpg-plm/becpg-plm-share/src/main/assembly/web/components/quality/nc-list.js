@@ -90,23 +90,24 @@
                                     };
                                     
                                     requestParams.filter.filterParams = dt._createFilterURLParameters(dt.currentFilter, dt.options.filterParameters);
-
-                                    for ( var i = 0, ii = response.json.columns.length; i < ii; i++) {
-                                       var column = response.json.columns[i], columnName = column.name.replace(":", "_");
-                                       if (column.dataType == "nested" && column.columns) {
-                                          for ( var j = 0; j < column.columns.length; j++) {                                             
-                                             var col = column.columns[j];                                            
-                                             columnName += "|" + col.name.replace(":", "_");                                             
-                                          }
-                                       }
-
-                                       requestParams.fields.push(columnName);
-                                    }
-
-                                    var PAGE_SIZE = 5000;
-                                  
-                                    document.location.href = dt._getDataUrl(PAGE_SIZE) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
-                                          .stringify(requestParams));
+					                
+                                     for ( var i = 0, ii = response.json.columns.length; i < ii; i++) {
+		                                 var column = response.json.columns[i], columnName = column.name.replace(":", "_");
+		                                 if (column.dataType == "nested" && column.columns) {
+		                                    for ( var j = 0; j < column.columns.length; j++) {                                             
+		                                      var col = column.columns[j];                                      
+		                                       columnName += "|" + col.name.replace(":", "_");                                             
+		                                    }
+		                                 }
+		
+		                                 requestParams.fields.push(columnName);
+		                              }
+		
+		                              var MAX_RESULTS_UNLIMITED = -1;
+									
+		 							 beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx", dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+		                                    .stringify(requestParams)));  
+		                 
 
                                  },
                                  scope : this
