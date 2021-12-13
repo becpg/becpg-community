@@ -78,7 +78,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 		logger.debug("process calculating visitor");
 
 		// no compo => no formulation
-		if (!formulatedProduct.hasProcessListEl(new VariantFilters<>())) {
+		if (!formulatedProduct.hasProcessListEl()) {
 			logger.debug("no process => no formulation");
 			return true;
 		}
@@ -169,18 +169,19 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 		}
 
 		// visit resources and steps from the end to the beginning
-		for (ProcessListDataItem p : formulatedProduct.getProcessList(new VariantFilters<>())) {
+		for (ProcessListDataItem p : formulatedProduct.getProcessList()) {
 
 			if (p.getRateResource() != null) {
 				if (ProductUnit.P.equals(p.getUnit())) {
 					p.setRateProduct(p.getRateResource());
 				} else if (ProductUnit.Box.equals(p.getUnit())) {
+					//TODO not variant aware
 					if ((formulatedProduct.getDefaultVariantPackagingData() != null)
 							&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)) {
 						p.setRateProduct(p.getRateResource() * formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes());
 					} else {
 						formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage(FormulationHelper.MISSING_NUMBER_OF_PRODUCT_PER_BOX), null,
-								new ArrayList<NodeRef>(), RequirementDataType.Packaging));
+								new ArrayList<>(), RequirementDataType.Packaging));
 					}
 				} else {
 					Double productQtyToTransform = p.getQty() != null ? p.getQty() : FormulationHelper.getNetWeight(formulatedProduct, null);

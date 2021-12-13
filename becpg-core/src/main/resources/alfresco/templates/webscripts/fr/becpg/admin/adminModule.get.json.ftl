@@ -13,6 +13,7 @@
 		"concurrentWriteUsers": ${concurrentWriteUsers?c},
 	    "namedReadUsers": ${namedReadUsers?c},
 		"namedWriteUsers": ${namedWriteUsers?c},
+		"withoutLicenseUsers": ${withoutLicenseUsers?c},
 		"license" : {
 		    "name":"${licenseName}",
 			"allowedConcurrentRead": ${allowedConcurrentRead?c},

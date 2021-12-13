@@ -18,28 +18,36 @@
          <span class="viewmode-value"><#if isTrue>${msg("data.boolean.true")}<#elseif isFalse>${msg("data.boolean.false")}<#else>${msg("data.boolean.empty")}</#if></span>
       </div>
    <#else>
-        <label >${field.label?html}:</label>
-        <div class="form-field-boolean" id="${fieldHtmlId}" >
- 
-		    <input type="radio" id="${fieldHtmlId}-true" name="${field.name}" tabindex="0" value="true" 
+        <label for="${fieldHtmlId}">${field.label?html}:</label>
+        <div class="form-field-boolean"  >
+             <input id="${fieldHtmlId}" type="hidden" name="${field.name}" value="<#if isTrue>true<#elseif isFalse>false<#else></#if>" />
+             
+		    <input type="radio" id="true-${fieldHtmlId}" name="${field.name}-entry" tabindex="0" value="true" 
 		        <#if field.description??>title="${field.description}"</#if>
 		        <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>
-		        <#if isTrue>checked="checked"</#if> > 
-		     <label for="${fieldHtmlId}-true"> ${msg("data.boolean.true")} </label>
+		        <#if isTrue>checked="checked"</#if>
+		        onchange='javascript:var el=YAHOO.util.Dom.get("${fieldHtmlId}"); el.value=this.value; el.dispatchEvent(new Event("change"));'
+		         > 
+		     <label for="true-${fieldHtmlId}"> ${msg("data.boolean.true")} </label>
 		   
 	
-		    <input type="radio" id="${fieldHtmlId}-false"  name="${field.name}" tabindex="0"  value="false" 
+	
+		    <input type="radio" id="false-${fieldHtmlId}"  name="${field.name}-entry" tabindex="0"  value="false" 
 		    <#if field.description??>title="${field.description}"</#if>
 		    <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> 
-		    <#if isFalse> checked="checked"</#if> > 
-		    <label for="${fieldHtmlId}-false"> ${msg("data.boolean.false")} </label>
+		    <#if isFalse> checked="checked"</#if> 
+		    onchange='javascript:var el=YAHOO.util.Dom.get("${fieldHtmlId}"); el.value=this.value; el.dispatchEvent(new Event("change"));'
+		    > 
+		    <label for="false-${fieldHtmlId}"> ${msg("data.boolean.false")} </label>
 		    
 		          
-		    <input type="radio" id="${fieldHtmlId}-empty"  name="${field.name}"   tabindex="0" value="" 
+		    <input type="radio" id="empty-${fieldHtmlId}"  name="${field.name}-entry"   tabindex="0" value="" 
 		    <#if field.description??>title="${field.description}"</#if>
 		    <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> 
-		    <#if !isTrue && !isFalse>checked="checked"</#if>  >
-		    <label for="${fieldHtmlId}-empty"> ${msg("data.boolean.empty")} </label>
+		    <#if !isTrue && !isFalse>checked="checked"</#if>  
+		    onchange='javascript:var el=YAHOO.util.Dom.get("${fieldHtmlId}"); el.value=this.value; el.dispatchEvent(new Event("change"));'
+		    >
+		    <label for="empty-${fieldHtmlId}"> ${msg("data.boolean.empty")} </label>
 		
 		</div>
       	<@formLib.renderFieldHelp field=field />

@@ -311,9 +311,27 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 				} else {
 					queueNode(KEY_QUEUE_UPDATED, nodeRef);
 				}
-				if ((TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString()) == null) && (updatedProperties != null)
-						&& !updatedProperties.isEmpty()) {
-					TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString(), updatedProperties);
+				
+				if (updatedProperties != null && !updatedProperties.isEmpty()) {
+					if ((TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString()) == null)) {
+						TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString(), updatedProperties);
+					} else {
+						Map<QName, Pair<List<Serializable>, List<Serializable>>> beforeUpdatedProperties = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString());
+						
+						boolean changed = false;
+						
+						for (Entry<QName, Pair<List<Serializable>, List<Serializable>>> entry : beforeUpdatedProperties.entrySet()) {
+							if (!updatedProperties.containsKey(entry.getKey())) {
+								updatedProperties.put(entry.getKey(), entry.getValue());
+								changed = true;
+							}
+						}
+						
+						if (changed) {
+							TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + nodeRef.toString(), updatedProperties);
+						}
+
+					}
 				}
 			}
 		}
@@ -335,30 +353,37 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 			QName type = assocRef.getTypeQName();
 
 			if (assocRef.getTargetRef() != null) {
-				Map<QName, Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>>> resources = new HashMap<>();
-				if (TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef()) != null) {
-					resources = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef());
-					List<Pair<NodeRef, Serializable>> afterAssocs = new ArrayList<>();
-					List<Pair<NodeRef, Serializable>> beforeAssocs = new ArrayList<>();
-					if (resources.get(type) != null) {
-						if (resources.get(type).getFirst() != null) {
-							beforeAssocs = resources.get(type).getFirst();
-						}
-						if (resources.get(type).getSecond() != null) {
-							afterAssocs = resources.get(type).getSecond();
+				Map<QName, Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>>> resources = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef());
+				List<Pair<NodeRef, Serializable>> afterAssocs = new ArrayList<>();
+				List<Pair<NodeRef, Serializable>> beforeAssocs = new ArrayList<>();
+				
+				List<AssociationRef> currentAssocs = nodeService.getTargetAssocs(assocRef.getSourceRef(), type);
+				
+				if (resources != null && resources.get(type) != null && resources.get(type).getFirst() != null) {
+					beforeAssocs = resources.get(type).getFirst();
+				} else {
+					
+					for (AssociationRef currentAssoc : currentAssocs) {
+						if (!currentAssoc.equals(assocRef)) {
+							beforeAssocs.add(new Pair<>(currentAssoc.getTargetRef(), nodeService.getProperty(currentAssoc.getTargetRef(), ContentModel.PROP_NAME)));
 						}
 					}
-					afterAssocs.add(new Pair<>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME)));
-					Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>> beforeAfterAssocs = new Pair<>(beforeAssocs,
-							afterAssocs);
-					resources.put(type, beforeAfterAssocs);
-				} else {
-					List<Pair<NodeRef, Serializable>> afterAssocs = new ArrayList<>();
-					afterAssocs.add(new Pair<>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME)));
-					Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>> beforeAfterAssocs = new Pair<>(null, afterAssocs);
-					resources.put(type, beforeAfterAssocs);
 				}
-				if ((resources != null) && !resources.isEmpty()) {
+				
+				for (AssociationRef currentAssoc : currentAssocs) {
+					afterAssocs.add(new Pair<>(currentAssoc.getTargetRef(), nodeService.getProperty(currentAssoc.getTargetRef(), ContentModel.PROP_NAME)));
+				}
+				
+				Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>> beforeAfterAssocs = new Pair<>(beforeAssocs, afterAssocs);
+				
+				if (resources == null) {
+					resources = new HashMap<>();
+				}
+				
+				resources.put(type, beforeAfterAssocs);
+				
+				
+				if (!resources.isEmpty()) {
 					TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef(), resources);
 				}
 				queueNode(KEY_QUEUE_UPDATED, assocRef.getSourceRef());
@@ -382,30 +407,35 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 			QName type = assocRef.getTypeQName();
 
 			if (assocRef.getTargetRef() != null) {
-				Map<QName, Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>>> resources = new HashMap<>();
-				if (TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef()) != null) {
-					resources = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef());
-					List<Pair<NodeRef, Serializable>> afterAssocs = new ArrayList<>();
-					List<Pair<NodeRef, Serializable>> beforeAssocs = new ArrayList<>();
-					if (resources.get(type) != null) {
-						if (resources.get(type).getFirst() != null) {
-							beforeAssocs = resources.get(type).getFirst();
-						}
-						if (resources.get(type) != null) {
-							afterAssocs = resources.get(type).getSecond();
-						}
+				Map<QName, Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>>> resources = TransactionSupportUtil.getResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef());
+				List<Pair<NodeRef, Serializable>> afterAssocs = new ArrayList<>();
+				List<Pair<NodeRef, Serializable>> beforeAssocs = new ArrayList<>();
+				
+				List<AssociationRef> currentAssocs = nodeService.getTargetAssocs(assocRef.getSourceRef(), type);
+				
+				if (resources != null && resources.get(type) != null && resources.get(type).getFirst() != null) {
+					beforeAssocs = resources.get(type).getFirst();
+				} else {
+					
+					for (AssociationRef currentAssoc : currentAssocs) {
+						beforeAssocs.add(new Pair<>(currentAssoc.getTargetRef(), nodeService.getProperty(currentAssoc.getTargetRef(), ContentModel.PROP_NAME)));
 					}
 					beforeAssocs.add(new Pair<>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME)));
-					Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>> beforeAfterAssocs = new Pair<>(beforeAssocs,
-							afterAssocs);
-					resources.put(type, beforeAfterAssocs);
-				} else {
-					List<Pair<NodeRef, Serializable>> beforeAssocs = new ArrayList<>();
-					beforeAssocs.add(new Pair<>(assocRef.getTargetRef(), nodeService.getProperty(assocRef.getTargetRef(), ContentModel.PROP_NAME)));
-					Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>> beforeAfterAssocs = new Pair<>(beforeAssocs, null);
-					resources.put(type, beforeAfterAssocs);
 				}
-				if ((resources != null) && !resources.isEmpty()) {
+				
+				for (AssociationRef currentAssoc : currentAssocs) {
+					afterAssocs.add(new Pair<>(currentAssoc.getTargetRef(), nodeService.getProperty(currentAssoc.getTargetRef(), ContentModel.PROP_NAME)));
+				}
+				
+				Pair<List<Pair<NodeRef, Serializable>>, List<Pair<NodeRef, Serializable>>> beforeAfterAssocs = new Pair<>(beforeAssocs, afterAssocs);
+				
+				if (resources == null) {
+					resources = new HashMap<>();
+				}
+				
+				resources.put(type, beforeAfterAssocs);
+				
+				if (!resources.isEmpty()) {
 					TransactionSupportUtil.bindResource(KEY_QUEUE_UPDATED_STATUS + assocRef.getSourceRef(), resources);
 				}
 				queueNode(KEY_QUEUE_UPDATED, assocRef.getSourceRef());

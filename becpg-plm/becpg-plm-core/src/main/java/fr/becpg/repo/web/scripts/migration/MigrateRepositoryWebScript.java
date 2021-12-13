@@ -35,6 +35,7 @@ import com.google.common.collect.Lists;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.version.VersionCleanerService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.migration.MigrationService;
@@ -59,6 +60,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private static final String PARAM_NODEREF = "nodeRef";
 	private static final String PARAM_OLD_USERNAME = "oldUserName";
 	private static final String PARAM_NEW_USERNAME = "newUserName";	
+	private static final String PARAM_NUMBER = "number";	
 
 
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
@@ -83,6 +85,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private static final String ACTION_CREATE_GEN_RAWMATERIAL = "createGenRawMaterial";
 	
 	private static final String ACTION_CLEAN_VERSIONS = "cleanVersions";
+	private static final String ACTION_CLEAN_VERSION_STORE = "cleanVersionStore";
 	
 	
 	private static final Log logger = LogFactory.getLog(MigrateRepositoryWebScript.class);
@@ -107,6 +110,8 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	protected AssociationService associationService;
 	
 	protected RepoService repoService;
+	
+	private VersionCleanerService versionCleanerService;
 
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
@@ -197,6 +202,10 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
 	}
+	
+	public void setVersionCleanerService(VersionCleanerService versionCleanerService) {
+		this.versionCleanerService = versionCleanerService;
+	}
 
 
 
@@ -209,8 +218,19 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 		String action = templateArgs.get(PARAM_ACTION);		
 
 		if (ACTION_CLEAN_VERSIONS.equals(action)) {
+
+			int maxProcessedNodes = VersionCleanerService.MAX_PROCESSED_NODES;
+			
+			if (templateArgs.get(PARAM_NUMBER) != null) {
+				maxProcessedNodes = Integer.parseInt(templateArgs.get(PARAM_NUMBER));
+			}
+			
+			versionCleanerService.cleanVersions(maxProcessedNodes);
 		
-			migrationService.cleanOrphanVersion();
+		} else if (ACTION_CLEAN_VERSION_STORE.equals(action)) {
+
+			versionCleanerService.cleanVersionStore();
+		
 		} else if (ACTION_DELETE_MODEL.equals(action)) {
 			NodeRef modelNodeRef = new NodeRef(req.getParameter(PARAM_NODEREF));
 			deleteModel(modelNodeRef);
@@ -420,7 +440,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			}
 			
 		}
-		else {
+ 		else {
 			logger.error("Unknown action" + action);
 		}
 

@@ -43,6 +43,7 @@
         
         YAHOO.Bubbling.on(this.fieldHtmlId + "refreshContent", this.refreshContent, this);
         YAHOO.Bubbling.on("formContainerDestroyed", this.onFormContainerDestroyed, this);
+  		YAHOO.Bubbling.on("mandatoryControlValueUpdated", this.checkParentField, this);
         
 
         return this;
@@ -118,6 +119,7 @@
                               YAHOO.Bubbling.unsubscribe("formContainerDestroyed", this.onFormContainerDestroyed, this);
                               YAHOO.Bubbling.unsubscribe(this.fieldHtmlId + "refreshContent", this.refreshContent, this);
                               YAHOO.Bubbling.unsubscribe("beforeFormRuntimeInit", this.beforeFormRuntimeInit, this);
+							  YAHOO.Bubbling.unsubscribe("mandatoryControlValueUpdated", this.checkParentField, this);
                            } catch (e) {
                               // Ignore
                            }
@@ -220,6 +222,9 @@
                                     });
 
                                 }
+
+							
+
 
                                 // The webservice needs additional parameters
                                 me.widgets.oAC.generateRequest = function(sQuery)
@@ -612,6 +617,12 @@
                             }
 
                         },
+
+						checkParentField : function(layer, args){
+						    if (this.options.parentFieldHtmlId != null && args!=null && args[1].id == this.options.parentFieldHtmlId){
+								 this.widgets.oAC._clearSelection();
+                               }
+						},
 
                         /**
                          * @param basket

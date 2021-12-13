@@ -17,4 +17,8 @@ public class MutexFactory {
     public ReentrantLock getMutex(String key) {
         return this.map.compute(key, (k, v) -> v == null ? new ReentrantLock() : v);
     }
+    
+    public void removeMutex(String key, Object value) {
+    	this.map.remove(key, value);
+    }
 }

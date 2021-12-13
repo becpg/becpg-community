@@ -25,6 +25,7 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.repo.version.common.VersionImpl;
+import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.AssociationExistsException;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -67,6 +68,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
@@ -164,6 +166,9 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	@Autowired
 	private LockService lockService;
 	
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
+
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties) {
@@ -340,8 +345,14 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			Map<QName, Serializable> aspectProperties = new HashMap<>();
 			aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 			nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-			createVersion(entityNodeRef, versionProperties);
-
+			NodeRef versionNode = createVersion(entityNodeRef, versionProperties);
+			
+			// we need to retrieve the AUDITABLE properties because Version2ServiceImpl only freezes these properties
+			nodeService.setProperty(versionNode, ContentModel.PROP_CREATED, nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
+			nodeService.setProperty(versionNode, ContentModel.PROP_CREATOR, nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR));
+			nodeService.setProperty(versionNode, ContentModel.PROP_MODIFIED, nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED));
+			nodeService.setProperty(versionNode, ContentModel.PROP_MODIFIER, nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIER));
+			nodeService.setProperty(versionNode, ContentModel.PROP_ACCESSED, nodeService.getProperty(entityNodeRef, ContentModel.PROP_ACCESSED));
 		}
 	}
 
@@ -364,7 +375,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			
 			createVersion(entityNodeRef, versionProperties);
 			
-			NodeRef initialVersion = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, versionService.getVersionHistory(entityNodeRef).getVersion(RepoConsts.INITIAL_VERSION).getFrozenStateNodeRef().getId());
+			NodeRef initialVersion = VersionUtil.convertNodeRef(versionService.getVersionHistory(entityNodeRef).getVersion(RepoConsts.INITIAL_VERSION).getFrozenStateNodeRef());
 			
 			String name = (String) nodeService.getProperty(initialVersion, ContentModel.PROP_NAME);
 			
@@ -464,7 +475,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityVersion(Version version) {
-		return new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID, version.getFrozenStateNodeRef().getId());
+		return VersionUtil.convertNodeRef(version.getFrozenStateNodeRef());
 	}
 
 	/** {@inheritDoc} */
@@ -1086,7 +1097,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				
 				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
 				
-				exporterService.exportView(new VersionExporter(entityNodeRef, versionNode, dbNodeService), crawlerParameters,
+				exporterService.exportView(new VersionExporter(entityNodeRef, versionNode, dbNodeService, entityDictionaryService), crawlerParameters,
 						null);
 				
 				entityFormatService.setEntityFormat(versionNode, EntityFormat.JSON);
@@ -1117,7 +1128,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 				entityActivityService.postVersionActivity(entityNodeRef, newVersion.getVersionedNodeRef(), newVersion.getVersionLabel());
 
-				return newVersion.getVersionedNodeRef();
+				return VersionUtil.convertNodeRef(newVersion.getFrozenStateNodeRef());
 
 			} finally {
 				if (logger.isDebugEnabled() && (watch != null)) {
@@ -1405,6 +1416,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 			policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 
 			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(finalVersionHistoryRef);
 
@@ -1440,9 +1452,9 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				crawlerParameters.setExcludeChildAssocs(new QName[] { QName.createQName(Version2Model.NAMESPACE_URI, VersionBaseModel.CHILD_VERSIONED_ASSOCS), RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
 
 				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
-
+				
 				// reconstructs the folder hierarchy
-				exporterService.exportView(new VersionExporter(versionNodeRef, entity, nodeService), crawlerParameters, null);
+				exporterService.exportView(new VersionExporter(versionNodeRef, entity, nodeService, entityDictionaryService), crawlerParameters, null);
 
 				entityFormatService.createOrUpdateEntityFromJson(entity, entityJson);
 
@@ -1477,6 +1489,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 			policyBehaviourFilter.enableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 		}
 
 		return entity;

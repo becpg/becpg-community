@@ -1,7 +1,5 @@
 package fr.becpg.repo.helper;
 
-import com.google.common.xml.XmlEscapers;
-
 public class XMLTextHelper {
 
 	private XMLTextHelper() {
@@ -33,11 +31,11 @@ public class XMLTextHelper {
 
 
 	public static String writeAttribute(String in) {
-		return XmlEscapers.xmlAttributeEscaper().escape(writeCData(in));
+		return writeCData(in);
 	}
 	
 	
 	public static String writeContent(String in) {
-		return XmlEscapers.xmlContentEscaper().escape(writeCData(in));
+		return writeCData(in);
 	}
 }

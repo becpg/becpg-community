@@ -22,6 +22,7 @@ import java.util.Set;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.formulation.FormulateException;
 
 
@@ -70,7 +71,7 @@ public interface EntityTplService {
 	 *
 	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	void synchronizeEntities(NodeRef tplNodeRef);
+	BatchInfo synchronizeEntities(NodeRef tplNodeRef);
 	
 	/**
 	 * <p>formulateEntities.</p>
@@ -78,7 +79,7 @@ public interface EntityTplService {
 	 * @param tplNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	void formulateEntities(NodeRef tplNodeRef) throws FormulateException;
+	BatchInfo formulateEntities(NodeRef tplNodeRef) throws FormulateException;
 
 	/**
 	 * <p>synchronizeEntity.</p>

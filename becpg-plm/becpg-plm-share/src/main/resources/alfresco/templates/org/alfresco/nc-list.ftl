@@ -16,6 +16,7 @@
             <div class="yui-b" id="alf-content">
                <@region id="toolbar" scope="template" />
                <@region id="list" scope="template" />
+               <@region id="archive-and-download" scope="template"/>
             </div>
          </div>
          <div class="yui-b" id="alf-filters">

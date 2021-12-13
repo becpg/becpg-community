@@ -9,6 +9,7 @@
       <div class="yui-t1">
          <div id="yui-main">
             <@region id="bulk-edit" scope="template" protected="true" />
+            <@region id="archive-and-download" scope="template"/>
          </div>
       </div>
    </div>
