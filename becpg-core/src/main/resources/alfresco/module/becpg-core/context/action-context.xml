@@ -79,6 +79,7 @@
       <property name="updateService" ref="downloadStatusUpdateService"/>
       <property name="excelReportSearchRenderer" ref="excelReportSearchRenderer"/>
       <property name="mimetypeService" ref="MimetypeService" />
+      <property name="entityActivityService" ref="entityActivityService" />
    </bean>
     
     
@@ -93,6 +94,7 @@
       <property name="updateService" ref="downloadStatusUpdateService"/>
       <property name="reportServerSearchRenderer" ref="reportServerSearchRenderer"/>
       <property name="mimetypeService" ref="MimetypeService" />
+      <property name="entityActivityService" ref="entityActivityService" />
    </bean>
     
     

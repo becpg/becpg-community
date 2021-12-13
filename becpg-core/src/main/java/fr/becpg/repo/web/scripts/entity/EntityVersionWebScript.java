@@ -166,7 +166,7 @@ public class EntityVersionWebScript extends AbstractWebScript {
 
 					jsonVersion.put("createdDate", displayFormat.format(createdDate));
 					jsonVersion.put("createdDateISO", ISO8601DateFormat.format(createdDate));
-					jsonVersion.put("creator", getPerson(version.getFrozenModifier()));
+					jsonVersion.put("creator", getPerson((String) nodeService.getProperty(version.getEntityVersionNodeRef(), ContentModel.PROP_CREATOR)));
 
 					QName itemType = nodeService.getType(version.getFrozenStateNodeRef());
 					// Branch info

@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -132,6 +133,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
 	private static final Tracer tracer = Tracing.getTracer();
+	private static final String REPORT_KIND_SPLIT_REGEXP = "\\s*,\\s*";
 
 	@Value("${beCPG.report.name.format}")
 	private String reportNameFormat;
@@ -208,7 +210,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Autowired
 	private MutexFactory mutexFactory;
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void generateReports(final NodeRef entityNodeRef) {
@@ -217,19 +219,22 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	@Override
 	public void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo) {
-		
+
+		ReentrantLock lock = mutexFactory.getMutex(nodeRefTo.toString());
+
 		try {
-			if (mutexFactory.getMutex(nodeRefTo.toString()).tryLock()) {
-					
+			if (lock.tryLock()) {
 				try (Scope scope = tracer.spanBuilder("reportService.GenerateReports").startScopedSpan()) {
 					internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo);
 				}
-				
 			} else {
-				mutexFactory.getMutex(nodeRefTo.toString()).lock();
+				lock.lock();
 			}
 		} finally {
-			mutexFactory.getMutex(nodeRefTo.toString()).unlock();
+			if ((lock.isHeldByCurrentThread())) {
+				lock.unlock();
+				mutexFactory.removeMutex(nodeRefTo.toString(), lock);
+			}
 		}
 	}
 
@@ -247,7 +252,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					Locale currentLocal = I18NUtil.getLocale();
 					Locale currentContentLocal = I18NUtil.getContentLocale();
 					try {
-						
+
 						Locale defaultLocale = MLTextHelper.getNearestLocale(Locale.getDefault());
 
 						I18NUtil.setLocale(defaultLocale);
@@ -256,7 +261,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 						ruleService.disableRules();
 						policyBehaviourFilter.disableBehaviour(nodeRefFrom, ContentModel.ASPECT_AUDITABLE);
 						if (logger.isDebugEnabled()) {
-							logger.debug("Generate reports for entity: " + nodeRefFrom + " - " + nodeService.getProperty(nodeRefFrom, ContentModel.PROP_NAME));
+							logger.debug("Generate reports for entity: " + nodeRefFrom + " - "
+									+ nodeService.getProperty(nodeRefFrom, ContentModel.PROP_NAME));
 						}
 
 						List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale);
@@ -545,7 +551,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 			return;
 		}
 
-		String reportKindCode = "", reportKindNoneCode = "None";
+		String reportKindCode = "";
+		String reportKindNoneCode = "None";
 		if (tplNodeRef != null) {
 			List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
 			if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
@@ -565,7 +572,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 					for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
 						Element itemEl = elIterator.next();
-						String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()).split("\\s*,\\s*");
+						String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()).split(REPORT_KIND_SPLIT_REGEXP);
 
 						if (Arrays.asList(repKindCodes).contains(reportKindNoneCode)) {
 							dlEl.remove(itemEl);
@@ -581,7 +588,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 					if (hasReportKindAspect) {
 						for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
 							Element itemEl = elIterator.next();
-							String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()).split("\\s*,\\s*");
+							String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName()).split(REPORT_KIND_SPLIT_REGEXP);
 							if (!Arrays.asList(repKindCodes).contains(reportKindCode) || (repKindCodes == null)) {
 								dlEl.remove(itemEl);
 							}
@@ -592,7 +599,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			// get report parameters
 			if (entityEl.getName().equals(ReportModel.PROP_REPORT_PARAMETERS.getLocalName())) {
-				entityParams = entityEl.getStringValue().split("\\s*,\\s*");
+				entityParams = entityEl.getStringValue().split(REPORT_KIND_SPLIT_REGEXP);
 			}
 		}
 
@@ -1183,7 +1190,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Merged preferences " + preferences.toString());
 				}
-				
+
 			} else {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Using reportParameters: " + reportParameters.toString());

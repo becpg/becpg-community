@@ -9,6 +9,7 @@
 <@markup id="js">
    <#-- JavaScript Dependencies -->
 	<@script type="text/javascript" src="${url.context}/res/components/entity-data-lists/entity-toolbar.js" group="project-toolbar"></@script>
+	<@script type="text/javascript" src="${url.context}/res/js/async-download.js" group="project-toolbar"/>
 	<@script type="text/javascript" src="${url.context}/res/components/project/project-list-toolbar.js" group="project-toolbar"></@script>
 
 </@>

@@ -35,6 +35,7 @@ public class AutomaticECOJob extends AbstractScheduledLockedJob implements Job {
 	/** {@inheritDoc} */
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
+		
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();
 
 		final AutomaticECOService automaticECOService = (AutomaticECOService) jobData.get("automaticECOService");

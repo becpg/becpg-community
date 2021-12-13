@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -40,6 +41,7 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 
 	@Autowired
 	private FileFolderService fileFolderService;
+	
 
 	@Test
 	public void testSynchronize() throws InterruptedException {
@@ -63,7 +65,7 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 			rm1Data.setEntityTpl(rmTplData);
 			rm1Data = (RawMaterialData) alfrescoRepository.create(getTestFolderNodeRef(), rm1Data);
 			
-			assertTrue(rm1Data.getCostList() == null);
+			assertNull(rm1Data.getCostList());
 
 			// add costList on template
 			List<CostListDataItem> costList = new ArrayList<>();
@@ -80,7 +82,9 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			entityTplService.synchronizeEntities(rmTplNodeRef);
+             BatchInfo batch = entityTplService.synchronizeEntities(rmTplNodeRef);
+			
+			waitForBatchEnd(batch);
 
 			return null;
 
@@ -118,7 +122,10 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			entityTplService.synchronizeEntities(rmTplNodeRef);
+
+            BatchInfo batch = entityTplService.synchronizeEntities(rmTplNodeRef);
+			
+			waitForBatchEnd(batch);
 			return null;
 			}, false, true);
 		
@@ -143,7 +150,10 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			entityTplService.synchronizeEntities(rmTplNodeRef);
+			BatchInfo batch = entityTplService.synchronizeEntities(rmTplNodeRef);
+			
+			waitForBatchEnd(batch);
+			
 			return null;
 			}, false, true);
 	
@@ -160,7 +170,7 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 		
 		
 	}
-	
+
 		
 
 

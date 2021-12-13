@@ -238,10 +238,16 @@ public class ActivityListExtractor extends SimpleExtractor {
 											}
 										}
 									}
-									postActivityProperties.put(postProperty);
+									
+									if (areStringsDifferent(postProperty.get(EntityActivityService.BEFORE), postProperty.get(EntityActivityService.AFTER))) {
+										postActivityProperties.put(postProperty);
+									}
+									
 								}
 							}
+							
 							postLookup.put(EntityActivityService.PROP_PROPERTIES, postActivityProperties);
+							
 						}
 					} catch (JSONException e) {
 						logger.error(e, e);
@@ -263,6 +269,19 @@ public class ActivityListExtractor extends SimpleExtractor {
 			}
 		}
 
+	}
+
+	private boolean areStringsDifferent(Object object, Object object2) {
+		
+		if (object == null && object2 == null) {
+			return false;
+		}
+		
+		if (object == null || object2 == null) {
+			return true;
+		}
+		
+		return !object.toString().equals(object2.toString());
 	}
 
 	private void adaptProperty(JSONArray propToAdapt, JSONArray propRef) throws JSONException {

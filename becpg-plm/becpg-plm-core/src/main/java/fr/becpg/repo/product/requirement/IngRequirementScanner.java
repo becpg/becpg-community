@@ -47,6 +47,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	private static final String MESSAGE_FORBIDDEN_ING = "message.formulate.ingredient.forbidden";
 
+	private Boolean addInfoReqCtrl;
+
 	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/**
@@ -59,6 +61,10 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
+	}
+
+	public void setAddInfoReqCtrl(Boolean addInfoReqCtrl) {
+		this.addInfoReqCtrl = addInfoReqCtrl;
 	}
 
 	/** {@inheritDoc} */
@@ -101,13 +107,17 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 									Double qtyPerc = computeQtyPerc(productData.getIngList(), ingListDataItem.getIng());
 
-									if ((qtyPerc == null) || ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= qtyPerc))) {
+									if ((qtyPerc == null) || ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= qtyPerc))
+											|| Boolean.TRUE.equals(addInfoReqCtrl)) {
 
-										// req not respected
+										boolean isInfo = qtyPerc != null && fil.getQtyPercMaxi() != null && (fil.getQtyPercMaxi() > qtyPerc);
+
+										// req not respecte
 										ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
 										if (reqCtrl == null) {
-											reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), fil.getReqMessage(), ingListDataItem.getIng(),
-													new ArrayList<>(), RequirementDataType.Specification);
+											reqCtrl = new ReqCtrlListDataItem(null, isInfo ? RequirementType.Info : fil.getReqType(),
+													fil.getReqMessage(), ingListDataItem.getIng(), new ArrayList<>(),
+													RequirementDataType.Specification);
 											reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
 										} else {
 											reqCtrl.setReqDataType(RequirementDataType.Specification);
@@ -119,7 +129,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 											reqCtrl.setRegulatoryCode(specification.getName());
 										}
 
-										if ((qtyPerc != null) && (fil.getQtyPercMaxi() != null) && (qtyPerc != 0)) {
+										if (!isInfo && (qtyPerc != null) && (fil.getQtyPercMaxi() != null) && (qtyPerc != 0)) {
 											reqCtrl.setReqMaxQty((fil.getQtyPercMaxi() / qtyPerc) * 100d);
 										}
 
@@ -194,6 +204,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		}
 
 		return new LinkedList<>(reqCtrlMap.values());
+
 	}
 
 	private Double computeQtyPerc(List<IngListDataItem> ingList, NodeRef ing) {

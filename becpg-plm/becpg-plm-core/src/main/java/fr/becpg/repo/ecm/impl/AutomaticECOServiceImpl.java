@@ -406,13 +406,13 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 			}, false, true);
 
-			if(logger.isDebugEnabled()) {
-				logger.debug(" - reformulating: " + toReformulates.size() + " entities");
-			}
-			
 			
 			if (toReformulates.isEmpty()) {
 				toReformulates.add(entityNodeRef);
+			}
+			
+			if(logger.isDebugEnabled()) {
+				logger.debug(" - reformulating: " + toReformulates.size() + " entities");
 			}
 			
 			for (NodeRef toReformulate : toReformulates) {

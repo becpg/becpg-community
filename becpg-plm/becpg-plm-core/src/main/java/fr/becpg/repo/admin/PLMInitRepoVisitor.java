@@ -1063,7 +1063,12 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_GS1_TRADE_ITEM_TRADE_CHANNELS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_SELLING_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 		
-
+		
+		entityLists.put(PlmRepoConsts.PATH_GS1_SPECIES_FOR_FISHERY, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_GS1_CATCH_METHID_CODES, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_GS1_CATCH_AREA_CODES, BeCPGModel.TYPE_LIST_VALUE);
+		
+		
 		entityLists.put(PlmRepoConsts.PATH_CONTACT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		
 		entityLists.put(RepoConsts.PATH_REPORT_PARAMS, BeCPGModel.TYPE_LIST_VALUE);

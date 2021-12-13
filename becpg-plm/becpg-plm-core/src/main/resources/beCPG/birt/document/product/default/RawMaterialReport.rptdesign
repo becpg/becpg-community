@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="author">beCPG</property>
-    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201806261756</property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -38,7 +38,7 @@
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">becpg-plm/becpg-plm-core/src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
+            <property name="FILELIST">datasource-rawmaterial.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -1780,6 +1780,16 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="onColumnLayout">false</property>
                     <text-property name="heading">pclMini</text-property>
                 </structure>
+                <structure>
+                    <property name="columnName">pclTextCriteria</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">pclTextCriteria</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">pclUnit</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">pclUnit</text-property>
+                </structure>
             </list-property>
             <list-property name="parameters"/>
             <structure name="cachedMetaData">
@@ -1806,11 +1816,21 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     </structure>
                     <structure>
                         <property name="position">5</property>
+                        <property name="name">pclTextCriteria</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">pclUnit</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
                         <property name="name">tableCheck</property>
                         <property name="dataType">integer</property>
                     </structure>
                     <structure>
-                        <property name="position">6</property>
+                        <property name="position">8</property>
                         <property name="name">runningCount</property>
                         <property name="dataType">integer</property>
                     </structure>
@@ -1846,8 +1866,22 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="dataType">float</property>
                     <property name="nativeDataType">8</property>
                 </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">pclTextCriteria</property>
+                    <property name="nativeName">pclTextCriteria</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">pclUnit</property>
+                    <property name="nativeName">pclUnit</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
             </list-property>
-            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/physicoChemLists/physicoChemList]#:#{pclPhysicoChem;STRING;/@pclPhysicoChem},{pclValue;DOUBLE;/@pclValue},{pclMaxi;DOUBLE;/@pclMaxi},{pclMini;DOUBLE;/@pclMini}]]></xml-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/dataLists/physicoChemLists/physicoChemList]#:#{pclPhysicoChem;STRING;/@pclPhysicoChem},{pclValue;DOUBLE;/@pclValue},{pclMaxi;DOUBLE;/@pclMaxi},{pclMini;DOUBLE;/@pclMini},{pclTextCriteria;STRING;/@pclTextCriteria},{pclUnit;STRING;/@pclUnit}]]></xml-property>
             <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
 <model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
   <Version>2.0</Version>
@@ -4291,6 +4325,179 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">id</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">id</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">entityName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityName</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">name</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">name</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">entityType</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityType</text-property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr" type="javascript">row["entityType"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"trademark"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">id</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">entityName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">entityType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">DataXml</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">id</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">entityName</property>
+                    <property name="nativeName">entityName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">entityType</property>
+                    <property name="nativeName">entityType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{id;STRING;/@id},{entityName;STRING;/@entityName},{name;STRING;/@name},{entityType;STRING;/@entityType}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>id</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>id</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>entityName</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>entityName</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>name</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>entityType</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>entityType</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="IngList" id="6387">
             <list-property name="computedColumns">
                 <structure>
@@ -5179,7 +5386,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
         <simple-master-page name="Simple MasterPage" id="10">
             <property name="topMargin">1cm</property>
             <property name="leftMargin">1.5cm</property>
-            <property name="bottomMargin">1cm</property>
+            <property name="bottomMargin">0.4cm</property>
             <property name="rightMargin">1.5cm</property>
             <property name="headerHeight">1.15in</property>
             <property name="footerHeight">1.4in</property>
@@ -5192,25 +5399,90 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <property name="borderRightColor">#FFFFFF</property>
                     <property name="borderTopColor">#FFFFFF</property>
                     <property name="pageBreakAfter">auto</property>
-                    <property name="width">7.177083333333333in</property>
                     <column id="766">
                         <property name="repeat">1</property>
-                        <property name="width">1.40625in</property>
                     </column>
                     <column id="767">
-                        <property name="width">2.9479166666666665in</property>
+                        <property name="width">50%</property>
                     </column>
-                    <column id="768">
-                        <property name="width">2.0833333333333335in</property>
-                    </column>
+                    <column id="768"/>
                     <row id="769">
                         <cell id="770">
-                            <property name="backgroundImage">./logo.png</property>
                             <property name="backgroundRepeat">no-repeat</property>
                             <property name="backgroundSizeHeight">cover</property>
                             <property name="backgroundSizeWidth">cover</property>
                             <property name="paddingLeft">1pt</property>
                             <property name="textAlign">left</property>
+                            <image id="12188">
+                                <property name="height">80%</property>
+                                <property name="width">80%</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["img"]==null ||row["img"]==""</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">entityName</property>
+                                        <expression name="expression" type="javascript">dataSetRow["entityName"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">name</property>
+                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">entityType</property>
+                                        <expression name="expression" type="javascript">dataSetRow["entityType"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">expr</property>
+                                <expression name="valueExpr">row["img"]</expression>
+                            </image>
+                            <image id="12189">
+                                <property name="height">0.7083333333333334in</property>
+                                <property name="width">0.9375in</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["img"]!=null</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <text-property name="displayName">id</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">embed</property>
+                                <property name="imageName">logo.png</property>
+                            </image>
                         </cell>
                         <cell id="772">
                             <property name="borderBottomColor">#FFFFFF</property>
@@ -5232,15 +5504,22 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
 </text-property>
                             </label>
                             <data id="3333">
-                                <property name="style">becpg-header-title</property>
-                                <property name="fontSize">14pt</property>
+                                <property name="style">becpg-header-type</property>
+                                <property name="fontSize">10pt</property>
+                                <property name="fontWeight">normal</property>
                                 <property name="dataSet">Product</property>
                                 <list-property name="boundDataColumns">
                                     <structure>
                                         <property name="name">title</property>
                                         <text-property name="displayName">title</text-property>
-                                        <expression name="expression" type="javascript">dataSetRow["title"]</expression>
+                                        <expression name="expression" type="javascript">if(dataSetRow["title"] != null &amp;&amp; dataSetRow["title"] != ""){
+dataSetRow["title"]
+}
+else{
+dataSetRow["name"]
+}</expression>
                                         <property name="dataType">string</property>
+                                        <property name="allowExport">true</property>
                                     </structure>
                                 </list-property>
                                 <property name="resultSetColumn">title</property>
@@ -5254,8 +5533,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                             <grid id="777">
                                 <property name="style">becpg-meta-grid</property>
                                 <property name="borderTopStyle">none</property>
-                                <property name="marginLeft">12%</property>
-                                <property name="width">1.78125in</property>
+                                <property name="marginLeft">0%</property>
                                 <property name="dataSet">Product</property>
                                 <list-property name="boundDataColumns">
                                     <structure>
@@ -5271,12 +5549,8 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                         <property name="dataType">string</property>
                                     </structure>
                                 </list-property>
-                                <column id="778">
-                                    <property name="width">1.1145833333333333in</property>
-                                </column>
-                                <column id="1519">
-                                    <property name="width">0.6666666666666666in</property>
-                                </column>
+                                <column id="778"/>
+                                <column id="1519"/>
                                 <row id="7352">
                                     <cell id="7260">
                                         <property name="style">becpg-meta-cell-label</property>
@@ -5497,7 +5771,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                 <property name="fontSize">7pt</property>
                                 <property name="fontStyle">italic</property>
                                 <property name="color">black</property>
-                                <property name="marginTop">6pt</property>
+                                <property name="marginTop">0pt</property>
                                 <property name="marginLeft">0pt</property>
                                 <property name="marginBottom">0pt</property>
                                 <property name="paddingLeft">20pt</property>
@@ -5590,6 +5864,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
         <grid id="2524">
             <property name="height">4.21875in</property>
             <property name="width">100%</property>
+            <property name="dataSet">Product</property>
             <column id="2525">
                 <property name="width">3.8702290076335877in</property>
             </column>
@@ -5630,6 +5905,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                         <property name="width">100%</property>
                         <column id="2481">
                             <property name="style">becpg-col-header</property>
+                            <property name="width">25%</property>
                         </column>
                         <column id="2482"/>
                         <row id="3328">
@@ -5664,86 +5940,9 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                 </label>
                             </cell>
                             <cell id="2492">
-                                <data id="7246">
+                                <property name="textAlign">justify</property>
+                                <text-data id="12234">
                                     <property name="dataSet">supplier</property>
-                                    <list-property name="visibility">
-                                        <structure>
-                                            <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["locationAddress1"] == "" || row["locationAddress1"] == null</expression>
-                                        </structure>
-                                    </list-property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">locationAddress1</property>
-                                            <text-property name="displayName">locationAddress1</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["locationAddress1"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                    </list-property>
-                                    <property name="resultSetColumn">locationAddress1</property>
-                                </data>
-                                <data id="7247">
-                                    <property name="dataSet">supplier</property>
-                                    <list-property name="visibility">
-                                        <structure>
-                                            <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["locationAddress2"] == "" || row["locationAddress2"] == null</expression>
-                                        </structure>
-                                    </list-property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">locationAddress2</property>
-                                            <text-property name="displayName">locationAddress2</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["locationAddress2"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                    </list-property>
-                                    <property name="resultSetColumn">locationAddress2</property>
-                                </data>
-                                <data id="7248">
-                                    <property name="dataSet">supplier</property>
-                                    <list-property name="visibility">
-                                        <structure>
-                                            <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["locationAddress3"] == "" || row["locationAddress3"] == null</expression>
-                                        </structure>
-                                    </list-property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">locationAddress3</property>
-                                            <text-property name="displayName">locationAddress3</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["locationAddress3"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                    </list-property>
-                                    <property name="resultSetColumn">locationAddress3</property>
-                                </data>
-                                <data id="7249">
-                                    <property name="dataSet">supplier</property>
-                                    <list-property name="visibility">
-                                        <structure>
-                                            <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["locationZip"] == "" || row["locationZip"] == null</expression>
-                                        </structure>
-                                    </list-property>
-                                    <list-property name="boundDataColumns">
-                                        <structure>
-                                            <property name="name">locationZip</property>
-                                            <text-property name="displayName">locationZip</text-property>
-                                            <expression name="expression" type="javascript">dataSetRow["locationZip"]</expression>
-                                            <property name="dataType">string</property>
-                                        </structure>
-                                    </list-property>
-                                    <property name="resultSetColumn">locationZip</property>
-                                </data>
-                                <data id="7250">
-                                    <property name="dataSet">supplier</property>
-                                    <list-property name="visibility">
-                                        <structure>
-                                            <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["locationCity"] == "" || row["locationCity"] == null</expression>
-                                        </structure>
-                                    </list-property>
                                     <list-property name="boundDataColumns">
                                         <structure>
                                             <property name="name">locationCity</property>
@@ -5751,36 +5950,48 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                                             <expression name="expression" type="javascript">dataSetRow["locationCity"]</expression>
                                             <property name="dataType">string</property>
                                         </structure>
-                                    </list-property>
-                                    <property name="resultSetColumn">locationCity</property>
-                                </data>
-                                <data id="7251">
-                                    <property name="dataSet">supplier</property>
-                                    <list-property name="visibility">
                                         <structure>
-                                            <property name="format">all</property>
-                                            <expression name="valueExpr" type="javascript">row["locationCountry"] == "" || row["locationCountry"] == null</expression>
+                                            <property name="name">locationAddress1</property>
+                                            <text-property name="displayName">locationAddress1</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["locationAddress1"]</expression>
+                                            <property name="dataType">string</property>
                                         </structure>
-                                    </list-property>
-                                    <list-property name="boundDataColumns">
                                         <structure>
                                             <property name="name">locationCountry</property>
                                             <text-property name="displayName">locationCountry</text-property>
                                             <expression name="expression" type="javascript">dataSetRow["locationCountry"]</expression>
                                             <property name="dataType">string</property>
                                         </structure>
+                                        <structure>
+                                            <property name="name">locationAddress3</property>
+                                            <text-property name="displayName">locationAddress3</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["locationAddress3"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">locationAddress2</property>
+                                            <text-property name="displayName">locationAddress2</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["locationAddress2"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
+                                        <structure>
+                                            <property name="name">locationZip</property>
+                                            <text-property name="displayName">locationZip</text-property>
+                                            <expression name="expression" type="javascript">dataSetRow["locationZip"]</expression>
+                                            <property name="dataType">string</property>
+                                        </structure>
                                     </list-property>
-                                    <property name="resultSetColumn">locationCountry</property>
-                                </data>
+                                    <expression name="valueExpr">var adress = "";
+row["locationAddress1"]?adress+=row["locationAddress1"]+", ":"";
+row["locationAddress2"]?adress+=row["locationAddress2"]+", ":"";
+row["locationAddress3"]?adress+=row["locationAddress3"]+", ":"";
+row["locationZip"]?adress+=row["locationZip"]+", ":"";
+row["locationCity"]?adress+=row["locationCity"]+", ":"";
+row["locationCountry"]?adress+=row["locationCountry"]:"";
+adress;</expression>
+                                    <property name="contentType">html</property>
+                                </text-data>
                             </cell>
-                        </row>
-                        <row id="9155">
-                            <cell id="9156">
-                                <label id="9158">
-                                    <property name="fontSize">6pt</property>
-                                </label>
-                            </cell>
-                            <cell id="9157"/>
                         </row>
                         <row id="6028">
                             <cell id="6029">
@@ -5945,6 +6156,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                     <grid id="6180">
                         <column id="6181">
                             <property name="style">becpg-col-header</property>
+                            <property name="width">40%</property>
                         </column>
                         <column id="6182"/>
                         <row id="6183">
@@ -6081,6 +6293,7 @@ dataSetRow["mblValue"] + " " + dataSetRow["mblUnit"]
                             </cell>
                             <cell id="6203">
                                 <data id="7253">
+                                    <property name="display">block</property>
                                     <property name="dataSet">Product</property>
                                     <list-property name="boundDataColumns">
                                         <structure>
@@ -7674,8 +7887,17 @@ decisionTree
                                 <cell id="6725">
                                     <property name="colSpan">7</property>
                                     <property name="rowSpan">1</property>
+                                    <property name="style">becpg-chapter-header</property>
+                                    <property name="borderBottomStyle">none</property>
+                                    <property name="borderLeftStyle">none</property>
+                                    <property name="borderRightStyle">none</property>
+                                    <property name="borderTopStyle">none</property>
                                     <label id="6734">
                                         <property name="style">becpg-chapter-header</property>
+                                        <property name="borderBottomStyle">none</property>
+                                        <property name="borderLeftStyle">none</property>
+                                        <property name="borderRightStyle">none</property>
+                                        <property name="borderTopStyle">none</property>
                                         <text-property name="text" key="chapterAllergens">ALLERGENES</text-property>
                                     </label>
                                 </cell>
@@ -8158,7 +8380,6 @@ decisionTree
                     <table id="6792">
                         <property name="marginTop">8pt</property>
                         <property name="marginBottom">8pt</property>
-                        <property name="width">100%</property>
                         <property name="dataSet">physicoChemList</property>
                         <list-property name="visibility">
                             <structure>
@@ -8197,25 +8418,31 @@ decisionTree
                                 <expression name="expression" type="javascript">dataSetRow["runningCount"]</expression>
                                 <property name="dataType">integer</property>
                             </structure>
+                            <structure>
+                                <property name="name">pclTextCriteria</property>
+                                <text-property name="displayName">pclTextCriteria</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["pclTextCriteria"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
+                            <structure>
+                                <property name="name">pclUnit</property>
+                                <text-property name="displayName">pclUnit</text-property>
+                                <expression name="expression" type="javascript">dataSetRow["pclUnit"]</expression>
+                                <property name="dataType">string</property>
+                            </structure>
                         </list-property>
                         <column id="6811">
                             <property name="style">becpg-col-header</property>
-                            <property name="width">2.0833333333333335in</property>
                         </column>
-                        <column id="6812">
-                            <property name="width">1.5520833333333333in</property>
-                        </column>
-                        <column id="6813">
-                            <property name="width">1.59375in</property>
-                        </column>
-                        <column id="6814">
-                            <property name="width">1.5833333333333333in</property>
-                        </column>
+                        <column id="6812"/>
+                        <column id="12202"/>
+                        <column id="6813"/>
+                        <column id="12195"/>
                         <header>
                             <row id="6816">
                                 <property name="style">becpg-chapter-header</property>
                                 <cell id="6817">
-                                    <property name="colSpan">4</property>
+                                    <property name="colSpan">5</property>
                                     <property name="rowSpan">1</property>
                                     <label id="6822">
                                         <property name="textAlign">center</property>
@@ -8228,8 +8455,9 @@ decisionTree
                                     <label id="6983"/>
                                 </cell>
                                 <cell id="6968"/>
+                                <cell id="12199"/>
                                 <cell id="6969"/>
-                                <cell id="6970"/>
+                                <cell id="12192"/>
                             </row>
                             <row id="6793">
                                 <property name="style">becpg-row-header</property>
@@ -8246,13 +8474,19 @@ decisionTree
                                         <text-property name="text" key="valuePerc"></text-property>
                                     </label>
                                 </cell>
+                                <cell id="12200">
+                                    <property name="style">becpg-cell-header</property>
+                                    <label id="12203">
+                                        <text-property name="text" key="unit"></text-property>
+                                    </label>
+                                </cell>
                                 <cell id="6796">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6827">
                                         <text-property name="text" key="mini"></text-property>
                                     </label>
                                 </cell>
-                                <cell id="6797">
+                                <cell id="12193">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="6828">
                                         <text-property name="text" key="maxi"></text-property>
@@ -8340,60 +8574,43 @@ decisionTree
                                     <property name="borderRightWidth">1px</property>
                                     <property name="borderTopStyle">solid</property>
                                     <property name="borderTopWidth">1px</property>
-                                    <data id="6824">
-                                        <property name="backgroundAttachment">scroll</property>
-                                        <property name="backgroundPositionX">0%</property>
-                                        <property name="backgroundPositionY">0%</property>
-                                        <property name="backgroundRepeat">repeat</property>
-                                        <property name="fontFamily">"arial"</property>
-                                        <property name="fontSize">10pt</property>
-                                        <property name="fontWeight">normal</property>
-                                        <property name="fontStyle">normal</property>
-                                        <property name="fontVariant">normal</property>
-                                        <property name="color">black</property>
-                                        <property name="textLineThrough">none</property>
-                                        <property name="textOverline">none</property>
-                                        <property name="textUnderline">none</property>
-                                        <property name="borderBottomColor">black</property>
-                                        <property name="borderBottomStyle">none</property>
-                                        <property name="borderBottomWidth">medium</property>
-                                        <property name="borderLeftColor">black</property>
-                                        <property name="borderLeftStyle">none</property>
-                                        <property name="borderLeftWidth">medium</property>
-                                        <property name="borderRightColor">black</property>
-                                        <property name="borderRightStyle">none</property>
-                                        <property name="borderRightWidth">medium</property>
-                                        <property name="borderTopColor">black</property>
-                                        <property name="borderTopStyle">none</property>
-                                        <property name="borderTopWidth">medium</property>
-                                        <property name="marginTop">0pt</property>
-                                        <property name="marginLeft">0pt</property>
-                                        <property name="marginBottom">0pt</property>
-                                        <property name="marginRight">0pt</property>
-                                        <property name="paddingTop">1pt</property>
-                                        <property name="paddingLeft">1pt</property>
-                                        <property name="paddingBottom">1pt</property>
-                                        <property name="paddingRight">1pt</property>
+                                    <property name="textAlign">justify</property>
+                                    <data id="1045">
+                                        <property name="style">becpg-data</property>
+                                        <property name="fontSize">9pt</property>
                                         <structure name="numberFormat">
-                                            <property name="category">General Number</property>
-                                            <property name="pattern">General Number</property>
+                                            <property name="category">Custom</property>
+                                            <property name="pattern">#,##0.##</property>
                                         </structure>
                                         <property name="textAlign">center</property>
-                                        <property name="letterSpacing">normal</property>
-                                        <property name="lineHeight">normal</property>
-                                        <property name="orphans">2</property>
-                                        <property name="textTransform">none</property>
-                                        <property name="whiteSpace">normal</property>
-                                        <property name="widows">2</property>
-                                        <property name="wordSpacing">normal</property>
+                                        <property name="whiteSpace">nowrap</property>
                                         <property name="display">block</property>
-                                        <property name="pageBreakAfter">auto</property>
-                                        <property name="pageBreakBefore">auto</property>
-                                        <property name="pageBreakInside">avoid</property>
-                                        <property name="showIfBlank">false</property>
-                                        <property name="canShrink">false</property>
-                                        <property name="overflow">hidden</property>
                                         <property name="resultSetColumn">pclValue</property>
+                                    </data>
+                                    <data id="12227">
+                                        <property name="textAlign">center</property>
+                                        <property name="display">block</property>
+                                        <list-property name="visibility">
+                                            <structure>
+                                                <property name="format">all</property>
+                                                <expression name="valueExpr" type="javascript">row["pclTextCriteria"]==null||row["pclTextCriteria"]==""</expression>
+                                            </structure>
+                                        </list-property>
+                                        <property name="resultSetColumn">pclTextCriteria</property>
+                                    </data>
+                                </cell>
+                                <cell id="12201">
+                                    <property name="style">becpg-cell-data</property>
+                                    <property name="borderBottomStyle">solid</property>
+                                    <property name="borderBottomWidth">1px</property>
+                                    <property name="borderLeftStyle">solid</property>
+                                    <property name="borderLeftWidth">1px</property>
+                                    <property name="borderRightStyle">solid</property>
+                                    <property name="borderRightWidth">1px</property>
+                                    <property name="borderTopStyle">solid</property>
+                                    <property name="borderTopWidth">1px</property>
+                                    <data id="12204">
+                                        <property name="resultSetColumn">pclUnit</property>
                                     </data>
                                 </cell>
                                 <cell id="6802">
@@ -8462,7 +8679,7 @@ decisionTree
                                         <property name="resultSetColumn">pclMini</property>
                                     </data>
                                 </cell>
-                                <cell id="6803">
+                                <cell id="12194">
                                     <property name="style">becpg-cell-data</property>
                                     <property name="borderBottomStyle">solid</property>
                                     <property name="borderBottomWidth">1px</property>
@@ -9054,7 +9271,6 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                 <property name="borderLeftStyle">none</property>
                                 <property name="borderRightStyle">none</property>
                                 <property name="borderTopStyle">none</property>
-                                <property name="height">0.1in</property>
                                 <cell id="7362">
                                     <property name="colSpan">6</property>
                                     <property name="rowSpan">1</property>
@@ -9062,6 +9278,7 @@ BirtMath.round(dataSetRow["mblMaxi"],0) + " " + dataSetRow["mblUnit"]
                                     <property name="borderLeftStyle">none</property>
                                     <property name="borderRightStyle">none</property>
                                     <property name="borderTopStyle">none</property>
+                                    <label id="12190"/>
                                 </cell>
                             </row>
                             <row id="6880">

@@ -1563,14 +1563,17 @@
 									fields += "$";
 								}
 								fields += this.dataRequestFields[i];
-
 							}
 							
-							var PAGE_SIZE = 5000;
+							var PAGE_SIZE = 50;
 							var CURRENT_PAGE = 1;
-							window.location = this.dataUrl + "/export?format=xlsx&" + this._buildDataParamsUrl(PAGE_SIZE, PAGE_SIZE)
+                            var MAX_RESULTS_UNLIMITED = 5000;
+							
+ 					   		beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx",this.dataUrl + "/export?format=xlsx&" + this._buildDataParamsUrl(PAGE_SIZE, MAX_RESULTS_UNLIMITED)
 									+ "&metadata=" + encodeURIComponent(YAHOO.lang.JSON
-		                           .stringify(this._buildBulkEditParams(CURRENT_PAGE)));
+		                           .stringify(this._buildBulkEditParams(CURRENT_PAGE))));  
+
+
 							
 						},
 						onShowThumbnails : function BulkEdit_onShowThumbnails() {

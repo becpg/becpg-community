@@ -38,7 +38,9 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
+import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
@@ -48,12 +50,14 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -216,30 +220,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		return mandatoryCharacts;
 	}
 
-	/**
-	 * <p>formulateSimpleList.</p>
-	 *
-	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
-	 * @param simpleListDataList a {@link java.util.List} object.
-	 * @param isFormulatedProduct a boolean.
-	 * @throws fr.becpg.repo.formulation.FormulateException if any.
-	 */
-	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, boolean isFormulatedProduct) {
-		logger.debug("formulateSimpleList");
-		cleanSimpleList(simpleListDataList, isFormulatedProduct);
-
-		synchronizeTemplate(formulatedProduct, simpleListDataList);
-
-		if (isFormulatedProduct) {
-			visitChildren(formulatedProduct, simpleListDataList,
-					FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT), null);
-			for (VariantData variant : formulatedProduct.getVariants()) {
-				visitChildren(formulatedProduct, simpleListDataList,
-						FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT), variant);
-			}
-		}
-
-	}
+	
 
 	/**
 	 * <p>cleanSimpleList.</p>
@@ -278,56 +259,191 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
+
+
+	protected interface SimpleListQtyProvider {
+		
+		Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct);
+		Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct);
+		Double getNetWeight();
+		Double getNetQty();
+		Boolean omitElement(CompoListDataItem compoListDataItem);
+		
+		
+	}
+	
 	/**
-	 * <p>visitChildren.</p>
+	 * <p>formulateSimpleList.</p>
 	 *
 	 * @param formulatedProduct a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @param simpleListDataList a {@link java.util.List} object.
-	 * @param netQtyInLorKg a {@link java.lang.Double} object.
-	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object.
+	 * @param isFormulatedProduct a boolean.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	protected void visitChildren(ProductData formulatedProduct, List<T> simpleListDataList, Double netQtyInLorKg, VariantData variant) {
+	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider simpleListQtyProvider, boolean isFormulatedProduct) {
+		
+		cleanSimpleList(simpleListDataList, isFormulatedProduct);
+		synchronizeTemplate(formulatedProduct, simpleListDataList);
+		
+		if (isFormulatedProduct) {
+			visitComposition(formulatedProduct, simpleListDataList, simpleListQtyProvider , null);
+			visitPackaging(formulatedProduct,  simpleListDataList, simpleListQtyProvider, null);
+			visitProcess(formulatedProduct,  simpleListDataList, simpleListQtyProvider , null);
 
-		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
+			for (VariantData variant : formulatedProduct.getVariants()) {
+				visitComposition(formulatedProduct, simpleListDataList, simpleListQtyProvider, variant);
+				visitPackaging(formulatedProduct,  simpleListDataList, simpleListQtyProvider, variant);
+				visitProcess(formulatedProduct,  simpleListDataList, simpleListQtyProvider, variant);
 
-		boolean isGenericRawMaterial = formulatedProduct instanceof RawMaterialData;
-
-		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-
-		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
-				(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
-			Map<NodeRef, List<NodeRef>> mandatoryCharacts = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
-			for (CompoListDataItem compoItem : formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
-					(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
-				Double weight = FormulationHelper.getQtyInKg(compoItem);
-				// omit item if parent is omitted
-				boolean omit = false;
-				CompoListDataItem tmpCompoItem = compoItem;
-				while ((tmpCompoItem != null) && !omit) {
-					omit = DeclarationType.Omit.equals(tmpCompoItem.getDeclType());
-					tmpCompoItem = tmpCompoItem.getParent();
-				}
-
-				if ((weight != null) && !omit && (compoItem != null)) {
-
-					ProductData partProduct = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
-					Double vol = FormulationHelper.getNetVolume(compoItem, partProduct);
-
-					visitPart(formulatedProduct, partProduct, simpleListDataList, weight, vol, netQtyInLorKg, netWeight, mandatoryCharacts,
-							totalQtiesValue, isGenericRawMaterial, variant);
-				}
 			}
-			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts, getRequirementDataType());
-
-		}
-
-		// Case Generic MP
-		if (isGenericRawMaterial) {
-			formulateGenericRawMaterial(simpleListDataList, totalQtiesValue, netQtyInLorKg);
 		}
 
 	}
+	
+	
+
+	
+
+	protected void visitComposition(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider, VariantData variant) {
+		NodeRef variantNodeRef = variant != null ? variant.getNodeRef() : null;
+
+		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+				(variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>())))) {
+
+			/*
+			 * Composition
+			 */
+			Map<NodeRef, List<NodeRef>> mandatoryCharacts1 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RAWMATERIAL);
+
+			Composite<CompoListDataItem> composite = CompositeHelper
+					.getHierarchicalCompoList(formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+							(variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>()))));
+			visitCompoListChildren(formulatedProduct, composite, simpleListDataList, formulatedProduct.getProductLossPerc(), qtyProvider, mandatoryCharacts1,
+					variant, true);
+
+			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts1, getRequirementDataType());
+
+		}
+		
+	}
+	
+	
+
+	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, List<T> simpleListDataList,
+			Double parentLossRatio, SimpleListQtyProvider qtyProvider , Map<NodeRef, List<NodeRef>> mandatoryCharacts, VariantData variant, boolean first) {
+
+		boolean isGenericRawMaterial = formulatedProduct instanceof RawMaterialData;
+		
+		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
+		for (Composite<CompoListDataItem> component : composite.getChildren()) {
+			CompoListDataItem compoListDataItem = component.getData();
+			if(compoListDataItem!=null) {
+				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
+				if(!Boolean.TRUE.equals(qtyProvider.omitElement(compoListDataItem))) {
+				if (!component.isLeaf()) {
+	
+					
+						// take in account the loss perc
+						Double lossPerc = FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem);
+						Double newLossPerc = FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc);
+						if (logger.isDebugEnabled()) {
+							logger.debug("parentLossRatio: " + parentLossRatio + " - lossPerc: " + lossPerc + " - newLossPerc: " + newLossPerc);
+						}
+		
+						// calculate children
+						Composite<CompoListDataItem> c = component;
+						visitCompoListChildren(formulatedProduct, c, simpleListDataList, newLossPerc, qtyProvider, mandatoryCharacts, variant, false);
+					
+				} else {
+	
+					Double qty = qtyProvider.getQty(compoListDataItem, parentLossRatio, componentProduct);
+				    Double vol = qtyProvider.getVolume(compoListDataItem, parentLossRatio, componentProduct);
+	
+					if ((qty != null)) {
+						visitPart(formulatedProduct, componentProduct, simpleListDataList, qty, vol, qtyProvider.getNetQty(), qtyProvider.getNetWeight(), mandatoryCharacts, totalQtiesValue,
+								isGenericRawMaterial, variant);
+					}
+	
+				}
+			}
+			}
+		}
+		// Case Generic MP
+		if (first && isGenericRawMaterial) {
+			formulateGenericRawMaterial(simpleListDataList, totalQtiesValue,  qtyProvider.getNetQty());
+		}
+	}
+
+	
+	
+	protected void visitPackaging(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider, VariantData variant) {
+	
+
+		if (formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+				(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
+
+			
+			/*
+			 * PackagingList
+			 */
+			Map<NodeRef, List<NodeRef>> mandatoryCharacts2 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_PACKAGINGMATERIAL);
+
+			for (PackagingListDataItem packagingListDataItem : formulatedProduct
+					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+							(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
+
+				if ((packagingListDataItem.getProduct() != null)
+						&& ((packagingListDataItem.getIsRecycle() == null) || !packagingListDataItem.getIsRecycle())) {
+
+					ProductData partProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
+
+					Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, partProduct);
+
+					visitPart(formulatedProduct, partProduct, simpleListDataList, qty, qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight(), mandatoryCharacts2, null, false, variant);
+				}
+			}
+
+			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts2, getRequirementDataType());
+		}
+		
+	}
+	
+	
+   protected void visitProcess(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider , VariantData variant) {
+
+		if (formulatedProduct.hasProcessListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+				(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
+			/*
+			 * ProcessList
+			 */
+
+			Double netQtyForCost = qtyProvider.getNetQty();
+			
+			Map<NodeRef, List<NodeRef>> mandatoryCharacts3 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RESOURCEPRODUCT);
+			for (ProcessListDataItem processListDataItem : formulatedProduct
+					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
+							(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
+
+				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
+
+				if ((processListDataItem.getResource() != null) && (qty != null)) {
+					if (ProductUnit.P.equals(processListDataItem.getUnit()) && ProductUnit.P.equals(formulatedProduct.getUnit())) {
+						netQtyForCost = FormulationHelper.QTY_FOR_PIECE;
+					}
+
+					ProductData partProduct = (ProductData) alfrescoRepository.findOne(processListDataItem.getResource());
+
+					visitPart(formulatedProduct, partProduct, simpleListDataList, qty, null, netQtyForCost, null, mandatoryCharacts3, null, false, variant);
+				}
+			}
+
+			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts3, getRequirementDataType());
+		}
+	
+
+}
+
+	
 
 	/**
 	 * <p>formulateGenericRawMaterial.</p>

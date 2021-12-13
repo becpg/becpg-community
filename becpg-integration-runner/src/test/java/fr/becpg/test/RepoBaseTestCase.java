@@ -62,6 +62,8 @@ import org.subethamail.wiser.Wiser;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
+import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntitySystemService;
@@ -206,6 +208,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Autowired
 	protected EntityListDAO entityListDAO;
+	
 
 	@Autowired
 	@Qualifier("qnameDAO")
@@ -326,54 +329,20 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		}, false, true);
 
 	}
+	
 
-	// public void waitForSolr(final Date startTime) {
-	// transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-	//
-	// List<Transaction> transactions =
-	// solrTrackingComponent.getTransactions(null, startTime.getTime(), null,
-	// null, 1000);
-	//
-	// logger.info("Found " + transactions.size() + " new transactions");
-	//
-	// Long lastIdxServer = transactions.get(transactions.size() - 1).getId();
-	//
-	// Long lastIdxSolr = getLastSolrIndex();
-	// Long transactionInSolr = getTransactionInIndex();
-	// Long transactionInServer = transactionInSolr+transactions.size();
-	//
-	// int j = 0;
-	// while (((lastIdxSolr < lastIdxServer) || (transactionInSolr <
-	// transactionInServer)) && (j < 10)) {
-	// Thread.sleep(2000);
-	// lastIdxSolr = getLastSolrIndex();
-	// transactionInSolr = getTransactionInIndex();
-	// j++;
-	// logger.info("Wait for solr (2s) : serverIdx " + lastIdxServer + " solrIdx
-	// " + lastIdxSolr + " serverTx " + transactionInServer + " solrTx " +
-	// transactionInSolr + " retry *" + j);
-	// }
-	//
-	// int count = 0;
-	// j=0;
-	// while (count <10 && (j < 10)) {
-	// long curtrans = getTransactionInIndex();
-	//
-	// if(transactionInSolr == curtrans) {
-	// count++;
-	// }
-	// logger.info("Wait for solr (2s) "+curtrans);
-	// transactionInSolr = curtrans;
-	// Thread.sleep(2000);
-	// j++;
-	// }
-	//
-	//
-	// return null;
-	//
-	// }, false, true);
-	// }
-
+	public void waitForBatchEnd(BatchInfo batch) throws InterruptedException {
+		int j = 0;
+		
+		while(!Boolean.TRUE.equals(batch.getIsCompleted()) && (j < 30)) {
+			logger.info("Wait for batch: "+ batch.getBatchId());
+			Thread.sleep(2000);
+			j++;
+		}
+		
+		
+	}
+	
 	protected boolean shouldInit() {
 		return nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)) == null;

@@ -31,55 +31,22 @@
          <region-id>navigation</region-id>
          <url>/components/navigation/collaboration-navigation</url>
       </component>
-   <!-- 
-      All Filter
-      <component>
-         <region-id>all-filter</region-id>
-         <url>/components/project/filter/all</url>
-         <properties>
-            <mode>projects</mode>
-         </properties>
-      </component>
-
-      Due Filter
-      <component>
-         <region-id>due-filter</region-id>
-         <url>/components/workflow/filter/due</url>
-      </component>
-
-      Started Filter
-      <component>
-         <region-id>started-filter</region-id>
-         <url>/components/workflow/filter/started</url>
-      </component>
-
-      Priority Filter
-      <component>
-         <region-id>priority-filter</region-id>
-         <url>/components/workflow/filter/priority</url>
-      </component>
-      
-      
-      Tags Filter
-      <component>
-         <region-id>tags</region-id>
-         <url>/components/tag-filter</url>
-         <properties>
-         	<container>projects</container>
-         </properties>
-      </component>
-		 -->
+  
 
       <component>
          <region-id>toolbar</region-id>
          <url>/components/project/project-list-toolbar</url>
       </component>
 
-
       <!-- project List -->
       <component>
          <region-id>list</region-id>
          <url>/components/project/project-list</url>
       </component>
+      
+      <component>
+         <region-id>archive-and-download</region-id>
+         <url>/components/download/archive</url>
+      </component>      
    </components>
 </template-instance>
