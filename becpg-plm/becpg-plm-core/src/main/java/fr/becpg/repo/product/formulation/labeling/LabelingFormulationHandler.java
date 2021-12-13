@@ -1892,7 +1892,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				compositeLabeling.setVolumeTotal(volume + compositeLabeling.getVolumeTotal());
 			}
 
-			if (qtyWithYield != null) {
+			if (qtyWithYield != null && currYield!=null) {
 
 				Double yieldQty = (qtyWithYield * currYield) / 100d;
 				if ((compositeLabeling.getQtyTotalWithYield() != null)) {
@@ -1916,7 +1916,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 
 			}
-			if (volumeWithYield != null) {
+			if (volumeWithYield != null && currYield!=null) {
 
 				Double yieldVol = (volumeWithYield * currYield) / 100d;
 
