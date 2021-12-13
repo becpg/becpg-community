@@ -550,7 +550,7 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 						propertiesMap.put(qname, properties.get(name).toString());
 					} else if (name.startsWith(BCPG_PREFIX)) {
 						QName qname = QName.createQName(BeCPGModel.BECPG_URI, name.split(BCPG_PREFIX)[1]);
-(??)						propertiesMap.put(qname, (Serializable) properties.get(name).toString());
+						propertiesMap.put(qname, properties.get(name).toString());
 					}
 				}
 				
