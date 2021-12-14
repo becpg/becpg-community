@@ -536,7 +536,9 @@
 	            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
 	          </field>
 	          <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false" set="formulation">
-	            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+	            <control template="/org/alfresco/components/form/controls/textfield.ftl">
+	            	<control-param name="defaultValue">125</control-param>
+	            </control>
 	          </field>
 	          <field help-id="becpg.forms.help.productSpecifications" id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
 	            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -690,6 +692,7 @@
 	          <field id="bcpg:startEffectivity" mandatory="false" read-only="false" set="effectivity">
 	            <control template="/org/alfresco/components/form/controls/date.ftl">
 	              <control-param name="showTime">false</control-param>
+	              <control-param name="defaultValue">01/06/1992</control-param>
 	            </control>
 	          </field>
 	          <field id="bcpg:endEffectivity" mandatory="false" read-only="false" set="effectivity">
@@ -1865,8 +1868,9 @@
 							template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:numberOfServings" help-id="becpg.forms.help.numberOfServings" set="formulation" >
-					  <control
-							template="/org/alfresco/components/form/controls/textfield.ftl" />
+					  <control template="/org/alfresco/components/form/controls/textfield.ftl">
+		            	<control-param name="defaultValue">125</control-param>
+		            </control>
 					</field>
 					
 
@@ -12702,8 +12706,9 @@
 						label-id="becpg.forms.set.validation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpgwf:pvValidationDate" set="productValidation">
 						<control template="/org/alfresco/components/form/controls/date.ftl">
-							<control-param name="showTime">false</control-param>
-						</control>
+			              <control-param name="showTime">false</control-param>
+			              <control-param name="defaultValue">01/06/1992</control-param>
+			            </control>
 					</field>
 					<field id="bcpgwf:pvRDApprovalActor" set="productValidation" />
 					<field id="bcpgwf:pvPackagingApprovalActor" set="productValidation" />
