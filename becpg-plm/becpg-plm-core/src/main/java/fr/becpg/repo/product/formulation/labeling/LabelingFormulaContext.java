@@ -1404,6 +1404,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		StringBuilder tableContent = new StringBuilder();
 
 		BigDecimal total = BigDecimal.valueOf(0d);
+		BigDecimal totalWithYield = BigDecimal.valueOf(0d);
 
 		ret.append("<table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"" + styleCss + "\" rules=\"none\">");
 
@@ -1461,6 +1462,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					if (qtyPerc != null) {
 						total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
 					}
+					if(qtyPercWithYield!=null) {
+						totalWithYield = totalWithYield.add(roundeedValue(qtyPercWithYield, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
+						
+					}
 
 				}
 
@@ -1516,6 +1521,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							if (qtyPerc != null) {
 								total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
 							}
+							if(qtyPercWithYield!=null) {
+								totalWithYield = totalWithYield.add(roundeedValue(qtyPercWithYield, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
+								
+							}
 						}
 
 					} else {
@@ -1532,6 +1541,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
 
 			total = BigDecimal.valueOf(1d);
+			totalWithYield = BigDecimal.valueOf(1d);
 
 			firstQtyPerc = roundeedValue(firstQtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())).add(diffValue)
 					.doubleValue();
@@ -1550,7 +1560,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		if (showTotal && (total.doubleValue() > 0)) {
 			ret.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()))
-					.format(new Object[] { "<b>" + I18NUtil.getMessage("entity.datalist.item.details.total") + "</b>", total.doubleValue(), "" }));
+					.format(new Object[] { "<b>" + I18NUtil.getMessage("entity.datalist.item.details.total") + "</b>", total.doubleValue(), "","",totalWithYield }));
 		}
 
 		ret.append("</table>");
