@@ -1713,7 +1713,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									compositeLabeling.setQtyTotal(qty);
 									compositeLabeling.setVolumeTotal(volume);
 
-									if (qtyWithYield != null) {
+									if (qtyWithYield != null && calculatedYield!=null) {
 
 										Double yieldQty = (qtyWithYield * calculatedYield) / 100d;
 										Double evaporatingLoss = qtyWithYield - yieldQty;
@@ -1728,7 +1728,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										compositeLabeling.setEvaporatedQty(evaporatingLoss);
 									}
 
-									if (volumeWithYield != null) {
+									if (volumeWithYield != null && calculatedYield!=null) {
 
 										Double yieldVol = (volumeWithYield * calculatedYield) / 100d;
 										Double evaporatingLoss = volumeWithYield - yieldVol;
