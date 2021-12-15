@@ -14,6 +14,7 @@ import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.rule.RuleService;
@@ -45,6 +46,7 @@ public class NutListMiniMaxiPatch extends AbstractBeCPGPatch {
 	private IntegrityChecker integrityChecker;
 	private RuleService ruleService;
 	private EntityListDAO entityListDAO;
+	private LockService lockService;
 
 	private final int batchThreads = 4;
 	private final int batchSize = 30;
@@ -128,6 +130,10 @@ public class NutListMiniMaxiPatch extends AbstractBeCPGPatch {
 						) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
+					if (lockService.isLocked(entityNodeRef)) {
+						lockService.unlock(entityNodeRef);
+					}
+					
 					logger.info("Updating :" + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
 
 					NodeRef entityContainer = entityListDAO.getListContainer(entityNodeRef);
@@ -267,6 +273,10 @@ public class NutListMiniMaxiPatch extends AbstractBeCPGPatch {
 	 */
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
+	}
+	
+	public void setLockService(LockService lockService) {
+		this.lockService = lockService;
 	}
 
 }
