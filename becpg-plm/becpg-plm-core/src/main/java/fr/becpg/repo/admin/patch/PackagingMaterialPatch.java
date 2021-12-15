@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +26,7 @@ public class PackagingMaterialPatch extends AbstractBeCPGPatch {
 	private static final String MSG_SUCCESS = "patch.bcpg.packagingMaterialPatch.result";
 
 	private BehaviourFilter policyBehaviourFilter;
+	private LockService lockService;
 
 
 	/** {@inheritDoc} */
@@ -51,6 +53,9 @@ public class PackagingMaterialPatch extends AbstractBeCPGPatch {
 						PackModel.TYPE_PACKAGING_MATERIAL.toPrefixString(namespaceService));
 			
 				for (NodeRef nodeRef : nodeRefs) {
+					if (lockService.isLocked(nodeRef)) {
+						lockService.unlock(nodeRef);
+					}
 					logger.info("Migrate : "+ nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_VALUE));
 					nodeService.setType(nodeRef, PackModel.TYPE_PACKAGING_MATERIAL);
 				}
@@ -70,6 +75,10 @@ public class PackagingMaterialPatch extends AbstractBeCPGPatch {
 	 */
 	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
 		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+	
+	public void setLockService(LockService lockService) {
+		this.lockService = lockService;
 	}
 
 }
