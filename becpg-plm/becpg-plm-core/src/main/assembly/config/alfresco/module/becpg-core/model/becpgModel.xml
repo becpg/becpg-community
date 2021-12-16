@@ -83,6 +83,7 @@
 					<value>Content</value>
 					<value>Merge</value>
 					<value>Version</value>
+					<value>Export</value>
 				</list>
 			</parameter>
 		</constraint>
