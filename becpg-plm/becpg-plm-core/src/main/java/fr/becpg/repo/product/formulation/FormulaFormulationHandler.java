@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010-2020 beCPG.
+ * Copyright (C) 2010-2021 beCPG.
  *
  * This file is part of beCPG
  *
@@ -29,7 +29,6 @@ import java.util.regex.Matcher;
 import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.MLText;
-import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -41,7 +40,6 @@ import org.json.JSONObject;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
-import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -82,7 +80,7 @@ import fr.becpg.repo.security.BeCPGAccessDeniedException;
  * @author matthieu
  * @version $Id: $Id
  */
-public class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
+public  class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
 
@@ -91,7 +89,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	/** Constant <code>DYN_COLUMN_NAME="bcpg:dynamicCharactColumn"</code> */
 	public static final String DYN_COLUMN_NAME = "bcpg:dynamicCharactColumn";
 
-	private static final String JSON_PATH_SEPARATOR = "/";
+	public static final String JSON_PATH_SEPARATOR = "/";
 
 	static {
 		SpelHelper
@@ -416,7 +414,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 		String path = JSON_PATH_SEPARATOR + dataListItem.getNodeRef().getId();
 
-		extractJSONSubList(productData, dataListItem, exp, path, subList, new HashSet<NodeRef>());
+		extractJSONSubList(productData, dataListItem, exp, path, subList);
 		jsonObject.put(JsonFormulaHelper.JSON_SUB_VALUES, subList);
 		jsonObject.put(JsonFormulaHelper.JSON_VALUE, value);
 		jsonObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(value));
@@ -424,7 +422,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		return jsonObject;
 	}
 
-	private void extractJSONSubList(ProductData productData, CompositionDataItem dataListItem, Expression exp, String path, JSONArray subList, Set<NodeRef> visited)
+	private void extractJSONSubList(ProductData productData, CompositionDataItem dataListItem, Expression exp, String path, JSONArray subList)
 			throws JSONException {
 		ProductData subProductData = alfrescoRepository.findOne(dataListItem.getComponent());
 		List<CompositionDataItem> compositeList = new ArrayList<>();
@@ -491,14 +489,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 				subObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(subValue));
 				subObject.put(JsonFormulaHelper.JSON_PATH, subPath);
 				subList.put(subObject);
-                 if(!visited.contains(dataListItem.getComponent())) {
-					if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
-							|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
-							|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))) {
-						visited.add(dataListItem.getComponent());
-						extractJSONSubList(productData, composite, exp, subPath, subList, visited);
-					}
-                 }
+				if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
+						|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
+						|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))) {
+					
+					extractJSONSubList(productData, composite, exp, subPath, subList);
+				}
 			} finally {
 				// Reset
 				composite.setQty(qtyList.get(i));
