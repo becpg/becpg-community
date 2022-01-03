@@ -1439,7 +1439,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						firstGeo = geoOriginsLabel != null ? geoOriginsLabel : "";
 					} else {
 						tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), qtyPerc)
-								.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "" }));
+								.format(new Object[] { decorate(subLabel), qtyPerc, geoOriginsLabel != null ? decorate(geoOriginsLabel) : "" }));
 					}
 					if (qtyPerc != null) {
 						total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
@@ -1484,7 +1484,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								firstGeo = geoOriginsLabel != null ? geoOriginsLabel : "";
 							} else {
 								tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), qtyPerc)
-										.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "" }));
+										.format(new Object[] { decorate(subLabel), qtyPerc, geoOriginsLabel != null ? decorate(geoOriginsLabel)  : "" }));
 							}
 
 							if (qtyPerc != null) {
@@ -1511,10 +1511,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					.doubleValue();
 
 			ret.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()))
-					.format(new Object[] { firstLabel, firstQtyPerc, firstGeo }));
+					.format(new Object[] {  decorate(firstLabel), firstQtyPerc,  decorate(firstGeo) }));
 		} else {
 			ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), firstQtyPerc)
-					.format(new Object[] { firstLabel, firstQtyPerc, firstGeo }));
+					.format(new Object[] {  decorate(firstLabel), firstQtyPerc,  decorate(firstGeo) }));
 		}
 
 		ret.append(tableContent);
@@ -1525,7 +1525,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		}
 
 		ret.append("</table>");
-		return decorate(ret.toString());
+		return ret.toString();
 
 	}
 
@@ -2203,8 +2203,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 			}
 
-			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(":,", ",").replaceAll(":$", "").replaceAll(">null<", "><")
-					.replaceAll("  ", "").trim();
+			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replace(":,", ",").replaceAll(":$", "").replace(">null<", "><")
+					.replace("  ", "").trim();
 		}
 		return "";
 	}
