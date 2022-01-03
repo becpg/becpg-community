@@ -260,6 +260,8 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+
+
 		
 		
 		<constraint name="gs1:tradeItemPriceTypes" type="LIST">
@@ -276,6 +278,8 @@
 				</list>
 			</parameter>
 		</constraint>
+
+
 		
 		
 		<constraint name="gs1:storageStateCodes" type="LIST">
@@ -287,6 +291,7 @@
 				</list>
 			</parameter>
 		</constraint>
+
 		
 		<constraint name="gs1:productionMethodForFishAndSeafoodCodes" type="LIST">
 			<parameter name="allowedValues">
@@ -298,7 +303,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 
 		<constraint name="gs1:speciesForFisheryStatisticsPurposesCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -316,6 +321,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+
 		
 		<constraint name="gs1:catchMethodCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -333,6 +339,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+
 		
 		<constraint name="gs1:catchAreaCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -350,6 +357,8 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+
+
 		
 		
 	</constraints>
@@ -896,11 +905,22 @@
 						<constraint ref="gs1:platformTermsAndConditionsCodes" />
 					</constraints>
 				</property>
-
+				
+				
+				<property name="gs1:netContent">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
 			</properties>
 			<overrides />
 			<mandatory-aspects />
 		</aspect>
+
 		
 		 <!-- PackagingMarkingModule -->
 		<aspect name="gs1:packSortingAspect">
@@ -1506,6 +1526,9 @@
 				</property>
 			</properties>
 		</aspect>
+
+
+
 		
 		
 		  

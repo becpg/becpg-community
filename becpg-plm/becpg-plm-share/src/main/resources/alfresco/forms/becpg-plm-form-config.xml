@@ -232,6 +232,7 @@
 	          <show force="false" id="bcpg:productQty"/>
 	          <show force="false" id="bcpg:productUnit"/>
 	          <show force="true" id="bcpg:netWeight"/>
+	          <show force="false" id="gs1:netContent"/>
 	          <show force="true" id="bcpg:drainedWeight"/>
 	          <show force="false" id="bcpg:productDensity"/>
 	          <show force="true" id="bcpg:netVolume"/>
@@ -514,6 +515,11 @@
 	            </control>
 	          </field>
 	          <field help-id="becpg.forms.help.netWeight" id="bcpg:netWeight" mandatory="false" read-only="false" set="formulation">
+	            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+	              <control-param name="unit">kg</control-param>
+	            </control>
+	          </field>
+	          <field help-id="becpg.forms.help.gs1.netContent" id="gs1:netContent" mandatory="false" read-only="false" set="formulation">
 	            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
 	              <control-param name="unit">kg</control-param>
 	            </control>
