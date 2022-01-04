@@ -362,11 +362,7 @@
 						</control>
 					</field>
 
-					<field id="pjt:projectStartDate" help-id="becpg.forms.help.projectStartDate" set="planning" >
-						<control template="/org/alfresco/components/form/controls/date.ftl">
-			              <control-param name="defaultValue">01/06/1992</control-param>
-			            </control>
-					</field>
+					<field id="pjt:projectStartDate" help-id="becpg.forms.help.projectStartDate" set="planning" />
 					<field id="pjt:projectDueDate" help-id="becpg.forms.help.projectDueDate" set="planning" />
 					<field id="pjt:projectPlanningMode" help-id="becpg.forms.help.projectPlanningMode" set="planning" />
 
@@ -1115,16 +1111,12 @@
 					<field id="pjt:notificationFrequencyValue" set="notifications" 
 					label-id="becpg.forms.notification.property.frequency"
 					help-id="becpg.forms.notification.tooltip.frequency">
-						<control template="/org/alfresco/components/form/controls/number.ftl">
-							<control-param name="defaultValue">2</control-param>
-						</control>
+						<control template="/org/alfresco/components/form/controls/number.ftl" />
 					</field>
 					<field id="pjt:notificationInitialValue" set="notifications" 
 					label-id="becpg.forms.notification.property.initialNotification"
 					help-id="becpg.forms.notification.tooltip.initial">
-						<control template="/org/alfresco/components/form/controls/number.ftl">
-							<control-param name="defaultValue">1</control-param>
-						</control>
+						<control template="/org/alfresco/components/form/controls/number.ftl" />
 					</field>	
 					
 				</appearance>
@@ -1282,16 +1274,12 @@
 					<field id="pjt:notificationFrequencyValue" set="notifications" 
 					label-id="becpg.forms.notification.property.frequency"
 					help-id="becpg.forms.notification.tooltip.frequency">
-						<control template="/org/alfresco/components/form/controls/number.ftl">
-							<control-param name="defaultValue">23</control-param>
-						</control>
+						<control template="/org/alfresco/components/form/controls/number.ftl" />
 					</field>
 					<field id="pjt:notificationInitialValue" set="notifications" 
 					label-id="becpg.forms.notification.property.initialNotification"
 					help-id="becpg.forms.notification.tooltip.initial">
-						<control template="/org/alfresco/components/form/controls/number.ftl">
-							<control-param name="defaultValue">13</control-param>
-						</control>
+						<control template="/org/alfresco/components/form/controls/number.ftl" />
 					</field>	
 
 				</appearance>
