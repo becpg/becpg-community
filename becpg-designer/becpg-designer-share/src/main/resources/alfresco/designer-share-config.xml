@@ -216,7 +216,34 @@
 			</provider>
 		</providers>	
 	</config>
-
 	
+	<config evaluator="string-compare" condition="DocLibCustom">
+		<dependencies>
+			<js src="/components/documentlibrary/becpg/designer-docLibAction.js" />
+		</dependencies>
+	</config>
+
+	<config evaluator="string-compare" condition="DocLibActions">
+		<actions>
+			<action id="publish-file" type="javascript" icon="document-edit-properties"	label="actions.entity.publish-file">
+				<param name="function">onActionPublishFile</param>
+				<evaluator>evaluator.becpg.doclib.action.hasDesignerConfigAspect</evaluator>
+			</action>
+			<action id="unpublish-file" type="javascript" icon="document-edit-properties"	label="actions.entity.unpublish-file">
+				<param name="function">onActionUnpublishFile</param>
+				<evaluator>evaluator.becpg.doclib.action.hasDesignerConfigAspect</evaluator>
+			</action>
+		</actions>
+		<actionGroups>
+			<actionGroup id="document-details">
+				<action index="450" id="publish-file" subgroup="45" />
+				<action index="451" id="unpublish-file" subgroup="45" />
+			</actionGroup>
+			<actionGroup id="document-browse">
+				<action index="241" id="publish-file" />
+				<action index="241" id="unpublish-file" />
+			</actionGroup>
+		</actionGroups>
+	</config>
 
 </alfresco-config>

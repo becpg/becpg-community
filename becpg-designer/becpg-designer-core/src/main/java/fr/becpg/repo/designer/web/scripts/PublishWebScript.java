@@ -3,17 +3,26 @@
  */
 package fr.becpg.repo.designer.web.scripts;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.extensions.webscripts.Cache;
-import org.springframework.extensions.webscripts.DeclarativeWebScript;
-import org.springframework.extensions.webscripts.Status;
+import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
+import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import com.github.openjson.JSONObject;
+
+import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;
 
 
@@ -23,12 +32,10 @@ import fr.becpg.repo.designer.DesignerService;
  * @author matthieu
  * @version $Id: $Id
  */
-public class PublishWebScript extends DeclarativeWebScript  {
+public class PublishWebScript extends AbstractWebScript  {
 	
 
 	private static final String PARAM_NODEREF = "nodeRef";
-
-	private static final String PERSISTED_OBJECT = "persistedObject";
 
 	
 	/** The logger. */
@@ -36,6 +43,10 @@ public class PublishWebScript extends DeclarativeWebScript  {
 	
 	/** The node service. */
 	private DesignerService designerService;
+	
+	private ContentService contentService;
+	
+	private NodeService nodeService;
 	
 
 	/**
@@ -45,6 +56,14 @@ public class PublishWebScript extends DeclarativeWebScript  {
 	 */
 	public void setDesignerService(DesignerService designerService) {
 		this.designerService = designerService;
+	}
+	
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
+	
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
 	}
 
 
@@ -57,23 +76,44 @@ public class PublishWebScript extends DeclarativeWebScript  {
 	 * url : /becpg/designer/form/publish?nodeRef={nodeRef}.
 	 */
 	@Override
-	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache){
-				
+	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
+		
 		logger.debug("PublishWebScript executeImpl()");
 			
-		NodeRef parentNodeRef = new NodeRef( req.getParameter(PARAM_NODEREF));		
-
+		NodeRef parentNodeRef = new NodeRef(req.getParameter(PARAM_NODEREF));
 		
-		Map<String, Object> model = new HashMap<>();
+		if (Boolean.parseBoolean(req.getParameter("writeXml"))) {
+			designerService.writeXml(parentNodeRef);
+		}
 		
-		designerService.writeXml(parentNodeRef);
+		ContentReader reader = contentService.getReader(parentNodeRef, ContentModel.PROP_CONTENT);
+		
+		String xml = IOUtils.toString(reader.getContentInputStream(), StandardCharsets.UTF_8);
+		
+		JSONObject jsonResponse = new JSONObject();
+		
+		jsonResponse.put("xml", xml);
+		
+		String publishedConfigName = (String) nodeService.getProperty(parentNodeRef, DesignerModel.PROP_PUBLISHED_CONFIG_NAME);
+		
+		if (publishedConfigName != null) {
+			jsonResponse.put("publishedConfigName", publishedConfigName);
+		} else {
+			jsonResponse.put("publishedConfigName", nodeService.getProperty(parentNodeRef, ContentModel.PROP_NAME));
+		}
+		
 		designerService.publish(parentNodeRef);
 		
-		model.put(PERSISTED_OBJECT, parentNodeRef.toString() );
-	
-		return model;
+		if (nodeService.hasAspect(parentNodeRef, DesignerModel.ASPECT_MODEL)) {
+			jsonResponse.put("type", "model");
+		} else if (nodeService.hasAspect(parentNodeRef, DesignerModel.ASPECT_CONFIG)) {
+			jsonResponse.put("type", "config");
+		}
+		
+		try (InputStream in = new ByteArrayInputStream(jsonResponse.toString().getBytes())){
+			IOUtils.copy(in, res.getOutputStream());
+		} catch (IOException e) {
+			logger.error(e, e);
+		}
 	}
-	
-	
-
 }

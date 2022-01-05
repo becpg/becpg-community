@@ -96,6 +96,8 @@ public class DesignerModel {
 
 	public static final QName ASPECT_CONFIG = QName.createQName(DESIGNER_URI, "configAspect");
 
+	public static final QName PROP_PUBLISHED_CONFIG_NAME = QName.createQName(DESIGNER_URI, "publishedConfigName");
+
 	/** Constant <code>ASPECT_MODEL</code> */
 	public static final QName ASPECT_MODEL = QName.createQName(DESIGNER_URI, "modelAspect");
 
@@ -283,7 +285,6 @@ public class DesignerModel {
 	public static final QName ASSOC_DSG_CONSTRAINTS = QName.createQName(DESIGNER_URI, "constraints");
 	
 	public static final QName ASSOC_DSG_CONSTRAINT_ASSOC = QName.createQName(DESIGNER_URI, "constraintAssoc");
-
 
 
 }
