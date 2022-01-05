@@ -488,6 +488,13 @@
 		</aspect>
 		<aspect name="dsg:configAspect">
 			<title>Config Aspect</title>
+			<properties>
+				<property name="dsg:publishedConfigName">
+					<title>Published config name</title>
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+			</properties>
 			<associations>
 				<child-association name="dsg:config">
 					<title>Config</title>
