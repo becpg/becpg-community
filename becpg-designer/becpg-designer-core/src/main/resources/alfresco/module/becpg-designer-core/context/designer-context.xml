@@ -27,7 +27,6 @@
 		<property name="ignoreResourceNotFound" value="true"></property>
 		<property name="locations">
 			<list>
-				<value>classpath:alfresco/module/${pom.artifactId}/becpg-config-designer.properties</value>
 				<value>classpath*:designer.properties</value>	
 				<value>classpath*:beCPG.properties</value>
 			</list>
@@ -40,6 +39,7 @@
 			<list>
 				<value>alfresco/module/${pom.artifactId}/messages/controls</value>
 				<value>alfresco/module/${pom.artifactId}/messages/path</value>
+				<value>alfresco/module/${pom.artifactId}/messages/publish</value>
 			</list>
 		</property>
 	</bean>
@@ -71,7 +71,6 @@
 		<property name="contentService" ref="contentService" />
 		<property name="formModelVisitor" ref="formModelVisitor" />
 		<property name="designerTreeVisitor" ref="designerTreeVisitor" />
-		<property name="configPath" value="${beCPG.designer.configPath}" />
 		<property name="dictionaryService" ref="cachedDictionaryService" />
 		<property name="designerInitService" ref="designerInitService" />
 		<property name="mimetypeService" ref="mimetypeService" />
@@ -129,6 +128,8 @@
 	<bean id="webscript.fr.becpg.designer.publish.post" class="fr.becpg.repo.designer.web.scripts.PublishWebScript"
 		parent="webscript">
 		<property name="designerService" ref="designerService" />
+		<property name="contentService" ref="contentService" />
+		<property name="nodeService" ref="nodeService" />
 	</bean>
 	
 	<bean id="webscript.fr.becpg.designer.export.get" class="fr.becpg.repo.designer.web.scripts.ExportWebScript"
@@ -139,6 +140,7 @@
 	<bean id="webscript.fr.becpg.designer.unpublish.post" class="fr.becpg.repo.designer.web.scripts.UnPublishWebScript"
 		parent="webscript">
 		<property name="designerService" ref="designerService" />
+		<property name="nodeService" ref="nodeService" />
 	</bean>
 
 </beans>
