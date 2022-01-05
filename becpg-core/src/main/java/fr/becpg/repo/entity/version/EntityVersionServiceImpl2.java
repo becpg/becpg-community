@@ -1035,6 +1035,8 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 		
 		String entityJsonString = entityFormatService.getEntityData(versionNodeRef);
 		
+		Date createdDate = (Date) nodeService.getProperty(newBranch, ContentModel.PROP_CREATED);
+		
 		JSONObject json = new JSONObject(entityJsonString);
 		
 		String name = (String) dbNodeService.getProperty(versionNodeRef, ContentModel.PROP_NAME) + "~";
@@ -1044,6 +1046,8 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 		((JSONObject) ((JSONObject) json.get("entity")).get("attributes")).put("cm:name", name);
 		
 		entityFormatService.createOrUpdateEntityFromJson(newBranch, json.toString());
+		
+		nodeService.setProperty(newBranch, ContentModel.PROP_CREATED, createdDate);
 		
 		nodeService.removeAspect(newBranch, ContentModel.ASPECT_VERSIONABLE);
 		nodeService.removeAspect(newBranch, BeCPGModel.ASPECT_COMPOSITE_VERSION);
