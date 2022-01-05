@@ -297,30 +297,31 @@
 
 				for (var key in catalogs) {
 
-					var color = catalogs[key].color;
-
-					var colorTipElement = document.createElement("SPAN");
-					colorTipElement.style.backgroundColor = color;
-					colorTipElement.className += "catalog-color";
-					colorTipElement.title = instance.msg("label.catalog") + " '" + catalogs[key].label + (catalogs[key].locale !== undefined && catalogs[key].locale.length == 1 ? "(" + catalogs[key].locale + ")'" : "'");
-
 					if (catalogs[key].missingFields !== undefined) {
 
 						//put a color tip for this catalog
 						var catalogId = catalogs[key].id;
-
-
+						
+					
 						if (instance.options.catalogId == null || instance.options.catalogId == catalogId) {
+
+							var color = catalogs[key].color;
+	
+							var colorTipElement = document.createElement("SPAN");
+							colorTipElement.style.backgroundColor = color;
+							colorTipElement.className += "catalog-color";
+							colorTipElement.title = instance.msg("label.catalog") + " '" + catalogs[key].label + (catalogs[key].locale !== undefined && catalogs[key].locale.length == 1 ? "(" + catalogs[key].locale + ")'" : "'");
+
 
 							var locale = catalogs[key].locale;
 
 							if (locale !== undefined && locale != null) {
 								catalogId = catalogId + "_" + locale;
 							}
-							var labelId = instance.id + "_" + catalogId + "_missingPropLabel";
+							
 
 							if (catalogs[key].missingFields.length > 0) {
-								var label = YAHOO.util.Dom.get(labelId);
+								var label = YAHOO.util.Dom.get(instance.id + "_" + catalogId + "_missingPropLabel");
 
 								if (label !== undefined && label != null) {
 									label.parentNode.insertBefore(colorTipElement.cloneNode(false), label.nextSibling);
@@ -331,19 +332,14 @@
 							for (var field in catalogs[key].missingFields) {
 								//try to find a prop or assoc with this field
 
-
 								var fieldArray = new Array();
 								var fieldCode = catalogs[key].missingFields[field].id;
-
-
-
 
 								if (fieldCode.indexOf("|") > -1) {
 									fieldArray = fieldCode.split("|");
 								} else {
 									fieldArray.push(fieldCode);
 								}
-
 
 								for (var subField in fieldArray) {
 
