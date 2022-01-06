@@ -18,6 +18,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.lock.LockService;
@@ -186,7 +187,23 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 					if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_TEMPORARY)) {
 						deleteTemporaryNode(entityNodeRef);
 					} else {
-						convertNode(entityNodeRef);
+						try {
+							convertNode(entityNodeRef);
+						} catch (Throwable t) {
+							if (RetryingTransactionHelper.extractRetryCause(t) == null) {
+
+								transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+									
+									entityFormatService.moveToImportToDoFolder(entityNodeRef);
+									
+									nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
+								
+									return null;
+								}, false, true);
+							}
+							throw t;
+						}
+							
 					}
 				} else {
 					logger.debug("Node already deleted : " + entityNodeRef + ", tenant : " + tenantDomain);
@@ -288,76 +305,67 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	}
 	
 	private void deleteTemporaryNode(NodeRef temporaryNode) {
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
-			String tenantDomain = DEFAULT;
-			
-			if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
-				tenantDomain = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
+
+		String tenantDomain = DEFAULT;
+
+		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
+			tenantDomain = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
+		}
+		if (nodeService.exists(temporaryNode)) {
+
+			NodeRef parentNode = nodeService.getPrimaryParent(temporaryNode).getParentRef();
+
+			String name = (String) nodeService.getProperty(temporaryNode, ContentModel.PROP_NAME);
+
+			if (lockService.isLocked(temporaryNode)) {
+				lockService.unlock(temporaryNode);
 			}
-			if (nodeService.exists(temporaryNode)) {
-				
-				NodeRef parentNode = nodeService.getPrimaryParent(temporaryNode).getParentRef();
-				
-				String name = (String) nodeService.getProperty(temporaryNode, ContentModel.PROP_NAME);
-				
-				if (lockService.isLocked(temporaryNode)) {
-					lockService.unlock(temporaryNode);
+			nodeService.deleteNode(temporaryNode);
+			logger.debug("deleted temporary version node : '" + name + "', tenant : " + tenantDomain);
+
+			if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
+				if (lockService.isLocked(parentNode)) {
+					lockService.unlock(parentNode);
 				}
-				nodeService.deleteNode(temporaryNode);
-				logger.debug("deleted temporary version node : '" + name + "', tenant : " + tenantDomain);
-				
-				if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
-					if (lockService.isLocked(parentNode)) {
-						lockService.unlock(parentNode);
-					}
-					nodeService.deleteNode(parentNode);
-					logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantDomain);
-				}
+				nodeService.deleteNode(parentNode);
+				logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantDomain);
 			}
-			
-			return null;
-		}, false, true);
+		}
+
 	}
 
 	private void convertNode(NodeRef notConvertedNode) {
-		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			String tenantDomain = DEFAULT;
+		String tenantDomain = DEFAULT;
 
-			if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
-				tenantDomain = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
+		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
+			tenantDomain = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
+		}
+
+		String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
+
+		NodeRef parentNode = nodeService.getPrimaryParent(notConvertedNode).getParentRef();
+
+		String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
+
+		NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
+
+		if (nodeService.exists(originalNode)) {
+			logger.debug("Converting node " + notConvertedNode + ", tenant : " + tenantDomain);
+			entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
+		} else {
+			logger.debug("deleting version history node : '" + name + "' because the original node doesn't exist anymore, tenant : " + tenantDomain);
+			if (lockService.isLocked(notConvertedNode)) {
+				lockService.unlock(notConvertedNode);
 			}
 
-			String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
+			deleteNode(notConvertedNode);
+		}
 
-			NodeRef parentNode = nodeService.getPrimaryParent(notConvertedNode).getParentRef();
-
-			String parentName = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
-
-			NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
-
-			if (nodeService.exists(originalNode)) {
-				logger.debug("Converting node " + notConvertedNode + ", tenant : " + tenantDomain);
-				entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
-			} else {
-				logger.debug(
-						"deleting version history node : '" + name + "' because the original node doesn't exist anymore, tenant : " + tenantDomain);
-				if (lockService.isLocked(notConvertedNode)) {
-					lockService.unlock(notConvertedNode);
-				}
-
-				deleteNode(notConvertedNode);
-			}
-
-			if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
-				deleteNode(parentNode);
-				logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantDomain);
-			}
-			return null;
-		}, false, true);
+		if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
+			deleteNode(parentNode);
+			logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantDomain);
+		}
 	}
 
 }
