@@ -785,8 +785,25 @@ span.geoOrigin,
 span.geo {
     background-image: url("../../components/images/filetypes/generic-geoOrigin-16.png") !important;
     padding-left: 20px;
-    background-repeat: no-repeat
+    background-repeat: no-repeat;
 }
+
+span.geoOrigin-ASSEMBLY,
+span.geoOrigin-BIRTH,
+span.geoOrigin-BOTTLING,
+span.geoOrigin-CATCH_ZONE,
+span.geoOrigin-FARMING,
+span.geoOrigin-IMPORTATION,
+span.geoOrigin-LAST_PROCESSING,
+span.geoOrigin-MILKING,
+span.geoOrigin-REARING,
+span.geoOrigin-SLAUGHTER {
+   background-image: url("../../components/images/filetypes/generic-supplier-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat;
+}
+
+
 span.cost,
 span.budgetList,
 span.costList {
