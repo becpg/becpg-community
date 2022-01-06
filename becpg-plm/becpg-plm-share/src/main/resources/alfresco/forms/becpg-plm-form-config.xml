@@ -7873,6 +7873,7 @@
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 					<show id="bcpg:erpCode" force="true" />
+					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 				<appearance>
@@ -7928,6 +7929,7 @@
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 					<show id="bcpg:erpCode" force="true" />
+					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />		
                </field-visibility>
 
@@ -8017,6 +8019,7 @@
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
 					<show id="bcpg:erpCode" force="true" />
+					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
 				</field-visibility>
 			</form>
@@ -8506,6 +8509,7 @@
 					<show id="bcpg:geoOriginISOCodeThreeLetters" />
                     <show id="bcpg:geoOriginISOCodeNumeric" />
                     <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="gs1:productActivityTypeCode" force="true"/>
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 				</field-visibility>
@@ -8515,6 +8519,9 @@
 						<control>
 							<control-param name="activateLinks">true</control-param>
 						</control>
+					</field>
+					<field id="gs1:productActivityTypeCode">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl"></control>
 					</field>
 					<field id="bcpg:linkedSearchAssociation">
 						<control
@@ -8541,6 +8548,7 @@
 					 <show id="bcpg:geoOriginISOCodeThreeLetters" />
                     <show id="bcpg:geoOriginISOCodeNumeric" />
                     <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="gs1:productActivityTypeCode" force="true"/>
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 				</field-visibility>
@@ -8561,6 +8569,9 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:geoOrigin
 							</control-param>
 						</control>
+					</field>
+					<field id="gs1:productActivityTypeCode">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl"></control>
 					</field>
 				</appearance>
 			</form>
@@ -8587,6 +8598,7 @@
 					<show id="bcpg:geoOriginISOCodeThreeLetters" />
                     <show id="bcpg:geoOriginISOCodeNumeric" />
                     <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="gs1:productActivityTypeCode" force="true"/>
 					<show id="bcpg:linkedSearchAssociation" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 				</field-visibility>
@@ -10828,7 +10840,6 @@
 					<show id="bcpg:suppliers" force="true"/>
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:priceListGeoOrigins" />
-					
 					<show id="bcpg:startEffectivity" />
 					<show id="bcpg:endEffectivity" />
 				</field-visibility>
@@ -12972,10 +12983,18 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="gs1:dutyFeeTaxCategoryCode" />
 					<show id="gs1:dutyFeeTaxCode" />
-					<show id="gs1:dutyFeeTaxCountry" />												
+					<show id="gs1:dutyFeeTaxCountry" />		
+					<show id="gs1:dutyFeeTaxRate"/>											
 				</field-visibility>
 				<appearance>
+				<field id="cm:description">
+						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
+			              <control-param name="maxLength">70</control-param>
+			            </control>
+					</field>
 					<field id="gs1:dutyFeeTaxCountry">
 						<control
 								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -12987,10 +13006,13 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="gs1:dutyFeeTaxCategoryCode" />
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />												
 				</field-visibility>
 				<appearance>
+				
 					<field id="gs1:dutyFeeTaxCountry">
 						<control
 								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -13002,9 +13024,13 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="gs1:dutyFeeTaxCategoryCode" />
 					<show id="gs1:dutyFeeTaxCode" />
-					<show id="gs1:dutyFeeTaxCountry" />		
+					<show id="gs1:dutyFeeTaxCountry" />	
+					<show id="gs1:dutyFeeTaxRate"/>		
 				</field-visibility>			
+				
 			</form>
 		</forms>
 	</config>
@@ -13013,10 +13039,18 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="cm:description" />
+					<show id="gs1:dutyFeeTaxCategoryCode" />
 					<show id="gs1:dutyFeeTaxCode" />
-					<show id="gs1:dutyFeeTaxCountry" />												
+					<show id="gs1:dutyFeeTaxCountry" />	
+					<show id="gs1:dutyFeeTaxRate"/>											
 				</field-visibility>
 				<appearance>
+				<field id="cm:description">
+						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
+			              <control-param name="maxLength">70</control-param>
+			            </control>
+					</field>
 					<field id="gs1:dutyFeeTaxCountry">
 						<control
 								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">

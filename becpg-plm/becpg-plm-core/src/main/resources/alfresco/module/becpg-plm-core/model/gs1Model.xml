@@ -280,8 +280,45 @@
 		</constraint>
 
 
-		
-		
+		<constraint name="gs1:productActivityTypeCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				  <value></value>
+				   <value>ASSEMBLY</value>
+				   <value>BIRTH</value>
+				   <value>BOTTLING</value>
+				   <value>CATCH_ZONE</value>
+				   <value>FARMING</value>
+				   <value>IMPORTATION</value>
+				   <value>LAST_PROCESSING</value>
+				   <value>MILKING</value>
+				   <value>REARING</value>
+				   <value>SLAUGHTER</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:dutyFeeTaxCategoryCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				   <value></value>
+				   <value>AAD</value>
+				   <value>AAE</value>
+				   <value>AAF</value>
+				   <value>AAJ</value>
+				   <value>ACT</value>
+				   <value>CAR</value>
+				   <value>ENV</value>
+				   <value>EXC</value>
+				   <value>GST</value>
+				   <value>IMP</value>
+				   <value>OIL</value>
+				   <value>OTH</value>
+				   <value>VAT</value>
+				</list>
+			</parameter>
+		</constraint>
+
 		<constraint name="gs1:storageStateCodes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -396,6 +433,26 @@
 				<property name="gs1:dutyFeeTaxCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+				</property>
+				<property name="gs1:dutyFeeTaxRate">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:dutyFeeTaxCategoryCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:dutyFeeTaxCategoryCodes" />
+					</constraints>
 				</property>
 			</properties>
 			<associations>
@@ -643,9 +700,24 @@
 			<overrides />
 			<mandatory-aspects />
 		</aspect>
-
-
-
+		
+		<aspect name="gs1:productActivityDetailsAspect">
+			<properties>
+				<property name="gs1:productActivityTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:productActivityTypeCodes" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
 
 
 		<aspect name="gs1:innerPackAspect">
