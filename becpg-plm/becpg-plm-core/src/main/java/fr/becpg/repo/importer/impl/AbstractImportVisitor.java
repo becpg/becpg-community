@@ -868,8 +868,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	public ImportContext loadMappingColumns(Element mappingElt, List<String> columns, ImportContext importContext) throws MappingException {
 
 		ClassMapping classMapping = importContext.getClassMappings().get(importContext.getType());
-		logger.debug(("Type: " + importContext.getType() + ", find matching class mapping: " + classMapping) != null);
-
+		
 		// check COLUMNS respects the mapping and the class attributes
 		List<AbstractAttributeMapping> columnsAttributeMapping = new ArrayList<>();
 		List<String> unknownColumns = new ArrayList<>();
