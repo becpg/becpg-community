@@ -35,6 +35,7 @@ import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -44,6 +45,7 @@ import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.validator.routines.checkdigit.CheckDigitException;
@@ -53,12 +55,14 @@ import org.springframework.extensions.webscripts.ScriptValueConverter;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.EntityListState;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AutoNumHelper;
@@ -70,6 +74,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.PaginatedSearchCache;
 
 /**
@@ -1171,6 +1176,68 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			return "The node couldn't be converted";
 		}
 		
+	}
+	
+	public String tryErrorVersionConversion(int max) {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		NodeRef rootNode = nodeService.getRootNode(RepoConsts.SPACES_STORE);
+		NodeRef importToDoNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode,RemoteEntityService.FULL_PATH_IMPORT_TO_DO);
+
+		int currentCount = 0;
+		for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(importToDoNodeRef)) {
+			
+			NodeRef childRef = childAssoc.getChildRef();
+			
+			if (entityDictionaryService.isSubClass(nodeService.getType(childRef), BeCPGModel.TYPE_ENTITY_V2)) {
+				tryConversion(sb, childRef);
+				currentCount++;
+			} else {
+				List<ChildAssociationRef> subChilds = nodeService.getChildAssocs(childRef);
+				if (subChilds.isEmpty() && ContentModel.TYPE_FOLDER.equals(nodeService.getType(childRef))) {
+					nodeService.addAspect(childRef, ContentModel.ASPECT_TEMPORARY, null);
+					nodeService.deleteNode(childRef);
+				} else {
+					
+					for (ChildAssociationRef childAssoc2 : subChilds) {
+						
+						NodeRef childRef2 = childAssoc2.getChildRef();
+						
+						if (entityDictionaryService.isSubClass(nodeService.getType(childRef2), BeCPGModel.TYPE_ENTITY_V2)) {
+							tryConversion(sb, childRef2);
+							currentCount++;
+						}
+						
+						if (currentCount >= max) {
+							break;
+						}
+					}
+				}
+			}
+			
+			if (currentCount >= max) {
+				break;
+			}
+		}
+	
+		return sb.toString();
+	}
+
+	private void tryConversion(StringBuilder sb, NodeRef node) {
+		String name = (String) nodeService.getProperty(node, ContentModel.PROP_NAME);
+		try {
+			NodeRef convertedNode = entityFormatService.convertVersionHistoryNodeRef(node);
+			
+			if (convertedNode != null) {
+				String message = "Converted entity '" + name + "', from " + node + " to " + convertedNode + "\n";
+				sb.append(message);
+			}
+		} catch (Throwable t) {
+			sb.append("Error found while converting '" + name + "' (" + node + "), error is : ");
+			sb.append(ExceptionUtils.getStackTrace(t));
+			sb.append("\n");
+		}
 	}
 	
 }
