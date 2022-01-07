@@ -500,14 +500,27 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		String versionLabel = (String) dbNodeService.getProperty(node, BeCPGModel.PROP_VERSION_LABEL);
 		
+		if (versionLabel == null) {
+			versionLabel = (String) dbNodeService.getProperty(node, ContentModel.PROP_VERSION_LABEL);
+		}
+		
+		if (versionLabel == null) {
+			String[] splitted = name.split(RepoConsts.VERSION_NAME_DELIMITER);
+			versionLabel = splitted[splitted.length - 1];
+		}
+		
 		NodeRef parentNode = dbNodeService.getPrimaryParent(node).getParentRef();
 		
 		String parentName = (String) dbNodeService.getProperty(parentNode, ContentModel.PROP_NAME);
 		
 		NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
 		
-		VersionHistory versionHistory = dbNodeService.exists(originalNode) ? versionService.getVersionHistory(originalNode) : null;
+		if (!nodeService.exists(originalNode)) {
+			originalNode = nodeService.getTargetAssocs(node, ContentModel.ASSOC_ORIGINAL).get(0).getTargetRef();
+		}
 		
+		VersionHistory versionHistory = dbNodeService.exists(originalNode) ? versionService.getVersionHistory(originalNode) : null;
+
 		if (versionHistory != null) {
 			NodeRef versionNode = VersionUtil.convertNodeRef(versionHistory.getVersion(versionLabel).getFrozenStateNodeRef());
 			
@@ -547,11 +560,20 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		if (classifyRule != null) {
 			ruleService.disableRule(classifyRule);
 		}
+		NodeRef originalParent = nodeService.getPrimaryParent(toMove).getParentRef();
+		String parentName = (String) nodeService.getProperty(originalParent, ContentModel.PROP_NAME);
 		
 		NodeRef rootNode = nodeService.getRootNode(RepoConsts.SPACES_STORE);
 		NodeRef importToDoNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode,RemoteEntityService.FULL_PATH_IMPORT_TO_DO);
 		
-		nodeService.moveNode(toMove, importToDoNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+		NodeRef newParent = nodeService.getChildByName(importToDoNodeRef, ContentModel.ASSOC_CONTAINS, parentName);
+		
+		if (newParent == null) {
+			newParent = nodeService.createNode(importToDoNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER).getChildRef();
+			nodeService.setProperty(newParent, ContentModel.PROP_NAME, parentName);
+		}
+		
+		nodeService.moveNode(toMove, newParent, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
 		
 		if (classifyRule != null) {
 			ruleService.enableRule(classifyRule);
