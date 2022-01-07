@@ -90,48 +90,59 @@ public class AnnotationMappingLoader implements MappingLoader {
 		List<String> columns = (List<String>) map.get(ImportHelper.PFX_COLUMS);
 		List<List<String>> columnsParams = (List<List<String>>) map.get(ImportHelper.PFX_COLUMNS_PARAMS);
 
+		ClassMapping classMapping = importContext.getClassMappings().get(importContext.getType()) != null
+				? importContext.getClassMappings().get(importContext.getType())
+				: new ClassMapping();
+		classMapping.setType(importContext.getType());
+		importContext.getClassMappings().put(importContext.getType(), classMapping);
+
 		if ((columns != null) && (columnsParams != null)) {
 			for (List<String> annotationMapping : columnsParams) {
 				for (int i = 1; (i < annotationMapping.size()) && (i < columns.size()); i++) {
 					Annotation annotation = (Annotation) parseAnnotation(annotationMapping.get(i));
 					if (annotation != null) {
-						boolean isMissedAssocType = StringUtils.isEmpty(annotation.getType());
 
 						if (StringUtils.isEmpty(annotation.getId())) {
 							annotation.setId(columns.get(i));
 						}
-						if (StringUtils.isEmpty(annotation.getKey())) {
-							annotation.setTargetKey(columns.get(i));
-						}
-						if ((importContext.getType() != null) && StringUtils.isEmpty(annotation.getType())) {
-							annotation.setTargetClass(importContext.getType().toPrefixString());
-						}
+						
+						
+						QName targetClassQName = null;
+						QName targetKey = null;
+						QName columnQname = null;
+						ClassAttributeDefinition attributeDef = null;
+						ClassMapping targetClassMapping = null;
 
-						QName typeQName = QName.createQName(annotation.getType(), namespaceService);
-
-						if ((annotation instanceof Assoc) && isMissedAssocType) {
+						if (!StringUtils.isEmpty(annotation.getType())) {
+							targetClassQName = QName.createQName(annotation.getType(), namespaceService);
+						} else if ((annotation instanceof Assoc)) {
 							AssociationDefinition assocDef = dictionaryService
 									.getAssociation(QName.createQName(annotation.getId(), namespaceService));
 							ClassDefinition typeDef = assocDef.getTargetClass();
-							typeQName = typeDef.getName();
-							annotation.setTargetClass(typeQName.getPrefixString());
+							targetClassQName = typeDef.getName();
+							annotation.setTargetClass(targetClassQName.getPrefixString());
 						}
+						
+						if(!StringUtils.isEmpty(annotation.getKey())) {
+							targetKey = QName.createQName(annotation.getKey(), namespaceService);
+						}
+						
+						
 
 						logger.debug("Parsed Annotation, " + annotation);
-
-						ClassMapping classMapping = importContext.getClassMappings().get(typeQName) != null
-								? importContext.getClassMappings().get(typeQName)
-								: new ClassMapping();
-						classMapping.setType(typeQName);
-						importContext.getClassMappings().put(typeQName, classMapping);
-
-						QName attribute;
-						ClassAttributeDefinition attributeDef;
+						
+						if(targetClassQName!=null) {
+							 targetClassMapping = importContext.getClassMappings().get(targetClassQName) != null
+									? importContext.getClassMappings().get(targetClassQName)
+									: new ClassMapping();
+							targetClassMapping.setType(targetClassQName);
+							importContext.getClassMappings().put(targetClassQName, targetClassMapping);
+						}
 
 						// Charact
 						if (annotation instanceof Charact) {
 							Charact charactAnnot = (Charact) annotation;
-							attribute = QName.createQName(charactAnnot.getDataListAttribute(), namespaceService);
+							columnQname = QName.createQName(charactAnnot.getDataListAttribute(), namespaceService);
 							QName dataListQName = QName.createQName(charactAnnot.getDataListQName(), namespaceService);
 							NodeRef charactNodeRef;
 							String charactNodeRefString = charactAnnot.getCharactNodeRef();
@@ -157,24 +168,31 @@ public class AnnotationMappingLoader implements MappingLoader {
 								throw new MappingException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_UNDEFINED_CHARACT, annotation));
 							}
 
-							attributeDef = dictionaryService.getProperty(attribute);
+							attributeDef = dictionaryService.getProperty(columnQname);
 							if (attributeDef == null) {
-								attributeDef = dictionaryService.getAssociation(attribute);
+								attributeDef = dictionaryService.getAssociation(columnQname);
 							}
 
 							CharacteristicMapping attributeMapping = new CharacteristicMapping(charactAnnot.getId(), attributeDef, dataListQName,
 									charactQName, charactNodeRef);
-							classMapping.getColumns().add(attributeMapping);
+							
+
+							if (targetClassMapping != null) {
+								targetClassMapping.getColumns().add(attributeMapping);
+							} else {
+								classMapping.getColumns().add(attributeMapping);
+							}
 						}
 						// MLText
 						else if (annotation instanceof MLText) {
 							String strAttribute = annotation.getAttribute() != null ? annotation.getAttribute() : annotation.getId().split("_")[0];
-							attribute = QName.createQName(strAttribute, namespaceService);
-							attributeDef = dictionaryService.getProperty(attribute);
+							columnQname = QName.createQName(strAttribute, namespaceService);
+							attributeDef = dictionaryService.getProperty(columnQname);
 							if (attributeDef == null) {
-								attributeDef = dictionaryService.getAssociation(attribute);
+								attributeDef = dictionaryService.getAssociation(columnQname);
 								if (attributeDef == null) {
-									throw new MappingException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_MAPPING_ATTR_FAILED, typeQName, attribute));
+									throw new MappingException(
+											I18NUtil.getMessage(ImportHelper.MSG_ERROR_MAPPING_ATTR_FAILED, targetClassQName, columnQname));
 								}
 							}
 							AttributeMapping attributeMapping = new AttributeMapping(annotation.getId(), attributeDef);
@@ -182,16 +200,17 @@ public class AnnotationMappingLoader implements MappingLoader {
 							classMapping.getColumns().add(attributeMapping);
 
 						} else {
-							String strAttribute = annotation.getKey();
+							String strAttribute = annotation.getId();
 							if (isColumnHasAnnotation(i, "@MLText", columnsParams)) {
 								strAttribute = annotation.getAttribute() != null ? annotation.getAttribute() : annotation.getId().split("_")[0];
 							}
-							attribute = QName.createQName(strAttribute, namespaceService);
-							attributeDef = dictionaryService.getProperty(attribute);
+							columnQname = QName.createQName(strAttribute, namespaceService);
+							attributeDef = dictionaryService.getProperty(columnQname);
 							if (attributeDef == null) {
-								attributeDef = dictionaryService.getAssociation(attribute);
+								attributeDef = dictionaryService.getAssociation(columnQname);
 								if (attributeDef == null) {
-									throw new MappingException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_MAPPING_ATTR_FAILED, typeQName, attribute));
+									throw new MappingException(
+											I18NUtil.getMessage(ImportHelper.MSG_ERROR_MAPPING_ATTR_FAILED, targetClassQName, columnQname));
 								}
 
 							}
@@ -199,36 +218,40 @@ public class AnnotationMappingLoader implements MappingLoader {
 
 						// Node key
 						if (annotation instanceof Key) {
-							classMapping.getNodeColumnKeys().add(attribute);
+							classMapping.getNodeColumnKeys().add(columnQname);
 
 							if (ImportType.EntityListItem.equals(importContext.getImportType()) && (importContext.getEntityType() != null)) {
 								ClassMapping entityClassMapping = importContext.getClassMappings().get(importContext.getEntityType()) != null
 										? importContext.getClassMappings().get(importContext.getEntityType())
 										: new ClassMapping();
 								entityClassMapping.setType(importContext.getEntityType());
-								entityClassMapping.getNodeColumnKeys().add(attribute);
+								entityClassMapping.getNodeColumnKeys().add(targetKey!=null ? targetKey : columnQname );
 								importContext.getClassMappings().put(importContext.getEntityType(), entityClassMapping);
 							}
 						}
-						// Assoc
-						if (annotation instanceof Assoc) {
-							classMapping.getNodeColumnKeys().add(attribute);
-							if (StringUtils.isNotEmpty(((Assoc) annotation).getPath())) {
-								classMapping.getPaths().put(QName.createQName(annotation.getId(), namespaceService), ((Assoc) annotation).getPath());
-							}
-						}
+
 						// NodeListKey
 						if (annotation instanceof DataListKey) {
-							classMapping.getDataListColumnKeys().add(attribute);
+							classMapping.getDataListColumnKeys().add(columnQname);
 						}
-						// Attribute
-						if (annotation instanceof Attribute) {
+
+						// Assoc
+						if ((annotation instanceof Assoc) || (annotation instanceof Attribute)) {
 							AttributeMapping attributeMapping = new AttributeMapping(annotation.getId(), attributeDef);
-							if ((annotation.getType() != null) && !annotation.getType().isEmpty()) {
-								attributeMapping.setTargetClass(QName.createQName(annotation.getType(), namespaceService));
+							if (targetClassQName!=null) {
+								attributeMapping.setTargetClass(targetClassQName);
 							}
 							classMapping.getColumns().add(attributeMapping);
+
+							if (targetClassMapping != null) {
+								targetClassMapping.getNodeColumnKeys().add(targetKey!=null ? targetKey : columnQname);
+								if ((annotation instanceof Assoc) && StringUtils.isNotEmpty(((Assoc) annotation).getPath())) {
+									targetClassMapping.getPaths().put(QName.createQName(annotation.getId(), namespaceService),
+											((Assoc) annotation).getPath());
+								}
+							}
 						}
+
 						// Formula
 						if (annotation instanceof Formula) {
 							AbstractAttributeMapping attributeMapping = new FormulaMapping(annotation.getId(), attributeDef);
@@ -241,7 +264,7 @@ public class AnnotationMappingLoader implements MappingLoader {
 							String[] arrPath = path.split(RepoConsts.PATH_SEPARATOR);
 							Collections.addAll(paths, arrPath);
 
-							PropertyDefinition propertyDefinition = dictionaryService.getProperty(attribute);
+							PropertyDefinition propertyDefinition = dictionaryService.getProperty(columnQname);
 							FileMapping attributeMapping = new FileMapping(((File) annotation).getId(), propertyDefinition, paths);
 							classMapping.getColumns().add(attributeMapping);
 						}
@@ -251,13 +274,13 @@ public class AnnotationMappingLoader implements MappingLoader {
 							ClassAttributeDefinition parentLevelAttributeDef = null;
 							if ((hierarchyAnnot.getParentLevelAttribute() != null) && !hierarchyAnnot.getParentLevelAttribute().isEmpty()) {
 
-								attribute = QName.createQName(hierarchyAnnot.getParentLevelAttribute(), namespaceService);
-								parentLevelAttributeDef = dictionaryService.getProperty(attribute);
+								columnQname = QName.createQName(hierarchyAnnot.getParentLevelAttribute(), namespaceService);
+								parentLevelAttributeDef = dictionaryService.getProperty(columnQname);
 								if (parentLevelAttributeDef == null) {
-									parentLevelAttributeDef = dictionaryService.getAssociation(attribute);
+									parentLevelAttributeDef = dictionaryService.getAssociation(columnQname);
 									if (parentLevelAttributeDef == null) {
 										throw new MappingException(
-												I18NUtil.getMessage(ImportHelper.MSG_ERROR_MAPPING_ATTR_FAILED, typeQName, attribute));
+												I18NUtil.getMessage(ImportHelper.MSG_ERROR_MAPPING_ATTR_FAILED, targetClassQName, columnQname));
 									}
 								}
 							}
