@@ -28,16 +28,20 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
+import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -71,6 +75,9 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	@Autowired
 	private AssociationService associationService;
+	
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
 	
 	@Override
 	public boolean cleanVersions(int maxProcessedNodes) {
@@ -365,6 +372,69 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
 			deleteNode(parentNode);
 			logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantDomain);
+		}
+	}
+	
+	@Override
+	public String tryErrorVersionConversion(int max) {
+		
+		StringBuilder sb = new StringBuilder();
+		
+		NodeRef rootNode = nodeService.getRootNode(RepoConsts.SPACES_STORE);
+		NodeRef importToDoNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode,RemoteEntityService.FULL_PATH_IMPORT_TO_DO);
+
+		int currentCount = 0;
+		for (ChildAssociationRef childAssoc : nodeService.getChildAssocs(importToDoNodeRef)) {
+			
+			NodeRef childRef = childAssoc.getChildRef();
+			
+			if (entityDictionaryService.isSubClass(nodeService.getType(childRef), BeCPGModel.TYPE_ENTITY_V2)) {
+				tryConversion(sb, childRef);
+				currentCount++;
+			} else {
+				List<ChildAssociationRef> subChilds = nodeService.getChildAssocs(childRef);
+				if (subChilds.isEmpty() && ContentModel.TYPE_FOLDER.equals(nodeService.getType(childRef))) {
+					nodeService.addAspect(childRef, ContentModel.ASPECT_TEMPORARY, null);
+					nodeService.deleteNode(childRef);
+				} else {
+					
+					for (ChildAssociationRef childAssoc2 : subChilds) {
+						
+						NodeRef childRef2 = childAssoc2.getChildRef();
+						
+						if (entityDictionaryService.isSubClass(nodeService.getType(childRef2), BeCPGModel.TYPE_ENTITY_V2)) {
+							tryConversion(sb, childRef2);
+							currentCount++;
+						}
+						
+						if (currentCount >= max) {
+							break;
+						}
+					}
+				}
+			}
+			
+			if (currentCount >= max) {
+				break;
+			}
+		}
+	
+		return sb.toString();
+	}
+
+	private void tryConversion(StringBuilder sb, NodeRef node) {
+		String name = (String) nodeService.getProperty(node, ContentModel.PROP_NAME);
+		try {
+			NodeRef convertedNode = entityFormatService.convertVersionHistoryNodeRef(node);
+			
+			if (convertedNode != null) {
+				String message = "Converted entity '" + name + "', from " + node + " to " + convertedNode + "\n";
+				sb.append(message);
+			}
+		} catch (Throwable t) {
+			sb.append("Error found while converting '" + name + "' (" + node + "), error is : ");
+			sb.append(ExceptionUtils.getStackTrace(t));
+			sb.append("\n");
 		}
 	}
 
