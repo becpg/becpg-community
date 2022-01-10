@@ -210,9 +210,15 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_PRODUCTS="ExportProducts"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PRODUCTS = "ExportProducts";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST="ExportRawMaterialIngList"</code> */
-	public static final String PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST = "ExportRawMaterialIngList";
+	public static final String PATH_REPORTS_EXPORT_SEARCH_INGLIST = "ExportIngList";
+	
+	public static final String PATH_REPORTS_EXPORT_SEARCH_LABELCLAIMLIST = "ExportLabelClaimList";
+	
+	public static final String PATH_REPORTS_EXPORT_SEARCH_PHYSICOCHEMICALLIST = "ExportPhysicoChemicalList";
+	
+	
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_INGLABELING="ExportIngLabeling"</code> */
-	public static final String PATH_REPORTS_EXPORT_SEARCH_INGLABELING = "ExportIngLabeling";
+	public static final String PATH_REPORTS_EXPORT_SEARCH_LABELLING = "ExportLabelling";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES="ExportNCSynthesis"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES = "ExportNCSynthesis";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_SUPPLIERS_CONTACTS="ExportSuppliersContacts"</code> */
@@ -221,8 +227,8 @@ public class PlmRepoConsts {
 	public static final String PATH_REPORTS_EXPORT_SEARCH_QUALITY_CONTROLS = "ExportQualityControls";
 	/** Constant <code>PATH_REPORTS_ECO="ECOReports"</code> */
 	public static final String PATH_REPORTS_ECO = "ECOReports";
-	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_PACKAGINGMATERIALS="ExportPackagingMaterials"</code> */
-	public static final String PATH_REPORTS_EXPORT_SEARCH_PACKAGINGMATERIALS= "ExportPackagingMaterials";
+	
+	public static final String PATH_REPORTS_EXPORT_SEARCH_CITEO= "ExportCiteo";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_ALLERGENS="ExportAllergens"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_ALLERGENS= "ExportAllergens";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_NUTRIENTS="ExportNutrients"</code> */
@@ -273,6 +279,7 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_SPECIES_FOR_FISHERY = "SpeciesForFishery";
 	public static final String PATH_GS1_CATCH_METHID_CODES = "CatchMethodCodes";
 	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
+
 
 
 }
