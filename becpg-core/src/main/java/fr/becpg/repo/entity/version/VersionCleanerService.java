@@ -7,5 +7,7 @@ public interface VersionCleanerService {
 	public boolean cleanVersions(int maxProcessedNdoes);
 
 	public void cleanVersionStore();
+
+	public String tryErrorVersionConversion(int max);
 	
 }
