@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2010-2018 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
+<export>
+	<settings>  
+		<setting id="dateFormat" value="yyyy-MM-dd HH:mm:ss"/> 
+		<setting id="datetimeFormat" value="yyyy-MM-dd HH:mm:ss"/> 
+		<!-- <setting id="decimalPattern" value="#0.00"/>-->
+	</settings>
+	<query>
+		<columns>
+			<!-- Node properties -->
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+			<column id="name" attribute="cm:name" type="Attribute" />
+			<column id="description" attribute="cm:description" type="Attribute" />
+			<column id="legalName" attribute="bcpg:legalName" type="Attribute" />			
+			<column id="productHierarchy1" attribute="bcpg:productHierarchy1" type="Attribute" />
+			<column id="productHierarchy2" attribute="bcpg:productHierarchy2" type="Attribute" />
+			<column id="eanCode" attribute="bcpg:eanCode" type="Attribute" />
+			<column id="trademark" attribute="bcpg:trademarkRef" type="Attribute" />
+			<column id="useByDate" attribute="bcpg:useByDate" type="Attribute" />
+			
+			<!-- characteristic properties -->
+<!-- 			<column id="coutMP" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue" -->
+<!-- 				charactNodeRef="" charactName="Coût emb" type="Characteristic" /> -->
+<!-- 			<column id="coutMPPrev" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue" -->
+<!-- 				charactNodeRef="" charactName="Coût prév MP" type="Characteristic" /> -->
+<!-- 			<column id="coutEmb" dataListQName="bcpg:costList" charactQName="bcpg:costListCost" attribute="bcpg:costListValue" -->
+<!-- 				charactNodeRef="" charactName="Coût Emb" type="Characteristic" /> -->
+<!-- 			<column id="nutProteines" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Protéines" type="Characteristic" /> -->
+<!-- 			<column id="nutLipides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Lipides" type="Characteristic" /> -->
+<!-- 			<column id="nutGlucides" dataListQName="bcpg:nutList" charactQName="bcpg:nutListNut" attribute="bcpg:nutListValue" -->
+<!-- 				charactNodeRef="" charactName="Glucides" type="Characteristic" /> -->
+				
+				<!-- files -->
+			<column id="thumbnail" attribute="cm:content" path="Images/produit.jpg" type="File"/>
+		</columns>
+	</query>
+	<nodes>
+		<node id="1" code="22223333" name="Assortment of 10 sushis (4S + 4T + 2D)" description="descr" legalName="Assortment of  10 sushis (4 salmons + 4 tunas + 2 sea breams)"
+			productHierarchy1="hierarchy1.1" productHierarchy2="hierarchy1.2" eanCode="1112222" />
+			
+		<node id="1" code="22223333" name="Assortment of 8 sushis (4S + 4T)" description="descr" legalName="Assortment of  8 sushis (4 salmons + 4 tunas)"
+			productHierarchy1="hierarchy2.1" productHierarchy2="hierarchy2.2" eanCode="1112222"  />
+	</nodes>
+</export>

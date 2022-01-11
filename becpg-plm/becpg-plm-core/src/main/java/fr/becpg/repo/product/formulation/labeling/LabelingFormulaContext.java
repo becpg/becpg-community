@@ -96,6 +96,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	public static final Pattern ALLERGEN_DETECTION_PATTERN = Pattern.compile(
 			"(<\\s*up[^>]*>.*?<\\s*/\\s*up>|<\\s*b[^>]*>.*?<\\s*/\\s*b>|<\\s*u[^>]*>.*?<\\s*/\\s*u>|<\\s*i[^>]*>.*?<\\s*/\\s*i>|[A-Z]{3,}|\\p{Lu}{3,})");
+	
+
+	private static final String UNSUPPORTED_ING_TYPE = "Unsupported ing type. Name: %s";
+	private static final String REMOVING_NULL_QTY = "Removing ing with qty of 0: %s";
 
 	private CompositeLabeling lblCompositeContext;
 
@@ -373,8 +377,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String allergenReplacementPattern = "<b>$1</b>";
 	private String htmlTableRowFormat = "<tr><td style=\"border: solid 1px !important;padding: 5px;\" >{0}</td>"
 			+ "<td style=\"border: solid 1px !important;padding: 5px;\" >{2}</td>"
-			+ "<td style=\"border: solid 1px !important;padding: 5px;text-align:center;\">{1,number,0.#%}</td></tr>";
-
+			+ "<td style=\"border: solid 1px !important;padding: 5px;\" >{3}</td>"
+			+ "<td style=\"border: solid 1px !important;padding: 5px;text-align:center;\">{1,number,0.#%}</td>"
+			+ "<td style=\"border: solid 1px !important;padding: 5px;text-align:center;\">{4,number,0.#%}</td></tr>";
+	private String htmlTableHeaderFormat = "<thead><tr><th style=\"border: solid 1px !important;padding: 5px;\" >{0}</th>"
+			+ "<th style=\"border: solid 1px !important;padding: 5px;\" >{2}</th>"
+			+ "<th style=\"border: solid 1px !important;padding: 5px;\" >{3}</th>"
+			+ "<th style=\"border: solid 1px !important;padding: 5px;text-align:center;\">{1}</th>"
+			+ "<th style=\"border: solid 1px !important;padding: 5px;text-align:center;\">{4}</th></tr></thead>";
+	
+	
 	private String defaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String atEndSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String groupDefaultSeparator = RepoConsts.LABEL_SEPARATOR;
@@ -972,6 +984,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		return ingLegalName;
 	}
+	
+	private boolean showPerc(LabelingComponent lblComponent) {
+			return showAllPerc!=null && showAllPerc.matchLocale(I18NUtil.getLocale())  || lblComponent!=null &&  showPercRules.containsKey(lblComponent.getNodeRef());
+	}
 
 	private Pair<DecimalFormat, RoundingMode> getDecimalFormat(LabelingComponent lblComponent, Double qty) {
 		DecimalFormat decimalFormat = null;
@@ -1365,7 +1381,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String renderAsHtmlTable() {
-		return renderAsHtmlTable("border-collapse:collapse", false);
+		return renderAsHtmlTable(null, false);
 	}
 
 	/**
@@ -1383,8 +1399,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return renderAsHtmlTable(styleCss, showTotal, false);
 	}
 
-	private static String UNSUPPORTED_ING_TYPE = "Unsupported ing type. Name: %s";
-	private static String REMOVING_NULL_QTY = "Removing ing with qty of 0: %s";
 
 	/**
 	 * <p>
@@ -1404,15 +1418,28 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		StringBuilder tableContent = new StringBuilder();
 
 		BigDecimal total = BigDecimal.valueOf(0d);
+		BigDecimal totalWithYield = BigDecimal.valueOf(0d);
 
-		ret.append("<table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"" + styleCss + "\" rules=\"none\">");
+		ret.append("<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\"" + (styleCss == null || (styleCss).isBlank() ? "border-collapse:collapse" : styleCss ) + "\" rules=\"none\">");
+		
+		if(htmlTableHeaderFormat != null && !htmlTableHeaderFormat.isBlank()) {
+			ret.append(new MessageFormat(htmlTableHeaderFormat, I18NUtil.getContentLocale())
+			.format(new Object[] {I18NUtil.getMessage("bcpg_bcpgmodel.association.bcpg_ingListIng.title"),
+					I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPerc.title"),
+					I18NUtil.getMessage("bcpg_bcpgmodel.association.bcpg_ingListGeoOrigin.title"),
+					I18NUtil.getMessage("bcpg_bcpgmodel.association.bcpg_ingListBioOrigin.title"),
+					I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPercWithYield.title")}));
+		}
 
+		ret.append("<tbody>");
+		
 		boolean first = true;
 		String firstLabel = "";
 		Double firstQtyPerc = 0d;
 		Double firstQtyPercWithYield = 0d;
 		String firstGeo = "";
 		String firstBio = "";
+		boolean showFirstPerc = false;
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(lblCompositeContext).entrySet()) {
 
 			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
@@ -1445,8 +1472,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				if ((subLabel != null) && !subLabel.isEmpty()) {
 
+					boolean showPerc = showPerc(kv.getKey());
 					if (first) {
-
+						showFirstPerc = showPerc;
 						first = false;
 						firstLabel = subLabel;
 						firstQtyPerc = qtyPerc;
@@ -1454,12 +1482,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						firstGeo = geoOriginsLabel != null ? geoOriginsLabel : "";
 						firstBio = bioOriginsLabel != null ? bioOriginsLabel : "";
 					} else {
+						
+						
 						tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), qtyPerc)
-								.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "",
-										bioOriginsLabel != null ? bioOriginsLabel : "", qtyPercWithYield }));
+								.format(new Object[] { decorate(subLabel), showPerc ? qtyPerc: null, geoOriginsLabel != null ? decorate(geoOriginsLabel) : "",
+										bioOriginsLabel != null ? decorate(bioOriginsLabel) : "", showPerc ? qtyPercWithYield :null}));
 					}
 					if (qtyPerc != null) {
 						total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
+					}
+					if(qtyPercWithYield!=null) {
+						totalWithYield = totalWithYield.add(roundeedValue(qtyPercWithYield, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
+						
 					}
 
 				}
@@ -1481,6 +1515,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 					qtyPercWithYield = (useVolume ? volumePercWithYield : qtyPercWithYield);
+					
+					
 
 					if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 
@@ -1498,9 +1534,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						} else {
 							logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
 						}
+						
+						boolean showPerc = showPerc(component);
 
 						if ((subLabel != null) && !subLabel.isEmpty()) {
 							if (first) {
+								showFirstPerc = showPerc;
 								first = false;
 								firstLabel = subLabel;
 								firstQtyPerc = qtyPerc;
@@ -1508,13 +1547,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								firstGeo = geoOriginsLabel != null ? geoOriginsLabel : "";
 								firstBio = bioOriginsLabel != null ? bioOriginsLabel : "";
 							} else {
+								
+								
+								
 								tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), qtyPerc)
-										.format(new Object[] { subLabel, qtyPerc, geoOriginsLabel != null ? geoOriginsLabel : "",
-												bioOriginsLabel != null ? bioOriginsLabel : "", qtyPercWithYield }));
+										.format(new Object[] { decorate(subLabel), showPerc ? qtyPerc : null, geoOriginsLabel != null ? decorate(geoOriginsLabel) : "",
+												bioOriginsLabel != null ? decorate(bioOriginsLabel) : "",  showPerc ?  qtyPercWithYield : null }));
 							}
 
 							if (qtyPerc != null) {
 								total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
+							}
+							if(qtyPercWithYield!=null) {
+								totalWithYield = totalWithYield.add(roundeedValue(qtyPercWithYield, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
+								
 							}
 						}
 
@@ -1532,6 +1578,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
 
 			total = BigDecimal.valueOf(1d);
+			totalWithYield = BigDecimal.valueOf(1d);
 
 			firstQtyPerc = roundeedValue(firstQtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())).add(diffValue)
 					.doubleValue();
@@ -1540,21 +1587,21 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					.doubleValue();
 
 			ret.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()))
-					.format(new Object[] { firstLabel, firstQtyPerc, firstGeo, firstBio, firstQtyPercWithYield }));
+					.format(new Object[] { decorate(firstLabel), showFirstPerc ? firstQtyPerc : null, decorate(firstGeo), decorate(firstBio), showFirstPerc ?  firstQtyPercWithYield :null }));
 		} else {
 			ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), firstQtyPerc)
-					.format(new Object[] { firstLabel, firstQtyPerc, firstGeo, firstBio, firstQtyPercWithYield }));
+					.format(new Object[] { decorate(firstLabel), showFirstPerc ? firstQtyPerc : null, decorate(firstGeo), decorate(firstBio), showFirstPerc ? firstQtyPercWithYield :null }));
 		}
 
 		ret.append(tableContent);
 
 		if (showTotal && (total.doubleValue() > 0)) {
 			ret.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()))
-					.format(new Object[] { "<b>" + I18NUtil.getMessage("entity.datalist.item.details.total") + "</b>", total.doubleValue(), "" }));
+					.format(new Object[] { "<b>" + I18NUtil.getMessage("entity.datalist.item.details.total") + "</b>", total.doubleValue(), "","",totalWithYield.doubleValue() }));
 		}
 
-		ret.append("</table>");
-		return decorate(ret.toString());
+		ret.append("</tbody></table>");
+		return ret.toString().replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replace(">null<", "><");
 
 	}
 
@@ -2288,8 +2335,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 			}
 
-			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replaceAll(":,", ",").replaceAll(":$", "").replaceAll(">null<", "><")
-					.replaceAll("  ", "").trim();
+			return input.replaceAll(" null| \\(null\\)| \\(\\)| \\[null\\]", "").replace(":,", ",").replaceAll(":$", "").replace(">null<", "><")
+					.replace("  ", "").trim();
 		}
 		return "";
 	}
@@ -2378,12 +2425,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		Map<IngTypeItem, List<LabelingComponent>> tmp = new LinkedHashMap<>();
 
 		boolean keepOrder = false;
-		for (LabelingComponent lblComponent : compositeLabeling.getIngList().values()) {
-			IngTypeItem ingType = null;
-
-			if (lblComponent instanceof CompositeLabeling) {
-				ingType = ((CompositeLabeling) lblComponent).getIngType();
-			}
+		for (CompositeLabeling lblComponent : compositeLabeling.getIngList().values()) {
+			IngTypeItem ingType =  lblComponent.getIngType();
+			
 
 			if (aggregateRules.containsKey(lblComponent.getNodeRef())) {
 				for (AggregateRule aggregateRule : aggregateRules.get(lblComponent.getNodeRef())) {
@@ -2433,7 +2477,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				keepOrder = true;
 			}
 
-			if ((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).isGroup()) {
+			if ((lblComponent instanceof CompositeLabeling) &&  lblComponent.isGroup()) {
 				ingType = IngTypeItem.DEFAULT_GROUP;
 			} else if (shouldBreakIngType && (ingType != null)) {
 

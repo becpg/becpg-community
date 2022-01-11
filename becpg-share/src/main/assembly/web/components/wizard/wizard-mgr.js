@@ -21,7 +21,6 @@
 	beCPG.component.WizardMgr = function WizardMgr_constructor(htmlId)
 	{
 		beCPG.component.WizardMgr.superclass.constructor.call(this, "beCPG.component.WizardMgr", htmlId);
-		
 
 		Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
 		return this;
@@ -51,17 +50,7 @@
 
 					 draft : false,
 					 
-					 wizardStruct : [],
-				
-			         divRight: "alf-filters",
-			   
-			         divLeft: "alf-content",
-			   
-			         documentHeight: -1,
-			         
-			         initialWidth: null,
-
-					 createResizer : false
+					 wizardStruct : []
 				 },
 
 				 /**
@@ -73,61 +62,6 @@
 				 onReady : function WizardMgr_onReady()
 				 {
 					 var me = this;
-				
-					if(this.options.createResizer){
-					     //Resizer
-				        // Horizontal Resizer
-				         this.widgets.horizResize = new YAHOO.util.Resize(this.options.divRight,
-				         {
-				            handles: ["l"],
-				            minWidth: 300,
-				            maxWidth: 500
-				         });
-				
-				         // Before and End resize event handlers
-				         this.widgets.horizResize.on("beforeResize", function(eventTarget)
-				         {
-				            this.onResize(eventTarget.width);
-				         }, this, true);
-				         this.widgets.horizResize.on("endResize", function(eventTarget)
-				         {
-				            this.onResize(eventTarget.width);
-				         }, this, true);
-				
-				         // Recalculate the vertical size on a browser window resize event
-				         YAHOO.util.Event.on(window, "resize", function(e)
-				         {
-				            this.onResize();
-				         }, this, true);
-				
-				         // Monitor the document height for ajax updates
-				         this.options.documentHeight = Dom.getXY("alf-ft")[1];
-				
-				         YAHOO.lang.later(1000, this, function()
-				         {
-				            var h = Dom.getXY("alf-ft")[1];
-				            if (Math.abs(this.options.documentHeight - h) > 4)
-				            {
-				               this.options.documentHeight = h;
-				               this.onResize();
-				            }
-				         }, null, true);
-				
-				         // Initial size
-				         var width = (this.options.initialWidth ? this.options.initialWidth : 300);
-				         if (YAHOO.env.ua.ie > 0)
-				         {
-				            this.widgets.horizResize.resize(null, this.widgets.horizResize.get("element").offsetHeight, width, 0, 0, true);
-				         }
-				         else
-				         {
-				            this.widgets.horizResize.resize(null, this.widgets.horizResize.get("height"), width, 0, 0, true);
-				         }
-				
-				         this.onResize(width);
-					}
-
-					// End Resizer
 					 
 					 
 					 if(Dom.get(this.id+'-tabview')!=null){
@@ -138,7 +72,7 @@
 					 this.widgets.wizard = jQuery("#" + this.id + "-wizard")
 					 .steps(
 							 {
-								 stepsOrientation : "horizontal",
+								 stepsOrientation : "vertical",
 								 enableCancelButton : true,
 								 showFinishButtonAlways : this.options.draft,
 								 enableKeyNavigation : false,
@@ -409,7 +343,7 @@
 								 "&formId={formId}" +
 								 "&itemId={itemId}" +
 								 "&itemKind={itemKind}" + 
-								 "&mode={mode}&submitType=json&showCancelButton=false&showSubmitButton=true&showToc=true",
+								 "&mode={mode}&submitType=json&showCancelButton=false&showSubmitButton=true",
 								 {
 									 mode:  (step.nodeRef != null && step.nodeRef.length > 0) ? "edit" : "create",
 											 itemKind : (step.nodeRef != null && step.nodeRef.length > 0) ?"node" : "type",
@@ -548,51 +482,7 @@
 					 }
 
 
-				 },
-			  /**
-		       * Fired by via resize event listener.
-		       *
-		       * @method onResize
-		       */
-	      onResize: function Resizer_onResize(width)
-	      {
-	         var cn = Dom.get(this.options.divRight).childNodes,
-	            handle = cn[cn.length - 1];
-	
-	         Dom.setStyle(this.options.divRight, "height", "auto");
-	         Dom.setStyle(handle, "height", "");
-	
-	         var h = Dom.getXY("alf-ft")[1] - Dom.getXY("alf-hd")[1] - Dom.get("alf-hd").offsetHeight;
-	
-	         if (YAHOO.env.ua.ie === 6)
-	         {
-	            var hd = Dom.get("alf-hd"), tmpHeight = 0;
-	            for (var i = 0, il = hd.childNodes.length; i < il; i++)
-	            {
-	               tmpHeight += hd.childNodes[i].offsetHeight;
-	            }
-	            h = Dom.get("alf-ft").parentNode.offsetTop - tmpHeight;
-	         }
-	         if (h < 500)
-	         {
-	            h = 500;
-	         }
-	
-	         Dom.setStyle(handle, "height", h + "px");
-	
-	         if (width !== undefined)
-	         {
-	            // 8px breathing space for resize gripper
-	            Dom.setStyle(this.options.divLeft, "margin-right", 8 + width + "px");
-	         }
-	
-	         YAHOO.Bubbling.fire("resizerChanged",
-	         {
-	             width: width
-	         });
-	
-	      }
-				
+				 }
 
 
 			});

@@ -22,6 +22,7 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.activities.ActivityService;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -78,6 +79,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	public static final int ML_TEXT_SIZE_LIMIT = 200;
 
+	private static final String EXPORT_ACTIVITY = "fr.becpg.export";
+	
 	private static final Map<String, Boolean> SORT_MAP;
 	static {
 		SORT_MAP = new LinkedHashMap<>();
@@ -131,6 +134,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Autowired
 	private BatchQueueService batchQueueService;
+	
+	@Autowired
+	private ActivityService activityService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -1317,6 +1323,64 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public void postExportActivity(NodeRef entityNodeRef, QName dataType, String fileName) {
 	   logger.info("Exporting:"+ fileName+ " "+ dataType+ " "+ entityNodeRef+ " "+ AuthenticationUtil.getFullyAuthenticatedUser());
 		
+	   if (entityNodeRef != null) {
+		   postEntityExportActivity(entityNodeRef, dataType, fileName);
+	   } else {
+			postAlfrescoExportActivity(fileName);
+	   }
+	}
+
+	private void postAlfrescoExportActivity(String fileName) {
+		JSONObject data = new JSONObject();
+
+		try {
+			data.put("title", fileName);
+		} catch (JSONException e) {
+			logger.error(e.getMessage(), e);
+		}
+
+		activityService.postActivity(EXPORT_ACTIVITY, null, "export", data.toString());
+	}
+
+	private void postEntityExportActivity(NodeRef entityNodeRef, QName dataType, String fileName) {
+		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+
+			// No list no activity
+			if (activityListNodeRef != null) {
+
+				NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+				NodeRef datalistNodeRef = null;
+				
+				if (listContainerNodeRef != null) {
+					datalistNodeRef = entityListDAO.getList(listContainerNodeRef, dataType);
+				}
+				
+				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
+				// Don't save System activities
+				if (!AuthenticationUtil.getSystemUserName().equals(activityListDataItem.getUserId())) {
+					JSONObject data = new JSONObject();
+
+					data.put(PROP_TITLE, fileName);
+					data.put(PROP_CLASSNAME, attributeExtractorService.extractMetadata(dataType, datalistNodeRef));
+
+					activityListDataItem.setActivityType(ActivityType.Export);
+					activityListDataItem.setActivityData(data.toString());
+					activityListDataItem.setParentNodeRef(activityListNodeRef);
+
+					alfrescoRepository.save(activityListDataItem);
+
+					notifyListeners(entityNodeRef, activityListDataItem);
+
+				}
+			}
+		} catch (JSONException e) {
+			logger.error(e, e);
+		} finally {
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
 	}
 
 }
