@@ -55,9 +55,7 @@
 				  <#if item??>
 				    <#if item.kind == "set">
 				     <#if item.appearance?? && item.appearance == "bordered-panel" >
-				   		 <#if !isHiddenSet(item)>
-							<li class="form-toc-item"><a href="#set-${item.id}"><h2 class="alfresco-twister alfresco-twister-closed">${item.label}</h2></a></li>
-						 </#if>
+						<li class="form-toc-item"><a href="#set-${item.id}"><h2 class="alfresco-twister alfresco-twister-closed">${item.label}</h2></a></li>
 				      </#if>
 				     </#if>
 				  </#if>	
@@ -183,7 +181,7 @@
 		      <#if set.appearance == "fieldset">
 		         <fieldset><legend>${set.label}</legend>
 		      <#elseif set.appearance == "bordered-panel">
-		         <div class="set-bordered-panel" id="set-${set.id}">
+		         <div class="set-bordered-panel" id="#set-${set.id}">
 		            <div class="set-bordered-panel-heading">${set.label}</div>
 		            <div class="set-bordered-panel-body">
 		      <#elseif set.appearance == "panel">
@@ -244,7 +242,7 @@
 		      <#if set.appearance == "fieldset">
 		         <fieldset><legend>${set.label}</legend>
 		      <#elseif set.appearance == "bordered-panel">
-		         <div class="set-bordered-panel" id="set-${set.id}">
+		         <div class="set-bordered-panel" id="#set-${set.id}">
 		            <div class="set-bordered-panel-heading">${set.label}</div>
 		            <div class="set-bordered-panel-body">
 		      <#elseif set.appearance == "panel">
