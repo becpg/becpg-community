@@ -29,7 +29,7 @@ public class BeCPGIntegrityChecker extends IntegrityChecker {
 	private static final String MSG_INTEGRITY_CONSTRAINT = "integrity-checker.constraint-error";
 
 	/** Constant <code>targetNodeRefRegex</code> */
-	public final static Pattern targetNodeRefRegex = Pattern.compile("   Source Node: (.*)", Pattern.MULTILINE);
+	public static final  Pattern targetNodeRefRegex = Pattern.compile("   Source Node: (.*)", Pattern.MULTILINE);
 
 	private EntityDictionaryService entityDictionaryService;
 
@@ -94,15 +94,15 @@ public class BeCPGIntegrityChecker extends IntegrityChecker {
 
 			StringBuilder sb = new StringBuilder();
 			boolean isConstraint = false;
-			boolean isDelete = true;
-			for (IntegrityRecord record : records) {
-				if (record.getMessage().contains("Constraint:")) {
+			boolean isDelete = false;
+			for (IntegrityRecord integrityRecord : records) {
+				if (integrityRecord.getMessage().contains("Constraint:")) {
 					isConstraint = true;
-				} else if(record.getMessage().contains("The association target multiplicity has been violated")) {
+				} else if(integrityRecord.getMessage().contains("The association target multiplicity has been violated")) {
 					isDelete = true;
 				}
 
-				String message = decorate(record.getMessage());
+				String message = decorate(integrityRecord.getMessage());
 				newRecords.add(new IntegrityRecord(message));
 				sb.append("\n").append(message);
 
