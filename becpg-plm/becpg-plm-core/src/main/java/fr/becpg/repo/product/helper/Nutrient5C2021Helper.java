@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.helper;
 
 import java.util.List;
+import java.util.Map;
 
 import fr.becpg.model.NutrientProfileCategory;
 
@@ -86,135 +87,132 @@ public class Nutrient5C2021Helper {
 	 */
 	public static int compute5CScore(Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
 			Double nspFibre, Double aoacFibre, Double protein, String category) {
-
-		int aScore = 0;
-		int cScore = 0;
-		int score = 10;
-
-//		les arrondis sont déja effectués
-		
-		double[][] aCategories = getACategory(NutrientProfileCategory.valueOf(category));
-		double[][] cCategories = getCCategory(NutrientProfileCategory.valueOf(category));
-
-		if (energyKj != null) {
-
-			for (double val : aCategories[0]) {
-				if ((energyKj > val) && (val > 0)) {
-					break;
-				}
-				score--;
-			}
-			aScore += score;
-		}
-
-		if (NutrientProfileCategory.Fats.equals(NutrientProfileCategory.valueOf(category))) {
-			if ((satFat != null) && (totalFat != null)) {
-				score = 10;
-				for (double val : aCategories[1]) {
-					double rounded = ((satFat / totalFat) * 100);
-					
-					if (((rounded > val) || (score == 10 && rounded == val))) {
-						break;
-					}
-					score--;
-				}
-				
-				
-				aScore += score;
-			}
-		} else if (satFat != null) {
-			score = 10;
-			for (double val : aCategories[1]) {
-				if ((satFat > val) && (val > 0)) {
-					break;
-				}
-				score--;
-			}
-
-			aScore += score;
-		}
-
-		if (totalSugar != null) {
-			score = 10;
-			for (double val : aCategories[2]) {
-				if ((totalSugar > val) && (val > 0)) {
-					break;
-				}
-				score--;
-			}
-
-			aScore += score;
-		}
-
-		if (sodium != null) {
-			score = 10;
-			for (double val : aCategories[3]) {
-				if ((sodium > val) && (val > 0)) {
-					break;
-				}
-				score--;
-			}
-
-			aScore += score;
-		}
-
-		if (percFruitsAndVetgs != null) {
-			score = 10;
-			for (double val : cCategories[0]) {
-				if ((percFruitsAndVetgs > val) && (val > 0)) {
-					break;
-				}
-				score--;
-			}
-			cScore += score;
-		}
-
-		if ((aScore < 11) || NutrientProfileCategory.Cheeses.equals(NutrientProfileCategory.valueOf(category))
-				|| ((aScore >= 11) && (cScore >= 5) && !NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))
-				|| ((aScore >= 11) && (cScore >= 10) && NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))) {
-			if (protein != null) {
-				score = 5;
-				for (double val : cCategories[3]) {
-					if ((protein > val) && (val > 0)) {
-						break;
-					}
-					score--;
-				}
-				cScore += score;
-			}
-
-		}
-
-		if (nspFibre != null) {
-			score = 5;
-			for (double val : cCategories[1]) {
-				if ((nspFibre > val) && (val > 0)) {
-					break;
-				}
-				score--;
-			}
-			cScore += score;
-		}
-
-		if (aoacFibre != null) {
-			score = 5;
-			for (double val : cCategories[2]) {
-				if (aoacFibre > val && (val > 0)) {
-					break;
-				}
-				score--;
-			}
-			cScore += score;
-		}
-
-		return aScore - cScore;
-
+		return compute5CScore(energyKj, satFat, totalFat, totalSugar, sodium, percFruitsAndVetgs, nspFibre, aoacFibre, protein, category, null);
 	}
 
 	
 	
 	
 	
+	public static int compute5CScore(Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
+				Double nspFibre, Double aoacFibre, Double protein, String category, Map<Double, double[]> resultMap) {
+	
+			int aScore = 0;
+			int cScore = 0;
+	
+	//		les arrondis sont déja effectués
+			
+			double[][] aCategories = getACategory(NutrientProfileCategory.valueOf(category));
+			double[][] cCategories = getCCategory(NutrientProfileCategory.valueOf(category));
+	
+			if (energyKj != null) {
+				
+				double[] scoreDetails = getScoreDetails(energyKj, 10, aCategories[0]);
+				
+				aScore += (int) scoreDetails[0];
+	
+				if (resultMap != null) {
+					resultMap.put(energyKj, scoreDetails);
+				}
+			}
+	
+			if (NutrientProfileCategory.Fats.equals(NutrientProfileCategory.valueOf(category))) {
+				if ((satFat != null) && (totalFat != null)) {
+					
+					double[] scoreDetails = getTotalFatScoreDetails(totalFat, satFat, 10, aCategories[1]);
+					
+					aScore += (int) scoreDetails[0];
+					
+					if (resultMap != null) {
+						resultMap.put(totalFat, scoreDetails);
+					}
+				}
+			} else if (satFat != null) {
+				
+				double[] scoreDetails = getScoreDetails(satFat, 10, aCategories[1]);
+				
+				aScore += (int) scoreDetails[0];
+				
+				if (resultMap != null) {
+					resultMap.put(satFat, scoreDetails);
+				}
+			}
+	
+			if (totalSugar != null) {
+	
+				double[] scoreDetails = getScoreDetails(totalSugar, 10, aCategories[2]);
+				
+				aScore += (int) scoreDetails[0];
+				
+				if (resultMap != null) {
+					resultMap.put(totalSugar, scoreDetails);
+				}
+			}
+	
+			if (sodium != null) {
+				
+				double[] scoreDetails = getScoreDetails(sodium, 10, aCategories[3]);
+				
+				aScore += (int) scoreDetails[0];
+				
+				if (resultMap != null) {
+					resultMap.put(sodium, scoreDetails);
+				}
+			}
+	
+			if (percFruitsAndVetgs != null) {
+				
+				double[] scoreDetails = getScoreDetails(percFruitsAndVetgs, 10, cCategories[0]);
+				
+				cScore += (int) scoreDetails[0];
+				
+				if (resultMap != null) {
+					resultMap.put(percFruitsAndVetgs, scoreDetails);
+				}
+			}
+	
+			if ((aScore < 11) || NutrientProfileCategory.Cheeses.equals(NutrientProfileCategory.valueOf(category))
+					|| ((aScore >= 11) && (cScore >= 5) && !NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))
+					|| ((aScore >= 11) && (cScore >= 10) && NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))) {
+				if (protein != null) {
+					
+					double[] scoreDetails = getScoreDetails(protein, 5, cCategories[3]);
+					
+					cScore += (int) scoreDetails[0];
+					
+					if (resultMap != null) {
+						resultMap.put(protein, scoreDetails);
+					}
+				}
+	
+			}
+	
+			if (nspFibre != null) {
+				
+				double[] scoreDetails = getScoreDetails(nspFibre, 5, cCategories[1]);
+				
+				cScore += (int) scoreDetails[0];
+				
+				if (resultMap != null) {
+					resultMap.put(nspFibre, scoreDetails);
+				}
+			}
+	
+			if (aoacFibre != null) {
+				
+				double[] scoreDetails = getScoreDetails(aoacFibre, 5, cCategories[2]);
+				
+				cScore += (int) scoreDetails[0];
+				
+				if (resultMap != null) {
+					resultMap.put(aoacFibre, scoreDetails);
+				}
+			}
+	
+			return aScore - cScore;
+	
+		}
+
 	/**
 	 * <p>buildNutrientClass.</p>
 	 *
@@ -224,16 +222,99 @@ public class Nutrient5C2021Helper {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public static String buildNutrientClass(Double score, List<Double> ranges, List<String> clazz) {
+		return buildNutrientClass(score, ranges, clazz, null);
+	}
+	
+	public static String buildNutrientClass(Double score, List<Double> ranges, List<String> clazz, double[] minMax) {
 		if (score != null) {
+			if (minMax != null) {
+				minMax[1] = Integer.MAX_VALUE;
+			}
 			for (int i = 0; i < ranges.size(); i++) {
+				if (minMax != null) {
+					minMax[0] = ranges.get(i);
+				}
 				if (score > ranges.get(i)) {
 					return clazz.get(i);
 				}
+				if (minMax != null) {
+					minMax[1] = ranges.get(i);
+				}
 			}
+			
+			if (minMax[0] == minMax[1]) {
+				minMax[0] = Integer.MIN_VALUE;
+			}
+			
 			return clazz.get(clazz.size() - 1);
 		}
 		return null;
 
+	}
+
+	public static double[] getScoreDetails(Double value, int score, double[] categories) {
+		double[] result = new double[3];
+		
+		double min = 0;
+		double max = Integer.MAX_VALUE;
+		
+		for (double val : categories) {
+			
+			min = val;
+			
+			if ((value > val) && (val > 0)) {
+				break;
+			}
+			
+			if (val > 0) {
+				max = val;
+			}
+			
+			score--;
+		}
+		
+		if (min == max) {
+			min = 0;
+		}
+		
+		result[0] = score;
+		result[1] = min;
+		result[2] = max;
+		
+		return result;
+	}
+	
+	public static double[] getTotalFatScoreDetails(Double totalFat, Double satFat, int score, double[] categories) {
+		double[] result = new double[4];
+		
+		double min = 0;
+		double max = Integer.MAX_VALUE;
+		double rounded = ((satFat / totalFat) * 100);
+
+		for (double val : categories) {
+			
+			min = val;
+
+			if (((rounded > val) || (score == 10 && rounded == val))) {
+				break;
+			}
+			
+			if (val > 0) {
+				max = val;
+			}
+			score--;
+		}
+		
+		if (min == max) {
+			min = 0;
+		}
+		
+		result[0] = score;
+		result[1] = min;
+		result[2] = max;
+		result[3] = rounded;
+		
+		return result;
 	}
 
 }

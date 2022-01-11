@@ -20,12 +20,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValuePage;
@@ -44,9 +44,6 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 	@Autowired
 	private NodeService nodeService;
-
-	@Autowired
-	private EntityDictionaryService entityDictionaryService;
 
 	private String agribaliseDBPath;
 	private String countryScoreDBPath;
@@ -284,26 +281,44 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 			}
 
-			JSONObject ecoScoreClass = new JSONObject();
+			productData.setEcoScore(ecoScore * 1d);
+			
+			String scoreClass = computeScoreClass(ecoScore);
+			
+			productData.setEcoScoreClass(scoreClass);
+			
+			JSONObject ecoScoreDetails = new JSONObject();
 			
 			try {
-				ecoScoreClass.put("ecoScore", ecoScore);
-				ecoScoreClass.put("scoreClass", computeScoreClass(ecoScore));
-				ecoScoreClass.put("acvScore", acvScore);
-				ecoScoreClass.put("claimBonus", claimBonus);
-				ecoScoreClass.put("transportScore", transportScore);
-				ecoScoreClass.put("politicalScore", politicalScore);
-				ecoScoreClass.put("packagingMalus", packagingMalus);
+				
+				StringBuilder sb = new StringBuilder();
+				
+				sb.append(I18NUtil.getMessage("ecoscore.score")).append(" = ").append(ecoScore).append(System.lineSeparator())
+				.append(I18NUtil.getMessage("ecoscore.class")).append(" = ").append(scoreClass).append(System.lineSeparator())
+				.append(I18NUtil.getMessage("ecoscore.acvScore")).append(" = ").append(acvScore).append(System.lineSeparator())
+				.append(I18NUtil.getMessage("ecoscore.claimBonus")).append(" = ").append(claimBonus).append(System.lineSeparator())
+				.append(I18NUtil.getMessage("ecoscore.transportScore")).append(" = ").append(transportScore).append(System.lineSeparator())
+				.append(I18NUtil.getMessage("ecoscore.politicalScore")).append(" = ").append(politicalScore).append(System.lineSeparator())
+				.append(I18NUtil.getMessage("ecoscore.packagingMalus")).append(" = ").append(packagingMalus).append(System.lineSeparator());
+				
+				ecoScoreDetails.put("prettyScore", sb.toString());
+				ecoScoreDetails.put("ecoScore", ecoScore);
+				ecoScoreDetails.put("scoreClass", scoreClass);
+				ecoScoreDetails.put("acvScore", acvScore);
+				ecoScoreDetails.put("claimBonus", claimBonus);
+				ecoScoreDetails.put("transportScore", transportScore);
+				ecoScoreDetails.put("politicalScore", politicalScore);
+				ecoScoreDetails.put("packagingMalus", packagingMalus);
 			} catch (JSONException e) {
 				logger.error(e.getMessage(), e);
 			}
 			
-			productData.setEcoScore(ecoScore * 1d);
-			productData.setEcoScoreClass(ecoScoreClass.toString());
+			productData.setEcoScoreDetails(ecoScoreDetails.toString());
 			
 		} else {
 			productData.setEcoScore(null);
 			productData.setEcoScoreClass(null);
+			productData.setEcoScoreDetails(null);
 		}
 
 		return true;
