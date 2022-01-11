@@ -66,8 +66,7 @@ function main() {
          destination :  (page.url.args.destination != null) ? page.url.args.destination : "",
          nodeRef :  (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
          draft : model.draft, 
-         wizardStruct : wizardStruct,
-		 createResizer: model.comments || (page.url.args.catalogId != null && page.url.args.nodeRef != null)
+         wizardStruct : wizardStruct
       }
    };
    model.widgets = [widget];
