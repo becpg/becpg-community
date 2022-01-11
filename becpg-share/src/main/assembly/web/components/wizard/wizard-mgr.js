@@ -59,9 +59,7 @@
 			   
 			         documentHeight: -1,
 			         
-			         initialWidth: null,
-
-					 createResizer : false
+			         initialWidth: null
 				 },
 
 				 /**
@@ -74,58 +72,56 @@
 				 {
 					 var me = this;
 				
-					if(this.options.createResizer){
-					     //Resizer
-				        // Horizontal Resizer
-				         this.widgets.horizResize = new YAHOO.util.Resize(this.options.divRight,
-				         {
-				            handles: ["l"],
-				            minWidth: 300,
-				            maxWidth: 500
-				         });
-				
-				         // Before and End resize event handlers
-				         this.widgets.horizResize.on("beforeResize", function(eventTarget)
-				         {
-				            this.onResize(eventTarget.width);
-				         }, this, true);
-				         this.widgets.horizResize.on("endResize", function(eventTarget)
-				         {
-				            this.onResize(eventTarget.width);
-				         }, this, true);
-				
-				         // Recalculate the vertical size on a browser window resize event
-				         YAHOO.util.Event.on(window, "resize", function(e)
-				         {
-				            this.onResize();
-				         }, this, true);
-				
-				         // Monitor the document height for ajax updates
-				         this.options.documentHeight = Dom.getXY("alf-ft")[1];
-				
-				         YAHOO.lang.later(1000, this, function()
-				         {
-				            var h = Dom.getXY("alf-ft")[1];
-				            if (Math.abs(this.options.documentHeight - h) > 4)
-				            {
-				               this.options.documentHeight = h;
-				               this.onResize();
-				            }
-				         }, null, true);
-				
-				         // Initial size
-				         var width = (this.options.initialWidth ? this.options.initialWidth : 300);
-				         if (YAHOO.env.ua.ie > 0)
-				         {
-				            this.widgets.horizResize.resize(null, this.widgets.horizResize.get("element").offsetHeight, width, 0, 0, true);
-				         }
-				         else
-				         {
-				            this.widgets.horizResize.resize(null, this.widgets.horizResize.get("height"), width, 0, 0, true);
-				         }
-				
-				         this.onResize(width);
-					}
+				     //Resizer
+			        // Horizontal Resizer
+			         this.widgets.horizResize = new YAHOO.util.Resize(this.options.divRight,
+			         {
+			            handles: ["l"],
+			            minWidth: 300,
+			            maxWidth: 500
+			         });
+			
+			         // Before and End resize event handlers
+			         this.widgets.horizResize.on("beforeResize", function(eventTarget)
+			         {
+			            this.onResize(eventTarget.width);
+			         }, this, true);
+			         this.widgets.horizResize.on("endResize", function(eventTarget)
+			         {
+			            this.onResize(eventTarget.width);
+			         }, this, true);
+			
+			         // Recalculate the vertical size on a browser window resize event
+			         YAHOO.util.Event.on(window, "resize", function(e)
+			         {
+			            this.onResize();
+			         }, this, true);
+			
+			         // Monitor the document height for ajax updates
+			         this.options.documentHeight = Dom.getXY("alf-ft")[1];
+			
+			         YAHOO.lang.later(1000, this, function()
+			         {
+			            var h = Dom.getXY("alf-ft")[1];
+			            if (Math.abs(this.options.documentHeight - h) > 4)
+			            {
+			               this.options.documentHeight = h;
+			               this.onResize();
+			            }
+			         }, null, true);
+			
+			         // Initial size
+			         var width = (this.options.initialWidth ? this.options.initialWidth : 300);
+			         if (YAHOO.env.ua.ie > 0)
+			         {
+			            this.widgets.horizResize.resize(null, this.widgets.horizResize.get("element").offsetHeight, width, 0, 0, true);
+			         }
+			         else
+			         {
+			            this.widgets.horizResize.resize(null, this.widgets.horizResize.get("height"), width, 0, 0, true);
+			         }
+			
+			         this.onResize(width);
 
 					// End Resizer
 					 
