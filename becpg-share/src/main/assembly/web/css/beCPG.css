@@ -207,20 +207,7 @@
 	border-radius: 0 4px 4px 0;
 }
 
-/** Toc **/
 
-
-.form-toc {
-	margin : 15px;
-	display: block;
-	float: left;
-	width: 250px;
-}
-
-
-.form-toc-item {
-	margin: 15px;
-}
 
 /** Tab **/
 .share-form .form-container .yui-navset .yui-content {

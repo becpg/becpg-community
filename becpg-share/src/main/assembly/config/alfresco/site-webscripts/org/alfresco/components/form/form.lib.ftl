@@ -48,22 +48,6 @@
 </#macro> 
 
 <#macro renderFormContainer formId>
-	 <#if args.showToc?? && args.showToc == "true">
-	 	<nav class="form-toc">
-	 	     <ul class="form-toc-menu">
-			    <#list form.structure as item>
-				  <#if item??>
-				    <#if item.kind == "set">
-				     <#if item.appearance?? && item.appearance == "bordered-panel" >
-						<li class="form-toc-item"><a href="#set-${item.id}"><h2 class="alfresco-twister alfresco-twister-closed">${item.label}</h2></a></li>
-				      </#if>
-				     </#if>
-				  </#if>	
-				</#list>
-			 </ul>	
-	 	</nav>
-	 </#if>
-
    <div id="${formId}-container" class="form-container">
       <#if form.showCaption?? && form.showCaption>
          <div id="${formId}-caption" class="caption"><span class="mandatory-indicator">*</span>${msg("form.required.fields")}</div>
@@ -181,7 +165,7 @@
 		      <#if set.appearance == "fieldset">
 		         <fieldset><legend>${set.label}</legend>
 		      <#elseif set.appearance == "bordered-panel">
-		         <div class="set-bordered-panel" id="#set-${set.id}">
+		         <div class="set-bordered-panel">
 		            <div class="set-bordered-panel-heading">${set.label}</div>
 		            <div class="set-bordered-panel-body">
 		      <#elseif set.appearance == "panel">
@@ -242,7 +226,7 @@
 		      <#if set.appearance == "fieldset">
 		         <fieldset><legend>${set.label}</legend>
 		      <#elseif set.appearance == "bordered-panel">
-		         <div class="set-bordered-panel" id="#set-${set.id}">
+		         <div class="set-bordered-panel">
 		            <div class="set-bordered-panel-heading">${set.label}</div>
 		            <div class="set-bordered-panel-body">
 		      <#elseif set.appearance == "panel">
