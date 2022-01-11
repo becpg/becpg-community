@@ -65,6 +65,8 @@
  * mergeBranch( node, branchToNode, description, type) branchToNode can be null if autoMerge
  * 
  * moveAndRename(node,dest) Move node and rename if same name exists in destination
+ *
+ * getAvailableName(dest, name) Get an available name adding (n) if same name exists in destination
  * 
  * generateEAN13Code(prefix) returns generate EAN13 code with autonum corresponding to prefix
  * 
@@ -570,6 +572,17 @@ function createBranch(node, dest, autoMerge){
  */
 function mergeBranch( node, branchToNode, description, type){
 	bcpg.mergeBranch( node, branchToNode, description, type);
+}
+
+
+/**
+ * Get an available name adding (n) if same name exists in destination
+ * @param dest
+ * @param name
+ * @returns void
+ */
+function getAvailableName(dest, name){
+	return bcpg.getAvailableName(dest, name);
 }
 
 

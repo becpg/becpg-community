@@ -49,11 +49,15 @@ main();
 //
 function rename(product) {
 	var name = propValue(product, "cm:title");
+	var erpCode = propValue(product, "bcpg:erpCode");
 
-	if (!isEmpty(name)) {
+	if (!isEmpty(name) && (isEmpty(erpCode) || name.indexOf(erpCode) == -1)) {
 
-		name = concatName(propValue(product, "bcpg:erpCode"), 
+		name = concatName(cleanName(erpCode), 
 				cleanName(name).toUpperCase());
+		
+		// If you want to rename if name already exists
+		//name = getAvailableName(product.parent,name);
 		
 		if (product.properties["cm:name"] != name && product.parent.childByNamePath(name) == null) {
 			product.properties["cm:name"] = name;
