@@ -242,10 +242,10 @@
 	          <show force="true" id="bcpg:numberOfServings"/>
 	          <show force="false" id="bcpg:productSpecifications"/>
 	          <show for-mode="view" force="false" id="bcpg:ecoScore"/>
-	          <show for-mode="view" force="false" id="bcpg:ecoScoreClass"/>
+	          <show for-mode="view" force="false" id="bcpg:ecoScoreDetails"/>
 	          <show force="false" id="bcpg:ecoScoreCategory"/>
 	          <show force="false" id="bcpg:nutrientProfileCategory"/>
-	          <show for-mode="view" force="false" id="bcpg:nutrientProfilingClass"/>
+	          <show for-mode="view" force="false" id="bcpg:nutrientProfilingDetails"/>
 	          <show for-mode="view" force="false" id="bcpg:nutrientProfilingScore"/>
 	          <show force="true" id="bcpg:useByDate"/>
 	          <show force="true" id="bcpg:bestBeforeDate"/>
@@ -547,7 +547,7 @@
 	          </field>
 	          <set appearance="bordered-panel" id="ecoscore" label-id="becpg.forms.set.eco.score.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
 	          <field id="bcpg:ecoScore" mandatory="false" read-only="false" set="ecoscore"/>
-	          <field id="bcpg:ecoScoreClass" mandatory="false" read-only="false" set="ecoscore">
+	          <field id="bcpg:ecoScoreDetails" mandatory="false" read-only="false" set="ecoscore">
 	            <control template="/org/alfresco/components/form/controls/ecoscore-class.ftl"/>
 	          </field>
 	          <field id="bcpg:ecoScoreCategory" mandatory="false" read-only="false" set="ecoscore">
@@ -562,7 +562,7 @@
 	            <control template="/org/alfresco/components/form/controls/selectone.ftl">
 	            </control>
 	          </field>
-	          <field id="bcpg:nutrientProfilingClass" mandatory="false" read-only="false" set="score">
+	          <field id="bcpg:nutrientProfilingDetails" mandatory="false" read-only="false" set="score">
 	            <control template="/org/alfresco/components/form/controls/nutrient-class.ftl"/>
 	          </field>
 	          <field id="bcpg:nutrientProfilingScore" mandatory="false" read-only="false" set="score"/>
@@ -1299,7 +1299,7 @@
 					<show id="bcpg:servingSizeText" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:nutrientProfilingScore" force="true" for-mode="view"/>
-					<show id="bcpg:nutrientProfilingClass" force="true" for-mode="view"/>
+					<show id="bcpg:nutrientProfilingDetails" force="true" for-mode="view"/>
 					<show id="bcpg:nutrientProfileCategory"   force="true"/>
 				</field-visibility>
 				<appearance>
@@ -1314,7 +1314,7 @@
 							template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:nutrientProfilingScore"  />
-					<field id="bcpg:nutrientProfilingClass"  >
+					<field id="bcpg:nutrientProfilingDetails"  >
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
 					</field>
 					<field id="bcpg:nutrientProfileCategory">
@@ -1990,10 +1990,10 @@
 	          <show force="true" id="bcpg:numberOfServings"/>
 	          <show force="true" id="bcpg:productSpecifications"/>
 	          <show for-mode="view" force="true" id="bcpg:ecoScore"/>
-	          <show for-mode="view" force="true" id="bcpg:ecoScoreClass"/>
+	          <show for-mode="view" force="true" id="bcpg:ecoScoreDetails"/>
 	          <show force="true" id="bcpg:ecoScoreCategory"/>
 	          <show force="true" id="bcpg:nutrientProfileCategory"/>
-	          <show for-mode="view" force="true" id="bcpg:nutrientProfilingClass"/>
+	          <show for-mode="view" force="true" id="bcpg:nutrientProfilingDetails"/>
 	          <show for-mode="view" force="true" id="bcpg:nutrientProfilingScore"/>
 	          <show force="true" id="bcpg:useByDate"/>
 	          <show force="true" id="bcpg:bestBeforeDate"/>
@@ -2281,7 +2281,7 @@
 	          </field>
 	          <set appearance="bordered-panel" id="ecoscore" label-id="becpg.forms.set.eco.score.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
 	          <field id="bcpg:ecoScore" mandatory="false" read-only="false" set="ecoscore"/>
-	          <field id="bcpg:ecoScoreClass" mandatory="false" read-only="false" set="ecoscore">
+	          <field id="bcpg:ecoScoreDetails" mandatory="false" read-only="false" set="ecoscore">
 	            <control template="/org/alfresco/components/form/controls/ecoscore-class.ftl"/>
 	          </field>
 	          <field id="bcpg:ecoScoreCategory" mandatory="false" read-only="false" set="ecoscore">
@@ -2297,7 +2297,7 @@
 	              <control-param name="showLink">false</control-param>
 	            </control>
 	          </field>
-	          <field id="bcpg:nutrientProfilingClass" mandatory="false" read-only="false" set="score">
+	          <field id="bcpg:nutrientProfilingDetails" mandatory="false" read-only="false" set="score">
 	            <control template="/org/alfresco/components/form/controls/nutrient-class.ftl"/>
 	          </field>
 	          <field id="bcpg:nutrientProfilingScore" mandatory="false" read-only="false" set="score"/>
@@ -4497,7 +4497,7 @@
 					
 					<!-- Nutrient profiling score -->
 					<show id="bcpg:nutrientProfilingScore"  for-mode="view"/>
-					<show id="bcpg:nutrientProfilingClass"  for-mode="view"/>
+					<show id="bcpg:nutrientProfilingDetails"  for-mode="view"/>
 					<show id="bcpg:nutrientProfileCategory"   />
 					
 					
@@ -4734,7 +4734,7 @@
 
 					<!-- Nutrient profiling score -->
 					<field id="bcpg:nutrientProfilingScore"  set="score"/>
-					<field id="bcpg:nutrientProfilingClass"  set="score">
+					<field id="bcpg:nutrientProfilingDetails"  set="score">
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
 					</field>
 					<field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
@@ -5087,12 +5087,12 @@
 			<form id="nutList">
 				<field-visibility>
 					<show id="bcpg:nutrientProfilingScore" force="true" for-mode="view"/>
-					<show id="bcpg:nutrientProfilingClass" force="true" for-mode="view"/>
+					<show id="bcpg:nutrientProfilingDetails" force="true" for-mode="view"/>
 					<show id="bcpg:nutrientProfileCategory"   force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:nutrientProfilingScore"  />
-					<field id="bcpg:nutrientProfilingClass"  >
+					<field id="bcpg:nutrientProfilingDetails"  >
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
 					</field>
 					<field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
@@ -5898,7 +5898,7 @@
 
 					<!-- Nutrient profiling score -->
 					<field id="bcpg:nutrientProfilingScore"  set="score"/>
-					<field id="bcpg:nutrientProfilingClass"  set="score">
+					<field id="bcpg:nutrientProfilingDetails"  set="score">
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
 					</field>
 					<field id="bcpg:nutrientProfileCategory" set="score">
@@ -6013,7 +6013,7 @@
 					
 					<!-- Nutrient profiling score -->
 					<show id="bcpg:nutrientProfilingScore"  for-mode="view"/>
-					<show id="bcpg:nutrientProfilingClass"  for-mode="view"/>
+					<show id="bcpg:nutrientProfilingDetails"  for-mode="view"/>
 					<show id="bcpg:nutrientProfileCategory"   />
 					
 					<!-- GHS SDS -->
@@ -6219,7 +6219,7 @@
 				
 					<!-- Nutrient profiling score -->
 					<field id="bcpg:nutrientProfilingScore"  set="score"/>
-					<field id="bcpg:nutrientProfilingClass"  set="score">
+					<field id="bcpg:nutrientProfilingDetails"  set="score">
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
 						</field>
 					<field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
@@ -6458,7 +6458,7 @@
 					<show id="bcpg:servingSizeText" force="true" />
 					<show id="bcpg:numberOfServings" force="true" />
 					<show id="bcpg:nutrientProfilingScore" force="true" for-mode="view"/>
-					<show id="bcpg:nutrientProfilingClass" force="true" for-mode="view"/>
+					<show id="bcpg:nutrientProfilingDetails" force="true" for-mode="view"/>
 					<show id="bcpg:nutrientProfileCategory"   force="true"/>
 				</field-visibility>
 				<appearance>
@@ -6473,7 +6473,7 @@
 							template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="bcpg:nutrientProfilingScore"  />
-					<field id="bcpg:nutrientProfilingClass"  >
+					<field id="bcpg:nutrientProfilingDetails"  >
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
 					</field>
 					<field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
@@ -7171,7 +7171,7 @@
 				
 					<!-- Nutrient profiling score -->
 					<field id="bcpg:nutrientProfilingScore"  set="score"/>
-					<field id="bcpg:nutrientProfilingClass"  set="score">
+					<field id="bcpg:nutrientProfilingDetails"  set="score">
 						<control template="/org/alfresco/components/form/controls/nutrient-class.ftl" />
 					</field>
 					<field id="bcpg:nutrientProfileCategory" set="score">

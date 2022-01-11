@@ -159,6 +159,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 
 	private Double nutrientScore;
 	private String nutrientClass;
+	private String nutrientDetails;
 	private NodeRef nutrientProfile;
 	
 	
@@ -169,6 +170,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private Double ecoScore;
 	private String ecoScoreClass;
 	private String ecoScoreCategory;
+	private String ecoScoreDetails;
 
 	/*
 	 * Meat aspect
@@ -1357,6 +1359,16 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setEcoScoreCategory(String ecoScoreCategory) {
 		this.ecoScoreCategory = ecoScoreCategory;
 	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:ecoScoreDetails")
+	public String getEcoScoreDetails() {
+		return ecoScoreDetails;
+	}
+	
+	public void setEcoScoreDetails(String ecoScoreDetails) {
+		this.ecoScoreDetails = ecoScoreDetails;
+	}
 
 	/**
 	 * <p>Getter for the field <code>nutrientScore</code>.</p>
@@ -1396,6 +1408,16 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 */
 	public void setNutrientClass(String nutrientClass) {
 		this.nutrientClass = nutrientClass;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutrientProfilingDetails")
+	public String getNutrientDetails() {
+		return nutrientDetails;
+	}
+	
+	public void setNutrientDetails(String nutrientDetails) {
+		this.nutrientDetails = nutrientDetails;
 	}
 
 	/**

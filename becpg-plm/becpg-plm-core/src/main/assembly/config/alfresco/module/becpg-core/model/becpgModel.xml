@@ -4525,6 +4525,14 @@
 		                  <facetable>false</facetable>
 		            </index>
 				</property>
+				<property name="bcpg:nutrientProfilingDetails">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
+				</property>
 				<property name="bcpg:nutrientProfileCategory">
 					<type>d:text</type>
 					<default></default>
@@ -4580,6 +4588,15 @@
 		                  <facetable>false</facetable>
 		            </index>
 				</property>
+				<property name="bcpg:ecoScoreDetails">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
+				</property>
+				
 			</properties>
 		</aspect>
 
