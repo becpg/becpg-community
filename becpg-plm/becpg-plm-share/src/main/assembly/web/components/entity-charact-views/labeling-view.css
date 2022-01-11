@@ -88,6 +88,15 @@
  Bar
 */
 
+.labeling-view  .labelingTable thead,
+.labeling-view  .labelingTable thead th{
+    background-color: transparent;
+    font-weight: bold;
+	color: black;
+}
+
+
+
 .labeling-view  .datagrid .datagrid-bar .paginator {
 	float: inherit;
 	width: inherit;

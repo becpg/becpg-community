@@ -89,6 +89,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 				} else if(activityType == "Entity"|| activityType == "Formulation" || activityType == "Report"){
 					title  = scope.msg("entity.activity."+activityType.toLowerCase(), title);
+				} else if(activityType == "Export"){
+					title  = scope.msg("entity.activity.export", scope.msg("data.list."+className), data.title);
 				} else if(activityType == "Comment"){
 					title  = scope.msg("entity.activity.comment."+data.activityEvent.toLowerCase(), title);
 				} else if(activityType == "Content"){

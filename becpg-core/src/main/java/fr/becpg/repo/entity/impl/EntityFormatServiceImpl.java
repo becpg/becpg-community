@@ -15,6 +15,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.model.RenditionModel;
 import org.alfresco.repo.content.MimetypeMap;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
@@ -28,6 +29,8 @@ import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.rule.Rule;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.view.ExporterCrawlerParameters;
@@ -111,6 +114,12 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	
 	@Autowired
 	private EntityService entityService;
+	
+	@Autowired
+	protected Repository repositoryHelper;
+
+	@Autowired
+	protected RuleService ruleService;
 	
 	private static final Log logger = LogFactory.getLog(EntityFormatServiceImpl.class);
 
@@ -480,11 +489,10 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		for (NodeRef toMove : getContainedEntities(node)) {
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				NodeRef rootNode = nodeService.getRootNode(RepoConsts.SPACES_STORE);
-				NodeRef importToDoNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode,RemoteEntityService.FULL_PATH_IMPORT_TO_DO);
-				NodeRef parent = nodeService.createNode(importToDoNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER).getChildRef();
 				
-				return nodeService.moveNode(toMove, parent, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+				moveToImportToDoFolder(toMove);
+				
+				return null;
 			}, false, true);
 		}
 		
@@ -492,14 +500,27 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		String versionLabel = (String) dbNodeService.getProperty(node, BeCPGModel.PROP_VERSION_LABEL);
 		
+		if (versionLabel == null) {
+			versionLabel = (String) dbNodeService.getProperty(node, ContentModel.PROP_VERSION_LABEL);
+		}
+		
+		if (versionLabel == null) {
+			String[] splitted = name.split(RepoConsts.VERSION_NAME_DELIMITER);
+			versionLabel = splitted[splitted.length - 1];
+		}
+		
 		NodeRef parentNode = dbNodeService.getPrimaryParent(node).getParentRef();
 		
 		String parentName = (String) dbNodeService.getProperty(parentNode, ContentModel.PROP_NAME);
 		
 		NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
 		
-		VersionHistory versionHistory = dbNodeService.exists(originalNode) ? versionService.getVersionHistory(originalNode) : null;
+		if (!nodeService.exists(originalNode)) {
+			originalNode = nodeService.getTargetAssocs(node, ContentModel.ASSOC_ORIGINAL).get(0).getTargetRef();
+		}
 		
+		VersionHistory versionHistory = dbNodeService.exists(originalNode) ? versionService.getVersionHistory(originalNode) : null;
+
 		if (versionHistory != null) {
 			NodeRef versionNode = VersionUtil.convertNodeRef(versionHistory.getVersion(versionLabel).getFrozenStateNodeRef());
 			
@@ -520,6 +541,43 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		return null;
 
+	}
+
+	@Override
+	public void moveToImportToDoFolder(NodeRef toMove) {
+		Rule classifyRule = null;
+		
+		List<Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
+		for (Rule rule : rules) {
+			if (!rule.getRuleDisabled()) {
+				if ("classifyEntityRule".equals(rule.getTitle())) {
+					classifyRule = rule;
+					break;
+				}
+			}
+		}
+
+		if (classifyRule != null) {
+			ruleService.disableRule(classifyRule);
+		}
+		NodeRef originalParent = nodeService.getPrimaryParent(toMove).getParentRef();
+		String parentName = (String) nodeService.getProperty(originalParent, ContentModel.PROP_NAME);
+		
+		NodeRef rootNode = nodeService.getRootNode(RepoConsts.SPACES_STORE);
+		NodeRef importToDoNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode,RemoteEntityService.FULL_PATH_IMPORT_TO_DO);
+		
+		NodeRef newParent = nodeService.getChildByName(importToDoNodeRef, ContentModel.ASSOC_CONTAINS, parentName);
+		
+		if (newParent == null) {
+			newParent = nodeService.createNode(importToDoNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER).getChildRef();
+			nodeService.setProperty(newParent, ContentModel.PROP_NAME, parentName);
+		}
+		
+		nodeService.moveNode(toMove, newParent, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+		
+		if (classifyRule != null) {
+			ruleService.enableRule(classifyRule);
+		}
 	}
 
 	private Set<NodeRef> getContainedEntities(NodeRef node) {
