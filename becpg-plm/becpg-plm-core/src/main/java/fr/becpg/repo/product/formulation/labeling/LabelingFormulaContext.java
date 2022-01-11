@@ -630,6 +630,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public void setHtmlTableRowFormat(String htmlTableRowFormat) {
 		this.htmlTableRowFormat = htmlTableRowFormat;
 	}
+	
+	
+	
+
+	public void setHtmlTableHeaderFormat(String htmlTableHeaderFormat) {
+		this.htmlTableHeaderFormat = htmlTableHeaderFormat;
+	}
 
 	/**
 	 * <p>
