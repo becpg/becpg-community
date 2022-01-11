@@ -176,7 +176,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 						return createExcelFile(asynExtractor, asynExtractor.getDataListFilter(), handler, new FileOutputStream(tempFile));
-					}, true, true);
+					}, false, true);
 
 					fileCreationComplete(downloadNodeRef, "xlsx", tempFile, handler);
 
