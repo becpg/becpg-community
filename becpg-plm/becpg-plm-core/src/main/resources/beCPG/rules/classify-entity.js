@@ -32,7 +32,7 @@ function main() {
         }
 
 		//Rename Sample
-		//rename();
+		//rename(document);
 	}
 }
 

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2010-2018 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
+<export>
+	<settings>
+		<setting id="dateFormat" value="yyyy-MM-dd HH:mm:ss" />
+		<setting id="datetimeFormat" value="yyyy-MM-dd HH:mm:ss" />
+		<!-- <setting id="decimalPattern" value="#0.00"/> -->
+	</settings>
+	<query>
+		<columns>
+
+			<!-- mainInfo -->
+			<column id="name" attribute="cm:name" type="Attribute" />
+			<column id="code" attribute="bcpg:code" type="Attribute" />
+			<column id="ncType" attribute="qa:ncType" type="Attribute" />
+			<column id="ncPriority" attribute="qa:ncPriority" type="Attribute" />
+			<column id="ncState" attribute="qa:ncState" type="Attribute" />
+			<column id="ncCreationStep" attribute="qa:ncCreationStep"
+				type="Attribute" />
+			<column id="created" attribute="cm:created" type="Attribute" />
+			<column id="ncQuantityNc" attribute="qa:ncQuantityNc" type="Attribute" />
+			<column id="ncQuantityNcUnit" attribute="qa:ncQuantityNcUnit"
+				type="Attribute" />
+			<column id="ncDetectionStep" attribute="qa:ncDetectionStep"
+				type="Attribute" />
+			<column id="ncCost" attribute="qa:ncCost" type="Attribute" />
+			<column id="description" attribute="cm:description" type="Attribute" />
+			<!-- <column id="ncComment" attribute="qa:ncComment" type="Attribute" 
+				/> -->
+			<!-- identification -->
+			<!-- <column id="ncBatchNumber" attribute="qa:ncBatchNumber" type="Attribute" 
+				/> -->
+			<!-- <column id="ncOrderNb" attribute="qa:ncOrderNb" type="Attribute" 
+				/> -->
+			<!-- <column id="ncBatchComment" attribute="qa:ncBatchComment" -->
+			<!-- type="Attribute" /> -->
+			<!-- Clients -->
+			<column id="clients" attribute="bcpg:clients" type="Attribute" />
+			<!-- Suppliers -->
+			<column id="suppliers" attribute="bcpg:suppliers" type="Attribute" />
+<!---->
+			<!-- Product -->
+			<!-- <column id="ncProductFamilly" attribute="qa:ncProductFamilly" -->
+			<!-- type="Attribute" /> -->
+			<!-- <column id="ncProduct" attribute="qa:ncProduct" type="Attribute" 
+				/> -->			
+
+		</columns>
+	</query>
+	<nodes>
+		 <node id="0" code="11" ncType="Physics and chemistry" name="Test NC" description="NC 
+			de test" ncCreationStep="Transportation" created="2010-10-07 12:25:12" ncQuantityNc="10" 
+			ncQuantityNcUnit="kg" ncDetectionStep="Delivery" ncDetected="2010-10-07 
+			12:25:12" ncCost="1000" ncCostUnit="€" ncService="Delivery Service" ncComment="No 
+			comment" ncCause="fall" ncBatchNumber="20454212" ncOrderNb="" ncBatchComment="" 
+			clients="Client1" ncProductFamilly="Pizzas" ncProduct="Prod 1" acType="Discarded" 
+			acExpectedDate="2010-10-07 12:25:12" acEffectiveDate="2010-10-07 12:25:12" 
+			acCheckDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Not satisfying" 
+			acAssignedTo="Matthieu" acChecker="Matthieu" acComment="" creator="admin" 
+			modified="2010-10-07 12:25:12" suppliers="Oven1" /> <node id="1" code="12" 
+			ncType="Physics and chemistry" name="Test NC" description="NC test" ncCreationStep="Transportation" 
+			created="2010-10-07 12:25:12" ncQuantityNc="10" ncQuantityNcUnit="kg" ncDetectionStep="Delivery" 
+			ncDetected="2010-10-07 12:25:12" ncCost="1000" ncCostUnit="€" ncService="Service 
+			Delivery" ncComment="No comment" ncCause="fall" ncBatchNumber="20454212" 
+			ncOrderNb="" ncBatchComment="" clients="Client1" ncProductFamilly="Pizzas" 
+			ncProduct="Prod 1" acType="Discarded" acExpectedDate="2010-10-07 12:25:12" 
+			acEffectiveDate="2010-10-07 12:25:12" acCheckDate="2010-10-07 12:25:12" acDescription="" 
+			acEfficiency="Not satisfying" acAssignedTo="Matthieu" acChecker="Matthieu" 
+			acComment="" creator="admin" modified="2010-10-07 12:25:12" suppliers="Four1" 
+			/> <node id="2" code="13" ncType="Foreign body" name="Test 
+			NC 2" description="NC de test" ncCreationStep="Transportation" created="2010-10-07 
+			12:25:12" ncQuantityNc="10" ncQuantityNcUnit="kg" ncDetectionStep="Delivery" 
+			ncDetected="2010-10-10 12:25:12" ncCost="1000" ncCostUnit="€" ncService="Service 
+			Delivery" ncComment="No comment" ncCause="fall" ncBatchNumber="20454212" 
+			ncOrderNb="" ncBatchComment="" clients="Client1" ncProductFamilly="Pizzas" 
+			ncProduct="Prod 2" acType="Discarded" acExpectedDate="2010-10-07 12:25:12" 
+			acEffectiveDate="2010-10-07 12:25:12" acCheckDate="2010-10-07 12:25:12" acDescription="" 
+			acEfficiency="Not satisfying" acAssignedTo="Matthieu" acChecker="Matthieu" 
+			acComment="" creator="admin" modified="2010-10-07 12:25:12" suppliers="Four1" 
+			/> <node id="3" code="14" ncType="Foreign body" name="Test NC 2" 
+			description="NC de test" ncCreationStep="Transport" created="2010-05-05 
+			12:25:12" ncQuantityNc="10" ncQuantityNcUnit="kg" ncDetectionStep="Delivery" 
+			ncDetected="2010-10-15 12:25:12" ncCost="1000" ncCostUnit="€" ncService="Service 
+			Delivery" ncComment="No comment" ncCause="fall" ncBatchNumber="20454212" 
+			ncOrderNb="" ncBatchComment="" clients="Client1, Client2" ncProductFamilly="Pizzas" 
+			ncProduct="Prod 2" acType="Discarded" acExpectedDate="2010-10-07 12:25:12" 
+			acEffectiveDate="2010-10-07 12:25:12" acCheckDate="2010-10-07 12:25:12" acDescription="" 
+			acEfficiency="Not satisfying" acAssignedTo="Matthieu" acChecker="Matthieu" 
+			acComment="" creator="admin" modified="2010-10-07 12:25:12" suppliers="Four 
+			2" /> <node id="4" code="15" ncType="Physics and chemistry" name="Test NC 2" description="NC 
+			de test" ncCreationStep="Transportation" created="2010-05-05 12:25:12" ncQuantityNc="10" 
+			ncQuantityNcUnit="kg" ncDetectionStep="Delivery" ncDetected="2010-10-20 
+			12:25:12" ncCost="1000" ncCostUnit="€" ncService="Service Delivery" ncComment="No 
+			comment" ncCause="fall" ncBatchNumber="20454212" ncOrderNb="" ncBatchComment="" 
+			clients="Client1, Client2" ncProductFamilly="Pizzas" ncProduct="Prod 2" acType="Discarded" 
+			acExpectedDate="2010-10-07 12:25:12" acEffectiveDate="2010-10-07 12:25:12" 
+			acCheckDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Not satisfying" 
+			acAssignedTo="Matthieu" acChecker="Matthieu" acComment="" creator="admin" 
+			modified="2010-10-07 12:25:12" suppliers="" /> <node id="5" code="16" ncType="Physics and chemistry" 
+			name="Test NC 2" description="NC de test" ncCreationStep="Transportation" created="2010-10-07 
+			12:25:12" ncQuantityNc="10" ncQuantityNcUnit="kg" ncDetectionStep="Delivery" 
+			ncDetected="2010-10-30 12:25:12" ncCost="1000" ncCostUnit="€" ncService="Service 
+			Delivery" ncComment="No comment" ncCause="fall" ncBatchNumber="20454212" 
+			ncOrderNb="" ncBatchComment="" clients="Client1, Client2" ncProductFamilly="Pizzas" 
+			ncProduct="Prod 2" acType="Discarded" acExpectedDate="2010-10-07 12:25:12" 
+			acEffectiveDate="2010-10-07 12:25:12" acCheckDate="2010-10-07 12:25:12" acDescription="" 
+			acEfficiency="Not satisfying" acAssignedTo="Matthieu" acChecker="Matthieu" 
+			acComment="" creator="admin" modified="2010-10-07 12:25:12" suppliers="" 
+			/> <node id="6" code="12" ncType="DLUO" name="Test NC 2" description="NC 
+			de test" ncCreationStep="Transportation" created="2010-05-05 12:25:12" ncQuantityNc="10" 
+			ncQuantityNcUnit="kg" ncDetectionStep="Delivery" ncDetected="2010-11-07 
+			12:25:12" ncCost="1000" ncCostUnit="€" ncService="Service Delivery" ncComment="No 
+			comment" ncCause="fall" ncBatchNumber="20454212" ncOrderNb="" ncBatchComment="" 
+			clients="Client1, Client2" ncProductFamilly="Pizzas" ncProduct="Prod 2" acType="Discarded" 
+			acExpectedDate="2010-10-07 12:25:12" acEffectiveDate="2010-10-07 12:25:12" 
+			acCheckDate="2010-10-07 12:25:12" acDescription="" acEfficiency="Not satisfying" 
+			acAssignedTo="Matthieu" acChecker="Matthieu" acComment="" creator="admin" 
+			modified="2010-10-07 12:25:12" suppliers="" />
+
+		<node id="1" name="2011-05-01 Allergen" code="3" ncType="Allergen" ncPriority="Low" ncCreationStep="" created="0006-11-01 00:00:00" ncQuantityNc="1.0" ncQuantityNcUnit="P" ncDetectionStep="" ncDetected="2011-06-06 00:00:00" ncCost="0.0" description="" ncCause="" ncService="R and D" clients="" suppliers="Supplier A"/><node id="2" name="2011-05-11 Allergen" code="13" ncType="Allergen" ncSeverity="High" ncCreationStep="" created="0016-10-31 00:00:00" ncQuantityNc="7.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="Production" clients="" suppliers="Sea products supplier"/><node id="3" name="2011-05-21 Allergen" code="23" ncType="Allergen" ncSeverity="Critical" ncCreationStep="" created="0026-11-01 00:00:00" ncQuantityNc="6.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="R and D" clients="" suppliers="Cereal supplier"/><node id="4" name="2011-05-31 Allergen" code="33" ncType="Allergen" ncSeverity="Low" ncCreationStep="" created="0036-10-31 00:00:00" ncQuantityNc="2.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="Production" clients="" suppliers="Supplier A"/><node id="5" name="2011-06-10 Allergen" code="43" ncType="Allergen" ncSeverity="High" ncCreationStep="" created="0015-12-02 00:00:00" ncQuantityNc="6.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="R and D" clients="" suppliers="Seafood Supplier"/><node id="6" name="2011-06-20 Allergen" code="53" ncType="Allergen" ncSeverity="Critical" ncCreationStep="" created="0025-12-02 00:00:00" ncQuantityNc="1.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="Production" clients="" suppliers="Cereal Supplier"/><node id="7" name="2011-06-30 Allergen" code="63" ncType="Allergen" ncSeverity="Low" ncCreationStep="" created="0035-12-02 00:00:00" ncQuantityNc="7.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="R and D" clients="" suppliers="Supplier A"/><node id="8" name="2011-07-10 Allergen" code="73" ncType="Allergen" ncSeverity="High" ncCreationStep="" created="0016-01-01 00:00:00" ncQuantityNc="6.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="Production" clients="" suppliers="Seafood Supplier"/><node id="9" name="2011-07-20 Allergen" code="83" ncType="Allergen" ncSeverity="Critical" ncCreationStep="" created="0026-01-01 00:00:00" ncQuantityNc="11.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="R and D" clients="" suppliers="Cereal Supplier"/><node id="10" name="2011-07-30 Allergen" code="93" ncType="Allergen" ncSeverity="Low" ncCreationStep="" created="0036-01-01 00:00:00" ncQuantityNc="2.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="Production" clients="Client B" suppliers=""/><node id="11" name="2011-08-09 Allergen" code="103" ncType="Allergen" ncSeverity="High" ncCreationStep="" created="0015-02-01 00:00:00" ncQuantityNc="8.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="R and D" clients="Client A" suppliers=""/><node id="12" name="2011-08-19 Allergen" code="113" ncType="Allergen" ncSeverity="Critical" ncCreationStep="" created="0025-01-31 00:00:00" ncQuantityNc="20.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="Production" clients="Client B" suppliers=""/><node id="13" name="2011-08-29 Allergen" code="123" ncType="Allergen" ncSeverity="Low" ncCreationStep="" created="0035-02-01 00:00:00" ncQuantityNc="16.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="R and D" clients="Client A" suppliers=""/><node id="14" name="2011-09-08 Allergen" code="133" ncType="Allergen" ncSeverity="High" ncCreationStep="" created="0014-03-04 00:00:00" ncQuantityNc="3.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="Production" clients="Client B" suppliers=""/><node id="15" name="2011-09-18 Allergen" code="143" ncType="Allergen" ncSeverity="Critical" ncCreationStep="" created="0024-03-03 00:00:00" ncQuantityNc="11.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="R and D" clients="Client A" suppliers=""/><node id="16" name="2011-09-28 Allergen" code="153" ncType="Allergen" ncSeverity="Low" ncCreationStep="" created="0034-03-04 00:00:00" ncQuantityNc="4.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="Production" clients="Client B" suppliers=""/><node id="17" name="2011-10-08 Allergen" code="163" ncType="Allergen" ncSeverity="High" ncCreationStep="" created="0014-04-03 00:00:00" ncQuantityNc="8.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="R and D" clients="Client A" suppliers=""/><node id="18" name="2011-10-18 Allergen" code="173" ncType="Allergen" ncSeverity="Critical" ncCreationStep="" created="0024-04-02 00:00:00" ncQuantityNc="4.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="Production" clients="Client B" suppliers=""/><node id="19" name="2011-10-28 Allergen" code="183" ncType="Allergen" ncSeverity="Low" ncCreationStep="" created="0034-04-03 00:00:00" ncQuantityNc="2.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="R and D" clients="Client A" suppliers=""/><node id="20" name="2011-11-07 Allergen" code="193" ncType="Allergen" ncSeverity="High" ncCreationStep="" created="0013-05-03 00:00:00" ncQuantityNc="8.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="Production" clients="Client B" suppliers=""/><node id="21" name="2011-11-17 Allergen" code="203" ncType="Allergen" ncSeverity="Critical" ncCreationStep="" created="0023-05-04 00:00:00" ncQuantityNc="4.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="R and D" clients="Client A" suppliers=""/><node id="22" name="2011-11-27 Allergen" code="213" ncType="Allergen" ncSeverity="Low" ncCreationStep="" created="0033-05-03 00:00:00" ncQuantityNc="6.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="Production" clients="Client B" suppliers=""/><node id="23" name="2011-12-07 Allergen" code="223" ncType="Allergen" ncSeverity="High" ncCreationStep="" created="0013-06-02 00:00:00" ncQuantityNc="5.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="R and D" clients="Client A" suppliers=""/><node id="24" name="2011-12-17 Allergen" code="233" ncType="Allergen" ncSeverity="Critical" ncCreationStep="" created="0023-06-03 00:00:00" ncQuantityNc="9.0" ncQuantityNcUnit="P" ncDetectionStep="" description="" ncCause="" ncService="Production" clients="Client B" suppliers=""/>
+
+	</nodes>
+</export>

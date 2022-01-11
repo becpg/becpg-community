@@ -189,8 +189,13 @@ function specialize(item, activity, summary)
           item.custom0 = msg.get("data.state." + summary.beforeState.toLowerCase());
           item.custom1 = msg.get("data.state." + summary.afterState.toLowerCase());
           break;
-        
+      case "fr.becpg.export":
+         item.suppressSite = true;
+		  item.title = summary.title;
+          item.custom0 = summary.title;
+		  break;
    }
+
    
    return item;
 }

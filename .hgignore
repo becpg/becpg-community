@@ -56,3 +56,6 @@ syntax: regexp
 .idea/workspace.xml
 .idea/*
 .iml$
+
+#Hive local devs specifics files
+^devs-*

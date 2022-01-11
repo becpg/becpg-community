@@ -1,5 +1,7 @@
 package fr.becpg.repo.importer.annotation;
 
+import java.util.Objects;
+
 /**
  * <p>Annotation class.</p>
  *
@@ -86,6 +88,7 @@ public class Annotation {
 		return type != null ? type : getTargetClass();
 	}
 
+
 	/**
 	 * <p>Setter for the field <code>type</code>.</p>
 	 *
@@ -132,13 +135,28 @@ public class Annotation {
 	}
 
 	
-
-
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return this.getClass().getSimpleName() + " [id=" + id + ", attribute=" + attribute + ", targetClass="
-				+ targetClass + ", targetKey=" + targetKey + "]";
+		return "Annotation [id=" + id + ", type=" + type + ", key=" + key + "]";
+	}
+	
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(attribute, id, key, targetClass, targetKey, type);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Annotation other = (Annotation) obj;
+		return Objects.equals(attribute, other.attribute) && Objects.equals(id, other.id) && Objects.equals(key, other.key)
+				&& Objects.equals(targetClass, other.targetClass) && Objects.equals(targetKey, other.targetKey) && Objects.equals(type, other.type);
 	}
 
 }
