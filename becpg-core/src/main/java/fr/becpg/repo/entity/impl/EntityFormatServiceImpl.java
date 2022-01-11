@@ -485,6 +485,8 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				}
 			}
 			logger.debug(sb.toString());
+			
+			return null;
 		}
 		
 		for (NodeRef toMove : getContainedEntities(node)) {
@@ -598,7 +600,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	public Set<NodeRef> findConvertibleRelatives(NodeRef originalEntity, Set<NodeRef> visited, final List<NodeRef> ignoredItems, final int maxProcessedNodes, AtomicInteger currentCount) {
 		Set<NodeRef> ret = new LinkedHashSet<>();
 		
-		if (currentCount.get() >= maxProcessedNodes || visited.contains(originalEntity) || !nodeService.exists(originalEntity)) {
+		if ((maxProcessedNodes >= 0 && currentCount.get() >= maxProcessedNodes) || visited.contains(originalEntity) || !nodeService.exists(originalEntity)) {
 			return ret;
 		}
 		
