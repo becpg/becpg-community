@@ -260,6 +260,8 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+
+
 		
 		
 		<constraint name="gs1:tradeItemPriceTypes" type="LIST">
@@ -276,8 +278,47 @@
 				</list>
 			</parameter>
 		</constraint>
-		
-		
+
+
+		<constraint name="gs1:productActivityTypeCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				  <value></value>
+				   <value>ASSEMBLY</value>
+				   <value>BIRTH</value>
+				   <value>BOTTLING</value>
+				   <value>CATCH_ZONE</value>
+				   <value>FARMING</value>
+				   <value>IMPORTATION</value>
+				   <value>LAST_PROCESSING</value>
+				   <value>MILKING</value>
+				   <value>REARING</value>
+				   <value>SLAUGHTER</value>
+				</list>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:dutyFeeTaxCategoryCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				   <value></value>
+				   <value>AAD</value>
+				   <value>AAE</value>
+				   <value>AAF</value>
+				   <value>AAJ</value>
+				   <value>ACT</value>
+				   <value>CAR</value>
+				   <value>ENV</value>
+				   <value>EXC</value>
+				   <value>GST</value>
+				   <value>IMP</value>
+				   <value>OIL</value>
+				   <value>OTH</value>
+				   <value>VAT</value>
+				</list>
+			</parameter>
+		</constraint>
+
 		<constraint name="gs1:storageStateCodes" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -287,6 +328,7 @@
 				</list>
 			</parameter>
 		</constraint>
+
 		
 		<constraint name="gs1:productionMethodForFishAndSeafoodCodes" type="LIST">
 			<parameter name="allowedValues">
@@ -298,7 +340,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		
+
 
 		<constraint name="gs1:speciesForFisheryStatisticsPurposesCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -316,6 +358,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+
 		
 		<constraint name="gs1:catchMethodCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -333,6 +376,7 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+
 		
 		<constraint name="gs1:catchAreaCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -350,6 +394,8 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+
+
 		
 		
 	</constraints>
@@ -395,6 +441,26 @@
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					</index>
+				</property>
+				<property name="gs1:dutyFeeTaxRate">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
+				<property name="gs1:dutyFeeTaxCategoryCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:dutyFeeTaxCategoryCodes" />
+					</constraints>
 				</property>
 			</properties>
 			<associations>
@@ -682,9 +748,24 @@
 			<overrides />
 			<mandatory-aspects />
 		</aspect>
-
-
-
+		
+		<aspect name="gs1:productActivityDetailsAspect">
+			<properties>
+				<property name="gs1:productActivityTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:productActivityTypeCodes" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
 
 
 		<aspect name="gs1:innerPackAspect">
@@ -930,11 +1011,22 @@
 						<constraint ref="gs1:platformTermsAndConditionsCodes" />
 					</constraints>
 				</property>
-
+				
+				
+				<property name="gs1:netContent">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+				</property>
 			</properties>
 			<overrides />
 			<mandatory-aspects />
 		</aspect>
+
 		
 		 <!-- PackagingMarkingModule -->
 		<aspect name="gs1:packSortingAspect">

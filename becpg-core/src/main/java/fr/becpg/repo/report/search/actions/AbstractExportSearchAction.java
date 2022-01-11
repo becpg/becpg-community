@@ -218,7 +218,7 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 				exporterService.exportView(handler, crawlerParameters, null);
 				fileCreationComplete(actionedUponNodeRef, extension, tempFile, handler);
 				entityActivityService.postExportActivity(null,
-						(QName) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME), tplName);
+						(QName) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME), FilenameUtils.removeExtension(tplName) + "." + extension.toLowerCase());
 
 			} catch (DownloadCancelledException ex) {
 				downloadCancelled(actionedUponNodeRef, handler);

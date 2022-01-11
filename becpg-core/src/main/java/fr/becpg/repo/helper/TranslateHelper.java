@@ -202,5 +202,13 @@ public class TranslateHelper {
 
 		return translation;
 	}
+	
+	public static String getLocaleAwarePath(String path) {
+		String lang = "en";
+		if(Locale.FRENCH.getLanguage().equals(Locale.getDefault().getLanguage())) {
+			lang = "fr";
+		}
+		return String.format(path, lang);
+	}
 
 }
