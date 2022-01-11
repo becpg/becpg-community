@@ -101,5 +101,7 @@ public interface GS1Model {
 	/** Constant <code>TYPE_DUTY_FEE_TAX</code> */
 	QName TYPE_DUTY_FEE_TAX  = QName.createQName(GS1_URI, "dutyFeeTax");
 	
+	QName PROP_PRODUCT_ACTIVITY_TYPE_CODE = QName.createQName(GS1_URI, "productActivityTypeCode");
+	
 
 }

@@ -281,10 +281,10 @@ public class FormulationHelper {
 
 		Double netWeight = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_NET_WEIGHT);
 
-		Double qty = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_QTY);
 		if (netWeight != null) {
 			return netWeight;
 		} else {
+			Double qty = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_QTY);
 			String strProductUnit = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PRODUCT_UNIT);
 			ProductUnit productUnit = strProductUnit != null ? ProductUnit.valueOf(strProductUnit) : null;
 			if (productUnit != null && (productUnit.isWeight() || productUnit.isVolume()) && qty != null) {

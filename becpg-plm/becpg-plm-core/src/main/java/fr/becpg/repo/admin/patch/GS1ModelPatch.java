@@ -11,6 +11,7 @@ import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.QName;
@@ -41,6 +42,7 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 	private PatchDAO patchDAO;
 	private QNameDAO qnameDAO;
 	private RuleService ruleService;
+	private LockService lockService;
 
 	
 	/**
@@ -115,6 +117,9 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 		this.ruleService = ruleService;
 	}
 
+	public void setLockService(LockService lockService) {
+		this.lockService = lockService;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -196,6 +201,11 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 
 				if (nodeService.exists(productNodeRef)) {
 					if (!nodeService.hasAspect(productNodeRef, GS1Model.ASPECT_GS1_ASPECT)) {
+						
+						if (lockService.isLocked(productNodeRef)) {
+							lockService.unlock(productNodeRef);
+						}
+						
 						nodeService.removeAspect(productNodeRef, ASPECT_GS1_DATES_ASPECT);
 						nodeService.removeAspect(productNodeRef, ASPECT_GS1_INDICATORS_ASPECT);
 					}
