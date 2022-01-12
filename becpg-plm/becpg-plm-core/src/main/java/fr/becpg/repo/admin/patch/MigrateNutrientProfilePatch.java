@@ -150,7 +150,6 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				return result.size();
 			}
 
-			@SuppressWarnings("deprecation")
 			public Collection<NodeRef> getNextWork() {
 
 				result.clear();
@@ -204,23 +203,26 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 					
 					String nutrientProfileClass = (String) nodeService.getProperty(nutrientProfile, BeCPGModel.PROP_CHARACT_NAME);
 					
-					for (AssociationRef sourceAssoc : sourceAssocs) {
-						
-						if (nutrientProfileClass.contains("Others")) {
-							nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Others.toString());
-						} else if (nutrientProfileClass.contains("Beverages")) {
-							nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Beverages.toString());
-						} else if (nutrientProfileClass.contains("Fats")) {
-							nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Fats.toString());
-						} else if (nutrientProfileClass.contains("Cheeses")) {
-							nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Cheeses.toString());
+					boolean nutrientProfileClassKnown = nutrientProfileClass.contains("Others") || nutrientProfileClass.contains("Beverages") || nutrientProfileClass.contains("Fats") || nutrientProfileClass.contains("Cheeses");
+					
+					if (nutrientProfileClassKnown) {
+						for (AssociationRef sourceAssoc : sourceAssocs) {
+							
+							if (nutrientProfileClass.contains("Others")) {
+								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Others.toString());
+							} else if (nutrientProfileClass.contains("Beverages")) {
+								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Beverages.toString());
+							} else if (nutrientProfileClass.contains("Fats")) {
+								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Fats.toString());
+							} else if (nutrientProfileClass.contains("Cheeses")) {
+								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Cheeses.toString());
+							}
+							
+							nodeService.removeAssociation(sourceAssoc.getSourceRef(), nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
 						}
-						
-						nodeService.removeAssociation(sourceAssoc.getSourceRef(), nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
+						nodeService.deleteNode(nutrientProfile);
 					}
 				}
-				
-				nodeService.deleteNode(nutrientProfile);
 				
 				policyBehaviourFilter.enableBehaviour();
 			}
