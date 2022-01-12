@@ -196,50 +196,50 @@ public class NutriScore implements ScoreCalculatingPlugin {
 			Double protein, Map<Double, double[]> map, int nutriScore, double[] minMax, String nutrientClass) {
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append(I18NUtil.getMessage("nutriscore.positive") + "\n");
+		sb.append(I18NUtil.getMessage("nutriscore.negative") + "\n");
 		sb.append(formatDetails(energyKj, energyKjNode, map));
 		sb.append(formatDetails(satFat, satFatNode, map));
 		sb.append(formatDetails(totalFat, totalFatNode, map));
 		sb.append(formatDetails(totalSugar, totalSugarNode, map));
 		sb.append(formatDetails(sodium, sodiumNode, map));
-		sb.append("\n" + I18NUtil.getMessage("nutriscore.negative") + "\n");
+		sb.append("\n" + I18NUtil.getMessage("nutriscore.positive") + "\n");
 		sb.append(formatDetails(protein, proteinNode, map));
 		sb.append(formatDetails(percFruitsAndVetgs, percFruitsAndVetgsNode, map));
 		sb.append(formatDetails(nspFibre, nspFibreNode, map));
 		sb.append(formatDetails(aoacFibre, aoacFibreNode, map));
 
-		double positiveScore = 0;
+		double negativePart = 0;
 		if (map.get(energyKj) != null) {
-			positiveScore += map.get(energyKj)[0];
+			negativePart += map.get(energyKj)[0];
 		}
 		if (map.get(satFat) != null) {
-			positiveScore += map.get(satFat)[0];
+			negativePart += map.get(satFat)[0];
 		}
 		if (map.get(totalFat) != null) {
-			positiveScore += map.get(totalFat)[0];
+			negativePart += map.get(totalFat)[0];
 		}
 		if (map.get(totalSugar) != null) {
-			positiveScore += map.get(totalSugar)[0];
+			negativePart += map.get(totalSugar)[0];
 		}
 		if (map.get(sodium) != null) {
-			positiveScore += map.get(sodium)[0];
+			negativePart += map.get(sodium)[0];
 		}
 
-		double negativeScore = 0;
+		double positivePart = 0;
 		if (map.get(protein) != null) {
-			negativeScore += map.get(protein)[0];
+			positivePart += map.get(protein)[0];
 		}
 		if (map.get(percFruitsAndVetgs) != null) {
-			negativeScore += map.get(percFruitsAndVetgs)[0];
+			positivePart += map.get(percFruitsAndVetgs)[0];
 		}
 		if (map.get(nspFibre) != null) {
-			negativeScore += map.get(nspFibre)[0];
+			positivePart += map.get(nspFibre)[0];
 		}
 		if (map.get(aoacFibre) != null) {
-			negativeScore += map.get(aoacFibre)[0];
+			positivePart += map.get(aoacFibre)[0];
 		}
-
-		sb.append("\n" + I18NUtil.getMessage("nutriscore.finalScore", positiveScore, negativeScore, nutriScore));
+		
+		sb.append("\n" + I18NUtil.getMessage("nutriscore.finalScore", negativePart, positivePart, nutriScore));
 		sb.append("\n" + I18NUtil.getMessage("nutriscore.category", minMax[0] == Integer.MIN_VALUE ? "-Inf" : minMax[0], nutriScore,
 				minMax[1] == Integer.MAX_VALUE ? "Inf" : minMax[1], nutrientClass));
 		return sb.toString();
@@ -247,13 +247,17 @@ public class NutriScore implements ScoreCalculatingPlugin {
 	
 	private String formatDetails(Double value, NodeRef node, Map<Double, double[]> map) {
 		
+		if (map.get(value) == null) {
+			return "";
+		}
+		
 		String name = (String) nodeService.getProperty(node, BeCPGModel.PROP_CHARACT_NAME);
 		
 		double actualValue = map.get(value).length == 4 ? map.get(value)[3] : value;
 		
 		Object upperValue = (map.get(value)[2] == Integer.MAX_VALUE) ? "Inf" : map.get(value)[2];
 		
-		return (map.get(value) == null) ? "" : name + " (" + map.get(value)[1] + " < " + actualValue + " <= " + upperValue + ") = " + (int) map.get(value)[0] + "\n";
+		return name + " (" + map.get(value)[1] + " < " + actualValue + " <= " + upperValue + ") = " + (int) map.get(value)[0] + "\n";
 	}
 	
 }
