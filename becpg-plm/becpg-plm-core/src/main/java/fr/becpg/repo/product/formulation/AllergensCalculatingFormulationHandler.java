@@ -31,6 +31,7 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -201,10 +202,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 			formulatedProduct.getAllergenList().retainAll(retainNodes);
 			formulatedProduct.getReqCtrlList().addAll(rclCtrlMap.values());
-			// sort
-			sort(formulatedProduct.getAllergenList());
+		
 
 		}
+		
+		// sort
+		sort(formulatedProduct.getAllergenList());
 
 		return true;
 
@@ -320,7 +323,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 					for (NodeRef p : allergenListDataItem.getVoluntarySources()) {
 						if (!newAllergenListDataItem.getVoluntarySources().contains(p)) {
-							newAllergenListDataItem.getVoluntarySources().add(p);
+							if(!(partProduct instanceof RawMaterialData) || alfrescoRepository.findOne(p) instanceof IngItem) {
+								newAllergenListDataItem.getVoluntarySources().add(p);
+							}
 						}
 					}
 
@@ -349,7 +354,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 					for (NodeRef p : allergenListDataItem.getInVoluntarySources()) {
 						if (!newAllergenListDataItem.getInVoluntarySources().contains(p)) {
-							newAllergenListDataItem.getInVoluntarySources().add(p);
+							if(!(partProduct instanceof RawMaterialData) || alfrescoRepository.findOne(p) instanceof IngItem) {
+								newAllergenListDataItem.getInVoluntarySources().add(p);
+							}
 						}
 					}
 
