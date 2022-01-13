@@ -207,7 +207,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		}
 		
 		// sort
-		sort(formulatedProduct.getAllergenList());
+		if(formulatedProduct.getAllergenList()!=null) {
+			sort(formulatedProduct.getAllergenList());
+		}
 
 		return true;
 

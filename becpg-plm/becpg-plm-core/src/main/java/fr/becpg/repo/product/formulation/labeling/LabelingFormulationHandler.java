@@ -473,22 +473,24 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
-		for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
-			NodeRef allergen = allergenListDataItem.getAllergen();
-			if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
-				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
-					appendAllergen(labelingFormulaContext.getAllergens(), allergen, allergenListDataItem.getQtyPerc());
-				}
-			} else if (Boolean.TRUE.equals(allergenListDataItem.getInVoluntary())) {
-				if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
-					appendAllergen(labelingFormulaContext.getInVolAllergens(), allergen, allergenListDataItem.getQtyPerc());
-					for (NodeRef inVoluntarySource : allergenListDataItem.getInVoluntarySources()) {
-						QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
-
-						if (PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
-							appendAllergen(labelingFormulaContext.getInVolAllergensRawMaterial(), allergen, allergenListDataItem.getQtyPerc());
-						} else if (PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
-							appendAllergen(labelingFormulaContext.getInVolAllergensProcess(), allergen, allergenListDataItem.getQtyPerc());
+		if(productData.getAllergenList()!=null) {
+			for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
+				NodeRef allergen = allergenListDataItem.getAllergen();
+				if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
+					if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
+						appendAllergen(labelingFormulaContext.getAllergens(), allergen, allergenListDataItem.getQtyPerc());
+					}
+				} else if (Boolean.TRUE.equals(allergenListDataItem.getInVoluntary())) {
+					if (AllergenType.Major.toString().equals(nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_TYPE))) {
+						appendAllergen(labelingFormulaContext.getInVolAllergens(), allergen, allergenListDataItem.getQtyPerc());
+						for (NodeRef inVoluntarySource : allergenListDataItem.getInVoluntarySources()) {
+							QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
+	
+							if (PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
+								appendAllergen(labelingFormulaContext.getInVolAllergensRawMaterial(), allergen, allergenListDataItem.getQtyPerc());
+							} else if (PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
+								appendAllergen(labelingFormulaContext.getInVolAllergensProcess(), allergen, allergenListDataItem.getQtyPerc());
+							}
 						}
 					}
 				}
