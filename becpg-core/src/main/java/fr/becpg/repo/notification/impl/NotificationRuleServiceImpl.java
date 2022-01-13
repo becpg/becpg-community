@@ -62,6 +62,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Service("notificationRuleService")
 public class NotificationRuleServiceImpl implements NotificationRuleService {
 
+
 	private static final Log logger = LogFactory.getLog(NotificationRuleServiceImpl.class);
 	
 	private static final String DATE_FIELD = "dateField";
@@ -70,6 +71,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private static final String NOTIFICATION = "notification";
 	private static final String TARGET_PATH = "targetPath";
 	private static final String ENTITYV2_SUBTYPE = "isEntityV2SubType";
+	private static final String DISPLAY_PATH = "displayPath";
 	
 	private static final String QUERY = "query";
 	private static final String ENTITY_FILTER = "entityFilter";
@@ -244,6 +246,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			for (NodeRef nodeRef : items) {
 				Map<String, Object> item = new HashMap<>();
 				item.put(NODE, nodeRef);
+				item.put(DISPLAY_PATH, nodeService.getPath(nodeRef).toDisplayPath(nodeService, permissionService));
 				item.put(ENTITYV2_SUBTYPE, dictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2));
 				entities.put(nodeRef, item);
 			}
