@@ -92,38 +92,35 @@ margin-top:3px;
                                             <#if args.entities?size != 0>
                                              <table cellpadding="0" cellspacing="0" style="border:solid 1px black;padding: 0px;" >
                                                <tr style="background-color: #004254;color:white">
-                                                 <#--  <th>Folder</th>  -->
-                                                 <th>Name</th>
-                                                 <th class="becpg_cellBorderLeft">Family</th>
-                                                 <th class="becpg_cellBorderLeft">Priority</th>
-                                                 <th class="becpg_cellBorderLeft">State</th>
-                                                 <th class="becpg_cellBorderLeft">Project manager</th>
-                                                 <th class="becpg_cellBorderLeft">Description</th>
-                                                 <th class="becpg_cellBorderLeft">Start</th>
-                                                 <th class="becpg_cellBorderLeft">Forecast end</th>
-                                                 <th class="becpg_cellBorderLeft">Duration(d)</th>
-                                                 <th class="becpg_cellBorderLeft">Delay(d)</th>
-                                                 <th class="becpg_cellBorderLeft">Note(%)</th>
-                                                 <th class="becpg_cellBorderLeft">Adv(%)</th>
-                                                 
+                                                 <th>Folder</th>
+                                                 <th class="becpg_cellBorderLeft">Object</th>
                                                  <#if args.versions??>
                                                  <th class="becpg_cellBorderLeft">Creation date</th>
                                                  <th class="becpg_cellBorderLeft">Version</th>
                                                  <th class="becpg_cellBorderLeft">Creator</th>
                                                  <th class="becpg_cellBorderLeft">Comment</th>
-                                                 <#--  <#else>
-                                                 <th class="becpg_cellBorderLeft">${args.dateField}</th>  -->
-                                                 
+                                                 <#else>
+                                                 <th class="becpg_cellBorderLeft">${args.dateField}</th>
                                                  </#if>
                                                </tr>
                                                
                                                <#list args.entities as item> 
                                                		<#assign node=item.node/>
+                                               		<#assign index = item.displayPath?index_of("Sites")> 
+	                                                   <#if (index+6) gt item.displayPath?length>
+	                                                       <#assign itemPath = item.displayPath>
+	                                                   <#else>
+		                                                   <#if index gt 0> 
+	                                                       		<#assign itemPath = item.displayPath?substring(index+6)>
+                                                     	  <#else> 
+                                                     	  		<#assign itemPath = item.displayPath>
+                                                     	  </#if>
+                                                 	   </#if>
                                                		<#if args.versions??>
 	                                               		<#list args.versions[node.nodeRef]?keys as key >
 	                                               			<#assign version=args.versions[node.nodeRef][key]>
 															<tr> 
-																<td class="becpg_rowBorderTop"> ${node.parent.name} </td>
+																<td class="becpg_rowBorderTop"> ${itemPath} </td>
 																<td class="becpg_rowBorderTopLeftRight">
 																	<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${node.name}</a>
 																</td>
@@ -135,81 +132,12 @@ margin-top:3px;
 														</#list>
 													<#else>
 														<tr> 
-															<#--  <td class="becpg_rowBorderTop"> ${node.parent.name} </td>  -->
-															<td class="becpg_rowBorderTop">
+															<td class="becpg_rowBorderTop"> ${itemPath} </td>
+															<td class="becpg_rowBorderTopLeftRight">
 																<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${node.name}</a>
 															</td>
-                                             <td class="becpg_rowBorderTopLeftRight">
-                                                <#if (node.properties["pjt:projectHierarchy1"])??>
-                                                <#assign famille = node.properties["pjt:projectHierarchy1"]>
-                                                   ${famille.properties["bcpg:lkvValue"]}
-                                                </#if>
-                                             </td>
-                                             <td class="becpg_rowBorderTopLeftRight">
-                                                <#if (node.properties["pjt:projectPriority"])??>
-                                                   <#if node.properties["pjt:projectPriority"] == 3>
-                                                      Low
-                                                   <#elseif node.properties["pjt:projectPriority"] == 2>
-                                                      Medium
-                                                   <#else>
-                                                      High
-                                                   </#if>
-                                                </#if>
-                                             </td>
-                                             <td class="becpg_rowBorderTopLeftRight">
-                                                <#if (node.properties["pjt:projectState"])??>
-                                                      ${node.properties["pjt:projectState"]}
-                                                </#if>
-                                             </td>
-                                             <td class="becpg_rowBorderTopLeftRight">
-                                                <#if (node.properties["cm:creator"])??>
-                                                   ${node.properties["cm:creator"]}
-                                                </#if>
-                                             </td>
-                                             <td class="becpg_rowBorderTopLeftRight">
-                                                <#if node.properties["cm:description"]??>
-                                                   ${node.properties["cm:description"]}
-                                                </#if>
-                                             </td>
-                                             <td class="becpg_rowBorderTopLeftRight">
-                                                <#if (node.properties["pjt:projectStartDate"])??>
-                                                   ${node.properties["pjt:projectStartDate"]?date?string.short}
-                                                </#if>
-                                             </td>
-                                             <td class="becpg_rowBorderTopLeftRight">
-                                                <#if (node.properties["pjt:projectCompletionDate"])??>
-                                                   ${node.properties["pjt:projectCompletionDate"]?date?string.short}
-                                                </#if>
-                                             </td>
-                                             <td class="becpg_rowBorderTopLeftRight">
-                                                <#if node.properties["pjt:projectCompletionDate"]?? && (node.properties["pjt:projectStartDate"])??>
-                                                   <#assign num1 = node.properties["pjt:projectStartDate"]?date?long>
-                                                   <#assign num2 = node.properties["pjt:projectCompletionDate"]?date?long>
-                                                   ${((num2 - num1)/(1000 * 60 * 60 * 24))?round}
-                                                </#if>
-                                             </td>
-                                                <#if (node.properties["pjt:projectOverdue"])??>
-                                                   <#assign overdue = node.properties["pjt:projectOverdue"]>
-                                                   <#if overdue <= 0>
-                                                         <#assign color = "#2ECC71">
-                                                   <#else>
-                                                         <#assign color = "#E74C3C">
-                                                   </#if>
-                                                   <td class="becpg_rowBorderTopLeftRight" style="background-color: ${color}">${overdue}</td>
-                                                </#if>
-                                             <td class="becpg_rowBorderTopLeftRight">
-                                                <#if (node.properties["pjt:projectScore"])??>
-                                                   ${node.properties["pjt:projectScore"]}
-                                                </#if>
-                                             </td>
-                                             <td class="becpg_rowBorderTopLeftRight">
-                                                <#if (node.properties["pjt:completionPercent"])??>
-                                                      ${node.properties["pjt:completionPercent"]}
-                                                </#if>
-                                             </td>
-	                                          <#--  <td class="becpg_rowBorderTopLeftRight">${node.properties[dateField]?date}</td>   -->
-                                                     
-	                                       </tr>	
+	                                               			<td class="becpg_rowBorderTopLeftRight">${node.properties[dateField]?date}</td>
+	                                               		</tr>	
 													</#if>
 														
                                                		
