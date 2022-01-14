@@ -4,7 +4,7 @@
       <span class="viewmode-label">${field.label?html}:</span>
       <#if fieldValue != "" && fieldValue?eval??>
 		<#assign ecoScore = fieldValue?eval>
-        <span <#if ecoScore.prettyScore??>title="${ecoScore.prettyScore?html}"</#if> class="viewmode-value ecoscore-class">
+        <span <#if ecoScore.displayValue??>title="${ecoScore.displayValue?html}"</#if> class="viewmode-value ecoscore-class">
 	      	<#if ecoScore.scoreClass != "" 
 	      	   && (
 	      	       ecoScore.scoreClass == "A"
