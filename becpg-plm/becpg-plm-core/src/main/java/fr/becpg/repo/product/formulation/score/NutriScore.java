@@ -3,10 +3,8 @@ package fr.becpg.repo.product.formulation.score;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -15,10 +13,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.GS1Model;
 import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.PLMModel;
@@ -115,7 +111,7 @@ public class NutriScore implements ScoreCalculatingPlugin {
 						totalSugar = nut.value("EU");
 						check++;
 					} else if (nut.getNut().equals(sodiumNode)) {
-						sodium = nut.value("EU");
+						sodium = nut.value("EU") * 1000;
 						check++;
 					} else if (nut.getNut().equals(nspFibreNode)) {
 						nspFibre = nut.value("EU");
@@ -140,29 +136,20 @@ public class NutriScore implements ScoreCalculatingPlugin {
 					}
 				}
 				
-				Map<Double, double[]> map = new HashMap<>();
+				NutriScoreContext nutriScoreContext = new NutriScoreContext();
 				
-				sodium = sodium * 1000;
-				
-				int nutriScore = Nutrient5C2021Helper.compute5CScore(energyKj, satFat, totalFat, totalSugar, sodium, percFruitsAndVetgs, nspFibre, aoacFibre, protein, nutrientProfileCategory.toString(), map);
-				
-				double[] minMax = new double[2];
-				
-				String nutrientClass = Nutrient5C2021Helper.buildNutrientClass((double) nutriScore, ranges, NUTRIENT_PROFILE_CLASSES, minMax);
-				
+				// compute score
+				int nutriScore = Nutrient5C2021Helper.compute5CScore(energyKj, satFat, totalFat, totalSugar, sodium, percFruitsAndVetgs, nspFibre, aoacFibre, protein, nutrientProfileCategory.toString(), nutriScoreContext);
 				productData.setNutrientScore((double) nutriScore);
+				
+				// compute class
+				String nutrientClass = Nutrient5C2021Helper.buildNutrientClass((double) nutriScore, ranges, NUTRIENT_PROFILE_CLASSES, nutriScoreContext);
 				productData.setNutrientClass(nutrientClass);
 				
+				// format details
 				JSONObject nutrientScoreDetails = new JSONObject();
-				
-				 String prettyScore = formatPrettyScore(energyKjNode, satFatNode, totalFatNode, totalSugarNode, sodiumNode,
-						percFruitsAndVetgsNode, nspFibreNode, aoacFibreNode, proteinNode, energyKj, satFat, totalFat,
-						totalSugar, sodium, percFruitsAndVetgs, nspFibre, aoacFibre, protein, map, nutriScore, minMax,
-						nutrientClass);
-				
-				nutrientScoreDetails.put("class", nutrientClass);
-				nutrientScoreDetails.put("prettyScore", prettyScore);
-				
+				nutrientScoreDetails.put("value", nutriScoreContext.getJsonValue());
+				nutrientScoreDetails.put("displayValue", nutriScoreContext.toString());
 				productData.setNutrientDetails(nutrientScoreDetails.toString());
 				
 			} catch (Exception e) {
@@ -187,77 +174,6 @@ public class NutriScore implements ScoreCalculatingPlugin {
 		}
 		
 		return true;
-	}
-
-	private String formatPrettyScore(NodeRef energyKjNode, NodeRef satFatNode, NodeRef totalFatNode,
-			NodeRef totalSugarNode, NodeRef sodiumNode, NodeRef percFruitsAndVetgsNode, NodeRef nspFibreNode,
-			NodeRef aoacFibreNode, NodeRef proteinNode, Double energyKj, Double satFat, Double totalFat,
-			Double totalSugar, Double sodium, Double percFruitsAndVetgs, Double nspFibre, Double aoacFibre,
-			Double protein, Map<Double, double[]> map, int nutriScore, double[] minMax, String nutrientClass) {
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(I18NUtil.getMessage("nutriscore.negative") + "\n");
-		sb.append(formatDetails(energyKj, energyKjNode, map));
-		sb.append(formatDetails(satFat, satFatNode, map));
-		sb.append(formatDetails(totalFat, totalFatNode, map));
-		sb.append(formatDetails(totalSugar, totalSugarNode, map));
-		sb.append(formatDetails(sodium, sodiumNode, map));
-		sb.append("\n" + I18NUtil.getMessage("nutriscore.positive") + "\n");
-		sb.append(formatDetails(protein, proteinNode, map));
-		sb.append(formatDetails(percFruitsAndVetgs, percFruitsAndVetgsNode, map));
-		sb.append(formatDetails(nspFibre, nspFibreNode, map));
-		sb.append(formatDetails(aoacFibre, aoacFibreNode, map));
-
-		double negativePart = 0;
-		if (map.get(energyKj) != null) {
-			negativePart += map.get(energyKj)[0];
-		}
-		if (map.get(satFat) != null) {
-			negativePart += map.get(satFat)[0];
-		}
-		if (map.get(totalFat) != null) {
-			negativePart += map.get(totalFat)[0];
-		}
-		if (map.get(totalSugar) != null) {
-			negativePart += map.get(totalSugar)[0];
-		}
-		if (map.get(sodium) != null) {
-			negativePart += map.get(sodium)[0];
-		}
-
-		double positivePart = 0;
-		if (map.get(protein) != null) {
-			positivePart += map.get(protein)[0];
-		}
-		if (map.get(percFruitsAndVetgs) != null) {
-			positivePart += map.get(percFruitsAndVetgs)[0];
-		}
-		if (map.get(nspFibre) != null) {
-			positivePart += map.get(nspFibre)[0];
-		}
-		if (map.get(aoacFibre) != null) {
-			positivePart += map.get(aoacFibre)[0];
-		}
-		
-		sb.append("\n" + I18NUtil.getMessage("nutriscore.finalScore", negativePart, positivePart, nutriScore));
-		sb.append("\n" + I18NUtil.getMessage("nutriscore.category", minMax[0] == Integer.MIN_VALUE ? "-Inf" : minMax[0], nutriScore,
-				minMax[1] == Integer.MAX_VALUE ? "Inf" : minMax[1], nutrientClass));
-		return sb.toString();
-	}
-	
-	private String formatDetails(Double value, NodeRef node, Map<Double, double[]> map) {
-		
-		if (map.get(value) == null) {
-			return "";
-		}
-		
-		String name = (String) nodeService.getProperty(node, BeCPGModel.PROP_CHARACT_NAME);
-		
-		double actualValue = map.get(value).length == 4 ? map.get(value)[3] : value;
-		
-		Object upperValue = (map.get(value)[2] == Integer.MAX_VALUE) ? "Inf" : map.get(value)[2];
-		
-		return name + " (" + map.get(value)[1] + " < " + actualValue + " <= " + upperValue + ") = " + (int) map.get(value)[0] + "\n";
 	}
 	
 }
