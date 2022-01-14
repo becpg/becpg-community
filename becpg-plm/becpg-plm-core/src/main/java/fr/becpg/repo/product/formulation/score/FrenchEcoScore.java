@@ -301,7 +301,7 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 				.append(I18NUtil.getMessage("ecoscore.politicalScore")).append(" = ").append(politicalScore).append(System.lineSeparator())
 				.append(I18NUtil.getMessage("ecoscore.packagingMalus")).append(" = ").append(packagingMalus).append(System.lineSeparator());
 				
-				ecoScoreDetails.put("prettyScore", sb.toString());
+				ecoScoreDetails.put("displayValue", sb.toString());
 				ecoScoreDetails.put("ecoScore", ecoScore);
 				ecoScoreDetails.put("scoreClass", scoreClass);
 				ecoScoreDetails.put("acvScore", acvScore);
