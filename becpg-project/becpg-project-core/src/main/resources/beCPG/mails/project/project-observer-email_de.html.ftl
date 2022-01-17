@@ -181,12 +181,13 @@
                                              </tr>
                                           </table>
                                           <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-                                        <#if (args.project.properties["bcpg:modifiedCatalog1"])??>
-                                            <#assign modifiedCatalog1 = args.project.properties["bcpg:modifiedCatalog1"]>
-                                            <#assign cmModified = args.project.properties["cm:modified"]>
+		                                        <#if (args.project.properties["bcpg:modifiedCatalog1"])??>
+		                                            <#assign modifiedCatalog1 = args.project.properties["bcpg:modifiedCatalog1"]>
+		                                            <#assign cmModified = args.project.properties["cm:modified"]>
                                                 <#if modifiedCatalog1?datetime?iso("UTC") = cmModified?datetime?iso("UTC")>
                                                     <p>Einige Projekteigenschaften wurden geändert</p>
-                                                <#else>
+                                                </#if>
+                                                </#if>
                                              	<#if args.activityType == 'State'>
 												 <p>Der Status der Aufgabe wurde von geändert <b>${args.beforeState}</b> nach 
 													<#if args.afterState == 'Refusé'><b style="color:#ff642d">${args.afterState}</b>

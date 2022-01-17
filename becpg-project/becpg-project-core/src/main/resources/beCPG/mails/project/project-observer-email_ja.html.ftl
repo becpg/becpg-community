@@ -193,18 +193,18 @@
                                            
                                                 <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
                                                 <#if (args.project.properties["bcpg:modifiedCatalog1"])??>
-                                            <#assign modifiedCatalog1 = args.project.properties["bcpg:modifiedCatalog1"]>
-                                            <#assign cmModified = args.project.properties["cm:modified"]>
+		                                            <#assign modifiedCatalog1 = args.project.properties["bcpg:modifiedCatalog1"]>
+		                                            <#assign cmModified = args.project.properties["cm:modified"]>
                                                 <#if modifiedCatalog1?datetime?iso("UTC") = cmModified?datetime?iso("UTC")>
                                                     <p>いくつかのプロジェクトのプロパティが変更されました</p>
-                                                <#else>
-                                                    
-                                             	    <#if args.activityType == 'State'>
-												     <p>からタスクの状態が変わりました。 <b>${args.beforeState}</b> で 
-													<#if args.afterState == 'Refusé'><b style="color:#ff642d">${args.afterState}</b>
-														<#elseif (args.afterState == 'En cours' || args.afterState == 'Terminé')><b style="color:#0f515f">${args.afterState}</b>
-																<#else><b>${args.afterState}</b>
-													</#if>
+                                                </#if>
+                                                </#if>
+                                         	    <#if args.activityType == 'State'>
+											     <p>からタスクの状態が変わりました。 <b>${args.beforeState}</b> で 
+												<#if args.afterState == 'Refusé'><b style="color:#ff642d">${args.afterState}</b>
+													<#elseif (args.afterState == 'En cours' || args.afterState == 'Terminé')><b style="color:#0f515f">${args.afterState}</b>
+															<#else><b>${args.afterState}</b>
+												</#if>
                                              	 </p>
                                              	<ul>
                                              	 <#if (args.taskTitle)??>                                             
@@ -281,8 +281,6 @@
                                        </td>
                                        
                                     </tr>
-                                    </#if>
-                                    </#if>
                                  </table>
                               </td>
                            </tr>

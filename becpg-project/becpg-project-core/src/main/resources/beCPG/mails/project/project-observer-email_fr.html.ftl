@@ -192,13 +192,14 @@
                                             </table>
                                            
                                                 <div style="font-size: 14px; margin: 12px 0px 24px 0px; padding-top: 10px; border-top: 1px solid #aaaaaa;">
-                                                <#if (args.project.properties["bcpg:modifiedCatalog1"])??>
-                                            <#assign modifiedCatalog1 = args.project.properties["bcpg:modifiedCatalog1"]>
-                                            <#assign cmModified = args.project.properties["cm:modified"]>
-                                                <#if modifiedCatalog1?datetime?iso("UTC") = cmModified?datetime?iso("UTC")>
-                                                    <p>Certaines propriétés du projet ont été modifiées</p>
-                                                <#else>
-                                                    
+	                                                <#if (args.project.properties["bcpg:modifiedCatalog1"])??>
+			                                            <#assign modifiedCatalog1 = args.project.properties["bcpg:modifiedCatalog1"]>
+			                                            <#assign cmModified = args.project.properties["cm:modified"]>
+	                                                <#if modifiedCatalog1?datetime?iso("UTC") = cmModified?datetime?iso("UTC")>
+	                                                    <p>Certaines propriétés du projet ont été modifiées</p>
+	                                                </#if>
+	                       					        </#if>	
+	
                                              	    <#if args.activityType == 'State'>
 												     <p>L'état de la tâche est passé de <b>${args.beforeState}</b> à 
 													<#if args.afterState == 'Refusé'><b style="color:#ff642d">${args.afterState}</b>
@@ -281,8 +282,6 @@
                                        </td>
                                        
                                     </tr>
-                                    </#if>
-                                    </#if>
                                  </table>
                               </td>
                            </tr>
