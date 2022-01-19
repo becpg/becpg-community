@@ -281,7 +281,14 @@ public class NutriScoreContext {
 
 	public void setSatFat(NutriScoreFrame satFat) {
 		this.satFat = satFat;
-		
+	}
+	
+	public Integer getAScore() {
+		return aScore;
+	}
+	
+	public Integer getCScore() {
+		return cScore;
 	}
 
 	public String buildNutrientDetails() {
