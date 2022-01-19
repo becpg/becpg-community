@@ -141,7 +141,7 @@ function getConvertedCapacityInUsUnit (qty, unit, isVolume) {
     </list-property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="452">
-            <property name="FILELIST">datasource_get_PF205_fr.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/document/product/default/ProductReport.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -4806,7 +4806,7 @@ row["rplStepRef"];
             <property name="bottomMargin">0.4cm</property>
             <property name="rightMargin">1.5cm</property>
             <property name="style">becpg-default-style</property>
-            <property name="headerHeight">1.15in</property>
+            <property name="headerHeight">1.2in</property>
             <property name="footerHeight">1.4in</property>
             <page-header>
                 <grid id="765">
@@ -4823,76 +4823,19 @@ row["rplStepRef"];
                     <column id="768"/>
                     <row id="769">
                         <cell id="770">
+                            <property name="backgroundImage">./logo.png</property>
                             <property name="backgroundRepeat">no-repeat</property>
                             <property name="backgroundSizeHeight">cover</property>
                             <property name="backgroundSizeWidth">cover</property>
                             <property name="paddingLeft">1pt</property>
                             <property name="textAlign">left</property>
-                            <image id="12188">
-                                <property name="height">80%</property>
-                                <property name="width">80%</property>
-                                <property name="dataSet">imgLogo</property>
-                                <list-property name="visibility">
-                                    <structure>
-                                        <property name="format">all</property>
-                                        <expression name="valueExpr" type="javascript">row["img"]==null ||row["img"]==""</expression>
-                                    </structure>
-                                </list-property>
-                                <list-property name="boundDataColumns">
-                                    <structure>
-                                        <property name="name">id</property>
-                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">entityName</property>
-                                        <expression name="expression" type="javascript">dataSetRow["entityName"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">name</property>
-                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">entityType</property>
-                                        <expression name="expression" type="javascript">dataSetRow["entityType"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">img</property>
-                                        <text-property name="displayName">img</text-property>
-                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
-                                        <property name="dataType">blob</property>
-                                        <property name="allowExport">true</property>
-                                    </structure>
-                                </list-property>
-                                <property name="source">expr</property>
-                                <expression name="valueExpr">row["img"]</expression>
-                            </image>
-                            <image id="12189">
+                            <image id="12241">
                                 <property name="height">0.7083333333333334in</property>
                                 <property name="width">0.9375in</property>
-                                <property name="dataSet">imgLogo</property>
                                 <list-property name="visibility">
                                     <structure>
                                         <property name="format">all</property>
-                                        <expression name="valueExpr" type="javascript">row["img"]!=null</expression>
-                                    </structure>
-                                </list-property>
-                                <list-property name="boundDataColumns">
-                                    <structure>
-                                        <property name="name">id</property>
-                                        <text-property name="displayName">id</text-property>
-                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">img</property>
-                                        <text-property name="displayName">img</text-property>
-                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
-                                        <property name="dataType">blob</property>
-                                        <property name="allowExport">true</property>
+                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("displayBeCPGLogo")=="false"</expression>
                                     </structure>
                                 </list-property>
                                 <property name="source">embed</property>
@@ -5590,8 +5533,10 @@ else{
             </list-property>
             <column id="6021"/>
             <row id="6022">
-                <property name="style">becpg-chapter-header1</property>
+                <property name="style">becpg-chapter-header</property>
+                <property name="fontSize">10pt</property>
                 <cell id="6023">
+                    <property name="fontSize">10pt</property>
                     <property name="borderBottomStyle">none</property>
                     <property name="borderLeftStyle">none</property>
                     <property name="borderRightStyle">none</property>
@@ -5900,7 +5845,8 @@ else{
             </list-property>
             <column id="5997"/>
             <row id="5998">
-                <property name="style">becpg-chapter-header1</property>
+                <property name="style">becpg-chapter-header</property>
+                <property name="fontSize">10pt</property>
                 <cell id="5999">
                     <property name="borderBottomStyle">none</property>
                     <property name="borderLeftStyle">none</property>
@@ -7273,7 +7219,8 @@ else{
             </list-property>
             <column id="3569"/>
             <row id="3570">
-                <property name="style">becpg-chapter-header1</property>
+                <property name="style">becpg-chapter-header</property>
+                <property name="fontSize">10pt</property>
                 <cell id="3571">
                     <property name="borderBottomStyle">none</property>
                     <property name="borderLeftStyle">none</property>
@@ -7480,7 +7427,8 @@ true
             </list-property>
             <column id="3584"/>
             <row id="3585">
-                <property name="style">becpg-chapter-header1</property>
+                <property name="style">becpg-chapter-header</property>
+                <property name="fontSize">10pt</property>
                 <cell id="3586">
                     <property name="borderBottomStyle">none</property>
                     <property name="borderLeftStyle">none</property>
@@ -7739,7 +7687,8 @@ true
             </column>
             <header>
                 <row id="9125">
-                    <property name="style">becpg-chapter-header1</property>
+                    <property name="style">becpg-chapter-header</property>
+                    <property name="fontSize">10pt</property>
                     <property name="fontWeight">bold</property>
                     <property name="borderBottomStyle">none</property>
                     <property name="borderLeftStyle">none</property>
@@ -7908,7 +7857,8 @@ true
             <column id="3594"/>
             <column id="3607"/>
             <row id="3595">
-                <property name="style">becpg-chapter-header1</property>
+                <property name="style">becpg-chapter-header</property>
+                <property name="fontSize">10pt</property>
                 <cell id="3596">
                     <property name="colSpan">2</property>
                     <property name="rowSpan">1</property>
@@ -8163,7 +8113,8 @@ true
             <column id="3609"/>
             <column id="3610"/>
             <row id="3611">
-                <property name="style">becpg-chapter-header1</property>
+                <property name="style">becpg-chapter-header</property>
+                <property name="fontSize">10pt</property>
                 <cell id="3612">
                     <property name="colSpan">2</property>
                     <property name="rowSpan">1</property>

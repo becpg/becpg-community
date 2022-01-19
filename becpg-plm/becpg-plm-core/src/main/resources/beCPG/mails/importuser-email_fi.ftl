@@ -80,7 +80,7 @@
                                              <tr>
                                                 <td class ="flex">
                                                    <img class="img" src="${shareUrl}/res/components/site-finder/images/project-email-logo.png" alt="" height="64" border="0" />
-                                                  <p class="title" style="font-size: 20px; color: #004254; font-weight: bold;">BECPG-tili</p>
+                                                  <p class="title" style="font-size: 20px; color: #004254; font-weight: bold;">beCPG-tili</p>
    
                                                 </td>
                                              </tr>
@@ -94,6 +94,13 @@
 															<br /><b>Salasana : </b>${password}</p>
 															
 															<p>Kehotan sinua käyttämään Firefox- tai Chrome-selainta.<br />															
+															</p>
+															
+															<p>					
+															Katso online-dokumentaatiomme aloittaaksesi beCPG:n käytön:<br />
+															- <a href="https://docs.becpg.fr/en/tutorial/tutorial.html">Opastus tuotteen luomiseen ja sen koostumukseen</a><br />
+															- <a href="https://docs.becpg.fr/en/utilization/navigation-becpg.html">BeCPG:n käyttöä koskevat asiakirjat</a> <br />
+															- <a href="https://docs.becpg.fr/en/utilization/project-management.html">Projektinhallinnan dokumentaatio</a>
 															</p>
 															
                                           
@@ -112,7 +119,7 @@
                            </tr>
                            <tr>
                               <td style="padding: 0px 30px; font-size: 13px;">
-                                 Lisätietoja beCPG: stä on osoitteessa <a style="text-decoration:none; color:#EF6236" href="http://www.becpg.net">http://www.becpg.net</a>
+                                 Lisätietoja beCPG: stä on osoitteessa <a style="text-decoration:none; color:#EF6236" href="https://www.becpg.net">https://www.becpg.net</a>
                               </td>
                            </tr>
                            <tr>

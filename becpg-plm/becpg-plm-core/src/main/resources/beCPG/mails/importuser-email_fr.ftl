@@ -96,7 +96,13 @@
 															<p>Je vous conseille d'utiliser le navigateur Firefox ou Chrome.<br />															
 															</p>
 															
-                                          
+                                      						<p>					
+															Consultez notre documentation en ligne pour utiliser beCPG:<br />
+															- <a href="https://docs.becpg.fr/fr/tutorial/tutorial.html">Tutoriel création d'un produit et d'une recette</a><br />
+															- <a href="https://docs.becpg.fr/fr/utilization/navigation-becpg.html">La documentation pour utiliser beCPG</a> <br />
+															- <a href="https://docs.becpg.fr/fr/utilization/project-management.html">La documentation pour la Gestion de Projet</a>
+															</p>								
+
                                             <p>Cordialement,<br />
                                              beCPG</p>
                                           </div>
@@ -112,7 +118,7 @@
                            </tr>
                            <tr>
                               <td style="padding: 0px 30px; font-size: 13px;">
-                                 Pour en savoir plus sur beCPG, vister <a style="text-decoration:none; color:#EF6236" href="http://www.becpg.net">http://www.becpg.net</a>
+                                 Pour en savoir plus sur beCPG, vister <a style="text-decoration:none; color:#EF6236" href="https://www.becpg.net">https://www.becpg.net</a>
                               </td>
                            </tr>
                            <tr>
