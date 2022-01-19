@@ -1548,7 +1548,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS), TranslateHelper.getLocaleAwarePath(EXPORT_PRODUCTS_REPORT_RPTFILE_PATH),
 					ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, false, false);
 
-			reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, false);
+			reportTplService.createTplRessource(exportSearchProductsNodeRef, TranslateHelper.getLocaleAwarePath(EXPORT_PRODUCTS_REPORT_XMLFILE_PATH), false);
 
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_INGLIST),
@@ -1592,10 +1592,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			NodeRef exportNCSynthesisNodeRef = visitFolder(exportSearchNodeRef, PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES);
 
 			reportTplService.createTplRptDesign(exportNCSynthesisNodeRef,
-					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES), EXPORT_NC_REPORT_RPTFILE_PATH,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES), TranslateHelper.getLocaleAwarePath(EXPORT_NC_REPORT_RPTFILE_PATH),
 					ReportType.ExportSearch, ReportFormat.PDF, QualityModel.TYPE_NC, false, true, false);
 
-			reportTplService.createTplRessource(exportNCSynthesisNodeRef, EXPORT_NC_REPORT_XMLFILE_PATH, false);
+			reportTplService.createTplRessource(exportNCSynthesisNodeRef, TranslateHelper.getLocaleAwarePath(EXPORT_NC_REPORT_XMLFILE_PATH), false);
 		} catch (IOException e) {
 			logger.error("Failed to create export search report tpl.", e);
 		}
