@@ -80,7 +80,7 @@
                                              <tr>
                                                 <td class ="flex">
                                                    <img class="img" src="${shareUrl}/res/components/site-finder/images/project-email-logo.png" alt="" height="64" border="0" />
-                                                  <p class="title" style="font-size: 20px; color: #004254; font-weight: bold;">BECPG hesabı</p>
+                                                  <p class="title" style="font-size: 20px; color: #004254; font-weight: bold;">beCPG hesabı</p>
    
                                                 </td>
                                              </tr>
@@ -94,6 +94,13 @@
 															<br /><b>Parola : </b>${password}</p>
 															
 															<p>Firefox veya Chrome tarayıcısını kullanmanızı tavsiye ederim.<br />															
+															</p>
+															
+															<p>					
+															beCPG'yi kullanmaya başlamak için çevrimiçi belgelerimize bakın:<br />
+															- <a href="https://docs.becpg.fr/en/tutorial/tutorial.html">Bir ürün ve kompozisyonu oluşturma eğitimi</a><br />
+															- <a href="https://docs.becpg.fr/en/utilization/navigation-becpg.html">beCPG kullanmak için belgeler</a> <br />
+															- <a href="https://docs.becpg.fr/en/utilization/project-management.html">Proje yönetimi için belgeler</a>
 															</p>
 															
                                           
@@ -112,7 +119,7 @@
                            </tr>
                            <tr>
                               <td style="padding: 0px 30px; font-size: 13px;">
-                                 BeCPG hakkında daha fazla bilgi edinmek için şu adresi ziyaret edin: <a style="text-decoration:none; color:#EF6236" href="http://www.becpg.net">http://www.becpg.net</a>
+                                 BeCPG hakkında daha fazla bilgi edinmek için şu adresi ziyaret edin: <a style="text-decoration:none; color:#EF6236" href="https://www.becpg.net">https://www.becpg.net</a>
                               </td>
                            </tr>
                            <tr>

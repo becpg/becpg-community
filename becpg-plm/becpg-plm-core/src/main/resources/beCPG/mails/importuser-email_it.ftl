@@ -80,7 +80,7 @@
                                              <tr>
                                                 <td class ="flex">
                                                    <img class="img" src="${shareUrl}/res/components/site-finder/images/project-email-logo.png" alt="" height="64" border="0" />
-                                                  <p class="title" style="font-size: 20px; color: #004254; font-weight: bold;">Conto BECPG</p>
+                                                  <p class="title" style="font-size: 20px; color: #004254; font-weight: bold;">Conto beCPG</p>
    
                                                 </td>
                                              </tr>
@@ -94,6 +94,13 @@
 															<br /><b>Parola d'ordine : </b>${password}</p>
 															
 															<p>Ti consiglio di utilizzare il browser Firefox o Chrome.<br />															
+															</p>
+															
+															<p>					
+															Consulta la nostra documentazione online per iniziare a utilizzare beCPG:<br />
+															- <a href="https://docs.becpg.fr/en/tutorial/tutorial.html">Il tutorial per creare un prodotto e la sua composizione</a><br />
+															- <a href="https://docs.becpg.fr/en/utilization/navigation-becpg.html">La documentazione per utilizzare beCPG</a> <br />
+															- <a href="https://docs.becpg.fr/en/utilization/project-management.html">La documentazione per la gestione del progetto</a>
 															</p>
 															
                                           
@@ -112,7 +119,7 @@
                            </tr>
                            <tr>
                               <td style="padding: 0px 30px; font-size: 13px;">
-                                 Per saperne di più su beCPG, visita <a style="text-decoration:none; color:#EF6236" href="http://www.becpg.net">http://www.becpg.net</a>
+                                 Per saperne di più su beCPG, visita <a style="text-decoration:none; color:#EF6236" href="https://www.becpg.net">https://www.becpg.net</a>
                               </td>
                            </tr>
                            <tr>
