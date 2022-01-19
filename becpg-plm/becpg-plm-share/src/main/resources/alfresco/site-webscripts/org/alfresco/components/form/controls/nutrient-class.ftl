@@ -5,7 +5,7 @@
       <#if fieldValue != "" && fieldValue?eval??>
 		<#assign nutrientDetails = fieldValue?eval>
 	      <span class="viewmode-value nutrient-class">
-	      <#assign class = nutrientDetails.value.class.result>
+	      <#assign class = nutrientDetails.value.nutrientClass>
 	      <#assign displayValue = nutrientDetails.displayValue>
 	      	<#if class != "" 
 	      	   && (
