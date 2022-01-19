@@ -1,10 +1,12 @@
 package fr.becpg.repo.product.helper;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.repo.product.formulation.score.NutriScoreContext;
-import fr.becpg.repo.product.formulation.score.NutriScoreContext.NutriScorePart;
+import fr.becpg.repo.product.formulation.score.NutriScoreFrame;
 
 /**
  * Helper to compute 5C Nutrient Profile Score
@@ -14,6 +16,7 @@ import fr.becpg.repo.product.formulation.score.NutriScoreContext.NutriScorePart;
  */
 public class Nutrient5C2021Helper {
 	
+	private static final List<String> NUTRIENT_PROFILE_CLASSES = Arrays.asList("E","D","C","B","A");
 
 	private static final double[][] othersACategories = new double[][] { { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
 			{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d }, { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d },
@@ -43,6 +46,15 @@ public class Nutrient5C2021Helper {
 	private static final double[][] beveragesCCategories = new double[][] { { 80d, -1d, -1d, -1d, -1d, -1d, 60d, -1d, 40d, -1d },
 			{ 3.5d, 2.8d, 2.1d, 1.4d, 0.7d }, { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d }, { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
 
+	private static final List<Double> BEVERAGES_RANGES = Arrays.asList(9d, 5d, 1d, 0d);
+	private static final List<Double> CHEESES_RANGES = Arrays.asList(18d, 10d, 2d, -1d);
+	private static final List<Double> FATS_RANGES = CHEESES_RANGES;
+	private static final List<Double> OTHERS_RANGES = CHEESES_RANGES;
+			
+	private Nutrient5C2021Helper() {
+		
+	}
+	
 	private static double[][] getACategory(NutrientProfileCategory category) {
 		switch (category) {
 		case Fats:
@@ -70,269 +82,169 @@ public class Nutrient5C2021Helper {
 		}
 	}
 
-
-	/**
-	 * <p>compute5CScore.</p>
-	 *
-	 * @param energyKj a {@link java.lang.Double} object.
-	 * @param satFat a {@link java.lang.Double} object.
-	 * @param totalFat a {@link java.lang.Double} object.
-	 * @param totalSugar a {@link java.lang.Double} object.
-	 * @param sodium a {@link java.lang.Double} object.
-	 * @param percFruitsAndVetgs a {@link java.lang.Double} object.
-	 * @param nspFibre a {@link java.lang.Double} object.
-	 * @param aoacFibre a {@link java.lang.Double} object.
-	 * @param protein a {@link java.lang.Double} object.
-	 * @param category a {@link java.lang.String} object.
-	 * @return a int.
-	 */
-	public static int compute5CScore(Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
-			Double nspFibre, Double aoacFibre, Double protein, String category) {
-		return compute5CScore(energyKj, satFat, totalFat, totalSugar, sodium, percFruitsAndVetgs, nspFibre, aoacFibre, protein, category, null);
-	}
-
-	public static int compute5CScore(Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
-				Double nspFibre, Double aoacFibre, Double protein, String category, NutriScoreContext nutriScoreContext) {
-	
-			int aScore = 0;
-			int cScore = 0;
-	
-	//		les arrondis sont déja effectués
-			
-			double[][] aCategories = getACategory(NutrientProfileCategory.valueOf(category));
-			double[][] cCategories = getCCategory(NutrientProfileCategory.valueOf(category));
-	
-			if (energyKj != null) {
-				
-				Object[] scoreDetails = getScoreDetails(energyKj, 10, aCategories[0]);
-				
-				aScore += (int) scoreDetails[3];
-	
-				if (nutriScoreContext != null) {
-					nutriScoreContext.getNutriScoreParts().put(NutriScorePart.ENERGY, scoreDetails);
-				}
-			}
-	
-			if (NutrientProfileCategory.Fats.equals(NutrientProfileCategory.valueOf(category))) {
-				if ((satFat != null) && (totalFat != null)) {
-					
-					Object[] scoreDetails = getScoreDetails((satFat / totalFat) * 100, 10, aCategories[1]);
-					
-					aScore += (int) scoreDetails[3];
-					
-					if (nutriScoreContext != null) {
-						nutriScoreContext.getNutriScoreParts().put(NutriScorePart.TOTAL_FAT, scoreDetails);
-					}
-				}
-			} else if (satFat != null) {
-				
-				Object[] scoreDetails = getScoreDetails(satFat, 10, aCategories[1]);
-				
-				aScore += (int) scoreDetails[3];
-				
-				if (nutriScoreContext != null) {
-					nutriScoreContext.getNutriScoreParts().put(NutriScorePart.SAT_FAT, scoreDetails);
-				}
-			}
-	
-			if (totalSugar != null) {
-	
-				Object[] scoreDetails = getScoreDetails(totalSugar, 10, aCategories[2]);
-				
-				aScore += (int) scoreDetails[3];
-				
-				if (nutriScoreContext != null) {
-					nutriScoreContext.getNutriScoreParts().put(NutriScorePart.TOTAL_SUGAR, scoreDetails);
-				}
-			}
-	
-			if (sodium != null) {
-				
-				Object[] scoreDetails = getScoreDetails(sodium, 10, aCategories[3]);
-				
-				aScore += (int) scoreDetails[3];
-				
-				if (nutriScoreContext != null) {
-					nutriScoreContext.getNutriScoreParts().put(NutriScorePart.SODIUM, scoreDetails);
-				}
-			}
-	
-			if (percFruitsAndVetgs != null) {
-				
-				Object[] scoreDetails = getScoreDetails(percFruitsAndVetgs, 10, cCategories[0]);
-				
-				cScore += (int) scoreDetails[3];
-				
-				if (nutriScoreContext != null) {
-					nutriScoreContext.getNutriScoreParts().put(NutriScorePart.FRUITS_AND_VEG, scoreDetails);
-				}
-			}
-	
-			if ((aScore < 11) || NutrientProfileCategory.Cheeses.equals(NutrientProfileCategory.valueOf(category))
-					|| ((aScore >= 11) && (cScore >= 5) && !NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))
-					|| ((aScore >= 11) && (cScore >= 10) && NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))) {
-				if (protein != null) {
-					
-					Object[] scoreDetails = getScoreDetails(protein, 5, cCategories[3]);
-					
-					cScore += (int) scoreDetails[3];
-					
-					if (nutriScoreContext != null) {
-						nutriScoreContext.getNutriScoreParts().put(NutriScorePart.PROTEIN, scoreDetails);
-					}
-				}
-	
-			}
-	
-			if (nspFibre != null) {
-				
-				Object[] scoreDetails = getScoreDetails(nspFibre, 5, cCategories[1]);
-				
-				cScore += (int) scoreDetails[3];
-				
-				if (nutriScoreContext != null) {
-					nutriScoreContext.getNutriScoreParts().put(NutriScorePart.NSP_FIBRE, scoreDetails);
-				}
-			}
-	
-			if (aoacFibre != null) {
-				
-				Object[] scoreDetails = getScoreDetails(aoacFibre, 5, cCategories[2]);
-				
-				cScore += (int) scoreDetails[3];
-				
-				if (nutriScoreContext != null) {
-					nutriScoreContext.getNutriScoreParts().put(NutriScorePart.AOAC_FIBRE, scoreDetails);
-				}
-			}
-	
-			int result = aScore - cScore;
-			
-			if (nutriScoreContext != null) {
-				nutriScoreContext.setNutriScore(result);
-			}
-			
-			return result;
-	
-		}
-
-	/**
-	 * <p>buildNutrientClass.</p>
-	 *
-	 * @param score a {@link java.lang.Double} object.
-	 * @param ranges a {@link java.util.List} object.
-	 * @param clazz a {@link java.util.List} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-	public static String buildNutrientClass(Double score, List<Double> ranges, List<String> clazz) {
-		return buildNutrientClass(score, ranges, clazz, null);
-	}
-	
-	public static String buildNutrientClass(Double score, List<Double> ranges, List<String> clazz, NutriScoreContext context) {
-		if (score != null) {
-			
-			double lower = Double.MIN_VALUE;
+	private static void buildNutriScoreFrame(NutriScoreFrame frame, int score, double[] categories) {
+		
+		Double value = frame.getValue();
+		
+		if (value != null) {
+			double lower = 0;
 			double upper = Double.MAX_VALUE;
 			
-			Object[] categoryValues = new Object[4];
-			
-			for (int i = 0; i < ranges.size(); i++) {
-				lower = ranges.get(i);
-				if (score > ranges.get(i)) {
-					if (context != null) {
-						categoryValues[0] = lower != Double.MIN_VALUE ? lower : "-Inf";
-						categoryValues[1] = score;
-						categoryValues[2] = upper != Double.MAX_VALUE ? upper : "+Inf";
-						categoryValues[3] = clazz.get(i);
-						context.getNutriScoreParts().put(NutriScorePart.CLASS, categoryValues);
-					}
-					return clazz.get(i);
+			for (double val : categories) {
+				
+				lower = val;
+				
+				if ((value > val) && (val > 0)) {
+					break;
 				}
-				upper = ranges.get(i);
+				
+				if (val > 0) {
+					upper = val;
+				}
+				
+				score--;
 			}
 			
 			if (lower == upper) {
-				lower = Double.MIN_VALUE;
+				lower = 0;
 			}
 			
-			if (context != null) {
-				categoryValues[0] = lower != Double.MIN_VALUE ? lower : "-Inf";
-				categoryValues[1] = score;
-				categoryValues[2] = upper != Double.MAX_VALUE ? upper : "+Inf";
-				categoryValues[3] = clazz.get(clazz.size() - 1);
-				context.getNutriScoreParts().put(NutriScorePart.CLASS, categoryValues);
-			}
-			
-			return clazz.get(clazz.size() - 1);
+			frame.setLowerValue(lower);
+			frame.setUpperValue(upper);
+			frame.setScore(score);
 		}
-		return null;
-
-	}
-
-	public static Object[] getScoreDetails(Double value, int score, double[] categories) {
-		Object[] result = new Object[4];
-		
-		double lower = 0;
-		double upper = Double.MAX_VALUE;
-		
-		for (double val : categories) {
-			
-			lower = val;
-			
-			if ((value > val) && (val > 0)) {
-				break;
-			}
-			
-			if (val > 0) {
-				upper = val;
-			}
-			
-			score--;
-		}
-		
-		if (lower == upper) {
-			lower = 0;
-		}
-		
-		result[0] = lower;
-		result[1] = value;
-		result[2] = upper != Double.MAX_VALUE ? upper : "+Inf";
-		result[3] = score;
-		
-		return result;
 	}
 	
-	public static Object[] getTotalFatScoreDetails(Double totalFat, Double satFat, int score, double[] categories) {
-		Object[] result = new Object[5];
+	public static int build5CScore(NutriScoreContext nutriScoreContext) {
 		
-		double lower = 0;
-		double upper = Double.MAX_VALUE;
-		double rounded = ((satFat / totalFat) * 100);
+		String category = nutriScoreContext.getCategory();
+		
+		int aScore = 0;
+		int cScore = 0;
 
-		for (double val : categories) {
-			
-			lower = val;
+//		les arrondis sont déja effectués
+		
+		double[][] aCategories = getACategory(NutrientProfileCategory.valueOf(category));
+		double[][] cCategories = getCCategory(NutrientProfileCategory.valueOf(category));
 
-			if (((rounded > val) || (score == 10 && rounded == val))) {
-				break;
+		if (nutriScoreContext.getEnergy() != null) {
+			buildNutriScoreFrame(nutriScoreContext.getEnergy(), 10, aCategories[0]);
+			aScore += nutriScoreContext.getEnergy().getScore();
+		}
+
+		if (NutrientProfileCategory.Fats.equals(NutrientProfileCategory.valueOf(category))) {
+			if ((nutriScoreContext.getSatFat() != null) && (nutriScoreContext.getTotalFat() != null)) {
+				
+				double satFat = nutriScoreContext.getSatFat().getValue();
+				double totalFat = nutriScoreContext.getTotalFat().getValue();
+				
+				nutriScoreContext.getTotalFat().setValue((satFat / totalFat) * 100);
+				
+				buildNutriScoreFrame(nutriScoreContext.getTotalFat(), 10, aCategories[1]);
+				
+				aScore += nutriScoreContext.getTotalFat().getScore();
 			}
+		} else if (nutriScoreContext.getSatFat() != null) {
 			
-			if (val > 0) {
-				upper = val;
+			buildNutriScoreFrame(nutriScoreContext.getSatFat(), 10, aCategories[1]);
+			
+			aScore += nutriScoreContext.getSatFat().getScore();
+		}
+
+		if (nutriScoreContext.getTotalSugar() != null) {
+
+			buildNutriScoreFrame(nutriScoreContext.getTotalSugar(), 10, aCategories[2]);
+			
+			aScore += nutriScoreContext.getTotalSugar().getScore();
+		}
+
+		if (nutriScoreContext.getSodium() != null) {
+			
+			buildNutriScoreFrame(nutriScoreContext.getSodium(), 10, aCategories[3]);
+			
+			aScore += nutriScoreContext.getSodium().getScore();
+		}
+
+		if (nutriScoreContext.getPercFruitsAndVetgs() != null) {
+			
+			buildNutriScoreFrame(nutriScoreContext.getPercFruitsAndVetgs(), 10, cCategories[0]);
+			
+			cScore += nutriScoreContext.getPercFruitsAndVetgs().getScore();
+		}
+
+		if ((aScore < 11) || NutrientProfileCategory.Cheeses.equals(NutrientProfileCategory.valueOf(category))
+				|| ((aScore >= 11) && (cScore >= 5) && !NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))
+				|| ((aScore >= 11) && (cScore >= 10) && NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))) {
+			if (nutriScoreContext.getProtein() != null) {
+				
+				buildNutriScoreFrame(nutriScoreContext.getProtein(), 5, cCategories[3]);
+				
+				cScore += nutriScoreContext.getProtein().getScore();
 			}
-			score--;
 		}
-		
-		if (lower == upper) {
-			lower = 0;
+
+		if (nutriScoreContext.getNspFibre() != null) {
+			
+			buildNutriScoreFrame(nutriScoreContext.getNspFibre(), 5, cCategories[1]);
+			
+			cScore += nutriScoreContext.getNspFibre().getScore();
 		}
+
+		if (nutriScoreContext.getAoacFibre() != null) {
+			
+			buildNutriScoreFrame(nutriScoreContext.getAoacFibre(), 5, cCategories[2]);
+			
+			cScore += nutriScoreContext.getAoacFibre().getScore();
+		}
+
+		int result = aScore - cScore;
 		
-		result[0] = lower;
-		result[1] = rounded;
-		result[2] = upper != Double.MAX_VALUE ? upper : "+Inf";
-		result[3] = score;
+		nutriScoreContext.setNutriScore(result);
+		nutriScoreContext.setAScore(aScore);
+		nutriScoreContext.setCScore(cScore);
 		
-		return result;
+		return nutriScoreContext.getNutriScore();
 	}
+
+		public static String buildNutrientClass(NutriScoreContext nutriScoreContext) {
+
+			List<Double> ranges = new ArrayList<>();
+
+			if (NutrientProfileCategory.Beverages.toString().equals(nutriScoreContext.getCategory())) {
+				ranges = BEVERAGES_RANGES;
+			} else if (NutrientProfileCategory.Cheeses.toString().equals(nutriScoreContext.getCategory())) {
+				ranges = CHEESES_RANGES;
+			} else if (NutrientProfileCategory.Fats.toString().equals(nutriScoreContext.getCategory())) {
+				ranges = FATS_RANGES;
+			} else if (NutrientProfileCategory.Others.toString().equals(nutriScoreContext.getCategory())) {
+				ranges = OTHERS_RANGES;
+			}
+
+			double score = nutriScoreContext.getNutriScore();
+
+			double lower = Double.MIN_VALUE;
+			double upper = Double.MAX_VALUE;
+
+			for (int i = 0; i < ranges.size(); i++) {
+				lower = ranges.get(i);
+				if (score > ranges.get(i)) {
+					nutriScoreContext.setClassLowerValue(lower);
+					nutriScoreContext.setClassUpperValue(upper);
+					nutriScoreContext.setNutrientClass(NUTRIENT_PROFILE_CLASSES.get(i));
+					return nutriScoreContext.getNutrientClass();
+				}
+				upper = ranges.get(i);
+			}
+
+			if (lower == upper) {
+				lower = Double.MIN_VALUE;
+			}
+
+			nutriScoreContext.setClassLowerValue(lower);
+			nutriScoreContext.setClassUpperValue(upper);
+			nutriScoreContext.setNutrientClass(NUTRIENT_PROFILE_CLASSES.get(NUTRIENT_PROFILE_CLASSES.size() - 1));
+
+			return nutriScoreContext.getNutrientClass();
+		}
 
 }

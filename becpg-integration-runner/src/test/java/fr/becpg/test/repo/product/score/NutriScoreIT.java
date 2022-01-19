@@ -38,7 +38,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 		NodeRef satFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FASAT");
 		NodeRef totalFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT");
 		NodeRef totalSugarNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR");
-		NodeRef saltNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NACL");
+		NodeRef sodiumNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NA");
 		NodeRef percFruitsAndVetgsNode = findOrCreateNode(PLMModel.TYPE_PHYSICO_CHEM, PLMModel.PROP_PHYSICO_CHEM_CODE, "FRUIT_VEGETABLE");
 		NodeRef nspFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS");
 		NodeRef aoacFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG");
@@ -52,7 +52,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			nutList.add(new NutListDataItem(null, 2.8d, null, null, null, null, satFatNode, true));
 			nutList.add(new NutListDataItem(null, 22.9d, null, null, null, null, totalFatNode, true));
 			nutList.add(new NutListDataItem(null, 4.73d, null, null, null, null, totalSugarNode, true));
-			nutList.add(new NutListDataItem(null, 0.672d * 2.5, null, null, null, null, saltNode, true));
+			nutList.add(new NutListDataItem(null, 672d, null, null, null, null, sodiumNode, true));
 			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, nspFibreNode, true));
 			nutList.add(new NutListDataItem(null, 4.13d, null, null, null, null, aoacFibreNode, true));
 			nutList.add(new NutListDataItem(null, 5.81d, null, null, null, null, proteinNode, true));
@@ -96,7 +96,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			nutList.add(new NutListDataItem(null, 15.16d, null, null, null, null, satFatNode, true));
 			nutList.add(new NutListDataItem(null, 70.172d, null, null, null, null, totalFatNode, true));
 			nutList.add(new NutListDataItem(null, 0.003d, null, null, null, null, totalSugarNode, true));
-			nutList.add(new NutListDataItem(null, 0.159d * 2.5, null, null, null, null, saltNode, true));
+			nutList.add(new NutListDataItem(null, 159d, null, null, null, null, sodiumNode, true));
 			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, nspFibreNode, true));
 			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, aoacFibreNode, true));
 			nutList.add(new NutListDataItem(null, 0.15d, null, null, null, null, proteinNode, true));
