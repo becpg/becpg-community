@@ -161,6 +161,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private String nutrientClass;
 	private String nutrientDetails;
 	private NodeRef nutrientProfile;
+	private String nutrientProfileCategory;
 	
 	
 	/*
@@ -1438,6 +1439,16 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 */
 	public void setNutrientProfile(NodeRef nutrientProfile) {
 		this.nutrientProfile = nutrientProfile;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutrientProfileCategory")
+	public String getNutrientProfileCategory() {
+		return nutrientProfileCategory;
+	}
+	
+	public void setNutrientProfileCategory(String nutrientProfileCategory) {
+		this.nutrientProfileCategory = nutrientProfileCategory;
 	}
 
 	/**
