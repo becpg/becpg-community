@@ -214,17 +214,14 @@
 	                                             	<li>説明 : ${args.taskDescription}</li>                                       
 	                                             </#if> 
 	                                             </ul>         
-                                             		<#if  args.taskComment??>
-                                             		    <li>コメント : </li>
-                                             			<table width="100%" cellpadding="0" callspacing="0" border="0" bgcolor="#eeeeee" style="padding:10px; border: 1px solid #aaaaaa;">
-		                                                   <tr>
-		                                                      <td>
-		                                                        ${args.taskComment}
-		                                                      </td>
-		                                                   </tr>
-		                                                </table>
-		                                          
-                                             		</#if>
+                                             		<#if args.taskComment??>
+		                                              <p style="color: #ff642d; font-weight: bold;">コメント :</p>
+	                                                        <div class="comment">
+	                                                           <p style="margin:0px;font-size:12px;color:grey"><b>${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</b></p>
+	                                                           <p style="margin:0px; font-style:italic">"${args.taskComment}"</p>
+	                                                        </div>
+	                                                           <br/>
+		                                            </#if>
 
 									      	
 									            <#if args.task?? &&  args.task.sourceAssociations["pjt:dlTask"]??>
