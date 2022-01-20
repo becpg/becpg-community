@@ -21,10 +21,7 @@
 	text-align: left;
 	width: 100%;
 }
-.becpg-meta-cell-label 
-{
-	
-}
+
 
 .becpg-meta-cell-data
 {
@@ -48,12 +45,6 @@
 	width: 1.931in;
 }
 
-
-.becpg-header-logo 
-{
-  background-size: contain;
-  background-repeat: no-repeat;
-}
 /* ---- BODY ----- */
 .becpg-chapter-header
 {
@@ -278,7 +269,7 @@
 	border-style: solid;
 	border-width: thin;
 	border-color: #c5c2c2;
-	color: #000000
+	color: #000000;
 }
 
 .becpg-quality-label-header

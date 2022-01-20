@@ -84,7 +84,6 @@ public class EntityTplWebScript extends AbstractWebScript {
 				}
 			} else if(ACTION_DATALIST_RECURSIVE_DELETE.equals(action)){
 				
-				logger.debug("In recursive delete block, has datalist: "+req.getParameter(PARAM_DATALIST));
 				if(req.getParameter(PARAM_DATALIST) != null){
 					entityTplService.removeDataListOnEntities(nodeRef, req.getParameter(PARAM_DATALIST));
 				}

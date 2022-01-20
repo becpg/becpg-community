@@ -3273,76 +3273,19 @@ row["properties2"]
                         <property name="verticalAlign">middle</property>
                         <property name="height">0.7678571428571429in</property>
                         <cell id="770">
+                            <property name="backgroundImage">./logo.png</property>
                             <property name="backgroundRepeat">no-repeat</property>
                             <property name="backgroundSizeHeight">cover</property>
                             <property name="backgroundSizeWidth">cover</property>
                             <property name="paddingLeft">1pt</property>
                             <property name="textAlign">left</property>
-                            <image id="12188">
-                                <property name="height">80%</property>
-                                <property name="width">80%</property>
-                                <property name="dataSet">imgLogo</property>
-                                <list-property name="visibility">
-                                    <structure>
-                                        <property name="format">all</property>
-                                        <expression name="valueExpr" type="javascript">row["img"]==null ||row["img"]==""</expression>
-                                    </structure>
-                                </list-property>
-                                <list-property name="boundDataColumns">
-                                    <structure>
-                                        <property name="name">id</property>
-                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">entityName</property>
-                                        <expression name="expression" type="javascript">dataSetRow["entityName"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">name</property>
-                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">entityType</property>
-                                        <expression name="expression" type="javascript">dataSetRow["entityType"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">img</property>
-                                        <text-property name="displayName">img</text-property>
-                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
-                                        <property name="dataType">blob</property>
-                                        <property name="allowExport">true</property>
-                                    </structure>
-                                </list-property>
-                                <property name="source">expr</property>
-                                <expression name="valueExpr">row["img"]</expression>
-                            </image>
                             <image id="12189">
                                 <property name="height">0.7083333333333334in</property>
                                 <property name="width">0.9375in</property>
-                                <property name="dataSet">imgLogo</property>
                                 <list-property name="visibility">
                                     <structure>
                                         <property name="format">all</property>
-                                        <expression name="valueExpr" type="javascript">row["img"]!=null</expression>
-                                    </structure>
-                                </list-property>
-                                <list-property name="boundDataColumns">
-                                    <structure>
-                                        <property name="name">id</property>
-                                        <text-property name="displayName">id</text-property>
-                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
-                                        <property name="dataType">string</property>
-                                    </structure>
-                                    <structure>
-                                        <property name="name">img</property>
-                                        <text-property name="displayName">img</text-property>
-                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
-                                        <property name="dataType">blob</property>
-                                        <property name="allowExport">true</property>
+                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("displayBeCPGLogo")=="false"</expression>
                                     </structure>
                                 </list-property>
                                 <property name="source">embed</property>
@@ -3354,7 +3297,6 @@ row["properties2"]
                             <label id="773">
                                 <property name="fontSize">24pt</property>
                                 <property name="fontWeight">bold</property>
-                                <property name="color">#7E8D9D</property>
                                 <property name="textAlign">center</property>
                                 <text-property name="text" key="label.title">Comparaison</text-property>
                             </label>
@@ -3507,6 +3449,18 @@ row["properties2"]
     <body>
         <table id="1483">
             <property name="style">beCPG-Table-border</property>
+            <property name="borderBottomColor">#004254</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftColor">#004254</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightColor">#004254</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopColor">#004254</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
             <property name="dataSet">ComparisonDataSet</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -4164,6 +4118,7 @@ row["properties2"]
             <header>
                 <row id="3491">
                     <property name="style">beCPG-Group</property>
+                    <property name="backgroundColor">#004254</property>
                     <property name="fontSize">10pt</property>
                     <cell id="3492">
                         <label id="1541">
@@ -4495,10 +4450,10 @@ row["properties2"]
                     </cell>
                     <cell id="3383">
                         <property name="borderBottomStyle">none</property>
-                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftColor">#004254</property>
                         <property name="borderLeftStyle">solid</property>
                         <property name="borderLeftWidth">thin</property>
-                        <property name="borderRightColor">#3EA1E6</property>
+                        <property name="borderRightColor">#004254</property>
                         <property name="borderRightStyle">solid</property>
                         <property name="borderRightWidth">thin</property>
                         <property name="borderTopStyle">none</property>
@@ -4517,7 +4472,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#78BDEE</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4553,7 +4508,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">orange</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4571,12 +4526,12 @@ row["properties2"]
                     </cell>
                     <cell id="3385">
                         <property name="borderBottomStyle">none</property>
-                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftColor">#004254</property>
                         <property name="borderLeftStyle">solid</property>
-                        <property name="borderLeftWidth">thin</property>
-                        <property name="borderRightColor">#3EA1E6</property>
+                        <property name="borderLeftWidth">medium</property>
+                        <property name="borderRightColor">#004254</property>
                         <property name="borderRightStyle">solid</property>
-                        <property name="borderRightWidth">thin</property>
+                        <property name="borderRightWidth">medium</property>
                         <property name="borderTopStyle">none</property>
                         <property name="paddingTop">1pt</property>
                         <property name="paddingLeft">1pt</property>
@@ -4593,7 +4548,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#78BDEE</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4629,7 +4584,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4665,7 +4620,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4673,6 +4628,12 @@ row["properties2"]
                             </structure>
                         </list-property>
                         <data id="3786">
+                            <property name="borderLeftColor">#004254</property>
+                            <property name="borderLeftStyle">solid</property>
+                            <property name="borderLeftWidth">thin</property>
+                            <property name="borderRightColor">#004254</property>
+                            <property name="borderRightStyle">solid</property>
+                            <property name="borderRightWidth">thin</property>
                             <property name="resultSetColumn">value5</property>
                         </data>
                     </cell>
@@ -4696,7 +4657,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4709,8 +4670,12 @@ row["properties2"]
                     </cell>
                     <cell id="3781">
                         <property name="borderBottomStyle">none</property>
-                        <property name="borderLeftStyle">none</property>
-                        <property name="borderRightStyle">none</property>
+                        <property name="borderLeftColor">#004254</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#004254</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
                         <property name="borderTopStyle">none</property>
                         <property name="paddingTop">1pt</property>
                         <property name="paddingLeft">1pt</property>
@@ -4727,7 +4692,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4758,7 +4723,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4789,7 +4754,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4820,7 +4785,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4851,7 +4816,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4882,7 +4847,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4913,7 +4878,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4944,7 +4909,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -4975,7 +4940,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5006,7 +4971,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5037,7 +5002,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5068,7 +5033,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5099,7 +5064,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5130,7 +5095,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5161,7 +5126,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5192,7 +5157,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5223,7 +5188,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5254,7 +5219,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5285,7 +5250,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5316,7 +5281,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5347,7 +5312,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5378,7 +5343,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5409,7 +5374,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5440,7 +5405,7 @@ row["properties2"]
                             </structure>
                             <structure>
                                 <property name="operator">eq</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["Aggregation"]%2</expression>
                                 <simple-property-list name="value1">
                                     <value type="javascript">1</value>
@@ -5457,6 +5422,18 @@ row["properties2"]
         <label id="3620"/>
         <table id="3581">
             <property name="style">beCPG-Table-border</property>
+            <property name="borderBottomColor">#004254</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftColor">#004254</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightColor">#004254</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopColor">#004254</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
             <property name="dataSet">CompositionDataSet</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -6167,6 +6144,7 @@ previousCharact;</expression>
             <header>
                 <row id="3705">
                     <property name="style">beCPG-Group</property>
+                    <property name="backgroundColor">#004254</property>
                     <property name="fontSize">10pt</property>
                     <cell id="3706">
                         <label id="3587">
@@ -6377,10 +6355,10 @@ previousCharact;</expression>
                         </data>
                     </cell>
                     <cell id="3602">
-                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftColor">#004254</property>
                         <property name="borderLeftStyle">solid</property>
                         <property name="borderLeftWidth">thin</property>
-                        <property name="borderRightColor">#3EA1E6</property>
+                        <property name="borderRightColor">#004254</property>
                         <property name="borderRightStyle">solid</property>
                         <property name="borderRightWidth">thin</property>
                         <property name="paddingTop">1pt</property>
@@ -6395,7 +6373,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#78BDEE</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6425,7 +6403,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">orange</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6443,10 +6421,10 @@ previousCharact;</expression>
                         </data>
                     </cell>
                     <cell id="3606">
-                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftColor">#004254</property>
                         <property name="borderLeftStyle">solid</property>
                         <property name="borderLeftWidth">thin</property>
-                        <property name="borderRightColor">#3EA1E6</property>
+                        <property name="borderRightColor">#004254</property>
                         <property name="borderRightStyle">solid</property>
                         <property name="borderRightWidth">thin</property>
                         <property name="paddingTop">1pt</property>
@@ -6461,11 +6439,15 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#78BDEE</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
                         <data id="3662">
+                            <property name="borderBottomStyle">none</property>
+                            <property name="borderLeftStyle">none</property>
+                            <property name="borderRightStyle">none</property>
+                            <property name="borderTopStyle">none</property>
                             <property name="paddingTop">2pt</property>
                             <property name="paddingLeft">2pt</property>
                             <property name="paddingBottom">2pt</property>
@@ -6487,7 +6469,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6513,7 +6495,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6530,7 +6512,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6547,7 +6529,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6564,7 +6546,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6581,7 +6563,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6598,7 +6580,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6615,7 +6597,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6632,7 +6614,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6649,7 +6631,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6666,7 +6648,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6683,7 +6665,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6700,7 +6682,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6717,7 +6699,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6734,7 +6716,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6751,7 +6733,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6768,7 +6750,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6785,7 +6767,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6802,7 +6784,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6819,7 +6801,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6836,7 +6818,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6853,7 +6835,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6870,7 +6852,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6887,7 +6869,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6904,7 +6886,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6921,7 +6903,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6938,7 +6920,7 @@ previousCharact;</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -6952,7 +6934,18 @@ previousCharact;</expression>
         <label id="3621"/>
         <table id="3437">
             <property name="style">beCPG-Table-border</property>
-            <property name="width">10.447916666666666in</property>
+            <property name="borderBottomColor">#004254</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftColor">#004254</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightColor">#004254</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopColor">#004254</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
             <property name="dataSet">ComparisonDataSet</property>
             <list-property name="boundDataColumns">
                 <structure>
@@ -7688,6 +7681,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                 <header>
                     <row id="3439">
                         <property name="style">beCPG-Group</property>
+                        <property name="backgroundColor">#004254</property>
                         <property name="fontSize">10pt</property>
                         <cell id="3769">
                             <property name="paddingLeft">2pt</property>
@@ -7972,10 +7966,10 @@ row["propertyQName"] == "qa:clValue")</expression>
                         </data>
                     </cell>
                     <cell id="3571">
-                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftColor">#004254</property>
                         <property name="borderLeftStyle">solid</property>
                         <property name="borderLeftWidth">thin</property>
-                        <property name="borderRightColor">#3EA1E6</property>
+                        <property name="borderRightColor">#004254</property>
                         <property name="borderRightStyle">solid</property>
                         <property name="borderRightWidth">thin</property>
                         <property name="paddingTop">1pt</property>
@@ -7990,7 +7984,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#78BDEE</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8016,7 +8010,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">orange</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8030,10 +8024,10 @@ row["propertyQName"] == "qa:clValue")</expression>
                         </data>
                     </cell>
                     <cell id="3573">
-                        <property name="borderLeftColor">#3EA1E6</property>
+                        <property name="borderLeftColor">#004254</property>
                         <property name="borderLeftStyle">solid</property>
                         <property name="borderLeftWidth">thin</property>
-                        <property name="borderRightColor">#3EA1E6</property>
+                        <property name="borderRightColor">#004254</property>
                         <property name="borderRightStyle">solid</property>
                         <property name="borderRightWidth">thin</property>
                         <property name="paddingTop">1pt</property>
@@ -8048,7 +8042,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#78BDEE</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8070,7 +8064,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8084,6 +8078,12 @@ row["propertyQName"] == "qa:clValue")</expression>
                         </data>
                     </cell>
                     <cell id="4040">
+                        <property name="borderLeftColor">#004254</property>
+                        <property name="borderLeftStyle">solid</property>
+                        <property name="borderLeftWidth">thin</property>
+                        <property name="borderRightColor">#004254</property>
+                        <property name="borderRightStyle">solid</property>
+                        <property name="borderRightWidth">thin</property>
                         <list-property name="highlightRules">
                             <structure>
                                 <property name="operator">is-false</property>
@@ -8092,7 +8092,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8109,7 +8109,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8126,7 +8126,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8143,7 +8143,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8160,7 +8160,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8177,7 +8177,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8194,7 +8194,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8211,7 +8211,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8228,7 +8228,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8245,7 +8245,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8262,7 +8262,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8279,7 +8279,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8296,7 +8296,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8313,7 +8313,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8330,7 +8330,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8347,7 +8347,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8364,7 +8364,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8381,7 +8381,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8398,7 +8398,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8415,7 +8415,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8432,7 +8432,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8449,7 +8449,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8466,7 +8466,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8483,7 +8483,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8500,7 +8500,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#00FFBD</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
@@ -8517,7 +8517,7 @@ row["propertyQName"] == "qa:clValue")</expression>
                             </structure>
                             <structure>
                                 <property name="operator">is-true</property>
-                                <property name="backgroundColor">#FFA500</property>
+                                <property name="backgroundColor">#FF642D</property>
                                 <expression name="testExpr" type="javascript">row["color"]</expression>
                             </structure>
                         </list-property>
