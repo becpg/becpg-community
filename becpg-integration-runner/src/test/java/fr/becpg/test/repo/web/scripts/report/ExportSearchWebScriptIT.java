@@ -69,8 +69,8 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(ExportSearchWebScriptIT.class);
 
-	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearch.rptdesign";
-	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/ExportSearchQuery.xml";
+	private static final String EXPORT_PRODUCTS_REPORT_RPTFILE_PATH = "beCPG/birt/exportsearch/product/fr/ExportSearch.rptdesign";
+	private static final String EXPORT_PRODUCTS_REPORT_XMLFILE_PATH = "beCPG/birt/exportsearch/product/fr/ExportSearchQuery.xml";
 
 	@Autowired
 	private ReportTplService reportTplService;
@@ -374,7 +374,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 				logger.debug("report name: " + nodeService.getProperty(n, ContentModel.PROP_NAME));
 			}
 
-			assertEquals("There is two report", 5, reportTpls.size());
+			assertEquals("There is 8 report", 8, reportTpls.size());
 			assertEquals("Check report nodeRef", exportProductReportTpl, reportTpls.get(0));
 
 			return null;

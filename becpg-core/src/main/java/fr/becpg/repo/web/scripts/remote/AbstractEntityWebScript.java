@@ -240,19 +240,19 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 					throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
 				}
 			} else {
-				throw new WebScriptException("Node " + nodeRef + " doesn't exist in repository");
+				throw new WebScriptException(Status.STATUS_NOT_FOUND ,"Node " + nodeRef + " doesn't exist in repository");
 			}
 
 		} else if (((req.getParameter(PARAM_PATH) == null) || req.getParameter(PARAM_PATH).isEmpty())
 				&& ((req.getParameter(PARAM_QUERY) == null) || req.getParameter(PARAM_QUERY).isEmpty())) {
-			throw new IllegalStateException("One of nodeRef query or path parameter is mandatory");
+			throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "One of nodeRef query or path parameter is mandatory");
 		}
 		List<NodeRef> ret = findEntities(req);
 		if ((ret != null) && !ret.isEmpty()) {
 			return ret.get(0);
 		}
 
-		throw new IllegalStateException("No entity found for this parameters");
+		throw new WebScriptException(Status.STATUS_NOT_FOUND ,"No entity found for this parameters");
 	}
 
 	/**

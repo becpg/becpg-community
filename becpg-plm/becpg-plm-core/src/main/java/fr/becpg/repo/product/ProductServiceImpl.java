@@ -170,7 +170,8 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 		productData.getPackagingListView().setDynamicCharactList(new ArrayList<>());
 		productData.getProcessListView().setProcessList(new ArrayList<>());
 		productData.getProcessListView().setDynamicCharactList(new ArrayList<>());
-
+		productData.getLabelingListView().setIngLabelingList(new ArrayList<>());
+		
 		if (logger.isDebugEnabled()) {
 			logger.debug("Lexer result: " + productData);
 		}

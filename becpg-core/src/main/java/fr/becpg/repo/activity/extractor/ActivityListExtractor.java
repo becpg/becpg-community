@@ -239,7 +239,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 										}
 									}
 									
-									if (areStringsDifferent(postProperty.get(EntityActivityService.BEFORE), postProperty.get(EntityActivityService.AFTER))) {
+									if (!postProperty.has(EntityActivityService.BEFORE) || !postProperty.has(EntityActivityService.AFTER) || areStringsDifferent(postProperty.get(EntityActivityService.BEFORE), postProperty.get(EntityActivityService.AFTER))) {
 										postActivityProperties.put(postProperty);
 									}
 									

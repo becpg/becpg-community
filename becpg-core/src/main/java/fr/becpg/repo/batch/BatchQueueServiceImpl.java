@@ -53,7 +53,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	@Override
 	public <T> Boolean queueBatch(@NonNull BatchInfo batchInfo, @NonNull BatchProcessWorkProvider<T> workProvider,
 			@NonNull BatchProcessWorker<T> processWorker, @Nullable BatchErrorCallback errorCallback) {
-		logger.info("Batch " + batchInfo.getBatchId() + " added to execution queue");
+		if(logger.isDebugEnabled()) {
+			logger.debug("Batch " + batchInfo.getBatchId() + " added to execution queue");
+		}
 
 		Runnable command = new BatchCommand<>(batchInfo, workProvider, processWorker, errorCallback);
 		if (!threadExecuter.getQueue().contains(command)) {

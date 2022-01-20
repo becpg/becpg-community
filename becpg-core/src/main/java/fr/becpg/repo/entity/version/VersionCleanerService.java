@@ -8,6 +8,4 @@ public interface VersionCleanerService {
 
 	public void cleanVersionStore();
 
-	public String tryErrorVersionConversion(int max);
-	
 }

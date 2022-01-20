@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201806261756</property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.controlList.x</property>
@@ -40,7 +40,9 @@
     <property name="Data Cube.Group2.NewTabularHierarchy2.width">150</property>
     <property name="Data Cube.Group2.NewTabularHierarchy2.height">200</property>
     <simple-property-list name="includeResource">
-        <value>src/main/resources/beCPG/birt/document/qualitycontrol/QualityControlReport</value>
+        <value>./QualityControlReport</value>
+        <value>./settings</value>
+        <value>./becpg-report</value>
     </simple-property-list>
     <property name="units">in</property>
     <property name="iconFile">/templates/blank_report.gif</property>
@@ -529,6 +531,180 @@
                 </ex-property>
             </list-property>
         </oda-data-set>
+        <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="imgLogo" id="12186">
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">id</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">id</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">entityName</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityName</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">name</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">name</text-property>
+                </structure>
+                <structure>
+                    <property name="columnName">entityType</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">entityType</text-property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">eq</property>
+                    <expression name="expr" type="javascript">row["entityType"]</expression>
+                    <simple-property-list name="value1">
+                        <value>"trademark"</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <list-property name="parameters"/>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">id</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">entityName</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">name</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">entityType</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">id</property>
+                    <property name="nativeName">id</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">entityName</property>
+                    <property name="nativeName">entityName</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">name</property>
+                    <property name="nativeName">name</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">entityType</property>
+                    <property name="nativeName">entityType</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[table0#-TNAME-#table0#:#[/entity/images/image]#:#{id;STRING;/@id},{entityName;STRING;/@entityName},{name;STRING;/@name},{entityType;STRING;/@entityType}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>id</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>id</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>entityName</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>entityName</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>name</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>name</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>entityType</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>entityType</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+            <list-property name="privateDriverProperties">
+                <ex-property>
+                    <name>MAX_ROW</name>
+                    <value>-1</value>
+                </ex-property>
+                <ex-property>
+                    <name>XML_FILE</name>
+                </ex-property>
+            </list-property>
+        </oda-data-set>
         <oda-data-set extensionID="org.eclipse.datatools.enablement.oda.xml.dataSet" name="samplingList" id="712">
             <list-property name="columnHints">
                 <structure>
@@ -753,20 +929,220 @@
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">1pt</property>
         </style>
-    </styles>
-    <page-setup>
-        <simple-master-page name="Simple MasterPage" id="2">
-            <property name="orientation">landscape</property>
-            <page-footer>
-                <text id="3">
-                    <property name="contentType">html</property>
-                    <text-property name="content"><![CDATA[<value-of>new Date()</value-of>]]></text-property>
-                </text>
-            </page-footer>
-        </simple-master-page>
-    </page-setup>
-    <body>
-        <grid id="9">
+        <style name="becpg-header-type" id="12194">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">14pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">black</property>
+            <property name="marginBottom">4.5pt</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-meta-grid" id="12195">
+            <property name="fontFamily">"arial"</property>
+            <property name="fontSize">8pt</property>
+            <property name="textAlign">left</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-meta-cell-label" id="12196"/>
+        <style name="becpg-meta-cell-data" id="12197">
+            <property name="fontWeight">bold</property>
+        </style>
+        <style name="becpg-header-table" id="12198">
+            <property name="textAlign">center</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-header-title" id="12199">
+            <property name="marginTop">4.5pt</property>
+        </style>
+        <style name="becpg-header-image" id="12200">
+            <property name="width">1.931in</property>
+        </style>
+        <style name="becpg-header-logo" id="12201">
+            <property name="backgroundRepeat">no-repeat</property>
+            <property name="backgroundSizeWidth">contain</property>
+        </style>
+        <style name="becpg-chapter-header" id="12202">
+            <property name="backgroundColor">#004254</property>
+            <property name="fontFamily">sans-serif</property>
+            <property name="fontSize">10pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#FFFFFF</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-table" id="12203">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-col-header" id="12204">
+            <property name="fontWeight">bold</property>
+            <property name="textAlign">left</property>
+        </style>
+        <style name="becpg-cell-header" id="12205">
+            <property name="fontWeight">bold</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-cell-footer" id="12206">
+            <property name="backgroundColor">#7BB7F7</property>
+            <property name="fontWeight">bold</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-cell-bold" id="12207">
+            <property name="fontWeight">bold</property>
+        </style>
+        <style name="becpg-grid-designation" id="12208">
+            <property name="fontSize">10pt</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-row-header" id="12209">
+            <property name="fontWeight">bold</property>
+            <property name="fontStyle">normal</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">center</property>
+            <property name="verticalAlign">middle</property>
+        </style>
+        <style name="becpg-col-border" id="12210">
+            <property name="borderLeftColor">#000000</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">none</property>
+            <property name="borderRightWidth">medium</property>
+            <property name="borderTopColor">#000000</property>
+        </style>
+        <style name="becpg-row-border" id="12211">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopColor">#000000</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="becpg-row-border-top" id="12212">
+            <property name="borderTopColor">#000000</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+        </style>
+        <style name="becpg-group-header" id="12213">
+            <property name="backgroundColor">#EEEEEE</property>
+        </style>
+        <style name="becpg-data-unit" id="12214">
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-cell-data-header" id="12215">
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-cell-dynamic-header" id="12216">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-cell-dynamic-header-left" id="12217">
+            <property name="fontWeight">bold</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">left</property>
+        </style>
+        <style name="becpg-cell-data" id="12218">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-cell-data-left" id="12219">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">left</property>
+        </style>
+        <style name="becpg-cell-data-right" id="12220">
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightStyle">solid</property>
+            <property name="borderRightWidth">thin</property>
+            <property name="borderTopStyle">solid</property>
+            <property name="borderTopWidth">thin</property>
+            <property name="textAlign">right</property>
+        </style>
+        <style name="becpg-quality-row-header" id="12221">
+            <property name="backgroundColor">#009DCC</property>
+            <property name="fontSize">12pt</property>
+            <property name="fontWeight">bold</property>
+            <property name="color">#FFFFFF</property>
+            <property name="borderBottomColor">#C5C2C2</property>
+            <property name="borderBottomStyle">solid</property>
+            <property name="borderBottomWidth">thin</property>
+            <property name="borderLeftColor">#C5C2C2</property>
+            <property name="borderRightColor">#C5C2C2</property>
+            <property name="borderTopColor">#C5C2C2</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-quality-col-border" id="12222">
+            <property name="borderBottomColor">#C5C2C2</property>
+            <property name="borderLeftColor">#C5C2C2</property>
+            <property name="borderLeftStyle">solid</property>
+            <property name="borderLeftWidth">thin</property>
+            <property name="borderRightColor">#C5C2C2</property>
+            <property name="borderTopColor">#C5C2C2</property>
+            <property name="textAlign">center</property>
+        </style>
+        <style name="becpg-quality-table" id="12223">
+            <property name="color">#000000</property>
             <property name="borderBottomColor">#C5C2C2</property>
             <property name="borderBottomStyle">solid</property>
             <property name="borderBottomWidth">thin</property>
@@ -779,6 +1155,228 @@
             <property name="borderTopColor">#C5C2C2</property>
             <property name="borderTopStyle">solid</property>
             <property name="borderTopWidth">thin</property>
+            <property name="width">100%</property>
+        </style>
+        <style name="becpg-quality-label-header" id="12224">
+            <property name="fontSize">12pt</property>
+        </style>
+        <style name="color-adress-website" id="12225">
+            <property name="color">#126683</property>
+        </style>
+    </styles>
+    <page-setup>
+        <simple-master-page name="Simple MasterPage" id="2">
+            <property name="orientation">landscape</property>
+            <property name="headerHeight">1.2in</property>
+            <property name="footerHeight">1.3in</property>
+            <page-header>
+                <grid id="765">
+                    <property name="style">becpg-table</property>
+                    <property name="backgroundImageType">url</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                    <property name="borderTopStyle">none</property>
+                    <property name="pageBreakAfter">auto</property>
+                    <column id="766">
+                        <property name="repeat">1</property>
+                    </column>
+                    <column id="767">
+                        <property name="width">50%</property>
+                    </column>
+                    <column id="768">
+                        <property name="repeat">1</property>
+                    </column>
+                    <row id="769">
+                        <cell id="770">
+                            <property name="backgroundImage">./logo.png</property>
+                            <property name="backgroundRepeat">no-repeat</property>
+                            <property name="backgroundSizeHeight">cover</property>
+                            <property name="backgroundSizeWidth">cover</property>
+                            <property name="paddingLeft">1pt</property>
+                            <property name="textAlign">left</property>
+                            <image id="12189">
+                                <property name="height">0.7083333333333334in</property>
+                                <property name="width">0.9375in</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("displayBeCPGLogo")=="false"</expression>
+                                    </structure>
+                                </list-property>
+                                <property name="source">embed</property>
+                                <property name="imageName">logo.png</property>
+                            </image>
+                        </cell>
+                        <cell id="772">
+                            <property name="borderBottomColor">#FFFFFF</property>
+                            <property name="borderBottomWidth">medium</property>
+                            <property name="borderLeftColor">#FFFFFF</property>
+                            <property name="borderLeftWidth">medium</property>
+                            <property name="borderRightColor">#FFFFFF</property>
+                            <property name="borderRightWidth">medium</property>
+                            <property name="borderTopColor">#FFFFFF</property>
+                            <property name="borderTopWidth">medium</property>
+                            <property name="textAlign">center</property>
+                        </cell>
+                        <cell id="776">
+                            <property name="fontSize">12pt</property>
+                            <property name="borderBottomColor">#FFFFFF</property>
+                            <property name="borderLeftColor">#FFFFFF</property>
+                            <property name="borderRightColor">#FFFFFF</property>
+                            <property name="borderTopColor">#FFFFFF</property>
+                            <property name="textAlign">right</property>
+                        </cell>
+                    </row>
+                </grid>
+            </page-header>
+            <page-footer>
+                <grid id="10541">
+                    <property name="textAlign">center</property>
+                    <property name="height">1.4583333333333333in</property>
+                    <column id="10542"/>
+                    <row id="10543">
+                        <property name="height">1.125in</property>
+                        <cell id="10544">
+                            <property name="fontFamily">sans-serif</property>
+                            <property name="verticalAlign">bottom</property>
+                            <label id="10552">
+                                <property name="fontFamily">sans-serif</property>
+                                <property name="fontSize">8pt</property>
+                                <property name="textAlign">center</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("footer1", reportContext.getLocale()) == null || reportContext.getMessage("footer1", reportContext.getLocale())  == ""</expression>
+                                    </structure>
+                                </list-property>
+                                <text-property name="text" key="footer1"></text-property>
+                            </label>
+                            <label id="10553">
+                                <property name="fontSize">8pt</property>
+                                <property name="marginTop">2pt</property>
+                                <property name="textAlign">center</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("footer2", reportContext.getLocale()) == null || reportContext.getMessage("footer2", reportContext.getLocale())  == ""</expression>
+                                    </structure>
+                                </list-property>
+                                <text-property name="text" key="footer2"></text-property>
+                            </label>
+                            <label id="10554">
+                                <property name="style">color-adress-website</property>
+                                <property name="fontSize">8pt</property>
+                                <property name="marginTop">2pt</property>
+                                <property name="marginBottom">2pt</property>
+                                <property name="textAlign">center</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("footer3", reportContext.getLocale()) == null || reportContext.getMessage("footer3", reportContext.getLocale())  == ""</expression>
+                                    </structure>
+                                </list-property>
+                                <text-property name="text" key="footer3"></text-property>
+                            </label>
+                            <label id="10551">
+                                <property name="fontSize">7pt</property>
+                                <property name="fontStyle">italic</property>
+                                <property name="color">black</property>
+                                <property name="marginTop">0pt</property>
+                                <property name="marginLeft">0pt</property>
+                                <property name="marginBottom">0pt</property>
+                                <property name="paddingLeft">20pt</property>
+                                <property name="paddingRight">20pt</property>
+                                <property name="textAlign">center</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("footer4", reportContext.getLocale()) == null || reportContext.getMessage("footer4", reportContext.getLocale())  == ""</expression>
+                                    </structure>
+                                </list-property>
+                                <text-property name="text" key="footer4"></text-property>
+                            </label>
+                        </cell>
+                    </row>
+                    <row id="10545">
+                        <property name="textAlign">right</property>
+                        <property name="height">0.3333333333333333in</property>
+                        <cell id="10546">
+                            <grid id="10555">
+                                <property name="width">7.104166666666667in</property>
+                                <column id="10556">
+                                    <property name="width">1.4270833333333333in</property>
+                                </column>
+                                <column id="10560">
+                                    <property name="width">1.5833333333333333in</property>
+                                </column>
+                                <row id="10561">
+                                    <cell id="10562">
+                                        <property name="textAlign">center</property>
+                                    </cell>
+                                    <cell id="10566">
+                                        <property name="fontSize">8pt</property>
+                                        <property name="paddingTop">1pt</property>
+                                        <property name="textAlign">center</property>
+                                        <grid id="10593">
+                                            <property name="width">3.5625in</property>
+                                            <column id="10594">
+                                                <property name="width">2.78125in</property>
+                                            </column>
+                                            <column id="10595">
+                                                <property name="width">0.2708333333333333in</property>
+                                            </column>
+                                            <column id="10596">
+                                                <property name="width">0.21875in</property>
+                                            </column>
+                                            <column id="10597">
+                                                <property name="width">0.2916666666666667in</property>
+                                            </column>
+                                            <row id="10598">
+                                                <property name="textAlign">right</property>
+                                                <cell id="10599">
+                                                    <property name="textAlign">right</property>
+                                                    <label id="7347">
+                                                        <property name="fontFamily">"arial"</property>
+                                                        <property name="fontSize">8pt</property>
+                                                        <property name="textAlign">center</property>
+                                                        <property name="display">inline</property>
+                                                        <text-property name="text" key="page">Page : </text-property>
+                                                    </label>
+                                                </cell>
+                                                <cell id="10600">
+                                                    <auto-text id="10592">
+                                                        <property name="type">page-number</property>
+                                                    </auto-text>
+                                                </cell>
+                                                <cell id="10601">
+                                                    <text id="10604">
+                                                        <property name="contentType">auto</property>
+                                                        <text-property name="content"><![CDATA[/]]></text-property>
+                                                    </text>
+                                                </cell>
+                                                <cell id="10602">
+                                                    <auto-text id="10603">
+                                                        <property name="type">total-page</property>
+                                                    </auto-text>
+                                                </cell>
+                                            </row>
+                                        </grid>
+                                    </cell>
+                                </row>
+                            </grid>
+                        </cell>
+                    </row>
+                </grid>
+            </page-footer>
+        </simple-master-page>
+    </page-setup>
+    <body>
+        <grid id="9">
+            <property name="borderBottomStyle">none</property>
+            <property name="borderLeftStyle">none</property>
+            <property name="borderRightStyle">none</property>
+            <property name="borderTopStyle">none</property>
             <property name="width">5.239583333333333in</property>
             <property name="dataSet">qualityControl</property>
             <list-property name="boundDataColumns">
@@ -794,6 +1392,24 @@
                     <expression name="expression" type="javascript">dataSetRow["productName"]</expression>
                     <property name="dataType">string</property>
                 </structure>
+                <structure>
+                    <property name="name">batchId</property>
+                    <text-property name="displayName">batchId</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["batchId"]</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">batchStart</property>
+                    <text-property name="displayName">batchStart</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["batchStart"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
+                <structure>
+                    <property name="name">created</property>
+                    <text-property name="displayName">created</text-property>
+                    <expression name="expression" type="javascript">dataSetRow["created"]</expression>
+                    <property name="dataType">date</property>
+                </structure>
             </list-property>
             <structure name="toc"/>
             <column id="10">
@@ -804,15 +1420,21 @@
                 <property name="width">3.5416666666666665in</property>
             </column>
             <row id="13">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["name"]==null || row["name"]==""</expression>
+                    </structure>
+                </list-property>
                 <cell id="14">
                     <label id="143">
-                        <property name="fontFamily">serif</property>
-                        <property name="fontWeight">bold</property>
+                        <property name="fontWeight">normal</property>
                         <text-property name="text" key="folder">Dossier : </text-property>
                     </label>
                 </cell>
                 <cell id="15">
                     <data id="144">
+                        <property name="fontWeight">bold</property>
                         <property name="dataSet">qualityControl</property>
                         <list-property name="boundDataColumns">
                             <structure>
@@ -827,29 +1449,41 @@
                 </cell>
             </row>
             <row id="17">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["productName"]==null ||row["productName"]==""</expression>
+                    </structure>
+                </list-property>
                 <cell id="18">
                     <label id="25">
-                        <property name="fontFamily">serif</property>
-                        <property name="fontWeight">bold</property>
+                        <property name="fontWeight">normal</property>
                         <text-property name="text" key="product">Produit : </text-property>
                     </label>
                 </cell>
                 <cell id="19">
                     <data id="145">
+                        <property name="fontWeight">bold</property>
                         <property name="resultSetColumn">productName</property>
                     </data>
                 </cell>
             </row>
             <row id="799">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["created"]==null||row["created"]==""</expression>
+                    </structure>
+                </list-property>
                 <cell id="800">
                     <label id="163">
-                        <property name="fontFamily">serif</property>
-                        <property name="fontWeight">bold</property>
+                        <property name="fontWeight">normal</property>
                         <text-property name="text" key="manufacturingDate">Date fabrication : </text-property>
                     </label>
                 </cell>
                 <cell id="801">
                     <data id="606">
+                        <property name="fontWeight">bold</property>
                         <structure name="dateTimeFormat">
                             <property name="category">Long Date</property>
                             <property name="pattern">Long Date</property>
@@ -869,15 +1503,22 @@
                 </cell>
             </row>
             <row id="793">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["batchStart"]==null||row["batchStart"]==""</expression>
+                    </structure>
+                </list-property>
                 <cell id="794">
+                    <property name="fontFamily">"Arial"</property>
                     <label id="164">
-                        <property name="fontFamily">serif</property>
-                        <property name="fontWeight">bold</property>
+                        <property name="fontWeight">normal</property>
                         <text-property name="text" key="analysisDate">Date d'analyse : </text-property>
                     </label>
                 </cell>
                 <cell id="795">
                     <data id="702">
+                        <property name="fontWeight">bold</property>
                         <property name="dataSet">qualityControl</property>
                         <list-property name="boundDataColumns">
                             <structure>
@@ -893,15 +1534,21 @@
                 </cell>
             </row>
             <row id="796">
+                <list-property name="visibility">
+                    <structure>
+                        <property name="format">all</property>
+                        <expression name="valueExpr" type="javascript">row["batchId"]==null||row["batchId"]==""</expression>
+                    </structure>
+                </list-property>
                 <cell id="797">
                     <label id="171">
-                        <property name="fontFamily">serif</property>
-                        <property name="fontWeight">bold</property>
+                        <property name="fontWeight">normal</property>
                         <text-property name="text" key="batchNumber">N° de lot : </text-property>
                     </label>
                 </cell>
                 <cell id="798">
                     <data id="703">
+                        <property name="fontWeight">bold</property>
                         <property name="dataSet">qualityControl</property>
                         <list-property name="boundDataColumns">
                             <structure>
@@ -916,6 +1563,7 @@
                 </cell>
             </row>
         </grid>
+        <label id="12230"/>
         <label id="146"/>
         <extended-item extensionName="Crosstab" extensionVersion="3.7.0" id="57">
             <property name="cube">Data Cube</property>
@@ -926,6 +1574,18 @@
                         <extended-item extensionName="AggregationCell" id="98">
                             <property name="aggregationOnRow">Group/clCharacts</property>
                             <property name="aggregationOnColumn">Group2/slDateTime</property>
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderLeftStyle">solid</property>
+                            <property name="borderLeftWidth">thin</property>
+                            <property name="borderLeftColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderRightStyle">solid</property>
+                            <property name="borderRightWidth">thin</property>
+                            <property name="borderRightColor">#000000</property>
                             <list-property name="highlightRules">
                                 <structure>
                                     <property name="operator">eq</property>
@@ -954,7 +1614,20 @@
                         </extended-item>
                     </property>
                     <property name="header">
-                        <extended-item extensionName="CrosstabCell" id="100"/>
+                        <extended-item extensionName="CrosstabCell" id="100">
+                            <property name="borderTopStyle">solid</property>
+                            <property name="borderTopWidth">thin</property>
+                            <property name="borderTopColor">#000000</property>
+                            <property name="borderLeftStyle">solid</property>
+                            <property name="borderLeftWidth">thin</property>
+                            <property name="borderLeftColor">#000000</property>
+                            <property name="borderBottomStyle">solid</property>
+                            <property name="borderBottomWidth">thin</property>
+                            <property name="borderBottomColor">#000000</property>
+                            <property name="borderRightStyle">solid</property>
+                            <property name="borderRightWidth">thin</property>
+                            <property name="borderRightColor">#000000</property>
+                        </extended-item>
                     </property>
                 </extended-item>
             </property>
@@ -973,6 +1646,18 @@
                                                     <property name="resultSetColumn">clMethod</property>
                                                 </data>
                                             </property>
+                                            <property name="borderTopStyle">solid</property>
+                                            <property name="borderTopWidth">thin</property>
+                                            <property name="borderTopColor">#000000</property>
+                                            <property name="borderLeftStyle">solid</property>
+                                            <property name="borderLeftWidth">thin</property>
+                                            <property name="borderLeftColor">#000000</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <property name="borderBottomColor">#000000</property>
+                                            <property name="borderRightStyle">solid</property>
+                                            <property name="borderRightWidth">thin</property>
+                                            <property name="borderRightColor">#000000</property>
                                         </extended-item>
                                     </property>
                                 </extended-item>
@@ -985,6 +1670,18 @@
                                                     <property name="resultSetColumn">clTemperature</property>
                                                 </data>
                                             </property>
+                                            <property name="borderTopStyle">solid</property>
+                                            <property name="borderTopWidth">thin</property>
+                                            <property name="borderTopColor">#000000</property>
+                                            <property name="borderLeftStyle">solid</property>
+                                            <property name="borderLeftWidth">thin</property>
+                                            <property name="borderLeftColor">#000000</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <property name="borderBottomColor">#000000</property>
+                                            <property name="borderRightStyle">solid</property>
+                                            <property name="borderRightWidth">thin</property>
+                                            <property name="borderRightColor">#000000</property>
                                         </extended-item>
                                     </property>
                                 </extended-item>
@@ -997,6 +1694,18 @@
                                                     <property name="resultSetColumn">clCharacts</property>
                                                 </data>
                                             </property>
+                                            <property name="borderTopStyle">solid</property>
+                                            <property name="borderTopWidth">thin</property>
+                                            <property name="borderTopColor">#000000</property>
+                                            <property name="borderLeftStyle">solid</property>
+                                            <property name="borderLeftWidth">thin</property>
+                                            <property name="borderLeftColor">#000000</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <property name="borderBottomColor">#000000</property>
+                                            <property name="borderRightStyle">solid</property>
+                                            <property name="borderRightWidth">thin</property>
+                                            <property name="borderRightColor">#000000</property>
                                         </extended-item>
                                     </property>
                                 </extended-item>
@@ -1017,9 +1726,23 @@
                                         <extended-item extensionName="CrosstabCell" id="68">
                                             <property name="content">
                                                 <data name="clSampleId" id="69">
+                                                    <property name="color">white</property>
                                                     <property name="resultSetColumn">clSampleId</property>
                                                 </data>
                                             </property>
+                                            <property name="backgroundColor">#004254</property>
+                                            <property name="borderTopStyle">solid</property>
+                                            <property name="borderTopWidth">thin</property>
+                                            <property name="borderTopColor">#000000</property>
+                                            <property name="borderLeftStyle">solid</property>
+                                            <property name="borderLeftWidth">thin</property>
+                                            <property name="borderLeftColor">#000000</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <property name="borderBottomColor">#000000</property>
+                                            <property name="borderRightStyle">solid</property>
+                                            <property name="borderRightWidth">thin</property>
+                                            <property name="borderRightColor">#000000</property>
                                         </extended-item>
                                     </property>
                                 </extended-item>
@@ -1037,6 +1760,18 @@
                                                     <property name="resultSetColumn">slDateTime</property>
                                                 </data>
                                             </property>
+                                            <property name="borderTopStyle">solid</property>
+                                            <property name="borderTopWidth">thin</property>
+                                            <property name="borderTopColor">#000000</property>
+                                            <property name="borderLeftStyle">solid</property>
+                                            <property name="borderLeftWidth">thin</property>
+                                            <property name="borderLeftColor">#000000</property>
+                                            <property name="borderBottomStyle">solid</property>
+                                            <property name="borderBottomWidth">thin</property>
+                                            <property name="borderBottomColor">#000000</property>
+                                            <property name="borderRightStyle">solid</property>
+                                            <property name="borderRightWidth">thin</property>
+                                            <property name="borderRightColor">#000000</property>
                                         </extended-item>
                                     </property>
                                 </extended-item>
@@ -1046,40 +1781,124 @@
                 </extended-item>
             </property>
             <property name="header">
-                <extended-item extensionName="CrosstabCell" id="135"/>
-                <extended-item extensionName="CrosstabCell" id="790"/>
-                <extended-item extensionName="CrosstabCell" id="102"/>
-                <extended-item extensionName="CrosstabCell" id="781"/>
-                <extended-item extensionName="CrosstabCell" id="789"/>
-                <extended-item extensionName="CrosstabCell" id="782"/>
+                <extended-item extensionName="CrosstabCell" id="135">
+                    <property name="borderTopStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                </extended-item>
+                <extended-item extensionName="CrosstabCell" id="790">
+                    <property name="borderTopStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderRightStyle">none</property>
+                </extended-item>
+                <extended-item extensionName="CrosstabCell" id="102">
+                    <property name="borderTopStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderBottomStyle">none</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderRightColor">#000000</property>
+                </extended-item>
+                <extended-item extensionName="CrosstabCell" id="781">
+                    <property name="borderTopStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderRightStyle">none</property>
+                </extended-item>
+                <extended-item extensionName="CrosstabCell" id="789">
+                    <property name="borderTopStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderRightStyle">none</property>
+                </extended-item>
+                <extended-item extensionName="CrosstabCell" id="782">
+                    <property name="borderTopStyle">none</property>
+                    <property name="borderLeftStyle">none</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderRightColor">#000000</property>
+                </extended-item>
                 <extended-item extensionName="CrosstabCell" id="117">
                     <property name="content">
                         <label id="131">
-                            <property name="fontFamily">serif</property>
                             <property name="fontWeight">bold</property>
+                            <property name="color">white</property>
                             <text-property name="text" key="method1">Méthode</text-property>
                         </label>
                     </property>
+                    <property name="backgroundColor">#004254</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <property name="borderTopColor">#000000</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderLeftColor">#000000</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderRightColor">#000000</property>
                 </extended-item>
                 <extended-item extensionName="CrosstabCell" id="788">
                     <property name="content">
                         <label id="792">
-                            <property name="fontFamily">serif</property>
                             <property name="fontWeight">bold</property>
+                            <property name="color">white</property>
                             <text-property name="text" key="temperature">clTemperature</text-property>
                         </label>
                     </property>
+                    <property name="backgroundColor">#004254</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <property name="borderTopColor">#000000</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderLeftColor">#000000</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderRightColor">#000000</property>
                 </extended-item>
                 <extended-item extensionName="CrosstabCell" id="134">
                     <property name="content">
                         <label id="137">
-                            <property name="fontFamily">serif</property>
                             <property name="fontWeight">bold</property>
+                            <property name="color">white</property>
                             <text-property name="text" key="criteria">Critère</text-property>
                         </label>
                     </property>
+                    <property name="backgroundColor">#004254</property>
+                    <property name="borderTopStyle">solid</property>
+                    <property name="borderTopWidth">thin</property>
+                    <property name="borderTopColor">#000000</property>
+                    <property name="borderLeftStyle">solid</property>
+                    <property name="borderLeftWidth">thin</property>
+                    <property name="borderLeftColor">#000000</property>
+                    <property name="borderBottomStyle">solid</property>
+                    <property name="borderBottomWidth">thin</property>
+                    <property name="borderBottomColor">#000000</property>
+                    <property name="borderRightStyle">solid</property>
+                    <property name="borderRightWidth">thin</property>
+                    <property name="borderRightColor">#000000</property>
                 </extended-item>
             </property>
+            <property name="fontFamily">"Arial"</property>
+            <property name="borderTopStyle">none</property>
+            <property name="borderLeftStyle">none</property>
+            <property name="borderBottomStyle">none</property>
+            <property name="borderRightStyle">none</property>
             <structure name="toc"/>
             <list-property name="boundDataColumns">
                 <structure>
@@ -1183,4 +2002,321 @@ if (nbOfDays % 30 == 0)  {
             </list-property>
         </extended-item>
     </body>
+    <list-property name="images">
+        <structure>
+            <property name="name">logo.png</property>
+            <property name="type">image/png</property>
+            <property name="data">
+                iVBORw0KGgoAAAANSUhEUgAAAFMAAABACAYAAABm8Es1AAA16npUWHRSYXcgcHJvZmlsZSB0eXBlIGV4
+                aWYAAHjarZxpchw5EqX/4xR9BOzLcbCazQ3m+PM9IEmpVFJ1tdlIXZKaZGZGAO5vcXeE2f/3/xzzn//8
+                x/mSvImp1NxytvyKLTbf+Ue171e7fzob75/3Vwqf77m/ft3Ez9et50v6oc8Plv75+c7X048XfH2GG3/9
+                uqmf7/j6eaPPN77eMOiTPf9YP18kX/fv6+5zJabt94/cavn5Uod/f8+vS64//vPJ5c+bvYvg/5ufvxAL
+                q7QSHxS838EFe/+s72eC/nOh83fhT/4/P+dCvv8u5v31uRIW5C+39/W3tT8v0F8W+etf5tfVn+n3i+/7
+                5yfCL2uZP2vEP377DZd+v/h3iX/64PB9Rf6v32g9/P12Pv+ds+o5+91dj5kVzZ+IsuZrdfQafnCw5OG+
+                LPO78F/i3+X+bvyuttvJli877eD3dM15duUYF91y3R2379/TTS4x+u0Lf3s/2Sh9rYbim59B+xT12x1f
+                QgsrVDZr+m1C4Mv++1rc/dx2P2+6yicvx496x5s5XvLH3+afvvm//DbnTC2R02LOdNeK6/IKUS5DO6c/
+                +Sk2xJ3PvqW7wF+/P9tvfwosQpUdTHeZKzfY7XhvMZL7EVvh7nPg5xJ/vxRypqzPG7BEfHbiYlxgB2x2
+                gRRytnhfnGMdKxvUuXIfoh/sgEvJLy7SxxCyN8VXr8/mNcXdn/XJZ68vg01sRCKbCnvTQmezYkzET4mV
+                GOoppJhSyqmkalJLPYccc8o5lyyQ6yWUWFLJpZRaWuk11FhTzbXUWlvtzbcABqaWW2m1tda7N50P6rxX
+                5+c7Xxl+hBFHGnmUUUcbfRI+M8408yyzzjb78issYGLlVVZdbfXtzAYpdtxp51123W33Q6ydcOJJJ59y
+                6mmnf+/aZ1f/9vt/2DX32TV/d0o/V753ja+aUr7ewglOkvaMHfPRseNFO0BAe+2ZrS5Gr53TntnmSYrk
+                ucikvTHLacfYwridT8d9792PnftX+2ZS/Vf75v/bzhlt3f+PnTNs3d/37Te7tsRz8+7Yy0KtqQ1kHz/T
+                fTV9zlVKWiMsW+JunffLpbqcUu0Qr6s5tRrzCqw+ETP4IMhzW7e7bz0VLXLyyThWIreV7al1zMzPlMrl
+                DV9PGmy+GG6s3XIaxe046xmz7zXPWino/4xV3MrDzDnSPnWU4nrfla+y8K2XOMja2UbJa0kflOIz+xmq
+                0HJWOJCXpV1Kb+msnc0ABAfLXEpYexBf3Meas+YYXONle60ZdwjVsbg2ZeGxL9xgWXHO3mZa3fV2EBHl
+                TL/ssaWcZXM4x7OBkIWHysY8ld13c2XgJPPv49bc3L/bRJBP3Gfva9ZlVvORJOLKSz+5n7ZPHkFw7+MZ
+                tu82Inh+hquL/VvbKnrzAo9m9p238yGPtBARORM2pfOivPzw+eRFgs1D9B3Ai9cmInATqavFOdwmcHQV
+                hHfgy3xhNHfMXqERU2x5WyfXXewiShZB2sqEgvKukZwlBPrpaRbe2NekrfRhhwM5FTcIUePRHycQyb5z
+                YWe60VciDzpBsfk/YwwudJM/dbFtOzXSopM88+7fKKS3DT2bsg8LscfZzs5zejmKnVlZ9NUSQdD9nnDa
+                DKfVudIO8RwHczfliUsrabNcM3pZvC8+jQ28AUh09w37jpDWZCcJgZ2UYoMln9sSDeAJQcBuVmLguFJN
+                IE0zzJHjmYtba4NtP7GvEM6O6Kj75mm6cD8S7mB90xZicCnV56mv72GqL2dXXuw7mb0EjcSK8slr6wKB
+                tHkv7+MiiFaNiXeMaTbekJRt920ia5TZOjb8ZlWMJA5BPgs/jMrIk6Wb3vPTrFTsJ7hT410Gn7g9Vmoo
+                VqyFRRJ5wTXY1g70NIgax4aczrYDDqxWWN7qX8jef/rb/O4b/mJcW23zjmWOAuSE0ohnMrqMDaix8mhx
+                0B50q8oHA3S47TNJ5RwZws8DBEQmOOIB2T3LGcO2ASbkHYb1pVoWANxaSkdwD7TnRkzYfE6IQ+GNOCP0
+                fCy8L0A7UhOmsFYlN0seNEJwA6dE3iEY0yqR7U6TTbFmBD95G5a5xbTBpZPgGfKVTW5kxfEW+C4K/8ne
+                zeT6RvnxYm6MmLGQC0u7jWsAyO5he+42r+z56d3XBizvfmylIOwC5OUa1kFQNjdAitRPUZZPUMdvWITr
+                jsBDa9wDAd8nxHYGWNzIoRF6dSfs4hqQ5xqrUWGOCAgBcJUdxi7xsScbtpqVD2G61euqmZCOoRP6BXoD
+                IoLbYAB5xl4FcrKQzUOY7/eqdXuJuUJAwf1cdGzb30Br9oDrqMHvhGjDgYSRYOJVMQuRnai2kaqDS80n
+                gQSJyE5pd2IAJppJoNsTwjdDDweScCXC4SwcXDZAIJCtukJ2e755ZF525EJWagYaKie2Qcb2eQiOHlOL
+                yi32ktVhqcTPFqKqe5A8StrD8m2XH+DAJ2s5oxuBVz17zP8Q3EQTsNHZSTZ4sLqpF9vnYOcWFDXYU34Q
+                +c1NsW3EPOzkl8l7F7zAquz74sYHZM8G5wTWs/krp9BkIERmENmJwI3ueUQSIi4QfM99QuLWRmQbmpvN
+                r9lLI6/JuYimmsLmBbsBmyzE3CXM4BerICEboYY40EpRwgUNOfuEyZG2hxcv0q2y5rGQRRll1PwBqdci
+                gZ1kA2pGGNkS4cvWAp0N0ACJiaNdZ2ALIfxOioLwLOeCO8E/ohecHE8DQCd5LOX3Gim8YAErQTto+hjY
+                lcuW2CGVWB/9ABrvrATSpvgr6j7M/Q3iatf2+MLbhnQi7iGUs7l2IBWy2KUd95A5Eif+EoStXS8ZjWSb
+                hdu+LDKJMxKAKBr6LmR/4v4zVvulGGK9BCekyQqpOwMTb276Bteatgm/lqhnseda5rYlryQMT1ygRN8K
+                ON5mHJIP3uPz0sJBks/AfUhgK9E7QBRgY8C1kxxvV1o1kg348L2z0VwZG1X5gVG25+eVp2kYT5RwrRmO
+                hhx2tujPneGAzY1KHhFKwRbYBQ1G0ktX5d6UT70mLh79NCF2A8wUR4LU6aDxHTxIwB9nlxRc561RVimi
+                YFKPlkRkER0E+LYnJGhLWubCCGbsaq167IUSOPoGgUd3373y3ECOc3vdHrazo3XYtta4TugGecMGm07u
+                RGACjEZhg2lZi0uqoL1C3gftjAbg4kH+lsOEXRxekbQj9MpETSHY+UkD4rRCYBcM40hTjEFuwwZFskFG
+                kdi30DFhyz5wUTh5VpAYIbAD8iQRxhuCZI8qyDUiqHLgwAG/NHsDEPuK0F8tSBQPNHBoy3HpBHlP7Co4
+                1g6Ugq4jskm54VYCuvjiGbwRSJKwDw442Eg1/GwGCjJJQrrWgxZdCSOWuS4XpUHh2mA8eGQxIwBtkZjL
+                xCq0SJZwjcFV3pd3P+hDkGCiBJeCCh6BUWfMJK6U8zim1qvGCTAYgTzk0wRYsirEScWhAfvSfOQrrEK0
+                EDi86YaPedMe5ZJIRZNYZYtkIGwQ0HuwlKcSbgQkbzsQjjgwonIAUR76w5FVGUyIxGdYr9dxI8v8PbQU
+                WUlIPLgVNv54mQ/uZ8+ky9lkGuaCoC0B8c/FS0Ph+3+E1XsbQip8UKc/bIDcDkvXF8GKCgMskY3aOY8d
+                Uh6TNQaBiSbCnoIqLD9OBGc7UcHRwiPhhK6c7ROnKe9CvvpVyE9k6skFVY1KYN23wbsMR+yF6lPkzy2b
+                gXxBscjBse3c3BZiTJQyTAoNw2s5gilgdE+QvONqEeysf9EeAyGkFRqM/9YMo0nnO4QSdDVhDbYFc8Vd
+                A3Z8pXb8QSQAYI8es4n6Lv498SPIE16PP9t8Rx+f2vEQAcod4uNFfuR6MmGiEGJ/4cECbhMHRHYnd8kT
+                VcygkigzDD+62kjn0R0yhIucyBJ2xQJNMO8+Q2Bbi8f6dGQVAAbToiy4Rqg/sUz63IkUUySTedEJIDG7
+                E6u4D+IMzplHFg5uy0AoaUvqhmNI7+7XUXRPBxlq9VCDMCqWTJ4JmEKBWfKdq8taQAiOgIF1qm7/QPqk
+                mVlJ/g1nEYt1f1RJ6QqWSlazgHimRjI3F4g+T5zh/qqB1RIBiHA6qK9xLQGgc2kOewOoDEfMk81sDj4v
+                KKgC1ADdHt8wG6wW129mUpZ3K1sTr52HLlU9AWhFcRBVQdjMoOpY3mQUnNEsMhQzPgsKG8HAchmPzYOf
+                AzTeIbpK2EVeSORiD0FhqDZIKeJBcGaWxUQ0E193rxbuOAMBALLBdUVVTxoOMZS9Z+COMavYel4bA1Ep
+                uZ2ABfBGopf0RrngKoDENQnOjmNPZoIRYoRI6rPxmFvShQ2K+Hy3gJXcrsTPvA0ygI0hSFccB2EqmgeC
+                JpTRgRFMsAcR+OCxBGd5O3+SLoBXSHWp2ukQXRaSgGZXstAP+oTsZW8E9WyQQV4FYOYgL45yCH0lNp0z
+                oscgfPiOTMMU4zIPOoz3YCtmwneEUZG1AB6eYpuGNw2qRSGhpO4cGQUL9hK7yP3AkZ6lP1wXfJRyuwHi
+                0RAEWd+ykF0XYQKhMkAUFt5lbiFg+xZkuIVKiGJ5yrDEPdgSrKYDa/iXI8TgLOLRTkRVdIZ7QimydaSN
+                3pAwA/DwDlzFP8mrjX7mWsoOVyQ2EzLbmeF/fD4yIpVJVKFlFTidtbgYHqWPuKzRWbWmqtAEkOTmI2Tq
+                JT+Mr5goiC1UPCQ7LYsFs0MJsJHIUnUIaVCUF+8GDYK+rpLNMYwCpKmwRi4ahJxqdMATN2W5oLBUkDqZ
+                KAejyaSx40JPsdhDhQk0lEfSV7RYaNOKXRywYjZ2q3S2gzhFL2E9IOsDnyOrfGsCyRqXhDhyC9l/Zuvt
+                ad/BEqE6UEO+TsNLZHRYuO9vQ2K1i3VgCrxITrwc9ljIq0gYT0KtoLpJZ0R3wSUknKchU8h/xNmETrFl
+                KA/+YJ9QAgUHCsQheZY9wMJOMCeXzoYUHNi5imkTpySdGfiNiDZA56AxUFskFFLQA11AfF/El+qPc2BD
+                29aGkm1KWO66NvgIxXPcqoZwxoY42FA05ycSx7KafZEfJAoKZASMUOptqfqDsoHguIriwG3eWPbdsx7c
+                GghoCcQAuyUP1e1tBzYYKpBFWuhqUSgEasWiZC73B3nChRJBpBRv8zwtNgXz6bgCuQWiBUCGMAQbSYwN
+                LZGxhKO6Qh4NH8KS2+hAZLOEm2qYiAjeXiEPYqBssjBggWfkgQNboKSA+EMl9Sqe6uHiSdR/vAQCJ+4c
+                gGWAo7QUvh69At1AkHzm4Pp0ZwRnqnzdyuDwkhH4SK1FBy39FIORRwPjaoR3k6tGCjmudFSVtddMSZSP
+                hMCsp7jLJFDhhE5ggPWEEJRHTvi7VfZMTA0hhE4FfwIbARQBUsepcGJdwUtn7Bb67EBa0sg3yEGi8MT9
+                J8y1azeMt5ZZtQGkDbnN4tbtc3yvG+pnwo1I2yNhFVEZYuGFgkjk4XEuqJ3BzzrdDQIZEmzc8gqqLRK2
+                PuBR0FiYL6IIU0ASqJ7NOtXTMUtYWKQ2sWHZfjAfMkQYo+cK0p7lk43tUtyoFHzF0jKmqzEgU9aiVnIa
+                BJlCS7iM27SGF+CH2g0hp96d0sd+JOkAXW9t7MqK1LWzXJqYa4NMiCa7Ze5HRY1g3rhmtaYknKSxOkuD
+                542+XIRhS9IeMoqqIh9xjDj0l++Z72+CcgJ7m/GVW4XCBnWphnwreDDPQWJjTiLADKAjX2AMEJSMml2d
+                46gaN3etOp+b4BxaURWcJsCuNURlCLwIfmT+pcKfY/0KzgMNozI5jDuiqdCgQzVD3U10AQJ1Vb0U/QUJ
+                QZQHoj4fRduoka0s4H2VNUN4+u6QUcCVUUkdMsCTV7ZTZWdhcGYznMNWNScKlz1YALpj17AVXVSabQiq
+                QNkus+rN4YJBhLgAvCGnAutDeXmqosc3SGx5O/iZHUQsdPSW+iVYFCEeJnJkciUbqbXky7ZcOm+WgEji
+                UMGY8cBcEXuCLFEZje0Gq73TqpHaZ/L5PaLH3YnDoAXQphV9KFvH4iF7/cbTYViWKFvuAihA/cmgQmGY
+                YEVruLjLtkzw0qPY/ODyW76KGdwvLJdwXL0HxxXJFKodECzKhisnRYgE+b4jpdQCIYBijgZ3U9QjWAdG
+                VZGlQ2q7Xs1DYuK3+QnwHfG+2uEChuQ+MULgEfo3aeAOFRBQKEgkLvAVENSxIQBImcASnwSBACd24ga4
+                XVIVDcL+rKyEZdXQmpKwJj/R8SU5/io4uFM2GZHt/lwsh4kB0Gx0v2SLqu5g0OVa7iY3EhdcdAhnFX3g
+                9dtgQPDiGBP2HnRT6WKDFkdjC2aPIkEj/5qwbSDJQtKq43OTLCbiECsMIKFVuSW4rQ80LQGXF3YVtgZJ
+                gRFia0b4GqnWMrtL+rAX89O8UkFPXi9C0Xz66tKYXSI6haGyNL7hikmYFkDEamEDoHXysan3Cn1jhrgf
+                VCjyH+yTKiEugUSyGEUVyRVYhIuwMxMU0Qg4F+jgyRkIs0Z1Le/moyxQd694N7Di6khhdtkw3pfrzhf+
+                Mc5DRS9zi0wqlqEhMfApnOff7RU5SDhZbwf+XFuJFV5uiaYjIgxrK6V4tFES7OwnzLjS/XQYIL6qUb/1
+                4e9L/FwgrP25QM2WEBkXlqc3RI0oasFiKOr8en2QxKkk1X6dGLyTIm29W56gzsHcFizXgRpElmcaLeKR
+                ZrpdjfsyV2WE9BK7uN8joOKu4Ry2lo8kQ4bmUPJs741Rc9bIJJJ9X00mm/6qEv9p3WK512XvZZl7Xbqs
+                omqeyno9bjCiuwILwb6+b6w+3gOTEWyaapViO/jjGhxg+S6H+YfP437/tIJZbXg1I/hEMgWhYsDFJHwE
+                uIuKrJX3VCHA40AgG/i/DEFkUAPkqCMA8uWtogDUgFWfNSHnEKPjoLshNzVyuC+w3krbosWnWBQ7gJJB
+                GpL60B3EgVo9Mj24nBsgrcjWsUY48PLZ1qByJStT742NlvvdF3VyXmzhnM+SFgSmnWpc2F65+NQN6OTw
+                sORPAMUTDIUudmpHcjVh4pA7fwIaG2VGAAKWgP0NxxLbqzeRMgHFdjAl/cbsOi+aD4bRbVVNqoKratCA
+                7FrhOqv7b7hS3R1IfAozPbfWsksREwuXzzfMBRCwDFgbCCYm3gYvL1MOnrCuDsuFFCBz1FGa2ZKy7SzD
+                1ybbo2IGWQfKVF4C76YQWI2ghtUsGoFSKTwnXHLDv6ndNhF78JVa3qs4Ux3SF4py1eKeYBy9KUmNxUqN
+                sJVW30UjCF58js9AlnFRR6Ut4JVlc6rIGISXxomSa+zE2FN9jS1vkMKtk+K80E8IwBArdGSR3Jm4mjAz
+                qlLt8JCtb9uEZrUzG6SEVYF7ArUr8m6qN+RwSPIQY+J91NIKqk5rCKmhtjw6cKp+cUyBRYa4FbokeFXu
+                S0uaFMvyaq1YRBYIe9ARIqkhH0MDvd12KseALRkIx6+pvz/GrNV7TUakVSs/etQQR5iocaXS/tqyozVc
+                0APTJ+K3TXWWIhyBEDJZhZE7xgLL512KuoRL5F22I2DwowPzDsIirZ3GRg46GyFzOv4FLiat1Kg1W3ZY
+                dhBWh6Nge7KXO22EkQZV1sYTWHyxZztwSyiOCV46YCg5dhJ5Ie9ccZBR7URV4UiQjByS6FBJCvpEVMmZ
+                494QqfhFN4uKoU1TBPIF3z1za81fWzEi5dkS6Cv4DP+1FrHbJXv+abwwmRe1YyegZVfdoEma5OpaOGkS
+                DBVasamadmEV7wBNUHyCWcROU+nNvlEGBA+WF/wikkR3LAIv/LUD2H7XAUQOEiAHYAP8sJRwr7oLAbK8
+                nVgPLKcx72Cbwly9PFAFscxGoe0mEgobP2A8OJFFG6ZldKLEF4JBq//vFx91CWvImGsMxnA1LneH/0jP
+                ukQWCtjY6OCFpJb79hrNaR0yyawbqwTkJLW7+acGKVwc0+S7VyQOwgtByA7GerRF2S3N55BuqkucuY/K
+                UxtKrwuS5201OCFnOXCQwZDJuZMaUi6wlbrrXG2fcKXL2D5VcxwWAnu1EN9eYys4IpwSJEiOqoCiUqIh
+                UnGhHp68FTgE8uynanQWrIAMAQwIQzXejgjrKDWWR/O1sEtpRCFwSsgLs+1HGrjbVdmS2reO1WpBYKNa
+                l1zOWQFnu7GIvMEZU005GIg9ImNx/2bd0gbmF7eyHfHHEli1dNUM34JF9TFUxJkZacR+dIXe1nTJYaOj
+                fE4L03jH+jhULFHaR6phNTarZJ/AzarqfTwSyVXCG7GVIv6j418QOztZhD5QzFoaPOuQFHFWhQUIuard
+                dLUq2SRbKEuhkQUWBB/Mp1gVxIondEkzEAQRGoO5hY2qmabRlmfPYs0q/BdCWPsVOyZRYaiBajQ/iaD2
+                A76P5QRKVB7mjjtQC4lsd+d5wH/wWf0U3lqz0V7NU7QGuBcJki5/fWCxrJ4a+7zVU51B+H4bvgCk6hBW
+                1X4NkDnV+SYxDYnL7eLcNBpFCBE0JUx7W7fsC2iS2BQiKRl4VgX1UodFeJU7YQF1smLrtk+5v4hzGxhX
+                tNZw+KvprtZS8VDYzmrWMQyfgEWtROQE3jqaDDbBg+HZISU4Q2QkMA+DwDpF7TjSCS/B/ynXtqIO/AKz
+                G+mVbh9HhIICcloNi3ODyEYLqoIj0DALbLmqelWFP+fc7cq5I6qpGmOcBXeflFbnmlWiEN+qTstrI3O7
+                c6pjQ8b6c8tsKmap2LE1WNKxpHMitBADqlNKiqmxMdWWPRrzC6yC5nM0qAePYyBmeqB8S5BlqQSpHqac
+                K8CmKQUsmBsyac6RrDlBtlPNViyLU3293eoA2ZjUpQkaAVVlCzCBHxCbWAiWVXNe7g1tTW7iJqw8Akut
+                PoZXUb011bF8fIONWU1oNDahcNAs6lsajQEmVcyaaz07qVsIJqoQH4J9ZNQuc2VcO74TorwfpT1U0V7v
+                zTsbEYbdiL8pmDk/3lc9G2QZvl7lBWDoaCpQvuAy3NbgH0qZlFSXtJp6NDW2LwItzWV+vy/uiy+DUzvM
+                PJRgSCunTnY+EcojgQMfdYL6DtNstVA19HibkLDkJBOtAnLE/dxvTrcXo1GBwLIXrKOzmLcTNEZVwFzW
+                zLB0blb1XYPmMtCPGs+Kan2PrL+QDbWvbSNhUjtqEmZpgZhQ75mXZbQAi2KGV/Ph3dpEeYUB/OGl/VL7
+                Cz6RQNWQG6Ee8cYIP5/q0JBfBy1ZIE1XHW9CsSontqUOQVcRDJnYVJ9banRU+eHaoVnWeGbWUx/Mjatz
+                Ma4qXw4hfAz3D+KgDDVTg9LzKn+DmjDGUrOkqanTBKaTtOggvSZOB1x+JyEx40A42Wk0h+xKVxkit6iB
+                DjCuQqB8SgLgwit3LDUBp4pCcgbdI835lgUEoFlYYRiF6NIOJO48qRE7VJRDes6I18T3AY7qMxUbYYYw
+                NGAycQ5J7YeiDqXKFVB2d84HkQK/3tEMVasTv3CkuVZofwG/0jvuTlX9viRjoDrJFzigK5pYzywHQl7A
+                IPkAu8hqfI1qoHnmOVVU9QEFCpScGEvVHjswG0ZBHr4Jui0jpgb6xfgNsjSUw9CBmCF4VA2UewvSt0hI
+                xUwVqnVNILSjkWR8JfqMy9zYCKCo5A11bAS4hgQzWJi7x2hAbaM3hUTsKk8gE0EBdtMQErjiGVV/Prdn
+                oUL5UMeUHJq1kQcz4rbwZZgidA4pSo5lTfJxtbWq/L2zUWSi+rnvghJJsGPyGgrrqtlDMPYGy+3+qgZw
+                geVNlSwszZ21sZqpMVzMIn4xJuqh+4yux2SJD8AHeVkdHRpElYQTUKqeakf7CcBwV54gWRWJYqoKhOwI
+                5hEct5q6KlenhvPVF0qQd/QaIxIVaXqs3tl2yB59qDoOuGPaUJMswK8dJcS9i+iw+BFmRFUc1Bo6ZWZM
+                tOUDcJYsyk3xettnWdV7D2XDgoDAUNl4gWwJKdWXi4pBwNTL8k5Nq0Q19kAbdVQQHNNJTaknx8INhJPB
+                xINjUz3VO+CBNNHoiqZBsKa8vebhYU/bMCKI35TIgnui6B61EsHFrfnshA3nPoh1L60Pud5qH0KBGEag
+                asGIUnSNdDSsWCMQ4yIKEzBHaK2G1ivWsMcwqH4QJAkdI3JzOgUsYmsBgaIGZdkx9du9JI/3cjrbBeBG
+                zSVGjauS/ZqLAseXjn2sI7kizTtiuANRFS+nYUqA4s5VSeSjuKBEywfwaRAbyt91uF8iMBR1TdTaGNAH
+                4ULkeA2OebU1o0ZswSYVawe3RkyXqJl6whybj8uJ27zWKhZUlS0rSf9GvNgq4EITI8gmyKtNkceKSbP8
+                FTRqWzGlbtpk1RCjJCT3f157PiDufNHhC/VfrL8Vy68ZGwyDVfW1aeg1IAA1GupU5icXDEkvRdUzG3QK
+                6w+nOolRFW4jF7sk4WoQpSlZJWbYg4BICX6rf6MKQ8xGE1Ukh7f3j7JT7OkOFW/Ch9SHwYKg5Mr70JDn
+                V90jPcQTKnFkGT6Hhqwpo/a3JD/2E/IjTjQ3hOjiSngR/vaOahfxVNP26lKnhjSgRofEi7MZcGmzTTAm
+                mIBb8PjnoV9WKB7U2YHhbG/oeQQluFARdd4BZ4SwlI2q3x191CRkEWw6h0HMASFjR3VAQa4p6eUvPAr0
+                BWUYTO1TzZOrQrVOthSCHuARIktG8CAelxoSwA22FrMz0LB8GqLTNxYgApTYNWLt9Ojr5d4fBVPzVTFl
+                sV/NdCbV0GSy/lwO7qre7w2OJBUlg+rZiugn6P65ThxV0iq8OUqm3tnchEoUvc77aqMLgIshsLOQmase
+                iIHrVh1J04WA/hb/Q1biJiEMykCtKyw59IDqC5ouNl7HA7jCGTSPmLFOuWssUd4EGzvQ2XccsRbA071x
+                RLyKBq5ROXcUSzYO49cJ+tmuoMEnqiKmdq4jwTXaE3VOQxaylNicqzqTZIl1od+uACEY3wRKJs1V/vU6
+                /UPd27zC93rbgON+8yYs1N82+J/31/yx3p8tOfL39+W7ToUonSf5udZuvort+QmDIf4HZbxAUiUwVipV
+                zTcEmXF5Hk04kNgQ41YfcWrE5BTTEcARM8cCuGbzUdkXK8vn64SBciJLYKM8MNR8ABzUNc54sJVIj3Vw
+                emoAobPBWatqQrynADZbifzQeQZ1c7RLrWqKSidvrjbA87OgGmsIKiLdYSZubSbVzXAh4Z6YIRL2p/tU
+                k7uksNUKTOD5lIEm3rjdBin4OTf2r6gq4KPRYQaPRBXzQF8LZgkaUeCGnI5QkVAsAtEUBPsb5tUJOg89
+                Ih9EptxqgyENPjqwRJmrGkJkdZ2PAiuhei2LE1RUa6TPJk6naoZRJavS+Moc4ImayrEYzUqg7OQGNPhA
+                tryZp1/Tn9B80UFs4G4j2RnYzJA9a0F8mP818P4Ud+YF3sBAuDsK31BYF+xJjq6Z+Fp0/ACe8V6Xe9BN
+                3JbOuOyrysTRM2/DvkDFGmIsOGqH9ZwAhg654BLmBWIEr9WBKtUAGtpSNa8D1pZskyBhNP4yZWdF5l0V
+                LhGFtRM32HVKUbOGrO5r+AfCDYa8qc0yasgeMevvQRoi2hBqaCmchTLCahhUgyMEudrCp9WqU1ma0FQ1
+                mfeddzchy6xKpio2PWmkx1xFXJzewZFfqvGAFPOV946mWuI7H+cHV4YXOUOBeNOTGEUdz6lhFwPldfWD
+                ZRVjU9lMk7tbs9RTSdpc9ohtAg8vIduIjCZUVAZAJMCntwLUnXkKFsmR1r4suDWPCBkDmM42NKhf4otX
+                QRy8Sd5yFAMelOTD+03PBpknvvkjvw5oOZ8+USCeNZxEHCPMcGCadQ2qPXvNfL8JN5vVdiDi08UjBCQU
+                i0QSGunMyQrFgdqk5u3hI7tULRzXrbWGt7isUuXclmg42GIaZIU2PcGrqy7Li35GWiO9neMrXWOffFnl
+                YgyfDgf4zqZpeKzKuYJfyLhiIhrvkAMWXx9gPyfB5DUS8WboVT/SAVJoBkBAud1zluO2ktm5qnHk0fMx
+                OqSV2ys+26HyBAIGuU10QYzyp7jJPKuKSOR2cetORWou7ZndMq7ZNcW9g2zqK4MTFiHb9+kSq5rZmyCw
+                imOqQ/aE225YAiLJTu8nCje8Rg1QqzNW5LCalTJn/bz2/r6HOoZGRTRiDCf3dW1vCtj0Z5+QWIW0DILS
+                bVg/IL5KoN/xUcceA6tbYRWIc02xNvbbNZ1wXkPnmHFBmnBNGk7tL/uSwXqpICRDeiNjcyW6OqJN5U8k
+                LNRcMTB36uQe9wXACjJ/bCSnIr8ROR7FBtR14kKnRVkWrRTpzMVG23XS7KBVLXKRxWQVcELljTqWSggn
+                DVbjl1FsIcH2qhXHEzQyJ+Nq7yDCUldcQx3gFuvtsKhzo21jxc7oeRMafeGyKtKuD4OOkzPWUEd2pO1Q
+                GUf8tc4cyQ0ICEOElkVoFkSRzgPsMWuuKEJiB3HS1WkzUVwFXmj+Zt+zyNxzV/OpO1Ydc5O5ZWDFWes1
+                3oYVgXMAGisot0uNnkhAOnYQd32kdJsmnAAXjTQHzfihB6a13Av4gZqAnbgYG9SkVLSNqQNa/h7GMAOI
+                xyQuEmhv1JPVzIZr7ERNBzCJO3Ixn9lzrK/FX4tGWOjGqoEsr5dnPDCjh0KA5Zq82SpVb9F1LrLSVS3d
+                g2GHRHfM6NB5JzaDeiKs3A1KzZwj/Vghr4dHkL5ow/g3A/Xv/JO5BirdeUKUe9376HAlyxNEdqAENj+p
+                n4mi1KvVIoF0nRq++/VZ4uxq+GL+yQ+MjyBTtQzVHUAD1UA7+0SskqpgCJDUNE4R1RzjntpPcdtRbOqW
+                xa0JzqPk09/3HcF0naKoOgbDbnZVVCvOjCzAL6HoiOzmtoAlAkIGbQ123TNNaA4dqWMt1ZYVEubowKF+
+                j5kUHclUC6LryR5km8Zr1X5GL0GUJiydE9J2qYQOJeMGa858Xog6vpIwwpmbmWxH0mFWKFxtoLTHmzMk
+                IgORZZT0KMQMIF0Yz/JDOGAgFTnK8rMNAzWFAO94Vg3mFFtBarYqD41hB+xyPUb2QP0CsJX4CRq3viAn
+                I7ju/O2quhApWC8yJkqhymKnWseYY50Ha3XrCMO8WBdvrwAXsT+Os6bvZin7gCYJt1k602qqOKqfr2bp
+                7mqWLnKtIDQhCNTlwC1qYoMQxgYgjYOGmP5dSdD8piaoMzcjhw8MqKxuQ3gwQBBVfPyDAeFTuDCQXTJb
+                Z//dGgA+YISnSv3pIYIY66m/nNRrgBEdxIUXs6I+bkFzc3VdxemCTmaiLnUmTmdNE6i6nc62cv9Dp7wV
+                02gMJ8UCLszT0n1eRVDGTGl6MKuGaDTkAIZVQYy6hgMizXqMwHwVlJ+kdBqv7PcU62jP0Lg3PaKzEE+C
+                qluNMgj1AJQOyzUJKp3Mx5UCK1NzsuCCBso/59zYFvFvnQMTbtTCybc0rOGSrBO0T7AgJhC3i2Urq7/O
+                OhRz9CwA7dXRwwA0OKCBbbyTkYHScyw0LPcLnYvNxeUazA06O6URWviFtwo4zrcnwx4PgWiQ6c1Czaap
+                6+/TmRtgBaCRYvWd/vfsWqyvT4NV7YFVgzE0xSXbgapFfCPPYNN7XmpjmWvSsyY6gapRj0EOS1fyKXUj
+                yMlDnWrxKO6hEgIymT/cu6ISZRt1JB3VdR8cggpOE3tPJGQd5wUr+XDNJ6ltboskKQIGFyyDsL0zapxC
+                4x6JpLqaBx1WQBppnCjASbgRsG1vcZK9nNRZHZwEOTowazjrohw24yNPUORNZUJwK7HCHpECRiwHwx5N
+                jXckhdVxGI+7icXjpaaa8iiRsGywOuGrNtE9Tw1n6KycTrsHTeVXMl0TsnjFOSE4naLTYe+sSXsNl2ny
+                RC4O2aPpQ43FthbjdEU9PeyI+p24F6WxWotdBe+uU6OEruYqwBePBJlhaGm3OpRYCGQov8cdrVkBO6HG
+                YbJc0NDxcD3YBfDQA7DK1boQ4a0AVh3QFftFdMcy8D+Ge6mQhXi6jaQs9FXfIzgYGpmog/QzIH4nIeE1
+                k5tllXQyuUvEauzPKA3hItyhTmzqUwgXVXb0uBJW5ahJqcOUaFtUu55n8KYJ0PX4cUL3Dl03M64F3POe
+                GeOqP6OimsAAwHXY0u83wAYq8plLO6KJvVa0R7w1JpgPQkQEDTsRA1tNLAfXHCmpNb5aBT+jhnzuxY0f
+                oDH0CBZEhM7HgwqThBa+fpd/wnnlH69JzFv+selT/iHJW6lqDKrWUiEdcNg4RCBsp5rfV7sObEMBqctS
+                NAmBnkG2DmgGnJGTkLtKTf6wxmRbIe8ciq1K42hopehxCOU+HkMPx7jPxsBH6ekY99kYS5OOQYcWio6D
+                ttsU+TqI7YzXUXs57QSZ6+ydVaDhym7pVA8Swkvff9sff/8GvH72Inp4QnntQTL8tgft/moPQomqzJHH
+                Vacj07uPXZGZjrRtRhVF4NfrgE3/HGtcXYdLhvdVJ5lvQcbruRmaRdHg5Ztb/RTbPqU2cz4TprKR0DEI
+                kRARU4V6HcBnY8kkwkaPVgpcJvLonu9UH7hoUFcTKXU6Y3WU+PaYbiiijlWKGRC/pmGzaupfioJ41+zG
+                R1GEeDvV6SmKjjy+h3YQA2qHRjIlcI2qiaxXE2maiVFlLC61nlZ3S6V2VJMGEW+RpbA6BjqFBYENcZiK
+                lVkHb6uGyvlBUMUVBDJMUHX+ttwSjbqUkpzhcxKLexnGIzLVWXZcOaRUdabzMx3O4t+tVelHUN2JIp3N
+                /5z8x3LfcbOgJY4a9dQoidzRdjrpqhqi11Az2OTe81cIBvVrFQzlEww6lpnWZ7T8UnZDE0X3mFTPZFGz
+                FMPdNdG4jkbZSBINhSIZdZCtz6yRg3OVw5GV6Kopaqq+BDVmJKq6bG/TWQ+rh/yoJ6EjU5qPK3+63SlB
+                FkvUQTitfdSJuv8y5v1zzfer4vsdheYThkP7AujeQ2tPNPxvlWTz9xFqva/W+50gyuPflfHMH+t4A42N
+                F2F3dZGqDUbNmamHgseCOy2BA5aExqqvaBTqIWc9FGZpuKqpRQiHkLpWY0PiJlWAI9klDFPPlaADtftc
+                mj9GlBQdYOrkvvqm9zDsBghljXK2UTUzLBTuR8/ryLLEu6scgT+SlQuaS8L3EtgY66SHBEU5Xz0ErTUb
+                5Hz5COLN3mcVqP9Vq85AWvzyLScOPQssa1rjHur2ki7OoA8IHQftaYirInizni4A3mD6m57yxO10PV5S
+                stdhRu6zULhI8mxVnZkKMnJgdlGAZpXOSJS1k2pqoI+mbxHqOrrmoGrNmdi+I1IrggfiP/AAutMggubY
+                lEnJKqqv8PgMIlzhIXQudd/HP9ReUU1cmfwSscsaTwSQn/DPkQczo/CdrjEHdMHSCTAhq846sNyuZ0lJ
+                UkteH2N2hzc3L8dpFnXJuXz8HZtikLl4etUxcC+N2NII50qf8wSfx1m8h1m8R1m8B1kUHEG75+C9hkFK
+                MxmIrrcz5zK/vIYmPUofdG1JFWWvUvxUpwAV95n/T1D7O9urSR6dErn9/qSxoqahyfdj9xjzTncuQl6q
+                qwA3ZbtD8cSbnieg67ZSSegxPT5jGIigaQpb9VX17VlGokOjhPm6TinszR/vBEf2OARCQnW9++QAgEpF
+                16JHzRGRVWcoBdTvuTM6g0mS6MFzVUdNis6Q6yy1HhXWpao/NM/a1KKT015CSwp9+4Tc0nDuUc73qgrW
+                M4hqhWD30BJ16omfZAVvo5KLRu2dWhGaljJFD03S0P36DN0PnWT5elrWxzd8PS3ryzegVGO7tc6j06ia
+                kzNWTVvsrUaH06dyh35+tbt9sfLhldSMUlX2HfVkV9YQDmncVLQKhgjWU8m6ZHUl2beGGPUQU2T4rVrP
+                5WQNkWno13tMspT4UYisoCo6Gz9iWCzspM5rhKSmovJag9ogkUp6O3tVV3PCvGkMXAPzYBpLpAeSna65
+                QWnrjRUtagexGcMS3np2ClzSADkZ6nfAvcyqELAS8vM+02nnkPX0uXZ3hSBwhjRcQ7VljW9rklPPr7hD
+                +mxv+5zGZ1c3oghnDApB7AAbkaRni0T1U/TgAKBWD63QDFdAD+pAqtjJIyFRzFMSQxBZ/NcTBZEB/T5S
+                Y+pNsCl4HRYzG6eHiqgA03ALm1WfTgeFUVqgxNxhgs0Zs441wKYr/QEl6OPOVbEDDnBBkDbiiMjTKFuz
+                tbIsbomasl/qY+ixE/J/FVGpI56qgW45WD1XRIfqdej4tW/MUbtLj+xzAxe39BRY4hpho6d4IWClT6Me
+                j6DDYeonFB3FQ8LqEWRISNgkRJyd0QywdkyV3aQnbiHhJopNY9CswFErcOlRNCjIh1FNRgKeveJZ59rK
+                yQEY2eEd6Pnx/ftdNTbyd2Njt4R//GojjvBLGxGUMeojpk8f8dNGDJesvZ5oyeKCTktn6wbUvL59s+B7
+                xJ+ss1GfqeTe6x3Gdjq8o+5HVZRodPHSm04eQyE9k9E4JmxLAKCRifwrZlA9JXYNwfAmmG61zaviVJbk
+                d1RVLqgfgCRfLdWpCSVNJh49S0OP0cC1oE71WGiD29TYPF9xEsKYIB0ngOmz6h6qMnSH4NLcoCY12Emb
+                ttUTSZEMRC+e1no9H1LpEmy60334Fz3JgTxwKjBhhetW3eg+/NCWAHORjO7ocT1NT6e4SlodwV5MlNW7
+                m8AKa4SAhdSh6qAJQ275ioe07wGWH6wGenyOJMgqBMSU0ZmEqhL+h9AQ5rwlyibqoSvoLBWugzap6EmV
+                TU+UuVqnSXm2mptMc7VmXgHhyNJ0j69OHQLm4zsv3HBzVPGYVy5s8Nbwl9gLdKnqn6uGWYaKD86AAHpS
+                qkZbG3oLC6KDHsIdPedaYZX1qF3UrQJK1dh3jMLp+RLA/32umcRovE/hSC1HxCe4pCfR+a1p/6WH2xU9
+                yPKjbtFhV3u22/IG0OfVkUVPCeuo2khsozF5jzwiwAlj7tq66pfpPsew3aZEO/hcPSPD6kyNkgA61Gyy
+                xjXahPv1lDudxrptJfIT5dAawYqXaLLxXLK7eqHep0VgfVF5mkiTCmmt1TbvA5RFEAQanjdoEBYXwQXW
+                6lXb0iFmEFDVFe5Q5/2Uq6nKs321jUdmS+Y0epqs5gWTb7FBoAjWNiE8samKq3pEHyDGnkhrk55rqhmg
+                yU/v7rko1aZ70+PTCQmgTPPpOOaeIOzyuwLgx0LrIrHOOs1gs3Tj0AReJEUAvRY1i5dv2/LqRrXycEZe
+                8xE3B3/p4ek00O3iIb1j36UvI3WH29T5+O82XtEjD+Xw5nMeqK7yXS1YmoGDp4ue43iLDexyc+ZHtaHo
+                IRLlPpROgyLqlm6neapXOEg+11dUkKc5GtfTYXKoSYJhmbTnffpRHQSJ5hi2TsBpytM1cgs9XJN6zHZO
+                NXj1iAdFGYng1PTXEyidJtMMEmrtO33dsCdZPRkAkaS5T45puoWx7lMJNdOMYIXNMAbF3m4tRJRuqyQb
+                Vag1BX1YaPXvpLf5RM0eqVuESrmnI5xGgxTVtS1oOVWCBH6v91CoWtOm6NG7Fl8gZJDKx6IHtvhWGvSI
+                or88iBABnkFPcFE6nETUIZcok6EzNUD90VlJPWtphVfpHzrmZokKXqzD92o8TlfVFrRX9NQJmgF6Ombp
+                WEijnprTvJvGAaf2/HynuZTbz4kOPWqaWAdWxNSJdX4zcRgvA+UBVNdnZ0GuNJ4Oh2Wr1sS4zVE9EUp+
+                Mt6HrUXPDvS6oO9LCELgmY1QeijGJT+wanO0GNlHu4ZmYAVpeJyqp8bdx6XplNXtMK09dYADIVG0z0Zd
+                RbHAFwkM3qoi6XUGBml+bkOvXpGviRv51KCRZ6vDnygZgoPtHcckLg5ds6pmEVWl06Pl9Bz7rPGHtKoa
+                s6TeOwh8mz+IZ79cjYJWTTFNotuboAGHKNms51E5NZ31JGQZDYxQSGohsU53aEGnHifCrugU4dajze7k
+                rGrUuKM74IClbHKEnwGHdm6V+M03sGqs+51v0Fy0WuryqX5L1sd4nhUyYBbyJTVpP9AMWGp62l2R24aW
+                pmQAaHQFlyoLot87XqsHAysjcpYvRx+pjNtefuu5qf4rw0n7dWd+yn1CmfbIFs2XvyFB8JzP7qqEaQQy
+                mggEIuc6SpQI0iEEDVQCkxc80G96AIsejNeLS3dEz/aZ/o525jOyoAeu6qG2kuNK4zfxpSPuVg/4/cfu
+                ya1D3+lDvjl6ug8i7Z8nAbMB9m2K/fH3UE8c+NSY1dT0Dz7Ca1AImQsekTX3YRx6eMG59CuSJYalu7XY
+                92bLvWo8fxftoVakyOBEEF8HvfFrA1KJEscBVow6FH5PT0hV7ftUBWi+Qx46WlM+l1t1mKGIoV8EQF1G
+                g7+aRWX/u8ZRZb2T9j/qmLCe+wt4BzVzkGAR/Jt6th+IoxHOySZ5HT4MeiCXnr05dQgFk9PUVkNgasIq
+                ANNK2qSHxd4F3TpLLPE4sstYGz3+Wn4duatn1SuCms62HR01Mv8PObOmyFCWiLIAAAGEaUNDUElDQyBw
+                cm9maWxlAAB4nH2RPUjDQBiG36ZKRaoOZhBRyFCdLIiKOGoVilAh1AqtOphc+gdNGpIWF0fBteDgz2LV
+                wcVZVwdXQRD8AXFzc1J0kRK/SwotYjy4u4f3vvfl7jtAqJeYbneMA7pRsZLxmJTOrEqhV4QgopfWYYXZ
+                5pwsJ+A7vu4R4PtdlGf51/05erSszYCARDzLTKtCvEE8vVkxOe8Ti6ygaMTnxGMWXZD4keuqx2+c8y4L
+                PFO0Usl5YpFYyrex2sasYOnEU8QRTTcoX0h7rHHe4qyXqqx5T/7CcNZYWeY6zSHEsYglyJCgoooiSqgg
+                SrtBio0kncd8/IOuXyaXSq4iGDkWUIYOxfWD/8Hv3tq5yQkvKRwDOl8c52MECO0CjZrjfB87TuMECD4D
+                V0bLX64DM5+k11pa5Ajo2wYurluaugdc7gADT6ZiKa4UpCnkcsD7GX1TBui/BbrXvL41z3H6AKSoV4kb
+                4OAQGM1T9rrPu7va+/ZvTbN/Py01covRP5/OAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAACxKAAAs
+                SgF3enRNAAAAB3RJTUUH5QcUDhsbzssTNQAAEFpJREFUeNrtnHmcFEWWx7+RVd3c0CCIgoAIioMKKquo
+                eGB3NseAoJIgXqzLR1dHPBFmxkHRcZRZDxxlQGfXUQdQViDBA1Chs1tE8AAZwNEeRGE4RG6Gqxv6qHz7
+                R0ZBdnVmVfUBg6vv8+lPZ0VGRGW+iHjv937xopSIUFP5J9CMgpOAAUA2cC5wUhW6eF7IfsRfoEzrbeAK
+                YKs49pn8ACRak8Zq0SVw+eMXAQ8BfQGjml3VDShrADQBiviBSFrKVEqhho9oJq6cjSsdEVdRLyo8NOpi
+                ymK3khHhJ0mhTOOO+xqLyHBuvfsGceUC0CYhouDSU2HlFij/DprVg7ZZ0KYpRI3twGpgZ5KuGwC9fxTK
+                bHj3KFXkuveg1KOIZFWq0KMtnNAAYi6gYHsRFG6DDbvK+WrH480yIhN3zZ4caowVBR2Ab/+/KbOSjTPu
+                Gd2iCApAPQdUVmSHLGjbrGLZmu2QvxbW7I4SURN2l8cKjKtubPFjW+YVlKnu+2UrUXwK9EyotxV4Glf6
+                cG+P78juAD3bwyVtIeLOY9XWrQn1e4qwRPW7odWP0mYaI39dH6XmIZx22DZCEaiHDcWk2MsTShUFFwGn
+                eC0zoX7mZy0HdOm/Y+rKTBe5C/gdUF+3PR2R94y+Qy9233ujuFZngGk1Fw89dAdaaDSwA1gL5FEe+1wW
+                vlnlfr9Ys46ud/6yPdAH6Aqc6NkxtgN/A95j1aa1suOzJMosPoDAcxofxmU9SvWR//7D176y/gntf7+V
+                K2HmlaXAs+raYfOA+UA7fb+LwLMz5uXdMaRfbo2VqEyrA/AocD0QBiHGEY0UKtN6olODetNWvz01Zb/5
+                Hy/DHPtkd2Ccxsnh0rXNImVaY8b2vXLxbx8YUfH5RAQ16sHuCJ/iuuAKuO52RLrLxPHrExzH+z4vXG5A
+                /RjZZRXqDLy5HSKf4UrLw/2JdJf505cmcUBPCdm/SlCcA+QA37NpZ2vaNL8DeBaol/B6xUAp0DjAB+Qp
+                uMF17FBkEc21ojHhKeA+PQv9sh9vmTYOaDrJgJExxy49vGKUUoB6JAFY3pyoSC0n+K4LExUJIG9P3QDc
+                klD6cI2mZJvmzwAv+hS5DLhZwYnE3Ab880DTqFKZwKW63iFdL1fgU2VabYK6jZhWZkyYA9zvU+Q7wAAF
+                jSgtb0xpWRPlQbn+wGxf8xEuvGeYVt0jy3z0b07Blb6+Su+w4OMFaUCp8Dh0zuvv0+/6uT6z0F/lDm4t
+                eTM3x98joYWbRJUnAw/4ZuFdlMdeDbCJMWAJsESZ1jPAa8DFQAdgrmFaF7uOXewPRMgZ9KK2jwCbgWHv
+                PjyyoO8VlxAw++ct/aJwXveRYy8FXgfaAtkCryqlrhcRDGBgAgh8XlYvCXuxg77r1qr8/cBKOt5/PqF4
+                gO860ctvSWYqjzhDeoljv5rKuYhjrzM825fns92/rVApZ9BVwHD9aQNwiTh2kCIPy4VdOiOOvRi4BFin
+                i4eSM2hIHBp199Xfc2LEKEjynF/6rpsTzTw7PNhWBcA+X5H/exKh19dpLPYR4thL0rUMMcc+pMACNuqi
+                e5VpnQKgLhsI8LRvRg8Wx96Ybt/i2JuBq7WtBngqM3ewYQAd/ehg2/j/StZPXsLnO0On8NzXXQ0n4tLZ
+                W98FmcCtvvIS5S3PZPIZZeWTq2pqXcfeBzyoP2YAtwNQJ6MX0EmXvyyOvayqfYtj/03bZ4B2ZSJXGaCa
+                +OpsJvl6mwvs8RXdqii4IEmTDb7rTG0cHwJa+8pnu2QfSPHsE+TDt6rluzKUmq5xIsDVnsOtYHIm1MA1
+                /tF3PTCqR8xvxMNHmuyDioLxGpzHR/stRUFPIfubgCaZCdBqmKbr/E5sXEp8CQuq+7aleTNjyrQKgKHA
+                WUbOoDou+CfAZGVatRFLnFdlPlPBeIEbgTN9zmSZouCe+jC1iGy/l2/vqTQCA392JpC4VMcL2V+mQA57
+                pTy2s4Yv+vf447teBOfnDbrVUmB2apWVqWfnQOBToKkubgJMLobHFAUzgDUUle6lU/OuNKgDjetB51Z1
+                ErpaaMBv0gh1Sygpq+mL+lFIxNd3EfCPWlJmUbWYdiF7jaIgRwPcU3y32gGjAdh5ADqcCOWu99fKb5px
+                FAwMAv0+iQPvFpEGdTOAmmi0vW9l7RLYC7QB1pM/65za2LoJpOCqoNAVylsiswNuwgqfL6sTgdZZcfD7
+                YB3o7ZKdLvmhYl5kU7143nM4PeLsl8Riu4Cv4ghD5Qw64aiSw1VY8tvZcmCQOnlpd+BuoB+QxdfbYKvP
+                QZ/ZYgMZkSnAJCF7WzW+6gbgg2o9ZM6grkCXOLSTD95EmVYecB2gxCNNJtaAeDlZz/gvjRoPx8kNEbI/
+                E7JvQtymzF4+kheWwJffw/KN8NG3B3h6YQ8he2w1FQlwizKtn1V9VnYE8APnV/SL20B8tMcYptW4GjRg
+                Az3AH+GhDcOorSmuLvw5DJo6jClfjGP9Hli/B7YdgOKyB2XB9M21sIJmGKbVqGqz8tyRvth7ESWlCzWY
+                34tHOQKcJDAlM3dw2rpo2nuIEm9g4gTKBNexd9dYmeqcHNSQ4V1p23KOhj51fThqCmVlE8NGVplW50a9
+                hqg0v+psgTxlWq3SGVhlWr8CxvuIitvko3f8EG+cDzINLBOZZphW/VR9R0yr7p6YOxkYoovWKI27FaPH
+                rMF1T0cEXHcxrkz08ZocuZYj1+KC62bhymm4kovrnlepvsjsiCtDy+dNKwuwNVcAc4BGwCoFPV3H3hPC
+                Z+7WkdR5cf4AeFTBK65j76/Qpuc1EI1croOKy+O8KzBEHPvNgOfoCCwGWuqidcDYiGJ6eZ5dXiGSyh0c
+                KRe5FngcOEMX7wJ6iGN/HaTMikpLrszK5d7/Q7ju7xoofn/g7dckxHDnJzDao8WxnwkjhxWcJTAroU2J
+                pty+1aikkWZz/NzlPuB6cex3kziR04F5wOl+wkcrOc5mtdSIwO/51wIDxLELa8WbJ8g+YAqKJ+Wd175L
+                iazS5zNxHXtPndzBuaUi9+twNAuoo5Ubts0wB7hPHHtdCsLiG8O0ugk8BozQIXIWlbdo8M30PykYo4kU
+                akuZ3wKLgHeV4l139uSDabZ7FDhfR1BLFbyUhMdUACV5M11gvGFa/yNwk37Zi4Bmvpf8SjNbr5FfuEqk
+                MF12aT9wvzKtp4D/AHoBF/qY/UOa3c8DXtEUXMADjx7TAdfNDF/mAf/FdZUr38ne/UUyZ1q1RiFiWnVd
+                aMW+4nWytPIqjOZaURGUAsodOzD6UT2vITMjapSJ1BWRYsmfVWvLTGVfi2EYGYByXSmVgtR9q9oKpX6S
+                GoSTP8lPyvxJmT8USS8/89xe0LxxNw2Ez8LbPm2kPe13wCZgOfABO/aul1V56RIFp2mIk46UKdgq5bED
+                1Ul9CYnCGouHZS/Q+PQMzXceBL7B24xbqmChf5u4Wg7IMK2m4mGv2xN4y2SyDHgxqtSUsryZsRTK/Aq9
+                0VYF2Y5HTM8yYEbMsQ9VmUNoXP8yvAyOAWlOqEPAm8AfyJ+1LExngcrscNWNrDtY8gu8+DWrmgO/GvhP
+                ceyPalmZftkK3M/u/W/IX+ensxJO1XRbvxp853QFdwWl3BgBs7HhuoMl84AXaqBI8PaIPlSmNUp1O2pJ
+                wicB/0uzRhPUub1SKbI/sKqGigS4TuALZVoXJFWmtiEFwM9rC/sCT9O00ZOa8T5acjfNGz+QRJG3AG8T
+                nIBVLRYX+ECZ1r8FLvO6uYONEpE8kqfUuZoAKNRMTgO8/ZUrqZzykijDxbFfTWOZx4BngmhEvG2Sbkns
+                WsfEUE+ZVm/g3RTIRYCV+r1K9Hd10Y42mWwBzhfH3lrBm5eIPJREkaXABAVPu469vdLIX3E1ZET7af6w
+                U0gfk5RpLRTHTrUbWC6O/esks+xKPKY8IRecusAv8O3LK9NqCUxNosgtwDgFUzVhfOR7zugJbZt3AkZR
+                MQMlcYZOUkoNEhGdn2la7TVRGgRTtmmqaWkaUKO+eMvJDKkyQ95//TqidZLNzBJx7Lop7N8NeJloibKC
+                /Fnnx1ebMq2/AP8exiopuCmR+Ulib2cSfF4JvKSvT+IjNiZEkcVAn3QUqdmXYuVl1X0TUmWI6nNjx1qI
+                NGYSnH3SNavXYKUVcAYwLKSLeVGlrklHkZqmm0ulnNMK8gBA1DCtLLwMjSB5RBx7ZVVe1HXsYmVawzU3
+                GCSdqeGxlZhjlynT2hKAfY19MTeKt8d+B5UzgQF2KhiWCgNXkvxZ08kZpICGQWZQXdSPqHieO2j67jAq
+                JialLTqHcfHRct0q+1owjEDYFlEq1v+2e+HIHk2iPOE69u4qv5NnOt5IFU6G2bdpMccuOT4ZBePCkBmy
+                rmzbHneeSCcqZtodntQKphxNoqNryL0Pjks9envcYUkD+fJFHngsfpAsr86srArR0T7k3t//VfpSphWE
+                JU/Eyz6+nfDj13/yQZYgWZXEY7dK4WRSyaYoXgZbUOiy9V+kzAzg82q0e0WcmX/V12ETZG+S9q2BJ2rw
+                3P8wQjwepEh8Pc7kYwUjfK8SSRJ8HC1pYRByOF4qJoQez/KSghy3IhW3KaRu86P4HG4UL9nznICbnYD1
+                x6kC9+Dlhj4njr0iJGoLktNSkDI1kS1RHdwHKbMH3jnIYy3lGnAHyT6gsFkkUrhr/vRk26phgcbFEdPK
+                9B/Ri8u5TRou3Vh0MOU2zu7y2GXAhwG31kbxkgiuC7h5U5PeQx7ZO3/Gsd4Ljoljv1yTDjKVWlkqsjfA
+                uTZwvXB3ZqWgftZf4uxRqjj9mpBbn0Tx6PiJAdO8/b6YeyPesbmqRSim1TlkgDws6NiLjuZolOTNdJVp
+                vQPcHHD74YzcwbOrHE56GLdpEvg029j51tQteHk5QTI+nRS+CjyYl+f4EjA25K/4GM3wF0PKzykXGbvu
+                +6rl3apufRDvCGNQGLuYnfsKjRMa1gMvaYkQoLwgfkwulbTsO5QSkRfwstGC5EMKN39+TFSZX/gJ3q5B
+                kIztMGzE6HTZf6WaQdOGj4TMdIDHZOUCjzSVBW8sB/4cUvEsYLkyrZuzeocnpirTOnV7Wflc4kfqAqAD
+                MFK+/+SY6FInbd3NkVMbifIUOYPeU6bVJVSpbszLW8/Jfgsv2SxIbPJn5YFv20ITu58DyXLHN2lIskJ7
+                1kwd2vXES3dOtm36mDh24q9qVYscrqL9vhOYlKLa55qL+BqPvjOAU4HL8LZkwibRRgXnxeP9Clu9yrTa
+                aerslFqeKDOaRiJDdyfAmWOiTO9c+TMcObNeW7IN6CmOvdrPGh1ZGo69QePLL2vxS6cacNPu5LjwKC53
+                gV37R+HtDdXWM6wFLvcrspIytUI3Ko+d+SMpMnpTyF7gNvJnDYuF5FceM4WumI849hN4G4Y1/XGqyQrO
+                E8deUwk6Bdpdxy4Wx74Hb7vzNbztz3RlF/Ckgg7i2H8+nvI/xbEXGp5DvRNYU5W4W8PHC8mfdUviwYTD
+                JiWdl9U5R73wfoKxi6armmhmaTveOfXlwKKIIi/xpEIS53BVQJTiimNPO9qK1bb0fLzfR7pA03at8CjA
+                g9rZrtY+ZK449vep+vw/cpM1FhpdS+4AAAAASUVORK5CYII=
+</property>
+        </structure>
+    </list-property>
 </report>

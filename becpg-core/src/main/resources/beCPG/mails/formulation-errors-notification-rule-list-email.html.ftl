@@ -91,16 +91,19 @@ margin-top:3px;
                                               </p>
                                             <#if args.entities?size != 0>
                                              <table cellpadding="0" cellspacing="0" style="border:solid 1px black;padding: 0px;" >
-                                               <tr style="background-color: #009dcc;">
-                                                 <th>Entity name</th>
+                                               <tr style="background-color: #004254;color:white">
+                                                 <th>Object</th>
                                                  <th class="becpg_cellBorderLeft">Error message</th>
                                                  <th class="becpg_cellBorderLeft">Date</th>
                                                </tr>
                                                
                                                <#list args.entities as item> 
                                                		<#assign node=item.node/>
+                                               		<#assign entityNode=node.parent.parent.parent/>
 													<tr> 
-														<td class="becpg_rowBorderTop"> ${node.parent.parent.parent.name} </td>
+														<td class="becpg_rowBorderTop">
+															<a href="${shareUrl}/page/<#if entityNode.siteShortName??>site/${entityNode.siteShortName}/</#if>entity-data-lists?nodeRef=${entityNode.nodeRef}">${entityNode.name}</a>
+														</td>
 														<td class="becpg_rowBorderTopLeftRight">${node.properties["bcpg:rclReqMessage"]}</td>
                                                			<td class="becpg_rowBorderTopLeftRight">${node.properties[dateField]?date}</td>
                                                		</tr>	

@@ -96,6 +96,13 @@
 															<p>FirefoxまたはChromeのブラウザを使用することをお勧めします。<br />															
 															</p>
 															
+															<p>					
+															beCPGの使用を開始するには、オンラインドキュメントを参照してください。<br />
+															- <a href="https://docs.becpg.fr/en/tutorial/tutorial.html">製品とその構成を作成するためのチュートリアル</a><br />
+															- <a href="https://docs.becpg.fr/en/utilization/navigation-becpg.html">beCPGを使用するためのドキュメント</a> <br />
+															- <a href="https://docs.becpg.fr/en/utilization/project-management.html">プロジェクト管理のドキュメント</a>
+															</p>
+															
                                           
                                             <p>敬具<br />
                                              beCPG</p>
@@ -112,7 +119,7 @@
                            </tr>
                            <tr>
                               <td style="padding: 0px 30px; font-size: 13px;">
-                                 beCPGの詳細については、以下をご覧ください。 <a style="text-decoration:none; color:#EF6236" href="http://www.becpg.net">http://www.becpg.net</a>
+                                 beCPGの詳細については、以下をご覧ください。 <a style="text-decoration:none; color:#EF6236" href="https://www.becpg.net">https://www.becpg.net</a>
                               </td>
                            </tr>
                            <tr>
