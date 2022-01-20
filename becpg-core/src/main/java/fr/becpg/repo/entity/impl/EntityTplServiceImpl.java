@@ -363,7 +363,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		BatchInfo batchInfo = new BatchInfo(String.format("synchronizeEntities-%s", tplNodeRef.getId()), "becpg.batch.entityTpl.synchronizeEntities");
 		batchInfo.enableNotifyByMail("entitiesTemplate.synchronize", String.format(ASYNC_ACTION_URL_PREFIX, tplNodeRef.toString()));
 
-		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(tplNodeRef);
+		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(tplNodeRef,false);
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
@@ -533,15 +533,20 @@ public class EntityTplServiceImpl implements EntityTplService {
 		return batchInfo;
 	}
 
-	private BatchProcessWorkProvider<NodeRef> createWorkProcessWorkProvider(NodeRef tplNodeRef) {
+	private BatchProcessWorkProvider<NodeRef> createWorkProcessWorkProvider(NodeRef tplNodeRef, boolean includeTpl) {
 		List<NodeRef> entityNodeRefs = new ArrayList<>();
 
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(tplNodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+	
 
 		for (AssociationRef assocRef : assocRefs) {
 			if (!nodeService.hasAspect(assocRef.getSourceRef(), BeCPGModel.ASPECT_COMPOSITE_VERSION) && !tplNodeRef.equals(assocRef.getSourceRef())) {
 				entityNodeRefs.add(assocRef.getSourceRef());
 			}
+		}
+		
+		if(Boolean.TRUE.equals(includeTpl)) {
+			entityNodeRefs.add(tplNodeRef);
 		}
 
 		return new EntityListBatchProcessWorkProvider<>(entityNodeRefs);
@@ -612,7 +617,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		batchInfo.enableNotifyByMail("entitiesTemplate.formulate", String.format(ASYNC_ACTION_URL_PREFIX, tplNodeRef.toString()));
 		batchInfo.setRunAsSystem(true);
 
-		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(tplNodeRef);
+		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(tplNodeRef,false);
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
@@ -751,7 +756,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 		BatchInfo batchInfo = new BatchInfo(String.format("removeDataList-%s", entityTplNodeRef.getId()), "becpg.batch.entityTpl.removeDataList");
 		batchInfo.enableNotifyByMail("entitiesTemplate.removeDataList", String.format(ASYNC_ACTION_URL_PREFIX, entityTplNodeRef.toString()));
 
-		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(entityTplNodeRef);
+		BatchProcessWorkProvider<NodeRef> workProvider = createWorkProcessWorkProvider(entityTplNodeRef,true);
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
@@ -777,11 +782,9 @@ public class EntityTplServiceImpl implements EntityTplService {
 				NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, entityListName);
 
 				if (listNodeRef != null) {
-					logger.debug("Deleting list with node: " + listNodeRef + " on entity: " + entityNodeRef + " ("
-							+ nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + ")");
 					nodeService.addAspect(listNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(listNodeRef);
-				}
+				} 
 
 			}
 		};

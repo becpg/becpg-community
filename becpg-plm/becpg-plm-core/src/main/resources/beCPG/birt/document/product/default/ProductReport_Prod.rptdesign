@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
-    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201806261756</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.9.0.v202108170925</property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -5741,7 +5741,7 @@ else{
                                 <cell id="2966">
                                     <property name="style">becpg-cell-header</property>
                                     <label id="2917">
-                                        <text-property name="text" key="netWeight">Poids</text-property>
+                                        <text-property name="text" key="netWeight2">Poids</text-property>
                                     </label>
                                 </cell>
                                 <cell id="2999">
