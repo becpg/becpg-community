@@ -207,8 +207,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private static final String CLASSIFY_RULE_TITLE = "classifyEntityRule";
 	
-	private String errorMessage = "Associating resource: %s to template: %s";
-
 	@Autowired
 	private SiteService siteService;
 
