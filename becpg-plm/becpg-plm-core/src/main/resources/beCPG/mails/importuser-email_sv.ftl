@@ -80,7 +80,7 @@
                                              <tr>
                                                 <td class ="flex">
                                                    <img class="img" src="${shareUrl}/res/components/site-finder/images/project-email-logo.png" alt="" height="64" border="0" />
-                                                  <p class="title" style="font-size: 20px; color: #004254; font-weight: bold;">BECPG-konto</p>
+                                                  <p class="title" style="font-size: 20px; color: #004254; font-weight: bold;">beCPG-konto</p>
    
                                                 </td>
                                              </tr>
@@ -94,6 +94,13 @@
 															<br /><b>Lösenord : </b>${password}</p>
 															
 															<p>Jag rekommenderar att du använder webbläsaren Firefox eller Chrome.<br />															
+															</p>
+															
+															<p>					
+															Se vår onlinedokumentation för att börja använda beCPG:<br />
+															- <a href="https://docs.becpg.fr/en/tutorial/tutorial.html">Handledningen för att skapa en produkt och dess sammansättning</a><br />
+															- <a href="https://docs.becpg.fr/en/utilization/navigation-becpg.html">Dokumentationen för att använda beCPG</a> <br />
+															- <a href="https://docs.becpg.fr/en/utilization/project-management.html">Dokumentationen för projektledning</a>
 															</p>
 															
                                           
@@ -112,7 +119,7 @@
                            </tr>
                            <tr>
                               <td style="padding: 0px 30px; font-size: 13px;">
-                                 För att lära dig mer om beCPG, besök <a style="text-decoration:none; color:#EF6236" href="http://www.becpg.net">http://www.becpg.net</a>
+                                 För att lära dig mer om beCPG, besök <a style="text-decoration:none; color:#EF6236" href="https://www.becpg.net">https://www.becpg.net</a>
                               </td>
                            </tr>
                            <tr>

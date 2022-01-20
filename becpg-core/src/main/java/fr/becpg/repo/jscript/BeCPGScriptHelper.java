@@ -889,6 +889,18 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		repoService.moveNode(nodeToMove.getNodeRef(), destination.getNodeRef());
 		return nodeToMove;
 	}
+	
+	
+	/**
+	 * <p>getAvailableName</p>
+	 *
+	 * @param folder a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @param name a {@link java.lang.String} object.
+	 */
+	public String getAvailableName(ScriptNode folder, String name) {
+		return repoService.getAvailableName(folder.getNodeRef(), name, false);
+	}
+
 
 	/**
 	 * <p>changeEntityListStates.</p>

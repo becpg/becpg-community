@@ -80,7 +80,7 @@
                                              <tr>
                                                 <td class ="flex">
                                                    <img class="img" src="${shareUrl}/res/components/site-finder/images/project-email-logo.png" alt="" height="64" border="0" />
-                                                  <p class="title" style="font-size: 20px; color: #004254; font-weight: bold;">BECPG-Konto</p>
+                                                  <p class="title" style="font-size: 20px; color: #004254; font-weight: bold;">beCPG-Konto</p>
    
                                                 </td>
                                              </tr>
@@ -95,6 +95,13 @@
 															
 															<p>Ich empfehle Ihnen, den Firefox- oder Chrome-Browser zu verwenden.<br />															
 															</p>
+															
+															<p>					
+															Sehen Sie sich unsere Online-Dokumentation an, um mit der Verwendung von beCPG zu beginnen:<br />
+															- <a href="https://docs.becpg.fr/en/tutorial/tutorial.html">Das Tutorial zum Erstellen eines Produkts und seiner Zusammensetzung</a><br />
+															- <a href="https://docs.becpg.fr/en/utilization/navigation-becpg.html">Die Dokumentation zur Verwendung von beCPG</a> <br />
+															- <a href="https://docs.becpg.fr/en/utilization/project-management.html">Die Dokumentation für das Projektmanagement</a>
+															</p>			
 															
                                           
                                             <p>herzlich,<br />
@@ -112,7 +119,7 @@
                            </tr>
                            <tr>
                               <td style="padding: 0px 30px; font-size: 13px;">
-                                 Um mehr über beCPG zu erfahren, besuchen Sie <a style="text-decoration:none; color:#EF6236" href="http://www.becpg.net">http://www.becpg.net</a>
+                                 Um mehr über beCPG zu erfahren, besuchen Sie <a style="text-decoration:none; color:#EF6236" href="https://www.becpg.net">https://www.becpg.net</a>
                               </td>
                            </tr>
                            <tr>

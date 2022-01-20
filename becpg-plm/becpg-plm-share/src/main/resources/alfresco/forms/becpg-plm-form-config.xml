@@ -10413,10 +10413,9 @@
 					<show id="bcpg:allergenListVoluntary" />
 					<!--  <show id="bcpg:allergenListDecisionTree" /> -->
 					<show id="bcpg:allergenListInVoluntary" />
-					<show id="bcpg:allergenListIsCleaned" />
 					<show id="bcpg:allergenListOnLine" />
 					<show id="bcpg:allergenListOnSite" />
-					
+					<show id="bcpg:allergenListIsCleaned" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
 				</field-visibility>
@@ -10513,10 +10512,10 @@
 					<show id="bcpg:allergenListVoluntary" />
 					<show id="bcpg:allergenListInVoluntary" />
 					<!--  <show id="bcpg:allergenListDecisionTree" /> -->
-					<show id="bcpg:allergenListIsCleaned" />
+					
 					<show id="bcpg:allergenListOnLine" />
 					<show id="bcpg:allergenListOnSite" />
-					
+					<show id="bcpg:allergenListIsCleaned" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
 					<show id="fm:commentCount" force="true" />
@@ -10557,9 +10556,10 @@
 					<show id="bcpg:allergenListVoluntary" />
 					<!--  <show id="bcpg:allergenListDecisionTree" /> -->
 					<show id="bcpg:allergenListInVoluntary" />
-					<show id="bcpg:allergenListIsCleaned" />
+					
 					<show id="bcpg:allergenListOnLine" />
 					<show id="bcpg:allergenListOnSite" />
+					<show id="bcpg:allergenListIsCleaned" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
 				</field-visibility>

@@ -31,6 +31,10 @@
 			<properties>
 				<property name="var:charactKey">
 					<type>d:text</type>
+					<index enabled="true">
+					    <tokenised>both</tokenised>
+					    <facetable>false</facetable>
+					</index>
 				</property>				
 			</properties>		
 		</type>
@@ -41,7 +45,10 @@
 			<properties>
 				<property name="var:pvlValue">
 					<type>d:text</type>
-					<index enabled="false"/>
+					<index enabled="true">
+					    <tokenised>both</tokenised>
+					    <facetable>false</facetable>
+					</index>
 				</property>				
 			</properties>
 			<associations>
