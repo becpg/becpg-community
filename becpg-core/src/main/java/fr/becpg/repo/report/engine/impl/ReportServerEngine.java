@@ -146,8 +146,13 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				
 				if (associatedTplFiles != null) {
 					for (NodeRef nodeRef : associatedTplFiles) {
-						String assocFileId = getAssociatedTplFileId(templateId, (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-						sendTplFile(reportSession, assocFileId, nodeRef);
+						String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+						if(name.startsWith("logo")) {
+							reportData.getImages().add(new EntityImageInfo(name,nodeRef));
+						} else {
+							String assocFileId = getAssociatedTplFileId(templateId, name);
+							sendTplFile(reportSession, assocFileId, nodeRef);
+						}
 					}
 				}
 				
