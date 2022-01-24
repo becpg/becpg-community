@@ -1,0 +1,414 @@
+<?xml version="1.0"?>
+<entity>
+  <images/>
+  <legalName prefix="bcpg"><![CDATA[]]></legalName>
+  <productState prefix="bcpg"><![CDATA[Simulation]]></productState>
+  <priceCurrency prefix="bcpg"><![CDATA[€]]></priceCurrency>
+  <tare prefix="pack"><![CDATA[0.0]]></tare>
+  <projectedQty prefix="bcpg"><![CDATA[]]></projectedQty>
+  <eanCodeLevel2 prefix="bcpg"><![CDATA[]]></eanCodeLevel2>
+  <creator prefix="cm"><![CDATA[admin]]><email prefix="cm"><![CDATA[admin@alfresco.com]]></email><homeFolder prefix="cm"><![CDATA[Espace racine]]></homeFolder><name prefix="cm"><![CDATA[a9af89ad-4767-4b49-9d9d-baa7c7661622]]></name><userName prefix="cm"><![CDATA[admin]]></userName><homeFolderProvider prefix="cm"><![CDATA[bootstrapHomeFolderProvider]]></homeFolderProvider><owner prefix="cm"><![CDATA[admin]]></owner><cascadeCRC prefix="sys"><![CDATA[3900140752]]></cascadeCRC><cascadeTx prefix="sys"><![CDATA[134]]></cascadeTx><lastName prefix="cm"><![CDATA[]]></lastName><preferenceValues prefix="cm"><![CDATA[contentUrl=store://2017/5/15/14/18/a5395836-3d97-419c-97a0-d66dd2395a47.bin|mimetype=text/plain|size=318|encoding=UTF-8|locale=en_US_|id=431]]></preferenceValues><organizationId prefix="cm"><![CDATA[]]></organizationId><sizeCurrent prefix="cm"><![CDATA[0]]></sizeCurrent><node-dbid prefix="sys"><![CDATA[32]]></node-dbid><locale prefix="sys"><![CDATA[fr_FR]]></locale><firstName prefix="cm"><![CDATA[Administrator]]></firstName></creator>
+  <futureUnitTotalCost prefix="bcpg"><![CDATA[0.0]]></futureUnitTotalCost>
+  <startEffectivity prefix="bcpg"><![CDATA[2017-05-15T12:18:15.166Z]]></startEffectivity>
+  <nutrientProfilingClass prefix="bcpg"><![CDATA[]]></nutrientProfilingClass>
+  <productCompoVolumeUsed prefix="bcpg"><![CDATA[25.0]]></productCompoVolumeUsed>
+  <netWeight prefix="bcpg"><![CDATA[]]></netWeight>
+  <productComments prefix="bcpg"><![CDATA[]]></productComments>
+  <productUnit prefix="bcpg"><![CDATA[g]]></productUnit>
+  <code prefix="bcpg"><![CDATA[FP2]]></code>
+  <productDensity prefix="bcpg"><![CDATA[1.0]]></productDensity>
+  <eanCodeLevel3 prefix="bcpg"><![CDATA[]]></eanCodeLevel3>
+  <previousUnitTotalCost prefix="bcpg"><![CDATA[0.0]]></previousUnitTotalCost>
+  <netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+  <useByDate prefix="bcpg"><![CDATA[]]></useByDate>
+  <ingTypeV2 prefix="bcpg"><![CDATA[]]></ingTypeV2>
+  <productHierarchy2 prefix="bcpg"><![CDATA[]]></productHierarchy2>
+  <eanCode prefix="bcpg"><![CDATA[]]></eanCode>
+  <node-dbid prefix="sys"><![CDATA[3669]]></node-dbid>
+  <unitTotalCost prefix="bcpg"><![CDATA[0.0]]></unitTotalCost>
+  <netVolume prefix="bcpg"><![CDATA[]]></netVolume>
+  <contractDate prefix="bcpg"><![CDATA[]]></contractDate>
+  <unitPrice prefix="bcpg"><![CDATA[]]></unitPrice>
+  <reportLocales prefix="rep"><![CDATA[]]></reportLocales>
+  <breakEven prefix="bcpg"><![CDATA[]]></breakEven>
+  <endEffectivity prefix="bcpg"><![CDATA[]]></endEffectivity>
+  <created prefix="cm"><![CDATA[2017-05-15T12:18:15.151Z]]></created>
+  <profitability prefix="bcpg"><![CDATA[]]></profitability>
+  <packagingDescription prefix="bcpg"><![CDATA[]]></packagingDescription>
+  <description prefix="cm"><![CDATA[]]></description>
+  <bestBeforeDate prefix="bcpg"><![CDATA[]]></bestBeforeDate>
+  <periodAfterOpening prefix="bcpg"><![CDATA[]]></periodAfterOpening>
+  <name prefix="cm"><![CDATA[Sandwich Oeuf]]></name>
+  <nutrientProfilingScore prefix="bcpg"><![CDATA[]]></nutrientProfilingScore>
+  <servingSize prefix="bcpg"><![CDATA[150.0]]></servingSize>
+  <erpCode prefix="bcpg"><![CDATA[]]></erpCode>
+  <productHierarchy1 prefix="bcpg"><![CDATA[]]></productHierarchy1>
+  <title prefix="cm"><![CDATA[]]></title>
+  <productQty prefix="bcpg"><![CDATA[]]></productQty>
+  <formulatedDate prefix="bcpg"><![CDATA[2017-05-15T12:58:29.509Z]]></formulatedDate>
+  <productCompoQtyUsed prefix="bcpg"><![CDATA[25.0]]></productCompoQtyUsed>
+  <locale prefix="sys"><![CDATA[en_US]]></locale>
+  <preparationTips prefix="bcpg"><![CDATA[]]></preparationTips>
+  <tareUnit prefix="pack"><![CDATA[g]]></tareUnit>
+  <numberOfServings prefix="bcpg"><![CDATA[1]]></numberOfServings>
+  <modifier prefix="cm"><![CDATA[admin]]></modifier>
+  <modified prefix="cm"><![CDATA[2017-05-15T12:39:32.029Z]]></modified>
+  <entityTplRef prefix="bcpg"><![CDATA[Produit fini]]></entityTplRef>
+  <aspects><![CDATA[bcpg:formulatedEntityAspect, bcpg:consumerAspect, bcpg:erpCodeAspect, pack:tareAspect, referenceable, bcpg:contractDateAspect, bcpg:entityScoreAspect, bcpg:transformationAspect, cm:titled, auditable, bcpg:productAspect, bcpg:nutrientProfilingScoreAspect, bcpg:effectivityAspect, bcpg:productMicrobioCriteriaAspect, rep:reportLocalesAspect, bcpg:legalNameAspect, localized, bcpg:entityTplRefAspect, bcpg:codeAspect, bcpg:entityListsAspect, rep:reportEntityAspect, bcpg:ingTypeAspect, bcpg:profitabilityAspect, bcpg:clientsAspect, bcpg:eanAspect]]></aspects>
+  <itemType><![CDATA[finishedProduct]]></itemType>
+  <dataLists>
+    <ingLists entityDataListState="ToValidate">
+      <ingList ingCEECode="" ingListQtyPerc="100.0" ingListQtyMaxi="0.0" ingListIsIonized="false" name="dfd1f708d92c253c3f42558359124f78" ingListIsProcessingAid="false" ingListIsGMO="false" ingListIsSupport="false" isManualListItem="false" ingListQtyMini="0.0" node-dbid="3703" locale="fr_FR" sort="1" depthLevel="1" ingListIng="Oeuf" legalName="oeuf">
+        <description prefix="cm"><![CDATA[]]></description>
+      </ingList>
+    </ingLists>
+    <nutLists entityDataListState="ToValidate" energiekjétiquetage="1040.0" energiekcalétiquetage="247.0" energiekj="1040.0" energiekcal="247.0" eau="47.7" protéines="8.52" protéinesbrutesnx625="8.52" glucides="30.9" lipides="9.47" sucres="2.38" amidon="28.5" fibresalimentaires="1.89" polyolstotaux="0.0" résiduàsec="1.52" alcooléthanol="0.0" acidesorganiques="0.0" agsaturés="2.18" agmonoinsaturés="2.57" agpolyinsaturés="3.97" ag40butyrique="0.05" ag60caproïque="0.05" ag80caprylique="0.05" ag100caprique="0.05" ag120laurique="0.05" ag140myristique="0.024" ag160palmitique="1.96" ag180stéarique="0.65" ag1819cn9oléique="3.51" ag1829c12cn6linoléique="1.38" ag183c9c12c15n3alphalinolénique="0.061" ag2045c8c11c14cn6arachidonique="0.12" ag2055c8c11c14c17cn3epa="0.0" ag2264c7c10c13c16c19cn3dha="0.09" cholestérol="95.7" sel="1.13" calcium="33.6" chlorure="" cuivre="0.092" fer="1.08" iode="23.5" magnésium="16.4" manganèse="0.31" phosphore="101.0" potassium="135.0" sélénium="8.6" sodium="457.0" zinc="0.68" rétinol="44.8" bêtacarotène="135.0" vitamined="0.43" activitévitaminiqueeenéquivalentsalphatocophérol="2.99" vitaminek1="0.27" vitaminek2="" vitaminectotale="3.31" vitamineb1outhiamine="0.07" vitamineb2ouriboflavine="0.14" vitamineb3ouppouniacine="0.59" vitamineb5ouacidepantothénique="0.55" vitamineb6oupyridoxine="0.092" vitamineb9oufolatestotaux="39.0" vitamineb12oucobalamines="0.3">
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="1040.0" name="17c771aa-05ae-4d36-a3ac-689681e58d94" nutListValuePerServing="1560.0" nutListIsFormulated="true" nutListMini="" nutListFormulatedValue="1031.1642" nutListLossPerc="" nutListGDAPerc="18.571428571428573" nutListUnit="kJ/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3710" locale="en_US" sort="1" depthLevel="1" nutListMaxi="" nutListNut="Energie kJ, &#xE9;tiquetage" legalName="Energie kJ, &#xE9;tiquetage">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[8400.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="247.0" name="33cdee69-2863-4f1d-9584-989f7e0cfb8d" nutListValuePerServing="370.5" nutListIsFormulated="true" nutListMini="" nutListFormulatedValue="246.69000000000003" nutListLossPerc="" nutListGDAPerc="18.525" nutListUnit="kcal/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3711" locale="en_US" sort="2" depthLevel="1" nutListMaxi="" nutListNut="Energie kcal, &#xE9;tiquetage" legalName="Energie kcal, &#xE9;tiquetage" color="#FF9900">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[2000.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="1040.0" name="8126c74b-7152-48ce-bdb1-ca1fa9c017a1" nutListValuePerServing="1560.0" nutListIsFormulated="true" nutListMini="" nutListFormulatedValue="1031.1642" nutListLossPerc="" nutListGDAPerc="18.571428571428573" nutListUnit="kJ/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3712" locale="en_US" sort="3" depthLevel="1" nutListMaxi="" nutListNut="Energie kJ" legalName="Energie kJ" color="#FF9900">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[8400.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="247.0" name="7a3e587a-14db-4e7a-9a21-ca935d0a6808" nutListValuePerServing="370.5" nutListIsFormulated="true" nutListMini="" nutListFormulatedValue="246.69000000000003" nutListLossPerc="" nutListGDAPerc="18.525" nutListUnit="kcal/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3713" locale="en_US" sort="4" depthLevel="1" nutListMaxi="" nutListNut="Energie kcal" legalName="Energie kcal" color="#FF9900">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[2000.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="47.7" name="16be8df5-2869-4dba-9e17-82bf61f9a674" nutListValuePerServing="71.55" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="75.7" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3714" locale="en_US" sort="5" depthLevel="1" nutListMaxi="" nutListNut="Eau" legalName="Eau">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="8.52" name="385ae4db-fe43-47bf-aa77-7a702d9db5f4" nutListValuePerServing="12.78" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="9.5" nutListLossPerc="" nutListGDAPerc="25.56" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3715" locale="en_US" sort="6" depthLevel="1" nutListMaxi="" nutListNut="Prot&#xE9;ines" legalName="Prot&#xE9;ines" color="#F6B26B">
+        <description prefix="cm"><![CDATA[< 10 g ± 2 g
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[50.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="8.52" name="8782751f-4f76-4ceb-b819-3f36c1d28ada" nutListValuePerServing="12.78" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="9.5" nutListLossPerc="" nutListGDAPerc="25.56" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3716" locale="en_US" sort="7" depthLevel="1" nutListMaxi="" nutListNut="Prot&#xE9;ines brutes (N x 6.25)" legalName="Prot&#xE9;ines brutes (N x 6.25)" color="#F6B26B">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[50.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="30.9" name="98aa16df-b1ad-4ee7-8fd8-e42457af0b73" nutListValuePerServing="46.35" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="1.98" nutListLossPerc="" nutListGDAPerc="17.826923076923077" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3717" locale="en_US" sort="8" depthLevel="1" nutListMaxi="" nutListNut="Glucides" legalName="Glucides" color="#4A86E8">
+        <description prefix="cm"><![CDATA[< 10 g ± 2 g
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[260.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Groupe 1" parentLevel="" nutListValue="9.47" name="18f05e3b-2f86-4395-9459-6adb4a254a5a" nutListValuePerServing="14.205" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="11.2" nutListLossPerc="" nutListGDAPerc="20.292857142857144" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3718" locale="en_US" sort="9" depthLevel="1" nutListMaxi="" nutListNut="Lipides" legalName="Mati&#xE8;res grasses">
+        <description prefix="cm"><![CDATA[< 10 g ± 1,5 g
+10 à 40 g ± 20 %
+> 40 g ± 8]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[70.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Groupe 2 " parentLevel="" nutListValue="2.38" name="1bb44484-ebf6-40e8-b12c-7ddb5d140958" nutListValuePerServing="3.57" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.8" nutListLossPerc="" nutListGDAPerc="3.966666666666667" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3719" locale="en_US" sort="10" depthLevel="1" nutListMaxi="" nutListNut="Sucres" legalName="dont sucres" color="#4A86E8">
+        <description prefix="cm"><![CDATA[< 10 g ± 2 g
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[90.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="28.5" name="e78ff4b1-57df-439d-8440-de0be2d6fda3" nutListValuePerServing="42.75" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.0" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3720" locale="en_US" sort="11" depthLevel="1" nutListMaxi="" nutListNut="Amidon" legalName="dont amidon" color="#DDDDDD">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Groupe 2 " parentLevel="" nutListValue="1.89" name="ec94717b-c71c-41a9-b972-5d17b5e51db9" nutListValuePerServing="2.835" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.55" nutListLossPerc="" nutListGDAPerc="11.34" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3721" locale="en_US" sort="12" depthLevel="1" nutListMaxi="" nutListNut="Fibres alimentaires" legalName="Fibres alimentaires" color="#00FF00">
+        <description prefix="cm"><![CDATA[< 10 g ± 2 g
+10 à 40 g ± 20 %
+> 40 g ± 8 g]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[25.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.0" name="d355c508-69e5-4453-9d91-5aeb5650b580" nutListValuePerServing="0.0" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.0" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3722" locale="en_US" sort="13" depthLevel="1" nutListMaxi="" nutListNut="Polyols totaux" legalName="dont polyols">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="1.52" name="a31ab493-71ba-4d56-94bb-27d60e764fed" nutListValuePerServing="2.28" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="1.13" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3723" locale="en_US" sort="14" depthLevel="1" nutListMaxi="" nutListNut="R&#xE9;sidu &#xE0; sec" legalName="R&#xE9;sidu &#xE0; sec">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.0" name="f45ff19e-debd-474f-9ea1-290444ebc242" nutListValuePerServing="0.0" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.0" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3724" locale="en_US" sort="15" depthLevel="1" nutListMaxi="" nutListNut="Alcool (&#xE9;thanol)" legalName="Alcool (&#xE9;thanol)">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.0" name="f4ff371f-852b-423b-a986-09c2cd02b05b" nutListValuePerServing="0.0" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.0" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3725" locale="en_US" sort="16" depthLevel="1" nutListMaxi="" nutListNut="Acides organiques" legalName="Acides organiques">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Groupe 2 " parentLevel="" nutListValue="2.18" name="3154a429-bdba-4b98-8e05-28b6628cc6d7" nutListValuePerServing="3.27" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="3.6" nutListLossPerc="" nutListGDAPerc="16.35" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3726" locale="en_US" sort="17" depthLevel="1" nutListMaxi="" nutListNut="AG satur&#xE9;s" legalName="dont AG satur&#xE9;s">
+        <description prefix="cm"><![CDATA[< 4 g ± 0,8 g
+>=  4 g ± 20 %]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[20.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="2.57" name="96d8733f-1822-4d33-aca4-54c788ddafe9" nutListValuePerServing="3.855" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="4.4" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3727" locale="en_US" sort="18" depthLevel="1" nutListMaxi="" nutListNut="AG monoinsatur&#xE9;s" legalName="dont AG mono-insatur&#xE9;s" color="#FFFF00">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="3.97" name="aa5a4bae-81a0-41b0-9a98-b52e807245d4" nutListValuePerServing="5.955" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="1.81" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3728" locale="en_US" sort="19" depthLevel="1" nutListMaxi="" nutListNut="AG polyinsatur&#xE9;s" legalName="dont AG polyinsatur&#xE9;s" color="#FFFF00">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.05" name="31ee1365-9ba6-4a23-9aa9-7756c4832493" nutListValuePerServing="0.075" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.05" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3729" locale="en_US" sort="20" depthLevel="1" nutListMaxi="" nutListNut="AG 4:0, butyrique" legalName="AG 4:0, butyrique">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.05" name="4f34f1ac-4ae8-4303-8cb9-91ce9d3e454f" nutListValuePerServing="0.075" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.05" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3730" locale="en_US" sort="21" depthLevel="1" nutListMaxi="" nutListNut="AG 6:0, capro&#xEF;que" legalName="AG 6:0, capro&#xEF;que">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.05" name="f710b569-566a-4c0b-928f-7bd123189e88" nutListValuePerServing="0.075" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.05" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3731" locale="en_US" sort="22" depthLevel="1" nutListMaxi="" nutListNut="AG 8:0, caprylique" legalName="AG 8:0, caprylique">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.05" name="0b19a5de-b9fa-4a9c-ac61-db2c584f06b5" nutListValuePerServing="0.075" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.05" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3732" locale="en_US" sort="23" depthLevel="1" nutListMaxi="" nutListNut="AG 10:0, caprique" legalName="AG 10:0, caprique">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.05" name="da16eb36-3157-4038-8402-0fde12c44853" nutListValuePerServing="0.075" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.05" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3733" locale="en_US" sort="24" depthLevel="1" nutListMaxi="" nutListNut="AG 12:0, laurique" legalName="AG 12:0, laurique">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.024" name="19b1f5b2-5b11-4912-920a-4bace4cb8c82" nutListValuePerServing="0.036000000000000004" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.024" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3734" locale="en_US" sort="25" depthLevel="1" nutListMaxi="" nutListNut="AG 14:0, myristique" legalName="AG 14:0, myristique">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="1.96" name="7e024c21-34b8-453d-84d1-43a4a9e7d452" nutListValuePerServing="2.94" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="1.96" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3735" locale="en_US" sort="26" depthLevel="1" nutListMaxi="" nutListNut="AG 16:0, palmitique" legalName="AG 16:0, palmitique">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.65" name="58dc72f4-5614-4aa0-9dba-aa56fbbea38a" nutListValuePerServing="0.975" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.65" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3736" locale="en_US" sort="27" depthLevel="1" nutListMaxi="" nutListNut="AG 18:0, st&#xE9;arique" legalName="AG 18:0, st&#xE9;arique">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="3.51" name="62a835bd-9a12-4256-85d5-fc8487ca9d64" nutListValuePerServing="5.265" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="3.51" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3737" locale="en_US" sort="28" depthLevel="1" nutListMaxi="" nutListNut="AG 18:1 9c (n-9), ol&#xE9;ique" legalName="AG 18:1 9c (n-9), ol&#xE9;ique">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="1.38" name="aedd28bb-d1d2-41ef-89b3-0360f5805ebb" nutListValuePerServing="2.07" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="1.38" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3738" locale="en_US" sort="29" depthLevel="1" nutListMaxi="" nutListNut="AG 18:2 9c,12c (n-6), linol&#xE9;ique" legalName="AG 18:2 9c,12c (n-6), linol&#xE9;ique">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.061" name="9a6d1a38-e2e3-4fb6-a74d-67f792c4ee7b" nutListValuePerServing="0.0915" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.061" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3739" locale="en_US" sort="30" depthLevel="1" nutListMaxi="" nutListNut="AG 18:3 c9,c12,c15 (n-3), alpha-linol&#xE9;nique" legalName="AG 18:3 c9,c12,c15 (n-3), alpha-linol&#xE9;nique">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.12" name="5dc81a10-6660-47f3-bb28-ac16b419e80a" nutListValuePerServing="0.18" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.12" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3740" locale="en_US" sort="31" depthLevel="1" nutListMaxi="" nutListNut="AG 20:4 5c,8c,11c,14c (n-6), arachidonique" legalName="AG 20:4 5c,8c,11c,14c (n-6), arachidonique">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.0" name="5196dc27-d864-48e9-a1f2-8873210498ff" nutListValuePerServing="0.0" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.0" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3741" locale="en_US" sort="32" depthLevel="1" nutListMaxi="" nutListNut="AG 20:5 5c,8c,11c,14c,17c (n-3), EPA" legalName="AG 20:5 5c,8c,11c,14c,17c (n-3), EPA">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.09" name="ec5fa0a3-ad56-41ae-8bca-1939eb691f6f" nutListValuePerServing="0.135" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.09" nutListLossPerc="" nutListGDAPerc="" nutListUnit="g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3742" locale="en_US" sort="33" depthLevel="1" nutListMaxi="" nutListNut="AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA" legalName="AG 22:6 4c,7c,10c,13c,16c,19c (n-3), DHA">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="95.7" name="48d8035c-2a33-4893-a678-59486da518fa" nutListValuePerServing="143.55" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="301.0" nutListLossPerc="" nutListGDAPerc="" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3743" locale="en_US" sort="34" depthLevel="1" nutListMaxi="" nutListNut="Cholest&#xE9;rol" legalName="Cholest&#xE9;rol">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Groupe 2 " parentLevel="" nutListValue="1.13" name="f8024d07-15b8-4328-8f96-b4abad1def07" nutListValuePerServing="1.6949999999999996" nutListIsFormulated="true" nutListMini="0.0" nutListFormulatedValue="1.16078" nutListLossPerc="" nutListGDAPerc="28.249999999999996" nutListUnit="g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3744" locale="en_US" sort="35" depthLevel="1" nutListMaxi="0.0" nutListNut="Sel" legalName="Sel" color="#C27BA0">
+        <description prefix="cm"><![CDATA[< 1,25 g ± 0,375
+>=  1,25 g ± 20 %]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[6.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="33.6" name="234324fc-f64e-4b7f-a05a-f0919cdc02b5" nutListValuePerServing="50.4" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="86.0" nutListLossPerc="" nutListGDAPerc="6.3" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3745" locale="en_US" sort="36" depthLevel="1" nutListMaxi="" nutListNut="Calcium" legalName="Calcium">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[800.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="" name="7e08e151-ae98-4f65-93e2-b1b8125ab917" nutListValuePerServing="" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="" nutListLossPerc="" nutListGDAPerc="" nutListUnit="mg/100g" nutListMethod="Formulation" nutListFormulaErrorLog="Caract&#xE9;ristique 'Chlorure' non renseign&#xE9;e : Omelette" isManualListItem="false" node-dbid="3746" locale="en_US" sort="37" depthLevel="1" nutListMaxi="" nutListNut="Chlorure" legalName="Chlorure">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.092" name="d8bc34de-9929-4edb-a7e8-11aff0182291" nutListValuePerServing="0.13799999999999998" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.044" nutListLossPerc="" nutListGDAPerc="13.799999999999999" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3747" locale="en_US" sort="38" depthLevel="1" nutListMaxi="" nutListNut="Cuivre" legalName="Cuivre">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[1.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="1.08" name="d930548b-65e0-4234-9522-7227b6edc097" nutListValuePerServing="1.62" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="1.83" nutListLossPerc="" nutListGDAPerc="11.571428571428571" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3748" locale="en_US" sort="39" depthLevel="1" nutListMaxi="" nutListNut="Fer" legalName="Fer">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[14.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="23.5" name="38d2ca29-f964-43a5-9091-f774ce8ee5ac" nutListValuePerServing="35.25" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="43.9" nutListLossPerc="" nutListGDAPerc="23.5" nutListUnit="&#xB5;g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3749" locale="en_US" sort="40" depthLevel="1" nutListMaxi="" nutListNut="Iode" legalName="Iode">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[150.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="16.4" name="262999cf-fb55-4f82-8f37-cd7c5fed4d41" nutListValuePerServing="24.6" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="14.5" nutListLossPerc="" nutListGDAPerc="6.56" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3750" locale="en_US" sort="41" depthLevel="1" nutListMaxi="" nutListNut="Magn&#xE9;sium" legalName="Magn&#xE9;sium">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[375.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.31" name="0b3095de-71a5-45d5-9455-a4059405ed2d" nutListValuePerServing="0.465" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.19" nutListLossPerc="" nutListGDAPerc="23.25" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3751" locale="en_US" sort="42" depthLevel="1" nutListMaxi="" nutListNut="Mangan&#xE8;se" legalName="Mangan&#xE8;se">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[2.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="101.0" name="853719fe-d94a-46df-a0f3-c376f9d3893f" nutListValuePerServing="151.5" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="157.0" nutListLossPerc="" nutListGDAPerc="216.42857142857142" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3752" locale="en_US" sort="43" depthLevel="1" nutListMaxi="" nutListNut="Phosphore" legalName="Phosphore">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[70.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="135.0" name="7e95668f-7e34-482a-a9e3-1ca362f32f4e" nutListValuePerServing="202.5" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="188.0" nutListLossPerc="" nutListGDAPerc="10.125" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3753" locale="en_US" sort="44" depthLevel="1" nutListMaxi="" nutListNut="Potassium" legalName="Potassium">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[2000.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="8.6" name="08a5d719-6c54-44fd-9519-1548c17e182d" nutListValuePerServing="12.9" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="11.6" nutListLossPerc="" nutListGDAPerc="23.454545454545453" nutListUnit="&#xB5;g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3754" locale="en_US" sort="45" depthLevel="1" nutListMaxi="" nutListNut="S&#xE9;l&#xE9;nium" legalName="S&#xE9;l&#xE9;nium">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[55.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Groupe 2 " parentLevel="" nutListValue="457.0" name="fe8a0683-a22e-4d56-8148-4f6d5283e291" nutListValuePerServing="685.5" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="173.0" nutListLossPerc="" nutListGDAPerc="28.5625" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3755" locale="en_US" sort="46" depthLevel="1" nutListMaxi="" nutListNut="Sodium" legalName="Sodium" color="#C27BA0">
+        <description prefix="cm"><![CDATA[< 0,5 g ± 0,15
+>= 0,5 g ± 20 %]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[2400.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.68" name="9de448b2-a6d5-4758-b29a-1b41782f7fde" nutListValuePerServing="1.0200000000000002" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.92" nutListLossPerc="" nutListGDAPerc="10.200000000000003" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3756" locale="en_US" sort="47" depthLevel="1" nutListMaxi="" nutListNut="Zinc" legalName="Zinc">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[10.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="44.8" name="3a1c363e-fd03-4c55-9e99-adee6677c1dd" nutListValuePerServing="67.2" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="160.0" nutListLossPerc="" nutListGDAPerc="" nutListUnit="&#xB5;g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3757" locale="en_US" sort="48" depthLevel="1" nutListMaxi="" nutListNut="R&#xE9;tinol" legalName="R&#xE9;tinol">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="135.0" name="03d43304-219a-4b47-8907-937c919dd982" nutListValuePerServing="202.5" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="549.0" nutListLossPerc="" nutListGDAPerc="" nutListUnit="&#xB5;g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3758" locale="en_US" sort="49" depthLevel="1" nutListMaxi="" nutListNut="B&#xEA;tacarot&#xE8;ne" legalName="B&#xEA;ta-carot&#xE8;ne">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.43" name="0f923289-7056-4293-96c9-f515bdebe0e1" nutListValuePerServing="0.645" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="1.38" nutListLossPerc="" nutListGDAPerc="12.9" nutListUnit="&#xB5;g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3759" locale="en_US" sort="50" depthLevel="1" nutListMaxi="" nutListNut="Vitamine D" legalName="Vitamine D">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[5.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="2.99" name="07290997-a65b-41b5-9e9c-a3081e930345" nutListValuePerServing="4.485" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="1.3" nutListLossPerc="" nutListGDAPerc="37.37500000000001" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3760" locale="en_US" sort="51" depthLevel="1" nutListMaxi="" nutListNut="Activit&#xE9; vitaminique E (en &#xE9;quivalents alpha-tocoph&#xE9;rol)" legalName="Activit&#xE9; vitaminique E (en &#xE9;quivalents alpha-tocoph&#xE9;rol)">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[12.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.27" name="836e3e38-4136-4220-86e6-da15d2a7b027" nutListValuePerServing="0.405" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.27" nutListLossPerc="" nutListGDAPerc="0.54" nutListUnit="&#xB5;g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3761" locale="en_US" sort="52" depthLevel="1" nutListMaxi="" nutListNut="Vitamine K1" legalName="Vitamine K1">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[75.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="" name="7a53c974-5b99-4ba7-b162-3fbe66081f34" nutListValuePerServing="" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="" nutListLossPerc="" nutListGDAPerc="" nutListUnit="&#xB5;g/100g" nutListMethod="Formulation" nutListFormulaErrorLog="Caract&#xE9;ristique 'Vitamine K2' non renseign&#xE9;e : Omelette" isManualListItem="false" node-dbid="3762" locale="en_US" sort="53" depthLevel="1" nutListMaxi="" nutListNut="Vitamine K2" legalName="Vitamine K2">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="3.31" name="7e291e93-b96c-4689-bd42-c3a26a02dd3b" nutListValuePerServing="4.965" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.0" nutListLossPerc="" nutListGDAPerc="6.20625" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3763" locale="en_US" sort="54" depthLevel="1" nutListMaxi="" nutListNut="Vitamine C totale" legalName="Vitamine C totale">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[80.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.07" name="9ef790ff-2264-4cfe-a2fc-88bc0fd2544b" nutListValuePerServing="0.10500000000000002" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.071" nutListLossPerc="" nutListGDAPerc="9.545454545454547" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3764" locale="en_US" sort="55" depthLevel="1" nutListMaxi="" nutListNut="Vitamine B1 ou Thiamine" legalName="Vitamine B1 ou Thiamine">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[1.1]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.14" name="97905bf3-4a42-4acb-b665-bbd05200730f" nutListValuePerServing="0.21000000000000005" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.33" nutListLossPerc="" nutListGDAPerc="15.000000000000004" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3765" locale="en_US" sort="56" depthLevel="1" nutListMaxi="" nutListNut="Vitamine B2 ou Riboflavine" legalName="Vitamine B2 ou Riboflavine">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[1.4]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.59" name="78029432-273f-4261-92fb-d053a84680ac" nutListValuePerServing="0.885" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.2" nutListLossPerc="" nutListGDAPerc="5.53125" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3766" locale="en_US" sort="57" depthLevel="1" nutListMaxi="" nutListNut="Vitamine B3 ou PP ou Niacine" legalName="Vitamine B3 ou PP ou Niacine">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[16.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.55" name="0686a197-4c91-42fe-adce-974e835a074b" nutListValuePerServing="0.825" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="1.06" nutListLossPerc="" nutListGDAPerc="13.75" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3767" locale="en_US" sort="58" depthLevel="1" nutListMaxi="" nutListNut="Vitamine B5 ou Acide pantoth&#xE9;nique" legalName="Vitamine B5 ou Acide pantoth&#xE9;nique">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[6.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.092" name="e3ac4f24-f2e3-4d40-ab4c-757bb1f50d9d" nutListValuePerServing="0.13799999999999998" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.12" nutListLossPerc="" nutListGDAPerc="9.857142857142858" nutListUnit="mg/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3768" locale="en_US" sort="59" depthLevel="1" nutListMaxi="" nutListNut="Vitamine B6 ou Pyridoxine" legalName="Vitamine B6 ou Pyridoxine">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[1.4]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="39.0" name="dc55e089-ea81-41c7-b687-8667051656e1" nutListValuePerServing="58.5" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="56.1" nutListLossPerc="" nutListGDAPerc="29.25" nutListUnit="&#xB5;g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3769" locale="en_US" sort="60" depthLevel="1" nutListMaxi="" nutListNut="Vitamine B9 ou Folates totaux" legalName="Vitamine B9 ou Folates totaux">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[200.0]]></nutGDA>
+      </nutList>
+      <nutList nutListGroup="Autres nutriments" parentLevel="" nutListValue="0.3" name="7c51c5a5-270d-4958-a156-2e8ac9fafe80" nutListValuePerServing="0.45" nutListIsFormulated="false" nutListMini="" nutListFormulatedValue="0.97" nutListLossPerc="" nutListGDAPerc="18.0" nutListUnit="&#xB5;g/100g" nutListMethod="" nutListFormulaErrorLog="" isManualListItem="false" node-dbid="3770" locale="en_US" sort="61" depthLevel="1" nutListMaxi="" nutListNut="Vitamine B12 ou Cobalamines" legalName="Vitamine B12 ou Cobalamines">
+        <description prefix="cm"><![CDATA[]]></description>
+        <nutGDA prefix="bcpg"><![CDATA[2.5]]></nutGDA>
+      </nutList>
+    </nutLists>
+    <compoLists entityDataListState="ToValidate">
+      <compoList legalName="" productState="Simulation" tare="0.0" projectedQty="" creator="admin" futureUnitTotalCost="0.0" startEffectivity="2017-05-15T12:15:20.874Z" nutrientProfilingClass="" productCompoVolumeUsed="100.0" netWeight="" productUnit="kg" code="SFP2" productDensity="1.0" previousUnitTotalCost="0.0" netWeightUnit="kg" useByDate="" ingTypeV2="" productHierarchy2="" node-dbid="3692" unitTotalCost="0.0" netVolume="" contractDate="" reportLocales="" unitPrice="" breakEven="" endEffectivity="" created="2017-05-15T12:15:20.860Z" profitability="" packagingDescription="" bestBeforeDate="" periodAfterOpening="" name="f135831d-e4e5-4a5e-befd-0e7f224a8589" nutrientProfilingScore="" servingSize="2.0" erpCode="" productHierarchy1="" title="" productQty="" formulatedDate="2017-05-15T12:16:46.019Z" productCompoQtyUsed="100.0" locale="en_US" preparationTips="" tareUnit="g" modifier="admin" modified="2017-05-15T12:16:36.865Z" entityTplRef="Produit semi fini" itemType="bcpg:semiFinishedProduct" aspects="bcpg:formulatedEntityAspect, bcpg:nutrientProfilingScoreAspect, bcpg:consumerAspect, bcpg:effectivityAspect, bcpg:erpCodeAspect, pack:tareAspect, bcpg:productMicrobioCriteriaAspect, rep:reportLocalesAspect, bcpg:legalNameAspect, referenceable, bcpg:contractDateAspect, bcpg:entityScoreAspect, localized, bcpg:entityTplRefAspect, bcpg:codeAspect, bcpg:entityListsAspect, rep:reportEntityAspect, bcpg:transformationAspect, cm:titled, bcpg:ingTypeAspect, bcpg:profitabilityAspect, auditable, bcpg:productAspect" dynamicCharactColumn5="" compoListQty="25.0" compoListLossPerc="" dynamicCharactColumn2="" dynamicCharactColumn9="" dynamicCharactColumn10="" compoListUnit="Perc" dynamicCharactColumn4="" dynamicCharactColumn8="" compoListYieldPerc="" compoListQtySubFormula="25.0" sort="100" depthLevel="1" dynamicCharactColumn1="" parentLevel="" variantIds="" compoListVolume="25.0" dynamicCharactColumn7="" compoListOverrunPerc="" dynamicCharactColumn6="" compoListDeclType="Declare" dynamicCharactColumn3="" compoListProduct="Omelette" compoListQtyForProduct="25.0" isDefaultVariant="true" nodeRef="workspace://SpacesStore/43cecb5b-b0e7-4a4f-86d0-aaea54ceb189">
+        <productComments prefix="bcpg"><![CDATA[]]></productComments>
+        <description prefix="cm"><![CDATA[]]></description>
+        <instruction prefix="bcpg"><![CDATA[]]></instruction>
+        <description prefix="cm"><![CDATA[]]></description>
+      </compoList>
+      <dynamicCharactLists/>
+      <reqCtrlLists>
+        <reqCtrlList rclReqMessage="Champ obligatoire 'Libell&#xE9; l&#xE9;gal' manquant (catalogue 'EU 1169/2011 (INCO)')" rclReqType="Forbidden"/>
+        <reqCtrlList rclReqMessage="Champ obligatoire 'Pr&#xE9;cautions d'emploi' manquant (catalogue 'EU 1169/2011 (INCO)')" rclReqType="Forbidden"/>
+        <reqCtrlList rclReqMessage="Champ obligatoire 'DLC (J) ou DDM/DLUO (J)' manquant (catalogue 'EU 1169/2011 (INCO)')" rclReqType="Forbidden"/>
+        <reqCtrlList rclReqMessage="Champ obligatoire 'Conditions de conservation' manquant (catalogue 'EU 1169/2011 (INCO)')" rclReqType="Forbidden"/>
+        <reqCtrlList rclReqMessage="Champ obligatoire 'Titre' manquant (catalogue 'EU 1169/2011 (INCO)')" rclReqType="Forbidden"/>
+        <reqCtrlList rclReqMessage="Composant non valid&#xE9;" rclReqType="Tolerated"/>
+        <reqCtrlList rclReqMessage="Caract&#xE9;ristique 'Vitamine K2' non renseign&#xE9;e" rclReqType="Tolerated"/>
+        <reqCtrlList rclReqMessage="Caract&#xE9;ristique 'Chlorure' non renseign&#xE9;e" rclReqType="Tolerated"/>
+      </reqCtrlLists>
+    </compoLists>
+    <rawMaterials>
+      <rawMaterial>
+        <legalName prefix="bcpg"><![CDATA[]]></legalName>
+        <productState prefix="bcpg"><![CDATA[Simulation]]></productState>
+        <tare prefix="pack"><![CDATA[]]></tare>
+        <projectedQty prefix="bcpg"><![CDATA[]]></projectedQty>
+        <creator prefix="cm"><![CDATA[admin]]></creator>
+        <store-identifier prefix="sys"><![CDATA[SpacesStore]]></store-identifier>
+        <futureUnitTotalCost prefix="bcpg"><![CDATA[0.0]]></futureUnitTotalCost>
+        <startEffectivity prefix="bcpg"><![CDATA[2017-05-15T12:01:26.226Z]]></startEffectivity>
+        <nutrientProfilingClass prefix="bcpg"><![CDATA[]]></nutrientProfilingClass>
+        <productCompoVolumeUsed prefix="bcpg"><![CDATA[]]></productCompoVolumeUsed>
+        <netWeight prefix="bcpg"><![CDATA[]]></netWeight>
+        <productComments prefix="bcpg"><![CDATA[]]></productComments>
+        <productUnit prefix="bcpg"><![CDATA[g]]></productUnit>
+        <code prefix="bcpg"><![CDATA[RM2]]></code>
+        <productDensity prefix="bcpg"><![CDATA[]]></productDensity>
+        <previousUnitTotalCost prefix="bcpg"><![CDATA[0.0]]></previousUnitTotalCost>
+        <ingTypeV2 prefix="bcpg"><![CDATA[]]></ingTypeV2>
+        <netWeightUnit prefix="bcpg"><![CDATA[kg]]></netWeightUnit>
+        <useByDate prefix="bcpg"><![CDATA[]]></useByDate>
+        <productHierarchy2 prefix="bcpg"><![CDATA[]]></productHierarchy2>
+        <store-protocol prefix="sys"><![CDATA[workspace]]></store-protocol>
+        <eanCode prefix="bcpg"><![CDATA[]]></eanCode>
+        <node-dbid prefix="sys"><![CDATA[1683]]></node-dbid>
+        <unitTotalCost prefix="bcpg"><![CDATA[0.0]]></unitTotalCost>
+        <netVolume prefix="bcpg"><![CDATA[]]></netVolume>
+        <contractDate prefix="bcpg"><![CDATA[]]></contractDate>
+        <reportLocales prefix="rep"><![CDATA[]]></reportLocales>
+        <unitPrice prefix="bcpg"><![CDATA[]]></unitPrice>
+        <entityScore prefix="bcpg"><![CDATA[{"ctrlCount":[{"Completion":{"Forbidden":1}}],"catalogs":[{"missingFields":[{"displayName":"Libellé légal","id":"bcpg:legalName"}],"score":0,"color":"hsl(51, 60%, 50%)","label":"EU 1169/2011 (INCO)","id":"incoRawMaterials"}],"totalForbidden":1,"global":66.66666666666667,"details":{"componentsValidation":100,"mandatoryFields":0,"specifications":100}}]]></entityScore>
+        <breakEven prefix="bcpg"><![CDATA[]]></breakEven>
+        <endEffectivity prefix="bcpg"><![CDATA[]]></endEffectivity>
+        <created prefix="cm"><![CDATA[2017-05-15T12:01:26.210Z]]></created>
+        <profitability prefix="bcpg"><![CDATA[]]></profitability>
+        <packagingDescription prefix="bcpg"><![CDATA[]]></packagingDescription>
+        <description prefix="cm"><![CDATA[]]></description>
+        <bestBeforeDate prefix="bcpg"><![CDATA[]]></bestBeforeDate>
+        <periodAfterOpening prefix="bcpg"><![CDATA[]]></periodAfterOpening>
+        <node-uuid prefix="sys"><![CDATA[ae32a5d1-d58d-4023-a3d5-66812f01c305]]></node-uuid>
+        <name prefix="cm"><![CDATA[Oeuf]]></name>
+        <nutrientProfilingScore prefix="bcpg"><![CDATA[]]></nutrientProfilingScore>
+        <erpCode prefix="bcpg"><![CDATA[]]></erpCode>
+        <servingSize prefix="bcpg"><![CDATA[]]></servingSize>
+        <productHierarchy1 prefix="bcpg"><![CDATA[]]></productHierarchy1>
+        <title prefix="cm"><![CDATA[]]></title>
+        <productQty prefix="bcpg"><![CDATA[]]></productQty>
+        <formulatedDate prefix="bcpg"><![CDATA[2017-05-15T12:15:54.301Z]]></formulatedDate>
+        <productCompoQtyUsed prefix="bcpg"><![CDATA[]]></productCompoQtyUsed>
+        <locale prefix="sys"><![CDATA[en_US]]></locale>
+        <preparationTips prefix="bcpg"><![CDATA[]]></preparationTips>
+        <tareUnit prefix="pack"><![CDATA[g]]></tareUnit>
+        <modifier prefix="cm"><![CDATA[admin]]></modifier>
+        <modified prefix="cm"><![CDATA[2017-05-15T12:15:53.778Z]]></modified>
+        <certificateDate prefix="bcpg"><![CDATA[]]></certificateDate>
+        <entityTplRef prefix="bcpg"><![CDATA[Matière première]]></entityTplRef>
+        <suppliers prefix="bcpg"/>
+        <compoListQty prefix="bcpg"><![CDATA[100.0]]></compoListQty>
+        <compoListQtyForProduct><![CDATA[100.0]]></compoListQtyForProduct>
+        <dataLists/>
+        <variants>
+          <variant name="" isDefaultVariant="true"/>
+        </variants>
+      </rawMaterial>
+    </rawMaterials>
+    <ingLabelingLists/>
+  </dataLists>
+  <variants>
+    <variant name="" isDefaultVariant="true"/>
+  </variants>
+  <versions/>
+</entity>
