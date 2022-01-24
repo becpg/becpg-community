@@ -10543,7 +10543,15 @@
 					<field id="bcpg:allergenListInVoluntary" >
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-				
+				   <field id="bcpg:allergenListIsCleaned" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+					<field id="bcpg:allergenListOnLine" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+					<field id="bcpg:allergenListOnSite" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -10562,7 +10570,7 @@
 					
 					<show id="bcpg:allergenListOnLine" />
 					<show id="bcpg:allergenListOnSite" />
-					<show id="bcpg:allergenListIsCleaned" help-id="becpg.forms.help.allergenListIsCleaned"/>
+					<show id="bcpg:allergenListIsCleaned" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
 				</field-visibility>
@@ -10608,7 +10616,7 @@
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 					
-					<field id="bcpg:allergenListIsCleaned" >
+					<field id="bcpg:allergenListIsCleaned" help-id="becpg.forms.help.allergenListIsCleaned">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 					<field id="bcpg:allergenListOnLine" >

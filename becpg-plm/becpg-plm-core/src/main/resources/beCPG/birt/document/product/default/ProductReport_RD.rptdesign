@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="author">beCPG</property>
-    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201806261756</property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -2047,7 +2047,7 @@
             <property name="bottomMargin">0.4cm</property>
             <property name="rightMargin">1.5cm</property>
             <property name="headerHeight">1.2in</property>
-            <property name="footerHeight">1.4in</property>
+            <property name="footerHeight">0.8in</property>
             <page-header>
                 <grid id="765">
                     <property name="style">becpg-header-table</property>
@@ -2066,23 +2066,137 @@
                     <column id="768"/>
                     <row id="769">
                         <cell id="770">
-                            <property name="backgroundImage">./logo.png</property>
                             <property name="backgroundRepeat">no-repeat</property>
                             <property name="backgroundSizeHeight">cover</property>
                             <property name="backgroundSizeWidth">cover</property>
                             <property name="paddingLeft">1pt</property>
                             <property name="textAlign">left</property>
-                            <image id="12189">
-                                <property name="height">0.7083333333333334in</property>
-                                <property name="width">0.9375in</property>
+                            <image name="defaultLogo" id="12230">
+                                <property name="height">0.8in</property>
+                                <property name="dataSet">imgLogo</property>
                                 <list-property name="visibility">
                                     <structure>
                                         <property name="format">all</property>
-                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("displayBeCPGLogo")=="false"</expression>
+                                        <expression name="valueExpr" type="javascript">row["imgTradeMark"]!=null || row["imgLogo"]!=null</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <text-property name="displayName">id</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">imgTradeMark</property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">imgLogo</property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get("logo.png");</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
                                     </structure>
                                 </list-property>
                                 <property name="source">embed</property>
                                 <property name="imageName">logo.png</property>
+                            </image>
+                            <image name="customLogo" id="12231">
+                                <property name="height">0.8in</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["imgTradeMark"]!=null || row["img"]==null</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">entityName</property>
+                                        <expression name="expression" type="javascript">dataSetRow["entityName"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">name</property>
+                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">entityType</property>
+                                        <expression name="expression" type="javascript">dataSetRow["entityType"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get("logo.png");</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">imgTradeMark</property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">expr</property>
+                                <expression name="valueExpr">row["img"]</expression>
+                            </image>
+                            <image name="trademarkLogo" id="12188">
+                                <property name="height">0.8in</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["img"]==null</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">entityName</property>
+                                        <expression name="expression" type="javascript">dataSetRow["entityName"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">name</property>
+                                        <expression name="expression" type="javascript">dataSetRow["name"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">entityType</property>
+                                        <expression name="expression" type="javascript">dataSetRow["entityType"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">expr</property>
+                                <expression name="valueExpr">row["img"]</expression>
                             </image>
                         </cell>
                         <cell id="772">
@@ -2330,10 +2444,8 @@ dataSetRow["versionLabel"]
             <page-footer>
                 <grid id="10541">
                     <property name="textAlign">center</property>
-                    <property name="height">1.4583333333333333in</property>
                     <column id="10542"/>
                     <row id="10543">
-                        <property name="height">1.125in</property>
                         <cell id="10544">
                             <property name="fontFamily">sans-serif</property>
                             <property name="verticalAlign">bottom</property>

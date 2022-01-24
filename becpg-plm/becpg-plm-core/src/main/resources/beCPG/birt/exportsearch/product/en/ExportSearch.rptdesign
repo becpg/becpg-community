@@ -7,7 +7,7 @@
     <property name="imageDPI">112</property>
     <data-sources>
         <oda-data-source extensionID="org.eclipse.datatools.enablement.oda.xml" name="DataXml" id="7">
-            <property name="FILELIST">src/main/resources/beCPG/birt/exportsearch/product/ExportSearchQuery.xml</property>
+            <property name="FILELIST">src/main/resources/beCPG/birt/exportsearch/product/en/ExportSearchQuery.xml</property>
         </oda-data-source>
     </data-sources>
     <data-sets>
@@ -391,7 +391,7 @@
                     <property name="fontFamily">"arial"</property>
                     <property name="fontSize">18pt</property>
                     <property name="fontWeight">bold</property>
-                    <property name="color">#999999</property>
+                    <property name="color">#004254</property>
                     <property name="textAlign">center</property>
                     <text-property name="text" key="label.title">Export produits</text-property>
                 </label>
@@ -459,6 +459,7 @@
                     <property name="dataType">string</property>
                 </structure>
             </list-property>
+            <property name="pageBreakInterval">100000</property>
             <column id="2007">
                 <property name="width">0.5877862595419847in</property>
             </column>
@@ -493,6 +494,8 @@
             <header>
                 <row id="1885">
                     <property name="style">beCPG-Table-Header</property>
+                    <property name="backgroundColor">#004254</property>
+                    <property name="color">#FFFFFF</property>
                     <cell id="2004">
                         <label id="2008">
                             <text-property name="text">Code</text-property>
