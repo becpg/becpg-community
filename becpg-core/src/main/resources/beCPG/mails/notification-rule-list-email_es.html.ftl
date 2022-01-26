@@ -106,21 +106,11 @@ margin-top:3px;
                                                
                                                <#list args.entities as item> 
                                                		<#assign node=item.node/>
-                                               		<#assign index = item.displayPath?index_of("Sites")> 
-	                                                   <#if (index+6) gt item.displayPath?length>
-	                                                       <#assign itemPath = item.displayPath>
-	                                                   <#else>
-		                                                   <#if index gt 0> 
-	                                                       		<#assign itemPath = item.displayPath?substring(index+6)>
-                                                     	  <#else> 
-                                                     	  		<#assign itemPath = item.displayPath>
-                                                     	  </#if>
-                                                 	   </#if>
                                                		<#if args.versions??>
 	                                               		<#list args.versions[node.nodeRef]?keys as key >
 	                                               			<#assign version=args.versions[node.nodeRef][key]>
 															<tr> 
-																<td class="becpg_rowBorderTop"> ${itemPath} </td>
+																<td class="becpg_rowBorderTop"> ${item.displayPath} </td>
 																<td class="becpg_rowBorderTopLeftRight">
 																	<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${node.name}</a>
 																</td>
@@ -132,7 +122,7 @@ margin-top:3px;
 														</#list>
 													<#else>
 														<tr> 
-															<td class="becpg_rowBorderTop"> ${itemPath} </td>
+															<td class="becpg_rowBorderTop"> ${item.displayPath} </td>
 															<td class="becpg_rowBorderTopLeftRight">
 																<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${node.name}</a>
 															</td>
