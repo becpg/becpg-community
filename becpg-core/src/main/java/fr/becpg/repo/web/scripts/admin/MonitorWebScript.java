@@ -7,17 +7,28 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.security.AuthorityService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptRequest;
+
+import com.google.common.net.HttpHeaders;
+
+import fr.becpg.model.SystemGroup;
+import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.license.BeCPGLicenseManager;
 
 /**
  * <p>MonitorWebScript class.</p>
@@ -32,6 +43,122 @@ public class MonitorWebScript extends DeclarativeWebScript {
 	private ContentService contentService;
 	
 	private AbstractAuthenticationService authenticationService;
+
+	private BeCPGLicenseManager licenseManager;
+
+	private TenantAdminService tenantAdminService;
+
+	private String becpgSchema;
+
+	private AuthorityService authorityService;
+
+	private BatchQueueService batchQueueService;
+
+	/** {@inheritDoc} */
+	@Override
+	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
+		
+		return AuthenticationUtil.runAsSystem(() -> {
+			logger.debug("start monitor webscript");
+			
+			Map<String, Object> ret = new HashMap<>();
+			
+			Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
+			
+			MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+			
+			Runtime runtime = Runtime.getRuntime();
+			
+			ret.put("diskFreeSpace", contentService.getStoreFreeSpace());
+			ret.put("diskTotalSpace", contentService.getStoreTotalSpace());
+			ret.put("totalMemory", runtime.totalMemory() / 1000000d);
+			ret.put("freeMemory", runtime.freeMemory() / 1000000d);
+			ret.put("maxMemory", runtime.maxMemory() / 1000000d);
+			ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / 1000000d);
+			ret.put("connectedUsers", users.size());
+			
+			fillMonitoringInformation(ret);
+			
+			// clear data as request caller is not becpg-monitors
+			if (!"beCPG Monitors".equals(req.getHeader(HttpHeaders.USER_AGENT))) {
+				ret.clear();
+			}
+			
+			ret.put("status", "SUCCESS");
+			
+			return ret;
+		});
+		
+	}
+
+	protected Set<String> fillMonitoringInformation(Map<String, Object> ret) {
+		
+		long concurrentReadUsers = 0;
+		long concurrentSupplierUsers = 0;
+		long concurrentWriteUsers = 0;
+		long namedReadUsers = 0;
+		long namedWriteUsers = 0;
+		long withoutLicenseUsers = 0;
+	
+		Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
+		for (Iterator<String> iterator = users.iterator(); iterator.hasNext();) {
+			String user = iterator.next();
+			if ((AuthenticationUtil.getGuestUserName().equals(user) || AuthenticationUtil.getSystemUserName().equals(user))
+					|| (tenantAdminService.isEnabled()
+							&& !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user)))) {
+				iterator.remove();
+			}
+		}
+	
+		for (String user : users) {
+			if (!AuthenticationUtil.getAdminUserName().equals(user)) {
+				Set<String> userAuthorities = authorityService.getAuthoritiesForUser(user);
+				if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser)
+						&& userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent)) {
+					concurrentSupplierUsers++;
+				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed)) {
+					namedWriteUsers++;
+				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed)) {
+					namedReadUsers++;
+				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteConcurrent)) {
+					concurrentWriteUsers++;
+				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent)) {
+					concurrentReadUsers++;
+				} else {
+					withoutLicenseUsers++;
+				}
+			}
+		}
+	
+		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+	
+		Runtime runtime = Runtime.getRuntime();
+	
+		ret.put("diskFreeSpace", contentService.getStoreFreeSpace());
+		ret.put("diskTotalSpace", contentService.getStoreTotalSpace());
+		ret.put("totalMemory", runtime.totalMemory() / 1000000d);
+		ret.put("freeMemory", runtime.freeMemory() / 1000000d);
+		ret.put("maxMemory", runtime.maxMemory() / 1000000d);
+		ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / 1000000d);
+		ret.put("connectedUsers", users.size());
+		ret.put("concurrentReadUsers", concurrentReadUsers);
+		ret.put("concurrentWriteUsers", concurrentWriteUsers);
+		ret.put("concurrentSupplierUsers", concurrentSupplierUsers);
+		ret.put("namedReadUsers", namedReadUsers);
+		ret.put("namedWriteUsers", namedWriteUsers);
+		ret.put("allowedConcurrentRead", licenseManager.getAllowedConcurrentRead());
+		ret.put("allowedConcurrentWrite", licenseManager.getAllowedConcurrentWrite());
+		ret.put("allowedConcurrentSupplier", licenseManager.getAllowedConcurrentSupplier());
+		ret.put("allowedNamedWrite", licenseManager.getAllowedNamedWrite());
+		ret.put("allowedNamedRead", licenseManager.getAllowedNamedRead());
+		ret.put("licenseName", licenseManager.getLicenseName());
+		ret.put("withoutLicenseUsers", withoutLicenseUsers);
+		ret.put("becpgSchema", becpgSchema);
+		ret.put("batchCounts", batchQueueService.getBatchesInQueue().size());
+	
+		return users;
+		
+	}
 
 	/**
 	 * <p>Setter for the field <code>authenticationService</code>.</p>
@@ -51,31 +178,24 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		this.contentService = contentService;
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
-		logger.debug("start admin webscript");
-		
-		Map<String, Object> ret = new HashMap<>();
+	public void setTenantAdminService(TenantAdminService tenantAdminService) {
+		this.tenantAdminService = tenantAdminService;
+	}
 
-		Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
+	public void setBecpgSchema(String becpgSchema) {
+		this.becpgSchema = becpgSchema;
+	}
 
-		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-		
-			
-		
-		Runtime runtime = Runtime.getRuntime();
+	public void setAuthorityService(AuthorityService authorityService) {
+		this.authorityService = authorityService;
+	}
 
-		ret.put("diskFreeSpace", contentService.getStoreFreeSpace());
-		ret.put("diskTotalSpace", contentService.getStoreTotalSpace());
-		ret.put("totalMemory", runtime.totalMemory() / 1000000d);
-		ret.put("freeMemory", runtime.freeMemory() / 1000000d);
-		ret.put("maxMemory", runtime.maxMemory() / 1000000d);
-		ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / 1000000d);
-		ret.put("connectedUsers", users.size());
-		ret.put("status", "SUCCESS");
-		return ret;
+	public void setBatchQueueService(BatchQueueService batchQueueService) {
+		this.batchQueueService = batchQueueService;
+	}
 
+	public void setLicenseManager(BeCPGLicenseManager licenseManager) {
+		this.licenseManager = licenseManager;
 	}
 
 }
