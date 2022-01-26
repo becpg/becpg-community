@@ -79,8 +79,9 @@ public class MonitorWebScript extends DeclarativeWebScript {
 			
 			fillMonitoringInformation(ret);
 			
-			// clear data as request caller is not becpg-monitors
-			if (!"beCPG Monitors".equals(req.getHeader(HttpHeaders.USER_AGENT))) {
+			if ("beCPG Monitors".equals(req.getHeader(HttpHeaders.USER_AGENT))) {
+				ret.put("authenticated", true);
+			} else {
 				ret.clear();
 			}
 			
