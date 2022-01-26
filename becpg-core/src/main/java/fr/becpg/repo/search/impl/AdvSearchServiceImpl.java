@@ -236,7 +236,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								// no need to add the term
 								if (!propValue.isEmpty()) {
 
-									String from, to;
+									String from;
+									String to;
 									int sepindex = propValue.indexOf("|");
 									if (propName.endsWith("-date-range")) {
 										// date range found
@@ -310,7 +311,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									queryBuilder.andBetween(QName.createQName(propName, namespaceService), "0", propValue);
 
 								}
-							} else {
+							} else if(!propName.endsWith("-entry")) {
 								// beCPG - bug fix : pb with operator -,
 								// AND, OR
 								// poivre AND -noir
@@ -378,10 +379,6 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}
 
 		if (!NodeRef.isNodeRef(hierarchyName)) {
-
-			// TODO use HierarchyService, not generic
-			// " +PATH:\"/app:company_home/%s//*\" +TYPE:\"bcpg:linkedValue\"
-			// +@bcpg\\:lkvValue:\"%s\" ";
 
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery()
 					.inSubPath(RepoConsts.PATH_SYSTEM + "/" + RepoConsts.PATH_PRODUCT_HIERARCHY + "/"
