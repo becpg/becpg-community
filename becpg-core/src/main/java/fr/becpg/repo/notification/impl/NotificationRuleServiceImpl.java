@@ -42,6 +42,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.JsonHelper;
+import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.notification.NotificationRuleFilter;
 import fr.becpg.repo.notification.NotificationRuleService;
@@ -246,7 +247,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			for (NodeRef nodeRef : items) {
 				Map<String, Object> item = new HashMap<>();
 				item.put(NODE, nodeRef);
-				item.put(DISPLAY_PATH, nodeService.getPath(nodeRef).toDisplayPath(nodeService, permissionService));
+				item.put(DISPLAY_PATH, SiteHelper.extractSiteDisplayPath(nodeService.getPath(nodeRef), permissionService, nodeService, namespaceService));
 				item.put(ENTITYV2_SUBTYPE, dictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2));
 				entities.put(nodeRef, item);
 			}
@@ -303,7 +304,6 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		    }
 		return ret;
 	}
-
 
 	private Set<String> extractAuthoritiesFromGroup(NodeRef authority) {
 		Set<String> ret = new HashSet<>();
