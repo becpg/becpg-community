@@ -3,39 +3,25 @@
  */
 package fr.becpg.repo.web.scripts.admin;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryMXBean;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.repo.dictionary.DictionaryDAO;
 import org.alfresco.repo.model.Repository;
-import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.tenant.TenantAdminService;
-import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.Cache;
-import org.springframework.extensions.webscripts.DeclarativeWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
-import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.admin.InitVisitorService;
-import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntitySystemService;
-import fr.becpg.repo.license.BeCPGLicenseManager;
 import fr.becpg.repo.security.SecurityService;
 
 /**
@@ -44,7 +30,7 @@ import fr.becpg.repo.security.SecurityService;
  * @author querephi
  * @version $Id: $Id
  */
-public class AdminModuleWebScript extends DeclarativeWebScript {
+public class AdminModuleWebScript extends MonitorWebScript {
 
 	private static final Log logger = LogFactory.getLog(AdminModuleWebScript.class);
 
@@ -67,47 +53,6 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 	private DictionaryDAO dictionaryDAO;
 
 	private EntitySystemService entitySystemService;
-
-	private BeCPGLicenseManager licenseManager;
-
-	private AbstractAuthenticationService authenticationService;
-
-	private TenantAdminService tenantAdminService;
-
-	private String becpgSchema;
-
-	private AuthorityService authorityService;
-
-	private ContentService contentService;
-	
-	private BatchQueueService batchQueueService;
-
-	/**
-	 * <p>Setter for the field <code>authorityService</code>.</p>
-	 *
-	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
-	 */
-	public void setAuthorityService(AuthorityService authorityService) {
-		this.authorityService = authorityService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>becpgSchema</code>.</p>
-	 *
-	 * @param becpgSchema a {@link java.lang.String} object.
-	 */
-	public void setBecpgSchema(String becpgSchema) {
-		this.becpgSchema = becpgSchema;
-	}
-
-	/**
-	 * <p>Setter for the field <code>tenantAdminService</code>.</p>
-	 *
-	 * @param tenantAdminService a {@link org.alfresco.repo.tenant.TenantAdminService} object.
-	 */
-	public void setTenantAdminService(TenantAdminService tenantAdminService) {
-		this.tenantAdminService = tenantAdminService;
-	}
 
 	/**
 	 * <p>Setter for the field <code>entitySystemService</code>.</p>
@@ -163,33 +108,6 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		this.repository = repository;
 	}
 
-	/**
-	 * <p>Setter for the field <code>authenticationService</code>.</p>
-	 *
-	 * @param authenticationService a {@link org.alfresco.repo.security.authentication.AbstractAuthenticationService} object.
-	 */
-	public void setAuthenticationService(AbstractAuthenticationService authenticationService) {
-		this.authenticationService = authenticationService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>licenseManager</code>.</p>
-	 *
-	 * @param licenseManager a {@link fr.becpg.repo.license.BeCPGLicenseManager} object.
-	 */
-	public void setLicenseManager(BeCPGLicenseManager licenseManager) {
-		this.licenseManager = licenseManager;
-	}
-
-	/**
-	 * <p>Setter for the field <code>contentService</code>.</p>
-	 *
-	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
-	 */
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
-	}
-
 	/** {@inheritDoc} */
 	@Override
 	protected Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
@@ -203,43 +121,9 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		if ((action == null) || action.isEmpty()) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'action' argument cannot be null or empty");
 		}
-		long concurrentReadUsers = 0;
-		long concurrentSupplierUsers = 0;
-		long concurrentWriteUsers = 0;
-		long namedReadUsers = 0;
-		long namedWriteUsers = 0;
-		long withoutLicenseUsers = 0;
-
-		Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
-		for (Iterator<String> iterator = users.iterator(); iterator.hasNext();) {
-			String user = iterator.next();
-			if ((AuthenticationUtil.getGuestUserName().equals(user) || AuthenticationUtil.getSystemUserName().equals(user))
-					|| (tenantAdminService.isEnabled()
-							&& !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user)))) {
-				iterator.remove();
-			}
-		}
-
-		for (String user : users) {
-			if (!AuthenticationUtil.getAdminUserName().equals(user)) {
-				Set<String> userAuthorities = authorityService.getAuthoritiesForUser(user);
-				if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser)
-						&& userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent)) {
-					concurrentSupplierUsers++;
-				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteNamed)) {
-					namedWriteUsers++;
-				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadNamed)) {
-					namedReadUsers++;
-				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseWriteConcurrent)) {
-					concurrentWriteUsers++;
-				} else if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseReadConcurrent)) {
-					concurrentReadUsers++;
-				} else {
-					withoutLicenseUsers++;
-				}
-			}
-		}
-
+		
+		Set<String> users = fillMonitoringInformation(ret);
+		
 		// #378 : force to use server locale
 		Locale currentLocal = I18NUtil.getLocale();
 		Locale currentContentLocal = I18NUtil.getContentLocale();
@@ -285,33 +169,7 @@ public class AdminModuleWebScript extends DeclarativeWebScript {
 		}
 
 		ret.put("status", "SUCCESS");
-
-		MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-
-		Runtime runtime = Runtime.getRuntime();
-
-		ret.put("diskFreeSpace", contentService.getStoreFreeSpace());
-		ret.put("diskTotalSpace", contentService.getStoreTotalSpace());
-		ret.put("totalMemory", runtime.totalMemory() / 1000000d);
-		ret.put("freeMemory", runtime.freeMemory() / 1000000d);
-		ret.put("maxMemory", runtime.maxMemory() / 1000000d);
-		ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / 1000000d);
-		ret.put("connectedUsers", users.size());
-		ret.put("concurrentReadUsers", concurrentReadUsers);
-		ret.put("concurrentWriteUsers", concurrentWriteUsers);
-		ret.put("concurrentSupplierUsers", concurrentSupplierUsers);
-		ret.put("namedReadUsers", namedReadUsers);
-		ret.put("namedWriteUsers", namedWriteUsers);
-		ret.put("allowedConcurrentRead", licenseManager.getAllowedConcurrentRead());
-		ret.put("allowedConcurrentWrite", licenseManager.getAllowedConcurrentWrite());
-		ret.put("allowedConcurrentSupplier", licenseManager.getAllowedConcurrentSupplier());
-		ret.put("allowedNamedWrite", licenseManager.getAllowedNamedWrite());
-		ret.put("allowedNamedRead", licenseManager.getAllowedNamedRead());
-		ret.put("licenseName", licenseManager.getLicenseName());
-		ret.put("withoutLicenseUsers", withoutLicenseUsers);
-		ret.put("becpgSchema", becpgSchema);
-		ret.put("batchCounts", 0);
-
+		
 		return ret;
 
 	}
