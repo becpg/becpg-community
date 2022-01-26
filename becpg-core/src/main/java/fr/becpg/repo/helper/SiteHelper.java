@@ -17,6 +17,19 @@
  ******************************************************************************/
 package fr.becpg.repo.helper;
 
+import java.io.Serializable;
+
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.site.SiteModel;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.Path;
+import org.alfresco.service.cmr.repository.Path.ChildAssocElement;
+import org.alfresco.service.cmr.repository.Path.Element;
+import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceService;
+
 /**
  * <p>SiteHelper class.</p>
  *
@@ -116,6 +129,86 @@ public class SiteHelper {
 		}
 
 		return ret;
+	}
+	
+	/**
+	 * <p>extractSiteDisplayPath.</p>
+	 * 
+	 * 
+	 * Extracts the display path out of a path but from the site name, and without "documentLibrary".
+	 * 
+	 * If there no site in path, the result is just the display path
+	 */
+	public static String extractSiteDisplayPath(Path path, PermissionService permissionService, NodeService nodeService, NamespaceService namespaceService) {
+
+		StringBuilder buf = new StringBuilder(64);
+
+		boolean isSite = false;
+		boolean isSiteChild = false;
+		
+		for (int i = 0; i < path.size() - 1; i++) {
+			String elementString = null;
+			Element element = path.get(i);
+			
+			if (isSite) {
+				isSiteChild = true;
+				isSite = false;
+			}
+			
+			if (element instanceof ChildAssocElement) {
+				ChildAssociationRef elementRef = ((ChildAssocElement) element).getRef();
+				if (elementRef.getParentRef() != null) {
+					Serializable nameProp = null;
+					if (permissionService.hasPermission(elementRef.getChildRef(), PermissionService.READ) == AccessStatus.ALLOWED) {
+						
+						if (SiteModel.TYPE_SITE.equals(nodeService.getType(elementRef.getChildRef()))) {
+							nameProp = nodeService.getProperty(elementRef.getChildRef(), ContentModel.PROP_TITLE);
+							isSite = true;
+						}
+
+						if (nameProp == null) {
+							nameProp = nodeService.getProperty(elementRef.getChildRef(), ContentModel.PROP_NAME);
+						}
+
+						// use the name property if we are allowed access to it
+						elementString = nameProp.toString();
+					} else {
+						// revert to using QName if not
+						elementString = elementRef.getQName().getLocalName();
+					}
+				}
+			} else {
+				elementString = element.getElementString();
+			}
+			
+			if (!isSiteChild && elementString != null) {
+				buf.append("/");
+				buf.append(elementString);
+			} else if (isSiteChild) {
+				isSiteChild = !isSiteChild;
+			}
+		}
+		
+		String ret = "";
+		
+		String displayPath = buf.toString();
+		
+		if (isSitePath(path.toPrefixString(namespaceService))) {
+			String[] splitted = displayPath.split("/");
+
+			for (int i = Math.min(3, splitted.length); i < splitted.length; i++) {
+				if (ret.length() > 0) {
+					ret += "/";
+				}
+				ret += splitted[i];
+			}
+
+		} else {
+			ret = displayPath;
+		}
+
+		return ret;
+
 	}
 
 }
