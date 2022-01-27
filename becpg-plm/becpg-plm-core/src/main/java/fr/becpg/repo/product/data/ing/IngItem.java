@@ -190,7 +190,7 @@ public class IngItem extends CompositeLabeling {
 	
 	/** {@inheritDoc} */
 	@Override
-	public IngItem clone()  {
+	public IngItem createCopy()  {
 		return new IngItem(this);
 	}
 
