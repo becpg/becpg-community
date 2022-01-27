@@ -8,8 +8,6 @@
 	   		"totalMemory": ${totalMemory?c},
 			"freeMemory": ${freeMemory?c},
 			"maxMemory": ${maxMemory?c},
-			"connectedUsers": ${connectedUsers?c},
-			"connectedUsers": ${connectedUsers?c},
 			"nonHeapMemoryUsage": ${nonHeapMemoryUsage?c},
 			"connectedUsers": ${connectedUsers?c},
 			"concurrentReadUsers": ${concurrentReadUsers?c},
@@ -22,9 +20,9 @@
 			"allowedConcurrentSupplier": ${allowedConcurrentSupplier?c},
 			"allowedNamedWrite": ${allowedNamedWrite?c},
 			"allowedNamedRead": ${allowedNamedRead?c},
-			"licenseName": ${licenseName},
+			"licenseName": "${licenseName}",
 			"withoutLicenseUsers": ${withoutLicenseUsers?c},
-			"becpgSchema": ${becpgSchema},
+			"becpgSchema": "${becpgSchema}",
 			"batchCounts": ${batchCounts?c}
 	   }
 	</#if>
