@@ -17,21 +17,31 @@
  ******************************************************************************/
 package fr.becpg.test.repo.product.formulation;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.formulation.FormulatedEntity;
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -39,6 +49,7 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
@@ -56,6 +67,9 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	@Autowired
+	private FormulationService<FormulatedEntity> formulationService;
 
 	@Override
 	public void setUp() throws Exception {
@@ -140,5 +154,101 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 		});
 
 	}
+	
+	@Test
+	public void testRecursiveFormula() {
+		NodeRef finishedProductDataNodeRef = inWriteTx(() -> {
 
+			SemiFinishedProductData SF2 = new SemiFinishedProductData();
+			SF2.setName("SF2");
+			NodeRef sf2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF2).getNodeRef();
+			
+			SemiFinishedProductData SF1 = new SemiFinishedProductData();
+			SF1.setName("SF1");
+			SF1.getCompoListView().setCompoList(Arrays.asList(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, sf2NodeRef)));
+			NodeRef sf1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF1).getNodeRef();
+			
+			SF2.getCompoListView().setCompoList(Arrays.asList(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, sf1NodeRef)));
+			alfrescoRepository.save(SF2);
+			
+			SemiFinishedProductData SF3 = new SemiFinishedProductData();
+			SF3.setName("SF3");
+			NodeRef sf3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF3).getNodeRef();
+			
+			SemiFinishedProductData SF4 = new SemiFinishedProductData();
+			SF4.setName("SF4");
+			NodeRef sf4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF4).getNodeRef();
+			
+			SemiFinishedProductData SF5 = new SemiFinishedProductData();
+			SF5.setName("SF5");
+			NodeRef sf5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF5).getNodeRef();
+			
+			SF4.getCompoListView().setCompoList(Arrays.asList(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, sf5NodeRef)));
+			alfrescoRepository.save(SF4);
+			
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, sf4NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 5d, ProductUnit.kg, 0d, DeclarationType.Detail, sf4NodeRef));
+			SF3.getCompoListView().setCompoList(compoList);
+
+			alfrescoRepository.save(SF3);
+
+			FinishedProductData FP1 = new FinishedProductData();
+			FP1.setName("FP1");
+			
+			DynamicCharactListItem dynListChar = new DynamicCharactListItem("formula", "90");
+			dynListChar.setMultiLevelFormula(true);
+			
+			dynListChar.setColumnName("bcpg_dynamicCharactColumn1");
+			
+			FP1.getCompoListView().setDynamicCharactList(Arrays.asList(dynListChar));
+			
+			List<CompoListDataItem> compoListFP = new ArrayList<>();
+			compoListFP.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, sf1NodeRef));
+			compoListFP.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, sf3NodeRef));
+			FP1.getCompoListView().setCompoList(compoListFP);
+			
+			alfrescoRepository.create(getTestFolderNodeRef(), FP1);
+
+			return FP1.getNodeRef();
+
+		});
+		
+		inWriteTx(() -> {
+			 L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
+				return formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID);
+			}), false, true);
+			 return true;
+		});
+			
+		inWriteTx(() -> {
+			FinishedProductData FP1 = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
+
+			int checks = 0;
+			
+			for (CompoListDataItem item : FP1.getCompoList()) {
+				
+				SemiFinishedProductData SF = (SemiFinishedProductData) alfrescoRepository.findOne(item.getProduct());
+				
+				Serializable dynCol = nodeService.getProperty(item.getNodeRef(), QName.createQName(BeCPGModel.BECPG_URI, "dynamicCharactColumn1"));
+				
+				assertNotNull(dynCol);
+				
+				if ("SF1".equals(SF.getName())) {
+					JSONObject json = new JSONObject(dynCol.toString());
+					assertEquals(3, ((JSONArray) json.get("sub")).length());
+					checks++;
+				} else if ("SF3".equals(SF.getName())) {
+					JSONObject json = new JSONObject(dynCol.toString());
+					assertEquals(4, ((JSONArray) json.get("sub")).length());
+					checks++;
+				}
+			}
+
+			assertEquals(2, checks);
+			
+			return FP1.getNodeRef();
+		});
+
+	}
 }
