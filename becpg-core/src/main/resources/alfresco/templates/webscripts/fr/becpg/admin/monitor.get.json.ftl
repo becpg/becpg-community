@@ -2,6 +2,7 @@
 {
    "status": "${status}",
 	<#if authenticated??>
+   "authenticated": true,
 	   "systemInfo" : {
 	   		"diskFreeSpace": ${diskFreeSpace?c},
 	   		"diskTotalSpace": ${diskTotalSpace?c},
