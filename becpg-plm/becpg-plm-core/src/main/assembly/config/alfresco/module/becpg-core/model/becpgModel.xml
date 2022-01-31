@@ -2514,7 +2514,10 @@
 				<property name="bcpg:rclDataType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="bcpg:reqDataTypes" />
 					</constraints>
