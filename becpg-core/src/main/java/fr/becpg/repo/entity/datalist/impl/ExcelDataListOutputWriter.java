@@ -402,7 +402,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 				XSSFCellStyle headerStyle = workbook.createCellStyle();
 
-				byte[] rgb2 = { (byte) 0, (byte) 157, (byte) 204 };
+				byte[] rgb2 = { (byte) 0, (byte) 66, (byte) 84 };
 
 				headerStyle.setFillForegroundColor(new XSSFColor(rgb2, new DefaultIndexedColorMap()));
 				headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
