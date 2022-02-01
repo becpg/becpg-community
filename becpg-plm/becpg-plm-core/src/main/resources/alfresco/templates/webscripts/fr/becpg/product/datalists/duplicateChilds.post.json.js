@@ -75,10 +75,34 @@ function runAction(p_params) {
 			if ("{http://www.bcpg.fr/model/becpg/1.0}compoList" == itemNode.type) {
 				var product = itemNode.associations["bcpg:compoListProduct"][0];
 				var parentQty = itemNode.properties["bcpg:compoListQty"];
-				var parentNetWeight = bFormulation.getNetWeight(product);
 				var compoList = getCompoList(product);
 	
 				if (compoList != null) {
+
+					var totalQty = 0;
+					
+					for (var subIndex in compoList.children) {
+						var currentChild = compoList.children[subIndex];
+						if ("{http://www.bcpg.fr/model/becpg/1.0}compoList" == currentChild.type) {
+							
+							var variants = currentChild.properties["bcpg:variantIds"];
+							if(variants!=null && variants.length > 0){
+								var isDefault = false;
+								for(var vIdx in variants ){
+									var variant = variants[vIdx];
+									if(true == variant.properties["bcpg:isDefaultVariant"]){
+										isDefault = true;
+									}
+								}	
+									
+								if(!isDefault){
+									continue;
+								}
+							}
+							
+							totalQty += currentChild.properties["bcpg:compoListQtySubFormula"];
+						}
+					}
 
 					for (var subIndex in compoList.children) {
 						var currentChild = compoList.children[subIndex];
@@ -122,8 +146,8 @@ function runAction(p_params) {
 
 							}
 							var qty = duplicateProperties["bcpg:compoListQtySubFormula"];
-							if ((parentNetWeight != null) && (parentNetWeight != 0 )) {
-								qty = (parentQty * qty) / parentNetWeight;
+							if ((totalQty != null) && (totalQty != 0 )) {
+								qty = (parentQty * qty) / totalQty;
 								duplicateProperties["bcpg:compoListQtySubFormula"] = qty;
 						      }
 							
