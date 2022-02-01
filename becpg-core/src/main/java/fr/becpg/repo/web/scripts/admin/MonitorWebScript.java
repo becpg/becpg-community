@@ -63,24 +63,11 @@ public class MonitorWebScript extends DeclarativeWebScript {
 			
 			Map<String, Object> ret = new HashMap<>();
 			
-			Set<String> users = new HashSet<>(authenticationService.getUsersWithTickets(true));
-			
-			MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
-			
-			Runtime runtime = Runtime.getRuntime();
-			
-			ret.put("diskFreeSpace", contentService.getStoreFreeSpace());
-			ret.put("diskTotalSpace", contentService.getStoreTotalSpace());
-			ret.put("totalMemory", runtime.totalMemory() / 1000000d);
-			ret.put("freeMemory", runtime.freeMemory() / 1000000d);
-			ret.put("maxMemory", runtime.maxMemory() / 1000000d);
-			ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / 1000000d);
-			ret.put("connectedUsers", users.size());
-			
 			fillMonitoringInformation(ret);
 			
-			// clear data as request caller is not becpg-monitors
-			if (!"beCPG Monitors".equals(req.getHeader(HttpHeaders.USER_AGENT))) {
+			if ("beCPG Monitors".equals(req.getHeader(HttpHeaders.USER_AGENT))) {
+				ret.put("authenticated", true);
+			} else {
 				ret.clear();
 			}
 			
