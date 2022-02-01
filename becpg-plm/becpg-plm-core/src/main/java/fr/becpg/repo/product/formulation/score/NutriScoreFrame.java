@@ -1,8 +1,18 @@
 package fr.becpg.repo.product.formulation.score;
 
+import java.util.Objects;
+
 import org.json.JSONObject;
 
 public class NutriScoreFrame {
+
+	private static final String SCORE_STRING = "score";
+
+	private static final String UPPER_VALUE = "upperValue";
+
+	private static final String LOWER_VALUE = "lowerValue";
+
+	private static final String VALUE_STRING = "value";
 
 	private Double value;
 
@@ -15,32 +25,15 @@ public class NutriScoreFrame {
 	public NutriScoreFrame(Double value) {
 		this.value = value;
 	}
-	
-	public static NutriScoreFrame parse(Object frame) {
-		
-		JSONObject jsonObject = new JSONObject(frame.toString());
-		if (jsonObject.has("value") && jsonObject.has("lowerValue") && jsonObject.has("upperValue") && jsonObject.has("score")) {
-			NutriScoreFrame nutriScoreFrame = new NutriScoreFrame(Double.parseDouble(jsonObject.get("value").toString()));
-			
-			//TODO inverser
-			nutriScoreFrame.setLowerValue(jsonObject.get("lowerValue").equals("-Inf") ? Double.MIN_VALUE : Double.parseDouble(jsonObject.get("lowerValue").toString()));
-			nutriScoreFrame.setUpperValue(jsonObject.get("upperValue").equals("+Inf") ? Double.MAX_VALUE : Double.parseDouble(jsonObject.get("upperValue").toString()));
-			nutriScoreFrame.setScore((Integer) jsonObject.get("score"));
-			
-			return nutriScoreFrame;
-		}
-		
-		return null;
-	}
-
+	 
 	public Double getLowerValue() {
 		return lowerValue;
 	}
-	
+
 	public Double getUpperValue() {
 		return upperValue;
 	}
-	
+
 	public Integer getScore() {
 		return score;
 	}
@@ -52,11 +45,11 @@ public class NutriScoreFrame {
 	public void setLowerValue(Double lower) {
 		this.lowerValue = lower;
 	}
-	
+
 	public void setUpperValue(Double upper) {
 		this.upperValue = upper;
 	}
-	
+
 	public void setScore(Integer score) {
 		this.score = score;
 	}
@@ -65,25 +58,64 @@ public class NutriScoreFrame {
 		this.value = value;
 	}
 
+	public static NutriScoreFrame parse(Object frame) {
+		
+		JSONObject jsonObject = new JSONObject(frame.toString());
+		if (jsonObject.has(VALUE_STRING) && jsonObject.has(LOWER_VALUE) && jsonObject.has(UPPER_VALUE) && jsonObject.has(SCORE_STRING)) {
+			NutriScoreFrame nutriScoreFrame = new NutriScoreFrame(Double.parseDouble(jsonObject.get(VALUE_STRING).toString()));
+			
+			nutriScoreFrame.setLowerValue("-Inf".equals(jsonObject.get(LOWER_VALUE)) ? Double.MIN_VALUE : Double.parseDouble(jsonObject.get(LOWER_VALUE).toString()));
+			nutriScoreFrame.setUpperValue("+Inf".equals(jsonObject.get(UPPER_VALUE)) ? Double.MAX_VALUE : Double.parseDouble(jsonObject.get(UPPER_VALUE).toString()));
+			nutriScoreFrame.setScore((Integer) jsonObject.get(SCORE_STRING));
+			
+			return nutriScoreFrame;
+		}
+		
+		return null;
+	}
+
 	public JSONObject toJSON() {
 		
 		JSONObject json = new JSONObject();
 		
-		json.put("value", value);
+		json.put(VALUE_STRING, value);
 		
 		if (lowerValue != null) {
-			json.put("lowerValue", lowerValue == Double.MIN_VALUE ? "-Inf" : lowerValue);
+			json.put(LOWER_VALUE, lowerValue == Double.MIN_VALUE ? "-Inf" : lowerValue);
 		}
 		
 		if (upperValue != null) {
-			json.put("upperValue", upperValue == Double.MAX_VALUE ? "+Inf" : upperValue);
+			json.put(UPPER_VALUE, upperValue == Double.MAX_VALUE ? "+Inf" : upperValue);
 		}
 		
 		if (score != null) {
-			json.put("score", score);
+			json.put(SCORE_STRING, score);
 		}
 		
 		return json;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(value, lowerValue, upperValue, score);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if ((obj == null) || (getClass() != obj.getClass())) {
+			return false;
+		}
+		NutriScoreFrame other = (NutriScoreFrame) obj;
+		return Objects.equals(value, other.value) && Objects.equals(lowerValue, other.lowerValue)
+				&& Objects.equals(upperValue, other.upperValue) && Objects.equals(score, other.score);
+	}
+
+	@Override
+	public String toString() {
+		return "NutriScoreFrame [value=" + value + ", lowerValue=" + lowerValue + ", upperValue=" + upperValue
+				+ ", score=" + score + "]";
+	}
 }
