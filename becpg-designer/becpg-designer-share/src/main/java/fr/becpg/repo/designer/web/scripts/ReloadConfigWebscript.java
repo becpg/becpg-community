@@ -36,7 +36,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 public class ReloadConfigWebscript  extends DeclarativeWebScript {
 	
 
-    private static final Log logger = LogFactory.getLog(DeclarativeWebScript.class);
+    private static final Log logger = LogFactory.getLog(ReloadConfigWebscript.class);
     
 	
 	ConfigService configService;
