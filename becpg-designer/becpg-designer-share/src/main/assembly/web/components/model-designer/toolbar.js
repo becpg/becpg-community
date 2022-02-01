@@ -170,7 +170,7 @@
 			  		               var publishName = me.tree.root.children[0].label;
 
 					               var templateUrl = Alfresco.constants.URL_SERVICECONTEXT + "modules/designer/unpublish?nodeRef="
-					                     + this.tree.modelNodeRef + "&fileName=" + publishName;
+					                     + me.tree.modelNodeRef + "&fileName=" + publishName;
 			                    	 
 					               
 					               var popup = Alfresco.util.PopupManager.displayMessage({
