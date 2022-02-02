@@ -191,7 +191,7 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 						logger.debug("Cannot calculate qty since density is null or equals to 0");
 					}
 				} else {
-					return (vol.multiply(BigDecimal.valueOf(density)).multiply(BigDecimal.valueOf(100))).divide(BigDecimal.valueOf((100 + overrun)));
+					return (vol.multiply(BigDecimal.valueOf(density)).multiply(BigDecimal.valueOf(100))).divide(BigDecimal.valueOf((100 + overrun)), 10, RoundingMode.HALF_UP);
 
 				}
 
