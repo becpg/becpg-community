@@ -993,7 +993,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 	
 	private boolean showPerc(LabelingComponent lblComponent) {
-			return showAllPerc!=null && showAllPerc.matchLocale(I18NUtil.getLocale())  || lblComponent!=null &&  showPercRules.containsKey(lblComponent.getNodeRef());
+		return showPercRules.isEmpty() || showPercRules.containsKey(lblComponent.getNodeRef());
 	}
 
 	private Pair<DecimalFormat, RoundingMode> getDecimalFormat(LabelingComponent lblComponent, Double qty) {
