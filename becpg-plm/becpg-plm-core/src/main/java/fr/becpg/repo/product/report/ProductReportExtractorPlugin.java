@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.report;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -229,7 +230,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 								}
 							}
 						}
-					} else if (!BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListQName) && shouldExtractList(isExtractedProduct, context, type, dataListQName)) {
+					} else if (!BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListQName)
+							&& shouldExtractList(isExtractedProduct, context, type, dataListQName)) {
 						// extract specific datalists
 						loadDataList(dataListsElt, listNodeRef, dataListQName, context);
 					}
@@ -296,7 +298,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				loadAllergenLists(productData, dataListsElt, context);
 			}
 
-			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) || shouldExtractList(isExtractedProduct,context,type, PLMModel.TYPE_COMPOLIST)) {
+			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel)
+					|| shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_COMPOLIST)) {
 				loadCompoList(productData, dataListsElt, context, level);
 			}
 
@@ -425,7 +428,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 		return true;
 	}
-	
+
 	@Override
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes) {
@@ -596,21 +599,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-					for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-						if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
+					for (CompoListDataItem compoListItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+						if ((compoListItem.getProduct() != null) && nodeService.exists(compoListItem.getProduct())) {
 
-							if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
-									|| nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
+							if ((nodeService.getType(compoListItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
+									|| nodeService.getType(compoListItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
 
-								ProductData subProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
-
-								Double parentLossRatio = FormulationHelper.getComponentLossPerc(subProductData, dataItem);
-								Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
-								Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
-										CostsCalculatingFormulationHandler.keepProductUnit);
-
-								loadPackagingListItemForCompo(productData.getNodeRef(), dataItem, subProductData, packagingListElt, 1, qty,
-										qtyForCost, parentLossRatio, context, defaultVariantNodeRef, defaultVariantPackagingData,
+								loadPackagingListItemForCompo(productData, compoListItem, packagingListElt, 1, 1d, 1d, context, defaultVariantNodeRef,
+										defaultVariantPackagingData,
 										(productData.getDropPackagingOfComponents() != null) && productData.getDropPackagingOfComponents());
 
 							}
@@ -623,71 +619,71 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		}
 	}
 
-	private void loadPackagingListItemForCompo(NodeRef entityNodeRef, CompoListDataItem compoListItem, ProductData productData,
-			Element packagingListElt, int level, double qty, double qtyForCost, double parentLossRatio, DefaultExtractorContext context,
-			NodeRef defaultVariantNodeRef, VariantPackagingData defaultVariantPackagingData, boolean dropPackagingOfComponents) {
+	private void loadPackagingListItemForCompo(ProductData productData, CompoListDataItem compoListItem, Element packagingListElt, int level,
+			Double parentQty, Double parentQtyForCost, DefaultExtractorContext context, NodeRef defaultVariantNodeRef,
+			VariantPackagingData defaultVariantPackagingData, boolean dropPackagingOfComponents) {
 
 		if (level > 20) {
 			//Avoid infinite loop
 			return;
 		}
 
-		if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoListItem.getProduct());
+
+		Double parentLossRatio = FormulationHelper.getComponentLossPerc(componentProductData, compoListItem);
+		Double qtyForCost = FormulationHelper.getQtyForCost(compoListItem, 0d, componentProductData,
+				CostsCalculatingFormulationHandler.keepProductUnit) * parentQtyForCost;
+		Double qtyForProduct = FormulationHelper.getPackagingListQtyForProduct(compoListItem, componentProductData)
+				.multiply(BigDecimal.valueOf(parentQty)).doubleValue();
+
+		Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+		Double qty = 0d;
+		if ((netWeight != 0) && (compoListItem.getQty() != null) && (parentQty != null)) {
+			qty = BigDecimal.valueOf(compoListItem.getQty() * parentQty).divide(BigDecimal.valueOf(netWeight), MathContext.DECIMAL64).doubleValue();
+		}
+
+		if (componentProductData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 			Element partElt = packagingListElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName());
 
-			ProductData subProductData = (ProductData) alfrescoRepository.findOne(compoListItem.getComponent());
-
-			loadProductData(entityNodeRef, compoListItem.getComponent(), partElt, context, CostType.Packaging);
+			loadProductData(productData.getNodeRef(), compoListItem.getComponent(), partElt, context, CostType.Packaging);
 			loadDataListItemAttributes(compoListItem, partElt, context);
-			partElt.addAttribute(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT.getLocalName(),
-					(String) nodeService.getProperty(compoListItem.getComponent(), ContentModel.PROP_NAME));
-			Double lossPerc = FormulationHelper.getComponentLossPerc(subProductData, compoListItem);
+			partElt.addAttribute(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT.getLocalName(), componentProductData.getName());
 
-			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_LOSS_PERC.getLocalName(), lossPerc != null ? lossPerc.toString() : "");
+			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_LOSS_PERC.getLocalName(), "" + parentLossRatio);
 			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_QTY.getLocalName(),
 					compoListItem.getQtySubFormula() != null ? compoListItem.getQtySubFormula().toString() : "");
 			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_UNIT.getLocalName(),
 					compoListItem.getCompoListUnit() != null ? compoListItem.getCompoListUnit().toString() : "");
 
-			partElt.addAttribute(ATTR_PACKAGING_QTY_FOR_PRODUCT, Double.toString(qty));
+			partElt.addAttribute(ATTR_PACKAGING_QTY_FOR_PRODUCT, Double.toString(qtyForProduct));
 			partElt.addAttribute(ATTR_QTY_FOR_COST, Double.toString(qtyForCost));
 
 			extractVariants(((AbstractEffectiveVariantListDataItem) compoListItem).getVariants(), partElt);
 
 			partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), Integer.toString(level));
 
-			for (PackagingListDataItem packagingListDataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (PackagingListDataItem packagingListDataItem : componentProductData
+					.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-				loadPackagingItem(entityNodeRef, qtyForCost, parentLossRatio, packagingListDataItem, packagingListElt, defaultVariantNodeRef,
-						defaultVariantPackagingData, context, level + 1, dropPackagingOfComponents, true);
+				loadPackagingItem(productData.getNodeRef(), qtyForCost, parentLossRatio, packagingListDataItem, packagingListElt,
+						defaultVariantNodeRef, defaultVariantPackagingData, context, level + 1, dropPackagingOfComponents, true);
 
 			}
 		}
 
-		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-			for (CompoListDataItem subDataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		if (componentProductData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (CompoListDataItem subDataItem : componentProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 				if ((subDataItem.getProduct() != null) && nodeService.exists(subDataItem.getProduct())) {
 
 					if ((nodeService.getType(subDataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
 							|| nodeService.getType(subDataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
-						ProductData subProductData = (ProductData) alfrescoRepository.findOne(subDataItem.getProduct());
 
-						Double subQty = (FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0)
-								&& (subDataItem.getQty() != null)
-										? (qty * subDataItem.getQty())
-												/ FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT)
-										: 0d;
-
-						Double subQtyForCost = (FormulationHelper.getQtyForCost(subDataItem, parentLossRatio, subProductData,
-								CostsCalculatingFormulationHandler.keepProductUnit) / FormulationHelper.getNetQtyForCost(productData)) * qtyForCost;
-
-						Double newLossPerc = FormulationHelper.getComponentLossPerc(subProductData, subDataItem);
-
-						loadPackagingListItemForCompo(entityNodeRef, subDataItem, subProductData, packagingListElt, level + 1, subQty, subQtyForCost,
-								newLossPerc, context, defaultVariantNodeRef, defaultVariantPackagingData, dropPackagingOfComponents
-										|| ((productData.getDropPackagingOfComponents() != null) && productData.getDropPackagingOfComponents()));
+						loadPackagingListItemForCompo(componentProductData, subDataItem, packagingListElt, level + 1, qty, qtyForCost, context,
+								defaultVariantNodeRef, defaultVariantPackagingData,
+								dropPackagingOfComponents || ((componentProductData.getDropPackagingOfComponents() != null)
+										&& componentProductData.getDropPackagingOfComponents()));
 
 					}
 
@@ -830,24 +826,25 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			extractVariants(dataItem.getVariants(), partElt);
 
 			boolean extractNextDatalist = true;
-			
+
 			if (context.getPreferences().containsKey(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT)) {
-				
-				List<String> maxLevelPrefs = Arrays.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
-				
+
+				List<String> maxLevelPrefs = Arrays
+						.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
+
 				List<Integer> maxLevels = new ArrayList<>();
-				
+
 				for (String pref : maxLevelPrefs) {
 					maxLevels.add(Integer.parseInt(pref));
 				}
-				
+
 				int maxLevel = Collections.min(maxLevels);
 
-				if (maxLevel < level + 1) {
+				if (maxLevel < (level + 1)) {
 					extractNextDatalist = false;
 				}
 			}
-			
+
 			Element dataListsElt = null;
 			if (context.isNotEmptyPrefs(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract)) {
 				if (extractNextDatalist) {
@@ -855,7 +852,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					loadDataLists(dataItem.getProduct(), dataListsElt, context, false, level + 1);
 				}
 			}
-			
+
 			Integer depthLevel = dataItem.getDepthLevel();
 			if (depthLevel != null) {
 				level = (depthLevel - 1) + level;
@@ -865,7 +862,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					partElt.addAttribute(ATTR_PARENT_NODEREF, parentDataItem.getNodeRef().toString());
 				}
 			}
-
 
 			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel)) {
 
@@ -894,26 +890,27 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							Double newLossPerc = FormulationHelper.getComponentLossPerc(subProductData, subDataItem);
 
 							boolean extractNextLevel = true;
-							
+
 							if (context.getPreferences().containsKey(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT)) {
-								List<String> maxLevelPrefs = Arrays.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
-								
+								List<String> maxLevelPrefs = Arrays
+										.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
+
 								List<Integer> maxLevels = new ArrayList<>();
-								
+
 								for (String pref : maxLevelPrefs) {
 									maxLevels.add(Integer.parseInt(pref));
 								}
-								
+
 								int maxLevel = Collections.min(maxLevels);
 
-								if (maxLevel < level + 1) {
+								if (maxLevel < (level + 1)) {
 									extractNextLevel = false;
 								}
 							}
-							
+
 							if (extractNextLevel) {
-								loadCompoListItem(entityNodeRef, dataItem, subDataItem, subProductData, compoListElt, level + 1, subQty, subQtyForCost,
-										newLossPerc, context);
+								loadCompoListItem(entityNodeRef, dataItem, subDataItem, subProductData, compoListElt, level + 1, subQty,
+										subQtyForCost, newLossPerc, context);
 							}
 
 						}
@@ -1237,7 +1234,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			priceBreakElt.addAttribute("projectedQty", entry.getKey().toString());
 
 			String products = "";
-			Double totalSimulatedValue = 0d;
+			double totalSimulatedValue = 0d;
 
 			for (PriceBreakReportData priceBreakReportData : tmp) {
 
@@ -1311,7 +1308,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				unitTotalCost += (netWeight * totalSimulatedValue);
 			}
 			priceBreakElt.addAttribute("products", products);
-			priceBreakElt.addAttribute("simulatedValue", totalSimulatedValue.toString());
+			priceBreakElt.addAttribute("simulatedValue", Double.toString(totalSimulatedValue));
 			priceBreakElt.addAttribute("unitTotalCost", unitTotalCost.toString());
 
 		}
@@ -1629,13 +1626,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					if (isDefault != null) {
 						variantNames += ",";
 					}
-					
+
 					variantNames += ((String) nodeService.getProperty(variantNodeRef, ContentModel.PROP_NAME));
-					
+
 					if ((isDefault == null) || !isDefault) {
 						isDefault = (Boolean) nodeService.getProperty(variantNodeRef, BeCPGModel.PROP_IS_DEFAULT_VARIANT);
 					}
-					
+
 					if (isDefault == null) {
 						isDefault = false;
 					}
@@ -1740,45 +1737,45 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		for (CostListDataItem c : formulatedProduct.getCostList()) {
 			if (c.getCost() != null) {
 
-			Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
-			if ((isFixed == null) || Boolean.FALSE.equals(isFixed)) {
+				Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
+				if ((isFixed == null) || Boolean.FALSE.equals(isFixed)) {
 
-				String costType = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTTYPE);
-				String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
-				String productCurrency = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRICE_CURRENCY);
+					String costType = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTTYPE);
+					String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
+					String productCurrency = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRICE_CURRENCY);
 
-				if ((productCurrency == null) || (costCurrency == null) || productCurrency.equals(costCurrency)) {
+					if ((productCurrency == null) || (costCurrency == null) || productCurrency.equals(costCurrency)) {
 
-					if (c.getValue() != null) {
+						if (c.getValue() != null) {
 
-						if (type.toString().equals(costType)) {
+							if (type.toString().equals(costType)) {
 
-							currentCost += c.getValue();
+								currentCost += c.getValue();
 
-							if (c.getFutureValue() != null) {
-								futureCost += c.getFutureValue();
+								if (c.getFutureValue() != null) {
+									futureCost += c.getFutureValue();
+								}
+
+								if (c.getPreviousValue() != null) {
+									previousCost += c.getPreviousValue();
+								}
+
+							} else if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
+
+								totalCurrentCost += c.getValue();
+
+								if (c.getFutureValue() != null) {
+									totalFutureCost += c.getFutureValue();
+								}
+
+								if (c.getPreviousValue() != null) {
+									totalPreviousCost += c.getPreviousValue();
+								}
+
 							}
-
-							if (c.getPreviousValue() != null) {
-								previousCost += c.getPreviousValue();
-							}
-
-						} else if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
-
-							totalCurrentCost += c.getValue();
-
-							if (c.getFutureValue() != null) {
-								totalFutureCost += c.getFutureValue();
-							}
-
-							if (c.getPreviousValue() != null) {
-								totalPreviousCost += c.getPreviousValue();
-							}
-
 						}
 					}
 				}
-                           }
 			}
 		}
 
@@ -1799,13 +1796,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Override
 	protected boolean isMultiLinesAttribute(QName attribute, DefaultExtractorContext context) {
 		if (attribute != null) {
-			if (attribute.equals(PLMModel.PROP_INSTRUCTION)) {
-				return true;
-			}
-			if (attribute.equals(PLMModel.PROP_PRODUCT_COMMENTS)) {
-				return true;
-			}
-			if (attribute.equals(ContentModel.PROP_DESCRIPTION)) {
+			if (attribute.equals(PLMModel.PROP_INSTRUCTION) || attribute.equals(PLMModel.PROP_PRODUCT_COMMENTS) || attribute.equals(ContentModel.PROP_DESCRIPTION)) {
 				return true;
 			}
 
