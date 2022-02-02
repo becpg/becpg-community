@@ -7293,11 +7293,6 @@
 					<show id="bcpg:eanCode" />
 					<show id="bcpg:suppliers" />
 					<show id="bcpg:entityTplRef" force="true" />
-					
-					<!-- Model -->
-					<show id="bcpg:entityTplEnabled" />
-					<show id="bcpg:entityTplIsDefault" />
-					<show id="bcpg:entityTplScript" />
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -7377,14 +7372,6 @@
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
-						</control>
-					</field>
-					
-					<field id="bcpg:entityTplEnabled" set="template" />
-					<field id="bcpg:entityTplIsDefault" set="template" />
-					<field id="bcpg:entityTplScript" set="template" mandatory="false" read-only="false">
-						<control template="/org/alfresco/components/form/controls/association.ftl">
-							<control-param name="startLocation">{doclib}</control-param>
 						</control>
 					</field>
 					
