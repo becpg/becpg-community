@@ -64,7 +64,7 @@ public class FormulationHelper {
 	private FormulationHelper() {
 		// Private
 	}
-	
+
 	/**
 	 * <p>getQtyInKg.</p>
 	 *
@@ -120,7 +120,6 @@ public class FormulationHelper {
 				unitFactor = ProductUnit.gal.getUnitFactor();
 			}
 		}
-		
 
 		if ((compoListUnit != null) && (componentProductUnit != null)) {
 			if (componentProductUnit.isWeight()) {
@@ -240,10 +239,8 @@ public class FormulationHelper {
 						&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)) {
 					productQtyToTransform = productQtyToTransform / formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes();
 				} else {
-					formulatedProduct.getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-									MLTextHelper.getI18NMessage(MISSING_NUMBER_OF_PRODUCT_PER_BOX), null, new ArrayList<>(),
-									RequirementDataType.Packaging));
+					formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+							MLTextHelper.getI18NMessage(MISSING_NUMBER_OF_PRODUCT_PER_BOX), null, new ArrayList<>(), RequirementDataType.Packaging));
 				}
 			}
 
@@ -266,7 +263,6 @@ public class FormulationHelper {
 			return qty * processListDataItem.getQtyResource();
 		}
 	}
-
 
 	/**
 	 * <p>getNetWeight.</p>
@@ -528,43 +524,54 @@ public class FormulationHelper {
 	 */
 	public static BigDecimal getTareInKg(CompoListDataItem compoList, ProductData subProduct) {
 
+		BigDecimal tare = FormulationHelper.getTareInKg(subProduct);
+		if ((tare != null) && (tare.doubleValue() != 0d)) {
+			BigDecimal packagingListQtyForProduct = getPackagingListQtyForProduct(compoList, subProduct);
+			if (packagingListQtyForProduct != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Compo tare [" + subProduct.getName() + "]: " + tare + " productQty " + packagingListQtyForProduct);
+				}
+				return tare.multiply(packagingListQtyForProduct);
+			}
+		}
+
+		return BigDecimal.valueOf(0d);
+	}
+
+	public static BigDecimal getPackagingListQtyForProduct(CompoListDataItem compoList, ProductData subProduct) {
+
 		ProductUnit compoListUnit = compoList.getCompoListUnit();
 		Double qty = compoList.getQtySubFormula();
 
 		if ((subProduct != null) && (compoListUnit != null) && (qty != null)) {
-			BigDecimal tare = FormulationHelper.getTareInKg(subProduct);
-			if ((tare != null) && (tare.doubleValue() != 0d)) {
-				Double productQty = subProduct.getQty();
-				if (productQty == null) {
+
+			Double productQty = subProduct.getQty();
+			if (productQty == null) {
+				productQty = 1d;
+			}
+
+			if (compoListUnit.isP()) {
+				if ((subProduct.getUnit() != null) && !subProduct.getUnit().isP()) {
 					productQty = 1d;
 				}
 
-				if (compoListUnit.isP()) {
-					if ((subProduct.getUnit() != null) && !subProduct.getUnit().isP()) {
-						productQty = 1d;
-					}
+			} else if (compoListUnit.isWeight() || compoListUnit.isVolume() || compoListUnit.isPerc()) {
 
-				} else if (compoListUnit.isWeight() || compoListUnit.isVolume() || compoListUnit.isPerc()) {
+				productQty = getNetQtyInLorKg(subProduct, 1d);
+				qty = getQtyInKg(compoList);
 
-					productQty = getNetQtyInLorKg(subProduct, 1d);
-					qty = getQtyInKg(compoList);
-
-				}
-
-				if ((qty != null) && !qty.isNaN() && !qty.isInfinite()) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Compo tare [" + subProduct.getName() + "]: " + tare + " qty " + qty + " productQty " + productQty);
-					}
-					if ((productQty != null) && !productQty.isNaN() && !productQty.isInfinite() && (productQty != 0d)) {
-						return tare.multiply(BigDecimal.valueOf(qty)).divide(BigDecimal.valueOf(productQty), MathContext.DECIMAL64);
-					} else {
-						return tare.multiply(BigDecimal.valueOf(qty));
-					}
-				} else {
-					logger.error("Qty/ProductQty is NaN or 0 or infinite:" + qty + " " + productQty + " for " + compoList.getProduct());
-				}
 			}
 
+			if ((qty != null) && !qty.isNaN() && !qty.isInfinite()) {
+
+				if ((productQty != null) && !productQty.isNaN() && !productQty.isInfinite() && (productQty != 0d)) {
+					return BigDecimal.valueOf(qty).divide(BigDecimal.valueOf(productQty), MathContext.DECIMAL64);
+				} else {
+					return BigDecimal.valueOf(qty);
+				}
+			} else {
+				logger.error("Qty/ProductQty is NaN or 0 or infinite:" + qty + " " + productQty + " for " + compoList.getProduct());
+			}
 		}
 
 		return BigDecimal.valueOf(0d);
@@ -683,10 +690,9 @@ public class FormulationHelper {
 						qty = qty / nbByPalet;
 					}
 				}
-			} else if ((
-					!(subProductData.getAspects().contains(PackModel.ASPECT_PALLET)
+			} else if ((!(subProductData.getAspects().contains(PackModel.ASPECT_PALLET)
 					&& PackagingLevel.Secondary.equals(packagingListDataItem.getPkgLevel())
-					&& ProductUnit.PP.equals(packagingListDataItem.getPackagingListUnit()) && (subProductData instanceof PackagingKitData)) )
+					&& ProductUnit.PP.equals(packagingListDataItem.getPackagingListUnit()) && (subProductData instanceof PackagingKitData)))
 					&& (formulatedProduct.getDefaultVariantPackagingData() != null)) {
 				if (packagingLevel.equals(PackagingLevel.Secondary)) {
 					if ((formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)
