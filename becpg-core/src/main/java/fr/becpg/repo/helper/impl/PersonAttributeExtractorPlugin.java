@@ -19,6 +19,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 */
 package fr.becpg.repo.helper.impl;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -81,7 +82,14 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	@Override
 	public String extractPropName(@Nonnull QName type,@Nonnull NodeRef nodeRef) {
 		if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
-			return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME);
+			
+			Serializable propAuthorityDisplayName = nodeService.getProperty(nodeRef, ContentModel.PROP_AUTHORITY_DISPLAY_NAME);
+			
+			if (propAuthorityDisplayName != null) {
+				return (String) propAuthorityDisplayName;
+			}
+			
+			return (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 		} 
 		return getPersonDisplayName((String) nodeService.getProperty(nodeRef, ContentModel.PROP_USERNAME));
 	}
