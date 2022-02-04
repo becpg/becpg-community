@@ -2,7 +2,6 @@ package fr.becpg.repo.survey.data;
 
 import java.util.Objects;
 
-import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -10,8 +9,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
-@AlfQname(qname = "survey:question")
-@AlfCacheable(isCharact = true)
+@AlfQname(qname = "survey:surveyQuestion")
 public class SurveyQuestion extends BeCPGDataObject {
 
 	/**
@@ -106,6 +104,57 @@ public class SurveyQuestion extends BeCPGDataObject {
 	public SurveyQuestion getNextQuestion() {
 		return nextQuestion;
 	}
+	
+	
+
+	public void setParent(SurveyQuestion parent) {
+		this.parent = parent;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public void setQuestionNote(String questionNote) {
+		this.questionNote = questionNote;
+	}
+
+	public void setQuestionUpperNote(String questionUpperNote) {
+		this.questionUpperNote = questionUpperNote;
+	}
+
+	public void setQuestionLowerNote(String questionLowerNote) {
+		this.questionLowerNote = questionLowerNote;
+	}
+
+	public void setQuestionUrl(String questionUrl) {
+		this.questionUrl = questionUrl;
+	}
+
+	public void setQuestionScore(Integer questionScore) {
+		this.questionScore = questionScore;
+	}
+
+	public void setIsMandatory(Boolean isMandatory) {
+		this.isMandatory = isMandatory;
+	}
+
+	public void setResponseType(String responseType) {
+		this.responseType = responseType;
+	}
+
+	public void setResponseCommentType(String responseCommentType) {
+		this.responseCommentType = responseCommentType;
+	}
+
+	public void setResponseCommentLabel(String responseCommentLabel) {
+		this.responseCommentLabel = responseCommentLabel;
+	}
+
+	public void setNextQuestion(SurveyQuestion nextQuestion) {
+		this.nextQuestion = nextQuestion;
+	}
+	
 
 	@Override
 	public int hashCode() {

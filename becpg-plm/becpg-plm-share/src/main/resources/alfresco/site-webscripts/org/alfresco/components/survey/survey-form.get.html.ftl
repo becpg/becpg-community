@@ -7,8 +7,8 @@
    
    <@markup id="html">
       <@uniqueIdDiv>
-            <#assign formId=args.htmlid?js_string?html + "-control">
-            <#assign controlId = args.htmlid?js_string?html +"-survey" >
+            <#assign formId=args.htmlid?js_string?html + "-form">
+            <#assign controlId = args.htmlid?js_string?html +"-control" >
             <#assign fieldHtmlId = args.htmlid?js_string?html +"-survey" >
                   <script type="text/javascript">//<![CDATA[
 				      new Alfresco.FormUI("${formId}", "${args.htmlid?js_string}").setOptions(
@@ -16,7 +16,7 @@
 				         mode: "POST",
 				         enctype: "application/json",
 				         fields:
-				         [{id:"${fieldHtmlId}"],
+				         [{id:"${fieldHtmlId}"}],
 				         fieldConstraints: 
 				         [ ],
 				         disableSubmitButton: false

@@ -76,19 +76,19 @@ public class SurveyServiceImpl implements SurveyService {
 
 			appendQuestionDefinition(definitions, surveyQuestion, questions);
 
-			value.append("qid", survey.getQuestion());
+			value.put("qid", survey.getQuestion());
 			if (survey.getComment() != null) {
-				value.append("comment", survey.getComment());
+				value.put("comment", survey.getComment());
 			}
 
 			if ((surveyQuestion.getResponseType() == null) || surveyQuestion.getResponseType().isEmpty()) {
 				for (NodeRef choice : survey.getChoices()) {
-					value.append("cid", choice);
+					value.put("cid", choice);
 				}
 
 			} else {
 
-				value.append("listOptions", getOptions(survey.getChoices()));
+				value.put("listOptions", getOptions(survey.getChoices()));
 			}
 
 			data.put(value);
@@ -159,17 +159,19 @@ public class SurveyServiceImpl implements SurveyService {
 	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions) throws JSONException {
 
 		if (!questions.contains(surveyQuestion)) {
-			questions.add(surveyQuestion);
+			
 			JSONObject definition = new JSONObject();
 
-			definition.append("id", surveyQuestion.getNodeRef());
-			definition.append("start", questions.isEmpty());
-			definition.append("label", surveyQuestion.getLabel());
-			definition.append("url", surveyQuestion.getQuestionUrl());
-			definition.append("lowerNote", surveyQuestion.getQuestionLowerNote());
-			definition.append("upperNote", surveyQuestion.getQuestionUpperNote());
-			definition.append("note", surveyQuestion.getQuestionNote());
-			definition.append("mandatory", surveyQuestion.getNodeRef());
+			definition.put("id", surveyQuestion.getNodeRef());
+			definition.put("start", questions.isEmpty());
+			definition.put("label", surveyQuestion.getLabel());
+			definition.put("url", surveyQuestion.getQuestionUrl());
+			definition.put("lowerNote", surveyQuestion.getQuestionLowerNote());
+			definition.put("upperNote", surveyQuestion.getQuestionUpperNote());
+			definition.put("note", surveyQuestion.getQuestionNote());
+			definition.put("mandatory", surveyQuestion.getNodeRef());
+			
+			questions.add(surveyQuestion);
 
 			JSONArray choices = new JSONArray();
 			List<NodeRef> definitionChoices = getDefinitionChoices(surveyQuestion);
@@ -177,12 +179,12 @@ public class SurveyServiceImpl implements SurveyService {
 				if (ResponseType.list.toString().equals(surveyQuestion.getResponseType())
 						|| ResponseType.checkboxes.toString().equals(surveyQuestion.getResponseType())) {
 					JSONObject choice = new JSONObject();
-					choice.append("id", surveyQuestion.getNodeRef() + "-choice");
-					choice.append("list", getOptions(definitionChoices));
-					choice.append("multiple", true);
-					choice.append("checkboxes", ResponseType.checkboxes.toString().equals(surveyQuestion.getResponseType()));
+					choice.put("id", surveyQuestion.getNodeRef() + "-choice");
+					choice.put("list", getOptions(definitionChoices));
+					choice.put("multiple", true);
+					choice.put("checkboxes", ResponseType.checkboxes.toString().equals(surveyQuestion.getResponseType()));
 					if (surveyQuestion.getNextQuestion() != null) {
-						choice.append("cid", surveyQuestion.getNextQuestion().getNodeRef());
+						choice.put("cid", surveyQuestion.getNextQuestion().getNodeRef());
 						appendQuestionDefinition(definitions, surveyQuestion.getNextQuestion(), questions);
 					}
 
@@ -194,18 +196,18 @@ public class SurveyServiceImpl implements SurveyService {
 						
 						SurveyQuestion defChoice = (SurveyQuestion) alfrescoRepository.findOne(nodeRef);
 						JSONObject choice = new JSONObject();
-						choice.append("id", defChoice.getNodeRef());
-						choice.append("label", defChoice.getLabel());
+						choice.put("id", defChoice.getNodeRef());
+						choice.put("label", defChoice.getLabel());
 						if (defChoice.getNextQuestion() != null) {
-							choice.append("cid", defChoice.getNextQuestion().getNodeRef());
-							appendQuestionDefinition(definitions, surveyQuestion.getNextQuestion(), questions);
+							choice.put("cid", defChoice.getNextQuestion().getNodeRef());
+							appendQuestionDefinition(definitions, defChoice.getNextQuestion(), questions);
 						}
 						if (CommentType.text.toString().equals(defChoice.getResponseCommentType())
 								|| CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
-							choice.append("comment", true);
-							choice.append("commentLabel", defChoice.getResponseCommentLabel());
+							choice.put("comment", true);
+							choice.put("commentLabel", defChoice.getResponseCommentLabel());
 							if (CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
-								choice.append("textarea", true);
+								choice.put("textarea", true);
 							}
 						}
 
@@ -217,22 +219,22 @@ public class SurveyServiceImpl implements SurveyService {
 			} else if (CommentType.text.toString().equals(surveyQuestion.getResponseCommentType())
 					|| CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 				JSONObject choice = new JSONObject();
-				choice.append("id", surveyQuestion.getNodeRef() + "-choice");
+				choice.put("id", surveyQuestion.getNodeRef() + "-choice");
 
-				choice.append("comment", true);
-				choice.append("commentLabel", surveyQuestion.getResponseCommentLabel());
+				choice.put("comment", true);
+				choice.put("commentLabel", surveyQuestion.getResponseCommentLabel());
 				if (CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
-					choice.append("textarea", true);
+					choice.put("textarea", true);
 				}
 
 				if (surveyQuestion.getNextQuestion() != null) {
-					choice.append("cid", surveyQuestion.getNextQuestion().getNodeRef());
+					choice.put("cid", surveyQuestion.getNextQuestion().getNodeRef());
 					appendQuestionDefinition(definitions, surveyQuestion.getNextQuestion(), questions);
 				}
 
 				choices.put(choice);
 			}
-			definition.append("choices", choices);
+			definition.put("choices", choices);
 
 			definitions.put(definition);
 		}
