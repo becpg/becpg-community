@@ -125,15 +125,30 @@
                                              <a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}"><button ><b>Mostrar</b></button></a>  
                                              
                                              <div>
-                                                <#if (args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"])??>
+                                               <#if (args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"])??>
+		                                          <#list args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"] as item>
+			                                          <#if item.properties["pjt:tlState"]=="Refused">
+			                                          	<#assign hasRefused = true>
+			                                          	<#break>
+			                                          </#if>
+		                                          </#list>
+                                              </#if>
+                                              
+                                                <#if hasRefused??>
                                                    <h3 style="color:#EC6535">Tareas y comentarios denegados</h3>
                                                       <#list args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"] as item>
                                                       <p style="margin-bottom:8px">
                                                       <b>${item.properties["pjt:tlTaskName"]}</b>
                                                          <#if item.properties["pjt:tlState"]=="Refused">
-                                                         <span class="state" style="background-color:#EC6535">rechazado</span>
-                                                         <#else>
-                                                         <span class="state" style="background-color:#0F4454">finalizado</span>
+                                                         <span class="state" style="background-color:#EC6535">rechazada</span>
+                                                         <#elseif item.properties["pjt:tlState"]=="Cancelled">
+                                                         <span class="state" style="background-color:#FF0000">cancelada</span>
+                                                         <#elseif item.properties["pjt:tlState"]=="Completed">
+                                                         <span class="state" style="background-color:#0F4454">terminada</span>
+                                                          <#elseif item.properties["pjt:tlState"]=="Planned">
+                                                         <span class="state" style="background-color:#708090">planificada</span>
+                                                         <#elseif item.properties["pjt:tlState"]=="OnHold">
+                                                         <span class="state" style="background-color:#0000CD">en espera</span>
                                                          </p>
                                                          </#if>
                                                          
