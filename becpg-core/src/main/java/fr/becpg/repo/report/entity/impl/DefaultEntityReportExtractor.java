@@ -725,7 +725,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		// versionLabel
 		String versionLabelDisplayValue = null;
 		QName versionLabelQName = null;
-		if (properties.containsKey(BeCPGModel.PROP_VERSION_LABEL) && (properties.get(BeCPGModel.PROP_VERSION_LABEL) != null)
+		if (properties.containsKey(BeCPGModel.PROP_MANUAL_VERSION_LABEL) && (properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL) != null)
+				&& !"".equals(properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL))) {
+			versionLabelQName = ContentModel.PROP_VERSION_LABEL;
+			properties.put(versionLabelQName, properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL));
+		} else if (properties.containsKey(BeCPGModel.PROP_VERSION_LABEL) && (properties.get(BeCPGModel.PROP_VERSION_LABEL) != null)
 				&& !"".equals(properties.get(BeCPGModel.PROP_VERSION_LABEL))) {
 			versionLabelQName = BeCPGModel.PROP_VERSION_LABEL;
 		} else if (properties.containsKey(ContentModel.PROP_VERSION_LABEL) && (properties.get(ContentModel.PROP_VERSION_LABEL) != null)

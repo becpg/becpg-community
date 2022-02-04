@@ -125,7 +125,17 @@
                                              <a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}"><button ><b>Afficher</b></button></a>  
                                              
                                              <div>
-                                                <#if (args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"])??>
+                                             
+                                             <#if (args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"])??>
+		                                          <#list args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"] as item>
+			                                          <#if item.properties["pjt:tlState"]=="Refused">
+			                                          	<#assign hasRefused = true>
+			                                          	<#break>
+			                                          </#if>
+		                                          </#list>
+                                              </#if>
+                                              
+                                                <#if hasRefused??>
                                                    <h3 style="color:#EC6535">Tâches refusées et commentaires</h3>
                                                       <#list args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"] as item>
                                                       <p style="margin-bottom:8px">
