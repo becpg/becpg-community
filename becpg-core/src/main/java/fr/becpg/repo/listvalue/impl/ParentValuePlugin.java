@@ -58,7 +58,7 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 	private static final String SOURCE_TYPE_PARENT_VALUE = "ParentValue";
 	private static final String SOURCE_TYPE_DATA_LIST_CHARACT = "DataListCharact";
 	private static final String FILTER_PARENT_AS_ENTITY = "parentAsEntity";
-	private static final String FILTER_ITEM_AS_ENTITY = "itemAsEntity";;
+	private static final String FILTER_ITEM_AS_ENTITY = "itemAsEntity";
 
 	@Autowired
 	private EntityListDAO entityListDAO;
