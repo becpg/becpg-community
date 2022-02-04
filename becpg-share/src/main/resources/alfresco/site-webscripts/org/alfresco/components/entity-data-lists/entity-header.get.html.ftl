@@ -83,9 +83,12 @@
 						 </#if>
 				      </span>
 				   </#list>
-                  
+                  	
+                  	<#assign version = item.version>
+   					<#if node.properties["bcpg:manualVersionLabel"]?? && node.properties["bcpg:manualVersionLabel"] != ""><#assign version = node.properties["bcpg:manualVersionLabel"]>
+   					</#if>
 		             	<#if showOnlyLocation == "true" && productState??><span class="product-state ${productState}">[${msg("status."+productState)}]</span></#if>
-						<#if showOnlyLocation == "true" && item.version?? && item.version?length &gt; 0 ><span class="document-version">${item.version}</span></#if>
+						<#if showOnlyLocation == "true" && item.version?? && item.version?length &gt; 0 ><span class="document-version">${version}</span></#if>
                   </div>
                </#if>
                </div>

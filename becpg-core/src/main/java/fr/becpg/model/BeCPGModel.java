@@ -148,6 +148,7 @@ public final class BeCPGModel {
 	public static final QName ASPECT_COMPOSITE_VERSION = QName.createQName(BECPG_URI, "compositeVersion");
 	/** Constant <code>PROP_VERSION_LABEL</code> */
 	public static final QName PROP_VERSION_LABEL = QName.createQName(BECPG_URI, "versionLabel");
+	public static final QName PROP_MANUAL_VERSION_LABEL = QName.createQName(BECPG_URI, "manualVersionLabel");
 
 	// permissionsTpl
 	/** Constant <code>ASPECT_PERMISSIONS_TPL</code> */
