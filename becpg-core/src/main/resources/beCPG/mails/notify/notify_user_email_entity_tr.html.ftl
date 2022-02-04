@@ -112,7 +112,7 @@ margin-top:3px;
                                                 <br /><span>Bitiş tarihi : <b>${args.dueDate?date}</b></span>.
                                                 </p>
                                               
-                                                <br /><a htref="${shareUrl}/page/task-edit?taskId=${args.taskId}"><button ><b>Görevi görüntüle</b></button></a>
+                                                <br /><a href="${shareUrl}/page/task-edit?taskId=${args.taskId}"><button ><b>Görevi görüntüle</b></button></a>
                                        </div>
                                     </td>
                                  </tr>

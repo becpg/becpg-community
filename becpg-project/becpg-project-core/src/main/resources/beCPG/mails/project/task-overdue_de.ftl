@@ -112,7 +112,7 @@ margin-top:3px;
                                                 <br /><span>Geburtstermin : <b>${args.dueDate?date}</b></span>.
                                                 </p>
                                               
-                                                <br /><a htref="${shareUrl}/page/task-edit?taskId=${args.taskId}"><button ><b>Siehe Aufgabe</b></button></a>
+                                                <br /><a href="${shareUrl}/page/task-edit?taskId=${args.taskId}"><button ><b>Siehe Aufgabe</b></button></a>
                                        </div>
                                     </td>
                                  </tr>

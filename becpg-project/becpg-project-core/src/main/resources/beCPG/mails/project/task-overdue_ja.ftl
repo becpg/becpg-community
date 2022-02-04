@@ -112,7 +112,7 @@ margin-top:3px;
                                                 <br /><span>締め切り : <b>${args.dueDate?date}</b></span>.
                                                 </p>
                                               
-                                                <br /><a htref="${shareUrl}/page/task-edit?taskId=${args.taskId}"><button ><b>タスクを表示</b></button></a>
+                                                <br /><a href="${shareUrl}/page/task-edit?taskId=${args.taskId}"><button ><b>タスクを表示</b></button></a>
                                        </div>
                                     </td>
                                  </tr>

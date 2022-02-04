@@ -126,14 +126,29 @@
                                              
                                              <div>
                                                 <#if (args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"])??>
+		                                          <#list args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"] as item>
+			                                          <#if item.properties["pjt:tlState"]=="Refused">
+			                                          	<#assign hasRefused = true>
+			                                          	<#break>
+			                                          </#if>
+		                                          </#list>
+                                              </#if>
+                                              
+                                                <#if hasRefused??>
                                                    <h3 style="color:#EC6535">Nekade uppgifter och kommentarer</h3>
                                                       <#list args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"] as item>
                                                       <p style="margin-bottom:8px">
                                                       <b>${item.properties["pjt:tlTaskName"]}</b>
                                                          <#if item.properties["pjt:tlState"]=="Refused">
                                                          <span class="state" style="background-color:#EC6535">vägrade</span>
-                                                         <#else>
-                                                         <span class="state" style="background-color:#0F4454">färdiga</span>
+                                                         <#elseif item.properties["pjt:tlState"]=="Cancelled">
+                                                         <span class="state" style="background-color:#FF0000">inställt</span>
+                                                         <#elseif item.properties["pjt:tlState"]=="Completed">
+                                                         <span class="state" style="background-color:#0F4454">avslutad</span>
+                                                          <#elseif item.properties["pjt:tlState"]=="Planned">
+                                                         <span class="state" style="background-color:#708090">planerad</span>
+                                                         <#elseif item.properties["pjt:tlState"]=="OnHold">
+                                                         <span class="state" style="background-color:#0000CD">placerad i kö</span>
                                                          </p>
                                                          </#if>
                                                          
