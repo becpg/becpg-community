@@ -233,6 +233,17 @@
 					type="form" formId="supplierPack"
 					itemId="bcpg:packagingKit"></step>
 			</wizard>
+			<wizard id="sample-survey">
+				<step id="step1" labelId="becpg.wizard.supplier.mp.step1.label"
+					titleId="becpg.wizard.supplier.mp.step1.title" type="form" formId="supplier-mp"
+					itemId="bcpg:rawMaterial"></step>
+				<step id="step2" label="Sample survey 1"
+					title="Sample survey 1" type="survey"
+					listId="survey@1" itemId="survey:survey"></step>
+			    <step id="step3" label="Sample survey 2"
+					title="Sample survey 2" type="survey"
+					listId="survey@2" itemId="survey:survey"></step>
+			</wizard>
 		</wizards>
 	</config>
 

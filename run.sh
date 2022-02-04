@@ -101,15 +101,9 @@ test() {
 
 reindex() {
 	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
-	
-	cd /var/lib/docker/volumes/target_solr_data/_data
-	
-	rm -rf archive
-	rm -rf alfrescoModels/*
-	rm -rf workspace
-	
-	cd -
-	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml start solr
+	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml  rm -v solr
+    docker volume rm target_solr_data
+	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up solr
 }
 
 
