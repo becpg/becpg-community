@@ -774,7 +774,13 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							}
 
 							nodeService.removeAspect(branchNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT);
-
+							
+							Serializable manualVersionLabel = nodeService.getProperty(internalBranchToNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+							
+							if (manualVersionLabel != null) {
+								nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL, null);
+							}
+							
 							// Deattach other branches
 							List<NodeRef> sources = associationService.getSourcesAssocs(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
 							for (NodeRef sourceNodeRef : sources) {

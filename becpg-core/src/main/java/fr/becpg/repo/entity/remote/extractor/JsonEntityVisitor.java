@@ -201,7 +201,9 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				visitPropValue(BeCPGModel.PROP_ERP_CODE, entity, properties.get(BeCPGModel.PROP_ERP_CODE), context);
 			}
 			
-			if (properties.get( BeCPGModel.PROP_VERSION_LABEL)!=null && !((String)properties.get( BeCPGModel.PROP_VERSION_LABEL)).isBlank()) {
+			if (properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL)!=null && !((String)properties.get( BeCPGModel.PROP_MANUAL_VERSION_LABEL)).isBlank()) {
+				entity.put(RemoteEntityService.ATTR_VERSION, properties.get( BeCPGModel.PROP_MANUAL_VERSION_LABEL));
+			} else if (properties.get( BeCPGModel.PROP_VERSION_LABEL)!=null && !((String)properties.get( BeCPGModel.PROP_VERSION_LABEL)).isBlank()) {
 				entity.put(RemoteEntityService.ATTR_VERSION, properties.get( BeCPGModel.PROP_VERSION_LABEL));
 			} else 	if (properties.get( ContentModel.PROP_VERSION_LABEL)!=null && !((String)properties.get( ContentModel.PROP_VERSION_LABEL)).isBlank()) {
 				entity.put(RemoteEntityService.ATTR_VERSION, properties.get( ContentModel.PROP_VERSION_LABEL));

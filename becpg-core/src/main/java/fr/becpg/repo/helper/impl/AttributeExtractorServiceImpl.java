@@ -868,7 +868,10 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						tmp.put("metadata", extractMetadata(type, nodeRef));
 					}
 				}
-				if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+				
+				if (properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL) != null && !((String)properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL)).isBlank()) {
+					tmp.put("version", properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL));
+				} else if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 					tmp.put("version", properties.get(BeCPGModel.PROP_VERSION_LABEL));
 				} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 					tmp.put("version", properties.get(ContentModel.PROP_VERSION_LABEL));
@@ -943,7 +946,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		tmp.put("metadata", extractMetadata(type, nodeRef));
 
-		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+		Serializable manualVersionLabel = nodeService.getProperty(nodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+		
+		if (manualVersionLabel instanceof String && !((String) manualVersionLabel).isBlank()) {
+			tmp.put("version", manualVersionLabel);
+		} else if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			tmp.put("version", nodeService.getProperty(nodeRef, BeCPGModel.PROP_VERSION_LABEL));
 		} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			tmp.put("version", nodeService.getProperty(nodeRef, ContentModel.PROP_VERSION_LABEL));
