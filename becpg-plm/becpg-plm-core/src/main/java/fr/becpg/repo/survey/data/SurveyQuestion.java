@@ -28,10 +28,24 @@ public class SurveyQuestion extends BeCPGDataObject {
 	private String questionUrl;
 	private Integer questionScore;
 	private Boolean isMandatory;
+	private Boolean isVisible;
 	private String responseType;
 	private String responseCommentType;
 	private String responseCommentLabel;
 	private SurveyQuestion nextQuestion;
+	
+    private Integer sort;
+    
+    
+    @AlfProp
+	@AlfQname(qname = "bcpg:sort")
+	public Integer getSort() {
+		return sort;
+	}
+
+	public void setSort(Integer sort) {
+		this.sort = sort;
+	}
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:parentLevel")
@@ -79,6 +93,16 @@ public class SurveyQuestion extends BeCPGDataObject {
 	@AlfQname(qname = "survey:isMandatory")
 	public Boolean getIsMandatory() {
 		return isMandatory;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "survey:isVisible")
+	public Boolean getIsVisible() {
+		return isVisible;
+	}
+
+	public void setIsVisible(Boolean isVisible) {
+		this.isVisible = isVisible;
 	}
 
 	@AlfProp
@@ -160,8 +184,8 @@ public class SurveyQuestion extends BeCPGDataObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(isMandatory, label, nextQuestion, parent, questionLowerNote, questionNote, questionScore,
-				questionUpperNote, questionUrl, responseCommentLabel, responseCommentType, responseType);
+		result = prime * result + Objects.hash(isMandatory, isVisible, label, nextQuestion, parent, questionLowerNote, questionNote, questionScore,
+				questionUpperNote, questionUrl, responseCommentLabel, responseCommentType, responseType, sort);
 		return result;
 	}
 
@@ -174,12 +198,13 @@ public class SurveyQuestion extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		SurveyQuestion other = (SurveyQuestion) obj;
-		return Objects.equals(isMandatory, other.isMandatory) && Objects.equals(label, other.label)
+		return Objects.equals(isMandatory, other.isMandatory) && Objects.equals(isVisible, other.isVisible) && Objects.equals(label, other.label)
 				&& Objects.equals(nextQuestion, other.nextQuestion) && Objects.equals(parent, other.parent)
 				&& Objects.equals(questionLowerNote, other.questionLowerNote) && Objects.equals(questionNote, other.questionNote)
 				&& Objects.equals(questionScore, other.questionScore) && Objects.equals(questionUpperNote, other.questionUpperNote)
 				&& Objects.equals(questionUrl, other.questionUrl) && Objects.equals(responseCommentLabel, other.responseCommentLabel)
-				&& Objects.equals(responseCommentType, other.responseCommentType) && Objects.equals(responseType, other.responseType);
+				&& Objects.equals(responseCommentType, other.responseCommentType) && Objects.equals(responseType, other.responseType)
+				&& Objects.equals(sort, other.sort);
 	}
 
 	@Override
@@ -187,7 +212,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 		return "SurveyQuestion [parent=" + parent + ", label=" + label + ", questionNote=" + questionNote + ", questionUpperNote=" + questionUpperNote
 				+ ", questionLowerNote=" + questionLowerNote + ", questionUrl=" + questionUrl + ", questionScore=" + questionScore + ", isMandatory="
 				+ isMandatory + ", responseType=" + responseType + ", responseCommentType=" + responseCommentType + ", responseCommentLabel="
-				+ responseCommentLabel + ", nextQuestion=" + nextQuestion + "]";
+				+ responseCommentLabel + ", nextQuestion=" + nextQuestion + ", sort=" + sort + "]";
 	}
 	
 	

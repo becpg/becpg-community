@@ -20,5 +20,5 @@
 	<url>/becpg/survey</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
-	<transaction allow="readonly" >required</transaction>
+	<transaction allow="readwrite" >required</transaction>
 </webscript>

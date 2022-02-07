@@ -242,7 +242,7 @@
 					listId="survey" itemId="survey:survey"></step>
 			    <step id="step3" label="Sample survey 2"
 					title="Sample survey 2" type="survey"
-					listId="survey@2" itemId="survey:survey"></step>
+					listId="survey@1" itemId="survey:survey"></step>
 			</wizard>
 		</wizards>
 	</config>

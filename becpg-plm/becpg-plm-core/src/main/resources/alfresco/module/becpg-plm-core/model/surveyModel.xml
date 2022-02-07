@@ -118,6 +118,9 @@
 				<property name="survey:isMandatory">
 					<type>d:boolean</type>
 				</property>
+				<property name="survey:isVisible">
+					<type>d:boolean</type>
+				</property>
 				<property name="survey:responseType">
 					<type>d:text</type>
 					<constraints>

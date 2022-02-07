@@ -28,7 +28,7 @@
                
               <div id="${formId}-container" class="form-container">
 			         <div id="${formId}-caption" class="caption"><span class="mandatory-indicator">*</span>${msg("form.required.fields")}</div>
-			         <form id="${formId}" method="POST" accept-charset="utf-8" enctype="application/json" action="${url.context}/proxy/alfresco/becpg/survey">
+			         <form id="${formId}" method="POST" accept-charset="utf-8" enctype="application/json" action="${url.context}/proxy/alfresco/becpg/survey?entityNodeRef=${nodeRef}&dataListName=${list}">
 			      
 					      <div id="${formId}-fields" class="form-fields">
 		
@@ -40,7 +40,7 @@
 					        </div>
 					      
 					        <div id="${formId}-buttons" class="form-buttons">
-							     <input id="${formId}-submit" type="submit" value="${msg("form.button.submit.label")}" />&nbsp;
+							     <input id="${formId}-submit" type="submit" value="${msg("form.button.submit.label")}" />
 							</div>
 					   </form>
 			 </div> 
