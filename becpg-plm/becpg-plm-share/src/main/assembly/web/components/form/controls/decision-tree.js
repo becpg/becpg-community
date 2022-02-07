@@ -110,18 +110,23 @@
                                   if(choice.multiple && choice.checkboxes){
                                 	  for(var z = 0; z< choice.list.length; z++){
                                           var selected = false;
+                                          var lbl = choice.list[z];
+                                          var val = z;
+                                          if(lbl.indexOf('|')>0){
+											  lbl = choice.list[z].split('|')[1];
+											  val = choice.list[z].split('|')[0];
+										  }
                                           if(listOption!=null && listOption!=""){
                                             var values = listOption.split(",");
                                               for(var zz = 0; zz< values.length; zz++){
-                                                  if(values[zz] == z){
+                                                  if(values[zz] == val){
                                                       selected = true;
                                                       break;
                                                   }
                                               }  
                                           }
-                                          
-                                          htmlForm +='<p><input type="checkbox" id="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" name="--group_'+this.id+question.id+'_'+choice.id+'" '+(this.options.disabled?'disabled':'')+' tabindex="0"  class="'+QUESTION_EVENTCLASS+'"  value="'+z+'" '+( selected ? 'checked="checked"':"")+'>';
-                                          htmlForm +='<label for="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" >'+choice.list[z]+'</label></p>';
+                                          htmlForm +='<p><input type="checkbox" id="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" name="--group_'+this.id+question.id+'_'+choice.id+'" '+(this.options.disabled?'disabled':'')+' tabindex="0"  class="'+QUESTION_EVENTCLASS+'"  value="'+val+'" '+( selected ? 'checked="checked"':"")+'>';
+                                          htmlForm +='<label for="checkbox-'+this.id+question.id+'_'+choice.id+'_'+z+'" >'+lbl+'</label></p>';
                                 	  
                                 	  }	  
                                 	  

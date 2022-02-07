@@ -56,17 +56,17 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.report.entity.EntityReportService;
 
 /**
- * <p>EntityCheckOutCheckInServicePolicy class.</p>
+ * <p>EntityVersionPolicy class.</p>
  *
  * @author quere
  * @version $Id: $Id
  */
-public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
+public class EntityVersionPolicy extends AbstractBeCPGPolicy
 		implements CheckOutCheckInServicePolicies.OnCheckOut, CheckOutCheckInServicePolicies.BeforeCheckIn, CheckOutCheckInServicePolicies.OnCheckIn,
 		CheckOutCheckInServicePolicies.BeforeCancelCheckOut, NodeServicePolicies.OnRemoveAspectPolicy,
 		NodeArchiveServicePolicies.BeforePurgeNodePolicy, CheckOutCheckInServicePolicies.OnCancelCheckOut, NodeServicePolicies.OnDeleteNodePolicy, VersionServicePolicies.AfterCreateVersionPolicy {
 
-	private static final Log logger = LogFactory.getLog(EntityCheckOutCheckInServicePolicy.class);
+	private static final Log logger = LogFactory.getLog(EntityVersionPolicy.class);
 
 	private EntityVersionService entityVersionService;
 
@@ -111,7 +111,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 	 */
 	@Override
 	public void doInit() {
-		logger.debug("Init EntityCheckOutCheckInServicePolicy...");
+		logger.debug("Init EntityVersionPolicy...");
 
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckOut.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
 				new JavaBehaviour(this, "onCheckOut"));
@@ -141,7 +141,7 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 
 	/** {@inheritDoc} */
 	@Override
-	//TODO delete in 4.0.0
+	//TODO delete in 3.2.3
 	@Deprecated
 	public void onCheckOut(final NodeRef workingCopyNodeRef) {
 		ruleService.disableRules();
@@ -153,7 +153,8 @@ public class EntityCheckOutCheckInServicePolicy extends AbstractBeCPGPolicy
 		}
 	}
 
-	/** {@inheritDoc} */
+	//TODO delete in 3.2.3
+	@Deprecated
 	@Override
 	public void beforeCheckIn(NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties, String contentUrl, boolean keepCheckedOut) {
 		ruleService.disableRules();

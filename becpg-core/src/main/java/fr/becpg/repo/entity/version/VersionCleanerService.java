@@ -4,7 +4,7 @@ public interface VersionCleanerService {
 	
 	public static final int MAX_PROCESSED_NODES = 5;
 
-	public boolean cleanVersions(int maxProcessedNdoes);
+	public boolean cleanVersions(int maxProcessedNdoes, String path);
 
 	public void cleanVersionStore();
 

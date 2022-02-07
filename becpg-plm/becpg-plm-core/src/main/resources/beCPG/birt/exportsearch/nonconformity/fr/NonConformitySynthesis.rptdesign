@@ -1174,19 +1174,61 @@
                     <row id="115">
                         <property name="height">0.8125in</property>
                         <cell id="770">
-                            <property name="backgroundImage">./logo.png</property>
                             <property name="backgroundRepeat">no-repeat</property>
                             <property name="backgroundSizeHeight">cover</property>
                             <property name="backgroundSizeWidth">cover</property>
                             <property name="paddingLeft">1pt</property>
                             <property name="textAlign">left</property>
-                            <image id="12189">
-                                <property name="height">0.7083333333333334in</property>
-                                <property name="width">0.9375in</property>
+                            <image id="12188">
+                                <property name="height">80%</property>
+                                <property name="width">80%</property>
+                                <property name="dataSet">imgLogo</property>
                                 <list-property name="visibility">
                                     <structure>
                                         <property name="format">all</property>
-                                        <expression name="valueExpr" type="javascript">reportContext.getMessage("displayBeCPGLogo")=="false"</expression>
+                                        <expression name="valueExpr" type="javascript">row["img"]==null ||row["img"]==""</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
+                                    </structure>
+                                </list-property>
+                                <property name="source">expr</property>
+                                <expression name="valueExpr">row["img"]</expression>
+                            </image>
+                            <image id="12189">
+                                <property name="height">0.7083333333333334in</property>
+                                <property name="width">0.9375in</property>
+                                <property name="dataSet">imgLogo</property>
+                                <list-property name="visibility">
+                                    <structure>
+                                        <property name="format">all</property>
+                                        <expression name="valueExpr" type="javascript">row["img"]!=null</expression>
+                                    </structure>
+                                </list-property>
+                                <list-property name="boundDataColumns">
+                                    <structure>
+                                        <property name="name">id</property>
+                                        <text-property name="displayName">id</text-property>
+                                        <expression name="expression" type="javascript">dataSetRow["id"]</expression>
+                                        <property name="dataType">string</property>
+                                    </structure>
+                                    <structure>
+                                        <property name="name">img</property>
+                                        <text-property name="displayName">img</text-property>
+                                        <expression name="expression" type="javascript">reportContext.getAppContext().get(dataSetRow["id"]);</expression>
+                                        <property name="dataType">blob</property>
+                                        <property name="allowExport">true</property>
                                     </structure>
                                 </list-property>
                                 <property name="source">embed</property>
@@ -1198,6 +1240,7 @@
                             <label id="120">
                                 <property name="fontSize">16pt</property>
                                 <property name="fontWeight">bold</property>
+                                <property name="color">#4D4D4D</property>
                                 <property name="textAlign">center</property>
                                 <text-property name="text">Rapport de Non Conformités</text-property>
                             </label>

@@ -37,7 +37,7 @@
 	<bean id="codePolicy" class="fr.becpg.repo.entity.policy.CodePolicy" parent="abstractBeCPGPolicy">
 		<property name="autoNumService" ref="autoNumService" />
 	</bean>
-
+	
 	<bean id="dynListPolicy" class="fr.becpg.repo.dictionary.constraint.DynListPolicy" parent="abstractBeCPGPolicy">
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
 		<property name="namespaceService" ref="namespaceService" />
@@ -61,7 +61,7 @@
 		<property name="entityDictionaryService" ref="cachedDictionaryService" />
 	</bean>
 
-	<bean id="entityCheckOutCheckInServicePolicy" class="fr.becpg.repo.entity.policy.EntityCheckOutCheckInServicePolicy"
+	<bean id="entityVersionPolicy" class="fr.becpg.repo.entity.policy.EntityVersionPolicy"
 		parent="abstractBeCPGPolicy">
 		<property name="entityVersionService" ref="entityVersionService" />
 		<property name="entityReportService" ref="entityReportService" />

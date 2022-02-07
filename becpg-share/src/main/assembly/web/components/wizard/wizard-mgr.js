@@ -101,7 +101,7 @@
 									 var step = me.options.wizardStruct[currentIndex];
 									 if (step != null)
 									 {
-										 if (step.type == "form")
+										 if (step.type == "form" || step.type == "survey")
 										 {
 											 if (step.form != null)
 											 {
@@ -128,12 +128,12 @@
 									 var step = me.options.wizardStruct[priorIndex];
 									 var nextStep = me.options.wizardStruct[currentIndex];
 									 // Load next step
-									 if(step!=null && nextStep!=null && (step.type != "form"  || currentIndex < priorIndex) ){
+									 if(step!=null && nextStep!=null && ((step.type != "form" && step.type != "survey")  || currentIndex < priorIndex) ){
 										 if(currentIndex > priorIndex){
 											 nextStep.nodeRef = step.nodeRef;
 										 }
 										 
-										 if(step.type != "form" && step.nextStepWebScript!=null){
+										 if((step.type != "form" && step.type != "survey") && step.nextStepWebScript!=null){
 
 											 var url = YAHOO.lang.substitute(
 													 Alfresco.constants.PROXY_URI + step.nextStepWebScript, {
@@ -164,7 +164,7 @@
 									 var step = me.options.wizardStruct[currentIndex];
 									 if (step != null)
 									 {
-										 if (step.type == "form")
+										 if (step.type == "form" || step.type == "survey")
 										 {
 											 if (step.form != null)
 											 {
@@ -177,7 +177,7 @@
 											 } else {
 												 isValid = true;
 											 }
-										 }
+										 } 
 									 }
 
 									 if(isValid && !(step!=null && step.finish) ){
@@ -374,7 +374,19 @@
 									 nodeRef : step.nodeRef,
 									 title : encodeURIComponent(step.label)
 								 });
-					 }
+					 } else if(step.type == "survey"){
+						url =  YAHOO.lang
+						 .substitute(
+								 Alfresco.constants.URL_SERVICECONTEXT + "components/survey/survey-form" + 
+								 "?list={list}&nodeRef={nodeRef}&itemType={itemType}&title={title}",
+								 {
+									 nodeRef : step.nodeRef,
+									 list : step.listId,
+									 itemType : step.itemId,
+									 title : encodeURIComponent(step.label)
+								 });
+						
+					  } 
 
 
 					 if(url!=null){

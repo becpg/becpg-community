@@ -993,7 +993,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 	
 	private boolean showPerc(LabelingComponent lblComponent) {
-			return showAllPerc!=null && showAllPerc.matchLocale(I18NUtil.getLocale())  || lblComponent!=null &&  showPercRules.containsKey(lblComponent.getNodeRef());
+		return showPercRules.isEmpty() || showPercRules.containsKey(lblComponent.getNodeRef());
 	}
 
 	private Pair<DecimalFormat, RoundingMode> getDecimalFormat(LabelingComponent lblComponent, Double qty) {
@@ -1523,9 +1523,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
 					qtyPercWithYield = (useVolume ? volumePercWithYield : qtyPercWithYield);
 					
-					
+					boolean shouldSkip = shouldSkip(component.getNodeRef(), qtyPerc);
+					boolean shouldSkipWithYield = shouldSkip(component.getNodeRef(), qtyPercWithYield);
 
-					if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
+					if (!(shouldSkip && shouldSkipWithYield)) {
 
 						String subLabel = "";
 						if (component instanceof CompositeLabeling) {
@@ -1558,8 +1559,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								
 								
 								tableContent.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), qtyPerc)
-										.format(new Object[] { decorate(subLabel), showPerc ? qtyPerc : null, geoOriginsLabel != null ? decorate(geoOriginsLabel) : "",
-												bioOriginsLabel != null ? decorate(bioOriginsLabel) : "",  showPerc ?  qtyPercWithYield : null }));
+										.format(new Object[] { decorate(subLabel), showPerc && !shouldSkip ? qtyPerc : null, geoOriginsLabel != null ? decorate(geoOriginsLabel) : "",
+												bioOriginsLabel != null ? decorate(bioOriginsLabel) : "",  showPerc && !shouldSkipWithYield ?  qtyPercWithYield : null }));
 							}
 
 							if (qtyPerc != null) {
