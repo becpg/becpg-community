@@ -3147,9 +3147,12 @@
 		</aspect>
 		
 		<!-- version with datalists -->
+		
+<!-- 		Deprecated -->
 		<aspect name="bcpg:compositeVersion">
 			<title>Versionable with datalists</title>
 			<properties>
+			<!-- 		Deprecated -->
 				<property name="bcpg:versionDescription">
 					<title>Version Label</title>
 					<type>d:text</type>
@@ -3159,6 +3162,7 @@
 		                  <facetable>false</facetable>
 		            </index>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:versionLabel">
 					<title>Version Label</title>
 					<type>d:text</type>
@@ -3168,6 +3172,7 @@
 		                  <facetable>false</facetable>
 		            </index>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenCreated">
 					<title>Created</title>
 					<type>d:datetime</type>
@@ -3177,6 +3182,7 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenCreator">
 					<title>Creator</title>
 					<type>d:text</type>
@@ -3186,6 +3192,7 @@
 		                  <facetable>false</facetable>
 		            </index>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenModified">
 					<title>Modified</title>
 					<type>d:datetime</type>
@@ -3195,6 +3202,7 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenModifier">
 					<title>Modifier</title>
 					<type>d:text</type>
@@ -3204,6 +3212,7 @@
 		                  <facetable>false</facetable>
 		            </index>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenAccessed">
 					<title>Accessed</title>
 					<type>d:datetime</type>
@@ -3213,6 +3222,7 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenNodeRef">
 					<type>d:text</type>
 					<mandatory enforced="true">false</mandatory>
@@ -3221,6 +3231,7 @@
 		                  <facetable>false</facetable>
 		            </index>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenNodeDbId">
 					<type>d:long</type>
 					<mandatory enforced="true">false</mandatory>
@@ -4476,6 +4487,9 @@
 		                  <tokenised>false</tokenised>
 		                  <facetable>true</facetable>
 		            </index>
+				</property>
+				<property name="bcpg:manualVersionLabel">
+					<type>d:text</type>
 				</property>
 			</properties>
 			<associations>

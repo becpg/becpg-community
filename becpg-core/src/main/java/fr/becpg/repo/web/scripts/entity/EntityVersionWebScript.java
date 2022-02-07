@@ -4,6 +4,7 @@
 package fr.becpg.repo.web.scripts.entity;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -14,6 +15,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.NoSuchPersonException;
 import org.alfresco.service.cmr.security.PersonService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
@@ -26,6 +30,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.version.EntityVersion;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -57,6 +62,8 @@ public class EntityVersionWebScript extends AbstractWebScript {
 	private AttributeExtractorService attributeExtractorService;
 
 	private ServiceRegistry serviceRegistry;
+	
+	private VersionService versionService;
 
 	/**
 	 * <p>Setter for the field <code>attributeExtractorService</code>.</p>
@@ -102,6 +109,10 @@ public class EntityVersionWebScript extends AbstractWebScript {
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
 	}
+	
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -131,7 +142,15 @@ public class EntityVersionWebScript extends AbstractWebScript {
 				JSONObject jsonVersion = new JSONObject();
 				jsonVersion.put("nodeRef", nodeRef);
 				jsonVersion.put("name", nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-				jsonVersion.put("label", RepoConsts.INITIAL_VERSION);
+				
+				Serializable manualVersionLabel = nodeService.getProperty(nodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+				
+				if (manualVersionLabel instanceof String && !((String) manualVersionLabel).isBlank()) {
+					jsonVersion.put("label", manualVersionLabel);
+				} else {
+					jsonVersion.put("label", RepoConsts.INITIAL_VERSION);
+				}
+				
 				jsonVersion.put("description", "");
 				jsonVersion.put("createdDate", displayFormat.format((Date) nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED)));
 				jsonVersion.put("createdDateISO", ISO8601DateFormat.format((Date) nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED)));
@@ -150,9 +169,31 @@ public class EntityVersionWebScript extends AbstractWebScript {
 					if (name.endsWith(RepoConsts.VERSION_NAME_DELIMITER + version.getVersionLabel())) {
 						name = name.replace(RepoConsts.VERSION_NAME_DELIMITER + version.getVersionLabel(), "");
 					}
-
+					
 					jsonVersion.put("name", name);
-					jsonVersion.put("label", version.getVersionLabel());
+					
+					VersionHistory versionHistory = versionService.getVersionHistory(version.getEntityNodeRef());
+					
+					NodeRef headVersionNodeRef = null;
+					
+					if (versionHistory != null) {
+						Version headVersion = versionService.getVersionHistory(version.getEntityNodeRef()).getHeadVersion();
+						headVersionNodeRef = headVersion.getFrozenStateNodeRef();
+					}
+					
+					boolean isHeadVersion = version.getFrozenStateNodeRef().equals(headVersionNodeRef);
+					
+					Serializable manualVersionLabel = null;
+					
+					if (isHeadVersion) {
+						manualVersionLabel = nodeService.getProperty(version.getEntityNodeRef(), BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+					}
+					
+					if (manualVersionLabel instanceof String && !((String) manualVersionLabel).isBlank()) {
+						jsonVersion.put("label", manualVersionLabel);
+					} else {
+						jsonVersion.put("label", version.getVersionLabel());
+					}
 					
 					String description = version.getDescription();
 					
@@ -196,7 +237,12 @@ public class EntityVersionWebScript extends AbstractWebScript {
 					JSONObject jsonBranch = new JSONObject();
 					jsonBranch.put("nodeRef", branchNodeRef);
 					jsonBranch.put("name", nodeService.getProperty(branchNodeRef, ContentModel.PROP_NAME));
-					if (nodeService.hasAspect(branchNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+					
+					Serializable manualVersionLabel = nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+					
+					if (manualVersionLabel instanceof String && !((String) manualVersionLabel).isBlank()) {
+						jsonBranch.put("label", manualVersionLabel);
+					} else if (nodeService.hasAspect(branchNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 						jsonBranch.put("label", nodeService.getProperty(branchNodeRef, ContentModel.PROP_VERSION_LABEL));
 					} else {
 						jsonBranch.put("label", RepoConsts.INITIAL_VERSION);

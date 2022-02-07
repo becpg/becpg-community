@@ -16,7 +16,7 @@
          color:#ff642d;
          padding: 15px 32px;
          text-align: center;
-         text-decoration: none;
+         text-decoration: none; 
          font-size: 16px;
          cursor : pointer;
          margin-bottom: 5px;
@@ -126,14 +126,29 @@
                                              
                                              <div>
                                                 <#if (args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"])??>
+		                                          <#list args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"] as item>
+			                                          <#if item.properties["pjt:tlState"]=="Refused">
+			                                          	<#assign hasRefused = true>
+			                                          	<#break>
+			                                          </#if>
+		                                          </#list>
+                                              </#if>
+                                              
+                                                <#if hasRefused??>
                                                    <h3 style="color:#EC6535">Denied tasks and comments</h3>
                                                       <#list args.projectTask.sourceAssocs["pjt:tlRefusedTaskRef"] as item>
                                                       <p style="margin-bottom:8px">
                                                       <b>${item.properties["pjt:tlTaskName"]}</b>
                                                          <#if item.properties["pjt:tlState"]=="Refused">
                                                          <span class="state" style="background-color:#EC6535">refused</span>
-                                                         <#else>
-                                                         <span class="state" style="background-color:#0F4454">finished</span>
+                                                         <#elseif item.properties["pjt:tlState"]=="Cancelled">
+                                                         <span class="state" style="background-color:#FF0000">cancelled</span>
+                                                         <#elseif item.properties["pjt:tlState"]=="Completed">
+                                                         <span class="state" style="background-color:#0F4454">completed</span>
+                                                          <#elseif item.properties["pjt:tlState"]=="Planned">
+                                                         <span class="state" style="background-color:#708090">planned</span>
+                                                         <#elseif item.properties["pjt:tlState"]=="OnHold">
+                                                         <span class="state" style="background-color:#0000CD">on hold</span>
                                                          </p>
                                                          </#if>
                                                          
@@ -153,7 +168,7 @@
                                                                </#if>
                                                             </div>
                                                                <br/>
-                                                </#if>
+                                               				 </#if>
                                                       </#list>
                                                 </#if>
                                              </div>

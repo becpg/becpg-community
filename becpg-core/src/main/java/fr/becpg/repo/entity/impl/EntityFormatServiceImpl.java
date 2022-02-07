@@ -469,7 +469,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		long start = System.currentTimeMillis();
 		
-		Set<NodeRef> relatives = findConvertibleRelatives(node, new HashSet<>(), null, -1, new AtomicInteger(0));
+		Set<NodeRef> relatives = findConvertibleRelatives(node, new HashSet<>(), null, -1, new AtomicInteger(0), null);
 		
 		if (relatives.size() > 1) {
 			String name = (String) nodeService.getProperty(node, ContentModel.PROP_NAME);
@@ -597,7 +597,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	}
 	
 	@Override
-	public Set<NodeRef> findConvertibleRelatives(NodeRef originalEntity, Set<NodeRef> visited, final List<NodeRef> ignoredItems, final int maxProcessedNodes, AtomicInteger currentCount) {
+	public Set<NodeRef> findConvertibleRelatives(NodeRef originalEntity, Set<NodeRef> visited, final List<NodeRef> ignoredItems, final int maxProcessedNodes, AtomicInteger currentCount, String path) {
 		Set<NodeRef> ret = new LinkedHashSet<>();
 		
 		if ((maxProcessedNodes >= 0 && currentCount.get() >= maxProcessedNodes) || visited.contains(originalEntity) || !nodeService.exists(originalEntity)) {
@@ -628,7 +628,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				
 				logger.trace("findConvertibleRelatives from " + originalEntity + "to " + entitySource);
 				
-				Set<NodeRef> convertibleRelatives = findConvertibleRelatives(entitySource, visited, ignoredItems, maxProcessedNodes, currentCount);
+				Set<NodeRef> convertibleRelatives = findConvertibleRelatives(entitySource, visited, ignoredItems, maxProcessedNodes, currentCount, path);
 				
 				if (ignoredItems != null) {
 					convertibleRelatives.removeAll(ignoredItems);
@@ -638,10 +638,24 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			}
 		}
 		
-		if ((ignoredItems == null || !ignoredItems.contains(originalEntity)) && nodeService.hasAspect(originalEntity, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
-			ret.add(originalEntity);
-			currentCount.addAndGet(1);
-			logger.trace("found " + currentCount.get() + " items out of " + maxProcessedNodes);
+		
+		if (ignoredItems == null || !ignoredItems.contains(originalEntity)) {
+			
+			boolean isConvertible = entityDictionaryService.isSubClass(nodeService.getType(originalEntity), BeCPGModel.TYPE_ENTITY_V2);
+			
+			if (isConvertible) {
+				isConvertible = nodeService.hasAspect(originalEntity, BeCPGModel.ASPECT_COMPOSITE_VERSION);
+				
+				if (!isConvertible && path != null) {
+					isConvertible = nodeService.getPath(originalEntity).toPrefixString(namespaceService).contains(path);
+				}
+			}
+			
+			if (isConvertible) {
+				ret.add(originalEntity);
+				currentCount.addAndGet(1);
+				logger.trace("found " + currentCount.get() + " items out of " + maxProcessedNodes);
+			}
 		}
 		
 		return ret;

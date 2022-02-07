@@ -50,7 +50,7 @@ public interface EntityFormatService {
 
 	public NodeRef convertVersionHistoryNodeRef(NodeRef from);
 
-	public Set<NodeRef> findConvertibleRelatives(NodeRef originalEntity, Set<NodeRef> visited, List<NodeRef> nextWork, int maxProcessedNodes, AtomicInteger currentCount);
+	public Set<NodeRef> findConvertibleRelatives(NodeRef originalEntity, Set<NodeRef> visited, List<NodeRef> nextWork, int maxProcessedNodes, AtomicInteger currentCount, String path);
 
 	public void moveToImportToDoFolder(NodeRef toMove);
 

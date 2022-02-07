@@ -17,6 +17,9 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -58,11 +61,10 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 
 		logger.debug("Composition calculating visitor");
 
-		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				|| formulatedProduct instanceof ProductSpecificationData) {
+		if (formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)) {
 			return true;
 		}
-		
+
 		// Take in account net weight
 		if (formulatedProduct.getUnit() != null) {
 			Double qty = null;
@@ -98,29 +100,28 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
-			Double qtyInKg = calculateQtyInKg(component.getData());
-			if(logger.isDebugEnabled()) {
+			BigDecimal qtyInKg = calculateQtyInKg(component.getData());
+			if (logger.isDebugEnabled()) {
 				logger.debug("qtySubFormula: " + qtyInKg + " parentQty: " + parentQty);
 			}
-			if (qtyInKg != null) {
 
-				// take in account percentage
-				if (ProductUnit.Perc.equals(component.getData().getCompoListUnit()) && (parentQty != null) && !parentQty.equals(0d)) {
-					qtyInKg = (qtyInKg * parentQty) / 100;
-				}
-
-				// Take in account yield that is defined on component
-				Double qty;
-				if (component.isLeaf()) {
-					qty = (qtyInKg * 100) / FormulationHelper.getYield(component.getData());
-					if(formulatedProduct.getManualYield()!=null && formulatedProduct.getManualYield()!=0d) {
-						qty = (qtyInKg * 100) / formulatedProduct.getManualYield();
-					}
-				} else {
-					qty = qtyInKg;
-				}
-				component.getData().setQty(qty);
+			// take in account percentage
+			if (ProductUnit.Perc.equals(component.getData().getCompoListUnit()) && (parentQty != null) && !parentQty.equals(0d)) {
+				qtyInKg = qtyInKg.multiply(BigDecimal.valueOf(parentQty)).divide(BigDecimal.valueOf(100), 10, RoundingMode.HALF_UP);
 			}
+
+			// Take in account yield that is defined on component
+
+			if (component.isLeaf()) {
+				if ((formulatedProduct.getManualYield() != null) && (formulatedProduct.getManualYield() != 0d)) {
+					qtyInKg = qtyInKg.multiply(BigDecimal.valueOf(100)).divide(BigDecimal.valueOf(formulatedProduct.getManualYield()), 10,
+							RoundingMode.HALF_UP);
+				} else {
+					qtyInKg = qtyInKg.multiply(BigDecimal.valueOf(100)).divide(BigDecimal.valueOf(FormulationHelper.getYield(component.getData())),
+							10, RoundingMode.HALF_UP);
+				}
+			}
+			component.getData().setQty(qtyInKg.doubleValue());
 
 			// calculate children
 			if (!component.isLeaf()) {
@@ -151,12 +152,11 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 		}
 	}
 
-	private Double calculateQtyInKg(CompoListDataItem compoListDataItem) {
+
+	private BigDecimal calculateQtyInKg(CompoListDataItem compoListDataItem) {
 		Double qty = compoListDataItem.getQtySubFormula();
 		ProductUnit compoListUnit = compoListDataItem.getCompoListUnit();
-		
-		
-		
+
 		ProductData componentProductData = alfrescoRepository.findOne(compoListDataItem.getProduct());
 
 		if ((qty != null) && (compoListUnit != null)) {
@@ -164,20 +164,21 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 			Double unitFactor = compoListUnit.getUnitFactor();
 
 			if (compoListUnit.isWeight()) {
-				return qty / unitFactor;
+				return BigDecimal.valueOf(qty).divide(BigDecimal.valueOf(unitFactor), 10, RoundingMode.HALF_UP);
 			} else if (compoListUnit.isP()) {
 
 				Double productQty = FormulationHelper.QTY_FOR_PIECE;
 
-				if (componentProductData.getUnit() != null && componentProductData.getUnit().isP() && componentProductData.getQty() != null) {
+				if ((componentProductData.getUnit() != null) && componentProductData.getUnit().isP() && (componentProductData.getQty() != null)) {
 					productQty = componentProductData.getQty();
 				}
 
-				return (FormulationHelper.getNetWeight(componentProductData, FormulationHelper.DEFAULT_NET_WEIGHT) * qty) / productQty;
+				return BigDecimal.valueOf(FormulationHelper.getNetWeight(componentProductData, FormulationHelper.DEFAULT_NET_WEIGHT))
+						.multiply(BigDecimal.valueOf(qty)).divide(BigDecimal.valueOf(productQty), 10, RoundingMode.HALF_UP);
 
 			} else if (compoListUnit.isVolume()) {
 
-				qty = qty / unitFactor;
+				BigDecimal vol = BigDecimal.valueOf(qty).divide(BigDecimal.valueOf(unitFactor), 10, RoundingMode.HALF_UP);
 
 				Double overrun = compoListDataItem.getOverrunPerc();
 				if (compoListDataItem.getOverrunPerc() == null) {
@@ -190,14 +191,17 @@ public class CompositionQtyCalculatingFormulationHandler extends FormulationBase
 						logger.debug("Cannot calculate qty since density is null or equals to 0");
 					}
 				} else {
-					return (qty * density * 100) / (100 + overrun);
+					return (vol.multiply(BigDecimal.valueOf(density)).multiply(BigDecimal.valueOf(100))).divide(BigDecimal.valueOf((100 + overrun)), 10, RoundingMode.HALF_UP);
 
 				}
 
+				return vol;
+
 			}
-			return qty;
+
+			return BigDecimal.valueOf(qty);
 		}
 
-		return FormulationHelper.DEFAULT_COMPONANT_QUANTITY;
+		return BigDecimal.valueOf(FormulationHelper.DEFAULT_COMPONANT_QUANTITY);
 	}
 }

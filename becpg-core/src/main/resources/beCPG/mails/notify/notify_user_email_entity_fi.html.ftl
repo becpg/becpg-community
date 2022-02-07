@@ -112,7 +112,7 @@ margin-top:3px;
                                                 <br /><span>Eräpäivä : <b>${args.dueDate?date}</b></span>.
                                                 </p>
                                               
-                                                <br /><a htref="${shareUrl}/page/task-edit?taskId=${args.taskId}"><button ><b>Katso tehtävä</b></button></a>
+                                                <br /><a href="${shareUrl}/page/task-edit?taskId=${args.taskId}"><button ><b>Katso tehtävä</b></button></a>
                                        </div>
                                     </td>
                                  </tr>
