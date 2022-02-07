@@ -61,6 +61,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 	private static final String PARAM_OLD_USERNAME = "oldUserName";
 	private static final String PARAM_NEW_USERNAME = "newUserName";	
 	private static final String PARAM_NUMBER = "number";	
+	private static final String PARAM_PATH = "path";	
 
 
 	private static final String ACTION_DELETE_MODEL = "deleteModel";
@@ -225,7 +226,13 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 				maxProcessedNodes = Integer.parseInt(templateArgs.get(PARAM_NUMBER));
 			}
 			
-			versionCleanerService.cleanVersions(maxProcessedNodes);
+			String path = null;
+			
+			if (req.getParameter(PARAM_PATH) != null) {
+				path = req.getParameter(PARAM_PATH);
+			}
+			
+			versionCleanerService.cleanVersions(maxProcessedNodes, path);
 		
 		} else if (ACTION_CLEAN_VERSION_STORE.equals(action)) {
 
