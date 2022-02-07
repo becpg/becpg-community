@@ -170,12 +170,14 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	private EntityDictionaryService entityDictionaryService;
 
 	/** {@inheritDoc} */
+	@Deprecated
 	@Override
 	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties) {
 		 throw new IllegalStateException(NOT_SUPPORTED);
 	}
 
 	/** {@inheritDoc} */
+	@Deprecated
 	@Override
 	public NodeRef doCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 		 throw new IllegalStateException(NOT_SUPPORTED);
@@ -775,7 +777,13 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							}
 
 							nodeService.removeAspect(branchNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT);
-
+							
+							Serializable manualVersionLabel = nodeService.getProperty(internalBranchToNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+							
+							if (manualVersionLabel != null) {
+								nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL, null);
+							}
+							
 							// Deattach other branches
 							List<NodeRef> sources = associationService.getSourcesAssocs(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
 							for (NodeRef sourceNodeRef : sources) {

@@ -521,6 +521,9 @@
 					    <facetable>true</facetable>
 					</index>
 				</property>
+				<property name="bcpg:manualVersionLabel">
+					<type>d:text</type>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:autoMergeTo">
