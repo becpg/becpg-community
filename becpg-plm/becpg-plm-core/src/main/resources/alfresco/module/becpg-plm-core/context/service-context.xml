@@ -223,6 +223,6 @@
       	<property name="permissionService" ref="permissionService"/>
    	</bean>
    	
-   	<alias alias="webscript.fr.becpg.survey.survey.post" name="webscript.fr.becpg.survey.get"/>
+   	<alias alias="webscript.fr.becpg.survey.survey.post" name="webscript.fr.becpg.survey.survey.get"/>
 
 </beans>

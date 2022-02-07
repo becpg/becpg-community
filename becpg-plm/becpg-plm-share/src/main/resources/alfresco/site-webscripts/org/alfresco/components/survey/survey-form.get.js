@@ -1,4 +1,4 @@
-<import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
+//<import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 
 
 function main() {
@@ -18,6 +18,15 @@ function main() {
 
     model.currentValue=result.data.toString();
 
+    //Ensure question are in a correct order
+	var sorted  = result.def.sort(function compare(a, b) {
+		  if (a.sort < b.sort)
+		     return -1;
+		  if (a.sort > b.sort)
+		     return 1;
+		  return 0;
+		}
+	);
 
 	// Widget instantiation metadata...
 	var widget = {
@@ -27,7 +36,7 @@ function main() {
 		options: {
 			disabled: false,
 			prefix: "survey",
-			data: result.def,
+			data: sorted,
 			currentValue: result.data
 		}
 	};

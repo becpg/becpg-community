@@ -17,7 +17,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.repo.survey.SurveyService;
 
 /**
- * 
+ *
  * @author matthieu
  *
  */
@@ -55,12 +55,17 @@ public class SurveyWebScript extends AbstractWebScript {
 
 		try {
 
-			
+			JSONObject ret = new JSONObject();
 			if ((JSONObject) req.parseContent() != null) {
-				surveyService.saveSurveyData(entityNodeRef, dataListName, (JSONObject) req.parseContent());
-			}
 
-			JSONObject ret = surveyService.getSurveyData(entityNodeRef, dataListName);
+				surveyService.saveSurveyData(entityNodeRef, dataListName, (JSONObject) req.parseContent());
+
+				ret.put("persistedObject", entityNodeRef);
+				ret.put("message", "Success");
+			} else {
+
+				ret = surveyService.getSurveyData(entityNodeRef, dataListName);
+			}
 
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");

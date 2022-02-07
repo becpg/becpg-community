@@ -101,7 +101,7 @@
 									 var step = me.options.wizardStruct[currentIndex];
 									 if (step != null)
 									 {
-										 if (step.type == "form")
+										 if (step.type == "form" || step.type == "survey")
 										 {
 											 if (step.form != null)
 											 {
@@ -128,12 +128,12 @@
 									 var step = me.options.wizardStruct[priorIndex];
 									 var nextStep = me.options.wizardStruct[currentIndex];
 									 // Load next step
-									 if(step!=null && nextStep!=null && (step.type != "form"  || currentIndex < priorIndex) ){
+									 if(step!=null && nextStep!=null && ((step.type != "form" && step.type != "survey")  || currentIndex < priorIndex) ){
 										 if(currentIndex > priorIndex){
 											 nextStep.nodeRef = step.nodeRef;
 										 }
 										 
-										 if(step.type != "form" && step.nextStepWebScript!=null){
+										 if((step.type != "form" && step.type != "survey") && step.nextStepWebScript!=null){
 
 											 var url = YAHOO.lang.substitute(
 													 Alfresco.constants.PROXY_URI + step.nextStepWebScript, {

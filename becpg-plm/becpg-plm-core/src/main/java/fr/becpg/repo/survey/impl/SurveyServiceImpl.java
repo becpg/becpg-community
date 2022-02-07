@@ -8,6 +8,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.StoreRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +34,8 @@ import fr.becpg.repo.survey.data.SurveyQuestion;
  */
 @Service("surveyService")
 public class SurveyServiceImpl implements SurveyService {
+
+	private static Log logger = LogFactory.getLog(SurveyServiceImpl.class);
 
 	public enum CommentType {
 		none, text, textarea, file
@@ -64,36 +69,36 @@ public class SurveyServiceImpl implements SurveyService {
 		JSONObject ret = new JSONObject();
 		JSONArray data = new JSONArray();
 		JSONArray definitions = new JSONArray();
-		
 
 		Set<SurveyQuestion> questions = new HashSet<>();
 
 		for (Survey survey : getSurveys(entityNodeRef, dataListName)) {
 			JSONObject value = new JSONObject();
-			
 
 			SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository.findOne(survey.getQuestion());
 
 			appendQuestionDefinition(definitions, surveyQuestion, questions);
-
-			value.put("qid", survey.getQuestion());
-			if (survey.getComment() != null) {
-				value.put("comment", survey.getComment());
-			}
-
-			if ((surveyQuestion.getResponseType() == null) || surveyQuestion.getResponseType().isEmpty()) {
-				for (NodeRef choice : survey.getChoices()) {
-					value.put("cid", choice);
+			if ((survey.getComment() != null) || !survey.getChoices().isEmpty()) {
+				value.put("qid", survey.getQuestion().getId());
+				if (survey.getComment() != null) {
+					value.put("comment", survey.getComment());
 				}
 
-			} else {
+				if ((surveyQuestion.getResponseType() == null) || surveyQuestion.getResponseType().isEmpty()) {
+					for (NodeRef choice : survey.getChoices()) {
+						value.put("cid", choice.getId());
+					}
 
-				value.put("listOptions", getOptions(survey.getChoices()));
+				} else {
+
+					value.put("listOptions", getOptions(survey.getChoices()));
+					value.put("cid", "sub-" + surveyQuestion.getNodeRef().getId().substring(4));
+				}
+				data.put(value);
 			}
 
-			data.put(value);
 		}
-		
+
 		ret.put("data", data);
 		ret.put("def", definitions);
 
@@ -103,38 +108,50 @@ public class SurveyServiceImpl implements SurveyService {
 	@Override
 	public void saveSurveyData(NodeRef entityNodeRef, String dataListName, JSONObject data) throws JSONException {
 		if (data.has("data")) {
+			String strData = data.getString("data");
 
-			JSONArray values = data.getJSONArray("data");
+			JSONArray values = new JSONArray(strData);
 			for (Survey survey : getSurveys(entityNodeRef, dataListName)) {
+				List<NodeRef> choices = new ArrayList<>();
+				survey.setComment(null);
+
 				for (int i = 0; i < values.length(); i++) {
+
 					JSONObject value = values.getJSONObject(i);
-					if (value.has("qid") && (new NodeRef(value.getString("qid"))).equals(survey.getQuestion())) {
+					if (value.has("qid") && (value.getString("qid")).equals(survey.getQuestion().getId())) {
 						if (value.has("comment")) {
 							survey.setComment(value.getString("comment"));
-						} else {
-							survey.setComment(null);
 						}
 
-						List<NodeRef> choices = new ArrayList<>();
 						if (value.has("listOptions")) {
 
 							for (String cid : value.getString("listOptions").split(",")) {
-								choices.add(new NodeRef(cid));
+								choices.add(createNodeRef(cid));
 							}
 						} else if (value.has("cid")) {
-							choices.add(new NodeRef(value.getString("cid")));
+							choices.add(createNodeRef(value.getString("cid")));
 						}
 
-						survey.setChoices(choices);
-						alfrescoRepository.save(survey);
+						break;
 
 					}
 
 				}
 
+				survey.setChoices(choices);
+				if (logger.isDebugEnabled()) {
+					logger.debug("Save: " + survey.toString());
+				}
+
+				alfrescoRepository.save(survey);
+
 			}
 		}
 
+	}
+
+	private NodeRef createNodeRef(String id) {
+		return new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, id);
 	}
 
 	private List<Survey> getSurveys(NodeRef entityNodeRef, String dataListName) {
@@ -144,7 +161,7 @@ public class SurveyServiceImpl implements SurveyService {
 			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, dataListName);
 
 			if (dataListNodeRef != null) {
-				
+
 				return entityListDAO.getListItems(dataListNodeRef, null).stream().map(el -> {
 					Survey s = (Survey) alfrescoRepository.findOne(el);
 					s.setParentNodeRef(dataListNodeRef);
@@ -159,18 +176,30 @@ public class SurveyServiceImpl implements SurveyService {
 	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions) throws JSONException {
 
 		if (!questions.contains(surveyQuestion)) {
-			
+
 			JSONObject definition = new JSONObject();
 
-			definition.put("id", surveyQuestion.getNodeRef());
-			definition.put("start", questions.isEmpty());
+			definition.put("id", surveyQuestion.getNodeRef().getId());
+			definition.put("sort", surveyQuestion.getSort());
 			definition.put("label", surveyQuestion.getLabel());
-			definition.put("url", surveyQuestion.getQuestionUrl());
-			definition.put("lowerNote", surveyQuestion.getQuestionLowerNote());
-			definition.put("upperNote", surveyQuestion.getQuestionUpperNote());
-			definition.put("note", surveyQuestion.getQuestionNote());
-			definition.put("mandatory", surveyQuestion.getNodeRef());
-			
+			definition.put("start", questions.isEmpty() || Boolean.TRUE.equals(surveyQuestion.getIsVisible()));
+
+			if ((surveyQuestion.getQuestionUrl() != null) && !surveyQuestion.getQuestionUrl().isBlank()) {
+				definition.put("url", surveyQuestion.getQuestionUrl());
+			}
+			if ((surveyQuestion.getQuestionLowerNote() != null) && !surveyQuestion.getQuestionLowerNote().isBlank()) {
+				definition.put("lowerNote", surveyQuestion.getQuestionLowerNote());
+			}
+			if ((surveyQuestion.getQuestionUpperNote() != null) && !surveyQuestion.getQuestionUpperNote().isBlank()) {
+				definition.put("upperNote", surveyQuestion.getQuestionUpperNote());
+			}
+			if ((surveyQuestion.getQuestionNote() != null) && !surveyQuestion.getQuestionNote().isBlank()) {
+				definition.put("note", surveyQuestion.getQuestionNote());
+			}
+			if (Boolean.TRUE.equals(surveyQuestion.getIsMandatory())) {
+				definition.put("mandatory", true);
+			}
+
 			questions.add(surveyQuestion);
 
 			JSONArray choices = new JSONArray();
@@ -179,12 +208,23 @@ public class SurveyServiceImpl implements SurveyService {
 				if (ResponseType.list.toString().equals(surveyQuestion.getResponseType())
 						|| ResponseType.checkboxes.toString().equals(surveyQuestion.getResponseType())) {
 					JSONObject choice = new JSONObject();
-					choice.put("id", surveyQuestion.getNodeRef() + "-choice");
-					choice.put("list", getOptions(definitionChoices));
+					choice.put("id", "sub-" + surveyQuestion.getNodeRef().getId().substring(4));
+					JSONArray list = new JSONArray();
+
+					for (NodeRef listOption : definitionChoices) {
+						SurveyQuestion opt = (SurveyQuestion) alfrescoRepository.findOne(listOption);
+
+						list.put(listOption.getId() + "|" + opt.getLabel());
+					}
+
+					choice.put("list", list);
 					choice.put("multiple", true);
-					choice.put("checkboxes", ResponseType.checkboxes.toString().equals(surveyQuestion.getResponseType()));
+					choice.put("label", "hidden");
+					if (ResponseType.checkboxes.toString().equals(surveyQuestion.getResponseType())) {
+						choice.put("checkboxes", true);
+					}
 					if (surveyQuestion.getNextQuestion() != null) {
-						choice.put("cid", surveyQuestion.getNextQuestion().getNodeRef());
+						choice.put("cid", surveyQuestion.getNextQuestion().getNodeRef().getId());
 						appendQuestionDefinition(definitions, surveyQuestion.getNextQuestion(), questions);
 					}
 
@@ -193,13 +233,13 @@ public class SurveyServiceImpl implements SurveyService {
 				} else {
 
 					for (NodeRef nodeRef : definitionChoices) {
-						
+
 						SurveyQuestion defChoice = (SurveyQuestion) alfrescoRepository.findOne(nodeRef);
 						JSONObject choice = new JSONObject();
-						choice.put("id", defChoice.getNodeRef());
+						choice.put("id", defChoice.getNodeRef().getId());
 						choice.put("label", defChoice.getLabel());
 						if (defChoice.getNextQuestion() != null) {
-							choice.put("cid", defChoice.getNextQuestion().getNodeRef());
+							choice.put("cid", defChoice.getNextQuestion().getNodeRef().getId());
 							appendQuestionDefinition(definitions, defChoice.getNextQuestion(), questions);
 						}
 						if (CommentType.text.toString().equals(defChoice.getResponseCommentType())
@@ -219,7 +259,7 @@ public class SurveyServiceImpl implements SurveyService {
 			} else if (CommentType.text.toString().equals(surveyQuestion.getResponseCommentType())
 					|| CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 				JSONObject choice = new JSONObject();
-				choice.put("id", surveyQuestion.getNodeRef() + "-choice");
+				choice.put("id", "sub-" + surveyQuestion.getNodeRef().getId().substring(4));
 
 				choice.put("comment", true);
 				choice.put("commentLabel", surveyQuestion.getResponseCommentLabel());
@@ -228,14 +268,15 @@ public class SurveyServiceImpl implements SurveyService {
 				}
 
 				if (surveyQuestion.getNextQuestion() != null) {
-					choice.put("cid", surveyQuestion.getNextQuestion().getNodeRef());
+					choice.put("cid", surveyQuestion.getNextQuestion().getNodeRef().getId());
 					appendQuestionDefinition(definitions, surveyQuestion.getNextQuestion(), questions);
 				}
 
 				choices.put(choice);
 			}
-			definition.put("choices", choices);
-
+			if (choices.length() > 0) {
+				definition.put("choices", choices);
+			}
 			definitions.put(definition);
 		}
 	}
@@ -255,7 +296,7 @@ public class SurveyServiceImpl implements SurveyService {
 			} else {
 				options.append(",");
 			}
-			options.append(choice);
+			options.append(choice.getId());
 		}
 		if (options != null) {
 			return options.toString();
