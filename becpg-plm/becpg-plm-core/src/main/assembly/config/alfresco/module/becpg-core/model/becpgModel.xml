@@ -2884,19 +2884,24 @@
 		</aspect>
 		
 		<!-- version with datalists -->
+		
+<!-- 		Deprecated -->
 		<aspect name="bcpg:compositeVersion">
 			<title>Versionable with datalists</title>
 			<properties>
+			<!-- 		Deprecated -->
 				<property name="bcpg:versionDescription">
 					<title>Version Label</title>
 					<type>d:text</type>
 					<protected>true</protected>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:versionLabel">
 					<title>Version Label</title>
 					<type>d:text</type>
 					<protected>true</protected>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenCreated">
 					<title>Created</title>
 					<type>d:datetime</type>
@@ -2907,11 +2912,13 @@
 						<tokenised>both</tokenised>
 					</index>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenCreator">
 					<title>Creator</title>
 					<type>d:text</type>
 					<protected>true</protected>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenModified">
 					<title>Modified</title>
 					<type>d:datetime</type>
@@ -2922,11 +2929,13 @@
 						<tokenised>both</tokenised>
 					</index>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenModifier">
 					<title>Modifier</title>
 					<type>d:text</type>
 					<protected>true</protected>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenAccessed">
 					<title>Accessed</title>
 					<type>d:datetime</type>
@@ -2937,10 +2946,12 @@
 						<tokenised>both</tokenised>
 					</index>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenNodeRef">
 					<type>d:text</type>
 					<mandatory enforced="true">false</mandatory>
 				</property>
+				<!-- 		Deprecated -->
 				<property name="bcpg:frozenNodeDbId">
 					<type>d:long</type>
 					<mandatory enforced="true">false</mandatory>

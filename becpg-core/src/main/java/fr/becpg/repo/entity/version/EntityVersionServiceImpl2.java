@@ -169,12 +169,14 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	private EntityDictionaryService entityDictionaryService;
 
 	/** {@inheritDoc} */
+	@Deprecated
 	@Override
 	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties) {
 		 throw new IllegalStateException(NOT_SUPPORTED);
 	}
 
 	/** {@inheritDoc} */
+	@Deprecated
 	@Override
 	public NodeRef doCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
 		 throw new IllegalStateException(NOT_SUPPORTED);

@@ -34,9 +34,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -72,14 +74,17 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	@Autowired
 	private AssociationService associationService;
 	
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
+	
 	@Override
-	public boolean cleanVersions(int maxProcessedNodes) {
+	public boolean cleanVersions(int maxProcessedNodes, String path) {
 		
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 		
 		try {
 			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getSystemUserName());
-			convertAndDeleteVersions(maxProcessedNodes, DEFAULT);
+			convertAndDeleteVersions(maxProcessedNodes, DEFAULT, path);
 			
 			if ((tenantAdminService != null) && tenantAdminService.isEnabled()) {
 				@SuppressWarnings("deprecation")
@@ -88,7 +93,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 					String tenantDomain = tenant.getTenantDomain();
 					AuthenticationUtil.clearCurrentSecurityContext();
 					AuthenticationUtil.setFullyAuthenticatedUser(tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
-					convertAndDeleteVersions(maxProcessedNodes, tenantDomain);
+					convertAndDeleteVersions(maxProcessedNodes, tenantDomain, path);
 				}
 			}
 		} finally {
@@ -104,16 +109,49 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	private class CleanVersionWorkProvider implements BatchProcessWorkProvider<NodeRef>{
 
 		private int maxProcessedNodes;
-		private List<NodeRef> initialList = null;
+		private List<NodeRef> initialList = new ArrayList<>();
 		private Set<NodeRef> toTreat = new LinkedHashSet<>();
 		private Set<NodeRef> treated = new LinkedHashSet<>();
 		private List<NodeRef> nextWork = new ArrayList<>();
 		private Calendar cal = Calendar.getInstance();
+		private String path;
 		
-		public CleanVersionWorkProvider(int maxProcessedNodes) {
+		public CleanVersionWorkProvider(int maxProcessedNodes, String path) {
 			super();
 			this.maxProcessedNodes = maxProcessedNodes;
-			initialList = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION).maxResults(maxProcessedNodes).inDB().ftsLanguage().list();
+			this.path = path;
+			
+			if (path != null) {
+				NodeRef parentNode = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE), path);
+				
+				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(parentNode, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
+				
+				for (ChildAssociationRef childAssoc : childAssocs) {
+					
+					List<ChildAssociationRef> subChildAssocs = nodeService.getChildAssocs(childAssoc.getChildRef(), ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
+					
+					if (subChildAssocs.isEmpty()) {
+						nodeService.deleteNode(childAssoc.getChildRef());
+					}
+					
+					for (ChildAssociationRef subChildAssoc : subChildAssocs) {
+						
+						if (entityDictionaryService.isSubClass(nodeService.getType(subChildAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
+							initialList.add(subChildAssoc.getChildRef());
+						}
+						
+						if (initialList.size() >= maxProcessedNodes) {
+							break;
+						}
+					}
+					if (initialList.size() >= maxProcessedNodes) {
+						break;
+					}
+				}
+			} else {
+				initialList = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION).maxResults(maxProcessedNodes).inDB().ftsLanguage().list();
+			}
+			
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 		}
 
@@ -144,7 +182,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 						
 						logger.trace("find convertible relatives of " + initialNode);
 						
-						Set<NodeRef> convertibleRelatives = entityFormatService.findConvertibleRelatives(initialNode, new HashSet<>(), nextWork, maxProcessedNodes, new AtomicInteger(treated.size() + toTreat.size()));
+						Set<NodeRef> convertibleRelatives = entityFormatService.findConvertibleRelatives(initialNode, new HashSet<>(), nextWork, maxProcessedNodes, new AtomicInteger(treated.size() + toTreat.size()), path);
 						
 						for (NodeRef convertibleRelative : convertibleRelatives) {
 							
@@ -174,7 +212,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 
 
-	private void convertAndDeleteVersions(int maxProcessedNodes, String tenantDomain) {
+	private void convertAndDeleteVersions(int maxProcessedNodes, String tenantDomain, String path) {
 		BatchInfo batchInfo = new BatchInfo("cleanVersions", "becpg.batch.versionCleaner.cleanVersions." + tenantDomain);
 		batchInfo.setRunAsSystem(true);
 
@@ -213,7 +251,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 		};
 
-		batchQueueService.queueBatch(batchInfo, new CleanVersionWorkProvider(maxProcessedNodes), processWorker, null);
+		batchQueueService.queueBatch(batchInfo, new CleanVersionWorkProvider(maxProcessedNodes, path), processWorker, null);
 
 	}
 
@@ -335,7 +373,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	}
 
 	private void convertNode(NodeRef notConvertedNode) {
-
+		
 		String tenantDomain = DEFAULT;
 
 		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
