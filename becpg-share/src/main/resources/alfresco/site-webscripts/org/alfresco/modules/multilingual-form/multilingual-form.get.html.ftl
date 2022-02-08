@@ -44,10 +44,14 @@
       				<#if !args.htmlEditor??>
 		      			<#if args.textarea??>
 		      				<textarea rows="2" cols="60" title="${mlField.description!""?html}" tabindex="0"
-			      				 name="${mlField.locale}" id="${el}-${mlField.locale}" >${mlField.value!""}</textarea>
+			      				 name="${mlField.locale}" id="${el}-${mlField.locale}" 
+			      				 <#if args.maxLength??> maxLength="${args.maxLength}" </#if>
+			      				 >${mlField.value!""}</textarea>
 		      			<#else>
 			      			<input type="text" title="${mlField.description!""?html}" tabindex="0"
-			      				 name="${mlField.locale}" id="${el}-${mlField.locale}"  value="${mlField.value!""}"></input>
+			      				 name="${mlField.locale}" id="${el}-${mlField.locale}"  value="${mlField.value!""}"
+			      				 <#if args.maxLength??> maxLength="${args.maxLength}" </#if>
+			      				 ></input>
 		      			</#if>
 	      			<#else>
 			      	 	<#assign mlFieldHtmlId = "${el}-${mlField.locale}">
@@ -70,7 +74,9 @@
 						   //]]></script>
 						   
 						   <textarea rows="2" columns="60" title="${mlField.description!""?html}" tabindex="0"
-						   		id="${mlFieldHtmlId}" name="${mlField.locale}" >${mlField.value!""}</textarea>
+						   		id="${mlFieldHtmlId}" name="${mlField.locale}" 
+						   		<#if args.maxLength??> maxLength="${args.maxLength}" </#if>
+						   		>${mlField.value!""}</textarea>
 			      	 </#if>		
 	      		</div>
                </#if>
@@ -84,8 +90,7 @@
 	      				<label for="${el}-${mlField.locale}"><#if args.label?? >${label?html}<#elseif mlField.label??>${mlField.label?html}<#else> ${mlField.localeLabel}</#if>:&nbsp;
 	      						<span class="locale-icon"><img class="icon16_11" title="${mlField.localeLabel}" tabindex="0" src="${url.context}/res/components/images/flags/${mlField.country?lower_case}.png">&nbsp;(${mlField.localeLabel})<span>&nbsp;&nbsp;
 	      				</label>
-	      			
-		      				<div rows="2" cols="60" title="${mlField.description!""?html}" tabindex="0" readonly
+	      			    <div rows="2" cols="60" title="${mlField.description!""?html}" tabindex="0" readonly
 			      				 name="${mlField.locale}" id="${el}-${mlField.locale}" >${mlField.value!""}</div>
 			      	 
 		      		</div>
