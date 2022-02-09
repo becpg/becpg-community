@@ -179,7 +179,7 @@
 	
 
 	<!-- bcpg:finishedProduct type (existing nodes) -->
-	 <config condition="bcpg:finishedProduct" evaluator="node-type" replace="true">
+	 <config condition="bcpg:finishedProduct" evaluator="node-type" >
 	    <forms>
 	      <form>
 	        <field-visibility>
