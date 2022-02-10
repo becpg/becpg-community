@@ -19,7 +19,7 @@
 if (beCPG.module.EntityDataGridRenderers) {
 
 
-    var NUMBER_FORMAT= { "maximumSignificantDigits": 3, "maximumFractionDigits": 4 };
+    var NUMBER_FORMAT= { "maximumFractionDigits": 4 };
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entityV2", "bcpg:resourceProduct",
