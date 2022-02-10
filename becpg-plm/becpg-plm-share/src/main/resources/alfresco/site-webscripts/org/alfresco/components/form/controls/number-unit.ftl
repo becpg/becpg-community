@@ -38,8 +38,8 @@
 	<#assign currUnits="mL,cL,L,fl_oz,cp,gal">
    <#elseif unit=="m" || unit=="mm" >	
 	<#assign currUnits="mil,in,ft,mm,cm,m">
-   <#elseif unit=="d" ||  unit=="mo">
-	<#assign currUnits="d,mo">
+   <#elseif unit=="d" ||  unit=="mo" || unit=="y">
+	<#assign currUnits="d,mo,y">
    <#elseif unit=="-">
 	<#assign currUnits="-,mega,milli,micro">
  </#if>
@@ -111,12 +111,15 @@
 		<#assign currUnit="mL" >
 		<#assign currValue=field.value*1000 >
   	 </#if>
-   <#elseif currUnit=="d" || currUnit=="mo">
+   <#elseif currUnit=="d" || currUnit=="mo" || currUnit=="y">
 		<#if field.value == 0  >
        		 <#assign currUnit="d">
      	<#elseif field.value/30 &gt; 1 && field.value%30 == 0>
 			<#assign currUnit="mo">
 			<#assign currValue=field.value/30 >
+		<#elseif field.value/365 &gt; 1 && field.value%365 == 0>
+			<#assign currUnit="y">
+			<#assign currValue=field.value/365 >	
 		<#else>
 		  	 <#assign currUnit="d">
 		</#if>
