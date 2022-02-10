@@ -308,8 +308,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES), COMPARE_ENTITIES_REPORT_PATH, ReportType.Compare,
 					ReportFormat.PDF, null, false, true, false);
 
-			List<NodeRef> resources = contentHelper.addFilesResources(compareProductFolderNodeRef, "classpath*:beCPG/birt/system/*.properties",
-					false);
+			List<NodeRef> resources = contentHelper.addFilesResources(compareProductFolderNodeRef, "classpath*:beCPG/birt/system/*.properties");
 			associationService.update(compareReportNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES, resources);
 
 		} catch (IOException e) {
