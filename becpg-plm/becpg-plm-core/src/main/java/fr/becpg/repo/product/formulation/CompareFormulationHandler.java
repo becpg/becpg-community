@@ -317,7 +317,6 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 		jsonObject.put(JsonFormulaHelper.JSON_VALUE, value);
-		jsonObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(value));
 		
 
 		return jsonObject;
