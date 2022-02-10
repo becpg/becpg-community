@@ -5,6 +5,7 @@ package fr.becpg.repo.product.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -236,6 +237,11 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 
 	private List<ProductSpecificationData> productSpecifications;
 	private List<ClientData> clients;
+	
+
+	private List<NodeRef> suppliers = new ArrayList<>();	
+	private List<NodeRef> supplierPlants = new ArrayList<>();
+
 
 	/*
 	 * Origin geo
@@ -323,7 +329,50 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public List<ClientData> getClients() {
 		return clients;
 	}
+	
+	/**
+	 * <p>Getter for the field <code>suppliers</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:suppliers")
+	public List<NodeRef> getSuppliers() {
+		return suppliers;
+	}
 
+	/**
+	 * <p>Setter for the field <code>suppliers</code>.</p>
+	 *
+	 * @param suppliers a {@link java.util.List} object.
+	 */
+	public void setSuppliers(List<NodeRef> suppliers) {
+		this.suppliers = suppliers;
+	}
+
+	
+
+	/**
+	 * <p>Getter for the field <code>supplierPlants</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:supplierPlants")
+	public List<NodeRef> getSupplierPlants() {
+		return supplierPlants;
+	}
+
+	/**
+	 * <p>Setter for the field <code>supplierPlants</code>.</p>
+	 *
+	 * @param supplierPlants a {@link java.util.List} object.
+	 */
+	public void setSupplierPlants(List<NodeRef> supplierPlants) {
+		this.supplierPlants = supplierPlants;
+	}
+	
+	
 	/**
 	 * <p>Setter for the field <code>clients</code>.</p>
 	 *
@@ -700,6 +749,19 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 */
 	public void setPlants(List<NodeRef> plants) {
 		this.plants = plants;
+	}
+
+	
+
+	public List<NodeRef> getAllPlants() {
+		List<NodeRef> ret = new ArrayList<>();
+		if(plants!=null) {
+			ret.addAll(plants);
+		}
+		if(supplierPlants!=null) {
+			ret.addAll(supplierPlants);
+		}
+		return ret;
 	}
 
 	
@@ -2381,11 +2443,11 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(clients, density, erpCode, formulatedDate, futureUnitTotalCost, hierarchy1, hierarchy2, ingType,
+		result = prime * result + Objects.hash(clients, suppliers, supplierPlants, density, erpCode, formulatedDate, futureUnitTotalCost, hierarchy1, hierarchy2, ingType,
 				legalName, netVolume, netWeight, netWeightSecondary, netWeightTertiary, nutrientClass, nutrientProfile, nutrientScore, plants,
 				profitability, projectedQty, qty, recipeQtyUsed, recipeQtyUsedWithLossPerc, recipeVolumeUsed, reformulateCount, regulatoryCountries,
 				regulatoryUsages, regulatoryMode, regulatoryRecipeId, reportLocales, servingSize, servingSizeByCountry, servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice,
-				unitTotalCost, updateFormulatedDate, weightPrimary, weightSecondary, weightTertiary, yield, yieldVolume);
+				unitTotalCost, updateFormulatedDate, weightPrimary, weightSecondary, weightTertiary, yield, yieldVolume, suppliers);
 		return result;
 	}
 
@@ -2399,7 +2461,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		if (getClass() != obj.getClass())
 			return false;
 		ProductData other = (ProductData) obj;
-		return Objects.equals(clients, other.clients) && Objects.equals(density, other.density) && Objects.equals(erpCode, other.erpCode)
+		return Objects.equals(clients, other.clients) && Objects.equals(suppliers, other.suppliers) && Objects.equals(supplierPlants, other.supplierPlants) && Objects.equals(density, other.density) && Objects.equals(erpCode, other.erpCode)
 				&& Objects.equals(formulatedDate, other.formulatedDate) && Objects.equals(futureUnitTotalCost, other.futureUnitTotalCost)
 				&& Objects.equals(hierarchy1, other.hierarchy1) && Objects.equals(hierarchy2, other.hierarchy2)
 				&& Objects.equals(ingType, other.ingType) && Objects.equals(legalName, other.legalName) && Objects.equals(netVolume, other.netVolume)

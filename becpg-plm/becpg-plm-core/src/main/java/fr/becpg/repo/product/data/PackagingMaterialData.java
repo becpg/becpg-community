@@ -44,29 +44,10 @@ public class PackagingMaterialData extends ProductData   {
 	private static final long serialVersionUID = 1386599003766479590L;
 
 
-	private List<NodeRef> suppliers = new ArrayList<>();
 	
 	private List<NodeRef> packagingMaterials = new ArrayList<>();
 
-	/**
-	 * <p>Getter for the field <code>suppliers</code>.</p>
-	 *
-	 * @return a {@link java.util.List} object.
-	 */
-	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:suppliers")
-	public List<NodeRef> getSuppliers() {
-		return suppliers;
-	}
-
-	/**
-	 * <p>Setter for the field <code>suppliers</code>.</p>
-	 *
-	 * @param suppliers a {@link java.util.List} object.
-	 */
-	public void setSuppliers(List<NodeRef> suppliers) {
-		this.suppliers = suppliers;
-	}
+	
 	
 	/**
 	 * <p>Getter for the field <code>packagingMaterials</code>.</p>
@@ -94,7 +75,6 @@ public class PackagingMaterialData extends ProductData   {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + ((packagingMaterials == null) ? 0 : packagingMaterials.hashCode());
-		result = prime * result + ((suppliers == null) ? 0 : suppliers.hashCode());
 		return result;
 	}
 
@@ -112,11 +92,6 @@ public class PackagingMaterialData extends ProductData   {
 			if (other.packagingMaterials != null)
 				return false;
 		} else if (!packagingMaterials.equals(other.packagingMaterials))
-			return false;
-		if (suppliers == null) {
-			if (other.suppliers != null)
-				return false;
-		} else if (!suppliers.equals(other.suppliers))
 			return false;
 		return true;
 	}
