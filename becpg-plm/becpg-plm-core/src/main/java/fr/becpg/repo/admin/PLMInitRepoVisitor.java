@@ -943,6 +943,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		// visit supplier
 		Set<QName> dataLists = new LinkedHashSet<>();
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
+		dataLists.add(PLMModel.TYPE_CERTIFICATION);
 		dataLists.add(PLMModel.TYPE_PLANT);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, true, dataLists,
 				subFolders);
