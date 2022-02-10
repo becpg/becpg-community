@@ -1419,6 +1419,11 @@
 						<mandatory>false</mandatory>
 						<index enabled="false" />
 				</property>
+                 <property name="bcpg:certificationNote">
+						<type>d:text</type>
+						<mandatory>false</mandatory>
+						<index enabled="false" />
+				</property>
 			</properties>
 		</type>
 
@@ -3460,6 +3465,15 @@
 		</aspect>
 
 		<aspect name="bcpg:suppliersAspect">
+            <properties>
+               <property name="bcpg:supplierRefCode">
+					<type>d:text</type>
+				    <index enabled="true">
+    					<tokenised>false</tokenised>
+    					<facetable>false</facetable>
+					</index>
+				</property>
+            </properties>
 			<associations>
 				<association name="bcpg:suppliers">
 					<source>
