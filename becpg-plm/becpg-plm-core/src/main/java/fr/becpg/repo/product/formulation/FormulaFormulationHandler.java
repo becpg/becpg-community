@@ -418,7 +418,6 @@ public  class FormulaFormulationHandler extends FormulationBaseHandler<ProductDa
 		extractJSONSubList(productData, dataListItem, exp, path, subList, new HashSet<>());
 		jsonObject.put(JsonFormulaHelper.JSON_SUB_VALUES, subList);
 		jsonObject.put(JsonFormulaHelper.JSON_VALUE, value);
-		jsonObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(value));
 
 		return jsonObject;
 	}
@@ -487,7 +486,6 @@ public  class FormulaFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				Object subValue = exp.getValue(dataContext);
 				subObject.put(JsonFormulaHelper.JSON_VALUE, subValue);
-				subObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(subValue));
 				subObject.put(JsonFormulaHelper.JSON_PATH, subPath);
 				subList.put(subObject);
                  if(!visited.contains(composite.getComponent())) {
