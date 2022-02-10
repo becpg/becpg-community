@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.dictionary.InvalidTypeException;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -128,6 +129,9 @@ public class ContentHelper {
 								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
 										QName.createValidLocalName((String) properties.get(ContentModel.PROP_NAME))),
 								ContentModel.TYPE_CONTENT, properties).getChildRef();
+						doUpdate = true;
+					} else if(!nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE) || 
+							RepoConsts.INITIAL_VERSION.equals(nodeService.getProperty(nodeRef,ContentModel.PROP_VERSION_LABEL))) {
 						doUpdate = true;
 					}
 
