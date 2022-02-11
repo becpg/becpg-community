@@ -18,6 +18,9 @@
  ******************************************************************************/
 if (beCPG.module.EntityDataGridRenderers) {
 
+
+    var NUMBER_FORMAT= { "maximumFractionDigits": 4 };
+
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entityV2", "bcpg:resourceProduct",
 				"cm:content_bcpg:costDetailsListSource", "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct",
@@ -455,6 +458,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 					if (data.value.indexOf && data.value.indexOf("\"comp\":") > -1) {
 						var json = JSON.parse(data.value);
 						if (json) {
+						
+						
 							var ret = "", i = 0, refValue = null, className, currValue = null;
 							json.comp.sort(function (a, b) {
 								if( a.name == null){
@@ -469,7 +474,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 								if (json.comp[i].value) {
 									if (i == 0) {
 										refValue = beCPG.util.sigFigs(parseFloat(json.comp[i].value),4);
-										ret += '<span style="color:' + color + ';">' + Alfresco.util.encodeHTML(json.comp[i].displayValue)
+										ret += '<span style="color:' + color + ';">' +  beCPG.util.formatNumber(NUMBER_FORMAT,json.comp[i].value)
 												+ '</span>';
 									} else {
 										currValue = beCPG.util.sigFigs(parseFloat(json.comp[i].value),4);
@@ -484,7 +489,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 										}
 										ret += '<span  class="' + className + '" >(<a title="' + json.comp[i].name + '" href="'
 												+ beCPG.util.entityURL(json.comp[i].siteId, json.comp[i].nodeRef, json.comp[i].itemType)
-												+ '">' + Alfresco.util.encodeHTML(json.comp[i].displayValue) + '</a>)</span>';
+												+ '">' + beCPG.util.formatNumber(NUMBER_FORMAT,json.comp[i].value) + '</a>)</span>';
 									}
 								}
 							}
@@ -727,13 +732,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 			if (data.value != null && data.value.indexOf && data.value.indexOf("\"comp\":") > -1) {
 				var json = JSON.parse(data.value);
 				if (json) {
+				
 					for (var i = 0; i < json.comp.length; i++) {
 						if (json.comp[i].value != null && json.comp[i].value !== undefined) {
 
 							var newColumn = scope.widgets.dataTable.getColumn("dynCompareWith-" + json.comp[i].nodeRef);
 							scope.widgets.dataTable.updateCell(oRecord, newColumn, {
 								value : json.comp[i].value,
-								displayValue : json.comp[i].displayValue,
+								displayValue : beCPG.util.formatNumber(NUMBER_FORMAT,json.comp[i].value),
 								itemNodeRef : json.comp[i].itemNodeRef
 							}, false);
 						}
@@ -936,19 +942,20 @@ if (beCPG.module.EntityDataGridRenderers) {
 				"bcpg:dynamicCharactColumn5", "bcpg:dynamicCharactColumn6", "bcpg:dynamicCharactColumn7", "bcpg:dynamicCharactColumn8",
 				"bcpg:dynamicCharactColumn9", "bcpg:dynamicCharactColumn10" ],
 		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+		
+		
+		    if(!oColumn.numberFormat){
+		       oColumn.numberFormat = NUMBER_FORMAT;
+		    }
+		
 		   
 		    if(oRecord.getData("itemData")["isMultiLevel"]){
 		        if( scope.subCache!=null && scope.subCache["idx_"+oColumn.getKeyIndex()]!=null){
 		              for (var j = 0; j <  scope.subCache["idx_"+oColumn.getKeyIndex()].length; j++) {
                         var path =  scope.subCache["idx_"+oColumn.getKeyIndex()][j].path;
-                        if(path == oRecord.getData("itemData")["path"] && scope.subCache["idx_"+oColumn.getKeyIndex()][j].displayValue){
-                        	
-                        	if(oColumn.numberFormat && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value!=null){
-                        		 return  beCPG.util.formatNumber(oColumn.numberFormat, scope.subCache["idx_"+oColumn.getKeyIndex()][j].value);	  
-             				} else {
-             					 return  scope.subCache["idx_"+oColumn.getKeyIndex()][j].displayValue;
-             				}
-
+                        if(path == oRecord.getData("itemData")["path"] && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value !=null){
+                        	 return  beCPG.util.formatNumber(oColumn.numberFormat, scope.subCache["idx_"+oColumn.getKeyIndex()][j].value);	  
+             			
                         }
                     }
                 }
@@ -964,11 +971,9 @@ if (beCPG.module.EntityDataGridRenderers) {
                                 scope.subCache = [];
                             }
                             scope.subCache["idx_"+oColumn.getKeyIndex()] = json.sub;
-                            if(oColumn.numberFormat && json.value!=null){
+                            if(json.value!=null){
             				    return  beCPG.util.formatNumber(oColumn.numberFormat, json.value);	   
-            				} else {
-            					return json.displayValue? json.displayValue : "";
-            				}
+            				} 
                         }
     			    }
 			    }
@@ -989,7 +994,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 							if (json.comp[z].value) {
 								if (z == 0) {
 									refValue = beCPG.util.sigFigs(parseFloat(json.comp[z].value),4);
-									ret += '<span>' + Alfresco.util.encodeHTML(json.comp[z].displayValue) + '</span>';
+									ret += '<span>' +  beCPG.util.formatNumber(oColumn.numberFormat, json.comp[z].value) + '</span>';
 								} else {
 									currValue = beCPG.util.sigFigs(parseFloat(json.comp[z].value),4);
 									if (currValue != Number.NaN && refValue != Number.NaN) {
@@ -1003,7 +1008,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 									}
 									ret += '<span  class="' + className + '" >(<a title="' + json.comp[z].name + '" href="'
 											+ beCPG.util.entityURL(json.comp[z].siteId, json.comp[z].nodeRef, json.comp[z].itemType) + '">'
-											+ Alfresco.util.encodeHTML(json.comp[z].displayValue) + '</a>)</span>';
+											+  beCPG.util.formatNumber(oColumn.numberFormat,json.comp[z].value) + '</a>)</span>';
 								}
 							}
 						}
@@ -1011,10 +1016,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 					}
 				}
 				
-				if(oColumn.numberFormat && data.value!=null){
+				if(data.value!=null){
 				   return  beCPG.util.formatNumber(oColumn.numberFormat, data.value); 
-				} else {
-				   return data.displayValue;
 				}
 			}
 			return "";

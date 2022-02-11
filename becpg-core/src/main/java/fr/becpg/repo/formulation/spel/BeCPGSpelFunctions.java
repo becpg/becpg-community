@@ -865,7 +865,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 								for (String propQName2 : propQNames) {
 									QName propQName = QName.createQName(propQName2, namespaceService);
 									if (qname.equals(propQName)) {
-										logger.debug("Setting property/assoc : " + propQName + " from repository entity: "+  pd.getName());
+										logger.debug("Setting property/assoc : " + propQName + " from repository entity: "+  pd.getName() );
 
 										PropertyUtils.setProperty(to, pd.getName(), PropertyUtils.getProperty(from, pd.getName()));
 										if(!readMethod.isAnnotationPresent(AlfReadOnly.class)) {

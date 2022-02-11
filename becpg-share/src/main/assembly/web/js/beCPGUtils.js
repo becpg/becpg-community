@@ -170,6 +170,9 @@
     		case "mo":
     			val=  val * 30;
     			break;
+    	    case "y":
+    	        val = val * 365;
+    	        break;
     		case "ppm":
     			val=   val / 10000;
     			break;
