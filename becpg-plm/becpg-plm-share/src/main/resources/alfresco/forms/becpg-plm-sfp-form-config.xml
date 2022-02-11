@@ -42,7 +42,7 @@
           <show force="false" id="pack:width"/>
           <show force="false" id="pack:height"/>
           <show for-mode="view" force="false" id="bcpg:nutrientProfilingScore"/>
-          <show for-mode="view" force="false" id="bcpg:nutrientProfilingClass"/>
+          <show for-mode="view" force="false" id="bcpg:nutrientProfilingDetails"/>
           <show force="false" id="bcpg:nutrientProfileRef"/>
           <show force="false" id="ghs:sdsSignalWord"/>
           <show force="false" id="ghs:sdsPictograms"/>
@@ -207,7 +207,7 @@
           </field>
           <set appearance="bordered-panel" id="score" label-id="becpg.forms.set.nutrient.score.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="bcpg:nutrientProfilingScore" mandatory="false" read-only="false" set="score"/>
-          <field id="bcpg:nutrientProfilingClass" mandatory="false" read-only="false" set="score">
+          <field id="bcpg:nutrientProfilingDetails" mandatory="false" read-only="false" set="score">
             <control template="/org/alfresco/components/form/controls/nutrient-class.ftl"/>
           </field>
           <field id="bcpg:nutrientProfileRef" mandatory="false" read-only="false" set="score">
@@ -431,7 +431,7 @@
           <show force="true" id="bcpg:servingSizeText"/>
           <show force="true" id="bcpg:numberOfServings"/>
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingScore"/>
-          <show for-mode="view" force="true" id="bcpg:nutrientProfilingClass"/>
+          <show for-mode="view" force="true" id="bcpg:nutrientProfilingDetails"/>
           <show force="true" id="bcpg:nutrientProfileRef"/>
         </field-visibility>
         <appearance>
@@ -444,7 +444,7 @@
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
           <field id="bcpg:nutrientProfilingScore" mandatory="false" read-only="false"/>
-          <field id="bcpg:nutrientProfilingClass" mandatory="false" read-only="false">
+          <field id="bcpg:nutrientProfilingDetails" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/nutrient-class.ftl"/>
           </field>
           <field id="bcpg:nutrientProfileRef" mandatory="false" read-only="false">
