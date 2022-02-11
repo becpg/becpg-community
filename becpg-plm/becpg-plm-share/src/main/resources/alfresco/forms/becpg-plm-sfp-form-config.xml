@@ -131,7 +131,7 @@
           <field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity</control-param>
-              <control-param name="parentAssoc">bcpg:suppliers</control-param>
+              <control-param name="parentAssoc">bcpg_suppliers</control-param>
             </control>
           </field>
           <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo"/>
@@ -921,7 +921,7 @@
           <field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity</control-param>
-              <control-param name="parentAssoc">bcpg:suppliers</control-param>
+              <control-param name="parentAssoc">bcpg_suppliers</control-param>
             </control>
           </field>
           <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo"/>
@@ -929,8 +929,7 @@
           <field help-id="becpg.forms.help.productQty" id="bcpg:productQty" mandatory="false" read-only="false" set="formulation"/>
           <field id="bcpg:productUnit" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/product-unit.ftl">
-              <control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
-							</control-param>
+              <control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit</control-param>
             </control>
           </field>
           <field help-id="becpg.forms.help.netWeight" id="bcpg:netWeight" mandatory="false" read-only="false" set="formulation">
