@@ -18,9 +18,6 @@
           <show force="false" id="bcpg:parentEntityRef"/>
           <show force="true" id="bcpg:plants"/>
           <show force="true" id="bcpg:productGeoOrigin"/>
-          <show force="false" id="bcpg:suppliers"/>
-          <show force="false" id="bcpg:supplierPlants"/>
-          <show force="false" id="bcpg:supplierRefCode"/>
           <show force="false" id="bcpg:productQty"/>
           <show force="false" id="bcpg:productUnit"/>
           <show force="true" id="bcpg:netWeight"/>
@@ -127,14 +124,6 @@
           </field>
           <field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:suppliers" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity</control-param>
-              <control-param name="parentAssoc">bcpg_suppliers</control-param>
-            </control>
-          </field>
-          <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo"/>
           <set appearance="bordered-panel" id="formulation" label-id="becpg.forms.set.formulation.label" template="/org/alfresco/components/form/3-column-set.ftl"/>
           <field help-id="becpg.forms.help.productQty" id="bcpg:productQty" mandatory="false" read-only="false" set="formulation"/>
           <field id="bcpg:productUnit" mandatory="false" read-only="false" set="formulation">
@@ -824,9 +813,6 @@
           <show force="true" id="bcpg:parentEntityRef"/>
           <show force="true" id="bcpg:plants"/>
           <show force="true" id="bcpg:productGeoOrigin"/>
-          <show force="true" id="bcpg:suppliers"/>
-          <show force="true" id="bcpg:supplierPlants"/>
-          <show force="true" id="bcpg:supplierRefCode"/>
           <show force="true" id="bcpg:productQty"/>
           <show force="true" id="bcpg:productUnit"/>
           <show force="true" id="bcpg:netWeight"/>
@@ -917,15 +903,7 @@
           </field>
           <field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:suppliers" mandatory="false" read-only="false" set="mainInfo"/>
-          <field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="mainInfo">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity</control-param>
-              <control-param name="parentAssoc">bcpg_suppliers</control-param>
-            </control>
-          </field>
-          <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo"/>
-          <set appearance="bordered-panel" id="formulation" label-id="becpg.forms.set.formulation.label" template="/org/alfresco/components/form/3-column-set.ftl"/>
+         <set appearance="bordered-panel" id="formulation" label-id="becpg.forms.set.formulation.label" template="/org/alfresco/components/form/3-column-set.ftl"/>
           <field help-id="becpg.forms.help.productQty" id="bcpg:productQty" mandatory="false" read-only="false" set="formulation"/>
           <field id="bcpg:productUnit" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/product-unit.ftl">
