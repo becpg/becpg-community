@@ -47,6 +47,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -135,8 +136,7 @@ public class ReportTplServiceImpl implements ReportTplService {
 	 * Create the rptdesign node for the report
 	 */
 	@Override
-	public NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, ReportFormat reportFormat,
-			QName nodeType, boolean isSystemTpl, boolean isDefaultTpl, boolean overrideTpl) throws IOException {
+	public NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportTplInformation reportTplInformation, boolean overrideTpl) throws IOException {
 
 		NodeRef reportTplNodeRef = null;
 		ClassPathResource resource = new ClassPathResource(tplFilePath);
@@ -152,27 +152,47 @@ public class ReportTplServiceImpl implements ReportTplService {
 
 				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, tplFullName);
-				properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportType);
-				properties.put(ReportModel.PROP_REPORT_TPL_FORMAT, reportFormat);
-				properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, nodeType != null ? nodeType.toString() : null);
-				properties.put(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, isSystemTpl);
-				properties.put(ReportModel.PROP_REPORT_TPL_IS_DEFAULT, isDefaultTpl);
+				properties.put(ReportModel.PROP_REPORT_TPL_TYPE, reportTplInformation.getReportType());
+				properties.put(ReportModel.PROP_REPORT_TPL_FORMAT, reportTplInformation.getReportFormat());
+				properties.put(ReportModel.PROP_REPORT_TPL_CLASS_NAME, reportTplInformation.getNodeType() != null ? reportTplInformation.getNodeType().toString() : null);
+				properties.put(ReportModel.PROP_REPORT_TPL_IS_SYSTEM, reportTplInformation.isSystemTpl());
+				properties.put(ReportModel.PROP_REPORT_TPL_IS_DEFAULT, reportTplInformation.isDefaultTpl());
+				if(reportTplInformation.getTextParameter()!=null) {
+					properties.put(ReportModel.PROP_REPORT_TEXT_PARAMETERS, reportTplInformation.getTextParameter());
+				}
+				if(reportTplInformation.getSupportedLocale()!=null){
+					properties.put(ReportModel.PROP_REPORT_LOCALES,(Serializable) reportTplInformation.getSupportedLocale());
+				}
+				
 
 				if (reportTplNodeRef != null) {
-
-					if (overrideTpl) {
-						logger.debug("override report Tpl, name: " + tplFullName);
-
-						nodeService.addProperties(reportTplNodeRef, properties);
+					if (overrideTpl || (!nodeService.hasAspect(reportTplNodeRef, ContentModel.ASPECT_VERSIONABLE)
+							|| RepoConsts.INITIAL_VERSION.equals(nodeService.getProperty(reportTplNodeRef, ContentModel.PROP_VERSION_LABEL)))) {
+						if (overrideTpl) {
+							logger.info("Override report content and properties: " + tplFullName);
+							nodeService.addProperties(reportTplNodeRef, properties);
+						} else {
+							logger.info("Updating report content: " + tplFullName);
+						}
 					} else {
 						return reportTplNodeRef;
 					}
 				} else {
-					logger.debug("Create report Tpl, name: " + tplFullName);
+					logger.info("Creating report template: " + tplFullName);
 
 					reportTplNodeRef = nodeService.createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)),
 							ReportModel.TYPE_REPORT_TPL, properties).getChildRef();
+					
+
+					if(reportTplInformation.getReportKindAspectProperties()!=null) {
+						nodeService.addAspect(reportTplNodeRef, ReportModel.ASPECT_REPORT_KIND, reportTplInformation.getReportKindAspectProperties());
+					}
+					
+					if(reportTplInformation.getResources()!=null ) {
+						associationService.update(reportTplNodeRef,  ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES, reportTplInformation.getResources());
+					}
+					
 				}
 
 				ContentWriter writer = contentService.getWriter(reportTplNodeRef, ContentModel.PROP_CONTENT, true);
@@ -208,7 +228,8 @@ public class ReportTplServiceImpl implements ReportTplService {
 			try (InputStream in = new BufferedInputStream(resource.getInputStream())) {
 				fileNodeRef = nodeService.getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, resource.getFilename());
 
-				if ((fileNodeRef == null) || overrideRessource) {
+				if ((fileNodeRef == null) || overrideRessource || (!nodeService.hasAspect(fileNodeRef, ContentModel.ASPECT_VERSIONABLE)
+						|| RepoConsts.INITIAL_VERSION.equals(nodeService.getProperty(fileNodeRef, ContentModel.PROP_VERSION_LABEL)))) {
 
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(ContentModel.PROP_NAME, resource.getFilename());
@@ -250,9 +271,9 @@ public class ReportTplServiceImpl implements ReportTplService {
 			Boolean isDefault = (Boolean) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
 			Boolean isSystem = (Boolean) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_SYSTEM);
 
-			if (isDefault) {
+			if (Boolean.TRUE.equals(isDefault)) {
 
-				if (!isSystem && (userDefaultTplNodeRef == null)) {
+				if (!Boolean.TRUE.equals(isSystem) && (userDefaultTplNodeRef == null)) {
 					userDefaultTplNodeRef = tplNodeRef;
 				} else {
 					defaultTplsNodeRef.add(tplNodeRef);
@@ -262,7 +283,6 @@ public class ReportTplServiceImpl implements ReportTplService {
 
 		// no user default tpl, take the first system default
 		if ((userDefaultTplNodeRef == null) && !defaultTplsNodeRef.isEmpty()) {
-			userDefaultTplNodeRef = defaultTplsNodeRef.get(0);
 			defaultTplsNodeRef.remove(0);
 		}
 
@@ -304,8 +324,6 @@ public class ReportTplServiceImpl implements ReportTplService {
 		} else {
 			queryBuilder.inDB();
 		}
-
-		// TODO DB query not supporting boolean, CMIS not supporting qname
 
 		List<NodeRef> ret = new LinkedList<>();
 		for (NodeRef rTplNodeRef : queryBuilder.list()) {

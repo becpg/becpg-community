@@ -135,7 +135,9 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 
 			FinishedProductData finishedProductData2 = (FinishedProductData) alfrescoRepository.findOne(finishedProductData2NodeRef);
 			FinishedProductData finishedProductData1 = (FinishedProductData) alfrescoRepository.findOne(finishedProductData1NodeRef);
+			
 
+			assertEquals(2, finishedProductData1.getSuppliers().size());
 			assertEquals("Client 1", finishedProductData1.getClients().get(0).getName());
 
 			productService.formulate(finishedProductData2);
@@ -146,7 +148,7 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			assertEquals(1, finishedProductData2.getCostList().size());
 			assertEquals(2, finishedProductData2.getCompoList().size());
 			assertEquals("Client 1", finishedProductData2.getClients().get(0).getName());
-			assertEquals(2, associationService.getTargetAssocs(finishedProductData2.getNodeRef(), PLMModel.ASSOC_SUPPLIERS).size());
+			assertEquals(2, finishedProductData2.getSuppliers().size());
 			assertEquals(1, associationService.getTargetAssocs(finishedProductData2.getNodeRef(), PLMModel.ASSOC_CLIENTS).size());
 
 			return finishedProductData2.getNodeRef();

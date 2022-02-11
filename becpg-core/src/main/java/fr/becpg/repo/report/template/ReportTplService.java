@@ -99,7 +99,7 @@ public interface ReportTplService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @throws java.io.IOException if any.
 	 */
-	NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportType reportType, ReportFormat reportFormat, QName nodeType, boolean isSystemTpl, boolean isDefaultTpl, boolean overrideTpl) throws IOException;
+	NodeRef createTplRptDesign(NodeRef parentNodeRef, String tplName, String tplFilePath, ReportTplInformation tplInformation, boolean overrideTpl) throws IOException;
 	
 	/**
 	 * Create a resource for the report

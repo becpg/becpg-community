@@ -49,8 +49,6 @@ public class JsonFormulaHelper {
 	public static final String JSON_PATH = "path";
 	/** Constant <code>JSON_SUB_VALUES="sub"</code> */
 	public static final String JSON_SUB_VALUES = "sub";
-    /** Constant <code>JSON_DISPLAY_VALUE="displayValue"</code> */
-    public static final String JSON_DISPLAY_VALUE = "displayValue";
 	
 	private JsonFormulaHelper() {
 		//Singleton
@@ -94,18 +92,5 @@ public class JsonFormulaHelper {
 		return value;
 	}
 	
-	/**
-	 * <p>formatValue.</p>
-	 *
-	 * @param v a {@link java.lang.Object} object.
-	 * @return a {@link java.lang.Object} object.
-	 */
-	public static Object formatValue(Object v) {
-		
-		if (v != null && (v instanceof Double || v instanceof Float)) {
-			return PropertyFormatService.getInstance().getPropertyFormats(FormatMode.JSON,true).formatDecimal(v);
-		}
-		return v;
-	}
 
 }
