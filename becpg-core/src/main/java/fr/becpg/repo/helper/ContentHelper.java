@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.version.VersionModel;
 import org.alfresco.service.cmr.dictionary.InvalidTypeException;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -130,13 +129,13 @@ public class ContentHelper {
 										QName.createValidLocalName((String) properties.get(ContentModel.PROP_NAME))),
 								ContentModel.TYPE_CONTENT, properties).getChildRef();
 						doUpdate = true;
+						logger.debug("Creating file " + fileName + " " + nodeRef);
 					} else if(!nodeService.hasAspect(nodeRef, ContentModel.ASPECT_VERSIONABLE) || 
 							RepoConsts.INITIAL_VERSION.equals(nodeService.getProperty(nodeRef,ContentModel.PROP_VERSION_LABEL))) {
 						doUpdate = true;
+						logger.debug("Updating file " + fileName + " " + nodeRef);
 					}
-
-					logger.debug("add file " + fileName + " " + nodeRef);
-
+					
 					ret.add(nodeRef);
 
 					if (doUpdate) {
