@@ -58,11 +58,13 @@ public class SupplierPlantValuePlugin extends EntityListValuePlugin {
 	 *
 	 * @return an array of {@link java.lang.String} objects.
 	 */
+	@Override
 	public String[] getHandleSourceTypes() {
 		return new String[] { SOURCE_TYPE_SUPPLIER_PLANTS};
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize,
 			Map<String, Serializable> props) {
 		
@@ -70,7 +72,7 @@ public class SupplierPlantValuePlugin extends EntityListValuePlugin {
 		
 		List<NodeRef> suppliers = associationService.getSourcesAssocs(connectedUser, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 		if(suppliers !=null && !suppliers.isEmpty()){
-			List<NodeRef> ret = new ArrayList<NodeRef>();
+			List<NodeRef> ret = new ArrayList<>();
 			for(NodeRef supplierNodeRef: suppliers){
 				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(supplierNodeRef);
 				if (listsContainerNodeRef != null) {
