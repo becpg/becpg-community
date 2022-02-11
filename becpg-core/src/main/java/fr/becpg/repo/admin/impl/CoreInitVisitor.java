@@ -59,10 +59,10 @@ import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.entity.version.EntityVersionService;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
+import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.report.client.ReportFormat;
@@ -95,9 +95,6 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 	@Autowired
 	private ReportTplService reportTplService;
-
-	@Autowired
-	private AssociationService associationService;
 
 	@Autowired
 	private PermissionService permissionService;
@@ -304,13 +301,21 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 		// compare report
 		try {
 			NodeRef compareProductFolderNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_COMPARE_ENTITIES);
-			NodeRef compareReportNodeRef = reportTplService.createTplRptDesign(compareProductFolderNodeRef,
-					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES), COMPARE_ENTITIES_REPORT_PATH, ReportType.Compare,
-					ReportFormat.PDF, null, false, true, false);
-
 			List<NodeRef> resources = contentHelper.addFilesResources(compareProductFolderNodeRef, "classpath*:beCPG/birt/system/*.properties");
-			associationService.update(compareReportNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES, resources);
 
+			ReportTplInformation reportTplInformation = new ReportTplInformation();
+			reportTplInformation.setReportType(ReportType.Compare);
+			reportTplInformation.setReportFormat(ReportFormat.PDF);
+			reportTplInformation.setNodeType(null);
+			reportTplInformation.setDefaultTpl(true);
+			reportTplInformation.setSystemTpl(false);
+			reportTplInformation.setResources(resources);
+			
+			
+			reportTplService.createTplRptDesign(compareProductFolderNodeRef,
+					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES), COMPARE_ENTITIES_REPORT_PATH, reportTplInformation, false);
+
+			
 		} catch (IOException e) {
 			logger.error("Failed to create compare entity report tpl.", e);
 		}

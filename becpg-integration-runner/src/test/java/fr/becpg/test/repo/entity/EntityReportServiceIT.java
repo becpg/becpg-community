@@ -24,6 +24,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.report.client.ReportFormat;
@@ -70,9 +71,17 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS));
 			productReportTplFolder = repoService.getOrCreateFolderByPath(reportsFolder, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES));
+			
+			ReportTplInformation reportTplInformation = new ReportTplInformation();
+			reportTplInformation.setReportType(ReportType.Document);
+			reportTplInformation.setReportFormat(ReportFormat.PDF);
+			reportTplInformation.setNodeType( PLMModel.TYPE_FINISHEDPRODUCT);
+			reportTplInformation.setDefaultTpl(false);
+			reportTplInformation.setSystemTpl(true);
+			
 
 			reportTplService.createTplRptDesign(productReportTplFolder, "report PF 2", "beCPG/birt/document/product/default/ProductReport.rptdesign",
-					ReportType.Document, ReportFormat.PDF, PLMModel.TYPE_FINISHEDPRODUCT, true, false, true);
+					reportTplInformation, true);
 
 			return null;
 
@@ -307,9 +316,17 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			assertEquals("check system templates", 5, reportTplService.getSystemReportTemplates(ReportType.Document, typeQName).size());
 
 			
+			
+			ReportTplInformation reportTplInformation = new ReportTplInformation();
+			reportTplInformation.setReportType(ReportType.Document);
+			reportTplInformation.setReportFormat(ReportFormat.PDF);
+			reportTplInformation.setNodeType( PLMModel.TYPE_FINISHEDPRODUCT);
+			reportTplInformation.setDefaultTpl(true);
+			reportTplInformation.setSystemTpl(false);
+			
 			// add a user template
 			reportTplService.createTplRptDesign(productReportTplFolder, userReportTpl, "beCPG/birt/document/product/default/ProductReport.rptdesign",
-					ReportType.Document, ReportFormat.PDF, PLMModel.TYPE_FINISHEDPRODUCT, false, true, true);
+					reportTplInformation, true);
 
 			return null;
 
@@ -323,10 +340,16 @@ public class EntityReportServiceIT extends PLMBaseTestCase {
 			assertEquals("check user templates", 1,
 					reportTplService.getUserReportTemplates(ReportType.Document, PLMModel.TYPE_FINISHEDPRODUCT, userReportTpl).size());
 
+			ReportTplInformation reportTplInformation = new ReportTplInformation();
+			reportTplInformation.setReportType(ReportType.Document);
+			reportTplInformation.setReportFormat(ReportFormat.PDF);
+			reportTplInformation.setNodeType( PLMModel.TYPE_FINISHEDPRODUCT);
+			reportTplInformation.setDefaultTpl(false);
+			reportTplInformation.setSystemTpl(false);
+			
 			// add a user template
 			return reportTplService.createTplRptDesign(productReportTplFolder, userReportTpl2,
-					"beCPG/birt/document/product/default/ProductReport.rptdesign", ReportType.Document, ReportFormat.PDF,
-					PLMModel.TYPE_FINISHEDPRODUCT, false, false, true);
+					"beCPG/birt/document/product/default/ProductReport.rptdesign",reportTplInformation, true);
 
 		}, false, true);
 

@@ -210,7 +210,7 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_PRODUCTS="ExportProducts"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PRODUCTS = "ExportProducts";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST="ExportRawMaterialIngList"</code> */
-	public static final String PATH_REPORTS_EXPORT_SEARCH_INGLIST = "";
+	public static final String PATH_REPORTS_EXPORT_SEARCH_INGLIST = "ExportIngList";
 	
 	public static final String PATH_REPORTS_EXPORT_SEARCH_LABELCLAIMLIST = "ExportLabelClaimList";
 	

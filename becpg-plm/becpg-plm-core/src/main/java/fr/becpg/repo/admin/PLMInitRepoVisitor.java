@@ -99,6 +99,7 @@ import fr.becpg.repo.notification.data.NotificationRuleTimeType;
 import fr.becpg.repo.notification.data.RecurringTimeType;
 import fr.becpg.repo.notification.data.VersionFilterType;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -1345,23 +1346,22 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	 * @param productReportTplsNodeRef
 	 */
 	private void visitReports(NodeRef systemNodeRef) {
-
-		// reports folder
-		NodeRef reportsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_REPORTS);
-
-		// product report templates
-		NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
-		String productReportClientName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME, Locale.getDefault());
-		String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
-		String productReportProductionName = I18NUtil.getMessage(PRODUCT_REPORT_PRODUCTION_NAME, Locale.getDefault());
-		String productReportPackagingName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
-		String productReportCostName = I18NUtil.getMessage(PRODUCT_REPORT_COST_NAME, Locale.getDefault());
-		String productReportRDName = I18NUtil.getMessage(PRODUCT_REPORT_RD_NAME, Locale.getDefault());
-		String qualityControlAgingName = I18NUtil.getMessage(QUALITY_CONTROL_AGING_NAME, Locale.getDefault());
-
-		List<NodeRef> commonResources = new ArrayList<>();
-
 		try {
+			// reports folder
+			NodeRef reportsNodeRef = visitFolder(systemNodeRef, RepoConsts.PATH_REPORTS);
+
+			// product report templates
+			NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
+			String productReportClientName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME, Locale.getDefault());
+			String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
+			String productReportProductionName = I18NUtil.getMessage(PRODUCT_REPORT_PRODUCTION_NAME, Locale.getDefault());
+			String productReportPackagingName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
+			String productReportCostName = I18NUtil.getMessage(PRODUCT_REPORT_COST_NAME, Locale.getDefault());
+			String productReportRDName = I18NUtil.getMessage(PRODUCT_REPORT_RD_NAME, Locale.getDefault());
+			String qualityControlAgingName = I18NUtil.getMessage(QUALITY_CONTROL_AGING_NAME, Locale.getDefault());
+
+			List<NodeRef> commonResources = new ArrayList<>();
+
 			List<String> supportedLocale = Arrays.asList("fr", "en", "es", "en_US", "it", "nl", "sv_SE", "fi", "ru", "pt");
 
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
@@ -1430,240 +1430,205 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				ClassDefinition classDef = dictionaryService.getClass(productType);
 
-				if (repoService.getFolderByPath(productReportTplsNodeRef, classDef.getTitle(dictionaryService)) == null) {
+				NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef, classDef.getTitle(dictionaryService),
+						classDef.getTitle(dictionaryService));
 
-					NodeRef folderNodeRef = repoService.getOrCreateFolderByPath(productReportTplsNodeRef, classDef.getTitle(dictionaryService),
-							classDef.getTitle(dictionaryService));
+				if ((defaultReport[i] != null) && (defaultReportName[i] != null)) {
 
-					if ((defaultReport[i] != null) && (defaultReportName[i] != null)) {
-						NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i], defaultReport[i],
-								ReportType.Document, ReportFormat.PDF, productType, true, true, false);
-
-						if (reportKindTplAssoc.get(defaultReport[i]) != null) {
-							nodeService.addAspect(template, ReportModel.ASPECT_REPORT_KIND, reportKindTplAssoc.get(defaultReport[i]));
-						}
-
-						if (!resources.isEmpty()) {
-
-							for (NodeRef resource : resources) {
-								nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
-							}
-
-							nodeService.setProperty(template, ReportModel.PROP_REPORT_LOCALES, (Serializable) supportedLocale);
-
-							if (productType == PLMModel.TYPE_PACKAGINGMATERIAL) {
-								nodeService.setProperty(template, ReportModel.PROP_REPORT_TEXT_PARAMETERS,
-										"{ prefs: { assocsToExtract: \"pack:pmMaterialRefs\"  } }");
-							}
-						}
+					ReportTplInformation reportTplInformation = new ReportTplInformation();
+					reportTplInformation.setReportType(ReportType.Document);
+					reportTplInformation.setReportFormat(ReportFormat.PDF);
+					reportTplInformation.setNodeType(productType);
+					reportTplInformation.setDefaultTpl(true);
+					reportTplInformation.setSystemTpl(true);
+					reportTplInformation.setReportKindAspectProperties(reportKindTplAssoc.get(defaultReport[i]));
+					reportTplInformation.setResources(resources);
+					reportTplInformation.setSupportedLocale(supportedLocale);
+					if (productType == PLMModel.TYPE_PACKAGINGMATERIAL) {
+						reportTplInformation.setTextParameter("{ prefs: { assocsToExtract: \"pack:pmMaterialRefs\"  } }");
 					}
 
-					if ((otherReport[i] != null) && (otherReportName[i] != null)) {
+					reportTplService.createTplRptDesign(folderNodeRef, defaultReportName[i], defaultReport[i], reportTplInformation, false);
 
-						for (int b = 0; b < otherReport[i].length; b++) {
+				}
 
-							NodeRef template = reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i][b], otherReport[i][b],
-									ReportType.Document, ReportFormat.PDF, productType, true, false, false);
+				if ((otherReport[i] != null) && (otherReportName[i] != null)) {
 
-							if (reportKindTplAssoc.get(otherReport[i][b]) != null) {
-								nodeService.addAspect(template, ReportModel.ASPECT_REPORT_KIND, reportKindTplAssoc.get(otherReport[i][b]));
-							}
+					for (int b = 0; b < otherReport[i].length; b++) {
 
-							if (!resources.isEmpty()) {
-								for (NodeRef resource : resources) {
-									nodeService.createAssociation(template, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
-								}
-							}
-						}
+						ReportTplInformation reportTplInformation = new ReportTplInformation();
+						reportTplInformation.setReportType(ReportType.Document);
+						reportTplInformation.setReportFormat(ReportFormat.PDF);
+						reportTplInformation.setNodeType(productType);
+						reportTplInformation.setDefaultTpl(false);
+						reportTplInformation.setSystemTpl(true);
+						reportTplInformation.setReportKindAspectProperties(reportKindTplAssoc.get(otherReport[i][b]));
+						reportTplInformation.setResources(resources);
+						reportTplInformation.setSupportedLocale(supportedLocale);
+
+						reportTplService.createTplRptDesign(folderNodeRef, otherReportName[i][b], otherReport[i][b], reportTplInformation, false);
 
 					}
+
 				}
 
 				i++;
 			}
 
-		} catch (Exception e) {
-			logger.error("Failed to create product report.", e);
-		}
+			// quality report templates
+			NodeRef qualityReportTplsNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_QUALITY_REPORTTEMPLATES);
 
-		// quality report templates
-		NodeRef qualityReportTplsNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_QUALITY_REPORTTEMPLATES);
+			supportedLocale = Arrays.asList("fr", "en", "es", "it", "nl", "sv_SE", "fi", "ru", "pt");
 
-		List<String> supportedLocale = Arrays.asList("fr", "en", "es", "it", "nl", "sv_SE", "fi", "ru", "pt");
-
-		// nc
-		try {
-
+			// nc
 			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_NC);
-			if (repoService.getFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService)) == null) {
+			NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService),
+					classDef.getTitle(dictionaryService));
 
-				NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService),
-						classDef.getTitle(dictionaryService));
+			resources = new ArrayList<>();
+			resources.addAll(commonResources);
+			resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, NC_REPORT_RESOURCE, true));
 
-				List<NodeRef> resources = new ArrayList<>();
-				resources.addAll(commonResources);
-				resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, NC_REPORT_RESOURCE, true));
-
-				for (String lang : supportedLocale) {
-					resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, String.format(NC_REPORT_RESOURCE_BY_LOCALE, lang), true));
-				}
-
-				NodeRef templateNC = reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService), NC_REPORT_PATH,
-						ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_NC, true, true, false);
-
-				if (!resources.isEmpty()) {
-					for (NodeRef resource : resources) {
-						nodeService.createAssociation(templateNC, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
-
-					}
-				}
-
-				nodeService.setProperty(templateNC, ReportModel.PROP_REPORT_LOCALES, (Serializable) supportedLocale);
-
+			for (String lang : supportedLocale) {
+				resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, String.format(NC_REPORT_RESOURCE_BY_LOCALE, lang), true));
 			}
 
-		} catch (Exception e) {
-			logger.error("Failed to create nc report tpl." + QualityModel.TYPE_NC, e);
-		}
+			ReportTplInformation reportTplInformation = new ReportTplInformation();
+			reportTplInformation.setReportType(ReportType.Document);
+			reportTplInformation.setReportFormat(ReportFormat.PDF);
+			reportTplInformation.setNodeType(QualityModel.TYPE_NC);
+			reportTplInformation.setDefaultTpl(true);
+			reportTplInformation.setSystemTpl(true);
+			reportTplInformation.setResources(resources);
+			reportTplInformation.setSupportedLocale(supportedLocale);
 
-		try {
+			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService), NC_REPORT_PATH, reportTplInformation,
+					false);
 
-			ClassDefinition classDef = dictionaryService.getClass(QualityModel.TYPE_QUALITY_CONTROL);
-			if (repoService.getFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService)) == null) {
+			classDef = dictionaryService.getClass(QualityModel.TYPE_QUALITY_CONTROL);
+			qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService),
+					classDef.getTitle(dictionaryService));
 
-				NodeRef qualityFolderNodeRef = repoService.getOrCreateFolderByPath(qualityReportTplsNodeRef, classDef.getTitle(dictionaryService),
-						classDef.getTitle(dictionaryService));
+			resources = new ArrayList<>();
+			resources.addAll(commonResources);
+			resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, QUALITY_REPORT_RESOURCE, true));
 
-				List<NodeRef> resources = new ArrayList<>();
-				resources.addAll(commonResources);
-				resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, QUALITY_REPORT_RESOURCE, true));
-
-				for (String lang : supportedLocale) {
-					resources.add(
-							reportTplService.createTplRessource(qualityFolderNodeRef, String.format(QUALITY_REPORT_RESOURCE_BY_LOCALE, lang), true));
-				}
-
-				NodeRef templateQuality = reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService),
-						QUALITY_CONTROL_REPORT_PATH, ReportType.Document, ReportFormat.PDF, QualityModel.TYPE_QUALITY_CONTROL, true, true, false);
-				NodeRef templateQualityAging = reportTplService.createTplRptDesign(qualityFolderNodeRef,
-						classDef.getTitle(dictionaryService) + " - " + qualityControlAgingName, QUALITY_CONTROL_AGING_REPORT_PATH,
-						ReportType.Document, ReportFormat.XLSX, QualityModel.TYPE_QUALITY_CONTROL, true, false, false);
-
-				if (!resources.isEmpty()) {
-					for (NodeRef resource : resources) {
-						nodeService.createAssociation(templateQuality, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
-						nodeService.createAssociation(templateQualityAging, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
-
-					}
-				}
-
-				nodeService.setProperty(templateQuality, ReportModel.PROP_REPORT_LOCALES, (Serializable) supportedLocale);
-				nodeService.setProperty(templateQualityAging, ReportModel.PROP_REPORT_LOCALES, (Serializable) supportedLocale);
+			for (String lang : supportedLocale) {
+				resources
+						.add(reportTplService.createTplRessource(qualityFolderNodeRef, String.format(QUALITY_REPORT_RESOURCE_BY_LOCALE, lang), true));
 			}
 
-		} catch (Exception e) {
-			logger.error("Failed to create quality report tpl." + QualityModel.TYPE_QUALITY_CONTROL, e);
-		}
+			reportTplInformation = new ReportTplInformation();
+			reportTplInformation.setReportType(ReportType.Document);
+			reportTplInformation.setReportFormat(ReportFormat.PDF);
+			reportTplInformation.setNodeType(QualityModel.TYPE_QUALITY_CONTROL);
+			reportTplInformation.setDefaultTpl(true);
+			reportTplInformation.setSystemTpl(true);
+			reportTplInformation.setResources(resources);
+			reportTplInformation.setSupportedLocale(supportedLocale);
 
-		// eco report
-		try {
+			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService), QUALITY_CONTROL_REPORT_PATH,
+					reportTplInformation, false);
 
-			if (repoService.getFolderByPath(reportsNodeRef, PlmRepoConsts.PATH_REPORTS_ECO) == null) {
+			reportTplInformation.setReportFormat(ReportFormat.XLSX);
+			reportTplInformation.setNodeType(QualityModel.TYPE_QUALITY_CONTROL);
+			reportTplInformation.setSystemTpl(false);
 
-				NodeRef ecoFolderNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_REPORTS_ECO);
+			reportTplService.createTplRptDesign(qualityFolderNodeRef, classDef.getTitle(dictionaryService) + " - " + qualityControlAgingName,
+					QUALITY_CONTROL_AGING_REPORT_PATH, reportTplInformation, false);
 
-				List<NodeRef> resources = new ArrayList<>();
-				resources.addAll(commonResources);
+			// eco report
 
-				NodeRef templateOM = reportTplService.createTplRptDesign(ecoFolderNodeRef,
-						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_ECO), ECO_REPORT_PATH, ReportType.Document, ReportFormat.PDF,
-						ECMModel.TYPE_ECO, true, true, false);
+			NodeRef ecoFolderNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_REPORTS_ECO);
 
-				if (!resources.isEmpty()) {
-					for (NodeRef resource : resources) {
-						nodeService.createAssociation(templateOM, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+			resources = new ArrayList<>();
+			resources.addAll(commonResources);
 
-					}
-				}
-			}
+			reportTplInformation = new ReportTplInformation();
+			reportTplInformation.setReportType(ReportType.Document);
+			reportTplInformation.setReportFormat(ReportFormat.PDF);
+			reportTplInformation.setNodeType(ECMModel.TYPE_ECO);
+			reportTplInformation.setDefaultTpl(true);
+			reportTplInformation.setSystemTpl(true);
+			reportTplInformation.setResources(resources);
 
-		} catch (IOException e) {
-			logger.error("Failed to create eco report tpl.", e);
-		}
+			reportTplService.createTplRptDesign(ecoFolderNodeRef, TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_ECO), ECO_REPORT_PATH,
+					reportTplInformation, false);
 
-		/*
-		 * Export Search reports
-		 */
-		NodeRef exportSearchNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH);
+			/*
+			 * Export Search reports
+			 */
+			NodeRef exportSearchNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_EXPORT_SEARCH);
 
-		// export search products
-		try {
+			// export search products
+
 			NodeRef exportSearchProductsNodeRef = visitFolder(exportSearchNodeRef, PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS);
+
+			reportTplInformation = new ReportTplInformation();
+			reportTplInformation.setReportType(ReportType.ExportSearch);
+			reportTplInformation.setReportFormat(ReportFormat.XLSX);
+			reportTplInformation.setNodeType(PLMModel.TYPE_PRODUCT);
+			reportTplInformation.setDefaultTpl(false);
+			reportTplInformation.setSystemTpl(false);
+
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS),
-					TranslateHelper.getLocaleAwarePath(EXPORT_PRODUCTS_REPORT_RPTFILE_PATH), ReportType.ExportSearch, ReportFormat.XLSX,
-					PLMModel.TYPE_PRODUCT, false, false, false);
+					TranslateHelper.getLocaleAwarePath(EXPORT_PRODUCTS_REPORT_RPTFILE_PATH), reportTplInformation, false);
 
 			reportTplService.createTplRessource(exportSearchProductsNodeRef, TranslateHelper.getLocaleAwarePath(EXPORT_PRODUCTS_REPORT_XMLFILE_PATH),
 					false);
 
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_INGLIST),
-					TranslateHelper.getLocaleAwarePath(EXPORT_INGLIST_XLSX_PATH), ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT,
-					false, false, false);
+					TranslateHelper.getLocaleAwarePath(EXPORT_INGLIST_XLSX_PATH), reportTplInformation, false);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_LABELLING),
-					TranslateHelper.getLocaleAwarePath(EXPORT_LABELLING_XLSX_PATH), ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT,
-					false, false, false);
+					TranslateHelper.getLocaleAwarePath(EXPORT_LABELLING_XLSX_PATH), reportTplInformation, false);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_CITEO),
-					TranslateHelper.getLocaleAwarePath(EXPORT_CITEO_XLSX_PATH), ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT,
-					false, false, false);
+					TranslateHelper.getLocaleAwarePath(EXPORT_CITEO_XLSX_PATH), reportTplInformation, false);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_ALLERGENS),
-					TranslateHelper.getLocaleAwarePath(EXPORT_ALLERGENS_XLSX_PATH), ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT,
-					false, false, false);
+					TranslateHelper.getLocaleAwarePath(EXPORT_ALLERGENS_XLSX_PATH), reportTplInformation, false);
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_NUTRIENTS),
-					TranslateHelper.getLocaleAwarePath(EXPORT_NUTRIENTS_XLSX_PATH), ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT,
-					false, false, false);
+					TranslateHelper.getLocaleAwarePath(EXPORT_NUTRIENTS_XLSX_PATH), reportTplInformation, false);
 
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_LABELCLAIMLIST),
-					TranslateHelper.getLocaleAwarePath(EXPORT_LABELCLAIMLIST_XLSX_PATH), ReportType.ExportSearch, ReportFormat.XLSX,
-					PLMModel.TYPE_PRODUCT, false, false, false);
+					TranslateHelper.getLocaleAwarePath(EXPORT_LABELCLAIMLIST_XLSX_PATH), reportTplInformation, false);
 
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PHYSICOCHEMICALLIST),
-					TranslateHelper.getLocaleAwarePath(EXPORT_PHYSICOCHEMICALLIST_XLSX_PATH), ReportType.ExportSearch, ReportFormat.XLSX,
-					PLMModel.TYPE_PRODUCT, false, false, false);
+					TranslateHelper.getLocaleAwarePath(EXPORT_PHYSICOCHEMICALLIST_XLSX_PATH), reportTplInformation, false);
+
+			reportTplInformation.setNodeType(PLMModel.TYPE_SUPPLIER);
 
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_SUPPLIERS_CONTACTS),
-					TranslateHelper.getLocaleAwarePath(EXPORT_SUPPLIERS_XLSX_PATH), ReportType.ExportSearch, ReportFormat.XLSX,
-					PLMModel.TYPE_SUPPLIER, false, false, false);
+					TranslateHelper.getLocaleAwarePath(EXPORT_SUPPLIERS_XLSX_PATH), reportTplInformation, false);
+
+			reportTplInformation.setNodeType(QualityModel.TYPE_QUALITY_CONTROL);
 
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_QUALITY_CONTROLS),
-					TranslateHelper.getLocaleAwarePath(EXPORT_QUALITY_CONTROLS_XLSX_PATH), ReportType.ExportSearch, ReportFormat.XLSX,
-					QualityModel.TYPE_QUALITY_CONTROL, false, false, false);
+					TranslateHelper.getLocaleAwarePath(EXPORT_QUALITY_CONTROLS_XLSX_PATH), reportTplInformation, false);
 
-		} catch (IOException e) {
-			logger.error("Failed to create export search report tpl.", e);
-		}
+			// export search NC
 
-		// export search NC
-		try {
 			NodeRef exportNCSynthesisNodeRef = visitFolder(exportSearchNodeRef, PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES);
+
+			reportTplInformation.setNodeType(QualityModel.TYPE_NC);
+			reportTplInformation.setReportFormat(ReportFormat.PDF);
+			reportTplInformation.setDefaultTpl(false);
 
 			reportTplService.createTplRptDesign(exportNCSynthesisNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES),
-					TranslateHelper.getLocaleAwarePath(EXPORT_NC_REPORT_RPTFILE_PATH), ReportType.ExportSearch, ReportFormat.PDF,
-					QualityModel.TYPE_NC, false, true, false);
+					TranslateHelper.getLocaleAwarePath(EXPORT_NC_REPORT_RPTFILE_PATH), reportTplInformation, false);
 
 			reportTplService.createTplRessource(exportNCSynthesisNodeRef, TranslateHelper.getLocaleAwarePath(EXPORT_NC_REPORT_XMLFILE_PATH), false);
 		} catch (IOException e) {
-			logger.error("Failed to create export search report tpl.", e);
+			logger.error(e, e);
 		}
 	}
 
