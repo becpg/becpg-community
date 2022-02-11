@@ -53,6 +53,7 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.report.client.ReportFormat;
@@ -103,10 +104,18 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		NodeRef exportSearchProductsNodeRef = repoService.getOrCreateFolderByPath(exportSearchNodeRef,
 				PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS,
 				TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS));
+		
+		
+		ReportTplInformation reportTplInformation = new ReportTplInformation();
+		reportTplInformation.setReportType(ReportType.ExportSearch);
+		reportTplInformation.setReportFormat(ReportFormat.XLSX);
+		reportTplInformation.setNodeType( PLMModel.TYPE_PRODUCT);
+		reportTplInformation.setDefaultTpl(true);
+		reportTplInformation.setSystemTpl(false);
 
 		exportProductReportTpl = reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 				TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS), EXPORT_PRODUCTS_REPORT_RPTFILE_PATH,
-				ReportType.ExportSearch, ReportFormat.XLSX, PLMModel.TYPE_PRODUCT, false, true, true);
+				reportTplInformation, true);
 
 		reportTplService.createTplRessource(exportSearchProductsNodeRef, EXPORT_PRODUCTS_REPORT_XMLFILE_PATH, false);
 	}

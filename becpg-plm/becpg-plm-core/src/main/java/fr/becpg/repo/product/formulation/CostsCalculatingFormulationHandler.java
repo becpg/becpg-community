@@ -428,16 +428,10 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				client.getCostList().forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false));
 			}
 		}
+		
 
-		if ((formulatedProduct instanceof RawMaterialData) && (((RawMaterialData) formulatedProduct).getSuppliers() != null)) {
-			for (NodeRef supplierNodeRef : ((RawMaterialData) formulatedProduct).getSuppliers()) {
-				SupplierData supplier = (SupplierData) alfrescoRepository.findOne(supplierNodeRef);
-				supplier.getCostList().forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false));
-			}
-		}
-
-		if ((formulatedProduct instanceof PackagingMaterialData) && (((PackagingMaterialData) formulatedProduct).getSuppliers() != null)) {
-			for (NodeRef supplierNodeRef : ((PackagingMaterialData) formulatedProduct).getSuppliers()) {
+		if (formulatedProduct.getSuppliers() != null) {
+			for (NodeRef supplierNodeRef : formulatedProduct.getSuppliers()) {
 				SupplierData supplier = (SupplierData) alfrescoRepository.findOne(supplierNodeRef);
 				supplier.getCostList().forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false));
 			}
@@ -448,11 +442,11 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 	private void synchronizeCost(ProductData formulatedProduct, CostListDataItem templateCostListItem, List<CostListDataItem> costList,
 			boolean isTemplateCost) {
 
-		boolean addCost = true;
+		boolean addCost = !costList.isEmpty() || templateCostListItem.getPlants().isEmpty() || !Collections.disjoint(templateCostListItem.getPlants(), formulatedProduct.getAllPlants());
 		for (CostListDataItem costListItem : costList) {
 			// plants
 			if (templateCostListItem.getPlants().isEmpty()
-					|| !Collections.disjoint(templateCostListItem.getPlants(), formulatedProduct.getPlants())) {
+					|| !Collections.disjoint(templateCostListItem.getPlants(), formulatedProduct.getAllPlants())) {
 				// same cost
 				if ((costListItem.getCost() != null) && costListItem.getCost().equals(templateCostListItem.getCost())) {
 					if (isTemplateCost) {
@@ -473,6 +467,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				addCost = false;
 			}
 		}
+		
+		
 		if (addCost) {
 			CostListDataItem costListDataItem = new CostListDataItem(templateCostListItem);
 			costListDataItem.setNodeRef(null);
