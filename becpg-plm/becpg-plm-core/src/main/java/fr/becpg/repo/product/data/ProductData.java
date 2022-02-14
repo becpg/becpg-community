@@ -197,6 +197,10 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 */
 	private String requirementChecksum;
 	
+	/**
+	 * Specify that a product isGeneric
+	 */
+	private Boolean isGeneric;
 	
 
 	/*
@@ -2369,6 +2373,15 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 */
 	public boolean isRawMaterial() {
 		return this instanceof RawMaterialData;
+	}
+	
+	
+	public boolean isGeneric() {
+		return isRawMaterial() || Boolean.TRUE.equals(isGeneric);
+	}
+
+	public void setIsGeneric(Boolean isGeneric) {
+		this.isGeneric = isGeneric;
 	}
 
 	/**
