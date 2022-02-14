@@ -94,9 +94,9 @@ public class FormulationCheckPropsOfCompIT extends AbstractFinishedProductTest {
 									&& r.getSources().contains(rawMaterial6NodeRef) && r.getSources().contains(rawMaterial7NodeRef));
 						} else if (source.equals(finishedProductNodeRef1)) {
 							// only legal name is filled
-							assertTrue(r.getReqMessage().equals("Champ obligatoire 'Précautions d'emploi' manquant (catalogue 'EU 1169/2011 (INCO)')")
+							assertTrue(r.getReqMessage().equals("Champ obligatoire 'Conditions de conservation ou Conseils de préparation et d'utilisation' manquant (catalogue 'EU 1169/2011 (INCO)')")
 									|| r.getReqMessage()
-											.equals("Champ obligatoire 'Conditions de conservation' manquant (catalogue 'EU 1169/2011 (INCO)')")
+											.equals("Champ obligatoire 'Libellé commercial' manquant (catalogue 'EU 1169/2011 (INCO)')")
 									|| r.getReqMessage()
 											.equals("Champ obligatoire 'DLC (J) ou DDM/DLUO (J)' manquant (catalogue 'EU 1169/2011 (INCO)')")
 									|| r.getReqMessage().equals("Champ obligatoire 'Titre' manquant (catalogue 'EU 1169/2011 (INCO)')"));

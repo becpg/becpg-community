@@ -87,8 +87,7 @@
           <field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/product-unit.ftl">
-              <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,mL,cp,fl_oz
-							</control-param>
+              <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,kg,mL,cp,fl_oz</control-param>
             </control>
           </field>
           <field id="bcpg:componentLossPerc" mandatory="false" read-only="false" set="mainInfo"/>
@@ -492,7 +491,7 @@
           <field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/product-unit.ftl">
-              <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,mL,cp,fl_oz
+              <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,kg,mL,cp,fl_oz
 							</control-param>
             </control>
           </field>
@@ -663,7 +662,7 @@
           <field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/product-unit.ftl">
-              <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,mL,cp,fl_oz
+              <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,kg,mL,cp,fl_oz
 							</control-param>
             </control>
           </field>
