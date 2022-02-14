@@ -2031,7 +2031,7 @@
 					</field>
 					 <field id="bcpg:plantCertifications" mandatory="false" read-only="false" >
 			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			              <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:certification&amp;attributeName=cm:name</control-param>
+			              <control-param name="ds">becpg/autocomplete/certification</control-param>
 			            </control>
 			          </field>
 					
@@ -2072,7 +2072,7 @@
 					</field>
 					 <field id="bcpg:plantCertifications" mandatory="false" read-only="false" >
 			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			              <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:certification&amp;attributeName=cm:name</control-param>
+			              <control-param name="ds">becpg/autocomplete/certification</control-param>
 			            </control>
 			          </field>
 					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
@@ -2091,7 +2091,7 @@
 				<appearance>
 				   <field id="bcpg:plantCertifications" mandatory="false" read-only="false" >
 			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			              <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:certification&amp;attributeName=cm:name</control-param>
+			              <control-param name="ds">becpg/autocomplete/certification</control-param>
 			            </control>
 			          </field>
 				</appearance>
