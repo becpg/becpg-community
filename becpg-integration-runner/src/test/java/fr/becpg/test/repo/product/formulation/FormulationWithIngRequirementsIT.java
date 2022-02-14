@@ -326,8 +326,8 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 				}
 			}
 
-			logger.info("/*-- Done checking, checks=" + checks + " (should be 13) --*/");
-			assertEquals(13, checks);
+			logger.info("/*-- Done checking, checks=" + checks + " (should be 14) --*/");
+			assertEquals(14, checks);
 
 			/*
 			 * #257: check reqCtrlList is clear if all req are respected (we
