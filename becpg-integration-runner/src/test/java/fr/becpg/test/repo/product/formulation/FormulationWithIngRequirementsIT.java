@@ -293,15 +293,8 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
-				} else if (I18NUtil
-						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
-						.equals(reqCtrlList.getReqMessage())) {
-
-					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(1, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
+				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation ou Conseils de préparation et d'utilisation",
 						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
@@ -315,7 +308,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Titre", "EU 1169/2011 (INCO)")
+				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Libellé commercial", "EU 1169/2011 (INCO)")
 						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
@@ -333,8 +326,8 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 				}
 			}
 
-			logger.info("/*-- Done checking, checks=" + checks + " (should be 14) --*/");
-			assertEquals(14, checks);
+			logger.info("/*-- Done checking, checks=" + checks + " (should be 13) --*/");
+			assertEquals(13, checks);
 
 			/*
 			 * #257: check reqCtrlList is clear if all req are respected (we
