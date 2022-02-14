@@ -120,7 +120,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				for (var i = 0; i < values.length; i++) {
 					if (ret.length > 0) {
 						ret += ", ";
-					}
+					}c
 					var msgKey = values[i].cid == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree.allergenList."
 							+ values[i].qid + "." + values[i].cid;
 
@@ -707,12 +707,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 						scope.widgets.dataTable.insertColumn({
 							key : "dynCompareWith-" + compareWithEntity.nodeRef,
 							label : "<span title='" +compareWithEntity.name + "' >" +precColumn.label+ind+"</span>",
+							className : precColumn.className? precColumn.className : "",
+							sortable : true,
 							editor : scope.rendererHelper.getCellEditor(scope, {
 								dataType : "double",
 								mandatory : true,
 								fieldRef : precColumn.getField()
 							},scope.options.saveFieldUrl),
-							formatter : function(elCell, oRecord, oColumn, oData) {
+							formatter : function(elCell, oR, oC, oData) {
 								if (oData != null) {
 									elCell.innerHTML = oData.displayValue;
 								}
@@ -732,6 +734,17 @@ if (beCPG.module.EntityDataGridRenderers) {
 			if (data.value != null && data.value.indexOf && data.value.indexOf("\"comp\":") > -1) {
 				var json = JSON.parse(data.value);
 				if (json) {
+					
+					var numberFormat = NUMBER_FORMAT;
+					var qtyColumn = scope.widgets.dataTable.getColumn("prop_bcpg_compoListQtySubFormula");
+				
+					if(qtyColumn.numberFormat){
+				       numberFormat = qtyColumn.numberFormat;
+				    }
+						
+					if(qtyColumn.className){
+						
+					}		
 				
 					for (var i = 0; i < json.comp.length; i++) {
 						if (json.comp[i].value != null && json.comp[i].value !== undefined) {
@@ -739,7 +752,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 							var newColumn = scope.widgets.dataTable.getColumn("dynCompareWith-" + json.comp[i].nodeRef);
 							scope.widgets.dataTable.updateCell(oRecord, newColumn, {
 								value : json.comp[i].value,
-								displayValue : beCPG.util.formatNumber(NUMBER_FORMAT,json.comp[i].value),
+								displayValue : beCPG.util.formatNumber(numberFormat,json.comp[i].value),
 								itemNodeRef : json.comp[i].itemNodeRef
 							}, false);
 						}

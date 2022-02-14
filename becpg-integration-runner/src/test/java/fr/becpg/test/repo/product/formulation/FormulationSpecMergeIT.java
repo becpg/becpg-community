@@ -508,11 +508,11 @@ public class FormulationSpecMergeIT extends FormulationLabelClaimIT {
 				if(RequirementType.Forbidden.equals(r.getReqType())) {
 				logger.debug("Checking rclDataItem " + r.getReqMessage());
 				if (I18NUtil
-						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Précautions d'emploi", "EU 1169/2011 (INCO)")
+						.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "DLC (J) ou DDM/DLUO (J)", "EU 1169/2011 (INCO)")
 						.equals(r.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, r.getReqType());
 					checkMissingFields++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
+				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation ou Conseils de préparation et d'utilisation",
 						"EU 1169/2011 (INCO)").equals(r.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, r.getReqType());
 					checkMissingFields++;

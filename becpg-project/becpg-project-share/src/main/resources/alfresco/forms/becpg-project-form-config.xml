@@ -390,6 +390,7 @@
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="pjt:projectEntity" />
 					<show id="pjt:projectState" />
+					<show id="pjt:projectPriority" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" />

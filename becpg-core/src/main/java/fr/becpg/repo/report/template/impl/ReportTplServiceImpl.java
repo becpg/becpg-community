@@ -173,6 +173,14 @@ public class ReportTplServiceImpl implements ReportTplService {
 							nodeService.addProperties(reportTplNodeRef, properties);
 						} else {
 							logger.info("Updating report content: " + tplFullName);
+							
+							List<NodeRef> ressources = associationService.getTargetAssocs(reportTplNodeRef, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
+							if(reportTplInformation.getResources()!=null ) {
+								ressources.addAll(reportTplInformation.getResources());
+								
+								associationService.update(reportTplNodeRef,  ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES, ressources);
+							}
+							
 						}
 					} else {
 						return reportTplNodeRef;

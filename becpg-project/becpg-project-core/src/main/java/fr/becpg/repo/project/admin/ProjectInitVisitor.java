@@ -18,7 +18,6 @@
 package fr.becpg.repo.project.admin;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -40,7 +39,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectGroup;
 import fr.becpg.model.ProjectModel;
-import fr.becpg.model.ReportModel;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.impl.AbstractInitVisitorImpl;
@@ -48,6 +46,7 @@ import fr.becpg.repo.entity.EntitySystemService;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -181,33 +180,28 @@ public class ProjectInitVisitor extends AbstractInitVisitorImpl {
 
 		try {
 
-			if (repoService.getFolderByPath(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS) == null) {
+			NodeRef exportSearchProjectNodeRef = visitFolder(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
 
-				NodeRef exportSearchProjectNodeRef = visitFolder(exportSearchNodeRef, PATH_REPORTS_EXPORT_SEARCH_PROJECTS);
+			String[] projectReportResources = { PROJECT_REPORT_CSS_RESOURCE, PROJECT_REPORT_FR_RESOURCE, PROJECT_REPORT_EN_RESOURCE };
+			List<NodeRef> resources = new ArrayList<>();
 
-				String[] projectReportResources = { PROJECT_REPORT_CSS_RESOURCE, PROJECT_REPORT_FR_RESOURCE, PROJECT_REPORT_EN_RESOURCE };
-				List<NodeRef> resources = new ArrayList<>();
-
-				for (String element : projectReportResources) {
-					resources.add(reportTplService.createTplRessource(exportSearchProjectNodeRef, element, false));
-				}
-
-				NodeRef templateProject = reportTplService.createTplRptDesign(exportSearchProjectNodeRef,
-						TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS), EXPORT_PROJECTS_REPORT_RPTFILE_PATH,
-						ReportType.ExportSearch, ReportFormat.PDF, ProjectModel.TYPE_PROJECT, false, true, false);
-
-				if (!resources.isEmpty()) {
-					for (NodeRef resource : resources) {
-						logger.debug("Associating resource: " + resource + " to template: " + templateProject);
-						nodeService.createAssociation(templateProject, resource, ReportModel.ASSOC_REPORT_ASSOCIATED_TPL_FILES);
-					}
-				}
-
-				nodeService.setProperty(templateProject, ReportModel.PROP_REPORT_LOCALES, (Serializable) Arrays.asList("fr", "en"));
-
-				reportTplService.createTplRessource(exportSearchProjectNodeRef, EXPORT_PROJECTS_REPORT_XMLFILE_PATH, false);
-
+			for (String element : projectReportResources) {
+				resources.add(reportTplService.createTplRessource(exportSearchProjectNodeRef, element, false));
 			}
+
+			ReportTplInformation reportTplInformation = new ReportTplInformation();
+			reportTplInformation.setReportType(ReportType.ExportSearch);
+			reportTplInformation.setReportFormat(ReportFormat.PDF);
+			reportTplInformation.setNodeType(ProjectModel.TYPE_PROJECT);
+			reportTplInformation.setDefaultTpl(true);
+			reportTplInformation.setSystemTpl(false);
+			reportTplInformation.setResources(resources);
+			reportTplInformation.setSupportedLocale(Arrays.asList("fr", "en"));
+
+			reportTplService.createTplRptDesign(exportSearchProjectNodeRef, TranslateHelper.getTranslatedPath(PATH_REPORTS_EXPORT_SEARCH_PROJECTS),
+					EXPORT_PROJECTS_REPORT_RPTFILE_PATH, reportTplInformation, false);
+
+			reportTplService.createTplRessource(exportSearchProjectNodeRef, EXPORT_PROJECTS_REPORT_XMLFILE_PATH, false);
 
 		} catch (IOException e) {
 			logger.error("Failed to create export search report tpl.", e);

@@ -197,7 +197,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 			logger.info("ValidationScore=" + validationScore + " (expecting 37)");
 			logger.info("SpecificationsScore=" + specificationsScore + " (expecting 90)");
-			logger.info("MandatoryFieldsScore=" + mandatoryFieldsScore + " (expecting 20)");
+			logger.info("MandatoryFieldsScore=" + mandatoryFieldsScore + " (expecting 25)");
 			logger.info("GlobalScore=" + globalScore + " (expecting 49)");
 
 			// 3 /8 valid products (37.5%)
@@ -207,7 +207,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			assertEquals(90, specificationsScore);
 
 			// 1/5 mandatory fields filled (20%)
-			assertEquals(20, mandatoryFieldsScore);
+			assertEquals(25, mandatoryFieldsScore);
 
 			// 37.5 + 90 + 20 = 49.1 % global score
 			assertEquals(49, globalScore);

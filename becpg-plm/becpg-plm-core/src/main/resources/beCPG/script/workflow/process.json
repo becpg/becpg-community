@@ -34,7 +34,7 @@
 				"prop_pjt_projectState": "InProgress"
 			},
 			"hiddenFields": [
-				"prop_pjt_projectState", "assoc_pjt_projectEntity"
+				"prop_pjt_projectState", "assoc_pjt_projectEntity", "prop_pjt_projectPriority"
 			],
 			"redirectUrl": "/entity-data-lists?nodeRef={nodeRef}&list=View-properties"
 		},
@@ -53,7 +53,23 @@
 			"itemKind": "workflow",
 			"permissionGroup": "GROUP_ClaimStart",
 			"condition": "js(items.length == 0 || items.every( (n) =>  n.isSubType(\"bcpg:product\")) )"
-		}
+		},
+		{
+            "title": "becpg.process.create-project.title",
+            "description": "becpg.process.create-project.description",
+            "itemId": "pjt:project",
+            "itemKind": "type",
+            "formId": "create-process",
+            "condition": "js(items.length > 0 && items.every( (n) =>  n.isSubType(\"cm:content\")) )",
+			"formFields": {
+				"prop_pjt_projectState": "InProgress"
+			},
+			"hiddenFields": [
+				"prop_pjt_projectState", "assoc_pjt_projectEntity"
+			],
+			"onFormSubmitSuccessUrl": "becpg/workflow/start-process?script=send-to-process.js&nodeRefs={selectedItems}&project={nodeRef}",
+			"redirectUrl": "/entity-data-lists?nodeRef={nodeRef}&list=View-properties"
+        }
 	]
 }
 
