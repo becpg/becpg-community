@@ -33,7 +33,7 @@ public class ProjectReportExtractor extends DefaultEntityReportExtractor {
 					Element pjtEntityElt = entityElt.addElement("projectEntity");
 					Element nodeElt = pjtEntityElt.addElement(qName.getLocalName());
 					EntityReportExtractorPlugin extractor = entityReportService.retrieveExtractor(nodeRef);
-					if(extractor!=null && extractor instanceof DefaultEntityReportExtractor){
+					if(extractor instanceof DefaultEntityReportExtractor){
 						((DefaultEntityReportExtractor)extractor).extractEntity(nodeRef, nodeElt, context);
 					} else {
 						extractEntity(nodeRef, nodeElt, context);
