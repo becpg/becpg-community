@@ -495,8 +495,9 @@ public  class FormulaFormulationHandler extends FormulationBaseHandler<ProductDa
 							|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
 							|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))) {
 						
+						visited.add(composite.getComponent());
 						extractJSONSubList(productData, composite, exp, subPath, subList, visited);
-						visited.add(dataListItem.getComponent());
+						visited.remove(composite.getComponent());
 					}
                  }
 			} finally {
