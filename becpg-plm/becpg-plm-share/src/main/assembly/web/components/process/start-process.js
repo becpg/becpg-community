@@ -213,23 +213,6 @@
             onFormSubmitSuccess: function FormManager_onFormSubmitSuccess(response)
             {
 	
-				if (this.currentDefinition.onFormSubmitSuccessUrl) {
-					
-					var onFormSubmitSuccessUrl  = YAHOO.lang
-							.substitute( this.currentDefinition.onFormSubmitSuccessUrl,
-								{
-									nodeRef: response.json.persistedObject,
-									selectedItems: this.options.selectedItems
-								});
-								
-					Alfresco.util.Ajax.request(
-						{
-							url: Alfresco.constants.PROXY_URI_RELATIVE + onFormSubmitSuccessUrl,
-							method : Alfresco.util.Ajax.GET,
-							scope: this,
-						});
-				}
-	
 				if(this.currentDefinition.redirectUrl){
 					
 					var redirectUrl  = YAHOO.lang
