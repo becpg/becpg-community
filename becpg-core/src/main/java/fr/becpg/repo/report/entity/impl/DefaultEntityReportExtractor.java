@@ -142,6 +142,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String REPORT_LOGO_ID = "report_logo";
 	private static final String TAG_COMMENTS = "comments";
 	private static final String TAG_COMMENT = "comment";
+	private static final String TAG_PREFERENCES = "preferences";
+	private static final String TAG_PREFERENCE = "preference";
 	private static final String ATTR_ENTITY_CODE ="entityCode";
 	private static final String ATTR_ENTITY_NAME ="entityName";
 
@@ -151,7 +153,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 
 	/** Constant <code>hiddenNodeAttributes</code> */
-	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_NODE_REF,
+	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_NODE_REF, ContentModel.PROP_CREATOR,
 			ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME, ContentModel.PROP_STORE_PROTOCOL,
 			ContentModel.PROP_CONTENT, BeCPGModel.PROP_ENTITY_SCORE, ContentModel.PROP_PREFERENCE_VALUES, ContentModel.PROP_PERSONDESC));
 
@@ -349,6 +351,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			
 			Document document = DocumentHelper.createDocument();
 			Element entityElt = document.addElement(TAG_ENTITY);
+			
+			
+			Element prefs = entityElt.addElement(TAG_PREFERENCES);
+			
+
+			for (Map.Entry<String,String> perfEntry : preferences.entrySet()) {
+				Element pref = prefs.addElement(TAG_PREFERENCE);
+				pref.addAttribute("key", perfEntry.getKey());
+				pref.addAttribute("value", perfEntry.getValue());
+			}
+			
 			
 			extractEntity(entityNodeRef, entityElt, context);
 			
