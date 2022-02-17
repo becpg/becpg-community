@@ -131,7 +131,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 					List<ChildAssociationRef> subChildAssocs = nodeService.getChildAssocs(childAssoc.getChildRef(), ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
 					
 					if (subChildAssocs.isEmpty()) {
-						nodeService.deleteNode(childAssoc.getChildRef());
+						deleteNode(childAssoc.getChildRef());
 					}
 					
 					for (ChildAssociationRef subChildAssoc : subChildAssocs) {
@@ -358,14 +358,14 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			if (lockService.isLocked(temporaryNode)) {
 				lockService.unlock(temporaryNode);
 			}
-			nodeService.deleteNode(temporaryNode);
+			deleteNode(temporaryNode);
 			logger.debug("deleted temporary version node : '" + name + "', tenant : " + tenantDomain);
 
 			if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
 				if (lockService.isLocked(parentNode)) {
 					lockService.unlock(parentNode);
 				}
-				nodeService.deleteNode(parentNode);
+				deleteNode(parentNode);
 				logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantDomain);
 			}
 		}
