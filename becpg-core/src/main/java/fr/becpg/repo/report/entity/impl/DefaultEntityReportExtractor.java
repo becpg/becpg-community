@@ -153,7 +153,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	private static final String REGEX_REMOVE_CHAR = "[^\\p{L}\\p{N}]";
 
 	/** Constant <code>hiddenNodeAttributes</code> */
-	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_NODE_REF, ContentModel.PROP_CREATOR,
+	protected static final ArrayList<QName> hiddenNodeAttributes = new ArrayList<>(Arrays.asList(ContentModel.PROP_NODE_REF,
 			ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER, ContentModel.PROP_STORE_NAME, ContentModel.PROP_STORE_PROTOCOL,
 			ContentModel.PROP_CONTENT, BeCPGModel.PROP_ENTITY_SCORE, ContentModel.PROP_PREFERENCE_VALUES, ContentModel.PROP_PERSONDESC));
 
