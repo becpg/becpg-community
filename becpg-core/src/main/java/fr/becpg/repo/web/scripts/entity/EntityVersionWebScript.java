@@ -181,7 +181,7 @@ public class EntityVersionWebScript extends AbstractWebScript {
 						headVersionNodeRef = headVersion.getFrozenStateNodeRef();
 					}
 					
-					boolean isHeadVersion = version.getFrozenStateNodeRef().equals(headVersionNodeRef);
+					boolean isHeadVersion = headVersionNodeRef == null || version.getFrozenStateNodeRef().equals(headVersionNodeRef);
 					
 					Serializable manualVersionLabel = null;
 					
