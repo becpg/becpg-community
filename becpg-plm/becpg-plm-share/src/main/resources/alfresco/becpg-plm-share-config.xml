@@ -127,9 +127,12 @@
 			<list id="physicoChemList" index="170" />
 			<list id="labelClaimList" index="180" />
 			<list id="replacementList" index="190" />
-            <list id="wUsedList" index="200" />
-            <list id="calculatedCharactList" index="210" />
-            <list id="changeUnitList" index="220" />
+			<list id="plant" index="200"/>
+            <list id="certification" index="210"/>
+            <list id="wUsedList" index="220" />
+            <list id="calculatedCharactList" index="230" />
+            <list id="changeUnitList" index="240" />
+            
             <!-- Characteristics -->
             <list id="Ings" index="0"/>
             <list id="Allergens" index="10"/>
