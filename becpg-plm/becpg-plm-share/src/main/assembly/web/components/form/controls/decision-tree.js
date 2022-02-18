@@ -74,7 +74,7 @@
                         
                            htmlForm += '<fieldset  id="'+this.id+'-question_'+question.id+'" class="hidden">';
                            htmlForm += '<legend title="'+this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".description")+'">'
-                                    +question.id.toUpperCase()+' - '
+                                    + ( question.id.length < 10 ? question.id.toUpperCase()+' - ' : "")
                                     + (question.label ? question.label: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".label"))
                                     +'</legend>';
                            if(question.note){

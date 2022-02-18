@@ -79,7 +79,9 @@ public class PackagingHelper implements InitializingBean {
 		PackagingData packagingData = new PackagingData(productData.getVariants());
 		if (productData.hasPackagingListEl()) {
 			for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				loadPackagingItem(dataItem, packagingData, dataItem.getVariants(), 1d);
+				if(dataItem.getProduct()!=null) {
+					loadPackagingItem(dataItem, packagingData, dataItem.getVariants(), 1d);
+				}
 			}
 		}
 
