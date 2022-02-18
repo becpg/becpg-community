@@ -216,7 +216,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 			assertNotNull(missingFieldsArray);
 
 			// 1/5 mandatory fields -> 4 missing
-			assertEquals(4, missingFieldsArray.length());
+			assertEquals(3, missingFieldsArray.length());
 			logger.info("score=" + scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score") + " (expecting 20)");
 
 			assertEquals(20, (int) scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score"));
