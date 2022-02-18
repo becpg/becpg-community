@@ -120,7 +120,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				for (var i = 0; i < values.length; i++) {
 					if (ret.length > 0) {
 						ret += ", ";
-					}c
+					}
 					var msgKey = values[i].cid == "-" ? "form.control.decision-tree.empty" : "form.control.decision-tree.allergenList."
 							+ values[i].qid + "." + values[i].cid;
 

@@ -142,6 +142,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String REPORT_LOGO_ID = "report_logo";
 	private static final String TAG_COMMENTS = "comments";
 	private static final String TAG_COMMENT = "comment";
+	private static final String TAG_PREFERENCES = "preferences";
+	private static final String TAG_PREFERENCE = "preference";
 	private static final String ATTR_ENTITY_CODE ="entityCode";
 	private static final String ATTR_ENTITY_NAME ="entityName";
 
@@ -349,6 +351,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			
 			Document document = DocumentHelper.createDocument();
 			Element entityElt = document.addElement(TAG_ENTITY);
+			
+			
+			Element prefs = entityElt.addElement(TAG_PREFERENCES);
+			
+
+			for (Map.Entry<String,String> perfEntry : preferences.entrySet()) {
+				Element pref = prefs.addElement(TAG_PREFERENCE);
+				pref.addAttribute("key", perfEntry.getKey());
+				pref.addAttribute("value", perfEntry.getValue());
+			}
+			
 			
 			extractEntity(entityNodeRef, entityElt, context);
 			

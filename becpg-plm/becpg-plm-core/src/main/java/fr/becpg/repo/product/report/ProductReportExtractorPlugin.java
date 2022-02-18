@@ -597,97 +597,84 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) && isExtractedProduct) {
 
-				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				loadPackagingListItemForCompo(productData, packagingListElt, 1, 1d, 1d, 0d, context, defaultVariantNodeRef,
+						defaultVariantPackagingData,
+						(productData.getDropPackagingOfComponents() != null) && productData.getDropPackagingOfComponents());
 
-					for (CompoListDataItem compoListItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-						if ((compoListItem.getProduct() != null) && nodeService.exists(compoListItem.getProduct())) {
-
-							if ((nodeService.getType(compoListItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
-									|| nodeService.getType(compoListItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
-
-								loadPackagingListItemForCompo(productData, compoListItem, packagingListElt, 1, 1d, 1d, 0d, context,
-										defaultVariantNodeRef, defaultVariantPackagingData,
-										(productData.getDropPackagingOfComponents() != null) && productData.getDropPackagingOfComponents());
-
-							}
-						}
-					}
-				}
 			}
 
 			loadDynamicCharactList(productData.getPackagingListView().getDynamicCharactList(), packagingListElt);
 		}
 	}
 
-	private void loadPackagingListItemForCompo(ProductData productData, CompoListDataItem compoListItem, Element packagingListElt, int level,
-			Double parentQty, Double parentQtyForCost, Double parentLossRatio, DefaultExtractorContext context, NodeRef defaultVariantNodeRef,
+	private void loadPackagingListItemForCompo(ProductData productData, Element packagingListElt, int level, Double parentQty,
+			Double parentQtyForCost, Double parentLossRatio, DefaultExtractorContext context, NodeRef defaultVariantNodeRef,
 			VariantPackagingData defaultVariantPackagingData, boolean dropPackagingOfComponents) {
 
 		if (level > 20) {
 			//Avoid infinite loop
 			return;
 		}
+		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-		ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoListItem.getProduct());
+			for (CompoListDataItem compoListItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				if ((compoListItem.getProduct() != null) && nodeService.exists(compoListItem.getProduct())) {
 
-		Double lossRatio = FormulationHelper.getComponentLossPerc(componentProductData, compoListItem);
-		Double qtyForCost = FormulationHelper.getQtyForCost(compoListItem, parentLossRatio, componentProductData,
-				CostsCalculatingFormulationHandler.keepProductUnit) * parentQtyForCost;
-		Double qtyForProduct = FormulationHelper.getPackagingListQtyForProduct(compoListItem, componentProductData)
-				.multiply(BigDecimal.valueOf(parentQty)).doubleValue();
+					if ((nodeService.getType(compoListItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
+							|| nodeService.getType(compoListItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
 
-		Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
-		Double qty = 0d;
-		if ((netWeight != 0) && (compoListItem.getQty() != null) && (parentQty != null)) {
-			qty = BigDecimal.valueOf(compoListItem.getQty() * parentQty).divide(BigDecimal.valueOf(netWeight), MathContext.DECIMAL64).doubleValue();
-		}
+						ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoListItem.getProduct());
 
-		if (componentProductData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+						Double lossRatio = FormulationHelper.getComponentLossPerc(componentProductData, compoListItem);
+						Double qtyForCost = FormulationHelper.getQtyForCost(compoListItem, parentLossRatio, componentProductData,
+								CostsCalculatingFormulationHandler.keepProductUnit) * parentQtyForCost;
+						Double qtyForProduct = FormulationHelper.getPackagingListQtyForProduct(compoListItem, componentProductData)
+								.multiply(BigDecimal.valueOf(parentQty)).doubleValue();
 
-			Element partElt = packagingListElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName());
+						Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+						Double qty = 0d;
+						if ((netWeight != 0) && (compoListItem.getQty() != null) && (parentQty != null)) {
+							qty = BigDecimal.valueOf(compoListItem.getQty() * parentQty).divide(BigDecimal.valueOf(netWeight), MathContext.DECIMAL64)
+									.doubleValue();
+						}
 
-			loadProductData(productData.getNodeRef(), compoListItem.getComponent(), partElt, context, CostType.Packaging);
-			loadDataListItemAttributes(compoListItem, partElt, context);
-			partElt.addAttribute(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT.getLocalName(), componentProductData.getName());
+						if (componentProductData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_LOSS_PERC.getLocalName(), "" + lossRatio);
-			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_QTY.getLocalName(),
-					compoListItem.getQtySubFormula() != null ? compoListItem.getQtySubFormula().toString() : "");
-			partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_UNIT.getLocalName(),
-					compoListItem.getCompoListUnit() != null ? compoListItem.getCompoListUnit().toString() : "");
+							Element partElt = packagingListElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName());
 
-			partElt.addAttribute(ATTR_PACKAGING_QTY_FOR_PRODUCT, Double.toString(qtyForProduct));
-			partElt.addAttribute(ATTR_QTY_FOR_COST, Double.toString(qtyForCost));
+							loadProductData(productData.getNodeRef(), compoListItem.getComponent(), partElt, context, CostType.Packaging);
+							loadDataListItemAttributes(compoListItem, partElt, context);
+							partElt.addAttribute(PLMModel.ASSOC_PACKAGINGLIST_PRODUCT.getLocalName(), componentProductData.getName());
 
-			extractVariants(((AbstractEffectiveVariantListDataItem) compoListItem).getVariants(), partElt);
+							partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_LOSS_PERC.getLocalName(), "" + lossRatio);
+							partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_QTY.getLocalName(),
+									compoListItem.getQtySubFormula() != null ? compoListItem.getQtySubFormula().toString() : "");
+							partElt.addAttribute(PLMModel.PROP_PACKAGINGLIST_UNIT.getLocalName(),
+									compoListItem.getCompoListUnit() != null ? compoListItem.getCompoListUnit().toString() : "");
 
-			partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), Integer.toString(level));
+							partElt.addAttribute(ATTR_PACKAGING_QTY_FOR_PRODUCT, Double.toString(qtyForProduct));
+							partElt.addAttribute(ATTR_QTY_FOR_COST, Double.toString(qtyForCost));
 
-			for (PackagingListDataItem packagingListDataItem : componentProductData
-					.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+							extractVariants(((AbstractEffectiveVariantListDataItem) compoListItem).getVariants(), partElt);
 
-				loadPackagingItem(productData.getNodeRef(), qtyForCost, lossRatio, packagingListDataItem, packagingListElt, defaultVariantNodeRef,
-						defaultVariantPackagingData, context, level + 1, dropPackagingOfComponents, true);
+							partElt.addAttribute(BeCPGModel.PROP_DEPTH_LEVEL.getLocalName(), Integer.toString(level));
 
-			}
-		}
+							for (PackagingListDataItem packagingListDataItem : componentProductData
+									.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-		if (componentProductData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-			for (CompoListDataItem subDataItem : componentProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+								loadPackagingItem(productData.getNodeRef(), qtyForCost, lossRatio, packagingListDataItem, packagingListElt,
+										defaultVariantNodeRef, defaultVariantPackagingData, context, level + 1, dropPackagingOfComponents, true);
 
-				if ((subDataItem.getProduct() != null) && nodeService.exists(subDataItem.getProduct())) {
+							}
+						}
 
-					if ((nodeService.getType(subDataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
-							|| nodeService.getType(subDataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
-
-						loadPackagingListItemForCompo(componentProductData, subDataItem, packagingListElt, level + 1, qty,
+						loadPackagingListItemForCompo(componentProductData, packagingListElt, level + 1, qty,
 								qtyForCost / FormulationHelper.getNetQtyForCost(productData), lossRatio, context, defaultVariantNodeRef,
 								defaultVariantPackagingData,
 								dropPackagingOfComponents || ((componentProductData.getDropPackagingOfComponents() != null)
 										&& componentProductData.getDropPackagingOfComponents()));
 
 					}
-
 				}
 			}
 		}
@@ -875,43 +862,45 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						}
 
 						for (CompoListDataItem subDataItem : componentProductData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+							if (subDataItem.getProduct() != null) {
 
-							ProductData subProductData = (ProductData) alfrescoRepository.findOne(subDataItem.getProduct());
+								ProductData subProductData = (ProductData) alfrescoRepository.findOne(subDataItem.getProduct());
 
-							Double subQty = (FormulationHelper.getNetWeight(componentProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0)
-									&& (subDataItem.getQty() != null)
-											? (qty * subDataItem.getQty())
-													/ FormulationHelper.getNetWeight(componentProductData, FormulationHelper.DEFAULT_NET_WEIGHT)
-											: 0d;
+								Double subQty = (FormulationHelper.getNetWeight(componentProductData, FormulationHelper.DEFAULT_NET_WEIGHT) != 0)
+										&& (subDataItem.getQty() != null)
+												? (qty * subDataItem.getQty())
+														/ FormulationHelper.getNetWeight(componentProductData, FormulationHelper.DEFAULT_NET_WEIGHT)
+												: 0d;
 
-							Double subQtyForCost = (FormulationHelper.getQtyForCost(subDataItem, 0d, subProductData,
-									CostsCalculatingFormulationHandler.keepProductUnit) / FormulationHelper.getNetQtyForCost(componentProductData))
-									* qtyForCost;
+								Double subQtyForCost = (FormulationHelper.getQtyForCost(subDataItem, 0d, subProductData,
+										CostsCalculatingFormulationHandler.keepProductUnit)
+										/ FormulationHelper.getNetQtyForCost(componentProductData)) * qtyForCost;
 
-							Double newLossPerc = FormulationHelper.getComponentLossPerc(subProductData, subDataItem);
+								Double newLossPerc = FormulationHelper.getComponentLossPerc(subProductData, subDataItem);
 
-							boolean extractNextLevel = true;
+								boolean extractNextLevel = true;
 
-							if (context.getPreferences().containsKey(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT)) {
-								List<String> maxLevelPrefs = Arrays
-										.asList(context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
+								if (context.getPreferences().containsKey(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT)) {
+									List<String> maxLevelPrefs = Arrays.asList(
+											context.getPreferences().get(EntityReportParameters.PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT).split(","));
 
-								List<Integer> maxLevels = new ArrayList<>();
+									List<Integer> maxLevels = new ArrayList<>();
 
-								for (String pref : maxLevelPrefs) {
-									maxLevels.add(Integer.parseInt(pref));
+									for (String pref : maxLevelPrefs) {
+										maxLevels.add(Integer.parseInt(pref));
+									}
+
+									int maxLevel = Collections.min(maxLevels);
+
+									if (maxLevel < (level + 1)) {
+										extractNextLevel = false;
+									}
 								}
 
-								int maxLevel = Collections.min(maxLevels);
-
-								if (maxLevel < (level + 1)) {
-									extractNextLevel = false;
+								if (extractNextLevel) {
+									loadCompoListItem(entityNodeRef, dataItem, subDataItem, subProductData, compoListElt, level + 1, subQty,
+											subQtyForCost, newLossPerc, context);
 								}
-							}
-
-							if (extractNextLevel) {
-								loadCompoListItem(entityNodeRef, dataItem, subDataItem, subProductData, compoListElt, level + 1, subQty,
-										subQtyForCost, newLossPerc, context);
 							}
 
 						}
@@ -1019,12 +1008,14 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			addDataListState(lcListsElt, productData.getLabelClaimList().get(0).getParentNodeRef());
 
 			for (LabelClaimListDataItem dataListItem : productData.getLabelClaimList()) {
-				Element lcListElt = lcListsElt.addElement(PLMModel.TYPE_LABELCLAIMLIST.getLocalName());
-				loadDataListItemAttributes(dataListItem, lcListElt, context);
+				if (dataListItem.getLabelClaim() != null) {
+					Element lcListElt = lcListsElt.addElement(PLMModel.TYPE_LABELCLAIMLIST.getLocalName());
+					loadDataListItemAttributes(dataListItem, lcListElt, context);
 
-				boolean isDisplay = isCharactDisplayedForLocale(dataListItem.getLabelClaim());
-				String displayMode = (isDisplay ? "O" : "");
-				lcListElt.addAttribute("regulDisplayMode", displayMode);
+					boolean isDisplay = isCharactDisplayedForLocale(dataListItem.getLabelClaim());
+					String displayMode = (isDisplay ? "O" : "");
+					lcListElt.addAttribute("regulDisplayMode", displayMode);
+				}
 			}
 		}
 	}
@@ -1040,87 +1031,90 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			StringBuilder inVolAllergensRawMaterial = null;
 
 			for (AllergenListDataItem dataListItem : productData.getAllergenList()) {
-				Element allergenListElt = allergenListsElt.addElement(PLMModel.TYPE_ALLERGENLIST.getLocalName());
-				loadDataListItemAttributes(dataListItem, allergenListElt, context);
+				if (dataListItem.getAllergen() != null) {
+					Element allergenListElt = allergenListsElt.addElement(PLMModel.TYPE_ALLERGENLIST.getLocalName());
+					loadDataListItemAttributes(dataListItem, allergenListElt, context);
 
-				String allergenType = (String) nodeService.getProperty(dataListItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
-				boolean isDisplayed = isCharactDisplayedForLocale(dataListItem.getAllergen());
-				String displayMode = "";
+					String allergenType = (String) nodeService.getProperty(dataListItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
+					boolean isDisplayed = isCharactDisplayedForLocale(dataListItem.getAllergen());
+					String displayMode = "";
 
-				if (isDisplayed) {
-					displayMode = "O";
+					if (isDisplayed) {
+						displayMode = "O";
 
-					if (allergenType != null) {
-						allergenListElt.addAttribute("allergenType", allergenType);
-						if (allergenType.equals("Major")) {
+						if (allergenType != null) {
+							allergenListElt.addAttribute("allergenType", allergenType);
+							if (allergenType.equals("Major")) {
 
-							displayMode = "M";
-							String allergen = (String) nodeService.getProperty(dataListItem.getAllergen(), BeCPGModel.PROP_LEGAL_NAME);
+								displayMode = "M";
+								String allergen = (String) nodeService.getProperty(dataListItem.getAllergen(), BeCPGModel.PROP_LEGAL_NAME);
 
-							if ((allergen == null) || allergen.isEmpty()) {
-								allergen = (String) nodeService.getProperty(dataListItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
-							}
-
-							if (allergen == null) {
-								allergen = "###";
-							}
-
-							// concat allergens
-							if (Boolean.TRUE.equals(dataListItem.getVoluntary())) {
-								if (volAllergens == null) {
-									volAllergens = new StringBuilder();
-								} else {
-									volAllergens.append(RepoConsts.LABEL_SEPARATOR);
+								if ((allergen == null) || allergen.isEmpty()) {
+									allergen = (String) nodeService.getProperty(dataListItem.getAllergen(), BeCPGModel.PROP_CHARACT_NAME);
 								}
 
-								volAllergens.append(allergen);
-
-							} else if (Boolean.TRUE.equals(dataListItem.getInVoluntary())) {
-								if (inVolAllergens == null) {
-									inVolAllergens = new StringBuilder();
-								} else {
-									inVolAllergens.append(RepoConsts.LABEL_SEPARATOR);
+								if (allergen == null) {
+									allergen = "###";
 								}
-								inVolAllergens.append(allergen);
 
-								boolean presentInRawMaterial = false;
-								boolean presentInProcess = false;
-								for (NodeRef inVoluntarySource : dataListItem.getInVoluntarySources()) {
-									QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
-
-									if (!presentInRawMaterial && PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
-										if (inVolAllergensRawMaterial == null) {
-											inVolAllergensRawMaterial = new StringBuilder();
-										} else {
-											inVolAllergensRawMaterial.append(RepoConsts.LABEL_SEPARATOR);
-										}
-										inVolAllergensRawMaterial.append(allergen);
-										presentInRawMaterial = true;
-									} else if (!presentInProcess && PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
-										if (inVolAllergensProcess == null) {
-											inVolAllergensProcess = new StringBuilder();
-										} else {
-											inVolAllergensProcess.append(RepoConsts.LABEL_SEPARATOR);
-										}
-										inVolAllergensProcess.append(allergen);
-										presentInProcess = true;
+								// concat allergens
+								if (Boolean.TRUE.equals(dataListItem.getVoluntary())) {
+									if (volAllergens == null) {
+										volAllergens = new StringBuilder();
+									} else {
+										volAllergens.append(RepoConsts.LABEL_SEPARATOR);
 									}
-								}
 
+									volAllergens.append(allergen);
+
+								} else if (Boolean.TRUE.equals(dataListItem.getInVoluntary())) {
+									if (inVolAllergens == null) {
+										inVolAllergens = new StringBuilder();
+									} else {
+										inVolAllergens.append(RepoConsts.LABEL_SEPARATOR);
+									}
+									inVolAllergens.append(allergen);
+
+									boolean presentInRawMaterial = false;
+									boolean presentInProcess = false;
+									for (NodeRef inVoluntarySource : dataListItem.getInVoluntarySources()) {
+										QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
+
+										if (!presentInRawMaterial && PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
+											if (inVolAllergensRawMaterial == null) {
+												inVolAllergensRawMaterial = new StringBuilder();
+											} else {
+												inVolAllergensRawMaterial.append(RepoConsts.LABEL_SEPARATOR);
+											}
+											inVolAllergensRawMaterial.append(allergen);
+											presentInRawMaterial = true;
+										} else if (!presentInProcess && PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
+											if (inVolAllergensProcess == null) {
+												inVolAllergensProcess = new StringBuilder();
+											} else {
+												inVolAllergensProcess.append(RepoConsts.LABEL_SEPARATOR);
+											}
+											inVolAllergensProcess.append(allergen);
+											presentInProcess = true;
+										}
+									}
+
+								}
 							}
 						}
 					}
+					allergenListElt.addAttribute("regulDisplayMode", displayMode);
 				}
-				allergenListElt.addAttribute("regulDisplayMode", displayMode);
-			}
 
-			allergenListsElt.addAttribute(PLMModel.PROP_ALLERGENLIST_VOLUNTARY.getLocalName(), volAllergens != null ? volAllergens.toString() : "");
-			allergenListsElt.addAttribute(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY.getLocalName(),
-					inVolAllergens != null ? inVolAllergens.toString() : "");
-			allergenListsElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS,
-					inVolAllergensProcess != null ? inVolAllergensProcess.toString() : "");
-			allergenListsElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL,
-					inVolAllergensRawMaterial != null ? inVolAllergensRawMaterial.toString() : "");
+				allergenListsElt.addAttribute(PLMModel.PROP_ALLERGENLIST_VOLUNTARY.getLocalName(),
+						volAllergens != null ? volAllergens.toString() : "");
+				allergenListsElt.addAttribute(PLMModel.PROP_ALLERGENLIST_INVOLUNTARY.getLocalName(),
+						inVolAllergens != null ? inVolAllergens.toString() : "");
+				allergenListsElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS,
+						inVolAllergensProcess != null ? inVolAllergensProcess.toString() : "");
+				allergenListsElt.addAttribute(ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL,
+						inVolAllergensRawMaterial != null ? inVolAllergensRawMaterial.toString() : "");
+			}
 		}
 	}
 
