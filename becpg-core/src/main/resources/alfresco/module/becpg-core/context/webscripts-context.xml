@@ -170,6 +170,7 @@
 		<property name="versionService" ref="versionService" />
 		<property name="entityVersionService" ref="entityVersionService" />
 		<property name="reportTplService" ref="reportTplService"/>
+		<property name="nodeService" ref="NodeService" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.entity.entityVersion.get" class="fr.becpg.repo.web.scripts.entity.EntityVersionWebScript" parent="webscript">
