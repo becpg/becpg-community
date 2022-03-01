@@ -197,7 +197,7 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 				entityNodeRefs.sort((e1, e2) -> {
 					Date d1 = (Date) nodeService.getProperty(e1, org.alfresco.model.ContentModel.PROP_CREATED);
 					Date d2 = (Date) nodeService.getProperty(e2, org.alfresco.model.ContentModel.PROP_CREATED);
-					return (d1 == d2) ? 0 : d2 == null ? -1 : d2.compareTo(d1);
+					return (d1 == d2) ? 0 : d1 == null ? -1 : d1.compareTo(d2);
 				});
 			}
 		}
