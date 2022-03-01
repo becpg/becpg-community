@@ -642,7 +642,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @return list
 		 */
 		public Collection<RepositoryEntity> extractCustomList(NodeRef nodeRef, String listType) {
-			return alfrescoRepository.loadDataList(entity.getNodeRef(), getQName(listType), getQName(listType));
+			return alfrescoRepository.loadDataList(nodeRef, getQName(listType).getLocalName(), getQName(listType));
 		}
 
 		/**
