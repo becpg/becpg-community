@@ -57,18 +57,18 @@
 
 	<types>
 
-		<type name="survey:survey">
+		<type name="survey:surveyList">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
-				<property name="survey:comment">
+				<property name="survey:slComment">
 					<type>d:any</type>
 				</property>
-				<property name="survey:response">
+				<property name="survey:slResponse">
 					<type>d:any</type>
 				</property>
 			</properties>
 			<associations>
-				<association name="survey:question">
+				<association name="survey:slQuestion">
 					<source>
 						<mandatory>true</mandatory>
 						<many>true</many>
@@ -79,7 +79,7 @@
 						<many>false</many>
 					</target>
 				</association>
-				<association name="survey:choices">
+				<association name="survey:slChoices">
 					<source>
 						<mandatory>true</mandatory>
 						<many>false</many>
@@ -97,7 +97,7 @@
 		<type name="survey:surveyQuestion">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
-				<property name="survey:label">
+				<property name="survey:questionLabel">
 					<type>d:mltext</type>
 				</property>
 				<property name="survey:questionNote">
@@ -115,10 +115,10 @@
 				<property name="survey:questionScore">
 					<type>d:int</type>
 				</property>
-				<property name="survey:isMandatory">
+				<property name="survey:questionIsMandatory">
 					<type>d:boolean</type>
 				</property>
-				<property name="survey:isVisible">
+				<property name="survey:questionIsVisible">
 					<type>d:boolean</type>
 				</property>
 				<property name="survey:responseType">
