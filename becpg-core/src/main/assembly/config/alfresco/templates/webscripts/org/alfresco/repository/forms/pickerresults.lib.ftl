@@ -58,8 +58,8 @@
 				<#elseif row.item.typeShort == "pack:packMaterial" >
 				"name": "${row.item.properties["bcpg:lvValue"]!""}",
 				<#elseif row.item.typeShort == "survey:surveyQuestion" >
-				"name": "${row.item.properties["survey:label"]!""}",
-				"title": "${row.item.properties["survey:label"]!""}",
+				"name": "${row.item.properties["survey:questionLabel"]!""}",
+				"title": "${row.item.properties["survey:questionLabel"]!""}",
 				<#elseif row.item.typeShort == "bcpg:listValue" >
 				"name": "${row.item.properties["bcpg:lvValue"]!""}",
 				"title": "${row.item.properties["bcpg:lvValue"]!""}",

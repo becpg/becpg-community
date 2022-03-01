@@ -54,7 +54,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 	}
 
 	@AlfProp
-	@AlfQname(qname = "survey:label")
+	@AlfQname(qname = "survey:questionLabel")
 	public String getLabel() {
 		return label;
 	}
@@ -90,13 +90,13 @@ public class SurveyQuestion extends BeCPGDataObject {
 	}
 
 	@AlfProp
-	@AlfQname(qname = "survey:isMandatory")
+	@AlfQname(qname = "survey:questionIsMandatory")
 	public Boolean getIsMandatory() {
 		return isMandatory;
 	}
 
 	@AlfProp
-	@AlfQname(qname = "survey:isVisible")
+	@AlfQname(qname = "survey:questionIsVisible")
 	public Boolean getIsVisible() {
 		return isVisible;
 	}
