@@ -511,11 +511,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				String allergenName2 = extractName(a2.getAllergen());
 
 				return allergenName1.compareTo(allergenName2);
-			} else if (AllergenType.Major.toString().equals(type1)) {
+			} else if (AllergenType.Major.toString().equals(type1) && AllergenType.Minor.toString().equals(type2)) {
+				return BEFORE;
+			} else if (AllergenType.Minor.toString().equals(type1) && type2 == null) { 
 				return BEFORE;
 			} else {
 				return AFTER;
-
 			}
 
 		}).forEach(al -> al.setSort(atomicInteger.getAndIncrement()));
