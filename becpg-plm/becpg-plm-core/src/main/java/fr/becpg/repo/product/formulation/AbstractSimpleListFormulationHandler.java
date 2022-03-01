@@ -49,7 +49,6 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -220,8 +219,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		return mandatoryCharacts;
 	}
 
-	
-
 	/**
 	 * <p>cleanSimpleList.</p>
 	 *
@@ -259,19 +256,20 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
-
-
 	protected interface SimpleListQtyProvider {
-		
+
 		Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct);
+
 		Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct);
+
 		Double getNetWeight();
+
 		Double getNetQty();
+
 		Boolean omitElement(CompoListDataItem compoListDataItem);
-		
-		
+
 	}
-	
+
 	/**
 	 * <p>formulateSimpleList.</p>
 	 *
@@ -280,31 +278,29 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param isFormulatedProduct a boolean.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider simpleListQtyProvider, boolean isFormulatedProduct) {
-		
+	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider simpleListQtyProvider,
+			boolean isFormulatedProduct) {
+
 		cleanSimpleList(simpleListDataList, isFormulatedProduct);
 		synchronizeTemplate(formulatedProduct, simpleListDataList);
-		
+
 		if (isFormulatedProduct) {
-			visitComposition(formulatedProduct, simpleListDataList, simpleListQtyProvider , null);
-			visitPackaging(formulatedProduct,  simpleListDataList, simpleListQtyProvider, null);
-			visitProcess(formulatedProduct,  simpleListDataList, simpleListQtyProvider , null);
+			visitComposition(formulatedProduct, simpleListDataList, simpleListQtyProvider, null);
+			visitPackaging(formulatedProduct, simpleListDataList, simpleListQtyProvider, null);
+			visitProcess(formulatedProduct, simpleListDataList, simpleListQtyProvider, null);
 
 			for (VariantData variant : formulatedProduct.getVariants()) {
 				visitComposition(formulatedProduct, simpleListDataList, simpleListQtyProvider, variant);
-				visitPackaging(formulatedProduct,  simpleListDataList, simpleListQtyProvider, variant);
-				visitProcess(formulatedProduct,  simpleListDataList, simpleListQtyProvider, variant);
+				visitPackaging(formulatedProduct, simpleListDataList, simpleListQtyProvider, variant);
+				visitProcess(formulatedProduct, simpleListDataList, simpleListQtyProvider, variant);
 
 			}
 		}
 
 	}
-	
-	
 
-	
-
-	protected void visitComposition(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider, VariantData variant) {
+	protected void visitComposition(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider,
+			VariantData variant) {
 		NodeRef variantNodeRef = variant != null ? variant.getNodeRef() : null;
 
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
@@ -318,71 +314,65 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			Composite<CompoListDataItem> composite = CompositeHelper
 					.getHierarchicalCompoList(formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
 							(variant != null ? new VariantFilters<>(variantNodeRef) : new VariantFilters<>()))));
-			visitCompoListChildren(formulatedProduct, composite, simpleListDataList, formulatedProduct.getProductLossPerc(), qtyProvider, mandatoryCharacts1,
-					variant, true);
+			visitCompoListChildren(formulatedProduct, composite, simpleListDataList, formulatedProduct.getProductLossPerc(), qtyProvider,
+					mandatoryCharacts1, variant, true);
 
 			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts1, getRequirementDataType());
 
 		}
-		
+
 	}
-	
-	
 
 	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, List<T> simpleListDataList,
-			Double parentLossRatio, SimpleListQtyProvider qtyProvider , Map<NodeRef, List<NodeRef>> mandatoryCharacts, VariantData variant, boolean first) {
+			Double parentLossRatio, SimpleListQtyProvider qtyProvider, Map<NodeRef, List<NodeRef>> mandatoryCharacts, VariantData variant,
+			boolean isFormulatedProduct) {
 
-		boolean isGenericRawMaterial = formulatedProduct instanceof RawMaterialData;
-		
+
 		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 			CompoListDataItem compoListDataItem = component.getData();
-			if(compoListDataItem!=null) {
+			if (compoListDataItem != null) {
 				ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
-				if(!Boolean.TRUE.equals(qtyProvider.omitElement(compoListDataItem))) {
-				if (!component.isLeaf()) {
-	
-					
+				if (!Boolean.TRUE.equals(qtyProvider.omitElement(compoListDataItem))) {
+					if (!component.isLeaf()) {
+
 						// take in account the loss perc
 						Double lossPerc = FormulationHelper.getComponentLossPerc(componentProduct, compoListDataItem);
 						Double newLossPerc = FormulationHelper.calculateLossPerc(parentLossRatio, lossPerc);
 						if (logger.isDebugEnabled()) {
 							logger.debug("parentLossRatio: " + parentLossRatio + " - lossPerc: " + lossPerc + " - newLossPerc: " + newLossPerc);
 						}
-		
+
 						// calculate children
 						Composite<CompoListDataItem> c = component;
 						visitCompoListChildren(formulatedProduct, c, simpleListDataList, newLossPerc, qtyProvider, mandatoryCharacts, variant, false);
+
+					} else {
+
 					
-				} else {
-	
-					Double qty = qtyProvider.getQty(compoListDataItem, parentLossRatio, componentProduct);
-				    Double vol = qtyProvider.getVolume(compoListDataItem, parentLossRatio, componentProduct);
-	
-					if ((qty != null)) {
-						visitPart(formulatedProduct, componentProduct, simpleListDataList, qty, vol, qtyProvider.getNetQty(), qtyProvider.getNetWeight(), mandatoryCharacts, totalQtiesValue,
-								isGenericRawMaterial, variant);
+						
+						FormulatedQties qties = new FormulatedQties(qtyProvider.getQty(compoListDataItem, parentLossRatio, componentProduct), 
+								qtyProvider.getVolume(compoListDataItem, parentLossRatio, componentProduct), qtyProvider.getNetQty(), qtyProvider.getNetWeight());
+						
+						if (qties.isNotNull()) {
+							visitPart(formulatedProduct, componentProduct, simpleListDataList, qties, mandatoryCharacts, totalQtiesValue, variant);
+						}
+
 					}
-	
 				}
-			}
 			}
 		}
 		// Case Generic MP
-		if (first && isGenericRawMaterial) {
-			formulateGenericRawMaterial(simpleListDataList, totalQtiesValue,  qtyProvider.getNetQty());
+		if (isFormulatedProduct && formulatedProduct.isGeneric()) {
+			formulateGenericRawMaterial(simpleListDataList, totalQtiesValue, qtyProvider.getNetQty());
 		}
 	}
 
-	
-	
 	protected void visitPackaging(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider, VariantData variant) {
-	
 
 		if (formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
 				(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
 
-			
 			/*
 			 * PackagingList
 			 */
@@ -398,18 +388,21 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
 
 					Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, partProduct);
+					
+					FormulatedQties qties = new FormulatedQties(qty ,
+							qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight());
 
-					visitPart(formulatedProduct, partProduct, simpleListDataList, qty, qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight(), mandatoryCharacts2, null, false, variant);
+					visitPart(formulatedProduct, partProduct, simpleListDataList, qties,
+							mandatoryCharacts2, null, variant);
 				}
 			}
 
 			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts2, getRequirementDataType());
 		}
-		
+
 	}
-	
-	
-   protected void visitProcess(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider , VariantData variant) {
+
+	protected void visitProcess(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider, VariantData variant) {
 
 		if (formulatedProduct.hasProcessListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
 				(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
@@ -418,7 +411,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			 */
 
 			Double netQtyForCost = qtyProvider.getNetQty();
-			
+
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts3 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RESOURCEPRODUCT);
 			for (ProcessListDataItem processListDataItem : formulatedProduct
 					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
@@ -432,18 +425,20 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					}
 
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(processListDataItem.getResource());
+					
+					FormulatedQties qties = new FormulatedQties(qty ,
+							null, netQtyForCost,null);
+					
 
-					visitPart(formulatedProduct, partProduct, simpleListDataList, qty, null, netQtyForCost, null, mandatoryCharacts3, null, false, variant);
+					visitPart(formulatedProduct, partProduct, simpleListDataList, qties, mandatoryCharacts3, null,
+							variant);
 				}
 			}
 
 			addReqCtrlList(formulatedProduct.getReqCtrlList(), mandatoryCharacts3, getRequirementDataType());
 		}
-	
 
-}
-
-	
+	}
 
 	/**
 	 * <p>formulateGenericRawMaterial.</p>
@@ -504,9 +499,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	protected void visitPart(ProductData formulatedProduct, ProductData partProduct, List<T> simpleListDataList, Double weightUsed, Double volUsed,
-			Double netQtyInLorKg, Double netWeight, Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue,
-			boolean isGenericRawMaterial, VariantData variant) {
+	protected void visitPart(ProductData formulatedProduct, ProductData partProduct, List<T> simpleListDataList, FormulatedQties qties , Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue,
+			 VariantData variant) {
 
 		if (!(partProduct instanceof LocalSemiFinishedProductData)) {
 
@@ -559,13 +553,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							}
 
 							// calculate charact from qty or vol ?
-							Double qtyUsed = formulateInVol ? volUsed : weightUsed;
-							Double netQty = forceWeight ? netWeight : netQtyInLorKg;
+							Double qtyUsed = qties.getQtyUsed( formulateInVol);
+							Double netQty = qties.getNetQty(forceWeight);
 
 							// Calculate values
 							if ((qtyUsed != null)) {
 
-								calculate(formulatedProduct, partProduct, newSimpleListDataItem, slDataItem, qtyUsed, netQty, isGenericRawMaterial,
+								calculate(formulatedProduct, partProduct, newSimpleListDataItem, slDataItem, qtyUsed, netQty,
 										variant);
 
 								if ((totalQtiesValue != null) && (slDataItem.getValue() != null)) {
@@ -596,88 +590,88 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param isGenericRawMaterial a boolean.
 	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object.
 	 */
-	protected void calculate(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem newSimpleListDataItem,
-			SimpleListDataItem slDataItem, Double qtyUsed, Double netQty, boolean isGenericRawMaterial, VariantData variant) {
+	protected void calculate(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem calculatedListItem,
+			SimpleListDataItem visitedListItem, Double qtyUsed, Double netQty, VariantData variant) {
 
 		Double formulatedValue;
-		if (newSimpleListDataItem instanceof FormulatedCharactDataItem) {
-			formulatedValue = ((FormulatedCharactDataItem) newSimpleListDataItem).getFormulatedValue();
+		if (calculatedListItem instanceof FormulatedCharactDataItem) {
+			formulatedValue = ((FormulatedCharactDataItem) calculatedListItem).getFormulatedValue();
 		} else {
-			formulatedValue = newSimpleListDataItem.getValue();
+			formulatedValue = calculatedListItem.getValue();
 		}
 
 		Double newValue = formulatedValue != null ? formulatedValue : 0d;
-		Double value = extractValue(formulatedProduct, partProduct, slDataItem);
-		if ((variant != null) && (newSimpleListDataItem instanceof VariantAwareDataItem)) {
-			formulatedValue = ((VariantAwareDataItem) newSimpleListDataItem).getValue(variant);
+		Double value = extractValue(formulatedProduct, partProduct, visitedListItem);
+		if ((variant != null) && (calculatedListItem instanceof VariantAwareDataItem)) {
+			formulatedValue = ((VariantAwareDataItem) calculatedListItem).getValue(variant);
 			if (value != null) {
-				((VariantAwareDataItem) newSimpleListDataItem).setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, value, netQty),
+				((VariantAwareDataItem) calculatedListItem).setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, value, netQty),
 						variant);
 			}
 		} else if (variant == null) {
 			if (value != null) {
-				newSimpleListDataItem.setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, value, netQty));
+				calculatedListItem.setValue(FormulationHelper.calculateValue(formulatedValue, qtyUsed, value, netQty));
 			} else {
 				value = 0d;
 			}
-			if (slDataItem instanceof MinMaxValueDataItem) {
-				Double newMini = ((MinMaxValueDataItem) newSimpleListDataItem).getMini();
-				if (newSimpleListDataItem instanceof NutListDataItem) {
-					newMini = ((NutListDataItem) newSimpleListDataItem).getFormulatedMini();
+			if (visitedListItem instanceof MinMaxValueDataItem) {
+				Double newMini = ((MinMaxValueDataItem) calculatedListItem).getMini();
+				if (calculatedListItem instanceof NutListDataItem) {
+					newMini = ((NutListDataItem) calculatedListItem).getFormulatedMini();
 				}
 
-				Double miniValue = ((MinMaxValueDataItem) slDataItem).getMini();
-				Double newMaxi = ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi();
+				Double miniValue = ((MinMaxValueDataItem) visitedListItem).getMini();
+				Double newMaxi = ((MinMaxValueDataItem) calculatedListItem).getMaxi();
 
-				if (newSimpleListDataItem instanceof NutListDataItem) {
-					newMaxi = ((NutListDataItem) newSimpleListDataItem).getFormulatedMaxi();
+				if (calculatedListItem instanceof NutListDataItem) {
+					newMaxi = ((NutListDataItem) calculatedListItem).getFormulatedMaxi();
 				}
 
-				Double maxiValue = ((MinMaxValueDataItem) slDataItem).getMaxi();
-				if (isGenericRawMaterial) {
+				Double maxiValue = ((MinMaxValueDataItem) visitedListItem).getMaxi();
+				if (formulatedProduct.isGeneric()) {
 					if ((miniValue != null) && ((newMini == null) || ((newMini != null) && (newMini > miniValue)))) {
-						((MinMaxValueDataItem) newSimpleListDataItem).setMini(miniValue);
+						((MinMaxValueDataItem) calculatedListItem).setMini(miniValue);
 					}
 					if ((maxiValue != null) && ((newMaxi == null) || ((newMaxi != null) && (newMaxi < maxiValue)))) {
-						((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(maxiValue);
+						((MinMaxValueDataItem) calculatedListItem).setMaxi(maxiValue);
 					}
 				} else {
 					if ((newMini != null) || (miniValue != null)) {
-						((MinMaxValueDataItem) newSimpleListDataItem).setMini(FormulationHelper.calculateValue(newMini != null ? newMini : newValue,
+						((MinMaxValueDataItem) calculatedListItem).setMini(FormulationHelper.calculateValue(newMini != null ? newMini : newValue,
 								qtyUsed, miniValue != null ? miniValue : value, netQty));
 					}
 					if ((newMaxi != null) || (maxiValue != null)) {
-						((MinMaxValueDataItem) newSimpleListDataItem).setMaxi(FormulationHelper.calculateValue(newMaxi != null ? newMaxi : newValue,
+						((MinMaxValueDataItem) calculatedListItem).setMaxi(FormulationHelper.calculateValue(newMaxi != null ? newMaxi : newValue,
 								qtyUsed, maxiValue != null ? maxiValue : value, netQty));
 					}
 				}
 			}
 
-			if (newSimpleListDataItem instanceof ForecastValueDataItem) {
-				((ForecastValueDataItem) newSimpleListDataItem)
-						.setPreviousValue(FormulationHelper.calculateValue(((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue(),
-								qtyUsed, ((ForecastValueDataItem) slDataItem).getPreviousValue(), netQty));
-				((ForecastValueDataItem) newSimpleListDataItem)
-						.setFutureValue(FormulationHelper.calculateValue(((ForecastValueDataItem) newSimpleListDataItem).getFutureValue(), qtyUsed,
-								((ForecastValueDataItem) slDataItem).getFutureValue(), netQty));
+			if (calculatedListItem instanceof ForecastValueDataItem) {
+				((ForecastValueDataItem) calculatedListItem)
+						.setPreviousValue(FormulationHelper.calculateValue(((ForecastValueDataItem) calculatedListItem).getPreviousValue(),
+								qtyUsed, ((ForecastValueDataItem) visitedListItem).getPreviousValue(), netQty));
+				((ForecastValueDataItem) calculatedListItem)
+						.setFutureValue(FormulationHelper.calculateValue(((ForecastValueDataItem) calculatedListItem).getFutureValue(), qtyUsed,
+								((ForecastValueDataItem) visitedListItem).getFutureValue(), netQty));
 			}
 
 			if (logger.isDebugEnabled()) {
-				logger.debug(partProduct.getName() + " - valueToAdd = qtyUsed * value : " + qtyUsed + " * " + slDataItem.getValue());
-				if (newSimpleListDataItem.getNodeRef() != null) {
-					logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-							+ " - newValue : " + newSimpleListDataItem.getValue());
-					if (newSimpleListDataItem instanceof MinMaxValueDataItem) {
-						logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-								+ " - newMini : " + ((MinMaxValueDataItem) newSimpleListDataItem).getMini());
-						logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-								+ " - newMaxi : " + ((MinMaxValueDataItem) newSimpleListDataItem).getMaxi());
+				logger.debug(partProduct.getName() + " - valueToAdd = qtyUsed * value : " + qtyUsed + " * " + visitedListItem.getValue());
+				if (calculatedListItem.getNodeRef() != null) {
+					logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
+							+ " - newValue : " + calculatedListItem.getValue());
+					if (calculatedListItem instanceof MinMaxValueDataItem) {
+						logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
+								+ " - newMini : " + ((MinMaxValueDataItem) calculatedListItem).getMini());
+						logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
+								+ " - newMaxi : " + ((MinMaxValueDataItem) calculatedListItem).getMaxi());
 					}
-					if (newSimpleListDataItem instanceof ForecastValueDataItem) {
-						logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-								+ " - previousValue : " + ((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue());
-						logger.debug("charact: " + nodeService.getProperty(newSimpleListDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
-								+ " - futureValue : " + ((ForecastValueDataItem) newSimpleListDataItem).getFutureValue());
+					if (calculatedListItem instanceof ForecastValueDataItem) {
+						logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
+								+ " - previousValue : " + ((ForecastValueDataItem) calculatedListItem).getPreviousValue());
+						logger.debug("charact: " + nodeService.getProperty(calculatedListItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME)
+								+ " - futureValue : " + ((ForecastValueDataItem) calculatedListItem).getFutureValue());
 					}
 				}
 			}
