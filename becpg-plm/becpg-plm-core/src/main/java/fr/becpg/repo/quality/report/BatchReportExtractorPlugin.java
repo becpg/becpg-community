@@ -98,7 +98,7 @@ public class BatchReportExtractorPlugin extends ProductReportExtractorPlugin {
 		// compoList
 		if (batchData.hasCompoListEl()) {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
-			addDataListState(compoListElt, batchData.getCompoList().get(0).getParentNodeRef());
+			addDataListStateAndName(compoListElt, batchData.getCompoList().get(0).getParentNodeRef());
 
 			for (CompoListDataItem dataItem : batchData.getCompoList()) {
 				if (dataItem.getProduct() != null) {
