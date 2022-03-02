@@ -70,6 +70,7 @@ import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.PaginatedSearchCache;
 
 /**
@@ -1184,5 +1185,24 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 		
 	}
+	
+	/**
+	 * <p>count.</p>
+	 * @param type
+	 * @return Number of object of type 
+	 */
+    public Long count(String type) {
+	   return  BeCPGQueryBuilder.createQuery().ofType(QName.createQName(type, namespaceService)).count();
+	}
+    
+    public Long count(String type, boolean excludeDefaults) {
+    	if(excludeDefaults) {
+    		return BeCPGQueryBuilder.createQuery().ofType(QName.createQName(type, namespaceService)).excludeDefaults().count();
+    	} else {
+    		return count(type);
+    	}
+ 	}
+	
+	
 	
 }
