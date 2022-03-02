@@ -8,7 +8,7 @@ public class FormulatedQties {
 	Double netQty;
 	
 	
-	public FormulatedQties(Double qty, Double volume, Double netWeight, Double netQty) {
+	public FormulatedQties(Double qty, Double volume, Double netQty, Double netWeight) {
 		super();
 		this.qty = qty;
 		this.volume = volume;

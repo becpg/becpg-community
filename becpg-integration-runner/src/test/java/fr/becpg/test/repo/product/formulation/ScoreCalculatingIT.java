@@ -223,8 +223,7 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 			String missingFieldsString = missingFieldsArray.toString();
 			logger.info("Missing fields: " + missingFieldsString);
-			assertTrue(missingFieldsString.contains("bcpg:precautionOfUseRef"));
-			assertTrue(missingFieldsString.contains("bcpg:storageConditionsRef"));
+			assertTrue(missingFieldsString.contains("cm:title"));
 
 			return null;
 		}, false, true);
