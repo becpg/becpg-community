@@ -427,7 +427,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(processListDataItem.getResource());
 					
 					FormulatedQties qties = new FormulatedQties(qty ,
-							null, netQtyForCost,null);
+							null, netQtyForCost, null );
 					
 
 					visitPart(formulatedProduct, partProduct, simpleListDataList, qties, mandatoryCharacts3, null,
