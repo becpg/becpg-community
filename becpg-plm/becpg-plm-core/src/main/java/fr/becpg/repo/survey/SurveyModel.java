@@ -15,8 +15,8 @@ public final class SurveyModel {
 
 	public static final QName TYPE_SURVEY_QUESTION = QName.createQName(SURVEY_URI, "surveyQuestion");
 	
-	public static final QName PROP_SURVEY_LABEL = QName.createQName(SURVEY_URI, "label");
+	public static final QName PROP_SURVEY_QUESTION_LABEL = QName.createQName(SURVEY_URI, "questionLabel");
 
-	public static final QName TYPE_SURVEY =  QName.createQName(SURVEY_URI, "survey");
+	public static final QName TYPE_SURVEY_LIST =  QName.createQName(SURVEY_URI, "surveyList");
 
 }

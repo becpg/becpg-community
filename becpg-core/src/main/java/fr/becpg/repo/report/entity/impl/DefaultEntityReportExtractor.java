@@ -573,17 +573,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			for (NodeRef listNodeRef : listNodeRefs) {
 				QName dataListQName = QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE),
 						namespaceService);
-
+			
 				Class<RepositoryEntity> entityClass = repositoryEntityDefReader.getEntityClass(dataListQName);
 				if (entityClass != null) {
-					List<BeCPGDataObject> dataListItems = alfrescoRepository.loadDataList(entityNodeRef, dataListQName, dataListQName);
+					List<BeCPGDataObject> dataListItems = alfrescoRepository.loadDataList(listNodeRef, dataListQName);
 
 					if ((dataListItems != null) && !dataListItems.isEmpty()) {
 						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
 
-						for (BeCPGDataObject dataListItem : dataListItems) {
+						addDataListStateAndName(dataListElt, dataListItems.get(0).getParentNodeRef());
 
-							addDataListState(dataListElt, dataListItem.getParentNodeRef());
+						for (BeCPGDataObject dataListItem : dataListItems) {
 							Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
 							loadDataListItemAttributes(dataListItem, nodeElt, context);
 						}
@@ -601,16 +601,25 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param xmlNode a {@link org.dom4j.Element} object.
 	 * @param listNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	protected void addDataListState(Element xmlNode, NodeRef listNodeRef) {
+	protected void addDataListStateAndName(Element xmlNode, NodeRef listNodeRef) {
 		if (xmlNode.attributeValue(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName()) == null) {
 			if ((listNodeRef != null) && nodeService.exists(listNodeRef)) {
-				Serializable state = nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
+				String state = (String) nodeService.getProperty(listNodeRef, BeCPGModel.PROP_ENTITYLIST_STATE);
 				if (state != null) {
-					xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), (String) state);
+					xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(),  state);
 				} else {
 					xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), SystemState.ToValidate.toString());
 				}
-
+				
+				String title = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_TITLE);
+				if (title != null) {
+					xmlNode.addAttribute( ContentModel.PROP_TITLE.getLocalName(), title);
+				}
+				
+				String name = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
+				if (name != null) {
+					xmlNode.addAttribute( ContentModel.PROP_NAME.getLocalName(), name);
+				}
 			}
 		}
 	}
@@ -627,10 +636,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		List<NodeRef> dataListItems = entityListDAO.getListItems(listNodeRef, dataListQName);
 		if ((dataListItems != null) && !dataListItems.isEmpty()) {
 			Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
-
+			addDataListStateAndName(dataListElt, listNodeRef);
+			
 			for (NodeRef dataListItem : dataListItems) {
-
-				addDataListState(dataListElt, dataListItem);
 				Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
 				loadDataListItemAttributes(dataListItem, nodeElt, context);
 			}

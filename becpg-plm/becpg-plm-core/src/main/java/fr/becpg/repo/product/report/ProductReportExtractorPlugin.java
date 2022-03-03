@@ -212,7 +212,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							if (shouldExtractList(isExtractedProduct, context, type, dataListQName)) {
 
 								Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
-								addDataListState(dataListElt, listNodeRef);
+								addDataListStateAndName(dataListElt, listNodeRef);
 
 								for (BeCPGDataObject dataListItem : dataListItems) {
 									Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
@@ -282,7 +282,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 				if ((microbioList != null) && !microbioList.isEmpty()) {
 					Element microbioListsElt = dataListsElt.addElement(PLMModel.TYPE_MICROBIOLIST.getLocalName() + "s");
-					addDataListState(microbioListsElt, microbioList.get(0).getParentNodeRef());
+					addDataListStateAndName(microbioListsElt, microbioList.get(0).getParentNodeRef());
 					if (productMicrobioCriteriaNodeRef != null) {
 						loadNodeAttributes(productMicrobioCriteriaNodeRef, microbioListsElt, false, context);
 					}
@@ -333,7 +333,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				if ((productData.getLabelingListView().getIngLabelingList() != null)
 						&& !productData.getLabelingListView().getIngLabelingList().isEmpty()) {
 					Element ingListElt = dataListsElt.addElement(PLMModel.TYPE_INGLABELINGLIST.getLocalName() + "s");
-					addDataListState(ingListElt, productData.getLabelingListView().getIngLabelingList().get(0).getParentNodeRef());
+					addDataListStateAndName(ingListElt, productData.getLabelingListView().getIngLabelingList().get(0).getParentNodeRef());
 					for (IngLabelingListDataItem dataItem : productData.getLabelingListView().getIngLabelingList()) {
 
 						MLText labelingText = dataItem.getValue();
@@ -440,7 +440,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		// compoList
 		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
-			addDataListState(compoListElt, productData.getCompoList().get(0).getParentNodeRef());
+			addDataListStateAndName(compoListElt, productData.getCompoList().get(0).getParentNodeRef());
 
 			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				if (dataItem.getProduct() != null) {
@@ -466,7 +466,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadProcessList(ProductData productData, Element dataListsElt, DefaultExtractorContext context, boolean isExtractedProduct) {
 		if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 			Element processListElt = dataListsElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName() + "s");
-			addDataListState(processListElt, productData.getProcessList().get(0).getParentNodeRef());
+			addDataListStateAndName(processListElt, productData.getProcessList().get(0).getParentNodeRef());
 
 			for (ProcessListDataItem dataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
@@ -531,7 +531,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 			Element packagingListElt = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
-			addDataListState(packagingListElt, productData.getPackagingList().get(0).getParentNodeRef());
+			addDataListStateAndName(packagingListElt, productData.getPackagingList().get(0).getParentNodeRef());
 
 			BigDecimal netWeightPrimary = BigDecimal.valueOf(FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT));
 
@@ -916,7 +916,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			Element dataListsElt = partElt.addElement(TAG_DATALISTS);
 			Element resourceListsElt = dataListsElt.addElement(MPMModel.TYPE_RESOURCEPARAMLIST.getLocalName() + "s");
-			addDataListState(resourceListsElt, productData.getResourceParamList().get(0).getParentNodeRef());
+			addDataListStateAndName(resourceListsElt, productData.getResourceParamList().get(0).getParentNodeRef());
 
 			for (ResourceParamListItem resourceParamListItem : productData.getResourceParamList()) {
 
@@ -933,7 +933,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		if ((productData.getNutList() != null) && !productData.getNutList().isEmpty()) {
 
 			Element nutListsElt = dataListsElt.addElement(PLMModel.TYPE_NUTLIST.getLocalName() + "s");
-			addDataListState(nutListsElt, productData.getNutList().get(0).getParentNodeRef());
+			addDataListStateAndName(nutListsElt, productData.getNutList().get(0).getParentNodeRef());
 
 			for (NutListDataItem dataListItem : productData.getNutList()) {
 
@@ -993,7 +993,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadOrganoLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getOrganoList() != null) && !productData.getOrganoList().isEmpty()) {
 			Element organoListsElt = dataListsElt.addElement(PLMModel.TYPE_ORGANOLIST.getLocalName() + "s");
-			addDataListState(organoListsElt, productData.getOrganoList().get(0).getParentNodeRef());
+			addDataListStateAndName(organoListsElt, productData.getOrganoList().get(0).getParentNodeRef());
 
 			for (OrganoListDataItem dataListItem : productData.getOrganoList()) {
 				Element organoListElt = organoListsElt.addElement(PLMModel.TYPE_ORGANOLIST.getLocalName());
@@ -1005,7 +1005,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadLabelCLaimLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
 			Element lcListsElt = dataListsElt.addElement(PLMModel.TYPE_LABELCLAIMLIST.getLocalName() + "s");
-			addDataListState(lcListsElt, productData.getLabelClaimList().get(0).getParentNodeRef());
+			addDataListStateAndName(lcListsElt, productData.getLabelClaimList().get(0).getParentNodeRef());
 
 			for (LabelClaimListDataItem dataListItem : productData.getLabelClaimList()) {
 				if (dataListItem.getLabelClaim() != null) {
@@ -1023,7 +1023,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadAllergenLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getAllergenList() != null) && !productData.getAllergenList().isEmpty()) {
 			Element allergenListsElt = dataListsElt.addElement(PLMModel.TYPE_ALLERGENLIST.getLocalName() + "s");
-			addDataListState(allergenListsElt, productData.getAllergenList().get(0).getParentNodeRef());
+			addDataListStateAndName(allergenListsElt, productData.getAllergenList().get(0).getParentNodeRef());
 
 			StringBuilder volAllergens = null;
 			StringBuilder inVolAllergens = null;
@@ -1121,7 +1121,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadIngLists(ProductData productData, Element dataListsElt, DefaultExtractorContext context) {
 		if ((productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 			Element ingListsElt = dataListsElt.addElement(PLMModel.TYPE_INGLIST.getLocalName() + "s");
-			addDataListState(ingListsElt, productData.getIngList().get(0).getParentNodeRef());
+			addDataListStateAndName(ingListsElt, productData.getIngList().get(0).getParentNodeRef());
 
 			for (IngListDataItem dataListItem : productData.getIngList()) {
 				if (dataListItem.getIng() != null) {

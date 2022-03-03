@@ -551,11 +551,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 					} else if (readMethod.isAnnotationPresent(DataListView.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 						QName datalistViewQname = repositoryEntityDefReader.readQName(readMethod);
 						PropertyUtils.setProperty(entity, pd.getName(),
-								loadDataListView(entity, datalistViewQname, readMethod.getReturnType(), localCache));
+								loadDataListView(entity, datalistViewQname.getLocalName(), readMethod.getReturnType(), localCache));
 					} else if (readMethod.isAnnotationPresent(DataList.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 						QName datalistQname = repositoryEntityDefReader.readQName(readMethod);
 
-						PropertyUtils.setProperty(entity, pd.getName(), createDataList(entity, pd, datalistQname, null, localCache));
+						PropertyUtils.setProperty(entity, pd.getName(), createDataList(entity, pd, datalistQname.getLocalName(), null, localCache));
 					}
 				}
 			}
@@ -681,7 +681,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 
 	}
 
-	private <R> R loadDataListView(final T entity, QName datalistContainerQname, Class<R> returnType, Map<NodeRef, RepositoryEntity> localCache)
+	private <R> R loadDataListView(final T entity, String datalistName, Class<R> returnType, Map<NodeRef, RepositoryEntity> localCache)
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		R ret = returnType.getDeclaredConstructor().newInstance();
@@ -694,14 +694,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 
 				final QName datalistQname = repositoryEntityDefReader.readQName(readMethod);
 
-				PropertyUtils.setProperty(ret, pd.getName(), createDataList(entity, pd, datalistContainerQname, datalistQname, localCache));
+				PropertyUtils.setProperty(ret, pd.getName(), createDataList(entity, pd, datalistName, datalistQname, localCache));
 			}
 		}
 
 		return ret;
 	}
 
-	private List<T> createDataList(final T entity, final PropertyDescriptor pd, final QName datalistContainerQname, final QName datalistQname,
+	private List<T> createDataList(final T entity, final PropertyDescriptor pd, final String datalistName, final QName datalistQname,
 			final Map<NodeRef, RepositoryEntity> localCache) {
 		if (logger.isTraceEnabled()) {
 			logger.debug("read dataList : " + pd.getName());
@@ -711,7 +711,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 		dataList.setDataProvider(new LazyLoadingDataList.DataProvider<T>() {
 			@Override
 			public List<T> getData() {
-				return loadDataList(entity.getNodeRef(), datalistContainerQname, datalistQname, localCache);
+				return loadDataList(entity.getNodeRef(), datalistName, datalistQname, localCache);
 			}
 
 			@Override
@@ -808,25 +808,41 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 
 	/** {@inheritDoc} */
 	@Override
-	public List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname) {
-		return loadDataList(entityNodeRef, datalistContainerQname, datalistQname, L2CacheSupport.getCurrentThreadCache());
+	public List<T> loadDataList(NodeRef entityNodeRef, String datalistName, QName datalistQname) {
+		return loadDataList(entityNodeRef, datalistName, datalistQname, L2CacheSupport.getCurrentThreadCache());
+	}
+	
+	@Override
+	public List<T> loadDataList(NodeRef dataListNodeRef, QName datalistQname) {
+		return loadDataList(dataListNodeRef,datalistQname, L2CacheSupport.getCurrentThreadCache());
+	}
+		
+		
+	private List<T> loadDataList(NodeRef dataListNodeRef, QName datalistQname, Map<NodeRef, RepositoryEntity> localCache) {
+		
+		if (dataListNodeRef != null) {
+
+			return entityListDAO.getListItems(dataListNodeRef, datalistQname).stream().map(el -> {
+				T ret = findOne(el, CacheType.NO_SHARED_CACHE, localCache);
+				ret.setParentNodeRef(dataListNodeRef);
+				return ret;
+			}).collect(Collectors.toCollection(LinkedList::new));
+
+		}
+		return new LinkedList<>();
 	}
 
-	private List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname,
+	private List<T> loadDataList(NodeRef entityNodeRef, String datalistName, QName datalistQname,
 			Map<NodeRef, RepositoryEntity> localCache) {
 
 		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 
 		if (listContainerNodeRef != null) {
-			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistContainerQname);
+			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistName);
 
 			if (dataListNodeRef != null) {
 
-				return entityListDAO.getListItems(dataListNodeRef, datalistQname).stream().map(el -> {
-					T ret = findOne(el, CacheType.NO_SHARED_CACHE, localCache);
-					ret.setParentNodeRef(dataListNodeRef);
-					return ret;
-				}).collect(Collectors.toCollection(LinkedList::new));
+				return loadDataList(dataListNodeRef, datalistQname);
 
 			}
 		}

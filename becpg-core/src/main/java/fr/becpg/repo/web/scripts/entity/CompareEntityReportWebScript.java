@@ -1,18 +1,18 @@
 /*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
+ * Copyright (C) 2010-2021 beCPG.
+ *
+ * This file is part of beCPG
+ *
+ * beCPG is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * beCPG is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG.
  *  If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
@@ -20,6 +20,7 @@ package fr.becpg.repo.web.scripts.entity;
 
 import java.io.IOException;
 import java.net.SocketException;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
@@ -79,6 +81,8 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 
 	private ReportTplService reportTplService;
 
+	private NodeService nodeService;
+
 	/**
 	 * <p>Setter for the field <code>compareEntityReportService</code>.</p>
 	 *
@@ -87,7 +91,6 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 	public void setCompareEntityReportService(CompareEntityReportService compareEntityReportService) {
 		this.compareEntityReportService = compareEntityReportService;
 	}
-
 
 	/**
 	 * <p>Setter for the field <code>mimetypeService</code>.</p>
@@ -125,6 +128,10 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 		this.reportTplService = reportTplService;
 	}
 
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
@@ -138,38 +145,37 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 			String storeType = templateArgs.get(PARAM_STORE_TYPE);
 			String storeId = templateArgs.get(PARAM_STORE_ID);
 			String nodeId = templateArgs.get(PARAM_ID);
-			if (storeType != null && storeId != null && nodeId != null) {
+			if ((storeType != null) && (storeId != null) && (nodeId != null)) {
 				entityNodeRef = new NodeRef(storeType, storeId, nodeId);
 			}
 		}
 
 		NodeRef entity1NodeRef = null;
 
-
 		String versionLabel = templateArgs.get(PARAM_VERSION_LABEL);
 		if (versionLabel != null) {
 			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
-			if(versionHistory!=null){
+			if (versionHistory != null) {
 				Version version = versionHistory.getVersion(versionLabel);
 				entity1NodeRef = entityVersionService.getEntityVersion(version);
 			} else {
 				entity1NodeRef = entityNodeRef;
 			}
-			
+
 			if (logger.isDebugEnabled()) {
 				logger.debug("entityNodeRef: " + entityNodeRef + " - versionLabel: " + versionLabel + " - entityVersionNodeRef: " + entityNodeRef);
 			}
 
 			entityNodeRefs.add(entityNodeRef);
 
-		}
-		else{
+		} else {
 			entity1NodeRef = entityNodeRef;
 			String entities = req.getParameter(PARAM_ENTITIES);
-			if (entities != null && !entities.isEmpty()) {
+			if ((entities != null) && !entities.isEmpty()) {
 				for (String entity : entities.split(",")) {
 					entityNodeRefs.add(new NodeRef(entity));
 				}
+
 			}
 
 			if (entityNodeRefs.isEmpty()) {
@@ -184,9 +190,15 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 					}
 				}
 			}
-			
+
 			if (entityNodeRefs.isEmpty()) {
 				entityNodeRefs.addAll(entityVersionService.getAllVersionBranches(entity1NodeRef));
+			} else {
+				entityNodeRefs.sort((e1, e2) -> {
+					Date d1 = (Date) nodeService.getProperty(e1, org.alfresco.model.ContentModel.PROP_CREATED);
+					Date d2 = (Date) nodeService.getProperty(e2, org.alfresco.model.ContentModel.PROP_CREATED);
+					return (d1 == d2) ? 0 : d1 == null ? -1 : d1.compareTo(d2);
+				});
 			}
 		}
 
@@ -199,40 +211,35 @@ public class CompareEntityReportWebScript extends AbstractWebScript {
 		// should allow large files
 		// to be streamed directly to the browser response stream.
 		try {
-			
-			 //Ensure not comparing itselfs
-             entityNodeRefs.remove(entity1NodeRef);
+
+			//Ensure not comparing itselfs
+			entityNodeRefs.remove(entity1NodeRef);
 
 			if (req.getParameter(PARAM_TPL_NODEREF) != null) {
 				templateNodeRef = new NodeRef(req.getParameter(PARAM_TPL_NODEREF));
 			} else {
 				templateNodeRef = reportTplService.getDefaultReportTemplate(ReportType.Compare, null);
 			}
-			
 
 			String fileName = compareEntityReportService.getReportFileName(templateNodeRef, templateArgs.get(PARAM_FILE_NAME));
-			
-			
-			if(logger.isDebugEnabled()){
+
+			if (logger.isDebugEnabled()) {
 				logger.debug("entity1NodeRef : " + entity1NodeRef);
 				logger.debug("entityNodeRefs : " + entityNodeRefs);
-			}			
-			
+			}
 
 			// set mimetype for the content and the character encoding + length
 			// for the stream
-			
+
 			res.setContentType(mimetypeService.guessMimetype(fileName));
 			AttachmentHelper.setAttachment(req, res, fileName);
-			
-			
-			compareEntityReportService.getComparisonReport(entity1NodeRef, entityNodeRefs, templateNodeRef, res.getOutputStream());
 
+			compareEntityReportService.getComparisonReport(entity1NodeRef, entityNodeRefs, templateNodeRef, res.getOutputStream());
 
 		} catch (SocketException | ContentIOException e1) {
 			// the client cut the connection - our mission was accomplished
 			// apart from a little error message
-			if (logger.isInfoEnabled()){
+			if (logger.isInfoEnabled()) {
 				logger.info("Client aborted stream read:\n\tcontent", e1);
 			}
 		}

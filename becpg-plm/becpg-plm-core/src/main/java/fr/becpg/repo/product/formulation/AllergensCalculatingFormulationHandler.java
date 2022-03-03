@@ -25,7 +25,6 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
@@ -358,7 +357,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 						}
 					}
 
-					if (!(partProduct.isRawMaterial()) ||  (formulatedProduct.isGeneric())) {
+					if (!(partProduct.isRawMaterial()) || (formulatedProduct.isGeneric())) {
 
 						if (Boolean.TRUE.equals(allergenListDataItem.getOnSite())) {
 							newAllergenListDataItem.setOnSite(true);
@@ -498,36 +497,27 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 	protected void sort(List<AllergenListDataItem> allergenList) {
 
 		final int BEFORE = -1;
-		final int EQUAL = 0;
 		final int AFTER = 1;
 
 		AtomicInteger atomicInteger = new AtomicInteger(1);
 		allergenList.stream().sorted((a1, a2) -> {
 
-			int comp = AFTER;
 			String type1 = (String) nodeService.getProperty(a1.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
 			String type2 = (String) nodeService.getProperty(a2.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
 
-			if ((type1 != null) && (type2 != null)) {
-				comp = type1.compareTo(type2);
+			if (((type1 != null) && type1.equals(type2)) || ((type1 == null) && (type2 == null))) {
 
-				if (EQUAL == comp) {
+				String allergenName1 = extractName(a1.getAllergen());
+				String allergenName2 = extractName(a2.getAllergen());
 
-					String allergenName1 = extractName(a1.getAllergen());
-					String allergenName2 = extractName(a2.getAllergen());
-
-					comp = allergenName1.compareTo(allergenName2);
-				} else {
-
-					if (AllergenType.Major.toString().equals(type1)) {
-						comp = BEFORE;
-					} else {
-						comp = AFTER;
-					}
-				}
+				return allergenName1.compareTo(allergenName2);
+			} else if (AllergenType.Major.toString().equals(type1) && AllergenType.Minor.toString().equals(type2)) {
+				return BEFORE;
+			} else if (AllergenType.Minor.toString().equals(type1) && type2 == null) { 
+				return BEFORE;
+			} else {
+				return AFTER;
 			}
-
-			return comp;
 
 		}).forEach(al -> al.setSort(atomicInteger.getAndIncrement()));
 

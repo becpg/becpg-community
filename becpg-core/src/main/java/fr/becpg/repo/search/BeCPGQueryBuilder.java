@@ -101,6 +101,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	@Autowired
 	@Qualifier("SearchService")
 	private SearchService searchService;
+	
+	
 	@Autowired
 	private NamespaceService namespaceService;
 
@@ -1515,6 +1517,8 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 * <p>
 	 * count.
 	 * </p>
+	 * 
+	 * This method can be very slow for high result counts and saturate nodeDao cache
 	 *
 	 * @return a {@link java.lang.Long} object.
 	 */
@@ -1530,13 +1534,23 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		sp.setQuery(runnedQuery);
 		sp.addLocale(locale);
 		sp.excludeDataInTheCurrentTransaction(true);
+		sp.setExcludeTenantFilter(false);
 		sp.setLanguage(language);
 		sp.setQueryConsistency(queryConsistancy);
-
+		sp.setLimitBy(LimitBy.UNLIMITED);
+		sp.setMaxPermissionChecks(Integer.MAX_VALUE);
+		sp.setMaxPermissionCheckTimeMillis(Integer.MAX_VALUE);
+		sp.setLimit(Integer.MAX_VALUE);
+		sp.setMaxItems(Integer.MAX_VALUE);
+		
 		ResultSet result = null;
 		try {
 			result = searchService.query(sp);
 			if (result != null) {
+				if(result.hasMore()) {
+					logger.warn("Count size was limited by: "+result.getResultSetMetaData().getLimitedBy());
+				}
+				
 				ret = result.getNumberFound();
 			}
 		} finally {

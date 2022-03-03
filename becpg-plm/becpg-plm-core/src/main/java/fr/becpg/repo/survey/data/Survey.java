@@ -13,7 +13,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
-@AlfQname(qname = "survey:survey")
+@AlfQname(qname = "survey:surveyList")
 public class Survey extends BeCPGDataObject  {
 
 	/**
@@ -28,7 +28,7 @@ public class Survey extends BeCPGDataObject  {
 	private List<NodeRef> choices;
 
 	@AlfProp
-	@AlfQname(qname = "survey:comment")
+	@AlfQname(qname = "survey:slComment")
 	public String getComment() {
 		return comment;
 	}
@@ -38,7 +38,7 @@ public class Survey extends BeCPGDataObject  {
 	}
 
 	@AlfSingleAssoc
-	@AlfQname(qname = "survey:question")
+	@AlfQname(qname = "survey:slQuestion")
 	public NodeRef getQuestion() {
 		return question;
 	}
@@ -48,7 +48,7 @@ public class Survey extends BeCPGDataObject  {
 	}
 
 	@AlfMultiAssoc
-	@AlfQname(qname = "survey:choices")
+	@AlfQname(qname = "survey:slChoices")
 	public List<NodeRef> getChoices() {
 		return choices;
 	}
