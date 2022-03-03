@@ -1218,4 +1218,25 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		return new ScriptNode(entityReportService.getOrRefreshReport(sourceNodeRef, null), serviceRegistry, getScope());
 	}
+
+	/**
+	 * <p>count.</p>
+	 * @param type
+	 * @return Number of object of type 
+	 */
+    public Long count(String type) {
+	   return  BeCPGQueryBuilder.createQuery().ofType(QName.createQName(type, namespaceService)).inDB().ftsLanguage().count();
+	}
+    
+    public Long count(String type, boolean excludeDefaults) {
+    	if(excludeDefaults) {
+    		return BeCPGQueryBuilder.createQuery().ofType(QName.createQName(type, namespaceService)).excludeDefaults().inDB().ftsLanguage().count();
+    	} else {
+    		return count(type);
+    	}
+ 	}
+	
+	
+	
+
 }

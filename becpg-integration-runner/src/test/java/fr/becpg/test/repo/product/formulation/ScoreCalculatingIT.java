@@ -217,14 +217,13 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 			// 1/5 mandatory fields -> 4 missing
 			assertEquals(3, missingFieldsArray.length());
-			logger.info("score=" + scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score") + " (expecting 20)");
+			logger.info("score=" + scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score") + " (expecting 25)");
 
-			assertEquals(20, (int) scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score"));
+			assertEquals(25, (int) scoresObject.getJSONArray("catalogs").getJSONObject(0).getDouble("score"));
 
 			String missingFieldsString = missingFieldsArray.toString();
 			logger.info("Missing fields: " + missingFieldsString);
-			assertTrue(missingFieldsString.contains("bcpg:precautionOfUseRef"));
-			assertTrue(missingFieldsString.contains("bcpg:storageConditionsRef"));
+			assertTrue(missingFieldsString.contains("cm:title"));
 
 			return null;
 		}, false, true);

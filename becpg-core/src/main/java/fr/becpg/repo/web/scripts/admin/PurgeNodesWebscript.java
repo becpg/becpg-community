@@ -37,7 +37,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  * @author matthieu
  * @version $Id: $Id
+ * TODO use batch Service
  */
+@Deprecated 
 public class PurgeNodesWebscript extends AbstractWebScript {
 
 	private final static Log logger = LogFactory.getLog(PurgeNodesWebscript.class);

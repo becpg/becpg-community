@@ -38,7 +38,7 @@ public class SurveyListValuePlugin extends EntityListValuePlugin {
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION).excludeDefaults()
-				.inSearchTemplate("%(bcpg:code survey:label)").locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
+				.inSearchTemplate("%(bcpg:code survey:questionLabel)").locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		if (!isAllQuery(query)) {
 			StringBuilder ftsQuery = new StringBuilder();
@@ -66,7 +66,7 @@ public class SurveyListValuePlugin extends EntityListValuePlugin {
 			queryBuilder.andNotID(itemId);
 		}
 
-		return new ListValuePage(queryBuilder.list(), pageNum, pageSize, new NodeRefListValueExtractor(SurveyModel.PROP_SURVEY_LABEL, nodeService));
+		return new ListValuePage(queryBuilder.list(), pageNum, pageSize, new NodeRefListValueExtractor(SurveyModel.PROP_SURVEY_QUESTION_LABEL, nodeService));
 
 	}
 

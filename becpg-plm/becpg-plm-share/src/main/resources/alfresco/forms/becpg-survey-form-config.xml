@@ -18,22 +18,22 @@
 <alfresco-config>
 
 	
-	<config evaluator="node-type" condition="survey:survey">
+	<config evaluator="node-type" condition="survey:surveyList">
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="survey:question" />
-					<show id="survey:choices" />
-					<show id="survey:comment" />
+					<show id="survey:slQuestion" />
+					<show id="survey:slChoices" />
+					<show id="survey:slComment" />
 				</field-visibility>
 				<appearance>
-				  <field id="survey:question">
+				  <field id="survey:slQuestion">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							 <control-param name="ds">becpg/autocomplete/survey</control-param>
 						</control>	
 					</field>
-					<field id="survey:choices">
+					<field id="survey:slChoices">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							 <control-param name="ds">becpg/autocomplete/survey</control-param>
@@ -45,22 +45,22 @@
 			</form>
 		</forms>
 	</config>
-	<config evaluator="model-type" condition="survey:survey">
+	<config evaluator="model-type" condition="survey:surveyList">
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="survey:question" />
-					<show id="survey:choices" />
-					<show id="survey:comment" />
+					<show id="survey:slQuestion" />
+					<show id="survey:slChoices" />
+					<show id="survey:slComment" />
 				</field-visibility>
 				<appearance>
-					 <field id="survey:question">
+					 <field id="survey:slQuestion">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							 <control-param name="ds">becpg/autocomplete/survey</control-param>
 						</control>	
 					</field>
-					<field id="survey:choices">
+					<field id="survey:slChoices">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							 <control-param name="ds">becpg/autocomplete/survey</control-param>
@@ -71,17 +71,17 @@
 			</form>
 			<form id="filter">
 				<field-visibility>
-					<show id="survey:question" />
-					<show id="survey:choices" />
+					<show id="survey:slQuestion" />
+					<show id="survey:slChoices" />
 				</field-visibility>
 					<appearance>
-					 <field id="survey:question">
+					 <field id="survey:slQuestion">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							 <control-param name="ds">becpg/autocomplete/survey</control-param>
 						</control>	
 					</field>
-					<field id="survey:choices">
+					<field id="survey:slChoices">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							 <control-param name="ds">becpg/autocomplete/survey</control-param>
@@ -92,9 +92,9 @@
 			</form>
 			<form id="datagrid">
 				<field-visibility>
-					<show id="survey:question" />
-					<show id="survey:choices" />
-					<show id="survey:comment" />
+					<show id="survey:slQuestion" />
+					<show id="survey:slChoices" />
+					<show id="survey:slComment" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -106,9 +106,9 @@
 			<form>
 				<field-visibility>
 				    <show id="bcpg:parentLevel" />
-					<show id="survey:label" />
-					<show id="survey:isMandatory" />
-					<show id="survey:isVisible" />
+					<show id="survey:questionLabel" />
+					<show id="survey:questionIsMandatory" />
+					<show id="survey:questionIsVisible" />
 					
 					<show id="survey:questionNote" />
 					<show id="survey:questionUpperNote" />
@@ -139,13 +139,13 @@
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:label</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:questionLabel</control-param>
 						</control>
 					</field>
 					
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:label</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:questionLabel</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -159,9 +159,9 @@
 			<form>
 				<field-visibility>
 				    <show id="bcpg:parentLevel" />
-					<show id="survey:label" />
-					<show id="survey:isMandatory" />
-					<show id="survey:isVisible" />
+					<show id="survey:questionLabel" />
+					<show id="survey:questionIsMandatory" />
+					<show id="survey:questionIsVisible" />
 					
 					<show id="survey:questionNote" />
 					<show id="survey:questionUpperNote" />
@@ -191,20 +191,20 @@
 					</field>
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:label</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:questionLabel</control-param>
 						</control>
 					</field>
 					
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:label</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:questionLabel</control-param>
 						</control>
 					</field>
 				</appearance>
 			</form>
 			<form id="filter">
 				<field-visibility>
-					<show id="survey:label" />	
+					<show id="survey:questionLabel" />	
 					<show id="bcpg:parentLevel" />
 				</field-visibility>
 				<appearance>
@@ -218,7 +218,7 @@
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:code" />
-					<show id="survey:label" />
+					<show id="survey:questionLabel" />
 					<show id="survey:nextQuestion" />
 	
 					<show id="survey:responseType" />
@@ -227,8 +227,8 @@
 					<show id="survey:responseCommentType" />
 					<show id="survey:responseCommentLabel" />
 					<show id="survey:questionScore" />
-					<show id="survey:isMandatory" />
-					<show id="survey:isVisible" />
+					<show id="survey:questionIsMandatory" />
+					<show id="survey:questionIsVisible" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:depthLevel" label="hidden"/>
