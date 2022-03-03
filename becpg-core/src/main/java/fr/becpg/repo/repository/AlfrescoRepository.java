@@ -57,7 +57,12 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	 * @param datalistQname a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	List<T> loadDataList(NodeRef entityNodeRef, QName datalistContainerQname, QName datalistQname);
+	List<T> loadDataList(NodeRef entityNodeRef, String listName, QName datalistQname);
+	
+	
+
+	List<T> loadDataList(NodeRef dataListNodeRef, QName datalistQname);
+
 	/**
 	 * <p>create.</p>
 	 *

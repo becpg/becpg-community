@@ -35,7 +35,8 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 		try {
 			return this.getPageItems();
 		} finally {
-			if(curPage == 1 || curPage * PAGE_SIZE <  this.fullListSize) {
+			int pages = ((this.fullListSize - 1) / PAGE_SIZE) + 1;
+			if( curPage  <=  pages ) {
 				dataListFilter.getPagination().setPage(curPage++);
 				dataListFilter.getPagination().setPageSize(PAGE_SIZE);			
 				clone(extractor.extract(dataListFilter, metadataFields));

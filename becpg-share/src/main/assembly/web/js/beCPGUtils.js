@@ -158,8 +158,11 @@
     };
     
     beCPG.util.formatNumber = function formatNumber(format, value){
-    	return '<span title='+value+'>'+(new Intl.NumberFormat(Alfresco.constants.JS_LOCALE.replace("_","-"), format).format(value))+'</span>';	
-    	
+		if(isNaN(value )){
+		    return value!=null ? value : "";
+		} else  {
+    	    return '<span title='+value+'>'+(new Intl.NumberFormat(Alfresco.constants.JS_LOCALE.replace("_","-"), format).format(value))+'</span>';	
+    	}
     };
     
 

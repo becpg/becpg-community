@@ -46,13 +46,13 @@ public class SurveyAttributeExtractorPlugin implements AttributeExtractorPlugin 
 	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		return (String) nodeService.getProperty(nodeRef, SurveyModel.PROP_SURVEY_LABEL);
+		return (String) nodeService.getProperty(nodeRef, SurveyModel.PROP_SURVEY_QUESTION_LABEL);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
-		return SurveyModel.PROP_SURVEY_LABEL.getLocalName();
+		return SurveyModel.PROP_SURVEY_QUESTION_LABEL.getLocalName();
 	}
 
 	/** {@inheritDoc} */

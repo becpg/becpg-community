@@ -499,7 +499,7 @@ public class FormulationHelper {
 	 * @param netWeight a {@link java.lang.Double} object.
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netWeight) {
+	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netQty) {
 
 		if ((totalValue == null) && (value == null)) {
 			return null;
@@ -508,8 +508,8 @@ public class FormulationHelper {
 		totalValue = totalValue != null ? totalValue : 0d;
 		value = value != null ? value : 0d;
 		value = value * qtyUsed;
-		if ((netWeight != null) && (netWeight != 0d)) {
-			value = value / netWeight;
+		if ((netQty != null) && (netQty != 0d)) {
+			value = value / netQty;
 		}
 
 		return totalValue + value;
