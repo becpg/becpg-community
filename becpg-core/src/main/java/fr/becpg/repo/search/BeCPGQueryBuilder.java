@@ -49,7 +49,6 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.search.LimitBy;
-import org.alfresco.service.cmr.search.PermissionEvaluationMode;
 import org.alfresco.service.cmr.search.QueryConsistency;
 import org.alfresco.service.cmr.search.ResultSet;
 import org.alfresco.service.cmr.search.SearchParameters;
@@ -1535,15 +1534,15 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		sp.setQuery(runnedQuery);
 		sp.addLocale(locale);
 		sp.excludeDataInTheCurrentTransaction(true);
-		sp.setLanguage(SearchService.LANGUAGE_FTS_ALFRESCO);
-		sp.setQueryConsistency(QueryConsistency.TRANSACTIONAL);
+		sp.setExcludeTenantFilter(false);
+		sp.setLanguage(language);
+		sp.setQueryConsistency(queryConsistancy);
 		sp.setLimitBy(LimitBy.UNLIMITED);
 		sp.setMaxPermissionChecks(Integer.MAX_VALUE);
 		sp.setMaxPermissionCheckTimeMillis(Integer.MAX_VALUE);
 		sp.setLimit(Integer.MAX_VALUE);
 		sp.setMaxItems(Integer.MAX_VALUE);
 		
-
 		ResultSet result = null;
 		try {
 			result = searchService.query(sp);
