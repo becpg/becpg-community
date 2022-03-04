@@ -30,6 +30,8 @@
    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
    <#--  beCPG Mobile Fix -->
    <meta name="viewport" content="initial-scale=1.0" />
+   <#--  No Robots -->
+   <meta name="robots" content="noindex,nofollow">
    <meta charset="utf-8"/>
    
    <#-- This MUST be placed before the <@outputJavaScript> directive to ensure that the Alfresco namespace
