@@ -121,7 +121,7 @@ public interface AssociationService {
 	 * @param isOrOperator a boolean.
 	 * @return a {@link java.util.List} object.
 	 */
-	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters);
+	List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocQName, QName listTypeQname, boolean isOrOperator, List<AssociationCriteriaFilter> criteriaFilters);
 	
 	
 	void removeChildCachedAssoc(NodeRef nodeRef, QName qName);
