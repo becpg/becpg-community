@@ -60,6 +60,7 @@ function runAction(p_params)
       "cm:modified": true,
       "cm:modifier": true,
       "bcpg:sort": true,
+      "qa:slSampleId": true,
       "fm:commentCount" : true
    };
    
