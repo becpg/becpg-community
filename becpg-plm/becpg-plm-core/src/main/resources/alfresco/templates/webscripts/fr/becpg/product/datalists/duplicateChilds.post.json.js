@@ -73,7 +73,8 @@ function runAction(p_params) {
 		if (itemNode !== null) {
 			if ("{http://www.bcpg.fr/model/becpg/1.0}compoList" == itemNode.type) {
 				var product = itemNode.associations["bcpg:compoListProduct"][0];
-				var parentQty = itemNode.properties["bcpg:compoListQty"];
+				var parentQty = itemNode.properties["bcpg:compoListQtySubFormula"];
+				var parentUnit = itemNode.properties["bcpg:compoListUnit"];
 				var compoList = getCompoList(product);
 	
 				if (compoList != null) {
@@ -134,6 +135,7 @@ function runAction(p_params) {
 								duplicateProperties["bcpg:compoListQtySubFormula"] = qty;
 						      }
 							
+							duplicateProperties["bcpg:compoListUnit"] = parentUnit;
 
 							// Duplicate the node with a new GUID cm:name
 							var newNode = parentNode.createNode(null, currentChild.type, duplicateProperties);
