@@ -529,11 +529,13 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 				logger.trace("findOne instanceOf :" + entity.getClass().getName());
 			}
 
-			entity.setNodeRef(id);
-
-			storeInCache(id, entity, localCache, cacheType);
-
 			Map<QName, Serializable> properties = mlNodeService.getProperties(id);
+			
+			entity.setNodeRef(id);
+			entity.setName((String) properties.get(ContentModel.PROP_NAME));
+			
+			storeInCache(id, entity, localCache, cacheType);
+	
 
 			BeanWrapper beanWrapper = new BeanWrapperImpl(entity);
 
@@ -658,7 +660,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 						}
 						if (isRefreshed) {
 							if (logger.isDebugEnabled()) {
-								logger.info("Refresh: " + entity.getName() + " - " + pd.getName());
+								logger.debug("Refresh: " + entity.getName() + " - " + pd.getName());
 							}
 						}
 
