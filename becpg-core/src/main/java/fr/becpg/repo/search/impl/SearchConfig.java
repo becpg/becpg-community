@@ -101,9 +101,11 @@ public class SearchConfig {
 
 					if (conf.has("htmlId")) {
 						field.setHtmlId(conf.getString("htmlId"));
-
 						keysToExclude.add(field.getHtmlId());
-
+					}
+					
+					if (conf.has("listType")) {
+						field.setSourceTypeQname(QName.createQName(conf.getString("listType"), namespaceService));
 					}
 
 					if (entityDictionaryService.isAssoc(field.getAttributeQname())) {
