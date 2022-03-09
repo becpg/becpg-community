@@ -48,6 +48,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.transaction.TransactionalResourceHelper;
 import org.alfresco.repo.version.Version2Model;
+import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -105,7 +106,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	private AsynchronouslyRefreshedCacheRegistry registry;
 
 	private static Set<QName> ignoredAssocs = new HashSet<>();
-	
+
 	private static Set<StoreRef> ignoredStoreRefs = new HashSet<>();
 
 	private QNameDAO qnameDAO;
@@ -454,7 +455,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 	/** {@inheritDoc} */
 	@Override
-	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, boolean isOrOperator,
+	public List<EntitySourceAssoc> getEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, QName listTypeQname, boolean isOrOperator,
 			List<AssociationCriteriaFilter> criteriaFilters) {
 		List<EntitySourceAssoc> ret = null;
 
@@ -471,9 +472,10 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			if (isAnd) {
 				for (NodeRef nodeRef : nodeRefs) {
 					if (ret == null) {
-						ret = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName, criteriaFilters);
+						ret = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName, listTypeQname, criteriaFilters);
 					} else {
-						List<EntitySourceAssoc> tmp = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName, criteriaFilters);
+						List<EntitySourceAssoc> tmp = internalEntitySourceAssocs(Arrays.asList(nodeRef), assocTypeQName, listTypeQname,
+								criteriaFilters);
 
 						for (Iterator<EntitySourceAssoc> iterator = ret.iterator(); iterator.hasNext();) {
 							EntitySourceAssoc entitySourceAssoc = iterator.next();
@@ -492,7 +494,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				}
 
 			} else {
-				ret = internalEntitySourceAssocs(nodeRefs, assocTypeQName, criteriaFilters);
+				ret = internalEntitySourceAssocs(nodeRefs, assocTypeQName, listTypeQname, criteriaFilters);
 			}
 
 		}
@@ -505,7 +507,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		return ret;
 	}
 
-	private List<EntitySourceAssoc> internalEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName,
+	private List<EntitySourceAssoc> internalEntitySourceAssocs(List<NodeRef> nodeRefs, QName assocTypeQName, QName listTypeQname,
 			List<AssociationCriteriaFilter> criteriaFilters) {
 		List<EntitySourceAssoc> ret = new ArrayList<>();
 
@@ -573,11 +575,11 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				isFirst = false;
 			}
 			query.append(")");
-			query.append("  group by dataListItem.uuid ");
 
 			Pair<Long, QName> aspectCompositeVersion = qnameDAO.getQName(BeCPGModel.ASPECT_COMPOSITE_VERSION);
 
 			Long typeQNameId = null;
+
 			Long aspectQnameId = aspectCompositeVersion != null ? aspectCompositeVersion.getFirst() : -1;
 			if (assocTypeQName != null) {
 				Pair<Long, QName> typeQNamePair = qnameDAO.getQName(assocTypeQName);
@@ -587,6 +589,53 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				}
 				typeQNameId = typeQNamePair.getFirst();
 			}
+			
+			if (listTypeQname == null) {
+			
+				AssociationDefinition assocDef = entityDictionaryService.getAssociation(assocTypeQName);
+				if(assocDef!=null && assocDef.getSourceClass()!=null  && !assocDef.getSourceClass().isAspect()) {
+					listTypeQname = assocDef.getSourceClass().getName();
+				}
+				
+			}
+			
+
+			boolean isEntity = (listTypeQname != null) && !entityDictionaryService.isSubClass(listTypeQname, BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+			if (listTypeQname != null) {
+				query.append(" and ( ");
+
+				Pair<Long, QName> typeQNamePair = qnameDAO.getQName(listTypeQname);
+				if (typeQNamePair == null) {
+					// No such QName
+					return Collections.emptyList();
+				}
+
+				query.append("dataListItem.type_qname_id='");
+				query.append(typeQNamePair.getFirst());
+				query.append("'");
+
+				if (isEntity) {
+					for (QName listSubTypeQname : entityDictionaryService.getSubTypes(listTypeQname)) {
+                         if(listTypeQname.equals(listSubTypeQname)) {
+							typeQNamePair = qnameDAO.getQName(listSubTypeQname);
+							if (typeQNamePair != null) {
+	
+								query.append(" or ");
+								query.append("dataListItem.type_qname_id='");
+								query.append(typeQNamePair.getFirst());
+								query.append("'");
+	
+							}
+                         }
+
+					}
+				}
+				query.append(")");
+
+			}
+
+			query.append("  group by dataListItem.uuid ");
 
 			StoreRef storeRef = StoreRef.STORE_REF_WORKSPACE_SPACESSTORE;
 			if (AuthenticationUtil.isMtEnabled()) {
@@ -609,15 +658,20 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 					statement.setLong(5, typeQNameId);
 
 					try (java.sql.ResultSet res = statement.executeQuery()) {
+
 						while (res.next()) {
 							NodeRef entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("entity"));
 							NodeRef sourceNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("targetNode"));
 							NodeRef dataListItemNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, res.getString("dataListItem"));
-							Pair<Long, QName> entityType = qnameDAO.getQName(res.getLong("dataListItemType"));
-							if (!entityDictionaryService.isSubClass(entityType.getSecond(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-								entityNodeRef = dataListItemNodeRef;
-							}
 
+							if (isEntity) {
+								entityNodeRef = dataListItemNodeRef;
+							} else if (listTypeQname == null) {
+								Pair<Long, QName> entityType = qnameDAO.getQName(res.getLong("dataListItemType"));
+								if (!entityDictionaryService.isSubClass(entityType.getSecond(), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+									entityNodeRef = dataListItemNodeRef;
+								}
+							}
 							ret.add(new EntitySourceAssoc(entityNodeRef, dataListItemNodeRef, sourceNodeRef));
 						}
 
@@ -677,7 +731,8 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	@Override
 	public void onDeleteAssociation(AssociationRef associationRef) {
 		if (TransactionalResourceHelper.getCount(UPDATE_ASSOC_COUNT) == 0) {
-			if (!ignoredAssocs.contains(associationRef.getTypeQName()) && !ignoredStoreRefs.contains(tenantService.getBaseName(associationRef.getSourceRef().getStoreRef()))) {
+			if (!ignoredAssocs.contains(associationRef.getTypeQName())
+					&& !ignoredStoreRefs.contains(tenantService.getBaseName(associationRef.getSourceRef().getStoreRef()))) {
 				removeCachedAssoc(associationRef.getSourceRef(), associationRef.getTypeQName());
 			}
 		}
@@ -687,7 +742,8 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 	@Override
 	public void onCreateAssociation(AssociationRef associationRef) {
 		if (TransactionalResourceHelper.getCount(UPDATE_ASSOC_COUNT) == 0) {
-			if (!ignoredAssocs.contains(associationRef.getTypeQName()) && !ignoredStoreRefs.contains(tenantService.getBaseName(associationRef.getSourceRef().getStoreRef()))) {
+			if (!ignoredAssocs.contains(associationRef.getTypeQName())
+					&& !ignoredStoreRefs.contains(tenantService.getBaseName(associationRef.getSourceRef().getStoreRef()))) {
 				removeCachedAssoc(associationRef.getSourceRef(), associationRef.getTypeQName());
 			}
 		}
@@ -774,13 +830,9 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		childsAssocsCache.remove(new AssociationCacheRegion(nodeRef, ContentModel.ASSOC_CONTAINS));
 
 	}
-	
+
 	public <T> T getFromCache(SimpleCache<AssociationCacheRegion, T> cache, AssociationCacheRegion cacheKey, Supplier<T> callback) {
-		if (ignoredAssocs.contains(cacheKey.getAssocQName())) {
-			return callback.get();
-		}
-		
-		if (ignoredStoreRefs.contains(tenantService.getBaseName(cacheKey.getNodeRef().getStoreRef()))) {
+		if (ignoredAssocs.contains(cacheKey.getAssocQName()) || ignoredStoreRefs.contains(tenantService.getBaseName(cacheKey.getNodeRef().getStoreRef()))) {
 			return callback.get();
 		}
 
@@ -819,5 +871,4 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		registry.register(this);
 
 	}
-
 }
