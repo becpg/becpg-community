@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.preference.PreferenceService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -182,16 +183,17 @@ public class MultiLevelExtractor extends SimpleExtractor {
 				} else {
 					props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess());
 				}
-
-				if (ret.getComputedFields() == null) {
-					ret.setComputedFields(attributeExtractorService.readExtractStructure(dataListFilter.getDataType(), metadataFields));
-				}
-
-				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
-					ret.addItem(extractExport(RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? FormatMode.XLSX : FormatMode.CSV, nodeRef,
-							ret.getComputedFields(), props, cache));
-				} else {
-					ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
+				if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+					if (ret.getComputedFields() == null) {
+						ret.setComputedFields(attributeExtractorService.readExtractStructure(dataListFilter.getDataType(), metadataFields));
+					}
+	
+					if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
+						ret.addItem(extractExport(RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat()) ? FormatMode.XLSX : FormatMode.CSV, nodeRef,
+								ret.getComputedFields(), props, cache));
+					} else {
+						ret.addItem(extractJSON(nodeRef, ret.getComputedFields(), props, cache));
+					}
 				}
 			} else if (currIndex >= (startIndex + pageSize)) {
 				return currIndex;
