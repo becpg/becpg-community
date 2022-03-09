@@ -183,7 +183,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 				} else {
 					props.put(PROP_ACCESSRIGHT, dataListFilter.hasWriteAccess());
 				}
-				if (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED) {
+				if (AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(nodeRef))) {
 					if (ret.getComputedFields() == null) {
 						ret.setComputedFields(attributeExtractorService.readExtractStructure(dataListFilter.getDataType(), metadataFields));
 					}
