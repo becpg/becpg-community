@@ -61,8 +61,8 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 	
 	private EntityListDAO entityListDAO;
 
-	private String KEY_PREFIX_CTRL_PLAN_ASSOC = QualityControlPolicies.class.getName() + "_CONTROL_PLANS_ASSOC_";
-	private String KEY_PREFIX_PRODUCT_ASSOC = QualityControlPolicies.class.getName() + "_PRODUCT_ASSOC_";
+	private static final  String KEY_PREFIX_CTRL_PLAN_ASSOC = QualityControlPolicies.class.getName() + "_CONTROL_PLANS_ASSOC_";
+	private static final  String KEY_PREFIX_PRODUCT_ASSOC = QualityControlPolicies.class.getName() + "_PRODUCT_ASSOC_";
 
 
 	/**
