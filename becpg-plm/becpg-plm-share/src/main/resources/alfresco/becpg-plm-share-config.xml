@@ -245,10 +245,10 @@
 					itemId="bcpg:supplier"></step>
 				<step id="step2" label="Sample survey 1"
 					title="Sample survey 1" type="survey"
-					listId="survey" itemId="survey:surveyList"></step>
+					listId="surveyList" itemId="survey:surveyList"></step>
 			    <step id="step3" label="Sample survey 2"
 					title="Sample survey 2" type="survey"
-					listId="survey@1" itemId="survey:surveyList"></step>
+					listId="surveyList@1" itemId="survey:surveyList"></step>
 			</wizard>
 		</wizards>
 	</config>
