@@ -14,6 +14,7 @@
                <@region id="wused-form" scope="template" />
                <@region id="wused-toolbar" scope="template" />
                <@region id="wused-list" scope="template" />
+               <@region id="archive-and-download" scope="template"/>
             </div>
          </div>
       </div>

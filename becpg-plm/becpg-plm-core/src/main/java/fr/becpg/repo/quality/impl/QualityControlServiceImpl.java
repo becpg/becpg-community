@@ -304,7 +304,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 				}
 				patternMatcher.appendTail(sb);
-				nodeService.setProperty(sampleListNodeRef, QualityModel.PROP_SL_SAMPLE_ID, sb.toString());
+				nodeService.setProperty(sampleListNodeRef, QualityModel.PROP_SL_SAMPLE_ID, sb.toString().trim());
 
 				samplesCounter++;
 				qualityControlData.setSamplesCounter(samplesCounter);
