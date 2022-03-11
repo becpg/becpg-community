@@ -118,9 +118,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	private SiteService siteService;
-	
+
 	private EntityFormatService entityFormatService;
-	
+
 	private TenantAdminService tenantAdminService;
 
 	private boolean useBrowserLocale;
@@ -132,10 +132,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setEntityFormatService(EntityFormatService entityFormatService) {
 		this.entityFormatService = entityFormatService;
 	}
-	
+
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
 		this.tenantAdminService = tenantAdminService;
 	}
+
 	/**
 	 * <p>Setter for the field <code>useBrowserLocale</code>.</p>
 	 *
@@ -374,7 +375,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
-	
+
 	public void setSiteService(SiteService siteService) {
 		this.siteService = siteService;
 	}
@@ -414,13 +415,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			for (ConstraintDefinition constraint : propertyDef.getConstraints()) {
 				if (constraint.getConstraint() instanceof DynListConstraint) {
 					dynListConstraint = (DynListConstraint) constraint.getConstraint();
-					
+
 				} else if ("LIST".equals(constraint.getConstraint().getType())) {
 					constraintName = constraint.getRef().toPrefixString(namespaceService).replace(":", "_");
-					
+
 				}
-				
-				if(constraintName!=null || dynListConstraint!=null) {
+
+				if (constraintName != null || dynListConstraint != null) {
 					break;
 				}
 			}
@@ -770,13 +771,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 		return null;
 	}
-	
+
 	public RepositoryEntity save(RepositoryEntity entity) {
 		return alfrescoRepository.save(entity);
 	}
-	
-	public void setExtraValue(RepositoryEntity entity, String qName,  Object value) {
-		 entity.getExtraProperties().put(getQName(qName), (Serializable) ScriptValueConverter.unwrapValue(value));
+
+	public void setExtraValue(RepositoryEntity entity, String qName, Object value) {
+		entity.getExtraProperties().put(getQName(qName), (Serializable) ScriptValueConverter.unwrapValue(value));
 	}
 
 	/**
@@ -853,10 +854,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		return new ScriptNode(retNodeRef, serviceRegistry);
 	}
-	
-	
-	
-	public void updateLastVersionLabel(ScriptNode entity,String versionLabel) {
+
+	public void updateLastVersionLabel(ScriptNode entity, String versionLabel) {
 		entityVersionService.updateLastVersionLabel(entity.getNodeRef(), versionLabel);
 	}
 
@@ -871,8 +870,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		repoService.moveNode(nodeToMove.getNodeRef(), destination.getNodeRef());
 		return nodeToMove;
 	}
-	
-	
+
 	/**
 	 * <p>getAvailableName</p>
 	 *
@@ -882,7 +880,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getAvailableName(ScriptNode folder, String name) {
 		return repoService.getAvailableName(folder.getNodeRef(), name, false);
 	}
-
 
 	/**
 	 * <p>changeEntityListStates.</p>
@@ -993,13 +990,13 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean setPermissionAsSystem(ScriptNode sourceNode, String permission, String authority) {
-		return setPermissionAsSystem(sourceNode.getNodeRef(),permission,authority);
+		return setPermissionAsSystem(sourceNode.getNodeRef(), permission, authority);
 	}
-	
+
 	public boolean setPermissionAsSystem(String nodeRef, String permission, String authority) {
-		return setPermissionAsSystem(new NodeRef(nodeRef),permission,authority);
+		return setPermissionAsSystem(new NodeRef(nodeRef), permission, authority);
 	}
-	
+
 	public boolean setPermissionAsSystem(NodeRef nodeRef, String permission, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
 			permissionService.setPermission(nodeRef, authority, permission, true);
@@ -1017,11 +1014,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean allowWrite(ScriptNode sourceNode, String authority) {
 		return allowWrite(sourceNode.getNodeRef(), authority);
 	}
-	
-	public boolean allowWrite(String nodeRef,  String authority) {
+
+	public boolean allowWrite(String nodeRef, String authority) {
 		return allowWrite(new NodeRef(nodeRef), authority);
 	}
-	
+
 	public boolean allowWrite(NodeRef nodeRef, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
 			permissionService.setPermission(nodeRef, authority, PermissionService.EDITOR, true);
@@ -1059,21 +1056,28 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean clearPermissions(ScriptNode sourceNode, boolean inherit) {
-		return clearPermissions(sourceNode.getNodeRef(),inherit);
+		return clearPermissions(sourceNode.getNodeRef(), inherit);
 	}
 
 	public boolean clearPermissions(String nodeRef, boolean inherit) {
-		return clearPermissions(new NodeRef(nodeRef),inherit);
+		return clearPermissions(new NodeRef(nodeRef), inherit);
 	}
-	
+
 	public boolean clearPermissions(NodeRef nodeRef, boolean inherit) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.deletePermissions(nodeRef);
+			Set<AccessPermission> acls = permissionService.getAllSetPermissions(nodeRef);
+			for (AccessPermission permission : acls) {
+				if (permission.isSetDirectly()) {
+
+					permissionService.deletePermission(nodeRef, PermissionService.ALL_AUTHORITIES, permission.getPermission());
+
+				}
+			}
 			permissionService.setInheritParentPermissions(nodeRef, inherit);
 			return true;
 		});
 	}
-	
+
 	/**
 	 * <p>deleteGroupPermission.</p>
 	 *
@@ -1084,11 +1088,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean deleteGroupPermission(ScriptNode sourceNode, String authority) {
 		return deleteGroupPermission(sourceNode.getNodeRef(), authority);
 	}
-	
+
 	public boolean deleteGroupPermission(String nodeRef, String authority) {
 		return deleteGroupPermission(new NodeRef(nodeRef), authority);
 	}
-	
+
 	public boolean deleteGroupPermission(NodeRef nodeRef, String authority) {
 		return AuthenticationUtil.runAsSystem(() -> {
 			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nodeRef);
@@ -1148,22 +1152,22 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public static String generateEAN13Code(String prefix) throws CheckDigitException {
 		return GTINHelper.createEAN13Code(prefix, AutoNumHelper.getAutoNumValue("bcpg:eanCode", "bcpg:ean13Pref" + prefix));
 	}
-	
+
 	public ScriptNode getDocumentLibraryNodeRef(String siteId) {
-		
+
 		NodeRef nodeRef = AuthenticationUtil.runAsSystem(() -> siteService.getContainer(siteId, "documentLibrary"));
-		
+
 		return new ScriptNode(nodeRef, serviceRegistry);
 	}
-	
+
 	public String convert(ScriptNode scriptNode) {
-		
+
 		NodeRef notConvertedNode = scriptNode.getNodeRef();
-		
+
 		String name = (String) nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME);
 
 		String tenantName = "default";
-		
+
 		if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
 			tenantName = tenantAdminService.getTenant(tenantAdminService.getCurrentUserDomain()).getTenantDomain();
 		}
@@ -1171,38 +1175,37 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		long start = System.currentTimeMillis();
 
 		NodeRef convertedNode = entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
-		
+
 		if (convertedNode != null) {
 			long timeElapsed = System.currentTimeMillis() - start;
-			
-			String message = "Converted entity '" + name + "', from " + notConvertedNode + " to " + convertedNode + ", tenant : " + tenantName + ", time elapsed : " + timeElapsed + " ms";
-			
+
+			String message = "Converted entity '" + name + "', from " + notConvertedNode + " to " + convertedNode + ", tenant : " + tenantName
+					+ ", time elapsed : " + timeElapsed + " ms";
+
 			logger.info(message);
-			
+
 			return message;
 		} else {
 			return "The node couldn't be converted";
 		}
-		
+
 	}
-	
+
 	/**
 	 * <p>count.</p>
 	 * @param type
 	 * @return Number of object of type 
 	 */
-    public Long count(String type) {
-	   return  BeCPGQueryBuilder.createQuery().ofType(QName.createQName(type, namespaceService)).inDB().ftsLanguage().count();
+	public Long count(String type) {
+		return BeCPGQueryBuilder.createQuery().ofType(QName.createQName(type, namespaceService)).inDB().ftsLanguage().count();
 	}
-    
-    public Long count(String type, boolean excludeDefaults) {
-    	if(excludeDefaults) {
-    		return BeCPGQueryBuilder.createQuery().ofType(QName.createQName(type, namespaceService)).excludeDefaults().inDB().ftsLanguage().count();
-    	} else {
-    		return count(type);
-    	}
- 	}
-	
-	
-	
+
+	public Long count(String type, boolean excludeDefaults) {
+		if (excludeDefaults) {
+			return BeCPGQueryBuilder.createQuery().ofType(QName.createQName(type, namespaceService)).excludeDefaults().inDB().ftsLanguage().count();
+		} else {
+			return count(type);
+		}
+	}
+
 }
