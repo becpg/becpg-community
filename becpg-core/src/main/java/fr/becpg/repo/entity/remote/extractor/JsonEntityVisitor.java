@@ -295,11 +295,10 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				if ((dataListType != null) && !dataListType.isEmpty()) {
 
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
-
-					if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
-							|| entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM))) {
-						if (!((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME)).startsWith(RepoConsts.WUSED_PREFIX)
-								&& params.shouldExtractList((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME))) {
+					if (!((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME)).startsWith(RepoConsts.WUSED_PREFIX)
+							&& params.shouldExtractList((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME))) {
+						if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
+								|| entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM))) {
 
 							List<ChildAssociationRef> listItemRefs = nodeService.getChildAssocs(listNodeRef);
 
@@ -527,7 +526,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private void visitMltextAttributes(String propType, JSONObject entity, MLText mlValues) throws JSONException {
 		if (mlValues != null) {
 			for (Map.Entry<Locale, String> mlEntry : mlValues.entrySet()) {
-				if(MLTextHelper.isSupportedLocale(mlEntry.getKey())) {
+				if (MLTextHelper.isSupportedLocale(mlEntry.getKey())) {
 					String code = MLTextHelper.localeKey(mlEntry.getKey());
 					if ((code != null) && !code.isBlank() && (mlEntry.getValue() != null)) {
 						entity.put(propType + "_" + code, mlEntry.getValue());
