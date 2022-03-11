@@ -1,3 +1,8 @@
+
+div.detailsContainer {
+	min-height: 500px;
+}
+
 div.detailsChart {
     height: auto; 
     overflow: auto;
@@ -5,7 +10,7 @@ div.detailsChart {
     background: none repeat scroll 0 0 white;
 }
 div.detailsChart table {
-    width: 100%;
+    width: 98%;
 }
 div.detailsChart table th.yui-dt-first {
     text-align: left;
