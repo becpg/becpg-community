@@ -596,17 +596,21 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 		List<NodeRef> ret = new LinkedList<>();
 		if (primaryParentNodeRef != null) {
+			int maxDeep = 0;
+			
 			do {
 				tmp = associationService.getTargetAssoc(primaryParentNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
-				
-				if (primaryParentNodeRef.equals(tmp)) {
-					break;
-				}
 				
 				if (tmp != null) {
 					primaryParentNodeRef = tmp;
 				}
-			} while (tmp != null);
+				maxDeep++;
+				
+			} while (tmp != null && maxDeep < 100);
+			
+			if(maxDeep >= 100) {
+				logger.error("Infinite branch cycle in : "+ primaryParentNodeRef);
+			}
 
 			ret.add(primaryParentNodeRef);
 			ret.addAll(getAllChildVersionBranches(primaryParentNodeRef));
