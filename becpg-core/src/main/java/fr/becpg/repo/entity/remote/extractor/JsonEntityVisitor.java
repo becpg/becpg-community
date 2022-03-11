@@ -295,8 +295,9 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				if ((dataListType != null) && !dataListType.isEmpty()) {
 
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
-					if (!((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME)).startsWith(RepoConsts.WUSED_PREFIX)
-							&& params.shouldExtractList((String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME))) {
+					String dataListName = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
+					if (!(dataListName).startsWith(RepoConsts.WUSED_PREFIX)
+							&& params.shouldExtractList(dataListName)) {
 						if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
 								|| entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM))) {
 
@@ -324,7 +325,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 						}
 					} else {
-						logger.warn("Existing " + dataListTypeQName + " list doesn't inheritate from 'bcpg:entityListItem'.");
+						logger.warn("Existing "+ dataListName+ " (" + dataListTypeQName + ") list doesn't inheritate from 'bcpg:entityListItem'.");
 					}
 				}
 
