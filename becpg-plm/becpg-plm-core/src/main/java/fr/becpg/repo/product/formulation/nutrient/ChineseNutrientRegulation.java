@@ -49,8 +49,9 @@ public class ChineseNutrientRegulation extends AbstractNutrientRegulation {
 			} else if (nutrientTypeCode.equals(NutrientCode.Calcium)){
 				return roundValue(value<=8?0:value, 1d);
 			} else if (nutrientTypeCode.equals(NutrientCode.VitD)){
-				return roundValue(value<=0.0001?0:value, 0.1d);
+				return roundValue(value<=0.1?0:value, 0.1d);
 			} else if (nutrientTypeCode.equals(NutrientCode.VitE)
+					|| nutrientTypeCode.equals(NutrientCode.VitTocpha)
 					|| nutrientTypeCode.equals(NutrientCode.VitB3)){
 				return roundValue(value<=0.28?0:value, 0.01d);
 			} else if (nutrientTypeCode.equals(NutrientCode.VitK1)){
@@ -86,6 +87,8 @@ public class ChineseNutrientRegulation extends AbstractNutrientRegulation {
 				return roundValue(value<=0.02?0:value, 0.01d);
 			} else if (nutrientTypeCode.equals(NutrientCode.Manganese)){
 				return roundValue(value<=0.06?0:value, 0.01d);
+			} else if (nutrientTypeCode.equals(NutrientCode.Selenium)) {
+				return roundValue(value<=1?0:value, 0.1d);
 			}
 
 		}
