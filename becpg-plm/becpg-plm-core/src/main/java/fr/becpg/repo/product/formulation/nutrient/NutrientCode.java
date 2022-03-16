@@ -60,6 +60,8 @@ public interface NutrientCode {
 	String VitD = "VITD-";
 	/** Constant <code>VitE="VITE-"</code> */
 	String VitE = "VITE-";
+	/** Constant <code>VitE="VITE-"</code> */
+	String VitTocpha = "TOCPHA";
 	/** Constant <code>VitK1="VITK1"</code> */
 	String VitK1 = "VITK1";
 	/** Constant <code>VitK2="VITK2"</code> */
