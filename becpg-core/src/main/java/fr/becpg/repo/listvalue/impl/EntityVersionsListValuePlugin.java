@@ -25,8 +25,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
+import org.alfresco.service.cmr.version.VersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -46,7 +50,11 @@ import fr.becpg.repo.listvalue.ListValueService;
 public class EntityVersionsListValuePlugin implements ListValuePlugin {
 
 	private static final String SOURCE_TYPE_BRANCHES = "branches";
+	private static final String SOURCE_TYPE_VERSIONS = "versions";
 
+	@Autowired
+	private VersionService versionService;
+	
 	@Autowired
 	private EntityVersionService entityVersionService;
 
@@ -57,7 +65,7 @@ public class EntityVersionsListValuePlugin implements ListValuePlugin {
 	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
-		return new String[] { SOURCE_TYPE_BRANCHES };
+		return new String[] { SOURCE_TYPE_BRANCHES, SOURCE_TYPE_VERSIONS };
 	}
 
 	/** {@inheritDoc} */
@@ -77,7 +85,19 @@ public class EntityVersionsListValuePlugin implements ListValuePlugin {
 		List<NodeRef> branches = Collections.emptyList();
 		
 		if(entityNodeRef!=null) {
+			
 			branches = entityVersionService.getAllVersionBranches(entityNodeRef);
+			
+			if (SOURCE_TYPE_VERSIONS.equals(sourceType)) {
+				
+				VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+					
+				if (versionHistory != null) {
+					for (Version version : versionHistory.getAllVersions()) {
+						branches.add(VersionUtil.convertNodeRef(version.getFrozenStateNodeRef()));
+					}
+				}
+			}
 	
 			for (Iterator<NodeRef> iterator = branches.iterator(); iterator.hasNext();) {
 				if (entityNodeRef.equals(iterator.next())) {
