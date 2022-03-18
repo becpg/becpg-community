@@ -5,6 +5,8 @@ function main()
 
     model.reportTpls = [];
     model.entities = "";
+    model.versions = "";
+    model.entity = args.entityNodeRef;
     try
     {
         var uri = "/becpg/report/compare/templates?entityNodeRef="+args.entityNodeRef;

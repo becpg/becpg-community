@@ -2,6 +2,7 @@ package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,7 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.model.ForumModel;
 import org.alfresco.model.ImapModel;
+import org.alfresco.model.RenditionModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
 import org.alfresco.repo.forum.CommentService;
@@ -22,48 +25,51 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.repo.version.common.VersionImpl;
-import org.alfresco.repo.version.common.versionlabel.SerialVersionLabelPolicy;
-import org.alfresco.service.cmr.coci.CheckOutCheckInService;
-import org.alfresco.service.cmr.coci.CheckOutCheckInServiceException;
+import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.cmr.lock.LockService;
-import org.alfresco.service.cmr.lock.LockStatus;
-import org.alfresco.service.cmr.lock.LockType;
-import org.alfresco.service.cmr.lock.NodeLockedException;
 import org.alfresco.service.cmr.repository.AssociationExistsException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.CopyService;
+import org.alfresco.service.cmr.repository.DuplicateChildNodeNameException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.rule.RuleService;
-import org.alfresco.service.cmr.rule.RuleType;
 import org.alfresco.service.cmr.security.AccessStatus;
-import org.alfresco.service.cmr.security.AuthenticationService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.version.VersionType;
+import org.alfresco.service.cmr.view.ExporterCrawlerParameters;
+import org.alfresco.service.cmr.view.ExporterService;
+import org.alfresco.service.cmr.view.Location;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.BeCPGModel.EntityFormat;
 import fr.becpg.model.BeCPGPermissions;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
@@ -85,24 +91,18 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  * @version $Id: $Id
  */
-@Service("entityVersionServiceV1")
+@Service("entityVersionService")
 public class EntityVersionServiceImpl implements EntityVersionService {
 
 	private static final QName QNAME_ENTITIES_HISTORY = QName.createQName(BeCPGModel.BECPG_URI, RepoConsts.ENTITIES_HISTORY_NAME);
 
 	private static final String KEY_ENTITIES_HISTORY = "EntitiesHistory";
-	private static final String MSG_ERR_NOT_AUTHENTICATED = "coci_service.err_not_authenticated";
 	private static final String MSG_INITIAL_VERSION = "create_version.initial_version";
-	private static final String MSG_WORKING_COPY_LABEL = "coci_service.working_copy_label";
-	private static final String MSG_ERR_ALREADY_WORKING_COPY = "coci_service.err_workingcopy_checkout";
-	private static final String MSG_ALREADY_CHECKEDOUT = "coci_service.err_already_checkedout";
-
-	private static final String EXTENSION_CHARACTER = ".";
-
-	private static final  Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(EntityVersionServiceImpl.class);
 
 	@Autowired
 	private NodeService nodeService;
+
 
 	@Autowired
 	@Qualifier("mtAwareNodeService")
@@ -124,9 +124,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private VersionService versionService;
 
 	@Autowired
-	private AuthenticationService authenticationService;
-
-	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 
 	@Autowired
@@ -136,13 +133,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private AssociationService associationService;
 
 	@Autowired
-	private LockService lockService;
-
-	@Autowired
 	private RepoService repoService;
-
-	@Autowired
-	private CheckOutCheckInService checkOutCheckInService;
 
 	@Autowired
 	private EntityActivityService entityActivityService;
@@ -157,79 +148,24 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private ContentService contentService;
 
 	@Autowired
+	@Qualifier("exporterComponent")
+	private ExporterService exporterService;
+
+	@Autowired
 	@Qualifier("ruleService")
 	private RuntimeRuleService ruleService;
 
 	@Autowired(required = false)
 	private EntityVersionPlugin[] entityVersionPlugins;
 
-	/** {@inheritDoc} */
-	@Override
-	public NodeRef createVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties) {
-		return internalCreateVersionAndCheckin(origNodeRef, workingCopyNodeRef, versionProperties, false);
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public NodeRef doCheckOut(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef) {
-
-		logger.debug("checkOutDataListAndFiles");
-		// Create initialVersion
-		createInitialVersion(origNodeRef);
-
-		// Copy entity datalists (rights are checked by copyService during
-		// recursiveCopy)
-		AuthenticationUtil.runAsSystem(() -> {
-
-			try {
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-
-				entityListDAO.copyDataLists(origNodeRef, workingCopyNodeRef, true);
-				entityService.moveFiles(origNodeRef, workingCopyNodeRef);
-			} finally {
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			}
-
-			return null;
-
-		});
-
-		// Set contributor permission for user to edit datalists
-		String userName = getUserName();
-		permissionService.setPermission(workingCopyNodeRef, userName, PermissionService.CONTRIBUTOR, true);
-
-		if (entityVersionPlugins != null) {
-			for (EntityVersionPlugin entityVersionPlugin : entityVersionPlugins) {
-				entityVersionPlugin.doAfterCheckout(origNodeRef, workingCopyNodeRef);
-			}
-		}
-
-		return workingCopyNodeRef;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void updateLastVersionLabel(final NodeRef entityNodeRef, final String versionLabel) {
-
-		// Create first version if needed
-		createInitialVersion(entityNodeRef);
-
-		Version currentVersion = versionService.getCurrentVersion(entityNodeRef);
-		if (currentVersion != null) {
-			NodeRef versionNodeRef = new NodeRef(new StoreRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID),
-					currentVersion.getFrozenStateNodeRef().getId());
-			dbNodeService.setProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL, versionLabel);
-
-			NodeRef entityVersion = getEntityVersion(currentVersion);
-			if (entityVersion != null) {
-				nodeService.setProperty(entityVersion, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
-			}
-
-			nodeService.setProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL, versionLabel);
-		}
-	}
+	@Autowired
+	private EntityFormatService entityFormatService;
+	
+	@Autowired
+	private LockService lockService;
+	
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -264,140 +200,31 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				|| (versionService.getVersionHistory(entityNodeRef).getAllVersions().size() == 1)) {
 			nodeService.removeAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE);
 		}
-
 	}
 
-	private NodeRef internalCreateVersionAndCheckin(final NodeRef origNodeRef, final NodeRef workingCopyNodeRef,
-			Map<String, Serializable> versionProperties, boolean createAlfrescoVersion) {
-		StopWatch watch = null;
+	/** {@inheritDoc} */
+	@Override
+	public void updateLastVersionLabel(final NodeRef entityNodeRef, final String versionLabel) {
 
-		if (logger.isDebugEnabled()) {
-			watch = new StopWatch();
-			watch.start();
-			logger.debug("createEntityVersion: " + origNodeRef + " versionProperties: " + versionProperties);
-		}
+		// Create first version if needed
+		createInitialVersion(entityNodeRef);
 
-		try {
-			NodeRef versionHistoryRef = getVersionHistoryNodeRef(origNodeRef);
-			boolean isInitialVersion = (versionHistoryRef == null);
+		Version currentVersion = versionService.getCurrentVersion(entityNodeRef);
+		if (currentVersion != null) {
+			NodeRef versionNodeRef = getEntityVersion(currentVersion);
+			dbNodeService.setProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL, versionLabel);
 
-			if (!isInitialVersion && (entityVersionPlugins != null) && !createAlfrescoVersion) {
-				for (EntityVersionPlugin entityVersionPlugin : entityVersionPlugins) {
-					entityVersionPlugin.doBeforeCheckin(origNodeRef, workingCopyNodeRef);
-				}
+			//Old version type
+			NodeRef entityVersion = getEntityVersion(currentVersion);
+			if (entityVersion != null) {
+				nodeService.setProperty(entityVersion, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
 			}
 
-			if (versionHistoryRef == null) {
-				versionHistoryRef = createVersionHistory(getEntitiesHistoryFolder(), origNodeRef);
-			}
-			final NodeRef finalVersionHistoryRef = versionHistoryRef;
-			NodeRef versionNodeRef;
-
-			// Rights are checked by copyService during recursiveCopy
-			versionNodeRef = AuthenticationUtil.runAsSystem(() -> {
-
-				try {
-					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
-					policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
-
-					// version is a copy of working copy or orig for 1st
-					// version
-					NodeRef nodeToVersionNodeRef = workingCopyNodeRef != null ? workingCopyNodeRef : origNodeRef;
-
-					// Recursive copy
-					NodeRef versionNodeRef1 = copyService.copy(nodeToVersionNodeRef, finalVersionHistoryRef, ContentModel.ASSOC_CONTAINS,
-							ContentModel.ASSOC_CHILDREN, true);
-
-					if (workingCopyNodeRef != null) {
-						((RuleService) ruleService).disableRules(workingCopyNodeRef);
-
-						// remove assoc (copy used to checkin doesn't do it)
-						removeRemovedAssociation(workingCopyNodeRef, origNodeRef);
-
-						entityActivityService.mergeActivities(origNodeRef, workingCopyNodeRef);
-
-						// Move workingCopyNodeRef DataList to origNodeRef
-						entityService.deleteDataLists(origNodeRef, true);
-						entityListDAO.moveDataLists(workingCopyNodeRef, origNodeRef);
-						// Move files to origNodeRef
-						entityService.deleteFiles(origNodeRef, true);
-						// Remove rules
-						ChildAssociationRef ruleChildAssocRef = ruleService.getSavedRuleFolderAssoc(origNodeRef);
-						if (ruleChildAssocRef != null) {
-							if (ruleChildAssocRef.isPrimary()) {
-								logger.debug("remove primary rule of entity " + origNodeRef);
-								nodeService.deleteNode(ruleChildAssocRef.getChildRef());
-							} else {
-								logger.debug("remove secondary rule of entity " + origNodeRef);
-								nodeService.removeSecondaryChildAssociation(ruleChildAssocRef);
-							}
-						}
-						entityService.moveFiles(workingCopyNodeRef, origNodeRef);
-						// delete files that are not moved (ie: Documents)
-						// otherwise
-						// checkin copy them and fails since they already
-						// exits
-						entityService.deleteFiles(workingCopyNodeRef, true);
-					}
-
-					return versionNodeRef1;
-
-				} finally {
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
-					policyBehaviourFilter.enableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
-				}
-
-			});
-
-			String versionLabel = getVersionLabel(origNodeRef, versionProperties, isInitialVersion, createAlfrescoVersion);
-
-			String name = nodeService.getProperty(origNodeRef, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
-			Map<QName, Serializable> aspectProperties = new HashMap<>(2);
-			aspectProperties.put(ContentModel.PROP_NAME, name);
-			aspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, versionLabel);
-			nodeService.addAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION, aspectProperties);
-
-			updateVersionEffectivity(origNodeRef, versionNodeRef);
-
-			if (!isInitialVersion) {
-
-				if ((versionProperties != null) && versionProperties.containsKey(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF)) {
-					NodeRef postUpdateHistoryNodeRef = (NodeRef) versionProperties.get(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF);
-					if (postUpdateHistoryNodeRef != null) {
-						updateEntitiesHistory(postUpdateHistoryNodeRef, origNodeRef);
-					}
-
-				} else {
-					updateEntitiesHistory(origNodeRef, null);
-				}
-
-				entityActivityService.postVersionActivity(origNodeRef, versionNodeRef, versionLabel);
-			}
-
-			return versionNodeRef;
-
-		} finally {
-			if (logger.isDebugEnabled() && (watch != null)) {
-				watch.stop();
-				logger.debug("internalCreateVersionAndCheckin run in  " + watch.getTotalTimeSeconds() + " s");
-			}
+			nodeService.setProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL, versionLabel);
 		}
 	}
 
-	private void updateVersionEffectivity(NodeRef entityNodeRef, NodeRef versionNodeRef) {
-		Date newEffectivity = new Date();
-		Date oldEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
-		if (oldEffectivity == null) {
-			oldEffectivity = newEffectivity;
-		}
-		nodeService.setProperty(versionNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, oldEffectivity);
-		nodeService.setProperty(versionNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
-	}
-
+	//Old version type
 	private void updateEntitiesHistory(NodeRef origNodeRef, NodeRef impactOnlyNodeRef) {
 		List<AssociationRef> assocRefs = nodeService.getSourceAssocs(origNodeRef, RegexQNamePattern.MATCH_ALL);
 
@@ -413,37 +240,39 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			NodeRef versionNodeRef = versions.get(index).getEntityVersionNodeRef();
 
-			for (AssociationRef assocRef : assocRefs) {
-				policyBehaviourFilter.disableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
-				try {
+			if (StoreRef.STORE_REF_WORKSPACE_SPACESSTORE.equals(versionNodeRef.getStoreRef())) {
+				for (AssociationRef assocRef : assocRefs) {
+					policyBehaviourFilter.disableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
+					try {
 
-					if ((assocRef != null) && (assocRef.getTargetRef() != null) && !assocRef.getTargetRef().equals(versionNodeRef)) {
-						NodeRef versionEntityNodeRef = entityService.getEntityNodeRef(assocRef.getSourceRef(),
-								nodeService.getType(assocRef.getSourceRef()));
+						if ((assocRef != null) && (assocRef.getTargetRef() != null) && !assocRef.getTargetRef().equals(versionNodeRef)) {
+							NodeRef versionEntityNodeRef = entityService.getEntityNodeRef(assocRef.getSourceRef(),
+									nodeService.getType(assocRef.getSourceRef()));
 
-						if ((versionEntityNodeRef != null) && nodeService.hasAspect(versionEntityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
+							if ((versionEntityNodeRef != null) && nodeService.hasAspect(versionEntityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 
-							NodeRef entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, (String) nodeService
-									.getProperty(nodeService.getPrimaryParent(versionEntityNodeRef).getParentRef(), ContentModel.PROP_NAME));
+								NodeRef entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, (String) nodeService
+										.getProperty(nodeService.getPrimaryParent(versionEntityNodeRef).getParentRef(), ContentModel.PROP_NAME));
 
-							if (nodeService.exists(entityNodeRef) && nodeService.exists(versionNodeRef)
-									&& ((impactOnlyNodeRef == null) || impactOnlyNodeRef.equals(entityNodeRef))) {
+								if (nodeService.exists(entityNodeRef) && nodeService.exists(versionNodeRef)
+										&& ((impactOnlyNodeRef == null) || impactOnlyNodeRef.equals(entityNodeRef))) {
 
-								String entityVersionLabel = (String) nodeService.getProperty(versionEntityNodeRef, BeCPGModel.PROP_VERSION_LABEL);
-								String versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
+									String entityVersionLabel = (String) nodeService.getProperty(versionEntityNodeRef, BeCPGModel.PROP_VERSION_LABEL);
+									String versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
 
-								if ((entityVersionLabel != null) && !entityVersionLabel.equals(versionLabel)) {
+									if ((entityVersionLabel != null) && !entityVersionLabel.equals(versionLabel)) {
 
-									nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
-									nodeService.createAssociation(assocRef.getSourceRef(), versionNodeRef, assocRef.getTypeQName());
+										nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
+										nodeService.createAssociation(assocRef.getSourceRef(), versionNodeRef, assocRef.getTypeQName());
+									}
 								}
 							}
 						}
+					} catch (AssociationExistsException e) {
+						logger.error("Cannot update assoc : " + assocRef);
+					} finally {
+						policyBehaviourFilter.enableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
 					}
-				} catch (AssociationExistsException e) {
-					logger.error("Cannot update assoc : " + assocRef);
-				} finally {
-					policyBehaviourFilter.enableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
 				}
 			}
 		}
@@ -453,8 +282,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private void removeRemovedAssociation(NodeRef sourceCopy, NodeRef targetCopy) {
 
 		/*
-		 * Extending DefaultCopyBehaviourCallback doesn't work since we must
-		 * implement it for every aspect
+		 * Extending DefaultCopyBehaviourCallback doesn't work since we must implement it for every aspect
 		 */
 
 		List<AssociationRef> sourceAssocRefs = nodeService.getTargetAssocs(sourceCopy, RegexQNamePattern.MATCH_ALL);
@@ -489,7 +317,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public void createInitialVersion(NodeRef entityNodeRef) {
-		if (getVersionHistoryNodeRef(entityNodeRef) == null) {
+		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			// Create the initial-version
 			Map<String, Serializable> versionProperties = new HashMap<>(1);
 			versionProperties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
@@ -500,27 +328,49 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
 
-			if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-				createVersionAndCheckin(entityNodeRef, null, versionProperties);
-			} else {
-				Map<QName, Serializable> aspectProperties = new HashMap<>();
-				aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
-				nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-				createVersion(entityNodeRef, versionProperties);
-			}
-
+			Map<QName, Serializable> aspectProperties = new HashMap<>();
+			aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+			nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+			NodeRef versionNode = createVersion(entityNodeRef, versionProperties);
+			
+			// we need to retrieve the AUDITABLE properties because Version2ServiceImpl only freezes these properties
+			nodeService.setProperty(versionNode, ContentModel.PROP_CREATED, nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
+			nodeService.setProperty(versionNode, ContentModel.PROP_CREATOR, nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATOR));
+			nodeService.setProperty(versionNode, ContentModel.PROP_MODIFIED, nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIED));
+			nodeService.setProperty(versionNode, ContentModel.PROP_MODIFIER, nodeService.getProperty(entityNodeRef, ContentModel.PROP_MODIFIER));
+			nodeService.setProperty(versionNode, ContentModel.PROP_ACCESSED, nodeService.getProperty(entityNodeRef, ContentModel.PROP_ACCESSED));
 		}
 	}
 
 	@Override
 	public void createInitialVersionWithProps(NodeRef entityNodeRef, Map<QName, Serializable> before) {
-		createInitialVersion(entityNodeRef);
-	}
+		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+			// Create the initial-version
+			Map<String, Serializable> versionProperties = new HashMap<>(1);
+			versionProperties.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
 
-	/** {@inheritDoc} */
-	@Override
-	public NodeRef createVersion(final NodeRef origNodeRef, Map<String, Serializable> versionProperties) {
-		return internalCreateVersionAndCheckin(origNodeRef, null, versionProperties, true);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Create initial version : " + I18NUtil.getMessage(MSG_INITIAL_VERSION));
+			}
+
+			versionProperties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage(MSG_INITIAL_VERSION));
+
+			Map<QName, Serializable> aspectProperties = new HashMap<>();
+			aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
+			nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
+			
+			createVersion(entityNodeRef, versionProperties);
+			
+			NodeRef initialVersion = VersionUtil.convertNodeRef(versionService.getVersionHistory(entityNodeRef).getVersion(RepoConsts.INITIAL_VERSION).getFrozenStateNodeRef());
+			
+			String name = (String) nodeService.getProperty(initialVersion, ContentModel.PROP_NAME);
+			
+			nodeService.setProperties(initialVersion, before);
+			
+			nodeService.setProperty(initialVersion, ContentModel.PROP_NAME, name);
+			nodeService.setProperty(initialVersion, Version2Model.PROP_QNAME_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
+
+		}
 	}
 
 	/**
@@ -590,14 +440,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			if (logger.isDebugEnabled()) {
 				logger.debug("delete versionHistoryRef " + versionHistoryRef);
 			}
-			try {
-				policyBehaviourFilter.disableBehaviour();
-				//TODO bug here disabling behaviour make association cache not working
-				nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
-				nodeService.deleteNode(versionHistoryRef);
-			} finally {
-				policyBehaviourFilter.enableBehaviour();
-			}
+			nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
+			nodeService.deleteNode(versionHistoryRef);
 		}
 	}
 
@@ -617,7 +461,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getEntityVersion(Version version) {
-		return getEntityVersion(getVersionAssocs(version.getVersionedNodeRef()), version);
+		return VersionUtil.convertNodeRef(version.getFrozenStateNodeRef());
 	}
 
 	/** {@inheritDoc} */
@@ -635,14 +479,18 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				NodeRef branchFromNodeRef = getBranchFromNodeRef(entityNodeRef);
 				for (Version version : versionHistory.getAllVersions()) {
 					NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
-					if (entityVersionNodeRef != null) {
-						EntityVersion entityVersion = new EntityVersion(version, entityNodeRef, entityVersionNodeRef, branchFromNodeRef);
-						if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
-							entityVersion.setCreatedDate((Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
-						}
-
-						entityVersions.add(entityVersion);
+					EntityVersion entityVersion = null;
+					if (entityVersionNodeRef != null && !nodeService.hasAspect(entityVersionNodeRef, ContentModel.ASPECT_TEMPORARY)) {
+						entityVersion = new EntityVersion(version, entityNodeRef, entityVersionNodeRef, branchFromNodeRef);
+					} else {
+						entityVersion = new EntityVersion(version, entityNodeRef,
+								getEntityVersion(version),
+								branchFromNodeRef);
 					}
+					if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
+						entityVersion.setCreatedDate((Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
+					}
+					entityVersions.add(entityVersion);
 				}
 			}
 		}
@@ -699,7 +547,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			List<EntityVersion> entityVersions = getAllVersions(branchNodeRef);
 
 			if (!entityVersions.isEmpty()) {
-				for (EntityVersion entityVersion : getAllVersions(branchNodeRef)) {
+				for (EntityVersion entityVersion : entityVersions) {
 					ret.add(entityVersion);
 				}
 			} else {
@@ -777,47 +625,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				NodeRef tmpNodeRef = associationRef.getSourceRef();
 				if (!ret.contains(tmpNodeRef)) {
 					ret.add(tmpNodeRef);
-					ret.addAll(getAllChildVersionBranches(tmpNodeRef));
+					if (!entityNodeRef.equals(tmpNodeRef)) {
+						ret.addAll(getAllChildVersionBranches(tmpNodeRef));
+					}
 				}
 			}
 		}
 
 		return ret;
-	}
-
-	private String getVersionLabel(NodeRef origNodeRef, Map<String, Serializable> versionProperties, boolean isInitialVersion,
-			boolean createNewVersion) {
-		String versionLabel = RepoConsts.INITIAL_VERSION;
-		if (createNewVersion) {
-			Version newVersion = versionService.createVersion(origNodeRef, versionProperties);
-			versionLabel = newVersion.getVersionLabel();
-		} else {
-
-			QName classRef = nodeService.getType(origNodeRef);
-			Version preceedingVersion = versionService.getCurrentVersion(origNodeRef);
-
-			if (!isInitialVersion) {
-
-				if (preceedingVersion == null) {
-
-					Map<String, Serializable> propsMap = new HashMap<>();
-					propsMap.put(VersionBaseModel.PROP_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
-					propsMap.put(VersionBaseModel.PROP_VERSION_TYPE, VersionType.MAJOR);
-
-					preceedingVersion = new VersionImpl(propsMap, origNodeRef);
-				}
-				// Default the version label to the SerialVersionLabelPolicy
-				SerialVersionLabelPolicy defaultVersionLabelPolicy = new SerialVersionLabelPolicy();
-				versionLabel = defaultVersionLabelPolicy.calculateVersionLabel(classRef, preceedingVersion, versionProperties);
-
-			}
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("new versionLabel: " + versionLabel + " - preceedingVersion: " + preceedingVersion);
-			}
-		}
-
-		return versionLabel;
 	}
 
 	private List<ChildAssociationRef> getVersionAssocs(NodeRef entityNodeRef) {
@@ -839,39 +654,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 		}
 
-		logger.error("Failed to find entity version. version: " + version.getFrozenStateNodeRef() + " versionLabel: " + version.getVersionLabel());
 		return null;
-	}
-
-	/**
-	 * Creates a new version history node, applying the root version aspect is
-	 * required.
-	 *
-	 * @param nodeRef
-	 *            the node ref
-	 * @return the version history node reference
-	 */
-	private NodeRef createVersionHistory(NodeRef entitiesHistoryFolder, NodeRef nodeRef) {
-		StopWatch watch = new StopWatch();
-		if (logger.isDebugEnabled()) {
-			watch.start();
-		}
-
-		Map<QName, Serializable> props = new HashMap<>();
-		props.put(ContentModel.PROP_NAME, nodeRef.getId());
-
-		ChildAssociationRef childAssocRef = nodeService.createNode(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS,
-				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, nodeRef.getId()), ContentModel.TYPE_FOLDER, props);
-
-		if (logger.isTraceEnabled()) {
-
-			watch.stop();
-			logger.trace("created version history nodeRef: " + childAssocRef.getChildRef() + " for " + nodeRef + " in " + watch.getTotalTimeSeconds()
-					+ " s");
-		}
-
-		return childAssocRef.getChildRef();
-
 	}
 
 	/**
@@ -886,20 +669,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	private List<ChildAssociationRef> getVersionAssocs(NodeRef versionHistoryRef, boolean preLoad) {
 
 		return nodeService.getChildAssocs(versionHistoryRef, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, preLoad);
-	}
-
-	/**
-	 * Gets the authenticated users node reference
-	 *
-	 * @return the users node reference
-	 */
-	private String getUserName() {
-		String un = this.authenticationService.getCurrentUserName();
-		if (un != null) {
-			return un;
-		} else {
-			throw new CheckOutCheckInServiceException(MSG_ERR_NOT_AUTHENTICATED);
-		}
 	}
 
 	/** {@inheritDoc} */
@@ -930,194 +699,445 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused, boolean rename) {
+	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused,
+			boolean rename) {
 
 		if (branchToNodeRef == null) {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
 		}
 
-		if (permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED && branchToNodeRef != null) {
+		if ((permissionService.hasPermission(branchToNodeRef, BeCPGPermissions.MERGE_ENTITY) == AccessStatus.ALLOWED) && (branchToNodeRef != null)) {
 
-				StopWatch watch = null;
+			StopWatch watch = null;
 
-				boolean mlAware = MLPropertyInterceptor.isMLAware();
-				try {
+			boolean mlAware = MLPropertyInterceptor.isMLAware();
+			try {
 
-					if (logger.isDebugEnabled()) {
-						watch = new StopWatch();
-						watch.start();
-					}
+				if (logger.isDebugEnabled()) {
+					watch = new StopWatch();
+					watch.start();
+				}
 
-					MLPropertyInterceptor.setMLAware(true);
+				MLPropertyInterceptor.setMLAware(true);
 
-					final NodeRef internalBranchToNodeRef = branchToNodeRef;
+				final NodeRef internalBranchToNodeRef = branchToNodeRef;
 
-					return AuthenticationUtil.runAsSystem(() -> {
-						return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				return AuthenticationUtil.runAsSystem(() -> {
+					return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-							// Only for transaction do not reenable it
+						try {
+							((RuleService) ruleService).disableRules();
+
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 							policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+							policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
 
-							prepareBranchBeforeMerge(branchNodeRef, internalBranchToNodeRef, rename);
+							createInitialVersion(internalBranchToNodeRef);
+							
+							/**
+							 *
+							  1 - Prepare branch
+							*/
 
-							Map<String, Serializable> properties = new HashMap<>();
-							properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
-							properties.put(Version.PROP_DESCRIPTION, description);
-							if (impactWused) {
-								properties.put(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF, null);
-							}
+							String finalBranchName = rename ? (String) this.nodeService.getProperty(branchNodeRef, ContentModel.PROP_NAME) : (String) this.nodeService.getProperty(internalBranchToNodeRef, ContentModel.PROP_NAME);
 
-							entityActivityService.postMergeBranchActivity(branchNodeRef, branchNodeRef, versionType, description);
+							nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_LOCKABLE, null);
+
+							// Set beCPG CODE
+							nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_CODE,
+									nodeService.getProperty(internalBranchToNodeRef, BeCPGModel.PROP_CODE));
+
+							// Remove branchForm as it's merge
+							nodeService.removeAspect(branchNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
 
 							NodeRef branchFromNodeRef = null;
 
 							if (nodeService.hasAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
 								branchFromNodeRef = associationService.getTargetAssoc(internalBranchToNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
+								nodeService.removeAspect(branchNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
 							}
 
-							NodeRef ret = checkOutCheckInService.checkin(branchNodeRef, properties);
+							nodeService.removeAspect(branchNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT);
+							
+							Serializable manualVersionLabel = nodeService.getProperty(internalBranchToNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
+							
+							if (manualVersionLabel != null) {
+								nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL, null);
+							}
+							
+							// Deattach other branches
+							List<NodeRef> sources = associationService.getSourcesAssocs(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
+							for (NodeRef sourceNodeRef : sources) {
+								associationService.update(sourceNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, internalBranchToNodeRef);
 
+								if (nodeService.hasAspect(internalBranchToNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+									nodeService.setProperty(sourceNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
+											nodeService.getProperty(internalBranchToNodeRef, ContentModel.PROP_VERSION_LABEL));
+								} else {
+									nodeService.setProperty(sourceNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
+								}
+
+							}
+
+							for (EntityVersionPlugin entityVersionPlugin : entityVersionPlugins) {
+								entityVersionPlugin.doBeforeCheckin(internalBranchToNodeRef, branchNodeRef);
+							}
+
+							/**
+							 * Merge branch
+							 */
+
+							// remove assoc (copy used to checkin doesn't do it) 
+
+							//TODO Matthieu needed why?
+							removeRemovedAssociation(branchNodeRef, internalBranchToNodeRef);
+
+							// Remove comments
+							mergeComments(branchNodeRef, internalBranchToNodeRef);
+
+							entityActivityService.mergeActivities(internalBranchToNodeRef, branchNodeRef);
+
+							// Remove rules
+							ChildAssociationRef ruleChildAssocRef = ruleService.getSavedRuleFolderAssoc(internalBranchToNodeRef);
+							if (ruleChildAssocRef != null) {
+								if (ruleChildAssocRef.isPrimary()) {
+									logger.debug("remove primary rule of entity " + internalBranchToNodeRef);
+									nodeService.deleteNode(ruleChildAssocRef.getChildRef());
+								} else {
+									logger.debug("remove secondary rule of entity " + internalBranchToNodeRef);
+									nodeService.removeSecondaryChildAssociation(ruleChildAssocRef);
+								}
+							}
+
+							// Move workingCopyNodeRef DataList to origNodeRef
+							entityService.deleteDataLists(internalBranchToNodeRef, true);
+							entityService.deleteFiles(internalBranchToNodeRef, true);
+							
+							try {
+								entityListDAO.moveDataLists(branchNodeRef, internalBranchToNodeRef);
+								entityService.moveFiles(branchNodeRef, internalBranchToNodeRef);
+							} catch (DuplicateChildNodeNameException e) {
+			                    // This will be rare, but it's not impossible.
+			                    // We have to retry the operation.
+			        			throw new ConcurrencyFailureException("DuplicateChildNodeNameException during mergeBranch");
+			        		}
+
+							// delete files that are not moved (ie: Documents)
+							// otherwise
+							// checkin copy them and fails since they already
+							// exits
+							entityService.deleteFiles(branchNodeRef, true);
+
+							//Add aspect to avoid rename during copy
+							nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_WORKING_COPY, null);
+
+							Date createdDate = (Date) nodeService.getProperty(internalBranchToNodeRef, ContentModel.PROP_CREATED);
+							String versionLabel = (String) nodeService.getProperty(internalBranchToNodeRef, ContentModel.PROP_VERSION_LABEL);
+							
+							// Copy the contents of the working copy onto the original
+							this.copyService.copy(branchNodeRef, internalBranchToNodeRef);
+							
+							// reset the original createdDate and versionLabel
+							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_CREATED, createdDate);
+							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_VERSION_LABEL, versionLabel);
+							
 							if (branchFromNodeRef != null) {
-								associationService.update(ret, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, branchFromNodeRef);
+								associationService.update(internalBranchToNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, branchFromNodeRef);
 							}
 
-							return ret;
+							/**
+							 * Create alfresco version
+							 */
+							Map<String, Serializable> versionProperties = new HashMap<>();
+							versionProperties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
+							versionProperties.put(Version.PROP_DESCRIPTION, description);
+							if (impactWused) {
+								versionProperties.put(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF, null);
+							}
 
-						}, false, false);
-					});
+							createVersion(internalBranchToNodeRef, versionProperties);
+							
+							if (rename) {
+								Version currentVersion = versionService.getCurrentVersion(internalBranchToNodeRef);
+								dbNodeService.setProperty(getEntityVersion(currentVersion), ContentModel.PROP_NAME, finalBranchName);
+							}
+							
+							/**
+							 * Post create alfresco version
+							 */
 
-				} finally {
-					MLPropertyInterceptor.setMLAware(mlAware);
+							// Update all association refering to this branch to point to
+							// branchToNodeRef
+							updateBranchAssoc(branchNodeRef, internalBranchToNodeRef);
 
-					if (logger.isDebugEnabled() && (watch != null)) {
-						watch.stop();
-						logger.debug("createBranch run in  " + watch.getTotalTimeSeconds() + " seconds ");
+							//TODO remove that when all version has been converted
+							// Update also version of the node
+							VersionHistory versionHistory = versionService.getVersionHistory(branchNodeRef);
 
-					}
+							if (versionHistory != null) {
+								List<ChildAssociationRef> versionAssocs = getVersionAssocs(branchNodeRef);
+
+								for (Version version : versionHistory.getAllVersions()) {
+									NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
+									if (entityVersionNodeRef != null && !isVersion(entityVersionNodeRef)) {
+										updateBranchAssoc(entityVersionNodeRef, internalBranchToNodeRef);
+									}
+								}
+							}
+
+							entityActivityService.postMergeBranchActivity(branchNodeRef, internalBranchToNodeRef, versionType, description);
+							
+							nodeService.removeAspect(internalBranchToNodeRef, ContentModel.ASPECT_CHECKED_OUT);
+
+
+						
+							// Delete the working copy
+
+							nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+							nodeService.deleteNode(branchNodeRef);
+
+
+							/**
+							 * After working copy deletion
+							 */
+							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_NAME, finalBranchName);
+							
+							associationService.removeAllCacheAssocs(internalBranchToNodeRef);
+							
+							if (nodeService.hasAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
+								nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
+								nodeService.removeProperty(internalBranchToNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
+							}
+							
+							return internalBranchToNodeRef;
+
+						} finally {
+							((RuleService) ruleService).enableRules();
+							policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+							policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
+							policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+							policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+							policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+							policyBehaviourFilter.enableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+
+						}
+
+					}, false, false);
+				});
+
+			} finally {
+				MLPropertyInterceptor.setMLAware(mlAware);
+
+				if (logger.isDebugEnabled() && (watch != null)) {
+					watch.stop();
+					logger.debug("createBranch run in  " + watch.getTotalTimeSeconds() + " seconds ");
+
 				}
-			
+			}
+
 		}
 		return null;
 	}
 
-	@SuppressWarnings("deprecation")
-	private void prepareBranchBeforeMerge(NodeRef branchNodeRef, NodeRef branchToNodeRef, boolean rename) {
-		if (nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_CHECKED_OUT)) {
-			throw new CheckOutCheckInServiceException(MSG_ALREADY_CHECKEDOUT);
+	private NodeRef convertNodeAndWhereUsed(NodeRef notConvertedNode) {
+		
+		for (NodeRef source : associationService.getSourcesAssocs(notConvertedNode, QName.createQName(BeCPGModel.BECPG_URI, "compoListProduct"))) {
+			NodeRef datalistFolder = nodeService.getPrimaryParent(source).getParentRef();
+			NodeRef entitylistFolder = nodeService.getPrimaryParent(datalistFolder).getParentRef();
+			NodeRef parentProduct = nodeService.getPrimaryParent(entitylistFolder).getParentRef();
+
+			if (nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					&& !nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_ENTITY_FORMAT)
+					&& !nodeService.hasAspect(parentProduct, ContentModel.ASPECT_TEMPORARY)) {
+				convertNodeAndWhereUsed(parentProduct);
+			}
 		}
+		
+		for (NodeRef source : associationService.getSourcesAssocs(notConvertedNode, QName.createQName(BeCPGModel.BECPG_URI, "packagingListProduct"))) {
+			NodeRef datalistFolder = nodeService.getPrimaryParent(source).getParentRef();
+			NodeRef entitylistFolder = nodeService.getPrimaryParent(datalistFolder).getParentRef();
+			NodeRef parentProduct = nodeService.getPrimaryParent(entitylistFolder).getParentRef();
 
-		// Make sure we are not checking out a working copy node
-		if (nodeService.hasAspect(branchNodeRef, ContentModel.ASPECT_WORKING_COPY)) {
-			throw new CheckOutCheckInServiceException(MSG_ERR_ALREADY_WORKING_COPY);
+			if (nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					&& !nodeService.hasAspect(parentProduct, BeCPGModel.ASPECT_ENTITY_FORMAT)
+					&& !nodeService.hasAspect(parentProduct, ContentModel.ASPECT_TEMPORARY)) {
+				convertNodeAndWhereUsed(parentProduct);
+			}
 		}
+		
+		logger.info("converting " + nodeService.getProperty(notConvertedNode, ContentModel.PROP_NAME));
+		
+		final NodeRef finalNotConvertedNode = notConvertedNode;
 
-		// Create initialVersion if needed
-		createInitialVersion(branchToNodeRef);
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-		// It is not enough to check LockUtils.isLockedOrReadOnly in case when
-		// the same user does offline and online edit (for instance in two open
-		// browsers). In this case we get
-		// set ContentModel.ASPECT_LOCKABLE and LockType.WRITE_LOCK. So, here we
-		// have to check following
-		LockStatus lockStatus = lockService.getLockStatus(branchToNodeRef);
-		if ((lockStatus != LockStatus.NO_LOCK) && (lockStatus != LockStatus.LOCK_EXPIRED)) {
-			throw new NodeLockedException(branchToNodeRef);
-		}
+			String versionLabel = (String) dbNodeService.getProperty(finalNotConvertedNode, BeCPGModel.PROP_VERSION_LABEL);
 
-		policyBehaviourFilter.disableBehaviour(branchNodeRef, ContentModel.ASPECT_AUDITABLE);
-		try {
+			NodeRef parentNode = dbNodeService.getPrimaryParent(finalNotConvertedNode).getParentRef();
 
-			// Apply the lock aspect if required
-			if (!nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_LOCKABLE)) {
-				nodeService.addAspect(branchToNodeRef, ContentModel.ASPECT_LOCKABLE, null);
+			String parentName = (String) dbNodeService.getProperty(parentNode, ContentModel.PROP_NAME);
+
+			NodeRef originalNode = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
+
+			VersionHistory versionHistory = dbNodeService.exists(originalNode) ? versionService.getVersionHistory(originalNode) : null;
+
+			if (versionHistory != null) {
+				NodeRef versionNode = new NodeRef(StoreRef.PROTOCOL_WORKSPACE, Version2Model.STORE_ID,
+						versionHistory.getVersion(versionLabel).getFrozenStateNodeRef().getId());
+
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					entityFormatService.convert(finalNotConvertedNode, versionNode, EntityFormat.JSON);
+					return null;
+				}, false, false);
+
+				return versionNode;
 			}
 
-			// Get the user
-			final String userName = getUserName();
+			return null;
+		}, false, true);
+		
+	}
+	
+	@Override
+	public NodeRef revertVersion(NodeRef versionNodeRef) throws IllegalAccessException {
+		
+		boolean notConverted = nodeService.hasAspect(versionNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
+				&& !nodeService.hasAspect(versionNodeRef, BeCPGModel.ASPECT_ENTITY_FORMAT)
+				&& !nodeService.hasAspect(versionNodeRef, ContentModel.ASPECT_TEMPORARY);
+		
+		if (notConverted) {
+			final NodeRef finalNode = versionNodeRef;
+			versionNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				return convertNodeAndWhereUsed(finalNode);
+			}, false, true);
+		}
+		
+		String parentName = (String) nodeService.getProperty(nodeService.getPrimaryParent(versionNodeRef).getParentRef(), ContentModel.PROP_NAME);
+		
+		NodeRef entityNodeRef = new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, parentName);
+		
+		if (!nodeService.exists(entityNodeRef)) {
+			throw new IllegalAccessException("Parent nodeRef doesn't exist : " + entityNodeRef);
+		}
+		
+		NodeRef newBranch = createEmptyBranch(entityNodeRef, nodeService.getPrimaryParent(entityNodeRef).getParentRef());
+		
+		String entityJsonString = entityFormatService.getEntityData(versionNodeRef);
+		
+		Date createdDate = (Date) nodeService.getProperty(newBranch, ContentModel.PROP_CREATED);
+		
+		JSONObject json = new JSONObject(entityJsonString);
+		
+		String name = (String) dbNodeService.getProperty(versionNodeRef, ContentModel.PROP_NAME) + "~";
+		
+		((JSONObject) json.get("entity")).put("cm:name", name);
+		
+		((JSONObject) ((JSONObject) json.get("entity")).get("attributes")).put("cm:name", name);
+		
+		entityFormatService.createOrUpdateEntityFromJson(newBranch, json.toString());
+		
+		nodeService.setProperty(newBranch, ContentModel.PROP_CREATED, createdDate);
+		
+		nodeService.removeAspect(newBranch, ContentModel.ASPECT_VERSIONABLE);
+		nodeService.removeAspect(newBranch, BeCPGModel.ASPECT_COMPOSITE_VERSION);
+		
+		return newBranch;
+	}
 
-			((RuleService) ruleService).disableRuleType(RuleType.UPDATE);
+	/** {@inheritDoc} */
+	@Override
+	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties) {
+		if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+
+			StopWatch watch = null;
+
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+				logger.debug("createEntityVersion: " + entityNodeRef + " versionProperties: " + versionProperties);
+			}
+
 			try {
 
-				// Remove comments
-				mergeComments(branchNodeRef, branchToNodeRef);
+				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
 
-				String copyName = (String) this.nodeService.getProperty(branchToNodeRef, ContentModel.PROP_NAME);
-				if(rename) {
-					copyName = (String) this.nodeService.getProperty(branchNodeRef, ContentModel.PROP_NAME);
-				}
-					
-				String workingCopyLabel = I18NUtil.getMessage(MSG_WORKING_COPY_LABEL);
-				copyName = createWorkingCopyName(copyName, workingCopyLabel);
-
-				// Apply the working copy aspect to the working copy
-				Map<QName, Serializable> workingCopyProperties = new HashMap<>(1);
-				workingCopyProperties.put(ContentModel.PROP_WORKING_COPY_OWNER, userName);
-				workingCopyProperties.put(ContentModel.PROP_WORKING_COPY_LABEL, workingCopyLabel);
-
-				nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_WORKING_COPY, workingCopyProperties);
-				nodeService.addAspect(branchNodeRef, ContentModel.ASPECT_LOCKABLE, null);
-				nodeService.addAspect(branchToNodeRef, ContentModel.ASPECT_CHECKED_OUT, null);
-				nodeService.createAssociation(branchToNodeRef, branchNodeRef, ContentModel.ASSOC_WORKING_COPY_LINK);
-
-				// Set beCPG CODE
-				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_CODE, nodeService.getProperty(branchToNodeRef, BeCPGModel.PROP_CODE));
-				nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, copyName);
-
-				// Remove branchForm as it's merge
-				nodeService.removeAspect(branchNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
-				nodeService.removeAspect(branchNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT);
-
-				// Deattach other branches
-				List<NodeRef> sources = associationService.getSourcesAssocs(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
-				for (NodeRef sourceNodeRef : sources) {
-					policyBehaviourFilter.disableBehaviour(sourceNodeRef, ContentModel.ASPECT_AUDITABLE);
-					try {
-						// nodeService.removeAspect(sourceNodeRef,
-						// BeCPGModel.ASPECT_ENTITY_BRANCH);
-						associationService.update(sourceNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, branchToNodeRef);
-
-						if (nodeService.hasAspect(branchToNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
-							nodeService.setProperty(sourceNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
-									nodeService.getProperty(branchToNodeRef, ContentModel.PROP_VERSION_LABEL));
-						} else {
-							nodeService.setProperty(sourceNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
-						}
-
-					} finally {
-						policyBehaviourFilter.enableBehaviour(sourceNodeRef, ContentModel.ASPECT_AUDITABLE);
+					// Set effectivity
+					Date newEffectivity = new Date();
+					Date oldEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
+					if (oldEffectivity == null) {
+						oldEffectivity = newEffectivity;
 					}
+					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, oldEffectivity);
+					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
 				}
-				// Update all association refering to this branch to point to
-				// branchToNodeRef
-				updateBranchAssoc(branchNodeRef, branchToNodeRef);
 
-				// Update also version of the node
-				VersionHistory versionHistory = versionService.getVersionHistory(branchNodeRef);
+				// create the version node
+				Version newVersion = versionService.createVersion(entityNodeRef, versionProperties);
+				
+				// extract the JSON data of the current node
+				String jsonData = entityFormatService.extractEntityData(entityNodeRef, EntityFormat.JSON);
 
-				if (versionHistory != null) {
-					List<ChildAssociationRef> versionAssocs = getVersionAssocs(branchNodeRef);
+				NodeRef versionNode = getEntityVersion(newVersion);
+				
+				// add child assocs to versions
+				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
+				
+				Location exportFrom = new Location(entityNodeRef);
+				crawlerParameters.setExportFrom(exportFrom);
+				
+				crawlerParameters.setCrawlSelf(true);
+				crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
+				
+				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
+				
+				exporterService.exportView(new VersionExporter(entityNodeRef, versionNode, dbNodeService, entityDictionaryService), crawlerParameters,
+						null);
+				
+				entityFormatService.setEntityFormat(versionNode, EntityFormat.JSON);
+				entityFormatService.setEntityData(versionNode, jsonData);
+				
+				String versionLabel = newVersion.getVersionLabel();
 
-					for (Version version : versionHistory.getAllVersions()) {
-						NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
-						if (entityVersionNodeRef != null) {
-							updateBranchAssoc(entityVersionNodeRef, branchToNodeRef);
-						}
+				String name = dbNodeService.getProperty(versionNode, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
+				dbNodeService.setProperty(versionNode, ContentModel.PROP_NAME, name);
+				dbNodeService.setProperty(versionNode, BeCPGModel.PROP_VERSION_LABEL, versionLabel);
+				dbNodeService.setProperty(versionNode, Version2Model.PROP_QNAME_FROZEN_MODIFIED, new Date());
+				
+
+				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
+					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
+					nodeService.removeProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
+				}
+				
+				if ((versionProperties != null) && versionProperties.containsKey(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF)) {
+					NodeRef postUpdateHistoryNodeRef = (NodeRef) versionProperties.get(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF);
+					if (postUpdateHistoryNodeRef != null) {
+						updateEntitiesHistory(postUpdateHistoryNodeRef, entityNodeRef);
 					}
+
+				} else {
+					updateEntitiesHistory(entityNodeRef, null);
 				}
+
+				entityActivityService.postVersionActivity(entityNodeRef, newVersion.getVersionedNodeRef(), newVersion.getVersionLabel());
+
+				return VersionUtil.convertNodeRef(newVersion.getFrozenStateNodeRef());
 
 			} finally {
-				((RuleService) ruleService).enableRuleType(RuleType.UPDATE);
+				if (logger.isDebugEnabled() && (watch != null)) {
+					watch.stop();
+					logger.debug("internalCreateVersionAndCheckin run in  " + watch.getTotalTimeSeconds() + " s");
+				}
 			}
 
-			// Lock the original node
-			lockService.lock(branchToNodeRef, LockType.READ_ONLY_LOCK);
-
-		} finally {
-			policyBehaviourFilter.enableBehaviour(branchToNodeRef, ContentModel.ASPECT_AUDITABLE);
+		} else {
+			logger.info("Should create initial version first");
 		}
 
+		return null;
 	}
 
 	private void updateBranchAssoc(NodeRef branchNodeRef, NodeRef branchToNodeRef) {
@@ -1127,7 +1147,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		for (AssociationRef assocRef : assocRefs) {
 			policyBehaviourFilter.disableBehaviour(assocRef.getSourceRef(), ContentModel.ASPECT_AUDITABLE);
 			try {
-				if ((assocRef != null) && (assocRef.getTargetRef() != null) && !assocRef.getTargetRef().equals(branchToNodeRef)
+				if ((assocRef.getTargetRef() != null) && !assocRef.getTargetRef().equals(branchToNodeRef)
 						&& !ContentModel.ASSOC_WORKING_COPY_LINK.equals(assocRef.getTypeQName())) {
 
 					nodeService.removeAssociation(assocRef.getSourceRef(), assocRef.getTargetRef(), assocRef.getTypeQName());
@@ -1173,6 +1193,57 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 		}
 	}
+	
+	public NodeRef createEmptyBranch(NodeRef entityNodeRef, NodeRef parentRef) {
+		StopWatch watch = null;
+
+		boolean mlAware = MLPropertyInterceptor.isMLAware();
+		try {
+
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+
+			MLPropertyInterceptor.setMLAware(true);
+
+			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+				// Only for transaction do not reenable it
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+
+				String newEntityName = repoService.getAvailableName(parentRef,
+						(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME), true);
+				
+				NodeRef branchNodeRef = nodeService.createNode(parentRef, ContentModel.ASSOC_CONTAINS,	QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(newEntityName)), nodeService.getType(entityNodeRef))
+							.getChildRef();
+				
+				if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
+					nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
+							nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL));
+				} else {
+					nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL, RepoConsts.INITIAL_VERSION);
+				}
+				
+				nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Collections.singletonList(entityNodeRef));
+				
+				return branchNodeRef;
+
+			}, false, false);
+
+		} finally {
+			MLPropertyInterceptor.setMLAware(mlAware);
+
+			if (logger.isDebugEnabled() && (watch != null)) {
+				watch.stop();
+				logger.debug("createBranch run in  " + watch.getTotalTimeSeconds() + " seconds ");
+
+			}
+		}
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -1194,12 +1265,22 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				// Only for transaction do not reenable it
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);	
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
 				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 
 				String newEntityName = repoService.getAvailableName(parentRef,
 						(String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME), true);
-				NodeRef branchNodeRef = entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef), newEntityName);
+				
+				NodeRef branchNodeRef = null;
+				
+				try {
+					branchNodeRef = entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef), newEntityName);
+        		} catch (AssociationExistsException e) {
+                    // This will be rare, but it's not impossible.
+                    // We have to retry the operation.
+        			throw new ConcurrencyFailureException("Association already exists for this noderef : " + entityNodeRef);
+        		}
+				
 				if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 					nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_BRANCH_FROM_VERSION_LABEL,
 							nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL));
@@ -1208,8 +1289,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				}
 				nodeService.setProperty(branchNodeRef, ContentModel.PROP_CREATED, new Date());
 				nodeService.setProperty(branchNodeRef, ContentModel.PROP_MODIFIED, new Date());
+				nodeService.setProperty(branchNodeRef, ContentModel.PROP_CREATOR, AuthenticationUtil.getFullyAuthenticatedUser());
 				nodeService.setProperty(branchNodeRef, ContentModel.PROP_MODIFIER, AuthenticationUtil.getFullyAuthenticatedUser());
+				
 				nodeService.setAssociations(branchNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY, Collections.singletonList(entityNodeRef));
+				
 				return branchNodeRef;
 
 			}, false, false);
@@ -1236,65 +1320,175 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	}
 
+	@Override
+	public boolean isVersion(NodeRef nodeRef) {
+		return nodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
+				|| nodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
+	}
+
 	/**
-	 * Create a working copy name using the given fileName and workingCopyLabel.
-	 * The label will be inserted before the file extension (if present), or
-	 * else appended to the name (in either case a space is prepended to the
-	 * workingCopyLabel).
-	 * <p>
-	 * Examples, where workingCopyLabel is "wc":
-	 * <p>
-	 * "Myfile.txt" becomes "Myfile wc.txt", "Myfile" becomes "Myfile wc".
-	 * <p>
-	 * In the event that fileName is empty or null, the workingCopyLabel is used
-	 * for the new working copy name
-	 * <p>
-	 * Example: "" becomes "wc".
+	 * Creates a new version history node, applying the root version aspect is
+	 * required.
 	 *
-	 * @param name
-	 * @param workingCopyLabel
-	 * @return
+	 * @param nodeRef
+	 *            the node ref
+	 * @return the version history node reference
 	 */
-	private String createWorkingCopyName(String name, final String workingCopyLabel) {
-		if ((workingCopyLabel != null) && (workingCopyLabel.length() != 0)) {
-			if ((name != null) && (name.length() != 0)) {
-				int index = name.lastIndexOf(EXTENSION_CHARACTER);
-				if (index > 0) {
-					// Insert the working copy label before the file extension
-					name = name.substring(0, index) + " " + workingCopyLabel + name.substring(index);
-				} else {
-					// Simply append the working copy label onto the end of the
-					// existing name
-					name = name + " " + workingCopyLabel;
-				}
-			} else {
-				name = workingCopyLabel;
-			}
-		} else {
-			throw new IllegalArgumentException("workingCopyLabel is null or empty");
+	private NodeRef createVersionHistory(NodeRef entitiesHistoryFolder, NodeRef nodeRef) {
+		StopWatch watch = new StopWatch();
+		if (logger.isDebugEnabled()) {
+			watch.start();
 		}
 
-		return name;
+		Map<QName, Serializable> props = new HashMap<>();
+		props.put(ContentModel.PROP_NAME, nodeRef.getId());
+
+		ChildAssociationRef childAssocRef = nodeService.createNode(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS,
+				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, nodeRef.getId()), ContentModel.TYPE_FOLDER, props);
+
+		if (logger.isTraceEnabled()) {
+
+			watch.stop();
+			logger.trace("created version history nodeRef: " + childAssocRef.getChildRef() + " for " + nodeRef + " in " + watch.getTotalTimeSeconds()
+					+ " s");
+		}
+
+		return childAssocRef.getChildRef();
+
 	}
 
 	@Override
-	public boolean isVersion(NodeRef entity1) {
-		return false;
+	public NodeRef extractVersion(NodeRef nodeRef) {
+
+		final NodeRef versionNodeRef = nodeRef;
+
+		NodeRef versionHistoryRef = getVersionHistoryNodeRef(versionNodeRef);
+
+		final String actualVersion = (String) dbNodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL);
+		
+		// check if this is an old version node which has already been converted
+		if (versionHistoryRef == null) {
+
+			NodeRef parentNode = nodeService.getPrimaryParent(versionNodeRef).getParentRef();
+
+			String name = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
+
+			NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
+			if (entitiesHistoryFolder != null) {
+				versionHistoryRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS, name);
+			}
+		}
+
+		if (versionHistoryRef == null) {
+			versionHistoryRef = createVersionHistory(getEntitiesHistoryFolder(), versionNodeRef);
+		}
+
+		final NodeRef finalVersionHistoryRef = versionHistoryRef;
+
+		QName type = dbNodeService.getType(versionNodeRef);
+
+		NodeRef extracted = null;
+		
+		extracted = transactionService.getRetryingTransactionHelper().doInTransaction(() ->
+
+		internalExtractVersion(versionNodeRef, actualVersion, finalVersionHistoryRef, type)
+
+				, false, false);
+		
+		return extracted;
 	}
 
-	@Override
-	public NodeRef extractVersion(NodeRef entity1) {
-		return null;
-	}
+	private NodeRef internalExtractVersion(final NodeRef versionNodeRef, final String actualVersion,
+			final NodeRef finalVersionHistoryRef, QName type) {
+		NodeRef entity = null;
 
-	@Override
-	public boolean isV2Service() {
-		return false;
-	}
+		try {
 
-	@Override
-	public NodeRef revertVersion(NodeRef versionNodeRef) throws IllegalAccessException {
-		return null;
+			((RuleService) ruleService).disableRules();
+
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+			policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
+
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(finalVersionHistoryRef);
+
+			for (ChildAssociationRef childAssoc : childAssocs) {
+				
+				String version = (String) nodeService.getProperty(childAssoc.getChildRef(), BeCPGModel.PROP_VERSION_LABEL);
+				
+				if (actualVersion.equals(version)) {
+					entity = childAssoc.getChildRef();
+					break;
+				}
+			}
+			
+			// create the temporary mirror node in EntitiesHistory folder
+			if ((entity == null) || !nodeService.exists(entity)) {
+
+				String entityJson = entityFormatService.getEntityData(versionNodeRef);
+
+				Map<QName, Serializable> props = new HashMap<>();
+				props.put(ContentModel.PROP_NAME, versionNodeRef.getId());
+
+				ChildAssociationRef childAssoc = nodeService.createNode(finalVersionHistoryRef, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, versionNodeRef.getId()), type, props);
+
+				entity = childAssoc.getChildRef();
+
+				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
+
+				Location exportFrom = new Location(versionNodeRef);
+				crawlerParameters.setExportFrom(exportFrom);
+
+				crawlerParameters.setCrawlSelf(true);
+				crawlerParameters.setExcludeChildAssocs(new QName[] { QName.createQName(Version2Model.NAMESPACE_URI, VersionBaseModel.CHILD_VERSIONED_ASSOCS), RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
+
+				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
+				
+				// reconstructs the folder hierarchy
+				exporterService.exportView(new VersionExporter(versionNodeRef, entity, nodeService, entityDictionaryService), crawlerParameters, null);
+
+				entityFormatService.createOrUpdateEntityFromJson(entity, entityJson);
+
+				if (lockService.isLocked(entity)) {
+					lockService.unlock(entity);
+				}
+				
+				String name = nodeService.getProperty(entity, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + actualVersion;
+				Map<QName, Serializable> versionAspectProperties = new HashMap<>(2);
+				versionAspectProperties.put(ContentModel.PROP_NAME, name);
+				versionAspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, actualVersion);
+				nodeService.addAspect(entity, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionAspectProperties);
+
+				nodeService.setProperty(entity, ContentModel.PROP_VERSION_LABEL, actualVersion);
+
+				// MNT-11911 fix, add ASPECT_INDEX_CONTROL and property that not create indexes for search and not visible files/folders at 'My Documents' dashlet
+				Map<QName, Serializable> aspectProperties = new HashMap<>(2);
+				aspectProperties.put(ContentModel.PROP_IS_INDEXED, Boolean.FALSE);
+				aspectProperties.put(ContentModel.PROP_IS_CONTENT_INDEXED, Boolean.FALSE);
+				nodeService.addAspect(entity, ContentModel.ASPECT_INDEX_CONTROL, aspectProperties);
+
+				// add temporary aspect in order to delete the node later with VersionCleanerJob
+				nodeService.addAspect(entity, ContentModel.ASPECT_TEMPORARY, null);
+
+			}
+
+		} finally {
+			((RuleService) ruleService).enableRules();
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_BRANCH);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_VERSIONABLE);
+			policyBehaviourFilter.enableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
+		}
+
+		return entity;
 	}
 
 }

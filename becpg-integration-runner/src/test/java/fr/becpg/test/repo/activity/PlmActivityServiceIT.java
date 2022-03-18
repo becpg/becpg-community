@@ -198,7 +198,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// Version activity
-		assertEquals("Check version activity", entityVersionService.isV2Service() ? 4 : 3, getActivities(newRawMaterialNodeRef, null).size());
+		assertEquals("Check version activity", 4, getActivities(newRawMaterialNodeRef, null).size());
 
 	}
 
@@ -231,7 +231,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// Merge activities
-		assertEquals("Check Merge Activities", entityVersionService.isV2Service() ? 5 : 4, getActivities(productNodeRef, null).size());
+		assertEquals("Check Merge Activities", 5, getActivities(productNodeRef, null).size());
 
 	}
 
