@@ -351,6 +351,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_WORKFLOW_SCRIPTS);
 
 		addClassifyRule(companyHome);
+		
+		// signature scripts
+		NodeRef scriptsFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, "./app:dictionary/app:scripts");
+		contentHelper.addFilesResources(scriptsFolderNodeRef, "classpath*:beCPG/signature/*.js");
 
 		// Create default sites
 		return visitSites();
