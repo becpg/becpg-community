@@ -768,4 +768,60 @@ function  toISO8601(dateObject, options) {
          return formattedDate.join('T'); // String
 }
 
+/**
+Applies formulary data (properties and associations) to an entity
+ */
+function submitForm(entity, formDataJson) {
+	for (var key in formDataJson) {
+		if (key != "prop_cm_name" && key.startsWith("prop_")) {
+			var prop = key.split("prop_")[1].replace("_", ":");
+			entity.properties[prop] = formDataJson[key];
+			entity.save();
+		} else if (key.startsWith("assoc_")) {
+			var assoc = key.split("assoc_")[1];
+
+			if (assoc.endsWith("_added")) {
+				assoc = assoc.split("_added")[0].replace("_", ":");
+
+				if (formDataJson[key] != "") {
+					
+					var splitted = formDataJson[key].split(",");
+					
+					for (var value in splitted) {
+						var sNode = search.findNode(splitted[value]);
+						entity.createAssociation(sNode, assoc);
+					}
+				}
+			} else if (assoc.endsWith("_removed")) {
+				assoc = assoc.split("_removed")[0].replace("_", ":");
+
+				if (formDataJson[key] != "") {
+					
+					var splitted = formDataJson[key].split(",");
+					
+					for (var value in splitted) {
+						var sNode = search.findNode(splitted[value]);
+						entity.removeAssociation(sNode, assoc);
+					}
+				}
+			}
+		}
+	}
+}
+
+function getEntityListFromNode(product, listName) {
+    var entityList = null;
+    if (product && product.childAssocs["bcpg:entityLists"]) {
+        var entityLists = product.childAssocs["bcpg:entityLists"][0];
+        var children = entityLists.childFileFolders();
+        for (var list in children) {
+            if (listName === children[list].properties["cm:name"]) {
+				entityList = children[list];
+                break;
+            }
+        }
+    }
+    return entityList;
+}
+
 

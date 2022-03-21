@@ -191,13 +191,13 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			for (NodeRef scriptNodeRef : scriptResources) {
 				String name = (String) nodeService.getProperty(scriptNodeRef, ContentModel.PROP_NAME);
-				if (name.equals("supplierPortalScript.js")) {
+				if (name.equals("supplier-portal-script.js")) {
 					preSupplierScript.setContent(scriptNodeRef);
-				} else if (name.equals("validateProjectEntity.js")) {
+				} else if (name.equals("supplier-portal-validate-project-entity.js")) {
 					postValidationScript.setContent(scriptNodeRef);
-				} else if (name.equals("sendForSignature.js")) {
+				} else if (name.equals("supplier-portal-prepare-for-signature.js")) {
 					preSignatureScript.setContent(scriptNodeRef);
-				} else if (name.equals("checkinSignature.js")) {
+				} else if (name.equals("supplier-portal-sign-and-checkin.js")) {
 					postSignatureScript.setContent(scriptNodeRef);
 				}
 			}
