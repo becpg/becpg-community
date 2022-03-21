@@ -149,7 +149,6 @@
           <show force="false" id="gs1:productHierarchy2"/>
           <show force="false" id="gs1:productHierarchy3"/>
           <show force="false" id="gs1:productHierarchy4"/>
-          <show force="false" id="gs1:productHierarchy5"/>
           <show force="false" id="gs1:dataCarrierTypeCode"/>
           <show force="false" id="bcpg:customsCodeRef"/>
           <show force="false" id="gs1:isTradeItemAVariableUnit"/>
@@ -673,12 +672,6 @@
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy</control-param>
               <control-param name="parent">gs1_productHierarchy3</control-param>
-            </control>
-          </field>
-          <field id="gs1:productHierarchy5" mandatory="false" read-only="false" set="hierarchyPanel">
-            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-              <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy</control-param>
-              <control-param name="parent">gs1_productHierarchy4</control-param>
             </control>
           </field>
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:dataCarrierTypeCode" mandatory="false" read-only="false" set="hierarchyPanel"/>
@@ -1661,7 +1654,6 @@
           <show force="true" id="gs1:productHierarchy2"/>
           <show force="true" id="gs1:productHierarchy3"/>
           <show force="true" id="gs1:productHierarchy4"/>
-          <show force="true" id="gs1:productHierarchy5"/>
           <show force="true" id="gs1:dataCarrierTypeCode"/>
           <show force="true" id="bcpg:customsCodeRef"/>
           <show force="true" id="gs1:isTradeItemAVariableUnit"/>
@@ -2174,12 +2166,6 @@
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy</control-param>
               <control-param name="parent">gs1_productHierarchy3</control-param>
-            </control>
-          </field>
-          <field id="gs1:productHierarchy5" mandatory="false" read-only="false" set="hierarchyPanel">
-            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-              <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy</control-param>
-              <control-param name="parent">gs1_productHierarchy4</control-param>
             </control>
           </field>
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:dataCarrierTypeCode" mandatory="false" read-only="false" set="hierarchyPanel"/>
