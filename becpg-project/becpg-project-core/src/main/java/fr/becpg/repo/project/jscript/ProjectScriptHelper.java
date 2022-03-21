@@ -192,6 +192,10 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 								String[] splitted = assocQname.split("\\|");
 								replacement.append(extractDeliverableProp(projectNodeRef, splitted));
 
+							} else if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM)) {
+								String[] splitted = assocQname.split("\\|");
+								replacement.append(extractDeliverableProp(taskNodeRef, splitted));
+
 							} else if (assocQname != null) {
 								String[] splitted = assocQname.split("\\|");
 								List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef,
@@ -229,7 +233,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 						splitted[1].substring(DeliverableUrl.XPATH_URL_PREFIX.length()));
 			} else {
 				Serializable tmp = nodeService.getProperty(nodeRef, QName.createQName(splitted[1], namespaceService));
-				return tmp != null ? tmp.toString() : "";
+				return tmp != null ? tmp.toString().replace("$", "\\$") : "";
 			}
 		} else {
 			ret = nodeRef;
