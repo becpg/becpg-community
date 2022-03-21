@@ -139,6 +139,10 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private static final String KEY_NAME_COLOR = "color";
 
 	private static final String KEY_NAME_VARIANT = "variants";
+	
+	private static final String KEY_NAME_IS_MODEL_VARIANT = "isModelVariant";
+	
+	private static final String KEY_NAME_VARIANT_PARENT = "variantParent";
 
 	private static final String KEY_NAME_COMPARE_WITH_ENTITIES = "compareWithEntities";
 
@@ -401,7 +405,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 		result.put(KEY_NAME_PATH, path);
 
-		List<NodeRef> nodeRefs = new ArrayList<>();
+		Set<NodeRef> nodeRefs = new HashSet<>();
 		nodeRefs.add(entity);
 		List<ChildAssociationRef> variantsAssociations = new ArrayList<>();
 		NodeRef entityTplNodeRef = associationService.getTargetAssoc(entity, BeCPGModel.ASSOC_ENTITY_TPL_REF);
@@ -428,6 +432,9 @@ public class EntityListsWebScript extends AbstractWebScript {
 				Serializable isDefaultVariant = nodeService.getProperty(variant, BeCPGModel.PROP_IS_DEFAULT_VARIANT);
 				obj.put(KEY_NAME_IS_DEFAULT_VARIANT, defaultValue(isDefaultVariant, false));
 				obj.put(KEY_NAME_COLOR, defaultValue(nodeService.getProperty(variant, BeCPGModel.PROP_COLOR), ""));
+				NodeRef variantParent = nodeService.getPrimaryParent(variant).getParentRef();
+				obj.put(KEY_NAME_IS_MODEL_VARIANT, nodeService.hasAspect(variantParent, BeCPGModel.ASPECT_ENTITY_TPL));
+				obj.put(KEY_NAME_VARIANT_PARENT, variantParent.toString());
 				variants.put(obj);
 			}
 			result.put(KEY_NAME_VARIANT, variants);
