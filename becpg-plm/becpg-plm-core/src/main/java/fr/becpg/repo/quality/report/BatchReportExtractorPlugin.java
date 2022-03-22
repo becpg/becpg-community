@@ -26,6 +26,8 @@ import org.alfresco.service.namespace.QName;
 import org.dom4j.Element;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.DataListModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.repo.product.data.ProductData;
@@ -46,10 +48,8 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 @Service
 public class BatchReportExtractorPlugin extends ProductReportExtractorPlugin {
 
-	
-	protected static final List<QName> DATALIST_SPECIFIC_EXTRACTOR = Arrays.asList(PLMModel.TYPE_COMPOLIST,PLMModel.TYPE_REQCTRLLIST);
-	
-	
+	protected static final List<QName> DATALIST_SPECIFIC_EXTRACTOR = Arrays.asList(PLMModel.TYPE_COMPOLIST, PLMModel.TYPE_REQCTRLLIST);
+
 	/**
 	 * {@inheritDoc}
 	 *
@@ -60,40 +60,51 @@ public class BatchReportExtractorPlugin extends ProductReportExtractorPlugin {
 		loadDataLists(entityNodeRef, dataListsElt, context, true);
 	}
 
-	
-
-	private void loadDataLists(NodeRef entityNodeRef, Element dataListsElt,   DefaultExtractorContext context, boolean isExtractedProduct) {
+	private void loadDataLists(NodeRef entityNodeRef, Element dataListsElt, DefaultExtractorContext context, boolean isExtractedProduct) {
 		BatchData batchData = (BatchData) alfrescoRepository.findOne(entityNodeRef);
 
-		Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(batchData);
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+		if (listContainerNodeRef != null) {
 
-		if ((datalists != null) && !datalists.isEmpty()) {
+			List<NodeRef> listNodeRefs = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
+			Map<QName, List<? extends RepositoryEntity>> datalists = repositoryEntityDefReader.getDataLists(batchData);
 
-			for (QName dataListQName : datalists.keySet()) {
+			for (NodeRef listNodeRef : listNodeRefs) {
+				QName dataListQName = QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE),
+						namespaceService);
 
 				if (!DATALIST_SPECIFIC_EXTRACTOR.contains(dataListQName)) {
-					if (alfrescoRepository.hasDataList(entityNodeRef, dataListQName)) {
-						Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
-	
-						@SuppressWarnings({ "unchecked" })
-						List<BeCPGDataObject> dataListItems = (List<BeCPGDataObject>) datalists.get(dataListQName);
-	
-						for (BeCPGDataObject dataListItem : dataListItems) {
-							Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
-							loadDataListItemAttributes(dataListItem, nodeElt, context);
-	
+
+					if ((datalists != null) && datalists.containsKey(dataListQName)) {
+						// use entityRepository for performances
+						@SuppressWarnings({ "rawtypes", "unchecked" })
+						List<BeCPGDataObject> dataListItems = (List) datalists.get(dataListQName);
+
+						if ((dataListItems != null) && !dataListItems.isEmpty()) {
+
+							Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
+							addDataListStateAndName(dataListElt, listNodeRef);
+
+							for (BeCPGDataObject dataListItem : dataListItems) {
+								Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
+								loadDataListItemAttributes(dataListItem, nodeElt, context);
+
+							}
 						}
+					} else if (!BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListQName)) {
+						// extract specific datalists
+						loadDataList(dataListsElt, listNodeRef, dataListQName, context);
 					}
 				}
 			}
 		}
-		
+
 		if (isExtractedProduct) {
 			loadCompoList(batchData, dataListsElt, context);
 		}
 
 	}
-	
+
 	private void loadCompoList(BatchData batchData, Element dataListsElt, DefaultExtractorContext context) {
 		// compoList
 		if (batchData.hasCompoListEl()) {
@@ -120,9 +131,7 @@ public class BatchReportExtractorPlugin extends ProductReportExtractorPlugin {
 		}
 
 	}
-	
 
-	
 	/** {@inheritDoc} */
 	@Override
 	public EntityReportExtractorPriority getMatchPriority(QName type) {
