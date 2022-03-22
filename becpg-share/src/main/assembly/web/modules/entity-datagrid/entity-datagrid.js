@@ -71,6 +71,8 @@
         {
             this.scopeId = htmlId;
         }
+        
+        this.actionCount = 0;
 
         /**
          * Decoupled event listeners
@@ -945,7 +947,7 @@
                         {
                             return this.options.columnsUrl + "?itemType=" + encodeURIComponent(this.options.itemType != null ? this.options.itemType
                                     : this.datalistMeta.itemType) + "&list=" + encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name
-                                    : this.options.list) + (formId != null ? "&formId=" + formId : "") + (this.options.clearCache ? "&clearCache=true"
+                                    : this.options.list) + (formId != null ? "&formId=" + formId : "") + (this.options.clearCache ? "&noCache="+(new Date().getTime())
                                     : "" ) + (this.options.siteId ? "&siteId=" + this.options.siteId : "") + (this.entity!=null ? "&entityType="+encodeURIComponent(this.entity.type) : "");
                         },
 
@@ -2670,12 +2672,19 @@
                           
                             if ((obj !== null))
                             {
+	
+								
 	                            	
 	                            if(obj.dataList){	
 	                            	if( this.datalistMeta!=null && this.datalistMeta.name!=null){
 	                            		Dom.removeClass(this.id+"-body",this.datalistMeta.name);
 	                            		if(obj.dataList.name!=null){
 	                            			Dom.addClass(this.id+"-body",obj.dataList.name);
+	                            			if(this.scopeId == ""){
+	                            				var queryParams = new URLSearchParams(window.location.search);
+												queryParams.set("list", obj.dataList.name);
+											    history.replaceState(null, null, "?"+queryParams.toString());	
+	                            			}
 	                            		}
 	                            	}
 	                            
@@ -2686,6 +2695,8 @@
 	                                }
 	                                
 	                                this.parentInputNodeRef = null;
+	                                
+	                                
 	                            }
 
 	                            if(obj.clearCache!=null){
@@ -2719,11 +2730,13 @@
 	                                    filterId : "all",
 	                                    filterData : ""
 	                                };
-	                                
-	                                var objNav = {};
+
+							         var objNav = {};
                                     objNav[this.scopeId + "filter"] = "all";
-                                    YAHOO.util.History.multiNavigate(objNav);
+                               		YAHOO.util.History.multiNavigate(objNav);
                                 }
+                                
+                                
                                 
                                 this.selectedItems = {};
                                 this.afterDataGridUpdate = [];
@@ -2744,6 +2757,8 @@
                                 {
                                     this.options.list = obj.list;
                                 }
+                                
+                                
 
                                 // Could happen more than once, so check return
                                 // value of
