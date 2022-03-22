@@ -22,6 +22,8 @@ import java.util.List;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
+
 /**
  * <p>SecurityService interface.</p>
  *
@@ -83,5 +85,11 @@ public interface SecurityService {
 	 * @return a {@link java.util.List} object.
 	 */
 	List<String> getUserSecurityRoles();
-
+	
+	/**
+	 * List acl permissions for a node
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	List<ACLEntryDataItem.PermissionModel> getNodeACLPermissions(NodeRef nodeRef, QName nodeType, String propName);
 }
