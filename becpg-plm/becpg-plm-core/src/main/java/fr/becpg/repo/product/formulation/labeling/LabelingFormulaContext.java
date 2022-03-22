@@ -1043,14 +1043,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 			}
 			
-			System.out.println("PWET" +selectedRule);
-
 			if (selectedRule != null) {
 				decimalFormat = new DecimalFormat(
 						(selectedRule.format != null) && !selectedRule.format.isEmpty() ? selectedRule.format : defaultPercFormat, symbols);
 				if (selectedRule.roundingMode != null) {
 					roundingMode = selectedRule.roundingMode;
-					System.out.println(roundingMode);
 				}
 
 			}
@@ -1431,7 +1428,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		BigDecimal totalWithYield = BigDecimal.valueOf(0d);
 
 		ret.append("<table class=\"labelingTable\" cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" style=\""
-				+ ((styleCss == null) || (styleCss).isBlank() ? "border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
+				+ ((styleCss == null) || (styleCss).isBlank() ? "border: solid 1px; border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
 
 		if ((htmlTableHeaderFormat != null) && !htmlTableHeaderFormat.isBlank()) {
 			ret.append(new MessageFormat(htmlTableHeaderFormat, I18NUtil.getContentLocale())
@@ -2500,15 +2497,21 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							break;
 						} else if ((DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
 								&& matchFormule(declarationFilter, new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale))) {
-							ingType = null;
-							break;
+							ingType = ingType.createCopy();
+							ingType.setIsDoNotDeclare(true);
+						} else if ((DeclarationType.DoNotDetailsAtEnd.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
+								&& matchFormule(declarationFilter, new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale))) {
+							ingType = ingType.createCopy();
+							ingType.setIsLastGroup(true);
 						}
 					}
 					if (shouldBreak) {
 						break;
 					}
 
-				} else if ((ingType != null) && ingType.doNotDeclare() && !ingType.lastGroup()) {
+				}
+				
+				if ((ingType != null) && ingType.doNotDeclare() && !ingType.lastGroup()) {
 					ingType = null;
 				}
 
