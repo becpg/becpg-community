@@ -25,9 +25,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import fr.becpg.config.format.FormatMode;
-import fr.becpg.config.format.PropertyFormatService;
-
 /**
  * <p>JsonFormulaHelper class.</p>
  *
