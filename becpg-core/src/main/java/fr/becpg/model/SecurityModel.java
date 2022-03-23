@@ -51,6 +51,9 @@ public final class SecurityModel {
 
 	/** Constant <code>PROP_ACL_GROUP_NODE_TYPE</code> */
 	public final static QName PROP_ACL_GROUP_NODE_TYPE = QName.createQName(SECURITY_URI, "nodeType");
+	
+	/** Constant <code>PROP_ACL_GROUP_NODE_TYPE</code> */
+	public final static QName PROP_ACL_GROUP_IS_LOCAL_PERMISSION= QName.createQName(SECURITY_URI, "isLocalPermission");
 
 	/** Constant <code>ASSOC_GROUPS_ASSIGNEE</code> */
 	public final static QName ASSOC_GROUPS_ASSIGNEE = QName.createQName(SECURITY_URI, "groupsAssignee");
@@ -61,4 +64,9 @@ public final class SecurityModel {
 	/** Constant <code>PROP_ACL_PERMISSION</code> */
 	public final static QName PROP_ACL_PERMISSION = QName.createQName(SECURITY_URI, "aclPermission");
 
+	/** Constant <code>ASPECT_SECURITY</code> */
+	public static final QName ASPECT_SECURITY= QName.createQName(SECURITY_URI, "securityAspect");
+	
+	/** Constant <code>ASSOC_SECURITY_REF</code> */
+	public static final QName ASSOC_SECURITY_REF= QName.createQName(SECURITY_URI, "securityRef");
 }
