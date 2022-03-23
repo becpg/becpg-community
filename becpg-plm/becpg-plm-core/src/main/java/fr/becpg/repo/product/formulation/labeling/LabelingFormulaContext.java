@@ -636,6 +636,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public void setHtmlTableHeaderFormat(String htmlTableHeaderFormat) {
 		this.htmlTableHeaderFormat = htmlTableHeaderFormat;
 	}
+	
+	public void setHtmlTableFooterFormat(String htmlTableFooterFormat) {
+		this.htmlTableFooterFormat = htmlTableFooterFormat;
+	}
 
 	/**
 	 * <p>
