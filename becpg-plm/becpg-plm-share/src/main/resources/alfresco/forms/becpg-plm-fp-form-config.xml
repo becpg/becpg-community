@@ -89,6 +89,7 @@
           <show force="false" id="ghs:sdsOnuCode"/>
           <show force="false" id="ghs:sdsClassCode"/>
           <show force="false" id="ghs:sdsPackagingGroupCode"/>
+          <show force="false" id="sec:securityRef"/>
           <show force="false" id="cm:taggable"/>
           <show force="false" id="cm:categories"/>
           <show for-mode="view" force="false" id="cm:creator"/>
@@ -191,6 +192,13 @@
         </field-visibility>
         <appearance>
           <set id="mainTab" label-id="becpg.forms.set.characteristics.label"/>
+          <set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" parent="mainTab" />
+			<field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
+				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
+					</control-param>
+				</control>
+			</field>
           <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
           <field help-id="becpg.forms.help.gs1.descriptionShort" id="gs1:descriptionShort" mandatory="false" read-only="false" set="mainInfo">

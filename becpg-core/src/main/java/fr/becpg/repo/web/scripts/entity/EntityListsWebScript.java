@@ -606,27 +606,31 @@ public class EntityListsWebScript extends AbstractWebScript {
 				Iterator<NodeRef> it = listsNodeRef.iterator();
 				while (it.hasNext()) {
 					NodeRef temp = it.next();
-					String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
-					int accessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListType);
-
-					if (SecurityService.NONE_ACCESS != accessMode) {
-						String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
-						int newAccessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListName);
-						if (newAccessMode < accessMode) {
-							accessMode = newAccessMode;
+					if (permissionService.hasPermission(temp, PermissionService.READ) == AccessStatus.ALLOWED) {
+						String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
+						int accessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListType);
+	
+						if (SecurityService.NONE_ACCESS != accessMode) {
+							String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
+							int newAccessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListName);
+							if (newAccessMode < accessMode) {
+								accessMode = newAccessMode;
+							}
 						}
-					}
-
-					if (SecurityService.NONE_ACCESS == accessMode) {
-						if (logger.isTraceEnabled()) {
-							logger.trace("Don't display dataList:" + dataListType);
+	
+						if (SecurityService.NONE_ACCESS == accessMode) {
+							if (logger.isTraceEnabled()) {
+								logger.trace("Don't display dataList:" + dataListType);
+							}
+							it.remove();
+						} else if (!isExternalUser && (SecurityService.WRITE_ACCESS == accessMode)
+								&& (permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED)) {
+							accessRights.put(temp, true);
+						} else {
+							accessRights.put(temp, false);
 						}
-						it.remove();
-					} else if (!isExternalUser && (SecurityService.WRITE_ACCESS == accessMode)
-							&& (permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED)) {
-						accessRights.put(temp, true);
 					} else {
-						accessRights.put(temp, false);
+						it.remove();
 					}
 				}
 			}
@@ -653,7 +657,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 			JSONObject permissions = new JSONObject();
 			permissions.put(KEY_NAME_CREATE, effectiveHasWritePermission && !lockService.isLocked(nodeRef));
 			result.put(KEY_NAME_PERMISSIONS, permissions);
-
 			result.put(RESULT_DATALISTS, makeDatalists(listsNodeRef, nodeRef, effectiveHasWritePermission, accessRights));
 
 			res.setContentType("application/json");
