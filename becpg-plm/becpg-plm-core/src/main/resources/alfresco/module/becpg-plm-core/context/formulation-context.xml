@@ -94,6 +94,14 @@
 					<property name="formulateChildren" value="true" />
 					<property name="lockService" ref="lockService" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.SecurityFormulationHandler">
+					<property name="nodeService" ref="nodeService"/> 
+					<property name="securityService" ref="securityService"/> 
+					<property name="permissionService" ref="permissionService"/>
+					<property name="entityListDAO" ref="entityListDAO"/>
+					<property name="authorityDAO" ref="authorityDAO"/>
+					<property name="siteService" ref="siteService"/>
+				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompositionQtyCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>

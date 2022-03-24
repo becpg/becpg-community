@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
@@ -58,6 +59,9 @@ public class WUsedListServiceImpl implements WUsedListService {
 
 	@Autowired
 	private PermissionService permissionService;
+	
+	@Autowired
+	private NodeService nodeService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -98,7 +102,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 		if ((entityNodeRefs != null) && !entityNodeRefs.isEmpty() && !parentNodeRefs.contains(entityNodeRefs.get(0))) {
 			parentNodeRefs.addAll(entityNodeRefs);
 
-			appendAssocs(ret, associationService.getEntitySourceAssocs(entityNodeRefs, associationName, WUsedOperator.OR.equals(operator), null),
+			appendAssocs(ret, associationService.getEntitySourceAssocs(entityNodeRefs, associationName, null, WUsedOperator.OR.equals(operator), null),
 					depthLevel, maxDepthLevel, associationName, filter, parentNodeRefs, permCache, WUsedOperator.OR.equals(operator));
 
 		}
@@ -134,7 +138,7 @@ public class WUsedListServiceImpl implements WUsedListService {
 			Boolean visible = permCache.get(rootNodeRef);
 
 			if (visible == null) {
-				visible = (permissionService.hasReadPermission(rootNodeRef) == AccessStatus.ALLOWED);
+				visible = nodeService.exists(rootNodeRef) && (permissionService.hasReadPermission(rootNodeRef) == AccessStatus.ALLOWED);
 
 				permCache.put(rootNodeRef, visible);
 			}

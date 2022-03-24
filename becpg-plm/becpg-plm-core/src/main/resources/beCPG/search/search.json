@@ -4,110 +4,110 @@
   "version": "1.0",
   "dataListSearchFilters":  {
           "claim1" : [ 
-           {"attribute": "bcpg:lclLabelClaim" , "htmlId":"assoc_bcpg_lclLabelClaim_added" },
+           {"attribute": "bcpg:lclLabelClaim" , "htmlId":"assoc_bcpg_lclLabelClaim_added", "listType": "bcpg:labelClaimList" },
            {"attribute": "bcpg:lclClaimValue" , "value":"true" }
          ],
          "claim2" :  [ 
-           {"attribute": "bcpg:lclLabelClaim" , "htmlId":"assoc_bcpg_advLclClaimAnd_added", "operator": "AND" },
+           {"attribute": "bcpg:lclLabelClaim" , "htmlId":"assoc_bcpg_advLclClaimAnd_added", "operator": "AND",  "listType": "bcpg:labelClaimList"  },
            {"attribute": "bcpg:lclClaimValue" , "value":"true" }
          ],
          
          "claim3" : [ 
-           {"attribute": "bcpg:lclLabelClaim" , "htmlId":"assoc_bcpg_advLclClaimNot_added", "operator": "AND" },
+           {"attribute": "bcpg:lclLabelClaim" , "htmlId":"assoc_bcpg_advLclClaimNot_added", "operator": "AND",  "listType": "bcpg:labelClaimList"  },
            {"attribute": "bcpg:lclClaimValue" , "value":"false" }
          ], 
 		"ing1" : [ 
-           {"attribute": "bcpg:ingListIng" , "htmlId":"assoc_bcpg_ingListIng_added" },
-           {"attribute": "bcpg:ingListGeoOrigin" , "htmlId":"assoc_bcpg_ingListGeoOrigin_added" },
-           {"attribute": "bcpg:ingListGeoOrigin" , "htmlId":"assoc_bcpg_advIlGeoOriginNot_added", "operator": "NOT" },
+           {"attribute": "bcpg:ingListIng" , "htmlId":"assoc_bcpg_ingListIng_added",  "listType": "bcpg:ingList"  },
+           {"attribute": "bcpg:ingListGeoOrigin" , "htmlId":"assoc_bcpg_ingListGeoOrigin_added" ,  "listType": "bcpg:ingList" },
+           {"attribute": "bcpg:ingListGeoOrigin" , "htmlId":"assoc_bcpg_advIlGeoOriginNot_added",  "listType": "bcpg:ingList", "operator": "NOT" },
            {"attribute": "bcpg:ingListBioOrigin" , "htmlId":"assoc_bcpg_ingListBioOrigin_added" },
            {"attribute": "bcpg:ingListQtyPerc" , "htmlId":"prop_bcpg_ingListQtyPerc-range" }
          ], 
          "ing2" : [ 
-           {"attribute": "bcpg:ingListIng" , "htmlId":"assoc_bcpg_advIlIngNot_added", "operator": "NOT" }
+           {"attribute": "bcpg:ingListIng" , "htmlId":"assoc_bcpg_advIlIngNot_added",  "listType": "bcpg:ingList", "operator": "NOT" }
          ], 
          "ing3" : [ 
-          {"attribute": "bcpg:ingListIng" , "htmlId":"assoc_bcpg_advIlIngAnd_added", "operator": "AND" }
+          {"attribute": "bcpg:ingListIng" , "htmlId":"assoc_bcpg_advIlIngAnd_added",  "listType": "bcpg:ingList", "operator": "AND" }
          ],
          
         "al1":
         [ 
-           {"attribute": "bcpg:allergenListAllergen" , "htmlId":"assoc_bcpg_allergenListAllergen_added" },
+           {"attribute": "bcpg:allergenListAllergen" , "htmlId":"assoc_bcpg_allergenListAllergen_added",  "listType": "bcpg:allergenList" },
            {"attribute": "bcpg:allergenListVoluntary" , "value":"true" }
          ], 
          
          "al2": [ 
-           {"attribute": "bcpg:allergenListAllergen" , "htmlId":"assoc_bcpg_advAlVolAnd_added", "operator": "AND" },
+           {"attribute": "bcpg:allergenListAllergen" , "htmlId":"assoc_bcpg_advAlVolAnd_added",  "listType": "bcpg:allergenList", "operator": "AND" },
            {"attribute": "bcpg:allergenListVoluntary" , "value":"true" }
          ], 
          
          
           "al3":  [ 
-           {"attribute": "bcpg:allergenListAllergen" , "htmlId":"assoc_bcpg_advAlVolNot_added" },
+           {"attribute": "bcpg:allergenListAllergen" , "htmlId":"assoc_bcpg_advAlVolNot_added",  "listType": "bcpg:allergenList" },
            {"attribute": "bcpg:allergenListVoluntary" , "value":"false" }
          ], 
          
           "al4":  [ 
-           {"attribute": "bcpg:allergenListAllergen" , "htmlId":"assoc_bcpg_advAlInVolAnd_added", "operator": "AND" },
+           {"attribute": "bcpg:allergenListAllergen" , "htmlId":"assoc_bcpg_advAlInVolAnd_added",  "listType": "bcpg:allergenList", "operator": "AND" },
            {"attribute": "bcpg:allergenListInVoluntary" , "value":"true" }
          ], 
          
         "al5":    [ 
-           {"attribute": "bcpg:allergenListAllergen" , "htmlId":"assoc_bcpg_advAlInVolNot_added" },
+           {"attribute": "bcpg:allergenListAllergen" ,  "listType": "bcpg:allergenList", "htmlId":"assoc_bcpg_advAlInVolNot_added" },
            {"attribute": "bcpg:allergenListINVoluntary" , "value":"false" }
          ], 
          
           "cost1":  [ 
-           {"attribute": "bcpg:costListCost" , "htmlId":"assoc_bcpg_costListCost_added" },
+           {"attribute": "bcpg:costListCost" ,  "listType": "bcpg:costList", "htmlId":"assoc_bcpg_costListCost_added" },
            {"attribute": "bcpg:costListValue" , "htmlId":"prop_bcpg_costListValue-range" }
          ], 
           "cost2":  [ 
-           {"attribute": "bcpg:costListCost" , "htmlId":"assoc_bcpg_advClCost1_added" },
+           {"attribute": "bcpg:costListCost" ,  "listType": "bcpg:costList", "htmlId":"assoc_bcpg_advClCost1_added" },
            {"attribute": "bcpg:costListValue" , "htmlId":"prop_bcpg_advClCost1-range" }
          ], 
         "cost3":   [ 
-           {"attribute": "bcpg:costListCost" , "htmlId":"assoc_bcpg_advClCost2_added" },
+           {"attribute": "bcpg:costListCost" ,  "listType": "bcpg:costList", "htmlId":"assoc_bcpg_advClCost2_added" },
            {"attribute": "bcpg:costListValue" , "htmlId":"prop_bcpg_advClCost2-range" }
          ], 
          
           "nut1":  [ 
-           {"attribute": "bcpg:nutListNut" , "htmlId":"assoc_bcpg_nutListNut_added" },
+           {"attribute": "bcpg:nutListNut" ,  "listType": "bcpg:nutList", "htmlId":"assoc_bcpg_nutListNut_added" },
            {"attribute": "bcpg:nutListValue" , "htmlId":"prop_bcpg_nutListValue-range" }
          ], 
          "nut2": [ 
-           {"attribute": "bcpg:nutListNut" , "htmlId":"assoc_bcpg_advNlNut1_added" },
+           {"attribute": "bcpg:nutListNut" ,  "listType": "bcpg:nutList", "htmlId":"assoc_bcpg_advNlNut1_added" },
            {"attribute": "bcpg:nutListValue" , "htmlId":"prop_bcpg_advNlValue1-range" }
          ], 
         "nut3":  [ 
-           {"attribute": "bcpg:nutListNut" , "htmlId":"assoc_bcpg_advNlNut2_added" },
+           {"attribute": "bcpg:nutListNut" ,  "listType": "bcpg:nutList", "htmlId":"assoc_bcpg_advNlNut2_added" },
            {"attribute": "bcpg:nutListValue" , "htmlId":"prop_bcpg_advNlValue2-range" }
          ], 
        "nut4":   [ 
-           {"attribute": "bcpg:nutListNut" , "htmlId":"assoc_bcpg_advNlNut3_added" },
+           {"attribute": "bcpg:nutListNut" ,  "listType": "bcpg:nutList", "htmlId":"assoc_bcpg_advNlNut3_added" },
            {"attribute": "bcpg:nutListValue" , "htmlId":"prop_bcpg_advNlValue3-range" }
          ], 
          
         "physico1":  [ 
-           {"attribute": "bcpg:pclPhysicoChem" , "htmlId":"assoc_bcpg_pclPhysicoChem_added" },
+           {"attribute": "bcpg:pclPhysicoChem" ,  "listType": "bcpg:physicoChemList", "htmlId":"assoc_bcpg_pclPhysicoChem_added" },
            {"attribute": "bcpg:pclValue" , "htmlId":"prop_bcpg_pclValue-range" }
          ], 
 		"physico2":       [ 
-           {"attribute": "bcpg:pclPhysicoChem" , "htmlId":"assoc_bcpg_advPclPhysicoChem1_added" },
+           {"attribute": "bcpg:pclPhysicoChem" ,  "listType": "bcpg:physicoChemList", "htmlId":"assoc_bcpg_advPclPhysicoChem1_added" },
            {"attribute": "bcpg:pclValue" , "htmlId":"prop_bcpg_advPclValue1-range" }
          ], 
          "physico3": [ 
-           {"attribute": "bcpg:pclPhysicoChem" , "htmlId":"assoc_bcpg_advPclPhysicoChem2_added" },
+           {"attribute": "bcpg:pclPhysicoChem",  "listType": "bcpg:physicoChemList" , "htmlId":"assoc_bcpg_advPclPhysicoChem2_added" },
            {"attribute": "bcpg:pclValue" , "htmlId":"prop_bcpg_advPclValue2-range" }
          ],
 
         "microbio1": [ 
-           {"attribute": "bcpg:mblMicrobio" , "htmlId":"assoc_bcpg_mblMicrobio_added" },
+           {"attribute": "bcpg:mblMicrobio" ,  "listType": "bcpg:microbioList", "htmlId":"assoc_bcpg_mblMicrobio_added" },
            {"attribute": "bcpg:mblValue" , "htmlId":"prop_bcpg_mblValue-range" }
          ], 
          
          "labelposition" :[
-           {"attribute": "bcpg:llLabel" , "htmlId":"assoc_pack_llLabel_added" },
-           {"attribute": "bcpg:llPosition" , "htmlId":"prop_pack_llPosition" }
+           {"attribute": "pack:llLabel" ,  "listType": "pack:labelingList", "htmlId":"assoc_pack_llLabel_added" },
+           {"attribute": "pack:llPosition" , "htmlId":"prop_pack_llPosition" }
          
          ]
 

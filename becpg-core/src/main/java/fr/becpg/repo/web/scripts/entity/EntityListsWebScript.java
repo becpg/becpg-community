@@ -137,6 +137,10 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private static final String KEY_NAME_COLOR = "color";
 
 	private static final String KEY_NAME_VARIANT = "variants";
+	
+	private static final String KEY_NAME_IS_MODEL_VARIANT = "isModelVariant";
+	
+	private static final String KEY_NAME_VARIANT_PARENT = "variantParent";
 
 	private static final String KEY_NAME_COMPARE_WITH_ENTITIES = "compareWithEntities";
 
@@ -399,7 +403,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 		result.put(KEY_NAME_PATH, path);
 
-		List<NodeRef> nodeRefs = new ArrayList<>();
+		Set<NodeRef> nodeRefs = new HashSet<>();
 		nodeRefs.add(entity);
 		List<ChildAssociationRef> variantsAssociations = new ArrayList<>();
 		NodeRef entityTplNodeRef = associationService.getTargetAssoc(entity, BeCPGModel.ASSOC_ENTITY_TPL_REF);
@@ -426,6 +430,9 @@ public class EntityListsWebScript extends AbstractWebScript {
 				Serializable isDefaultVariant = nodeService.getProperty(variant, BeCPGModel.PROP_IS_DEFAULT_VARIANT);
 				obj.put(KEY_NAME_IS_DEFAULT_VARIANT, defaultValue(isDefaultVariant, false));
 				obj.put(KEY_NAME_COLOR, defaultValue(nodeService.getProperty(variant, BeCPGModel.PROP_COLOR), ""));
+				NodeRef variantParent = nodeService.getPrimaryParent(variant).getParentRef();
+				obj.put(KEY_NAME_IS_MODEL_VARIANT, nodeService.hasAspect(variantParent, BeCPGModel.ASPECT_ENTITY_TPL));
+				obj.put(KEY_NAME_VARIANT_PARENT, variantParent.toString());
 				variants.put(obj);
 			}
 			result.put(KEY_NAME_VARIANT, variants);
@@ -597,27 +604,31 @@ public class EntityListsWebScript extends AbstractWebScript {
 				Iterator<NodeRef> it = listsNodeRef.iterator();
 				while (it.hasNext()) {
 					NodeRef temp = it.next();
-					String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
-					int accessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListType);
-
-					if (SecurityService.NONE_ACCESS != accessMode) {
-						String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
-						int newAccessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListName);
-						if (newAccessMode < accessMode) {
-							accessMode = newAccessMode;
+					if (permissionService.hasPermission(temp, PermissionService.READ) == AccessStatus.ALLOWED) {
+						String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
+						int accessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListType);
+	
+						if (SecurityService.NONE_ACCESS != accessMode) {
+							String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
+							int newAccessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListName);
+							if (newAccessMode < accessMode) {
+								accessMode = newAccessMode;
+							}
 						}
-					}
-
-					if (SecurityService.NONE_ACCESS == accessMode) {
-						if (logger.isTraceEnabled()) {
-							logger.trace("Don't display dataList:" + dataListType);
+	
+						if (SecurityService.NONE_ACCESS == accessMode) {
+							if (logger.isTraceEnabled()) {
+								logger.trace("Don't display dataList:" + dataListType);
+							}
+							it.remove();
+						} else if (!isExternalUser && (SecurityService.WRITE_ACCESS == accessMode)
+								&& (permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED)) {
+							accessRights.put(temp, true);
+						} else {
+							accessRights.put(temp, false);
 						}
-						it.remove();
-					} else if (!isExternalUser && (SecurityService.WRITE_ACCESS == accessMode)
-							&& (permissionService.hasPermission(temp, PermissionService.WRITE) == AccessStatus.ALLOWED)) {
-						accessRights.put(temp, true);
 					} else {
-						accessRights.put(temp, false);
+						it.remove();
 					}
 				}
 			}
@@ -644,7 +655,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 			JSONObject permissions = new JSONObject();
 			permissions.put(KEY_NAME_CREATE, effectiveHasWritePermission && !lockService.isLocked(nodeRef));
 			result.put(KEY_NAME_PERMISSIONS, permissions);
-
 			result.put(RESULT_DATALISTS, makeDatalists(listsNodeRef, nodeRef, effectiveHasWritePermission, accessRights));
 
 			res.setContentType("application/json");

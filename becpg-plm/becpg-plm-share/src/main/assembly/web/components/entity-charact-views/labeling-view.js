@@ -157,11 +157,12 @@
 			
 			new Alfresco.module.SimpleDialog(nodeRef+"-multilingualForm").setOptions({
               templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/multilingual-form/multilingual-form?nodeRef=" + nodeRef + "&field=" + field +
-              				(readOnly == "true" ? "&readonly=true" : "&textarea=true&htmlEditor=true&allowCurrentLocale=true"),
+              				(readOnly == "true" || (readOnly!=null && readOnly.indexOf("diff") == 0 )? "&readonly=true" : "&textarea=true&htmlEditor=true&allowCurrentLocale=true") +
+              			    (readOnly!=null && readOnly.indexOf("diff-") == 0 ? "&diffField="+readOnly.split("-")[1]:"")+"&columnWidth=120",
               actionUrl : Alfresco.constants.PROXY_URI + "becpg/form/multilingual/field/" + field + "?nodeRef=" + nodeRef,
               validateOnSubmit : false,
               destroyOnHide : true,
-              width: "33em",
+              width: "60em",
               onSuccess: {
                  fn: function(){
                 	 YAHOO.Bubbling.fire("scopedActiveDataListChanged");

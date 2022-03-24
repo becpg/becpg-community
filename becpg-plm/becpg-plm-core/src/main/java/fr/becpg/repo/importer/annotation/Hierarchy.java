@@ -1,5 +1,7 @@
 package fr.becpg.repo.importer.annotation;
 
+import java.util.Objects;
+
 /**
  * <p>Hierarchy class.</p>
  *
@@ -64,6 +66,29 @@ public class Hierarchy extends Annotation {
 	 */
 	public void setParentLevelAttribute(String parentLevelAttribute) {
 		this.parentLevelAttribute = parentLevelAttribute;
+	}
+
+	
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(parentLevelAttribute, parentLevelColumn, path);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Hierarchy other = (Hierarchy) obj;
+		return Objects.equals(parentLevelAttribute, other.parentLevelAttribute) && Objects.equals(parentLevelColumn, other.parentLevelColumn)
+				&& Objects.equals(path, other.path);
 	}
 
 	/** {@inheritDoc} */

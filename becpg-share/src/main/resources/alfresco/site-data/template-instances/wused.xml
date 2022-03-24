@@ -54,5 +54,11 @@
 				<itemUrl>becpg/entity/datalists/item/node/</itemUrl>
 			</properties>
 		</component>
+	    <component>
+          <region-id>archive-and-download</region-id>
+          <url>/components/download/archive</url>
+        </component>  
+	
 	</components>
+	
 </template-instance>

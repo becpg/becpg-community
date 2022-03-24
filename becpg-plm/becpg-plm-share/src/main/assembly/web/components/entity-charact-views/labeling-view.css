@@ -153,7 +153,7 @@
 .labeling-view  .note.rounded:before {
 	border-width: 8px;
 	border-color: #fff #fff transparent transparent;
-	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-radius: 0 0 0 5px;
 	-moz-border-radius: 0 0 0 5px;
 	border-radius: 0 0 0 5px;
 }
@@ -203,7 +203,6 @@
 
 .labeling-view a.copy-to {
   background: url("../../components/documentlibrary/actions/document-copy-to-16.png") no-repeat;
-  display: inline-block;
   float: right;
   width:16px;
   height:16px;
@@ -212,7 +211,6 @@
 
 .labeling-view a.clipboard {
   background: url("../../components/images/pooled-task-16.png") no-repeat;
-  display: inline-block;
   float: right;
   width:16px;
   height:16px;
@@ -228,6 +226,14 @@
 
 .labeling-view a.edit-translation {
 	background: url("../../components/images/edit-16.png") no-repeat;
+	float: right;
+	width:16px;
+	height:16px;
+	padding-right: 5px;
+}
+
+.labeling-view a.show-diff {
+	background: url("../../components/documentlibrary/actions/compare-16.png") no-repeat;
 	float: right;
 	width:16px;
 	height:16px;

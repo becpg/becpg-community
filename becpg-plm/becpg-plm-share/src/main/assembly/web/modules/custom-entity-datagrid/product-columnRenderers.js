@@ -905,10 +905,17 @@ if (beCPG.module.EntityDataGridRenderers) {
 					html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ suffix+  '" class="onCopyToClipboard"><a href="#" title="'+ scope.msg("label.copy.to.clipboard.title") +'" class="labeling-action clipboard"></a> </span>';
 					html += '<span>&nbsp;&nbsp;</span>';
 				}
-				if(label == "bcpg:illManualValue" && editPermission){
-					html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#false" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.edit.translation.title") +'" class="labeling-action edit-translation"></a> </span>';
-					html += '<span>&nbsp;</span>';
+				if(label == "bcpg:illManualValue"){
+					if( editPermission) {
+						html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#false" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.edit.translation.title") +'" class="labeling-action edit-translation"></a> </span>';
+						html += '<span>&nbsp;</span>';
+					} 
+						html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#diff-bcpg:illValue"+'" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.show.diff.title") +'" class="labeling-action show-diff"></a> </span>';
+						html += '<span>&nbsp;&nbsp;</span>';	
+					
 				}
+			
+				
 				if (data.value != null){
 					html += '<span id="' +htmlId+"#"+ nodeRef+"#"+ label+ "#true" + '" class="onShowTranslation"><a href="#" title="'+ scope.msg("label.show.translation.title") +'" class="labeling-action show-translation" ></a></span>';
 					html += '</div>';

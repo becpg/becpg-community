@@ -27,6 +27,7 @@
 				<aspect name="pack:pmCoilAspect" />
 				<aspect name="pack:pmPrintAspect" />
 				<aspect name="bcpg:entityVariantAspect" />
+				<aspect name="sec:securityAspect" />
 				<aspect name="bcpg:chemicalCodeAspect" />
 				<aspect name="bcpg:meatAspect" />
 				<aspect name="ghs:sdsAspect" />

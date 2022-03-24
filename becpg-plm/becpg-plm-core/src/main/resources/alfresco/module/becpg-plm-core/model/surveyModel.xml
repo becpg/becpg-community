@@ -48,6 +48,7 @@
 				<list>
 					<value></value>
 					<value>list</value>
+					<value>multiChoicelist</value>
 					<value>checkboxes</value>
 				</list>
 			</parameter>

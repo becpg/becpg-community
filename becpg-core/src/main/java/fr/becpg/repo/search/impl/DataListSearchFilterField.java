@@ -14,6 +14,7 @@ public class DataListSearchFilterField {
 	private String value;
 	private String htmlId;
 	private QName attributeQname;
+	private QName sourceTypeQname;
 	
 	
 	/**
@@ -79,6 +80,12 @@ public class DataListSearchFilterField {
 	 */
 	public void setAttributeQname(QName attributeQname) {
 		this.attributeQname = attributeQname;
+	}
+	public QName getSourceTypeQname() {
+		return sourceTypeQname;
+	}
+	public void setSourceTypeQname(QName sourceTypeQname) {
+		this.sourceTypeQname = sourceTypeQname;
 	}
 	
 	

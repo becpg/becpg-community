@@ -131,22 +131,33 @@
                                 	  }	  
                                 	  
                                   } else {
-                                	  htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
+									  if(choice.label != "hidden"){
+                                		  htmlForm +='<label for="'+this.id+'-choice_'+question.id+'_'+choice.id+'">'+(choice.label ? choice.label:  this.msg(msgKey))+'</label>';
+                                	  }
 	                                  htmlForm +='<select '+(choice.multiple ? 'multiple="true"':"")+' '+(this.options.disabled?'disabled':'')+' tabindex="0" id="'+this.id+'-select_'+question.id+'_'+choice.id+'" class="'+LIST_EVENTCLASS+'" name="--group_'+this.id+question.id+'_'+choice.id+'"  >';
 	                                  for(var z = 0; z< choice.list.length; z++){
 	                                      var selected = false;
+                                      
+                                          var lbl = choice.list[z];
+                                          var val = choice.list[z];
+                                          if(lbl.indexOf('|')>0){
+											  lbl = choice.list[z].split('|')[1];
+											  val = choice.list[z].split('|')[0];
+										  }
+	                                      
+	                                      
 	                                      if(choice.multiple){
 	                                          var values = listOption.split(",");
 	                                          for(var zz = 0; zz< values.length; zz++){
-	                                              if(values[zz] == choice.list[z]){
+	                                              if(values[zz] == val){
 	                                                  selected = true;
 	                                                  break;
 	                                              }
 	                                          }
 	                                      } else {
-	                                          selected = listOption == choice.list[z];
+	                                          selected = listOption == val;
 	                                      }
-	                                      htmlForm +='<option '+( selected ? "selected":"")+'>'+choice.list[z]+'</option>';
+	                                      htmlForm +='<option value="'+val+'" '+( selected ? "selected":"")+'>'+lbl+'</option>';
 	                                  }
 	                                  htmlForm +='</select>';
 	                                  

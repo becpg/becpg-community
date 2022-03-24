@@ -30,7 +30,9 @@ import org.alfresco.repo.security.authority.UnknownAuthorityException;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -66,6 +68,7 @@ import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 public class SecurityServiceImpl implements SecurityService {
 
 	private static final String ACLS_CACHE_KEY = "ACLS_CACHE_KEY";
+	private static final String LOCAL_ACLS_CACHE_KEY = "LOCAL_ACLS_CACHE_KEY";
 	private static final String USER_ROLE_CACHE_KEY = "ACLS_CACHE_KEY";
 
 	private static final Log logger = LogFactory.getLog(SecurityServiceImpl.class);
@@ -84,9 +87,12 @@ public class SecurityServiceImpl implements SecurityService {
 
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
-	
+
 	@Autowired
 	private SecurityServicePlugin[] securityPlugins;
+
+	@Autowired
+	private NodeService nodeService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -97,6 +103,7 @@ public class SecurityServiceImpl implements SecurityService {
 	/** {@inheritDoc} */
 	@Override
 	public int computeAccessMode(NodeRef nodeRef, QName nodeType, String propName) {
+
 		StopWatch stopWatch = null;
 		if (logger.isDebugEnabled()) {
 			stopWatch = new StopWatch();
@@ -104,13 +111,8 @@ public class SecurityServiceImpl implements SecurityService {
 		}
 		try {
 
-			String key = computeAclKey(nodeType, propName);
-			Map<String, List<PermissionModel>> acls = getAcls();
-
-			if (acls.containsKey(key)) {
-
-				List<ACLEntryDataItem.PermissionModel> perms = acls.get(key);
-
+			List<ACLEntryDataItem.PermissionModel> perms = getNodeACLPermissions(nodeRef, nodeType, propName);
+			if (perms != null) {
 				if (isAdmin()) {
 					return SecurityService.WRITE_ACCESS;
 				}
@@ -152,14 +154,41 @@ public class SecurityServiceImpl implements SecurityService {
 		}
 	}
 
+	@Override
+	public List<ACLEntryDataItem.PermissionModel> getNodeACLPermissions(NodeRef nodeRef, QName nodeType, String propName) {
+		List<NodeRef> aclGroups = new ArrayList<>();
+		String cacheKey = ACLS_CACHE_KEY;
+		if(nodeRef != null && nodeService.hasAspect(nodeRef, SecurityModel.ASPECT_SECURITY)
+				&& nodeService.getTargetAssocs(nodeRef,SecurityModel.ASSOC_SECURITY_REF) != null
+				&& !nodeService.getTargetAssocs(nodeRef,SecurityModel.ASSOC_SECURITY_REF).isEmpty()){		
+			cacheKey = LOCAL_ACLS_CACHE_KEY;
+			for (AssociationRef association : nodeService.getTargetAssocs(nodeRef,SecurityModel.ASSOC_SECURITY_REF)) {
+				aclGroups.add(association.getTargetRef());
+				cacheKey = cacheKey.concat("_" + association.getId().toString());
+			}
+		} else {
+			aclGroups = findAllAclGroups();
+		}
+		String key = computeAclKey(nodeType, propName);
+		Map<String, List<PermissionModel>> acls = getAcls(aclGroups, cacheKey);
+
+		if (acls.containsKey(key)) {
+			return acls.get(key);
+		}
+
+		return null;
+
+	}
+
+
 	/** {@inheritDoc} */
 	@Override
 	public void refreshAcls() {
 		beCPGCacheService.clearCache(SecurityService.class.getName());
 	}
 
-	private Map<String, List<ACLEntryDataItem.PermissionModel>> getAcls() {
-		return beCPGCacheService.getFromCache(SecurityService.class.getName(), ACLS_CACHE_KEY, () -> {
+	private Map<String, List<ACLEntryDataItem.PermissionModel>> getAcls(List<NodeRef> aclGroups, String cacheKey) {
+		return beCPGCacheService.getFromCache(SecurityService.class.getName(), cacheKey, () -> {
 			Map<String, List<ACLEntryDataItem.PermissionModel>> acls = new HashMap<>();
 			StopWatch stopWatch = null;
 			if (logger.isDebugEnabled()) {
@@ -167,8 +196,8 @@ public class SecurityServiceImpl implements SecurityService {
 				stopWatch.start();
 			}
 
-			List<NodeRef> aclGroups = findAllAclGroups();
 			if (aclGroups != null) {
+
 				for (NodeRef aclGroupNodeRef : aclGroups) {
 					ACLGroupData aclGrp = alfrescoRepository.findOne(aclGroupNodeRef);
 					QName aclGrpType = QName.createQName(aclGrp.getNodeType(), namespaceService);
@@ -184,7 +213,6 @@ public class SecurityServiceImpl implements SecurityService {
 							acls.put(key, perms);
 						}
 					}
-
 				}
 			}
 
@@ -252,7 +280,7 @@ public class SecurityServiceImpl implements SecurityService {
 	 * Check if current user is in corresponding group or role
 	 */
 	private boolean isInGroup(NodeRef nodeRef, QName nodeType, PermissionModel permissionModel) {
-		
+
 		for(SecurityServicePlugin plugin : securityPlugins ) {
 			if(plugin.accept(nodeType) && plugin.checkIsInSecurityGroup(nodeRef, permissionModel)) {
 				return true;
@@ -267,7 +295,12 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private List<NodeRef> findAllAclGroups() {
-		return BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).inDB().list();
+		List<NodeRef> aclGroupsNull = BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).
+				isNullOrUnset(SecurityModel.PROP_ACL_GROUP_IS_LOCAL_PERMISSION).inDB().list();
+		List<NodeRef> aclGroupsFalse = BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).
+				andPropEquals(SecurityModel.PROP_ACL_GROUP_IS_LOCAL_PERMISSION, Boolean.FALSE.toString()).inDB().list();
+		aclGroupsNull.addAll(aclGroupsFalse);
+		return aclGroupsNull;
 	}
 
 	/** {@inheritDoc} */

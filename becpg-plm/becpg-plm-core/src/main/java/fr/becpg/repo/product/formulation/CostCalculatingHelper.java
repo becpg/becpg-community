@@ -7,14 +7,14 @@ import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 public class CostCalculatingHelper {
-	
+
 	private CostCalculatingHelper() {
 		// None
 	}
 
-	public static Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
+	public static Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact,
+			Date effectiveDate) {
 
-		final Date now = new Date();
 		if ((partProduct.getPriceList() != null) && !partProduct.getPriceList().isEmpty()) {
 			PriceListDataItem item = null;
 			boolean matchPlant = false;
@@ -24,13 +24,13 @@ public class CostCalculatingHelper {
 					matchPlant = true;
 					if ((priceListDataItem.getCost() != null) && priceListDataItem.getCost().equals(simpleCharact.getCharactNodeRef())) {
 
-						if (((item == null) || (item.getPrefRank() == null))
-								|| ((priceListDataItem.getPrefRank() != null) && (priceListDataItem.getPrefRank() < item.getPrefRank() && (priceListDataItem.getPrefRank()>0 || item == null)))
-								|| ((priceListDataItem.getPrefRank() != null) && (item.getPrefRank() !=null && item.getPrefRank() < 0))) {
+						if (((item == null) || (item.getPrefRank() == null)) || ((priceListDataItem.getPrefRank() != null)
+								&& (priceListDataItem.getPrefRank() < item.getPrefRank() && (priceListDataItem.getPrefRank() > 0 || item == null)))
+								|| ((priceListDataItem.getPrefRank() != null) && (item.getPrefRank() != null && item.getPrefRank() < 0))) {
 							if (((priceListDataItem.getStartEffectivity() == null)
-									|| (priceListDataItem.getStartEffectivity().getTime() <= now.getTime()))
+									|| (priceListDataItem.getStartEffectivity().getTime() <= effectiveDate.getTime()))
 									&& ((priceListDataItem.getEndEffectivity() == null)
-											|| (priceListDataItem.getEndEffectivity().getTime() > now.getTime()))) {
+											|| (priceListDataItem.getEndEffectivity().getTime() > effectiveDate.getTime()))) {
 								item = priceListDataItem;
 							}
 						}
@@ -38,7 +38,8 @@ public class CostCalculatingHelper {
 				}
 			}
 
-			if ((item != null) && (item.getValue() != null) && (item.getPrefRank() == null || (item.getPrefRank() !=null && item.getPrefRank() >= 0))) {
+			if ((item != null) && (item.getValue() != null)
+					&& (item.getPrefRank() == null || (item.getPrefRank() != null && item.getPrefRank() >= 0))) {
 				return item.getValue();
 			} else if ((item == null) && matchPlant) {
 				return 0d;
@@ -46,6 +47,10 @@ public class CostCalculatingHelper {
 		}
 
 		return simpleCharact.getValue();
+	}
+
+	public static Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
+		return extractValue(formulatedProduct, partProduct, simpleCharact, new Date());
 	}
 
 }

@@ -277,7 +277,6 @@ public class QualityControlServiceImpl implements QualityControlService {
 	/** {@inheritDoc} */
 	@Override
 	public void createSamplingListId(NodeRef sampleListNodeRef) {
-		logger.debug("nodeService.getProperty(sampleListNodeRef, QualityModel.PROP_SL_SAMPLE_ID) " + nodeService.getProperty(sampleListNodeRef, QualityModel.PROP_SL_SAMPLE_ID));
 		if(nodeService.getProperty(sampleListNodeRef, QualityModel.PROP_SL_SAMPLE_ID) == null){
 			NodeRef qcNodeRef = entityListDAO.getEntity(sampleListNodeRef);
 			RepositoryEntity entity = alfrescoRepository.findOne(qcNodeRef);
@@ -305,7 +304,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 
 				}
 				patternMatcher.appendTail(sb);
-				nodeService.setProperty(sampleListNodeRef, QualityModel.PROP_SL_SAMPLE_ID, sb.toString());
+				nodeService.setProperty(sampleListNodeRef, QualityModel.PROP_SL_SAMPLE_ID, sb.toString().trim());
 
 				samplesCounter++;
 				qualityControlData.setSamplesCounter(samplesCounter);

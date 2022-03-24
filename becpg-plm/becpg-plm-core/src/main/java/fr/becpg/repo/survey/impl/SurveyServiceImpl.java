@@ -42,7 +42,7 @@ public class SurveyServiceImpl implements SurveyService {
 	}
 
 	public enum ResponseType {
-		list, checkboxes
+		list, checkboxes, multiChoicelist
 	}
 
 	@Autowired
@@ -206,7 +206,8 @@ public class SurveyServiceImpl implements SurveyService {
 			List<NodeRef> definitionChoices = getDefinitionChoices(surveyQuestion);
 			if (!definitionChoices.isEmpty()) {
 				if (ResponseType.list.toString().equals(surveyQuestion.getResponseType())
-						|| ResponseType.checkboxes.toString().equals(surveyQuestion.getResponseType())) {
+						|| ResponseType.checkboxes.toString().equals(surveyQuestion.getResponseType())
+						|| ResponseType.multiChoicelist.toString().equals(surveyQuestion.getResponseType())) {
 					JSONObject choice = new JSONObject();
 					choice.put("id", "sub-" + surveyQuestion.getNodeRef().getId().substring(4));
 					JSONArray list = new JSONArray();
@@ -218,11 +219,21 @@ public class SurveyServiceImpl implements SurveyService {
 					}
 
 					choice.put("list", list);
-					choice.put("multiple", true);
+					choice.put("multiple", !ResponseType.list.toString().equals(surveyQuestion.getResponseType()));
 					choice.put("label", "hidden");
 					if (ResponseType.checkboxes.toString().equals(surveyQuestion.getResponseType())) {
 						choice.put("checkboxes", true);
 					}
+					
+					if (CommentType.text.toString().equals(surveyQuestion.getResponseCommentType())
+							|| CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
+						choice.put("comment", true);
+						choice.put("commentLabel",  surveyQuestion.getResponseCommentLabel());
+						if (CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
+							choice.put("textarea", true);
+						}
+					}
+					
 					if (surveyQuestion.getNextQuestion() != null) {
 						choice.put("cid", surveyQuestion.getNextQuestion().getNodeRef().getId());
 						appendQuestionDefinition(definitions, surveyQuestion.getNextQuestion(), questions);
@@ -245,7 +256,7 @@ public class SurveyServiceImpl implements SurveyService {
 						if (CommentType.text.toString().equals(defChoice.getResponseCommentType())
 								|| CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
 							choice.put("comment", true);
-							choice.put("commentLabel", defChoice.getResponseCommentLabel());
+							choice.put("commentLabel",  defChoice.getResponseCommentLabel());
 							if (CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
 								choice.put("textarea", true);
 							}
@@ -260,9 +271,9 @@ public class SurveyServiceImpl implements SurveyService {
 					|| CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 				JSONObject choice = new JSONObject();
 				choice.put("id", "sub-" + surveyQuestion.getNodeRef().getId().substring(4));
-
+				choice.put("label","hidden");
 				choice.put("comment", true);
-				choice.put("commentLabel", surveyQuestion.getResponseCommentLabel());
+				choice.put("commentLabel", surveyQuestion.getResponseCommentLabel() );
 				if (CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 					choice.put("textarea", true);
 				}

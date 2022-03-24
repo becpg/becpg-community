@@ -36,7 +36,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
  */
 @AlfType
 @AlfQname(qname = "bcpg:ingTypeItem")
-@AlfCacheable
+@AlfCacheable(isCharact = true)
 public class IngTypeItem extends LabelingComponent{
 
 	private static final long serialVersionUID = 182156222574786727L;
