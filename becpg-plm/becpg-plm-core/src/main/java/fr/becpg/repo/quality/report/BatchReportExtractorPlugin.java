@@ -83,8 +83,7 @@ public class BatchReportExtractorPlugin extends ProductReportExtractorPlugin {
 						if ((dataListItems != null) && !dataListItems.isEmpty()) {
 
 							Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
-							addDataListStateAndName(dataListElt, listNodeRef);
-
+						
 							for (BeCPGDataObject dataListItem : dataListItems) {
 								Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
 								loadDataListItemAttributes(dataListItem, nodeElt, context);
