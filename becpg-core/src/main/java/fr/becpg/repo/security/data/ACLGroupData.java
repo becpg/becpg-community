@@ -44,6 +44,8 @@ public class ACLGroupData extends BeCPGDataObject {
 
 	private String nodeType;
 	
+	private Boolean isLocalPermission;
+	
 	List<ACLEntryDataItem> acls = new ArrayList<>();
 
 	/**
@@ -86,6 +88,28 @@ public class ACLGroupData extends BeCPGDataObject {
 		this.nodeType =  nodeType;
 	}
 	
+	/**
+	 * <p>Getter for the field <code>isLocalPermission</code>.</p>
+	 *
+	 * @return a {@link java.lang.Boolean} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "sec:isLocalPermission")
+	public Boolean getIsLocalPermission() {
+		return isLocalPermission;
+	}
+
+	/**
+	 * <p>Setter for the field <code>isLocalPermission</code>.</p>
+	 *
+	 * @param nodeType a {@link java.lang.Boolean} object.
+	 */
+	public void setIsLocalPermission(Boolean isLocalPermission) {
+		this.isLocalPermission = isLocalPermission;
+	}
+
+	
+	
 	
 	/** {@inheritDoc} */
 	@Override
@@ -94,6 +118,7 @@ public class ACLGroupData extends BeCPGDataObject {
 		int result = super.hashCode();
 		result = prime * result + ((acls == null) ? 0 : acls.hashCode());
 		result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
+		result = prime * result + ((isLocalPermission == null) ? 0 : isLocalPermission.hashCode());
 		return result;
 	}
 
@@ -117,13 +142,18 @@ public class ACLGroupData extends BeCPGDataObject {
 				return false;
 		} else if (!nodeType.equals(other.nodeType))
 			return false;
+		if (isLocalPermission == null) {
+			if (other.isLocalPermission != null)
+				return false;
+		} else if (!isLocalPermission.equals(other.isLocalPermission))
+			return false;
 		return true;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "ACLGroupData [nodeType=" + nodeType + ", acls=" + acls + "]";
+		return "ACLGroupData [nodeType=" + nodeType + ", acls=" + acls + ", isLocalPermission=" + isLocalPermission + "]";
 	}
 	
 	

@@ -200,10 +200,26 @@
 
                            this.currentVariantNodeRef = p_oItem.value;
 
+							var currentVariant = null;
+							
+							for (var i = 0; i < this.options.entity.variants.length; i++) {
+							  var variant = this.options.entity.variants[i];
+								if (variant.nodeRef == value) {
+									currentVariant = variant;
+									break;
+								}
+							}
+
                            Dom.setStyle(this.widgets.createVariantButton, 'display', 'none');
                            Dom.setStyle(this.widgets.editVariantButton, 'display', '');
                            Dom.setStyle(this.widgets.duplicateVariantButton, 'display', '');
-                           Dom.setStyle(this.widgets.deleteVariantButton, 'display', '');
+								
+							if (currentVariant.isModelVariant && this.options.entity.nodeRef != currentVariant.variantParent) {
+	                           Dom.setStyle(this.widgets.deleteVariantButton, 'display', 'none');
+							} else {
+	                           Dom.setStyle(this.widgets.deleteVariantButton, 'display', '');
+							}
+							
                         }
                      }
                   },

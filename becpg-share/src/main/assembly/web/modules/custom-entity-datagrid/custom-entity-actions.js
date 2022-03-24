@@ -787,13 +787,17 @@
 						var containerDiv = document.createElement("div");
 						containerDiv.innerHTML = response.serverResponse.responseText;
 
-						// The panel is created from the HTML returned in the
-						// XHR
-						// request, not the container
-						var panelDiv = Dom.getFirstChild(containerDiv);
+						
+						// The panel is created from the HTML returned in the XHR request, not the container
+				         var panelDiv = Dom.getFirstChild(containerDiv);
+				         while (panelDiv && panelDiv.tagName.toLowerCase() != "div")
+				         {
+				            panelDiv = Dom.getNextSibling(panelDiv);
+				         }
+						
+						
 						this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, {
-							draggable : true,
-							width : vWidth
+							 width : vWidth
 						});
 
 						if(itemNodeRef!=null){

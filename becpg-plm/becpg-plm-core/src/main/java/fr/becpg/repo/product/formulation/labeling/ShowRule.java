@@ -22,13 +22,13 @@ class ShowRule {
 	 * @param format a {@link java.lang.String} object.
 	 * @param locales a {@link java.util.List} object.
 	 */
-	public ShowRule(@Nonnull String format, List<String> locales) {
+	public ShowRule(@Nonnull String format, RoundingMode roundingMode, List<String> locales) {
 		if(format.contains("|")) {
 			String[] splitted = format.split("\\|");
-			
+			this.roundingMode = roundingMode;
 			this.format = splitted[0];
 			if(!splitted[1].isEmpty()) {
-				roundingMode = RoundingMode.valueOf(splitted[1]);
+				this.roundingMode = RoundingMode.valueOf(splitted[1]);
 			} 
 			if(splitted.length>2 && !splitted[2].isEmpty()) {
 				threshold = Double.valueOf(splitted[2]);

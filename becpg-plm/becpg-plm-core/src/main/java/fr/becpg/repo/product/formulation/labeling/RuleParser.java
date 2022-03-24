@@ -46,15 +46,15 @@ public abstract class RuleParser {
 	protected final Map<String, MeatContentRule> meatContentRules = new HashMap<>();
 	protected final Map<NodeRef, RenameRule> renameRules = new HashMap<>();
 
-	protected final List<ShowRule> showPercRulesByThreshold = new ArrayList<>();
-	protected final Map<NodeRef, ShowRule> showPercRules = new HashMap<>();
 	protected final Map<NodeRef, ShowRule> showGeoRules = new HashMap<>();
 	protected final Map<NodeRef, ShowRule> showBioRules = new HashMap<>();
 
 	protected String defaultPercFormat = "0.#%";
 	protected RoundingMode defaultRoundingMode = RoundingMode.HALF_DOWN;
 
-	protected ShowRule showAllPerc = null;
+	protected List<ShowRule> showAllPerc = new ArrayList<>();
+	protected final Map<NodeRef, List<ShowRule>> showPercRules = new HashMap<>();
+	
 	protected ShowRule showAllGeo = null;
 	protected ShowRule showAllBio = null;
 
@@ -92,7 +92,7 @@ public abstract class RuleParser {
 	 */
 	public void setShowAllPerc(boolean showAllPerc) {
 		if (showAllPerc) {
-			this.showAllPerc = new ShowRule(defaultPercFormat, null);
+			this.showAllPerc.add(new ShowRule(defaultPercFormat, defaultRoundingMode, null));
 		}
 		this.showAllPerc = null;
 	}
@@ -106,7 +106,7 @@ public abstract class RuleParser {
 		if (showAllGeo) {
 
 		}
-		this.showAllGeo = new ShowRule("", null);
+		this.showAllGeo = new ShowRule("", null, null);
 	}
 
 	/**
@@ -192,42 +192,57 @@ public abstract class RuleParser {
 			} else if (LabelingRuleType.ShowPerc.equals(labeLabelingRuleType)) {
 				if (components == null || components.isEmpty()) {
 					if ((formula != null) && !formula.isEmpty()) {
-						if (formula.contains("|")) {
-							if (formula.split("\\|").length > 2) {
-								showPercRulesByThreshold.add(new ShowRule(formula, locales));
+						String[] splitted = formula.split(",");
+						for(String roundFormula : splitted) {
+							if (roundFormula.contains("|")) {
+								if (roundFormula.split("\\|").length == 2) {
+									defaultPercFormat = roundFormula.split("\\|")[0];
+									defaultRoundingMode = RoundingMode.valueOf(roundFormula.split("\\|")[1]);
+								} 
+								showAllPerc.add(new ShowRule(roundFormula, defaultRoundingMode , locales));
+								
 							} else {
-								defaultPercFormat = formula.split("\\|")[0];
-								defaultRoundingMode = RoundingMode.valueOf(formula.split("\\|")[1]);
-								showAllPerc = new ShowRule(defaultPercFormat, locales);
+								defaultPercFormat = formula;
+								showAllPerc.add(new ShowRule(formula, defaultRoundingMode, locales));
 							}
-						} else {
-							defaultPercFormat = formula;
-							showAllPerc = new ShowRule(defaultPercFormat, locales);
 						}
 					} else {
-						showAllPerc = new ShowRule(defaultPercFormat, locales);
+						showAllPerc.add(new ShowRule(defaultPercFormat, defaultRoundingMode, locales));
 					}
 
 				} else {
 					for (NodeRef component : components) {
-						showPercRules.put(component, new ShowRule((formula != null) && !formula.isEmpty() ? formula : defaultPercFormat, locales));
+						List<ShowRule> rules = showPercRules.get(component);
+						if(rules == null) {
+							rules = new ArrayList<>();
+							showPercRules.put(component, rules);
+						}
+						
+						if ((formula != null) && !formula.isEmpty()) {
+							String[] splitted = formula.split(",");
+							for(String roundFormula : splitted) {
+								rules.add(new ShowRule(roundFormula, defaultRoundingMode, locales));
+							}
+						} else {
+							rules.add( new ShowRule(defaultPercFormat, defaultRoundingMode, locales));
+						}
 					}
 				}
 
 			} else if (LabelingRuleType.ShowGeo.equals(labeLabelingRuleType)) {
 				if (components.isEmpty()) {
-					showAllGeo = new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales);
+					showAllGeo = new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", null, locales);
 				} else {
 					for (NodeRef component : components) {
-						showGeoRules.put(component, new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales));
+						showGeoRules.put(component, new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", null, locales));
 					}
 				}
 			} else if (LabelingRuleType.ShowBio.equals(labeLabelingRuleType)) {
 				if (components.isEmpty()) {
-					showAllBio = new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales);
+					showAllBio = new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", null, locales);
 				} else {
 					for (NodeRef component : components) {
-						showBioRules.put(component, new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", locales));
+						showBioRules.put(component, new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", null, locales));
 					}
 				}
 			} else if (LabelingRuleType.Type.equals(labeLabelingRuleType)

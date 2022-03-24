@@ -158,7 +158,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				List<AssociationCriteriaFilter> criteriaFilters = buildCriteriaFilters(criteria, filter);
 
-				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue,isOrOperator), assocFilter.getAttributeQname(),
+				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue,isOrOperator), assocFilter.getAttributeQname(), assocFilter.getSourceTypeQname(),
 						isOrOperator , criteriaFilters);
 
 				if ("not".equals(assocFilter.getOperator())) {
@@ -347,13 +347,29 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						for (String strNodeRef : arrValues) {
 							NodeRef nodeRef = new NodeRef(strNodeRef);
 							if (nodeService.exists(nodeRef)) {
-								nodesToKeep.addAll(associationService.getSourcesAssocs(nodeRef, assocQName));
+								
+								Set<NodeRef> nodeRefs = new HashSet<>();
+								nodeRefs.add(nodeRef);
 								
 								if (nodeService.getType(nodeRef).equals(ContentModel.TYPE_PERSON)) {
 									for (ChildAssociationRef assoc : nodeService.getParentAssocs(nodeRef, ContentModel.ASSOC_MEMBER, RegexQNamePattern.MATCH_ALL)) {
-										nodesToKeep.addAll(associationService.getSourcesAssocs(assoc.getParentRef(), assocQName));
+										nodeRefs.add(assoc.getParentRef());
+										
 									}
 								}
+
+								List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(new ArrayList<>(nodeRefs),assocQName,
+										datatype, true , null);
+								
+								
+								for (EntitySourceAssoc assocRef : entitySourceAssocs) {
+
+									if (nodes.contains(assocRef.getEntityNodeRef())) {
+										nodesToKeep.add(assocRef.getEntityNodeRef());
+									}
+								}
+
+								
 							}
 
 						}

@@ -44,6 +44,10 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 				</property>
+				<property name="sec:isLocalPermission">
+					<type>d:boolean</type>
+					<default>false</default>
+				</property>
 			</properties>
 			<mandatory-aspects>
 				<aspect>bcpg:entityListsAspect</aspect>
@@ -85,6 +89,24 @@
 		</type>
 
 	</types>
+	
+	<aspects>
+		<aspect name="sec:securityAspect">
+			<associations>
+				<association name="sec:securityRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>sec:aclGroup</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+	</aspects>
 
 
 </model>

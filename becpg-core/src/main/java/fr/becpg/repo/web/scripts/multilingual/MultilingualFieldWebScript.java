@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 
@@ -45,6 +46,8 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestTemplate;
 
+import fr.becpg.common.diff.Diff;
+import fr.becpg.common.diff.DiffMatchPatch;
 import fr.becpg.repo.helper.MLTextHelper;
 
 /**
@@ -60,6 +63,9 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	private static final String PARAM_NODEREF = "nodeRef";
 
 	private static final String PARAM_FIELD = "field";
+	
+	private static final String PARAM_DIFF_FIELD = "diffField";
+	
 
 	private static final String PARAM_SUGGEST = "suggest";
 
@@ -100,7 +106,9 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		String nodeRef = req.getParameter(PARAM_NODEREF);
 		
 		boolean copy = "true".equals(req.getParameter(PARAM_COPY));
+		
 		String destFieldName = req.getParameter(PARAM_DEST_FIELD);
+		String diffFieldName = req.getParameter(PARAM_DIFF_FIELD);
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -111,10 +119,16 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		NodeRef formNodeRef = null;
 		QName fieldQname = null;
 		QName destFieldQname = null;
+		QName diffFieldQName = null;
 		
 		if (destFieldName != null) {
 			destFieldName = destFieldName.replace("_", ":");
 			destFieldQname = QName.createQName(destFieldName, serviceRegistry.getNamespaceService());
+		}
+		
+		if (diffFieldName != null) {
+			diffFieldName = diffFieldName.replace("_", ":");
+			diffFieldQName = QName.createQName(diffFieldName, serviceRegistry.getNamespaceService());
 		}
 
 		if ((nodeRef != null) && !nodeRef.isEmpty()) {
@@ -145,6 +159,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 			if (dataType.isMatch(DataTypeDefinition.MLTEXT)) {
 				// Save
 				MLText mlText = null;
+				MLText diffMlText = null;
 				
 				Locale contentLocale = I18NUtil.getContentLocale();
 				String language = contentLocale.getLanguage();
@@ -167,6 +182,11 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 						mlText = new MLText();
 						mlText.addValue(toSaveUnderLocale, "");
 					}
+					
+					if(diffFieldQName!=null) {
+						diffMlText = (MLText) serviceRegistry.getNodeService().getProperty(formNodeRef, diffFieldQName);
+					}
+					
 
 				} finally {
 					MLPropertyInterceptor.setMLAware(wasMLAware);
@@ -213,14 +233,22 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 						if(copy){
 							serviceRegistry.getNodeService().setProperty(formNodeRef, destFieldQname, mlText);
 						}
+						
+						
 						JSONArray items = new JSONArray();
 						for (Map.Entry<Locale, String> mlEntry : mlText.entrySet()) {
 							JSONObject item = new JSONObject();
 							item.put("label", propertyDef.getTitle(serviceRegistry.getDictionaryService()));
 							item.put("description", propertyDef.getDescription(serviceRegistry.getDictionaryService()));
 							item.put("name", fieldQname.toPrefixString(serviceRegistry.getNamespaceService()));
-							item.put("value", mlEntry.getValue());
 							
+							if(diffMlText!=null && diffMlText.containsKey(mlEntry.getKey())) {
+								DiffMatchPatch dmp = new DiffMatchPatch();
+								LinkedList<Diff> diffs = dmp.diff_main( diffMlText.get(mlEntry.getKey()),mlEntry.getValue());
+								item.put("value",dmp.diffPrettyHtml(diffs));
+							} else {
+								item.put("value", mlEntry.getValue());
+							}
 							String lang = mlEntry.getKey().getLanguage();
 							String code = lang;
 							String country = lang.toUpperCase();

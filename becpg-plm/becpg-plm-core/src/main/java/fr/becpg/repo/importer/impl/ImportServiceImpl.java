@@ -332,13 +332,9 @@ public class ImportServiceImpl implements ImportService {
 						throw new ImporterException(
 								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_PATH, importContext.getImportIndex()));
 					}
-
-					if (pathValue.startsWith(PATH_SITES) || pathValue.startsWith(RepoConsts.PATH_SEPARATOR + PATH_SITES)) {
-						importContext.setSiteDocLib(true);
-					} else {
-						importContext.setSiteDocLib(false);
-					}
-
+					
+					importContext.setSiteDocLib(pathValue.startsWith(PATH_SITES) || pathValue.startsWith(RepoConsts.PATH_SEPARATOR + PATH_SITES));
+				
 					List<String> paths = new ArrayList<>();
 					String[] arrPath = pathValue.split(RepoConsts.PATH_SEPARATOR);
 					Collections.addAll(paths, arrPath);
@@ -504,7 +500,6 @@ public class ImportServiceImpl implements ImportService {
 							policyBehaviourFilter.disableBehaviour(disabledPolicy);
 						}
 
-						// TODO Use factory or @annotation instead of if
 						if (ImportType.Comments.equals(importContext.getImportType())) {
 							importCommentsVisitor.importNode(importContext, values);
 						} else if (dictionaryService.isSubClass(importContext.getType(), PLMModel.TYPE_PRODUCT)) {

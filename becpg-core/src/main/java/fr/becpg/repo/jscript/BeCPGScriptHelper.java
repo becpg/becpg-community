@@ -821,8 +821,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param param a {@link java.lang.Object} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String getMessage(String messageKey, Object... param) {
-		return I18NUtil.getMessage(messageKey, param);
+	public String getMessage(String messageKey, Object param) {
+		return I18NUtil.getMessage(messageKey, param, I18NUtil.getLocale());
 	}
 
 	/**
@@ -1093,7 +1093,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	public boolean clearPermissions(NodeRef nodeRef, boolean inherit) {
 		return AuthenticationUtil.runAsSystem(() -> {
-			permissionService.deletePermissions(nodeRef);
+			Set<AccessPermission> acls = permissionService.getAllSetPermissions(nodeRef);
+			for (AccessPermission permission : acls) {
+				if (permission.isSetDirectly()) {
+
+					permissionService.deletePermission(nodeRef, PermissionService.ALL_AUTHORITIES, permission.getPermission());
+
+				}
+			}
 			permissionService.setInheritParentPermissions(nodeRef, inherit);
 			return true;
 		});

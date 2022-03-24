@@ -1,5 +1,6 @@
-<#if field.control.params.submitTime?? && field.control.params.submitTime == "false"><#assign submitTime=false><#else><#assign submitTime=true></#if>
 <#if field.control.params.showTime?? && field.control.params.showTime == "true"><#assign showTime=true><#else><#assign showTime=false></#if>
+<#if field.control.params.submitTime?? && field.control.params.submitTime == "false"><#assign submitTime=false><#else><#assign submitTime=showTime></#if>
+
 
 <#if showTime><#assign viewFormat>${msg("form.control.date-picker.view.time.format")}</#assign><#else><#assign viewFormat>${msg("form.control.date-picker.view.date.format")}</#assign></#if>
 

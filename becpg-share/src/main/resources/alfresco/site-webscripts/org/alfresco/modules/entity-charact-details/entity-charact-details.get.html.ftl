@@ -37,7 +37,7 @@
 		       
 	   </div>
 		<div class="body">
-			<div id="${el}-chartContainer" class="yui-content">
+			<div id="${el}-chartContainer" class="detailsContainer yui-content">
 			    <div class="node-header ">
                   <div id="${el}-chartPath" class="datagrid node-path" ></div>
 				</div>
