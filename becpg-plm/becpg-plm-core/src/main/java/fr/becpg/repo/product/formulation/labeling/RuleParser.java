@@ -23,7 +23,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
-import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.meat.MeatType;
 
 /**
@@ -39,8 +38,8 @@ public abstract class RuleParser {
 	protected final NodeService mlNodeService;
 	protected final Set<Locale> availableLocales;
 	protected final Map<NodeRef, TextFormatRule> textFormaters = new HashMap<>();
-	protected final Map<NodeRef, List<DeclarationFilter>> nodeDeclarationFilters = new HashMap<>();
-	protected final List<DeclarationFilter> declarationFilters = new ArrayList<>();
+	protected final Map<NodeRef, List<DeclarationFilterRule>> nodeDeclarationFilters = new HashMap<>();
+	protected final List<DeclarationFilterRule> declarationFilters = new ArrayList<>();
 	protected final List<SeparatorRule> separatorRules = new ArrayList<>();
 	protected final Map<NodeRef, List<AggregateRule>> aggregateRules = new HashMap<>();
 	protected final Map<String, MeatContentRule> meatContentRules = new HashMap<>();
@@ -48,6 +47,9 @@ public abstract class RuleParser {
 
 	protected final Map<NodeRef, ShowRule> showGeoRules = new HashMap<>();
 	protected final Map<NodeRef, ShowRule> showBioRules = new HashMap<>();
+	
+	protected final List<FootNoteRule> footNoteRules = new ArrayList<>();
+	protected final Map<NodeRef, List<FootNoteRule>> nodeFootNoteRules = new HashMap<>();
 
 	protected String defaultPercFormat = "0.#%";
 	protected RoundingMode defaultRoundingMode = RoundingMode.HALF_DOWN;
@@ -93,8 +95,9 @@ public abstract class RuleParser {
 	public void setShowAllPerc(boolean showAllPerc) {
 		if (showAllPerc) {
 			this.showAllPerc.add(new ShowRule(defaultPercFormat, defaultRoundingMode, null));
+		} else {
+			this.showAllPerc = null;
 		}
-		this.showAllPerc = null;
 	}
 
 	/**
@@ -104,9 +107,23 @@ public abstract class RuleParser {
 	 */
 	public void setShowAllGeo(boolean showAllGeo) {
 		if (showAllGeo) {
-
+			this.showAllGeo = new ShowRule("", null, null);
+		} else {
+			this.showAllGeo = null;
 		}
-		this.showAllGeo = new ShowRule("", null, null);
+	}
+	
+	/**
+	 * <p>Setter for the field <code>showAllGeo</code>.</p>
+	 *
+	 * @param showAllGeo a boolean.
+	 */
+	public void setShowAllBio(boolean showAllBio) {
+		if (showAllBio) {
+			this.showAllBio = new ShowRule("", null, null);
+		} else {
+			this.showAllBio = null;
+		}
 	}
 
 	/**
@@ -132,8 +149,21 @@ public abstract class RuleParser {
 	 *
 	 * @return a {@link java.util.Map} object.
 	 */
-	public Map<NodeRef, List<DeclarationFilter>> getNodeDeclarationFilters() {
+	public Map<NodeRef, List<DeclarationFilterRule>> getNodeDeclarationFilters() {
 		return nodeDeclarationFilters;
+	}
+
+	
+	
+	
+	public Map<NodeRef, List<FootNoteRule>> getNodeFootNoteRules() {
+		return nodeFootNoteRules;
+	}
+
+	
+	
+	public List<FootNoteRule> getFootNoteRules() {
+		return footNoteRules;
 	}
 
 	/**
@@ -141,7 +171,7 @@ public abstract class RuleParser {
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
-	public List<DeclarationFilter> getDeclarationFilters() {
+	public List<DeclarationFilterRule> getDeclarationFilters() {
 		return declarationFilters;
 	}
 
@@ -179,7 +209,7 @@ public abstract class RuleParser {
 	 * @return a boolean.
 	 */
 	public boolean addRule(NodeRef ruleNodeRef, String name, List<NodeRef> components, List<NodeRef> replacement, MLText label, String formula,
-			LabelingRuleType labeLabelingRuleType, List<String> locales) {
+			LabelingRuleType labeLabelingRuleType, List<String> locales, int sort) {
 
 		if (labeLabelingRuleType != null) {
 
@@ -230,7 +260,7 @@ public abstract class RuleParser {
 				}
 
 			} else if (LabelingRuleType.ShowGeo.equals(labeLabelingRuleType)) {
-				if (components.isEmpty()) {
+				if (components==null || components.isEmpty()) {
 					showAllGeo = new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", null, locales);
 				} else {
 					for (NodeRef component : components) {
@@ -238,7 +268,7 @@ public abstract class RuleParser {
 					}
 				}
 			} else if (LabelingRuleType.ShowBio.equals(labeLabelingRuleType)) {
-				if (components.isEmpty()) {
+				if (components==null ||components.isEmpty()) {
 					showAllBio = new ShowRule((formula != null) && !formula.isEmpty() ? formula : "", null, locales);
 				} else {
 					for (NodeRef component : components) {
@@ -254,7 +284,26 @@ public abstract class RuleParser {
 				} else {
 					aggregate(ruleNodeRef, name, components, replacement, label, formula, labeLabelingRuleType, locales);
 				}
-			} else {
+			} else if(LabelingRuleType.FootNote.equals(labeLabelingRuleType)) {
+				
+				FootNoteRule footNoteRule = new FootNoteRule(name, label, formula, locales, sort);
+				
+				if (components==null || components.isEmpty()) {
+					footNoteRules.add(footNoteRule);
+				} else {
+					for (NodeRef component : components) {
+						
+						List<FootNoteRule> tmp = new LinkedList<>();
+						if (nodeFootNoteRules.containsKey(component)) {
+							tmp = nodeFootNoteRules.get(component);
+						}
+						tmp.add(footNoteRule);
+
+						nodeFootNoteRules.put(component, tmp);
+					}
+				}
+			
+		    }  else {
 
 				DeclarationType type = null;
 				boolean isThreshold = false;
@@ -270,14 +319,14 @@ public abstract class RuleParser {
 					type = DeclarationType.valueOf(labeLabelingRuleType.toString());
 				}
 
-				DeclarationFilter declarationFilter = new DeclarationFilter(name, formula, type, locales);
+				DeclarationFilterRule declarationFilter = new DeclarationFilterRule(name, formula, type, locales);
 				if (isThreshold) {
 					declarationFilter.setThreshold(Double.parseDouble(formula));
 				}
 
 				if ((components != null) && !components.isEmpty()) {
 					for (NodeRef component : components) {
-						List<DeclarationFilter> tmp = new LinkedList<>();
+						List<DeclarationFilterRule> tmp = new LinkedList<>();
 						if (nodeDeclarationFilters.containsKey(component)) {
 							tmp = nodeDeclarationFilters.get(component);
 						}
