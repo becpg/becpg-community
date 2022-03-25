@@ -70,12 +70,11 @@ import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
-import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.ing.LabelingComponent;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.data.spel.DeclarationFilterContext;
+import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
@@ -120,6 +119,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private Map<NodeRef, Double> inVolAllergens = new HashMap<>();
 	private Map<NodeRef, Double> inVolAllergensProcess = new HashMap<>();
 	private Map<NodeRef, Double> inVolAllergensRawMaterial = new HashMap<>();
+
+	private Set<FootNoteRule> footNotes = new HashSet<>();
 
 	private Set<NodeRef> toApplyThresholdItems = new HashSet<>();
 
@@ -278,6 +279,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return lblCompositeContext;
 	}
 
+	public Set<FootNoteRule> getFootNotes() {
+		return footNotes;
+	}
+
 	/**
 	 * <p>
 	 * Getter for the field <code>toApplyThresholdItems</code>.
@@ -397,6 +402,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String geoOriginsSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String bioOriginsSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String subIngsSeparator = RepoConsts.LABEL_SEPARATOR;
+	private String footNotesLabelSeparator = "<br/>";
 
 	private boolean showIngCEECode = false;
 	private boolean useVolume = false;
@@ -636,7 +642,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public void setHtmlTableHeaderFormat(String htmlTableHeaderFormat) {
 		this.htmlTableHeaderFormat = htmlTableHeaderFormat;
 	}
-	
+
 	public void setHtmlTableFooterFormat(String htmlTableFooterFormat) {
 		this.htmlTableFooterFormat = htmlTableFooterFormat;
 	}
@@ -747,6 +753,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public void setBioOriginsSeparator(String bioOriginsSeparator) {
 		this.bioOriginsSeparator = bioOriginsSeparator;
+	}
+
+	public void setFootNotesLabelSeparator(String footNotesLabelSeparator) {
+		this.footNotesLabelSeparator = footNotesLabelSeparator;
 	}
 
 	/**
@@ -971,11 +981,25 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		if (!lblComponent.getAllergens().isEmpty()) {
 			ingLegalName = createAllergenAwareLabel(ingLegalName, lblComponent.getAllergens(),
 					!((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).getIngList().isEmpty()));
+		}
 
+		if (!lblComponent.getFootNotes().isEmpty()) {
+			ingLegalName = createFootNoteMarkersLabel(ingLegalName, lblComponent.getFootNotes());
 		}
 
 		if (qty != null) {
 			ingLegalName = createPercAwareLabel(lblComponent, ingLegalName, qty, useTotalPrecision);
+		}
+
+		return ingLegalName;
+	}
+
+	private String createFootNoteMarkersLabel(String ingLegalName, Set<FootNoteRule> footNotes) {
+
+		String footNoteLabel = footNotes.stream().filter(f -> f.matchLocale(I18NUtil.getLocale())).sorted().map(FootNoteRule::getFootNoteMarker)
+				.collect(Collectors.joining(" "));
+		if ((footNoteLabel != null) && !footNoteLabel.isBlank()) {
+			return ingLegalName + footNoteLabel;
 		}
 
 		return ingLegalName;
@@ -1033,9 +1057,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					}
 				}
 			}
-			
 
-			if(showPercRules.get(nodeRef)!=null) {
+			if (showPercRules.get(nodeRef) != null) {
 				for (ShowRule showRule : showPercRules.get(nodeRef)) {
 					if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
 						if ((selectedRule == null) || ((selectedRule.getThreshold() == null) && (showRule.getThreshold() != null))
@@ -1046,7 +1069,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					}
 				}
 			}
-			
+
 			if (selectedRule != null) {
 				decimalFormat = new DecimalFormat(
 						(selectedRule.format != null) && !selectedRule.format.isEmpty() ? selectedRule.format : defaultPercFormat, symbols);
@@ -1313,6 +1336,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private Set<String> getDetectedAllergens() {
 		return detectedAllergensByLocale.computeIfAbsent(I18NUtil.getLocale(), r -> new LinkedHashSet<>());
+	}
+
+	public String renderFootNotes() {
+		return footNotes.stream().filter(f -> f.matchLocale(I18NUtil.getLocale())).sorted().map(f -> f.getFootNoteLabel(I18NUtil.getLocale()))
+				.collect(Collectors.joining(footNotesLabelSeparator));
 	}
 
 	/**
@@ -1830,9 +1858,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		Locale currentLocale = I18NUtil.getLocale();
 		if (nodeDeclarationFilters.containsKey(nodeRef)) {
-			for (DeclarationFilter declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
+			for (DeclarationFilterRule declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
 				if (DeclarationType.DoNotDetails.equals(declarationFilter.getDeclarationType())
-						&& matchFormule(declarationFilter, new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale)) {
+						&& matchFormule(declarationFilter, new LabelingFormulaFilterContext()) && declarationFilter.matchLocale(currentLocale)) {
 					return true;
 				}
 			}
@@ -2038,9 +2066,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private String getLocaleSeparator(String separator) {
-	   if("ar".equalsIgnoreCase((I18NUtil.getLocale().getLanguage()))){
-		   return separator.replace(",","،"); 
-	   }
+		if ("ar".equalsIgnoreCase((I18NUtil.getLocale().getLanguage()))) {
+			return separator.replace(",", "،");
+		}
 		return separator;
 	}
 
@@ -2227,7 +2255,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			Locale currentLocale = I18NUtil.getLocale();
 
 			if (nodeDeclarationFilters.containsKey(nodeRef)) {
-				for (DeclarationFilter declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
+				for (DeclarationFilterRule declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
 					if (declarationFilter.isThreshold() && (qtyPerc < (declarationFilter.getThreshold() / 100d))
 							&& declarationFilter.matchLocale(currentLocale)) {
 						return true;
@@ -2235,7 +2263,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 			}
 
-			for (DeclarationFilter declarationFilter : declarationFilters) {
+			for (DeclarationFilterRule declarationFilter : declarationFilters) {
 				if (declarationFilter.isThreshold() && (qtyPerc < (declarationFilter.getThreshold() / 100d))
 						&& declarationFilter.matchLocale(currentLocale)) {
 					return true;
@@ -2494,17 +2522,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				// If Omit
 				if ((ingType != null) && nodeDeclarationFilters.containsKey(ingType.getNodeRef())) {
 					boolean shouldBreak = false;
-					for (DeclarationFilter declarationFilter : nodeDeclarationFilters.get(ingType.getNodeRef())) {
+					for (DeclarationFilterRule declarationFilter : nodeDeclarationFilters.get(ingType.getNodeRef())) {
 						if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType())
-								&& matchFormule(declarationFilter, new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale)) {
+								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext()) && declarationFilter.matchLocale(currentLocale)) {
 							shouldBreak = true;
 							break;
 						} else if ((DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
-								&& matchFormule(declarationFilter, new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale))) {
+								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext()) && declarationFilter.matchLocale(currentLocale))) {
 							ingType = ingType.createCopy();
 							ingType.setIsDoNotDeclare(true);
-						} else if ((DeclarationType.DoNotDetailsAtEnd.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
-								&& matchFormule(declarationFilter, new DeclarationFilterContext()) && declarationFilter.matchLocale(currentLocale))) {
+						} else if ((DeclarationType.DoNotDetailsAtEnd.equals(declarationFilter.getDeclarationType())
+								&& !declarationFilter.isThreshold() && matchFormule(declarationFilter, new LabelingFormulaFilterContext())
+								&& declarationFilter.matchLocale(currentLocale))) {
 							ingType = ingType.createCopy();
 							ingType.setIsLastGroup(true);
 						}
@@ -2514,7 +2543,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					}
 
 				}
-				
+
 				if ((ingType != null) && ingType.doNotDeclare() && !ingType.lastGroup()) {
 					ingType = null;
 				}
@@ -2704,19 +2733,19 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 *            object.
 	 * @return a boolean.
 	 */
-	public boolean matchFormule(DeclarationFilter declarationFilter, DeclarationFilterContext declarationFilterContext) {
-		if ((declarationFilter.getFormula() != null) && !declarationFilter.getFormula().isEmpty()) {
+	public boolean matchFormule(AbstractFormulaFilterRule formulaFilter, LabelingFormulaFilterContext formulaFilterContext) {
+		if ((formulaFilter.getFormula() != null) && !formulaFilter.getFormula().isEmpty()) {
 
 			try {
 				ExpressionParser parser = new SpelExpressionParser();
-				StandardEvaluationContext dataContext = new StandardEvaluationContext(declarationFilterContext);
+				StandardEvaluationContext dataContext = new StandardEvaluationContext(formulaFilterContext);
 
-				Expression exp = parser.parseExpression(SpelHelper.formatFormula(declarationFilter.getFormula()));
+				Expression exp = parser.parseExpression(SpelHelper.formatFormula(formulaFilter.getFormula()));
 
 				boolean ret = exp.getValue(dataContext, Boolean.class);
 
 				if (ret && logger.isDebugEnabled()) {
-					logger.debug("Matching formula :" + declarationFilter.getFormula());
+					logger.debug("Matching formula :" + formulaFilter.getFormula());
 				}
 
 				return ret;
@@ -2725,10 +2754,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				getEntity().getReqCtrlList()
 						.add(new ReqCtrlListDataItem(
 								null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
-										declarationFilter.getRuleName(), e.getLocalizedMessage()),
+										formulaFilter.getRuleName(), e.getLocalizedMessage()),
 								null, new ArrayList<>(), RequirementDataType.Labelling));
 				if (logger.isDebugEnabled()) {
-					logger.debug("Cannot evaluate formula :" + declarationFilter.getFormula() + " on " + declarationFilterContext.toString(), e);
+					logger.debug("Cannot evaluate formula :" + formulaFilter.getFormula() + " on " + formulaFilterContext.toString(), e);
 				}
 			}
 		}

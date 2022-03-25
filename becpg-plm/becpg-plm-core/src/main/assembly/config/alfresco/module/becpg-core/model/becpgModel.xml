@@ -338,7 +338,7 @@
 					<value>Locale</value>
 					<value>Format</value>
 					<value>Prefs</value>
-
+					<value>FootNote</value>
 				</list>
 			</parameter>
 		</constraint>

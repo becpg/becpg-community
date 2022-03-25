@@ -58,7 +58,6 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
-import fr.becpg.repo.product.data.ing.DeclarationFilter;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.meat.MeatContentData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
@@ -67,7 +66,7 @@ import fr.becpg.repo.product.data.productList.IngLabelingListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.data.spel.DeclarationFilterContext;
+import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -230,7 +229,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey() + " - " + formulatedProduct.getName());
 
 			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository);
-			
+
 			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield);
 
 			ExpressionParser parser = new SpelExpressionParser();
@@ -239,6 +238,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();
 
 			// Apply before formula
+			int groupSortOrder = 0;
 			for (LabelingRuleListDataItem labelingRuleListDataItem : labelingRuleLists) {
 				if (Boolean.TRUE.equals(labelingRuleListDataItem.getIsActive())) {
 					LabelingRuleType type = labelingRuleListDataItem.getLabelingRuleType();
@@ -263,7 +263,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						labelingFormulaContext.addRule(labelingRuleListDataItem.getNodeRef(), labelingRuleListDataItem.getName(),
 								labelingRuleListDataItem.getComponents(), labelingRuleListDataItem.getReplacements(),
 								labelingRuleListDataItem.getLabel(), labelingRuleListDataItem.getFormula(), type,
-								labelingRuleListDataItem.getLocales());
+								labelingRuleListDataItem.getLocales(), groupSortOrder++);
 
 					} else {
 						shouldSkip = false;
@@ -445,7 +445,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (component.getVolume() != null) {
 				totalVolume += component.getVolume();
 			}
-			
+
 			if (component.getQtyWithYield() != null) {
 				totalQtyWithYield += component.getQtyWithYield();
 			}
@@ -461,7 +461,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if ((lblCompositeContext.getVolumeTotal() != null) && (lblCompositeContext.getVolumeTotal() < totalVolume)) {
 				lblCompositeContext.setVolumeTotal(totalVolume);
 			}
-			
+
 			if ((lblCompositeContext.getQtyTotalWithYield() != null) && (lblCompositeContext.getQtyTotalWithYield() < totalQtyWithYield)) {
 				lblCompositeContext.setQtyTotalWithYield(totalQtyWithYield);
 			}
@@ -473,7 +473,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void extractAllergens(LabelingFormulaContext labelingFormulaContext, ProductData productData) {
-		if(productData.getAllergenList()!=null) {
+		if (productData.getAllergenList() != null) {
 			for (AllergenListDataItem allergenListDataItem : productData.getAllergenList()) {
 				NodeRef allergen = allergenListDataItem.getAllergen();
 				if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
@@ -485,7 +485,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						appendAllergen(labelingFormulaContext.getInVolAllergens(), allergen, allergenListDataItem.getQtyPerc());
 						for (NodeRef inVoluntarySource : allergenListDataItem.getInVoluntarySources()) {
 							QName inVoluntarySourceType = nodeService.getType(inVoluntarySource);
-	
+
 							if (PLMModel.TYPE_RAWMATERIAL.equals(inVoluntarySourceType)) {
 								appendAllergen(labelingFormulaContext.getInVolAllergensRawMaterial(), allergen, allergenListDataItem.getQtyPerc());
 							} else if (PLMModel.TYPE_RESOURCEPRODUCT.equals(inVoluntarySourceType)) {
@@ -528,7 +528,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							if (replacement instanceof IngItem) {
 								fatReplacement = new IngItem((IngItem) replacement);
 								fatReplacement.setQties(0d);
-								
 
 								if (logger.isTraceEnabled()) {
 									logger.trace("Create new fat replacement :" + getName(fatReplacement));
@@ -560,65 +559,65 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					for (CompositeLabeling component : parent.getIngList().values()) {
 						if (component.getNodeRef().equals(meatContentRule.getComponent())) {
-							
-								if (ctReplacement != null && fatReplacement != null) {
-									if (component.getQty() != null) {
-										ctReplacement.setQty(component.getQty() * (meatContentData.getExCTPerc() / 100d));
-										fatReplacement.setQty(component.getQty() * (meatContentData.getExFatPerc() / 100d));
-									}
-									if (component.getQtyWithYield() != null) {
-										ctReplacement.setQtyWithYield(component.getQtyWithYield() * (meatContentData.getExCTPerc() / 100d));
-										fatReplacement.setQtyWithYield(component.getQtyWithYield() * (meatContentData.getExFatPerc() / 100d));
-									}
-									
-									if(component.getVolume()!=null) {
-										ctReplacement.setVolume(component.getVolume() * (meatContentData.getExCTPerc() / 100d));
-										fatReplacement.setVolume(component.getVolume() * (meatContentData.getExFatPerc() / 100d));	
-									}
-									
-									if (component.getVolumeWithYield() != null) {
-										ctReplacement.setVolumeWithYield(component.getVolumeWithYield() * (meatContentData.getExCTPerc() / 100d));
-										fatReplacement.setVolumeWithYield(component.getVolumeWithYield() * (meatContentData.getExFatPerc() / 100d));
-									}
-									
-									toAdd.add(ctReplacement);
-								} else if (fatReplacement != null) {
-									if (component.getQty() != null) {
-										fatReplacement.setQty(component.getQty() * (1d - (meatContentData.getMeatContent() / 100d)));
-									}
-									if (component.getQtyWithYield() != null) {
-										fatReplacement.setQtyWithYield(component.getQtyWithYield()* (1d - (meatContentData.getMeatContent() / 100d)));
-									}
-									if(component.getVolume()!=null) {
-										fatReplacement.setVolume(component.getVolume() * (1d - (meatContentData.getMeatContent() / 100d)));
-									}
-									if (component.getVolumeWithYield() != null) {
-										fatReplacement.setVolumeWithYield(component.getVolumeWithYield() * (1d - (meatContentData.getMeatContent() / 100d)));
-									}
-								}
-								
+
+							if ((ctReplacement != null) && (fatReplacement != null)) {
 								if (component.getQty() != null) {
-									component.setQty(component.getQty() * (meatContentData.getMeatContent() / 100d));
+									ctReplacement.setQty(component.getQty() * (meatContentData.getExCTPerc() / 100d));
+									fatReplacement.setQty(component.getQty() * (meatContentData.getExFatPerc() / 100d));
 								}
 								if (component.getQtyWithYield() != null) {
-									component.setQtyWithYield(component.getQtyWithYield() * (meatContentData.getMeatContent() / 100d));
+									ctReplacement.setQtyWithYield(component.getQtyWithYield() * (meatContentData.getExCTPerc() / 100d));
+									fatReplacement.setQtyWithYield(component.getQtyWithYield() * (meatContentData.getExFatPerc() / 100d));
 								}
-								if(component.getVolume()!=null) {
-									component.setVolume(component.getVolume() * (meatContentData.getMeatContent() / 100d));
+
+								if (component.getVolume() != null) {
+									ctReplacement.setVolume(component.getVolume() * (meatContentData.getExCTPerc() / 100d));
+									fatReplacement.setVolume(component.getVolume() * (meatContentData.getExFatPerc() / 100d));
+								}
+
+								if (component.getVolumeWithYield() != null) {
+									ctReplacement.setVolumeWithYield(component.getVolumeWithYield() * (meatContentData.getExCTPerc() / 100d));
+									fatReplacement.setVolumeWithYield(component.getVolumeWithYield() * (meatContentData.getExFatPerc() / 100d));
+								}
+
+								toAdd.add(ctReplacement);
+							} else if (fatReplacement != null) {
+								if (component.getQty() != null) {
+									fatReplacement.setQty(component.getQty() * (1d - (meatContentData.getMeatContent() / 100d)));
+								}
+								if (component.getQtyWithYield() != null) {
+									fatReplacement.setQtyWithYield(component.getQtyWithYield() * (1d - (meatContentData.getMeatContent() / 100d)));
+								}
+								if (component.getVolume() != null) {
+									fatReplacement.setVolume(component.getVolume() * (1d - (meatContentData.getMeatContent() / 100d)));
 								}
 								if (component.getVolumeWithYield() != null) {
-									component.setVolumeWithYield(component.getVolumeWithYield() * (meatContentData.getMeatContent() / 100d));
+									fatReplacement
+											.setVolumeWithYield(component.getVolumeWithYield() * (1d - (meatContentData.getMeatContent() / 100d)));
 								}
-								if (fatReplacement != null) {
-									toAdd.add(fatReplacement);
-								}
-							
-							
-							
+							}
+
+							if (component.getQty() != null) {
+								component.setQty(component.getQty() * (meatContentData.getMeatContent() / 100d));
+							}
+							if (component.getQtyWithYield() != null) {
+								component.setQtyWithYield(component.getQtyWithYield() * (meatContentData.getMeatContent() / 100d));
+							}
+							if (component.getVolume() != null) {
+								component.setVolume(component.getVolume() * (meatContentData.getMeatContent() / 100d));
+							}
+							if (component.getVolumeWithYield() != null) {
+								component.setVolumeWithYield(component.getVolumeWithYield() * (meatContentData.getMeatContent() / 100d));
+							}
+							if (fatReplacement != null) {
+								toAdd.add(fatReplacement);
+							}
+
 							if (fatReplacement != null) {
 								fatReplacement.getAllergens().addAll(component.getAllergens());
 								fatReplacement.getGeoOrigins().addAll(component.getGeoOrigins());
 								fatReplacement.getBioOrigins().addAll(component.getBioOrigins());
+								fatReplacement.getFootNotes().addAll(component.getFootNotes());
 							}
 
 						} else {
@@ -761,8 +760,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			} else {
 				prev.setVolumeTotal(null);
 			}
-			
-			
+
 			if ((prev.getQtyWithYield() != null) && (component.getQtyWithYield() != null)) {
 				prev.setQtyWithYield(prev.getQtyWithYield() + component.getQtyWithYield());
 			} else {
@@ -784,7 +782,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			} else {
 				prev.setVolumeTotalWithYield(null);
 			}
-			
+
 			for (CompositeLabeling ing : component.getIngList().values()) {
 				if (prev.getIngList().containsKey(ing.getNodeRef())) {
 					merge(prev.getIngList().get(ing.getNodeRef()), ing);
@@ -809,6 +807,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			prev.getAllergens().addAll(component.getAllergens());
 			prev.getGeoOrigins().addAll(component.getGeoOrigins());
 			prev.getBioOrigins().addAll(component.getBioOrigins());
+			prev.getFootNotes().addAll(component.getFootNotes());
 		}
 	}
 
@@ -836,7 +835,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							compositeLabeling.getQty() != null ? compositeLabeling.getQty() : 1d);
 					Double volume = labelingFormulaContext.computeVolumePerc(compositeLabeling, subComponent,
 							compositeLabeling.getVolume() != null ? compositeLabeling.getVolume() : 1d);
-					
+
 					Double qtyWithYield = labelingFormulaContext.computeQtyPerc(compositeLabeling, subComponent,
 							compositeLabeling.getQtyWithYield() != null ? compositeLabeling.getQtyWithYield() : 1d);
 					Double volumeWithYield = labelingFormulaContext.computeVolumePerc(compositeLabeling, subComponent,
@@ -848,9 +847,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						CompositeLabeling clonedSubComponent = subComponent.createCopy();
 						clonedSubComponent.setQty(qty);
 						clonedSubComponent.setVolume(volume);
-						clonedSubComponent.setQtyWithYield(qtyWithYield );
-						clonedSubComponent.setVolumeWithYield(volumeWithYield );
-						
+						clonedSubComponent.setQtyWithYield(qtyWithYield);
+						clonedSubComponent.setVolumeWithYield(volumeWithYield);
+
 						merged.add(clonedSubComponent);
 					} else {
 
@@ -860,7 +859,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if ((volume != null) && (toMerged.getVolume() != null)) {
 							toMerged.setVolume(toMerged.getVolume() + volume);
 						}
-						
+
 						if ((qtyWithYield != null) && (toMerged.getQtyWithYield() != null)) {
 							toMerged.setQtyWithYield(toMerged.getQtyWithYield() + qtyWithYield);
 						}
@@ -871,6 +870,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						toMerged.getAllergens().addAll(subComponent.getAllergens());
 						toMerged.getGeoOrigins().addAll(subComponent.getGeoOrigins());
 						toMerged.getBioOrigins().addAll(subComponent.getBioOrigins());
+						toMerged.getFootNotes().addAll(subComponent.getFootNotes());
 
 					}
 				}
@@ -938,7 +938,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 				List<LabelingRuleListDataItem> tmp = ret.get(group);
 				if (tmp == null) {
-					tmp = new ArrayList<>();
+					tmp = new LinkedList<>();
 				}
 				tmp.add(labelingRule);
 				ret.put(group, tmp);
@@ -947,7 +947,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			String group = LabelingRuleListDataItem.DEFAULT_LABELING_GROUP;
 			List<LabelingRuleListDataItem> tmp = ret.get(group);
 			if (tmp == null) {
-				tmp = new ArrayList<>();
+				tmp = new LinkedList<>();
 			}
 			tmp.add(labelingRule);
 			ret.put(group, tmp);
@@ -1022,10 +1022,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									Double volume = component.getVolume();
 									Double qtyWithYield = component.getQtyWithYield();
 									Double volumeWithYield = component.getVolumeWithYield();
-									
+
 									Set<NodeRef> allergens = component.getAllergens();
 									Set<NodeRef> geoOrigins = component.getGeoOrigins();
 									Set<NodeRef> bioOrigins = component.getBioOrigins();
+									Set<FootNoteRule> footNotes = component.getFootNotes();
 
 									boolean is100Perc = (aggregateRule.getQty() == null) || (aggregateRule.getQty() == 100d);
 									// Add ing to group
@@ -1037,7 +1038,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										if (volume != null) {
 											volume = (volume * aggregateRule.getQty()) / 100;
 										}
-										
+
 										if (qtyWithYield != null) {
 											qtyWithYield = (qtyWithYield * aggregateRule.getQty()) / 100;
 										}
@@ -1092,7 +1093,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 											if ((volume != null) && (current.getVolume() != null)) {
 												current.setVolume(current.getVolume() + volume);
 											}
-											
+
 											if ((qtyWithYield != null) && (current.getQtyWithYield() != null)) {
 												current.setQtyWithYield(current.getQtyWithYield() + qtyWithYield);
 											}
@@ -1104,6 +1105,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 											current.getAllergens().addAll(allergens);
 											current.getGeoOrigins().addAll(geoOrigins);
 											current.getBioOrigins().addAll(bioOrigins);
+											current.getFootNotes().addAll(footNotes);
 										}
 
 									} else {
@@ -1143,9 +1145,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 												if ((qty != null) && (childComponent.getQty() != null)) {
 													subQty = (childComponent.getQty() * qty) / component.getQtyTotal();
 												}
-												
+
 												if ((qtyWithYield != null) && (childComponent.getQtyWithYield() != null)) {
-													subQtyWithYield = (childComponent.getQtyWithYield() * qtyWithYield) / component.getQtyTotalWithYield();
+													subQtyWithYield = (childComponent.getQtyWithYield() * qtyWithYield)
+															/ component.getQtyTotalWithYield();
 												}
 
 												if ((volume != null) && (childComponent.getVolume() != null)) {
@@ -1153,17 +1156,19 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 												}
 
 												if ((volumeWithYield != null) && (childComponent.getVolumeWithYield() != null)) {
-													subVolumeWithYield = (childComponent.getVolumeWithYield() * volumeWithYield) / component.getVolumeTotalWithYield();
+													subVolumeWithYield = (childComponent.getVolumeWithYield() * volumeWithYield)
+															/ component.getVolumeTotalWithYield();
 												}
-												
-												error = appendToAggregate(childComponent, compositeLabeling, aggregateRule, subQty, subVolume, subQtyWithYield, subVolumeWithYield,
-														childComponent.getAllergens(), childComponent.getGeoOrigins(),
-														childComponent.getBioOrigins());
+
+												error = appendToAggregate(childComponent, compositeLabeling, aggregateRule, subQty, subVolume,
+														subQtyWithYield, subVolumeWithYield, childComponent.getAllergens(),
+														childComponent.getGeoOrigins(), childComponent.getBioOrigins(),
+														childComponent.getFootNotes());
 											}
 
 										} else {
-											error = appendToAggregate(component, compositeLabeling, aggregateRule, qty, volume, qtyWithYield, volumeWithYield, allergens, geoOrigins,
-													bioOrigins);
+											error = appendToAggregate(component, compositeLabeling, aggregateRule, qty, volume, qtyWithYield,
+													volumeWithYield, allergens, geoOrigins, bioOrigins, footNotes);
 										}
 
 										if (error != null) {
@@ -1189,14 +1194,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										break;
 									} else {
 
-										if((qty != null) && (component.getQty() != null)) {
+										if ((qty != null) && (component.getQty() != null)) {
 											component.setQty(component.getQty() - qty);
 										}
 										if ((volume != null) && (component.getVolume() != null)) {
 											component.setVolume(component.getVolume() - volume);
 										}
-										
-										if((qtyWithYield != null) && (component.getQtyWithYield() != null)) {
+
+										if ((qtyWithYield != null) && (component.getQtyWithYield() != null)) {
 											component.setQtyWithYield(component.getQtyWithYield() - qtyWithYield);
 										}
 										if ((volumeWithYield != null) && (component.getVolumeWithYield() != null)) {
@@ -1221,7 +1226,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private ReqCtrlListDataItem appendToAggregate(CompositeLabeling component, CompositeLabeling compositeLabeling, AggregateRule aggregateRule,
-			Double qty, Double volume, Double qtyWithYield, Double volumeWithYield, Set<NodeRef> allergens, Set<NodeRef> geoOrigins, Set<NodeRef> bioOrigins) {
+			Double qty, Double volume, Double qtyWithYield, Double volumeWithYield, Set<NodeRef> allergens, Set<NodeRef> geoOrigins,
+			Set<NodeRef> bioOrigins, Set<FootNoteRule> footNoteRules) {
 		CompositeLabeling current = compositeLabeling.getIngList().get(component.getNodeRef());
 		boolean is100Perc = (aggregateRule.getQty() == null) || (aggregateRule.getQty() == 100d);
 
@@ -1247,85 +1253,84 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				compositeLabeling.add(current);
 			}
 		}
-		
-	    if (current != null) {
 
-				if (qty != null && current.getQty() != null) {
-					if (logger.isTraceEnabled()) {
-						logger.trace(" - Update aggregate ing qty  :" + getName(current) + " " + qty);
-					}
-					current.setQty(current.getQty() + qty);
-				} else {
-					current.setQty(null);
-				}
-				
-				
-				if ((current.getVolume() != null) && (volume != null)) {
-					if (logger.isTraceEnabled()) {
-						logger.trace(" - Update aggregate ing volume  :" + getName(current) + " " + volume);
-					}
-					current.setVolume(current.getVolume() + volume);
-				} else {
-					current.setVolume(null);
-				}
-				
-				if (qtyWithYield != null && current.getQtyWithYield() != null) {
-					if (logger.isTraceEnabled()) {
-						logger.trace(" - Update aggregate ing qtyWithYield  :" + getName(current) + " " + qtyWithYield);
-					}
-					current.setQtyWithYield(current.getQtyWithYield() + qtyWithYield);
-				} else {
-					current.setQtyWithYield(null);				
-				}
-				
-				if ((current.getVolumeWithYield() != null) && (volumeWithYield != null)) {
-					if (logger.isTraceEnabled()) {
-						logger.trace(" - Update aggregate ing volumeWithYield  :" + getName(current) + " " + volumeWithYield);
-					}
-					current.setVolumeWithYield(current.getVolumeWithYield() + volumeWithYield);
-				} else {
-					current.setVolumeWithYield(null);
-				}
+		if (current != null) {
 
-				current.getAllergens().addAll(allergens);
-				current.getGeoOrigins().addAll(geoOrigins);
-				current.getBioOrigins().addAll(bioOrigins);
-
+			if ((qty != null) && (current.getQty() != null)) {
+				if (logger.isTraceEnabled()) {
+					logger.trace(" - Update aggregate ing qty  :" + getName(current) + " " + qty);
+				}
+				current.setQty(current.getQty() + qty);
 			} else {
-				compositeLabeling.getAllergens().addAll(allergens);
-				compositeLabeling.getGeoOrigins().addAll(geoOrigins);
-				compositeLabeling.getBioOrigins().addAll(bioOrigins);
+				current.setQty(null);
 			}
 
-		  	if(qty!=null && compositeLabeling.getQtyTotal()!=null) {
-		  		compositeLabeling.setQty(qty + compositeLabeling.getQtyTotal());
-		  		compositeLabeling.setQtyTotal(compositeLabeling.getQty());
-		  		
-		  	}
-		  	
-			if(volume!=null && compositeLabeling.getVolumeTotal()!=null) {
-				compositeLabeling.setVolume(volume  + compositeLabeling.getVolumeTotal());
-				compositeLabeling.setVolumeTotal(compositeLabeling.getVolume());
-				
-		  	}
-			
-			if(qtyWithYield!=null && compositeLabeling.getQtyTotalWithYield()!=null) {
-				compositeLabeling.setQtyWithYield(qtyWithYield + compositeLabeling.getQtyTotalWithYield());
-		  		compositeLabeling.setQtyTotalWithYield(compositeLabeling.getQtyWithYield());
-		  	}
-		  	
-			if(volumeWithYield!=null && compositeLabeling.getVolumeTotalWithYield()!=null) {
-				compositeLabeling.setVolumeWithYield(volumeWithYield  + compositeLabeling.getVolumeTotalWithYield());
-				compositeLabeling.setVolumeTotalWithYield(compositeLabeling.getVolumeWithYield());
-		  	}
-		  	
-			
-			
-		if(qty == null && current!=null) {
+			if ((current.getVolume() != null) && (volume != null)) {
+				if (logger.isTraceEnabled()) {
+					logger.trace(" - Update aggregate ing volume  :" + getName(current) + " " + volume);
+				}
+				current.setVolume(current.getVolume() + volume);
+			} else {
+				current.setVolume(null);
+			}
+
+			if ((qtyWithYield != null) && (current.getQtyWithYield() != null)) {
+				if (logger.isTraceEnabled()) {
+					logger.trace(" - Update aggregate ing qtyWithYield  :" + getName(current) + " " + qtyWithYield);
+				}
+				current.setQtyWithYield(current.getQtyWithYield() + qtyWithYield);
+			} else {
+				current.setQtyWithYield(null);
+			}
+
+			if ((current.getVolumeWithYield() != null) && (volumeWithYield != null)) {
+				if (logger.isTraceEnabled()) {
+					logger.trace(" - Update aggregate ing volumeWithYield  :" + getName(current) + " " + volumeWithYield);
+				}
+				current.setVolumeWithYield(current.getVolumeWithYield() + volumeWithYield);
+			} else {
+				current.setVolumeWithYield(null);
+			}
+
+			current.getAllergens().addAll(allergens);
+			current.getGeoOrigins().addAll(geoOrigins);
+			current.getBioOrigins().addAll(bioOrigins);
+			current.getFootNotes().addAll(footNoteRules);
+
+		} else {
+			compositeLabeling.getAllergens().addAll(allergens);
+			compositeLabeling.getGeoOrigins().addAll(geoOrigins);
+			compositeLabeling.getBioOrigins().addAll(bioOrigins);
+			compositeLabeling.getFootNotes().addAll(footNoteRules);
+		}
+
+		if ((qty != null) && (compositeLabeling.getQtyTotal() != null)) {
+			compositeLabeling.setQty(qty + compositeLabeling.getQtyTotal());
+			compositeLabeling.setQtyTotal(compositeLabeling.getQty());
+
+		}
+
+		if ((volume != null) && (compositeLabeling.getVolumeTotal() != null)) {
+			compositeLabeling.setVolume(volume + compositeLabeling.getVolumeTotal());
+			compositeLabeling.setVolumeTotal(compositeLabeling.getVolume());
+
+		}
+
+		if ((qtyWithYield != null) && (compositeLabeling.getQtyTotalWithYield() != null)) {
+			compositeLabeling.setQtyWithYield(qtyWithYield + compositeLabeling.getQtyTotalWithYield());
+			compositeLabeling.setQtyTotalWithYield(compositeLabeling.getQtyWithYield());
+		}
+
+		if ((volumeWithYield != null) && (compositeLabeling.getVolumeTotalWithYield() != null)) {
+			compositeLabeling.setVolumeWithYield(volumeWithYield + compositeLabeling.getVolumeTotalWithYield());
+			compositeLabeling.setVolumeTotalWithYield(compositeLabeling.getVolumeWithYield());
+		}
+
+		if ((qty == null) && (current != null)) {
 			return new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage(NULL_ING_ERROR, getName(current)), null,
-				new ArrayList<>(), RequirementDataType.Labelling);
-		} 
-		
+					new ArrayList<>(), RequirementDataType.Labelling);
+		}
+
 		return null;
 	}
 
@@ -1335,25 +1340,24 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		for (Iterator<Map.Entry<NodeRef, CompositeLabeling>> iterator = current.getIngList().entrySet().iterator(); iterator.hasNext();) {
 			CompositeLabeling component = iterator.next().getValue();
-				Double currQty = context.isIngsLabelingWithYield() ? component.getQtyWithYield():  component.getQty();
-				ret.addAll(reorderCompositeLabeling(context, component, false));
-				if ( context.isIngsLabelingWithYield() ? !Objects.equals(component.getQtyWithYield(), currQty) && (component.getQtyWithYield() == 0) 
-						: !Objects.equals(component.getQty(), currQty) && (component.getQty() == 0) ) {
-					iterator.remove();
-				} else {
-					if (!isFirst) {
-						if (component.isGroup()) {
-	
-							logger.trace("Found misplaced group :" + getName(component));
-							// Remove from current
-							iterator.remove();
-	
-							ret.add(component);
-	
-						}
+			Double currQty = context.isIngsLabelingWithYield() ? component.getQtyWithYield() : component.getQty();
+			ret.addAll(reorderCompositeLabeling(context, component, false));
+			if (context.isIngsLabelingWithYield() ? !Objects.equals(component.getQtyWithYield(), currQty) && (component.getQtyWithYield() == 0)
+					: !Objects.equals(component.getQty(), currQty) && (component.getQty() == 0)) {
+				iterator.remove();
+			} else {
+				if (!isFirst) {
+					if (component.isGroup()) {
+
+						logger.trace("Found misplaced group :" + getName(component));
+						// Remove from current
+						iterator.remove();
+
+						ret.add(component);
+
 					}
 				}
-			
+			}
 
 		}
 		if (!isFirst) {
@@ -1362,7 +1366,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				double qtyTotalToremove = 0;
 				double volumeTotalToremove = 0;
-				
+
 				double qtyTotalToremoveWithYield = 0;
 				double volumeTotalToremoveWithYield = 0;
 
@@ -1374,13 +1378,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					volumeTotalToremove += childGroup.getVolume();
 					childGroup.setVolume((childGroup.getVolume() * current.getVolume()) / current.getVolumeTotal());
-					
+
 					qtyTotalToremoveWithYield += childGroup.getQtyWithYield();
 					childGroup.setQtyWithYield((childGroup.getQtyWithYield() * current.getQtyWithYield()) / current.getQtyTotalWithYield());
 
 					volumeTotalToremoveWithYield += childGroup.getVolumeWithYield();
-					childGroup.setVolumeWithYield((childGroup.getVolumeWithYield() * current.getVolumeWithYield()) / current.getVolumeTotalWithYield());
-
+					childGroup
+							.setVolumeWithYield((childGroup.getVolumeWithYield() * current.getVolumeWithYield()) / current.getVolumeTotalWithYield());
 
 					if (logger.isTraceEnabled()) {
 						logger.trace(" - Move child group to level n-1 :" + getName(childGroup) + " new qty " + childGroup.getQty() + " new vol "
@@ -1393,11 +1397,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				current.setVolume(current.getVolume() - ((volumeTotalToremove * current.getVolume()) / current.getVolumeTotal()));
 				current.setVolumeTotal(current.getVolumeTotal() - volumeTotalToremove);
-				
-				current.setQtyWithYield(current.getQtyWithYield() - ((qtyTotalToremoveWithYield * current.getQtyWithYield()) / current.getQtyTotalWithYield()));
+
+				current.setQtyWithYield(
+						current.getQtyWithYield() - ((qtyTotalToremoveWithYield * current.getQtyWithYield()) / current.getQtyTotalWithYield()));
 				current.setQtyTotalWithYield(current.getQtyTotalWithYield() - qtyTotalToremoveWithYield);
 
-				current.setVolumeWithYield(current.getVolumeWithYield() - ((volumeTotalToremoveWithYield * current.getVolumeWithYield()) / current.getVolumeTotalWithYield()));
+				current.setVolumeWithYield(current.getVolumeWithYield()
+						- ((volumeTotalToremoveWithYield * current.getVolumeWithYield()) / current.getVolumeTotalWithYield()));
 				current.setVolumeTotalWithYield(current.getVolumeTotal() - volumeTotalToremoveWithYield);
 
 			}
@@ -1554,9 +1560,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				}
 
-
 				//Water loss
-				if (recipeQtyUsed != null && (calculatedYield != null) && (calculatedYield != 100d) && nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
+				if ((recipeQtyUsed != null) && (calculatedYield != null) && (calculatedYield != 100d)
+						&& nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Detected water lost");
@@ -1624,7 +1630,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					parent.setQty(qty);
 					parent.setVolume(volume);
-					
+
 					parent.setQtyWithYield(qtyWithYield);
 					parent.setVolumeWithYield(volumeWithYield);
 					if (logger.isTraceEnabled()) {
@@ -1694,19 +1700,21 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								compositeLabeling = lc;
 								compositeLabeling.setPlural(true);
 
-								appendQtiesToLabeling(compositeLabeling, qty ,qtyWithYield, volume, volumeWithYield,calculatedYield,true, composite.isLeaf());
-								
-							
+								appendQtiesToLabeling(compositeLabeling, qty, qtyWithYield, volume, volumeWithYield, calculatedYield, true,
+										composite.isLeaf());
 
 							} else {
 								compositeLabeling = new CompositeLabeling(productData);
 
 								fillAllergensAndGeos(compositeLabeling, productData);
 
+								compositeLabeling.getFootNotes().addAll(extractFootNotes(compoListDataItem, null, labelingFormulaContext));
+
 								compositeLabeling.setDeclarationType(declarationType);
-								
-								appendQtiesToLabeling(compositeLabeling, qty ,qtyWithYield, volume, volumeWithYield,calculatedYield,true, composite.isLeaf());
-								
+
+								appendQtiesToLabeling(compositeLabeling, qty, qtyWithYield, volume, volumeWithYield, calculatedYield, true,
+										composite.isLeaf());
+
 								if (composite.isLeaf()) {
 
 									if (logger.isTraceEnabled()) {
@@ -1715,14 +1723,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									compositeLabeling.setQtyTotal(qty);
 									compositeLabeling.setVolumeTotal(volume);
 
-									if (qtyWithYield != null && calculatedYield!=null) {
+									if ((qtyWithYield != null) && (calculatedYield != null)) {
 
 										Double yieldQty = (qtyWithYield * calculatedYield) / 100d;
 										Double evaporatingLoss = qtyWithYield - yieldQty;
 
 										if (logger.isTraceEnabled()) {
-											logger.trace(
-													"Set totalQtyWithYield: " + yieldQty + " yield: " + calculatedYield + " evaporating: " + evaporatingLoss);
+											logger.trace("Set totalQtyWithYield: " + yieldQty + " yield: " + calculatedYield + " evaporating: "
+													+ evaporatingLoss);
 
 										}
 
@@ -1730,7 +1738,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										compositeLabeling.setEvaporatedQty(evaporatingLoss);
 									}
 
-									if (volumeWithYield != null && calculatedYield!=null) {
+									if ((volumeWithYield != null) && (calculatedYield != null)) {
 
 										Double yieldVol = (volumeWithYield * calculatedYield) / 100d;
 										Double evaporatingLoss = volumeWithYield - yieldVol;
@@ -1755,7 +1763,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 
 							if (logger.isTraceEnabled()) {
-								logger.trace(" - Add detailed labeling component : " + getName(compositeLabeling) + " qty: " + qty+ " qtyWithYield: "+ qtyWithYield);
+								logger.trace(" - Add detailed labeling component : " + getName(compositeLabeling) + " qty: " + qty + " qtyWithYield: "
+										+ qtyWithYield);
 							}
 						}
 
@@ -1824,21 +1833,19 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (!(DeclarationType.Declare.equals(declarationType) && aggregateRules.isEmpty() && (isLocalSemiFinished || isMultiLevel))) {
 						// Update parent qty
 						if (!DeclarationType.DoNotDetailsAtEnd.equals(declarationType)) {
-							appendQtiesToLabeling(parent, qty ,qtyWithYield, volume, volumeWithYield,calculatedYield, false, true);
+							appendQtiesToLabeling(parent, qty, qtyWithYield, volume, volumeWithYield, calculatedYield, false, true);
 						}
-						
+
 					}
 				}
-				
 
 				if (logger.isTraceEnabled()) {
 					logger.info("#########  End :" + productData.getName());
 
-
 				}
-				
+
 			}
-			
+
 		}
 
 		if (apply)
@@ -1853,50 +1860,50 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-
-	private void appendQtiesToLabeling(CompositeLabeling compositeLabeling, Double qty, Double qtyWithYield, Double volume, Double volumeWithYield, Double currYield, boolean addToQty, boolean addToTotal) {
-		if(addToQty) {
-			if (qty != null && compositeLabeling.getQty() != null) {
+	private void appendQtiesToLabeling(CompositeLabeling compositeLabeling, Double qty, Double qtyWithYield, Double volume, Double volumeWithYield,
+			Double currYield, boolean addToQty, boolean addToTotal) {
+		if (addToQty) {
+			if ((qty != null) && (compositeLabeling.getQty() != null)) {
 				compositeLabeling.setQty(qty + compositeLabeling.getQty());
 			} else {
 				compositeLabeling.setQty(null);
 			}
-			if (qtyWithYield != null && compositeLabeling.getQtyWithYield() != null) {
+			if ((qtyWithYield != null) && (compositeLabeling.getQtyWithYield() != null)) {
 				compositeLabeling.setQtyWithYield(qtyWithYield + compositeLabeling.getQtyWithYield());
-			}else {
+			} else {
 				compositeLabeling.setQtyWithYield(null);
 			}
-			if (volume != null && compositeLabeling.getVolume() != null) {
+			if ((volume != null) && (compositeLabeling.getVolume() != null)) {
 				compositeLabeling.setVolume(volume + compositeLabeling.getVolume());
-			}else {
+			} else {
 				compositeLabeling.setVolume(null);
 			}
-			if (volumeWithYield != null && compositeLabeling.getVolumeWithYield() != null) {
+			if ((volumeWithYield != null) && (compositeLabeling.getVolumeWithYield() != null)) {
 				compositeLabeling.setVolumeWithYield(volumeWithYield + compositeLabeling.getVolumeWithYield());
-			}else {
+			} else {
 				compositeLabeling.setVolumeWithYield(null);
 			}
 		}
 
 		if (addToTotal) {
 
-			if (qty != null && (compositeLabeling.getQtyTotal() != null)) {
+			if ((qty != null) && (compositeLabeling.getQtyTotal() != null)) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Add to totalQty: " + qty);
 				}
 				compositeLabeling.setQtyTotal(qty + compositeLabeling.getQtyTotal());
 			}
 
-			if (volume != null && compositeLabeling.getVolumeTotal() != null) {
+			if ((volume != null) && (compositeLabeling.getVolumeTotal() != null)) {
 				if (logger.isTraceEnabled()) {
 					logger.trace("Add to totalVolume: " + volume);
 				}
 				compositeLabeling.setVolumeTotal(volume + compositeLabeling.getVolumeTotal());
 			}
 
-			if (qtyWithYield != null && currYield!=null) {
+			if ((qtyWithYield != null) && (currYield != null)) {
 
-				Double yieldQty = (qtyWithYield * currYield) / 100d;
+				double yieldQty = (qtyWithYield * currYield) / 100d;
 				if ((compositeLabeling.getQtyTotalWithYield() != null)) {
 
 					if (logger.isTraceEnabled()) {
@@ -1909,7 +1916,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 
 				if (compositeLabeling.getEvaporatedQty() != null) {
-					Double evaporatedQty = qtyWithYield - yieldQty;
+					double evaporatedQty = qtyWithYield - yieldQty;
 					if (logger.isTraceEnabled()) {
 						logger.trace("Add to evaporate qty: " + evaporatedQty);
 
@@ -1918,9 +1925,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 
 			}
-			if (volumeWithYield != null && currYield!=null) {
+			if ((volumeWithYield != null) && (currYield != null)) {
 
-				Double yieldVol = (volumeWithYield * currYield) / 100d;
+				double yieldVol = (volumeWithYield * currYield) / 100d;
 
 				if ((compositeLabeling.getVolumeTotalWithYield() != null)) {
 
@@ -1933,7 +1940,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 
 				if (compositeLabeling.getEvaporatedVolume() != null) {
-					Double evaporatedVolume = volumeWithYield - yieldVol;
+					double evaporatedVolume = volumeWithYield - yieldVol;
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Add to evaporate volume: " + evaporatedVolume);
@@ -1959,6 +1966,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		if (productData.getGeoOrigins() != null) {
 			compositeLabeling.getGeoOrigins().addAll(productData.getGeoOrigins());
 		}
+
+		//		if (productData.getBioOrigins() != null) {
+		//			compositeLabeling.getGeoOrigins().addAll(productData.getBioOrigins());
+		//		}
 
 	}
 
@@ -2003,7 +2014,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					productLabelItem.setQtyWithYield(productLabelItem.getQtyWithYield() - ((evaporatingQty * evaporatedDataItem.getRate()) / 100d));
 
 				}
-				
+
 				if ((productLabelItem != null) && (productLabelItem.getVolumeWithYield() != null)) {
 
 					if (logger.isDebugEnabled()) {
@@ -2011,7 +2022,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								+ parent.getVolumeTotalWithYield());
 
 					}
-					productLabelItem.setVolumeWithYield(productLabelItem.getVolumeWithYield() - ((evaporatingVolume * evaporatedDataItem.getRate()) / 100d));
+					productLabelItem
+							.setVolumeWithYield(productLabelItem.getVolumeWithYield() - ((evaporatingVolume * evaporatedDataItem.getRate()) / 100d));
 
 				}
 			});
@@ -2037,9 +2049,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if ((ingLabelItem != null) && (ingLabelItem.getQty() != null) && (reconstituableData.getRate() != 0d)) {
 
 						BigDecimal rate = BigDecimal.valueOf(reconstituableData.getRate());
-						
-						
-						
+
 						BigDecimal productQty = BigDecimal.valueOf(productLabelItem.getQty());
 						BigDecimal ingQty = BigDecimal.valueOf(ingLabelItem.getQty());
 						BigDecimal diluentQty = productQty.multiply(rate).subtract(productQty);
@@ -2048,7 +2058,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								: realDiluentQty.divide(diluentQty, 10, RoundingMode.HALF_UP);
 						BigDecimal realQty = realDiluentQty.add(productQty.multiply(realDiluentQtyRatio)).divide(rate, 10, RoundingMode.HALF_UP);
 						ingLabelItem.setQty(ingQty.subtract(realDiluentQty).doubleValue());
-						productLabelItem.setQty(productQty.subtract(realQty).doubleValue()); 
+						productLabelItem.setQty(productQty.subtract(realQty).doubleValue());
 
 						BigDecimal productQtyWithYield = BigDecimal.valueOf(productLabelItem.getQtyWithYield());
 						BigDecimal ingQtyWithYield = BigDecimal.valueOf(ingLabelItem.getQtyWithYield());
@@ -2056,10 +2066,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						BigDecimal realDiluentQtyWithYield = ingQtyWithYield.min(diluentQtyWithYield);
 						BigDecimal realDiluentQtyRatioWithYield = (diluentQtyWithYield.compareTo(BigDecimal.ZERO) == 0) ? (BigDecimal.valueOf(1d))
 								: realDiluentQtyWithYield.divide(diluentQtyWithYield, 10, RoundingMode.HALF_UP);
-						BigDecimal realQtyWithYield = realDiluentQtyWithYield.add(productQtyWithYield.multiply(realDiluentQtyRatioWithYield)).divide(rate, 10, RoundingMode.HALF_UP);
+						BigDecimal realQtyWithYield = realDiluentQtyWithYield.add(productQtyWithYield.multiply(realDiluentQtyRatioWithYield))
+								.divide(rate, 10, RoundingMode.HALF_UP);
 						ingLabelItem.setQtyWithYield(ingQtyWithYield.subtract(realDiluentQtyWithYield).doubleValue());
-						productLabelItem.setQtyWithYield(productQtyWithYield.subtract(realQtyWithYield).doubleValue()); 
-						
+						productLabelItem.setQtyWithYield(productQtyWithYield.subtract(realQtyWithYield).doubleValue());
+
 						BigDecimal ingVol = BigDecimal.valueOf(ingLabelItem.getVolume());
 						BigDecimal productVol = BigDecimal.valueOf(productLabelItem.getVolume());
 						BigDecimal diluentVolume = rate.multiply(productVol).subtract(productVol);
@@ -2070,19 +2081,18 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								RoundingMode.HALF_UP);
 						ingLabelItem.setVolume(ingVol.subtract(readlDiluentvolume).doubleValue());
 						productLabelItem.setVolume(productVol.subtract(realVol).doubleValue());
-						
+
 						BigDecimal ingVolWithYield = BigDecimal.valueOf(ingLabelItem.getVolume());
 						BigDecimal productVolWithYield = BigDecimal.valueOf(productLabelItem.getVolume());
 						BigDecimal diluentVolumeWithYield = rate.multiply(productVolWithYield).subtract(productVolWithYield);
 						BigDecimal readlDiluentvolumeWithYield = ingVol.min(diluentVolumeWithYield);
-						BigDecimal readlDiluentvolumeRatioWithYield = (diluentVolumeWithYield.compareTo(BigDecimal.ZERO) == 0) ? (BigDecimal.valueOf(1d))
+						BigDecimal readlDiluentvolumeRatioWithYield = (diluentVolumeWithYield.compareTo(BigDecimal.ZERO) == 0)
+								? (BigDecimal.valueOf(1d))
 								: readlDiluentvolumeWithYield.divide(diluentVolumeWithYield, 10, RoundingMode.HALF_UP);
-						BigDecimal realVolWithYield = readlDiluentvolumeWithYield.add(productVolWithYield.multiply(readlDiluentvolumeRatioWithYield)).divide(rate, 10,
-								RoundingMode.HALF_UP);
+						BigDecimal realVolWithYield = readlDiluentvolumeWithYield.add(productVolWithYield.multiply(readlDiluentvolumeRatioWithYield))
+								.divide(rate, 10, RoundingMode.HALF_UP);
 						ingLabelItem.setVolumeWithYield(ingVolWithYield.subtract(readlDiluentvolumeWithYield).doubleValue());
 						productLabelItem.setVolumeWithYield(productVolWithYield.subtract(realVolWithYield).doubleValue());
-						
-						
 
 						IngItem targetLabelItem = (IngItem) parent.get(reconstituableData.getTargetIngNodeRef());
 						if (targetLabelItem == null) {
@@ -2094,11 +2104,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							parent.add(targetLabelItem);
 						}
 
-					
 						targetLabelItem.setQty(BigDecimal.valueOf(targetLabelItem.getQty()).add(realQty).add(realDiluentQty).doubleValue());
-						targetLabelItem.setVolume(BigDecimal.valueOf(targetLabelItem.getVolume()).add(realVol).add(readlDiluentvolume).doubleValue());	
-						targetLabelItem.setQtyWithYield(BigDecimal.valueOf(targetLabelItem.getQtyWithYield()).add(realQtyWithYield).add(realDiluentQtyWithYield).doubleValue());
-						targetLabelItem.setVolumeWithYield(BigDecimal.valueOf(targetLabelItem.getVolumeWithYield()).add(realVolWithYield).add(readlDiluentvolumeWithYield).doubleValue());
+						targetLabelItem.setVolume(BigDecimal.valueOf(targetLabelItem.getVolume()).add(realVol).add(readlDiluentvolume).doubleValue());
+						targetLabelItem.setQtyWithYield(BigDecimal.valueOf(targetLabelItem.getQtyWithYield()).add(realQtyWithYield)
+								.add(realDiluentQtyWithYield).doubleValue());
+						targetLabelItem.setVolumeWithYield(BigDecimal.valueOf(targetLabelItem.getVolumeWithYield()).add(realVolWithYield)
+								.add(readlDiluentvolumeWithYield).doubleValue());
 
 						if (logger.isTraceEnabled()) {
 							logger.trace("Applying reconstitution:" + getName(productLabelItem) + " with " + getName(ingLabelItem) + " to "
@@ -2113,7 +2124,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							logger.trace(" - new quantity: " + targetLabelItem.getQty());
 						}
 
-						Double threshold = 0.00001d;
+						double threshold = 0.00001d;
 
 						if (targetLabelItem.getQty() < threshold) {
 							parent.getIngList().remove(targetLabelItem.getNodeRef());
@@ -2146,8 +2157,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private CompositeLabeling visitIngList(CompositeLabeling parent, ProductData product, Composite<IngListDataItem> compositeIngList,
-			Double omitQtyPerc, Double qty, Double volume,Double qtyWithYield, Double volumeWithYield, Double currYield, LabelingFormulaContext labelingFormulaContext,
-			CompoListDataItem compoListDataItem, Map<String, ReqCtrlListDataItem> errors) {
+			Double omitQtyPerc, Double qty, Double volume, Double qtyWithYield, Double volumeWithYield, Double currYield,
+			LabelingFormulaContext labelingFormulaContext, CompoListDataItem compoListDataItem, Map<String, ReqCtrlListDataItem> errors) {
 
 		boolean applyThreshold = false;
 		if (nodeService.hasAspect(product.getNodeRef(), PLMModel.ASPECT_WATER)) {
@@ -2192,7 +2203,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (DeclarationType.Declare.equals(ingDeclarationType) && !ingListItem.isLeaf()
 						&& hasVisibleSubIng(compoListDataItem, ingListItem, labelingFormulaContext)) {
 					logger.debug("Declaring ingredient: ");
-					visitIngList(parent, product, ingListItem, omitQtyPerc, qty, volume,qtyWithYield, volumeWithYield, currYield, labelingFormulaContext, compoListDataItem, errors);
+					visitIngList(parent, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield, currYield,
+							labelingFormulaContext, compoListDataItem, errors);
 				} else {
 
 					if (DeclarationType.Declare.equals(ingDeclarationType)) {
@@ -2255,6 +2267,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						ingLabelItem.getGeoOrigins().addAll(product.getGeoOrigins());
 					}
 
+					ingLabelItem.getFootNotes().addAll(extractFootNotes(compoListDataItem, ingListItem.getData(), labelingFormulaContext));
+
 					Double qtyPerc = ingListItem.getData().getQtyPerc();
 
 					if (qtyPerc == null) {
@@ -2297,48 +2311,43 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							ingLabelItem.setQty(ingLabelItem.getQty() + ((qty * qtyPerc) / 100));
 							ingLabelItem.setQtyTotal(ingLabelItem.getQty());
-						
-							
+
 						}
-							
+
 						if ((ingLabelItem.getVolume() != null) && (volume != null)) {
-							
+
 							if (logger.isTraceEnabled()) {
 								logger.trace(" -- new volume to add: " + ((volume * qtyPerc) / 100));
 							}
-							
+
 							ingLabelItem.setVolume(ingLabelItem.getVolume() + ((volume * qtyPerc) / 100));
 							ingLabelItem.setVolumeTotal(ingLabelItem.getVolume());
-							
+
 						}
-						
+
 						if ((ingLabelItem.getQtyWithYield() != null) && (qtyWithYield != null)) {
 							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100));
 							if ((currYield != null) && (currYield != 0)) {
-								ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() * currYield / 100d );
-							
-							} 
-						
+								ingLabelItem.setQtyWithYield((ingLabelItem.getQtyWithYield() * currYield) / 100d);
+
+							}
+
 							ingLabelItem.setQtyTotalWithYield(ingLabelItem.getQtyWithYield());
 
 						}
-						
+
 						if ((ingLabelItem.getVolumeWithYield() != null) && (volumeWithYield != null)) {
 							ingLabelItem.setVolumeWithYield(ingLabelItem.getVolumeWithYield() + ((volumeWithYield * volumeWithYield) / 100));
 							if ((currYield != null) && (currYield != 0)) {
-								ingLabelItem.setVolumeWithYield(ingLabelItem.getVolumeWithYield() * currYield / 100d );
-							
-							} 
-						
+								ingLabelItem.setVolumeWithYield((ingLabelItem.getVolumeWithYield() * currYield) / 100d);
+
+							}
+
 							ingLabelItem.setVolumeTotalWithYield(ingLabelItem.getVolumeWithYield());
 
 						}
-						
-							
-							
 
-							
-						if ((ingLabelItem.getQty() == null) && (qty == null)) { 
+						if ((ingLabelItem.getQty() == null) && (qty == null)) {
 
 							String message = I18NUtil.getMessage(NULL_ING_ERROR, getName(ingLabelItem));
 							ReqCtrlListDataItem error = errors.get(message);
@@ -2379,8 +2388,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							logger.trace(" -- Adding subings " + ingListItem.getChildren().size());
 						}
 
-						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume,qtyWithYield, volumeWithYield, currYield, labelingFormulaContext, compoListDataItem,
-								errors);
+						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield, currYield,
+								labelingFormulaContext, compoListDataItem, errors);
 
 					} else if (DeclarationType.Detail.equals(ingDeclarationType)) {
 						ingLabelItem.setDeclarationType(DeclarationType.DoNotDetails);
@@ -2422,9 +2431,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		if (ingListDataItem == null) {
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(compoListDataItem.getProduct())) {
-				for (DeclarationFilter declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(compoListDataItem.getProduct())) {
+				for (DeclarationFilterRule declarationFilter : labelingFormulaContext.getNodeDeclarationFilters()
+						.get(compoListDataItem.getProduct())) {
 					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
-							.matchFormule(declarationFilter, new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
+							.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService,compoListDataItem, ingListDataItem)))) {
 
 						if (logger.isTraceEnabled()) {
 							logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
@@ -2438,9 +2448,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		} else {
 
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(ingListDataItem.getIng())) {
-				for (DeclarationFilter declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng())) {
+				for (DeclarationFilterRule declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng())) {
 					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
-							.matchFormule(declarationFilter, new DeclarationFilterContext(compoListDataItem, ingListDataItem)))) {
+							.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService,compoListDataItem, ingListDataItem)))) {
 						if (logger.isTraceEnabled()) {
 							logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
 									+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
@@ -2450,9 +2460,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 
-			for (DeclarationFilter declarationFilter : labelingFormulaContext.getDeclarationFilters()) {
-				if (!declarationFilter.isThreshold() && (declarationFilter.getFormula() != null)
-						&& labelingFormulaContext.matchFormule(declarationFilter, new DeclarationFilterContext(compoListDataItem, ingListDataItem))) {
+			for (DeclarationFilterRule declarationFilter : labelingFormulaContext.getDeclarationFilters()) {
+				if (!declarationFilter.isThreshold() && (declarationFilter.getFormula() != null) && labelingFormulaContext
+						.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService,compoListDataItem, ingListDataItem))) {
 					if (logger.isTraceEnabled()) {
 						logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
 								+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
@@ -2486,6 +2496,61 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		}
 		return compoListDataItem.getDeclType();
+	}
+
+	private Set<FootNoteRule> extractFootNotes(CompoListDataItem compoListDataItem, IngListDataItem ingListDataItem,
+			LabelingFormulaContext labelingFormulaContext) {
+
+		Set<FootNoteRule> footNoteRules = new HashSet<>();
+
+		if (ingListDataItem == null) {
+			if (labelingFormulaContext.getNodeFootNoteRules().containsKey(compoListDataItem.getProduct())) {
+				for (FootNoteRule footNoteRule : labelingFormulaContext.getNodeFootNoteRules().get(compoListDataItem.getProduct())) {
+					if ((((footNoteRule.getFormula() == null) || footNoteRule.getFormula().isBlank()) || labelingFormulaContext
+							.matchFormule(footNoteRule, new LabelingFormulaFilterContext(formulaService,compoListDataItem, ingListDataItem)))) {
+
+						if (logger.isTraceEnabled()) {
+							logger.trace(" -- Found footNote : " + footNoteRule.getRuleName() + " for "
+									+ nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
+						}
+						labelingFormulaContext.getFootNotes().add(footNoteRule);
+						footNoteRules.add(footNoteRule);
+					}
+				}
+			}
+
+		} else {
+
+			if (labelingFormulaContext.getNodeFootNoteRules().containsKey(ingListDataItem.getIng())) {
+				for (FootNoteRule footNoteRule : labelingFormulaContext.getNodeFootNoteRules().get(ingListDataItem.getIng())) {
+					if ((((footNoteRule.getFormula() == null) || footNoteRule.getFormula().isBlank()) || labelingFormulaContext
+							.matchFormule(footNoteRule, new LabelingFormulaFilterContext(formulaService, compoListDataItem, ingListDataItem)))) {
+
+						if (logger.isTraceEnabled()) {
+							logger.trace(" -- Found footNote : " + footNoteRule.getRuleName() + " for "
+									+ nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
+						}
+						labelingFormulaContext.getFootNotes().add(footNoteRule);
+						footNoteRules.add(footNoteRule);
+					}
+				}
+			}
+		}
+
+		for (FootNoteRule footNoteRule : labelingFormulaContext.getFootNoteRules()) {
+			if ((((footNoteRule.getFormula() == null) || footNoteRule.getFormula().isBlank())
+					|| labelingFormulaContext.matchFormule(footNoteRule, new LabelingFormulaFilterContext(formulaService,compoListDataItem, ingListDataItem)))) {
+
+				if (logger.isTraceEnabled()) {
+					logger.trace(" -- Found footNote : " + footNoteRule.getRuleName() + " for "
+							+ nodeService.getProperty(compoListDataItem.getProduct(), ContentModel.PROP_NAME));
+				}
+				labelingFormulaContext.getFootNotes().add(footNoteRule);
+				footNoteRules.add(footNoteRule);
+			}
+		}
+
+		return footNoteRules;
 	}
 
 }
