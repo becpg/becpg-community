@@ -26,6 +26,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.formulation.labeling.FootNoteRule;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -61,6 +62,8 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	private Set<NodeRef> geoOrigins = new HashSet<>();
 
 	private Set<NodeRef> bioOrigins = new HashSet<>();
+	
+	private Set<FootNoteRule> footNotes = new HashSet<>();
 
 	/**
 	 * <p>Constructor for LabelingComponent.</p>
@@ -83,6 +86,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.volumeWithYield = abstractLabelingComponent.volumeWithYield;
 		this.legalName = abstractLabelingComponent.legalName;
 		this.isPlural = abstractLabelingComponent.isPlural;
+		this.footNotes = new HashSet<>(abstractLabelingComponent.footNotes);
 		this.allergens = new HashSet<>(abstractLabelingComponent.allergens);
 		this.geoOrigins = new HashSet<>(abstractLabelingComponent.geoOrigins);
 		this.bioOrigins = new HashSet<>(abstractLabelingComponent.bioOrigins);
@@ -267,6 +271,14 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.allergens = allergens;
 	}
 
+	public Set<FootNoteRule> getFootNotes() {
+		return footNotes;
+	}
+
+	public void setFootNotes(Set<FootNoteRule> footNotes) {
+		this.footNotes = footNotes;
+	}
+
 	/**
 	 * <p>Getter for the field <code>bioOrigins</code>.</p>
 	 *
@@ -310,7 +322,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		final int prime = 31;
 		int result = super.hashCode();
 		result = (prime * result)
-				+ Objects.hash(allergens, bioOrigins, geoOrigins, isPlural, legalName, pluralLegalName, qty, qtyWithYield, volume, volumeWithYield);
+				+ Objects.hash(footNotes, allergens, bioOrigins, geoOrigins, isPlural, legalName, pluralLegalName, qty, qtyWithYield, volume, volumeWithYield);
 		return result;
 	}
 
@@ -323,7 +335,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 			return false;
 		}
 		LabelingComponent other = (LabelingComponent) obj;
-		return Objects.equals(allergens, other.allergens) && Objects.equals(bioOrigins, other.bioOrigins)
+		return Objects.equals(allergens, other.allergens) && Objects.equals(bioOrigins, other.bioOrigins) && Objects.equals(footNotes, other.footNotes)
 				&& Objects.equals(geoOrigins, other.geoOrigins) && (isPlural == other.isPlural) && Objects.equals(legalName, other.legalName)
 				&& Objects.equals(pluralLegalName, other.pluralLegalName) && Objects.equals(qty, other.qty)
 				&& Objects.equals(qtyWithYield, other.qtyWithYield) && Objects.equals(volume, other.volume)
@@ -359,5 +371,6 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		}
 		return 0;// equals
 	}
+
 
 }
