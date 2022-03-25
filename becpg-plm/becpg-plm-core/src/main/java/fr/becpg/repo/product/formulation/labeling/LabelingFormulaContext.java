@@ -61,6 +61,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.formulation.spel.SpelFormulaContext;
+import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -106,6 +107,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private final AssociationService associationService;
 
 	private final AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	private final  SpelFormulaService formulaService;
 
 	private List<ReqCtrlListDataItem> errors = new ArrayList<>();
 
@@ -346,10 +349,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 *            a {@link fr.becpg.repo.repository.AlfrescoRepository} object.
 	 */
 	public LabelingFormulaContext(NodeService mlNodeService, AssociationService associationService,
-			AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+			AlfrescoRepository<RepositoryEntity> alfrescoRepository, SpelFormulaService formulaService) {
 		super(mlNodeService);
 		this.alfrescoRepository = alfrescoRepository;
 		this.associationService = associationService;
+		this.formulaService = formulaService;
 	}
 
 	/**
@@ -1860,7 +1864,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		if (nodeDeclarationFilters.containsKey(nodeRef)) {
 			for (DeclarationFilterRule declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
 				if (DeclarationType.DoNotDetails.equals(declarationFilter.getDeclarationType())
-						&& matchFormule(declarationFilter, new LabelingFormulaFilterContext()) && declarationFilter.matchLocale(currentLocale)) {
+						&& matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService,null)) && declarationFilter.matchLocale(currentLocale)) {
 					return true;
 				}
 			}
@@ -2524,15 +2528,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					boolean shouldBreak = false;
 					for (DeclarationFilterRule declarationFilter : nodeDeclarationFilters.get(ingType.getNodeRef())) {
 						if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType())
-								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext()) && declarationFilter.matchLocale(currentLocale)) {
+								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext( formulaService, ingType)) && declarationFilter.matchLocale(currentLocale)) {
 							shouldBreak = true;
 							break;
 						} else if ((DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
-								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext()) && declarationFilter.matchLocale(currentLocale))) {
+								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, ingType)) && declarationFilter.matchLocale(currentLocale))) {
 							ingType = ingType.createCopy();
 							ingType.setIsDoNotDeclare(true);
 						} else if ((DeclarationType.DoNotDetailsAtEnd.equals(declarationFilter.getDeclarationType())
-								&& !declarationFilter.isThreshold() && matchFormule(declarationFilter, new LabelingFormulaFilterContext())
+								&& !declarationFilter.isThreshold() && matchFormule(declarationFilter, new LabelingFormulaFilterContext( formulaService, ingType))
 								&& declarationFilter.matchLocale(currentLocale))) {
 							ingType = ingType.createCopy();
 							ingType.setIsLastGroup(true);
@@ -2738,7 +2742,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			try {
 				ExpressionParser parser = new SpelExpressionParser();
-				StandardEvaluationContext dataContext = new StandardEvaluationContext(formulaFilterContext);
+				
+				StandardEvaluationContext dataContext =  formulaService.createCustomSpelContext(entity, formulaFilterContext);
 
 				Expression exp = parser.parseExpression(SpelHelper.formatFormula(formulaFilter.getFormula()));
 
