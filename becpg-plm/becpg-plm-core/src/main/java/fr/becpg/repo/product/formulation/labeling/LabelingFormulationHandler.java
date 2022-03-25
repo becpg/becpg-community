@@ -228,7 +228,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey() + " - " + formulatedProduct.getName());
 
-			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository);
+			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository, formulaService);
 
 			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield);
 
