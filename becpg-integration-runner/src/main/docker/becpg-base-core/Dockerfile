@@ -4,7 +4,10 @@ ENV TOMCAT_DIR=/usr/local/tomcat
 
 USER root
 
-RUN yum -y install glibc-locale-source glibc-langpack-en
+RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
+RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
+RUN yum update -y && yum -y install glibc-locale-source glibc-langpack-en  && yum clean all && \
+    rm -rf /var/cache/yum
 
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV AOS_VERSION=${alfresco.aos.version}
