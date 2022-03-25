@@ -19,10 +19,12 @@ package fr.becpg.repo.product.data.spel;
 
 import java.util.Objects;
 
+import fr.becpg.repo.formulation.spel.DataListItemSpelContext;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
+import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
-import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
  * <p>DeclarationFilterContext class.</p>
@@ -30,11 +32,11 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @author matthieu
  * @version $Id: $Id
  */
-public class LabelingFormulaFilterContext {
+public class LabelingFormulaFilterContext extends DataListItemSpelContext<ProductData> {
 
 	private CompoListDataItem compoListDataItem;
 	private IngListDataItem ingListDataItem;
-	private SpelFormulaService formulaService;
+	private IngTypeItem ingTypeItem;
 
 	/**
 	 * <p>Constructor for DeclarationFilterContext.</p>
@@ -43,17 +45,18 @@ public class LabelingFormulaFilterContext {
 	 * @param ingListDataItem a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object.
 	 */
 	public LabelingFormulaFilterContext(SpelFormulaService formulaService, CompoListDataItem compoListDataItem, IngListDataItem ingListDataItem) {
-		super();
+		super(formulaService);
+		this.setDataListItem(compoListDataItem);
 		this.compoListDataItem = compoListDataItem;
 		this.ingListDataItem = ingListDataItem;
-		this.formulaService = formulaService;
 	}
 
 	/**
 	 * <p>Constructor for DeclarationFilterContext.</p>
 	 */
-	public LabelingFormulaFilterContext() {
-		super();
+	public LabelingFormulaFilterContext(SpelFormulaService formulaService, IngTypeItem ingTypeItem) {
+		super(formulaService);
+		this.ingTypeItem = ingTypeItem;
 	}
 
 	/**
@@ -74,14 +77,8 @@ public class LabelingFormulaFilterContext {
 		return ingListDataItem;
 	}
 
-	/**
-	 * <p>getDataListItemEntity.</p>
-	 *
-	 * @return a {@link fr.becpg.repo.repository.RepositoryEntity} object.
-	 */
-	public RepositoryEntity getDataListItemEntity() {
-		return compoListDataItem.getComponent() != null ? formulaService.findOne(compoListDataItem.getComponent()) : null;
-
+	public IngTypeItem getIngTypeItem() {
+		return ingTypeItem;
 	}
 
 	/** {@inheritDoc} */
@@ -92,7 +89,7 @@ public class LabelingFormulaFilterContext {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(compoListDataItem, formulaService, ingListDataItem);
+		return Objects.hash(compoListDataItem, ingListDataItem, ingTypeItem);
 	}
 
 	@Override
@@ -104,8 +101,8 @@ public class LabelingFormulaFilterContext {
 			return false;
 		}
 		LabelingFormulaFilterContext other = (LabelingFormulaFilterContext) obj;
-		return Objects.equals(compoListDataItem, other.compoListDataItem) && Objects.equals(formulaService, other.formulaService)
-				&& Objects.equals(ingListDataItem, other.ingListDataItem);
+		return Objects.equals(compoListDataItem, other.compoListDataItem) && Objects.equals(ingListDataItem, other.ingListDataItem)
+				&& Objects.equals(ingTypeItem, other.ingTypeItem);
 	}
 
 }
