@@ -61,6 +61,8 @@ public enum LabelingRuleType {
 
 	ShowGeo,
 	
-	ShowBio
+	ShowBio,
+	
+	FootNote
 
 }
