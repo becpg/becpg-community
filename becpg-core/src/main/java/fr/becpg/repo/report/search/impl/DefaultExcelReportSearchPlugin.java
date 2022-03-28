@@ -279,9 +279,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 		ExpressionParser parser = new SpelExpressionParser();
 	
 		Expression exp = parser.parseExpression(formula);
-		Object ret = exp.getValue(context);
-		
-		return ret;
+		return exp.getValue(context);
 
 	}
 	
