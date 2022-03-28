@@ -45,12 +45,8 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
-import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
@@ -279,7 +275,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			if ((formulatedProduct instanceof RawMaterialData) || !formulatedProduct.hasCompoListEl()) {
+			if ((formulatedProduct.isGeneric()) || Boolean.TRUE.equals(formulatedProduct.getIsIngListManual()) || !formulatedProduct.hasCompoListEl()) {
 				compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, formulatedProduct.getNodeRef()));
 			} else {
 				compoList = formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
@@ -1510,7 +1506,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				}
 
-				boolean isLocalSemiFinished = (productData instanceof LocalSemiFinishedProductData);
+				boolean isLocalSemiFinished = productData.isLocalSemiFinished();
 
 				// Calculate qty
 				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
@@ -1643,46 +1639,49 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				if (!DeclarationType.DoNotDeclare.equals(declarationType) || !aggregateRules.isEmpty()) {
 
-					// MultiLevel only if detail or group
-					if ((!DeclarationType.DoNotDetails.equals(declarationType) || !DeclarationType.DoNotDetailsAtEnd.equals(declarationType))
-							&& ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData))) {
-						Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(
-								productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
-						if ((sfComposite.getChildren() != null) && !sfComposite.getChildren().isEmpty()) {
-							for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
-								CompoListDataItem clone = sfChild.getData().clone();
-								clone.setParent(compoListDataItem);
-								sfChild.setData(clone);
-								composite.addChild(sfChild);
-							}
-							isMultiLevel = true;
-						}
-					}
-
-					// Case show ings and is empty use legalName instead #2558
-					if (!isMultiLevel && (DeclarationType.Declare.equals(declarationType)) && !isLocalSemiFinished) {
-						if (((productData.getIngList() == null) || productData.getIngList().isEmpty())) {
-							declarationType = DeclarationType.DoNotDetails;
-						} else {
-							// Case all ingredients are omit
-							boolean shouldOmit = true;
-							for (IngListDataItem ingListItem : productData.getIngList()) {
-								DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem, labelingFormulaContext);
-
-								if (!DeclarationType.Omit.equals(ingDeclarationType)) {
-									shouldOmit = false;
-									break;
+					if(!isLocalSemiFinished) {
+						// MultiLevel only if detail or group
+						if ((!DeclarationType.DoNotDetails.equals(declarationType) || !DeclarationType.DoNotDetailsAtEnd.equals(declarationType))
+								&& (!productData.isGeneric() && !Boolean.TRUE.equals(productData.getIsIngListManual()))) {
+							Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(
+									productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
+							if ((sfComposite.getChildren() != null) && !sfComposite.getChildren().isEmpty()) {
+								for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
+									CompoListDataItem clone = sfChild.getData().clone();
+									clone.setParent(compoListDataItem);
+									sfChild.setData(clone);
+									composite.addChild(sfChild);
 								}
+								isMultiLevel = true;
 							}
-							if (shouldOmit) {
-								if (logger.isDebugEnabled()) {
-									logger.debug("Only omitted ingredients, omit the raw material");
-								}
-								declarationType = DeclarationType.Omit;
-							}
-
 						}
-
+	
+						
+						if (!isMultiLevel && (DeclarationType.Declare.equals(declarationType)) ) {
+							// Case show ings and is empty use legalName instead #2558
+							if (((productData.getIngList() == null) || productData.getIngList().isEmpty())) {
+								declarationType = DeclarationType.DoNotDetails;
+							} else {
+								// Case all ingredients are omit
+								boolean shouldOmit = true;
+								for (IngListDataItem ingListItem : productData.getIngList()) {
+									DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem, labelingFormulaContext);
+	
+									if (!DeclarationType.Omit.equals(ingDeclarationType)) {
+										shouldOmit = false;
+										break;
+									}
+								}
+								if (shouldOmit) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("Only omitted ingredients, omit the raw material");
+									}
+									declarationType = DeclarationType.Omit;
+								}
+	
+							}
+	
+						}
 					}
 
 					if (!DeclarationType.Omit.equals(declarationType)) {

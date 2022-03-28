@@ -2758,7 +2758,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				getEntity().getReqCtrlList()
 						.add(new ReqCtrlListDataItem(
-								null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
+								null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
 										formulaFilter.getRuleName(), e.getLocalizedMessage()),
 								null, new ArrayList<>(), RequirementDataType.Labelling));
 				if (logger.isDebugEnabled()) {

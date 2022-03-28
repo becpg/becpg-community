@@ -86,7 +86,6 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private List<NodeRef> plants = new ArrayList<>();
 
 	protected Date startEffectivity;
-	
 	protected Date endEffectivity;
 	
 	/* Glop
@@ -149,10 +148,17 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private Integer reformulateCount;
 	private Integer currentReformulateCount;
 	private String formulationChainId;
-	private IngTypeItem ingType;
 	private Boolean isUpToDate = false;
 	private Boolean updateFormulatedDate = true;
 
+	/*
+	 * Labeling formulation
+	 */
+	
+	private IngTypeItem ingType;
+	private Boolean isIngListManual;
+	
+	
 	/*
 	 * Nutrient Score
 	 */
@@ -766,8 +772,17 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		}
 		return ret;
 	}
-
 	
+	@AlfProp
+	@AlfQname(qname = "bcpg:isIngListManual")
+	public Boolean getIsIngListManual() {
+		return isIngListManual;
+	}
+
+	public void setIsIngListManual(Boolean isIngListManual) {
+		this.isIngListManual = isIngListManual;
+	}
+
 	/**
 	 * <p>Getter for the field <code>ingType</code>.</p>
 	 *
