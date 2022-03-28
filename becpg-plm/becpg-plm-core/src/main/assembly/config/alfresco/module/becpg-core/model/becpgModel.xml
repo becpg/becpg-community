@@ -3293,6 +3293,10 @@
 				<property name="bcpg:dropPackagingOfComponents">
 					<type>d:boolean</type>
 				</property>
+				<property name="bcpg:isIngListManual">
+					<type>d:boolean</type>
+				</property>
+				
 			
 			</properties>
 		</aspect>
