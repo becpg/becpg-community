@@ -1,46 +1,37 @@
 function main() {
-	
-	var projectNode = search.findNode(project.nodeRef);
-	
-	var taskNode = search.findNode(task.nodeRef);
-
-    var taskList = getEntityListFromNode(projectNode, "taskList");
 
 	var canBeDeleted = true;
 
-	for (var i in taskList.childAssocs["cm:contains"]) {
-		var otherTask = taskList.childAssocs["cm:contains"][i];
-		if (otherTask != taskNode && otherTask.properties["cm:name"].includes("-validatingTask-")) {
-			if (otherTask.properties["pjt:tlState"] != "Completed") {
+	for (var i = 0; i < project.taskList.size(); i++) {
+		var otherTask = project.taskList.get(i);
+		if (otherTask != task && otherTask.name.includes("-validatingTask-")) {
+			if (otherTask.taskState != "Completed") {
 				canBeDeleted = false;
 				break;
 			}
 		}
 	}
-	
-	var document = search.findNode("workspace://SpacesStore/" + task.name.split("-validatingTask-")[1]);
-	
-	document.properties["sign:validationDate"] = new Date();
-	document.save();
-	
+
 	if (canBeDeleted) {
+		var docDeliverable;
+	
+		for (var i = 0; i < project.deliverableList.size(); i++) {
+			var deliverable = project.deliverableList.get(i);
+			if (deliverable.name.endsWith("doc") && deliverable.tasks.contains(task.nodeRef)) {
+				docDeliverable = deliverable;
+				break;
+			}
+		}
+
+		var document = search.findNode(docDeliverable.content);
+
+		document.properties["sign:validationDate"] = new Date();
+		document.save();
+
+		var projectNode = search.findNode(project.nodeRef);
+		
 		projectNode.remove();
 	}
-}
-
-function getEntityListFromNode(product, listName) {
-    var entityList = null;
-    if (product && product.childAssocs["bcpg:entityLists"]) {
-        var entityLists = product.childAssocs["bcpg:entityLists"][0];
-        var children = entityLists.childFileFolders();
-        for (var list in children) {
-            if (listName === children[list].properties["cm:name"]) {
-				entityList = children[list];
-                break;
-            }
-        }
-    }
-    return entityList;
 }
 
 main();
