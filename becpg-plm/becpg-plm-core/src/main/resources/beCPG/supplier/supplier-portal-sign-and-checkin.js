@@ -1,28 +1,26 @@
-function main() {
+function main()
+{
 
-	var projectNode = search.findNode(project.nodeRef);
+	var entity = search.findNode(project.entities.get(0));
 
-	for each (var entity in projectNode.assocs["pjt:projectEntity"]) {
-		
-		var docs = entity.childByNamePath('Documents').children;
-	
-		var signedDocument = null;
-	
-		var report = bcpg.getReportNode(entity);
-	
-		var reportName = report.properties["cm:name"].split(".pdf")[0];
-		
-		var signedName = bcpg.getMessage("plm.supplier.portal.signature.signed.name", reportName) + ".pdf";
-	
-		for (var i = 0; i < docs.length; i++) {
-			if (docs[i].properties['cm:name'] == signedName) {
-				signedDocument = docs[i];
-				break;
-			}
+	var docs = entity.childByNamePath('Documents').children;
+
+	var signedDocument = null;
+
+	var report = bcpg.getReportNode(entity);
+
+	var reportName = report.properties["cm:name"].split(".pdf")[0];
+
+	var signedName = bcpg.getMessage("plm.supplier.portal.signature.signed.name", reportName) + ".pdf";
+
+	for (var i = 0; i < docs.length; i++) {
+		if (docs[i].properties['cm:name'] == signedName) {
+			signedDocument = docs[i];
+			break;
 		}
-	
-		bSign.signDocument(signedDocument);
 	}
+
+	bSign.signDocument(signedDocument);
 }
 
 main();

@@ -19,7 +19,7 @@ function main() {
 		
         var deliverableList = getEntityListFromNode(project, "deliverableList");
         var taskList = getEntityListFromNode(project, "taskList");
-		var currentUser = bcpg.getFullyAuthenticatedUser();
+		var currentUser = search.findNode(currentUserNodeRef);
 
 		for each(var doc in items) {
 
@@ -48,7 +48,7 @@ function main() {
 			rejectDeliv.createAssociation(rejectScript, "pjt:dlContent");
 			rejectDeliv.createAssociation(rejectTask, "pjt:dlTask");
 
-			var rejectDocDeliv = deliverableList.createNode(rejectTaskName, "pjt:deliverableList");
+			var rejectDocDeliv = deliverableList.createNode(rejectTaskName + "-doc", "pjt:deliverableList");
 			rejectDocDeliv.properties["pjt:dlDescription"] = doc.properties["cm:name"];
 			rejectDocDeliv.properties["pjt:dlState"] = "Planned";
 			rejectDocDeliv.save();
@@ -98,6 +98,7 @@ function main() {
 				urlDeliv.properties["pjt:dlState"] = "Planned";
 				urlDeliv.save();
 				urlDeliv.createAssociation(signTask, "pjt:dlTask");
+				urlDeliv.createAssociation(doc, "pjt:dlContent");
 				
 				var signingDeliv = deliverableList.createNode(signTaskName + " - signing", "pjt:deliverableList");
 				signingDeliv.properties["pjt:dlDescription"] = doc.properties["cm:name"];
@@ -129,7 +130,7 @@ function main() {
 			var validatingScript = search.xpathSearch("/app:company_home/app:dictionary/app:scripts/cm:validate-signature.js")[0];
 			validatingDeliv.createAssociation(validatingScript, "pjt:dlContent");
 			
-			var documentDeliv = deliverableList.createNode(doc.properties["cm:name"], "pjt:deliverableList");
+			var documentDeliv = deliverableList.createNode(doc.properties["cm:name"] + "-doc", "pjt:deliverableList");
 			documentDeliv.properties["pjt:dlDescription"] = doc.properties["cm:name"];
 			documentDeliv.properties["pjt:dlState"] = "Planned";
 			documentDeliv.save();
