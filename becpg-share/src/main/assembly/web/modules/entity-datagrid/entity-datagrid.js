@@ -1411,7 +1411,7 @@
                                 label : this.fnRenderCellActionsHeader(),
                                 sortable : false,
                                 formatter : this.fnRenderCellActions(),
-                                width :   40 
+                                width :   60 
                             });
                             
                            delete me.widgets.columnConfigurer;

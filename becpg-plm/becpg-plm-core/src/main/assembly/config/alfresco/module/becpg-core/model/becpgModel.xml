@@ -3650,6 +3650,10 @@
 		                  <facetable>true</facetable>
 		            </index>
 				</property>
+				<property name="bcpg:isIngListManual">
+					<type>d:boolean</type>
+				</property>
+				
 			
 			</properties>
 		</aspect>
