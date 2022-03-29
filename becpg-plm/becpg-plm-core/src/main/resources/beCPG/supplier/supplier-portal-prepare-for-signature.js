@@ -4,46 +4,43 @@ function main() {
 
 	var supplier = projectNode.assocs["bcpg:suppliers"][0].assocs["bcpg:supplierAccountRef"][0];
 
-	for each (var entity in projectNode.assocs["pjt:projectEntity"]) {
+	var entity = search.findNode(project.entities.get(0));
 
-		var report = bcpg.getReportNode(entity);
+	var report = bcpg.getReportNode(entity);
 
-		var reportName = report.properties["cm:name"].split(".pdf")[0];
-		
-		var signedName = bcpg.getMessage("plm.supplier.portal.signature.signed.name", reportName) + ".pdf";
+	var reportName = report.properties["cm:name"].split(".pdf")[0];
 
-		var signedReport = report.getParent().createNode(signedName, "cm:content");
+	var signedName = bcpg.getMessage("plm.supplier.portal.signature.signed.name", reportName) + ".pdf";
 
-		signedReport.createAssociation(supplier, "sign:recipients");
+	var signedReport = report.getParent().createNode(signedName, "cm:content");
 
-		bcpg.copyContent(report, signedReport);
+	signedReport.createAssociation(supplier, "sign:recipients");
 
-		var recipients = [];
-		
-		recipients.push(supplier);
+	bcpg.copyContent(report, signedReport);
 
-		bSign.prepareForSignature(signedReport, recipients);
+	var recipients = [];
 
-		var deliverables = projectNode.childAssocs["bcpg:entityLists"][0].childByNamePath('deliverableList').children;
-		var signDeliverable = null;
+	recipients.push(supplier);
 
-		for (var i = 0; i < deliverables.length; i++) {
-			if (deliverables[i].properties["pjt:dlDescription"] == bcpg.getMessage("plm.supplier.portal.deliverable.sign.url.name")) {
-				signDeliverable = deliverables[i];
-				break;
-			}
+	bSign.prepareForSignature(signedReport, recipients);
+
+	var signDeliverable;
+
+	for (var i = 0; i < project.deliverableList.size(); i++) {
+		var deliverable = project.deliverableList.get(i);
+		if (deliverable.description == bcpg.getMessage("plm.supplier.portal.deliverable.sign.url.name")) {
+			signDeliverable = deliverable;
+			break;
 		}
-		
-		var signatureUrl = bSign.getSignatureView(signedReport, null, signedReport.nodeRef);
-
-		signDeliverable.properties["pjt:dlDescription"] = signedName;
-		signDeliverable.properties["pjt:dlUrl"] = signatureUrl;
-
-		signDeliverable.save();
-
-		bSupplier.assignToSupplier(project, task, entity);
-
 	}
+	
+	var signatureUrl = bSign.getSignatureView(signedReport, null, task.nodeRef);
+
+	signDeliverable.description = signedName;
+	signDeliverable.url = signatureUrl;
+
+	bSupplier.assignToSupplier(project, task, entity);
+
 }
 
 main();

@@ -45,7 +45,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
@@ -134,18 +133,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	private EntityReportService entityReportService;
 
-	private PersonService personService;
-	
 	private boolean useBrowserLocale;
 
 	private boolean showEntitiesInTree = false;
 
 	private boolean showUnauthorizedWarning = true;
 
-	public void setPersonService(PersonService personService) {
-		this.personService = personService;
-	}
-	
 	public void setEntityFormatService(EntityFormatService entityFormatService) {
 		this.entityFormatService = entityFormatService;
 	}
@@ -821,8 +814,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param param a {@link java.lang.Object} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String getMessage(String messageKey, Object param) {
-		return I18NUtil.getMessage(messageKey, param, I18NUtil.getLocale());
+	public String getMessage(String messageKey, Object... param) {
+		return I18NUtil.getMessage(messageKey, param);
 	}
 
 	/**
@@ -1249,15 +1242,5 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
     		return count(type);
     	}
  	}
-
-	public ScriptNode getFullyAuthenticatedUser() {
-		
-		NodeRef fullyAuthenticatedUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
-		
-		return new ScriptNode(fullyAuthenticatedUser, serviceRegistry);
-	}
-	
-	
-	
 
 }
