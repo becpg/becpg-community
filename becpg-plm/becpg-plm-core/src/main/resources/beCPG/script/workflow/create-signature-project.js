@@ -13,7 +13,19 @@ function main() {
 		submitForm(project, formDataJson);
 		
 		if (!project.assocs["bcpg:entityTplRef"]) {
-			var defaultTemplate = search.xpathSearch("/app:company_home/cm:System/cm:EntityTemplates/cm:project")[0];
+			var defaultTemplate;
+			
+			var modelTemplates = search.xpathSearch("/app:company_home/cm:System/cm:EntityTemplates/cm:project");
+			
+			for (var i = 0; i < modelTemplates.length; i++) {
+				var modelTemplate = modelTemplates[i];
+				
+				if (modelTemplate.properties["bcpg:entityTplIsDefault"] == true) {
+					defaultTemplate = modelTemplate;
+					break;
+				}
+			}
+			
 			project.createAssociation(defaultTemplate, "bcpg:entityTplRef");
 		}
 		
@@ -61,7 +73,7 @@ function main() {
 				
 				var recipient = project.assocs["sign:recipients"][i];
 				
-				var signTaskName = bcpg.getMessage("signatureWorkflow.task-signature.name", doc.properties["cm:name"], recipient.properties["cm:firstName"], recipient.properties["cm:lastName"]);
+				var signTaskName = bcpg.getMessage("signatureWorkflow.task-signature.name", doc.properties["cm:name"]);
 				
 				var signTask = taskList.createNode(recipient.properties["cm:userName"] + "-signTask-" + doc.nodeRef.id, "pjt:taskList");
 				signTask.properties["pjt:tlTaskName"] = signTaskName;
@@ -84,7 +96,7 @@ function main() {
 
 				lastTask = signTask;
 				
-				var prepareDeliv = deliverableList.createNode(signTaskName + " - prepare", "pjt:deliverableList");
+				var prepareDeliv = deliverableList.createNode(doc.properties["cm:name"] + recipient.properties["cm:firstName"] + recipient.properties["cm:lastName"] + " - prepare", "pjt:deliverableList");
 				prepareDeliv.properties["pjt:dlDescription"] = doc.properties["cm:name"];
 				prepareDeliv.properties["pjt:dlState"] = "Planned";
 				prepareDeliv.properties["pjt:dlScriptExecOrder"] = "Pre";
@@ -93,14 +105,14 @@ function main() {
 				prepareDeliv.createAssociation(prepareScript, "pjt:dlContent");
 				prepareDeliv.createAssociation(signTask, "pjt:dlTask");
 				
-				var urlDeliv = deliverableList.createNode(signTaskName + " - url", "pjt:deliverableList");
+				var urlDeliv = deliverableList.createNode(doc.properties["cm:name"] + recipient.properties["cm:firstName"] + recipient.properties["cm:lastName"] + " - prepare" + " - url", "pjt:deliverableList");
 				urlDeliv.properties["pjt:dlDescription"] = doc.properties["cm:name"];
 				urlDeliv.properties["pjt:dlState"] = "Planned";
 				urlDeliv.save();
 				urlDeliv.createAssociation(signTask, "pjt:dlTask");
 				urlDeliv.createAssociation(doc, "pjt:dlContent");
 				
-				var signingDeliv = deliverableList.createNode(signTaskName + " - signing", "pjt:deliverableList");
+				var signingDeliv = deliverableList.createNode(doc.properties["cm:name"] + recipient.properties["cm:firstName"] + recipient.properties["cm:lastName"] + " - prepare" + " - signing", "pjt:deliverableList");
 				signingDeliv.properties["pjt:dlDescription"] = doc.properties["cm:name"];
 				signingDeliv.properties["pjt:dlState"] = "Planned";
 				signingDeliv.properties["pjt:dlScriptExecOrder"] = "Post";
