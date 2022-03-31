@@ -2705,6 +2705,9 @@
                                 	this.entity = obj.entity;
                                 }
                                 this.currentPage = 1;
+                                this.currentSort = null;
+                                this.currentSortDir = null;
+				
                                 this.queryExecutionId = null;
                                 this.isFilterFormLoaded = false;
                                 this.showingMoreActions = false;
