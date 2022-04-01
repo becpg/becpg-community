@@ -73,6 +73,8 @@
         }
         
         this.actionCount = 0;
+        
+        this.services.preferences = new Alfresco.service.Preferences();
 
         /**
          * Decoupled event listeners
@@ -945,10 +947,19 @@
 
                         _getColumnUrl : function(formId)
                         {
-                            return this.options.columnsUrl + "?itemType=" + encodeURIComponent(this.options.itemType != null ? this.options.itemType
-                                    : this.datalistMeta.itemType) + "&list=" + encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name
-                                    : this.options.list) + (formId != null ? "&formId=" + formId : "") + (this.options.clearCache ? "&noCache="+(new Date().getTime())
-                                    : "" ) + (this.options.siteId ? "&siteId=" + this.options.siteId : "") + (this.entity!=null ? "&entityType="+encodeURIComponent(this.entity.type) : "");
+	
+							var columnUrl = this.options.columnsUrl + "?itemType=" + encodeURIComponent(this.options.itemType != null ? this.options.itemType
+								: this.datalistMeta.itemType) + "&list=" + encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name
+									: this.options.list) + (formId != null ? "&formId=" + formId : "") + (this.options.siteId ? "&siteId=" + this.options.siteId : "")
+								+ (this.entity != null ? "&entityType=" + encodeURIComponent(this.entity.type) : "");
+	                            	
+	                        var	cacheTimeStamp  = Alfresco.util.findValueByDotNotation(this.services.preferences.get(), "fr.becpg.column.cache.timeStamp");
+
+							if (cacheTimeStamp!=null) {
+								columnUrl = columnUrl + ("&noCache=" + cacheTimeStamp);
+							}
+
+							return columnUrl;
                         },
 
                         /**
@@ -2699,8 +2710,8 @@
 	                                
 	                            }
 
-	                            if(obj.clearCache!=null){
-	                            	this.options.clearCache = obj.clearCache;
+	                            if(obj.clearCache!=null && obj.clearCache == true && obj.cacheTimeStamp){	                            	
+	                            	this.services.preferences.set("fr.becpg.column.cache", {"timeStamp": obj.cacheTimeStamp});
 	                            }
 	                            
                             	if(obj.extraDataParams!=null) {
