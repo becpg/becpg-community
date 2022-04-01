@@ -6,19 +6,19 @@ import org.json.JSONObject;
 
 public class NutriScoreFrame {
 
-	private static final String SCORE_STRING = "score";
+	public static final String SCORE_STRING = "score";
 
-	private static final String UPPER_VALUE = "upperValue";
+	public static final String UPPER_VALUE = "upperValue";
 
-	private static final String LOWER_VALUE = "lowerValue";
+	public static final String LOWER_VALUE = "lowerValue";
 
-	private static final String VALUE_STRING = "value";
+	public static final String VALUE_STRING = "value";
 
-	private Double value;
+	private Double value = 0d;
 
-	private Double lowerValue;
+	private Double lowerValue = 0d;
 	
-	private Double upperValue;
+	private Double upperValue = 0d;
 	
 	private Integer score = 0;
 	
@@ -26,6 +26,9 @@ public class NutriScoreFrame {
 		this.value = value;
 	}
 	 
+	public NutriScoreFrame() {
+	}
+
 	public Double getLowerValue() {
 		return lowerValue;
 	}
@@ -79,18 +82,9 @@ public class NutriScoreFrame {
 		JSONObject json = new JSONObject();
 		
 		json.put(VALUE_STRING, value);
-		
-		if (lowerValue != null) {
-			json.put(LOWER_VALUE, lowerValue == Double.MIN_VALUE ? "-Inf" : lowerValue);
-		}
-		
-		if (upperValue != null) {
-			json.put(UPPER_VALUE, upperValue == Double.MAX_VALUE ? "+Inf" : upperValue);
-		}
-		
-		if (score != null) {
-			json.put(SCORE_STRING, score);
-		}
+		json.put(LOWER_VALUE, lowerValue == Double.MIN_VALUE ? "-Inf" : lowerValue);
+		json.put(UPPER_VALUE, upperValue == Double.MAX_VALUE ? "+Inf" : upperValue);
+		json.put(SCORE_STRING, score);
 		
 		return json;
 	}
