@@ -203,13 +203,17 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode) {
  */
 function main() {
 	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId")
-	, mode = getArgument("mode"), clearCache = getArgument("clearCache"), siteId = getArgument("siteId")
+	, mode = getArgument("mode"), noCache = getArgument("noCache"), siteId = getArgument("siteId")
 	, entityType = getArgument("entityType");
 
+	
 	cache.maxAge = 3600; // in seconds
-
-	if (clearCache) {
-		cache.maxAge = 0;
+	cache.neverCache=false;
+	cache.isPublic=false;
+	cache.mustRevalidate=true;
+	
+	if (noCache) {
+	   cache.lastModified = new Date(noCache);	
 	}
 
 	var prefixedSiteId = siteId ? "-" + siteId : "";
