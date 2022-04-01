@@ -71,6 +71,10 @@
         {
             this.scopeId = htmlId;
         }
+        
+        this.actionCount = 0;
+        
+        this.services.preferences = new Alfresco.service.Preferences();
 
         /**
          * Decoupled event listeners
@@ -943,10 +947,19 @@
 
                         _getColumnUrl : function(formId)
                         {
-                            return this.options.columnsUrl + "?itemType=" + encodeURIComponent(this.options.itemType != null ? this.options.itemType
-                                    : this.datalistMeta.itemType) + "&list=" + encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name
-                                    : this.options.list) + (formId != null ? "&formId=" + formId : "") + (this.options.clearCache ? "&clearCache=true"
-                                    : "" ) + (this.options.siteId ? "&siteId=" + this.options.siteId : "") + (this.entity!=null ? "&entityType="+encodeURIComponent(this.entity.type) : "");
+	
+							var columnUrl = this.options.columnsUrl + "?itemType=" + encodeURIComponent(this.options.itemType != null ? this.options.itemType
+								: this.datalistMeta.itemType) + "&list=" + encodeURIComponent(this.datalistMeta.name != null ? this.datalistMeta.name
+									: this.options.list) + (formId != null ? "&formId=" + formId : "") + (this.options.siteId ? "&siteId=" + this.options.siteId : "")
+								+ (this.entity != null ? "&entityType=" + encodeURIComponent(this.entity.type) : "");
+	                            	
+	                        var	cacheTimeStamp  = Alfresco.util.findValueByDotNotation(this.services.preferences.get(), "fr.becpg.column.cache.timeStamp");
+
+							if (cacheTimeStamp!=null) {
+								columnUrl = columnUrl + ("&noCache=" + cacheTimeStamp);
+							}
+
+							return columnUrl;
                         },
 
                         /**
@@ -2670,12 +2683,19 @@
                           
                             if ((obj !== null))
                             {
+	
+								
 	                            	
 	                            if(obj.dataList){	
 	                            	if( this.datalistMeta!=null && this.datalistMeta.name!=null){
 	                            		Dom.removeClass(this.id+"-body",this.datalistMeta.name);
 	                            		if(obj.dataList.name!=null){
 	                            			Dom.addClass(this.id+"-body",obj.dataList.name);
+	                            			if(this.scopeId == ""){
+	                            				var queryParams = new URLSearchParams(window.location.search);
+												queryParams.set("list", obj.dataList.name);
+											    history.replaceState(null, null, "?"+queryParams.toString());	
+	                            			}
 	                            		}
 	                            	}
 	                            
@@ -2686,10 +2706,12 @@
 	                                }
 	                                
 	                                this.parentInputNodeRef = null;
+	                                
+	                                
 	                            }
 
-	                            if(obj.clearCache!=null){
-	                            	this.options.clearCache = obj.clearCache;
+	                            if(obj.clearCache!=null && obj.clearCache == true && obj.cacheTimeStamp){	                            	
+	                            	this.services.preferences.set("fr.becpg.column.cache", {"timeStamp": obj.cacheTimeStamp});
 	                            }
 	                            
                             	if(obj.extraDataParams!=null) {
@@ -2722,11 +2744,13 @@
 	                                    filterId : "all",
 	                                    filterData : ""
 	                                };
-	                                
-	                                var objNav = {};
+
+							         var objNav = {};
                                     objNav[this.scopeId + "filter"] = "all";
-                                    YAHOO.util.History.multiNavigate(objNav);
+                               		YAHOO.util.History.multiNavigate(objNav);
                                 }
+                                
+                                
                                 
                                 this.selectedItems = {};
                                 this.afterDataGridUpdate = [];
@@ -2747,6 +2771,8 @@
                                 {
                                     this.options.list = obj.list;
                                 }
+                                
+                                
 
                                 // Could happen more than once, so check return
                                 // value of

@@ -75,6 +75,8 @@
 			   }
 
 		   };
+		   
+		   var popupId = this.id + "-createRow"+ (this.actionCount++);
 
 		   var templateUrl = YAHOO.lang
 		         .substitute(
@@ -92,7 +94,7 @@
 		               });
 
 		   // Using Forms Service, so always create new instance
-		   var createRow = new Alfresco.module.SimpleDialog(this.id + "-createRow");
+		   var createRow = new Alfresco.module.SimpleDialog(popupId);
 		   createRow.bulkEdit = false;
 		   createRow.setOptions({
 		      width : this.options.formWidth,
@@ -105,10 +107,10 @@
 		      },
 		      doBeforeFormSubmit : {
 		         fn : function() {
-			         var checkBoxEl = Dom.get(this.id + "-createRow" + "-form-bulkAction");
+			         var checkBoxEl = Dom.get(popupId+ "-form-bulkAction");
 			         
-			         var parentInput =   Dom.get(this.id + "-createRow_prop_bcpg_parentLevel-added");
-			         var variantInput =   Dom.get(this.id + "-createRow_prop_bcpg_variantIds-added");
+			         var parentInput =   Dom.get(popupId+"_prop_bcpg_parentLevel-added");
+			         var variantInput =   Dom.get(popupId+"_prop_bcpg_variantIds-added");
 			         me.parentInputNodeRef = null;
 			         me.variantInputNodeRef = null;
 			         if(parentInput !=null && parentInput.value!=null && parentInput.value.length>0){
@@ -212,6 +214,8 @@
 		 */
 	   onActionEdit : function EntityDataGrid_onActionEdit(item) {
 		   var me = this;
+		   
+		   
 
 		   // Intercept before dialog show
 		   var doBeforeDialogShow = function EntityDataGrid_onActionEdit_doBeforeDialogShow(p_form, p_dialog) {
@@ -244,8 +248,10 @@
 		               });
 
 		   // Using Forms Service, so always create new instance
+		   
+		   var popupId = this.id + "-editDetails"+ (this.actionCount++);
 
-		   var editDetails = new Alfresco.module.SimpleDialog(this.id + "-editDetails");
+		   var editDetails = new Alfresco.module.SimpleDialog(popupId);
 
 		   editDetails.bulkEdit = false;
 		   editDetails.setOptions({
@@ -259,7 +265,7 @@
 		      },
 		      doBeforeFormSubmit : {
 		         fn : function() {
-			         var checkBoxEl = Dom.get(me.id + "-editDetails" + "-form-bulkAction");
+			         var checkBoxEl = Dom.get(popupId + "-form-bulkAction");
 
 			         if (checkBoxEl && checkBoxEl.checked) {
 				         me.onActionEditBulkEdit = true;
@@ -606,12 +612,15 @@
 				var itemType =  this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType;
 				var containerEl = Dom.get(this.id+'-columns-list').parentNode, html = "";
 				var colCount = 0;
-				var siteId = this.options.siteId 
+				var siteId = this.options.siteId;
+				
+				var timeStamp =  (new Date().getTime());
 					
 				Alfresco.util.Ajax.jsonGet({
 				url : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=datagrid-prefs&itemType=" + encodeURIComponent(itemType) + "&clearCache=true" 
 					+ (this.options.siteId ? "&siteId=" + this.options.siteId : "")
-					+ (this.entity!=null ? "&entityType="+encodeURIComponent(this.entity.type) : ""),
+					+ (this.entity!=null ? "&entityType="+encodeURIComponent(this.entity.type) : "")
+					+ ("&noCache="+ timeStamp),
 				successCallback : {
 					fn : function (response) {
 						var prefs = "fr.becpg.formulation.dashlet.custom.datagrid-prefs"+"."+itemType.replace(":","_");
@@ -653,7 +662,8 @@
 			            	
 			            	setTimeout(function(){
 			            		YAHOO.Bubbling.fire("activeDataListChanged", 
-			            	    		{clearCache :true}
+			            	    		{ clearCache :true,
+			            	    		  cacheTimeStamp : timeStamp }
 			            	    );
 			            	}, 1000);
 			            	
