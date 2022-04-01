@@ -953,9 +953,14 @@
 									: this.options.list) + (formId != null ? "&formId=" + formId : "") + (this.options.siteId ? "&siteId=" + this.options.siteId : "")
 								+ (this.entity != null ? "&entityType=" + encodeURIComponent(this.entity.type) : "");
 	                            	
-	                        var	cacheTimeStamp  = Alfresco.util.findValueByDotNotation(this.services.preferences.get(), "fr.becpg.column.cache.timeStamp");
+	                           	
+	                        var	cacheTimeStamp  = this.cacheTimeStamp
+	                        
+	                        if(!cacheTimeStamp){
+	                        	cacheTimeStamp  = Alfresco.util.findValueByDotNotation(this.services.preferences.get(), "fr.becpg.column.cache.timeStamp");
+	                        }
 
-							if (cacheTimeStamp!=null) {
+							if (cacheTimeStamp && cacheTimeStamp!=null) {
 								columnUrl = columnUrl + ("&noCache=" + cacheTimeStamp);
 							}
 
@@ -2710,7 +2715,8 @@
 	                                
 	                            }
 
-	                            if(obj.clearCache!=null && obj.clearCache == true && obj.cacheTimeStamp){	                            	
+	                            if(obj.clearCache!=null && obj.clearCache == true && obj.cacheTimeStamp){	    
+									this.cacheTimeStamp = obj.cacheTimeStamp;                        	
 	                            	this.services.preferences.set("fr.becpg.column.cache", {"timeStamp": obj.cacheTimeStamp});
 	                            }
 	                            
