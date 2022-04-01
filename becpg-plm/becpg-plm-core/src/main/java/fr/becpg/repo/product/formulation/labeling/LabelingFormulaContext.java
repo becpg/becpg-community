@@ -894,6 +894,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			for (Format format : messageFormat.getFormats()) {
 				if (format instanceof DecimalFormat) {
 					applyAutomaticPrecicion(((DecimalFormat) format), qty, defaultRoundingMode, useTotalPrecision);
+					break;
 				}
 			}
 		}
