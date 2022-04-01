@@ -7,8 +7,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 public class NutriScoreContext {
 
-	private static final String DISPLAY_VALUE = "displayValue";
-	private static final String VALUE = "value";
 	private static final String PROTEIN_STRING = "protein";
 	private static final String AOAC_FIBRE = "aoacFibre";
 	private static final String NSP_FIBRE = "nspFibre";
@@ -26,15 +24,15 @@ public class NutriScoreContext {
 	private static final String A_SCORE = "aScore";
 	private static final String NUTRI_SCORE = "nutriScore";
 
-	private NutriScoreFrame energy;
-	private NutriScoreFrame satFat;
-	private NutriScoreFrame totalFat;
-	private NutriScoreFrame totalSugar;
-	private NutriScoreFrame sodium;
-	private NutriScoreFrame percFruitsAndVetgs;
-	private NutriScoreFrame nspFibre;
-	private NutriScoreFrame aoacFibre;
-	private NutriScoreFrame protein;
+	private NutriScoreFrame energy = new NutriScoreFrame();
+	private NutriScoreFrame satFat = new NutriScoreFrame();
+	private NutriScoreFrame totalFat = new NutriScoreFrame();
+	private NutriScoreFrame totalSugar = new NutriScoreFrame();
+	private NutriScoreFrame sodium = new NutriScoreFrame();
+	private NutriScoreFrame percFruitsAndVetgs = new NutriScoreFrame();
+	private NutriScoreFrame nspFibre = new NutriScoreFrame();
+	private NutriScoreFrame aoacFibre = new NutriScoreFrame();
+	private NutriScoreFrame protein = new NutriScoreFrame();
 
 	private String category;
 
@@ -207,22 +205,22 @@ public class NutriScoreContext {
 		json.put(CLASS_LOWER_VALUE, classLowerValue == Double.MIN_VALUE ? "-Inf" : classLowerValue.intValue());
 		json.put(CLASS_UPPER_VALUE, classUpperValue == Double.MAX_VALUE ? "+Inf" : classUpperValue.intValue());
 
-		json.put(ENERGY_STRING, energy == null ? new JSONObject() : energy.toJSON());
-		json.put(SAT_FAT, satFat == null ? new JSONObject() : satFat.toJSON());
-		json.put(TOTAL_FAT, totalFat == null ? new JSONObject() : totalFat.toJSON());
-		json.put(TOTAL_SUGAR, totalSugar == null ? new JSONObject() : totalSugar.toJSON());
-		json.put(SODIUM_STRING, sodium == null ? new JSONObject() : sodium.toJSON());
-		json.put(PERC_FRUITS_AND_VETGS, percFruitsAndVetgs == null ? new JSONObject() : percFruitsAndVetgs.toJSON());
-		json.put(NSP_FIBRE, nspFibre == null ? new JSONObject() : nspFibre.toJSON());
-		json.put(AOAC_FIBRE, aoacFibre == null ? new JSONObject() : aoacFibre.toJSON());
-		json.put(PROTEIN_STRING, protein == null ? new JSONObject() : protein.toJSON());
+		json.put(ENERGY_STRING, energy.toJSON());
+		json.put(SAT_FAT, satFat.toJSON());
+		json.put(TOTAL_FAT, totalFat.toJSON());
+		json.put(TOTAL_SUGAR, totalSugar.toJSON());
+		json.put(SODIUM_STRING, sodium.toJSON());
+		json.put(PERC_FRUITS_AND_VETGS, percFruitsAndVetgs.toJSON());
+		json.put(NSP_FIBRE, nspFibre.toJSON());
+		json.put(AOAC_FIBRE, aoacFibre.toJSON());
+		json.put(PROTEIN_STRING, protein.toJSON());
 
 		return json;
 	}
 
 	public static NutriScoreContext parse(String nutriScoreDetails) {
 
-		JSONObject jsonValue = new JSONObject(nutriScoreDetails).getJSONObject(VALUE);
+		JSONObject jsonValue = new JSONObject(nutriScoreDetails);
 
 		NutriScoreContext nutriScoreContext = new NutriScoreContext();
 
@@ -249,62 +247,69 @@ public class NutriScoreContext {
 
 	}
 
-	public String buildNutrientDetails() {
-
-		JSONObject nutrientScoreDetails = new JSONObject();
-		nutrientScoreDetails.put(VALUE, toJSON());
-		nutrientScoreDetails.put(DISPLAY_VALUE, toDisplayValue());
-
-		return nutrientScoreDetails.toString();
-	}
-
-	public String toDisplayValue() {
+	public String toHtmlDisplayValue() {
 
 		StringBuilder sb = new StringBuilder();
-
-		JSONObject contextJson = toJSON();
-
+		
+		sb.append("@html");
+		sb.append("<b>");
 		sb.append(I18NUtil.getMessage("nutriscore.display.negative"));
-		sb.append("\n");
-
-		appendFrame(sb, energy, "nutriscore.display.energy");
-		appendFrame(sb, satFat, "nutriscore.display.satfat");
-		appendFrame(sb, totalFat, "nutriscore.display.totalfat");
-		appendFrame(sb, totalSugar, "nutriscore.display.totalsugar");
-		appendFrame(sb, sodium, "nutriscore.display.sodium");
-
-		sb.append("\n");
+		sb.append("</b>");
+		
+		sb.append("<ul>");
+		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.energy", energy.toJSON().get(NutriScoreFrame.LOWER_VALUE), energy.toJSON().get(NutriScoreFrame.VALUE_STRING), energy.toJSON().get(NutriScoreFrame.UPPER_VALUE), energy.toJSON().get(NutriScoreFrame.SCORE_STRING)));
+		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.satfat", satFat.toJSON().get(NutriScoreFrame.LOWER_VALUE), satFat.toJSON().get(NutriScoreFrame.VALUE_STRING), satFat.toJSON().get(NutriScoreFrame.UPPER_VALUE), satFat.toJSON().get(NutriScoreFrame.SCORE_STRING)));
+		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.totalfat", totalFat.toJSON().get(NutriScoreFrame.LOWER_VALUE), totalFat.toJSON().get(NutriScoreFrame.VALUE_STRING), totalFat.toJSON().get(NutriScoreFrame.UPPER_VALUE), totalFat.toJSON().get(NutriScoreFrame.SCORE_STRING)));
+		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.totalsugar", totalSugar.toJSON().get(NutriScoreFrame.LOWER_VALUE), totalSugar.toJSON().get(NutriScoreFrame.VALUE_STRING), totalSugar.toJSON().get(NutriScoreFrame.UPPER_VALUE), totalSugar.toJSON().get(NutriScoreFrame.SCORE_STRING)));
+		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.sodium", sodium.toJSON().get(NutriScoreFrame.LOWER_VALUE), sodium.toJSON().get(NutriScoreFrame.VALUE_STRING), sodium.toJSON().get(NutriScoreFrame.UPPER_VALUE), sodium.toJSON().get(NutriScoreFrame.SCORE_STRING)));
+		sb.append("</ul>");
+		
+		sb.append("</br>");
+		
+		sb.append("<b>");
 		sb.append(I18NUtil.getMessage("nutriscore.display.positive"));
-		sb.append("\n");
+		sb.append("</b>");
+		
+		sb.append("<ul>");
+		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.protein", protein.toJSON().get(NutriScoreFrame.LOWER_VALUE), protein.toJSON().get(NutriScoreFrame.VALUE_STRING), protein.toJSON().get(NutriScoreFrame.UPPER_VALUE), protein.toJSON().get(NutriScoreFrame.SCORE_STRING)));
+		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.percfruitsandveg", percFruitsAndVetgs.toJSON().get(NutriScoreFrame.LOWER_VALUE), percFruitsAndVetgs.toJSON().get(NutriScoreFrame.VALUE_STRING), percFruitsAndVetgs.toJSON().get(NutriScoreFrame.UPPER_VALUE), percFruitsAndVetgs.toJSON().get(NutriScoreFrame.SCORE_STRING)));
+		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.nspfibre", nspFibre.toJSON().get(NutriScoreFrame.LOWER_VALUE), nspFibre.toJSON().get(NutriScoreFrame.VALUE_STRING), nspFibre.toJSON().get(NutriScoreFrame.UPPER_VALUE), nspFibre.toJSON().get(NutriScoreFrame.SCORE_STRING)));
+		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.aoacfibre", aoacFibre.toJSON().get(NutriScoreFrame.LOWER_VALUE), aoacFibre.toJSON().get(NutriScoreFrame.VALUE_STRING), aoacFibre.toJSON().get(NutriScoreFrame.UPPER_VALUE), aoacFibre.toJSON().get(NutriScoreFrame.SCORE_STRING)));
+		sb.append("</ul>");
 
-		appendFrame(sb, protein, "nutriscore.display.protein");
-		appendFrame(sb, percFruitsAndVetgs, "nutriscore.display.percfruitsandveg");
-		appendFrame(sb, nspFibre, "nutriscore.display.nspfibre");
-		appendFrame(sb, aoacFibre, "nutriscore.display.aoacfibre");
+		sb.append("</br>");
+		
+		JSONObject contextJson = toJSON();
+		
+		sb.append("<p>");
+		sb.append(I18NUtil.getMessage("nutriscore.display.finalScore", contextJson.get(A_SCORE), contextJson.get(C_SCORE), contextJson.get(NUTRI_SCORE)));
+		sb.append("</p>");
+		
+		sb.append("</br>");
 
-		sb.append("\n");
-		sb.append(I18NUtil.getMessage("nutriscore.display.finalScore", contextJson.get(A_SCORE), contextJson.get(C_SCORE),
-				contextJson.get(NUTRI_SCORE)));
-		sb.append("\n");
-
-		sb.append("\n");
-		sb.append(I18NUtil.getMessage("nutriscore.display.class", contextJson.get(CLASS_LOWER_VALUE), contextJson.get(NUTRI_SCORE),
-				contextJson.get(CLASS_UPPER_VALUE), contextJson.getString(NUTRIENT_CLASS)));
-
+		sb.append("<p>");
+		sb.append(I18NUtil.getMessage("nutriscore.display.class", contextJson.get(CLASS_LOWER_VALUE), contextJson.get(NUTRI_SCORE), contextJson.get(CLASS_UPPER_VALUE), contextJson.getString(NUTRIENT_CLASS)));
+		sb.append("</p>");
+		
+		sb.append("<p>");
+		
+		String aClass = "A".equals(nutrientClass) ? "selected nutrient-class-a" : "nutrient-class-a";
+		String bClass = "B".equals(nutrientClass) ? "selected nutrient-class-b" : "nutrient-class-b";
+		String cClass = "C".equals(nutrientClass) ? "selected nutrient-class-c" : "nutrient-class-c";
+		String dClass = "D".equals(nutrientClass) ? "selected nutrient-class-d" : "nutrient-class-d";
+		String eClass = "E".equals(nutrientClass) ? "selected nutrient-class-e" : "nutrient-class-e";
+		
+        sb.append("<span class=\"" + aClass + "\">A</span>");
+        sb.append("<span class=\"" + bClass + "\">B</span>");
+        sb.append("<span class=\"" + cClass + "\">C</span>");
+        sb.append("<span class=\"" + dClass + "\">D</span>");
+        sb.append("<span class=\"" + eClass + "\">E</span>");
+		sb.append("</p>");
+		
 		return sb.toString();
+		
 	}
-
-	private void appendFrame(StringBuilder sb, NutriScoreFrame frame, String messageKey) {
-		if ((frame != null) && (frame.getValue() != null) && (frame.getLowerValue() != null) && (frame.getUpperValue() != null)) {
-
-			JSONObject frameJson = frame.toJSON();
-
-			sb.append(I18NUtil.getMessage(messageKey, frameJson.get("lowerValue"), frameJson.get(VALUE), frameJson.get("upperValue"),
-					frameJson.get("score")));
-			sb.append("\n");
-		}
-	}
-
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(aScore, aoacFibre, cScore, category, classLowerValue, classUpperValue, energy, nspFibre, nutriScore, nutrientClass,

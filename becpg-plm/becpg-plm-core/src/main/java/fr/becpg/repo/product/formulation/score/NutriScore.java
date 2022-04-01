@@ -87,7 +87,7 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				
 				productData.setNutrientScore((double) Nutrient5C2021Helper.build5CScore(nutriScoreContext));
 				productData.setNutrientClass(Nutrient5C2021Helper.buildNutrientClass(nutriScoreContext));
-				productData.setNutrientDetails(nutriScoreContext.buildNutrientDetails());
+				productData.setNutrientDetails(nutriScoreContext.toJSON().toString());
 				
 			} catch (Exception e) {
 				MLText errorMsg = MLTextHelper.getI18NMessage("message.formulate.formula.incorrect.nutrientProfile", e.getLocalizedMessage());

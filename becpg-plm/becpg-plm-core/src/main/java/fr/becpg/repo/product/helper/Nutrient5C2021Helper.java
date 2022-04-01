@@ -116,93 +116,74 @@ public class Nutrient5C2021Helper {
 	}
 	
 	public static int build5CScore(NutriScoreContext nutriScoreContext) {
-		
+
 		String category = nutriScoreContext.getCategory();
-		
+
 		int aScore = 0;
 		int cScore = 0;
 
 //		les arrondis sont déja effectués
-		
+
 		double[][] aCategories = getACategory(NutrientProfileCategory.valueOf(category));
 		double[][] cCategories = getCCategory(NutrientProfileCategory.valueOf(category));
 
-		if (nutriScoreContext.getEnergy() != null) {
-			buildNutriScoreFrame(nutriScoreContext.getEnergy(), 10, aCategories[0]);
-			aScore += nutriScoreContext.getEnergy().getScore();
-		}
+		buildNutriScoreFrame(nutriScoreContext.getEnergy(), 10, aCategories[0]);
+		aScore += nutriScoreContext.getEnergy().getScore();
 
 		if (NutrientProfileCategory.Fats.equals(NutrientProfileCategory.valueOf(category))) {
-			if ((nutriScoreContext.getSatFat() != null) && (nutriScoreContext.getTotalFat() != null)) {
-				
-				double satFat = nutriScoreContext.getSatFat().getValue();
-				double totalFat = nutriScoreContext.getTotalFat().getValue();
-				
+
+			double satFat = nutriScoreContext.getSatFat().getValue();
+			double totalFat = nutriScoreContext.getTotalFat().getValue();
+
+			if (totalFat != 0) {
 				nutriScoreContext.getTotalFat().setValue((satFat / totalFat) * 100);
-				
-				buildNutriScoreFrame(nutriScoreContext.getTotalFat(), 10, aCategories[1]);
-				
-				aScore += nutriScoreContext.getTotalFat().getScore();
 			}
-		} else if (nutriScoreContext.getSatFat() != null) {
-			
+
+			buildNutriScoreFrame(nutriScoreContext.getTotalFat(), 10, aCategories[1]);
+
+			aScore += nutriScoreContext.getTotalFat().getScore();
+		} else {
 			buildNutriScoreFrame(nutriScoreContext.getSatFat(), 10, aCategories[1]);
-			
 			aScore += nutriScoreContext.getSatFat().getScore();
 		}
 
-		if (nutriScoreContext.getTotalSugar() != null) {
+		buildNutriScoreFrame(nutriScoreContext.getTotalSugar(), 10, aCategories[2]);
 
-			buildNutriScoreFrame(nutriScoreContext.getTotalSugar(), 10, aCategories[2]);
-			
-			aScore += nutriScoreContext.getTotalSugar().getScore();
-		}
+		aScore += nutriScoreContext.getTotalSugar().getScore();
 
-		if (nutriScoreContext.getSodium() != null) {
-			
-			buildNutriScoreFrame(nutriScoreContext.getSodium(), 10, aCategories[3]);
-			
-			aScore += nutriScoreContext.getSodium().getScore();
-		}
+		buildNutriScoreFrame(nutriScoreContext.getSodium(), 10, aCategories[3]);
 
-		if (nutriScoreContext.getPercFruitsAndVetgs() != null) {
-			
-			buildNutriScoreFrame(nutriScoreContext.getPercFruitsAndVetgs(), 10, cCategories[0]);
-			
-			cScore += nutriScoreContext.getPercFruitsAndVetgs().getScore();
-		}
+		aScore += nutriScoreContext.getSodium().getScore();
+
+		buildNutriScoreFrame(nutriScoreContext.getPercFruitsAndVetgs(), 10, cCategories[0]);
+
+		cScore += nutriScoreContext.getPercFruitsAndVetgs().getScore();
 
 		if ((aScore < 11) || NutrientProfileCategory.Cheeses.equals(NutrientProfileCategory.valueOf(category))
-				|| ((aScore >= 11) && (cScore >= 5) && !NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))
-				|| ((aScore >= 11) && (cScore >= 10) && NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))) {
-			if (nutriScoreContext.getProtein() != null) {
-				
-				buildNutriScoreFrame(nutriScoreContext.getProtein(), 5, cCategories[3]);
-				
-				cScore += nutriScoreContext.getProtein().getScore();
-			}
+				|| ((aScore >= 11) && (cScore >= 5)
+						&& !NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))
+				|| ((aScore >= 11) && (cScore >= 10)
+						&& NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))) {
+
+			buildNutriScoreFrame(nutriScoreContext.getProtein(), 5, cCategories[3]);
+
+			cScore += nutriScoreContext.getProtein().getScore();
 		}
 
-		if (nutriScoreContext.getNspFibre() != null) {
-			
-			buildNutriScoreFrame(nutriScoreContext.getNspFibre(), 5, cCategories[1]);
-			
-			cScore += nutriScoreContext.getNspFibre().getScore();
-		}
+		buildNutriScoreFrame(nutriScoreContext.getNspFibre(), 5, cCategories[1]);
 
-		if (nutriScoreContext.getAoacFibre() != null) {
-			
-			buildNutriScoreFrame(nutriScoreContext.getAoacFibre(), 5, cCategories[2]);
-			
-			cScore += nutriScoreContext.getAoacFibre().getScore();
-		}
+		cScore += nutriScoreContext.getNspFibre().getScore();
+
+		buildNutriScoreFrame(nutriScoreContext.getAoacFibre(), 5, cCategories[2]);
+
+		cScore += nutriScoreContext.getAoacFibre().getScore();
 
 		int result = aScore - cScore;
-		
+
 		nutriScoreContext.setNutriScore(result);
 		nutriScoreContext.setAScore(aScore);
 		nutriScoreContext.setCScore(cScore);
-		
+
 		return nutriScoreContext.getNutriScore();
 	}
 
