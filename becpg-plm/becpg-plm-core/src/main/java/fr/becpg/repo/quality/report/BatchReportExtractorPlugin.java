@@ -30,10 +30,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
-import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.report.ProductReportExtractorPlugin;
 import fr.becpg.repo.quality.data.BatchData;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -112,17 +109,8 @@ public class BatchReportExtractorPlugin extends ProductReportExtractorPlugin {
 			addDataListStateAndName(compoListElt, batchData.getCompoList().get(0).getParentNodeRef());
 
 			for (CompoListDataItem dataItem : batchData.getCompoList()) {
-				if (dataItem.getProduct() != null) {
-
-					ProductData subProductData = (ProductData) alfrescoRepository.findOne(dataItem.getProduct());
-
-					Double parentLossRatio = FormulationHelper.getComponentLossPerc(subProductData, dataItem);
-					Double qty = dataItem.getQty() != null ? dataItem.getQty() : 0d;
-					Double qtyForCost = FormulationHelper.getQtyForCost(dataItem, 0d, subProductData,
-							CostsCalculatingFormulationHandler.keepProductUnit);
-
-					loadCompoListItem(batchData.getNodeRef(), null, dataItem, subProductData, compoListElt, 1, qty, qtyForCost, parentLossRatio,
-							context);
+				if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
+					loadCompoListItem(batchData.getNodeRef(), null, compoListElt, 1, new CurrentLevelQuantities(dataItem), context);
 				}
 			}
 
