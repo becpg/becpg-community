@@ -51,15 +51,15 @@ public class NutriScoreContext {
 	public NutriScoreContext(Double energyValue, Double satFatValue, Double totalFatValue, Double totalSugarValue, Double sodiumValue,
 			Double percFruitsAndVetgsValue, Double nspFibreValue, Double aoacFibreValue, Double proteinValue, String category) {
 
-		this.energy = energyValue == null ? null : new NutriScoreFrame(energyValue);
-		this.satFat = satFatValue == null ? null : new NutriScoreFrame(satFatValue);
-		this.totalFat = totalFatValue == null ? null : new NutriScoreFrame(totalFatValue);
-		this.totalSugar = totalSugarValue == null ? null : new NutriScoreFrame(totalSugarValue);
-		this.sodium = sodiumValue == null ? null : new NutriScoreFrame(sodiumValue);
-		this.percFruitsAndVetgs = percFruitsAndVetgsValue == null ? null : new NutriScoreFrame(percFruitsAndVetgsValue);
-		this.nspFibre = nspFibreValue == null ? null : new NutriScoreFrame(nspFibreValue);
-		this.aoacFibre = aoacFibreValue == null ? null : new NutriScoreFrame(aoacFibreValue);
-		this.protein = proteinValue == null ? null : new NutriScoreFrame(proteinValue);
+		this.energy = new NutriScoreFrame(energyValue);
+		this.satFat = new NutriScoreFrame(satFatValue);
+		this.totalFat = new NutriScoreFrame(totalFatValue);
+		this.totalSugar = new NutriScoreFrame(totalSugarValue);
+		this.sodium = new NutriScoreFrame(sodiumValue);
+		this.percFruitsAndVetgs = new NutriScoreFrame(percFruitsAndVetgsValue);
+		this.nspFibre = new NutriScoreFrame(nspFibreValue);
+		this.aoacFibre = new NutriScoreFrame(aoacFibreValue);
+		this.protein = new NutriScoreFrame(proteinValue);
 		this.category = category;
 	}
 

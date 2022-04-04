@@ -11,7 +11,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,8 +69,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 			
 			Assert.assertEquals((Double) 50d, finishedProductData.getEcoScore());
 			
-			JSONObject result = new JSONObject(finishedProductData.getEcoScoreClass());
-			Assert.assertEquals("C", result.get("scoreClass"));
+			Assert.assertEquals("C", finishedProductData.getEcoScoreClass());
 			
 			alfrescoRepository.save(finishedProductData);
 
@@ -109,8 +107,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 			frenchEcoScore.formulateScore(finishedProductData);
 			
 			Assert.assertEquals((Double) 79d, finishedProductData.getEcoScore());
-			JSONObject result = new JSONObject(finishedProductData.getEcoScoreClass());
-			Assert.assertEquals("B", result.get("scoreClass"));
+			Assert.assertEquals("B", finishedProductData.getEcoScoreClass());
 			
 			alfrescoRepository.save(finishedProductData);
 
@@ -150,8 +147,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 			frenchEcoScore.formulateScore(finishedProductData);
 			
 			Assert.assertEquals((Double) 59d, finishedProductData.getEcoScore());
-			JSONObject result = new JSONObject(finishedProductData.getEcoScoreClass());
-			Assert.assertEquals("C", result.get("scoreClass"));
+			Assert.assertEquals("C", finishedProductData.getEcoScoreClass());
 			
 			alfrescoRepository.save(finishedProductData);
 			
