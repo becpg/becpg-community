@@ -431,7 +431,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, false);
 	}
 
-	private class CurrentLevelQuantities {
+	protected class CurrentLevelQuantities {
 
 		private Double qtyForProduct;
 		private Double qtyForCost;
