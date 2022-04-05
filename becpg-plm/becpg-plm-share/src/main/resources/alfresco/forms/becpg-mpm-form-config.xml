@@ -26,6 +26,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -51,7 +52,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
-
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
 				<appearance>
@@ -72,6 +73,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />					
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName">
@@ -79,6 +81,9 @@
 					</field>
 					<field id="cm:title">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -89,6 +94,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" />						
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -120,6 +126,7 @@
 					<hide id="exif:xResolution" />
 					<hide id="exif:yResolution" />
 					<hide id="exif:resolutionUnit" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -146,6 +153,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="rep:reportKinds" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -164,6 +172,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 					<show id="rep:reportKinds" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName">
@@ -171,6 +180,9 @@
 					</field>
 					<field id="cm:title">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -181,6 +193,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" />
 					<show id="cm:content" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>

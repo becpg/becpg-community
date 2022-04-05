@@ -205,6 +205,9 @@
                             </control-param>
                         </control>
                     </field>
+                    <field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
                 </appearance>
             </form>
 
@@ -265,6 +268,11 @@
 					<show id="bcpg:lvValue" />
 					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">
