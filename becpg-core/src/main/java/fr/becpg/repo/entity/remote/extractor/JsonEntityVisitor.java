@@ -322,10 +322,9 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 								}
 							}
-
+						} else {
+							logger.warn("Existing "+ dataListName+ " (" + dataListTypeQName + ") list doesn't inheritate from 'bcpg:entityListItem'.");
 						}
-					} else {
-						logger.warn("Existing "+ dataListName+ " (" + dataListTypeQName + ") list doesn't inheritate from 'bcpg:entityListItem'.");
 					}
 				}
 
