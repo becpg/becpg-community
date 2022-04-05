@@ -1240,6 +1240,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1254,6 +1255,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="datagrid">
@@ -1261,6 +1263,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1275,6 +1278,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1289,6 +1293,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="datagrid">
@@ -1296,6 +1301,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1311,6 +1317,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1326,6 +1333,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="datagrid">
@@ -1334,6 +1342,7 @@
 					<show id="bcpg:charactName" force="true" />
 					<show id="cm:title" force="true" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
