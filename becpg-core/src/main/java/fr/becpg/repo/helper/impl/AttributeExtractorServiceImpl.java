@@ -754,15 +754,20 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if ((FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) && !extracted.isEmpty()) {
 
 					if (extracted.size() > 1) {
-						Double value;
+						
 						for (Map<String, Object> extractedElt : extracted) {
 							for (Map.Entry<String, Object> entry : extractedElt.entrySet()) {
-								if ((entry.getValue() instanceof Number) && ret.containsKey(field.getFieldName() + "_" + entry.getKey())
-										&& (ret.get(field.getFieldName() + "_" + entry.getKey()) instanceof Number)) {
-									value = (Double) ret.get(field.getFieldName() + "_" + entry.getKey()) + (Double) entry.getValue();
-									ret.put(field.getFieldName() + "_" + entry.getKey(), value);
+								String key = field.getFieldName() + "_" + entry.getKey();
+								if ((entry.getValue() instanceof Number) && ret.containsKey(key)
+										&& (ret.get(key) instanceof Number)) {
+									Double	value = (Double) ret.get(key) + (Double) entry.getValue();
+									ret.put(key, value);
+								} if ((entry.getValue() instanceof String) && ret.containsKey(key)
+										&& (ret.get(key) instanceof String)) {
+									String value = (String) ret.get(key) +","+ (String) entry.getValue();
+									ret.put(key, value);
 								} else {
-									ret.put(field.getFieldName() + "_" + entry.getKey(), entry.getValue());
+									ret.put(key, entry.getValue());
 								}
 							}
 						}
