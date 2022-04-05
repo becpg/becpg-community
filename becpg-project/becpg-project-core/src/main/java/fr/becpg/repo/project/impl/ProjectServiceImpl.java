@@ -455,7 +455,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 
 		for (NodeRef resourceNodeRef : resources) {
 			String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
-			if (isRoleAuhtority(authorityName)) {
+			if (ProjectHelper.isRoleAuhtority(authorityName)) {
 				logger.debug("Found project role : " + authorityName);
 				QName propName = extractRolePropName(authorityName);
 				if (propName != null) {
@@ -592,9 +592,6 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 		return QName.createQName(propName, namespaceService);
 	}
 
-	private boolean isRoleAuhtority(String authorityName) {
-		return (authorityName != null) && authorityName.startsWith(PermissionService.GROUP_PREFIX + ProjectRepoConsts.PROJECT_GROUP_PREFIX);
-	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -607,7 +604,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 			if ((resourceNodeRef != null) && nodeService.exists(resourceNodeRef)) {
 				String authorityName = authorityDAO.getAuthorityName(resourceNodeRef);
 
-				if ((authorityName != null) && !isRoleAuhtority(authorityName)) {
+				if ((authorityName != null) && !ProjectHelper.isRoleAuhtority(authorityName)) {
 					logger.debug("Set permission for authority: " + authorityName + " allow :" + allow);
 					ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
 					List<DeliverableListDataItem> deliverableList = ProjectHelper.getDeliverables(projectData, taskListNodeRef);
@@ -702,11 +699,8 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	public boolean checkIsInSecurityGroup(NodeRef nodeRef, PermissionModel permissionModel) {
 		if(nodeRef!=null ) {
 			for(NodeRef groupNodeRef : permissionModel.getGroups()) {
-				String authorityName = authorityDAO.getAuthorityName(groupNodeRef);
-			
-				
-				if(isRoleAuhtority(authorityName)) {
-					
+				String authorityName = authorityDAO.getAuthorityName(groupNodeRef);						
+				if(ProjectHelper.isRoleAuhtority(authorityName)) {
 					List<NodeRef> resources = extractResources(nodeRef, Arrays.asList(groupNodeRef));
 					if(resources.contains(personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()))) {
 						return true;

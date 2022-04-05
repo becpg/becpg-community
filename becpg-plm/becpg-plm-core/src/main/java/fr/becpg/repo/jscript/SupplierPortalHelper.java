@@ -165,6 +165,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	 */
 	public void assignToSupplier(final ProjectData project, final TaskListDataItem task, final ScriptNode entityNodeRef, boolean moveSupplier) {
 
+		
 		if (task != null) {
 			if (entityNodeRef != null) {
 				NodeRef supplierNodeRef = null;
@@ -187,10 +188,8 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 					associationService.update(project.getNodeRef(), PLMModel.ASSOC_SUPPLIERS, Collections.singletonList(supplierNodeRef));
 
 					List<NodeRef> accountNodeRefs = associationService.getTargetAssocs(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
-					if (accountNodeRefs != null) {
-						if (task.getResources() != null) {
-							task.getResources().clear();
-						} else {
+					if (accountNodeRefs != null && (task.getResources() ==null || task.getResources().isEmpty())) {
+						if (task.getResources() == null) {
 							task.setResources(new ArrayList<>());
 						}
 						task.getResources().addAll(accountNodeRefs);
