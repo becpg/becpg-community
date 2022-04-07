@@ -329,7 +329,7 @@
 					itemId: nodeRef,
 					mode: "edit",
 					submitType: "json",
-					formId: "doclib-simple-metadata"
+					formId: this.options.simpleFormId != null  ? this.options.simpleFormId : "doclib-simple-metadata"
 				});
 
 			// Using Forms Service, so always create new instance

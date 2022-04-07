@@ -2311,7 +2311,7 @@
 	                       <control-param name="maxLength">10000</control-param>
 	                   </control>
 					</field>
-						<field id="cm:from">
+					<field id="cm:from">
 						<control template="/org/alfresco/components/form/controls/date.ftl">
 							<control-param name="showTime">false</control-param>
 						</control>

@@ -69,3 +69,23 @@ div.entityFolderInstructions {
 	background-image: url(../basket/images/basket-selected_16x16.png);
 }
 
+.detail .effectivity-past {
+    color: red;
+}
+
+.detail .effectivity-future {
+    color: green;
+}
+
+.simple-document .detail .effectivity {
+    color: magenta;
+}
+
+.simple-document .detail .effectivity {
+    color: green;
+}
+
+.simple-document .detail .effectivity-empty {
+    color: orange !important;
+}
+
