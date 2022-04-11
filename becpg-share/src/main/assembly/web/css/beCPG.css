@@ -490,6 +490,17 @@ span.productCatalog {
 }
 
 span.product,
+span.productCollection,
+span.productCollection-ToValidate,
+.entity.bcpg-productCollection,
+.entity.productCollection  {
+    background-image: url("../../components/images/filetypes/generic-productCollection-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
+
+
+span.product,
 span.finishedProduct,
 span.finishedProduct-ToValidate,
 .entity.bcpg-finishedProduct,

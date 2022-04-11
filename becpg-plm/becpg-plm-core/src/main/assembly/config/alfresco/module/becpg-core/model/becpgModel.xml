@@ -939,6 +939,53 @@
 				<aspect>bcpg:formulatedEntityAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		<type name="bcpg:productCollection">
+			<parent>bcpg:entityV2</parent>
+			<properties>
+	            <property name="bcpg:productCollectionHierarchy1">
+					<type>d:noderef</type>
+				</property>
+				<property name="bcpg:productCollectionHierarchy2">
+					<type>d:noderef</type>
+				</property>
+				<property name="bcpg:productCollectionState">
+					<type>d:text</type>
+					<default>Simulation</default>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>false</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:systemState" />
+					</constraints>
+				</property>
+			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:entityTplRefAspect</aspect>
+				<aspect>bcpg:codeAspect</aspect>
+				<aspect>bcpg:entityListsAspect</aspect>
+			</mandatory-aspects>
+		</type>
+		
+		<type name="bcpg:productList">
+			<parent>bcpg:entityListItem</parent>
+			<associations>
+				<association name="bcpg:productListProduct">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>
+		
 
 		<type name="bcpg:charact">
 			<parent>bcpg:entityListItem</parent>

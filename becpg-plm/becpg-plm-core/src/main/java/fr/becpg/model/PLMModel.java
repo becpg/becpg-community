@@ -31,6 +31,8 @@ public interface PLMModel {
 	QName TYPE_PACKAGINGMATERIAL = QName.createQName(BeCPGModel.BECPG_URI, "packagingMaterial");
 	/** Constant <code>TYPE_RESOURCEPRODUCT</code> */
 	QName TYPE_RESOURCEPRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "resourceProduct");
+	
+	QName TYPE_PRODUCTCOLLECTION = QName.createQName(BeCPGModel.BECPG_URI, "productCollection");
 
 	/** Constant <code>TYPE_PRODUCT_SPECIFICATION</code> */
 	QName TYPE_PRODUCT_SPECIFICATION = QName.createQName(BeCPGModel.BECPG_URI, "productSpecification");
@@ -64,6 +66,11 @@ public interface PLMModel {
 	/** Constant <code>ASSOC_ALLERGENSUBSETS</code> */
 	QName ASSOC_ALLERGENSUBSETS = QName.createQName(BeCPGModel.BECPG_URI, "allergenSubset");
 
+	//productList
+	
+	QName TYPE_PRODUCTLIST = QName.createQName(BeCPGModel.BECPG_URI, "productList");
+	QName ASSOC_PRODUCTLIST_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "productListProduct");
+	
 	// compoList
 	/** Constant <code>TYPE_COMPOLIST</code> */
 	QName TYPE_COMPOLIST = QName.createQName(BeCPGModel.BECPG_URI, "compoList");
@@ -676,6 +683,8 @@ public interface PLMModel {
 	QName PROP_MODIFIED_CATALOG2 =  QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog2");
 	/** Constant <code>PROP_MODIFIED_CATALOG3</code> */
 	QName PROP_MODIFIED_CATALOG3 =  QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog3");
+
+
 
 	
 	
