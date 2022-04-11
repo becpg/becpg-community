@@ -62,7 +62,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
 		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
 
-		String depthLevel = parameter != null ? parameter.replaceAll("Level", "").replaceAll("Max", "").replaceAll("Only", "") : "All";
+		String depthLevel = parameter != null ? parameter.replace("Level", "").replace("Max", "").replace("Only", "") : "All";
 
 		for (NodeRef entityNodeRef : searchResults) {
 			QName entityType = nodeService.getType(entityNodeRef);

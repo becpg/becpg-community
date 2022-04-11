@@ -103,5 +103,5 @@ public interface GS1Model {
 	
 	QName PROP_PRODUCT_ACTIVITY_TYPE_CODE = QName.createQName(GS1_URI, "productActivityTypeCode");
 	
-
+	QName TYPE_TRADEITEM_PRICE_LIST = QName.createQName(GS1_URI, "tradeItemPriceList");
 }
