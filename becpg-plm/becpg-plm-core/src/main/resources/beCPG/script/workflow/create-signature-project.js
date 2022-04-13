@@ -145,6 +145,7 @@ function main() {
 			var documentDeliv = deliverableList.createNode(doc.properties["cm:name"] + "-doc", "pjt:deliverableList");
 			documentDeliv.properties["pjt:dlDescription"] = doc.properties["cm:name"];
 			documentDeliv.properties["pjt:dlState"] = "Planned";
+			documentDeliv.properties["pjt:dlUrl"] = bSign.getSignatureView(doc, null, validatingTask.nodeRef);
 			documentDeliv.save();
 			documentDeliv.createAssociation(validatingTask, "pjt:dlTask");
 			documentDeliv.createAssociation(doc, "pjt:dlContent");
