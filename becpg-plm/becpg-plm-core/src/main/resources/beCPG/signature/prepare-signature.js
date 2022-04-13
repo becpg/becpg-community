@@ -20,7 +20,7 @@ function main() {
 
 	bSign.prepareForSignature(document, recipients);
 
-	var signatureUrl = bSign.getSignatureView(document, null, task.nodeRef);
+	var signatureUrl = bSign.getSignatureView(document, recipient, task.nodeRef);
 
 	urlDeliverable.url = signatureUrl;
 
