@@ -34,7 +34,7 @@ function main() {
 		}
 	}
 	
-	var signatureUrl = bSign.getSignatureView(signedReport, null, task.nodeRef);
+	var signatureUrl = bSign.getSignatureView(signedReport, supplier, task.nodeRef);
 
 	signDeliverable.description = signedName;
 	signDeliverable.url = signatureUrl;
