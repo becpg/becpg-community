@@ -727,6 +727,20 @@
 		
 				</appearance>
 			</form>
+			<form id="datagridWUsed">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:plants" force="true" />
+					<show id="qa:claimType" force="true"/>
+					<show id="qa:claimDistributionNetwork" force="true"/>
+					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:suppliers" force="true" />
+					<show id="qa:claimDescription" force="true"/>
+
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 	
@@ -1089,6 +1103,17 @@
 					<!-- Product -->
 					<show id="qa:product" />
 
+				</field-visibility>
+			</form>
+			<form id="datagridWUsed">
+				<field-visibility>
+					<show id="bcpg:code" />
+					<show id="cm:name" />
+					<show id="qa:qcState" />
+					<show id="qa:qcControlPlans" />
+					<show id="qa:batchId" />
+					<show id="qa:batchStart" />
+					<show id="qa:batchComment" />
 				</field-visibility>
 			</form>
 		</forms>
