@@ -2381,7 +2381,7 @@
 	                       <control-param name="maxLength">10000</control-param>
 	                   </control>
 					</field>
-						<field id="cm:from">
+					<field id="cm:from">
 						<control template="/org/alfresco/components/form/controls/date.ftl">
 							<control-param name="showTime">false</control-param>
 						</control>
@@ -3159,6 +3159,142 @@
 			</form>
 		</forms>
 	</config>
+	
+	
+	
+		
+	<!-- bcpg:supplier type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:productCollection">
+		<forms>
+			<form>
+
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:productCollectionHierarchy1" />
+					<show id="bcpg:productCollectionHierarchy2" />
+					<show id="bcpg:productCollectionState" />
+					<show id="cm:description" />
+					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
+					<!-- audit -->
+					<show id="cm:creator" for-mode="view"/>
+					<show id="cm:created" for-mode="view"/>
+					<show id="cm:modifier" for-mode="view"/>
+					<show id="cm:modified" for-mode="view"/>
+				</field-visibility>
+				<appearance>
+				
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+							template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:productCollectionHierarchy1">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productCollectionHierarchy2">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
+							<control-param name="parent">bcpg_productCollectionHierarchy1</control-param>
+						</control>
+					</field>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" />
+				
+					<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+				</appearance>
+			</form>
+		
+		
+		</forms>
+	</config>
+
+	<!-- bcpg:supplier type (creating nodes) -->
+	<config evaluator="model-type" condition="bcpg:productCollection">
+		<forms>
+			<form id="create">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:productCollectionHierarchy1" />
+					<show id="bcpg:productCollectionHierarchy2" />
+					<show id="bcpg:productCollectionState" />
+					<show id="cm:description" />
+					<show id="bcpg:code" />
+					<show id="bcpg:erpCode" force="true" />
+					
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:productCollectionHierarchy1">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productCollectionHierarchy2">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg_productCollectionHierarchy1</control-param>
+						</control>
+					</field>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" />
+				</appearance>
+			</form>
+			
+			<form id="bulk-edit">
+				<field-visibility>
+
+					<show id="bcpg:code" force="true" />
+					<show id="cm:name" force="true" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:productCollectionHierarchy1" />
+					<show id="bcpg:productCollectionHierarchy2" />
+					<show id="bcpg:productCollectionState" />
+					<show id="cm:description" />
+					<show id="bcpg:erpCode" force="true" />
+				
+
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:productCollectionHierarchy1">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productCollectionHierarchy2">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy
+							</control-param>
+							<control-param name="parent">bcpg:productCollectionHierarchy1
+							</control-param>
+						</control>
+					</field>
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" />
+				</appearance>
+				
+			</form>
+		</forms>
+	</config>
 
 	<!-- <config evaluator="aspect" condition="bcpg:clientsAspect"> <forms> 
 		<form id="filter"> <show id="entity_bcpg:clients_bcpg:product" for-mode="wused" 
@@ -3535,6 +3671,108 @@
 					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
 			</form>
+		</forms>
+	</config>
+	
+	
+	
+	<!-- bcpg:productList type -->
+	<config evaluator="model-type" condition="bcpg:productList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:productListProduct" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
+				</field-visibility>
+
+				<appearance>
+					
+					<field id="bcpg:productListProduct" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2</control-param>
+						</control>
+					</field>
+				<field id="bcpg:startEffectivity"   >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+				    </field>
+				</appearance>
+			</form>
+			
+			<form id="full-screen">
+				<field-visibility>
+					<show id="bcpg:productListProduct" />
+				
+				</field-visibility>
+
+				<appearance>
+					<field id="bcpg:productListProduct">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct%5E4,bcpg:semiFinishedProduct</control-param>
+						</control>
+					</field>
+			
+				</appearance>
+			</form>
+		
+			
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:productListProduct" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
+					<show id="fm:commentCount" force="true" />
+				</field-visibility>
+				<appearance>
+						<field id="fm:commentCount" label="hidden" read-only="true" />
+				</appearance>
+			</form>
+			
+		</forms>
+	</config>
+	<!-- bcpg:compoList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:productList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:productListProduct" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
+				</field-visibility>
+
+				<appearance>
+				
+					<field id="bcpg:productListProduct" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct%5E4,bcpg:semiFinishedProduct</control-param>
+						</control>
+					</field>
+					<field id="bcpg:startEffectivity"   >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+				    </field>
+				
+				</appearance>
+			</form>
+			
 		</forms>
 	</config>
 

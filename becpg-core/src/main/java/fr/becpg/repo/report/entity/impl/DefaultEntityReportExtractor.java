@@ -239,6 +239,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		boolean isInDataListContext = false;
 
 		Map<String, String> preferences;
+		Map<String, Boolean> cache = new HashMap<>(4);
+		
 		Set<NodeRef> extractedNodes = new HashSet<>();
 
 		EntityReportData reportData = new EntityReportData();
@@ -246,6 +248,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		public DefaultExtractorContext(Map<String, String> preferences) {
 			super();
 			this.preferences = preferences;
+		}
+
+
+		public Map<String, Boolean> getCache() {
+			return cache;
 		}
 
 
