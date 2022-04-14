@@ -150,8 +150,12 @@ public class TranslateHelper {
 			logger.debug("getting title mltext for class: " + classQName + " (" + localName + ", pfx:" + shortPrefix + ")");
 			logger.debug("Full path: " + shortPrefix + "_" + shortPrefix + "model.type." + shortPrefix + "_" + localName + "." + key);
 		}
-
-		return getTranslatedKey(shortPrefix + "_" + shortPrefix + "model.type." + shortPrefix + "_" + localName + "." + key);
+		if("gs1".equals(shortPrefix)) {
+			return getTranslatedKey(shortPrefix + "_" + shortPrefix + "Model.type." + shortPrefix + "_" + localName + "." + key);
+		} else {
+			return getTranslatedKey(shortPrefix + "_" + shortPrefix + "model.type." + shortPrefix + "_" + localName + "." + key);
+		}
+		
 	}
 
 	/**

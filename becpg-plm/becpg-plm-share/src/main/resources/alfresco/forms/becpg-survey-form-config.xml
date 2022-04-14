@@ -37,7 +37,7 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							 <control-param name="ds">becpg/autocomplete/survey</control-param>
-							<control-param name="parentAssoc">survey_question</control-param>
+							<control-param name="parentAssoc">survey_slQuestion</control-param>
 					</control>		
 					</field>
 				
@@ -64,7 +64,7 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							 <control-param name="ds">becpg/autocomplete/survey</control-param>
-							<control-param name="parentAssoc">survey_question</control-param>
+							<control-param name="parentAssoc">survey_slQuestion</control-param>
 					</control>		
 					</field>
 				</appearance>
@@ -85,7 +85,7 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							 <control-param name="ds">becpg/autocomplete/survey</control-param>
-							<control-param name="parentAssoc">survey_question</control-param>
+							<control-param name="parentAssoc">survey_slQuestion</control-param>
 					</control>		
 					</field>
 				</appearance>

@@ -612,13 +612,15 @@
 				var itemType =  this.options.itemType != null ? this.options.itemType : this.datalistMeta.itemType;
 				var containerEl = Dom.get(this.id+'-columns-list').parentNode, html = "";
 				var colCount = 0;
-				var siteId = this.options.siteId 
+				var siteId = this.options.siteId;
+				
+				var timeStamp =  (new Date().getTime());
 					
 				Alfresco.util.Ajax.jsonGet({
 				url : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns?mode=datagrid-prefs&itemType=" + encodeURIComponent(itemType) + "&clearCache=true" 
 					+ (this.options.siteId ? "&siteId=" + this.options.siteId : "")
 					+ (this.entity!=null ? "&entityType="+encodeURIComponent(this.entity.type) : "")
-					+ ("&noCache="+(new Date().getTime())),
+					+ ("&noCache="+ timeStamp),
 				successCallback : {
 					fn : function (response) {
 						var prefs = "fr.becpg.formulation.dashlet.custom.datagrid-prefs"+"."+itemType.replace(":","_");
@@ -660,7 +662,8 @@
 			            	
 			            	setTimeout(function(){
 			            		YAHOO.Bubbling.fire("activeDataListChanged", 
-			            	    		{clearCache :true}
+			            	    		{ clearCache :true,
+			            	    		  cacheTimeStamp : timeStamp }
 			            	    );
 			            	}, 1000);
 			            	

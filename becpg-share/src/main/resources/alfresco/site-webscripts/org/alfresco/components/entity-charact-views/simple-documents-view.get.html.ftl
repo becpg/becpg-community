@@ -29,6 +29,7 @@
          showFolders : true,
          hideNavBar:  false,
          simpleView :  "null",
+         simpleFormId : "wizard-doclib-simple-metadata",
          viewRenderers: [{"widget": "Alfresco.DocumentListSimpleViewRenderer", "index": 10.0, "id": "simple", "label": "Vue simplifi\u00e9e", "iconClass": "simple"}, {"widget": "Alfresco.DocumentListViewRenderer", "index": 20.0, "id": "detailed", "label": "Vue d\u00e9taill\u00e9e", "iconClass": "detailed"}, {"widget": "Alfresco.DocumentListGalleryViewRenderer", "index": 30.0, "id": "gallery", "label": "Affichage Galerie", "iconClass": "gallery"}, {"widget": "Alfresco.DocumentListFilmstripViewRenderer", "index": 40.0, "id": "filmstrip", "label": "Affichage Pellicule", "iconClass": "filmstrip"}, {"jsonConfig": "{ \"actions\": { \"show\": \"true\" }, \"indicators\": { \"show\": \"true\" }, \"selector\": { \"show\": \"true\" }, \"thumbnail\": { \"show\": \"true\" }, \"propertyColumns\": [ { \"property\": \"name\", \"label\": \"label.name\", \"width\": \"300\" }, { \"property\": \"cm:title\", \"label\": \"label.title\" }, { \"property\": \"cm:description\", \"label\": \"label.description\" }, { \"property\": \"cm:creator\", \"label\": \"label.creator\" }, { \"property\": \"cm:created\", \"label\": \"label.created\" }, { \"property\": \"cm:modifier\", \"label\": \"label.modifier\" }, { \"property\": \"modified\", \"label\": \"label.modified\" } ] }", "widget": "Alfresco.DocumentListTableViewRenderer", "index": 50.0, "id": "table", "label": "Affichage Table", "iconClass": "table"}, {"jsonConfig": "{ \"actions\": { \"show\": \"true\" }, \"indicators\": { \"show\": \"true\" }, \"selector\": { \"show\": \"true\" }, \"thumbnail\": { \"show\": \"true\" }, \"propertyColumns\": [ { \"property\": \"name\", \"label\": \"table.audio.label.name\", \"width\": \"300\" }, { \"property\": \"cm:title\", \"label\": \"table.audio.label.title\", \"width\": \"200\" }, { \"property\": \"audio:album\", \"label\": \"table.audio.label.album\", \"width\": \"200\", \"link\": \"true\" }, { \"property\": \"audio:artist\", \"label\": \"table.audio.label.artist\", \"width\": \"200\" }, { \"property\": \"audio:genre\", \"label\": \"table.audio.label.genre\", \"width\": \"100\" }, { \"property\": \"audio:trackNumber\", \"label\": \"table.audio.label.trackNumber\", \"width\": \"100\" }, { \"property\": \"audio:sampleRate\", \"label\": \"table.audio.label.sampleRate\", \"width\": \"100\" }, { \"property\": \"audio:compressor\", \"label\": \"table.audio.label.compressor\", \"width\": \"100\" } ] }", "widget": "Alfresco.DocumentListTableViewRenderer", "index": 60.0, "id": "audio", "label": "Affichage Audio", "iconClass": "table"}, {"jsonConfig": "{ \"actions\": { \"show\": \"true\" }, \"indicators\": { \"show\": \"true\" }, \"selector\": { \"show\": \"true\" }, \"thumbnail\": { \"show\": \"true\" }, \"propertyColumns\": [ { \"property\": \"name\", \"label\": \"label.name\", \"width\": \"300\" }, { \"property\": \"cm:description\", \"label\": \"label.description\", \"width\": \"200\" }, { \"property\": \"tags\", \"label\": \"label.tags\", \"width\": \"100\" }, { \"property\": \"exif:pixelXDimension\", \"label\": \"label.exif.width\", \"width\": \"75\" }, { \"property\": \"exif:pixelYDimension\", \"label\": \"label.exif.height\", \"width\": \"75\" }, { \"property\": \"size\", \"label\": \"label.size\", \"width\": \"75\" }, { \"property\": \"version\", \"label\": \"label.version\", \"width\": \"50\" } ] }", "widget": "Alfresco.DocumentListTableViewRenderer", "index": 100.0, "id": "media_table", "label": "Affichage Media", "iconClass": "table"}],
          viewRendererName :  "simple",
          viewRendererNames : ["simple", "detailed", "gallery", "filmstrip", "table", "audio", "media_table"],
@@ -79,7 +80,7 @@
                record.actionParams = {};
                for (var i = 0, ii = actions.length; i < ii; i++)
                {
-                 if(actions[i].id == "document-upload-new-version" || actions[i].id  == "document-delete" || actions[i].id  == "document-download" ) {
+                 if(actions[i].id == "document-upload-new-version" || actions[i].id  == "document-delete" || actions[i].id  == "document-download" || actions[i].id  == "document-edit-properties" ) {
                   	actionHTML += scope.renderAction(actions[i], record);
                   }
                }
@@ -177,7 +178,7 @@
 	
 		//]]></script>
    
-    <div id="${el}" class="documents">
+    <div id="${el}" class="documents simple-document">
     
    <div id="${el}-tb-body" class="toolbar no-check-bg">
       <@markup id="documentListToolbar">
