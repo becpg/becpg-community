@@ -18,6 +18,7 @@
 package fr.becpg.repo.security.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +31,9 @@ import org.alfresco.repo.security.authority.UnknownAuthorityException;
 import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -49,6 +50,7 @@ import fr.becpg.model.SecurityModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
@@ -70,7 +72,6 @@ public class SecurityServiceImpl implements SecurityService {
 	private static final String ACLS_CACHE_KEY = "ACLS_CACHE_KEY";
 	private static final String LOCAL_ACLS_CACHE_KEY = "LOCAL_ACLS_CACHE_KEY";
 	private static final String USER_ROLE_CACHE_KEY = "ACLS_CACHE_KEY";
-
 	private static final Log logger = LogFactory.getLog(SecurityServiceImpl.class);
 
 	@Autowired
@@ -94,6 +95,9 @@ public class SecurityServiceImpl implements SecurityService {
 	@Autowired
 	private NodeService nodeService;
 
+	@Autowired
+	private AssociationService associationService;
+
 	/** {@inheritDoc} */
 	@Override
 	public int computeAccessMode(NodeRef nodeRef, QName nodeType, QName propName) {
@@ -112,7 +116,7 @@ public class SecurityServiceImpl implements SecurityService {
 		try {
 
 			List<ACLEntryDataItem.PermissionModel> perms = getNodeACLPermissions(nodeRef, nodeType, propName);
-			if (perms != null) {
+			if (!perms.isEmpty()) {
 				if (isAdmin()) {
 					return SecurityService.WRITE_ACCESS;
 				}
@@ -123,7 +127,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 				for (PermissionModel permissionModel : perms) {
 
-					if (isInGroup(nodeRef, nodeType , permissionModel)) {
+					if (isInGroup(nodeRef, nodeType, permissionModel)) {
 						if (permissionModel.isWrite()) {
 							return SecurityService.WRITE_ACCESS;
 						} else if (permissionModel.isReadOnly()) {
@@ -146,7 +150,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 			return SecurityService.WRITE_ACCESS;
 		} finally {
-			if (logger.isDebugEnabled() && stopWatch!=null) {
+			if (logger.isDebugEnabled() && (stopWatch != null)) {
 				stopWatch.stop();
 				logger.debug("Compute Access Mode takes : " + stopWatch.getTotalTimeSeconds() + "s");
 			}
@@ -156,30 +160,25 @@ public class SecurityServiceImpl implements SecurityService {
 
 	@Override
 	public List<ACLEntryDataItem.PermissionModel> getNodeACLPermissions(NodeRef nodeRef, QName nodeType, String propName) {
-		List<NodeRef> aclGroups = new ArrayList<>();
 		String cacheKey = ACLS_CACHE_KEY;
-		if(nodeRef != null && nodeService.hasAspect(nodeRef, SecurityModel.ASPECT_SECURITY)
-				&& nodeService.getTargetAssocs(nodeRef,SecurityModel.ASSOC_SECURITY_REF) != null
-				&& !nodeService.getTargetAssocs(nodeRef,SecurityModel.ASSOC_SECURITY_REF).isEmpty()){		
-			cacheKey = LOCAL_ACLS_CACHE_KEY;
-			for (AssociationRef association : nodeService.getTargetAssocs(nodeRef,SecurityModel.ASSOC_SECURITY_REF)) {
-				aclGroups.add(association.getTargetRef());
-				cacheKey = cacheKey.concat("_" + association.getId().toString());
+		if ((nodeRef != null) && nodeService.hasAspect(nodeRef, SecurityModel.ASPECT_SECURITY)) {
+			NodeRef aclGroupNodeRef = associationService.getTargetAssoc(nodeRef, SecurityModel.ASSOC_SECURITY_REF);
+
+			if (aclGroupNodeRef != null) {
+				cacheKey = LOCAL_ACLS_CACHE_KEY + "_" + aclGroupNodeRef.getId();
+
 			}
-		} else {
-			aclGroups = findAllAclGroups();
 		}
 		String key = computeAclKey(nodeType, propName);
-		Map<String, List<PermissionModel>> acls = getAcls(aclGroups, cacheKey);
+		Map<String, List<PermissionModel>> acls = getAcls(cacheKey);
 
 		if (acls.containsKey(key)) {
 			return acls.get(key);
 		}
 
-		return null;
+		return new ArrayList<>();
 
 	}
-
 
 	/** {@inheritDoc} */
 	@Override
@@ -187,13 +186,22 @@ public class SecurityServiceImpl implements SecurityService {
 		beCPGCacheService.clearCache(SecurityService.class.getName());
 	}
 
-	private Map<String, List<ACLEntryDataItem.PermissionModel>> getAcls(List<NodeRef> aclGroups, String cacheKey) {
+	private Map<String, List<ACLEntryDataItem.PermissionModel>> getAcls(String cacheKey) {
 		return beCPGCacheService.getFromCache(SecurityService.class.getName(), cacheKey, () -> {
 			Map<String, List<ACLEntryDataItem.PermissionModel>> acls = new HashMap<>();
 			StopWatch stopWatch = null;
 			if (logger.isDebugEnabled()) {
 				stopWatch = new StopWatch();
 				stopWatch.start();
+			}
+
+			List<NodeRef> aclGroups = null;
+
+			if (cacheKey.startsWith(LOCAL_ACLS_CACHE_KEY)) {
+				aclGroups = Arrays.asList(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, cacheKey.split("_")[4]));
+
+			} else {
+				aclGroups = findAllAclGroups();
 			}
 
 			if (aclGroups != null) {
@@ -216,7 +224,7 @@ public class SecurityServiceImpl implements SecurityService {
 				}
 			}
 
-			if (logger.isDebugEnabled() && stopWatch!=null) {
+			if (logger.isDebugEnabled() && (stopWatch != null)) {
 				stopWatch.stop();
 				logger.debug("Compute ACLs takes : " + stopWatch.getTotalTimeSeconds() + "s");
 			}
@@ -281,8 +289,8 @@ public class SecurityServiceImpl implements SecurityService {
 	 */
 	private boolean isInGroup(NodeRef nodeRef, QName nodeType, PermissionModel permissionModel) {
 
-		for(SecurityServicePlugin plugin : securityPlugins ) {
-			if(plugin.accept(nodeType) && plugin.checkIsInSecurityGroup(nodeRef, permissionModel)) {
+		for (SecurityServicePlugin plugin : securityPlugins) {
+			if (plugin.accept(nodeType) && plugin.checkIsInSecurityGroup(nodeRef, permissionModel)) {
 				return true;
 			}
 		}
@@ -295,10 +303,10 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 
 	private List<NodeRef> findAllAclGroups() {
-		List<NodeRef> aclGroupsNull = BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).
-				isNullOrUnset(SecurityModel.PROP_ACL_GROUP_IS_LOCAL_PERMISSION).inDB().list();
-		List<NodeRef> aclGroupsFalse = BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP).
-				andPropEquals(SecurityModel.PROP_ACL_GROUP_IS_LOCAL_PERMISSION, Boolean.FALSE.toString()).inDB().list();
+		List<NodeRef> aclGroupsNull = BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP)
+				.isNullOrUnset(SecurityModel.PROP_ACL_GROUP_IS_LOCAL_PERMISSION).inDB().list();
+		List<NodeRef> aclGroupsFalse = BeCPGQueryBuilder.createQuery().ofType(SecurityModel.TYPE_ACL_GROUP)
+				.andPropEquals(SecurityModel.PROP_ACL_GROUP_IS_LOCAL_PERMISSION, Boolean.FALSE.toString()).inDB().list();
 		aclGroupsNull.addAll(aclGroupsFalse);
 		return aclGroupsNull;
 	}
@@ -328,7 +336,6 @@ public class SecurityServiceImpl implements SecurityService {
 					if (aspects == null) {
 						aspects = new ArrayList<>();
 					}
-
 
 					for (AspectDefinition aspect : aspects) {
 						if ((aspect != null) && (aspect.getProperties() != null)) {
@@ -367,7 +374,7 @@ public class SecurityServiceImpl implements SecurityService {
 	 */
 	private boolean isViewableProperty(QName qName) {
 
-		if (qName.equals(ContentModel.PROP_NODE_REF) || qName.equals(ContentModel.PROP_NODE_DBID) || qName.equals(ContentModel.PROP_NODE_UUID)
+		return !(qName.equals(ContentModel.PROP_NODE_REF) || qName.equals(ContentModel.PROP_NODE_DBID) || qName.equals(ContentModel.PROP_NODE_UUID)
 				|| qName.equals(ContentModel.PROP_STORE_IDENTIFIER) || qName.equals(ContentModel.PROP_STORE_NAME)
 				|| qName.equals(ContentModel.PROP_STORE_PROTOCOL) || qName.equals(ContentModel.PROP_CONTENT)
 				|| qName.equals(ContentModel.PROP_AUTO_VERSION) || qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS) ||
@@ -376,12 +383,7 @@ public class SecurityServiceImpl implements SecurityService {
 				// system properties
 				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) || qName.equals(ContentModel.PROP_NAME) || qName.equals(ContentModel.PROP_CREATOR)
 				|| qName.equals(ContentModel.PROP_CREATED) || qName.equals(ContentModel.PROP_ACCESSED) || qName.equals(ContentModel.PROP_MODIFIER)
-				|| qName.equals(ContentModel.PROP_MODIFIED)) {
-
-			return false;
-		}
-
-		return true;
+				|| qName.equals(ContentModel.PROP_MODIFIED));
 	}
 
 }

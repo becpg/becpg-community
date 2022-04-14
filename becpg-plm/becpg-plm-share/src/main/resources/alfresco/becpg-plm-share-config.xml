@@ -113,10 +113,12 @@
 
 	<config evaluator="string-compare" condition="EntityDataLists">
 		<lists> 
+		
 			<list id="compoList" index="50" view="true" />
 			<list id="packagingList" index="60" view="true" />
 			<list id="processList" index="80" view="true" />
 			<list id="resourceParamList" index="90" />
+			<list id="productList" index="95" />
 			<list id="ingList" index="100" />
 			<list id="allergenList" index="110" />
 			<list id="costList" index="120" />

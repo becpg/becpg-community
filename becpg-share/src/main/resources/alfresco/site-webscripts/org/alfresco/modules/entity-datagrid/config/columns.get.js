@@ -213,9 +213,7 @@ function main() {
 	cache.mustRevalidate=true;
 	
 	if (noCache) {
-	   cache.maxAge = 0;
-	   //headers["Clear-Site-Data"] =  "cache";
-	   cache.lastModified = new Date(new Date().getTime() - 3600);	
+	   cache.lastModified = new Date(noCache);	
 	}
 
 	var prefixedSiteId = siteId ? "-" + siteId : "";
