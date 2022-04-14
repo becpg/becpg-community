@@ -1396,6 +1396,36 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="qa:slControlPoint" />
+					<show id="qa:sdlQty" />
+					<show id="qa:sdlFreqText" />
+					<show id="qa:sdlFreq" />
+					<show id="qa:sdlFreqUnit" />
+					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
+					<show id="qa:slReaction" />
+				</field-visibility>
+
+				<appearance>
+					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)"/>
+					<field id="qa:slReaction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="qa:sdlFreqUnit">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
@@ -1665,6 +1695,50 @@
 					<field id="qa:clTimePeriod" set="reqInfo" />
 					<field id="qa:clType" set="reqInfo" />
 					<field id="qa:clTemperature" set="reqInfo" />
+					<field id="qa:clMethod" set="reqInfo" />
+					<field id="qa:clTarget" set="reqInfo" />
+					<field id="qa:clUnit" set="reqInfo" />
+					<field id="qa:clMini" set="reqInfo" />
+					<field id="qa:clMaxi" set="reqInfo" />
+					<field id="qa:clCharacts" set="reqInfo" />
+					<field id="qa:clRequired" set="reqInfo" />
+					
+					<set id="fillInfo" appearance="bordered-panel" label-id="becpg.forms.set.fill-info.label" />
+					<field id="qa:clValue" set="fillInfo" />
+					<field id="qa:clState" set="fillInfo" />
+				</appearance>
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="qa:clControlPoint" />
+					<show id="qa:clSampleId" />
+					<show id="qa:clTimePeriod" />
+					<show id="qa:clType" />
+					<show id="qa:clTemperature" />
+					<show id="qa:clMethod" />
+					<show id="qa:clCharacts" />
+					<show id="qa:clTarget" />
+					<show id="qa:clUnit" />
+					<show id="qa:clMini" />
+					<show id="qa:clMaxi" />
+					<show id="qa:clValue" />
+					<show id="qa:clState" />
+					<show id="qa:clRequired" />
+				</field-visibility>
+
+				<appearance>
+					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+					<field id="qa:clControlPoint" set="reqInfo" />
+					<field id="qa:clSampleId" set="reqInfo" />
+					<field id="qa:clTimePeriod" set="reqInfo" />
+					<field id="qa:clType" set="reqInfo" />
+					<field id="qa:clTemperature" set="reqInfo">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
 					<field id="qa:clMethod" set="reqInfo" />
 					<field id="qa:clTarget" set="reqInfo" />
 					<field id="qa:clUnit" set="reqInfo" />

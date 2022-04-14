@@ -366,6 +366,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 									if (nodes.contains(assocRef.getEntityNodeRef())) {
 										nodesToKeep.add(assocRef.getEntityNodeRef());
+									} else if (nodes.contains(assocRef.getDataListItemNodeRef())) {
+										nodesToKeep.add(assocRef.getDataListItemNodeRef());
 									}
 								}
 
