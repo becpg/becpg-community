@@ -16,6 +16,20 @@ function main() {
 		var workingCopy = document.assocs["cm:workingcopylink"][0];
 		workingCopy.cancelCheckout();
 	}
+	
+	var preparedRecipients = document.assocs["sign:preparedRecipients"];
+
+	if (preparedRecipients) {
+		for (var i = 0; i < preparedRecipients.length; i++) {
+			var preparedRecipient = preparedRecipients[i];
+	
+			document.removeAssociation(preparedRecipient, "sign:preparedRecipients");
+		}
+	}
+	
+	document.properties["sign:status"] = "Initialized";
+	
+	document.save();
 }
 
 main();
