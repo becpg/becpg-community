@@ -367,7 +367,7 @@ div.itemSelect-open {
 
 /* Form filter */ 
 div.filterform {
-	width: 33em;
+	width: auto;
 	float:none !important;
 }
 

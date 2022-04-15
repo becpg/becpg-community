@@ -469,6 +469,14 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 			boolean isAnd = !isOrOperator && (nodeRefs.size() > 1);
 
+			if(logger.isDebugEnabled()) {
+				logger.debug("getEntitySourceAssocs");
+				logger.debug(" - assocTypeQName : "+ assocTypeQName);
+				logger.debug(" - listTypeQname : "+ listTypeQname);
+				logger.debug(" - isOrOperator : "+ isOrOperator);
+				logger.debug(" - criteriaFilters : "+ criteriaFilters);
+			}
+			
 			if (isAnd) {
 				for (NodeRef nodeRef : nodeRefs) {
 					if (ret == null) {
