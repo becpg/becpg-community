@@ -4443,6 +4443,47 @@
 					</field>
 				</appearance>
 			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:priceListCost" />
+					<show id="bcpg:priceListPrefRank" />
+					<show id="bcpg:priceListValue" />
+					<show id="bcpg:priceListUnit" />
+					<show id="bcpg:priceListPurchaseQty" />
+					<show id="bcpg:priceListPurchaseUnit" />
+					<show id="bcpg:suppliers" force="true"/>
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:priceListGeoOrigins" />
+					<show id="bcpg:startEffectivity" />
+					<show id="bcpg:endEffectivity" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:priceListCost">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:priceListGeoOrigins">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:priceListUnit">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:startEffectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
@@ -5838,6 +5879,42 @@
 					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
 					<field id="bcpg:contactListNotes">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+				</appearance>
+			</form>
+			
+			<form id="filter">
+				<field-visibility>
+				    <show id="bcpg:contactListType" />
+				    <show force="true" id="bcpg:eanCode"/>
+					<show id="bcpg:contactListFirstName" />
+					<show id="bcpg:contactListLastName" />
+					<show id="bcpg:contactListEmail" />
+					<show id="bcpg:contactListJobTitle" />
+					<show id="bcpg:contactListPhoneOffice" />
+					<show id="bcpg:contactListPhoneMobile" />
+					<show id="bcpg:contactListFax" />
+					<show id="bcpg:contactListNotes" />
+					<show id="bcpg:locationAddress1" force="true" />
+					<show id="bcpg:locationAddress2" force="true"/>
+					<show id="bcpg:locationAddress3" force="true"/>
+					<show id="bcpg:locationCity" force="true"/>
+					<show id="bcpg:locationZip" force="true"/>
+					<show id="bcpg:locationState" force="true"/>
+					<show id="bcpg:locationCountry" force="true"/>
+				</field-visibility>
+				<appearance>
+					
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
+					<field id="bcpg:contactListNotes">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:contactListType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
