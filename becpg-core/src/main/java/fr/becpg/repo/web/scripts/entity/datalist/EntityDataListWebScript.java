@@ -400,6 +400,10 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			}
 
 			DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter);
+			
+			if(logger.isDebugEnabled()) {
+				logger.debug("Using extractor: "+extractor.getClass().getSimpleName());
+			}
 
 			boolean hasWriteAccess = !dataListFilter.isVersionFilter();
 			boolean hasReadAccess = true;
