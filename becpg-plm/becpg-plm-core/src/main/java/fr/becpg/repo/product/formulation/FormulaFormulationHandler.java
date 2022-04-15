@@ -66,6 +66,7 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -81,7 +82,7 @@ import fr.becpg.repo.security.BeCPGAccessDeniedException;
  * @author matthieu
  * @version $Id: $Id
  */
-public  class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
+public class FormulaFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(FormulaFormulationHandler.class);
 
@@ -423,8 +424,8 @@ public  class FormulaFormulationHandler extends FormulationBaseHandler<ProductDa
 		return jsonObject;
 	}
 
-	private void extractJSONSubList(ProductData productData, CompositionDataItem dataListItem, Expression exp, String path, JSONArray subList, Set<NodeRef> visited)
-			throws JSONException {
+	private void extractJSONSubList(ProductData productData, CompositionDataItem dataListItem, Expression exp, String path, JSONArray subList,
+			Set<NodeRef> visited) throws JSONException {
 		ProductData subProductData = alfrescoRepository.findOne(dataListItem.getComponent());
 		List<CompositionDataItem> compositeList = new ArrayList<>();
 		List<Double> qtyList = new ArrayList<>();
@@ -483,23 +484,31 @@ public  class FormulaFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				StandardEvaluationContext dataContext = formulaService.createDataListItemSpelContext(productData, composite);
 
-				String subPath = path + JSON_PATH_SEPARATOR + composite.getNodeRef().getId();
+				String subPath = path + JSON_PATH_SEPARATOR;
+
+				if (composite instanceof CompoListDataItem) {
+					if ((((CompoListDataItem) composite).getParent() != null) && (((CompoListDataItem) composite).getParent().getNodeRef() != null)) {
+						subPath += ((CompoListDataItem) composite).getParent().getNodeRef().getId() + JSON_PATH_SEPARATOR;
+					}
+				}
+
+				subPath += composite.getNodeRef().getId();
 
 				Object subValue = exp.getValue(dataContext);
 				subObject.put(JsonFormulaHelper.JSON_VALUE, subValue);
 				subObject.put(JsonFormulaHelper.JSON_DISPLAY_VALUE, JsonFormulaHelper.formatValue(subValue));
 				subObject.put(JsonFormulaHelper.JSON_PATH, subPath);
 				subList.put(subObject);
-                 if(!visited.contains(composite.getComponent())) {
+				if (!visited.contains(composite.getComponent())) {
 					if (PLMModel.TYPE_SEMIFINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
 							|| PLMModel.TYPE_FINISHEDPRODUCT.equals(nodeService.getType(dataListItem.getComponent()))
 							|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))) {
-						
+
 						visited.add(composite.getComponent());
 						extractJSONSubList(productData, composite, exp, subPath, subList, visited);
 						visited.remove(composite.getComponent());
 					}
-                 }
+				}
 			} finally {
 				// Reset
 				composite.setQty(qtyList.get(i));
