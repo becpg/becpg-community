@@ -133,7 +133,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		queryBuilder.andFTSQuery(ftsQuery.toString());
 
 		NodeRef entityNodeRef = null;
-		if (props.get(ListValueService.PROP_ENTITYNODEREF) != null) {
+		if (props.get(ListValueService.PROP_ENTITYNODEREF) != null && !((String)props.get(ListValueService.PROP_ENTITYNODEREF)).isEmpty() ) {
 			entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF));
 			queryBuilder.andNotID(entityNodeRef);
 		}

@@ -56,6 +56,7 @@ public class ExcelHelper {
 	public static int appendExcelField(List<AttributeExtractorStructure> computedFields, String prefix, Map<String, Object> item, XSSFSheet sheet,
 			Row row, int cellnum, int rowNum, List<Locale> supportedLocales) {
 		for (AttributeExtractorStructure field : computedFields) {
+
 			if (field.isNested()) {
 				cellnum = appendExcelField(field.getChildrens(), field.getFieldName(), item, sheet, row, cellnum, rowNum, supportedLocales);
 			} else {
@@ -72,7 +73,7 @@ public class ExcelHelper {
 
 					for (Locale locale : supportedLocales) {
 						Cell cell = row.createCell(cellnum++);
-						if ((obj != null) && (obj instanceof MLText)) {
+						if ((obj instanceof MLText)) {
 
 							String value = null;
 
