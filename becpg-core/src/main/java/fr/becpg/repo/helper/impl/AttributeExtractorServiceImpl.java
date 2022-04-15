@@ -34,10 +34,13 @@ import java.util.regex.Pattern;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
+import org.alfresco.service.cmr.dictionary.ModelDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.i18n.MessageLookup;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -127,11 +130,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 	@Autowired
 	private PropertyFormatService propertyFormatService;
-	
+
 	private CommonDataListCallBack commonDataListCallBack = new CommonDataListCallBack();
-	
-	private class CommonDataListCallBack implements DataListCallBack{
-	
+
+	private class CommonDataListCallBack implements DataListCallBack {
+
 		@Override
 		public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field, FormatMode mode) {
 			List<Map<String, Object>> ret = new ArrayList<>();
@@ -163,9 +166,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				}
 			}
 		}
-		
+
 	}
-	
 
 	private AttributeExtractorPlugin getAttributeExtractorPlugin(QName type) {
 
@@ -204,6 +206,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		final String fieldName;
 		boolean isEntityField = false;
+		boolean isDataListField = false;
 		ClassAttributeDefinition fieldDef;
 		List<AttributeExtractorStructure> childrens;
 		AttributeExtractorFilter filter;
@@ -211,32 +214,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		QName fieldQname;
 		QName itemType;
 		String formula = null;
-
-		public AttributeExtractorStructure(String fieldName, QName fieldQname, AttributeExtractorFilter filter, List<String> dLFields,
-				QName itemType) {
-			this.fieldName = fieldName;
-			this.filter = filter;
-			this.fieldQname = fieldQname;
-			this.itemType = itemType;
-			this.childrens = readExtractStructure(fieldQname, dLFields);
-		}
-
-		public AttributeExtractorStructure(String fieldName, QName fieldQname, boolean isEntityField, List<String> dLFields, QName itemType) {
-			this.fieldName = fieldName;
-			this.isEntityField = isEntityField;
-			this.fieldQname = fieldQname;
-			this.itemType = itemType;
-			this.childrens = readExtractStructure(fieldQname, dLFields);
-		}
-
-		public AttributeExtractorStructure(String fieldName, QName fieldQname, ClassAttributeDefinition fieldDef, List<String> dLFields,
-				QName itemType) {
-			this.fieldName = fieldName;
-			this.fieldDef = fieldDef;
-			this.fieldQname = fieldDef.getName();
-			this.itemType = itemType;
-			this.childrens = readExtractStructure(fieldQname, dLFields);
-		}
 
 		public AttributeExtractorStructure(String fieldName, ClassAttributeDefinition fieldDef, QName itemType) {
 			this.fieldDef = fieldDef;
@@ -246,12 +223,49 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 
 		public AttributeExtractorStructure(String fieldName, ClassAttributeDefinition fieldDef, Locale locale, QName itemType) {
-			this.fieldDef = fieldDef;
-			this.fieldQname = fieldDef.getName();
-			this.fieldName = fieldName;
+			this(fieldName, fieldDef, itemType);
 			this.locale = locale;
-			this.itemType = itemType;
 		}
+
+		public AttributeExtractorStructure(String fieldName, QName fieldQname, ClassAttributeDefinition fieldDef, List<String> dLFields, QName itemType) {
+			this(fieldName, fieldDef, itemType);
+			this.childrens = readExtractStructure(fieldQname, dLFields);
+		}
+
+		protected AttributeExtractorStructure(String fieldName, QName fieldQname, ClassDefinition fieldDef, boolean isEntityField, AttributeExtractorFilter filter, List<String> dLFields,
+				QName itemType) {
+			this(fieldName, fieldQname, new ClassAttributeDefinition() {
+
+				@Override
+				public boolean isProtected() {
+					return false;
+				}
+
+				@Override
+				public String getTitle(MessageLookup messageLookup) {
+					return fieldDef.getTitle(messageLookup);
+				}
+
+				@Override
+				public QName getName() {
+					return fieldDef.getName();
+				}
+
+				@Override
+				public ModelDefinition getModel() {
+					return fieldDef.getModel();
+				}
+
+				@Override
+				public String getDescription(MessageLookup messageLookup) {
+					return fieldDef.getDescription(messageLookup);
+				}
+			}, dLFields, itemType);
+			this.filter = filter;
+			this.isEntityField =isEntityField;
+			this.isDataListField = !isEntityField;
+		}
+
 
 		public AttributeExtractorStructure(String fieldName, String formula) {
 			this.fieldName = fieldName;
@@ -271,7 +285,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 
 		public boolean isDataListItems() {
-			return isNested() && !isEntityField && (fieldDef == null);
+			return isDataListField;
 		}
 
 		public boolean isNested() {
@@ -321,10 +335,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			if (this == obj) {
 				return true;
 			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
+			if ((obj == null) || (getClass() != obj.getClass())) {
 				return false;
 			}
 			AttributeExtractorStructure other = (AttributeExtractorStructure) obj;
@@ -392,7 +403,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					value.append(extractPropName(categoryNodeRef));
 				}
 			}
-			
+
 		} else if (dataType.equals(DataTypeDefinition.BOOLEAN.toString())
 				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && (v instanceof Boolean))) {
 
@@ -415,7 +426,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						constraintName = entityDictionaryService.toPrefixString(constraint.getRef()).replace(":", "_");
 						found = true;
 					}
-					if(found) {
+					if (found) {
 						break;
 					}
 				}
@@ -464,9 +475,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					QName aclPropName = QName.createQName(v.toString(), namespaceService);
 					ClassAttributeDefinition aclDef = entityDictionaryService.getPropDef(aclPropName);
 					if (aclDef != null) {
-					 return  aclDef.getTitle(dictionaryService);
+						return aclDef.getTitle(dictionaryService);
 					} else {
-						 return v.toString();
+						return v.toString();
 					}
 
 				} else {
@@ -486,14 +497,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			return propertyFormats.formatDateTime(v);
 		} else if (dataType.equals(DataTypeDefinition.NODE_REF.toString())) {
 			if (!propertyDef.isMultiValued()) {
-				return  extractPropName((NodeRef) v);
+				return extractPropName((NodeRef) v);
 			} else {
 				List<NodeRef> values = (List<NodeRef>) v;
 				if (values != null) {
 					for (NodeRef tempValue : values) {
 						if (tempValue != null) {
 							if (value != null) {
-								value.append( RepoConsts.LABEL_SEPARATOR);
+								value.append(RepoConsts.LABEL_SEPARATOR);
 							} else {
 								value = new StringBuilder();
 							}
@@ -505,16 +516,17 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			}
 
 		} else if (dataType.equals(DataTypeDefinition.MLTEXT.toString())) {
-			return  v.toString();
+			return v.toString();
 		} else if (dataType.equals(DataTypeDefinition.DOUBLE.toString()) || dataType.equals(DataTypeDefinition.FLOAT.toString())
 				|| (dataType.equals(DataTypeDefinition.ANY.toString()) && ((v instanceof Double) || (v instanceof Float)))) {
 
-			 return propertyFormats.formatDecimal(v);
+			return propertyFormats.formatDecimal(v);
 
 		} else if (dataType.equals(DataTypeDefinition.QNAME.toString())) {
 
 			if (v != null) {
-				String ret = I18NUtil.getMessage("bcpg_bcpgmodel.type." + entityDictionaryService.toPrefixString((QName) v).replace(":", "_") + ".title");
+				String ret = I18NUtil
+						.getMessage("bcpg_bcpgmodel.type." + entityDictionaryService.toPrefixString((QName) v).replace(":", "_") + ".title");
 				if (ret == null) {
 					ret = v.toString();
 				}
@@ -526,9 +538,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		else {
 
 			TypeConverter converter = new TypeConverter();
-			return  converter.convert(propertyDef.getDataType(), v).toString();
+			return converter.convert(propertyDef.getDataType(), v).toString();
 		}
-		return value!=null ? value.toString() : null;
+		return value != null ? value.toString() : null;
 	}
 
 	/** {@inheritDoc} */
@@ -548,7 +560,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			if ((value instanceof NodeRef) || (value instanceof String) || (value instanceof List)) {
 				if (DataTypeDefinition.ANY.toString().equals(propertyDef.getDataType().toString()) && (value instanceof String)) {
 					value = (Serializable) JsonFormulaHelper.cleanCompareJSON((String) value);
-					if(value == null) {
+					if (value == null) {
 						return "";
 					}
 				}
@@ -679,14 +691,21 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					}
 
 					if (entityDictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-						ret.add(new AttributeExtractorStructure(DT_SUFFIX + dlField.replaceFirst(":", "_"), fieldQname, dataListFilter, dLFields,
+
+						ClassDefinition propDef = entityDictionaryService.getClass(fieldQname);
+
+						ret.add(new AttributeExtractorStructure(DT_SUFFIX + dlField.replaceFirst(":", "_"), fieldQname, propDef, false, dataListFilter, dLFields,
 								itemType));
 
 					} else if (entityDictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITY_V2)) {
-						ret.add(new AttributeExtractorStructure(DT_SUFFIX + dlField.replaceFirst(":", "_"), fieldQname, true, dLFields, itemType));
+
+						ClassDefinition propDef = entityDictionaryService.getClass(fieldQname);
+
+						ret.add(new AttributeExtractorStructure(DT_SUFFIX + dlField.replaceFirst(":", "_"), fieldQname , propDef, true, null, dLFields, itemType));
 					} else {
-						// nested assoc
+
 						ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(fieldQname);
+						// nested assoc
 						if (hasReadAccess(itemType, dlField)) {
 							if (isAssoc(propDef)) {
 								ret.add(new AttributeExtractorStructure(DT_SUFFIX + dlField.replaceFirst(":", "_"),
@@ -723,14 +742,13 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		}
 		return ret;
 	}
-	
 
 	/** {@inheritDoc} */
 	@Override
 	public Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, FormatMode mode) {
-		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), readExtractStructure(itemType, metadataFields), mode, commonDataListCallBack);
+		return extractNodeData(nodeRef, itemType, nodeService.getProperties(nodeRef), readExtractStructure(itemType, metadataFields), mode,
+				commonDataListCallBack);
 
-				
 	}
 
 	/** {@inheritDoc} */
@@ -745,7 +763,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		Map<String, Object> ret = new HashMap<>(metadataFields.size());
 
-		Integer order = 0;
+		int order = 0;
 
 		for (AttributeExtractorStructure field : metadataFields) {
 			if (field.isNested()) {
@@ -754,17 +772,16 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if ((FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) && !extracted.isEmpty()) {
 
 					if (extracted.size() > 1) {
-						
+
 						for (Map<String, Object> extractedElt : extracted) {
 							for (Map.Entry<String, Object> entry : extractedElt.entrySet()) {
 								String key = field.getFieldName() + "_" + entry.getKey();
-								if ((entry.getValue() instanceof Number) && ret.containsKey(key)
-										&& (ret.get(key) instanceof Number)) {
-									Double	value = (Double) ret.get(key) + (Double) entry.getValue();
+								if ((entry.getValue() instanceof Number) && ret.containsKey(key) && (ret.get(key) instanceof Number)) {
+									Double value = (Double) ret.get(key) + (Double) entry.getValue();
 									ret.put(key, value);
-								} if ((entry.getValue() instanceof String) && ret.containsKey(key)
-										&& (ret.get(key) instanceof String)) {
-									String value = (String) ret.get(key) +","+ (String) entry.getValue();
+								}
+								if ((entry.getValue() instanceof String) && ret.containsKey(key) && (ret.get(key) instanceof String)) {
+									String value = (String) ret.get(key) + "," + (String) entry.getValue();
 									ret.put(key, value);
 								} else {
 									ret.put(key, entry.getValue());
@@ -858,17 +875,17 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						} else {
 							@SuppressWarnings("unchecked")
 							List<NodeRef> values = (List<NodeRef>) value;
-								for (NodeRef tempValue : values) {
-									if (tempValue != null) {
-										if (metadata != null) {
-											metadata += ",";
-										} else {
-											metadata = "";
-										}
-										metadata += extractMetadata(nodeService.getType(tempValue), tempValue);
+							for (NodeRef tempValue : values) {
+								if (tempValue != null) {
+									if (metadata != null) {
+										metadata += ",";
+									} else {
+										metadata = "";
 									}
+									metadata += extractMetadata(nodeService.getType(tempValue), tempValue);
 								}
-							
+							}
+
 						}
 
 						tmp.put("metadata", metadata);
@@ -876,8 +893,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						tmp.put("metadata", extractMetadata(type, nodeRef));
 					}
 				}
-				
-				if (properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL) != null && !((String)properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL)).isBlank()) {
+
+				if ((properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL) != null)
+						&& !((String) properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL)).isBlank()) {
 					tmp.put("version", properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL));
 				} else if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 					tmp.put("version", properties.get(BeCPGModel.PROP_VERSION_LABEL));
@@ -955,8 +973,8 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		tmp.put("metadata", extractMetadata(type, nodeRef));
 
 		Serializable manualVersionLabel = nodeService.getProperty(nodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
-		
-		if (manualVersionLabel instanceof String && !((String) manualVersionLabel).isBlank()) {
+
+		if ((manualVersionLabel instanceof String) && !((String) manualVersionLabel).isBlank()) {
 			tmp.put("version", manualVersionLabel);
 		} else if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)) {
 			tmp.put("version", nodeService.getProperty(nodeRef, BeCPGModel.PROP_VERSION_LABEL));
@@ -1055,7 +1073,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	private boolean hasReadAccess(QName nodeType, String propName) {
-	  return securityService.computeAccessMode(null, nodeType, propName) != SecurityService.NONE_ACCESS;
+		return securityService.computeAccessMode(null, nodeType, propName) != SecurityService.NONE_ACCESS;
 	}
 
 	/** {@inheritDoc} */
@@ -1073,12 +1091,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		/** Criteria:{bcpg:allergenListAllergen|bcpg:allergenCode=FX1}
 		 * Extracted:{dt_bcpg_allergenListAllergen=[{prop_bcpg_allergenCode={displayValue=F257,
 		 * metadata=text, value=F257}}]}
-
+		
 		 * Criteria:{pack:pmlMaterial=Autres matériaux}
 		 * Extracted:{assoc_pack_pmlMaterial=[{displayValue=Autres matériaux -
 		 * Bois, siteId=null, metadata=lvValue,
 		 * value=workspace://SpacesStore/405f98a1-ebfa-41f0-a3e7-8ac7c7c150ca}]}
-		 * 
+		 *
 		 */
 
 		for (Map.Entry<String, Object> entry : comp.entrySet()) {
@@ -1105,7 +1123,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if (data.containsKey("value") && (data.get("value") != null)) {
 					value = data.get("value").toString().toLowerCase();
 				} else {
-					
 
 					for (Map.Entry<String, Object> subEntry : data.entrySet()) {
 						tmp = subEntry.getValue();
@@ -1138,8 +1155,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					return false;
 				}
 
-				
-
 				String compValue = criteriaMap.get(critKey).toLowerCase();
 				String displayValue = data.get("displayValue").toString().toLowerCase();
 				if (compValue.startsWith("\"") && compValue.endsWith("\"")) {
@@ -1148,12 +1163,12 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 				if (logger.isTraceEnabled()) {
 					logger.trace("Test Match on: " + critKey);
-					logger.trace("Test Match : " + value + "/" + displayValue   + " - " + compValue);
+					logger.trace("Test Match : " + value + "/" + displayValue + " - " + compValue);
 				}
-				if((compValue != null) && compValue.contains("*")) {
-					
+				if ((compValue != null) && compValue.contains("*")) {
+
 					compValue = compValue.replace("*", "");
-					
+
 					if (!value.contains(compValue) && !displayValue.contains(compValue)) {
 						return false;
 					}
