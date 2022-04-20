@@ -1554,6 +1554,27 @@
 				</field-visibility>
 			</form>
 			
+			<form id="export">
+				<field-visibility>
+					<show id="pjt:tlTaskName" force="true" />
+					<show id="entity_pjt:project_pjt:project" force="true" />
+					<show id="pjt:tlTaskDescription" force="true" />
+					<show id="pjt:tlTaskLegend" force="true" />
+					<show id="pjt:tlState" force="true" />
+					<show id="pjt:subProjectRef" force="true" />
+				    <show id="pjt:tlResources" force="true" />
+					<show id="pjt:tlDuration" force="true" />
+					<show id="pjt:tlRealDuration" force="true" />
+					<show id="pjt:completionPercent" force="true" />
+					<show id="pjt:tlManualDate" force="true" />
+					<show id="pjt:tlStart" force="true"  />
+					<show id="pjt:tlEnd" force="true" />
+					<show id="pjt:tlWork" force="true" />
+					<show id="pjt:tlResourceCost" force="true" />
+					<show id="pjt:tlBudgetRef" force="true" />
+				</field-visibility>
+			</form>
+			
 			<form id="projectList">
 				<field-visibility>
 					<show id="bcpg:depthLevel" />

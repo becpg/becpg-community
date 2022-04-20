@@ -515,6 +515,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:labelClaim",
 		renderer : function(oRecord, data, label, scope) {
+			
+			if(scope.datalistMeta && scope.datalistMeta.name.indexOf("WUsed")>-1){
+			   var  url = beCPG.util.entityURL(data.siteId, data.value);
+			   return '<span class="' + data.metadata + '">' +(url!=null?'<a href="' + url + '">':'') +  Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+ '</span>';
+			}
+			
 
 			var isFormulated = oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"]!=null 
 						? oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"].value : false;

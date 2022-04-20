@@ -1022,6 +1022,14 @@
           <set appearance="bordered-panel" id="effectivity" label-id="becpg.forms.set.effectivity.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
         </appearance>
       </form>
+      <form id="datagridWUsed">
+          <field-visibility>
+              <show id="bcpg:parentEntityRef" force="true" />
+              <show id="cm:title" force="true" />
+              <show id="cm:modified" force="true" />
+              <show id="bcpg:formulatedDate" force="true" />
+          </field-visibility>
+      </form>
     </forms>
   </config>
 </alfresco-config>
