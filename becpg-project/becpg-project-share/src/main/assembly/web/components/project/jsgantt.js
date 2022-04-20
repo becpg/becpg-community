@@ -1942,7 +1942,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 			}
 
 			return '<div id="bardiv_' + vcurrDivID + '" style="position:absolute; top:3px; left:' + Math
-				.ceil(vTaskLeft * (vDayWidth) + 1) + 'px; height: 16px; width:266px; overflow:hidden;z-index:5;">' + '  <div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr
+				.ceil(vTaskLeft * (vDayWidth) + 1) + 'px; height: 16px; width:266px; overflow:hidden;z-index:2;">' + '  <div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr
 				+ '"  class="milestone ' + (vTask.getCompVal() < 100 ? "" : "completed") + '" style="background-color:#' + vTask.getColor() + ';">&nbsp;</div>'
 				+ ((vCaptionStr != null && vCaptionStr.length > 0) ? '<div class="gcaption" style="top:0px; left:20px">' + vCaptionStr + '</div>' : '') + '</div>';
 
@@ -1950,7 +1950,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 
 		this.renderTask = function(vcurrDivID, vTaskLeft, vTaskRight, vDayWidth, vDateRowStr, vCaptionStr, vTask) {
 			return '<div id="bardiv_' + vcurrDivID + '" class="gtaskdiv" style="position:absolute; left:'
-				+ Math.ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height:18px;z-index:5; width:'
+				+ Math.ceil(vTaskLeft * (vDayWidth) - 1) + 'px; height:18px;z-index:2; width:'
 				+ Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbar_' + vcurrDivID + '" title="' + vDateRowStr
 				+ '" class="gtask' + (vTask.getIsCritical() ? ' critical' : '') + '" style="background-color:#' + vTask.getColor() + '; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px;"  >'
 				+ '<div class="gcomplete" style="width:' + vTask.getCompStr() + ';">' + '</div>' + '</div>'
@@ -1962,7 +1962,7 @@ JSGantt.PREF_GANTT_FORMAT = "fr.becpg.gantt.format";
 		this.renderPlanTask = function(vcurrDivID, vTaskLeft, vTaskRight, vDayWidth, vDateRowStr, vTask) {
 
 			return '<div id="planbardiv_' + vcurrDivID + '" class="gtaskplandiv" style="position:absolute; left:'
-				+ Math.ceil(vTaskLeft * (vDayWidth) - 2) + 'px; height:18px;z-index:5; width:'
+				+ Math.ceil(vTaskLeft * (vDayWidth) - 2) + 'px; height:18px;z-index:2; width:'
 				+ Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px">' + '<div id="taskbarplan_' + vcurrDivID + '" title="' + vDateRowStr
 				+ '" class="gtaskplan" style="background-color:#' + vTask.getColor() + '; width:' + Math.ceil((vTaskRight) * (vDayWidth) - 1) + 'px;"  >'
 				+ '</div></div>';
