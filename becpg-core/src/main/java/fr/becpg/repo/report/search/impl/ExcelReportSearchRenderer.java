@@ -199,7 +199,11 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 			headerRow.setZeroHeight(true);
 			List<AttributeExtractorStructure> metadataFields = extractListStruct(itemType, headerRow);
 			AttributeExtractorStructure keyColumn = null;
-			if (entityDictionaryService.isSubClass(itemType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+			
+			// case of multiple lists of same type (ex: bcpg:surveyList@1)
+			QName actualType = QName.createQName(itemType.toString().split("@")[0]);
+			
+			if (entityDictionaryService.isSubClass(actualType, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 				keyColumn = metadataFields.remove(0);
 				logger.debug("Datalist key column : " + keyColumn.getFieldDef().getName());
 			} else {
