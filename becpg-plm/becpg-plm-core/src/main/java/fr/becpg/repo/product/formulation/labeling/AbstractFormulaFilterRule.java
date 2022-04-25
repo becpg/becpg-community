@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.formulation.labeling;
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -8,14 +9,16 @@ import java.util.Set;
 
 import fr.becpg.repo.helper.MLTextHelper;
 
-public abstract class AbstractFormulaFilterRule {
+public abstract class AbstractFormulaFilterRule implements Serializable {
+
+	private static final long serialVersionUID = -3030472014517241276L;
 
 	private final String formula;
 
 	private final Set<Locale> locales = new HashSet<>();
 
 	private final String ruleName;
-
+	
 	protected AbstractFormulaFilterRule(String ruleName, String formula, List<String> locales) {
 
 		this.ruleName = ruleName;
