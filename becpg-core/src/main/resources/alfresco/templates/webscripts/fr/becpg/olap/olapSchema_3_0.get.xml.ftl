@@ -136,6 +136,36 @@
 			</Hierarchy>
 		</Dimension>
 		
+		<Dimension name="suppliersDimension" caption="${msg("jsolap.supplier.title")}">
+			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.supplier.caption")}" primaryKey="entityNodeRef">
+				<View name="suppliers" alias="suppliers">
+								<SQL dialect="generic">
+									select  
+										a.entityNodeRef,
+										a.doc->>"$.name" as name,
+										a.nodeRef as nodeRef,
+										b.doc->>"$.bcpg_supplierState" as supplierState,
+										b.doc->>"$.bcpg_supplierHierarchy1[0]" as supplierHierarchy1,
+										b.doc->>"$.bcpg_supplierHierarchy2[0]" as supplierHierarchy2
+									from
+										assoc_bcpg_suppliers a left join bcpg_supplier b on a.nodeRef = b.nodeRef						
+									<#if !isAdmin>	
+									  where b.instanceId = ${instanceId}
+									</#if>
+								</SQL>
+				</View>
+				<Level name="name" caption="${msg("jsolap.supplierName.title")}" nameColumn="name" column="nodeRef" type="String">
+				</Level>
+				<Level name="family" caption="${msg("jsolap.supplierFamily.title")}" column="supplierHierarchy1" type="String">
+				</Level>
+				<Level name="subfamily" caption="${msg("jsolap.supplierSubFamily.title")}" column="supplierHierarchy2" type="String">
+				</Level>
+				<Level name="state" caption="${msg("jsolap.supplierState.title")}" column="supplierState" type="String">
+				</Level>
+			</Hierarchy>
+		</Dimension>	
+		
+		
 		<Dimension  name="productsDimension" caption="${msg("jsolap.products.title")}">
 			<Hierarchy name="products" hasAll="true" allMemberCaption="${msg("jsolap.products.caption")}" primaryKey="nodeRef">		
 				<View name="products_dim" alias="products_dim">
@@ -692,6 +722,8 @@
 
 		<DimensionUsage name="clients" caption="${msg("jsolap.client.title")}" source="clientsDimension" foreignKey="nodeRef" />
 		
+		<DimensionUsage name="suppliers" caption="${msg("jsolap.supplier.title")}" source="suppliersDimension" foreignKey="nodeRef" />
+
 		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="nodeRef" />
 		
 		<#if isAdmin>
@@ -1527,34 +1559,7 @@
 		
 		<DimensionUsage name="clients" caption="${msg("jsolap.client.title")}" source="clientsDimension" foreignKey="nodeRef" />
 		
-		<Dimension type="StandardDimension" foreignKey="nodeRef"  name="supplier" caption="${msg("jsolap.supplier.title")}">
-			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.supplier.caption")}" primaryKey="entityNodeRef">
-				<View name="suppliers" alias="suppliers">
-								<SQL dialect="generic">
-									select  
-										a.entityNodeRef,
-										a.doc->>"$.name" as name,
-										a.nodeRef as nodeRef,
-										b.doc->>"$.bcpg_supplierState" as supplierState,
-										b.doc->>"$.bcpg_supplierHierarchy1[0]" as supplierHierarchy1,
-										b.doc->>"$.bcpg_supplierHierarchy2[0]" as supplierHierarchy2
-									from
-										assoc_bcpg_suppliers a left join bcpg_supplier b on a.nodeRef = b.nodeRef						
-									<#if !isAdmin>	
-									  where b.instanceId = ${instanceId}
-									</#if>
-								</SQL>
-				</View>
-				<Level name="name" caption="${msg("jsolap.supplierName.title")}" nameColumn="name" column="nodeRef" type="String">
-				</Level>
-				<Level name="family" caption="${msg("jsolap.supplierFamily.title")}" column="supplierHierarchy1" type="String">
-				</Level>
-				<Level name="subfamily" caption="${msg("jsolap.supplierSubFamily.title")}" column="supplierHierarchy2" type="String">
-				</Level>
-				<Level name="state" caption="${msg("jsolap.supplierState.title")}" column="supplierState" type="String">
-				</Level>
-			</Hierarchy>
-		</Dimension>
+		<DimensionUsage name="suppliers" caption="${msg("jsolap.supplier.title")}" source="suppliersDimension" foreignKey="nodeRef" />
 		
 	    <Dimension name="nutritionScale" caption="${msg("jsolap.nutrientScore.title")}">
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.nutrientScore.caption")}" >
