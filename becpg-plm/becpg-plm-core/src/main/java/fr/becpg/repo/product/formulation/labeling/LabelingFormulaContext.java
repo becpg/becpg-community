@@ -2230,7 +2230,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			showRule = showGeoRules.get(nodeRef);
 		}
 
-		if (showRule.matchLocale(I18NUtil.getLocale())) {
+		if (showRule!=null && showRule.matchLocale(I18NUtil.getLocale())) {
 
 			List<PlaceOfActivityTypeCode> filters = new LinkedList<>();
 

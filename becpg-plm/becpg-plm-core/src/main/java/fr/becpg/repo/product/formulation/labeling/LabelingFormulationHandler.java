@@ -2403,18 +2403,22 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		boolean added = false;
 		for (NodeRef geo : geoOrigins) {
-			PlaceOfActivityTypeCode placeOfActivity = defaultActivity;
 
-			String placeOfActivityProp = (String) nodeService.getProperty(geo, GS1Model.PROP_PRODUCT_ACTIVITY_TYPE_CODE);
-			if (placeOfActivityProp != null && ! placeOfActivityProp.isBlank()) {
-				placeOfActivity = PlaceOfActivityTypeCode.valueOf(placeOfActivityProp);
+			@SuppressWarnings("unchecked")
+			List<String> placeOfActivityProps = (List<String>) nodeService.getProperty(geo, GS1Model.PROP_PRODUCT_ACTIVITY_TYPE_CODE);
+
+			if ((placeOfActivityProps != null) && !placeOfActivityProps.isEmpty()) {
+				for (String placeOfActivityProp : placeOfActivityProps) {
+					labelingComponent.getGeoOriginsByPlaceOfActivity()
+							.computeIfAbsent(PlaceOfActivityTypeCode.valueOf(placeOfActivityProp), (a) -> new HashSet<>()).add(geo);
+					added = true;
+
+				}
+
+			} else {
+				added = true;
+				labelingComponent.getGeoOriginsByPlaceOfActivity().computeIfAbsent(defaultActivity, (a) -> new HashSet<>()).add(geo);
 			}
-			Set<NodeRef> tmp = labelingComponent.getGeoOriginsByPlaceOfActivity().computeIfAbsent(placeOfActivity, (a) -> new HashSet<>());
-
-			tmp.add(geo);
-			added = true;
-
-			labelingComponent.getGeoOriginsByPlaceOfActivity().put(placeOfActivity, tmp);
 
 		}
 		return added;
