@@ -75,7 +75,14 @@ define(["dojo/_base/declare",
           this.addEcmBarHtml(payload);
       },
       
-      createUnauthorizedWarninBar : function alfresco_header_UnauthorizedWarningBar__createBar()
+      createNoLicenseWarningBar : function alfresco_header_NoLicenseWarningBar__createBar()
+      {
+    	  this.messageBox.innerHTML = this.message("nolicense.warning.bar.message");
+    	  this.stopRecording.style.display = "none";
+    	  domStyle.set(this.domNode, "display", "block");
+      },
+      
+      createUnauthorizedWarningBar : function alfresco_header_UnauthorizedWarningBar__createBar()
       {
     	  this.messageBox.innerHTML = this.message("unauthorized.warning.bar.message");
     	  this.stopRecording.style.display = "none";
@@ -88,8 +95,13 @@ define(["dojo/_base/declare",
        */
       postCreate: function alfresco_header_WarningBar__postCreate() {
     	  	
-    	  if(this.warningType == "UnauthorizedWarning"){
-    	  		this.createUnauthorizedWarninBar();
+    	  if(this.warningType == "NoLicenseWarning"){
+    	  		this.createNoLicenseWarningBar();
+    	  		return;
+    	  	}
+
+			if(this.warningType == "UnauthorizedWarning"){
+    	  		this.createUnauthorizedWarningBar();
     	  		return;
     	  	}
         
