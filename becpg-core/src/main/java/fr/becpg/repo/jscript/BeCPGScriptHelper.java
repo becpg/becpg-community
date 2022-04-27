@@ -72,6 +72,7 @@ import fr.becpg.repo.helper.GTINHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.license.BeCPGLicenseManager;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -132,6 +133,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private ContentService contentService;
 	
 	private EntityReportService entityReportService;
+	
+	private BeCPGLicenseManager beCPGLicenseManager;
 
 	private boolean useBrowserLocale;
 
@@ -139,6 +142,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private boolean showUnauthorizedWarning = true;
 
+	public void setBeCPGLicenseManager(BeCPGLicenseManager beCPGLicenseManager) {
+		this.beCPGLicenseManager = beCPGLicenseManager;
+	}
+	
 	public void setEntityFormatService(EntityFormatService entityFormatService) {
 		this.entityFormatService = entityFormatService;
 	}
@@ -1242,5 +1249,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
     		return count(type);
     	}
  	}
+    
+    public boolean isLicenseValid() {
+    	return beCPGLicenseManager.isLicenseValid();
+    }
+    
 
 }

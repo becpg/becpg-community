@@ -1,4 +1,4 @@
-package fr.becpg.test.repo.lisence;
+package fr.becpg.test.repo.license;
 
 import static org.junit.Assert.assertTrue;
 
@@ -18,11 +18,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import fr.becpg.repo.license.BeCPGLicense;
 import fr.becpg.repo.license.BeCPGLicenseManager;
 
-public class LisenceManagerTest {
+public class LicenseManagerTest {
 
 	String DELIMITER = ";";
-	String licenseFilePath = "./src/test/java/fr/becpg/test/repo/lisence/LicenseList.csv";
-	String targetPath = "./target/test-classes/fr/becpg/test/repo/lisence/output/";
+	String licenseFilePath = "./src/test/java/fr/becpg/test/repo/license/LicenseList.csv";
+	String targetPath = "./target/test-classes/fr/becpg/test/repo/license/output/";
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -86,15 +86,15 @@ public class LisenceManagerTest {
 	
 	//TODO test LisenceManager and sample json file
 	@Test
-	public void testLisenceKey() {
+	public void testLienseKey() {
 
 		BeCPGLicense license = new BeCPGLicense("beCPG Sample LICENSE", 1, 1, 10, 1, 10);
 
-		String lisenceKey  = BeCPGLicenseManager.computeLicenseKey(license);
+		String licenseKey  = BeCPGLicenseManager.computeLicenseKey(license);
 
-		//Used to get the key System.out.println("Sample license key:"+lisenceKey);
+		//Used to get the key System.out.println("Sample license key:"+licenseKey);
 
-		assertTrue(BeCPGLicenseManager.isValid(lisenceKey, license));
+		assertTrue(BeCPGLicenseManager.isValid(licenseKey, license));
 	}
 
 }

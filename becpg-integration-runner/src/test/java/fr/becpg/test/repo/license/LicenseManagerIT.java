@@ -1,4 +1,4 @@
-package fr.becpg.test.repo.lisence;
+package fr.becpg.test.repo.license;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.MimetypeMap;
@@ -35,7 +35,7 @@ public class LicenseManagerIT extends RepoBaseTestCase {
 	private CopyService copyService;
 	
 	@Test
-	public void readLisenceTest() {
+	public void readLicenseTest() {
 
 		// Purge existing licence
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -131,16 +131,16 @@ public class LicenseManagerIT extends RepoBaseTestCase {
 
 		BeCPGLicense license = new BeCPGLicense("beCPG Sample LICENSE", 1, 1, 10, 1, 10);
 
-		String lisenceKey = BeCPGLicenseManager.computeLicenseKey(license);
+		String licenseKey = BeCPGLicenseManager.computeLicenseKey(license);
 
 		// Used to get the key System.out.println("Sample license
 		// key:"+lisenceKey);
 
-		assertTrue(BeCPGLicenseManager.isValid(lisenceKey, license));
+		assertTrue(BeCPGLicenseManager.isValid(licenseKey, license));
 
 		license = new BeCPGLicense("beCPG Sample LICENSE", 2, 2, 10, 1, 10);
 
-		assertFalse(BeCPGLicenseManager.isValid(lisenceKey, license));
+		assertFalse(BeCPGLicenseManager.isValid(licenseKey, license));
 
 	}
 
