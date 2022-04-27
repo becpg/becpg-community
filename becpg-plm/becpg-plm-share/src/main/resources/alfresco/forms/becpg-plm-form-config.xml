@@ -3087,6 +3087,16 @@
 					<show id="cm:description" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					<show force="true" id="bcpg:subsidiaryRef"/>
+			        <show force="true" id="bcpg:trademarkRef"/>
+			        <show force="true" id="bcpg:plants"/>
+			        <show force="false" id="bcpg:clients"/>
+			        <show force="false" id="bcpg:suppliers"/>
+			        <show force="false" id="bcpg:supplierPlants"/>
+			        <show force="false" id="bcpg:supplierRefCode"/>
+			        		<!-- tags and categories -->
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
 					<!-- audit -->
 					<show id="cm:creator" for-mode="view"/>
 					<show id="cm:created" for-mode="view"/>
@@ -3095,25 +3105,73 @@
 				</field-visibility>
 				<appearance>
 				
-					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
-							template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="bcpg:productCollectionHierarchy1">
+				    <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label"  template="/org/alfresco/components/form/2-column-set.ftl"/>
+			          <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
+			        
+			          <field id="cm:title"  mandatory="false" read-only="false" set="mainInfo">
+			            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+			          </field>
+			       
+			       
+			          <field id="bcpg:productCollectionHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productCollectionHierarchy2">
+					<field id="bcpg:productCollectionState"  set="mainInfo"/>
+					<field id="bcpg:productCollectionHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
 							<control-param name="parent">bcpg_productCollectionHierarchy1</control-param>
 						</control>
 					</field>
-					<field id="cm:description">
+					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:code" read-only="true" />
+					<field id="bcpg:code" read-only="true" set="mainInfo"/>
+					<field id="bcpg:erpCode" read-only="true" set="mainInfo"/>
+				
+				  <field id="bcpg:subsidiaryRef" mandatory="false" read-only="false" set="mainInfo"/>
+		          <field id="bcpg:trademarkRef" mandatory="false" read-only="false" set="mainInfo"/>
+		          <field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo"/>
+		          <field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="mainInfo"/>
+		         
+		          <field id="bcpg:clients" mandatory="false" read-only="false" set="mainInfo"/>
+		          <field id="bcpg:suppliers" mandatory="false" read-only="false" set="mainInfo"/>
+		          <field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="mainInfo">
+		            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+		              <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity</control-param>
+		              <control-param name="parentAssoc">bcpg_suppliers</control-param>
+		            </control>
+		          </field>
+		          <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="mainInfo"/>
+		          <set id="categories" appearance="bordered-panel"
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+						
+						<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+		          
+		          
+		          
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
+							template="/org/alfresco/components/form/2-column-set.ftl" />
+					
 				
 					<!-- audit -->
 					<field id="cm:creator" set="audit" />
@@ -3143,25 +3201,33 @@
 					
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:productCollectionHierarchy1">
+				    <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+			          <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
+			        
+			          <field id="cm:title"  mandatory="false" read-only="false" set="mainInfo">
+			            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+			          </field>
+			       
+			       
+			          <field id="bcpg:productCollectionHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
 						</control>
 					</field>
-					<field id="bcpg:productCollectionHierarchy2">
+					<field id="bcpg:productCollectionHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
 							<control-param name="parent">bcpg_productCollectionHierarchy1</control-param>
 						</control>
 					</field>
-					<field id="cm:description">
+					<field id="bcpg:productCollectionState"  set="mainInfo"/>
+					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:code" read-only="true" />
+					<field id="bcpg:code" read-only="true" set="mainInfo"/>
+					<field id="bcpg:erpCode" read-only="true" set="mainInfo"/>
 				</appearance>
 			</form>
 			
@@ -3176,7 +3242,12 @@
 					<show id="bcpg:productCollectionState" />
 					<show id="cm:description" />
 					<show id="bcpg:erpCode" force="true" />
-				
+					<show force="true" id="bcpg:trademarkRef"/>
+			          <show force="true" id="bcpg:plants"/>
+			          <show force="true" id="bcpg:clients"/>
+			          <show force="true" id="bcpg:suppliers"/>
+			          <show force="true" id="bcpg:supplierPlants"/>
+			          <show force="true" id="bcpg:supplierRefCode"/>
 
 				</field-visibility>
 				<appearance>
@@ -3438,6 +3509,7 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
+		
 			
 			<form id="labeling">
 				<field-visibility>
@@ -3593,6 +3665,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:productListProduct" />
+					<show id="bcpg:parentLevel" force="true" />
 					<show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
@@ -3603,6 +3676,12 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2</control-param>
+						</control>
+					</field>
+					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:productList&#38;attributeName=bcpg:productListProduct
+							</control-param>
 						</control>
 					</field>
 				<field id="bcpg:startEffectivity"   >
@@ -3638,13 +3717,15 @@
 			
 			<form id="datagrid">
 				<field-visibility>
+				    <show id="bcpg:depthLevel" />
 					<show id="bcpg:productListProduct" />
 					<show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
-						<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:depthLevel" label="hidden" />		
+					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 			
@@ -3657,6 +3738,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:productListProduct" />
+					<show id="bcpg:parentLevel" force="true" />
 					<show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
@@ -3667,6 +3749,12 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct%5E4,bcpg:semiFinishedProduct</control-param>
+						</control>
+					</field>
+					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:productList&#38;attributeName=bcpg:productListProduct
+							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:startEffectivity"   >
