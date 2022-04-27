@@ -534,7 +534,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 				skipFilter = true;
 			}
 			// We get datalist for entity
-			else {
+			else if (dictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITY_V2)) {
 
 				NodeRef entityTplNodeRef;
 				if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
