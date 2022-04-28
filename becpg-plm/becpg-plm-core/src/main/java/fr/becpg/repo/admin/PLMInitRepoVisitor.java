@@ -1650,8 +1650,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		String[] groups = { PLMGroup.RDUser.toString(), PLMGroup.RDMgr.toString(), PLMGroup.QualityUser.toString(), PLMGroup.QualityMgr.toString(),
 				PLMGroup.ProductionUser.toString(), PLMGroup.ProductionMgr.toString(), PLMGroup.PackagingMgr.toString(),
-				PLMGroup.PackagingUser.toString(), PLMGroup.ReferencingMgr.toString(), PLMGroup.TradeUser.toString(), NCGroup.ClaimStart.toString(),
-				NCGroup.ClaimAnalysis.toString(), NCGroup.ClaimClassification.toString(), NCGroup.ClaimTreatment.toString(),
+				PLMGroup.PackagingUser.toString(), PLMGroup.ReferencingMgr.toString(), PLMGroup.TradeUser.toString(), PLMGroup.ProductValidationStart.toString(),
+				NCGroup.ClaimStart.toString(), 	NCGroup.ClaimAnalysis.toString(), NCGroup.ClaimClassification.toString(), NCGroup.ClaimTreatment.toString(),
 				NCGroup.ClaimResponse.toString(), NCGroup.ClaimClosing.toString(), ECMGroup.CreateChangeOrder.toString(),
 				ECMGroup.ApplyChangeOrder.toString() };
 

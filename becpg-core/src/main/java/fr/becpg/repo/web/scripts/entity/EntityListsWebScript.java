@@ -137,9 +137,9 @@ public class EntityListsWebScript extends AbstractWebScript {
 	private static final String KEY_NAME_COLOR = "color";
 
 	private static final String KEY_NAME_VARIANT = "variants";
-	
+
 	private static final String KEY_NAME_IS_MODEL_VARIANT = "isModelVariant";
-	
+
 	private static final String KEY_NAME_VARIANT_PARENT = "variantParent";
 
 	private static final String KEY_NAME_COMPARE_WITH_ENTITIES = "compareWithEntities";
@@ -279,7 +279,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
-
 	/**
 	 * <p>Setter for the field <code>reportAssociationDecorator</code>.</p>
 	 *
@@ -411,7 +410,8 @@ public class EntityListsWebScript extends AbstractWebScript {
 			nodeRefs.add(entityTplNodeRef);
 		}
 		for (NodeRef nodeRef : nodeRefs) {
-			if ((permissionService.hasPermission(nodeRef, "Read")== AccessStatus.ALLOWED) && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
+			if ((permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED)
+					&& nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_VARIANT)) {
 				for (ChildAssociationRef association : nodeService.getChildAssocs(nodeRef)) {
 					if (association.getTypeQName().isMatch(BeCPGModel.ASSOC_VARIANTS)) {
 						variantsAssociations.add(association);
@@ -419,7 +419,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 				}
 			}
 		}
-		
+
 		if (!variantsAssociations.isEmpty()) {
 			JSONArray variants = new JSONArray();
 			for (ChildAssociationRef association : variantsAssociations) {
@@ -436,7 +436,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 				variants.put(obj);
 			}
 			result.put(KEY_NAME_VARIANT, variants);
-		}		
+		}
 
 		List<AssociationRef> compareAssociations = new ArrayList<>();
 		if (nodeService.hasAspect(entity, BeCPGModel.ASPECT_COMPARE_WITH)) {
@@ -465,7 +465,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 	 * </code>
 	 */
 	@Override
-	public final void execute(WebScriptRequest req, WebScriptResponse res)  {
+	public final void execute(WebScriptRequest req, WebScriptResponse res) {
 		JSONObject result = new JSONObject();
 		try {
 			// Always return in browser local
@@ -476,7 +476,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 			String storeId = templateArgs.get(PARAM_STORE_ID);
 			String nodeId = templateArgs.get(PARAM_ID);
 			String aclMode = req.getParameter(PARAM_ACL_MODE);
-			
+
 			List<NodeRef> listsNodeRef = new ArrayList<>();
 			final NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
 			NodeRef listContainerNodeRef = null;
@@ -539,7 +539,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 				skipFilter = true;
 			}
 			// We get datalist for entity
-			else {
+			else if (dictionaryService.isSubClass(nodeType, BeCPGModel.TYPE_ENTITY_V2)) {
 
 				NodeRef entityTplNodeRef;
 				if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL_REF)) {
@@ -607,7 +607,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 					if (permissionService.hasPermission(temp, PermissionService.READ) == AccessStatus.ALLOWED) {
 						String dataListType = (String) nodeService.getProperty(temp, DataListModel.PROP_DATALISTITEMTYPE);
 						int accessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListType);
-	
+
 						if (SecurityService.NONE_ACCESS != accessMode) {
 							String dataListName = (String) nodeService.getProperty(temp, ContentModel.PROP_NAME);
 							int newAccessMode = securityService.computeAccessMode(nodeRef, nodeType, dataListName);
@@ -615,7 +615,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 								accessMode = newAccessMode;
 							}
 						}
-	
+
 						if (SecurityService.NONE_ACCESS == accessMode) {
 							if (logger.isTraceEnabled()) {
 								logger.trace("Don't display dataList:" + dataListType);

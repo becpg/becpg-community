@@ -79,6 +79,9 @@
 					<show id="bcpg:entityTplIsDefault" />
 					<show id="bcpg:entityTplDefaultDest" />
 					<show id="bcpg:entityTplScript" />
+					
+					<!-- local security rule -->
+					<show id="sec:securityRef" />	
 
 					<!-- tags and categories -->
 					<show id="cm:taggable" />
@@ -101,6 +104,7 @@
 						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label"
 						template="/org/alfresco/components/form/2-column-set.ftl" />
+					 <set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
 
 					<field id="cm:name" set="mainInfo" />
 					<field id="cm:title" set="mainInfo" />
@@ -169,6 +173,13 @@
 							<control-param name="startLocation">{doclib}</control-param>
 						</control>
 					</field>
+					
+		            <field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
+					  <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						  <control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
+						  </control-param>
+					  </control>
+				    </field>
 
 					<!-- categories -->
 					<field id="cm:taggable" set="categories">

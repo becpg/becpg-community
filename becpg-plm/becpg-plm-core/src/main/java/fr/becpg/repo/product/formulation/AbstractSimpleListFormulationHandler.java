@@ -355,7 +355,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 								qtyProvider.getVolume(compoListDataItem, parentLossRatio, componentProduct), qtyProvider.getNetQty(), qtyProvider.getNetWeight());
 						
 						if (qties.isNotNull()) {
-							visitPart(formulatedProduct, componentProduct, simpleListDataList, qties, mandatoryCharacts, totalQtiesValue, variant);
+							visitPart(formulatedProduct, componentProduct, simpleListDataList, qties, mandatoryCharacts, totalQtiesValue,  FormulationHelper.getQtyInKg(compoListDataItem) , variant);
 						}
 
 					}
@@ -393,7 +393,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight());
 
 					visitPart(formulatedProduct, partProduct, simpleListDataList, qties,
-							mandatoryCharacts2, null, variant);
+							mandatoryCharacts2, null, null, variant);
 				}
 			}
 
@@ -430,7 +430,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							null, netQtyForCost, null );
 					
 
-					visitPart(formulatedProduct, partProduct, simpleListDataList, qties, mandatoryCharacts3, null,
+					visitPart(formulatedProduct, partProduct, simpleListDataList, qties, mandatoryCharacts3, null, null,
 							variant);
 				}
 			}
@@ -500,7 +500,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
 	protected void visitPart(ProductData formulatedProduct, ProductData partProduct, List<T> simpleListDataList, FormulatedQties qties , Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue,
-			 VariantData variant) {
+			 Double totalQtyUsed, VariantData variant) {
 
 		if (!(partProduct instanceof LocalSemiFinishedProductData)) {
 
@@ -562,12 +562,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 								calculate(formulatedProduct, partProduct, newSimpleListDataItem, slDataItem, qtyUsed, netQty,
 										variant);
 
-								if ((totalQtiesValue != null) && (slDataItem.getValue() != null)) {
+								if ((totalQtiesValue != null) && (slDataItem.getValue() != null) && totalQtyUsed != null) {
 									Double currentQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
 									if (currentQty == null) {
 										currentQty = 0d;
 									}
-									totalQtiesValue.put(newSimpleListDataItem.getCharactNodeRef(), currentQty + qtyUsed);
+									
+									totalQtiesValue.put(newSimpleListDataItem.getCharactNodeRef(), currentQty + totalQtyUsed);
 								}
 							}
 						}

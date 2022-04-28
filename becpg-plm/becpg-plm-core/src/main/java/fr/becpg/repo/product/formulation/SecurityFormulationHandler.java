@@ -119,7 +119,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	public boolean process(ProductData productData) throws FormulateException {
 		if (!L2CacheSupport.isCacheOnlyEnable()) {
 			NodeRef productDataNodeRef = productData.getNodeRef();
-			NodeRef listContainerNodeRef = entityListDAO.getListContainer(productData.getNodeRef());
+			NodeRef listContainerNodeRef = entityListDAO.getListContainer(productDataNodeRef);
 			List<NodeRef> datalists = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
 
 			//Set datalist permissions
@@ -152,11 +152,11 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			boolean setOtherGroupPermissions = false;
 			List<String> authorityPermissionGroup = new ArrayList<>();
 
-			if (permissionModel.getPermission().equals(PermissionModel.READ_ONLY)) {
+			if (PermissionModel.READ_ONLY.equals(permissionModel.getPermission())) {
 				permissionToSet = PermissionService.CONSUMER;
-			} else if (permissionModel.getPermission().equals(PermissionModel.READ_READANDWRITE)) {
+			} else if (PermissionModel.READ_READANDWRITE.equals(permissionModel.getPermission())) {
 				permissionToSet = PermissionService.CONTRIBUTOR;
-			} else if (permissionModel.getPermission().equals(PermissionModel.READ_WRITE)) {
+			} else if (PermissionModel.READ_WRITE.equals(permissionModel.getPermission())) {
 				permissionToSet = PermissionService.CONTRIBUTOR;
 				setOtherGroupPermissions = true;
 			}
@@ -168,9 +168,9 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (siteService.getSite(productDataNodeRef) != null) {
 					String sitePermission = siteService.getMembersRole(siteService.getSite(productDataNodeRef).getShortName(), authorityName);
 					if (sitePermission != null) {							
-						if (permissionToSet.equals(PermissionService.CONSUMER) || sitePermission.contains(permissionToSet)) {
+						if (PermissionService.CONSUMER.equals(permissionToSet) || sitePermission.contains(permissionToSet)) {
 							permissionService.setPermission(nodeRef, authorityName, permissionToSet, true);
-						} else if (sitePermission.equals("SiteCollaborator") || sitePermission.equals("SiteManager")) {
+						} else if ("SiteCollaborator".equals(sitePermission) || "SiteManager".equals(sitePermission)) {
 							permissionService.setPermission(nodeRef, authorityName, PermissionService.COORDINATOR, true);
 						}
 					}
@@ -185,7 +185,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 					permissionService.setInheritParentPermissions(nodeRef, true);
 				}
 				for(AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
-					if (!authorityPermissionGroup.contains(permission.getAuthority()) && !permission.getPermission().equals(PermissionService.READ)) {
+					if (!authorityPermissionGroup.contains(permission.getAuthority()) && !PermissionService.READ.equals(permission.getPermission())) {
 						permissionService.setPermission(nodeRef, permission.getAuthority(), PermissionService.READ , true);
 					}
 				}

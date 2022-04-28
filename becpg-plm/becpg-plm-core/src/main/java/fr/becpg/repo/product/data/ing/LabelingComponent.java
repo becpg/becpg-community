@@ -17,8 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.ing;
 
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -26,6 +28,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.data.constraints.PlaceOfActivityTypeCode;
 import fr.becpg.repo.product.formulation.labeling.FootNoteRule;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.annotation.AlfMlText;
@@ -58,8 +61,8 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	protected MLText pluralLegalName;
 
 	private Set<NodeRef> allergens = new HashSet<>();
-
-	private Set<NodeRef> geoOrigins = new HashSet<>();
+	
+	private Map<PlaceOfActivityTypeCode,Set<NodeRef>> geoOriginsByPlaceOfActivity = new EnumMap<>(PlaceOfActivityTypeCode.class);
 
 	private Set<NodeRef> bioOrigins = new HashSet<>();
 	
@@ -88,7 +91,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.isPlural = abstractLabelingComponent.isPlural;
 		this.footNotes = new HashSet<>(abstractLabelingComponent.footNotes);
 		this.allergens = new HashSet<>(abstractLabelingComponent.allergens);
-		this.geoOrigins = new HashSet<>(abstractLabelingComponent.geoOrigins);
+		this.geoOriginsByPlaceOfActivity = new EnumMap<>(abstractLabelingComponent.geoOriginsByPlaceOfActivity);
 		this.bioOrigins = new HashSet<>(abstractLabelingComponent.bioOrigins);
 	}
 
@@ -297,23 +300,14 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.bioOrigins = bioOrigins;
 	}
 
-	/**
-	 * <p>Getter for the field <code>geoOrigins</code>.</p>
-	 *
-	 * @return a {@link java.util.Set} object.
-	 */
-	public Set<NodeRef> getGeoOrigins() {
-		return geoOrigins;
+	public Map<PlaceOfActivityTypeCode, Set<NodeRef>> getGeoOriginsByPlaceOfActivity() {
+		return geoOriginsByPlaceOfActivity;
 	}
 
-	/**
-	 * <p>Setter for the field <code>geoOrigins</code>.</p>
-	 *
-	 * @param geoOrigins a {@link java.util.Set} object.
-	 */
-	public void setGeoOrigins(Set<NodeRef> geoOrigins) {
-		this.geoOrigins = geoOrigins;
+	public void setGeoOriginsByPlaceOfActivity(Map<PlaceOfActivityTypeCode, Set<NodeRef>> geoOriginsByPlaceOfActivity) {
+		this.geoOriginsByPlaceOfActivity = geoOriginsByPlaceOfActivity;
 	}
+
 
 	public abstract LabelingComponent createCopy();
 
@@ -322,7 +316,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		final int prime = 31;
 		int result = super.hashCode();
 		result = (prime * result)
-				+ Objects.hash(footNotes, allergens, bioOrigins, geoOrigins, isPlural, legalName, pluralLegalName, qty, qtyWithYield, volume, volumeWithYield);
+				+ Objects.hash(footNotes, allergens, bioOrigins, geoOriginsByPlaceOfActivity, isPlural, legalName, pluralLegalName, qty, qtyWithYield, volume, volumeWithYield);
 		return result;
 	}
 
@@ -336,7 +330,7 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		}
 		LabelingComponent other = (LabelingComponent) obj;
 		return Objects.equals(allergens, other.allergens) && Objects.equals(bioOrigins, other.bioOrigins) && Objects.equals(footNotes, other.footNotes)
-				&& Objects.equals(geoOrigins, other.geoOrigins) && (isPlural == other.isPlural) && Objects.equals(legalName, other.legalName)
+				&& Objects.equals(geoOriginsByPlaceOfActivity, other.geoOriginsByPlaceOfActivity) && (isPlural == other.isPlural) && Objects.equals(legalName, other.legalName)
 				&& Objects.equals(pluralLegalName, other.pluralLegalName) && Objects.equals(qty, other.qty)
 				&& Objects.equals(qtyWithYield, other.qtyWithYield) && Objects.equals(volume, other.volume)
 				&& Objects.equals(volumeWithYield, other.volumeWithYield);
