@@ -17,5 +17,6 @@ public enum PLMGroup {
 	ProductionMgr, 
 	ReferencingMgr,
 	PackagingMgr,
-	PackagingUser
+	PackagingUser,
+	ProductValidationStart
 }

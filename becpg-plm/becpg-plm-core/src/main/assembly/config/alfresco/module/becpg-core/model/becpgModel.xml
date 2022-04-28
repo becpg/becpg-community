@@ -1020,6 +1020,10 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>bcpg:effectivityAspect</aspect>
+			</mandatory-aspects>
 		</type>
 		
 

@@ -26,14 +26,12 @@ import fr.becpg.repo.report.search.impl.DefaultExcelReportSearchPlugin;
  */
 @Service
 public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelReportSearchPlugin {
-	
-	
 
 	/** {@inheritDoc} */
 	@Override
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
-		
+
 		for (NodeRef entityNodeRef : searchResults) {
 			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
 				if (keyColumn != null) {
@@ -54,9 +52,13 @@ public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelRepor
 					listNodeRefs.add(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_COMPOLIST));
 					listNodeRefs.add(entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_PACKAGINGLIST));
 					listNodeRefs.add(entityListDAO.getList(listContainerNodeRef, MPMModel.TYPE_PROCESSLIST));
-					
-					listNodeRefs.forEach((nodeRef) -> results.addAll(entityListDAO.getListItems(nodeRef, PLMModel.TYPE_DYNAMICCHARACTLIST)));
-					
+
+					listNodeRefs.forEach((nodeRef) -> {
+						if (nodeRef != null) {
+							results.addAll(entityListDAO.getListItems(nodeRef, PLMModel.TYPE_DYNAMICCHARACTLIST));
+						}
+					});
+
 					for (NodeRef itemNodeRef : results) {
 						if (itemType.equals(nodeService.getType(itemNodeRef))) {
 							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
@@ -64,7 +66,7 @@ public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelRepor
 							}
 						}
 					}
-					
+
 				} else {
 					rownum = fillRow(sheet, entityNodeRef, itemType, metadataFields, cache, rownum, null, null);
 				}
@@ -74,20 +76,17 @@ public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelRepor
 		return rownum;
 
 	}
-	
 
-	
 	/** {@inheritDoc} */
 	@Override
 	public boolean isApplicable(QName itemType, String[] parameters) {
 		return PLMModel.TYPE_DYNAMICCHARACTLIST.equals(itemType);
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean isDefault() {
 		return false;
 	}
-	
 
 }
