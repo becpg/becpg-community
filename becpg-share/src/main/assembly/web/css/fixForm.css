@@ -97,3 +97,51 @@
 }
 
 
+/** Filter form */
+
+
+.filter-form .form-container .yui-g .form-field input[type="text"], 
+.filter-form .form-container .yui-g .form-field input[type="file"],
+.filter-form .form-container .yui-g .form-field input[type="password"],
+.filter-form .form-container .yui-g .form-field input,
+.filter-form .form-container .yui-g .form-field select,
+.filter-form .form-container .yui-g .form-field textarea,
+.filter-form .form-container .yui-g .yui-ac .ac-body {
+	width: 13em !important;
+}
+
+
+.filter-form .form-container .form-field input[type="text"], 
+.filter-form .form-container .form-field input[type="file"],
+.filter-form .form-container .form-field input[type="password"],
+.filter-form .form-container .form-field input,
+.filter-form .form-container .form-field select,
+.filter-form .form-container .yui-ac .ac-body {
+	width: 30em !important;
+}
+
+
+.filter-form .form-container .form-field input.number-unit {
+	width: 26em !important;
+}
+
+.filter-form .form-container  .form-field select.number-unit {
+	width: 4em !important;
+}
+
+.filter-form .form-container .form-field textarea {
+	width: 95% !important;
+}
+
+
+.filter-form .form-container .yui-g .yui-ac .ac-body .yui-ac-input {
+	width: 80% !important;
+}
+
+
+.filter-form .form-container .yui-g  input[type="checkbox"],
+.filter-form .form-container .form-field  input[type="checkbox"] {
+    width: auto !important;
+}
+
+
