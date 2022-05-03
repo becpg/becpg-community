@@ -266,7 +266,11 @@ public class ImportHelper {
 
 								String strLocale = transLocalName.replace(qName.getLocalName() + MLTEXT_SEPARATOR, "");
 								Locale locale = MLTextHelper.parseLocale(strLocale);
-								mlText.addValue(locale, values.get(z_idx));
+								if(values.get(z_idx) == null || values.get(z_idx).isBlank()) {
+									mlText.removeValue(locale);
+								} else {
+									mlText.addValue(locale, values.get(z_idx));
+								}
 							} else {
 								// the translation is finished
 								break;
