@@ -130,11 +130,20 @@ public class SpelFormulaService {
 	 * @param <T> a T object.
 	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
 	 */
-	public <T extends RepositoryEntity> StandardEvaluationContext createCustomSpelContext(T entity, SpelFormulaContext<T> formulaContext) {
+	public <T extends RepositoryEntity> StandardEvaluationContext createCustomSpelContext(T entity, SpelFormulaContext<T> formulaContext, boolean applySecurity) {
 		StandardEvaluationContext context = new StandardEvaluationContext(formulaContext);
-		formulaContext.setEntity(createSecurityProxy(entity));
+		if(applySecurity) {
+			formulaContext.setEntity(createSecurityProxy(entity));
+		} else {
+			formulaContext.setEntity(entity);
+		}
 		registerCustomFunctions(entity, context);
 		return context;
+	}
+	
+	
+	public <T extends RepositoryEntity> StandardEvaluationContext createCustomSpelContext(T entity, SpelFormulaContext<T> formulaContext) {
+		return createCustomSpelContext(entity, formulaContext,true);
 	}
 
 	/**
