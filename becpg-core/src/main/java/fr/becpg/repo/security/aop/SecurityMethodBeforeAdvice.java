@@ -68,7 +68,7 @@ public class SecurityMethodBeforeAdvice implements MethodBeforeAdvice {
 
 		if (m.isAnnotationPresent(AlfQname.class)) {
 			String methodQName = m.getAnnotation(AlfQname.class).qname();
-			if (methodQName != null) {
+			if (methodQName != null && target!=null &&  target.getClass().isAnnotationPresent(AlfQname.class)) {
 				String classQName = target.getClass().getAnnotation(AlfQname.class).qname();
 				if (classQName != null) {
 					if (securityService.computeAccessMode(null, QName.createQName(classQName, namespaceService), methodQName) != SecurityService.WRITE_ACCESS) {
