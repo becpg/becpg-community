@@ -332,6 +332,10 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 			seri = Double.parseDouble((String) value);
 			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
 			value = seri;
+		} else if (metadata.equals("float")) {
+			seri = Float.parseFloat((String) value);
+			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
+			value = seri;
 		} else if (metadata.equals("int")) {
 			seri = Integer.parseInt((String) value);
 			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
