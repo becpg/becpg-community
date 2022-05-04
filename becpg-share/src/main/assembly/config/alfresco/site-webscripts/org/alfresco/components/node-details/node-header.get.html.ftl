@@ -120,13 +120,32 @@
                </div>
                <div class="node-action">
                   <#if showDownload == "true" && node.contentURL??>
-                  <!-- Download Button -->
-                  <span class="yui-button yui-link-button onDownloadDocumentClick">
-                     <span class="first-child">
-                        <a href="${url.context}/proxy/alfresco${node.contentURL?html}?a=true" tabindex="0">${msg("button.download")}</a>
-                     </span>
-                  </span>
-                  </#if>
+                    <!-- Download Button -->
+                    <span class="yui-button yui-link-button onDownloadDocumentClick">
+                       <span class="first-child">
+                          <a href="#" onclick="downloadNode();" tabindex="0">${msg("button.download")}</a>
+                       </span>
+                    </span>
+                    <script type="text/javascript">
+                       function downloadNode(){
+                            var request = new XMLHttpRequest();
+                            var relativeUrl = "${url.context}/proxy/alfresco${node.contentURL?html}?a=true";
+                            var url = window.location.protocol + "//" + window.location.host + relativeUrl;
+
+                            request.onreadystatechange = function() {
+                              if (this.status === 401)
+                              {
+                                 window.location.reload();
+                              }
+                              else if (this.readyState == 4 && this.status == 200) {
+                                 window.open(relativeUrl, "_blank");
+                              }
+                            };
+                            request.open("GET", url, true);
+                            request.send();
+                       }
+                    </script>
+                    </#if>
                </div>
                <#else>
                </div>

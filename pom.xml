@@ -5,7 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>4.0.0</version>
+	<version>4.2.0</version>
 	<name>beCPG</name>
 	
 	<description>BeCPG Parent Project</description>
@@ -102,7 +102,7 @@
 	<properties>
 	
 	 <!-- Alfresco Maven Plugin version to use -->
-		<alfresco.sdk.version>4.2.0</alfresco.sdk.version>
+		<alfresco.sdk.version>4.4.0</alfresco.sdk.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -111,22 +111,24 @@
         <alfresco.bomDependencyArtifactId>acs-community-packaging</alfresco.bomDependencyArtifactId>
         
         
-         <!-- Alfresco 7 -->
-		<alfresco.platform.version>7.0.0</alfresco.platform.version>
-        <alfresco.share.version>7.0.0</alfresco.share.version>
+         <!-- Alfresco 7.2 -->
+		<alfresco.platform.version>7.2.0</alfresco.platform.version>
+		<alfresco.share.docker.version>7.2.0</alfresco.share.docker.version>
+		
+		<!--  Old 7.0.0 -->
+        <alfresco.share.version>14.96</alfresco.share.version>
         
-        
-        <alfresco-repository.version>8.423</alfresco-repository.version>
-		<alfresco-remote-api.version>8.423</alfresco-remote-api.version>
-		<alfresco-data-model.version>8.423</alfresco-data-model.version>
-		<alfresco-core.version>8.423</alfresco-core.version>
-	    <spring-webscripts.version>8.18</spring-webscripts.version>
-	    <spring-surf.version>8.9</spring-surf.version>
+        <!-- Old 8.423 -->
+        <alfresco-repository.version>14.145</alfresco-repository.version>
+		<alfresco-remote-api.version>14.145</alfresco-remote-api.version>
+		<alfresco-data-model.version>14.145</alfresco-data-model.version>
+		<alfresco-core.version>14.145</alfresco-core.version>
+	    <spring-webscripts.version>8.28</spring-webscripts.version>
 	
 
 
-		<alfresco.aos.version>1.4.0</alfresco.aos.version>
-		<mysql.connector.version>8.0.22</mysql.connector.version>
+		<alfresco.aos.version>1.4.1</alfresco.aos.version>
+		<mysql.connector.version>8.0.28</mysql.connector.version>
         
     
         <!-- Docker images -->
@@ -154,7 +156,7 @@
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
 		<docker.becpg.url>becpg</docker.becpg.url>
-		<docker.becpg.tag>4.0.0</docker.becpg.tag>
+		<docker.becpg.tag>4.2.0</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -540,14 +542,6 @@
 			<scope>test</scope>
 		</dependency>
 		
-		<!--
-		<dependency>
-		    <groupId>org.apache.activemq</groupId>
-		    <artifactId>activemq-broker</artifactId>
-		    <version>5.16.1</version>
-		    <scope>test</scope>
-		</dependency>
-		-->
 
 
 		<dependency>
@@ -563,10 +557,6 @@
 					<groupId>javax.xml.bind</groupId>
 					<artifactId>jaxb-api</artifactId>
 				</exclusion>
-				<!-- <exclusion>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-				</exclusion> -->
 				<exclusion>
 					<groupId>javax.xml.ws</groupId>
 					<artifactId>jaxws-api</artifactId>
