@@ -12,11 +12,10 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
-
-import com.github.openjson.JSONObject;
 
 import fr.becpg.repo.designer.DesignerModel;
 import fr.becpg.repo.designer.DesignerService;

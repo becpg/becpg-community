@@ -370,6 +370,56 @@ var AlfrescoUtil =
    },
 
    /**
+    * Retrieve supplied site visibility status for current user
+    *
+    * @method isSiteVisible
+    * @param siteId {string} Site to get the visibility status
+    * @return null if site is not supplied, true if user can see the site, false otherwise
+    */
+   isSiteVisible: function isSiteVisible(siteId)
+   {
+       var isVisible = null;
+
+       if (siteId)
+       {
+         var site = AlfrescoUtil.getSite(siteId);
+         var isPublic = site != null && site.isPublic == true;
+         var isMember = AlfrescoUtil.getSiteMembership(siteId).isMember == true;
+
+         isVisible = isPublic || isMember;
+      }
+
+      return isVisible;
+   },
+
+   /**
+    * Extract and retrieve the node site name from repo path
+    *
+    * repoPath: "/Sites/{siteName}/documentLibrary/*"
+    *
+    * @method getSiteFromPath
+    * @param itemDetails {object} As returned from repository data webscript
+    * @return null if node is not located in a site, otherwise, the site name
+    */
+   getSiteFromPath: function getSiteFromPath(itemDetails)
+   {
+      if (itemDetails)
+      {
+        var repoPath = itemDetails.item.location.repoPath,
+        sites = "/Sites/",
+        docLibrary = "/documentLibrary",
+        docLibraryIndex = repoPath.indexOf(docLibrary);
+
+        if (repoPath.startsWith(sites) && docLibraryIndex > -1 && docLibraryIndex == repoPath.indexOf("/", sites.length))
+        {
+           return repoPath.substring(sites.length, docLibraryIndex);
+        }
+      }
+
+       return null;
+   },
+
+   /**
     * Retrieve current user's site membership.
     *
     * @method getSiteMembership
