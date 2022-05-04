@@ -56,6 +56,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
@@ -166,6 +167,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
+	
+	@Autowired
+	private NamespaceService namespaceService;
+
+	@Value("${beCPG.copyOrBranch.propertiesToReset}")
+	private String propertiesToReset;
+
 
 	/** {@inheritDoc} */
 	@Override
@@ -863,10 +871,18 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 							createVersion(internalBranchToNodeRef, versionProperties);
 							
+							NodeRef newVersionNode = getEntityVersion(versionService.getCurrentVersion(internalBranchToNodeRef));
+							
 							if (rename) {
-								Version currentVersion = versionService.getCurrentVersion(internalBranchToNodeRef);
-								dbNodeService.setProperty(getEntityVersion(currentVersion), ContentModel.PROP_NAME, finalBranchName);
+								dbNodeService.setProperty(newVersionNode, ContentModel.PROP_NAME, finalBranchName);
 							}
+							
+							if(propertiesToReset!=null) {
+						        for(String propertyToKeep : propertiesToReset.split(",")) {	        	
+						        	QName propertyQname = QName.createQName(propertyToKeep, namespaceService);	
+						        	nodeService.removeProperty(newVersionNode, propertyQname);
+						        }
+					        }
 							
 							/**
 							 * Post create alfresco version
