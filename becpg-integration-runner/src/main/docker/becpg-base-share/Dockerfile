@@ -1,4 +1,4 @@
-FROM ${docker.share.image}:${alfresco.share.version}
+FROM ${docker.share.image}:${alfresco.share.docker.version}
 
 ENV TOMCAT_DIR=/usr/local/tomcat
 ENV I18_VERSION=1.0-83
@@ -6,10 +6,8 @@ ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
 
 USER root
 
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*
-RUN sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
-RUN yum update -y && yum -y install glibc-locale-source glibc-langpack-en  && yum clean all && \
-    rm -rf /var/cache/yum
+#RUN yum update -y && yum -y install glibc-locale-source glibc-langpack-en  && yum clean all && \
+#    rm -rf /var/cache/yum
 
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV AOS_VERSION=${alfresco.aos.version}

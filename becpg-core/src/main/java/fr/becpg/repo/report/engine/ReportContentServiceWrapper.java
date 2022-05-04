@@ -1,7 +1,5 @@
 package fr.becpg.repo.report.engine;
 
-import java.util.Date;
-
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
@@ -43,36 +41,51 @@ public class ReportContentServiceWrapper implements ContentService {
 	private TransactionService transactionService;
 
 	/**
-	 * <p>Setter for the field <code>contentService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>contentService</code>.
+	 * </p>
 	 *
-	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
+	 * @param contentService a
+	 *                       {@link org.alfresco.service.cmr.repository.ContentService}
+	 *                       object.
 	 */
 	public void setContentService(ContentService contentService) {
 		this.contentService = contentService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>entityReportService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>entityReportService</code>.
+	 * </p>
 	 *
-	 * @param entityReportService a {@link fr.becpg.repo.report.entity.EntityReportService} object.
+	 * @param entityReportService a
+	 *                            {@link fr.becpg.repo.report.entity.EntityReportService}
+	 *                            object.
 	 */
 	public void setEntityReportService(EntityReportService entityReportService) {
 		this.entityReportService = entityReportService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>nodeService</code>.
+	 * </p>
 	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
+	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService}
+	 *                    object.
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
 
 	/**
-	 * <p>Setter for the field <code>transactionService</code>.</p>
+	 * <p>
+	 * Setter for the field <code>transactionService</code>.
+	 * </p>
 	 *
-	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
+	 * @param transactionService a
+	 *                           {@link org.alfresco.service.transaction.TransactionService}
+	 *                           object.
 	 */
 	public void setTransactionService(TransactionService transactionService) {
 		this.transactionService = transactionService;
@@ -98,12 +111,14 @@ public class ReportContentServiceWrapper implements ContentService {
 
 	/** {@inheritDoc} */
 	@Override
-	public ContentReader getReader(NodeRef nodeRef, QName propertyQName) throws InvalidNodeRefException, InvalidTypeException {
+	public ContentReader getReader(NodeRef nodeRef, QName propertyQName)
+			throws InvalidNodeRefException, InvalidTypeException {
 
 		if (ReportModel.TYPE_REPORT.equals(nodeService.getType(nodeRef))) {
 
 			if ((nodeRef != null) && nodeService.hasAspect(nodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
-				nodeRef = new NodeRef((String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
+				nodeRef = new NodeRef(
+						(String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
 			}
 
 			final NodeRef finalNodeRef = nodeRef;
@@ -137,7 +152,8 @@ public class ReportContentServiceWrapper implements ContentService {
 
 	/** {@inheritDoc} */
 	@Override
-	public ContentWriter getWriter(NodeRef nodeRef, QName propertyQName, boolean update) throws InvalidNodeRefException, InvalidTypeException {
+	public ContentWriter getWriter(NodeRef nodeRef, QName propertyQName, boolean update)
+			throws InvalidNodeRefException, InvalidTypeException {
 		return contentService.getWriter(nodeRef, propertyQName, update);
 	}
 
@@ -148,9 +164,19 @@ public class ReportContentServiceWrapper implements ContentService {
 	}
 
 	@Override
-	public DirectAccessUrl getDirectAccessUrl(NodeRef nodeRef, Date expiresAt) {
-		return contentService.getDirectAccessUrl(nodeRef, expiresAt);
+	public boolean isContentDirectUrlEnabled() {
+		return contentService.isContentDirectUrlEnabled();
 	}
 
-	
+	@Override
+	public boolean isContentDirectUrlEnabled(NodeRef nodeRef, QName propertyQName) {
+		return contentService.isContentDirectUrlEnabled(nodeRef, propertyQName);
+	}
+
+	@Override
+	public DirectAccessUrl requestContentDirectUrl(NodeRef nodeRef, QName propertyQName, boolean attachment,
+			Long validFor) {
+		return contentService.requestContentDirectUrl(nodeRef, propertyQName, attachment, validFor);
+	}
+
 }
