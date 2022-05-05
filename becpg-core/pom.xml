@@ -72,12 +72,12 @@
 		<dependency>
 			<groupId>io.opencensus</groupId>
 			<artifactId>opencensus-api</artifactId>
-			<version>0.28.3</version>
+			<version>0.31.1</version>
 		</dependency>
 		<dependency>
 			<groupId>io.opencensus</groupId>
 			<artifactId>opencensus-exporter-trace-stackdriver</artifactId>
-			<version>0.28.3</version>
+			<version>0.31.1</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.google.code.gson</groupId>
@@ -95,9 +95,9 @@
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
 				</exclusion>
-					<exclusion>
-						 <groupId>com.google.code.findbugs</groupId>
-						 <artifactId>jsr305</artifactId>
+				<exclusion>
+				     <groupId>com.google.code.findbugs</groupId>
+				     <artifactId>jsr305</artifactId>
 				  </exclusion>
 				  <exclusion>
 			      <groupId>org.apache.commons</groupId>
@@ -109,7 +109,7 @@
 		<dependency>
 			<groupId>io.opencensus</groupId>
 			<artifactId>opencensus-impl</artifactId>
-			<version>0.28.3</version>
+			<version>0.31.1</version>
 
 			<scope>runtime</scope>
 			<exclusions>
