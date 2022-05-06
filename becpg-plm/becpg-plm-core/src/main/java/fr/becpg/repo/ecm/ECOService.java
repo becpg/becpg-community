@@ -17,7 +17,15 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
+
+import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchStep;
+import fr.becpg.repo.data.hierarchicalList.Composite;
+import fr.becpg.repo.ecm.data.ChangeOrderData;
+import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
 
 /**
  * Engineering change order service
@@ -41,7 +49,9 @@ public interface ECOService {
 	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a boolean.
 	 */
-	boolean apply(NodeRef ecoNodeRef);
+	BatchInfo apply(NodeRef ecoNodeRef);
+	
+	BatchInfo apply(NodeRef ecoNodeRef, boolean deleteOnApply);
 	
 	/**
 	 * <p>doSimulation.</p>
@@ -49,7 +59,7 @@ public interface ECOService {
 	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a boolean.
 	 */
-	boolean doSimulation(NodeRef ecoNodeRef);
+	BatchInfo doSimulation(NodeRef ecoNodeRef);
 
 	/**
 	 * <p>setInProgress.</p>
@@ -67,6 +77,10 @@ public interface ECOService {
 	 * @return a {@link java.lang.Boolean} object.
 	 */
 	Boolean setInError(NodeRef ecoNodeRef, String errorTxt);
+
+	BatchStep<List<Composite<WUsedListDataItem>>> createSimulateECOBatchStep(ChangeOrderData ecoData);
+
+	BatchStep<Composite<WUsedListDataItem>> createApplyECOBatchStep(ChangeOrderData ecoData, boolean deleteOnApply);
 
 
 }
