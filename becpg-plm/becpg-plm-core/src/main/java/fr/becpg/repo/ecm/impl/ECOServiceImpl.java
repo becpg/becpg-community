@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,6 +35,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.batch.BatchProcessWorkProvider;
+import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
@@ -52,10 +55,17 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import com.google.common.collect.Sets;
+
 import fr.becpg.model.ECMGroup;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.BatchStepAdapter;
+import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.BatchStep;
+import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.ecm.ECOService;
@@ -127,23 +137,470 @@ public class ECOServiceImpl implements ECOService {
 
 	@Autowired
 	private SecurityService securityService;
+	
+	@Autowired
+	private BatchQueueService batchQueueService;
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean doSimulation(NodeRef ecoNodeRef) {
-		return doRun(ecoNodeRef, ECOState.Simulated);
+	public BatchInfo doSimulation(NodeRef ecoNodeRef) {
+		return doRunInBatch(ecoNodeRef, ECOState.Simulated, false);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean apply(NodeRef ecoNodeRef) {
+	public BatchInfo apply(NodeRef ecoNodeRef, boolean deleteOnApply) {
 		if (securityService.isCurrentUserAllowed(ECMGroup.ApplyChangeOrder.toString())) {
-			return doRun(ecoNodeRef, ECOState.Applied);
+			return doRunInBatch(ecoNodeRef, ECOState.Applied, deleteOnApply);
 		} else {
 			throw new BeCPGAccessDeniedException(ECMGroup.ApplyChangeOrder.toString());
 		}
 	}
+	
+	@Override
+	public BatchInfo apply(NodeRef ecoNodeRef) {
+		return apply(ecoNodeRef, false);
+	}
 
+	private BatchInfo doRunInBatch(NodeRef ecoNodeRef, final ECOState state, boolean deleteOnApply) {
+		
+		final ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+		
+		boolean isSimulated = ECOState.Simulated.equals(state);
+		
+		// Do not run if already applied
+		if (!ECOState.Applied.equals(ecoData.getEcoState()) && !(ECOState.InError.equals(ecoData.getEcoState()) && isSimulated)) {
+			
+			BatchInfo batchInfo = new BatchInfo(String.format(isSimulated ? "simulateECO-%s" : "applyECO-%s", ecoNodeRef.getId()),
+					isSimulated ? "becpg.batch.eco.simulate" : "becpg.batch.eco.apply");
+			
+			batchInfo.setRunAsSystem(true);
+
+			if (isSimulated) {
+				batchQueueService.queueBatch(batchInfo, Arrays.asList(createSimulateECOBatchStep(ecoData)));
+			} else {
+				batchQueueService.queueBatch(batchInfo, Arrays.asList(createApplyECOBatchStep(ecoData, deleteOnApply)));
+			}
+			
+			return batchInfo;
+		}
+		
+		return null;
+		
+	}
+
+	@Override
+	public BatchStep<List<Composite<WUsedListDataItem>>> createSimulateECOBatchStep(final ChangeOrderData ecoData) {
+		BatchStep<List<Composite<WUsedListDataItem>>> batchStep = new BatchStep<>();
+		
+		SimulateECOProcessWorker processWorker = new SimulateECOProcessWorker(ecoData);
+		
+		batchStep.setProcessWorker(processWorker);
+		
+		batchStep.setBatchStepListener(createSimulationECOBatchAdapter(ecoData, batchStep));
+		return batchStep;
+	}
+
+	@Override
+	public BatchStep<Composite<WUsedListDataItem>> createApplyECOBatchStep(final ChangeOrderData ecoData, boolean deleteOnApply) {
+		BatchStep<Composite<WUsedListDataItem>> batchStep = new BatchStep<>();
+		
+		ApplyECOProcessWorker processWorker = new ApplyECOProcessWorker(ecoData);
+		
+		batchStep.setProcessWorker(processWorker);
+		
+		batchStep.setBatchStepListener(createApplyECOBatchAdapter(ecoData, batchStep, processWorker, deleteOnApply));
+		return batchStep;
+	}
+
+	private BatchStepAdapter createApplyECOBatchAdapter(final ChangeOrderData ecoData, BatchStep<Composite<WUsedListDataItem>> batchStep,
+			ApplyECOProcessWorker processWorker, boolean deleteOnApply) {
+		return new BatchStepAdapter() {
+			
+			@Override
+			public void beforeStep() {
+				
+				List<Composite<WUsedListDataItem>> entries = provideApplyECOEntries(ecoData);
+				
+				BatchProcessWorkProvider<Composite<WUsedListDataItem>> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(entries));
+				
+				batchStep.setWorkProvider(workProvider);
+				
+				ecoData.setEcoState(ECOState.InProgress);
+				
+				alfrescoRepository.save(ecoData);
+			}
+			
+			@Override
+			public void afterStep() {
+				
+				if (!processWorker.getErrors().isEmpty()) {
+					ecoData.setEcoState(ECOState.InError);
+					StringBuilder comments = new StringBuilder();
+					for (String error : processWorker.getErrors()) {
+						comments.append(error + "</br>");
+					}
+					
+					commentService.createComment(ecoData.getNodeRef(), "", comments.toString(), false);
+				} else {
+					if (!isFuture(ecoData)) {
+						ecoData.setEffectiveDate(new Date());
+					}
+					ecoData.setEcoState(ECOState.Applied);
+				}
+				
+				// Change eco state
+				
+				alfrescoRepository.save(ecoData);
+				
+				if (deleteOnApply) {
+					nodeService.deleteNode(ecoData.getNodeRef());
+				}
+				
+			}
+		};
+	}
+	
+	private BatchStepAdapter createSimulationECOBatchAdapter(final ChangeOrderData ecoData, BatchStep<List<Composite<WUsedListDataItem>>> batchStep) {
+		return new BatchStepAdapter() {
+			
+			@Override
+			public void beforeStep() {
+				
+				List<List<Composite<WUsedListDataItem>>> entries = provideSimulateECOEntries(ecoData);
+				
+				BatchProcessWorkProvider<List<Composite<WUsedListDataItem>>> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(entries));
+				
+				batchStep.setWorkProvider(workProvider);
+				
+				ecoData.setEcoState(ECOState.InProgress);
+				
+				alfrescoRepository.save(ecoData);
+			}
+			
+			@Override
+			public void afterStep() {
+				
+				for (ChangeUnitDataItem cul2 : ecoData.getChangeUnitList()) {
+					cul2.setTreated(Boolean.FALSE);
+				}
+				
+				ecoData.setEcoState(ECOState.Simulated);
+				
+				// Change eco state
+				alfrescoRepository.save(ecoData);
+				
+			}
+		};
+	}
+
+	private List<Composite<WUsedListDataItem>> provideApplyECOEntries(final ChangeOrderData ecoData) {
+		// Clear changeUnitList
+		List<ChangeUnitDataItem> toRemove = new ArrayList<>();
+		for (ChangeUnitDataItem cul1 : ecoData.getChangeUnitList()) {
+			if (Boolean.FALSE.equals(cul1.getTreated())) {
+				toRemove.add(cul1);
+			}
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Remove " + toRemove.size() + " previous changeUnit");
+		}
+		
+		ecoData.getChangeUnitList().removeAll(toRemove);
+		
+		// Visit Wused
+		Composite<WUsedListDataItem> composite = CompositeHelper.getHierarchicalCompoList(ecoData.getWUsedList());
+		
+		checkMissingWUsed(composite);
+		
+		if (logger.isTraceEnabled()) {
+			logger.trace("WUsedList to impact :" + composite.toString());
+		}
+		
+		return findAllImpactedChildrenComposites(composite, ecoData);
+	}
+	
+	private List<List<Composite<WUsedListDataItem>>> provideSimulateECOEntries(final ChangeOrderData ecoData) {
+		// Clear changeUnitList
+		List<ChangeUnitDataItem> toRemove = new ArrayList<>();
+		for (ChangeUnitDataItem cul1 : ecoData.getChangeUnitList()) {
+			if (Boolean.FALSE.equals(cul1.getTreated())) {
+				toRemove.add(cul1);
+			}
+		}
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("Remove " + toRemove.size() + " previous changeUnit");
+		}
+		
+		ecoData.getChangeUnitList().removeAll(toRemove);
+		
+		// Reset simulation item
+		ecoData.getSimulationList().clear();
+		
+		// Visit Wused
+		Composite<WUsedListDataItem> composite = CompositeHelper.getHierarchicalCompoList(ecoData.getWUsedList());
+		
+		checkMissingWUsed(composite);
+		
+		if (logger.isTraceEnabled()) {
+			logger.trace("WUsedList to impact :" + composite.toString());
+		}
+		
+		List<List<Composite<WUsedListDataItem>>> compositesList = new LinkedList<>();
+		
+		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
+			if (component.getData() != null && ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
+				
+				List<Composite<WUsedListDataItem>> composites = new LinkedList<>();
+				
+				composites.add(component);
+				composites.addAll(findAllImpactedChildrenComposites(component, ecoData));
+				
+				compositesList.add(composites);
+			} else {
+				for (final Composite<WUsedListDataItem> childComponent : component.getChildren()) {
+					List<Composite<WUsedListDataItem>> composites = new LinkedList<>();
+					
+					composites.add(childComponent);
+					composites.addAll(findAllImpactedChildrenComposites(childComponent, ecoData));
+					
+					compositesList.add(composites);
+				}
+			}
+		}
+		
+		int currentSize = -1;
+		
+		//merge lists that have elements in common because they need to be executed in the same cache-only transaction
+		do {
+			
+			currentSize = compositesList.size();
+			
+			for (int i = 0; i < compositesList.size() - 1; i++) {
+				for (int j = i + 1; j < compositesList.size(); j++) {
+					List<Composite<WUsedListDataItem>> firstList = compositesList.get(i);
+					List<Composite<WUsedListDataItem>> secondList = compositesList.get(j);
+					
+					if (hasIntersection(firstList, secondList)) {
+						firstList.addAll(secondList);
+						secondList.clear();
+					}
+				}
+			}
+			
+			compositesList.removeIf(List::isEmpty);
+			
+		} while (compositesList.size() != currentSize);
+		
+		return compositesList;
+		
+	}
+
+	private boolean hasIntersection(List<Composite<WUsedListDataItem>> firstList, List<Composite<WUsedListDataItem>> secondList) {
+		
+		for (Composite<WUsedListDataItem> firstItem : firstList) {
+			for (Composite<WUsedListDataItem> secondItem : secondList) {
+				if (!Sets.intersection(new HashSet<>(firstItem.getData().getSourceItems()), new HashSet<>(secondItem.getData().getSourceItems())).isEmpty()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	private class ApplyECOProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<Composite<WUsedListDataItem>> {
+
+		private ChangeOrderData ecoData;
+		
+		private Set<String> errors = new HashSet<>();
+		
+		public ApplyECOProcessWorker(ChangeOrderData ecoData) {
+			this.ecoData = ecoData;
+		}
+		
+		public Set<String> getErrors() {
+			return errors;
+		}
+		
+		@Override
+		public void process(Composite<WUsedListDataItem> component) throws Throwable {
+			
+			if (!getErrors().isEmpty()) {
+				return;
+			}
+			
+			applyECO(ecoData, component, false, 1, errors);
+		}
+		
+	}
+	
+	private class SimulateECOProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<List<Composite<WUsedListDataItem>>> {
+		
+		private ChangeOrderData ecoData;
+		
+		private Set<String> errors = new HashSet<>();
+		
+		public SimulateECOProcessWorker(ChangeOrderData ecoData) {
+			this.ecoData = ecoData;
+		}
+		
+		public Set<String> getErrors() {
+			return errors;
+		}
+		
+		@Override
+		public void process(List<Composite<WUsedListDataItem>> components) throws Throwable {
+			
+			L2CacheSupport.doInCacheContext(() -> {
+				if (!getErrors().isEmpty()) {
+					return;
+				}
+				
+				int sort = 1;
+				
+				for (Composite<WUsedListDataItem> component : components) {
+					sort = applyECO(ecoData, component, true, sort, errors);
+				}
+			} , true, true);
+			
+			alfrescoRepository.save(ecoData);
+		}
+	}
+	
+	private int applyECO(ChangeOrderData ecoData, Composite<WUsedListDataItem> component, boolean isSimulation, int sort, Set<String> errors) {
+		boolean isMergeItem = ChangeOrderType.Merge.equals(ecoData.getEcoType()) && (component.getData().getDepthLevel() == 1);
+		
+		final ChangeUnitDataItem changeUnitDataItem = getOrCreateChangeUnitDataItem(ecoData, component.getData());
+		
+		// We break if product treated
+		if ((changeUnitDataItem != null) && !Boolean.TRUE.equals(changeUnitDataItem.getTreated())) {
+			
+			// We test if all referring nodes are treated before
+			// apply
+			// to branch
+			if ((component.getData().getDepthLevel() > 2) && shouldSkipCurrentBranch(ecoData, changeUnitDataItem)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug(
+							"Skip current branch at " + nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME));
+				}
+				return sort;
+			}
+			
+			final int finalSort = sort++;
+			final RetryingTransactionCallback<Object> actionCallback = () -> {
+				
+				NodeRef productNodeRef = getProductToImpact(changeUnitDataItem, isSimulation);
+				
+				if (productNodeRef != null) {
+					
+					RepositoryEntity repositoryEntity = alfrescoRepository.findOne(productNodeRef);
+					
+					if (repositoryEntity instanceof ProductData) {
+						ProductData productToFormulateData = (ProductData) repositoryEntity;
+						
+						if (isSimulation) {
+							// Before formulate we create simulation
+							// List
+							createCalculatedCharactValues(ecoData, productToFormulateData, finalSort);
+						}
+						
+						// Level 2
+						if ((component.getData().getDepthLevel() == 2) || isMergeItem) {
+							applyReplacementList(ecoData, productToFormulateData, isSimulation, isMergeItem);
+						}
+						
+						if (isMergeItem && isSimulation) {
+							
+							logger.debug("Merge finding corresponding branch...");
+							
+							for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
+								if ((replacementListDataItem.getSourceItems() != null) && (replacementListDataItem.getTargetItem() != null)
+										&& (replacementListDataItem.getSourceItems().size() == 1)
+										&& replacementListDataItem.getTargetItem().equals(productNodeRef)) {
+									
+									productToFormulateData = (ProductData) alfrescoRepository
+											.findOne(replacementListDataItem.getSourceItems().get(0));
+									
+									logger.debug("Found matching branch product:" + productToFormulateData.getName());
+									
+									break;
+								}
+							}
+						}
+						
+						productService.formulate(productToFormulateData);
+						
+						if (isSimulation) {
+							// update simulation List
+							updateCalculatedCharactValues(ecoData, productToFormulateData, productNodeRef);
+						}
+						
+						// check req
+						checkRequirements(changeUnitDataItem, productToFormulateData);
+						
+						alfrescoRepository.save(productToFormulateData);
+						
+						// Create new version if needed
+						if (!isSimulation && !isMergeItem) {
+							if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
+								createNewProductVersion(productNodeRef,
+										changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR,
+												ecoData, component.getData().getParent());
+							}
+						}
+						
+					} else {
+						logger.warn("Product to impact is empty");
+					}
+					
+					changeUnitDataItem.setErrorMsg(null);
+					changeUnitDataItem.setTreated(Boolean.TRUE);
+					
+					if (!isSimulation) {
+						
+						// Store current state of ecoData
+						alfrescoRepository.save(ecoData);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Applied Treated to item "
+									+ nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME));
+						}
+					}
+					
+				}
+				return null;
+				
+			};
+			
+			try {
+				AuthenticationUtil.runAsSystem(() -> transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true));
+			} catch (Exception e) {
+				
+				changeUnitDataItem.setTreated(false);
+				changeUnitDataItem.setErrorMsg(e.getMessage());
+				errors.add("Change unit in Error: " + changeUnitDataItem.getNodeRef());
+				errors.add("Error message: " + e.getMessage());
+				
+				try (StringWriter buffer = new StringWriter()) {
+					try (PrintWriter printer = new PrintWriter(buffer)) {
+						e.printStackTrace(printer);
+					}
+					errors.add("StackTrace : " + buffer.toString());
+				} catch (IOException e1) {
+					// Nothing can be done here
+					
+				}
+				
+				if (logger.isDebugEnabled()) {
+					logger.debug("Error applying for: " + changeUnitDataItem.toString(), e);
+				}
+			}
+		}
+		
+		return sort;
+	}
+	
 	private boolean doRun(NodeRef ecoNodeRef, final ECOState state) {
 
 		final ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
@@ -397,6 +854,31 @@ public class ECOServiceImpl implements ECOService {
 
 		return null;
 
+	}
+	
+	private List<Composite<WUsedListDataItem>> findAllImpactedChildrenComposites(Composite<WUsedListDataItem> composite, final ChangeOrderData ecoData) {
+		
+		List<Composite<WUsedListDataItem>> composites = new LinkedList<>();
+		
+		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
+			
+			boolean isMergeItem = ChangeOrderType.Merge.equals(ecoData.getEcoType()) && (component.getData().getDepthLevel() == 1);
+			
+			// Not First level
+			if ((component.getData() != null) && ((component.getData().getDepthLevel() > 1) || isMergeItem)
+					&& Boolean.TRUE.equals(component.getData().getIsWUsedImpacted())) {
+				
+				composites.add(component);
+				
+			}
+			
+			if (!component.isLeaf() && Boolean.TRUE.equals(component.getData().getIsWUsedImpacted())) {
+				composites.addAll(findAllImpactedChildrenComposites(component, ecoData));
+			}
+		}
+		
+		return composites;
+		
 	}
 
 	private boolean visitChildrens(Composite<WUsedListDataItem> composite, final ChangeOrderData ecoData, final boolean isSimulation,

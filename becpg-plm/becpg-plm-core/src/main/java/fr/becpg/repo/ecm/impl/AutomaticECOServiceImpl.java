@@ -283,21 +283,14 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 					if (ret) {
 
-						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							ecoService.setInProgress(ecoNodeRef);
-							return true;
-						}, false, true);
-
 						return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 							if (logger.isDebugEnabled()) {
 								logger.debug("Found automatic change order to apply :" + ecoNodeRef);
 							}
 							try {
-
-								if (ecoService.apply(ecoNodeRef) && Boolean.TRUE.equals(deleteOnApply)) {
-									logger.debug("It's applied and deleteOnApply is set to true, deleting ECO with NR=" + ecoNodeRef);
-									nodeService.deleteNode(ecoNodeRef);
-								}
+								transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+									return ecoService.apply(ecoNodeRef, deleteOnApply);
+								}, false, true);
 
 							} catch (Exception e) {
 								if (RetryingTransactionHelper.extractRetryCause(e) != null) {

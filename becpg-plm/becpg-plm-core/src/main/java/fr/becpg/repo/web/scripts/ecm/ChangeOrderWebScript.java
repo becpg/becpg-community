@@ -18,7 +18,6 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.repo.ecm.AsyncECOService;
 import fr.becpg.repo.ecm.AutomaticECOService;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
@@ -47,8 +46,6 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 
 	private ECOService ecoService;
 
-	private AsyncECOService asyncECOService;
-
 	private AutomaticECOService automaticECOService;
 
 	private NodeService nodeService;
@@ -64,15 +61,6 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 	 */
 	public void setAutomaticECOService(AutomaticECOService automaticECOService) {
 		this.automaticECOService = automaticECOService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>asyncECOService</code>.</p>
-	 *
-	 * @param asyncECOService a {@link fr.becpg.repo.ecm.AsyncECOService} object.
-	 */
-	public void setAsyncECOService(AsyncECOService asyncECOService) {
-		this.asyncECOService = asyncECOService;
 	}
 
 	/**
@@ -128,10 +116,10 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 			ecoService.calculateWUsedList(ecoNodeRef, false);
 			writeInfos(ecoNodeRef, res);
 		} else if (ACTION_DO_SIMULATION.equals(action)) {
-			asyncECOService.doSimulationAsync(ecoNodeRef);
+			ecoService.doSimulation(finalEcoNodeRef);
 			writeInfos(ecoNodeRef, res);
 		} else if (ACTION_APPLY.equals(action)) {
-			asyncECOService.applyAsync(ecoNodeRef);
+			ecoService.apply(finalEcoNodeRef);
 			writeInfos(ecoNodeRef, res);
 		} else if (ACTION_GET_INFOS.equals(action)) {
 
