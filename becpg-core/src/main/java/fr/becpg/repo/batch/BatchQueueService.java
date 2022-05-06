@@ -7,17 +7,16 @@ import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 
 public interface BatchQueueService {
-	
 
 	<T> Boolean queueBatch(BatchInfo batchInfo, BatchProcessWorkProvider<T> workProvider, BatchProcessWorker<T> processWorker,
 			BatchErrorCallback errorCallback);
-
+	
+	<T> Boolean queueBatch(BatchInfo batchInfo, List<BatchStep<T>> batchSteps);
+	
     List<BatchInfo> getBatchesInQueue();
 
 	boolean removeBatchFromQueue(String batchId);
 
 	BatchMonitor getLastRunningBatch();
-
-	
 	
 }
