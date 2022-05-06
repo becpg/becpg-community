@@ -16,6 +16,8 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -68,7 +70,7 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
             
             NodeRef commentNodeRef = new NodeRef(activityData.getString("commentNodeRef"));
             
-            String comment = "";//Jsoup.parse(contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT).getContentString()).text();
+            String comment = ""; //Jsoup.parse(contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT).getContentString()).text();
     
             sendCommentNotification(comment, entityNodeRef);
             
@@ -76,9 +78,15 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
             
             String versionLabel = activityData.getString("versionLabel");
 
-            String comment = versionService.getVersionHistory(entityNodeRef).getVersion(versionLabel).getDescription();
+            VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
             
-	    sendCommentNotification(comment, entityNodeRef);
+            if (versionHistory != null) {
+            	Version version = versionHistory.getVersion(versionLabel);
+            	
+            	if (version != null) {
+            		sendCommentNotification(version.getDescription(), entityNodeRef);
+            	}
+            }
         }
     }
 
