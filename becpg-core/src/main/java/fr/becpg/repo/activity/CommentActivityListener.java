@@ -23,6 +23,7 @@ import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -70,7 +71,7 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
             
             NodeRef commentNodeRef = new NodeRef(activityData.getString("commentNodeRef"));
             
-            String comment = ""; //Jsoup.parse(contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT).getContentString()).text();
+            String comment = Jsoup.parse(contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT).getContentString()).text();
     
             sendCommentNotification(comment, entityNodeRef);
             
