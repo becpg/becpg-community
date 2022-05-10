@@ -117,7 +117,7 @@
      	<#elseif field.value/30 &gt; 1 && field.value%30 == 0>
 			<#assign currUnit="mo">
 			<#assign currValue=field.value/30 >
-		<#elseif field.value/365 &gt; 1 && field.value%365 == 0>
+		<#elseif field.value &gt; 364 && field.value%365 == 0>
 			<#assign currUnit="y">
 			<#assign currValue=field.value/365 >	
 		<#else>
