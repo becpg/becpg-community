@@ -181,12 +181,16 @@ var Filters =
             break;
          case "Simulation":
  		 case "ToValidate":
- 		 case "Valid":
- 		 case "Stopped":
+ 		 case "Stopped":	 
+ 		 case "Valid":         
          case "Refused":
          case "Archived":
          	filterQuery += this.constructPathQuery(parsedArgs);
-         	filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
+         	if( args.type == "productCollection" ){
+				filterQuery += " +@bcpg\\:productCollectionState:\""+filter+"\"";
+			} else {
+         		filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
+         	}
             filterParams.query = filterQuery + filterQueryDefaults;
          	break;
          case "Planned":
@@ -295,7 +299,7 @@ var Filters =
    constructPathQuery: function constructPathQuery(parsedArgs)
    {
       var pathQuery = "";
-      if (parsedArgs.nodeRef != "alfresco://company/home")
+      if (parsedArgs.libraryRoot != companyhome || parsedArgs.nodeRef != "alfresco://company/home")
       {
          if (parsedArgs.nodeRef == "alfresco://sites/home")
          {
