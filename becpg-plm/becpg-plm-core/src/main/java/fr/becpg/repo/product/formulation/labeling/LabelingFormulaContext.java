@@ -97,7 +97,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public static final int PRECISION_FACTOR = 100;
 
 	public static final Pattern ALLERGEN_DETECTION_PATTERN = Pattern.compile(
-			"(<\\s*up[^>]*>.*?<\\s*/\\s*up>|<\\s*b[^>]*>.*?<\\s*/\\s*b>|<\\s*u[^>]*>.*?<\\s*/\\s*u>|<\\s*i[^>]*>.*?<\\s*/\\s*i>|[A-Z]{3,}|\\p{Lu}{3,})");
+			"(<\\s*up[^>]*>.*?<\\s*/\\s*up>|<\\s*b[^>]*>.*?<\\s*/\\s*b>|<\\s*u[^>]*>.*?<\\s*/\\s*u>|<\\s*i[^>]*>.*?<\\s*/\\s*i>|[A-Z]{4,}|\\p{Lu}{4,})");
 
 	private static final String UNSUPPORTED_ING_TYPE = "Unsupported ing type. Name: %s";
 	private static final String REMOVING_NULL_QTY = "Removing ing with qty of 0: %s";
@@ -2235,10 +2235,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			List<PlaceOfActivityTypeCode> filters = new LinkedList<>();
 
 			if ((showRule.format != null) && !showRule.format.isEmpty()) {
-				try {
-					filters.add(PlaceOfActivityTypeCode.valueOf(showRule.format));
-				} catch (IllegalArgumentException e) {
-					//Do nothing
+				for(String splitted: showRule.format.split(",")) {
+					try {
+						filters.add(PlaceOfActivityTypeCode.valueOf(splitted));
+					} catch (IllegalArgumentException e) {
+						//Do nothing
+					}
 				}
 			}
 
