@@ -187,7 +187,11 @@ var Filters =
          case "Refused":
          case "Archived":
          	filterQuery += this.constructPathQuery(parsedArgs);
-         	filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
+         	if( args.type == "productCollection" ){
+				filterQuery += " +@bcpg\\:productCollectionState:\""+filter+"\"";
+			} else {
+         		filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
+         	}
             filterParams.query = filterQuery + filterQueryDefaults;
          	break;
          case "Planned":
