@@ -7,6 +7,8 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.rule.RuleService;
@@ -115,45 +117,47 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 			try {
 				JSONObject jsonObject = new JSONObject();
 				
-				if (catalogId == null) {
-					
-					boolean formulated = false;
-					if (formulationService.shouldFormulate(productNodeRef)) {
+				if (!isVersion(productNodeRef)) {
+					if (catalogId == null) {
 						
-						try {
-							policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-							policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-							ruleService.disableRules();
+						boolean formulated = false;
+						if (formulationService.shouldFormulate(productNodeRef)) {
 							
-							L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
-								formulationService.formulate(productNodeRef, FormulationService.FAST_FORMULATION_CHAINID);
-								return true;
-							}), false, true);
+							try {
+								policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+								policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+								ruleService.disableRules();
+								
+								L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
+									formulationService.formulate(productNodeRef, FormulationService.FAST_FORMULATION_CHAINID);
+									return true;
+								}), false, true);
+								
+								formulated = true;
+								
+							} finally {
+								ruleService.enableRules();
+								policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+								policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+								policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+							}
 							
-							formulated = true;
-							
-						} finally {
-							ruleService.enableRules();
-							policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-							policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-							policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 						}
 						
+						String scores = (String) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_ENTITY_SCORE);
+						
+						if ((scores != null) && !scores.isEmpty()) {
+							jsonObject = new JSONObject(scores);
+						}
+						
+						jsonObject.put("formulated", formulated);
+					} else {
+						jsonObject = new JSONObject();
+						
+						jsonObject.put(EntityCatalogService.PROP_CATALOGS, entityCatalogService.formulateCatalog(catalogId, productNodeRef,
+								(List<String>) nodeService.getProperty(productNodeRef, ReportModel.PROP_REPORT_LOCALES)));
 					}
-					
-					String scores = (String) nodeService.getProperty(productNodeRef, BeCPGModel.PROP_ENTITY_SCORE);
-					
-					if ((scores != null) && !scores.isEmpty()) {
-						jsonObject = new JSONObject(scores);
-					}
-					
-					jsonObject.put("formulated", formulated);
-				} else {
-					jsonObject = new JSONObject();
-					
-					jsonObject.put(EntityCatalogService.PROP_CATALOGS, entityCatalogService.formulateCatalog(catalogId, productNodeRef,
-							(List<String>) nodeService.getProperty(productNodeRef, ReportModel.PROP_REPORT_LOCALES)));
 				}
 				
 				res.setContentType("application/json");
@@ -165,6 +169,11 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 				throw new WebScriptException("Unable to serialize JSON", e);
 			}
 
+	}
+	
+	private boolean isVersion(NodeRef entityNodeRef) {
+		return entityNodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
+				|| entityNodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
 	}
 
 }

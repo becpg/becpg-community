@@ -94,7 +94,7 @@
 					fn: function(response) {
 
 						var alertMsg = "";
-						if (response.json != null && response.json !== undefined && Object.keys(response.json.catalogs).length > 0) {
+						if (response.json && response.json.catalogs && Object.keys(response.json.catalogs).length > 0) {
 
 							var catalogs = response.json.catalogs;
 
