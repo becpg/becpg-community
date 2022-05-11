@@ -1,5 +1,6 @@
 package fr.becpg.repo.activity;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,8 +23,12 @@ import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.workflow.WorkflowService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.htmlcleaner.ContentToken;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,101 +40,132 @@ import fr.becpg.repo.activity.data.ActivityType;
 @Service
 public class CommentActivityListener implements InitializingBean, EntityActivityListener {
 
-    @Autowired
-    private PersonService personService;
+	@Autowired
+	private PersonService personService;
 
-    @Autowired
-    private ContentService contentService;
+	@Autowired
+	private ContentService contentService;
 
-    @Autowired
-    @Qualifier("WorkflowService")
-    private WorkflowService workflowService;
+	@Autowired
+	@Qualifier("WorkflowService")
+	private WorkflowService workflowService;
 
-    @Autowired
-    private NodeService nodeService;
+	@Autowired
+	private NodeService nodeService;
 
-    @Autowired
-    private BehaviourFilter policyBehaviourFilter;
-    
-    @Autowired
-    private VersionService versionService;
-    
-    private PackageManager packageMgr;
-    
-    private static final Pattern commentNotificationPattern = Pattern.compile("@[a-zA-Z0-9]([^\\s]+)");
-    
-    @Override
-    public void afterPropertiesSet() throws Exception {
-	packageMgr = new PackageManager(workflowService, nodeService, policyBehaviourFilter, null);
-    }
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
 
-    @Override
-    public void notify(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
-	JSONObject activityData = new JSONObject(activityListDataItem.getActivityData());
+	@Autowired
+	private VersionService versionService;
+
+	private PackageManager packageMgr;
+
+	private static final Pattern commentNotificationPattern = Pattern.compile("@[a-zA-Z0-9]([^\\s]+)");
+
+	private static final Log logger = LogFactory.getLog(CommentActivityListener.class);
 	
-        if (ActivityType.Comment.equals(activityListDataItem.getActivityType())) {
-            
-            NodeRef commentNodeRef = new NodeRef(activityData.getString("commentNodeRef"));
-            
-            String comment = Jsoup.parse(contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT).getContentString()).text();
-    
-            sendCommentNotification(comment, entityNodeRef);
-            
-        } else if (ActivityType.Version.equals(activityListDataItem.getActivityType())) {
-            
-            String versionLabel = activityData.getString("versionLabel");
-
-            VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
-            
-            if (versionHistory != null) {
-            	Version version = versionHistory.getVersion(versionLabel);
-            	
-            	if (version != null) {
-            		sendCommentNotification(version.getDescription(), entityNodeRef);
-            	}
-            }
-        }
-    }
-
-    private void sendCommentNotification(String comment, NodeRef entityNodeRef) {
-
-	if (comment != null && !comment.isBlank()) {
-
-	    String itemName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-
-	    Matcher matcher = commentNotificationPattern.matcher(comment);
-
-	    ArrayList<String> usernames = new ArrayList<>();
-
-	    String commentText = comment;
-
-	    while (matcher.find()) {
-		String match = matcher.group();
-		String username = match.substring(1);
-
-		usernames.add(username);
-
-		commentText = commentText.replace(match + " ", "");
-	    }
-
-	    for (String username : usernames) {
-
-		NodeRef packageRef = packageMgr.create(null);
-
-		Map<QName, Serializable> params = new HashMap<>();
-
-		params.put(WorkflowModel.ASSOC_PACKAGE, packageRef);
-		params.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, commentText);
-		params.put(WorkflowModel.ASSOC_ASSIGNEE, (Serializable) Arrays.asList(personService.getPerson(username)));
-		params.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
-		params.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
-
-		nodeService.addChild(packageRef, entityNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(itemName)));
-
-		workflowService.startWorkflow("activiti$activitiAdhoc:1:4", params);
-
-	    }
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		packageMgr = new PackageManager(workflowService, nodeService, policyBehaviourFilter, null);
 	}
-    }
+
+	@Override
+	public void notify(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
+		JSONObject activityData = new JSONObject(activityListDataItem.getActivityData());
+
+		if (ActivityType.Comment.equals(activityListDataItem.getActivityType())) {
+
+			NodeRef commentNodeRef = new NodeRef(activityData.getString("commentNodeRef"));
+
+			String comment = contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT).getContentString();
+
+			sendCommentNotification(comment, entityNodeRef);
+
+		} else if (ActivityType.Version.equals(activityListDataItem.getActivityType())) {
+
+			String versionLabel = activityData.getString("versionLabel");
+
+			VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+
+			if (versionHistory != null) {
+				Version version = versionHistory.getVersion(versionLabel);
+
+				if (version != null) {
+					sendCommentNotification(version.getDescription(), entityNodeRef);
+				}
+			}
+		}
+	}
+
+	private void sendCommentNotification(String comment, NodeRef entityNodeRef) {
+
+		if (comment != null && !comment.isBlank()) {
+
+			String itemName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+
+			Matcher matcher = commentNotificationPattern.matcher(comment);
+
+			ArrayList<String> usernames = new ArrayList<>();
+
+			String commentText = comment;
+
+			while (matcher.find()) {
+				String match = matcher.group();
+				String username = match.substring(1);
+
+				usernames.add(username);
+
+				commentText = commentText.replace(match + " ", "");
+			}
+
+			HtmlCleaner cleaner = new HtmlCleaner(commentText);
+
+			try {
+				cleaner.clean();
+			} catch (IOException e) {
+				logger.error("Could not parse HTML comment", e);
+			}
+			
+			commentText = parseHtmlContent(cleaner.getBodyNode(), null);
+			
+			for (String username : usernames) {
+
+				NodeRef packageRef = packageMgr.create(null);
+
+				Map<QName, Serializable> params = new HashMap<>();
+
+				params.put(WorkflowModel.ASSOC_PACKAGE, packageRef);
+				params.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, commentText);
+				params.put(WorkflowModel.ASSOC_ASSIGNEE,
+						(Serializable) Arrays.asList(personService.getPerson(username)));
+				params.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
+				params.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
+
+				nodeService.addChild(packageRef, entityNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, QName
+						.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(itemName)));
+
+				workflowService.startWorkflow("activiti$activitiAdhoc:1:4", params);
+
+			}
+		}
+	}
+
+	private String parseHtmlContent(TagNode node, StringBuilder contentBuilder) {
+
+		if (contentBuilder == null) {
+			contentBuilder = new StringBuilder();
+		}
+		
+		for (Object child : node.getChildren()) {
+			if (child instanceof ContentToken) {
+				contentBuilder.append(((ContentToken) child).getContent());
+			} else if (child instanceof TagNode) {
+				parseHtmlContent((TagNode) child, contentBuilder);
+			}
+		}
+		
+		return contentBuilder.toString();
+	}
 
 }
