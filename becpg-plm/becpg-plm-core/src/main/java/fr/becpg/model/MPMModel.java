@@ -57,9 +57,6 @@ public class MPMModel {
 	/** Constant <code>PROP_PL_YIELD</code> */
 	public static final QName PROP_PL_YIELD = QName.createQName(MPM_URI,
 			"plYield");
-	/** Constant <code>PROP_PL_RATE_PROCESS</code> */
-	public static final QName PROP_PL_RATE_PROCESS = QName.createQName(MPM_URI,
-			"plRateProcess");
 	/** Constant <code>PROP_PL_RATE_PRODUCT</code> */
 	public static final QName PROP_PL_RATE_PRODUCT = QName.createQName(MPM_URI,
 			"plRateProduct");
