@@ -218,7 +218,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			//Versions history filter
 			Map<NodeRef, Map<String, NodeRef>> itemVersions = new HashMap<>();
 			final VersionFilterType versionType = notification.getVersionFilterType();
-			if(!versionType.equals(VersionFilterType.NONE) && dateField.isMatch(ContentModel.PROP_MODIFIED)){
+			if(!VersionFilterType.NONE.equals(versionType) && dateField.isMatch(ContentModel.PROP_MODIFIED)){
 				Iterator<NodeRef> iter = items.iterator();
 				while(iter.hasNext()){
 					NodeRef item = iter.next();
@@ -231,7 +231,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				}
 			}
 			
-			if((items.isEmpty() || items == null || (itemVersions.isEmpty() && !versionType.equals(VersionFilterType.NONE) )) && !notification.isEnforced()){
+			if((items.isEmpty() || items == null || (itemVersions.isEmpty() && !VersionFilterType.NONE.equals(versionType) )) && !notification.isEnforced()){
 				logger.warn("No object found for notification: " + notification.getNodeRef());
 				continue;
 			}
@@ -277,7 +277,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 						Map<String, Object> templateModel = new HashMap<>();
 						HashMap<String, Object> userTemplateArgs = new HashMap<>(templateArgs);
 						userTemplateArgs.put("entities", entitiesByUser);
-						if(!versionType.equals(VersionFilterType.NONE)){
+						if(!VersionFilterType.NONE.equals(versionType)){
 							userTemplateArgs.put("versions", itemVersions);
 						}
 						templateModel.put("args", userTemplateArgs);
@@ -296,7 +296,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		    if(from!=null && to !=null && versionService.getVersionHistory(item) != null){
 		    	versionService.getVersionHistory(item).getAllVersions().forEach(version-> {
 		    		Date createDate = version.getFrozenModifiedDate();
-		    		if(version.getVersionType().toString().equals(versionType.toString()) && !version.getVersionLabel().equals("1.0") 
+		    		if((versionType!=null && versionType.match(version.getVersionType())) && !RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())  
 		    				&& (from.equals(to) ? formatter.get().format(createDate).equals(formatter.get().format(from)) : (createDate.after(from) && createDate.before(to)))){
 		    			ret.put(version.getVersionLabel() + "|" + version.getDescription(), version.getFrozenStateNodeRef());
 		    		}
