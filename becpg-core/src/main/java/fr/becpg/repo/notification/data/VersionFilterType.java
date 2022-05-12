@@ -1,5 +1,7 @@
 package fr.becpg.repo.notification.data;
 
+import org.alfresco.service.cmr.version.VersionType;
+
 /**
  * <p>VersionFilterType class.</p>
  *
@@ -7,5 +9,9 @@ package fr.becpg.repo.notification.data;
  * @version $Id: $Id
  */
 public enum VersionFilterType {
-	MAJOR, MINOR, NONE
+	MAJOR, MINOR, NONE;
+
+	public boolean match(VersionType versionType) {
+		return versionType!=null && versionType.toString().equals(this.toString());
+	}
 }
