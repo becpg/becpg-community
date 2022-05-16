@@ -60,10 +60,10 @@ import fr.becpg.model.ECMGroup;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
+import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
@@ -142,26 +142,21 @@ public class ECOServiceImpl implements ECOService {
 
 	/** {@inheritDoc} */
 	@Override
-	public BatchInfo doSimulation(NodeRef ecoNodeRef) {
-		return doRunInBatch(ecoNodeRef, ECOState.Simulated, false);
+	public BatchInfo doSimulation(NodeRef ecoNodeRef, boolean calculateWUsed) {
+		return doRunInBatch(ecoNodeRef, ECOState.Simulated, false, calculateWUsed);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public BatchInfo apply(NodeRef ecoNodeRef, boolean deleteOnApply) {
+	public BatchInfo apply(NodeRef ecoNodeRef, boolean deleteOnApply, boolean calculateWUsed) {
 		if (securityService.isCurrentUserAllowed(ECMGroup.ApplyChangeOrder.toString())) {
-			return doRunInBatch(ecoNodeRef, ECOState.Applied, deleteOnApply);
+			return doRunInBatch(ecoNodeRef, ECOState.Applied, deleteOnApply, calculateWUsed);
 		} else {
 			throw new BeCPGAccessDeniedException(ECMGroup.ApplyChangeOrder.toString());
 		}
 	}
-	
-	@Override
-	public BatchInfo apply(NodeRef ecoNodeRef) {
-		return apply(ecoNodeRef, false);
-	}
 
-	private BatchInfo doRunInBatch(NodeRef ecoNodeRef, final ECOState state, boolean deleteOnApply) {
+	private BatchInfo doRunInBatch(NodeRef ecoNodeRef, final ECOState state, boolean deleteOnApply, boolean calculateWUsed) {
 		
 		final ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 		
@@ -175,11 +170,19 @@ public class ECOServiceImpl implements ECOService {
 			
 			batchInfo.setRunAsSystem(true);
 
-			if (isSimulated) {
-				batchQueueService.queueBatch(batchInfo, Arrays.asList(createSimulateECOBatchStep(ecoData)));
-			} else {
-				batchQueueService.queueBatch(batchInfo, Arrays.asList(createApplyECOBatchStep(ecoData, deleteOnApply)));
+			List<BatchStep<Object>> batchStepList = new LinkedList<>();
+			
+			if (calculateWUsed) {
+				batchStepList.add(createCalculateWUsedListBatchStep(ecoData, true));
 			}
+			
+			if (isSimulated) {
+				batchStepList.add(createSimulateECOBatchStep(ecoData));
+			} else {
+				batchStepList.add(createApplyECOBatchStep(ecoData, deleteOnApply));
+			}
+			
+			batchQueueService.queueBatch(batchInfo, batchStepList);
 			
 			return batchInfo;
 		}
@@ -188,9 +191,8 @@ public class ECOServiceImpl implements ECOService {
 		
 	}
 
-	@Override
-	public BatchStep<List<Composite<WUsedListDataItem>>> createSimulateECOBatchStep(final ChangeOrderData ecoData) {
-		BatchStep<List<Composite<WUsedListDataItem>>> batchStep = new BatchStep<>();
+	private BatchStep<Object> createSimulateECOBatchStep(final ChangeOrderData ecoData) {
+		BatchStep<Object> batchStep = new BatchStep<>();
 		
 		SimulateECOProcessWorker processWorker = new SimulateECOProcessWorker(ecoData);
 		
@@ -200,9 +202,8 @@ public class ECOServiceImpl implements ECOService {
 		return batchStep;
 	}
 
-	@Override
-	public BatchStep<Composite<WUsedListDataItem>> createApplyECOBatchStep(final ChangeOrderData ecoData, boolean deleteOnApply) {
-		BatchStep<Composite<WUsedListDataItem>> batchStep = new BatchStep<>();
+	private BatchStep<Object> createApplyECOBatchStep(final ChangeOrderData ecoData, boolean deleteOnApply) {
+		BatchStep<Object> batchStep = new BatchStep<>();
 		
 		ApplyECOProcessWorker processWorker = new ApplyECOProcessWorker(ecoData);
 		
@@ -212,7 +213,7 @@ public class ECOServiceImpl implements ECOService {
 		return batchStep;
 	}
 
-	private BatchStepAdapter createApplyECOBatchAdapter(final ChangeOrderData ecoData, BatchStep<Composite<WUsedListDataItem>> batchStep,
+	private BatchStepAdapter createApplyECOBatchAdapter(final ChangeOrderData ecoData, BatchStep<Object> batchStep,
 			ApplyECOProcessWorker processWorker, boolean deleteOnApply) {
 		return new BatchStepAdapter() {
 			
@@ -221,7 +222,7 @@ public class ECOServiceImpl implements ECOService {
 				
 				List<Composite<WUsedListDataItem>> entries = provideApplyECOEntries(ecoData);
 				
-				BatchProcessWorkProvider<Composite<WUsedListDataItem>> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(entries));
+				BatchProcessWorkProvider<Object> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(entries));
 				
 				batchStep.setWorkProvider(workProvider);
 				
@@ -260,15 +261,15 @@ public class ECOServiceImpl implements ECOService {
 		};
 	}
 	
-	private BatchStepAdapter createSimulationECOBatchAdapter(final ChangeOrderData ecoData, BatchStep<List<Composite<WUsedListDataItem>>> batchStep) {
+	private BatchStepAdapter createSimulationECOBatchAdapter(final ChangeOrderData ecoData, BatchStep<Object> batchStep) {
 		return new BatchStepAdapter() {
 			
 			@Override
 			public void beforeStep() {
 				
-				List<List<Composite<WUsedListDataItem>>> entries = provideSimulateECOEntries(ecoData);
+				List<Object> entries = provideSimulateECOEntries(ecoData);
 				
-				BatchProcessWorkProvider<List<Composite<WUsedListDataItem>>> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(entries));
+				BatchProcessWorkProvider<Object> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(entries));
 				
 				batchStep.setWorkProvider(workProvider);
 				
@@ -320,7 +321,8 @@ public class ECOServiceImpl implements ECOService {
 		return findAllImpactedChildrenComposites(composite, ecoData);
 	}
 	
-	private List<List<Composite<WUsedListDataItem>>> provideSimulateECOEntries(final ChangeOrderData ecoData) {
+	@SuppressWarnings("unchecked")
+	private List<Object> provideSimulateECOEntries(final ChangeOrderData ecoData) {
 		// Clear changeUnitList
 		List<ChangeUnitDataItem> toRemove = new ArrayList<>();
 		for (ChangeUnitDataItem cul1 : ecoData.getChangeUnitList()) {
@@ -347,7 +349,7 @@ public class ECOServiceImpl implements ECOService {
 			logger.trace("WUsedList to impact :" + composite.toString());
 		}
 		
-		List<List<Composite<WUsedListDataItem>>> compositesList = new LinkedList<>();
+		List<Object> compositesList = new LinkedList<>();
 		
 		for (final Composite<WUsedListDataItem> component : composite.getChildren()) {
 			if (component.getData() != null && ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
@@ -379,8 +381,8 @@ public class ECOServiceImpl implements ECOService {
 			
 			for (int i = 0; i < compositesList.size() - 1; i++) {
 				for (int j = i + 1; j < compositesList.size(); j++) {
-					List<Composite<WUsedListDataItem>> firstList = compositesList.get(i);
-					List<Composite<WUsedListDataItem>> secondList = compositesList.get(j);
+					List<Object> firstList = (List<Object>) compositesList.get(i);
+					List<Object> secondList = (List<Object>) compositesList.get(j);
 					
 					if (hasIntersection(firstList, secondList)) {
 						firstList.addAll(secondList);
@@ -389,7 +391,7 @@ public class ECOServiceImpl implements ECOService {
 				}
 			}
 			
-			compositesList.removeIf(List::isEmpty);
+			compositesList.removeIf( list -> ((List<?>) list).isEmpty());
 			
 		} while (compositesList.size() != currentSize);
 		
@@ -397,11 +399,16 @@ public class ECOServiceImpl implements ECOService {
 		
 	}
 
-	private boolean hasIntersection(List<Composite<WUsedListDataItem>> firstList, List<Composite<WUsedListDataItem>> secondList) {
+	private boolean hasIntersection(List<?> firstList, List<?> secondList) {
 		
-		for (Composite<WUsedListDataItem> firstItem : firstList) {
-			for (Composite<WUsedListDataItem> secondItem : secondList) {
-				if (!Sets.intersection(new HashSet<>(firstItem.getData().getSourceItems()), new HashSet<>(secondItem.getData().getSourceItems())).isEmpty()) {
+		for (Object firstItem : firstList) {
+			for (Object secondItem : secondList) {
+				
+				WUsedListDataItem firstData = (WUsedListDataItem) ((Composite<?>) firstItem).getData();
+				
+				WUsedListDataItem secondData = (WUsedListDataItem) ((Composite<?>) secondItem).getData();
+				
+				if (!Sets.intersection(new HashSet<>(firstData.getSourceItems()), new HashSet<>(secondData.getSourceItems())).isEmpty()) {
 					return true;
 				}
 			}
@@ -409,7 +416,7 @@ public class ECOServiceImpl implements ECOService {
 		return false;
 	}
 	
-	private class ApplyECOProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<Composite<WUsedListDataItem>> {
+	private class ApplyECOProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<Object> {
 
 		private ChangeOrderData ecoData;
 		
@@ -423,19 +430,22 @@ public class ECOServiceImpl implements ECOService {
 			return errors;
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
-		public void process(Composite<WUsedListDataItem> component) throws Throwable {
+		public void process(Object component) throws Throwable {
 			
 			if (!getErrors().isEmpty()) {
 				return;
 			}
 			
-			applyECO(ecoData, component, false, 1, errors);
+			if (component instanceof Composite<?> && ((Composite<?>) component).getData() instanceof WUsedListDataItem) {
+				applyECO(ecoData, (Composite<WUsedListDataItem>) component, false, 1, errors);
+			}
 		}
 		
 	}
 	
-	private class SimulateECOProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<List<Composite<WUsedListDataItem>>> {
+	private class SimulateECOProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<Object> {
 		
 		private ChangeOrderData ecoData;
 		
@@ -449,8 +459,9 @@ public class ECOServiceImpl implements ECOService {
 			return errors;
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
-		public void process(List<Composite<WUsedListDataItem>> components) throws Throwable {
+		public void process(Object components) throws Throwable {
 			
 			L2CacheSupport.doInCacheContext(() -> {
 				if (!getErrors().isEmpty()) {
@@ -459,9 +470,14 @@ public class ECOServiceImpl implements ECOService {
 				
 				int sort = 1;
 				
-				for (Composite<WUsedListDataItem> component : components) {
-					sort = applyECO(ecoData, component, true, sort, errors);
+				if (components instanceof List) {
+					for (Object component : (List<?>) components) {
+						if (component instanceof Composite && ((Composite<?>) component).getData() instanceof WUsedListDataItem) {
+							sort = applyECO(ecoData, (Composite<WUsedListDataItem>) component, true, sort, errors);
+						}
+					}
 				}
+				
 			} , true, true);
 			
 			alfrescoRepository.save(ecoData);
@@ -469,9 +485,10 @@ public class ECOServiceImpl implements ECOService {
 	}
 	
 	private int applyECO(ChangeOrderData ecoData, Composite<WUsedListDataItem> component, boolean isSimulation, int sort, Set<String> errors) {
-		boolean isMergeItem = ChangeOrderType.Merge.equals(ecoData.getEcoType()) && (component.getData().getDepthLevel() == 1);
+		WUsedListDataItem wusedData = component.getData();
+		boolean isMergeItem = ChangeOrderType.Merge.equals(ecoData.getEcoType()) && (wusedData.getDepthLevel() == 1);
 		
-		final ChangeUnitDataItem changeUnitDataItem = getOrCreateChangeUnitDataItem(ecoData, component.getData());
+		final ChangeUnitDataItem changeUnitDataItem = getOrCreateChangeUnitDataItem(ecoData, wusedData);
 		
 		// We break if product treated
 		if ((changeUnitDataItem != null) && !Boolean.TRUE.equals(changeUnitDataItem.getTreated())) {
@@ -479,7 +496,7 @@ public class ECOServiceImpl implements ECOService {
 			// We test if all referring nodes are treated before
 			// apply
 			// to branch
-			if ((component.getData().getDepthLevel() > 2) && shouldSkipCurrentBranch(ecoData, changeUnitDataItem)) {
+			if ((wusedData.getDepthLevel() > 2) && shouldSkipCurrentBranch(ecoData, changeUnitDataItem)) {
 				if (logger.isDebugEnabled()) {
 					logger.debug(
 							"Skip current branch at " + nodeService.getProperty(changeUnitDataItem.getSourceItem(), ContentModel.PROP_NAME));
@@ -506,7 +523,7 @@ public class ECOServiceImpl implements ECOService {
 						}
 						
 						// Level 2
-						if ((component.getData().getDepthLevel() == 2) || isMergeItem) {
+						if ((wusedData.getDepthLevel() == 2) || isMergeItem) {
 							applyReplacementList(ecoData, productToFormulateData, isSimulation, isMergeItem);
 						}
 						
@@ -546,7 +563,7 @@ public class ECOServiceImpl implements ECOService {
 							if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
 								createNewProductVersion(productNodeRef,
 										changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR,
-												ecoData, component.getData().getParent());
+												ecoData, wusedData.getParent());
 							}
 						}
 						
@@ -618,61 +635,121 @@ public class ECOServiceImpl implements ECOService {
 		}
 
 	}
+	
+	private BatchStep<Object> createCalculateWUsedListBatchStep(ChangeOrderData ecoData, boolean isWUsedImpacted) {
+		BatchStep<Object> batchStep = new BatchStep<>();
+		
+		BatchProcessor.BatchProcessWorkerAdaptor<Object> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<Object>() {
+
+			@Override
+			public void process(Object entry) throws Throwable {
+				
+				internalCalculateWUsedList(ecoData, isWUsedImpacted);
+			}
+		};
+		
+		batchStep.setProcessWorker(processWorker);
+		
+		batchStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(Arrays.asList(ecoData)));
+		
+		batchStep.setBatchStepListener(new BatchStepAdapter() {
+			
+			@Override
+			public void beforeStep() {
+				ecoData.setEcoState(ECOState.InProgress);
+				alfrescoRepository.save(ecoData);
+			}
+			
+			@Override
+			public void afterStep() {
+				if (ECOState.InProgress.equals(ecoData.getEcoState())) {
+					ecoData.setEcoState(ECOState.WUsedCalculated);
+					alfrescoRepository.save(ecoData);
+				}
+			}
+			
+			@Override
+			public void onError(String lastErrorEntryId, String lastError) {
+
+				if (!ECOState.InError.equals(ecoData.getEcoState())) {
+					ecoData.setEcoState(ECOState.InError);
+
+					commentService.createComment(ecoData.getNodeRef(), "", "Error during OM calculating of WUsed: " + lastError, false);
+
+					alfrescoRepository.save(ecoData);
+				}
+			}
+		});
+		
+		return batchStep;
+	}
 
 	/** {@inheritDoc} */
 	@Override
-	public void calculateWUsedList(NodeRef ecoNodeRef, boolean isWUsedImpacted) {
-
+	public BatchInfo calculateWUsedList(NodeRef ecoNodeRef, boolean isWUsedImpacted) {
+		
+		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+		
+		if (!ECOState.Applied.equals(ecoData.getEcoState()) && !ECOState.InError.equals(ecoData.getEcoState())) {
+			
+			BatchInfo batchInfo = new BatchInfo(String.format("calculateWUsed-%s", ecoNodeRef.getId()), "becpg.batch.eco.calculateWUsed");
+			
+			batchInfo.setRunAsSystem(true);
+			
+			List<BatchStep<Object>> batchStepList = new LinkedList<>();
+			
+			batchStepList.add(createCalculateWUsedListBatchStep(ecoData, isWUsedImpacted));
+			
+			batchQueueService.queueBatch(batchInfo, batchStepList);
+			
+			return batchInfo;
+		}
+		
+		return null;
+	}
+	
+	private void internalCalculateWUsedList(ChangeOrderData ecoData, boolean isWUsedImpacted) {
 		logger.debug("calculateWUsedList");
 
-		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+		// clear WUsedList
+		ecoData.getWUsedList().clear();
+		ecoData.getChangeUnitList().clear();
 
-		// Do not run if already applied
-		if (!ECOState.Applied.equals(ecoData.getEcoState()) && !ECOState.InError.equals(ecoData.getEcoState())) {
+		if (ecoData.getReplacementList() != null) {
 
-			// clear WUsedList
-			ecoData.getWUsedList().clear();
-			ecoData.getChangeUnitList().clear();
+			int sort = 1;
 
-			if (ecoData.getReplacementList() != null) {
+			for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
 
-				int sort = 1;
+				List<NodeRef> replacements = getSourceItems(ecoData, replacementListDataItem);
 
-				for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
+				if ((replacements != null) && !replacements.isEmpty()) {
 
-					List<NodeRef> replacements = getSourceItems(ecoData, replacementListDataItem);
+					WUsedListDataItem parent = new WUsedListDataItem();
+					parent.setSourceItems(replacements);
+					parent.setIsWUsedImpacted(true);
+					parent.setDepthLevel(1);
+					parent.setSort(sort++);
 
-					if ((replacements != null) && !replacements.isEmpty()) {
+					ecoData.getWUsedList().add(parent);
 
-						WUsedListDataItem parent = new WUsedListDataItem();
-						parent.setSourceItems(replacements);
-						parent.setIsWUsedImpacted(true);
-						parent.setDepthLevel(1);
-						parent.setSort(sort++);
+					List<QName> associationQNames = evaluateWUsedAssociations(replacements);
 
-						ecoData.getWUsedList().add(parent);
+					for (QName associationQName : associationQNames) {
 
-						List<QName> associationQNames = evaluateWUsedAssociations(replacements);
+						MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(replacements, WUsedOperator.AND, associationQName,
+								RepoConsts.MAX_DEPTH_LEVEL);
 
-						for (QName associationQName : associationQNames) {
-
-							MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(replacements, WUsedOperator.AND, associationQName,
-									RepoConsts.MAX_DEPTH_LEVEL);
-
-							QName datalistQName = evaluateListFromAssociation(associationQName);
-							sort = calculateWUsedList(ecoData, wUsedData, datalistQName, parent,
-									ChangeOrderType.Merge.equals(ecoData.getEcoType()) || isWUsedImpacted, sort);
-						}
+						QName datalistQName = evaluateListFromAssociation(associationQName);
+						sort = calculateWUsedList(ecoData, wUsedData, datalistQName, parent,
+								ChangeOrderType.Merge.equals(ecoData.getEcoType()) || isWUsedImpacted, sort);
 					}
 				}
 			}
-
-			// change state
-			ecoData.setEcoState(ECOState.WUsedCalculated);
-
-			alfrescoRepository.save(ecoData);
-
 		}
+
+		alfrescoRepository.save(ecoData);
+
 	}
 
 	private List<NodeRef> getSourceItems(ChangeOrderData ecoData, ReplacementListDataItem replacementListDataItem) {
@@ -708,6 +785,7 @@ public class ECOServiceImpl implements ECOService {
 		for (Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()) {
 
 			WUsedListDataItem wUsedListDataItem = new WUsedListDataItem();
+			wUsedListDataItem.setLink(kv.getKey());
 			wUsedListDataItem.setParent(parent);
 			wUsedListDataItem.setImpactedDataList(dataListQName);
 			wUsedListDataItem.setIsWUsedImpacted(isWUsedImpacted);
@@ -1202,43 +1280,11 @@ public class ECOServiceImpl implements ECOService {
 		return null;
 	}
 
-	/** {@inheritDoc} */
-	@Override
 	public Boolean setInProgress(NodeRef ecoNodeRef) {
 		ChangeOrderData om = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 		if (!ECOState.InProgress.equals(om.getEcoState())) {
 			om.setEcoState(ECOState.InProgress);
 			alfrescoRepository.save(om);
-			return true;
-		}
-
-		return false;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public Boolean setInError(NodeRef ecoNodeRef, String errorTxt) {
-
-		List<String> errors = new ArrayList<>();
-
-		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
-
-		errors.add("OM in error ");
-		errors.add("Error message: " + errorTxt);
-
-		if (!ECOState.InError.equals(ecoData.getEcoState())) {
-			ecoData.setEcoState(ECOState.InError);
-
-			if (!errors.isEmpty()) {
-				StringBuilder comments = new StringBuilder();
-				for (String error : errors) {
-					comments.append(error + "</br>");
-				}
-
-				commentService.createComment(ecoData.getNodeRef(), "", comments.toString(), false);
-			}
-
-			alfrescoRepository.save(ecoData);
 			return true;
 		}
 
