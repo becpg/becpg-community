@@ -230,7 +230,6 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Override
 	public boolean applyAutomaticEco() {
 
-		boolean ret;
 		if (Boolean.TRUE.equals(isEnable)) {
 
 			autoMergeBranch();
@@ -250,18 +249,15 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 				if (ecoNodeRef != null) {
 
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						ecoService.setInProgress(ecoNodeRef);
-						return true;
-					}, false, true);
-
-					ret = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+					return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 						if (logger.isDebugEnabled()) {
-							logger.debug("Found automatic change order to calculate WUsed :" + ecoNodeRef);
+							logger.debug("Found automatic change order to apply :" + ecoNodeRef);
 						}
 						try {
-							ecoService.calculateWUsedList(ecoNodeRef, true);
+							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								return ecoService.apply(ecoNodeRef, deleteOnApply, true);
+							}, false, true);
+
 						} catch (Exception e) {
 							if (RetryingTransactionHelper.extractRetryCause(e) != null) {
 								throw e;
@@ -270,30 +266,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 							return false;
 						}
 						return true;
-
 					}, false, true);
-
-					if (ret) {
-
-						return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							if (logger.isDebugEnabled()) {
-								logger.debug("Found automatic change order to apply :" + ecoNodeRef);
-							}
-							try {
-								transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-									return ecoService.apply(ecoNodeRef, deleteOnApply);
-								}, false, true);
-
-							} catch (Exception e) {
-								if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-									throw e;
-								}
-								logger.error(e, e);
-								return false;
-							}
-							return true;
-						}, false, true);
-					}
 				}
 			}
 		}

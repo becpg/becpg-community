@@ -19,6 +19,7 @@
 	<shortname>Batch queue module</shortname>
 	<description>Batch queue - beCPG administration</description>	
 	<url>/becpg/batch/queue</url>
+	<url>/becpg/batch/remove/{batchId}</url>
 	<format default="json">argument</format>
 	<authentication>admin</authentication>
 	<transaction allow="readonly" >required</transaction>

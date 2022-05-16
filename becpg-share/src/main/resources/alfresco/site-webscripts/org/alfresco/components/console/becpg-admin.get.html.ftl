@@ -73,6 +73,8 @@
 									</#if>
 									<label>${msg("label.connectedUsers")}</label>
 									<span class="info">${systemInfo.connectedUsers}</span><br/>
+									<label>${msg("label.batchCounts")}</label>
+									<span class="info">${systemInfo.batchCounts}</span><br/>
 					 			</div>
 					 			 <div class="action">
 						    		<button type="button" name="${el}-empty-cache" id="${el}-empty-cache-button">${msg("button.empty-cache")}</button>
@@ -81,6 +83,10 @@
 						  		  <div class="action">
 						    		<button type="button" name="${el}-show-users" id="${el}-show-users-button">${msg("button.show-users")}</button>
 						    		<label for="${el}-show-users-button">${msg("label.show-users")}</label>    		
+						  		  </div>
+						  		  <div class="action">
+						    		<button type="button" name="${el}-show-batches" id="${el}-show-batches-button">${msg("button.show-batches")}</button>
+						    		<label for="${el}-show-batches-button">${msg("label.show-batches")}</label>    		
 						  		  </div>
 					 			 </td>
 					 			</tr>

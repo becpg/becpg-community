@@ -28,8 +28,8 @@ public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkPr
 	}
 
 	@Override
-	public int getTotalEstimatedWorkSize() {
-		return size;
+	public long getTotalEstimatedWorkSizeLong() {
+		return getTotalEstimatedWorkSize();
 	}
 
 	@Override
@@ -39,6 +39,11 @@ public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkPr
 			results.add(iterator.next());
 		}
 		return results;
+	}
+
+	@Override
+	public int getTotalEstimatedWorkSize() {
+		return size;
 	}
 
 }

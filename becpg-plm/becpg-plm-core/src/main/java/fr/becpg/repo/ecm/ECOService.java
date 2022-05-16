@@ -17,15 +17,9 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm;
 
-import java.util.List;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.batch.BatchInfo;
-import fr.becpg.repo.batch.BatchStep;
-import fr.becpg.repo.data.hierarchicalList.Composite;
-import fr.becpg.repo.ecm.data.ChangeOrderData;
-import fr.becpg.repo.ecm.data.dataList.WUsedListDataItem;
 
 /**
  * Engineering change order service
@@ -40,18 +34,11 @@ public interface ECOService {
 	 *
 	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param selectToApply a boolean.
+	 * @return 
 	 */
-	void calculateWUsedList(NodeRef ecoNodeRef, boolean selectToApply);
+	BatchInfo calculateWUsedList(NodeRef ecoNodeRef, boolean selectToApply);
 	
-	/**
-	 * <p>apply.</p>
-	 *
-	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @return a boolean.
-	 */
-	BatchInfo apply(NodeRef ecoNodeRef);
-	
-	BatchInfo apply(NodeRef ecoNodeRef, boolean deleteOnApply);
+	BatchInfo apply(NodeRef ecoNodeRef, boolean deleteOnApply, boolean calculateWUsed);
 	
 	/**
 	 * <p>doSimulation.</p>
@@ -59,28 +46,6 @@ public interface ECOService {
 	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a boolean.
 	 */
-	BatchInfo doSimulation(NodeRef ecoNodeRef);
-
-	/**
-	 * <p>setInProgress.</p>
-	 *
-	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @return a {@link java.lang.Boolean} object.
-	 */
-	Boolean setInProgress(NodeRef ecoNodeRef);
-
-	/**
-	 * <p>setInError.</p>
-	 *
-	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param e a {@link java.lang.Exception} object.
-	 * @return a {@link java.lang.Boolean} object.
-	 */
-	Boolean setInError(NodeRef ecoNodeRef, String errorTxt);
-
-	BatchStep<List<Composite<WUsedListDataItem>>> createSimulateECOBatchStep(ChangeOrderData ecoData);
-
-	BatchStep<Composite<WUsedListDataItem>> createApplyECOBatchStep(ChangeOrderData ecoData, boolean deleteOnApply);
-
+	BatchInfo doSimulation(NodeRef ecoNodeRef, boolean calculateWUsed);
 
 }
