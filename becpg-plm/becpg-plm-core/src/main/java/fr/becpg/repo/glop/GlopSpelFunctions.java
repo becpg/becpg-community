@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
 import fr.becpg.repo.formulation.spel.CustomSpelFunctions;
+import fr.becpg.repo.glop.impl.GlopServiceImpl;
 import fr.becpg.repo.glop.model.GlopData;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.ProductData;
@@ -88,6 +91,8 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 @Service
 public class GlopSpelFunctions implements CustomSpelFunctions {
+
+	private static final Log logger = LogFactory.getLog(GlopSpelFunctions.class);
 
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
@@ -246,6 +251,7 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 				errorResult.put("status", "Error : Glop server URI has a syntax error");
 				return errorResult;
 			} catch (RestClientException e) {
+				logger.error(e.getMessage(), e);
 				errorResult.put("status", "Error : Failed to send request to the Glop server");
 				return errorResult;
 			}

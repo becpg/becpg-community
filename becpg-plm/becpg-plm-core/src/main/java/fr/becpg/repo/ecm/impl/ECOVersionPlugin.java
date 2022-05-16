@@ -165,29 +165,9 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 
 			}, false, true);
 
-			try {
-				boolean success = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					ecoService.calculateWUsedList(ecoNodeRef, true);
-					return true;
-				}, false, true);
-
-				if (success) {
-
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						return ecoService.apply(ecoNodeRef, deleteOnApply);
-					}, false, true);
-				} else {
-					logger.warn("Cannot calculate wused:" + ecoNodeRef);
-				}
-
-			} catch (Exception e) {
-				if (nodeService.exists(ecoNodeRef)) {
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						return ecoService.setInError(ecoNodeRef, e.getMessage());
-					}, false, true);
-				}
-				logger.error("Unable to apply eco ", e);
-			}
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				return ecoService.apply(ecoNodeRef, deleteOnApply, true);
+			}, false, true);
 
 		}
 

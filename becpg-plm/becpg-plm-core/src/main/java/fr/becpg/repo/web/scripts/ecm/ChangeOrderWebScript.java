@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
@@ -52,8 +51,6 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 
 	private AlfrescoRepository<ChangeOrderData> alfrescoRepository;
 
-	private TransactionService transactionService;
-
 	/**
 	 * <p>Setter for the field <code>automaticECOService</code>.</p>
 	 *
@@ -90,10 +87,6 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 	
-	public void setTransactionService(TransactionService transactionService) {
-		this.transactionService = transactionService;
-	}
-
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) {
@@ -112,14 +105,13 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 		final NodeRef finalEcoNodeRef = ecoNodeRef;
 
 		if (ACTION_CALCULATE_WUSED.equals(action)) {
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> ecoService.setInProgress(finalEcoNodeRef), false, true);
 			ecoService.calculateWUsedList(ecoNodeRef, false);
 			writeInfos(ecoNodeRef, res);
 		} else if (ACTION_DO_SIMULATION.equals(action)) {
-			ecoService.doSimulation(finalEcoNodeRef);
+			ecoService.doSimulation(finalEcoNodeRef, false);
 			writeInfos(ecoNodeRef, res);
 		} else if (ACTION_APPLY.equals(action)) {
-			ecoService.apply(finalEcoNodeRef);
+			ecoService.apply(finalEcoNodeRef, false, false);
 			writeInfos(ecoNodeRef, res);
 		} else if (ACTION_GET_INFOS.equals(action)) {
 

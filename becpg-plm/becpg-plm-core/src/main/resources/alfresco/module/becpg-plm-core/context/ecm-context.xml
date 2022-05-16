@@ -28,7 +28,6 @@
       	<property name="automaticECOService" ref="automaticECOService"/>
       	<property name="alfrescoRepository" ref="alfrescoRepository"/>
       	<property name="nodeService" ref="NodeService"/>
-      	<property name="transactionService" ref="transactionService"/>
    	</bean>
    	
    	<alias alias="webscript.fr.becpg.ecm.changeOrder.post" name="webscript.fr.becpg.ecm.changeOrder.get"/>

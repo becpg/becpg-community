@@ -47,34 +47,43 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 		List<BatchInfo> batches = batchQueueService.getBatchesInQueue();
 			
 		JSONObject ret = new JSONObject();
-		try {
-			JSONArray jsonBatches = new JSONArray();
-			for(BatchInfo batch : batches) {
-				JSONObject jsonBatch = new JSONObject();
-				jsonBatch.put("batchId", batch.getBatchId());
-				jsonBatch.put("batchUser", batch.getBatchUser());
-				String label = I18NUtil.getMessage(batch.getBatchDescId());
+		
+		if (req.getURL().contains("/becpg/batch/queue")) {
+			
+			try {
+				JSONArray jsonBatches = new JSONArray();
+				for(BatchInfo batch : batches) {
+					JSONObject jsonBatch = new JSONObject();
+					jsonBatch.put("batchId", batch.getBatchId());
+					jsonBatch.put("batchUser", batch.getBatchUser());
+					String label = I18NUtil.getMessage(batch.getBatchDescId());
+					
+					jsonBatch.put("batchDesc",label!=null ? label :  batch.getBatchDescId());
+					jsonBatches.put(jsonBatch);
+				}
+				ret.put("queue", jsonBatches);
 				
-				jsonBatch.put("batchDesc",label!=null ? label :  batch.getBatchDescId());
-				jsonBatches.put(jsonBatch);
+				BatchMonitor lastRunningBatch = batchQueueService.getLastRunningBatch();
+				
+				if(lastRunningBatch!=null) {
+					JSONObject last = new JSONObject();
+					last.put("batchId", lastRunningBatch.getProcessName());
+					last.put("percentCompleted", lastRunningBatch.getPercentComplete());
+					ret.put("last", last);
+				}
+			} catch (JSONException e) {
+				logger.error(e,e);
 			}
-			ret.put("queue", jsonBatches);
-			
-			BatchMonitor lastRunningBatch = batchQueueService.getLastRunningBatch();
-			
-			if(lastRunningBatch!=null) {
-				JSONObject last = new JSONObject();
-				last.put("batchId", lastRunningBatch.getProcessName());
-				last.put("percentCompleted", lastRunningBatch.getPercentComplete());
-				ret.put("last", last);
+		} else if (req.getURL().contains("/becpg/batch/remove")) {
+			String batchId = req.getServiceMatch().getTemplateVars().get("batchId");
+			if (batchId != null) {
+				batchQueueService.removeBatchFromQueue(batchId);
 			}
-
-			resp.setContentType("application/json");
-			resp.setContentEncoding("UTF-8");
-			ret.write(resp.getWriter());
-		} catch (JSONException e) {
-			logger.error(e,e);
 		}
+		
+		resp.setContentType("application/json");
+		resp.setContentEncoding("UTF-8");
+		ret.write(resp.getWriter());
 		
 	}
 }

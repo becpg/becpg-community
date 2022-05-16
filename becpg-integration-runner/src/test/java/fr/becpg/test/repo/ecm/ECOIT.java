@@ -240,13 +240,14 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
 
-			// calculate WUsed
-			ecoService.calculateWUsedList(ecoNodeRef1, false);
 
 			
 			return ecoNodeRef1;
 
 		}, false, true);
+		
+		// calculate WUsed
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -270,13 +271,8 @@ public class ECOIT extends AbstractFinishedProductTest {
 			return null;
 		
 		}, false, true);
-
-		// simulation
-//		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-//			return ecoService.doSimulation(ecoNodeRef);
-//		}, false, true);
 		
-		waitForBatchEnd(ecoService.doSimulation(ecoNodeRef));
+		waitForBatchEnd(ecoService.doSimulation(ecoNodeRef, false));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -441,13 +437,19 @@ public class ECOIT extends AbstractFinishedProductTest {
 			
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
 			
-			// calculate WUsed
-			ecoService.calculateWUsedList(ecoNodeRef1, false);
-			
 			
 			return ecoNodeRef1;
 			
 		}, false, true);
+		
+		// calculate WUsed
+//		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+		
+		
+		logger.info("Version Before : " + getVersionLabel(finishedProduct1NodeRef));
+		
+		// apply
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, true));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -471,11 +473,6 @@ public class ECOIT extends AbstractFinishedProductTest {
 			return null;
 			
 		}, false, true);
-		
-		logger.info("Version Before : " + getVersionLabel(finishedProduct1NodeRef));
-		
-		// apply
-		waitForBatchEnd(ecoService.apply(ecoNodeRef));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -602,32 +599,39 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
 
-			// calculate WUsed
-			ecoService.calculateWUsedList(ecoNodeRef1, false);
-
-			// verify WUsed
-			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
-			assertNotNull("check ECO exist in DB", dbECOData);
-			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-
-			assertEquals("Check 2 WUsed are impacted", 2, dbECOData.getWUsedList().size());
-
-			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
-
-				wul.setIsWUsedImpacted(true);
-				alfrescoRepository.save(wul);
-
-				assertNotNull(wul.getSourceItems().get(0));
-				logger.info("Source item " + wul.getSourceItems().get(0));
-
-			}
 
 			return ecoNodeRef1;
 
 		}, false, true);
+		
+		// calculate WUsed
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		
+			// verify WUsed
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+			assertNotNull("check ECO exist in DB", dbECOData);
+			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+			
+			assertEquals("Check 2 WUsed are impacted", 2, dbECOData.getWUsedList().size());
+			
+			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+				
+				wul.setIsWUsedImpacted(true);
+				alfrescoRepository.save(wul);
+				
+				assertNotNull(wul.getSourceItems().get(0));
+				logger.info("Source item " + wul.getSourceItems().get(0));
+				
+			}
+	
+			return null;
+	
+		}, false, true);
 
 		// apply
-		waitForBatchEnd(ecoService.apply(ecoNodeRef));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -665,31 +669,39 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
 
-			// calculate WUsed
-			ecoService.calculateWUsedList(ecoNodeRef1, false);
-
-			// verify WUsed
-			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
-			assertNotNull("check ECO exist in DB", dbECOData);
-			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-
-			assertEquals("Check 2 WUsed are impacted", 2, dbECOData.getWUsedList().size());
-
-			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
-
-				wul.setIsWUsedImpacted(true);
-				alfrescoRepository.save(wul);
-
-				assertNotNull(wul.getSourceItems().get(0));
-				logger.info("Source item " + wul.getSourceItems().get(0));
-
-			}
 
 			return ecoNodeRef1;
 
 		}, false, true);
+		
+		// calculate WUsed
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-		waitForBatchEnd(ecoService.apply(ecoNodeRef));
+			// verify WUsed
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+			assertNotNull("check ECO exist in DB", dbECOData);
+			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+			
+			assertEquals("Check 2 WUsed are impacted", 2, dbECOData.getWUsedList().size());
+			
+			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+				
+				wul.setIsWUsedImpacted(true);
+				alfrescoRepository.save(wul);
+				
+				assertNotNull(wul.getSourceItems().get(0));
+				logger.info("Source item " + wul.getSourceItems().get(0));
+				
+			}
+			
+			return null;
+
+		}, false, true);
+
+
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -731,43 +743,46 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
 
-			// calculate WUsed
-			ecoService.calculateWUsedList(ecoNodeRef1, false);
-
-			// verify WUsed
-			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
-			assertNotNull("check ECO exist in DB", dbECOData);
-			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-
-			assertEquals("Check 2 WUsed are impacted", 2, dbECOData.getWUsedList().size());
-
-			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
-
-				wul.setIsWUsedImpacted(true);
-				alfrescoRepository.save(wul);
-
-				assertNotNull(wul.getSourceItems().get(0));
-				logger.info("Source item " + wul.getSourceItems().get(0));
-
-			}
 
 			return ecoNodeRef1;
 
 		}, false, true);
+		
+		// calculate WUsed
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			// verify WUsed
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+			assertNotNull("check ECO exist in DB", dbECOData);
+			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+			
+			assertEquals("Check 2 WUsed are impacted", 2, dbECOData.getWUsedList().size());
+			
+			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+				
+				wul.setIsWUsedImpacted(true);
+				alfrescoRepository.save(wul);
+				
+				assertNotNull(wul.getSourceItems().get(0));
+				logger.info("Source item " + wul.getSourceItems().get(0));
+				
+			}
+			
+			return null;
+
+		}, false, true);
+
 
 		logger.info("BEFORE");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1NodeRef);
-
-
 			
 			for(CompoListDataItem compoListDataItem : productData.getCompoList()) {
 				logger.info(nodeService.getProperty(compoListDataItem.getComponent(),ContentModel.PROP_NAME)
 						+" "+compoListDataItem.getStartEffectivity() + " - " +compoListDataItem.getEndEffectivity());
-				
-
-
 			}
 
 			return null;
@@ -775,7 +790,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// apply
-		waitForBatchEnd(ecoService.apply(ecoNodeRef));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false));
 		
 		logger.info("APTER");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -821,32 +836,40 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
 
-			// calculate WUsed
-			ecoService.calculateWUsedList(ecoNodeRef1, false);
-
-			// verify WUsed
-			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
-			assertNotNull("check ECO exist in DB", dbECOData);
-			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-
-			assertEquals("Check 2 WUsed are impacted", 2, dbECOData.getWUsedList().size());
-
-			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
-
-				wul.setIsWUsedImpacted(true);
-				alfrescoRepository.save(wul);
-
-				assertNotNull(wul.getSourceItems().get(0));
-				logger.info("Source item " + wul.getSourceItems().get(0));
-
-			}
 
 			return ecoNodeRef1;
 
 		}, false, true);
+		
+		// calculate WUsed
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef2, false));
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			// verify WUsed
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef2);
+			assertNotNull("check ECO exist in DB", dbECOData);
+			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+			
+			assertEquals("Check 2 WUsed are impacted", 2, dbECOData.getWUsedList().size());
+			
+			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+				
+				wul.setIsWUsedImpacted(true);
+				alfrescoRepository.save(wul);
+				
+				assertNotNull(wul.getSourceItems().get(0));
+				logger.info("Source item " + wul.getSourceItems().get(0));
+				
+			}
+		
+			return null;
+	
+		}, false, true);
+
 
 		// apply
-		waitForBatchEnd(ecoService.apply(ecoNodeRef2));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef2, false, false));
 		
 		logger.info("APTER 2");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -881,34 +904,41 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
 
-			// calculate WUsed
-			ecoService.calculateWUsedList(ecoNodeRef1, false);
-
-			// verify WUsed
-			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
-			assertNotNull("check ECO exist in DB", dbECOData);
-			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-			
-		
-
-			assertEquals("Check 3 WUsed are impacted", 3, dbECOData.getWUsedList().size());
-
-			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
-
-				wul.setIsWUsedImpacted(true);
-				alfrescoRepository.save(wul);
-
-				assertNotNull(wul.getSourceItems().get(0));
-				logger.info("Source item " + wul.getSourceItems().get(0));
-
-			}
 
 			return ecoNodeRef1;
 
 		}, false, true);
+		
+		// calculate WUsed
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef3, false));
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			// verify WUsed
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef3);
+			assertNotNull("check ECO exist in DB", dbECOData);
+			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+			
+			
+			
+			assertEquals("Check 3 WUsed are impacted", 3, dbECOData.getWUsedList().size());
+			
+			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+				
+				wul.setIsWUsedImpacted(true);
+				alfrescoRepository.save(wul);
+				
+				assertNotNull(wul.getSourceItems().get(0));
+				logger.info("Source item " + wul.getSourceItems().get(0));
+				
+			}
+			return null;
+
+		}, false, true);
+
 
 		// apply
-		waitForBatchEnd(ecoService.apply(ecoNodeRef3));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef3, false, false));
 
 		logger.info("APTER 3");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -1039,33 +1069,29 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
 
-			// calculate WUsed
-			ecoService.calculateWUsedList(ecoNodeRef1, false);
-
-			// verify WUsed
-			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
-			assertNotNull("check ECO exist in DB", dbECOData);
-			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-			assertEquals("Check WUsed impacted", 5, dbECOData.getWUsedList().size());
-
-			for (WUsedListDataItem wul1 : dbECOData.getWUsedList()) {
-
-				wul1.setIsWUsedImpacted(true);
-				alfrescoRepository.save(wul1);
-
-				assertNotNull(wul1.getSourceItems().get(0));
-
-			}
 			
 			return ecoNodeRef1;
 
 		}, false, true);
-
-		waitForBatchEnd(ecoService.doSimulation(ecoNodeRef));
+		
+		waitForBatchEnd(ecoService.doSimulation(ecoNodeRef, true));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
+			// verify WUsed
 			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+			assertNotNull("check ECO exist in DB", dbECOData);
+			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+			assertEquals("Check WUsed impacted", 5, dbECOData.getWUsedList().size());
+			
+			for (WUsedListDataItem wul1 : dbECOData.getWUsedList()) {
+				
+				wul1.setIsWUsedImpacted(true);
+				alfrescoRepository.save(wul1);
+				
+				assertNotNull(wul1.getSourceItems().get(0));
+				
+			}
 			
 			int checks = 0;
 
@@ -1289,11 +1315,18 @@ public class ECOIT extends AbstractFinishedProductTest {
 			
 			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
 			
-			// calculate WUsed
-			ecoService.calculateWUsedList(ecoNodeRef1, false);
 			
+			return ecoNodeRef1;
+			
+		}, false, true);
+		
+		// calculate WUsed
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		
 			// verify WUsed
-			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 			assertNotNull("check ECO exist in DB", dbECOData);
 			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
 			assertEquals("Check WUsed impacted", 5, dbECOData.getWUsedList().size());
@@ -1307,13 +1340,12 @@ public class ECOIT extends AbstractFinishedProductTest {
 				
 			}
 			
-			return ecoNodeRef1;
+			return null;
 			
 		}, false, true);
-		
-		
+
 		// apply
-		waitForBatchEnd(ecoService.apply(ecoNodeRef));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -1481,30 +1513,36 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 					NodeRef ecoNodeRef1 = alfrescoRepository.create(testNodeRef, changeOrderData).getNodeRef();
 
-					// calculate WUsed
-					ecoService.calculateWUsedList(ecoNodeRef1, false);
-
-					ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef1);
-					assertNotNull("check ECO exist in DB", dbECOData);
-					assertNotNull("Check WUsed list", dbECOData.getWUsedList());
-
-					assertEquals("Check 10 WUsed are impacted", 10, dbECOData.getWUsedList().size());
-
-					for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
-
-						wul.setIsWUsedImpacted(true);
-						alfrescoRepository.save(wul);
-
-					}
 
 					return ecoNodeRef1;
 
 				}, false, true);
 
+				// calculate WUsed
+				waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+				
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+					assertNotNull("check ECO exist in DB", dbECOData);
+					assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+					
+					assertEquals("Check 10 WUsed are impacted", 10, dbECOData.getWUsedList().size());
+					
+					for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+						
+						wul.setIsWUsedImpacted(true);
+						alfrescoRepository.save(wul);
+						
+					}
+					
+					return null;
+				}, false, true);
+
+				
 				logger.info("Name Before : " + alfrescoRepository.findOne(finishedProduct1NodeRef).getName() + " in thread " + threadName);
 				
 				// apply
-				waitForBatchEnd(ecoService.apply(ecoNodeRef));
+				waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false));
 
 				return null;
 			});

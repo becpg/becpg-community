@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.alfresco.repo.batch.BatchMonitor;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
@@ -141,7 +142,14 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		ret.put("licenseName", licenseManager.getLicenseName());
 		ret.put("withoutLicenseUsers", withoutLicenseUsers);
 		ret.put("becpgSchema", becpgSchema);
-		ret.put("batchCounts", batchQueueService.getBatchesInQueue().size());
+		
+		BatchMonitor lastRunningBatch = batchQueueService.getLastRunningBatch();
+		
+		boolean batchInProgress = false;
+		
+		batchInProgress = lastRunningBatch != null && !lastRunningBatch.getPercentComplete().contains("100");
+		
+		ret.put("batchCounts", batchQueueService.getBatchesInQueue().size() + (batchInProgress ? 1 : 0));
 	
 		return users;
 		

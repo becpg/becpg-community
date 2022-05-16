@@ -15,6 +15,12 @@
    margin: 16px 16px 10px 10px;
 }
 
+.removeIcon
+{
+   background: transparent url(remove-icon-16.png) no-repeat center center;
+   padding: 8px;
+}
+
 .becpg-admin-console .section .action
 {
    margin: 10px;
@@ -35,6 +41,19 @@
 	padding-left: 20px;
 }
 
+
+ul.batches {
+    height: 25em;
+    line-height: 2em;
+    padding-top: 20px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+.batches li span {
+	vertical-align: top;
+	padding-left: 20px;
+}
 
 ul.users {
     height: 25em;

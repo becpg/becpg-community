@@ -74,6 +74,9 @@
                      this.widgets.showUsersButton = Alfresco.util.createYUIButton(this, "show-users-button",
                            this.onShowUsersClick);
 
+                     this.widgets.showBatchesButton = Alfresco.util.createYUIButton(this, "show-batches-button",
+                           this.onShowBatchesClick);
+
                      this.createGauge();
                   },
 
@@ -330,7 +333,113 @@
                            scope : this
                         }
                      });
-                  }
+                  },
+
+				   onShowBatchesClick: function AdminConsole_onShowBatchesClick(e, args) {
+
+					   Alfresco.util.Ajax.request({
+						   url: Alfresco.constants.PROXY_URI + "/becpg/batch/queue",
+						   method: Alfresco.util.Ajax.GET,
+						   responseContentType: Alfresco.util.Ajax.JSON,
+						   successCallback: {
+							   fn: function(response) {
+								   if (response.json) {
+									   // Inject the template from the XHR request into a new DIV
+									   // element
+									   var containerDiv = document.createElement("div");
+						
+									   var div = document.createElement("div");
+									   div.id = this.id + "show-batches-panel";
+									   div.classList.add("about-share");
+									   var bd = document.createElement("div");
+									   bd.classList.add("bd");
+									   bd.style = "padding: 10px";
+									   div.appendChild(bd);
+									   var ul = document.createElement("ul");
+									   ul.style = "padding: 10px";
+									   ul.classList.add("batches");
+									   bd.appendChild(ul);
+
+									   var last = response.json.last;
+
+									   var header = document.createElement("li");
+									   ul.appendChild(header);
+									   var label = document.createElement("label");
+									   header.appendChild(label);
+									   label.innerText = this.msg("label.task.current");
+									   label.style = "font-weight: bold"
+						
+									   if (last) {
+										   var batchId = last.batchId;
+										   var percentCompleted = last.percentCompleted;
+
+										   var percent = percentCompleted.substring(0, percentCompleted.length - 2)
+
+							
+										   if (percent != 100) {
+											
+											   var li = document.createElement("li");
+											   ul.appendChild(li);
+											   var spanText = document.createElement("span");
+											   li.appendChild(spanText);
+											   spanText.innerText = batchId;
+											   var spanMeter = document.createElement("span");
+											   li.appendChild(spanMeter);
+											   var meter = document.createElement("meter");
+											   spanMeter.appendChild(meter);
+											   meter.style = "width:100px";
+											   meter.min = "0";
+											   meter.value = percent;
+											   meter.max = "100";
+											   meter.title = percentCompleted;
+										   }
+									   }
+
+									   if (response.json.queue) {
+										   var header = document.createElement("li");
+										   ul.appendChild(header);
+										   var label = document.createElement("label");
+										   header.appendChild(label);
+										   label.innerText = this.msg("label.task.pending");
+										   label.style = "font-weight: bold"
+										   for (j in response.json.queue) {
+											   var batchId = response.json.queue[j].batchId;
+	
+											   var li = document.createElement("li");
+											   ul.appendChild(li);
+											   var spanText = document.createElement("span");
+											   li.appendChild(spanText);
+											   spanText.innerText = batchId;
+											   var spanButton = document.createElement("span");
+											   li.appendChild(spanButton);
+											   var button = document.createElement("a");
+											   spanButton.appendChild(button);
+											   button.classList.add("removeIcon");
+											   button.style = "cursor:pointer";
+											   button.id = batchId;
+											   button.onclick = function (event) {
+													 Alfresco.util.Ajax.request({
+													   url: Alfresco.constants.PROXY_URI + "/becpg/batch/remove/" + event.target.id,
+													   method: Alfresco.util.Ajax.GET,
+													   responseContentType: Alfresco.util.Ajax.JSON
+													});
+													event.target.style = "display:none";
+											   };
+										   }
+									   }
+
+										containerDiv.appendChild(div);
+
+									   var panelDiv = Dom.getFirstChild(containerDiv);
+									   this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, { draggable: false, width: "40em" });
+
+									   this.widgets.panel.show();
+								   }
+							   },
+							   scope: this
+						   }
+					   });
+				   }
                });
 
 })();
