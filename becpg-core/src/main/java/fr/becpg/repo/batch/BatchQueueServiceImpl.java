@@ -200,11 +200,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					
 				}
 
-				BatchProcessor<T> batchProcessor = new BatchProcessor<>(batchInfo.getBatchDescId(),
+				BatchProcessor<T> batchProcessor = new BatchProcessor<>(batchInfo.getBatchId(),
 						transactionService.getRetryingTransactionHelper(), batchStep.getWorkProvider(),
 						batchInfo.getWorkerThreads(), batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
 
-				batchProcessor.process(runAsWrapper(batchStep.getProcessWorker()), true);
+				batchProcessor.processLong(runAsWrapper(batchStep.getProcessWorker()), true);
 
 				if (startTime == null) {
 					startTime = batchProcessor.getStartTime();
@@ -212,7 +212,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				
 				endTime = batchProcessor.getEndTime();
 				
-				if (batchProcessor.getTotalErrors() > 0 && batchStep.getBatchStepListener() != null) {
+				if (batchProcessor.getTotalErrorsLong() > 0 && batchStep.getBatchStepListener() != null) {
 
 					hasError = true;
 					
