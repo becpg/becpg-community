@@ -23,7 +23,8 @@
 			"allowedNamedRead": ${allowedNamedRead?c}
 		},
 		"nonHeapMemoryUsage": ${nonHeapMemoryUsage?c},
-		"becpgSchema": "${becpgSchema?js_string}"
+		"becpgSchema": "${becpgSchema?js_string}",
+		"batchCounts": ${batchCounts?c}
    }
    <#if sites??>
    , "sites" :
