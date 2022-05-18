@@ -173,6 +173,7 @@
 		<property name="repoService" ref="repoService"/>
 		<property name="hierarchyService" ref="hierarchyService"/>
 		<property name="siteService" ref="siteService"/>
+		<property name="projectService" ref="projectService"/>
 	</bean>
 
 	
