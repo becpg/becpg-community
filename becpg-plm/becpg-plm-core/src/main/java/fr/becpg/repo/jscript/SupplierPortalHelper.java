@@ -46,6 +46,7 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.hierarchy.HierarchyService;
+import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
@@ -79,7 +80,13 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	private SiteService siteService;
 
 	private HierarchyService hierarchyService;
+	
+	private ProjectService projectService;
 
+	public void setProjectService(ProjectService projectService) {
+		this.projectService = projectService;
+	}
+	
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
 	 *
@@ -206,18 +213,23 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 					@Override
 					public NodeRef doWork() throws Exception {
-						if ((task.getResources() != null) && !task.getResources().isEmpty()) {
+						
+						List<NodeRef> resources = projectService.extractResources(project.getNodeRef(), task.getResources());
+						
+						resources.removeIf((resource -> ContentModel.TYPE_AUTHORITY_CONTAINER.equals(nodeService.getType(resource))));
+						
+						if ((resources != null) && !resources.isEmpty()) {
 
 							NodeRef supplierNodeRef = associationService.getTargetAssoc(entityNodeRef.getNodeRef(), PLMModel.ASSOC_SUPPLIERS);
 
-							NodeRef dest = getSupplierDestFolder(supplierNodeRef, task.getResources());
+							NodeRef dest = getSupplierDestFolder(supplierNodeRef, resources);
 
 							if (supplierNodeRef != null) {
 								if (moveSupplier) {
 									repoService.moveNode(supplierNodeRef, dest);
 									permissionService.setInheritParentPermissions(supplierNodeRef, true);
 								} else {
-									for (NodeRef resourceRef : task.getResources()) {
+									for (NodeRef resourceRef : resources) {
 										permissionService.setPermission(supplierNodeRef,
 												(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.CONSUMER,
 												true);
@@ -228,7 +240,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 							nodeService.moveNode(entityNodeRef.getNodeRef(), dest, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
 							permissionService.setInheritParentPermissions(entityNodeRef.getNodeRef(), true);
 
-							for (NodeRef resourceRef : task.getResources()) {
+							for (NodeRef resourceRef : resources) {
 								permissionService.setPermission(task.getNodeRef(),
 										(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.COORDINATOR,
 										true);
@@ -291,7 +303,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 										destFolder = repoService.getOrCreateFolderByPath(destFolder, supplierNodeRef.getId(),
 												(String) nodeService.getProperty(supplierNodeRef, ContentModel.PROP_NAME));
 
-										for (NodeRef resourceRef : task.getResources()) {
+										for (NodeRef resourceRef : resources) {
 											permissionService.setPermission(destFolder,
 													(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
 													PermissionService.COORDINATOR, true);
