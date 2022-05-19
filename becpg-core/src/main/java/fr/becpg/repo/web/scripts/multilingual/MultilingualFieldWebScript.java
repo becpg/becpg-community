@@ -63,23 +63,20 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	private static final String PARAM_NODEREF = "nodeRef";
 
 	private static final String PARAM_FIELD = "field";
-	
+
 	private static final String PARAM_DIFF_FIELD = "diffField";
-	
 
 	private static final String PARAM_SUGGEST = "suggest";
 
 	private static final String PARAM_TARGET = "target";
-	
+
 	private static final String PARAM_COPY = "copy";
-	
+
 	private static final String PARAM_DEST_FIELD = "destField";
 
 	private String googleApiKey;
 
 	private ServiceRegistry serviceRegistry;
-	
-
 
 	/**
 	 * <p>Setter for the field <code>serviceRegistry</code>.</p>
@@ -105,9 +102,9 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
 		String nodeRef = req.getParameter(PARAM_NODEREF);
-		
+
 		boolean copy = "true".equals(req.getParameter(PARAM_COPY));
-		
+
 		String destFieldName = req.getParameter(PARAM_DEST_FIELD);
 		String diffFieldName = req.getParameter(PARAM_DIFF_FIELD);
 
@@ -121,12 +118,12 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		QName fieldQname = null;
 		QName destFieldQname = null;
 		QName diffFieldQName = null;
-		
+
 		if (destFieldName != null) {
 			destFieldName = destFieldName.replace("_", ":");
 			destFieldQname = QName.createQName(destFieldName, serviceRegistry.getNamespaceService());
 		}
-		
+
 		if (diffFieldName != null) {
 			diffFieldName = diffFieldName.replace("_", ":");
 			diffFieldQName = QName.createQName(diffFieldName, serviceRegistry.getNamespaceService());
@@ -139,12 +136,12 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		if (templateArgs != null) {
 			String fieldName = templateArgs.get(PARAM_FIELD);
-			
+
 			if (fieldName != null) {
 				fieldName = fieldName.replace("_", ":");
 				fieldQname = QName.createQName(fieldName, serviceRegistry.getNamespaceService());
 			}
-			
+
 		}
 
 		if ((formNodeRef == null) || (fieldQname == null)) {
@@ -161,17 +158,11 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 				// Save
 				MLText mlText = null;
 				MLText diffMlText = null;
-				
-				Locale contentLocale = I18NUtil.getContentLocale();
-				String language = contentLocale.getLanguage();
-		    	Locale  toSaveUnderLocale= new Locale(language);
-		    	if(MLTextHelper.isSupportedLocale(contentLocale)){
-		    		toSaveUnderLocale = contentLocale;
-		    	}
+
+				Locale toSaveUnderLocale = MLTextHelper.getSupportedLocale(I18NUtil.getContentLocale());
 
 				boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
 				try {
-					
 
 					Serializable value = serviceRegistry.getNodeService().getProperty(formNodeRef, fieldQname);
 					if (value instanceof MLText) {
@@ -183,11 +174,10 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 						mlText = new MLText();
 						mlText.addValue(toSaveUnderLocale, "");
 					}
-					
-					if(diffFieldQName!=null) {
+
+					if (diffFieldQName != null) {
 						diffMlText = (MLText) serviceRegistry.getNodeService().getProperty(formNodeRef, diffFieldQName);
 					}
-					
 
 				} finally {
 					MLPropertyInterceptor.setMLAware(wasMLAware);
@@ -203,7 +193,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 						throw new WebScriptException("Invalid params");
 					}
 
-					ret.put("translatedText", getTranslatedText(mlText.getDefaultValue(), target));
+					ret.put("translatedText", getTranslatedText(mlText, target));
 
 				} else {
 
@@ -231,31 +221,30 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 					}
 
 					if (mlText != null) {
-						if(copy){
+						if (copy) {
 							serviceRegistry.getNodeService().setProperty(formNodeRef, destFieldQname, mlText);
 						}
-						
-						
+
 						JSONArray items = new JSONArray();
 						for (Map.Entry<Locale, String> mlEntry : mlText.entrySet()) {
 							JSONObject item = new JSONObject();
 							item.put("label", propertyDef.getTitle(serviceRegistry.getDictionaryService()));
 							item.put("description", propertyDef.getDescription(serviceRegistry.getDictionaryService()));
 							item.put("name", fieldQname.toPrefixString(serviceRegistry.getNamespaceService()));
-							
-							if(diffMlText!=null && diffMlText.containsKey(mlEntry.getKey())) {
+
+							if ((diffMlText != null) && diffMlText.containsKey(mlEntry.getKey())) {
 								DiffMatchPatch dmp = new DiffMatchPatch();
-								LinkedList<Diff> diffs = dmp.diff_main( diffMlText.get(mlEntry.getKey()),mlEntry.getValue());
-								item.put("value",dmp.diffPrettyHtml(diffs));
+								LinkedList<Diff> diffs = dmp.diff_main(diffMlText.get(mlEntry.getKey()), mlEntry.getValue());
+								item.put("value", dmp.diffPrettyHtml(diffs));
 							} else {
 								item.put("value", mlEntry.getValue());
 							}
 							String lang = mlEntry.getKey().getLanguage();
 							String code = lang;
 							String country = lang.toUpperCase();
-							if(mlEntry.getKey().getCountry()!=null && !mlEntry.getKey().getCountry().isEmpty()){
-								country =mlEntry.getKey().getCountry();
-								code+="_"+country;
+							if ((mlEntry.getKey().getCountry() != null) && !mlEntry.getKey().getCountry().isEmpty()) {
+								country = mlEntry.getKey().getCountry();
+								code += "_" + country;
 							}
 							item.put("locale", code);
 							item.put("lang", lang);
@@ -264,8 +253,8 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 						}
 
 						ret.put("items", items);
-						ret.put("currentLocale",MLTextHelper.localeKey(toSaveUnderLocale));
-						
+						ret.put("currentLocale", MLTextHelper.localeKey(toSaveUnderLocale));
+
 					}
 
 				}
@@ -289,21 +278,25 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 
 	}
 
-
-	private String getTranslatedText(String defaultValue, String target) throws IOException {
+	private String getTranslatedText(MLText mlText, String target) {
 		if ((googleApiKey != null) && !googleApiKey.isEmpty()) {
+
+			String language = I18NUtil.getContentLocale().getLanguage();
+
+			String defaultValue = MLTextHelper.getClosestValue(mlText, MLTextHelper.getSupportedLocale(I18NUtil.getContentLocale()));
+
 			logger.debug("Try to translate : " + defaultValue + " in " + target);
 
-			if(target.split("_")[0].equals(I18NUtil.getContentLocale().getLanguage())) {
+			if (target.split("_")[0].equals(language)) {
 				return defaultValue;
 			}
-			
+
 			Map<String, String> vars = new HashMap<>();
 			vars.put("key", googleApiKey);
 			vars.put("target", target.split("_")[0]);
-			vars.put("source", I18NUtil.getContentLocale().getLanguage());
+			vars.put("source", language);
 			vars.put("q", defaultValue);
-			
+
 			String url = "https://www.googleapis.com/language/translate/" + "v2?key={key}&source={source}&target={target}&q={q}";
 
 			RestTemplate restTemplate = new RestTemplate();
