@@ -665,17 +665,14 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     private void replaceTextForLanguage(Locale contentLocale, String updatedText, MLText mlText)
     {
     	
-    	String language = contentLocale.getLanguage();
-    	Locale  toSaveUnderLocale= new Locale(language);
-    	if(MLTextHelper.isSupportedLocale(contentLocale)){
-    		toSaveUnderLocale = contentLocale;
-    	} 
+    	Locale  toSaveUnderLocale = MLTextHelper.getSupportedLocale(contentLocale);
+    	
     	
     	 Iterator<Locale> locales = mlText.getLocales().iterator();
 	        while (locales.hasNext())
 	        {
 	            Locale locale = locales.next();
-	            if (locale.getLanguage().equals(language) && (!MLTextHelper.isSupportedLocale(locale) ) )
+	            if (locale.getLanguage().equals(toSaveUnderLocale.getLanguage()) && (!MLTextHelper.isSupportedLocale(locale) ) )
 	            {
 	                locales.remove();
 	            }
