@@ -12,7 +12,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  * @version 1.0
  * @see fr.becpg.repo.glop.GlopService
  */
-public class GlopTargetSpecification {
+public class GlopTarget {
 
 	private SimpleCharactDataItem target;
 
@@ -26,7 +26,7 @@ public class GlopTargetSpecification {
 	 * @param task
 	 *            the task to perform with the generated target function
 	 */
-	public GlopTargetSpecification(SimpleCharactDataItem target, String task) {
+	public GlopTarget(SimpleCharactDataItem target, String task) {
 		this.target = target;
 
 		if (!(task.equals("min") || task.contentEquals("max"))) {
