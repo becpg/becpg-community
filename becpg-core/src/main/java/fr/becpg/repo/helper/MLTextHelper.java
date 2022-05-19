@@ -37,7 +37,6 @@ public class MLTextHelper {
 
 	private static Map<String, MLText> mlTextCache = new ConcurrentHashMap<>();
 
-
 	/**
 	 * <p>Setter for the field <code>supportedLocales</code>.</p>
 	 *
@@ -321,7 +320,7 @@ public class MLTextHelper {
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * <p>getI18NMessage.</p>
 	 *
@@ -330,17 +329,16 @@ public class MLTextHelper {
 	 * @return a {@link org.alfresco.service.cmr.repository.MLText} object.
 	 */
 	public static MLText getI18NMessage(String messageKey, Object... variables) {
-	
-		if(variables==null) {
+
+		if (variables == null) {
 			return mlTextCache.computeIfAbsent(messageKey, MLTextHelper::internalI18NMessage);
 		}
-		
+
 		return internalI18NMessage(messageKey, variables);
 	}
-	
+
 	private static MLText internalI18NMessage(String messageKey, Object... variables) {
-		
-		
+
 		MLText ret = new MLText();
 		for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
 
@@ -356,7 +354,7 @@ public class MLTextHelper {
 						}
 					}
 				}
-				if(parsedVariable.isEmpty()) {
+				if (parsedVariable.isEmpty()) {
 					ret.addValue(locale, I18NUtil.getMessage(messageKey, locale));
 				} else {
 					ret.addValue(locale, I18NUtil.getMessage(messageKey, locale, parsedVariable.toArray()));
@@ -407,6 +405,21 @@ public class MLTextHelper {
 		}
 
 		return toMergeTo;
+	}
+
+	/**
+	 * @param contentLocale
+	 * @return if contentLocale is supported or language only locale
+	 */
+	public static Locale getSupportedLocale(Locale contentLocale) {
+		if (contentLocale != null) {
+			if (MLTextHelper.isSupportedLocale(contentLocale)) {
+				return contentLocale;
+			}
+			String language = contentLocale.getLanguage();
+			return new Locale(language);
+		}
+		return null;
 	}
 
 }

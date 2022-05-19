@@ -411,6 +411,7 @@ public class ImportEntityXmlVisitor {
 										serviceRegistry.getNodeService().createAssociation(curNodeRef.peek(), node, currAssoc.peek());
 									} catch (AssociationExistsException e) {
 										// association already exists
+										//TODO doesn't handle yet association update
 									}
 
 								}
@@ -443,7 +444,7 @@ public class ImportEntityXmlVisitor {
 							locale = MLTextHelper.parseLocale(strLocale);
 							if (!attributes.getValue(i).equals(RemoteEntityService.MLTEXT_TYPE) && (attributes.getQName(i) != null)
 									&& MLTextHelper.isSupportedLocale(locale)) {
-								mltextAttributes.put(locale, StringEscapeUtils.unescapeHtml4(readCDATA(attributes.getValue(i))));
+								mltextAttributes.put(locale, StringEscapeUtils.unescapeHtml(readCDATA(attributes.getValue(i))));
 							}
 						}
 					}
@@ -887,7 +888,7 @@ public class ImportEntityXmlVisitor {
 						
 						 ret =  serviceRegistry
 								.getNodeService().createNode(parentNodeRef, ContentModel.ASSOC_CONTAINS,
-										QName.resolveToQName(serviceRegistry.getNamespaceService(), name.replace("_x0020_", " ")), ContentModel.TYPE_FOLDER, properties)
+										QName.resolveToQName(serviceRegistry.getNamespaceService(), name.replaceAll("_x0020_", " ")), ContentModel.TYPE_FOLDER, properties)
 								.getChildRef();
 						if(logger.isDebugEnabled()) {
 							logger.debug("Creating path " + parentPath + "  "+ serviceRegistry

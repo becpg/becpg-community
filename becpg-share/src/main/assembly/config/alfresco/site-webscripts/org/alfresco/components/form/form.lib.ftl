@@ -245,9 +245,9 @@
 		        <#if item.kind == "set">
 		           <@renderBulkSet set=item fields=fields />
 		        <#else>
-						<#if fields?contains(item.id) > 
-						     <@renderField field=form.fields[item.id] />
-						 </#if>
+					<#if fields?contains(item.id+",") || fields?ends_with(item.id) > 
+						  <@renderField field=form.fields[item.id] />
+				     </#if>
 		       </#if>
 		       </#if>
 		   </#list>

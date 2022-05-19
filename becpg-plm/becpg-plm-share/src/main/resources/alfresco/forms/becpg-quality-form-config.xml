@@ -314,7 +314,6 @@
 					<show id="qa:batchQtyUnit"/>
 					<show id="qa:batchState"/>
 					<show id="qa:batchAllocationStockRefs"/>
-					<show id="bcpg:suppliers" force="true"/>
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>

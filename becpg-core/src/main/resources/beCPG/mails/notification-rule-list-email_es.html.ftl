@@ -126,7 +126,7 @@ margin-top:3px;
 															<td class="becpg_rowBorderTopLeftRight">
 																<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${node.name}</a>
 															</td>
-	                                               			<td class="becpg_rowBorderTopLeftRight">${node.properties[dateField]?date}</td>
+	                                               			<td class="becpg_rowBorderTopLeftRight"><#if node.properties[dateField]??>${node.properties[dateField]?date}</#if</td>
 	                                               		</tr>	
 													</#if>
 														

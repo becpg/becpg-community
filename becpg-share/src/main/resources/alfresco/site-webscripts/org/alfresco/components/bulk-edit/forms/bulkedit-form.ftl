@@ -36,7 +36,7 @@
 		         	 </#if>  
                   <#else>
                       <#if fields??>
-				          <#if fields?contains(item.id) > 
+				          <#if fields?contains(item.id+",") || fields?ends_with(item.id) > 
 				            <@formLib.renderField field=form.fields[item.id] />
 				      	 </#if>
 			          <#else>

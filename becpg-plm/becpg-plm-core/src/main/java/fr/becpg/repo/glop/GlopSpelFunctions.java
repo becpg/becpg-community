@@ -3,27 +3,25 @@ package fr.becpg.repo.glop;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.spel.CustomSpelFunctions;
-import fr.becpg.repo.glop.impl.GlopServiceImpl;
 import fr.becpg.repo.glop.model.GlopData;
-import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.impl.LazyLoadingDataList;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
  * Register custom Glop SPEL helper accessible with @glop.
@@ -95,10 +93,10 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 	private static final Log logger = LogFactory.getLog(GlopSpelFunctions.class);
 
 	@Autowired
-	private AttributeExtractorService attributeExtractorService;
-
-	@Autowired
 	private GlopService glopService;
+	
+	@Autowired
+	private NodeService nodeService;
 	
 	/** {@inheritDoc} */
 	@Override
@@ -114,11 +112,7 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 
 	public class GlopSpelFunctionsWrapper {
 
-		private static final String COMPONENTS = "components";
 		private static final String STATUS = "status";
-		private static final String VALUE = "value";
-		private static final String NAME = "name";
-		private static final String ID = "id";
 		
 		RepositoryEntity entity;
 
@@ -127,24 +121,141 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			this.entity = entity;
 		}
 
+		public GlopData optimize(Map<String, ?> problem) throws JSONException {
+			
+			try {
+				
+				return glopService.optimize((ProductData) entity, buildGlopConstraints(problem), buildGlopTarget(problem));
+				
+			} catch (GlopException e) {
+				GlopData errorResult = new GlopData();
+				errorResult.put(STATUS, "Error : Linear program is unfeasible");
+				return errorResult;
+			} catch (JSONException e) {
+				GlopData errorResult = new GlopData();
+				errorResult.put(STATUS, "Error : Failed to build request to send to the Glop server : " + e.getMessage());
+				return errorResult;
+			} catch (URISyntaxException e) {
+				GlopData errorResult = new GlopData();
+				errorResult.put(STATUS, "Error : Glop server URI has a syntax error");
+				return errorResult;
+			} catch (RestClientException e) {
+				logger.error(e.getMessage(), e);
+				GlopData errorResult = new GlopData();
+				errorResult.put(STATUS, "Error : Failed to send request to the Glop server : " + e.getMessage());
+				return errorResult;
+			} catch (Exception e) {
+				logger.error(e.getMessage(), e);
+				GlopData errorResult = new GlopData();
+				errorResult.put(STATUS, "Error : " + e.getMessage());
+				return errorResult;
+			}
+		}
+
 		@SuppressWarnings("unchecked")
-		private Map<String, ?> getTarget(Map<String, ?> problem) throws IllegalArgumentException {
+		private GlopTarget buildGlopTarget(Map<String, ?> problem) throws IllegalArgumentException {
 			Object ret = problem.get("target");
+			
+			Map<String, ?> targetMap = null;
+			
 			if (ret instanceof Map<?, ?>) {
-				return (Map<String, ?>) ret;
+				targetMap = (Map<String, ?>) ret;
 			} else if (ret instanceof Collection<?>) {
 				Collection<?> c = (Collection<?>) ret;
 				if (c.size() == 1) {
-					return (Map<String, ?>) c.iterator().next();
+					targetMap = (Map<String, ?>) c.iterator().next();
 				} else {
 					throw new IllegalArgumentException("target list must have size 1");
 				}
 			} else {
 				throw new IllegalArgumentException("target specification is not a map");
 			}
+			
+			SimpleCharactDataItem targetItem = (SimpleCharactDataItem) targetMap.get("var");
+			String targetTask = (String) targetMap.get("task");
+			return new GlopTarget(targetItem, targetTask);
+			
 		}
 
-		private double getDouble(Object obj) {
+		@SuppressWarnings("unchecked")
+		private List<GlopConstraint> buildGlopConstraints(Map<String, ?> problem) {
+			Object objConstraints = problem.get("constraints");
+			if (!(objConstraints instanceof Collection<?>)) {
+				throw new IllegalArgumentException("constraints must be a collection");
+			}
+			
+			List<GlopConstraint> constraints = new ArrayList<>();
+			
+			for (Object objConstraint : (Collection<?>) objConstraints) {
+				
+				Map<String, ?> constraint = (Map<String, ?>) objConstraint;
+				
+				if (constraint.containsKey("list")) {
+					Object objConstraintItem = constraint.get("list");
+					if (objConstraintItem instanceof LazyLoadingDataList) {
+						
+						LazyLoadingDataList<RepositoryEntity> list = (LazyLoadingDataList<RepositoryEntity>) objConstraintItem;
+						
+						for (RepositoryEntity item : list) {
+							
+							if (item instanceof SimpleCharactDataItem) {
+								nodeService.removeProperty(item.getNodeRef(), PLMModel.PROP_GLOP_VALUE);
+								String glopTarget = (String) nodeService.getProperty(item.getNodeRef(), PLMModel.PROP_GLOP_TARGET);
+								if (glopTarget != null && !glopTarget.isBlank()) {
+									
+									Double tolerance = null;
+									
+									glopTarget = glopTarget.replace(" ", "");
+									
+									if (glopTarget.contains("(") && glopTarget.contains(")")) {
+										tolerance = Double.parseDouble(glopTarget.split("\\(")[1].replace(")", ""));
+										
+										glopTarget = glopTarget.replace(glopTarget.split("\\(")[1], "").replace("(", "");
+									}
+									
+									String[] split = glopTarget.split("-");
+									
+									Double netWeight = 1d;
+									
+									if (item instanceof SimpleListDataItem && entity instanceof ProductData && ((ProductData) entity).getNetWeight() != null && ((ProductData) entity).getNetWeight() != 0d) {
+										netWeight = ((ProductData) entity).getNetWeight();
+									}
+									
+									Double minValue = Double.parseDouble(split[0]) * netWeight;
+									Double maxValue = split.length < 2 ? minValue : Double.parseDouble(split[1]) * netWeight;
+									
+									GlopConstraint glopConstraint = new GlopConstraint((SimpleCharactDataItem) item, minValue, maxValue);
+									
+									if (tolerance == null && constraint.containsKey("tol")) {
+										tolerance = buildDouble(constraint.get("tol"));
+									}
+									
+									glopConstraint.setTolerance(tolerance);
+									constraints.add(glopConstraint);
+								}
+							}
+						}
+						
+					}
+				} else if (constraint.containsKey("var")) {
+					Object constraintItem = constraint.get("var");
+					Double constraintMin = buildDouble(constraint.get("min"));
+					Double constraintMax = buildDouble(constraint.get("max"));
+					
+					GlopConstraint glopConstraint = new GlopConstraint(constraintItem, constraintMin, constraintMax);
+					
+					if (constraint.containsKey("tol")) {
+						glopConstraint.setTolerance(buildDouble(constraint.get("tol")));
+					}
+					
+					constraints.add(glopConstraint);
+				}
+				
+			}
+			return constraints;
+		}
+
+		private double buildDouble(Object obj) {
 			if (obj instanceof Double) {
 				return (Double) obj;
 			} else if (obj instanceof Integer) {
@@ -160,102 +271,6 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			throw new IllegalArgumentException("Expected Double, got " + obj.getClass().getName());
 		}
 
-		private GlopData translate(JSONObject obj) throws JSONException {
-			
-			GlopData ret = new GlopData();
-			
-			JSONArray components = new JSONArray();
-			
-			JSONObject coeff = (JSONObject) obj.get("coefficients");
-			
-			Iterator<String> keys = coeff.keys();
-
-			while (keys.hasNext()) {
-				String key = keys.next();
-				
-				JSONObject component = new JSONObject();
-				
-				NodeRef nodeRef = new NodeRef(key);
-				
-				component.put(ID, nodeRef.toString());
-				component.put(NAME, attributeExtractorService.extractPropName(nodeRef));
-				component.put(VALUE, coeff.getDouble(key));
-				
-				components.put(component);
-			}
-			
-			ret.put(COMPONENTS, components);
-			ret.put(VALUE, obj.get(VALUE));
-			ret.put(STATUS, obj.get(STATUS));
-
-			return ret;
-		}
-
-		public Double extractValue(NodeRef nodeRef, String in) throws JSONException {
-			
-			JSONObject json = new JSONObject(in);
-			
-			JSONArray comps = json.getJSONArray(COMPONENTS);
-			
-			for (int index = 0; index < comps.length(); index++) {
-				JSONObject comp = (JSONObject) comps.get(index);
-				if (comp.has(ID) && comp.getString(ID).equals(nodeRef.toString())) {
-					return comp.getDouble(VALUE);
-				}
-			}
-			
-			return null;
-		}
-		
-		@SuppressWarnings("unchecked")
-		public GlopData optimize(Map<String, ?> problem) throws JSONException {
-			
-			GlopData errorResult = new GlopData();
-			
-			Map<String, ?> target = getTarget(problem);
-			SimpleCharactDataItem targetItem = (SimpleCharactDataItem) target.get("var");
-			String targetTask = (String) target.get("task");
-			GlopTargetSpecification fullTarget = new GlopTargetSpecification(targetItem, targetTask);
-
-			Object objConstraints = problem.get("constraints");
-			if (!(objConstraints instanceof Collection<?>)) {
-				errorResult.put("status", "Error : constraints must be a collection");
-				return errorResult;
-			}
-			Collection<?> constraints = (Collection<?>) objConstraints;
-			List<GlopConstraintSpecification> fullConstraints = new ArrayList<>();
-			for (Object objConstraint : constraints) {
-
-				Map<String, ?> constraint = (Map<String, ?>) objConstraint;
-				Double constraintMin = getDouble(constraint.get("min"));
-				Double constraintMax = getDouble(constraint.get("max"));
-				Object objConstraintItem = constraint.get("var");
-				if (objConstraintItem instanceof SimpleCharactDataItem) {
-					SimpleCharactDataItem constraintItem = (SimpleCharactDataItem) objConstraintItem;
-					fullConstraints.add(new GlopConstraintSpecification(constraintItem, constraintMin, constraintMax));
-				} else {
-					String constraintType = (String) objConstraintItem;
-					fullConstraints.add(new GlopConstraintSpecification(constraintType, constraintMin, constraintMax));
-				}
-			}
-			try {
-				JSONObject response = glopService.optimize((ProductData) entity, fullConstraints, fullTarget);
-				return translate(response);
-			} catch (GlopException e) {
-				errorResult.put("status", "Error : Linear program is unfeasible");
-				return errorResult;
-			} catch (JSONException e) {
-				errorResult.put("status", "Error : Failed to build request to send to the Glop server");
-				return errorResult;
-			} catch (URISyntaxException e) {
-				errorResult.put("status", "Error : Glop server URI has a syntax error");
-				return errorResult;
-			} catch (RestClientException e) {
-				logger.error(e.getMessage(), e);
-				errorResult.put("status", "Error : Failed to send request to the Glop server");
-				return errorResult;
-			}
-		}
 	}
 
 }
