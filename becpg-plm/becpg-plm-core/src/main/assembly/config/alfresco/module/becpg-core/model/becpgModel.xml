@@ -4997,5 +4997,18 @@
 				</association>
 			</associations>
 		</aspect>
+		
+		<aspect name="bcpg:glopAspect">
+			<properties>
+				<property name="bcpg:glopTarget">
+					<type>d:text</type>
+					<index enabled="false"></index>
+				</property>
+				<property name="bcpg:glopValue">
+					<type>d:text</type>
+					<index enabled="false"></index>
+				</property>
+		</properties>
+		</aspect>
 	</aspects>
 </model>

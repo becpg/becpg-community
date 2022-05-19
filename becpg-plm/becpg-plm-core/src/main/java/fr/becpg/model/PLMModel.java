@@ -683,8 +683,8 @@ public interface PLMModel {
 	/** Constant <code>PROP_MODIFIED_CATALOG3</code> */
 	QName PROP_MODIFIED_CATALOG3 =  QName.createQName(BeCPGModel.BECPG_URI, "modifiedCatalog3");
 
-
-
+	QName PROP_GLOP_TARGET =  QName.createQName(BeCPGModel.BECPG_URI, "glopTarget");
 	
+	QName PROP_GLOP_VALUE =  QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
 	
 }

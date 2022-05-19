@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
     <property name="author">beCPG</property>
-    <property name="createdBy">Eclipse BIRT Designer Version 4.4.2.v201410272105 Build &lt;4.4.2.v20150217-1805></property>
+    <property name="createdBy">Eclipse BIRT Designer Version 4.8.0.v201805221921</property>
     <list-property name="userProperties">
         <structure>
             <property name="name">Data Cube.OrganoList.x</property>
@@ -8712,10 +8712,10 @@ row["HML"] == "HIGH"</expression>
                         <list-property name="visibility">
                             <structure>
                                 <property name="format">all</property>
-                                <expression name="valueExpr" type="javascript">if ( (row["nutrientProfilingClass"] != null &amp;&amp; row["nutrientProfilingClass"] != "") &amp;&amp; (BirtStr.toLower( reportContext.getLocale().toString()) == "fr" || BirtStr.toLower( reportContext.getLocale().toString()) == "fr_fr") ) {
-	(BirtStr.indexOf( "Afficher le nutri-score", row["reportParameters"]) == -1)
-} else {
-	true;
+                                <expression name="valueExpr" type="javascript">if (row["nutrientProfilingClass"] != null &amp;&amp; row["nutrientProfilingClass"] != "") {&#13;
+	(BirtStr.indexOf( reportContext.getMessage("showNutritionalScore", reportContext.getLocale()), row["reportParameters"]) == -1)&#13;
+} else {&#13;
+	true;&#13;
 }</expression>
                             </structure>
                         </list-property>

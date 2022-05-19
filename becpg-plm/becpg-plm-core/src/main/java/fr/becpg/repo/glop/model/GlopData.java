@@ -20,6 +20,19 @@ public class GlopData extends JSONObject {
 		return 0;
 	}
 	
+	public double getComponentValue(String name) throws JSONException {
+		JSONArray comps = getJSONArray("components");
+		
+		for (int index = 0; index < comps.length(); index++) {
+			JSONObject comp = (JSONObject) comps.get(index);
+			if (comp.has("name") && comp.getString("name").equals(name)) {
+				return comp.getDouble("value");
+			}
+		}
+		
+		return 0;
+	}
+	
 	public String getStatus() throws JSONException {
 		return getString("status");
 	}

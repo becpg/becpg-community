@@ -103,7 +103,7 @@ def solve(content):
 	if status == solver.OPTIMAL or status == solver.FEASIBLE:
 		return {
 			"value": objective.Value(),
-			"coefficients": {key: var_dict[key].solution_value() for key in var_dict if var_dict[key].solution_value() != 0},
+			"coefficients": {key: var_dict[key].solution_value() for key in var_dict},
 			"status": "optimal" if status == solver.OPTIMAL else "feasible"
 		}
 	else:
