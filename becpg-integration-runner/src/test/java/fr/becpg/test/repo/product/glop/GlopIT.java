@@ -15,9 +15,10 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fr.becpg.repo.glop.GlopConstraintSpecification;
+import fr.becpg.repo.glop.GlopConstraint;
 import fr.becpg.repo.glop.GlopService;
-import fr.becpg.repo.glop.GlopTargetSpecification;
+import fr.becpg.repo.glop.GlopTarget;
+import fr.becpg.repo.glop.model.GlopData;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -111,13 +112,13 @@ public class GlopIT extends AbstractFinishedProductTest {
 	 */
 	@Test
 	public void testSendRequest() {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		assertTrue(transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			JSONObject request = exampleRequest();
 			logger.debug("Sending " + request.toString());
-			JSONObject response = glopService.sendRequest(request);
+			JSONObject response = new JSONObject(glopService.sendRequest(request));
 			logger.debug(response.toString());
-			return null;
-		}, false, true);
+			return true;
+		}, false, true));
 	}
 	
 	private static void assertEpsilon(double expected, double actual, double epsilon) {
@@ -188,34 +189,41 @@ public class GlopIT extends AbstractFinishedProductTest {
 			
 			/*-- Make optimization problem --*/
 			logger.debug("/*-- Make optimization problem --*/");
-			GlopTargetSpecification target = null;
-			List<GlopConstraintSpecification> characts = new ArrayList<>();
+			GlopTarget target = null;
+			List<GlopConstraint> characts = new ArrayList<>();
 			for (IngListDataItem ing: ingList1) {
 				if (ing.getIng().equals(ing1)) {
-					target = new GlopTargetSpecification(ing, "max");
+					target = new GlopTarget(ing, "max");
 					logger.debug("Added " + target.toString());
 				} else if (ing.getIng().equals(ing2)) {
-					characts.add(new GlopConstraintSpecification(ing, 0d, 1d));
+					characts.add(new GlopConstraint(ing, 0d, 1d));
 				}
 			}
 			assertNotNull("target is null", target);
-			JSONObject result1 = glopService.optimize(formulatedProduct1, characts, target);
+			GlopData result1 = glopService.optimize(formulatedProduct1, characts, target);
 			
 			assertEpsilon(4, result1.getDouble("value"), 1e-6);
 			
-			JSONObject resultCoefs1 = result1.getJSONObject("coefficients");
 			List<CompoListDataItem> compoList1 = formulatedProduct1.getCompoList();
 			assertNotNull("Component list is null", compoList1);
 			assertEquals(2, compoList1.size());
+			
+			int checks = 0;
+			
 			for (CompoListDataItem compoItem: compoList1) {
-				try {
-					double value = resultCoefs1.getDouble(compoItem.getProduct().toString());
+				double value = result1.getComponentValue(compoItem.getProduct());
+				if (rawMaterial6NodeRef.equals(compoItem.getProduct())) {
 					assertEquals(compoItem.getProduct().toString() + "not found in composition list", rawMaterial6NodeRef, compoItem.getProduct());
 					assertEpsilon(0.05d, value, 1e-6);
-				} catch (JSONException e) {
+					checks++;
+				} else if (rawMaterial2NodeRef.equals(compoItem.getProduct())) {
 					assertEquals(compoItem.getProduct().toString() + "not found in composition list", rawMaterial2NodeRef, compoItem.getProduct());
+					assertEpsilon(0d, value, 1e-6);
+					checks++;
 				}
 			}
+			
+			assertEquals(2, checks);
 			
 			return null;
 			
@@ -280,33 +288,32 @@ public class GlopIT extends AbstractFinishedProductTest {
 
 			/*-- Make optimization problem --*/
 			logger.debug("/*-- Make optimization problem --*/");
-			GlopTargetSpecification target = null;
-			List<GlopConstraintSpecification> characts2 = new ArrayList<>();
+			GlopTarget target = null;
+			List<GlopConstraint> characts2 = new ArrayList<>();
 			for (CostListDataItem cost: costList2) {
 				if (cost.getCost().equals(cost1)) {
-					target = new GlopTargetSpecification(cost, "min");
+					target = new GlopTarget(cost, "min");
 				}
 			}
 			for (NutListDataItem nut: nutList2) {
 				if (nut.getNut().equals(nut3)) {
-					characts2.add(new GlopConstraintSpecification(nut, 10d, Double.POSITIVE_INFINITY));
+					characts2.add(new GlopConstraint(nut, 10d, Double.POSITIVE_INFINITY));
 				} else if (nut.getNut().equals(nut4)) {
-					characts2.add(new GlopConstraintSpecification(nut, 4d, 4d));
+					characts2.add(new GlopConstraint(nut, 4d, 4d));
 				}
 			}
 			assertNotNull("target is null", target);
 			assertEquals(2, characts2.size());
-			JSONObject result2 = glopService.optimize(formulatedProduct2, characts2, target); 
+			GlopData result2 = glopService.optimize(formulatedProduct2, characts2, target); 
 			logger.debug("Server returned " + result2.toString());
 			
 			assertEpsilon(4d + 7d/9d, result2.getDouble("value"), 1e-6);
 			
-			JSONObject resultCoefs2 = result2.getJSONObject("coefficients");
 			List<CompoListDataItem> compoList2 = formulatedProduct2.getCompoList();
 			assertNotNull("Component list is null", compoList2);
 			assertEquals(2, compoList2.size());
 			for (CompoListDataItem compoItem: compoList2) {
-				double value = resultCoefs2.getDouble(compoItem.getProduct().toString());
+				double value = result2.getComponentValue(compoItem.getProduct());
 				if (compoItem.getProduct().equals(rawMaterial1NodeRef)) {
 					assertEpsilon(4d/3d, value, 1e-6);
 				} else if (compoItem.getProduct().equals(rawMaterial2NodeRef)) {
@@ -373,21 +380,20 @@ public class GlopIT extends AbstractFinishedProductTest {
 			
 			/*-- Make optimization problem --*/
 			logger.debug("/*-- Make optimization problem --*/");
-			GlopTargetSpecification target = null;
-			List<GlopConstraintSpecification> characts = new ArrayList<>();
+			GlopTarget target = null;
+			List<GlopConstraint> characts = new ArrayList<>();
 			CompoListDataItem compo = compoList.get(0);
 			assertEquals(rawMaterial2NodeRef, compo.getProduct());
-			target = new GlopTargetSpecification(compo, "max");
+			target = new GlopTarget(compo, "max");
 			logger.debug("Added " + target.toString());
-			characts.add(new GlopConstraintSpecification(compo, 0d, 1d));
+			characts.add(new GlopConstraint(compo, 0d, 1d));
 			logger.debug("Added " + characts.get(0));
 
-			JSONObject result = glopService.optimize(formulatedProduct, characts, target);
+			GlopData result = glopService.optimize(formulatedProduct, characts, target);
 			
 			assertEpsilon(1, result.getDouble("value"), 1e-6);
 			
-			JSONObject resultCoefs = result.getJSONObject("coefficients");
-			double value = resultCoefs.getDouble(compo.getProduct().toString());
+			double value = result.getComponentValue(compo.getProduct());
 			assertEpsilon(1d, value, 1e-6);
 			
 			return null;

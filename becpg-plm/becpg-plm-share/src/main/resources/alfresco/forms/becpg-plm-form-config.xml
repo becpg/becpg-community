@@ -3518,6 +3518,8 @@
 					<show id="bcpg:endEffectivity" force="true" />
 					<show id="bcpg:instruction" force="true" />
 					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -4235,6 +4237,8 @@
 					<show id="bcpg:allergenListInVoluntary" />
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -4257,6 +4261,8 @@
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
 					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -4440,6 +4446,8 @@
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:costListIsFormulated" />
 					<show id="bcpg:costListFormulaErrorLog" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -4465,6 +4473,8 @@
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:costListIsFormulated" />
 					<show id="bcpg:costListFormulaErrorLog" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -4656,6 +4666,8 @@
 					<show id="bcpg:priceListGeoOrigins" />
 					<show id="bcpg:startEffectivity" />
 					<show id="bcpg:endEffectivity" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -5041,6 +5053,8 @@
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="dataList_bcpg:reqCtrlList" />
 					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -5067,6 +5081,8 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -5268,6 +5284,8 @@
 					<show id="bcpg:mblControlStep" />
 					<show id="rep:reportKinds" />
 					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -5369,6 +5387,8 @@
 					<show id="bcpg:nutListFormulaErrorLog" />					
 					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
 					<show id="rep:reportKinds" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -5404,6 +5424,8 @@
 					<show id="bcpg:nutListFormulaErrorLog" />					
 					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
 					<show id="rep:reportKinds" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -5625,6 +5647,8 @@
 					<show id="bcpg:physicoChemIsFormulated" />
 					<show id="bcpg:physicoChemFormulaErrorLog" />
 					<show id="rep:reportKinds" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -5650,6 +5674,8 @@
 					<show id="bcpg:physicoChemIsFormulated" />
 					<show id="bcpg:physicoChemFormulaErrorLog" />
 					<show id="rep:reportKinds" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -5862,6 +5888,8 @@
 					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
 					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
