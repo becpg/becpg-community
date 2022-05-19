@@ -161,6 +161,11 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		}
 		
 		@Override
+		public long getTotalEstimatedWorkSizeLong() {
+			return getTotalEstimatedWorkSize();
+		}
+		
+		@Override
 		public Collection<NodeRef> getNextWork() {
 			
 			nextWork.clear();
