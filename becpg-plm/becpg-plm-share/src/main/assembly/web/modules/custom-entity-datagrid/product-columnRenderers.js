@@ -1130,6 +1130,23 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
   });	
 
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : [ "bcpg:glopValue"],
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+         if(data && data.value != null && data.value.length>0){
+			var glopValue = JSON.parse(data.value);
+			
+			if (glopValue.status == "optimal") {
+				return "<span style=\"color:green\">" + glopValue.value + "</span>";
+			} else if (glopValue.status == "suboptimal") {
+				return "<span style=\"color:orange\">" + glopValue.value + "</span>";
+			}
+         }
+
+         return "";
+      }
+  });	
+
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	      propertyName : [ "bcpg:lclComments"],
