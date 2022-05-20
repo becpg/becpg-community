@@ -392,6 +392,21 @@
 											   meter.value = percent;
 											   meter.max = "100";
 											   meter.title = percentCompleted;
+											   var spanButton = document.createElement("span");
+											   li.appendChild(spanButton);
+											   var button = document.createElement("a");
+											   spanButton.appendChild(button);
+											   button.classList.add("removeIcon");
+											   button.style = "cursor:pointer";
+											   button.id = batchId;
+											   button.onclick = function (event) {
+													 Alfresco.util.Ajax.request({
+													   url: Alfresco.constants.PROXY_URI + "/becpg/batch/cancel/" + event.target.id,
+													   method: Alfresco.util.Ajax.GET,
+													   responseContentType: Alfresco.util.Ajax.JSON
+													});
+													event.target.style = "display:none";
+											   };
 										   }
 									   }
 
