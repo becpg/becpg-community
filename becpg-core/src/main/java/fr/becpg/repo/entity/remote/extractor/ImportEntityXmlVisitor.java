@@ -443,8 +443,8 @@ public class ImportEntityXmlVisitor {
 							strLocale = attributes.getQName(i);
 							locale = MLTextHelper.parseLocale(strLocale);
 							if (!attributes.getValue(i).equals(RemoteEntityService.MLTEXT_TYPE) && (attributes.getQName(i) != null)
-									&& MLTextHelper.isSupportedLocale(locale)) {
-								mltextAttributes.put(locale, StringEscapeUtils.unescapeHtml(readCDATA(attributes.getValue(i))));
+									&& MLTextHelper.isSupportedLocale(locale)) { 
+								mltextAttributes.put(locale, StringEscapeUtils.unescapeHtml4(readCDATA(attributes.getValue(i))));
 							}
 						}
 					}

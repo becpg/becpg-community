@@ -5,6 +5,7 @@ import java.util.List;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.Tenant;
 import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.schedule.AbstractScheduledLockedJob;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
@@ -51,10 +52,12 @@ public class AutomaticECOJob extends AbstractScheduledLockedJob implements Job {
 			List<Tenant> tenants = tenantAdminService.getAllTenants();
 			for (Tenant tenant : tenants) {
 				String tenantDomain = tenant.getTenantDomain();
-				AuthenticationUtil.runAs(() -> {
-					automaticECOService.applyAutomaticEco();
-					return null;
-				}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				if (!TenantService.DEFAULT_DOMAIN.equals(tenantDomain)) {
+					AuthenticationUtil.runAs(() -> {
+						automaticECOService.applyAutomaticEco();
+						return null;
+					}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				}
 			}
 		}
 

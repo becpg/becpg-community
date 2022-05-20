@@ -1,10 +1,14 @@
 package fr.becpg.repo.batch;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.annotation.Nullable;
@@ -16,6 +20,7 @@ import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
+import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +37,7 @@ import fr.becpg.repo.mail.BeCPGMailService;
 @Service("batchQueueService")
 public class BatchQueueServiceImpl implements BatchQueueService, ApplicationListener<BatchMonitorEvent> {
 
-	private static Log logger = LogFactory.getLog(BatchQueueServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(BatchQueueServiceImpl.class);
 
 	@Autowired
 	private TransactionService transactionService;
@@ -49,18 +54,15 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 	@Autowired
 	private TenantAdminService tenantAdminService;
-
+	
 	private BatchMonitor lastRunningBatch;
-
+	
+	private Set<String> cancelledBatches = new HashSet<>();
+	
 	@Override
 	public <T> Boolean queueBatch(@NonNull BatchInfo batchInfo, @NonNull BatchProcessWorkProvider<T> workProvider,
 			@NonNull BatchProcessWorker<T> processWorker, @Nullable BatchErrorCallback errorCallback) {
-		if(logger.isDebugEnabled()) {
-			logger.debug("Batch " + batchInfo.getBatchId() + " added to execution queue");
-		}
 
-		List<BatchStep<T>> batchSteps = new ArrayList<>();
-		
 		BatchStep<T> batchStep = new BatchStep<>();
 		
 		batchStep.setWorkProvider(workProvider);
@@ -69,34 +71,36 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		BatchStepListener batchStepListener = new BatchStepAdapter() {
 			@Override
 			public void onError(String lastErrorEntryId, String lastError) {
-				errorCallback.run(lastErrorEntryId, lastError);
+				if (errorCallback != null) {
+					errorCallback.run(lastErrorEntryId, lastError);
+				}
 			}
 		};
 		
 		batchStep.setBatchStepListener(batchStepListener);
 		
-		batchSteps.add(batchStep);
+		return queueBatch(batchInfo, Arrays.asList(batchStep));
 		
-		Runnable command = new BatchCommand<>(batchInfo, batchSteps);
-		
-		if (!threadExecuter.getQueue().contains(command)) {
-			threadExecuter.execute(command);
-		} else {
-			String label = I18NUtil.getMessage(batchInfo.getBatchDescId());
-			logger.warn("Same batch already in queue " + (label != null ? label : batchInfo.getBatchDescId()) + " (" + batchInfo.getBatchId() + ")");
-		}
-
-		return false;
 	}
 	
 	@Override
 	public <T> Boolean queueBatch(@NonNull BatchInfo batchInfo, @NonNull List<BatchStep<T>> batchSteps) {
-		if(logger.isDebugEnabled()) {
-			logger.debug("Batch " + batchInfo.getBatchId() + " added to execution queue");
+		
+		if (tenantAdminService.isEnabled()) {
+			String currentDomain = tenantAdminService.getCurrentUserDomain();
+			
+			if (!TenantService.DEFAULT_DOMAIN.equals(currentDomain)) {
+				batchInfo.setBatchId(batchInfo.getBatchId() + " - " + currentDomain);
+			}
 		}
+		
+		cancelledBatches.remove(batchInfo.getBatchId());
 		
 		Runnable command = new BatchCommand<>(batchInfo, batchSteps);
 		if (!threadExecuter.getQueue().contains(command)) {
+			if(logger.isDebugEnabled()) {
+				logger.debug("Batch " + batchInfo.getBatchId() + " added to execution queue");
+			}
 			threadExecuter.execute(command);
 		} else {
 			String label = I18NUtil.getMessage(batchInfo.getBatchDescId());
@@ -128,22 +132,37 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 	@Override
 	public boolean removeBatchFromQueue(String batchId) {
-		BatchCommand<?> command = null;
-		for (Runnable batch : threadExecuter.getQueue()) {
-			if ((batch instanceof BatchCommand) && batchId.equals(((BatchCommand<?>) batch).getBatchId())) {
-				command = (BatchCommand<?>) batch;
-				break;
-			}
-		}
-
+		
+		BatchCommand<?> command = findCommandInQueue(batchId);
+		
 		if (command != null) {
 			return threadExecuter.remove(command);
 		}
+		
 		return false;
 
 	}
 
-	private class BatchCommand<T> implements Runnable {
+	private BatchCommand<?> findCommandInQueue(String batchId) {
+		for (Runnable batch : threadExecuter.getQueue()) {
+			if ((batch instanceof BatchCommand) && batchId.equals(((BatchCommand<?>) batch).getBatchId())) {
+				return (BatchCommand<?>) batch;
+			}
+		}
+		return null;
+	}
+	
+	@Override
+	public boolean cancelBatch(String batchId) {
+		
+		if (findCommandInQueue(batchId) == null) {
+			return cancelledBatches.add(batchId);
+		}
+		
+		return false;
+	}
+	
+	public class BatchCommand<T> implements Runnable {
 
 		private String batchId;
 		private BatchInfo batchInfo;
@@ -167,7 +186,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		@Override
 		public void run() {
 
-			
 			boolean hasError = false;
 			
 			Date startTime = null;
@@ -201,7 +219,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				}
 
 				BatchProcessor<T> batchProcessor = new BatchProcessor<>(batchInfo.getBatchId(),
-						transactionService.getRetryingTransactionHelper(), batchStep.getWorkProvider(),
+						transactionService.getRetryingTransactionHelper(), getNextWorkwrapper(batchStep.getWorkProvider()),
 						batchInfo.getWorkerThreads(), batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
 
 				batchProcessor.processLong(runAsWrapper(batchStep.getProcessWorker()), true);
@@ -254,20 +272,48 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				final boolean finalHasError = hasError;
 				final Date finalEndTime = endTime;
 				final Date finalStartTime = startTime;
-				
-				AuthenticationUtil.runAs(() -> {
-					return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-						beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(), batchInfo.getMailAction(), batchInfo.getMailActionUrl(),
-								finalHasError, finalEndTime.compareTo(finalStartTime));
+				AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-						return null;
-					}, true, false);
-				}, batchInfo.getBatchUser());
+					beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(), batchInfo.getMailAction(),
+							batchInfo.getMailActionUrl(), finalHasError, finalEndTime.compareTo(finalStartTime));
+
+					return null;
+				}, true, false), batchInfo.getBatchUser());
 			}
 
 			batchInfo.setIsCompleted(true);
+			
+			cancelledBatches.remove(batchId);
+			
+		}
 
+		private BatchProcessWorkProvider<T> getNextWorkwrapper(BatchProcessWorkProvider<T> workProvider) {
+			return new BatchProcessWorkProvider<T>() {
+
+				@SuppressWarnings("deprecation")
+				@Override
+				public int getTotalEstimatedWorkSize() {
+					return workProvider.getTotalEstimatedWorkSize();
+				}
+				
+				@Override
+				public long getTotalEstimatedWorkSizeLong() {
+					return workProvider.getTotalEstimatedWorkSizeLong();
+				}
+
+				@Override
+				public Collection<T> getNextWork() {
+					if (cancelledBatches.contains(batchId)) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Stop prividing next work for batch '" + batchId + "' as it was cancelled");
+						}
+						return Collections.emptyList();
+					}
+					return workProvider.getNextWork();
+				}
+				
+			};
 		}
 
 		private BatchProcessWorker<T> runAsWrapper(BatchProcessWorker<T> processWorker) {
@@ -301,6 +347,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				@Override
 				public void process(T entry) throws Throwable {
 
+					if (cancelledBatches.contains(batchId)) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Skip entry '" + entry + "' as batch : '" + batchId + "' was cancelled");
+						}
+						return;
+					}
+					
 					processWorker.process(entry);
 				}
 
@@ -350,5 +403,5 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	public void onApplicationEvent(BatchMonitorEvent event) {
 		lastRunningBatch = event.getBatchMonitor();
 	}
-
+	
 }
