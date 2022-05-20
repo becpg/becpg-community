@@ -19,4 +19,6 @@ public interface BatchQueueService {
 
 	BatchMonitor getLastRunningBatch();
 	
+	boolean cancelBatch(String batchId);
+	
 }
