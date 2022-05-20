@@ -204,7 +204,6 @@ public class GlopServiceImpl implements GlopService {
 		return response;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private GlopData buildGlopData(ProductData productData, JSONObject obj, List<GlopConstraint> constraints, Set<CompoListDataItem> variables) throws JSONException {
 		
 		GlopData ret = new GlopData();
