@@ -16,7 +16,10 @@ import org.springframework.web.client.RestClientException;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.spel.CustomSpelFunctions;
+import fr.becpg.repo.glop.model.GlopConstraint;
+import fr.becpg.repo.glop.model.GlopContext;
 import fr.becpg.repo.glop.model.GlopData;
+import fr.becpg.repo.glop.model.GlopTarget;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.impl.LazyLoadingDataList;
@@ -112,6 +115,8 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 
 	public class GlopSpelFunctionsWrapper {
 
+		private static final String RECIPE_QTY_USED = "recipeQtyUsed";
+
 		private static final String STATUS = "status";
 		
 		RepositoryEntity entity;
@@ -125,7 +130,7 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			
 			try {
 				
-				return glopService.optimize((ProductData) entity, buildGlopConstraints(problem), buildGlopTarget(problem));
+				return glopService.optimize((ProductData) entity, buildGlopContext(problem));
 				
 			} catch (GlopException e) {
 				GlopData errorResult = new GlopData();
@@ -152,6 +157,18 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			}
 		}
 
+		private GlopContext buildGlopContext(Map<String, ?> problem) {
+			GlopContext glopContext = new GlopContext();
+			
+			glopContext.setTotalQuantity(getTotalQuantity((ProductData) entity, (Collection<?>) problem.get("constraints")));
+			
+			glopContext.setTarget(buildGlopTarget(problem));
+			
+			glopContext.setConstraints(buildGlopConstraints(problem, glopContext.getTotalQuantity()));
+			
+			return glopContext;
+		}
+		
 		@SuppressWarnings("unchecked")
 		private GlopTarget buildGlopTarget(Map<String, ?> problem) throws IllegalArgumentException {
 			Object ret = problem.get("target");
@@ -178,11 +195,13 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 		}
 
 		@SuppressWarnings("unchecked")
-		private List<GlopConstraint> buildGlopConstraints(Map<String, ?> problem) {
+		private List<GlopConstraint> buildGlopConstraints(Map<String, ?> problem, Double totalQuantity) {
 			Object objConstraints = problem.get("constraints");
 			if (!(objConstraints instanceof Collection<?>)) {
 				throw new IllegalArgumentException("constraints must be a collection");
 			}
+			
+			boolean recipeQtyUsedFound = false;
 			
 			List<GlopConstraint> constraints = new ArrayList<>();
 			
@@ -215,16 +234,10 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 									
 									String[] split = glopTarget.split("-");
 									
-									Double netWeight = 1d;
+									Double minValue = Double.parseDouble(split[0]) * (item instanceof SimpleListDataItem ? totalQuantity : 1d);
+									Double maxValue = split.length < 2 ? minValue : Double.parseDouble(split[1]) * (item instanceof SimpleListDataItem ? totalQuantity : 1d);
 									
-									if (item instanceof SimpleListDataItem && entity instanceof ProductData && ((ProductData) entity).getNetWeight() != null && ((ProductData) entity).getNetWeight() != 0d) {
-										netWeight = ((ProductData) entity).getNetWeight();
-									}
-									
-									Double minValue = Double.parseDouble(split[0]) * netWeight;
-									Double maxValue = split.length < 2 ? minValue : Double.parseDouble(split[1]) * netWeight;
-									
-									GlopConstraint glopConstraint = new GlopConstraint((SimpleCharactDataItem) item, minValue, maxValue);
+									GlopConstraint glopConstraint = new GlopConstraint(item, minValue, maxValue);
 									
 									if (tolerance == null && constraint.containsKey("tol")) {
 										tolerance = buildDouble(constraint.get("tol"));
@@ -249,9 +262,18 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 					}
 					
 					constraints.add(glopConstraint);
+					
+					if (RECIPE_QTY_USED.equals(constraintItem)) {
+						recipeQtyUsedFound = true;
+					}
 				}
 				
 			}
+			
+			if (!recipeQtyUsedFound) {
+				constraints.add(new GlopConstraint(RECIPE_QTY_USED, ((ProductData) entity).getRecipeQtyUsed(), ((ProductData) entity).getRecipeQtyUsed()));
+			}
+			
 			return constraints;
 		}
 
@@ -269,6 +291,31 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 				}
 			}
 			throw new IllegalArgumentException("Expected Double, got " + obj.getClass().getName());
+		}
+		
+		private Double getTotalQuantity(ProductData entity, Collection<?> objConstraints) {
+			if (entity.getNetWeight() != null && entity.getNetWeight() != 0d) {
+				return entity.getNetWeight();
+			}
+			
+			for (Object objConstraint : objConstraints) {
+				
+				@SuppressWarnings("unchecked")
+				Map<String, ?> constraint = (Map<String, ?>) objConstraint;
+				
+				if (constraint.containsKey("var") && RECIPE_QTY_USED.equals(constraint.get("var"))) {
+					Double constraintMin = buildDouble(constraint.get("min"));
+					Double constraintMax = buildDouble(constraint.get("max"));
+					return (constraintMin + constraintMax) / 2;
+				}
+			}
+			
+			if (entity.getRecipeQtyUsed() != null && entity.getRecipeQtyUsed() != 0d) {
+				return entity.getRecipeQtyUsed();
+			}
+			
+			return 1d;
+			
 		}
 
 	}
