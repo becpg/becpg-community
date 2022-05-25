@@ -15,10 +15,11 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fr.becpg.repo.glop.GlopConstraint;
 import fr.becpg.repo.glop.GlopService;
-import fr.becpg.repo.glop.GlopTarget;
+import fr.becpg.repo.glop.model.GlopConstraint;
+import fr.becpg.repo.glop.model.GlopContext;
 import fr.becpg.repo.glop.model.GlopData;
+import fr.becpg.repo.glop.model.GlopTarget;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -200,7 +201,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 				}
 			}
 			assertNotNull("target is null", target);
-			GlopData result1 = glopService.optimize(formulatedProduct1, characts, target);
+			GlopData result1 = glopService.optimize(formulatedProduct1, new GlopContext(target, characts));
 			
 			assertEpsilon(4, result1.getDouble("value"), 1e-6);
 			
@@ -304,7 +305,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 			}
 			assertNotNull("target is null", target);
 			assertEquals(2, characts2.size());
-			GlopData result2 = glopService.optimize(formulatedProduct2, characts2, target); 
+			GlopData result2 = glopService.optimize(formulatedProduct2, new GlopContext(target, characts2)); 
 			logger.debug("Server returned " + result2.toString());
 			
 			assertEpsilon(4d + 7d/9d, result2.getDouble("value"), 1e-6);
@@ -389,7 +390,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 			characts.add(new GlopConstraint(compo, 0d, 1d));
 			logger.debug("Added " + characts.get(0));
 
-			GlopData result = glopService.optimize(formulatedProduct, characts, target);
+			GlopData result = glopService.optimize(formulatedProduct, new GlopContext(target, characts));
 			
 			assertEpsilon(1, result.getDouble("value"), 1e-6);
 			
@@ -436,7 +437,7 @@ public class GlopIT extends AbstractFinishedProductTest {
 			finishedProduct.setNutList(nutList);
 			
 			List<DynamicCharactListItem> dynamicCharactList = new ArrayList<>();
-			dynamicCharactList.add(new DynamicCharactListItem("test1", "var glopData = @glop.optimize({target: {var: cost['" + cost1 + "'], task: \"min\"}, constraints: {{var: nut['" + nut3 + "'], min: 10, max: \"inf\"}, {var: nut['" + nut4 + "'], min: 4, max: 4}}}); #glopData.toString();"));
+			dynamicCharactList.add(new DynamicCharactListItem("test1", "var glopData = @glop.optimize({target: {var: cost['" + cost1 + "'], task: \"min\"}, constraints: {{var: nut['" + nut3 + "'], min: 10, max: \"inf\"}, {var: nut['" + nut4 + "'], min: 4, max: 4},{var:\"recipeQtyUsed\", min:\"-inf\", max:\"inf\"}}}); #glopData.toString();"));
 			finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactList);
 			
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();

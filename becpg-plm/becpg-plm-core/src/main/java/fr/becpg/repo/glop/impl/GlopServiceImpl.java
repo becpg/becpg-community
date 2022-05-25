@@ -28,11 +28,12 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.glop.GlopConstraint;
 import fr.becpg.repo.glop.GlopException;
 import fr.becpg.repo.glop.GlopService;
-import fr.becpg.repo.glop.GlopTarget;
+import fr.becpg.repo.glop.model.GlopConstraint;
+import fr.becpg.repo.glop.model.GlopContext;
 import fr.becpg.repo.glop.model.GlopData;
+import fr.becpg.repo.glop.model.GlopTarget;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -89,14 +90,17 @@ public class GlopServiceImpl implements GlopService {
 	 * list of constraints.
 	 */
 	@Override
-	public GlopData optimize(ProductData productData, List<GlopConstraint> constraints, GlopTarget target)
-			throws GlopException, RestClientException, URISyntaxException, JSONException {
+	public GlopData optimize(ProductData productData, GlopContext glopContext) throws GlopException, RestClientException, URISyntaxException, JSONException {
 		
 		StopWatch stopWatch = null;
 		if (logger.isDebugEnabled()) {
 			stopWatch = new StopWatch();
 			stopWatch.start();
 		}
+		
+		GlopTarget target = glopContext.getTarget();
+		
+		List<GlopConstraint> constraints = glopContext.getConstraints();
 		
 		Set<CompoListDataItem> variables = new HashSet<>();
 		
@@ -123,15 +127,11 @@ public class GlopServiceImpl implements GlopService {
 				
 				Map<CompoListDataItem, Double> constraintContribution = entry.getValue();
 				
-				if (constraintItem instanceof SimpleCharactDataItem) {
-					Double constraintContributionValue = computeComponentContribution(componentProductData, (SimpleCharactDataItem) constraintItem);
-					if (constraintContributionValue != null) {
-						variables.add(compoListDataItem);
-						constraintContribution.put(compoListDataItem, constraintContributionValue);
-					}
-				} else if ("recipeQtyUsed".equals(constraintItem)) {
-					constraintContribution.put(compoListDataItem, 1d);
+				Double constraintContributionValue = computeComponentContribution(componentProductData, constraintItem);
+				
+				if (constraintContributionValue != null) {
 					variables.add(compoListDataItem);
+					constraintContribution.put(compoListDataItem, constraintContributionValue);
 				}
 			}
 		}
@@ -159,7 +159,7 @@ public class GlopServiceImpl implements GlopService {
 					
 					completeResponse(constraintContributionMaps, jsonResponse);
 					
-					return buildGlopData(productData, jsonResponse, constraints, variables);
+					return buildGlopData(productData, jsonResponse, constraints, variables, glopContext.getTotalQuantity());
 				}
 			}
 			
@@ -177,7 +177,7 @@ public class GlopServiceImpl implements GlopService {
 			logger.debug("Took " + stopWatch.getTotalTimeMillis() + " ms");
 		}
 		
-		return buildGlopData(productData, jsonResponse, constraints, variables);
+		return buildGlopData(productData, jsonResponse, constraints, variables, glopContext.getTotalQuantity());
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class GlopServiceImpl implements GlopService {
 		return response;
 	}
 	
-	private GlopData buildGlopData(ProductData productData, JSONObject obj, List<GlopConstraint> constraints, Set<CompoListDataItem> variables) throws JSONException {
+	private GlopData buildGlopData(ProductData productData, JSONObject obj, List<GlopConstraint> constraints, Set<CompoListDataItem> variables, Double totalQuantity) throws JSONException {
 		
 		GlopData ret = new GlopData();
 		
@@ -234,13 +234,7 @@ public class GlopServiceImpl implements GlopService {
 						component.put(STATUS, SUBOPTIMAL);
 					}
 					
-					Double netWeight = 1d;
-					
-					if (constraint.getData() instanceof SimpleListDataItem && productData.getNetWeight() != null && productData.getNetWeight() != 0d) {
-						netWeight = productData.getNetWeight();
-					}
-					
-					component.put(VALUE, coeff.getDouble(key) / netWeight);
+					component.put(VALUE, coeff.getDouble(key) / (constraint.getData() instanceof SimpleListDataItem ? totalQuantity : 1d));
 					
 					nodeService.setProperty(((SimpleCharactDataItem) constraint.getData()).getNodeRef(), PLMModel.PROP_GLOP_VALUE, component.toString());
 				} else {
@@ -315,18 +309,20 @@ public class GlopServiceImpl implements GlopService {
 		}
 	}
 
-	private Double computeComponentContribution(final ProductData component, SimpleCharactDataItem itemImpacted) {
+	private Double computeComponentContribution(final ProductData component, Object constraintItem) {
 		
-		if (itemImpacted instanceof CompoListDataItem) {
-			if (component.getNodeRef().equals(((CompoListDataItem) itemImpacted).getProduct())) {
+		if (constraintItem instanceof CompoListDataItem) {
+			if (component.getNodeRef().equals(((CompoListDataItem) constraintItem).getProduct())) {
 				return 1d;
 			}
-		} else {
-			for (SimpleCharactDataItem item : alfrescoRepository.getList(component, itemImpacted.getClass())) {
-				if (item.getCharactNodeRef().equals(itemImpacted.getCharactNodeRef())) {
+		} else if (constraintItem instanceof SimpleCharactDataItem) {
+			for (SimpleCharactDataItem item : alfrescoRepository.getList(component, ((SimpleCharactDataItem) constraintItem).getClass())) {
+				if (item.getCharactNodeRef().equals(((SimpleCharactDataItem) constraintItem).getCharactNodeRef())) {
 					return item.getValue() != null ? item.getValue() : 0d;
 				}
 			}
+		} else if ("recipeQtyUsed".equals(constraintItem)) {
+			return 1d;
 		}
 		
 		return null;
@@ -367,7 +363,8 @@ public class GlopServiceImpl implements GlopService {
 		}
 		
 		JSONObject jsonTarget = new JSONObject();
-		target.putIntoJson(jsonTarget);
+		jsonTarget.put("task", target.getTask());
+		
 		JSONObject jsonCoefficients = new JSONObject();
 		
 		for (Map.Entry<CompoListDataItem, Double> entry : targetContributions.entrySet()) {
