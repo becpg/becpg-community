@@ -10,7 +10,7 @@ USER root
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV AOS_VERSION=${alfresco.aos.version}
 ENV MYSQL_CONNECTOR=${mysql.connector.version}
-ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
+ENV SUPPORT_TOOLS_VERSION=1.3.0.0-beCPG-amp
 ENV I18_VERSION=1.0-83      
    
 ## JDBC - MYSQL
