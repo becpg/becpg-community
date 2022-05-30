@@ -121,35 +121,36 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			this.maxProcessedNodes = maxProcessedNodes;
 			this.path = path;
 			
-			if (path != null) {
-				NodeRef parentNode = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE), path);
+			if (path == null) {
+				path = RepoConsts.ENTITIES_HISTORY_XPATH;
+			}
+			
+			NodeRef parentNode = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE), path);
+			
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(parentNode, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
+			
+			for (ChildAssociationRef childAssoc : childAssocs) {
 				
-				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(parentNode, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
+				List<ChildAssociationRef> subChildAssocs = nodeService.getChildAssocs(childAssoc.getChildRef(), ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
 				
-				for (ChildAssociationRef childAssoc : childAssocs) {
+				if (subChildAssocs.isEmpty()) {
+					deleteNode(childAssoc.getChildRef());
+					logger.debug("delete empty folder : " + childAssoc.getChildRef());
+				}
+				
+				for (ChildAssociationRef subChildAssoc : subChildAssocs) {
 					
-					List<ChildAssociationRef> subChildAssocs = nodeService.getChildAssocs(childAssoc.getChildRef(), ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
-					
-					if (subChildAssocs.isEmpty()) {
-						deleteNode(childAssoc.getChildRef());
+					if (entityDictionaryService.isSubClass(nodeService.getType(subChildAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
+						initialList.add(subChildAssoc.getChildRef());
 					}
 					
-					for (ChildAssociationRef subChildAssoc : subChildAssocs) {
-						
-						if (entityDictionaryService.isSubClass(nodeService.getType(subChildAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
-							initialList.add(subChildAssoc.getChildRef());
-						}
-						
-						if (initialList.size() >= maxProcessedNodes) {
-							break;
-						}
-					}
 					if (initialList.size() >= maxProcessedNodes) {
 						break;
 					}
 				}
-			} else {
-				initialList = BeCPGQueryBuilder.createQuery().withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION).maxResults(maxProcessedNodes).inDB().ftsLanguage().list();
+				if (initialList.size() >= maxProcessedNodes) {
+					break;
+				}
 			}
 			
 			cal.add(Calendar.DAY_OF_YEAR, -1);
