@@ -1,4 +1,4 @@
-package fr.becpg.repo.glop;
+package fr.becpg.repo.glop.model;
 
 import java.io.Serializable;
 
@@ -19,7 +19,7 @@ public class GlopConstraint implements Serializable {
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "GlopConstraintSpecification [data=" + data + ", minValue=" + minValue + ", maxValue=" + maxValue + "]";
+		return "GlopConstraint [data=" + data + ", minValue=" + minValue + ", maxValue=" + maxValue + "]";
 	}
 
 	private Object data;
