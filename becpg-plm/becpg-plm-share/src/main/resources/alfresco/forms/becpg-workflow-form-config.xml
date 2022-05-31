@@ -754,8 +754,8 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>					
-					<field id="bcpgwf:reviewQualityComment" set="assignees">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					<field id="bcpgwf:reviewQualityComment" set="assignees" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpgwf:pvProductionApprovalActor" set="assignees" read-only="true"/>
 					<field id="bcpgwf:reviewProductionApproval" set="assignees" read-only="true">
@@ -763,8 +763,8 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewProductionComment" set="assignees">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					<field id="bcpgwf:reviewProductionComment" set="assignees" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpgwf:pvRDApprovalActor" set="assignees" read-only="true"/>
 					<field id="bcpgwf:reviewRDApproval" set="assignees" read-only="true">
@@ -772,8 +772,8 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewRDComment" set="assignees">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					<field id="bcpgwf:reviewRDComment" set="assignees" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpgwf:pvPackagingApprovalActor" set="assignees" read-only="true"/>
 					<field id="bcpgwf:reviewPackagingApproval" set="assignees" read-only="true">
@@ -781,8 +781,8 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewPackagingComment" set="assignees">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					<field id="bcpgwf:reviewPackagingComment" set="assignees" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpgwf:pvCallerActor" set="assignees" read-only="true"/>
 					<field id="bcpgwf:reviewCallerApproval" set="assignees" read-only="true">
@@ -790,8 +790,8 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewCallerComment" set="assignees">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					<field id="bcpgwf:reviewCallerComment" set="assignees" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpgwf:pvCaller2Actor" set="assignees" read-only="true"/>
 					<field id="bcpgwf:reviewCaller2Approval" set="assignees" read-only="true">
@@ -799,8 +799,8 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewCaller2Comment" set="assignees">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					<field id="bcpgwf:reviewCaller2Comment" set="assignees" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					
 					<field id="packageItems" set="items" />
@@ -876,8 +876,8 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>					
-					<field id="bcpgwf:reviewQualityComment" set="assignees">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					<field id="bcpgwf:reviewQualityComment" set="assignees" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpgwf:pvProductionApprovalActor" set="assignees" />
 					<field id="bcpgwf:reviewProductionApproval" set="assignees" read-only="true">
@@ -885,8 +885,8 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewProductionComment" set="assignees">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					<field id="bcpgwf:reviewProductionComment" set="assignees" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpgwf:pvRDApprovalActor" set="assignees" />
 					<field id="bcpgwf:reviewRDApproval" set="assignees" read-only="true">
@@ -894,8 +894,8 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewRDComment" set="assignees">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					<field id="bcpgwf:reviewRDComment" set="assignees" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpgwf:pvPackagingApprovalActor" set="assignees" />
 					<field id="bcpgwf:reviewPackagingApproval" set="assignees" read-only="true">
@@ -903,8 +903,8 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewPackagingComment" set="assignees">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					<field id="bcpgwf:reviewPackagingComment" set="assignees" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpgwf:pvCallerActor" set="assignees" />
 					<field id="bcpgwf:reviewCallerApproval" set="assignees" read-only="true">
@@ -912,8 +912,8 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewCallerComment" set="assignees">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					<field id="bcpgwf:reviewCallerComment" set="assignees" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpgwf:pvCaller2Actor" set="assignees" />
 					<field id="bcpgwf:reviewCaller2Approval" set="assignees" read-only="true">
@@ -921,8 +921,8 @@
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="bcpgwf:reviewCaller2Comment" set="assignees">
-						<control template="/org/alfresco/components/form/controls/info.ftl" />
+					<field id="bcpgwf:reviewCaller2Comment" set="assignees" read-only="true">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					
 					<field id="packageItems" set="items" />
