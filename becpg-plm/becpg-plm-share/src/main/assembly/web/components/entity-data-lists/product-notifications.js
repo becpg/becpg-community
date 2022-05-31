@@ -415,7 +415,7 @@
 						 */
 						getParameters : function ProductNotifications_getParameters() {
 
-							var request = {
+							return {
 								fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSources", "bcpg_rclDataType", "bcpg_regulatoryCode" ],
 								page : this.currentPage,
 								filter : {
@@ -426,7 +426,6 @@
 								},
 								extraParams : null
 							};
-							return request;
 
 						},
 
@@ -444,7 +443,7 @@
 						 *            {object|string}
 						 */
 						renderCellDetail : function ProductNotifications_renderCellDetail(elCell, oRecord, oColumn, oData) {
-							var record = oRecord.getData(), desc = "", dateLine = "";
+							var record = oRecord.getData(), desc = "";
 
 							if (record.isInfo) {
 								desc += '<div class="empty"><h3>' + record.title + '</h3>';

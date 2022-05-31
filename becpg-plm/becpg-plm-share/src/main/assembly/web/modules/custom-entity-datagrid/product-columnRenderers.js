@@ -371,16 +371,6 @@ if (beCPG.module.EntityDataGridRenderers) {
   });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : "bcpg:nutListGDAPerc",
-      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-      	if(data.value != null){
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,2).toLocaleString());
-      	}      
-      	return "";
-      }
-  });
-	
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
