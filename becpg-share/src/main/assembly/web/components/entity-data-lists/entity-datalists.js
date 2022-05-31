@@ -129,7 +129,7 @@
 
 							this.widgets.spinner.setHeader(this.msg("message.loading"));
 							this.widgets.spinner.setBody('<div style="text-align:center;"><img class="icon16" src="' + Alfresco.constants.URL_RESCONTEXT
-									+ '/components/images/lightbox/loading.gif" /></div>');
+									+ 'components/images/lightbox/loading.gif" /></div>');
 							this.widgets.spinner.render(document.body);
 
 							if(this.options.showCreate){
