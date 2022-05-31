@@ -21,12 +21,12 @@
          <div class="yui-u first">
             <span>${msg("form.control.range.min")}:</span>
             <#-- min value -->
-            <input id="${controlId}-min" name="-" type="text" class="number number-range" <#if field.description??>title="${field.description}"</#if> tabindex="0" />
+            <input id="${controlId}-min" name="-" type="text" autocomplete="off" class="number number-range" <#if field.description??>title="${field.description}"</#if> tabindex="0" />
          </div>
          <div class="yui-u">
             <span>${msg("form.control.range.max")}:</span>
             <#-- max value -->
-            <input id="${controlId}-max" name="-" type="text" class="number number-range" <#if field.description??>title="${field.description}"</#if> tabindex="0" />
+            <input id="${controlId}-max" name="-" type="text"  autocomplete="off" class="number number-range" <#if field.description??>title="${field.description}"</#if> tabindex="0" />
             <#if !field.disabled || (field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>
 			    <@formLib.renderFieldHelp field=field />
 			</#if>
