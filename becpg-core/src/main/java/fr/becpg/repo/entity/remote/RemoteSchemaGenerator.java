@@ -193,7 +193,7 @@ public class RemoteSchemaGenerator {
 	private boolean appendAspects(QName dataType, XMLStreamWriter xmlw, boolean first) throws XMLStreamException {
 		for (AspectDefinition aspectDefinition : dictionaryService.getClass(dataType).getDefaultAspects(false)) {
 
-			if(aspectDefinition.getAssociations().keySet().size()>0 || ! isEmpty(aspectDefinition.getProperties().keySet())){
+			if(!aspectDefinition.getAssociations().keySet().isEmpty() || ! isEmpty(aspectDefinition.getProperties().keySet())){
 				
 				
 				if (first) {
