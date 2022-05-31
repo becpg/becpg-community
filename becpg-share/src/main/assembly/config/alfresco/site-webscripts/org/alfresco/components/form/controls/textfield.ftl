@@ -41,7 +41,7 @@
       </div>
    <#else>
       <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if> <#if field.control.params.maxLength??><@formLib.renderLocaleImage field=field maxLength=field.control.params.maxLength?number/> <#else> <@formLib.renderLocaleImage field=field/></#if></label>
-      <input id="${fieldHtmlId}" name="${field.name}" tabindex="0"
+      <input id="${fieldHtmlId}" name="${field.name}" tabindex="0" autocomplete="off"
              <#if field.control.params.password??>type="password"<#else>type="text"</#if>
              <#if field.control.params.styleClass??>class="${field.control.params.styleClass}"</#if>
              <#if field.control.params.style??>style="${field.control.params.style}"</#if>
