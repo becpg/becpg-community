@@ -153,7 +153,7 @@
 	      </div>
 	   <#else>
 	      <label id="${fieldHtmlId}-label"  for="${fieldHtmlId}">${currLabel?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
-	      <input id="${fieldHtmlId}" type="text" name="-" tabindex="0"
+	      <input id="${fieldHtmlId}" type="text" name="-" tabindex="0" autocomplete="off"
 	             class="number number-unit<#if field.control.params.styleClass??> ${field.control.params.styleClass}</#if>"
 	             <#if field.control.params.style??>style="${field.control.params.style}"</#if>	
 	             <#if field.value?is_number>value="${currValue?c}"<#else>value="${currValue?html}"</#if>
