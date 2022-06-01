@@ -47,6 +47,7 @@ public class ReplacementListDataItem extends BeCPGDataObject {
 	private List<NodeRef> sourceItems;
 	private NodeRef targetItem;
 	private Integer qtyPerc;
+	private Double loss;
 
 	/**
 	 * <p>Getter for the field <code>qtyPerc</code>.</p>
@@ -57,6 +58,16 @@ public class ReplacementListDataItem extends BeCPGDataObject {
 	@AlfQname(qname = "ecm:rlQtyPerc")
 	public Integer getQtyPerc() {
 		return qtyPerc;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "ecm:rlLoss")
+	public Double getLoss() {
+		return loss;
+	}
+	
+	public void setLoss(Double lossPerc) {
+		this.loss = lossPerc;
 	}
 
 	/**
