@@ -1769,7 +1769,14 @@
 					<field id="qa:clMini" set="reqInfo" />
 					<field id="qa:clMaxi" set="reqInfo" />
 					<field id="qa:clCharacts" set="reqInfo" />
-					<field id="qa:clRequired" set="reqInfo" />
+					<field id="qa:clRequired" set="reqInfo" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
+							<control-param name="options">true|data.boolean.true,false|data.boolean.false
+							</control-param>
+						</control>
+					</field>
 					
 					<set id="fillInfo" appearance="bordered-panel" label-id="becpg.forms.set.fill-info.label" />
 					<field id="qa:clValue" set="fillInfo" />
