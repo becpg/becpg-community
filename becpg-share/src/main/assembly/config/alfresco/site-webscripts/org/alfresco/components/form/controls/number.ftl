@@ -15,7 +15,7 @@
 			<#assign fieldValue=field.control.params.defaultValue>
 	   </#if>
 	      <label for="${fieldHtmlId}">${field.label?html}:<#if field.mandatory><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
-	      <input id="${fieldHtmlId}" type="text" name="${field.name}" tabindex="0"
+	      <input id="${fieldHtmlId}" type="text" name="${field.name}" tabindex="0" autocomplete="off"
 	             class="number<#if field.control.params.styleClass??> ${field.control.params.styleClass}</#if>"
 	             <#if field.control.params.style??>style="${field.control.params.style}"</#if>	
 	             <#if fieldValue?is_number>value="${fieldValue?c}"<#else>value="${fieldValue?html}"</#if>

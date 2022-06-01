@@ -57,7 +57,10 @@
 	                <#if field.control.params.style??>style="${field.control.params.style}"</#if>
                     <#if field.control.params.maxLength??>maxlength="${field.control.params.maxLength}"<#else>maxlength="10000"</#if>
 	                <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if>>${fieldValue?html}</textarea>
-	      <@formLib.renderFieldHelp field=field />
+	     <#if !(field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>
+	       <@formLib.renderFieldHelp field=field />
+	      </#if>
+              
 	   </#if>
    </#if>
 </div>
