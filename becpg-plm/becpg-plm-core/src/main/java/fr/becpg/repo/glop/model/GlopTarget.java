@@ -1,7 +1,4 @@
-package fr.becpg.repo.glop;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+package fr.becpg.repo.glop.model;
 
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
@@ -44,24 +41,15 @@ public class GlopTarget {
 	public SimpleCharactDataItem getTarget() {
 		return target;
 	}
-
-	/**
-	 * Add the target task into a JSON representation. Intended to be used by
-	 * {@link fr.becpg.repo.glop.impl.GlopServiceImpl}.
-	 *
-	 * @param obj
-	 *            the JSON to add the target to
-	 * @throws org.json.JSONException
-	 *             if the operation failed
-	 */
-	public void putIntoJson(JSONObject obj) throws JSONException {
-		obj.put("task", task);
+	
+	public String getTask() {
+		return task;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "GlopTargetSpecification [target=" + target + ", task=" + task + "]";
+		return "GlopTarget [target=" + target + ", task=" + task + "]";
 	}
 
 }
