@@ -101,31 +101,30 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	public List<NodeRef> filter(List<NodeRef> nodes, QName datatype, Map<String, String> criteria, SearchConfig searchConfig) {
 
 		boolean isAssocSearch = isAssocSearch(criteria);
-		
+
 		if (isAssocSearch) {
-			
+
 			tracer.getCurrentSpan().addAnnotation("filterByAssociations");
 			nodes = filterByAssociations(nodes, datatype, criteria);
-			
-			if ((datatype != null) ) {
-				if( entityDictionaryService.isSubClass(datatype, BeCPGModel.TYPE_ENTITY_V2)) {
+
+			if ((datatype != null)) {
+				if (entityDictionaryService.isSubClass(datatype, BeCPGModel.TYPE_ENTITY_V2)) {
 					if (searchConfig.getDataListSearchFilters() != null) {
 						for (DataListSearchFilter filter : searchConfig.getDataListSearchFilters()) {
 							nodes = getSearchNodesByListCriteria(nodes, criteria, filter);
 						}
 					}
 				}
-				
-				if( entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
+
+				if (entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT);
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE);
 				}
 				nodes = getSearchNodesBySpecificationCriteria(nodes, criteria);
-				
+
 			}
 		}
-
 
 		return nodes;
 	}
@@ -141,7 +140,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		}
 
 		tracer.getCurrentSpan().addAnnotation(filter.getName());
-		
+
 		List<EntitySourceAssoc> entitySourceAssocs = null;
 		List<EntitySourceAssoc> notEntitySourceAssocs = null;
 
@@ -155,20 +154,20 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			}
 
 			if ((propValue != null) && !propValue.isBlank()) {
-				
+
 				boolean isOrOperator = "or".equals(assocFilter.getOperator()) || "not".equals(assocFilter.getOperator());
 
 				List<AssociationCriteriaFilter> criteriaFilters = buildCriteriaFilters(criteria, filter);
 
-				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue,isOrOperator), assocFilter.getAttributeQname(), assocFilter.getSourceTypeQname(),
-						isOrOperator , criteriaFilters);
+				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue, isOrOperator),
+						assocFilter.getAttributeQname(), assocFilter.getSourceTypeQname(), isOrOperator, criteriaFilters);
 
 				if ("not".equals(assocFilter.getOperator())) {
 
 					if (notEntitySourceAssocs == null) {
 						notEntitySourceAssocs = tmp;
 					} else {
-						merge(notEntitySourceAssocs, tmp, true);
+						merge(notEntitySourceAssocs, tmp);
 					}
 
 				} else {
@@ -176,7 +175,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					if (entitySourceAssocs == null) {
 						entitySourceAssocs = tmp;
 					} else {
-						merge(entitySourceAssocs, tmp, true);
+						merge(entitySourceAssocs, tmp);
 					}
 				}
 
@@ -189,10 +188,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (entitySourceAssocs != null) {
 
-			if (notEntitySourceAssocs != null) {
-				merge(entitySourceAssocs, notEntitySourceAssocs, false);
-			}
-
 			for (EntitySourceAssoc assocRef : entitySourceAssocs) {
 
 				if (nodes.contains(assocRef.getEntityNodeRef())) {
@@ -202,15 +197,17 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			nodes.retainAll(entities);
 
-		} else if (notEntitySourceAssocs != null) {
-			nodes.removeAll(notEntitySourceAssocs.stream().map(a -> a.getEntityNodeRef()).collect(Collectors.toList()));
+		}
+
+		if (notEntitySourceAssocs != null) {
+			nodes.removeAll(notEntitySourceAssocs.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList()));
 
 		}
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
-			logger.debug("getSearchNodesByListCriteria " + filter.getName() + " executed in  " + watch.getTotalTimeSeconds() + " seconds - size after "
-					+ nodes.size());
+			logger.debug("getSearchNodesByListCriteria " + filter.getName() + " executed in  " + watch.getTotalTimeSeconds()
+					+ " seconds - size after " + nodes.size());
 		}
 
 		return nodes;
@@ -234,7 +231,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				QName attributeQName = propFilter.getAttributeQname();
 
 				// Warning : this will be a problem with generic raw materials
-				if (!PLMModel.TYPE_RAWMATERIAL.getPrefixedQName(namespaceService).getPrefixString().equals(criteria.get("datatype")) && PLMModel.PROP_NUTLIST_VALUE.equals(attributeQName)) {
+				if (!PLMModel.TYPE_RAWMATERIAL.getPrefixedQName(namespaceService).getPrefixString().equals(criteria.get("datatype"))
+						&& PLMModel.PROP_NUTLIST_VALUE.equals(attributeQName)) {
 
 					attributeQName = PLMModel.PROP_NUTLIST_FORMULATED_VALUE;
 
@@ -256,7 +254,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return criteriaFilters;
 	}
 
-	private void merge(List<EntitySourceAssoc> sources, List<EntitySourceAssoc> targets, boolean retain) {
+	private void merge(List<EntitySourceAssoc> sources, List<EntitySourceAssoc> targets) {
 
 		Iterator<EntitySourceAssoc> e = sources.iterator();
 		while (e.hasNext()) {
@@ -271,14 +269,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				}
 			}
 
-			if (retain) {
-				if (!contains) {
-					e.remove();
-				}
-			} else {
-				if (contains) {
-					e.remove();
-				}
+			if (!contains) {
+				e.remove();
 			}
 
 		}
@@ -347,34 +339,33 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						Set<NodeRef> nodesToKeep = new HashSet<>();
 
 						Set<NodeRef> nodeRefs = new HashSet<>();
-			
-						
+
 						for (String strNodeRef : arrValues) {
 							NodeRef nodeRef = new NodeRef(strNodeRef);
 							if (nodeService.exists(nodeRef)) {
-								
+
 								nodeRefs.add(nodeRef);
-								
+
 								if (nodeService.getType(nodeRef).equals(ContentModel.TYPE_PERSON)) {
-									for (ChildAssociationRef assoc : nodeService.getParentAssocs(nodeRef, ContentModel.ASSOC_MEMBER, RegexQNamePattern.MATCH_ALL)) {
+									for (ChildAssociationRef assoc : nodeService.getParentAssocs(nodeRef, ContentModel.ASSOC_MEMBER,
+											RegexQNamePattern.MATCH_ALL)) {
 										nodeRefs.add(assoc.getParentRef());
-										
+
 									}
 								}
 
 							}
 						}
-						
-						if(!nodeRefs.isEmpty()) {
 
-							List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(new ArrayList<>(nodeRefs),assocQName,
-									datatype, true , null);
+						if (!nodeRefs.isEmpty()) {
+
+							List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(new ArrayList<>(nodeRefs),
+									assocQName, datatype, true, null);
 							for (EntitySourceAssoc assocRef : entitySourceAssocs) {
 								nodesToKeep.add(assocRef.getDataListItemNodeRef());
 							}
 						}
 
-						
 						if (!isOROperand) {
 							nodes.retainAll(nodesToKeep);
 						} else {
@@ -409,14 +400,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				if (nodeService.exists(nodeRef)) {
 					ret.add(nodeRef);
-					if(isOrOperator) {
+					if (isOrOperator) {
 						if (logger.isDebugEnabled()) {
 							int size = associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION).size();
-							if(size > 0) {
-								logger.debug("Found linked  associated search to add :"
-										+ size);
+							if (size > 0) {
+								logger.debug("Found linked  associated search to add :" + size);
 							}
-	
+
 						}
 
 						ret.addAll(associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_LINKED_SEARCH_ASSOCIATION));
@@ -440,7 +430,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			String propValue = criteria.get(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
 			if ((propValue != null) && !propValue.isBlank()) {
-				for (NodeRef nodeRef : extractNodeRefs(propValue,false)) {
+				for (NodeRef nodeRef : extractNodeRefs(propValue, false)) {
 
 					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
 					List<NodeRef> retainNodes = new ArrayList<>();
@@ -469,7 +459,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			String propValue = criteria.get(CRITERIA_RESPECTED_SPECIFICATIONS);
 			if ((propValue != null) && !propValue.isEmpty()) {
-				for (NodeRef nodeRef : extractNodeRefs(propValue,false)) {
+				for (NodeRef nodeRef : extractNodeRefs(propValue, false)) {
 					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
 					List<NodeRef> removedNodes = new ArrayList<>();
 					for (NodeRef productNodeRef : nodes) {
@@ -506,43 +496,43 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			QName criteriaAssoc) {
 
 		Map<String, AttributeValue> attributes = new HashMap<>();
-		
+
 		if (criteriaAssoc != null) {
 			attributes.put("wUsedAssoc", AttributeValue.stringAttributeValue(criteriaAssoc.getLocalName()));
 		}
-		
+
 		tracer.getCurrentSpan().addAnnotation("filterByWUsed", attributes);
-		
+
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
 			watch.start();
 		}
-		
+
 		if (criteria.containsKey(criteriaAssocString)) {
-			
+
 			String propValue = criteria.get(criteriaAssocString);
-			
+
 			if ((propValue != null) && !propValue.isBlank()) {
-				
-				List<NodeRef> toFilterByNodes = extractNodeRefs(propValue,false);
-				
+
+				List<NodeRef> toFilterByNodes = extractNodeRefs(propValue, false);
+
 				if (!toFilterByNodes.isEmpty()) {
-					
+
 					MultiLevelListData ret = wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
 					if (ret != null) {
 						nodes.retainAll(ret.getAllChilds());
 					}
 				}
 			}
-			
+
 		}
-		
+
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
 			logger.debug("getSearchNodesByWUsedCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}
-		
+
 		return nodes;
 	}
 
