@@ -27,9 +27,9 @@
 <#macro dataGridToolbarFilter toolbarId>
 	<div class="filter-form" >
 			<button id="${toolbarId}-filterform-button" title="${msg("filterform.header")}">&nbsp;</button>
-			<div id="${toolbarId}-filterform-panel"  class="yuimenu" >
+			<div id="${toolbarId}-filterform-panel"  class="yuimenu filterform-panel" >
 						<div class="bd">
-								 <div class="filterButtonsBar">
+							    <div class="filterButtonsBar">
 								 		<button id="${toolbarId}-filterform-clear"   >${msg("filterform.clear")}</button>
 								  		<button id="${toolbarId}-filterform-submit"  >${msg("filterform.submit")}</button>
 								  	</div>
