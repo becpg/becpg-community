@@ -107,18 +107,20 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			tracer.getCurrentSpan().addAnnotation("filterByAssociations");
 			nodes = filterByAssociations(nodes, datatype, criteria);
 			
-			if ((datatype != null) && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
-				
-				if (searchConfig.getDataListSearchFilters() != null) {
-					for (DataListSearchFilter filter : searchConfig.getDataListSearchFilters()) {
-						nodes = getSearchNodesByListCriteria(nodes, criteria, filter);
+			if ((datatype != null) ) {
+				if( entityDictionaryService.isSubClass(datatype, BeCPGModel.TYPE_ENTITY_V2)) {
+					if (searchConfig.getDataListSearchFilters() != null) {
+						for (DataListSearchFilter filter : searchConfig.getDataListSearchFilters()) {
+							nodes = getSearchNodesByListCriteria(nodes, criteria, filter);
+						}
 					}
 				}
 				
-				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
-				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT);
-				getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE);
-				
+				if( entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
+					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
+					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT);
+					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE);
+				}
 				nodes = getSearchNodesBySpecificationCriteria(nodes, criteria);
 				
 			}
@@ -326,7 +328,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				String assocName = key.substring(6);
 				if (assocName.endsWith("_added")) {
-					if (!entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT) || !keysToExclude.contains(key)) {
+					if (!entityDictionaryService.isSubClass(datatype, BeCPGModel.TYPE_ENTITY_V2) || !keysToExclude.contains(key)) {
 
 						boolean isOROperand = false;
 
