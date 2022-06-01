@@ -131,6 +131,10 @@
 					<default>100</default>
 					<index enabled="false"/>
 				</property>
+				<property name="ecm:rlLoss">
+					<type>d:double</type>
+					<index enabled="false"/>
+				</property>
 			</properties>
 			<associations>
 				<association name="ecm:rlSourceItems">
@@ -173,7 +177,28 @@
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					 </index>
-				</property>			
+				</property>	
+				<property name="ecm:wulEffectiveDate">
+					<type>d:date</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
+				</property>	
+				<property name="ecm:wulQty">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
+				</property>	
+				<property name="ecm:wulLoss">
+					<type>d:double</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
+				</property>	
 			</properties>
 			<associations>
 				<association name="ecm:wulLink">

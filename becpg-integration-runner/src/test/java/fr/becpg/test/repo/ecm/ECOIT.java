@@ -1584,6 +1584,109 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 	}
+	
+	@Test
+	public void testQuantityAndLoss() throws Exception {
+
+		final NodeRef finishedProduct1NodeRef = createFinishedProduct("PF1");
+		final NodeRef finishedProduct2NodeRef = createFinishedProduct("PF2");
+
+		final NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, new ArrayList<>());
+
+			List<ReplacementListDataItem> replacementList = new ArrayList<>();
+
+			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial1NodeRef), rawMaterial5NodeRef, 75);
+			replacement.setLoss(10.0);
+			replacementList.add(replacement);
+			changeOrderData.setReplacementList(replacementList);
+
+			NodeRef ecoNodeRef1 = alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
+
+			return ecoNodeRef1;
+
+		}, false, true);
+		
+		// calculate WUsed
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			// verify WUsed
+			ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+			assertNotNull("check ECO exist in DB", dbECOData);
+			assertNotNull("Check WUsed list", dbECOData.getWUsedList());
+			
+			assertEquals("Check 3 WUsed are impacted", 3, dbECOData.getWUsedList().size());
+			
+			for (WUsedListDataItem wul : dbECOData.getWUsedList()) {
+				
+				wul.setIsWUsedImpacted(true);
+				
+				assertNotNull(wul.getSourceItems().get(0));
+				
+				if (wul.getSourceItems().contains(finishedProduct2NodeRef)) {
+					wul.setQty(50.0);
+					wul.setLoss(20.0);
+				}
+				
+				alfrescoRepository.save(wul);
+				
+			}
+			
+			return null;
+
+		}, false, true);
+
+
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false));
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct1NodeRef);
+
+			assertEquals(6, productData.getCompoList().size());
+			
+			boolean check = false;
+			
+			for (CompoListDataItem compoItem : productData.getCompoList()) {
+				if (compoItem.getComponent().equals(rawMaterial5NodeRef)) {
+					assertEquals(10.0, compoItem.getLossPerc());
+					assertEquals(0.75, compoItem.getQtySubFormula());
+					check = true;
+				}
+			}
+			
+			assertTrue(check);
+
+			return null;
+
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(finishedProduct2NodeRef);
+			
+			assertEquals(6, productData.getCompoList().size());
+			
+			boolean check = false;
+			
+			for (CompoListDataItem compoItem : productData.getCompoList()) {
+				if (compoItem.getComponent().equals(rawMaterial5NodeRef)) {
+					assertEquals(20.0, compoItem.getLossPerc());
+					assertEquals(50.0, compoItem.getQtySubFormula());
+					check = true;
+				}
+			}
+			
+			assertTrue(check);
+			
+			return null;
+			
+		}, false, true);
+
+	}
 
 	private String getVersionLabel(NodeRef productNodeRef) {
 		return (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_VERSION_LABEL);
