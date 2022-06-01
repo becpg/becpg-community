@@ -1,12 +1,12 @@
 package fr.becpg.repo.glop;
 
 import java.net.URISyntaxException;
-import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.client.RestClientException;
 
+import fr.becpg.repo.glop.model.GlopContext;
 import fr.becpg.repo.glop.model.GlopData;
 import fr.becpg.repo.product.data.ProductData;
 
@@ -40,7 +40,7 @@ public interface GlopService {
 	 * @throws java.net.URISyntaxException if the Glop server URL specified is syntactically incorrect
 	 * @throws org.json.JSONException if an error was met building one of the JSON objects involved
 	 */
-	public GlopData optimize(ProductData productData, List<GlopConstraint> characts, GlopTarget target) throws GlopException, RestClientException, URISyntaxException, JSONException;
+	public GlopData optimize(ProductData entity, GlopContext buildGlopContext) throws GlopException, RestClientException, URISyntaxException, JSONException;
 
 	/**
 	 * Sends a request to the Glop server. Mostly for testing and may be deprecated in the future.
@@ -53,5 +53,6 @@ public interface GlopService {
 	 * @throws fr.becpg.repo.glop.GlopException if the linear program is unfeasible
 	 */
 	public String sendRequest(JSONObject request) throws URISyntaxException, JSONException, RestClientException, GlopException;
+
 	
 }
