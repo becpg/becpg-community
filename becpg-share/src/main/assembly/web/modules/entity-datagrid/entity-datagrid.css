@@ -474,6 +474,8 @@ div.filterButtonsBar {
 }
 
 
+
+
 .datagrid-bar .filter-form > span > span.first-child,
 .toolbar .filter-form  > span > span.first-child {
 	background: url(../../components/images/search-16.png) no-repeat 12px
@@ -569,11 +571,6 @@ div.filterButtonsBar {
 	border-top: 1px solid #7f7f7f;
 }
 
-/* The first row in the group */
-.datagrid  .group-first-row td {
-	
-}
-
 /* The group when collapsed */
 .datagrid  .group-collapsed {
 	margin-top: 0px;
@@ -611,9 +608,6 @@ div.filterButtonsBar {
 
 /* Progress bar */
 
-.datagrid .progress-bar {
-	
-}
 
 .datagrid .inner-progress-bar {
 	border-radius: 0 4px 4px 0;
@@ -701,7 +695,7 @@ div.dt-tooltip span.dt-tooltip-content {
   -moz-transition: opacity 300ms, visibility 0ms linear 300ms;
   -o-transition: opacity 300ms, visibility 0ms linear 300ms;
   -webkit-transition: opacity 300ms, visibility 0ms linear;
-  -webkit-transition-delay: 0s, 300ms;
+  transition-delay: 0s, 300ms;
   transition: opacity 300ms, visibility 0ms linear 300ms;
   pointer-events: none;
  
