@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm.data.dataList;
 
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -51,7 +52,40 @@ public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataI
 	private List<NodeRef> sourceItems;
 	private WUsedListDataItem parent;
 	private Integer sort;
+	private Date effectiveDate;
+	private Double qty;
+	private Double loss;
 
+	@AlfProp
+	@AlfQname(qname = "ecm:wulEffectiveDate")
+	public Date getEffectiveDate() {
+		return effectiveDate;
+	}
+	
+	public void setEffectiveDate(Date effectiveDate) {
+		this.effectiveDate = effectiveDate;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "ecm:wulQty")
+	public Double getQty() {
+		return qty;
+	}
+	
+	public void setQty(Double qtyPerc) {
+		this.qty = qtyPerc;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "ecm:wulLoss")
+	public Double getLoss() {
+		return loss;
+	}
+	
+	public void setLoss(Double lossPerc) {
+		this.loss = lossPerc;
+	}
+	
 	/**
 	 * <p>Getter for the field <code>parent</code>.</p>
 	 *

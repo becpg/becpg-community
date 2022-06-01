@@ -340,7 +340,10 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 						column.help = formConfig.fields[fieldId].getHelpText();
 					}
 					
-					if (formIdArgs != null) {
+					if (splitted[1].includes("@")) {
+						var formSplitted = splitted[1].split("@");
+						column.columns = getColumns(formSplitted[0] + "", "sub-datagrid", formSplitted[1] + "");
+					} else if (formIdArgs != null) {
 						column.columns = getColumns(splitted[1] + "", "sub-datagrid", "sub-datagrid-" + formIdArgs);
 					} else {
 						column.columns = getColumns(splitted[1] + "", "sub-datagrid");
