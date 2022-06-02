@@ -84,9 +84,13 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, itemType);
 					if (listNodeRef != null) {
 						Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
-						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, itemType);
+						
+						// case of multiple lists of same type (ex: bcpg:surveyList@1)
+						QName actualType = QName.createQName(itemType.toString().split("@")[0]);
+						
+						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, actualType);
 						for (NodeRef itemNodeRef : results) {
-							if (itemType.equals(nodeService.getType(itemNodeRef))) {
+							if (actualType.equals(nodeService.getType(itemNodeRef))) {
 								if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
 									rownum = fillRow(sheet, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems);
 								}
@@ -279,9 +283,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 		ExpressionParser parser = new SpelExpressionParser();
 	
 		Expression exp = parser.parseExpression(formula);
-		Object ret = exp.getValue(context);
-		
-		return ret;
+		return exp.getValue(context);
 
 	}
 	

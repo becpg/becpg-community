@@ -28,6 +28,8 @@ import fr.becpg.repo.helper.RepoService;
 @DependsOn
 public class BeCPGLicenseManager {
 
+	private static final String INVALID_LICENSE_FILE = "Invalid license file";
+
 	private static final Log logger = LogFactory.getLog(BeCPGLicenseManager.class);
 
 	@Autowired
@@ -52,7 +54,7 @@ public class BeCPGLicenseManager {
 	}
 
 	private BeCPGLicense getLicense() {
-		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName(), "lisence", () -> {
+		return beCPGCacheService.getFromCache(BeCPGLicenseManager.class.getName(), "license", () -> {
 			BeCPGLicense ret = new BeCPGLicense();
 
 			JSONObject licenseObj = getLicenseFile();
@@ -88,7 +90,7 @@ public class BeCPGLicenseManager {
 				}
 
 				if (!valid) {
-					ret.licenseName = "Invalid license file";
+					ret.licenseName = INVALID_LICENSE_FILE;
 					ret.allowedNamedRead = 0;
 					ret.allowedNamedWrite = 0;
 					ret.allowedConcurrentRead = 0;
@@ -146,6 +148,10 @@ public class BeCPGLicenseManager {
 	public String getLicenseName() {
 		return getLicense().licenseName;
 	}
+	
+	public boolean isLicenseValid() {
+		return getLicenseFile() != null && !INVALID_LICENSE_FILE.equals(getLicenseName());
+	}
 
 
 	/**
@@ -172,13 +178,13 @@ public class BeCPGLicenseManager {
 	/**
 	 * <p>computeLicenseKey.</p>
 	 *
-	 * @param lisence a {@link fr.becpg.repo.license.BeCPGLicense} object.
+	 * @param license a {@link fr.becpg.repo.license.BeCPGLicense} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public static String computeLicenseKey(BeCPGLicense lisence) {
+	public static String computeLicenseKey(BeCPGLicense license) {
 
-		String key = lisence.licenseName + lisence.allowedNamedRead + lisence.allowedNamedWrite + lisence.allowedConcurrentRead
-				+ lisence.allowedConcurrentWrite + lisence.allowedConcurrentSupplier;
+		String key = license.licenseName + license.allowedNamedRead + license.allowedNamedWrite + license.allowedConcurrentRead
+				+ license.allowedConcurrentWrite + license.allowedConcurrentSupplier;
 
 		return java.util.Base64.getEncoder().encodeToString(key.getBytes());
 	}

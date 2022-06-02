@@ -1,4 +1,4 @@
-//<import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
+<import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 
 
 
@@ -47,8 +47,13 @@ function main()
            				description = field.description;
            				if(field.locale == lang.key){
            					field.localeLabel = lang.label;
-           					field.control = {params: {editorAppearance: "custom"
-           						, editorParameters:"toolbar: \"bold italic underline\",formats: { bold : {inline :'b' }},menu: {},entity_encoding : \"raw\",forced_root_blocks : false,forced_root_block: false,force_p_newlines: false"}};
+           					field.control = {
+								params: {
+								 editorAppearance: "custom",
+								 editorWidth: 750,
+           						 editorParameters:"toolbar: \"bold italic underline\",formats: { bold : {inline :'b' },underline : {inline : 'u', exact : true},italic : {inline : 'i'} },extended_valid_elements:'u,b,i',invalid_elements:'em strong',menu: {},entity_encoding : \"raw\",forced_root_blocks : false,forced_root_block: false,force_p_newlines: false"
+           						}
+           					 };
 
            					model.mlFields.push(field);
            					added = true;
@@ -62,7 +67,7 @@ function main()
            			  	 country = lang.key.split("_")[1].toLowerCase();
            			  	}
            				var toAdd  = { "localeLabel" : lang.label, "locale" : lang.key, "value": "", "description":description, "country":country, "control": { "params": 
-           					{"editorAppearance": "custom", "editorParameters":"toolbar: \"bold italic underline\",menu: {},formats: { bold : {inline :'b' }},entity_encoding : \"raw\",forced_root_blocks : false,forced_root_block: false,force_p_newlines: false"}
+           					{"editorAppearance": "custom", "editorWidth" : 750, "editorParameters":"toolbar: \"bold italic underline\",menu: {},formats: { bold : {inline :'b' },underline : {inline : 'u', exact : true},italic : {inline : 'i'} },extended_valid_elements:'u,b,i',invalid_elements:'em strong',entity_encoding : \"raw\",forced_root_blocks : false,forced_root_block: false,force_p_newlines: false"}
            					}};
            				model.mlFields.push(toAdd);
            			}

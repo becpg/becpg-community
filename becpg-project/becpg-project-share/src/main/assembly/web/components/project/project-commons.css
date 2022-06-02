@@ -170,6 +170,19 @@
 	padding-left: 20px;
 }
 
+project-status-Cancelled {
+	background: url("../documentlibrary/indicators/project-cancelled-16.png") no-repeat;
+	display: inline-table;
+	background-repeat: no-repeat;
+	padding-left: 20px;
+}
+
+project-status-OnHold {
+	background: url("../documentlibrary/indicators/project-onhold-16.png") no-repeat;
+	display: inline-table;
+	background-repeat: no-repeat;
+	padding-left: 20px;
+}
 
 
 .project-list span.delivrable-status {

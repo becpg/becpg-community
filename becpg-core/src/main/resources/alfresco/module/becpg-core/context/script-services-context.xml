@@ -76,7 +76,7 @@
 		<property name="tenantAdminService" ref="tenantAdminService"/>
 		<property name="contentService" ref="contentService"/>
 		<property name="entityReportService" ref="entityReportService"/>
-		<property name="personService" ref="personService"/>
+		<property name="beCPGLicenseManager" ref="becpgLicenseManager"/>
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">

@@ -35,6 +35,8 @@ else if (args["user"] != null)
    var languageMgrGroup = people.getGroup("GROUP_LanguageMgr");
 
    var isOlapUser = false, isMemberOfAllowedGroup = false;
+
+   var isAdmin = false;
    
    if(languageMgrGroup){
       if(people.getMembers(languageMgrGroup, false).length == 0){
@@ -56,6 +58,10 @@ else if (args["user"] != null)
        if("GROUP_OlapUser" == groups[i].properties["cm:authorityName"]){
     	   isOlapUser = true;
        }
+       if("GROUP_ALFRESCO_ADMINISTRATORS" == groups[i].properties["cm:authorityName"]){
+    	   isAdmin = true;
+       }
+
        if("GROUP_LicenseWriteNamed" == groups[i].properties["cm:authorityName"]
        	|| "GROUP_LicenseReadNamed" == groups[i].properties["cm:authorityName"]
        	|| "GROUP_LicenseWriteConcurrent" == groups[i].properties["cm:authorityName"]
@@ -86,9 +92,10 @@ else if (args["user"] != null)
   if(userContentLocale!=null){
       model.capabilities["userContentLocale_"+userContentLocale] = true;
   }
-  
-  model.capabilities["hasValidLicense"] = !bcpg.isShowUnauthorizedWarning() || userId == "admin"|| isMemberOfAllowedGroup;
-		  
+	
+	model.capabilities["isLicenseValid"] = bcpg.isLicenseValid() || !isAdmin;
+	model.capabilities["isMemberOfLicenseGroup"] = !bcpg.isShowUnauthorizedWarning() || userId == "admin"|| isMemberOfAllowedGroup;
+
   model.immutableProperties = people.getImmutableProperties(userId);
 }
 

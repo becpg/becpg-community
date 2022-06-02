@@ -69,7 +69,7 @@ public class CalculatedCharactsValuePlugin extends EntityListValuePlugin {
 				}
 				
 				ret.addAll(BeCPGQueryBuilder.createQuery().inType(PLMModel.TYPE_NUT).inType(PLMModel.TYPE_COST).inType(PLMModel.TYPE_PHYSICO_CHEM)
-						.inType(PLMModel.TYPE_LABEL_CLAIM).andPropQuery(BeCPGModel.PROP_CHARACT_NAME, prepareQuery(query)).ftsLanguage().list());
+						.inType(PLMModel.TYPE_LABEL_CLAIM).andPropQuery(BeCPGModel.PROP_CHARACT_NAME, prepareQuery(query)).excludeProp(BeCPGModel.PROP_IS_DELETED, "true").ftsLanguage().list());
 				
 
 		

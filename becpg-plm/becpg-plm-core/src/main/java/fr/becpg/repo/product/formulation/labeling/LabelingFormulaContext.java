@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -68,6 +69,7 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
+import fr.becpg.repo.product.data.constraints.PlaceOfActivityTypeCode;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
@@ -107,8 +109,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private final AssociationService associationService;
 
 	private final AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
-	private final  SpelFormulaService formulaService;
+
+	private final SpelFormulaService formulaService;
 
 	private List<ReqCtrlListDataItem> errors = new ArrayList<>();
 
@@ -380,6 +382,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String ingTypeDefaultFormat = "{0}: {2} [{3}]";
 	private String ingTypeDecThresholdFormat = "{0} [{3}]";
 	private String subIngsDefaultFormat = "{0} ({2}) [{3}]";
+	private String geoPlaceOfActivityFormat = "{0}: {1}";
 
 	private String allergenDetailsFormat = "{0} ({2})";
 	private String allergenReplacementPattern = "<b>$1</b>";
@@ -404,6 +407,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private String ingTypeDefaultSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String allergensSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String geoOriginsSeparator = RepoConsts.LABEL_SEPARATOR;
+	private String geoPlaceOfActiviySeparator = RepoConsts.LABEL_SEPARATOR;
 	private String bioOriginsSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String subIngsSeparator = RepoConsts.LABEL_SEPARATOR;
 	private String footNotesLabelSeparator = "<br/>";
@@ -533,6 +537,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public void setYield(Double yield) {
 		this.yield = yield;
 		this.ingsLabelingWithYield = true;
+	}
+
+	public void setGeoPlaceOfActivityFormat(String geoPlaceOfActivityFormat) {
+		this.geoPlaceOfActivityFormat = geoPlaceOfActivityFormat;
+	}
+
+	public void setGeoPlaceOfActiviySeparator(String geoPlaceOfActiviySeparator) {
+		this.geoPlaceOfActiviySeparator = geoPlaceOfActiviySeparator;
 	}
 
 	/**
@@ -894,6 +906,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			for (Format format : messageFormat.getFormats()) {
 				if (format instanceof DecimalFormat) {
 					applyAutomaticPrecicion(((DecimalFormat) format), qty, defaultRoundingMode, useTotalPrecision);
+					break;
 				}
 			}
 		}
@@ -1483,6 +1496,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		Double firstQtyPercWithYield = 0d;
 		LabelingComponent firstLabelingComponent = null;
 		String firstGeo = "";
+		String firstOtherGeo = "";
 		String firstBio = "";
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> kv : getSortedIngListByType(lblCompositeContext).entrySet()) {
 
@@ -1506,7 +1520,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
 				}
 
-				String geoOriginsLabel = createGeoOriginsLabel(null, kv.getValue());
+				String geoOriginsLabel = createGeoOriginsLabel(null, kv.getValue(), PlaceOfActivityTypeCode.LAST_PROCESSING);
+				String otherGeoOriginsLabel = createGeoOriginsLabel(null, kv.getValue(), PlaceOfActivityTypeCode.EMPTY);
 				String bioOriginsLabel = createBioOriginsLabel(null, kv.getValue());
 
 				String subLabel = getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, null,
@@ -1523,13 +1538,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						firstQtyPercWithYield = qtyPercWithYield;
 						firstGeo = geoOriginsLabel != null ? geoOriginsLabel : "";
 						firstBio = bioOriginsLabel != null ? bioOriginsLabel : "";
+						firstOtherGeo = otherGeoOriginsLabel != null ? otherGeoOriginsLabel : "";
 					} else {
 
 						boolean showPerc = showPerc(kv.getKey());
 
 						tableContent.append(getHtmlTableRowFormat(kv.getKey(), qtyPerc).format(new Object[] { decorate(subLabel),
 								showPerc ? qtyPerc : null, geoOriginsLabel != null ? decorate(geoOriginsLabel) : "",
-								bioOriginsLabel != null ? decorate(bioOriginsLabel) : "", showPerc ? qtyPercWithYield : null }));
+								bioOriginsLabel != null ? decorate(bioOriginsLabel) : "", showPerc ? qtyPercWithYield : null,
+								otherGeoOriginsLabel }));
 					}
 					if (qtyPerc != null) {
 						total = total.add(roundeedValue(qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
@@ -1553,7 +1570,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					Double volumePercWithYield = computeVolumePerc(lblCompositeContext, component, 1d, true);
 
 					String ingName = getLegalIngName(component, null, false, false);
-					String geoOriginsLabel = createGeoOriginsLabel(null, component.getGeoOrigins());
+					String geoOriginsLabel = createGeoOriginsLabel(null, component.getGeoOriginsByPlaceOfActivity(),
+							PlaceOfActivityTypeCode.LAST_PROCESSING);
+					String otherGeoOriginsLabel = createGeoOriginsLabel(null, component.getGeoOriginsByPlaceOfActivity(),
+							PlaceOfActivityTypeCode.EMPTY);
 					String bioOriginsLabel = createBioOriginsLabel(null, component.getBioOrigins());
 
 					qtyPerc = (useVolume ? volumePerc : qtyPerc);
@@ -1588,6 +1608,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								firstQtyPercWithYield = qtyPercWithYield;
 								firstGeo = geoOriginsLabel != null ? geoOriginsLabel : "";
 								firstBio = bioOriginsLabel != null ? bioOriginsLabel : "";
+								firstOtherGeo = otherGeoOriginsLabel != null ? otherGeoOriginsLabel : "";
 							} else {
 
 								boolean showPerc = showPerc(component);
@@ -1595,7 +1616,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								tableContent.append(getHtmlTableRowFormat(component, qtyPerc).format(new Object[] { decorate(subLabel),
 										showPerc && !shouldSkip ? qtyPerc : null, geoOriginsLabel != null ? decorate(geoOriginsLabel) : "",
 										bioOriginsLabel != null ? decorate(bioOriginsLabel) : "",
-										showPerc && !shouldSkipWithYield ? qtyPercWithYield : null }));
+										showPerc && !shouldSkipWithYield ? qtyPercWithYield : null, otherGeoOriginsLabel }));
 							}
 
 							if (qtyPerc != null) {
@@ -1628,12 +1649,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			ret.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()))
 					.format(new Object[] { decorate(firstLabel), showPerc(firstLabelingComponent) ? firstQtyPerc : null, decorate(firstGeo),
-							decorate(firstBio), showPerc(firstLabelingComponent) ? firstQtyPercWithYield : null }));
+							decorate(firstBio), showPerc(firstLabelingComponent) ? firstQtyPercWithYield : null, firstOtherGeo }));
 		} else {
 
 			ret.append(getHtmlTableRowFormat(firstLabelingComponent, firstQtyPerc)
 					.format(new Object[] { decorate(firstLabel), showPerc(firstLabelingComponent) ? firstQtyPerc : null, decorate(firstGeo),
-							decorate(firstBio), showPerc(firstLabelingComponent) ? firstQtyPercWithYield : null }));
+							decorate(firstBio), showPerc(firstLabelingComponent) ? firstQtyPercWithYield : null, firstOtherGeo }));
 		}
 
 		ret.append(tableContent);
@@ -1828,7 +1849,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				}
 
-				String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
+				String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
+						PlaceOfActivityTypeCode.LAST_PROCESSING);
 				String bioOriginsLabel = createBioOriginsLabel(component.getNodeRef(), component.getBioOrigins());
 
 				if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
@@ -1864,7 +1886,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		if (nodeDeclarationFilters.containsKey(nodeRef)) {
 			for (DeclarationFilterRule declarationFilter : nodeDeclarationFilters.get(nodeRef)) {
 				if (DeclarationType.DoNotDetails.equals(declarationFilter.getDeclarationType())
-						&& matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService,null)) && declarationFilter.matchLocale(currentLocale)) {
+						&& matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, null))
+						&& declarationFilter.matchLocale(currentLocale)) {
 					return true;
 				}
 			}
@@ -1994,7 +2017,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
 				}
 
-				String geoOriginsLabel = createGeoOriginsLabel(kv.getKey().getNodeRef(), kv.getValue());
+				String geoOriginsLabel = createGeoOriginsLabel(kv.getKey().getNodeRef(), kv.getValue(), PlaceOfActivityTypeCode.LAST_PROCESSING);
 				String bioOriginsLabel = createBioOriginsLabel(kv.getKey().getNodeRef(), kv.getValue());
 
 				toAppend.append(getIngTextFormat(kv.getKey(), qtyPerc).format(new Object[] { ingTypeLegalName, qtyPerc,
@@ -2098,7 +2121,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			String ingName = getLegalIngName(component, qtyPerc, false, first && (total != null));
 
-			String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOrigins());
+			String geoOriginsLabel = createGeoOriginsLabel(component.getNodeRef(), component.getGeoOriginsByPlaceOfActivity(),
+					PlaceOfActivityTypeCode.LAST_PROCESSING);
 			String bioOriginsLabel = createBioOriginsLabel(component.getNodeRef(), component.getBioOrigins());
 
 			if (logger.isDebugEnabled()) {
@@ -2169,22 +2193,28 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return ret;
 	}
 
-	private String createGeoOriginsLabel(NodeRef nodeRef, List<LabelingComponent> components) {
+	private String createGeoOriginsLabel(NodeRef nodeRef, List<LabelingComponent> components, PlaceOfActivityTypeCode placeOfActivity) {
 
 		if (((showAllGeo != null) && showAllGeo.matchLocale(I18NUtil.getLocale()))
 				|| ((nodeRef != null) && showGeoRules.containsKey(nodeRef) && showGeoRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
 
 			if ((components != null) && !components.isEmpty()) {
 
-				Set<NodeRef> geoOrigins = new HashSet<>();
+				EnumMap<PlaceOfActivityTypeCode, Set<NodeRef>> geoOrigins = new EnumMap<>(PlaceOfActivityTypeCode.class);
 
 				for (LabelingComponent component : components) {
-					if (component.getGeoOrigins() != null) {
-						geoOrigins.addAll(component.getGeoOrigins());
+
+					for (Map.Entry<PlaceOfActivityTypeCode, Set<NodeRef>> entry : component.getGeoOriginsByPlaceOfActivity().entrySet()) {
+						if (geoOrigins.containsKey(entry.getKey())) {
+							geoOrigins.get(entry.getKey()).addAll(entry.getValue());
+						} else {
+							geoOrigins.put(entry.getKey(), entry.getValue());
+						}
+
 					}
 				}
 
-				return createGeoOriginsLabel(null, geoOrigins);
+				return createGeoOriginsLabel(null, geoOrigins, placeOfActivity);
 			}
 
 		}
@@ -2192,21 +2222,63 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return null;
 	}
 
-	private String createGeoOriginsLabel(NodeRef nodeRef, Set<NodeRef> geoOrigins) {
+	private String createGeoOriginsLabel(NodeRef nodeRef, Map<PlaceOfActivityTypeCode, Set<NodeRef>> geoOriginsByPlaceOfActivity,
+			PlaceOfActivityTypeCode placeOfActivity) {
 
-		if (((showAllGeo != null) && showAllGeo.matchLocale(I18NUtil.getLocale()))
-				|| ((nodeRef != null) && showGeoRules.containsKey(nodeRef) && showGeoRules.get(nodeRef).matchLocale(I18NUtil.getLocale()))) {
+		ShowRule showRule = showAllGeo;
+		if (showGeoRules.containsKey(nodeRef) && showGeoRules.get(nodeRef).matchLocale(I18NUtil.getLocale())) {
+			showRule = showGeoRules.get(nodeRef);
+		}
 
-			if ((geoOrigins != null) && !geoOrigins.isEmpty()) {
+		if (showRule!=null && showRule.matchLocale(I18NUtil.getLocale())) {
 
-				Set<String> geoOriginsBuffer = new HashSet<>();
-				for (NodeRef geoOrigin : geoOrigins) {
-					geoOriginsBuffer.add(getCharactName(geoOrigin));
+			List<PlaceOfActivityTypeCode> filters = new LinkedList<>();
+
+			if ((showRule.format != null) && !showRule.format.isEmpty()) {
+				try {
+					filters.add(PlaceOfActivityTypeCode.valueOf(showRule.format));
+				} catch (IllegalArgumentException e) {
+					//Do nothing
 				}
-				return String.join(getLocaleSeparator(geoOriginsSeparator), geoOriginsBuffer);
 			}
+
+			if (filters.isEmpty()) {
+				filters.add(placeOfActivity);
+			}
+
+			StringBuilder ret = new StringBuilder();
+
+			for (PlaceOfActivityTypeCode filter : filters) {
+
+				if (!ret.toString().isBlank()) {
+					ret.append(geoPlaceOfActiviySeparator);
+				}
+
+				Set<NodeRef> geoOrigins = geoOriginsByPlaceOfActivity.get(filter);
+
+				if ((geoOrigins != null) && !geoOrigins.isEmpty()) {
+
+					Set<String> geoOriginsBuffer = new HashSet<>();
+					for (NodeRef geoOrigin : geoOrigins) {
+						geoOriginsBuffer.add(getCharactName(geoOrigin));
+					}
+
+					if ((filters.size() > 1) && !PlaceOfActivityTypeCode.EMPTY.equals(filter)) {
+						ret.append((MessageFormat.format(geoPlaceOfActivityFormat, getPlaceOfActivityName(filter),
+								String.join(getLocaleSeparator(geoOriginsSeparator), geoOriginsBuffer))));
+					} else {
+						ret.append(String.join(getLocaleSeparator(geoOriginsSeparator), geoOriginsBuffer));
+					}
+				}
+
+			}
+			return ret.toString().isBlank() ? null : ret.toString();
 		}
 		return null;
+	}
+
+	private String getPlaceOfActivityName(PlaceOfActivityTypeCode filter) {
+		return I18NUtil.getMessage("listconstraint.gs1_productActivityTypeCodes." + filter.toString());
 	}
 
 	private String createBioOriginsLabel(NodeRef nodeRef, List<LabelingComponent> components) {
@@ -2333,10 +2405,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				tree.put("allergens", tmp);
 			}
 
-			if (!component.getGeoOrigins().isEmpty()
-					&& (!(component instanceof CompositeLabeling) || ((CompositeLabeling) component).getIngList().isEmpty())) {
+			Set<NodeRef> geos = component.getGeoOriginsByPlaceOfActivity().computeIfAbsent(PlaceOfActivityTypeCode.LAST_PROCESSING,
+					a -> new HashSet<>());
+
+			if (!geos.isEmpty() && (!(component instanceof CompositeLabeling) || ((CompositeLabeling) component).getIngList().isEmpty())) {
 				JSONArray geoOrigins = new JSONArray();
-				for (NodeRef geoOrigin : component.getGeoOrigins()) {
+
+				for (NodeRef geoOrigin : geos) {
 					geoOrigins.add(getCharactName(geoOrigin));
 				}
 				tree.put("geoOrigins", geoOrigins);
@@ -2528,15 +2603,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					boolean shouldBreak = false;
 					for (DeclarationFilterRule declarationFilter : nodeDeclarationFilters.get(ingType.getNodeRef())) {
 						if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType())
-								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext( formulaService, ingType)) && declarationFilter.matchLocale(currentLocale)) {
+								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, ingType))
+								&& declarationFilter.matchLocale(currentLocale)) {
 							shouldBreak = true;
 							break;
 						} else if ((DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
-								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, ingType)) && declarationFilter.matchLocale(currentLocale))) {
+								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, ingType))
+								&& declarationFilter.matchLocale(currentLocale))) {
 							ingType = ingType.createCopy();
 							ingType.setIsDoNotDeclare(true);
 						} else if ((DeclarationType.DoNotDetailsAtEnd.equals(declarationFilter.getDeclarationType())
-								&& !declarationFilter.isThreshold() && matchFormule(declarationFilter, new LabelingFormulaFilterContext( formulaService, ingType))
+								&& !declarationFilter.isThreshold()
+								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, ingType))
 								&& declarationFilter.matchLocale(currentLocale))) {
 							ingType = ingType.createCopy();
 							ingType.setIsLastGroup(true);
@@ -2742,8 +2820,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			try {
 				ExpressionParser parser = new SpelExpressionParser();
-				
-				StandardEvaluationContext dataContext =  formulaService.createCustomSpelContext(entity, formulaFilterContext);
+
+				StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(entity, formulaFilterContext, false);
 
 				Expression exp = parser.parseExpression(SpelHelper.formatFormula(formulaFilter.getFormula()));
 
@@ -2758,7 +2836,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				getEntity().getReqCtrlList()
 						.add(new ReqCtrlListDataItem(
-								null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
+								null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
 										formulaFilter.getRuleName(), e.getLocalizedMessage()),
 								null, new ArrayList<>(), RequirementDataType.Labelling));
 				if (logger.isDebugEnabled()) {

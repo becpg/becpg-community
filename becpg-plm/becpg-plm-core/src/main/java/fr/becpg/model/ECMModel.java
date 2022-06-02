@@ -121,9 +121,6 @@ public class ECMModel {
 	/** Constant <code>ASSOC_CUL_TARGET_ITEM</code> */
 	public static final QName ASSOC_CUL_TARGET_ITEM = QName.createQName(ECM_URI,
 			"culTargetItem");	
-	/** Constant <code>ASSOC_CUL_SIMULATION_ITEM</code> */
-	public static final QName ASSOC_CUL_SIMULATION_ITEM = QName.createQName(ECM_URI,
-			"culSimulationItem");	
 	
 	
 	

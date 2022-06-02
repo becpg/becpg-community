@@ -35,6 +35,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.GS1Model;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
@@ -45,20 +46,18 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
-import fr.becpg.repo.product.data.FinishedProductData;
-import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.RawMaterialData;
-import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.AllergenType;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
+import fr.becpg.repo.product.data.constraints.PlaceOfActivityTypeCode;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.IngItem;
+import fr.becpg.repo.product.data.ing.LabelingComponent;
 import fr.becpg.repo.product.data.meat.MeatContentData;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -228,7 +227,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			logger.debug("Calculate Ingredient Labeling for group : " + labelingRuleListsGroup.getKey() + " - " + formulatedProduct.getName());
 
-			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository, formulaService);
+			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository,
+					formulaService);
 
 			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield);
 
@@ -279,7 +279,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
 
-			if ((formulatedProduct instanceof RawMaterialData) || !formulatedProduct.hasCompoListEl()) {
+			if ((formulatedProduct.isGeneric()) || Boolean.TRUE.equals(formulatedProduct.getIsIngListManual())
+					|| !formulatedProduct.hasCompoListEl()) {
 				compoList.add(new CompoListDataItem(null, null, 1d, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, formulatedProduct.getNodeRef()));
 			} else {
 				compoList = formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
@@ -614,10 +615,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							}
 
 							if (fatReplacement != null) {
-								fatReplacement.getAllergens().addAll(component.getAllergens());
-								fatReplacement.getGeoOrigins().addAll(component.getGeoOrigins());
-								fatReplacement.getBioOrigins().addAll(component.getBioOrigins());
-								fatReplacement.getFootNotes().addAll(component.getFootNotes());
+
+								copyAttributes(fatReplacement, component);
 							}
 
 						} else {
@@ -804,11 +803,25 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			prev.setPlural(true);
 
-			prev.getAllergens().addAll(component.getAllergens());
-			prev.getGeoOrigins().addAll(component.getGeoOrigins());
-			prev.getBioOrigins().addAll(component.getBioOrigins());
-			prev.getFootNotes().addAll(component.getFootNotes());
+			copyAttributes(prev, component);
 		}
+	}
+
+	private void copyAttributes(CompositeLabeling prev, CompositeLabeling component) {
+
+		prev.getAllergens().addAll(component.getAllergens());
+		prev.getBioOrigins().addAll(component.getBioOrigins());
+		prev.getFootNotes().addAll(component.getFootNotes());
+
+		for (Map.Entry<PlaceOfActivityTypeCode, Set<NodeRef>> entry : component.getGeoOriginsByPlaceOfActivity().entrySet()) {
+			if (prev.getGeoOriginsByPlaceOfActivity().containsKey(entry.getKey())) {
+				prev.getGeoOriginsByPlaceOfActivity().get(entry.getKey()).addAll(entry.getValue());
+			} else {
+				prev.getGeoOriginsByPlaceOfActivity().put(entry.getKey(), entry.getValue());
+			}
+
+		}
+
 	}
 
 	private CompositeLabeling mergeCompositeLabeling(CompositeLabeling lblCompositeContext, LabelingFormulaContext labelingFormulaContext) {
@@ -867,10 +880,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							toMerged.setVolumeWithYield(toMerged.getVolumeWithYield() + volumeWithYield);
 						}
 
-						toMerged.getAllergens().addAll(subComponent.getAllergens());
-						toMerged.getGeoOrigins().addAll(subComponent.getGeoOrigins());
-						toMerged.getBioOrigins().addAll(subComponent.getBioOrigins());
-						toMerged.getFootNotes().addAll(subComponent.getFootNotes());
+						copyAttributes(toMerged, subComponent);
 
 					}
 				}
@@ -1023,11 +1033,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									Double qtyWithYield = component.getQtyWithYield();
 									Double volumeWithYield = component.getVolumeWithYield();
 
-									Set<NodeRef> allergens = component.getAllergens();
-									Set<NodeRef> geoOrigins = component.getGeoOrigins();
-									Set<NodeRef> bioOrigins = component.getBioOrigins();
-									Set<FootNoteRule> footNotes = component.getFootNotes();
-
 									boolean is100Perc = (aggregateRule.getQty() == null) || (aggregateRule.getQty() == 100d);
 									// Add ing to group
 									if (aggregateRule.getQty() != null) {
@@ -1102,10 +1107,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 												current.setVolumeWithYield(current.getVolumeWithYield() + volumeWithYield);
 											}
 
-											current.getAllergens().addAll(allergens);
-											current.getGeoOrigins().addAll(geoOrigins);
-											current.getBioOrigins().addAll(bioOrigins);
-											current.getFootNotes().addAll(footNotes);
+											copyAttributes(current, component);
+
 										}
 
 									} else {
@@ -1161,14 +1164,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 												}
 
 												error = appendToAggregate(childComponent, compositeLabeling, aggregateRule, subQty, subVolume,
-														subQtyWithYield, subVolumeWithYield, childComponent.getAllergens(),
-														childComponent.getGeoOrigins(), childComponent.getBioOrigins(),
-														childComponent.getFootNotes());
+														subQtyWithYield, subVolumeWithYield);
 											}
 
 										} else {
 											error = appendToAggregate(component, compositeLabeling, aggregateRule, qty, volume, qtyWithYield,
-													volumeWithYield, allergens, geoOrigins, bioOrigins, footNotes);
+													volumeWithYield);
 										}
 
 										if (error != null) {
@@ -1226,8 +1227,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private ReqCtrlListDataItem appendToAggregate(CompositeLabeling component, CompositeLabeling compositeLabeling, AggregateRule aggregateRule,
-			Double qty, Double volume, Double qtyWithYield, Double volumeWithYield, Set<NodeRef> allergens, Set<NodeRef> geoOrigins,
-			Set<NodeRef> bioOrigins, Set<FootNoteRule> footNoteRules) {
+			Double qty, Double volume, Double qtyWithYield, Double volumeWithYield) {
 		CompositeLabeling current = compositeLabeling.getIngList().get(component.getNodeRef());
 		boolean is100Perc = (aggregateRule.getQty() == null) || (aggregateRule.getQty() == 100d);
 
@@ -1292,16 +1292,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				current.setVolumeWithYield(null);
 			}
 
-			current.getAllergens().addAll(allergens);
-			current.getGeoOrigins().addAll(geoOrigins);
-			current.getBioOrigins().addAll(bioOrigins);
-			current.getFootNotes().addAll(footNoteRules);
+			copyAttributes(current, component);
 
 		} else {
-			compositeLabeling.getAllergens().addAll(allergens);
-			compositeLabeling.getGeoOrigins().addAll(geoOrigins);
-			compositeLabeling.getBioOrigins().addAll(bioOrigins);
-			compositeLabeling.getFootNotes().addAll(footNoteRules);
+			copyAttributes(compositeLabeling, component);
 		}
 
 		if ((qty != null) && (compositeLabeling.getQtyTotal() != null)) {
@@ -1510,7 +1504,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				}
 
-				boolean isLocalSemiFinished = (productData instanceof LocalSemiFinishedProductData);
+				boolean isLocalSemiFinished = productData.isLocalSemiFinished();
 
 				// Calculate qty
 				Double qty = FormulationHelper.getQtyInKg(compoListDataItem);
@@ -1643,46 +1637,48 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				if (!DeclarationType.DoNotDeclare.equals(declarationType) || !aggregateRules.isEmpty()) {
 
-					// MultiLevel only if detail or group
-					if ((!DeclarationType.DoNotDetails.equals(declarationType) || !DeclarationType.DoNotDetailsAtEnd.equals(declarationType))
-							&& ((productData instanceof SemiFinishedProductData) || (productData instanceof FinishedProductData))) {
-						Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(
-								productData.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
-						if ((sfComposite.getChildren() != null) && !sfComposite.getChildren().isEmpty()) {
-							for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
-								CompoListDataItem clone = sfChild.getData().clone();
-								clone.setParent(compoListDataItem);
-								sfChild.setData(clone);
-								composite.addChild(sfChild);
-							}
-							isMultiLevel = true;
-						}
-					}
-
-					// Case show ings and is empty use legalName instead #2558
-					if (!isMultiLevel && (DeclarationType.Declare.equals(declarationType)) && !isLocalSemiFinished) {
-						if (((productData.getIngList() == null) || productData.getIngList().isEmpty())) {
-							declarationType = DeclarationType.DoNotDetails;
-						} else {
-							// Case all ingredients are omit
-							boolean shouldOmit = true;
-							for (IngListDataItem ingListItem : productData.getIngList()) {
-								DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem, labelingFormulaContext);
-
-								if (!DeclarationType.Omit.equals(ingDeclarationType)) {
-									shouldOmit = false;
-									break;
+					if (!isLocalSemiFinished) {
+						// MultiLevel only if detail or group
+						if ((!DeclarationType.DoNotDetails.equals(declarationType) || !DeclarationType.DoNotDetailsAtEnd.equals(declarationType))
+								&& (!productData.isGeneric() && !Boolean.TRUE.equals(productData.getIsIngListManual()))) {
+							Composite<CompoListDataItem> sfComposite = CompositeHelper.getHierarchicalCompoList(productData
+									.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
+							if ((sfComposite.getChildren() != null) && !sfComposite.getChildren().isEmpty()) {
+								for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
+									CompoListDataItem clone = sfChild.getData().clone();
+									clone.setParent(compoListDataItem);
+									sfChild.setData(clone);
+									composite.addChild(sfChild);
 								}
+								isMultiLevel = true;
 							}
-							if (shouldOmit) {
-								if (logger.isDebugEnabled()) {
-									logger.debug("Only omitted ingredients, omit the raw material");
-								}
-								declarationType = DeclarationType.Omit;
-							}
-
 						}
 
+						if (!isMultiLevel && (DeclarationType.Declare.equals(declarationType))) {
+							// Case show ings and is empty use legalName instead #2558
+							if (((productData.getIngList() == null) || productData.getIngList().isEmpty())) {
+								declarationType = DeclarationType.DoNotDetails;
+							} else {
+								// Case all ingredients are omit
+								boolean shouldOmit = true;
+								for (IngListDataItem ingListItem : productData.getIngList()) {
+									DeclarationType ingDeclarationType = getDeclarationType(compoListDataItem, ingListItem, labelingFormulaContext);
+
+									if (!DeclarationType.Omit.equals(ingDeclarationType)) {
+										shouldOmit = false;
+										break;
+									}
+								}
+								if (shouldOmit) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("Only omitted ingredients, omit the raw material");
+									}
+									declarationType = DeclarationType.Omit;
+								}
+
+							}
+
+						}
 					}
 
 					if (!DeclarationType.Omit.equals(declarationType)) {
@@ -1964,12 +1960,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		if (productData.getGeoOrigins() != null) {
-			compositeLabeling.getGeoOrigins().addAll(productData.getGeoOrigins());
+			addGeo(compositeLabeling, productData.getGeoOrigins(), PlaceOfActivityTypeCode.LAST_PROCESSING);
 		}
-
-		//		if (productData.getBioOrigins() != null) {
-		//			compositeLabeling.getGeoOrigins().addAll(productData.getBioOrigins());
-		//		}
 
 	}
 
@@ -2253,10 +2245,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 					}
 
+					boolean hasGeoTransfo = false;
 					if ((ingListItem.getData().getGeoTransfo() != null) && !ingListItem.getData().getGeoTransfo().isEmpty()) {
-						ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoTransfo());
-					} else if (ingListItem.getData().getGeoOrigin() != null) {
-						ingLabelItem.getGeoOrigins().addAll(ingListItem.getData().getGeoOrigin());
+						hasGeoTransfo = addGeo(ingLabelItem, ingListItem.getData().getGeoTransfo(), PlaceOfActivityTypeCode.LAST_PROCESSING);
+					}
+
+					if (ingListItem.getData().getGeoOrigin() != null) {
+						addGeo(ingLabelItem, ingListItem.getData().getGeoOrigin(),
+								hasGeoTransfo ? PlaceOfActivityTypeCode.EMPTY : PlaceOfActivityTypeCode.LAST_PROCESSING);
+
 					}
 
 					if (ingListItem.getData().getBioOrigin() != null) {
@@ -2264,7 +2261,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					}
 
 					if (product.getGeoOrigins() != null) {
-						ingLabelItem.getGeoOrigins().addAll(product.getGeoOrigins());
+						addGeo(ingLabelItem, product.getGeoOrigins(), PlaceOfActivityTypeCode.LAST_PROCESSING);
 					}
 
 					ingLabelItem.getFootNotes().addAll(extractFootNotes(compoListDataItem, ingListItem.getData(), labelingFormulaContext));
@@ -2402,6 +2399,32 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return parent;
 	}
 
+	private Boolean addGeo(LabelingComponent labelingComponent, List<NodeRef> geoOrigins, PlaceOfActivityTypeCode defaultActivity) {
+
+		boolean added = false;
+		for (NodeRef geo : geoOrigins) {
+
+			@SuppressWarnings("unchecked")
+			List<String> placeOfActivityProps = (List<String>) nodeService.getProperty(geo, GS1Model.PROP_PRODUCT_ACTIVITY_TYPE_CODE);
+
+			if ((placeOfActivityProps != null) && !placeOfActivityProps.isEmpty()) {
+				for (String placeOfActivityProp : placeOfActivityProps) {
+					labelingComponent.getGeoOriginsByPlaceOfActivity()
+							.computeIfAbsent(PlaceOfActivityTypeCode.valueOf(placeOfActivityProp), (a) -> new HashSet<>()).add(geo);
+					added = true;
+
+				}
+
+			} else {
+				added = true;
+				labelingComponent.getGeoOriginsByPlaceOfActivity().computeIfAbsent(defaultActivity, (a) -> new HashSet<>()).add(geo);
+			}
+
+		}
+		return added;
+
+	}
+
 	private boolean hasVisibleSubIng(CompoListDataItem compoListDataItem, Composite<IngListDataItem> ingListItem,
 			LabelingFormulaContext labelingFormulaContext) {
 		for (Composite<IngListDataItem> subIngListItem : ingListItem.getChildren()) {
@@ -2434,7 +2457,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				for (DeclarationFilterRule declarationFilter : labelingFormulaContext.getNodeDeclarationFilters()
 						.get(compoListDataItem.getProduct())) {
 					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
-							.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService,compoListDataItem, ingListDataItem)))) {
+							.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, compoListDataItem, ingListDataItem)))) {
 
 						if (logger.isTraceEnabled()) {
 							logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
@@ -2450,7 +2473,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (labelingFormulaContext.getNodeDeclarationFilters().containsKey(ingListDataItem.getIng())) {
 				for (DeclarationFilterRule declarationFilter : labelingFormulaContext.getNodeDeclarationFilters().get(ingListDataItem.getIng())) {
 					if (!declarationFilter.isThreshold() && ((declarationFilter.getFormula() == null) || labelingFormulaContext
-							.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService,compoListDataItem, ingListDataItem)))) {
+							.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, compoListDataItem, ingListDataItem)))) {
 						if (logger.isTraceEnabled()) {
 							logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
 									+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
@@ -2462,7 +2485,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			for (DeclarationFilterRule declarationFilter : labelingFormulaContext.getDeclarationFilters()) {
 				if (!declarationFilter.isThreshold() && (declarationFilter.getFormula() != null) && labelingFormulaContext
-						.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService,compoListDataItem, ingListDataItem))) {
+						.matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, compoListDataItem, ingListDataItem))) {
 					if (logger.isTraceEnabled()) {
 						logger.trace(" -- Found declType : " + declarationFilter.getDeclarationType() + " for "
 								+ nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
@@ -2507,7 +2530,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			if (labelingFormulaContext.getNodeFootNoteRules().containsKey(compoListDataItem.getProduct())) {
 				for (FootNoteRule footNoteRule : labelingFormulaContext.getNodeFootNoteRules().get(compoListDataItem.getProduct())) {
 					if ((((footNoteRule.getFormula() == null) || footNoteRule.getFormula().isBlank()) || labelingFormulaContext
-							.matchFormule(footNoteRule, new LabelingFormulaFilterContext(formulaService,compoListDataItem, ingListDataItem)))) {
+							.matchFormule(footNoteRule, new LabelingFormulaFilterContext(formulaService, compoListDataItem, ingListDataItem)))) {
 
 						if (logger.isTraceEnabled()) {
 							logger.trace(" -- Found footNote : " + footNoteRule.getRuleName() + " for "
@@ -2538,8 +2561,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		for (FootNoteRule footNoteRule : labelingFormulaContext.getFootNoteRules()) {
-			if ((((footNoteRule.getFormula() == null) || footNoteRule.getFormula().isBlank())
-					|| labelingFormulaContext.matchFormule(footNoteRule, new LabelingFormulaFilterContext(formulaService,compoListDataItem, ingListDataItem)))) {
+			if ((((footNoteRule.getFormula() == null) || footNoteRule.getFormula().isBlank()) || labelingFormulaContext.matchFormule(footNoteRule,
+					new LabelingFormulaFilterContext(formulaService, compoListDataItem, ingListDataItem)))) {
 
 				if (logger.isTraceEnabled()) {
 					logger.trace(" -- Found footNote : " + footNoteRule.getRuleName() + " for "

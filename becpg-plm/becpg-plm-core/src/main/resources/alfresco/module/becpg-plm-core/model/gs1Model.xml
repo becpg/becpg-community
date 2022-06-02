@@ -770,6 +770,20 @@
 
 		<aspect name="gs1:innerPackAspect">
 			<properties>
+			
+				<property name="gs1:innerPackTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:packagingTypeCodeConstraint" />
+					</constraints>
+				</property>
+			
 				<property name="gs1:eanCodeInnerPack">
 					<type>d:text</type>
 					<index enabled="true">
