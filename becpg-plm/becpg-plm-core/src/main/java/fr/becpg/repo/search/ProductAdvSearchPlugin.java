@@ -109,14 +109,14 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			if ((datatype != null)) {
 				if (entityDictionaryService.isSubClass(datatype, BeCPGModel.TYPE_ENTITY_V2)) {
-					if (searchConfig.getDataListSearchFilters() != null) {
+					if (searchConfig.getDataListSearchFilters() != null && !nodes.isEmpty()) {
 						for (DataListSearchFilter filter : searchConfig.getDataListSearchFilters()) {
 							nodes = getSearchNodesByListCriteria(nodes, criteria, filter);
 						}
 					}
 				}
 
-				if (entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
+				if (entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT) && !nodes.isEmpty()) {
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT);
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE);
@@ -131,7 +131,10 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	private List<NodeRef> getSearchNodesByListCriteria(List<NodeRef> nodes, Map<String, String> criteria, DataListSearchFilter filter) {
 
-		List<NodeRef> entities = new ArrayList<>();
+		if(nodes.isEmpty()) {
+			return nodes;
+		}
+	
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -143,6 +146,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		List<EntitySourceAssoc> entitySourceAssocs = null;
 		List<EntitySourceAssoc> notEntitySourceAssocs = null;
+		List<NodeRef> entities = new ArrayList<>();
 
 		for (DataListSearchFilterField assocFilter : filter.getAssocsFilters()) {
 			String propValue = null;
@@ -161,6 +165,10 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue, isOrOperator),
 						assocFilter.getAttributeQname(), assocFilter.getSourceTypeQname(), isOrOperator, criteriaFilters);
+				
+				if(tmp == null) {
+					tmp = new ArrayList<>();
+				}
 
 				if ("not".equals(assocFilter.getOperator())) {
 
@@ -281,7 +289,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	@Override
 	public Set<String> getIgnoredFields(QName datatype, SearchConfig searchConfig) {
 		Set<String> ret = new HashSet<>();
-		if ((datatype != null) && entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT)) {
+		if ((datatype != null) && entityDictionaryService.isSubClass(datatype, BeCPGModel.TYPE_ENTITY_V2)) {
 
 			if (keysToExclude.isEmpty()) {
 				initKeys();
@@ -302,6 +310,11 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	 */
 	private List<NodeRef> filterByAssociations(List<NodeRef> nodes, QName datatype, Map<String, String> criteria) {
 
+
+		if(nodes.isEmpty()) {
+			return nodes;
+		}
+		
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -420,6 +433,12 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	}
 
 	private List<NodeRef> getSearchNodesBySpecificationCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
+
+		if(nodes.isEmpty()) {
+			return nodes;
+		}
+	
+			
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
