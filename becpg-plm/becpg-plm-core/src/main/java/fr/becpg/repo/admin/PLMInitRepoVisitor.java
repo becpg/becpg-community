@@ -1031,6 +1031,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_RESOURCEPRODUCT), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_CLIENT), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_SUPPLIER), BeCPGModel.TYPE_LINKED_VALUE);
+		entityLists.put(HierarchyHelper.getHierarchyPathName(PLMModel.TYPE_PRODUCTCOLLECTION), BeCPGModel.TYPE_LINKED_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_HIERARCHY, BeCPGModel.TYPE_LINKED_VALUE);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
@@ -1143,6 +1144,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		productTypes.add(PLMModel.TYPE_PACKAGINGMATERIAL);
 		productTypes.add(PLMModel.TYPE_PACKAGINGKIT);
 		productTypes.add(PLMModel.TYPE_RESOURCEPRODUCT);
+		productTypes.add(PLMModel.TYPE_PRODUCTCOLLECTION);
 
 		Set<String> subFolders = new HashSet<>();
 		subFolders.add(RepoConsts.PATH_IMAGES);
@@ -1230,6 +1232,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			} else if (productType.equals(SecurityModel.TYPE_ACL_GROUP)) {
 				dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
+			} else if (productType.equals(PLMModel.TYPE_PRODUCTCOLLECTION)) {
+				dataLists.add(PLMModel.TYPE_PRODUCTLIST);
+				//dataLists.add(GS1Model.TYPE_TRADEITEM_PRICE_LIST);
 			}
 
 			NodeRef entityTplNodeRef = entityTplService.createEntityTpl(productTplsNodeRef, productType, null, true, true, dataLists, subFolders);
@@ -1645,8 +1650,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		String[] groups = { PLMGroup.RDUser.toString(), PLMGroup.RDMgr.toString(), PLMGroup.QualityUser.toString(), PLMGroup.QualityMgr.toString(),
 				PLMGroup.ProductionUser.toString(), PLMGroup.ProductionMgr.toString(), PLMGroup.PackagingMgr.toString(),
-				PLMGroup.PackagingUser.toString(), PLMGroup.ReferencingMgr.toString(), PLMGroup.TradeUser.toString(), NCGroup.ClaimStart.toString(),
-				NCGroup.ClaimAnalysis.toString(), NCGroup.ClaimClassification.toString(), NCGroup.ClaimTreatment.toString(),
+				PLMGroup.PackagingUser.toString(), PLMGroup.ReferencingMgr.toString(), PLMGroup.TradeUser.toString(), PLMGroup.ProductValidationStart.toString(),
+				NCGroup.ClaimStart.toString(), 	NCGroup.ClaimAnalysis.toString(), NCGroup.ClaimClassification.toString(), NCGroup.ClaimTreatment.toString(),
 				NCGroup.ClaimResponse.toString(), NCGroup.ClaimClosing.toString(), ECMGroup.CreateChangeOrder.toString(),
 				ECMGroup.ApplyChangeOrder.toString() };
 

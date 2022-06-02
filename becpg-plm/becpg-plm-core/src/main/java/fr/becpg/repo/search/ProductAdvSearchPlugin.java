@@ -344,11 +344,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 						String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
 						Set<NodeRef> nodesToKeep = new HashSet<>();
 
+						Set<NodeRef> nodeRefs = new HashSet<>();
+			
+						
 						for (String strNodeRef : arrValues) {
 							NodeRef nodeRef = new NodeRef(strNodeRef);
 							if (nodeService.exists(nodeRef)) {
 								
-								Set<NodeRef> nodeRefs = new HashSet<>();
 								nodeRefs.add(nodeRef);
 								
 								if (nodeService.getType(nodeRef).equals(ContentModel.TYPE_PERSON)) {
@@ -358,21 +360,19 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 									}
 								}
 
-								List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(new ArrayList<>(nodeRefs),assocQName,
-										datatype, true , null);
-								
-								
-								for (EntitySourceAssoc assocRef : entitySourceAssocs) {
-
-									if (nodes.contains(assocRef.getEntityNodeRef())) {
-										nodesToKeep.add(assocRef.getEntityNodeRef());
-									}
-								}
-
-								
 							}
-
 						}
+						
+						if(!nodeRefs.isEmpty()) {
+
+							List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(new ArrayList<>(nodeRefs),assocQName,
+									datatype, true , null);
+							for (EntitySourceAssoc assocRef : entitySourceAssocs) {
+								nodesToKeep.add(assocRef.getDataListItemNodeRef());
+							}
+						}
+
+						
 						if (!isOROperand) {
 							nodes.retainAll(nodesToKeep);
 						} else {

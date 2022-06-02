@@ -45,7 +45,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
@@ -73,6 +72,7 @@ import fr.becpg.repo.helper.GTINHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.license.BeCPGLicenseManager;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -133,17 +133,17 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private ContentService contentService;
 	
 	private EntityReportService entityReportService;
-
-	private PersonService personService;
 	
+	private BeCPGLicenseManager beCPGLicenseManager;
+
 	private boolean useBrowserLocale;
 
 	private boolean showEntitiesInTree = false;
 
 	private boolean showUnauthorizedWarning = true;
 
-	public void setPersonService(PersonService personService) {
-		this.personService = personService;
+	public void setBeCPGLicenseManager(BeCPGLicenseManager beCPGLicenseManager) {
+		this.beCPGLicenseManager = beCPGLicenseManager;
 	}
 	
 	public void setEntityFormatService(EntityFormatService entityFormatService) {
@@ -821,8 +821,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param param a {@link java.lang.Object} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String getMessage(String messageKey, Object param) {
-		return I18NUtil.getMessage(messageKey, param, I18NUtil.getLocale());
+	public String getMessage(String messageKey, Object... param) {
+		return I18NUtil.getMessage(messageKey, param);
 	}
 
 	/**
@@ -1249,15 +1249,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
     		return count(type);
     	}
  	}
-
-	public ScriptNode getFullyAuthenticatedUser() {
-		
-		NodeRef fullyAuthenticatedUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
-		
-		return new ScriptNode(fullyAuthenticatedUser, serviceRegistry);
-	}
-	
-	
-	
+    
+    public boolean isLicenseValid() {
+    	return beCPGLicenseManager.isLicenseValid();
+    }
+    
 
 }

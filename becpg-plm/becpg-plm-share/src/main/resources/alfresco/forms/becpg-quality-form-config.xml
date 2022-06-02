@@ -727,6 +727,20 @@
 		
 				</appearance>
 			</form>
+			<form id="datagridWUsed">
+				<field-visibility>
+
+					<!-- mainInfo -->
+					<show id="cm:name" />
+					<show id="bcpg:plants" force="true" />
+					<show id="qa:claimType" force="true"/>
+					<show id="qa:claimDistributionNetwork" force="true"/>
+					<show id="bcpg:clients" force="true" />
+					<show id="bcpg:suppliers" force="true" />
+					<show id="qa:claimDescription" force="true"/>
+
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 	
@@ -796,6 +810,9 @@
 					<!-- Closing -->
 					<show id="qa:claimClosingDate" />
 					<show id="qa:claimClosingComment" />
+					
+					<!-- local security rule -->
+					<show id="sec:securityRef" />	
 					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -936,7 +953,13 @@
 					<field id="qa:claimClosingComment"  set="closing">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-
+					<set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
+			          <field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
+							</control-param>
+						</control>
+					  </field>
 					<!-- audit -->
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="cm:creator" set="audit" />
@@ -988,6 +1011,9 @@
 					<show id="cm:description" force="true"/>
 					<show id="cm:title" />
 					<show id="bcpg:code" />
+					
+					<!-- local security rule -->
+					<show id="sec:securityRef" />	
 
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -1001,6 +1027,13 @@
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
+					<set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
+			          <field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
+							</control-param>
+						</control>
+					  </field>
 				</appearance>
 			</form>
 		</forms>
@@ -1091,6 +1124,17 @@
 
 				</field-visibility>
 			</form>
+			<form id="datagridWUsed">
+				<field-visibility>
+					<show id="bcpg:code" />
+					<show id="cm:name" />
+					<show id="qa:qcState" />
+					<show id="qa:qcControlPlans" />
+					<show id="qa:batchId" />
+					<show id="qa:batchStart" />
+					<show id="qa:batchComment" />
+				</field-visibility>
+			</form>
 		</forms>
 	</config>
 
@@ -1119,6 +1163,9 @@
 
 					<!-- Product -->
 					<show id="qa:product" />
+					
+					<!-- local security rule -->
+					<show id="sec:securityRef" />	
 
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -1153,6 +1200,14 @@
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
+					
+					 <set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
+			          <field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
+							</control-param>
+						</control>
+					  </field>
 
 					<!-- audit -->
 					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" />
@@ -1193,6 +1248,9 @@
 					<show id="qa:cpReleaseInfo" />
 					<show id="qa:cpSendResults" />
 					<show id="qa:cpStoreResults" />
+					
+					<!-- local security rule -->
+					<show id="sec:securityRef" />	
 
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -1206,6 +1264,13 @@
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
+					<set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
+			          <field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
+							</control-param>
+						</control>
+					  </field>
 				</appearance>
 			</form>
 		</forms>
@@ -1240,6 +1305,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1254,6 +1320,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="datagrid">
@@ -1261,6 +1328,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1275,6 +1343,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1289,6 +1358,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="datagrid">
@@ -1296,6 +1366,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1311,6 +1382,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1326,6 +1398,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="datagrid">
@@ -1334,6 +1407,7 @@
 					<show id="bcpg:charactName" force="true" />
 					<show id="cm:title" force="true" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1392,6 +1466,36 @@
 					<field id="qa:slReaction">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="qa:slControlPoint" />
+					<show id="qa:sdlQty" />
+					<show id="qa:sdlFreqText" />
+					<show id="qa:sdlFreq" />
+					<show id="qa:sdlFreqUnit" />
+					<show id="qa:slControlStep" />
+					<show id="qa:slSamplingGroup" />
+					<show id="qa:slControlingGroup" />
+					<show id="qa:slFixingGroup" />
+					<show id="qa:slReaction" />
+				</field-visibility>
+
+				<appearance>
+					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)"/>
+					<field id="qa:slReaction">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="qa:sdlFreqUnit">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -1616,6 +1720,50 @@
 					<field id="qa:clTimePeriod" set="reqInfo" />
 					<field id="qa:clType" set="reqInfo" />
 					<field id="qa:clTemperature" set="reqInfo" />
+					<field id="qa:clMethod" set="reqInfo" />
+					<field id="qa:clTarget" set="reqInfo" />
+					<field id="qa:clUnit" set="reqInfo" />
+					<field id="qa:clMini" set="reqInfo" />
+					<field id="qa:clMaxi" set="reqInfo" />
+					<field id="qa:clCharacts" set="reqInfo" />
+					<field id="qa:clRequired" set="reqInfo" />
+					
+					<set id="fillInfo" appearance="bordered-panel" label-id="becpg.forms.set.fill-info.label" />
+					<field id="qa:clValue" set="fillInfo" />
+					<field id="qa:clState" set="fillInfo" />
+				</appearance>
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="qa:clControlPoint" />
+					<show id="qa:clSampleId" />
+					<show id="qa:clTimePeriod" />
+					<show id="qa:clType" />
+					<show id="qa:clTemperature" />
+					<show id="qa:clMethod" />
+					<show id="qa:clCharacts" />
+					<show id="qa:clTarget" />
+					<show id="qa:clUnit" />
+					<show id="qa:clMini" />
+					<show id="qa:clMaxi" />
+					<show id="qa:clValue" />
+					<show id="qa:clState" />
+					<show id="qa:clRequired" />
+				</field-visibility>
+
+				<appearance>
+					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+					<field id="qa:clControlPoint" set="reqInfo" />
+					<field id="qa:clSampleId" set="reqInfo" />
+					<field id="qa:clTimePeriod" set="reqInfo" />
+					<field id="qa:clType" set="reqInfo" />
+					<field id="qa:clTemperature" set="reqInfo">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
 					<field id="qa:clMethod" set="reqInfo" />
 					<field id="qa:clTarget" set="reqInfo" />
 					<field id="qa:clUnit" set="reqInfo" />

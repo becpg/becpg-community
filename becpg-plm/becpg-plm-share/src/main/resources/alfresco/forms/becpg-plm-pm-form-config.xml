@@ -41,6 +41,7 @@
           <show force="false" id="pack:pmPrintColor"/>
           <show force="false" id="pack:pmPrintType"/>
           <show force="false" id="pack:pmPrintVarnish"/>
+          <show force="false" id="sec:securityRef" />
           <show force="false" id="cm:taggable"/>
           <show force="false" id="cm:categories"/>
           <show for-mode="view" force="false" id="cm:creator"/>
@@ -184,6 +185,15 @@
           <field id="pack:pmPrintColor" mandatory="false" read-only="false" set="print"/>
           <field id="pack:pmPrintType" mandatory="false" read-only="false" set="print"/>
           <field id="pack:pmPrintVarnish" mandatory="false" read-only="false" set="print"/>
+          
+          <set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
+          <field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
+			 <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+				<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
+				</control-param>
+			 </control>
+          </field>
+					
           <set appearance="bordered-panel" id="categories" label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="cm:taggable" mandatory="false" read-only="false" set="categories">
             <control>

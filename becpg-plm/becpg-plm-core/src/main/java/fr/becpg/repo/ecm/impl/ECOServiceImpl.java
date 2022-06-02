@@ -880,7 +880,7 @@ public class ECOServiceImpl implements ECOService {
 	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	public List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
+	private List<QName> evaluateWUsedAssociations(NodeRef targetAssocNodeRef) {
 		List<QName> wUsedAssociations = new ArrayList<>();
 
 		QName nodeType = nodeService.getType(targetAssocNodeRef);

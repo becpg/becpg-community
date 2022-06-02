@@ -22,6 +22,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -31,17 +32,25 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:content" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -53,6 +62,7 @@
 				<field-visibility>
 					<show id="ghs:pictogramCode" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -63,19 +73,27 @@
 				<field-visibility>
 					<show id="ghs:pictogramCode" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="ghs:pictogramCode" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
 					<show id="ghs:pictogramCode" />
 					<show id="bcpg:charactName" />
 					<show id="cm:content" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -91,6 +109,7 @@
 					<show id="bcpg:charactName" />
 					<show id="ghs:signalWord" />
 					<show id="ghs:hazardClassCode" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -104,6 +123,7 @@
 					<show id="bcpg:charactName" />
 					<show id="ghs:signalWord" />
 					<show id="ghs:hazardClassCode" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="filter">
@@ -113,7 +133,13 @@
 					<show id="bcpg:charactName" />
 					<show id="ghs:signalWord" />
 					<show id="ghs:hazardClassCode" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
@@ -122,6 +148,7 @@
 					<show id="bcpg:charactName" />
 					<show id="ghs:signalWord" />
 					<show id="ghs:hazardClassCode" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -134,6 +161,7 @@
 					<show id="ghs:precautionaryType" />
 					<show id="ghs:precautionaryCode" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -145,6 +173,7 @@
 					<show id="ghs:precautionaryType" />
 					<show id="ghs:precautionaryCode" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="filter">
@@ -152,13 +181,20 @@
 					<show id="ghs:precautionaryType" />
 					<show id="ghs:precautionaryCode" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
 					<show id="ghs:precautionaryType" />
 					<show id="ghs:precautionaryCode" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -170,6 +206,7 @@
 				<field-visibility>
 					<show id="ghs:onuCodeNumber" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -180,18 +217,26 @@
 				<field-visibility>
 					<show id="ghs:onuCodeNumber" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="ghs:onuCodeNumber" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
 					<show id="ghs:onuCodeNumber" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -203,6 +248,7 @@
 				<field-visibility>
 					<show id="ghs:classCodeNumber" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -213,18 +259,26 @@
 				<field-visibility>
 					<show id="ghs:classCodeNumber" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="ghs:classCodeNumber" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
 					<show id="ghs:classCodeNumber" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -236,6 +290,7 @@
 				<field-visibility>
 					<show id="ghs:packagingGroupCodeNumber" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -246,18 +301,26 @@
 				<field-visibility>
 					<show id="ghs:packagingGroupCodeNumber" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="filter">
 				<field-visibility>
 					<show id="ghs:packagingGroupCodeNumber" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
 					<show id="ghs:packagingGroupCodeNumber" />
 					<show id="bcpg:charactName" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>

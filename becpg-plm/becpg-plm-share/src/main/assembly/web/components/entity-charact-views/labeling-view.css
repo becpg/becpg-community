@@ -28,7 +28,7 @@
 .labeling-view  .yui-resize .yui-resize-handle-b {
     background-color: #eee !important;
     left: -9px;
-    width: 105%;
+    width: auto;
 }
 
 

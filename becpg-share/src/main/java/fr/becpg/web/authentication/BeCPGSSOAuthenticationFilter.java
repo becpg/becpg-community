@@ -570,7 +570,7 @@ public class BeCPGSSOAuthenticationFilter implements DependencyInjectedFilter, C
         if (this.userHeader != null)
         {
             String userId = AuthenticationUtil.getUserId(req);
-            if (userId != null && req.getRemoteUser() != null)
+            if (userId != null && req.getRemoteUser() != null && !req.getRemoteUser().isEmpty())
             {
                 if (logger.isDebugEnabled())
                     logger.debug("userHeader external auth - skipping auth filter...");

@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.formulation.labeling;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -9,7 +10,9 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.helper.MLTextHelper;
 
-public class FootNoteRule extends AbstractFormulaFilterRule implements Comparable<FootNoteRule> {
+public class FootNoteRule extends AbstractFormulaFilterRule implements Comparable<FootNoteRule>, Serializable {
+
+	private static final long serialVersionUID = 4589879904230809954L;
 
 	private final String footNoteMarker;
 

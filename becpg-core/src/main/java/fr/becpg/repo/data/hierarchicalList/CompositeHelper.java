@@ -32,6 +32,11 @@ public class CompositeHelper {
 
 	private static final Log logger = LogFactory.getLog(CompositeHelper.class);
 
+	
+	private CompositeHelper() {
+		//Do nothing
+	}
+	
 	/**
 	 * <p>getHierarchicalCompoList.</p>
 	 *

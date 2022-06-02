@@ -452,6 +452,7 @@
 							} else {
 
 								var reqType = oRecord.getData("itemData")["prop_bcpg_rclReqType"].value;
+								var reqDataType = oRecord.getData("itemData")["prop_bcpg_rclDataType"].value;
 								var regulatoryCode = oRecord.getData("itemData")["prop_bcpg_regulatoryCode"].value;
 								
 								var reqProducts = oRecord.getData("itemData")["assoc_bcpg_rclSources"];
@@ -474,12 +475,40 @@
 								if (reqProducts) {
 									for ( var i in reqProducts) {
 										var product = reqProducts[i], pUrl = beCPG.util.entityURL(product.siteId, product.value);
-
+										var dataList = null;
 										if (product.metadata.indexOf("finishedProduct") != -1
 												|| product.metadata.indexOf("semiFinishedProduct") != -1) {
-											pUrl = beCPG.util.entityURL(product.siteId, product.value, null, null, "compoList");
+											dataList =  "compoList";
 										} else if (product.metadata.indexOf("packagingKit") != -1) {
-											pUrl = beCPG.util.entityURL(product.siteId, product.value, null, null, "packagingList");
+											dataList =  "packagingList";
+										}
+										
+										switch (reqDataType) {
+											case 'Labelling':
+												dataList = "ingLabelingList";
+												break;
+											case 'Labelclaim':
+												dataList = "labelClaimList";
+												break;
+											case 'Physicochem':
+												dataList = "physicoChemList";
+												break;
+											case 'Nutrient':
+												dataList = "nutList";
+												break;
+											case 'Ingredient':
+												dataList = "ingList";
+												break;
+											case 'Allergen':
+												dataList = "allergenList";
+												break;
+											case 'Cost':
+												dataList = "costList";
+												break;
+										}
+
+										if(dataList!=null){
+											pUrl = beCPG.util.entityURL(product.siteId, product.value, null, null, dataList);
 										}
 
 										if (pUrl) {
