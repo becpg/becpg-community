@@ -256,10 +256,10 @@
                         {
 
                             var ret = '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">' + task.name + ' (' + task.completionPercent + '%)';
-                            ret += '<a class="task-comments ' + COMMENT_EVENTCLASS +(task.commentCount?" active-comments":"")+ '" title="' + this
+                            ret += '<a class="task-comments ' + COMMENT_EVENTCLASS +((task.commentCount && task.commentCount!=0) ?" active-comments":"")+ '" title="' + this
                                     .msg("link.title.comment-task") + '" href="#" >';
 
-                            if (task.commentCount)
+                            if (task.commentCount && task.commentCount!=0)
                             {
                                 ret += task.commentCount;
                             }

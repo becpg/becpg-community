@@ -16,11 +16,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.common.csv.CSVReader;
@@ -287,33 +284,17 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 			
 			productData.setEcoScoreClass(scoreClass);
 			
-			JSONObject ecoScoreDetails = new JSONObject();
+			EcoScoreContext ecoScoreContext = new EcoScoreContext();
 			
-			try {
-				
-				StringBuilder sb = new StringBuilder();
-				
-				sb.append(I18NUtil.getMessage("ecoscore.score")).append(" = ").append(ecoScore).append(System.lineSeparator())
-				.append(I18NUtil.getMessage("ecoscore.class")).append(" = ").append(scoreClass).append(System.lineSeparator())
-				.append(I18NUtil.getMessage("ecoscore.acvScore")).append(" = ").append(acvScore).append(System.lineSeparator())
-				.append(I18NUtil.getMessage("ecoscore.claimBonus")).append(" = ").append(claimBonus).append(System.lineSeparator())
-				.append(I18NUtil.getMessage("ecoscore.transportScore")).append(" = ").append(transportScore).append(System.lineSeparator())
-				.append(I18NUtil.getMessage("ecoscore.politicalScore")).append(" = ").append(politicalScore).append(System.lineSeparator())
-				.append(I18NUtil.getMessage("ecoscore.packagingMalus")).append(" = ").append(packagingMalus).append(System.lineSeparator());
-				
-				ecoScoreDetails.put("displayValue", sb.toString());
-				ecoScoreDetails.put("ecoScore", ecoScore);
-				ecoScoreDetails.put("scoreClass", scoreClass);
-				ecoScoreDetails.put("acvScore", acvScore);
-				ecoScoreDetails.put("claimBonus", claimBonus);
-				ecoScoreDetails.put("transportScore", transportScore);
-				ecoScoreDetails.put("politicalScore", politicalScore);
-				ecoScoreDetails.put("packagingMalus", packagingMalus);
-			} catch (JSONException e) {
-				logger.error(e.getMessage(), e);
-			}
+			ecoScoreContext.setEcoScore(ecoScore);
+			ecoScoreContext.setScoreClass(scoreClass);
+			ecoScoreContext.setAcvScore(acvScore);
+			ecoScoreContext.setClaimBonus(claimBonus);
+			ecoScoreContext.setTransportScore(transportScore);
+			ecoScoreContext.setPoliticalScore(politicalScore);
+			ecoScoreContext.setPackagingMalus(packagingMalus);
 			
-			productData.setEcoScoreDetails(ecoScoreDetails.toString());
+			productData.setEcoScoreDetails(ecoScoreContext.toJSON().toString());
 			
 		} else {
 			productData.setEcoScore(null);

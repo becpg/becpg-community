@@ -169,11 +169,13 @@ public class IngItem extends CompositeLabeling {
 	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:ingTypeV2")
+	@Override
 	public IngTypeItem getIngType() {
 		return ingType;
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public void setIngType(IngTypeItem ingType) {
 		this.ingType = ingType;
 	}

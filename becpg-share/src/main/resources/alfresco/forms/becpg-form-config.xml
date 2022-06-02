@@ -119,7 +119,108 @@
 		</forms>
 	</config>
 
-
+   <config evaluator="node-type" condition="cm:folder">
+		<forms>
+	  		<form id="wizard-doclib-simple-metadata">
+	             <field-visibility>
+               <show id="cm:name" />
+               <show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
+            </field-visibility>
+            <edit-form template="/org/alfresco/components/form/popupedit-form.ftl" />
+            <appearance>
+               <field id="cm:name">
+                 <control>
+                    <control-param name="maxLength">255</control-param>
+                 </control>
+               </field>
+               <field id="cm:title">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+               <field id="cm:description">
+                  <control>
+                     <control-param name="activateLinks">true</control-param>
+                  </control>
+               </field>
+            </appearance>
+	         </form>
+         </forms>
+	</config>
+	
+	
+	 <!-- cm:content type (existing nodes) -->
+   <config evaluator="node-type" condition="cm:content">
+      <forms>
+ 
+         <!-- Document Library pop-up Edit Metadata form -->
+         <form id="doclib-simple-metadata">
+            <field-visibility>
+               <show id="cm:name" />
+               <show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
+               <!-- cm:effectivity aspect -->
+               <show id="cm:from" force="true"/>
+               <show id="cm:to" force="true"/>
+            </field-visibility>
+            <edit-form template="../documentlibrary/forms/doclib-simple-metadata.ftl" />
+            <appearance>
+               <field id="cm:name">
+                 <control>
+                    <control-param name="maxLength">255</control-param>
+                 </control>
+               </field>
+               <field id="cm:title">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+               <field id="cm:description">
+                  <control>
+                     <control-param name="activateLinks">true</control-param>
+                  </control>
+               </field>
+               <field id="cm:from">
+                  <control template="/org/alfresco/components/form/controls/date.ftl">
+                     <control-param name="showTime">false</control-param>
+                  </control>
+               </field>
+               <field id="cm:to">
+                  <control template="/org/alfresco/components/form/controls/date.ftl">
+                     <control-param name="showTime">false</control-param>
+                  </control>
+               </field>
+            </appearance>
+         </form>
+         
+         <form id="wizard-doclib-simple-metadata">
+            <field-visibility>
+               <show id="cm:name" />
+               <!-- cm:effectivity aspect -->
+               <show id="cm:from" force="true"/>
+               <show id="cm:to" force="true"/>
+            </field-visibility>
+             <edit-form template="/org/alfresco/components/form/popupedit-form.ftl" />
+            <appearance>
+               <field id="cm:name">
+                 <control>
+                    <control-param name="maxLength">255</control-param>
+                 </control>
+               </field>
+               <set id="effectivity"  label-id="aspect.cm_effectivity" template="/org/alfresco/components/form/2-column-set.ftl" />
+               <field set="effectivity" id="cm:from">
+                  <control template="/org/alfresco/components/form/controls/date.ftl">
+                     <control-param name="showTime">false</control-param>
+                  </control>
+               </field>
+               <field set="effectivity" id="cm:to">
+                  <control template="/org/alfresco/components/form/controls/date.ftl">
+                     <control-param name="showTime">false</control-param>
+                  </control>
+               </field>
+            </appearance>
+         </form>
+         
+      </forms>
+   </config>
+   
 
 	<config evaluator="model-type" condition="bcpg:smartContentListItem">
 		<forms>
@@ -205,6 +306,9 @@
                             </control-param>
                         </control>
                     </field>
+                    <field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
                 </appearance>
             </form>
 
@@ -265,6 +369,11 @@
 					<show id="bcpg:lvValue" />
 					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">

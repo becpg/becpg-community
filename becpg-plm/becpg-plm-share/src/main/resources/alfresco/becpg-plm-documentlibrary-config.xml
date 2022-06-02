@@ -68,6 +68,7 @@
 				<subtype name="bcpg:supplier" />
 				<subtype name="bcpg:client" />
 				<subtype name="ecm:changeOrder" />	
+				<subtype name="bcpg:productCollection" />
 			</type>
 			<type name="bcpg:product">
 			  <subtype name="bcpg:finishedProduct" />
@@ -160,6 +161,7 @@
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=cm:content&amp;mimeType=text/plain
 				</param>
 			</content>
+			
 			<content id="finishedProduct" label="menu.create-content.finishedProduct" type="pagelink" index="40" icon="finishedProduct">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:finishedProduct&amp;formId=create&amp;isEntity=true
 				</param>
@@ -221,6 +223,10 @@
 				<permissions>
 			       <permission allow="true">CreateChangeOrder</permission>
 			    </permissions>
+			</content>
+			<content id="productCollection" label="menu.create-content.productCollection" type="pagelink" index="40" icon="productCollection">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:productCollection&amp;formId=create&amp;isEntity=true
+				</param>
 			</content>
 			<content id="productSpecification" label="menu.create-content.productSpecification" type="pagelink" index="180" icon="productSpecification">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:productSpecification&amp;formId=create&amp;isEntity=true</param>

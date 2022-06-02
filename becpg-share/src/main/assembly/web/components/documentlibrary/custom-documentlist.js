@@ -143,6 +143,62 @@
 				            }
 				            return html;
 				         });
+				         
+				         
+						  this.registerRenderer("effectivity", function(record) {
+							  var jsNode = record.jsNode,
+								  properties = jsNode.properties,
+								  id = Alfresco.util.generateDomId(),
+								  cssClass = "effectivity";
+
+							  if (jsNode.hasAspect("cm:effectivity")) {
+
+								  var startEffectivity = properties["cm:from"];
+								  var endEffectivity = properties["cm:to"];
+								  if (startEffectivity != null || endEffectivity != null) {
+									  var now = new Date();
+									  var future = false;
+									  var startEffectivityDate = null;
+									  var endEffectivityDate = null;
+									  if (startEffectivity != null) {
+										  startEffectivityDate = Alfresco.util.formatDate(startEffectivity.iso8601, "shortDate");
+										  if (now.getTime() < Alfresco.util.fromISO8601(startEffectivity.iso8601).getTime()) {
+											  cssClass = "effectivity-future";
+											  future = true;
+
+										  }
+									  }
+									  if (endEffectivity != null) {
+										  endEffectivityDate = Alfresco.util.formatDate(endEffectivity.iso8601, "shortDate");
+										  if (!future && endEffectivity.value != null && now.getTime() > Alfresco.util.fromISO8601(endEffectivity.iso8601).getTime()) {
+											  cssClass = "effectivity-past";
+										  }
+									  }
+
+									 var html = '<span id="' + id + '" class="' + cssClass + '">';
+									  
+									 if(startEffectivityDate == null && endEffectivityDate!=null) {
+										 html += this.msg("details.effectivity.to", endEffectivityDate);
+									  } else if(startEffectivityDate != null && endEffectivityDate==null) {
+										 html += this.msg("details.effectivity.from", startEffectivityDate);
+									  } else {
+										 html += this.msg("details.effectivity.fromto", startEffectivityDate, endEffectivityDate);
+									  } 
+									
+									  return html + '</span>';
+
+								  }
+							  }
+
+							  if (jsNode.type == "cm:content") {
+								  return '<span class="faded effectivity-empty">' + this.msg("details.effectivity.none") + '</span>';
+							  }
+
+							  return "";
+						  }
+
+						  );
+
 
 
 						// Hook favourite document/folder events

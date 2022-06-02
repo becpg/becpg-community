@@ -175,6 +175,7 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 		String template = searchTemplate;
 		if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
 			template = charactSearchTemplate;
+			queryBuilder.excludeProp(BeCPGModel.PROP_IS_DELETED, "true");
 			if (isAllQuery(query)) {
 				queryBuilder.addSort(BeCPGModel.PROP_CHARACT_NAME, true);
 			}

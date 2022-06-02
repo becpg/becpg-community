@@ -769,7 +769,12 @@ function  toISO8601(dateObject, options) {
 }
 
 /**
-Applies formulary data (properties and associations) to an entity
+ * Applies formulary data (properties and associations) to an entity
+ *
+ * @method submitForm
+ * @param entity {ScriptNode}
+ * @param formDataJson {json object}
+ * @static
  */
 function submitForm(entity, formDataJson) {
 	for (var key in formDataJson) {
