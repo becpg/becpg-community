@@ -114,12 +114,12 @@
    <#elseif currUnit=="d" || currUnit=="mo" || currUnit=="y">
 		<#if field.value == 0  >
        		 <#assign currUnit="d">
-     	<#elseif field.value/30 &gt; 1 && field.value%30 == 0>
-			<#assign currUnit="mo">
-			<#assign currValue=field.value/30 >
 		<#elseif field.value &gt; 364 && field.value%365 == 0>
 			<#assign currUnit="y">
 			<#assign currValue=field.value/365 >	
+	   	<#elseif field.value/30 &gt; 1 && field.value%30 == 0>
+			<#assign currUnit="mo">
+			<#assign currValue=field.value/30 >
 		<#else>
 		  	 <#assign currUnit="d">
 		</#if>
