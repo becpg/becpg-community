@@ -19,6 +19,8 @@ package fr.becpg.repo.search.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +33,10 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ISO9075;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +69,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	private static final Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
 
 	private static final Tracer tracer = Tracing.getTracer();
-	
+
 	@Autowired
 	private NamespaceService namespaceService;
 
@@ -122,36 +126,36 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
-		
+
 		try (Scope scope = tracer.spanBuilder("search.AdvSearch").startScopedSpan()) {
-			
+
 			if (datatype != null) {
 				tracer.getCurrentSpan().putAttribute("becpg/datatype", AttributeValue.stringAttributeValue(datatype.getLocalName()));
 			}
-			
+
 			SearchConfig searchConfig = getSearchConfig();
-			
+
 			logger.debug("advSearch, dataType=" + datatype + ", \ncriteria=" + criteria + "\nplugins: " + Arrays.asList(advSearchPlugins));
 			if (isAssocSearch(criteria) || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
 				maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
 			} else if (maxResults <= 0) {
 				maxResults = RepoConsts.MAX_RESULTS_1000;
 			}
-			
+
 			Set<String> ignoredFields = new HashSet<>();
-			
+
 			if (advSearchPlugins != null) {
 				for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
 					ignoredFields.addAll(advSearchPlugin.getIgnoredFields(datatype, searchConfig));
 				}
 			}
-			
+
 			addCriteriaMap(beCPGQueryBuilder, criteria, ignoredFields);
-			
+
 			tracer.getCurrentSpan().addAnnotation("runQuery");
-			
+
 			List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).inDBIfPossible().list();
-			
+
 			if (advSearchPlugins != null) {
 				StopWatch watch = null;
 				for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
@@ -159,21 +163,20 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 						watch = new StopWatch();
 						watch.start();
 					}
-						tracer.getCurrentSpan().addAnnotation("filter."+advSearchPlugin.getClass().getSimpleName());
-						
-						nodes = advSearchPlugin.filter(nodes, datatype, criteria, searchConfig);
-					
+					tracer.getCurrentSpan().addAnnotation("filter." + advSearchPlugin.getClass().getSimpleName());
+
+					nodes = advSearchPlugin.filter(nodes, datatype, criteria, searchConfig);
 
 					if (logger.isDebugEnabled() && (watch != null)) {
 						watch.stop();
 						logger.debug("query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds()
-						+ " seconds, new size: " + nodes.size());
+								+ " seconds, new size: " + nodes.size());
 					}
 				}
 			}
-			
+
 			return nodes;
-			
+
 		}
 	}
 
@@ -205,17 +208,29 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return beCPGQueryBuilder;
 	}
 
+	// Advanced search form data search.
+	// Supplied as json in the standard Alfresco Forms data structure:
+	//    prop_<name>:value|assoc_<name>:value
+	//    name = namespace_propertyname|pseudopropertyname
+	//    value = string value - comma separated for multi-value, no escaping yet!
+	// - underscore represents colon character in name
+	// - pseudo property is one of any cm:content url property: mimetype|encoding|size
+	// - always string values - interogate DD for type data
+	// - an additional "-mode" suffixed parameter for a value is allowed to specify
+	//   either an AND or OR join condition for multi-value property searches
 	private void addCriteriaMap(BeCPGQueryBuilder queryBuilder, Map<String, String> criteriaMap, Set<String> ignoredFields) {
 		if ((criteriaMap != null) && !criteriaMap.isEmpty()) {
 
+			boolean useSubCats = false;
 			for (Map.Entry<String, String> criterion : criteriaMap.entrySet()) {
 
 				String key = criterion.getKey();
 				String propValue = criterion.getValue();
+				String modePropValue = criteriaMap.get(key + "-mode");
 
 				if (!propValue.isEmpty() && !ignoredFields.contains(key)) {
 					// properties
-					if (key.startsWith("prop_")) {
+					if (key.startsWith("prop_") && !key.endsWith("-mode")) {
 
 						// found a property - is it namespace_propertyname or
 						// pseudo property format?
@@ -311,7 +326,35 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									queryBuilder.andBetween(QName.createQName(propName, namespaceService), "0", propValue);
 
 								}
-							} else if(!propName.endsWith("-entry")) {
+							} else if (isCategoryProperty(criteriaMap, key)) {
+								// If there's no suffix it means this property holds the value for categories
+								if ((propName.indexOf("usesubcats") == -1) && (propName.indexOf("isCategory") == -1)) {
+									// Determines if the checkbox use sub categories was clicked
+									if ("true".equals(criteriaMap.get(key + "_usesubcats"))) {
+										useSubCats = true;
+									}
+
+									// Build list of category terms to search for
+									String catQuery = "";
+									String[] cats = propValue.split(",");
+									if (propName.indexOf("cm:categories") != -1) {
+										catQuery = processDefaultCategoryProperty(cats, useSubCats);
+									} else if (propName.indexOf("cm:taggable") != -1) {
+										catQuery = processDefaultTagProperty(cats);
+									}
+
+									if (!catQuery.isBlank()) {
+
+										queryBuilder.andFTSQuery(catQuery);
+
+									}
+								}
+							} else if (isMultiValueProperty(propValue, modePropValue) || isListProperty(criteriaMap, key)) {
+								if (propName.startsWith("isListProperty")) {
+									queryBuilder.andFTSQuery(processMultiValue(propName, propValue, modePropValue, false));
+
+								}
+							} else if (!propName.endsWith("-entry")) {
 								// beCPG - bug fix : pb with operator -,
 								// AND, OR
 								// poivre AND -noir
@@ -322,10 +365,15 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 								queryBuilder.andPropQuery(QName.createQName(propName, namespaceService), cleanValue(propValue));
 							}
 						} else {
-							// pseudo cm:content property - e.g.
-							// mimetype,size
-							// or encoding
-							queryBuilder.andFTSQuery("cm:content." + propName + ":\"" + propValue + "\"");
+
+							if (isMultiValueProperty(propValue, modePropValue)) {
+								queryBuilder.andFTSQuery(processMultiValue(propName, propValue, modePropValue, true));
+							} else {
+								// pseudo cm:content property - e.g.
+								// mimetype,size
+								// or encoding
+								queryBuilder.andFTSQuery("cm:content." + propName + ":\"" + propValue + "\"");
+							}
 
 						}
 
@@ -425,4 +473,128 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		}
 		return false;
 	}
+
+	boolean isMultiValueProperty(String propValue, String modePropValue) {
+		return (modePropValue != null) && (propValue.indexOf(",") != -1);
+	}
+
+	/**
+	 * Helper method used to construct lucene query fragment for a multi-valued property.
+	 *
+	 * @param propName property name
+	 * @param propValue property value (comma separated)
+	 * @param operand logical operand that should be used
+	 * @param pseudo is it a pseudo property
+	 * @return lucene query with multi-valued property
+	 */
+	String processMultiValue(String propName, String propValue, String operand, boolean pseudo) {
+
+		String[] multiValue = propValue.split(",");
+		StringBuilder formQuery = new StringBuilder();
+		for (var i = 0; i < multiValue.length; i++) {
+
+			if (i > 0) {
+				formQuery.append(' ' + operand + ' ');
+			}
+
+			if (pseudo) {
+				formQuery.append("(cm:content." + propName + ":\"" + multiValue[i] + "\")");
+			} else {
+				formQuery.append('(' + AbstractBeCPGQueryBuilder.escapeQName(QName.createQName(propName, namespaceService)) + ":\""
+						+ cleanValue(multiValue[i]) + "\")");
+			}
+		}
+
+		return formQuery.toString();
+	}
+
+	/*
+	 * @return true if it is tied to a list of properties, false otherwise
+	 */
+	private boolean isListProperty(Map<String, String> criteriaMap, String prop) {
+		return (prop.indexOf("isListProperty") != -1) || criteriaMap.containsKey(prop + "_isListProperty");
+	}
+
+	/**
+	 * Helper method used to determine whether the property is tied to categories.
+	 *
+	 * @param formJSON the list of the properties provided to the form
+	 * @param prop propertyname
+	 * @return true if it is tied to categories, false otherwise
+	 */
+	private boolean isCategoryProperty(Map<String, String> criteriaMap, String prop) {
+		return (prop.indexOf("usesubcats") != -1) || (prop.indexOf("isCategory") != -1) || criteriaMap.containsKey(prop + "_usesubcats")
+				|| criteriaMap.containsKey(prop + "_isCategory");
+	}
+
+	/**
+	 * Helper method used to construct lucene query fragment for a default category property.
+	 *
+	 * @param cats the selected categories (array of string noderef)
+	 * @param useSubCats boolean that indicates if should search also in subcategories
+	 * @return lucene query with default category property
+	 */
+	private String processDefaultCategoryProperty(String[] cats, boolean useSubCats) {
+		boolean firstCat = true;
+		StringBuilder catQuery = new StringBuilder();
+		final Map<String, String> cache = new HashMap<>();
+		for (String cat : cats) {
+
+			NodeRef catNode = new NodeRef(cat);
+
+			final StringBuilder buf = new StringBuilder(128);
+			final Path path = nodeService.getPath(catNode);
+			for (final Path.Element e : path) {
+				if (e instanceof Path.ChildAssocElement) {
+					final QName qname = ((Path.ChildAssocElement) e).getRef().getQName();
+					if (qname != null) {
+						String prefix = cache.get(qname.getNamespaceURI());
+						if (prefix == null) {
+							// first request for this namespace prefix, get and cache result
+							Collection<String> prefixes = namespaceService.getPrefixes(qname.getNamespaceURI());
+							prefix = !prefixes.isEmpty() ? prefixes.iterator().next() : "";
+							cache.put(qname.getNamespaceURI(), prefix);
+						}
+						buf.append('/');
+						if (prefix.length() > 0) {
+							buf.append(prefix).append(':');
+						}
+						buf.append(ISO9075.encode(qname.getLocalName()));
+					}
+				} else {
+					buf.append('/').append(e.toString());
+				}
+			}
+
+			catQuery.append((firstCat ? "" : " OR ") + "PATH:\"" + buf.toString() + (useSubCats ? "//*\"" : "/member\""));
+
+			firstCat = false;
+
+		}
+		return catQuery.toString();
+	}
+
+	/**
+	 * Helper method used to construct lucene query fragment for a custom category property.
+	 *
+	 * @param propName property name
+	 * @param cats the selected categories (array of string noderef)
+	 * @param useSubCats boolean that indicates if should search also in subcategories
+	 * @return lucene query with custom category property
+	 */
+	private String processDefaultTagProperty(String[] cats) {
+		StringBuilder catQuery = new StringBuilder();
+
+		boolean first = true;
+		for (String cat : cats) {
+
+			NodeRef catNode = new NodeRef(cat);
+
+			catQuery.append((first ? "" : " OR ") + "TAG:\"" + nodeService.getProperty(catNode, ContentModel.PROP_NAME) + "\"");
+			first = false;
+		}
+
+		return catQuery.toString();
+	}
+
 }

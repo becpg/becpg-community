@@ -361,7 +361,7 @@ public abstract class AbstractBeCPGQueryBuilder {
 	 * @param qName a {@link org.alfresco.service.namespace.QName} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	protected String escapeQName(QName qName) {
+	public static String escapeQName(QName qName) {
 		String string = qName.toString();
 		StringBuilder buf = new StringBuilder(string.length() + 4);
 		for (int i = 0; i < string.length(); i++) {
