@@ -157,7 +157,7 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			}
 		}
 
-		private GlopContext buildGlopContext(Map<String, ?> problem) {
+		private GlopContext buildGlopContext(Map<String, ?> problem) throws IllegalArgumentException {
 			GlopContext glopContext = new GlopContext();
 			
 			glopContext.setTotalQuantity(getTotalQuantity((ProductData) entity, (Collection<?>) problem.get("constraints")));
@@ -240,7 +240,7 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 									GlopConstraint glopConstraint = new GlopConstraint(item, minValue, maxValue);
 									
 									if (tolerance == null && constraint.containsKey("tol")) {
-										tolerance = buildDouble(constraint.get("tol"));
+										tolerance = buildDouble(constraint, "tol");
 									}
 									
 									glopConstraint.setTolerance(tolerance);
@@ -252,20 +252,24 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 					}
 				} else if (constraint.containsKey("var")) {
 					Object constraintItem = constraint.get("var");
-					Double constraintMin = buildDouble(constraint.get("min"));
-					Double constraintMax = buildDouble(constraint.get("max"));
 					
-					GlopConstraint glopConstraint = new GlopConstraint(constraintItem, constraintMin, constraintMax);
-					
-					if (constraint.containsKey("tol")) {
-						glopConstraint.setTolerance(buildDouble(constraint.get("tol")));
-					}
-					
-					constraints.add(glopConstraint);
+					GlopConstraint glopConstraint = null;
 					
 					if (RECIPE_QTY_USED.equals(constraintItem)) {
 						recipeQtyUsedFound = true;
 					}
+					
+					Double constraintMin = buildDouble(constraint,"min");
+					Double constraintMax = buildDouble(constraint,"max");
+					
+					glopConstraint = new GlopConstraint(constraintItem, constraintMin, constraintMax);
+					
+					if (constraint.containsKey("tol")) {
+						glopConstraint.setTolerance(buildDouble(constraint,"tol"));
+					}
+					
+					constraints.add(glopConstraint);
+					
 				}
 				
 			}
@@ -277,7 +281,16 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 			return constraints;
 		}
 
-		private double buildDouble(Object obj) {
+		private double buildDouble(Map<String, ?> constraint, String key) {
+			
+			Object obj = constraint.get(key);
+			
+			if (obj == null) {
+				Object constraintName = constraint.get("var");
+				
+				throw new IllegalArgumentException("Constraint '" + constraintName + "' has no '" + key + "' value");
+			}
+			
 			if (obj instanceof Double) {
 				return (Double) obj;
 			} else if (obj instanceof Integer) {
@@ -290,10 +303,13 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 					return Double.NEGATIVE_INFINITY;
 				}
 			}
-			throw new IllegalArgumentException("Expected Double, got " + obj.getClass().getName());
+			
+			Object constraintName = constraint.containsKey("var") ? constraint.get("var") : "list";
+
+			throw new IllegalArgumentException("Constraint '" + constraintName + "' has no double value for '" + key);
 		}
 		
-		private Double getTotalQuantity(ProductData entity, Collection<?> objConstraints) {
+		private Double getTotalQuantity(ProductData entity, Collection<?> objConstraints) throws IllegalArgumentException {
 			if (entity.getNetWeight() != null && entity.getNetWeight() != 0d) {
 				return entity.getNetWeight();
 			}
@@ -304,9 +320,17 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 				Map<String, ?> constraint = (Map<String, ?>) objConstraint;
 				
 				if (constraint.containsKey("var") && RECIPE_QTY_USED.equals(constraint.get("var"))) {
-					Double constraintMin = buildDouble(constraint.get("min"));
-					Double constraintMax = buildDouble(constraint.get("max"));
-					return (constraintMin + constraintMax) / 2;
+					
+					
+					Double constraintMin = buildDouble(constraint,"min");
+					
+					Double constraintMax = buildDouble(constraint,"max");
+					
+					if (!constraintMin.equals(constraintMax)) {
+						throw new IllegalArgumentException(RECIPE_QTY_USED + " constraint must have same 'min' and 'max' values");
+					}
+
+					return constraintMin;
 				}
 			}
 			
