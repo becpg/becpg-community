@@ -104,7 +104,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 	private DownloadStatusUpdateService updateService;
 	@Autowired
 	private MimetypeService mimetypeService;
-	
+
 	@Autowired
 	private EntityActivityService entityActivityService;
 
@@ -172,10 +172,10 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				ExcelDataListDownloadExporter handler = new ExcelDataListDownloadExporter(transactionService.getRetryingTransactionHelper(),
 						updateService, downloadStorage, downloadNodeRef, Long.valueOf(asynExtractor.getFullListSize()));
 
-				try {
+				try (OutputStream out = new FileOutputStream(tempFile)) {
 
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						return createExcelFile(asynExtractor, asynExtractor.getDataListFilter(), handler, new FileOutputStream(tempFile));
+						return createExcelFile(asynExtractor, asynExtractor.getDataListFilter(), handler, out);
 					}, false, true);
 
 					fileCreationComplete(downloadNodeRef, "xlsx", tempFile, handler);
@@ -508,7 +508,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 			} while (hasExtrasSheet);
 
 			workbook.write(outputStream);
-			
+
 			entityActivityService.postExportActivity(dataListFilter.getEntityNodeRef(), dataListFilter.getDataType(), getFileName(dataListFilter));
 		}
 		return true;
