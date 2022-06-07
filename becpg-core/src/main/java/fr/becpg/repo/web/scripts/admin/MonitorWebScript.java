@@ -63,7 +63,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 			
 			Map<String, Object> ret = new HashMap<>();
 			
-			fillMonitoringInformation(ret);
+			fillMonitoringInformation(ret, false);
 			
 			if ("beCPG Monitors".equals(req.getHeader(HttpHeaders.USER_AGENT))) {
 				ret.put("authenticated", true);
@@ -78,7 +78,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		
 	}
 
-	protected Set<String> fillMonitoringInformation(Map<String, Object> ret) {
+	protected Set<String> fillMonitoringInformation(Map<String, Object> ret, boolean isAuthenticated) {
 		
 		long concurrentReadUsers = 0;
 		long concurrentSupplierUsers = 0;
@@ -127,7 +127,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		ret.put("freeMemory", runtime.freeMemory() / 1000000d);
 		ret.put("maxMemory", runtime.maxMemory() / 1000000d);
 		ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / 1000000d);
-		ret.put("connectedUsers", users.size());
+		ret.put("connectedUsers", isAuthenticated ? users.size() : users.size() + 1);
 		ret.put("concurrentReadUsers", concurrentReadUsers);
 		ret.put("concurrentWriteUsers", concurrentWriteUsers);
 		ret.put("concurrentSupplierUsers", concurrentSupplierUsers);
