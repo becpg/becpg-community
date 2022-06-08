@@ -115,6 +115,7 @@
 					<show id="ecm:rlSourceItems" />
 					<show id="ecm:rlTargetItem" />	
 					<show id="ecm:rlQtyPerc" />				
+					<show id="ecm:rlLoss" />				
 				</field-visibility>
 				<create-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -140,6 +141,7 @@
 					<show id="ecm:rlSourceItems" />
 					<show id="ecm:rlTargetItem" />
 					<show id="ecm:rlQtyPerc" />
+					<show id="ecm:rlLoss" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -154,6 +156,7 @@
 					<show id="ecm:rlSourceItems" />
 					<show id="ecm:rlTargetItem" />
 					<show id="ecm:rlQtyPerc" />
+					<show id="ecm:rlLoss" />
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />
 				<appearance>
@@ -193,11 +196,17 @@
 					<show id="ecm:wulSourceItems" />
 					<show id="ecm:isWUsedImpacted" />
 					<show id="ecm:impactedDataList" />		
+					<show id="ecm:wulLink" />		
+					<show id="entity_ecm:wulLink_bcpg:entityListItem@ecmDatagrid" />
+					<show id="ecm:wulEffectiveDate" />
+					<show id="ecm:wulQty" />
+					<show id="ecm:wulLoss" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:depthLevel" read-only="true"/>
 					<field id="ecm:wulSourceItems" read-only="true"/>
 					<field id="ecm:impactedDataList" read-only="true"/>	
+					<field id="entity_ecm:wulLink_bcpg:entityListItem@ecmDatagrid" label="hidden"/>	
 				</appearance>
 			</form>
 			<form id="filter">
@@ -210,6 +219,14 @@
 					<field id="bcpg:depthLevel">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">All|data.level.all,1|1,2|2</control-param>
+						</control>
+					</field>
+					<field id="ecm:isWUsedImpacted">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
+							<control-param name="options">true|data.boolean.true,false|data.boolean.false
+							</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -370,6 +387,29 @@
 					<show id="ecm:cclTargetValue" />										
 				</field-visibility>
 				<edit-form template="../data-lists/forms/bulkdataitem.ftl" />				
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="bcpg:entityListItem">
+		<forms>
+			<form id="ecmDatagrid">
+				<field-visibility>
+					<show id="bcpg:compoListQty" force ="true"/>
+					<show id="bcpg:compoListUnit" force ="true"/>
+					<show id="mpm:plQty" force ="true"/>
+					<show id="mpm:plUnit" force ="true"/>
+					<show id="bcpg:packagingListQty" force ="true"/>
+					<show id="bcpg:packagingListUnit" force ="true"/>
+				</field-visibility>
+			</form>
+			<form id="ecmFilter">
+				<field-visibility>
+					<show id="bcpg:compoListQty" force ="true"/>
+					<show id="bcpg:compoListLossPerc" force ="true"/>
+					<show id="mpm:plQty" force ="true"/>
+					<show id="bcpg:packagingListQty" force ="true"/>
+				</field-visibility>
 			</form>
 		</forms>
 	</config>
