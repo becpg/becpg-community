@@ -276,7 +276,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 					beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(), batchInfo.getMailAction(),
-							batchInfo.getMailActionUrl(), finalHasError, finalEndTime.compareTo(finalStartTime));
+							batchInfo.getMailActionUrl(), !finalHasError, finalEndTime.compareTo(finalStartTime));
 
 					return null;
 				}, true, false), batchInfo.getBatchUser());

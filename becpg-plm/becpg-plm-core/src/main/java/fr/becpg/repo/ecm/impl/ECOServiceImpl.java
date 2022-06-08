@@ -30,9 +30,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -47,7 +46,6 @@ import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
-import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,6 +110,8 @@ import fr.becpg.repo.security.SecurityService;
 public class ECOServiceImpl implements ECOService {
 
 	private static final Log logger = LogFactory.getLog(ECOServiceImpl.class);
+	
+	private static final String ACTION_URL_PREFIX = "page/entity-data-lists?list=changeUnitList&nodeRef=%s";
 
 	@Autowired
 	private WUsedListService wUsedListService;
@@ -169,6 +169,8 @@ public class ECOServiceImpl implements ECOService {
 					isSimulated ? "becpg.batch.eco.simulate" : "becpg.batch.eco.apply");
 			
 			batchInfo.setRunAsSystem(true);
+			
+			batchInfo.enableNotifyByMail(isSimulated ? "eco.simulate" : "eco.apply", String.format(ACTION_URL_PREFIX, ecoNodeRef.toString()));
 
 			List<BatchStep<Object>> batchStepList = new LinkedList<>();
 			
@@ -243,7 +245,7 @@ public class ECOServiceImpl implements ECOService {
 					
 					commentService.createComment(ecoData.getNodeRef(), "", comments.toString(), false);
 				} else {
-					if (!isFuture(ecoData)) {
+					if (!isFuture(ecoData.getEffectiveDate())) {
 						ecoData.setEffectiveDate(new Date());
 					}
 					ecoData.setEcoState(ECOState.Applied);
@@ -696,6 +698,8 @@ public class ECOServiceImpl implements ECOService {
 			
 			batchInfo.setRunAsSystem(true);
 			
+			batchInfo.enableNotifyByMail("eco.calculateWUsed", String.format(ACTION_URL_PREFIX, ecoNodeRef.toString()));
+			
 			List<BatchStep<Object>> batchStepList = new LinkedList<>();
 			
 			batchStepList.add(createCalculateWUsedListBatchStep(ecoData, isWUsedImpacted));
@@ -931,144 +935,181 @@ public class ECOServiceImpl implements ECOService {
 
 		}
 	}
-
-	@SuppressWarnings("unchecked")
+	
 	private <T extends CompositionDataItem> void applyToList(ChangeOrderData ecoData, ProductData productData, List<T> items) {
 
-		Predicate<EffectiveDataItem> filter = null;
-
-		boolean isFuture = isFuture(ecoData);
-
-		if (!isFuture) {
-			filter = (new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).createPredicate(productData);
-		} else {
-			filter = (new EffectiveFilters<>(ecoData.getEffectiveDate())).createPredicate(productData);
+		Map<T, WUsedListDataItem> itemToWUsedData = new HashMap<>();
+		
+		// map each item to the WUsed item
+		items.forEach(item -> {
+			for (WUsedListDataItem wUsedItem : ecoData.getWUsedList()) {
+				if (Boolean.TRUE.equals(wUsedItem.getIsWUsedImpacted()) && item.getNodeRef().equals(wUsedItem.getLink())) {
+					itemToWUsedData.put(item, wUsedItem);
+				}
+			}
+		});
+		
+		for (ReplacementListDataItem replacement : ecoData.getReplacementList()) {
+			checkForItemsToDelete(ecoData, items, itemToWUsedData, replacement);
 		}
+		
+		Date ecoEffectiveDate = ecoData.getEffectiveDate();
+		
+		Set<T> newItems = new HashSet<>();
+		
+		for (T item : items) {
+			if (itemToWUsedData.containsKey(item)) {
+				WUsedListDataItem wUsedData = itemToWUsedData.get(item);
+				
+				Date effectiveDate = ecoEffectiveDate;
+				
+				if (wUsedData.getEffectiveDate() != null) {
+					effectiveDate = wUsedData.getEffectiveDate();
+				}
+				
+				EffectiveFilters<EffectiveDataItem> filter = null;
+				
+				boolean isFuture = isFuture(effectiveDate);
+				
+				if (isFuture) {
+					filter = new EffectiveFilters<>(effectiveDate);
+				} else {
+					filter = new EffectiveFilters<>(EffectiveFilters.EFFECTIVE);
+				}
+				
+				if (filter.createPredicate(productData).test(item)) {
 
-		Map<NodeRef, Set<Pair<NodeRef, Integer>>> replacements = new HashMap<>();
-		Set<T> toDelete = new HashSet<>();
-		for (ReplacementListDataItem replacementListDataItem : ecoData.getReplacementList()) {
-
-			// Only reformulate SKIP
-			if (!((replacementListDataItem.getSourceItems() != null) && (replacementListDataItem.getTargetItem() != null)
-					&& (replacementListDataItem.getQtyPerc() != null) && (replacementListDataItem.getSourceItems().size() == 1)
-					&& replacementListDataItem.getSourceItems().contains(replacementListDataItem.getTargetItem())
-					&& (replacementListDataItem.getQtyPerc() == 100))) {
-
-				List<NodeRef> replacementsList = getSourceItems(ecoData, replacementListDataItem);
-
-				// if rule match compoList
-				if (items.stream().filter(filter).map(T::getComponent).collect(Collectors.toSet()).containsAll(replacementsList)) {
-					boolean first = true;
-					for (NodeRef sourceItem : replacementsList) {
-
-						if (toDelete.stream().map(T::getComponent).collect(Collectors.toSet()).contains(sourceItem)) {
-							logger.warn("Cannot add rule: " + sourceItem + " deleted by another rule");
-							break;
-						}
-
-						Set<Pair<NodeRef, Integer>> targetItems = replacements.get(sourceItem);
-						if (first) {
-							if (targetItems == null) {
-								targetItems = new HashSet<>();
-							}
+					for (ReplacementListDataItem replacement : ecoData.getReplacementList()) {
+						
+						if (!((replacement.getSourceItems() != null) && (replacement.getTargetItem() != null)
+								&& (replacement.getQtyPerc() != null) && (replacement.getSourceItems().size() == 1)
+								&& replacement.getSourceItems().contains(replacement.getTargetItem())
+								&& (replacement.getQtyPerc() == 100))) {
+							List<NodeRef> sourceItems = getSourceItems(ecoData, replacement);
+							
+							NodeRef target = null;
+							
 							if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
-								if (replacementListDataItem.getSourceItems() != null) {
-									targetItems
-											.add(new Pair<>(replacementListDataItem.getSourceItems().get(0), replacementListDataItem.getQtyPerc()));
-								}
+								target = replacement.getSourceItems().get(0);
 							} else {
-								if (replacementListDataItem.getTargetItem() != null) {
-									targetItems.add(new Pair<>(replacementListDataItem.getTargetItem(), replacementListDataItem.getQtyPerc()));
-								} else {
-									toDelete.addAll(items.stream().filter(filter).filter(c -> sourceItem.equals(c.getComponent()))
-											.collect(Collectors.toSet()));
+								target = replacement.getTargetItem();
+							}
+							
+							if (sourceItems.contains(item.getComponent())) {
+								T newItem = applyToComponent(effectiveDate, item, replacement, target, wUsedData, isFuture);
+								
+								if (newItem != null) {
+									newItems.add(newItem);
 								}
 							}
-							replacements.put(sourceItem, targetItems);
+						}
+						
+					}
+				}
+			}
+		}
+		
+		items.addAll(newItems);
+		
+	}
 
-							first = false;
+	private <T extends CompositionDataItem> void checkForItemsToDelete(ChangeOrderData ecoData, List<T> items, Map<T, WUsedListDataItem> itemToWUsedData, ReplacementListDataItem replacement) {
+		List<NodeRef> sourceItems = getSourceItems(ecoData, replacement);
+		
+		if (sourceItems.size() > 1 || replacement.getTargetItem() == null) {
+			
+			boolean hasWUsed = false;
+			
+			boolean isFuture = false;
+			
+			Date effectiveDate = null;
+			
+			for (NodeRef sourceItem : sourceItems) {
+				for (Entry<T, WUsedListDataItem> entry : itemToWUsedData.entrySet()) {
+					if (entry.getKey().getComponent().equals(sourceItem)) {
+						
+						effectiveDate = ecoData.getEffectiveDate();
+						
+						if (entry.getValue().getEffectiveDate() != null) {
+							effectiveDate = entry.getValue().getEffectiveDate();
+						}
+						
+						isFuture = isFuture(effectiveDate);
+						
+						hasWUsed = true;
+						break;
+					}
+				}
+			}
+			
+			final boolean finalIsFuture = isFuture;
+			final Date finalEffectiveDate = effectiveDate;
+			
+			if (hasWUsed) {
+				items.forEach(item -> {
+					if (sourceItems.contains(item.getComponent()) && (replacement.getTargetItem() == null || !itemToWUsedData.keySet().contains(item))) {
+						if (finalIsFuture) {
+							item.setEndEffectivity(finalEffectiveDate);
 						} else {
-							if ((targetItems == null) || targetItems.isEmpty()) {
-								toDelete.addAll(
-										items.stream().filter(filter).filter(c -> sourceItem.equals(c.getComponent())).collect(Collectors.toSet()));
-							} else {
-								logger.warn("Cannot delete target item: " + sourceItem + " used in another rule");
-							}
+							items.remove(item);
 						}
-
 					}
+				});
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T extends CompositionDataItem> T applyToComponent(Date effectiveDate, T item, ReplacementListDataItem replacement, NodeRef target, WUsedListDataItem wUsedData, boolean isFuture) {
+		
+		Double newQuantity = wUsedData.getQty();
+		
+		if (newQuantity == null) {
+			if (item instanceof CompoListDataItem) {
+				if ((((CompoListDataItem) item).getQtySubFormula() != null) && (replacement.getQtyPerc() != null)) {
+					newQuantity = (replacement.getQtyPerc() / 100d) * ((CompoListDataItem) item).getQtySubFormula();
+				}
+			} else {
+				if ((item.getQty() != null) && (replacement.getQtyPerc() != null)) {
+					newQuantity = (replacement.getQtyPerc() / 100d) * item.getQty();
 				}
 			}
 		}
-		if (isFuture) {
-			for (T item : items) {
-				for (T itemToDelete : toDelete) {
-					if (item.equals(itemToDelete)) {
-						item.setEndEffectivity(ecoData.getEffectiveDate());
-					}
-				}
-			}
+		
+		Double newLoss = wUsedData.getLoss();
+		
+		if (newLoss == null) {
+			newLoss = replacement.getLoss();
+		}
+		
+		if (!isFuture) {
+			updateComponent(item, target, newQuantity, newLoss);
+			return null;
 		} else {
-			items.removeAll(toDelete);
+			T origComponent = item;
+			T newCompoListDataItem = (T) origComponent.clone();
+			newCompoListDataItem.setNodeRef(null);
+			updateComponent(newCompoListDataItem, target, newQuantity, newLoss);
+			origComponent.setEndEffectivity(effectiveDate);
+			newCompoListDataItem.setStartEffectivity(effectiveDate);
+			return newCompoListDataItem;
 		}
-
-		for (Map.Entry<NodeRef, Set<Pair<NodeRef, Integer>>> replacement : replacements.entrySet()) {
-			Set<T> components = items.stream().filter(filter).filter(c -> replacement.getKey().equals(c.getComponent())).collect(Collectors.toSet());
-			if (!components.isEmpty()) {
-				boolean first = true;
-				for (Pair<NodeRef, Integer> target : replacement.getValue()) {
-
-					if (first && !isFuture) {
-						for (T component : components) {
-							updateComponent(component, target.getFirst(), target.getSecond());
-						}
-						first = false;
-					} else {
-						T origComponent = components.iterator().next();
-						T newCompoListDataItem = (T) origComponent.clone();
-						newCompoListDataItem.setNodeRef(null);
-						updateComponent(newCompoListDataItem, target.getFirst(), target.getSecond());
-						if (isFuture) {
-							if (first) {
-								origComponent.setEndEffectivity(ecoData.getEffectiveDate());
-							}
-							newCompoListDataItem.setStartEffectivity(ecoData.getEffectiveDate());
-						}
-						items.add(newCompoListDataItem);
-					}
-
-				}
-			}
-
-		}
-
 	}
 
-	private boolean isFuture(ChangeOrderData ecoData) {
+	private boolean isFuture(Date effectiveDate) {
 		Date now = new Date();
-		return (ecoData.getEffectiveDate() != null) && (ecoData.getEffectiveDate().getTime() > now.getTime());
+		return (effectiveDate != null) && (effectiveDate.getTime() > now.getTime());
 	}
 
-	private <T extends CompositionDataItem> void updateComponent(T component, NodeRef target, Integer qtyPerc) {
+	private <T extends CompositionDataItem> void updateComponent(T component, NodeRef target, Double newQuantity, Double newLoss) {
 		component.setComponent(target);
 		if (component instanceof CompoListDataItem) {
-			if ((((CompoListDataItem) component).getQtySubFormula() != null) && (qtyPerc != null)) {
-
-				Double newQty = (qtyPerc / 100d) * ((CompoListDataItem) component).getQtySubFormula();
-
-				((CompoListDataItem) component).setQtySubFormula(newQty);
-			}
+			((CompoListDataItem) component).setQtySubFormula(newQuantity);
 		} else {
-
-			if ((component.getQty() != null) && (qtyPerc != null)) {
-
-				Double newQty = (qtyPerc / 100d) * component.getQty();
-
-				component.setQty(newQty);
-			}
+			component.setQty(newQuantity);
 		}
-
+		
+		component.setLossPerc(newLoss);
 	}
 
 	private NodeRef getProductToImpact(ChangeUnitDataItem changeUnitDataItem, boolean isSimulation) {
