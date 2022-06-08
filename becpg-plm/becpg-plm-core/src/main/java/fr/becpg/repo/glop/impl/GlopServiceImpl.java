@@ -159,7 +159,7 @@ public class GlopServiceImpl implements GlopService {
 					
 					completeResponse(constraintContributionMaps, jsonResponse);
 					
-					return buildGlopData(productData, jsonResponse, constraints, variables, glopContext.getTotalQuantity());
+					return buildGlopData(jsonResponse, constraints, variables, glopContext.getTotalQuantity());
 				}
 			}
 			
@@ -177,7 +177,7 @@ public class GlopServiceImpl implements GlopService {
 			logger.debug("Took " + stopWatch.getTotalTimeMillis() + " ms");
 		}
 		
-		return buildGlopData(productData, jsonResponse, constraints, variables, glopContext.getTotalQuantity());
+		return buildGlopData(jsonResponse, constraints, variables, glopContext.getTotalQuantity());
 	}
 
 	/**
@@ -204,7 +204,7 @@ public class GlopServiceImpl implements GlopService {
 		return response;
 	}
 	
-	private GlopData buildGlopData(ProductData productData, JSONObject obj, List<GlopConstraint> constraints, Set<CompoListDataItem> variables, Double totalQuantity) throws JSONException {
+	private GlopData buildGlopData(JSONObject obj, List<GlopConstraint> constraints, Set<CompoListDataItem> variables, Double totalQuantity) throws JSONException {
 		
 		GlopData ret = new GlopData();
 		

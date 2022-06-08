@@ -371,16 +371,6 @@ if (beCPG.module.EntityDataGridRenderers) {
   });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : "bcpg:nutListGDAPerc",
-      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-      	if(data.value != null){
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,2).toLocaleString());
-      	}      
-      	return "";
-      }
-  });
-	
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
@@ -947,6 +937,44 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "ecm:wulLink" ],
+		renderer : function(oRecord, data, label, scope) {
+			var additionalProps = Object.entries(oRecord.getData("itemData")["dt_ecm_wulLink"][0].itemData);
+			
+			var ret = "";
+			
+			var columns = null;
+			
+			for (var i = 0; i < scope.datalistColumns.length; i++) {
+				if (scope.datalistColumns[i].name == "ecm:wulLink" && scope.datalistColumns[i].type == "entity") {
+					columns = scope.datalistColumns[i].columns;
+					break;
+				}
+			}
+			
+			for (var i = 0; i < additionalProps.length; i++) {
+				var propName = additionalProps[i][0];
+				var propValue = additionalProps[i][1];
+				var label = null;
+				if (propName.startsWith("prop_")) {
+					if (propValue && propValue.displayValue) {
+						for (var j = 0; j < columns.length; j++) {
+							if (columns[j].name == propName.replace("prop_", "").replace("_",":")) {
+								label = columns[j].label;
+								break;
+							}
+						}
+						ret += label + ": " +  propValue.displayValue + " ";
+					}
+				}
+			}
+			
+			return ret;
+		}
+
+	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	    propertyName : "boolean_bcpg:lrIsActive",
 	    renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 	    	if (oColumn.hidden) {
@@ -1145,9 +1173,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 
          return "";
       }
-  });	
+  });
 
-	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 	      propertyName : [ "bcpg:lclComments"],
 	      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {

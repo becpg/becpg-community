@@ -34,6 +34,8 @@ import org.springframework.extensions.webscripts.json.JSONWriter;
  */
 public class FilterFormUIGet extends FormUIGet {
 	
+	private static final String ENTITY_PREFIX = "entity_";
+
 	private static final String PARAM_SITEID = "siteId";
 
 	private static final String PARAM_LIST = "list";
@@ -42,6 +44,7 @@ public class FilterFormUIGet extends FormUIGet {
 
 	/** {@inheritDoc} */
 	@SuppressWarnings("unchecked")
+	@Override
 	protected Map<String, Object> generateModel(String itemKind, String itemId, WebScriptRequest request, Status status, Cache cache) {
 		Map<String, Object> model = null;
 
@@ -90,19 +93,31 @@ public class FilterFormUIGet extends FormUIGet {
 		
 		String prevFieldId = null;
 		for (String fieldId : visibleFields) {
-			if (fieldId.indexOf("entity_") == 0) {
+			if (fieldId.indexOf(ENTITY_PREFIX) == 0) {
 
 				String fieldSet = formConfig.getFields().get(fieldId).getSet();
 
-				String[] splitted = fieldId.replace("entity_", "").split("_");
+				String[] splitted = fieldId.replace(ENTITY_PREFIX, "").split("_");
 				String name = splitted[0];
-				FormConfigElement subFormConfig = getFormConfig(splitted[1], "sub-datagrid-filter");
-				List<String> subVisibleFields =  new ArrayList<String>(getVisibleFields(Mode.CREATE, subFormConfig));
+				
+				String subItemId = splitted[1];
+				
+				String subFormId = "sub-datagrid-filter";
+				
+				if (subItemId.contains("@")) {
+					String[] newSplitted = subItemId.split("@");
+					subItemId = newSplitted[0];
+					subFormId = newSplitted[1];
+				}
+				
+				FormConfigElement subFormConfig = getFormConfig(subItemId, subFormId);
+				
+				List<String> subVisibleFields =  new ArrayList<>(getVisibleFields(Mode.CREATE, subFormConfig));
 				
 				subVisibleFields.removeAll(visibleFields);
 				subVisibleFields = Collections.unmodifiableList(subVisibleFields);
 
-				formSvcResponse = retrieveFormDefinition(itemKind, splitted[1], subVisibleFields, subFormConfig);
+				formSvcResponse = retrieveFormDefinition(itemKind, subItemId, subVisibleFields, subFormConfig);
 				if (formSvcResponse.getStatus().getCode() == Status.STATUS_OK && model!=null) {
 					merge(model, name, generateFormModel(request, Mode.CREATE, formSvcResponse, subFormConfig), fieldSet, prevFieldId);
 				}
@@ -189,7 +204,7 @@ public class FilterFormUIGet extends FormUIGet {
 		if (prevFieldId != null) {
 			prevFieldId = prevFieldId.replace(":", "_");
 			for (Iterator<Element> iterator = mainSet.getChildren().iterator(); iterator.hasNext();) {
-				Element el = (Element) iterator.next();
+				Element el = iterator.next();
 
 				if (FIELD.equals(el.getKind()) && el.getId().contains(prevFieldId)) {
 					mainSet.getChildren().add(idx + 1, fieldPointer);
@@ -234,14 +249,14 @@ public class FilterFormUIGet extends FormUIGet {
 		writer.writeValue(PARAM_ITEM_ID, itemId.replace(":/", ""));
 
 		List<String> forcedFields = null;
-		if (visibleFields != null && visibleFields.size() > 0) {
+		if (visibleFields != null && !visibleFields.isEmpty()) {
 			// list the requested fields
 			writer.startValue(MODEL_FIELDS);
 			writer.startArray();
 
-			forcedFields = new ArrayList<String>(visibleFields.size());
+			forcedFields = new ArrayList<>(visibleFields.size());
 			for (String fieldId : visibleFields) {
-				if (fieldId.indexOf("dataList_") < 0 && fieldId.indexOf("entity_") < 0) {
+				if (fieldId.indexOf("dataList_") < 0 && fieldId.indexOf(ENTITY_PREFIX) < 0) {
 
 					// write out the fieldId
 					writer.writeValue(fieldId);
@@ -258,7 +273,7 @@ public class FilterFormUIGet extends FormUIGet {
 		}
 
 		// list the forced fields, if present
-		if (forcedFields != null && forcedFields.size() > 0) {
+		if (forcedFields != null && !forcedFields.isEmpty()) {
 			writer.startValue(MODEL_FORCE);
 			writer.startArray();
 
@@ -309,15 +324,12 @@ public class FilterFormUIGet extends FormUIGet {
         if (formsConfig != null)
         {
            // Extract the form we are looking for
-            if (formsConfig != null)
+            // try and retrieve the specified form 
+            if (formId != null && formId.length() > 0)
             {
-                // try and retrieve the specified form 
-                if (formId != null && formId.length() > 0)
-                {
-                    formConfig = formsConfig.getForm(formId);
-                }
-                
+                formConfig = formsConfig.getForm(formId);
             }
+                
         }
         else if (logger.isWarnEnabled())
         {
