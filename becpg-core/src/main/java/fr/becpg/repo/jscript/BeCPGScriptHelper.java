@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -1218,7 +1217,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		
 	}
 	
-	public void copyContent(ScriptNode from, ScriptNode to) throws ContentIOException, IOException {
+	public void copyContent(ScriptNode from, ScriptNode to) throws ContentIOException {
 		
 		ContentReader reader = contentService.getReader(from.getNodeRef(), ContentModel.PROP_CONTENT);
 		ContentWriter writer = contentService.getWriter(to.getNodeRef(), ContentModel.PROP_CONTENT, true);
@@ -1252,6 +1251,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
     
     public boolean isLicenseValid() {
     	return beCPGLicenseManager.isLicenseValid();
+    }
+    
+    public  String getTranslatedPath(String name) {
+    	
+    	String ret =  TranslateHelper.getTranslatedPath(name);
+    	if(ret==null  || ret.isBlank()) {
+    		return name;
+    	}
+    	return ret;
+    	                               
     }
     
 

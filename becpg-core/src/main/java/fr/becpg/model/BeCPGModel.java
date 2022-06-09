@@ -236,6 +236,9 @@ public final class BeCPGModel {
 	public static final QName PROP_AUTO_MERGE_COMMENTS = QName.createQName(BECPG_URI, "autoMergeComments");
 	/** Constant <code>PROP_AUTO_MERGE_IMPACTWUSED</code> */
 	public static final QName PROP_AUTO_MERGE_IMPACTWUSED = QName.createQName(BECPG_URI, "autoMergeImpactWUsed");
+	
+	public static final QName PROP_AUTO_MERGE_DATE = QName.createQName(BECPG_URI, "autoMergeDate");
+	
 	/** Constant <code>ASPECT_AUTO_MERGE_ASPECT</code> */
 	public static final QName ASPECT_AUTO_MERGE_ASPECT = QName.createQName(BeCPGModel.BECPG_URI, "autoMergeAspect");
 

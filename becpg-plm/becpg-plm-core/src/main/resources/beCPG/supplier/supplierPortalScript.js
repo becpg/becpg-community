@@ -6,7 +6,7 @@ function main()
         projectEntity = search.findNode(project.entities.get(0));
     } 
 
-    bSupplier.assignToSupplier(project, task, projectEntity, true);
+    bSupplier.assignToSupplier(project, task, projectEntity);
     
 }
 
