@@ -161,6 +161,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	// {nodeRef|xpath:./path} --> replace with nodeRef found in relative project path
 	// {assocName} --> replace with association nodeRef
 	// {assocName|propName} --> replace with association property
+	// {assocName|@type} --> replace with association property
 	// {assocName|xpath:./path} --> replace with nodeRef found in relative assoc path
 
 	public String getDeliverableUrl(ScriptNode deliverable) {
@@ -231,6 +232,9 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 			if (splitted[1].startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
 				ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeRef,
 						splitted[1].substring(DeliverableUrl.XPATH_URL_PREFIX.length()));
+			} else if(splitted[1].startsWith("@type")) {
+				QName type = nodeService.getType(nodeRef);
+				return type != null ? type.getLocalName() : "";
 			} else {
 				Serializable tmp = nodeService.getProperty(nodeRef, QName.createQName(splitted[1], namespaceService));
 				return tmp != null ? tmp.toString().replace("$", "\\$") : "";

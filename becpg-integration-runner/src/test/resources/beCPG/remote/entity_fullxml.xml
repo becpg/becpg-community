@@ -832,7 +832,7 @@
                           <cm:created type="d:datetime">2014-03-11T08:25:52.489+01:00</cm:created>
                           <cm:title type="d:mltext"><![CDATA[Activités]]></cm:title>
                           <cm:description type="d:mltext"><![CDATA[Activités projet]]></cm:description>
-                          <dl:dataListItemType type="d:text"><![CDATA[pjt:activityList]]></dl:dataListItemType>
+                          <dl:dataListItemType type="d:text"><![CDATA[bcpg:activityList]]></dl:dataListItemType>
                           <cm:creator type="d:text"><![CDATA[admin]]></cm:creator>
                           <cm:name type="d:text"><![CDATA[activityList]]></cm:name>
                           <cm:modifier type="d:text"><![CDATA[admin]]></cm:modifier>

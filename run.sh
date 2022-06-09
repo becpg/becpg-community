@@ -44,26 +44,26 @@ down() {
 deploy_fast(){
 
 	#becpg-amp
-	docker cp becpg-core/src/main/resources/alfresco/templates/. target_becpg_1:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
-	docker cp becpg-plm/becpg-plm-core/src/main/resources/alfresco/templates/. target_becpg_1:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
+	docker cp becpg-core/src/main/resources/alfresco/templates/. becpg_4_0_becpg_1:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
+	docker cp becpg-plm/becpg-plm-core/src/main/resources/alfresco/templates/. becpg_4_0_becpg_1:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
 	
 	#becpg-share
-	docker cp becpg-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	docker cp becpg-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker cp becpg-designer/becpg-designer-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	docker cp becpg-designer/becpg-designer-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker cp becpg-project/becpg-project-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	docker cp becpg-project/becpg-project-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	docker cp becpg-plm/becpg-plm-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	docker cp becpg-plm/becpg-plm-share/src/main/assembly/config/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-share/src/main/assembly/web/. becpg_4_0_becpg_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-share/src/main/resources/alfresco/. becpg_4_0_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-designer/becpg-designer-share/src/main/assembly/web/. becpg_4_0_becpg-share_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-designer/becpg-designer-share/src/main/resources/alfresco/. becpg_4_0_becpg-share_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-project/becpg-project-share/src/main/assembly/web/. becpg_4_0_becpg-share_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-project/becpg-project-share/src/main/resources/alfresco/. becpg_4_0_becpg-share_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. becpg_4_0_becpg-share_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-plm/becpg-plm-share/src/main/resources/alfresco/. becpg_4_0_becpg-share_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. becpg_4_0_becpg-share_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-plm/becpg-plm-share/src/main/assembly/config/alfresco/. becpg_4_0_becpg-share_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	if [ -d becpg-enterprise ]; then
-	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/assembly/web/. becpg_4_0_becpg-share_1:/usr/local/tomcat/webapps/share/
+	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/resources/alfresco/. becpg_4_0_becpg-share_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	fi
 	
-	wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8080/share/page/index
+	wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8180/share/page/index
 
 }
 
@@ -92,7 +92,7 @@ install() {
 }
 
 tail() {
-    docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH logs -f --tail=100 
+    docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg 
 }
 
 test() {

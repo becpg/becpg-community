@@ -18,7 +18,7 @@ services:
                      -Dcom.sun.management.jmxremote.authenticate=false
                      -Dcom.sun.management.jmxremote.local.only=false
                      -Djava.rmi.server.hostname=127.0.0.1"
-
+#      JAVA_HOME: /usr/java/latest
 #      CATALINA_OPTS: "-Xmx4G -XX:HotswapAgent=external -Duser.language=fr -Duser.country=FR 
 #                     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
 #                     -XX:HotswapAgent=fatjar

@@ -2774,35 +2774,39 @@
 	
 	<config evaluator="model-type" condition="pjt:project">
 	   <forms>
-	 	 <form id="supplier-project">
+			<form id="supplier-process">
 				<field-visibility>
-				   <show id="cm:name" />
-				   <show id="pjt:projectObservers" />		
-				   <show id="bcpg:entityTplRef" force="true" />			
-				   <show id="pjt:projectEntity" />
-				   <show id="pjt:projectState" />										
+					<show id="cm:name" />
+					<show id="pjt:projectObservers" />
+					<show id="bcpg:entityTplRef" force="true" />
+					<show id="pjt:projectState" />
+					<show id="bcpg:supplierAccountRef" force="true"  />
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" appearance="bordered-panel"
 						label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="cm:name" set="mainInfo" />
+					<field id="cm:name" set="mainInfo" mandatory="true"/>
 					<field id="pjt:projectObservers" set="mainInfo" />		
-					<field id="bcpg:entityTplRef" set="mainInfo" >
+					
+					<field id="bcpg:supplierAccountRef" set="mainInfo"  mandatory="true"/>
+					<field id="bcpg:entityTplRef" set="mainInfo" mandatory="true" >	
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse</control-param>
-							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
-						</control>
-					</field>				
-					<field id="pjt:projectEntity" set="mainInfo" />	
-					<field id="pjt:projectState" set="mainInfo">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">Planned|data.taskstate.planned,InProgress|data.taskstate.inprogress,OnHold|data.taskstate.onhold,Cancelled|data.taskstate.cancelled,Completed|data.taskstate.completed
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect,bcpg:suppliersAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
+							<control-param name="showTooltip">false</control-param>
 						</control>
-					</field>										
+					</field>
 				</appearance>
 			</form>
+			<form id="sign-process">
+				<field-visibility>
+					<show id="sign:recipients" force="true" />
+					<show id="pjt:projectState" />
+				</field-visibility>
+			</form>
+			
+			
 		</forms>
 	</config>
 	

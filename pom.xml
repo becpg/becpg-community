@@ -385,6 +385,8 @@
 							<excludes>
 								<exclude>**/templates/**</exclude>
 								<exclude>**/webscripts/**</exclude>
+								<exclude>**/suppliers/**</exclude>
+								<exclude>**/signature/**</exclude>
 								<exclude>**/rules/**</exclude>
 								<exclude>**/script/**</exclude>
 								<exclude>**/site-webscripts/**</exclude>
@@ -409,6 +411,8 @@
 								<exclude>**/templates/**</exclude>
 								<exclude>**/webscripts/**</exclude>
 								<exclude>**/rules/**</exclude>
+								<exclude>**/suppliers/**</exclude>
+								<exclude>**/signature/**</exclude>
 								<exclude>**/script/**</exclude>
 								<exclude>**/site-webscripts/**</exclude>
 								<exclude>**/*.lib.js</exclude>

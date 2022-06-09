@@ -130,7 +130,7 @@
 						if (response.json) {
 							this.modules.sendToSupplier.hide();
 							window.location.href = beCPG.util.entityURL(recordSiteName,
-								response.json.persistedObject, p_record.node.type);
+								response.json.persistedObject, "pjt:project");
 						}
 					},
 					scope: this

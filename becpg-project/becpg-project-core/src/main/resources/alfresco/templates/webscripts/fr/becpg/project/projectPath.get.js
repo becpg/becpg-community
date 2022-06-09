@@ -24,8 +24,11 @@ function main()
    		node = node.parent;
    		path = path.substr(3);
    	}
+   	model.path="";
+   	
    	if(path!=""){
-   		node = node.childByNamePath(path);
+		   node = node.childByNamePath(bcpg.getTranslatedPath(path));
+		   model.path=bcpg.getTranslatedPath(path);
    	}
        model.entity = node;
    }

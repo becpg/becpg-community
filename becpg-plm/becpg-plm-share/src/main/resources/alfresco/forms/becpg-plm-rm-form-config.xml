@@ -356,7 +356,7 @@
           </field>
         </appearance>
       </form>
-      <form id="supplier-mp">
+      <form id="supplier">
         <field-visibility>
           <show force="false" id="cm:name"/>
           <show force="true" id="cm:title"/>
