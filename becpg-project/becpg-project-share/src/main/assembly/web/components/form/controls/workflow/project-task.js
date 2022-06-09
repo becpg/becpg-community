@@ -175,10 +175,40 @@
                             {
                             	var dUrl = deliverables[j].url
 								var hiddenWizard = false;
-                            	if(dUrl != null && dUrl.length > 0 && dUrl.indexOf("wizard") > 0 && dUrl.indexOf("catalogId") > 0){
+								
+								var mode = YAHOO.util.History.getQueryStringParameter("mode", dUrl);
+								var wizardNodeRef = YAHOO.util.History.getQueryStringParameter("nodeRef", dUrl);
+								
+								if (mode == "sign") {
+									var validateButtonId = this.id.replace(/assoc_pjt_workflowTask\-cntrl/g, this.options.transitionField) + "-validate";
+									YAHOO.util.Event.onAvailable(validateButtonId, function() {
+										Dom.addClass(validateButtonId, "hidden");
+									}, this);
+									
+									Alfresco.util.Ajax.request({
+		                    				url : Alfresco.constants.PROXY_URI + "slingshot/doclib2/node/" + wizardNodeRef.replace(":/",""),
+		                    				method : Alfresco.util.Ajax.GET,
+		                    				responseContentType : Alfresco.util.Ajax.JSON,
+		                    				successCallback : {
+		                    					fn : function (response){
+		                    						var isValid = false;
+		                    						
+													if (response.json.item.node.properties["sign:status"] == "ReadyToSign" || response.json.item.node.properties["sign:status"] == "Signed") {
+		                    							isValid = true;
+													}
+													
+		                    						if(isValid){
+			                                        	YAHOO.util.Event.onAvailable(validateButtonId,function(){
+			                                        		  Dom.removeClass(validateButtonId, "hidden");
+			                                        	}, this);
+		                    						}
+		                    					},
+		                    					scope : this
+		                    				}
+		                    			}); 
+								} else if(dUrl != null && dUrl.length > 0 && dUrl.indexOf("wizard") > 0 && dUrl.indexOf("catalogId") > 0){
                             	
                             			 
-                            	    var wizardNodeRef = YAHOO.util.History.getQueryStringParameter("nodeRef",dUrl);
                              		var catalogId = YAHOO.util.History.getQueryStringParameter("catalogId",dUrl);	 
                             		
 									if(YAHOO.util.History.getQueryStringParameter("id",dUrl) == null){
