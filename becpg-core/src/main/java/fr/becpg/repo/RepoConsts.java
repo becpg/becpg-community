@@ -18,6 +18,7 @@ import org.alfresco.service.cmr.repository.StoreRef;
 public class RepoConsts
 {
 
+
 	private RepoConsts() {
 		//Private constructor
 	}
@@ -75,6 +76,10 @@ public class RepoConsts
 	public static final String PATH_IMAGES = "Images";
 	/** Constant <code>PATH_DOCUMENTS="Documents"</code> */
 	public static final String PATH_DOCUMENTS = "Documents";
+	
+
+	public static String PATH_SUPPLIER_DOCUMENTS= "SupplierDocuments";
+	
 	/** Constant <code>PATH_BRIEF="Brief"</code> */
 	public static final String PATH_BRIEF = "Brief";
 	/** Constant <code>PATH_LOGO_IMAGE="logoimage"</code> */

@@ -169,25 +169,17 @@
 		<property name="associationService" ref="associationService" />
 		<property name="nodeService" ref="NodeService" />
 		<property name="permissionService" ref="permissionService" />
-		<property name="repository" ref="repositoryHelper" />
 		<property name="repoService" ref="repoService"/>
-		<property name="hierarchyService" ref="hierarchyService"/>
-		<property name="siteService" ref="siteService"/>
+		<property name="serviceRegistry" ref="ServiceRegistry"/>
 		<property name="projectService" ref="projectService"/>
+		<property name="supplierPortalService" ref="supplierPortalService"/>
+		<property name="entityVersionService" ref="entityVersionService"/>
 	</bean>
 
 	
 	<bean id="webscript.fr.becpg.supplier.sendToSupplier.post" class="fr.becpg.repo.web.scripts.supplier.SupplierPortalWebScript" parent="webscript">
-		<property name="alfrescoRepository" ref="alfrescoRepository" />
-		<property name="nodeService" ref="NodeService" />
-		<property name="namespaceService" ref="NamespaceService" />
-		<property name="associationService" ref="associationService"/>
-		<property name="entityVersionService" ref="entityVersionService"/>
-		<property name="entityNameTpl" value="${beCPG.sendToSupplier.entityName.format}"/>		
-		<property name="projectNameTpl" value="${beCPG.sendToSupplier.projectName.format}"/>	
-		<property name="repoService" ref="repoService"/>
-		<property name="createBranch" value="${beCPG.sendToSupplier.createBranch}"/>	
-		<property name="siteService" ref="siteService"/>
+		<property name="paginatedSearchCache" ref="paginatedSearchCache" />
+		<property name="supplierPortalService" ref="supplierPortalService"/>
 	</bean>
 	
 	<bean id="webscript.fr.becpg.supplier.createSupplier.post" class="fr.becpg.repo.web.scripts.supplier.SupplierAccountWebScript" parent="webscript">
