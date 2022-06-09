@@ -1197,7 +1197,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		}
 	}
 	
-	public NodeRef createEmptyBranch(NodeRef entityNodeRef, NodeRef parentRef) {
+	private NodeRef createEmptyBranch(NodeRef entityNodeRef, NodeRef parentRef) {
 		StopWatch watch = null;
 
 		boolean mlAware = MLPropertyInterceptor.isMLAware();
