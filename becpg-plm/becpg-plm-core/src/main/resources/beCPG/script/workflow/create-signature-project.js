@@ -39,6 +39,7 @@ function main() {
 			
 			for (var i in project.assocs["sign:recipients"]) {
 				var recipient = project.assocs["sign:recipients"][i];
+				doc.removeAssociation(recipient, "sign:recipients");
 				doc.createAssociation(recipient, "sign:recipients");
 			}
 			
