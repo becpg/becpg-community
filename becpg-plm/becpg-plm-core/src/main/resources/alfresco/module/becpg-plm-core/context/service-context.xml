@@ -151,6 +151,11 @@
 		<property name="versionCleanerService" ref="versionCleanerService" />
 	</bean>
 	
+	<!-- Publication -->
+	<bean id="webscript.fr.becpg.publication.channelList.get" class="fr.becpg.repo.web.scripts.publication.ListEntitiesByChannelWebScript" parent="webscript.fr.becpg.remote.entities.get">
+		<property name="publicationChannelService" ref="publicationChannelService" />
+	</bean>
+	
 	<!-- Formulation javascript helper -->
 	
 	<bean id="bFormulationScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.FormulationScriptHelper">

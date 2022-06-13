@@ -68,7 +68,7 @@ public class UnlimitedSearchIT extends RepoBaseTestCase {
 		}, false, true);
 
 		waitForSolr();
-		//sorl  test
+		//solr  test
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_LIST_VALUE).andPropQuery(ContentModel.PROP_NAME, "UnlimitedSearchTest").andPropEquals(ContentModel.PROP_TITLE,
