@@ -13,6 +13,8 @@ import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.search.data.DateFilterType;
+import fr.becpg.repo.search.data.VersionFilterType;
 
 /**
  * <p>NotificationRuleListDataItem class.</p>
@@ -34,7 +36,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	private String subject;
 	private NodeRef email;
 	private int frequency;
-	private NotificationRuleTimeType timeType;
+	private DateFilterType timeType;
 	private List<NodeRef> authorities = new ArrayList<>();
 	private Date frequencyStartDate;
 	private VersionFilterType versionFilterType;
@@ -179,7 +181,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	 */
 	@AlfProp
 	@AlfQname(qname="bcpg:nrTimeType")
-	public NotificationRuleTimeType getTimeType() {
+	public DateFilterType getTimeType() {
 		return timeType;
 	}
 
@@ -188,7 +190,7 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	 *
 	 * @param timeType a {@link fr.becpg.repo.notification.data.NotificationRuleTimeType} object.
 	 */
-	public void setTimeType(NotificationRuleTimeType timeType) {
+	public void setTimeType(DateFilterType timeType) {
 		this.timeType = timeType;
 	}
 

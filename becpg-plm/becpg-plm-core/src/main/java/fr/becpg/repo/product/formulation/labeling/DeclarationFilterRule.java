@@ -30,6 +30,11 @@ import fr.becpg.repo.product.data.constraints.DeclarationType;
  */
 public class DeclarationFilterRule extends AbstractFormulaFilterRule {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7819866735412692528L;
+
 	private final DeclarationType declarationType;
 
 	private Double threshold = null;
