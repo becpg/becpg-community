@@ -74,7 +74,7 @@ margin-top:3px;
                                             <tr>
                                        <td>
                                        <#assign notification=args.notification>
-                                       <#assign dateField=notification.properties["bcpg:nrDateField"]>
+                                       <#assign dateField=notification.properties["bcpg:nrDateField"] >
                                           <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                              <tr>
                                                 <td class="flex">
@@ -106,7 +106,7 @@ margin-top:3px;
                                                
                                                <#list args.entities as item> 
                                                		<#assign node=item.node/>
-                                               		<#if args.versions??>
+                                               		<#if args.versions?? && node.properties[dateField]??>
 	                                               		<#list args.versions[node.nodeRef]?keys as key >
 	                                               			<#assign version=args.versions[node.nodeRef][key]>
 															<tr> 
