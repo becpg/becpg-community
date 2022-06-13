@@ -308,7 +308,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 				if (jsonObject.has("data") && jsonObject.getJSONObject("data").has("translations")) {
 					JSONArray translations = jsonObject.getJSONObject("data").getJSONArray("translations");
 					if (translations.length() > 0) {
-						return StringEscapeUtils.unescapeHtml4(translations.getJSONObject(0).getString("translatedText"));
+						return StringEscapeUtils.unescapeHtml(translations.getJSONObject(0).getString("translatedText"));
 					}
 				}
 
