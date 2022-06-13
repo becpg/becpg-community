@@ -27,10 +27,6 @@ public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkPr
 		this.iterator = entities.iterator();
 	}
 
-	@Override
-	public long getTotalEstimatedWorkSizeLong() {
-		return getTotalEstimatedWorkSize();
-	}
 
 	@Override
 	public Collection<T> getNextWork() {
