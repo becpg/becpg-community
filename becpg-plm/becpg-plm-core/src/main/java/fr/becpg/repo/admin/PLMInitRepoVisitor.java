@@ -77,6 +77,7 @@ import fr.becpg.model.NCGroup;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
+import fr.becpg.model.PublicationModel;
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
@@ -95,15 +96,15 @@ import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
-import fr.becpg.repo.notification.data.NotificationRuleTimeType;
 import fr.becpg.repo.notification.data.RecurringTimeType;
-import fr.becpg.repo.notification.data.VersionFilterType;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.report.template.ReportTplInformation;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.search.data.DateFilterType;
+import fr.becpg.repo.search.data.VersionFilterType;
 import fr.becpg.report.client.ReportFormat;
 
 /**
@@ -591,7 +592,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "bcpg:reqCtrlList");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "cm:created");
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.Before);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), DateFilterType.Before);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 0);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"),
@@ -618,7 +619,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "cm:folder");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "cm:to");
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.To);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), DateFilterType.To);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 90);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
@@ -642,7 +643,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "pjt:project");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "cm:created");
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.Before);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), DateFilterType.Before);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 0);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
@@ -670,7 +671,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "bcpg:product");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "bcpg:stateActivityModified");
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.From);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), DateFilterType.From);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
@@ -697,7 +698,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "bcpg:product");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "cm:modified");
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.From);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), DateFilterType.From);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
@@ -723,7 +724,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrNodeType"), "bcpg:product");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringTimeType"), RecurringTimeType.Day);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrDateField"), "bcpg:stateActivityModified");
-			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), NotificationRuleTimeType.From);
+			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeType"), DateFilterType.From);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrRecurringDay"), "MONDAY");
@@ -1014,6 +1015,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_CONTACTS, PLMModel.TYPE_CONTACTLIST);
 
 		entityLists.put(RepoConsts.PATH_NOTIFICATIONS, BeCPGModel.TYPE_NOTIFICATIONRULELIST);
+		entityLists.put(PlmRepoConsts.PATH_PUBCHANNELS, PublicationModel.TYPE_PUBLICATION_CHANNEL);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
