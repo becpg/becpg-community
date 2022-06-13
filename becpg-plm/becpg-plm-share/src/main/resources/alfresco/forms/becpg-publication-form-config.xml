@@ -17,59 +17,189 @@
 -->
 <alfresco-config>
 
-	<config condition="bp:MailingListChannel" evaluator="node-type">
+
+
+
+	<config evaluator="node-type" condition="bp:pubChannel">
 		<forms>
-			<form >
+			<form>
 				<field-visibility>
-					<show force="false" id="cm:name" />
-					<show force="false" id="bp:mailingMembers" />
+					<show id="cm:name" />
+					<show id="bp:pubChannelId" />
+					<show id="bp:pubChannelCatalogId" />
+					<show id="bp:pubChannelBatchId" />
+					<show id="bp:pubChannelLastSuccessBatchId" />
+					<show id="bp:pubChannelBatchStartTime" />
+					<show id="bp:pubChannelBatchEndTime" />
+					<show id="bp:pubChannelBatchDuration" />
+					<show id="bp:pubChannelStatus" />
+					<show id="bp:pubChannelReadCount" />
+					<show id="bp:pubChannelFailCount" />
+					<show id="bp:pubChannelError" />
+					<show id="bp:pubChannelConfig" />
+					<show id="bp:pubChannelConfigFile" />
+
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" mandatory="false" read-only="false" />
-					<field id="bp:mailingMembers" mandatory="false" read-only="false" />
+					<field id="cm:name" />
+					<field id="bp:pubChannelId" />
+					<field id="bp:pubChannelBatchId" read-only="true" />
+					<field id="bp:pubChannelLastSuccessBatchId" read-only="true" />
+					<field id="bp:pubChannelBatchStartTime" read-only="true" />
+					<field id="bp:pubChannelBatchEndTime" read-only="true" />
+					<field id="bp:pubChannelBatchDuration" read-only="true" />
+					<field id="bp:pubChannelStatus" read-only="true" />
+					<field id="bp:pubChannelReadCount" read-only="true" />
+					<field id="bp:pubChannelFailCount" read-only="true" />
+					<field id="bp:pubChannelError" read-only="true" />
+					<field id="bp:pubChannelConfig">
+
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bp:pubChannelConfigFile" />
 				</appearance>
 			</form>
 		</forms>
 	</config>
-	<config condition="bp:MailingListChannel" evaluator="model-type">
+
+	<config evaluator="model-type" condition="bp:pubChannel">
 		<forms>
-			<form >
+			<form>
 				<field-visibility>
-					<show force="false" id="cm:name" />
-					<show force="false" id="bp:mailingMembers" />
+					<show id="cm:name" />
+					<show id="bp:pubChannelId" />
+					<show id="bp:pubChannelCatalogId" />
+					<show id="bp:pubChannelConfig" />
+					<show id="bp:pubChannelConfigFile" />
+
 				</field-visibility>
 				<appearance>
-					<field id="cm:name" mandatory="false" read-only="false" />
-					<field id="bp:mailingMembers" mandatory="true" >
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">4</control-param>
+					<field id="cm:name" />
+					<field id="bp:pubChannelId" />
+					<field id="bp:pubChannelConfig">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bp:pubChannelConfigFile" />
+				</appearance>
+			</form>
+
+			<form id="filter">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bp:pubChannelId" />
+				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bp:pubChannelId" />
+					<show id="bp:pubChannelBatchId" />
+					<show id="bp:pubChannelLastSuccessBatchId" />
+					<show id="bp:pubChannelBatchStartTime" />
+					<show id="bp:pubChannelBatchEndTime" />
+					<show id="bp:pubChannelBatchDuration" />
+					<show id="bp:pubChannelStatus" />
+					<show id="bp:pubChannelReadCount" />
+					<show id="bp:pubChannelFailCount" />
+					<show id="bp:pubChannelError" />
+
+				</field-visibility>
+				<appearance>
+					<field id="cm:name" />
+					<field id="bp:pubChannelId" />
+					<field id="bp:pubChannelBatchId" read-only="true" />
+					<field id="bp:pubChannelLastSuccessBatchId" read-only="true" />
+					<field id="bp:pubChannelBatchStartTime" read-only="true" />
+					<field id="bp:pubChannelBatchEndTime" read-only="true" />
+					<field id="bp:pubChannelBatchDuration" read-only="true" />
+					<field id="bp:pubChannelStatus" read-only="true" />
+					<field id="bp:pubChannelReadCount" read-only="true" />
+					<field id="bp:pubChannelFailCount" read-only="true" />
+					<field id="bp:pubChannelError" read-only="true" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+
+
+	<config evaluator="node-type" condition="bp:pubChannelList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bp:pubChannelListChannel" />
+					<show id="bp:pubChannelListForcePublication" />
+					<show id="bp:pubChannelListModifiedDate" />
+					<show id="bp:pubChannelListPublishedDate" />
+					<show id="bp:pubChannelListBatchId" />
+					<show id="bp:pubChannelListStatus" />
+					<show id="bp:pubChannelListError" />
+
+				</field-visibility>
+				<appearance>
+					<field id="bp:pubChannelListChannel">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bp:pubChannelListForcePublication" />
+					<field id="bp:pubChannelListModifiedDate" read-only="true" />
+					<field id="bp:pubChannelListPublishedDate" read-only="true" />
+					<field id="bp:pubChannelListBatchId" read-only="true" />
+					<field id="bp:pubChannelListStatus" read-only="true" />
+					<field id="bp:pubChannelListError" read-only="true" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+
+
+
+	<config evaluator="model-type" condition="bp:pubChannelList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bp:pubChannelListChannel" />
+					<show id="bp:pubChannelListForcePublication" />
+				</field-visibility>
+				<appearance>
+					<field id="bp:pubChannelListChannel">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
 				</appearance>
 			</form>
-		</forms>
-	</config>
-	
-	
-	<config condition="bp:productCatalog" evaluator="node-type">
-		<forms>
-			<form >
+
+			<form id="filter">
 				<field-visibility>
-					<show force="false" id="cm:name" />
-					<show force="false" id="bp:productCatalogId" />
+					<show id="bp:pubChannelListChannel" />
 				</field-visibility>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bp:pubChannelListChannel" />
+					<show id="bp:pubChannelListForcePublication" />
+					<show id="bp:pubChannelListModifiedDate" />
+					<show id="bp:pubChannelListPublishedDate" />
+					<show id="bp:pubChannelListBatchId" />
+					<show id="bp:pubChannelListStatus" />
+					<show id="bp:pubChannelListError" />
+
+				</field-visibility>
+				<appearance>
+					<field id="bp:pubChannelListChannel" />
+					<field id="bp:pubChannelListForcePublication" />
+					<field id="bp:pubChannelListModifiedDate" read-only="true" />
+					<field id="bp:pubChannelListPublishedDate" read-only="true" />
+					<field id="bp:pubChannelListBatchId" read-only="true" />
+					<field id="bp:pubChannelListStatus" read-only="true" />
+					<field id="bp:pubChannelListError" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
-	<config condition="bp:productCatalog" evaluator="model-type">
-		<forms>
-			<form >
-				<field-visibility>
-					<show force="false" id="cm:name" />
-					<show force="false" id="bp:mailingMembers" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
+
 
 </alfresco-config>

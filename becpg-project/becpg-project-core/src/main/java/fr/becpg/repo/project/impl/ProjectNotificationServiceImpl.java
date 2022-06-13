@@ -184,7 +184,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 	}
 
 	@Override
-	public boolean accept(QName type, NodeRef entityNodeRef) {
+	public boolean acceptCatalogEvents(QName type, NodeRef entityNodeRef) {
 		return ProjectModel.TYPE_PROJECT.equals(type);
 	}
 	

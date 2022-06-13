@@ -212,7 +212,7 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 					for (int i = 0; i < catalogDef.length(); i++) {
 						JSONObject catalog = catalogDef.getJSONObject(i);
 						QName type = nodeService.getType(entityNodeRef);
-						if (isMatchEntityType(catalog, type, namespaceService) && catalog.has(PROP_CATALOG_MODIFIED_FIELD)
+						if (isMatchEntityType(catalog, type, namespaceService) && catalog.has(PROP_AUDITED_FIELDS)
 								&& isMatchFilter(catalog, entityNodeRef)) {
 							Set<QName> auditedFields = getAuditedFields(catalog, namespaceService);
 							if ((auditedFields != null) && !auditedFields.isEmpty()) {
@@ -237,14 +237,16 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 								}
 
 								if (changedField != null) {
-									QName catalogModifiedDate = QName.createQName(catalog.getString(PROP_CATALOG_MODIFIED_FIELD), namespaceService);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Audited field " + changedField + " has changed, update date: " + catalogModifiedDate);
+									if(catalog.has(PROP_CATALOG_MODIFIED_FIELD)) {
+										QName catalogModifiedDate = QName.createQName(catalog.getString(PROP_CATALOG_MODIFIED_FIELD), namespaceService);
+										if (logger.isDebugEnabled()) {
+											logger.debug("Audited field " + changedField + " has changed, update date: " + catalogModifiedDate);
+										}
+	
+										nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
 									}
-
-									nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
 									for (EntityCatalogObserver observer : observers) {
-										if (observer.accept(type, entityNodeRef)) {
+										if (observer.acceptCatalogEvents(type, entityNodeRef)) {
 											observer.notifyAuditedFieldChange(catalog.getString(PROP_ID), entityNodeRef);
 										}
 									}

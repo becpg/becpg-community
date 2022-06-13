@@ -7,6 +7,6 @@ public interface EntityCatalogObserver {
 
 	void notifyAuditedFieldChange(String string, NodeRef entityNodeRef);
 
-	boolean accept(QName type, NodeRef entityNodeRef);
+	boolean acceptCatalogEvents(QName type, NodeRef entityNodeRef);
 
 }

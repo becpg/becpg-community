@@ -1,4 +1,4 @@
-package fr.becpg.repo.notification.data;
+package fr.becpg.repo.search.data;
 
 import org.alfresco.service.cmr.version.VersionType;
 
