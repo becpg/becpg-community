@@ -25,37 +25,47 @@ import org.alfresco.service.namespace.QName;
  * @author matthieu
  * @version $Id: $Id
  */
-public interface PublicationModel {
+public class PublicationModel {
 
 	/** Constant <code>PUBLICATION_URI="http://www.bcpg.fr/model/publication/1."{trunked}</code> */
-	String PUBLICATION_URI = "http://www.bcpg.fr/model/publication/1.0";
+	public static String PUBLICATION_URI = "http://www.bcpg.fr/model/publication/1.0";
 
 	/** Constant <code>PUBLICATION_PREFIX="bp"</code> */
-	String PUBLICATION_PREFIX = "bp";
+	public static String PUBLICATION_PREFIX = "bp";
+	
+	private PublicationModel() {
+		//Constants only
+	}
 
 	/** 
 	 * The Constant MODEL. 
 	 */
-	QName MODEL = QName.createQName(PUBLICATION_URI, "publicationModel");
+	public static QName MODEL = QName.createQName(PUBLICATION_URI, "publicationModel");
 
-	/**
-	 * Mailing List
-	 */
+	public static final QName TYPE_PUBLICATION_CHANNEL = QName.createQName(PUBLICATION_URI, "pubChannel");
+	public static final QName TYPE_PUBLICATION_CHANNEL_LIST = QName.createQName(PUBLICATION_URI, "pubChannelList");
 
-	QName TYPE_DELIVERY_CHANNEL = QName.createQName(PUBLICATION_URI, "MailingListChannel");
+	public static final QName ASSOC_PUBCHANNELLIST_CHANNEL = QName.createQName(PUBLICATION_URI, "pubChannelListChannel");
+	public static final QName PROP_PUBCHANNEL_CATALOG_ID = QName.createQName(PUBLICATION_URI, "pubChannelCatalogId");
+	public static final QName PROP_PUBCHANNELLIST_MODIFIED_DATE = QName.createQName(PUBLICATION_URI, "pubChannelListModifiedDate");
+	public static final QName PROP_PUBCHANNEL_ID = QName.createQName(PUBLICATION_URI, "pubChannelId");
 
-	/** Constant <code>PROP_MAILLING_MEMBERS</code> */
-	QName PROP_MAILLING_MEMBERS = QName.createQName(PUBLICATION_URI, "mailingMembers");
+	public static final QName PROP_PUBCHANNELLIST_BATCHID = QName.createQName(PUBLICATION_URI, "pubChannelListBatchId");
+	public static final QName PROP_PUBCHANNELLIST_PUBLISHEDDATE = QName.createQName(PUBLICATION_URI, "pubChannellListPublishedDate");
+	public static final QName PROP_PUBCHANNELLIST_STATUS = QName.createQName(PUBLICATION_URI, "pubChannellListStatus");
+	public static final QName PROP_PUBCHANNELLIST_ERROR = QName.createQName(PUBLICATION_URI, "pubChannellListError");
+	public static final QName PROP_PUBCHANNELLIST_FORCEPUBLIVCATION = QName.createQName(PUBLICATION_URI, "pubChannelListForcePublication");
+	public static final QName PROP_PUBCHANNEL_CONFIG = QName.createQName(PUBLICATION_URI, "pubChannelConfig");
+	public static final QName ASSOC_PUBCHANNEL_CONFIGFILE = QName.createQName(PUBLICATION_URI, "pubChannelConfigFile");
 
-	/**
-	 * Product catalog
-	 */
-	QName TYPE_PRODUCT_CATALOG = QName.createQName(PUBLICATION_URI, "productCatalog");
-
-	/** Constant <code>PROP_PRODUCT_CATALOG_ID</code> */
-	QName PROP_PRODUCT_CATALOG_ID = QName.createQName(PUBLICATION_URI, "productCatalogId");
-
-	/** Constant <code>ASSOC_PRODUCT_CATALOGS</code> */
-	QName ASSOC_PRODUCT_CATALOGS = QName.createQName(PUBLICATION_URI, "productCatalogs");
+	public static final QName PROP_PUBCHANNEL_BTASHSTARTTIME = QName.createQName(PUBLICATION_URI, "pubChannelBatchStartTime");
+	public static final QName PROP_PUBCHANNEL_BATCHENDTIME = QName.createQName(PUBLICATION_URI, "pubChannelBatchEndTime");
+	public static final QName PROP_PUBCHANNEL_BATCHDURATION = QName.createQName(PUBLICATION_URI, "pubChannelBatchDuration");
+	public static final QName PROP_PUBCHANNEL_BATCHID = QName.createQName(PUBLICATION_URI, "pubChannelBatchId");
+	public static final QName PROP_PUBCHANNEL_FAILCOUNT = QName.createQName(PUBLICATION_URI, "pubChannelFailCount");
+	public static final QName PROP_PUBCHANNEL_READCOUNT = QName.createQName(PUBLICATION_URI, "pubChannelReadCount");
+	public static final QName PROP_PUBCHANNEL_ERROR = QName.createQName(PUBLICATION_URI, "pubChannelError");
+	public static final QName PROP_PUBCHANNEL_LASTSUCCESSBATCHID = QName.createQName(PUBLICATION_URI, "pubChannelLastSuccessBatchId");
+	public static final QName PROP_PUBCHANNEL_STATUS = QName.createQName(PUBLICATION_URI, "pubChannelStatus");
 
 }

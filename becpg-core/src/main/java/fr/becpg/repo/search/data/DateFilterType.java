@@ -1,4 +1,4 @@
-package fr.becpg.repo.notification.data;
+package fr.becpg.repo.search.data;
 
 /**
  * <p>NotificationRuleTimeType class.</p>
@@ -6,6 +6,6 @@ package fr.becpg.repo.notification.data;
  * @author matthieu
  * @version $Id: $Id
  */
-public enum NotificationRuleTimeType {
+public enum DateFilterType {
 	Before, After, From, To, Equals
 }

@@ -279,6 +279,7 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_SPECIES_FOR_FISHERY = "SpeciesForFishery";
 	public static final String PATH_GS1_CATCH_METHID_CODES = "CatchMethodCodes";
 	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
+	public static final String PATH_PUBCHANNELS = "PubChannels";
 
 
 

@@ -22,22 +22,206 @@
 	<published>2012-10-16</published>
 	<version>1.0</version>
 	<imports>
-		<import uri="http://www.alfresco.org/model/dictionary/1.0"
-			prefix="d" />
+		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d" />
 		<import uri="http://www.alfresco.org/model/system/1.0" prefix="sys" />
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
-		<import uri="http://www.alfresco.org/model/publishing/1.0"
-			prefix="pub" />
+		<import uri="http://www.alfresco.org/model/publishing/1.0" prefix="pub" />
+		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
 	</imports>
 	<namespaces>
-		<namespace uri="http://www.bcpg.fr/model/publication/1.0"
-			prefix="bp" />
+		<namespace uri="http://www.bcpg.fr/model/publication/1.0" prefix="bp" />
 	</namespaces>
+	<constraints>
+		<constraint name="bp:pubChannelStatus" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				    <value></value>
+					<value>COMPLETED</value>
+					<value>STARTING</value>
+					<value>STARTED</value>
+					<value>STOPPING</value>
+					<value>STOPPED</value>
+					<value>FAILED</value>
+					<value>ABANDONED</value>
+					<value>UNKNOWN</value>
+				</list>
+			</parameter>
+		</constraint>
+	
+	</constraints>
 	<types>
+
+
+		<type name="bp:pubChannel">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bp:pubChannelId">
+					<type>d:text</type>
+					<mandatory enforced="true">true</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:pubChannelCatalogId">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:pubChannelBatchId">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+					<property name="bp:pubChannelLastSuccessBatchId">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:pubChannelStatus">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bp:pubChannelStatus" />
+					</constraints>
+				</property>
+				<property name="bp:pubChannelBatchStartTime">
+					<type>d:date</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:pubChannelBatchEndTime">
+					<type>d:date</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:pubChannelBatchDuration">
+					<type>d:long</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:pubChannelFailCount">
+					<type>d:int</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:pubChannelReadCount">
+					<type>d:int</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:pubChannelError">
+					<type>d:text</type>
+					<index enabled="false"/>
+				</property>
+				<property name="bp:pubChannelConfig">
+					<type>d:text</type>
+					<index enabled="false"/>
+				</property>
+
+			</properties>
+			<associations>
+				<association name="bp:pubChannelConfigFile">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:content</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>
+
+
+		<type name="bp:pubChannelList">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bp:pubChannelListBatchId">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:pubChannelListPublishedDate">
+					<type>d:date</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:pubChannelListStatus">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bp:pubChannelStatus" />
+					</constraints>
+				</property>
+				<property name="bp:pubChannelListError">
+					<type>d:text</type>
+					<index enabled="false"/>
+				</property>
+				<property name="bp:pubChannelListForcePublication">
+					<type>d:boolean</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bp:pubChannelListModifiedDate">
+					<type>d:date</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+			</properties>
+			<associations>
+				<association name="bp:pubChannelListChannel">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bp:pubChannel</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</type>
+
+<!-- Deprecated TO Remove -->
 		<type name="bp:MailingListChannel">
 			<title>Mailing List Delivery Channel</title>
 			<description>Node type used to represent Mailing List delivery
-				channel</description>
+				channel
+			</description>
 			<parent>pub:DeliveryChannel</parent>
 			<mandatory-aspects>
 				<aspect>bp:MailingListChannelAspect</aspect>
@@ -55,16 +239,22 @@
 
 	</types>
 	<aspects>
+	<!-- Deprecated TO Remove -->
 		<aspect name="bp:MailingListChannelAspect">
 			<title>Mailing List Delivery Channel Aspect</title>
 			<description>Applied to a node that represents a Mailing List
-				Delivery Channel</description>
+				Delivery Channel
+			</description>
 			<properties>
 				<property name="bp:mailingMembers">
 					<title>Mailing List members</title>
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 			</properties>
 
@@ -72,12 +262,17 @@
 		<aspect name="bp:productCatalogChannelAspect">
 			<title>Product Catalog Channel Aspect</title>
 			<description>Applied to a node that represents a Product Catalog
-				Channel</description>
+				Channel
+			</description>
 			<properties>
 				<property name="bp:productCatalogId">
 					<title>Product catalog identifier</title>
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 			</properties>
 
