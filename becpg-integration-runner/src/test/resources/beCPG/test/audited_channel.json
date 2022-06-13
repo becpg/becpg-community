@@ -1,0 +1,12 @@
+[
+	{
+		"id": "channel-catalod",
+		"label": "Audited channel test",
+		"entityType": [
+			"bcpg:finishedProduct"
+		],
+		"auditedFields": [
+			"cm:title"
+		]
+	}
+]

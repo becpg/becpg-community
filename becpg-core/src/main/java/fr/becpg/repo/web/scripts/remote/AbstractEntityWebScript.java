@@ -231,7 +231,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	protected NodeRef findEntity(WebScriptRequest req) {
 
 		String nodeRef = req.getParameter(PARAM_NODEREF);
-		if ((nodeRef != null) && (nodeRef.length() > 0)) {
+		if ((nodeRef != null) && !nodeRef.isBlank()) {
 			NodeRef node = new NodeRef(nodeRef);
 			if (nodeService.exists(node)) {
 				if (AccessStatus.ALLOWED.equals(permissionService.hasReadPermission(node))) {
@@ -410,7 +410,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	}
 	
 	
-	private static  String decodeParam(String param)   {
+	protected static  String decodeParam(String param)   {
 		if ((param != null) && param.startsWith(BASE_64_PREFIX) ) {
 		     try {
 				 Inflater decompresser = new Inflater();
