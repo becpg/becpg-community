@@ -9,42 +9,36 @@ function main() {
 
 		var recipients = bSupplier.assignToSupplier(project, task, entity);
 
-		var report = bcpg.getReportNode(entity);//,"SupplierSheet"); // TODO get report of type supplier
-
-		//Sinon skip tâche
+		var report = bcpg.getReportNodeOfKind(entity, "SupplierSheet");
 
 		if (report != null) {
-
 
 			var destFolder = entity.childByNamePath(bcpg.getTranslatedPath('SupplierDocuments'));
 
 			if (destFolder != null) {
 
-				var signedReport = destFolder.createNode(getAvailableName(dest, report.name), "cm:content");
+				var signedReport = destFolder.createNode(bcpg.getAvailableName(destFolder, report.name, true), "cm:content");
 
-				updateAssoc(signedReport, "sign:recipients", recipients)
-
+				updateAssoc(signedReport, "sign:recipients", recipients);
 
 				bcpg.copyContent(report, signedReport);
 
 				bSign.prepareForSignature(signedReport, recipients);
 
-
 				for (var i = 0; i < project.deliverableList.size(); i++) {
 					var deliverable = project.deliverableList.get(i);
 					if (deliverable.description == bcpg.getMessage("plm.supplier.portal.deliverable.sign.url.name")) {
 
-						var signatureUrl = bSign.getSignatureView(signedReport, supplier, task.nodeRef);
+						var signatureUrl = bSign.getSignatureView(signedReport, recipients[0], task.nodeRef);
 
 						deliverable.url = signatureUrl;
 						break;
 					}
 				}
-
-
-
 			}
 
+		} else {
+			bProject.updateTaskState(task, "Cancelled");
 		}
 
 	}

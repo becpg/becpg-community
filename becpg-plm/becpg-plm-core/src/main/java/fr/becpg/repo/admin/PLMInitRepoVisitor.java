@@ -134,6 +134,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_CLIENT_NAME = "path.productreportclienttemplate";
 	private static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
 	private static final String PRODUCT_REPORT_PRODUCTION_NAME = "path.productreportproductiontemplate";
+	private static final String PRODUCT_REPORT_SUPPLIER_PATH = "beCPG/birt/document/product/default/ProductReport_Supplier.rptdesign";
 
 	private static final String PRODUCT_REPORT_PACKAGING_PATH = "beCPG/birt/document/product/default/PackagingReport.rptdesign";
 	private static final String PRODUCT_REPORT_COST_PATH = "beCPG/birt/document/product/default/ProductReport_Cost.rptdesign";
@@ -168,6 +169,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	static {
 		reportKindCodes.put(PRODUCT_REPORT_CLIENT_PATH, "CustomerSheet");
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
+		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_PATH, "SupplierSheet");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
 
@@ -1377,7 +1379,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
 					PLMModel.TYPE_PACKAGINGMATERIAL };
 			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH,
-					PRODUCT_REPORT_PACKAGING_PATH };
+					PRODUCT_REPORT_SUPPLIER_PATH, PRODUCT_REPORT_PACKAGING_PATH };
 			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName,
 					productReportPackagingName };
 

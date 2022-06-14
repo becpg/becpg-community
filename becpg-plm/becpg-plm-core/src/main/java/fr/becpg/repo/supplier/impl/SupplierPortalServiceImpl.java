@@ -106,7 +106,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 		Date currentDate = Calendar.getInstance().getTime();
 		
-		boolean checkAccounts = supplierAccountNodeRefs!=null && supplierAccountNodeRefs.isEmpty();
+		boolean checkAccounts = supplierAccountNodeRefs == null || supplierAccountNodeRefs.isEmpty();
 
 		NodeRef supplierNodeRef = checkSupplierNodeRef(entityNodeRef, checkAccounts);
 		

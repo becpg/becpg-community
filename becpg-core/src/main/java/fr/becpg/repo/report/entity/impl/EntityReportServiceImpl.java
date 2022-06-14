@@ -1599,6 +1599,29 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 		return ret;
 	}
+	
+	@Override
+	public NodeRef getReportOfKind(NodeRef entityNodeRef, String reportKind) {
+		
+		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
+		
+		for (NodeRef reportNodeRef : dbReports) {
+			if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
+				
+				Serializable reportKindsProp = nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_KINDS);
+				
+				if (reportKindsProp instanceof List<?>) {
+					List<?> reportKinds = (List<?>) reportKindsProp;
+					if (reportKinds.contains(reportKind)) {
+						return reportNodeRef;
+					}
+				}
+				
+			}
+		}
+		
+		return null;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -1639,6 +1662,15 @@ public class EntityReportServiceImpl implements EntityReportService {
 			documentNodeRef = getSelectedReport(entityNodeRef);
 		}
 		return documentNodeRef;
+	}
+	
+	@Override
+	public NodeRef getOrRefreshReportOfKind(NodeRef entityNodeRef, String reportKind) {
+		if (shouldGenerateReport(entityNodeRef, null)) {
+			logger.debug("Entity report is not up to date for entity " + entityNodeRef);
+			generateReports(entityNodeRef);
+		}
+		return getReportOfKind(entityNodeRef, reportKind);
 	}
 
 	/** {@inheritDoc} */
