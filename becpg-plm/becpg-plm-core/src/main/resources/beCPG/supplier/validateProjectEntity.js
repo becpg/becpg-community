@@ -1,17 +1,41 @@
-function main()
-{
-   var  projectEntity = null;
+function main() {
+	var projectEntity = null;
 
-    if (project.entities != null && project.entities.size() > 0) {
-        projectEntity = search.findNode(project.entities.get(0));
-        /*
-          if no autoMerge date is specified  merge and validate entity 
-         */
-        bSupplier.validateProjectEntity(projectEntity);
-    }
+	var projectNodeRef = search.findNode(project.nodeRef);
+	var supplier = projectNodeRef.assocs["bcpg:supplierAccountRef"][0];
 
- // TODO if signed document send an email
-    
+	if (project.entities != null && project.entities.size() > 0) {
+		projectEntity = search.findNode(project.entities.get(0));
+		/*
+		  if no autoMerge date is specified  merge and validate entity 
+		 */
+		projectEntity = bSupplier.validateProjectEntity(projectEntity);
+
+		var destFolder = projectEntity.childByNamePath(bcpg.getTranslatedPath('SupplierDocuments'));
+		
+		var suppliers = [];
+		
+		suppliers.push(supplier);
+		
+		if (destFolder != null) {
+
+			for (var i = 0; i < destFolder.children.length; i++) {
+				if (destFolder.children[i].hasAspect("sign:signatureAspect") && destFolder.children[i].properties["sign:status"] == "Signed") {
+					var documentName = destFolder.children[i].properties["cm:name"];
+					var shareId = bcpg.shareContent(destFolder.children[i]);
+					
+					var templateArgs = {};
+					var templateModel = {};
+
+					templateArgs['documentName'] = documentName;
+					templateArgs['shareId'] = shareId;
+					templateModel['args'] = templateArgs;
+					
+					bcpg.sendMail(suppliers, bcpg.getMessage("plm.supplier.portal.sign.mail.title", documentName), "/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:signature-notify-email.ftl", templateModel, true);
+				}
+			}
+		}
+	}
 }
 
 main();

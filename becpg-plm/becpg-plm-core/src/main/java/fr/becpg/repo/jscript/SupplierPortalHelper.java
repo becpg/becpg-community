@@ -246,7 +246,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 			nodeService.setProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
 
-			return new ActivitiScriptNode( entityNodeRef, serviceRegistry);
+			return new ScriptNode(entityNodeRef, serviceRegistry, getScope());
 
 		}
 

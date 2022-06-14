@@ -8,20 +8,12 @@ function main() {
 		var destFolder = entity.childByNamePath(bcpg.getTranslatedPath('SupplierDocuments'));
 
 		if (destFolder != null) {
-
-		
-				for (var i = 0; i < project.deliverableList.size(); i++) {
-					var deliverable = project.deliverableList.get(i);
-					if (deliverable.description == bcpg.getMessage("plm.supplier.portal.deliverable.sign.url.name")) {
-//Mettre le doc dans le livrable // Ou un aspect mais pas ce baser sur le nom
-						
-							bSign.signDocument(deliverable.content);
-						
-						break;
-					}
+			
+			for (var i = 0; i < destFolder.children.length; i++) {
+				if (destFolder.children[i].hasAspect("sign:signatureAspect") && destFolder.children[i].properties["sign:status"] == "ReadyToSign") {
+					bSign.signDocument(destFolder.children[i]);
 				}
-
-		
+			}
 		}
 	}
 }

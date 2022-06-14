@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
@@ -34,6 +36,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.quickshare.QuickShareDTO;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -72,6 +75,7 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.license.BeCPGLicenseManager;
+import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -134,12 +138,18 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private EntityReportService entityReportService;
 	
 	private BeCPGLicenseManager beCPGLicenseManager;
+	
+	private BeCPGMailService beCPGMailService;
 
 	private boolean useBrowserLocale;
 
 	private boolean showEntitiesInTree = false;
 
 	private boolean showUnauthorizedWarning = true;
+	
+	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
+		this.beCPGMailService = beCPGMailService;
+	}
 
 	public void setBeCPGLicenseManager(BeCPGLicenseManager beCPGLicenseManager) {
 		this.beCPGLicenseManager = beCPGLicenseManager;
@@ -234,8 +244,15 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 *
 	 * @param sourceNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 */
-	public void shareContent(ScriptNode sourceNode) {
-		quickShareService.shareContent(sourceNode.getNodeRef());
+	public String shareContent(ScriptNode sourceNode) {
+		
+		QuickShareDTO quickShareDTO = quickShareService.shareContent(sourceNode.getNodeRef());
+		
+		if (quickShareDTO != null) {
+			return quickShareDTO.getId();
+		}
+		
+		return null;
 	}
 
 	/**
@@ -906,6 +923,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getAvailableName(ScriptNode folder, String name) {
 		return repoService.getAvailableName(folder.getNodeRef(), name, false);
 	}
+	
+	public String getAvailableName(ScriptNode folder, String name, boolean keepExtension) {
+		return repoService.getAvailableName(folder.getNodeRef(), name, false, keepExtension);
+	}
 
 
 	/**
@@ -1231,6 +1252,19 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		return new ScriptNode(entityReportService.getOrRefreshReport(sourceNodeRef, null), serviceRegistry, getScope());
 	}
+	
+	public ScriptNode getReportNodeOfKind(ScriptNode sourceNode, String reportKind) {
+		
+		NodeRef sourceNodeRef = sourceNode.getNodeRef();
+		
+		NodeRef reportNodeRef = entityReportService.getOrRefreshReportOfKind(sourceNodeRef, reportKind);
+		
+		if (reportNodeRef != null) {
+			return new ScriptNode(reportNodeRef, serviceRegistry, getScope());
+		}
+		
+		return null;
+	}
 
 	/**
 	 * <p>count.</p>
@@ -1263,5 +1297,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
     	                               
     }
     
-
+    @SuppressWarnings("unchecked")
+	public void sendMail(List<ScriptNode> recipientNodeRefs, String subject, String mailTemplate, Map<String, Object> templateArgs, boolean sendToSelf) {
+    	beCPGMailService.sendMail(recipientNodeRefs.stream().map(r -> r.getNodeRef()).collect(Collectors.toList()), subject, mailTemplate, (Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs), sendToSelf);
+    }
+    
 }
