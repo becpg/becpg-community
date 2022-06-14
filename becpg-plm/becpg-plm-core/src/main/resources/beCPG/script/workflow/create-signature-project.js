@@ -39,8 +39,7 @@ function main() {
 			
 			for (var i in project.assocs["sign:recipients"]) {
 				var recipient = project.assocs["sign:recipients"][i];
-				doc.removeAssociation(recipient, "sign:recipients");
-				doc.createAssociation(recipient, "sign:recipients");
+				updateAssoc(doc, "sign:recipients", recipient);
 			}
 			
 			var rejectTaskName = bcpg.getMessage("signatureWorkflow.task-reject.name", doc.properties["cm:name"]);

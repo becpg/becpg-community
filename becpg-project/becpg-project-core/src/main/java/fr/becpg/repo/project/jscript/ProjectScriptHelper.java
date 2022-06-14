@@ -42,6 +42,8 @@ import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.BudgetListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -243,6 +245,10 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 			ret = nodeRef;
 		}
 		return ret != null ? ret.toString() : "";
+	}
+	
+	public void updateTaskState(TaskListDataItem task, String taskState) {
+		task.setTaskState(TaskState.valueOf(taskState));
 	}
 
 
