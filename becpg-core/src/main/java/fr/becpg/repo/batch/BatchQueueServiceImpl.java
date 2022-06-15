@@ -222,7 +222,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						transactionService.getRetryingTransactionHelper(), getNextWorkwrapper(batchStep.getWorkProvider()),
 						batchInfo.getWorkerThreads(), batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
 
-				batchProcessor.processLong(runAsWrapper(batchStep.getProcessWorker()), true);
+				batchProcessor.process(runAsWrapper(batchStep.getProcessWorker()), true);
 
 				if (startTime == null) {
 					startTime = batchProcessor.getStartTime();
@@ -230,7 +230,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				
 				endTime = batchProcessor.getEndTime();
 				
-				if (batchProcessor.getTotalErrorsLong() > 0 && batchStep.getBatchStepListener() != null) {
+				if (batchProcessor.getTotalErrors() > 0 && batchStep.getBatchStepListener() != null) {
 
 					hasError = true;
 					
@@ -291,17 +291,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		private BatchProcessWorkProvider<T> getNextWorkwrapper(BatchProcessWorkProvider<T> workProvider) {
 			return new BatchProcessWorkProvider<T>() {
 
-				@SuppressWarnings("deprecation")
 				@Override
 				public int getTotalEstimatedWorkSize() {
 					return workProvider.getTotalEstimatedWorkSize();
 				}
 				
-				@Override
-				public long getTotalEstimatedWorkSizeLong() {
-					return workProvider.getTotalEstimatedWorkSizeLong();
-				}
-
 				@Override
 				public Collection<T> getNextWork() {
 					if (cancelledBatches.contains(batchId)) {

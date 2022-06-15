@@ -106,7 +106,7 @@ margin-top:3px;
                                                
                                                <#list args.entities as item> 
                                                		<#assign node=item.node/>
-                                               		<#if args.versions??>
+                                               		<#if args.versions?? && node.properties[dateField]??>
 	                                               		<#list args.versions[node.nodeRef]?keys as key >
 	                                               			<#assign version=args.versions[node.nodeRef][key]>
 															<tr> 
