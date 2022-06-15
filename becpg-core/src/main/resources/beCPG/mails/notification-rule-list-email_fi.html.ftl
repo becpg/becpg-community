@@ -106,7 +106,7 @@ margin-top:3px;
                                                
                                                <#list args.entities as item> 
                                                		<#assign node=item.node/>
-                                               		<#if args.versions?? && node.properties[dateField]??>
+                                               		<#if args.versions?? >
 	                                               		<#list args.versions[node.nodeRef]?keys as key >
 	                                               			<#assign version=args.versions[node.nodeRef][key]>
 															<tr> 
@@ -120,7 +120,7 @@ margin-top:3px;
 																<td class="becpg_rowBorderTopLeftRight">${key?split("|")[1]}</td>
 															</tr>
 														</#list>
-													<#else>
+													<#elseif node.properties[dateField]??>
 														<tr> 
 															<td class="becpg_rowBorderTop"> ${item.displayPath} </td>
 															<td class="becpg_rowBorderTopLeftRight">
