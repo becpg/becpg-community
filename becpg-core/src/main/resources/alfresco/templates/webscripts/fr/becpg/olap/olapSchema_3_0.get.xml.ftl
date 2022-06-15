@@ -431,6 +431,8 @@
 						doc->>"$.cm_name" as name,
 						doc->>"$.bcpg_rclReqType" as rclReqType,
 						doc->>"$.bcpg_rclReqMessage" as rclReqMessage,
+						doc->>"$.bcpg_rclDataType" as rclDataType,
+						doc->>"$.bcpg_regulatoryCode" as regulatoryCode,
 						instanceId
 					from
 						reqCtrlList
@@ -469,6 +471,50 @@
 			</Hierarchy>
 		</Dimension>
 		
+		<Dimension name="rclDataType" caption="${msg("jsolap.requirementsType.title")}" >
+			<Hierarchy name="rclDataType" caption="${msg("jsolap.requirementsType.title")}" hasAll="true" allMemberCaption="${msg("jsolap.requirementsType.caption")}">
+			<Level name="rclDataType" caption="${msg("jsolap.requirementsType.title")}" column="rclDataType"  type="String"    >
+					 <MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Packaging' :
+				      				return  '${msg("listconstraint.bcpg_reqDataTypes.Packaging")}';
+				   				case 'Labelling' :
+				    				return  '${msg("listconstraint.bcpg_reqDataTypes.Labelling")}';
+				   				case 'Physicochem' :
+				    				return   '${msg("listconstraint.bcpg_reqDataTypes.Physicochem")}';
+				    		    case 'Nutrient' :
+				    				return   '${msg("listconstraint.bcpg_reqDataTypes.Nutrient")}';
+				    		    case 'Ingredient' :
+				    				return   '${msg("listconstraint.bcpg_reqDataTypes.Ingredient")}';
+				    			case 'Allergen' :
+				    				return   '${msg("listconstraint.bcpg_reqDataTypes.Allergen")}';
+                                case 'Composition' :
+				    				return   '${msg("listconstraint.bcpg_reqDataTypes.Composition")}';
+				    			case 'Specification' :
+				    				return   '${msg("listconstraint.bcpg_reqDataTypes.Specification")}';	
+				    			case 'Cost' :
+				    				return   '${msg("listconstraint.bcpg_reqDataTypes.Cost")}';
+				    			case 'Formulation' :
+				    				return   '${msg("listconstraint.bcpg_reqDataTypes.Formulation")}';
+				    			case 'Completion' :
+				    				return   '${msg("listconstraint.bcpg_reqDataTypes.Completion")}';		
+				    			case 'Validation' :
+				    				return   '${msg("listconstraint.bcpg_reqDataTypes.Validation")}';    			
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
+			</Hierarchy>
+		</Dimension>
+		
+		<Dimension name="regulatoryCode" caption="${msg("jsolap.tags.caption")}" >
+			<Hierarchy name="regulatoryCode" caption="${msg("jsolap.tags.title")}" hasAll="true" allMemberCaption="${msg("jsolap.tags.caption")}">
+				<Level name="regulatoryCode" caption="${msg("jsolap.tags.title")}" column="regulatoryCode"  type="String"    />
+			</Hierarchy>
+		</Dimension>
 		
 		<DimensionUsage name="targetProducts" caption="${msg("jsolap.products.title")}" source="productsDimension" foreignKey="entityNodeRef" />
 		
@@ -559,9 +605,6 @@
 			</Hierarchy>
 		</Dimension>
 		
-		
-		
-		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="entityNodeRef" />
 		
 		
 		<#if isAdmin>
