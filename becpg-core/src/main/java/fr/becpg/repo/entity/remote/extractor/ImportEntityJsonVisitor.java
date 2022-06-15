@@ -671,14 +671,18 @@ public class ImportEntityJsonVisitor {
 									if (cont.contains(":")) {
 										String locale = cont.split(":")[0];
 										
-										int index = cont.indexOf(":");
-										String actualValue = cont.substring(index + 1);
+										Locale parseLocale = MLTextHelper.parseLocale(locale);
 										
-										if (actualValue.length() > 1 && actualValue.startsWith("\"") && actualValue.endsWith("\"")) {
-											actualValue = actualValue.substring(1, actualValue.length() - 1);
+										if (MLTextHelper.isSupportedLocale(parseLocale)) {
+											int index = cont.indexOf(":");
+											String actualValue = cont.substring(index + 1);
+											
+											if (actualValue.length() > 1 && actualValue.startsWith("\"") && actualValue.endsWith("\"")) {
+												actualValue = actualValue.substring(1, actualValue.length() - 1);
+											}
+											
+											mlText.addValue(parseLocale, actualValue);
 										}
-										
-										mlText.addValue(MLTextHelper.parseLocale(locale), actualValue);
 									}
 								}
 

@@ -737,15 +737,12 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 			StopWatch watch = null;
 
-			boolean mlAware = MLPropertyInterceptor.isMLAware();
 			try {
 
 				if (logger.isDebugEnabled()) {
 					watch = new StopWatch();
 					watch.start();
 				}
-
-				MLPropertyInterceptor.setMLAware(true);
 
 				final NodeRef internalBranchToNodeRef = branchToNodeRef;
 
@@ -956,8 +953,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				});
 
 			} finally {
-				MLPropertyInterceptor.setMLAware(mlAware);
-
 				if (logger.isDebugEnabled() && (watch != null)) {
 					watch.stop();
 					logger.debug("createBranch run in  " + watch.getTotalTimeSeconds() + " seconds ");

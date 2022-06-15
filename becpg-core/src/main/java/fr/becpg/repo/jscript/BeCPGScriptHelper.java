@@ -30,6 +30,7 @@ import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -41,6 +42,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -68,6 +70,7 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.olap.OlapService;
+import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -123,12 +126,24 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private TenantAdminService tenantAdminService;
 
+	private VersionService versionService;
+	
+	private EntityReportService entityReportService;
+	
 	private boolean useBrowserLocale;
 
 	private boolean showEntitiesInTree = false;
 
 	private boolean showUnauthorizedWarning = true;
 
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
+	}
+	
+	public void setEntityReportService(EntityReportService entityReportService) {
+		this.entityReportService = entityReportService;
+	}
+	
 	public void setEntityFormatService(EntityFormatService entityFormatService) {
 		this.entityFormatService = entityFormatService;
 	}
@@ -1205,6 +1220,18 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			return BeCPGQueryBuilder.createQuery().ofType(QName.createQName(type, namespaceService)).excludeDefaults().inDB().ftsLanguage().count();
 		} else {
 			return count(type);
+		}
+	}
+	
+	public void generateVersionReport(ScriptNode node, String versionLabel) {
+		
+		NodeRef entityNodeRef = node.getNodeRef();
+		
+		NodeRef versionNode = VersionUtil.convertNodeRef(versionService.getVersionHistory(entityNodeRef).getVersion(versionLabel).getFrozenStateNodeRef());
+		
+		if (entityVersionService.isVersion(versionNode) && (nodeService.getProperty(versionNode, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
+			NodeRef extractedNode = entityVersionService.extractVersion(versionNode);
+			entityReportService.generateReports(extractedNode, versionNode);
 		}
 	}
 
