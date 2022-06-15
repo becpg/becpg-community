@@ -702,12 +702,20 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 		if (impactWused == null) {
 			impactWused = false;
 		}
+		
 		String description = (String) nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_COMMENTS);
 		if (description == null) {
 			description = "";
 		}
+		
+		NodeRef newEntityNodeRef = mergeBranch(branchNodeRef, null, VersionType.valueOf(versionType), description, impactWused, false);
 
-		return mergeBranch(branchNodeRef, null, VersionType.valueOf(versionType), description, impactWused, false);
+		if (impactWused) {
+			impactWUsed(newEntityNodeRef, VersionType.valueOf(versionType), description);
+		}
+
+		return newEntityNodeRef;
+	
 	}
 
 	/** {@inheritDoc} */
