@@ -386,6 +386,7 @@
 								<exclude>**/templates/**</exclude>
 								<exclude>**/webscripts/**</exclude>
 								<exclude>**/supplier/**</exclude>
+								<exclude>**/artworks-viewer/**</exclude>
 								<exclude>**/signature/**</exclude>
 								<exclude>**/rules/**</exclude>
 								<exclude>**/script/**</exclude>
@@ -412,6 +413,7 @@
 								<exclude>**/webscripts/**</exclude>
 								<exclude>**/rules/**</exclude>
 								<exclude>**/supplier/**</exclude>
+								<exclude>**/artworks-viewer/**</exclude>
 								<exclude>**/signature/**</exclude>
 								<exclude>**/script/**</exclude>
 								<exclude>**/site-webscripts/**</exclude>
