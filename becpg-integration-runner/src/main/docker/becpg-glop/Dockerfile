@@ -1,4 +1,4 @@
-FROM ubuntu:focal
+FROM ubuntu:kinetic
 
 ENV DEBIAN_FRONTEND noninteractive
 
