@@ -142,8 +142,8 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 				}
 			}
 
-			if (catalog.has(EntityCatalogService.PROP_UNIQUE_FIELDS)) {
-				JSONArray uniqueFields = catalog.getJSONArray(EntityCatalogService.PROP_UNIQUE_FIELDS);
+			if (catalog.has(EntityCatalogService.PROP_NON_UNIQUE_FIELDS)) {
+				JSONArray uniqueFields = catalog.getJSONArray(EntityCatalogService.PROP_NON_UNIQUE_FIELDS);
 				if (uniqueFields != null) {
 					for (int j = 0; j < uniqueFields.length(); j++) {
 						JSONObject uniqueField = uniqueFields.getJSONObject(j);
