@@ -41,5 +41,10 @@ public class EntityListBatchProcessWorkProvider<T> implements BatchProcessWorkPr
 	public int getTotalEstimatedWorkSize() {
 		return size;
 	}
+	
+	@Override
+		public long getTotalEstimatedWorkSizeLong() {
+			return getTotalEstimatedWorkSize();
+		}
 
 }
