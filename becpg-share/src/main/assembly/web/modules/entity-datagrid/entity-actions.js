@@ -76,7 +76,8 @@
 
 		   };
 		   
-		   var popupId = this.id + "-createRow"+ (this.actionCount++);
+		   //Note is important to have the same popupId as component manager will use it to destroy previous popup components
+		   var popupId = this.id + "-editDetails";
 
 		   var templateUrl = YAHOO.lang
 		         .substitute(
@@ -247,9 +248,8 @@
 		                  siteId : this.options.siteId
 		               });
 
-		   // Using Forms Service, so always create new instance
-		   
-		   var popupId = this.id + "-editDetails"+ (this.actionCount++);
+		   //Note is important to have the same popupId as component manager will use it to destroy previous popup components
+		   var popupId = this.id + "-editDetails";
 
 		   var editDetails = new Alfresco.module.SimpleDialog(popupId);
 
