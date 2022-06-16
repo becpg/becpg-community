@@ -189,6 +189,11 @@
 					<show id="ecm:wulSourceItems" />										
 				</field-visibility>
 			</form>
+			<form id="bulk-edit">
+				<field-visibility>
+					<show id="ecm:isWUsedImpacted" />
+				</field-visibility>
+			</form>
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
@@ -214,6 +219,7 @@
 					<show id="bcpg:depthLevel" />
 					<show id="entity_ecm:wulSourceItems_bcpg:product" />
 					<show id="ecm:isWUsedImpacted" />
+					<show id="entity_ecm:wulLink_bcpg:entityListItem@ecmFilter" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:depthLevel">

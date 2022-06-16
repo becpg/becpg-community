@@ -256,9 +256,17 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 	@Override
 	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
 		
+		String entityDescription = null;
+
+		if (!pendingNodes.isEmpty()) {
+			
+			NodeRef versionNode = pendingNodes.iterator().next();
+			
+			entityDescription = nodeService.getProperty(versionNode, BeCPGModel.PROP_CODE) + " " + nodeService.getProperty(versionNode, ContentModel.PROP_NAME);
+		}
 
 		BatchInfo batchInfo = new BatchInfo(String.format("generateVersionReports-%s", Calendar.getInstance().getTimeInMillis()),
-				"becpg.batch.entityVersion.generateReports");
+				"becpg.batch.entityVersion.generateReports", entityDescription);
 		batchInfo.setRunAsSystem(true);
 
 		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(pendingNodes));
