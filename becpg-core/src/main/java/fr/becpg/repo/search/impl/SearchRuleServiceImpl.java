@@ -204,7 +204,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		if (advSearchPlugins != null) {
 			for (NodeRef nodeRef : nodes) {
 				NodeRef entityRef = entityService.getEntityNodeRef(nodeRef, nodeService.getType(nodeRef));
-				if (matchEntityType(entityRef, filter.getEntityType())) {
+				if (entityRef!=null &&  matchEntityType(entityRef, filter.getEntityType())) {
 					List<NodeRef> entityList = new ArrayList<>(Collections.singletonList(entityRef));
 					for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
 						entityList = advSearchPlugin.filter(entityList, filter.getEntityType(), filter.getEntityCriteria(),
