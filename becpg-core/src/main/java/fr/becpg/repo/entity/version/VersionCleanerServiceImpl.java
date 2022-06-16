@@ -214,7 +214,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 
 	private void convertAndDeleteVersions(int maxProcessedNodes, String tenantDomain, String path) {
-		BatchInfo batchInfo = new BatchInfo("cleanVersions", "becpg.batch.versionCleaner.cleanVersions." + tenantDomain);
+		BatchInfo batchInfo = new BatchInfo("cleanVersions." + tenantDomain, "becpg.batch.versionCleaner.cleanVersions");
 		batchInfo.setRunAsSystem(true);
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
@@ -286,7 +286,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 	private void cleanOrphanVersions(String tenantDomain) {
 		
-		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions", "becpg.batch.versionCleaner.cleanOrphanVersions." + tenantDomain);
+		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions." + tenantDomain, "becpg.batch.versionCleaner.cleanOrphanVersions");
 		batchInfo.setRunAsSystem(true);
 		
 		List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
