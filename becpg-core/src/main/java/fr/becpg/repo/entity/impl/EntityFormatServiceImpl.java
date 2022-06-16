@@ -16,6 +16,7 @@ import org.alfresco.model.ForumModel;
 import org.alfresco.model.RenditionModel;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
@@ -278,6 +279,11 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	public String extractEntityData(NodeRef entityNodeRef, EntityFormat toFormat) {
 		
 		if (EntityFormat.JSON.equals(toFormat)) {
+			
+			boolean isMLAware = MLPropertyInterceptor.isMLAware();
+			
+			MLPropertyInterceptor.setMLAware(false);
+			
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 				
 				RemoteParams remoteParams = new RemoteParams(RemoteEntityFormat.json_all);
@@ -293,6 +299,8 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				return out.toString();
 			} catch (IOException | JSONException e) {
 				logger.error("Failed to convert entity to JSON format", e);
+			} finally {
+				MLPropertyInterceptor.setMLAware(isMLAware);
 			}
 		}
 		
