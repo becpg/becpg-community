@@ -1,7 +1,6 @@
 <#escape x as jsonUtils.encodeJSONString(x)>
 {
-   "status": "${status}",
-	<#if authenticated??>
+   "status": "${status}"<#if authenticated??>,
    "authenticated": true,
 	   "systemInfo" : {
 	   		"diskFreeSpace": ${diskFreeSpace?c},

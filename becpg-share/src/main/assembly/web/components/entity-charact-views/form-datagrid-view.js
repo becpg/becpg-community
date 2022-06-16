@@ -104,7 +104,7 @@
                                              Alfresco.constants.URL_SERVICECONTEXT 
                                              + "components/form?popup=true&formId={formId}&itemKind=node&itemId={itemId}&mode=edit&submitType=json&showCancelButton=true",
                                              {
-                                             	itemId: this.options.nodeRef,
+                                             	 itemId: this.options.nodeRef,
                                                  formId: this.options.formId
                                              }),
                                      destroyOnHide : true,
@@ -174,6 +174,7 @@
                           
                             if ((obj !== null))
                             {	
+								var prevId = this.options.formId ;
 	                            if(obj.dataList){	
 	                            	if( this.datalistMeta!=null && this.datalistMeta.name!=null){
 	                            		
@@ -185,7 +186,9 @@
                                 {
                                 	this.options.formId= obj.list;
                                 }
-                                this.loadForm();
+                                if(prevId!=this.options.formId){
+                                	this.loadForm();
+                                }
                             }
                             
                         }

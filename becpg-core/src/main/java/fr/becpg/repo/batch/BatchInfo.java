@@ -31,6 +31,8 @@ public class BatchInfo {
 	private String mailAction;
 
 	private String mailActionUrl;
+	
+	private String entityDescription;
 
 	private int workerThreads = BATCH_THREAD;
 
@@ -42,6 +44,14 @@ public class BatchInfo {
 		super();
 		this.batchId = batchId;
 		this.batchDescId = batchDescId;
+		this.batchUser = AuthenticationUtil.getRunAsUser();
+	}
+	
+	public BatchInfo(String batchId, String batchDescId, String entityDescription) {
+		super();
+		this.batchId = batchId;
+		this.batchDescId = batchDescId;
+		this.entityDescription = entityDescription;
 		this.batchUser = AuthenticationUtil.getRunAsUser();
 	}
 
@@ -59,6 +69,10 @@ public class BatchInfo {
 
 	public Boolean getNotifyByMail() {
 		return notifyByMail;
+	}
+	
+	public String getEntityDescription() {
+		return entityDescription;
 	}
 
 	public void enableNotifyByMail(String mailAction, String mailActionUrl) {

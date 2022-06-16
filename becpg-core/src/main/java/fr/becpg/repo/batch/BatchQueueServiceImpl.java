@@ -24,6 +24,8 @@ import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
@@ -50,7 +52,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 	@Autowired
 	@Qualifier("batchThreadPoolExecutor")
-	private ThreadPoolExecutor threadExecuter;
+	private ThreadPoolExecutor threadExecutor;
 
 	@Autowired
 	private TenantAdminService tenantAdminService;
@@ -97,11 +99,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		cancelledBatches.remove(batchInfo.getBatchId());
 		
 		Runnable command = new BatchCommand<>(batchInfo, batchSteps);
-		if (!threadExecuter.getQueue().contains(command)) {
+		if (!threadExecutor.getQueue().contains(command)) {
 			if(logger.isDebugEnabled()) {
 				logger.debug("Batch " + batchInfo.getBatchId() + " added to execution queue");
 			}
-			threadExecuter.execute(command);
+			threadExecutor.execute(command);
 		} else {
 			String label = I18NUtil.getMessage(batchInfo.getBatchDescId());
 			logger.warn("Same batch already in queue " + (label != null ? label : batchInfo.getBatchDescId()) + " (" + batchInfo.getBatchId() + ")");
@@ -114,13 +116,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	public BatchMonitor getLastRunningBatch() {
 		return lastRunningBatch;
 	}
-
+	
 	@Override
 	public List<BatchInfo> getBatchesInQueue() {
 
 		List<BatchInfo> batchInfos = new LinkedList<>();
 
-		for (Runnable batch : threadExecuter.getQueue()) {
+		for (Runnable batch : threadExecutor.getQueue()) {
 			if (batch instanceof BatchCommand) {
 				batchInfos.add(((BatchCommand<?>) batch).getBatchInfo());
 			}
@@ -136,7 +138,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		BatchCommand<?> command = findCommandInQueue(batchId);
 		
 		if (command != null) {
-			return threadExecuter.remove(command);
+			return threadExecutor.remove(command);
 		}
 		
 		return false;
@@ -144,7 +146,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	}
 
 	private BatchCommand<?> findCommandInQueue(String batchId) {
-		for (Runnable batch : threadExecuter.getQueue()) {
+		for (Runnable batch : threadExecutor.getQueue()) {
 			if ((batch instanceof BatchCommand) && batchId.equals(((BatchCommand<?>) batch).getBatchId())) {
 				return (BatchCommand<?>) batch;
 			}
@@ -185,7 +187,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 		@Override
 		public void run() {
-
+			
 			boolean hasError = false;
 			
 			Date startTime = null;
@@ -217,8 +219,19 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					AuthenticationUtil.popAuthentication();
 					
 				}
+				
+				JSONObject jsonBatch = new JSONObject();
+				
+				try {
+					jsonBatch.put("batchId", batchInfo.getBatchId());
+					jsonBatch.put("batchDescId", batchInfo.getBatchDescId());
+					jsonBatch.put("batchUser", batchInfo.getBatchUser());
+					jsonBatch.put("entityDescription", batchInfo.getEntityDescription());
+				} catch (JSONException e) {
+					logger.error("Failed to fill JSON information", e);
+				}
 
-				BatchProcessor<T> batchProcessor = new BatchProcessor<>(batchInfo.getBatchId(),
+				BatchProcessor<T> batchProcessor = new BatchProcessor<>(jsonBatch.toString(),
 						transactionService.getRetryingTransactionHelper(), getNextWorkwrapper(batchStep.getWorkProvider()),
 						batchInfo.getWorkerThreads(), batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
 
@@ -272,11 +285,13 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				final boolean finalHasError = hasError;
 				final Date finalEndTime = endTime;
 				final Date finalStartTime = startTime;
+				
+				int secondsBetween = (int) ((finalEndTime.getTime() - finalStartTime.getTime()) / 1000);
 
 				AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 					beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(), batchInfo.getMailAction(),
-							batchInfo.getMailActionUrl(), !finalHasError, finalEndTime.compareTo(finalStartTime));
+							batchInfo.getMailActionUrl(), !finalHasError, secondsBetween, batchInfo.getEntityDescription());
 
 					return null;
 				}, true, false), batchInfo.getBatchUser());

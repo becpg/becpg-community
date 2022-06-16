@@ -72,8 +72,6 @@
             this.scopeId = htmlId;
         }
         
-        this.actionCount = 0;
-        
         this.services.preferences = new Alfresco.service.Preferences();
 
         /**

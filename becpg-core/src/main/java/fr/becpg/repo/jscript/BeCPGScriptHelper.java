@@ -32,6 +32,7 @@ import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -48,6 +49,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -134,6 +136,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private TenantAdminService tenantAdminService;
 	
 	private ContentService contentService;
+
+       private VersionService versionService;
 	
 	private EntityReportService entityReportService;
 	
@@ -151,8 +155,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		this.beCPGMailService = beCPGMailService;
 	}
 
-	public void setBeCPGLicenseManager(BeCPGLicenseManager beCPGLicenseManager) {
-		this.beCPGLicenseManager = beCPGLicenseManager;
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
+	}
+	
+	public void setEntityReportService(EntityReportService entityReportService) {
+		this.entityReportService = entityReportService;
 	}
 	
 	public void setEntityFormatService(EntityFormatService entityFormatService) {
@@ -1301,5 +1309,18 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public void sendMail(List<ScriptNode> recipientNodeRefs, String subject, String mailTemplate, Map<String, Object> templateArgs, boolean sendToSelf) {
     	beCPGMailService.sendMail(recipientNodeRefs.stream().map(r -> r.getNodeRef()).collect(Collectors.toList()), subject, mailTemplate, (Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs), sendToSelf);
     }
+
+
+	public void generateVersionReport(ScriptNode node, String versionLabel) {
+		
+		NodeRef entityNodeRef = node.getNodeRef();
+		
+		NodeRef versionNode = VersionUtil.convertNodeRef(versionService.getVersionHistory(entityNodeRef).getVersion(versionLabel).getFrozenStateNodeRef());
+		
+		if (entityVersionService.isVersion(versionNode) && (nodeService.getProperty(versionNode, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
+			NodeRef extractedNode = entityVersionService.extractVersion(versionNode);
+			entityReportService.generateReports(extractedNode, versionNode);
+		}
+	}
     
 }
