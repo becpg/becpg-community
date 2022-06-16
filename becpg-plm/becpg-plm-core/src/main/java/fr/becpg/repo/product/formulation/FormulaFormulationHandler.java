@@ -306,16 +306,13 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 										if ((jsonValue.length() > LargeTextHelper.TEXT_SIZE_LIMIT)) {
 											dataListItem.getExtraProperties().put(columnName, (Serializable) value);
 											
-											MLText  errorMsg = MLTextHelper.getI18NMessage("message.formulate.formula.toolong",
-													dynamicCharactListItem.getTitle());
 											
-											dynamicCharactListItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.toolong"));
-
 											productData.getReqCtrlList()
-													.add(new ReqCtrlListDataItem(
-															null, RequirementType.Info, errorMsg,
-															null, new ArrayList<>(), RequirementDataType.Formulation));
-
+											.add(new ReqCtrlListDataItem(
+													null, RequirementType.Info, MLTextHelper.getI18NMessage("message.formulate.formula.toolong",
+															dynamicCharactListItem.getTitle()),
+													null, new ArrayList<>(), RequirementDataType.Formulation));
+											
 											
 											
 											
