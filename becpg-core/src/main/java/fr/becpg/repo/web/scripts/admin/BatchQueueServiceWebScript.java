@@ -29,7 +29,11 @@ import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
 public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 
 	private static final Log logger = LogFactory.getLog(BatchQueueServiceWebScript.class);
+	
+	private static final String BATCH_DESC_ID = "batchDescId";
 
+	private static final String BATCH_USER = "batchUser";
+	
 	private static final String BATCH_ID = "batchId";
 
 	private static final String QUEUE_ACTION = "queue";
@@ -58,12 +62,15 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 
 				JSONArray jsonBatches = new JSONArray();
 				for (BatchInfo batch : batches) {
+					
+					String entityDescription = batch.getEntityDescription();
+					
 					JSONObject jsonBatch = new JSONObject();
 					jsonBatch.put(BATCH_ID, batch.getBatchId());
-					jsonBatch.put("batchUser", batch.getBatchUser());
-					String label = I18NUtil.getMessage(batch.getBatchDescId());
+					jsonBatch.put(BATCH_USER, batch.getBatchUser());
+					String label = I18NUtil.getMessage(batch.getBatchDescId(), entityDescription);
 
-					jsonBatch.put("batchDesc", label != null ? label : batch.getBatchDescId());
+					jsonBatch.put(BATCH_DESC_ID,label!=null ? label :  batch.getBatchDescId());
 					jsonBatches.put(jsonBatch);
 				}
 				ret.put("queue", jsonBatches);
@@ -72,7 +79,19 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 
 				if (lastRunningBatch != null) {
 					JSONObject last = new JSONObject();
-					last.put(BATCH_ID, lastRunningBatch.getProcessName());
+					
+					JSONObject batchInfo = new JSONObject(lastRunningBatch.getProcessName());
+					
+					String entityDescription = null;
+					
+					if (batchInfo.has("entityDescription")) {
+						entityDescription = batchInfo.getString("entityDescription");
+					}
+					
+					last.put(BATCH_ID, batchInfo.getString(BATCH_ID));
+					last.put(BATCH_USER, batchInfo.getString(BATCH_USER));
+					String descriptionLabel = I18NUtil.getMessage(batchInfo.getString(BATCH_DESC_ID), entityDescription);
+					last.put(BATCH_DESC_ID, descriptionLabel != null ? descriptionLabel : batchInfo.getString(BATCH_DESC_ID));
 					last.put("percentCompleted", lastRunningBatch.getPercentComplete());
 					ret.put("last", last);
 				}
