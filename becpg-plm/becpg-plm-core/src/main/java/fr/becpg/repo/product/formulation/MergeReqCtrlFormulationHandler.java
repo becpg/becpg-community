@@ -175,8 +175,8 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 								if (i >= 5) {
 									message.append("...");
 									break;
-								} else  {
-									message .append(", ");
+								} else if(i > 0) {
+									message.append(", ");
 								}
 								message.append(nodeService.getProperty(n, ContentModel.PROP_NAME));
 								i++;
