@@ -52,6 +52,7 @@ import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.formulation.spel.SpelHelper.SpelShortcut;
 import fr.becpg.repo.helper.JsonFormulaHelper;
+import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
 import fr.becpg.repo.product.data.CompoListView;
@@ -300,9 +301,29 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 													|| PLMModel.TYPE_PACKAGINGKIT.equals(nodeService.getType(dataListItem.getComponent()))))) {
 
 										JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
-										dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
-										if (logger.isDebugEnabled()) {
-											logger.debug(" -- json tree value:" + value);
+										String jsonValue = jsonTree.toString();
+										
+										if ((jsonValue.length() > LargeTextHelper.TEXT_SIZE_LIMIT)) {
+											dataListItem.getExtraProperties().put(columnName, (Serializable) value);
+											
+											MLText  errorMsg = MLTextHelper.getI18NMessage("message.formulate.formula.toolong",
+													dynamicCharactListItem.getTitle());
+											
+											dynamicCharactListItem.setErrorLog(I18NUtil.getMessage("message.formulate.formula.toolong"));
+
+											productData.getReqCtrlList()
+													.add(new ReqCtrlListDataItem(
+															null, RequirementType.Info, errorMsg,
+															null, new ArrayList<>(), RequirementDataType.Formulation));
+
+											
+											
+											
+										} else {
+											dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
+											if (logger.isDebugEnabled()) {
+												logger.debug(" -- json tree value:" + value);
+											}
 										}
 									} else {
 										dataListItem.getExtraProperties().put(columnName, (Serializable) value);
