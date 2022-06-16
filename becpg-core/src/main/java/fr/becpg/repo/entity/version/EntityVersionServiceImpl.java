@@ -690,8 +690,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		if (description == null) {
 			description = "";
 		}
+		
+		NodeRef newEntityNodeRef = mergeBranch(branchNodeRef, null, VersionType.valueOf(versionType), description, impactWused, false);
 
-		return mergeBranch(branchNodeRef, null, VersionType.valueOf(versionType), description, impactWused, false);
+		if (impactWused) {
+			impactWUsed(newEntityNodeRef, VersionType.valueOf(versionType), description);
+		}
+
+		return newEntityNodeRef;
 	}
 
 	/** {@inheritDoc} */

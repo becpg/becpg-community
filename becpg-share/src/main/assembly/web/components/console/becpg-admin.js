@@ -378,7 +378,7 @@
 					containerDiv.appendChild(div);
 
 					var panelDiv = Dom.getFirstChild(containerDiv);
-					this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, { draggable: false, width: "40em" });
+					this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, { draggable: false, width: "50em" });
 
 					this.widgets.panel.show();
 
@@ -404,12 +404,13 @@
 
 						if (last) {
 							var batchId = last.batchId;
+							var batchDescId = last.batchDescId;
 							var percentCompleted = last.percentCompleted;
 
 							var percent = percentCompleted.substring(0, percentCompleted.length - 2);
 
 							if (ulCur.firstChild) {
-								ulCur.firstChild.children[0].innerText = batchId;
+								ulCur.firstChild.children[0].innerText = batchDescId;
 								ulCur.firstChild.children[1].firstChild.value = percent;
 								ulCur.firstChild.children[1].firstChild.title = percentCompleted;
 								ulCur.firstChild.children[2].firstChild.id = batchId;
@@ -423,7 +424,7 @@
 								ulCur.appendChild(li);
 								var spanText = document.createElement("span");
 								li.appendChild(spanText);
-								spanText.innerText = batchId;
+								spanText.innerText = batchDescId;
 								var spanMeter = document.createElement("span");
 								li.appendChild(spanMeter);
 								var meter = document.createElement("meter");
@@ -460,12 +461,13 @@
 						for (var j = 0; j < response.json.queue.length; j++) {
 							
 							var batchId = response.json.queue[j].batchId;
+							var batchDescId = response.json.queue[j].batchDescId;
 							
 							var child = ulQu.children[j];
 							
 							if (child) {
 								child.id = batchId;
-								child.firstChild.innerText = batchId;
+								child.firstChild.innerText = batchDescId;
 								child.children[1].firstChild.id = batchId;
 								child.children[1].firstChild.style = "cursor:pointer";
 							} else {
@@ -474,7 +476,7 @@
 								ulQu.appendChild(li);
 								var spanText = document.createElement("span");
 								li.appendChild(spanText);
-								spanText.innerText = batchId;
+								spanText.innerText = batchDescId;
 								var spanButton = document.createElement("span");
 								li.appendChild(spanButton);
 								var button = document.createElement("a");

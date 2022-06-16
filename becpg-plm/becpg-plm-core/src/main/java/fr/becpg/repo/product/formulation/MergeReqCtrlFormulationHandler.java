@@ -31,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -171,17 +172,17 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 							int i = 0;
 							message.append( " : ");
 							for (NodeRef n : r.getSources()) {
-								if (i > 0) {
-									message .append(", ");
-								} else if (i >= 5) {
+								if (i >= 5) {
 									message.append("...");
 									break;
+								} else if(i > 0) {
+									message.append(", ");
 								}
-								message .append(nodeService.getProperty(n, ContentModel.PROP_NAME));
+								message.append(nodeService.getProperty(n, ContentModel.PROP_NAME));
 								i++;
 							}
 						}
-						sl.setErrorLog((sl.getErrorLog() != null ? sl.getErrorLog() + ". " : "") + message.toString());
+						sl.setErrorLog(LargeTextHelper.elipse((sl.getErrorLog() != null ? sl.getErrorLog() + ". " : "") + message.toString()));
 						if (logger.isDebugEnabled()) {
 							logger.debug("setErrorLog " + sl.getErrorLog());
 						}
