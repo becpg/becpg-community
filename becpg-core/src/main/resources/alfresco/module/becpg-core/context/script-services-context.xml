@@ -77,9 +77,9 @@
 		<property name="versionService" ref="versionService" />
 		<property name="entityReportService" ref="entityReportService" />
 		<property name="contentService" ref="contentService"/>
-		<property name="entityReportService" ref="entityReportService"/>
 		<property name="beCPGLicenseManager" ref="becpgLicenseManager"/>
 		<property name="beCPGMailService" ref="beCPGMailService"/>
+		
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">

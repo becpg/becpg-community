@@ -151,6 +151,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private boolean showUnauthorizedWarning = true;
 
+	public void setBeCPGLicenseManager(BeCPGLicenseManager beCPGLicenseManager) {
+		this.beCPGLicenseManager = beCPGLicenseManager;
+	}
+	
+	public void setEntityFormatService(EntityFormatService entityFormatService) {
+		this.entityFormatService = entityFormatService;
+	}
+	
 	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
 		this.beCPGMailService = beCPGMailService;
 	}
