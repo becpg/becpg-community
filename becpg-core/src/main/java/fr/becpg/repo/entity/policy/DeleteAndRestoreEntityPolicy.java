@@ -3,6 +3,7 @@ package fr.becpg.repo.entity.policy;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
@@ -228,6 +229,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 					.getChildRef();
 
 			nodeService.setProperty(entityDeletedFileNodeRef, ContentModel.PROP_NAME, REMOTE_FILE_NAME + "_" + entityNodeRef.getId());
+			nodeService.setProperty(entityDeletedFileNodeRef, ContentModel.PROP_ARCHIVED_DATE, new Date());
 
 			ContentWriter writer = contentService.getWriter(entityDeletedFileNodeRef, ContentModel.PROP_CONTENT, true);
 
