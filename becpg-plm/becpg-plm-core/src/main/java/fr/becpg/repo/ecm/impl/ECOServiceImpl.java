@@ -284,7 +284,7 @@ public class ECOServiceImpl implements ECOService {
 			
 			@Override
 			public void afterStep() {
-				
+
 				if (!processWorker.getErrors().isEmpty()) {
 					ecoData.setEcoState(ECOState.InError);
 					StringBuilder comments = new StringBuilder();
@@ -483,6 +483,10 @@ public class ECOServiceImpl implements ECOService {
 				
 			} , true, true);
 			
+			for (ChangeUnitDataItem cul2 : ecoData.getChangeUnitList()) {
+				cul2.setTreated(Boolean.FALSE);
+			}
+			
 			alfrescoRepository.save(ecoData);
 		}
 	}
@@ -576,9 +580,9 @@ public class ECOServiceImpl implements ECOService {
 					
 					changeUnitDataItem.setErrorMsg(null);
 					
-					if (!isSimulation) {
+					changeUnitDataItem.setTreated(Boolean.TRUE);
 						
-						changeUnitDataItem.setTreated(Boolean.TRUE);
+					if (!isSimulation) {
 						
 						// Store current state of ecoData
 						alfrescoRepository.save(ecoData);
