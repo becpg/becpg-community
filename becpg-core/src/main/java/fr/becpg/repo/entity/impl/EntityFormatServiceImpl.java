@@ -16,10 +16,13 @@ import org.alfresco.model.ForumModel;
 import org.alfresco.model.RenditionModel;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
+import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -278,6 +281,11 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	public String extractEntityData(NodeRef entityNodeRef, EntityFormat toFormat) {
 		
 		if (EntityFormat.JSON.equals(toFormat)) {
+			
+			boolean isMLAware = MLPropertyInterceptor.isMLAware();
+			
+			MLPropertyInterceptor.setMLAware(false);
+			
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 				
 				RemoteParams remoteParams = new RemoteParams(RemoteEntityFormat.json_all);
@@ -293,6 +301,8 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				return out.toString();
 			} catch (IOException | JSONException e) {
 				logger.error("Failed to convert entity to JSON format", e);
+			} finally {
+				MLPropertyInterceptor.setMLAware(isMLAware);
 			}
 		}
 		
@@ -641,7 +651,9 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		if (ignoredItems == null || !ignoredItems.contains(originalEntity)) {
 			
-			boolean isConvertible = entityDictionaryService.isSubClass(nodeService.getType(originalEntity), BeCPGModel.TYPE_ENTITY_V2);
+			boolean isConvertible = entityDictionaryService.isSubClass(nodeService.getType(originalEntity), BeCPGModel.TYPE_ENTITY_V2)
+					&& !originalEntity.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
+					&& !originalEntity.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID);
 			
 			if (isConvertible) {
 				isConvertible = nodeService.hasAspect(originalEntity, BeCPGModel.ASPECT_COMPOSITE_VERSION);

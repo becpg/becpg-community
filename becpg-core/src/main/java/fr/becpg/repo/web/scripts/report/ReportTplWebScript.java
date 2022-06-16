@@ -21,6 +21,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
@@ -141,7 +142,9 @@ public class ReportTplWebScript extends AbstractWebScript {
 
 		if (refs != null) {
 
-			BatchInfo batchInfo = new BatchInfo( String.format("generateReports-%s-%s", action, nodeRef.getId()), "becpg.batch.entityTpl.generateReports");
+			String entityDescription = nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE) + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+
+			BatchInfo batchInfo = new BatchInfo( String.format("generateReports-%s-%s", action, nodeRef.getId()), "becpg.batch.entityTpl.generateReports", entityDescription);
 			batchInfo.enableNotifyByMail("generate-reports", null);
 			batchInfo.setRunAsSystem(true);
 			BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(refs);

@@ -30,7 +30,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -108,11 +107,9 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 			logger.info("On check out Variant");
 			AuthenticationUtil.runAsSystem(() -> {
 
-				NodeRef origNodeRef1 = getCheckedOut(workingCopyNodeRef);
-
 				// Copy variants
 
-				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef1, BeCPGModel.ASSOC_VARIANTS,
+				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef, BeCPGModel.ASSOC_VARIANTS,
 						RegexQNamePattern.MATCH_ALL);
 				for (ChildAssociationRef childAssoc : childAssocs) {
 					if (logger.isDebugEnabled()) {
@@ -144,14 +141,9 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 			logger.debug("On check in Variant");
 
 			AuthenticationUtil.runAsSystem(() -> {
-				NodeRef origNodeRef1 = getCheckedOut(workingCopyNodeRef);
 
-				if (origNodeRef1 == null) {
-					origNodeRef1 = finalOrigNode;
-				}
-
-				if (origNodeRef1 != null) {
-					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(origNodeRef1, BeCPGModel.ASSOC_VARIANTS,
+				if (finalOrigNode != null) {
+					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(finalOrigNode, BeCPGModel.ASSOC_VARIANTS,
 							RegexQNamePattern.MATCH_ALL);
 
 					//On initial version while branch merging
@@ -187,7 +179,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 							logger.debug("move variant of workfingCopy " + childAssoc2.getChildRef() + " "
 									+ nodeService.getProperty(childAssoc2.getChildRef(), ContentModel.PROP_NAME) + " to origNode ");
 						}
-						nodeService.moveNode(childAssoc2.getChildRef(), origNodeRef1, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS);
+						nodeService.moveNode(childAssoc2.getChildRef(), finalOrigNode, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS);
 					}
 				}
 
@@ -196,26 +188,6 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 			});
 		}
 
-	}
-
-	private NodeRef getCheckedOut(NodeRef nodeRef) {
-		NodeRef original = null;
-		if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_WORKING_COPY)) {
-			List<AssociationRef> assocs = nodeService.getSourceAssocs(nodeRef, ContentModel.ASSOC_WORKING_COPY_LINK);
-			// It is a 1:1 relationship
-			if (!assocs.isEmpty()) {
-				if (logger.isWarnEnabled() && (assocs.size() > 1)) {
-					logger.warn("Found multiple " + ContentModel.ASSOC_WORKING_COPY_LINK + " associations to node: " + nodeRef);
-				}
-				original = assocs.get(0).getSourceRef();
-			} else {
-				logger.warn("No working copy link found");
-			}
-		} else {
-			logger.warn("Node is not a working copy");
-		}
-
-		return original;
 	}
 
 	/** {@inheritDoc} */

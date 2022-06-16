@@ -93,7 +93,7 @@
 				successCallback: {
 					fn: function(response) {
 
-						var alertMsg = "";
+						var alerts = [];
 						if (response.json && response.json.catalogs && Object.keys(response.json.catalogs).length > 0) {
 
 							var catalogs = response.json.catalogs;
@@ -113,7 +113,6 @@
 									var country = null;
 
 									if (locale !== undefined && locale != null) {
-										catalogId = catalogId + "_" + locale;
 
 										country = locale.toLowerCase();
 										if (locale.indexOf("_") > 0) {
@@ -154,11 +153,12 @@
 									}
 
 
+									var field,displayName;
 									//display missing props, if any
 									if (catalogs[key].missingFields !== undefined) {
 										html += "<h3 >" + instance.msg("label.missing_properties") + "</h3>";
 										html += "<ul class=\"catalog-missing-propList\">";
-										for (var field in catalogs[key].missingFields) {
+										for ( field in catalogs[key].missingFields) {
 
 											var flag = null;
 											if (catalogs[key].missingFields[field].locale != null) {
@@ -168,7 +168,7 @@
 												}
 											}
 
-											var displayName = catalogs[key].missingFields[field].displayName;
+										    displayName = catalogs[key].missingFields[field].displayName;
 											if (catalogs[key].missingFields[field]["displayName_" + Alfresco.constants.JS_LOCALE]) {
 												displayName = catalogs[key].missingFields[field]["displayName_" + Alfresco.constants.JS_LOCALE];
 											}
@@ -200,11 +200,9 @@
 											html += "<li class=\"non-unique-field\" >"
 												+ displayName
 												+ "</li>";
-											if (alertMsg.length > 0) {
-												alertMsg += ", ";
-											}
+											
 
-											alertMsg += displayName
+											alerts.push(displayName);
 										}
 
 										html += "</ul>";
@@ -228,32 +226,40 @@
 								.replace("-mgr", "").replace("%%%", "wizard-mgr");
 
 
-							if (this.id.indexOf("wizard-mgr") < 1) {
-								var form = YAHOO.util.Dom.get(insertId + "-form");
-
-								if (form !== undefined && form != null) {
-
-									var pageContent = YAHOO.util.Dom.get(insertId);
-									YAHOO.util.Dom.addClass(pageContent, "inline-block");
-									YAHOO.util.Dom.addClass(catalogsDiv, "inline-block");
-									YAHOO.util.Dom.addClass(catalogsDiv, "catalogs");
-									YAHOO.util.Dom.insertAfter(catalogsDiv, pageContent);
-									YAHOO.util.Dom.removeClass(this.id + "-entity-catalog", "hidden");
-
-								}
-							}
-
-
 							YAHOO.util.Event.onAvailable(insertId + "-form", function() {
+								
+								if (this.id.indexOf("wizard-mgr") < 1) {
+									var form = YAHOO.util.Dom.get(insertId + "-form");
+	
+									if (form !== undefined && form != null) {
+	
+										var pageContent = YAHOO.util.Dom.get(insertId);
+										YAHOO.util.Dom.addClass(pageContent, "inline-block");
+										YAHOO.util.Dom.addClass(catalogsDiv, "inline-block");
+										YAHOO.util.Dom.addClass(catalogsDiv, "catalogs");
+										YAHOO.util.Dom.insertAfter(catalogsDiv, pageContent);
+										YAHOO.util.Dom.removeClass(this.id + "-entity-catalog", "hidden");
+	
+									}
+									
+									
+								}
 								instance.colorizeMissingFields(response.json, insertId);
+								
 							}, this);
 
 
-							if(alertMsg.length>0){
+							if(alerts.length>0){
+								var uniqueAlerts = alerts.filter(function(item, pos) {
+								    return alerts.indexOf(item) == pos;
+								})
+								
+								//YAHOO.util.Dom.insertAfter(insertId, '<span class="error">'+  instance.msg("label.non-unique-properties",uniqueAlerts.join(", ") ) +'</span>');
+								
 								Alfresco.util.PopupManager.displayPrompt({
-								title: instance.msg("label.non-unique-properties"),
-								text: alertMsg
-							});
+									title: instance.msg("label.non-unique-properties"),
+									text: uniqueAlerts.join(", ")
+								});
 							}
 
 						} else {

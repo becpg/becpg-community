@@ -17,10 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm.impl;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -54,6 +51,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Sets;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMGroup;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
@@ -165,8 +163,12 @@ public class ECOServiceImpl implements ECOService {
 		// Do not run if already applied
 		if (!ECOState.Applied.equals(ecoData.getEcoState()) && !(ECOState.InError.equals(ecoData.getEcoState()) && isSimulated)) {
 			
+			String entityDescription = nodeService.getProperty(ecoNodeRef, BeCPGModel.PROP_CODE) + " - " + nodeService.getProperty(ecoNodeRef, ContentModel.PROP_NAME);
+
 			BatchInfo batchInfo = new BatchInfo(String.format(isSimulated ? "simulateECO-%s" : "applyECO-%s", ecoNodeRef.getId()),
-					isSimulated ? "becpg.batch.eco.simulate" : "becpg.batch.eco.apply");
+					isSimulated ? "becpg.batch.eco.simulate" : "becpg.batch.eco.apply", entityDescription);
+			
+			batchInfo.setWorkerThreads(1);
 			
 			batchInfo.setRunAsSystem(true);
 			
@@ -200,7 +202,7 @@ public class ECOServiceImpl implements ECOService {
 		
 		batchStep.setProcessWorker(processWorker);
 		
-		batchStep.setBatchStepListener(createSimulationECOBatchAdapter(ecoData, batchStep));
+		batchStep.setBatchStepListener(createSimulationECOBatchAdapter(ecoData, batchStep, processWorker));
 		return batchStep;
 	}
 
@@ -263,7 +265,7 @@ public class ECOServiceImpl implements ECOService {
 		};
 	}
 	
-	private BatchStepAdapter createSimulationECOBatchAdapter(final ChangeOrderData ecoData, BatchStep<Object> batchStep) {
+	private BatchStepAdapter createSimulationECOBatchAdapter(final ChangeOrderData ecoData, BatchStep<Object> batchStep, SimulateECOProcessWorker processWorker) {
 		return new BatchStepAdapter() {
 			
 			@Override
@@ -282,12 +284,18 @@ public class ECOServiceImpl implements ECOService {
 			
 			@Override
 			public void afterStep() {
-				
-				for (ChangeUnitDataItem cul2 : ecoData.getChangeUnitList()) {
-					cul2.setTreated(Boolean.FALSE);
+
+				if (!processWorker.getErrors().isEmpty()) {
+					ecoData.setEcoState(ECOState.InError);
+					StringBuilder comments = new StringBuilder();
+					for (String error : processWorker.getErrors()) {
+						comments.append(error + "</br>");
+					}
+					
+					commentService.createComment(ecoData.getNodeRef(), "", comments.toString(), false);
+				} else {
+					ecoData.setEcoState(ECOState.Simulated);
 				}
-				
-				ecoData.setEcoState(ECOState.Simulated);
 				
 				// Change eco state
 				alfrescoRepository.save(ecoData);
@@ -366,10 +374,12 @@ public class ECOServiceImpl implements ECOService {
 				for (final Composite<WUsedListDataItem> childComponent : component.getChildren()) {
 					List<Composite<WUsedListDataItem>> composites = new LinkedList<>();
 					
-					composites.add(childComponent);
-					composites.addAll(findAllImpactedChildrenComposites(childComponent, ecoData));
-					
-					compositesList.add(composites);
+					if (childComponent.getData() != null && Boolean.TRUE.equals(childComponent.getData().getIsWUsedImpacted())) {
+						composites.add(childComponent);
+						composites.addAll(findAllImpactedChildrenComposites(childComponent, ecoData));
+						
+						compositesList.add(composites);
+					}
 				}
 			}
 		}
@@ -435,11 +445,6 @@ public class ECOServiceImpl implements ECOService {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void process(Object component) throws Throwable {
-			
-			if (!getErrors().isEmpty()) {
-				return;
-			}
-			
 			if (component instanceof Composite<?> && ((Composite<?>) component).getData() instanceof WUsedListDataItem) {
 				applyECO(ecoData, (Composite<WUsedListDataItem>) component, false, 1, errors);
 			}
@@ -449,9 +454,9 @@ public class ECOServiceImpl implements ECOService {
 	
 	private class SimulateECOProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<Object> {
 		
-		private ChangeOrderData ecoData;
+		Set<String> errors = new HashSet<>();
 		
-		private Set<String> errors = new HashSet<>();
+		private ChangeOrderData ecoData;
 		
 		public SimulateECOProcessWorker(ChangeOrderData ecoData) {
 			this.ecoData = ecoData;
@@ -466,10 +471,6 @@ public class ECOServiceImpl implements ECOService {
 		public void process(Object components) throws Throwable {
 			
 			L2CacheSupport.doInCacheContext(() -> {
-				if (!getErrors().isEmpty()) {
-					return;
-				}
-				
 				int sort = 1;
 				
 				if (components instanceof List) {
@@ -481,6 +482,10 @@ public class ECOServiceImpl implements ECOService {
 				}
 				
 			} , true, true);
+			
+			for (ChangeUnitDataItem cul2 : ecoData.getChangeUnitList()) {
+				cul2.setTreated(Boolean.FALSE);
+			}
 			
 			alfrescoRepository.save(ecoData);
 		}
@@ -574,8 +579,9 @@ public class ECOServiceImpl implements ECOService {
 					}
 					
 					changeUnitDataItem.setErrorMsg(null);
-					changeUnitDataItem.setTreated(Boolean.TRUE);
 					
+					changeUnitDataItem.setTreated(Boolean.TRUE);
+						
 					if (!isSimulation) {
 						
 						// Store current state of ecoData
@@ -597,22 +603,18 @@ public class ECOServiceImpl implements ECOService {
 				
 				changeUnitDataItem.setTreated(false);
 				changeUnitDataItem.setErrorMsg(e.getMessage());
-				errors.add("Change unit in Error: " + changeUnitDataItem.getNodeRef());
-				errors.add("Error message: " + e.getMessage());
 				
-				try (StringWriter buffer = new StringWriter()) {
-					try (PrintWriter printer = new PrintWriter(buffer)) {
-						e.printStackTrace(printer);
-					}
-					errors.add("StackTrace : " + buffer.toString());
-				} catch (IOException e1) {
-					// Nothing can be done here
-					
+				if (errors != null) {
+					errors.add("Change unit in Error: " + changeUnitDataItem.getNodeRef());
+					errors.add("Error type: " + e.getClass());
+					errors.add("Error message: " + e.getMessage());
 				}
 				
 				if (logger.isDebugEnabled()) {
 					logger.debug("Error applying for: " + changeUnitDataItem.toString(), e);
 				}
+				
+				throw e;
 			}
 		}
 		
@@ -694,7 +696,9 @@ public class ECOServiceImpl implements ECOService {
 		
 		if (!ECOState.Applied.equals(ecoData.getEcoState()) && !ECOState.InError.equals(ecoData.getEcoState())) {
 			
-			BatchInfo batchInfo = new BatchInfo(String.format("calculateWUsed-%s", ecoNodeRef.getId()), "becpg.batch.eco.calculateWUsed");
+			String entityDescription = nodeService.getProperty(ecoNodeRef, BeCPGModel.PROP_CODE) + " - " + nodeService.getProperty(ecoNodeRef, ContentModel.PROP_NAME);
+			
+			BatchInfo batchInfo = new BatchInfo(String.format("calculateWUsed-%s", ecoNodeRef.getId()), "becpg.batch.eco.calculateWUsed", entityDescription);
 			
 			batchInfo.setRunAsSystem(true);
 			

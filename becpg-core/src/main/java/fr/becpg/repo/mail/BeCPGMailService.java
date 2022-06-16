@@ -61,7 +61,7 @@ public interface BeCPGMailService {
 	 * @param runWithSuccess a boolean.
 	 * @param time a double.
 	 */
-	void sendMailOnAsyncAction(String userName, String action, String actionUrl, boolean runWithSuccess, double time);
+	void sendMailOnAsyncAction(String userName, String action, String actionUrl, boolean runWithSuccess, double time, Object ... bodyParams);
 	
 	/**
 	 * <p>findTemplateNodeRef.</p>
