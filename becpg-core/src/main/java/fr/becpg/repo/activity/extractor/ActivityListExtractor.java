@@ -326,7 +326,19 @@ public class ActivityListExtractor extends SimpleExtractor {
 								propertyArray.get(i).toString().indexOf(")"));
 
 					} else {
-						nodeRef = new NodeRef(propertyArray.get(i).toString());
+						
+						String nodeRefString = propertyArray.get(i).toString();
+						
+				        int lastForwardSlash = nodeRefString.lastIndexOf('/');
+				        
+				        // case of malformed activities
+				        if(lastForwardSlash == -1) {
+				        	JSONObject jsonNodeRef = new JSONObject(nodeRefString);
+				        	nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://" + jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
+				        } else {
+				        	nodeRef = new NodeRef(propertyArray.get(i).toString());
+				        }
+						
 					}
 					if (nodeService.exists(nodeRef)) {
 						if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
