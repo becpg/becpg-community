@@ -308,6 +308,9 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 					assertEquals(1, reqCtrlList.getSources().size());
 					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
+				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_NON_UNIQUE_FIELD, "Nom",
+						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
+					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Libellé commercial", "EU 1169/2011 (INCO)")
 						.equals(reqCtrlList.getReqMessage())) {
 
@@ -320,6 +323,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					checks++;
+					
 				} else {
 					logger.info("Unexpected rclDataItem: " + reqCtrlList.getReqMessage());
 					fail();
