@@ -99,7 +99,8 @@ public class FormulationCheckPropsOfCompIT extends AbstractFinishedProductTest {
 											.equals("Champ obligatoire 'Libellé commercial' manquant (catalogue 'EU 1169/2011 (INCO)')")
 									|| r.getReqMessage()
 											.equals("Champ obligatoire 'DLC (J) ou DDM/DLUO (J)' manquant (catalogue 'EU 1169/2011 (INCO)')")
-									|| r.getReqMessage().equals("Champ obligatoire 'Titre' manquant (catalogue 'EU 1169/2011 (INCO)')"));
+									|| r.getReqMessage().equals("Champ obligatoire 'Titre' manquant (catalogue 'EU 1169/2011 (INCO)')")
+									|| r.getReqMessage().equals("L'unicité du champ 'Nom' n'est pas respectée"));
 						} else if (source.equals(rawMaterial5NodeRef)) {
 							assertEquals("L'unité utilisée n'est pas la bonne.", r.getReqMessage());
 							checks++;
