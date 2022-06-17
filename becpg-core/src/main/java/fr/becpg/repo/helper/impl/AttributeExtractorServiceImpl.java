@@ -772,7 +772,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 				if ((FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) && !extracted.isEmpty()) {
 
 					if (extracted.size() > 1) {
-
 						for (Map<String, Object> extractedElt : extracted) {
 							for (Map.Entry<String, Object> entry : extractedElt.entrySet()) {
 								String key = field.getFieldName() + "_" + entry.getKey();
