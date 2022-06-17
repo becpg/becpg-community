@@ -959,7 +959,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									for (Serializable ent : entry.getValue().getSecond()) {
 										if (ent instanceof Date) {
 											afterList.add(ISO8601DateFormat.format((Date) ent));
-										} else if (ent instanceof Pair) {
+										} else if (ent instanceof Pair || ent instanceof NodeRef) {
 											afterList.add(ent.toString());
 										} else {
 											afterList.add(ent);
