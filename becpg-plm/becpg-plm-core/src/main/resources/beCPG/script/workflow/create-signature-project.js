@@ -37,10 +37,7 @@ function main() {
 
 			doc.createAssociation(currentUser, "sign:validator");
 			
-			for (var i in project.assocs["sign:recipients"]) {
-				var recipient = project.assocs["sign:recipients"][i];
-				updateAssoc(doc, "sign:recipients", recipient);
-			}
+			updateAssoc(doc, "sign:recipients", project.assocs["sign:recipients"]);
 			
 			var rejectTaskName = bcpg.getMessage("signatureWorkflow.task-reject.name", doc.properties["cm:name"]);
 			var rejectTask = taskList.createNode(doc.properties["cm:name"] + "-rejectTask-" + doc.nodeRef.id, "pjt:taskList");
