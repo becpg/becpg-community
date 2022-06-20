@@ -305,7 +305,9 @@
 				</field>
 				<field id="ecm:culTreated">
 					<control template="/org/alfresco/components/form/controls/selectone.ftl">
-						<control-param name="options">,false|data.boolean.false,true|data.boolean.true</control-param>
+						<control-param name="insertBlank">true</control-param>
+						<control-param name="isSearch">true</control-param>
+						<control-param name="options">true|data.boolean.true,false|data.boolean.false</control-param>
 					</control>
 				</field>
 				</appearance>				
