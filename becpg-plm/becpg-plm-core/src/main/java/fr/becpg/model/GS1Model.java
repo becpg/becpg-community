@@ -92,6 +92,7 @@ public interface GS1Model {
 	/** Constant <code>PROP_PALLET_TYPE_CODE</code> */
 	QName PROP_PALLET_TYPE_CODE  = QName.createQName(GS1_URI, "palletTypeCode");
 
+	
 	/** Constant <code>PROP_PLATFORMTERMSANSCONDITION_CODE</code> */
 	QName PROP_PLATFORMTERMSANSCONDITION_CODE  = QName.createQName(GS1_URI, "platformTermsAndConditionsCode");
 
@@ -100,8 +101,15 @@ public interface GS1Model {
 	
 	/** Constant <code>TYPE_DUTY_FEE_TAX</code> */
 	QName TYPE_DUTY_FEE_TAX  = QName.createQName(GS1_URI, "dutyFeeTax");
+	/** Constant <code>PROP_PALLET_TYPE_CODE</code> */
+	QName PROP_DUTY_FEE_TAX_RATE = QName.createQName(GS1_URI, "dutyFeeTaxRate");
+
+	
+	
 	
 	QName PROP_PRODUCT_ACTIVITY_TYPE_CODE = QName.createQName(GS1_URI, "productActivityTypeCode");
 	
 	QName TYPE_TRADEITEM_PRICE_LIST = QName.createQName(GS1_URI, "tradeItemPriceList");
+
+	QName TYPE_COLLECTION_PRICE_LIST = QName.createQName(GS1_URI, "collectionPriceList");
 }
