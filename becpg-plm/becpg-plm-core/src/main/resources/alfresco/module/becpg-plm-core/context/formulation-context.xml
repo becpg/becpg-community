@@ -291,5 +291,16 @@
 		</property>
 	</bean>
 
+	<bean id="productCollectionFormulationChain" class="fr.becpg.repo.formulation.FormulationChain" init-method="init">
+		<property name="handlers">
+			<list>
+				<bean id="productCollectionsFormulationHandler" class="fr.becpg.repo.collection.formulation.ProductCollectionFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+				</bean>
+			</list>
+		</property>
+		<property name="formulationService" ref="formulationService" />
+		<property name="contextClass" value="fr.becpg.repo.collection.data.ProductCollectionData" />
+	</bean>
 
 </beans>

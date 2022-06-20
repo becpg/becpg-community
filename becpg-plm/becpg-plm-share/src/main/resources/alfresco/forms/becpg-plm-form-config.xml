@@ -3157,6 +3157,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					 <show id="bcpg:entityTplRef" force="true" />
 					<show force="true" id="bcpg:subsidiaryRef"/>
 			        <show force="true" id="bcpg:trademarkRef"/>
 			        <show force="true" id="bcpg:plants"/>
@@ -3201,7 +3202,17 @@
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo"/>
-					<field id="bcpg:erpCode" read-only="true" set="mainInfo"/>
+					<field id="bcpg:erpCode" set="mainInfo"/>
+					
+					<field id="bcpg:entityTplRef" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:productCollection?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
 				
 				  <field id="bcpg:subsidiaryRef" mandatory="false" read-only="false" set="mainInfo"/>
 		          <field id="bcpg:trademarkRef" mandatory="false" read-only="false" set="mainInfo"/>
@@ -3253,6 +3264,67 @@
 		
 		
 		</forms>
+		<form id="doclib-simple-metadata">
+				<field-visibility>
+				    <show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:productCollectionHierarchy1" />
+					<show id="bcpg:productCollectionHierarchy2" />
+					<show id="bcpg:productCollectionState" />
+					<show id="cm:description" />
+					<!-- tags and categories -->
+					<show id="cm:taggable" for-mode="edit" force="true" />
+					<show id="cm:categories" />
+				</field-visibility>
+				<edit-form template="../documentlibrary/forms/doclib-simple-metadata.ftl" />
+				<appearance>
+					<field id="cm:name">
+						<control>
+							<control-param name="maxLength">255</control-param>
+						</control>
+					</field>
+					<field id="cm:title">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					
+			          <field id="bcpg:productCollectionHierarchy1" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
+						</control>
+					</field>
+					<field id="bcpg:productCollectionState"  />
+					<field id="bcpg:productCollectionHierarchy2" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
+							<control-param name="parent">bcpg_productCollectionHierarchy1</control-param>
+						</control>
+					</field>
+					
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					
+			       
+					<field id="cm:taggable">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		
 	</config>
 
 	<!-- bcpg:supplier type (creating nodes) -->
@@ -3268,6 +3340,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+				    <show id="bcpg:entityTplRef" force="true" />
 					
 				</field-visibility>
 				<appearance>
@@ -3297,7 +3370,16 @@
 						</control>
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo"/>
-					<field id="bcpg:erpCode" read-only="true" set="mainInfo"/>
+					<field id="bcpg:erpCode"  set="mainInfo"/>
+						<field id="bcpg:entityTplRef" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:productCollection?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 			
@@ -3313,11 +3395,11 @@
 					<show id="cm:description" />
 					<show id="bcpg:erpCode" force="true" />
 					<show force="true" id="bcpg:trademarkRef"/>
-			          <show force="true" id="bcpg:plants"/>
-			          <show force="true" id="bcpg:clients"/>
-			          <show force="true" id="bcpg:suppliers"/>
-			          <show force="true" id="bcpg:supplierPlants"/>
-			          <show force="true" id="bcpg:supplierRefCode"/>
+			        <show force="true" id="bcpg:plants"/>
+			        <show force="true" id="bcpg:clients"/>
+			        <show force="true" id="bcpg:suppliers"/>
+			         <show force="true" id="bcpg:supplierPlants"/>
+			         <show force="true" id="bcpg:supplierRefCode"/>
 
 				</field-visibility>
 				<appearance>
@@ -7202,7 +7284,145 @@
 			</form>
 		</forms>
 	</config>
-		
+	
+	
+
+	
+	
+		<config evaluator="model-type" condition="gs1:collectionPriceList">
+		<forms>
+			<form>
+				<field-visibility>
+				    <show id="gs1:cplProduct"/>
+					<show id="gs1:cplPriceTaxIncl"/>
+					<show id="gs1:tradeItemPriceUnit" />
+					<show id="gs1:dutyFeeTaxRef" />			
+					<show id="gs1:priceBasisQuantity" />	
+					<show id="gs1:priceBasisQuantityUnit" />	
+			         <show id="bcpg:parentLevel"/>
+					 <show id="bcpg:startEffectivity" />	
+				     <show id="bcpg:endEffectivity" />			
+				</field-visibility>
+				<appearance>
+				   <field id="gs1:cplProduct">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:productList&#38;attributeName=bcpg:productListProduct</control-param>
+						</control>
+					</field>
+					
+					<field id="gs1:dutyFeeTaxRef">
+						<control
+								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="showLink">false</control-param>							
+							</control>
+					</field>
+				
+					<field id="bcpg:startEffectivity" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=gs1:collectionPriceList&#38;attributeName=gs1:cplProduct
+							</control-param>
+						</control>
+					</field>
+				</appearance>				
+			</form>
+			<form id="filter">
+				<field-visibility>
+				    <show id="gs1:cplProduct"/>		
+					<show id="gs1:tradeItemPriceType" />
+					<show id="gs1:dutyFeeTaxRef" />								       	
+				</field-visibility>
+				<appearance>
+				    <field id="gs1:cplProduct">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:productList&#38;attributeName=bcpg:productListProduct</control-param>
+						</control>
+					</field>
+					<field id="gs1:dutyFeeTaxRef">
+						<control
+								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="showLink">false</control-param>							
+							</control>
+					</field>
+				</appearance>			
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="gs1:cplProduct"/>
+					<show id="gs1:cplPriceTaxIncl"/>
+					<show id="gs1:tradeItemPrice" />
+					<show id="gs1:tradeItemPriceUnit" />
+					<show id="gs1:dutyFeeTaxRef" />	
+					<show id="gs1:dutyFeeTaxAmount" />			
+					<show id="gs1:priceBasisQuantity" />	
+					<show id="gs1:priceBasisQuantityUnit" />	
+					<show id="gs1:cplUnitTotalCost"/>
+			        <show id="gs1:cplProfitabilityRatio"/>
+					<show id="bcpg:startEffectivity" />	
+				    <show id="bcpg:endEffectivity" />			
+				</field-visibility>			
+			</form>
+		</forms>
+	</config>
+	<config evaluator="node-type" condition="gs1:collectionPriceList">
+		<forms>
+			<form>
+				<field-visibility>
+				    <show id="gs1:cplProduct"/>
+					 <show id="gs1:cplPriceTaxIncl"/>
+					 <show id="gs1:tradeItemPriceUnit" />
+					 <show id="gs1:dutyFeeTaxRef" />			
+					 <show id="gs1:priceBasisQuantity" />	
+					 <show id="gs1:priceBasisQuantityUnit" />
+			         <show id="bcpg:parentLevel"/>
+					 <show id="bcpg:startEffectivity" />	
+				     <show id="bcpg:endEffectivity" />			
+				</field-visibility>
+				<appearance>
+					 <field id="gs1:cplProduct">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:productList&#38;attributeName=bcpg:productListProduct</control-param>
+						</control>
+					</field>
+					<field id="gs1:dutyFeeTaxRef">
+						<control
+								template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+								<control-param name="showLink">false</control-param>							
+							</control>
+					</field>
+				
+					<field id="bcpg:startEffectivity" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					
+					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=gs1:collectionPriceList&#38;attributeName=gs1:cplProduct
+							</control-param>
+						</control>
+					</field>
+				</appearance>				
+			</form>
+		</forms>
+	</config>
+	
+	
 		<config evaluator="model-type" condition="gs1:fishReportingInformationList">
 		<forms>
 			<form>

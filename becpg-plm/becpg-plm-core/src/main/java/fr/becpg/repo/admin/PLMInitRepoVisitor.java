@@ -1233,7 +1233,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(SecurityModel.TYPE_ACL_ENTRY);
 			} else if (productType.equals(PLMModel.TYPE_PRODUCTCOLLECTION)) {
 				dataLists.add(PLMModel.TYPE_PRODUCTLIST);
-				//dataLists.add(GS1Model.TYPE_TRADEITEM_PRICE_LIST);
+				dataLists.add(GS1Model.TYPE_COLLECTION_PRICE_LIST);
 			}
 
 			NodeRef entityTplNodeRef = entityTplService.createEntityTpl(productTplsNodeRef, productType, null, true, true, dataLists, subFolders);
