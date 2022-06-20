@@ -69,6 +69,9 @@
 				<#elseif row.item.typeShort == "bcpg:productList" >				
 				"name": "${row.item.assocs["bcpg:productListProduct"][0].properties.name!""}",
 				"title": "${row.item.assocs["bcpg:productListProduct"][0].properties.name!""}",	
+				<#elseif row.item.typeShort == "gs1:cplProduct" >				
+				"name": "${row.item.assocs["gs1:cplProduct"][0].properties.name!""}",
+				"title": "${row.item.assocs["gs1:cplProduct"][0].properties.name!""}",	
 				<#elseif row.item.typeShort == "bcpg:nutList" >				
 				"name": "${row.item.assocs["bcpg:nutListNut"][0].properties["bcpg:charactName"]!""}",
 				"title": "${row.item.assocs["bcpg:nutListNut"][0].properties["bcpg:charactName"]!""}",

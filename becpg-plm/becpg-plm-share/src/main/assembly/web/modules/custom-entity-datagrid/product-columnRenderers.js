@@ -25,7 +25,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entityV2", "bcpg:resourceProduct",
 				"cm:content_bcpg:costDetailsListSource", "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct", "bcpg:product_bcpg:productListProduct",
 				"ecm:wulSourceItems", "ecm:rlSourceItems","bcpg:psclSourceItem" , "ecm:rlTargetItem", "ecm:culSourceItem", "ecm:culTargetItem", "ecm:cclSourceItem"
-				,"cm:cmobject_bcpg:lrComponents" ],
+				,"cm:cmobject_bcpg:lrComponents", "bcpg:product_gs1:cplProduct" ],
 		renderer : function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
 
 			var url = beCPG.util.entityURL(data.siteId, data.value), version = "";
