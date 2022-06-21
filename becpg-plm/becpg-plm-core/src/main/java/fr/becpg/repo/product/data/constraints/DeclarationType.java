@@ -30,6 +30,7 @@ public enum DeclarationType {
 	Detail,
 	Group,
 	Kit,
+	Choice,
 	DoNotDeclare, 
 	DoNotDetails,
 	DoNotDetailsAtEnd
