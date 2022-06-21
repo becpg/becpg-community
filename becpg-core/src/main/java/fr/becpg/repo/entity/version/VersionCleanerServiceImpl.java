@@ -121,39 +121,44 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			this.maxProcessedNodes = maxProcessedNodes;
 			this.path = path;
 			
+			cal.add(Calendar.DAY_OF_YEAR, -1);
+			
 			if (path == null) {
 				path = RepoConsts.ENTITIES_HISTORY_XPATH;
 			}
 			
 			NodeRef parentNode = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE), path);
 			
-			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(parentNode, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
-			
-			for (ChildAssociationRef childAssoc : childAssocs) {
+			if (parentNode != null && nodeService.exists(parentNode)) {
 				
-				List<ChildAssociationRef> subChildAssocs = nodeService.getChildAssocs(childAssoc.getChildRef(), ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
+				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(parentNode, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
 				
-				if (subChildAssocs.isEmpty()) {
-					deleteNode(childAssoc.getChildRef());
-					logger.debug("delete empty folder : " + childAssoc.getChildRef());
-				}
-				
-				for (ChildAssociationRef subChildAssoc : subChildAssocs) {
+				for (ChildAssociationRef childAssoc : childAssocs) {
 					
-					if (entityDictionaryService.isSubClass(nodeService.getType(subChildAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
-						initialList.add(subChildAssoc.getChildRef());
+					List<ChildAssociationRef> subChildAssocs = nodeService.getChildAssocs(childAssoc.getChildRef(), ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
+					
+					if (subChildAssocs.isEmpty()) {
+						deleteNode(childAssoc.getChildRef());
+						logger.debug("delete empty folder : " + childAssoc.getChildRef());
 					}
 					
+					for (ChildAssociationRef subChildAssoc : subChildAssocs) {
+						
+						if (entityDictionaryService.isSubClass(nodeService.getType(subChildAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
+							initialList.add(subChildAssoc.getChildRef());
+						}
+						
+						if (initialList.size() >= maxProcessedNodes) {
+							break;
+						}
+					}
 					if (initialList.size() >= maxProcessedNodes) {
 						break;
 					}
 				}
-				if (initialList.size() >= maxProcessedNodes) {
-					break;
-				}
+			} else {
+				logger.warn("node doen't exist for path : " + path);
 			}
-			
-			cal.add(Calendar.DAY_OF_YEAR, -1);
 		}
 
 		@Override
