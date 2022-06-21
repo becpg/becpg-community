@@ -196,26 +196,29 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	}
 
 	private boolean accept(NodeRef entityNodeRef) {
-
-		String productState = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
-
-		if ((productState == null) || productState.isEmpty() || !statesToRegister.contains(productState)) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Skipping product state : " + productState);
+		if(nodeService.exists(entityNodeRef)) {
+	
+			String productState = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
+	
+			if ((productState == null) || productState.isEmpty() || !statesToRegister.contains(productState)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Skipping product state : " + productState);
+				}
+				return false;
 			}
-			return false;
-		}
-
-		QName nodeType = nodeService.getType(entityNodeRef);
-
-		if (PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeType)) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Skipping local semi finished product");
+	
+			QName nodeType = nodeService.getType(entityNodeRef);
+	
+			if (PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeType)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Skipping local semi finished product");
+				}
+				return false;
 			}
-			return false;
+	
+			return true;
 		}
-
-		return true;
+		return false;
 	}
 
 	private NodeRef getAutomaticECONoderef(NodeRef parentFolderNodeRef) {
@@ -356,8 +359,6 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker();
 		
 		batchQueueService.queueBatch(batchInfo, new EntityListBatchProcessWorkProvider<>(nodeRefs), processWorker, null);
-
-		logger.debug("End of reformulate changed entities");
 
 		return processWorker.getResult();
 	}
