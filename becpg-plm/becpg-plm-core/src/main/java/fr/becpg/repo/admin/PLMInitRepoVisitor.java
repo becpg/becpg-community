@@ -134,7 +134,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_CLIENT_NAME = "path.productreportclienttemplate";
 	private static final String PRODUCT_REPORT_PRODUCTION_PATH = "beCPG/birt/document/product/default/ProductReport_Prod.rptdesign";
 	private static final String PRODUCT_REPORT_PRODUCTION_NAME = "path.productreportproductiontemplate";
-	private static final String PRODUCT_REPORT_SUPPLIER_PATH = "beCPG/birt/document/product/default/ProductReport_Supplier.rptdesign";
 
 	private static final String PRODUCT_REPORT_PACKAGING_PATH = "beCPG/birt/document/product/default/PackagingReport.rptdesign";
 	private static final String PRODUCT_REPORT_COST_PATH = "beCPG/birt/document/product/default/ProductReport_Cost.rptdesign";
@@ -165,14 +164,15 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private static final Map<String, String> reportKindCodes = new HashMap<>();
 	private static final String NONE_KIND_REPORT = "none";
+	private static final String SUPPLIER_KIND_REPORT = "supplier";
 
 	static {
 		reportKindCodes.put(PRODUCT_REPORT_CLIENT_PATH, "CustomerSheet");
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
-		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_PATH, "SupplierSheet");
+		reportKindCodes.put(SUPPLIER_KIND_REPORT, "SupplierSheet");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
-
+	
 	private static final String EXPORT_LABELLING_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLabelling.xlsx";
 	private static final String EXPORT_CITEO_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCiteo.xlsx";
 	private static final String EXPORT_ALLERGENS_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportAllergens.xlsx";
@@ -1379,7 +1379,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
 					PLMModel.TYPE_PACKAGINGMATERIAL };
 			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH,
-					PRODUCT_REPORT_SUPPLIER_PATH, PRODUCT_REPORT_PACKAGING_PATH };
+					PRODUCT_REPORT_PACKAGING_PATH };
 			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName,
 					productReportPackagingName };
 
@@ -1398,6 +1398,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			Map<String, Map<QName, Serializable>> reportKindTplAssoc = new HashMap<>();
 			List<String> defaultKindReport = new ArrayList<>(Arrays.asList(defaultReport));
 			defaultKindReport.add(NONE_KIND_REPORT);
+			defaultKindReport.add(SUPPLIER_KIND_REPORT);
 
 			for (String reportKind : defaultKindReport) {
 				if (PRODUCT_REPORT_RAWMATERIAL_PATH.equals(reportKind) || PRODUCT_REPORT_PACKAGING_PATH.equals(reportKind)
@@ -1410,7 +1411,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				MLText mltValue = new MLText();
 				mltValue.put(Locale.FRENCH, I18NUtil.getMessage("becpg.reportkind." + reportKindCode.toLowerCase() + ".value", Locale.FRENCH));
 				mltValue.put(Locale.ENGLISH, I18NUtil.getMessage("becpg.reportkind." + reportKindCode.toLowerCase() + ".value", Locale.ENGLISH));
-
+				
 				// for aspect on report template
 				Map<QName, Serializable> reportKindTplProps = new HashMap<>();
 				reportKindTplProps.put(ReportModel.PROP_REPORT_KINDS, reportKindCode);
@@ -1423,7 +1424,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				reportKindListProps.put(BeCPGModel.PROP_LV_VALUE, mltValue);
 				reportKindDefaultValues.put(reportKind, reportKindListProps);
 			}
-
+			
 			visitReportKindList(reportKindDefaultValues);
 
 			List<NodeRef> resources = new ArrayList<>();
