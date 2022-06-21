@@ -173,6 +173,9 @@
        <showAdditionalDownloadLinks>true</showAdditionalDownloadLinks>	
    </config>
 
+  <config evaluator="string-compare" condition="SAML">
+	  <enable>false</enable>
+   </config>
 
 	<config>
 		<forms>
