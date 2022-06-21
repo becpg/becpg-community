@@ -309,6 +309,7 @@
 					<value>DoNotDetailsAtEnd</value>
 					<value>Detail</value>
 					<value>Kit</value>
+					<value>Choice</value>
 					<value>Group</value>
 					<value>Omit</value>
 					<value>DoNotDeclare</value>
