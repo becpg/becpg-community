@@ -247,7 +247,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 		
 		// calculate WUsed
-		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -272,7 +272,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		
 		}, false, true);
 		
-		waitForBatchEnd(ecoService.doSimulation(ecoNodeRef, false));
+		waitForBatchEnd(ecoService.doSimulation(ecoNodeRef, false, false));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -449,7 +449,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		logger.info("Version Before : " + getVersionLabel(finishedProduct1NodeRef));
 		
 		// apply
-		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, true));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, true, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -605,7 +605,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 		
 		// calculate WUsed
-		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 		
@@ -631,7 +631,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// apply
-		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false, false));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -675,7 +675,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 		
 		// calculate WUsed
-		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -701,7 +701,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 
-		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false, false));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -749,7 +749,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 		
 		// calculate WUsed
-		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -790,7 +790,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// apply
-		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false, false));
 		
 		logger.info("APTER");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -842,7 +842,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 		
 		// calculate WUsed
-		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef2, false));
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef2, false, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -869,7 +869,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 
 		// apply
-		waitForBatchEnd(ecoService.apply(ecoNodeRef2, false, false));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef2, false, false, false));
 		
 		logger.info("APTER 2");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -910,7 +910,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 		
 		// calculate WUsed
-		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef3, false));
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef3, false, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -938,7 +938,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 
 		// apply
-		waitForBatchEnd(ecoService.apply(ecoNodeRef3, false, false));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef3, false, false, false));
 
 		logger.info("APTER 3");
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -1074,7 +1074,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 
 		}, false, true);
 		
-		waitForBatchEnd(ecoService.doSimulation(ecoNodeRef, true));
+		waitForBatchEnd(ecoService.doSimulation(ecoNodeRef, true, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -1321,7 +1321,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 		
 		// calculate WUsed
-		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 		
@@ -1345,7 +1345,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// apply
-		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
@@ -1519,7 +1519,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 				}, false, true);
 
 				// calculate WUsed
-				waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+				waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false, false));
 				
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 					ChangeOrderData dbECOData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
@@ -1542,7 +1542,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 				logger.info("Name Before : " + alfrescoRepository.findOne(finishedProduct1NodeRef).getName() + " in thread " + threadName);
 				
 				// apply
-				waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false));
+				waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false, false));
 
 				return null;
 			});
@@ -1609,7 +1609,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 		
 		// calculate WUsed
-		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false, false));
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -1640,7 +1640,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 
-		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false));
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false, false));
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
