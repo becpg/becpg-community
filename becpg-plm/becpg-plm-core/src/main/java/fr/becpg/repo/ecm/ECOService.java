@@ -36,9 +36,9 @@ public interface ECOService {
 	 * @param selectToApply a boolean.
 	 * @return 
 	 */
-	BatchInfo calculateWUsedList(NodeRef ecoNodeRef, boolean selectToApply);
+	BatchInfo calculateWUsedList(NodeRef ecoNodeRef, boolean selectToApply, boolean notifyByMail);
 	
-	BatchInfo apply(NodeRef ecoNodeRef, boolean deleteOnApply, boolean calculateWUsed);
+	BatchInfo apply(NodeRef ecoNodeRef, boolean deleteOnApply, boolean calculateWUsed, boolean notifyByMail);
 	
 	/**
 	 * <p>doSimulation.</p>
@@ -46,6 +46,6 @@ public interface ECOService {
 	 * @param ecoNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a boolean.
 	 */
-	BatchInfo doSimulation(NodeRef ecoNodeRef, boolean calculateWUsed);
+	BatchInfo doSimulation(NodeRef ecoNodeRef, boolean calculateWUsed, boolean notifyByMail);
 
 }
