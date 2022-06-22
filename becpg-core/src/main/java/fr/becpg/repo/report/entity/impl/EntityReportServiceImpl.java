@@ -347,7 +347,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
 									reportParameters.getReportTitleFormat(reportTitleFormat));
 
-							NodeRef documentNodeRef = getReportDocumenNodeRef(entityNodeTo, tplNodeRef, documentName, locale, reportParameters);
+							NodeRef documentNodeRef = getReportDocumentNodeRef(entityNodeTo, tplNodeRef, documentName, locale, reportParameters);
 
 							if (documentNodeRef != null) {
 
@@ -1323,7 +1323,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		return null;
 	}
 
-	private NodeRef getReportDocumenNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName, Locale locale,
+	private NodeRef getReportDocumentNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName, Locale locale,
 			EntityReportParameters reportParameters) {
 		NodeRef documentNodeRef = null;
 		NodeRef documentsFolderNodeRef = entityService.getOrCreateDocumentsFolder(entityNodeRef);
@@ -1608,15 +1608,18 @@ public class EntityReportServiceImpl implements EntityReportService {
 		for (NodeRef reportNodeRef : dbReports) {
 			if (permissionService.hasPermission(reportNodeRef, "Read") == AccessStatus.ALLOWED) {
 				
-				Serializable reportKindsProp = nodeService.getProperty(reportNodeRef, ReportModel.PROP_REPORT_KINDS);
+				List<AssociationRef> assocRefs = nodeService.getTargetAssocs(reportNodeRef, ReportModel.ASSOC_REPORT_TPL);
 				
-				if (reportKindsProp instanceof List<?>) {
-					List<?> reportKinds = (List<?>) reportKindsProp;
-					if (reportKinds.contains(reportKind)) {
-						return reportNodeRef;
+				for (AssociationRef assocRef : assocRefs) {
+					Serializable reportKindsProp = nodeService.getProperty(assocRef.getTargetRef(), ReportModel.PROP_REPORT_KINDS);
+					
+					if (reportKindsProp instanceof List<?>) {
+						List<?> reportKinds = (List<?>) reportKindsProp;
+						if (reportKinds.contains(reportKind)) {
+							return reportNodeRef;
+						}
 					}
 				}
-				
 			}
 		}
 		
