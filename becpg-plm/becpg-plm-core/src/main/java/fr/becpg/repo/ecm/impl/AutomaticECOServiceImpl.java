@@ -434,7 +434,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			
 			for (NodeRef toReformulate : toReformulates) {
 
-				if (!formulatedEntities.contains(toReformulate)) {
+				if (!formulatedEntities.contains(toReformulate) && nodeService.exists(toReformulate)) {
 
 					result = result && formulatedEntities.add(toReformulate);
 					
