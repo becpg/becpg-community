@@ -53,6 +53,8 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				
 				NutriScoreContext nutriScoreContext = new NutriScoreContext();
 				
+				nutriScoreContext.setWater(productData.getAspects().contains(PLMModel.ASPECT_WATER));
+				
 				nutriScoreContext.setCategory(nutrientProfileCategory);
 
 				for (NutListDataItem nutList : productData.getNutList()) {
