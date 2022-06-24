@@ -1,14 +1,13 @@
 package fr.becpg.repo.ecm.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.batch.BatchProcessor;
-import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.VersionType;
@@ -22,9 +21,6 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.batch.BatchInfo;
-import fr.becpg.repo.batch.BatchQueueService;
-import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.ECOState;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
@@ -63,10 +59,10 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 	private Boolean deleteOnApply = false;
 
 	@Autowired
-	private BatchQueueService batchQueueService;
-
-	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	@Autowired
+	private TenantAdminService tenantAdminService;
 
 	private static final Log logger = LogFactory.getLog(ECOVersionPlugin.class);
 
@@ -92,90 +88,82 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 	@Override
 	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
 
-		String name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-		String versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
-
-		if (versionLabel == null) {
-			versionLabel = RepoConsts.INITIAL_VERSION;
+		String userName = AuthenticationUtil.getSystemUserName();
+		
+		if (tenantAdminService.isEnabled()) {
+			userName = tenantAdminService.getDomainUser(userName, tenantAdminService.getCurrentUserDomain());
 		}
 		
-		String ecoName = generateEcoName(name + "_v" + versionLabel);
+		final String finalUsername = userName;
 		
-		BatchInfo batchInfo = new BatchInfo(String.format("impactWUsed-%s-%s", entityNodeRef, versionLabel), "becpg.batch.eco.impactWUsed");
-		batchInfo.setWorkerThreads(1);
-		batchInfo.setBatchSize(1);
-		batchInfo.setRunAsSystem(true);
+		Thread asyncEcoGenerator = new Thread() {
+			
+			@Override
+			public void run() {
+				
 
-		batchQueueService.queueBatch(batchInfo, new EntityListBatchProcessWorkProvider<>(Arrays.asList(entityNodeRef)),
-				new AsyncECOGenerator(ecoName, versionType, description), null);
+				AuthenticationUtil.runAs(() -> {
+					String name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+					String versionLabel = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_VERSION_LABEL);
 
+					if (versionLabel == null) {
+						versionLabel = RepoConsts.INITIAL_VERSION;
+					}
+					
+					String ecoName = generateEcoName(name + "_v" + versionLabel);
+
+					NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Creating new impactWUsed change order");
+						}
+						ChangeOrderData changeOrderData = (ChangeOrderData) alfrescoRepository.create(getChangeOrderFolder(),
+								new ChangeOrderData(ecoName, ECOState.Automatic, ChangeOrderType.ImpactWUsed, null));
+
+						changeOrderData.setDescription(description);
+						changeOrderData.setEcoState(ECOState.InProgress);
+
+						List<ReplacementListDataItem> replacementList = changeOrderData.getReplacementList();
+
+						if (replacementList == null) {
+							replacementList = new ArrayList<>();
+						}
+						RevisionType revisionType = VersionType.MAJOR.equals(versionType) ? RevisionType.Major : RevisionType.Minor;
+
+						replacementList.add(new ReplacementListDataItem(revisionType, Collections.singletonList(entityNodeRef), entityNodeRef, 100));
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Adding nodeRef " + entityNodeRef + " to automatic change order :" + changeOrderData.getName());
+							logger.debug("Revision type : " + revisionType);
+						}
+
+						changeOrderData.setReplacementList(replacementList);
+						alfrescoRepository.save(changeOrderData);
+
+						return changeOrderData.getNodeRef();
+
+					}, false, true);
+
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						return ecoService.apply(ecoNodeRef, deleteOnApply, true, false);
+					}, false, true);
+					return null;
+				}, finalUsername);
+			};
+		};
+		
+		asyncEcoGenerator.start();
+		
+	}
+	
+	private NodeRef getChangeOrderFolder() {
+		return repoService.getFolderByPath("/" + RepoConsts.PATH_SYSTEM + "/" + PlmRepoConsts.PATH_ECO);
 	}
 	
 
 	private String generateEcoName(String name) {
 		return name + "-" + I18NUtil.getMessage("plm.ecm.current.name", new Date());
-	}
-
-	private class AsyncECOGenerator extends BatchProcessor.BatchProcessWorkerAdaptor<NodeRef> implements BatchProcessWorker<NodeRef> {
-
-		private final VersionType versionType;
-		private final String description;
-		private final String ecoName;
-
-		public AsyncECOGenerator(String ecoName, VersionType versionType, String description) {
-			super();
-			this.ecoName = ecoName;
-			this.versionType = versionType;
-			this.description = description;
-		}
-
-		@Override
-		public void process(NodeRef entityNodeRef) {
-
-			NodeRef ecoNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Creating new impactWUsed change order");
-				}
-				ChangeOrderData changeOrderData = (ChangeOrderData) alfrescoRepository.create(getChangeOrderFolder(),
-						new ChangeOrderData(ecoName, ECOState.Automatic, ChangeOrderType.ImpactWUsed, null));
-
-				changeOrderData.setDescription(description);
-				changeOrderData.setEcoState(ECOState.InProgress);
-
-				List<ReplacementListDataItem> replacementList = changeOrderData.getReplacementList();
-
-				if (replacementList == null) {
-					replacementList = new ArrayList<>();
-				}
-				RevisionType revisionType = VersionType.MAJOR.equals(versionType) ? RevisionType.Major : RevisionType.Minor;
-
-				replacementList.add(new ReplacementListDataItem(revisionType, Collections.singletonList(entityNodeRef), entityNodeRef, 100));
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Adding nodeRef " + entityNodeRef + " to automatic change order :" + changeOrderData.getName());
-					logger.debug("Revision type : " + revisionType);
-				}
-
-				changeOrderData.setReplacementList(replacementList);
-				alfrescoRepository.save(changeOrderData);
-
-				return changeOrderData.getNodeRef();
-
-			}, false, true);
-
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				return ecoService.apply(ecoNodeRef, deleteOnApply, true);
-			}, false, true);
-
-		}
-
-
-		private NodeRef getChangeOrderFolder() {
-			return repoService.getFolderByPath("/" + RepoConsts.PATH_SYSTEM + "/" + PlmRepoConsts.PATH_ECO);
-		}
-
 	}
 
 }

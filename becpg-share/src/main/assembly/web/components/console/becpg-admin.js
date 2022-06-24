@@ -351,7 +351,7 @@
 					bd.appendChild(ulCurrent);
 					var ulCur = document.createElement("ul");
 					ulCur.classList.add("batches");
-					ulCur.style = "height: 3em;"
+					ulCur.style = "height: 5em;"
 					bd.appendChild(ulCur);
 
 					var headerCurrent = document.createElement("li");
@@ -378,7 +378,7 @@
 					containerDiv.appendChild(div);
 
 					var panelDiv = Dom.getFirstChild(containerDiv);
-					this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, { draggable: false, width: "50em" });
+					this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv, { draggable: false, width: "auto" });
 
 					this.widgets.panel.show();
 
@@ -410,23 +410,25 @@
 							var percent = percentCompleted.substring(0, percentCompleted.length - 2);
 
 							if (ulCur.firstChild) {
-								ulCur.firstChild.children[0].innerText = batchDescId;
-								ulCur.firstChild.children[1].firstChild.value = percent;
-								ulCur.firstChild.children[1].firstChild.title = percentCompleted;
-								ulCur.firstChild.children[2].firstChild.id = batchId;
-								ulCur.firstChild.children[2].firstChild.style = "cursor:pointer";
+								ulCur.children[0].children[0].innerText = batchDescId;
+								ulCur.children[1].children[0].firstChild.value = percent;
+								ulCur.children[1].children[0].firstChild.title = percentCompleted;
+								ulCur.children[1].children[1].firstChild.id = batchId;
+								ulCur.children[1].children[1].firstChild.style = "cursor:pointer";
 								if (percent == 100) {
-									ulCur.firstChild.children[2].firstChild.style = "display:none";
+									ulCur.children[1].children[1].firstChild.style = "display:none";
 								}
 							} else {
-								var li = document.createElement("li");
-								li.id = batchId;
-								ulCur.appendChild(li);
+								var textLine = document.createElement("li");
+								textLine.id = batchId;
+								ulCur.appendChild(textLine);
 								var spanText = document.createElement("span");
-								li.appendChild(spanText);
 								spanText.innerText = batchDescId;
+								textLine.appendChild(spanText);
+								var meterLine = document.createElement("li");
+								ulCur.appendChild(meterLine);
 								var spanMeter = document.createElement("span");
-								li.appendChild(spanMeter);
+								meterLine.appendChild(spanMeter);
 								var meter = document.createElement("meter");
 								spanMeter.appendChild(meter);
 								meter.style = "width:100px";
@@ -435,7 +437,7 @@
 								meter.max = "100";
 								meter.title = percentCompleted;
 								var spanButton = document.createElement("span");
-								li.appendChild(spanButton);
+								meterLine.appendChild(spanButton);
 								var button = document.createElement("a");
 								spanButton.appendChild(button);
 								button.classList.add("removeIcon");
@@ -469,9 +471,10 @@
 								child.id = batchId;
 								child.firstChild.innerText = batchDescId;
 								child.children[1].firstChild.id = batchId;
-								child.children[1].firstChild.style = "cursor:pointer";
+								child.children[1].firstChild.style = "cursor:pointer; float:right; padding-right:20px; padding-top:15px";
 							} else {
 								var li = document.createElement("li");
+								li.style = "width:100%";
 								li.id = batchId;
 								ulQu.appendChild(li);
 								var spanText = document.createElement("span");
@@ -482,7 +485,7 @@
 								var button = document.createElement("a");
 								spanButton.appendChild(button);
 								button.classList.add("removeIcon");
-								button.style = "cursor:pointer";
+								button.style = "cursor:pointer; float:right; padding-right:20px; padding-top:15px";
 								button.id = batchId;
 								button.onclick = function(event) {
 									Alfresco.util.Ajax.request({
