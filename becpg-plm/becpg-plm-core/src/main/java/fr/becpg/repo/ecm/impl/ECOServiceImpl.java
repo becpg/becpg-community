@@ -140,21 +140,21 @@ public class ECOServiceImpl implements ECOService {
 
 	/** {@inheritDoc} */
 	@Override
-	public BatchInfo doSimulation(NodeRef ecoNodeRef, boolean calculateWUsed) {
-		return doRunInBatch(ecoNodeRef, ECOState.Simulated, false, calculateWUsed);
+	public BatchInfo doSimulation(NodeRef ecoNodeRef, boolean calculateWUsed, boolean notifyByMail) {
+		return doRunInBatch(ecoNodeRef, ECOState.Simulated, false, calculateWUsed, notifyByMail);
 	}
 
 	/** {@inheritDoc} */
 	@Override
-	public BatchInfo apply(NodeRef ecoNodeRef, boolean deleteOnApply, boolean calculateWUsed) {
+	public BatchInfo apply(NodeRef ecoNodeRef, boolean deleteOnApply, boolean calculateWUsed, boolean notifyByMail) {
 		if (securityService.isCurrentUserAllowed(ECMGroup.ApplyChangeOrder.toString())) {
-			return doRunInBatch(ecoNodeRef, ECOState.Applied, deleteOnApply, calculateWUsed);
+			return doRunInBatch(ecoNodeRef, ECOState.Applied, deleteOnApply, calculateWUsed, notifyByMail);
 		} else {
 			throw new BeCPGAccessDeniedException(ECMGroup.ApplyChangeOrder.toString());
 		}
 	}
 
-	private BatchInfo doRunInBatch(NodeRef ecoNodeRef, final ECOState state, boolean deleteOnApply, boolean calculateWUsed) {
+	private BatchInfo doRunInBatch(NodeRef ecoNodeRef, final ECOState state, boolean deleteOnApply, boolean calculateWUsed, boolean notifyByMail) {
 		
 		final ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 		
@@ -172,7 +172,9 @@ public class ECOServiceImpl implements ECOService {
 			
 			batchInfo.setRunAsSystem(true);
 			
-			batchInfo.enableNotifyByMail(isSimulated ? "eco.simulate" : "eco.apply", String.format(ACTION_URL_PREFIX, ecoNodeRef.toString()));
+			if (notifyByMail) {
+				batchInfo.enableNotifyByMail(isSimulated ? "eco.simulate" : "eco.apply", String.format(ACTION_URL_PREFIX, ecoNodeRef.toString()));
+			}
 
 			List<BatchStep<Object>> batchStepList = new LinkedList<>();
 			
@@ -690,7 +692,7 @@ public class ECOServiceImpl implements ECOService {
 
 	/** {@inheritDoc} */
 	@Override
-	public BatchInfo calculateWUsedList(NodeRef ecoNodeRef, boolean isWUsedImpacted) {
+	public BatchInfo calculateWUsedList(NodeRef ecoNodeRef, boolean isWUsedImpacted, boolean notifyByMail) {
 		
 		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
 		
@@ -702,7 +704,9 @@ public class ECOServiceImpl implements ECOService {
 			
 			batchInfo.setRunAsSystem(true);
 			
-			batchInfo.enableNotifyByMail("eco.calculateWUsed", String.format(ACTION_URL_PREFIX, ecoNodeRef.toString()));
+			if (notifyByMail) {
+				batchInfo.enableNotifyByMail("eco.calculateWUsed", String.format(ACTION_URL_PREFIX, ecoNodeRef.toString()));
+			}
 			
 			List<BatchStep<Object>> batchStepList = new LinkedList<>();
 			

@@ -105,13 +105,13 @@ public class ChangeOrderWebScript extends AbstractWebScript {
 		final NodeRef finalEcoNodeRef = ecoNodeRef;
 
 		if (ACTION_CALCULATE_WUSED.equals(action)) {
-			ecoService.calculateWUsedList(ecoNodeRef, false);
+			ecoService.calculateWUsedList(ecoNodeRef, false, true);
 			writeInfos(ecoNodeRef, res);
 		} else if (ACTION_DO_SIMULATION.equals(action)) {
-			ecoService.doSimulation(finalEcoNodeRef, false);
+			ecoService.doSimulation(finalEcoNodeRef, false, true);
 			writeInfos(ecoNodeRef, res);
 		} else if (ACTION_APPLY.equals(action)) {
-			ecoService.apply(finalEcoNodeRef, false, false);
+			ecoService.apply(finalEcoNodeRef, false, false, true);
 			writeInfos(ecoNodeRef, res);
 		} else if (ACTION_GET_INFOS.equals(action)) {
 
