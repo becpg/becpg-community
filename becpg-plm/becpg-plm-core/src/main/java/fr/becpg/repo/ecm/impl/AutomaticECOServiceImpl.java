@@ -266,7 +266,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 						}
 						try {
 							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-								return ecoService.apply(ecoNodeRef, deleteOnApply, true);
+								return ecoService.apply(ecoNodeRef, deleteOnApply, true, false);
 							}, false, true);
 
 						} catch (Exception e) {
@@ -434,7 +434,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			
 			for (NodeRef toReformulate : toReformulates) {
 
-				if (!formulatedEntities.contains(toReformulate)) {
+				if (!formulatedEntities.contains(toReformulate) && nodeService.exists(toReformulate)) {
 
 					result = result && formulatedEntities.add(toReformulate);
 					
