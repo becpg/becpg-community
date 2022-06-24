@@ -225,6 +225,12 @@ public class Nutrient5C2021Helper {
 			nutriScoreContext.setClassUpperValue(upper);
 			nutriScoreContext.setNutrientClass(NUTRIENT_PROFILE_CLASSES.get(NUTRIENT_PROFILE_CLASSES.size() - 1));
 
+			// case of beverages : never get "A" class except for water
+			if (NutrientProfileCategory.Beverages.toString().equals(nutriScoreContext.getCategory())
+					&& "A".equals(nutriScoreContext.getNutrientClass()) && !nutriScoreContext.isWater()) {
+				nutriScoreContext.setNutrientClass("B");
+			}
+			
 			return nutriScoreContext.getNutrientClass();
 		}
 

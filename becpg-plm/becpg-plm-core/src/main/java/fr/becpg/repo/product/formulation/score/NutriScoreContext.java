@@ -43,6 +43,8 @@ public class NutriScoreContext {
 	private Integer nutriScore;
 	private Integer aScore;
 	private Integer cScore;
+	
+	private boolean isWater;
 
 	public NutriScoreContext() {
 
@@ -61,6 +63,14 @@ public class NutriScoreContext {
 		this.aoacFibre = new NutriScoreFrame(aoacFibreValue);
 		this.protein = new NutriScoreFrame(proteinValue);
 		this.category = category;
+	}
+
+	public boolean isWater() {
+		return isWater;
+	}
+
+	public void setWater(boolean isWater) {
+		this.isWater = isWater;
 	}
 
 	public void setTotalFat(NutriScoreFrame totalFat) {
@@ -214,6 +224,7 @@ public class NutriScoreContext {
 		json.put(NSP_FIBRE, nspFibre.toJSON());
 		json.put(AOAC_FIBRE, aoacFibre.toJSON());
 		json.put(PROTEIN_STRING, protein.toJSON());
+		json.put("isWater", isWater);
 
 		return json;
 	}
@@ -242,6 +253,7 @@ public class NutriScoreContext {
 		nutriScoreContext.setAoacFibre(NutriScoreFrame.parse(jsonValue.get(AOAC_FIBRE)));
 		nutriScoreContext.setProtein(NutriScoreFrame.parse(jsonValue.get(PROTEIN_STRING)));
 		nutriScoreContext.setPercFruitsAndVetgs(NutriScoreFrame.parse(jsonValue.get(PERC_FRUITS_AND_VETGS)));
+		nutriScoreContext.setWater(jsonValue.getBoolean("isWater"));
 
 		return nutriScoreContext;
 
@@ -313,7 +325,7 @@ public class NutriScoreContext {
 	@Override
 	public int hashCode() {
 		return Objects.hash(aScore, aoacFibre, cScore, category, classLowerValue, classUpperValue, energy, nspFibre, nutriScore, nutrientClass,
-				percFruitsAndVetgs, protein, satFat, sodium, totalFat, totalSugar);
+				percFruitsAndVetgs, protein, satFat, sodium, totalFat, totalSugar, isWater);
 	}
 
 	@Override
@@ -331,7 +343,7 @@ public class NutriScoreContext {
 				&& Objects.equals(nspFibre, other.nspFibre) && Objects.equals(nutriScore, other.nutriScore)
 				&& Objects.equals(nutrientClass, other.nutrientClass) && Objects.equals(percFruitsAndVetgs, other.percFruitsAndVetgs)
 				&& Objects.equals(protein, other.protein) && Objects.equals(satFat, other.satFat) && Objects.equals(sodium, other.sodium)
-				&& Objects.equals(totalFat, other.totalFat) && Objects.equals(totalSugar, other.totalSugar);
+				&& Objects.equals(totalFat, other.totalFat) && Objects.equals(totalSugar, other.totalSugar) && Objects.equals(isWater, other.isWater);
 	}
 
 	@Override
@@ -339,7 +351,7 @@ public class NutriScoreContext {
 		return "NutriScoreContext [energy=" + energy + ", satFat=" + satFat + ", totalFat=" + totalFat + ", totalSugar=" + totalSugar + ", sodium="
 				+ sodium + ", percFruitsAndVetgs=" + percFruitsAndVetgs + ", nspFibre=" + nspFibre + ", aoacFibre=" + aoacFibre + ", protein="
 				+ protein + ", category=" + category + ", nutrientClass=" + nutrientClass + ", classLowerValue=" + classLowerValue
-				+ ", classUpperValue=" + classUpperValue + ", nutriScore=" + nutriScore + ", aScore=" + aScore + ", cScore=" + cScore + "]";
+				+ ", classUpperValue=" + classUpperValue + ", nutriScore=" + nutriScore + ", aScore=" + aScore + ", cScore=" + cScore + ", isWater=" + isWater + "]";
 	}
 
 }
