@@ -31,6 +31,7 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.ibatis.javassist.bytecode.stackmap.BasicBlock.Catch;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StopWatch;
 
@@ -170,6 +171,8 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 						
 						try (InputStream in = new ByteArrayInputStream(imageBytes)) {
 							sendImage(reportSession, entry.getId(), in);
+						} catch(ReportException e) {
+							logger.error(e,e);
 						}
 					}
 				}
