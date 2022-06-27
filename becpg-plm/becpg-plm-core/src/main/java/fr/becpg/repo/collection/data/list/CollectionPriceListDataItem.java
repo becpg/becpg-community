@@ -38,6 +38,8 @@ public class CollectionPriceListDataItem extends AbstractEffectiveDataItem imple
 	private String priceUnit;
 	private Double priceBasisQuantity;
 	private String priceBasisQuantityUnit;
+	
+	private Double turnover;
 
 	private NodeRef dutyFeeTax;
 	private Double dutyFeeTaxAmount;
@@ -132,6 +134,17 @@ public class CollectionPriceListDataItem extends AbstractEffectiveDataItem imple
 
 	public void setPriceBasisQuantityUnit(String priceBasisQuantityUnit) {
 		this.priceBasisQuantityUnit = priceBasisQuantityUnit;
+	}
+
+	
+	@AlfProp
+	@AlfQname(qname = "gs1:cplProductTurnover")
+	public Double getTurnover() {
+		return turnover;
+	}
+
+	public void setTurnover(Double turnover) {
+		this.turnover = turnover;
 	}
 
 	@AlfSingleAssoc
