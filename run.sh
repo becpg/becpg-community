@@ -92,7 +92,7 @@ install() {
 }
 
 tail() {
-    docker-compose -f $COMPOSE_FILE_PATH logs -f --tail=50 becpg 
+    docker-compose -f $COMPOSE_FILE_PATH logs -f --tail=50 becpg solr
 }
 
 test() {
