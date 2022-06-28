@@ -543,13 +543,20 @@
 			<properties>
 			  <property name="gs1:cplPriceTaxIncl">
 					<type>d:double</type>
-					<mandatory>true</mandatory>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					</index>
 				</property>
 			  <property name="gs1:cplProfitabilityRatio">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
+				 <property name="gs1:cplTurnover">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
