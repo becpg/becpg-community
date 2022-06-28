@@ -1,20 +1,23 @@
 package fr.becpg.repo.helper;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.Token;
+import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.fr.FrenchAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.repo.search.lucene.analysis.AbstractBeCPGAnalyzer;
-import fr.becpg.repo.search.lucene.analysis.EnglishBeCPGAnalyser;
-import fr.becpg.repo.search.lucene.analysis.FrenchBeCPGAnalyser;
+import fr.becpg.repo.search.lucene.analysis.AccentFilter;
 
 /**
  * <p>BeCPGQueryHelper class.</p>
@@ -32,8 +35,10 @@ public class BeCPGQueryHelper {
 	private static final String SUFFIX_SPACE = " ";
 	private static final String SUFFIX_DOUBLE_QUOTE = "\"";
 	private static final String SUFFIX_SIMPLE_QUOTE = "'";
-
-	private static Analyzer luceneAnaLyzer = null;
+	
+	private BeCPGQueryHelper() {
+		
+	}
 
 	/**
 	 * <p>isQueryMatch.</p>
@@ -50,68 +55,75 @@ public class BeCPGQueryHelper {
 				return true;
 			}
 
-			Analyzer analyzer = getTextAnalyzer();
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Analyzing " + entityName + " with query " + query + " using analyzer : " + analyzer.getClass().getName());
-			}
-
-			TokenStream querySource = null;
-			Reader queryReader;
-			TokenStream productNameSource = null;
-			Reader productNameReader;
-			try {
-
-				queryReader = new StringReader(query);
-				productNameReader = new StringReader(entityName);
-				querySource = analyzer.tokenStream("isQueryMatch", queryReader);
-				productNameSource = analyzer.tokenStream("isQueryMatch", productNameReader);
-
-				Token reusableToken = new Token();
-				boolean match = true;
-				while ((reusableToken = querySource.next(reusableToken)) != null) {
-					Token tmpToken = new Token();
-					while ((tmpToken = productNameSource.next(tmpToken)) != null) {
-						match = false;
-						if (logger.isDebugEnabled()) {
-							logger.debug("Test StartWith : " + reusableToken.term() + " with " + tmpToken.term());
-						}
-
-						if (tmpToken.term().startsWith(reusableToken.term())) {
-							match = true;
-							break;
-						}
-					}
-					if (!match) {
+			List<String> queryTokens = extractTokens(query.trim(), true);
+			
+			List<String> entityNameTokens = extractTokens(entityName, true);
+			
+			boolean match = true;
+			
+			for (String queryToken : queryTokens) {
+				for (String productNameToken : entityNameTokens) {
+					match = false;
+					if (productNameToken.startsWith(queryToken)) {
+						match = true;
 						break;
 					}
 				}
-				querySource.reset();
-				productNameSource.reset();
-				return match;
-			} catch (Exception e) {
-				logger.error(e, e);
-			} finally {
-
-				try {
-					if (querySource != null) {
-						querySource.close();
-					}
-					if (productNameSource != null) {
-						productNameSource.close();
-					}
-
-				} catch (IOException e) {
-					logger.error(e, e);
+				if (!match) {
+					break;
 				}
-
 			}
-
+			
+			return match;
+			
 		}
 		return false;
 	}
 
-	// TODO escape + - && || ! ( ) { } [ ] ^ " ~ * ? : \
+	private static List<String> extractTokens(String input, boolean enableStopWords) {
+		
+		InputStreamReader reader = new InputStreamReader(new ByteArrayInputStream(input.getBytes()), StandardCharsets.UTF_8);
+
+		List<String> tokens = new ArrayList<>();
+		
+		try (TokenStream tokenFilter = new AccentFilter(getTextAnalyzer(enableStopWords).tokenStream("isQueryMatch", reader))) {
+			tokenFilter.reset();
+			while (tokenFilter.incrementToken()) {
+				tokens.add(tokenFilter.getAttribute(CharTermAttribute.class).toString());
+			}
+		} catch (Exception e) {
+			logger.error(e, e);
+		}
+		
+		return tokens;
+	}
+	
+	public static String prepareQueryForSorting(String query) {
+
+		logger.debug("Query before prepare:" + query);
+		if ((query != null) && !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE)
+				|| query.endsWith(SUFFIX_SIMPLE_QUOTE))) {
+			
+			List<String> queryTokens = extractTokens(query.trim(), false);
+			
+			StringBuilder buff = new StringBuilder();
+
+			for (String queryToken : queryTokens) {
+				if (buff.length() > 0) {
+					buff.append(' ');
+				}
+				buff.append(queryToken);
+			}
+			
+			buff.append(SUFFIX_ALL);
+			query = buff.toString();
+		}
+
+		logger.debug("Query after prepare:" + query);
+
+		return query;
+	}
+
 	/**
 	 * <p>prepareQuery.</p>
 	 *
@@ -121,71 +133,24 @@ public class BeCPGQueryHelper {
 	 */
 	public static String prepareQuery(String query) {
 
-		logger.debug("Query before prepare:" + query);
-		if ((query != null) && !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE)
-				|| query.endsWith(SUFFIX_SIMPLE_QUOTE))) {
-			// Query with wildcard are not getting analyzed by stemmers
-			// so do it manually
-			Analyzer analyzer = getTextAnalyzer();
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Using analyzer : " + analyzer.getClass().getName());
-			}
-			TokenStream source = null;
-			Reader reader;
-			try {
-
-				reader = new StringReader(query.trim());
-
-				if (analyzer instanceof AbstractBeCPGAnalyzer) {
-					source = ((AbstractBeCPGAnalyzer) analyzer).tokenStream("prepareQuery", reader, true);
-				} else {
-					source = analyzer.tokenStream("prepareQuery", reader);
-				}
-
-				StringBuilder buff = new StringBuilder();
-				Token reusableToken = new Token();
-				while ((reusableToken = source.next(reusableToken)) != null) {
-					if (buff.length() > 0) {
-						buff.append(' ');
-					}
-					buff.append(reusableToken.term());
-				}
-				source.reset();
-				buff.append(SUFFIX_ALL);
-				query = buff.toString();
-			} catch (Exception e) {
-				logger.error(e, e);
-			} finally {
-
-				try {
-					if (source != null) {
-						source.close();
-					}
-
-				} catch (IOException e) {
-					logger.error(e, e);
-				}
-
-			}
-
+		if ((query != null) && !(query.endsWith(SUFFIX_ALL) || query.endsWith(SUFFIX_SPACE) || query.endsWith(SUFFIX_DOUBLE_QUOTE) || query.endsWith(SUFFIX_SIMPLE_QUOTE))) {
+			query += SUFFIX_ALL;
 		}
-
-		logger.debug("Query after prepare:" + query);
 
 		return query;
 	}
 
-	private static Analyzer getTextAnalyzer() {
-		if (luceneAnaLyzer == null) {
-			if (Locale.FRENCH.equals(I18NUtil.getLocale())) {
-				luceneAnaLyzer = new FrenchBeCPGAnalyser();
-			} else {
-				luceneAnaLyzer = new EnglishBeCPGAnalyser();
+	private static Analyzer getTextAnalyzer(boolean enableStopWords) {
+		if (Locale.FRENCH.equals(I18NUtil.getLocale())) {
+			if (enableStopWords) {
+				return new FrenchAnalyzer();
 			}
+			return new FrenchAnalyzer(CharArraySet.EMPTY_SET);
 		}
-		return luceneAnaLyzer;
-
+		if (enableStopWords) {
+			return new EnglishAnalyzer();
+		}
+		return new EnglishAnalyzer(CharArraySet.EMPTY_SET);
 	}
 
 	/**
