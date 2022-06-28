@@ -67,14 +67,21 @@ public class ProductCollectionFormulationHandler extends FormulationBaseHandler<
 
 			// profitability
 			double profit = priceListItem.getPrice() - priceListItem.getUnitTotalCost();
-			Double profitabilityRatio = priceListItem.getPrice() / (100 * profit);
+			Double profitabilityRatio = priceListItem.getPrice() / profit;
 
 			priceListItem.setProfitabilityRatio(profitabilityRatio);
 
 		} else {
 			priceListItem.setProfitabilityRatio(null);
 		}
-
+		
+		
+		if ((priceListItem.getPriceBasisQuantity() != null) && (priceListItem.getPrice() != null)) {
+			priceListItem.setTurnover(priceListItem.getPrice() *priceListItem.getUnitTotalCost());
+		} else {
+			priceListItem.setTurnover(null);
+		}
+		
 	}
 
 	private void calculatePriceParentValue(Composite<CollectionPriceListDataItem> parent) {
