@@ -154,23 +154,10 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- TODO to remove -->
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-core</artifactId>
-			<version>2.9.4</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-snowball</artifactId>
-			<version>2.9.4</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.lucene</groupId>
-			<artifactId>lucene-analyzers</artifactId>
-			<version>2.9.4</version>
+			<artifactId>lucene-analyzers-common</artifactId>
+			<version>8.11.2</version>
 		</dependency>
 
 	</dependencies>

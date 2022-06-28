@@ -143,8 +143,8 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 				return o1.getValue().compareTo(o2.getValue());
 			}
 
-			String value = BeCPGQueryHelper.prepareQuery( o1.getValue()).replace("*", "").replace(preparedQuery, "A");
-			String value2 = BeCPGQueryHelper.prepareQuery(o2.getValue()).replace("*", "").replace(preparedQuery, "A");
+			String value = BeCPGQueryHelper.prepareQueryForSorting( o1.getValue()).replace("*", "").replace(preparedQuery, "A");
+			String value2 = BeCPGQueryHelper.prepareQueryForSorting(o2.getValue()).replace("*", "").replace(preparedQuery, "A");
 
 			return value.compareTo(value2);
 
