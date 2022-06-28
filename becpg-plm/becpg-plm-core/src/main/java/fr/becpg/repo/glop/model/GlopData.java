@@ -5,6 +5,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
+
 public class GlopData extends JSONObject {
 
 	public double getComponentValue(NodeRef nodeRef) throws JSONException {
@@ -35,6 +38,24 @@ public class GlopData extends JSONObject {
 	
 	public String getStatus() throws JSONException {
 		return getString("status");
+	}
+	
+	public void applyValues(ProductData product, boolean apply) throws JSONException {
+		if (apply) {
+			JSONArray comps = getJSONArray("components");
+			
+			for (int index = 0; index < comps.length(); index++) {
+				JSONObject comp = (JSONObject) comps.get(index);
+				if (comp.has("id")) {
+					for (CompoListDataItem compoListItem : product.getCompoList()) {
+						if (comp.get("id").equals(compoListItem.getProduct().toString())) {
+							compoListItem.setQtySubFormula(comp.getDouble("value"));
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 	
 }
