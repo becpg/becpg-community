@@ -1,7 +1,6 @@
 package fr.becpg.repo.web.scripts.remote;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -9,13 +8,13 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
-import org.apache.commons.io.IOUtils;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -36,7 +35,7 @@ import io.opencensus.common.Scope;
 public class GetContentWebScript extends AbstractEntityWebScript {
 
 	private static final String PARAM_SHARE = "share";
-
+	
 	private EntityReportService entityReportService;
 	private AssociationService associationService;
 	private ContentService contentService;
@@ -79,12 +78,12 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 		try (Scope scope = tracer.spanBuilder("/remote/content").startScopedSpan()) {
 			NodeRef documentNodeRef = findEntity(req);
 
-			try (OutputStream out = res.getOutputStream()) {
+			try  {
 
 				if ("true".equalsIgnoreCase(req.getParameter(PARAM_SHARE))) {
 					if (AccessStatus.ALLOWED.equals(permissionService.hasPermission(documentNodeRef, PermissionService.WRITE))) {
 						String sharedId = quickShareService.shareContent(documentNodeRef).getId();
-						out.write(sharedId.getBytes());
+						res.getOutputStream().write(sharedId.getBytes());
 					} else {
 						throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to share this node");
 					}
@@ -103,7 +102,28 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 						throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef);
 					}
 
-					IOUtils.copy(reader.getContentInputStream(), out);
+					String mimetype = reader.getMimetype();
+					String extensionPath = req.getExtensionPath();
+					if ((mimetype == null) || (mimetype.length() == 0)) {
+						mimetype = MimetypeMap.MIMETYPE_BINARY;
+						int extIndex = extensionPath.lastIndexOf('.');
+						if (extIndex != -1) {
+							String ext = extensionPath.substring(extIndex + 1);
+							mimetype = mimetypeService.getMimetype(ext);
+						}
+					}
+					final String encoding = reader.getEncoding();
+
+
+					// set mimetype for the content and the character encoding for the stream
+					res.setContentType(mimetype);
+					res.setContentEncoding(encoding);
+
+					// get the content and stream directly to the response output stream
+					// assuming the repository is capable of streaming in chunks, this should allow large files
+					// to be streamed directly to the browser response stream.
+					reader.getContent(res.getOutputStream());
+
 				}
 
 			} catch (BeCPGException e) {
