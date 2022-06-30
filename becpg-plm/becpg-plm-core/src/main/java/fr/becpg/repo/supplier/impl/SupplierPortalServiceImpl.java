@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -130,37 +131,43 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
 
 			NodeRef branchNodeRef = entityNodeRef;
-			if (!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
 				
+			NodeRef supplierDestFolder = getOrCreateSupplierDestFolder(supplierNodeRef, supplierAccountNodeRefs);
 
-				NodeRef supplierDestFolder = getOrCreateSupplierDestFolder(supplierNodeRef, supplierAccountNodeRefs);
-
-				String branchName = repoService.getAvailableName(supplierDestFolder, createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate),
-						false);
-
-				if (supplierDestFolder != null && nodeService.getChildByName(supplierDestFolder, ContentModel.ASSOC_CONTAINS, branchName) != null) {
-					throw new IllegalStateException(I18NUtil.getMessage("message.supplier.entity-already-exists"));
-				}
-
+			String branchName = createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate);
+			
+			if (!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
 				branchNodeRef = entityVersionService.createBranch(entityNodeRef, destNodeRef);
 				associationService.update(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO, entityNodeRef);
 				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE,  VersionType.MAJOR.toString());
 				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_COMMENTS,  projectName);
-				nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, branchName);
+			} else {
+				List<AssociationRef> assocs = nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
 				
-
-				Map<QName, Serializable> properties = new HashMap<>();
-				properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SUPPLIER_DOCUMENTS));
-				NodeRef documentsFolderNodeRef = nodeService.getChildByName(branchNodeRef, ContentModel.ASSOC_CONTAINS,
-						(String) properties.get(ContentModel.PROP_NAME));
-				if (documentsFolderNodeRef == null) {
-					nodeService.createNode(branchNodeRef, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(RepoConsts.PATH_SUPPLIER_DOCUMENTS)),
-							ContentModel.TYPE_FOLDER, properties).getChildRef();
+				if (!assocs.isEmpty()) {
+					NodeRef branchFromEntity = assocs.get(0).getTargetRef();
+					
+					branchName = createName(branchFromEntity, supplierNodeRef, entityNameTpl, currentDate);
 				}
-				
 			}
 			
+			if (supplierDestFolder != null && nodeService.getChildByName(supplierDestFolder, ContentModel.ASSOC_CONTAINS, branchName) != null) {
+				throw new IllegalStateException(I18NUtil.getMessage("message.supplier.entity-already-exists", branchName));
+			}
+			
+			nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, branchName);
+			
+
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SUPPLIER_DOCUMENTS));
+			NodeRef documentsFolderNodeRef = nodeService.getChildByName(branchNodeRef, ContentModel.ASSOC_CONTAINS,
+					(String) properties.get(ContentModel.PROP_NAME));
+			if (documentsFolderNodeRef == null) {
+				nodeService.createNode(branchNodeRef, ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(RepoConsts.PATH_SUPPLIER_DOCUMENTS)),
+						ContentModel.TYPE_FOLDER, properties).getChildRef();
+			}
+				
 			projectData.setEntities(Arrays.asList(branchNodeRef));
 		
 		}
