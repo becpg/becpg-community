@@ -11,6 +11,8 @@ function main() {
 		 */
 		projectEntity = bSupplier.validateProjectEntity(projectEntity);
 
+		project.entities.add(projectEntity.nodeRef);
+		
 		var destFolder = projectEntity.childByNamePath(bcpg.getTranslatedPath('SupplierDocuments'));
 		
 		var suppliers = [];
