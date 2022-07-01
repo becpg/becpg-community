@@ -157,7 +157,8 @@ public class EntityServiceImpl implements EntityService {
 	}
 
 	// TODO Refactor and avoid duplicate
-	private NodeRef getOrCreateImageFolder(NodeRef entityNodeRef) {
+	@Override
+	public NodeRef getOrCreateImageFolder(NodeRef entityNodeRef) {
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
 				TranslateHelper.getTranslatedPath(RepoConsts.PATH_IMAGES));
 		if (imagesFolderNodeRef == null) {
