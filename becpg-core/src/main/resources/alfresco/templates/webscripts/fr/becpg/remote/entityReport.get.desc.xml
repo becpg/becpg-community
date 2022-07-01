@@ -22,6 +22,8 @@
 	<url>/becpg/remote/report?nodeRef={nodeRef}&amp;tplNodeRef={tplNodeRef}&amp;locale={locale}</url>
 	<url>/becpg/remote/report?nodeRef={nodeRef}&amp;tplNodeRef={tplNodeRef}&amp;locale={locale}&amp;format={format}</url>
 	<authentication>user</authentication>
-	<transaction allow="readonly" >required</transaction>
-	<transaction>required</transaction>
+	 <!-- beCPG Do not remove buffersize=0 
+      buffersize wrap response for transactional concurrency failure but it will not work for large stream 
+     -->
+    <transaction buffersize="0" allow="readwrite" >required</transaction>
 </webscript>

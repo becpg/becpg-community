@@ -36,6 +36,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.report.client.ReportFormat;
@@ -69,6 +70,12 @@ public class ReportContentGet extends ContentGet {
 	private EntityReportService entityReportService;
 
 	private NamespaceService namespaceService;
+	
+	private EntityVersionService entityVersionService;
+	
+	public void setEntityVersionService(EntityVersionService entityVersionService) {
+		this.entityVersionService = entityVersionService;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -133,6 +140,10 @@ public class ReportContentGet extends ContentGet {
 					entityNodeRef = new NodeRef(entityNodeRefParam);
 				} else {
 					entityNodeRef = entityReportService.getEntityNodeRef(nodeRef);
+				}
+				
+				if (entityVersionService.isVersion(nodeRef)) {
+					entityNodeRef = entityVersionService.extractVersion(entityReportService.getEntityNodeRef(nodeRef));
 				}
 				
 				if ((entityNodeRef != null) && nodeService.hasAspect(entityNodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {

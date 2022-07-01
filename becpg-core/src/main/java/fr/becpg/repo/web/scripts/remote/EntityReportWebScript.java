@@ -10,7 +10,6 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
@@ -120,7 +119,10 @@ public class EntityReportWebScript extends AbstractEntityWebScript {
 						throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef);
 					}
 
-					IOUtils.copy(reader.getContentInputStream(), resp.getOutputStream());
+					// get the content and stream directly to the response output stream
+					// assuming the repository is capable of streaming in chunks, this should allow large files
+					// to be streamed directly to the browser response stream.
+					reader.getContent(resp.getOutputStream());
 
 				} else {
 					if (logger.isDebugEnabled()) {
