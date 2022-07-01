@@ -136,8 +136,19 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 				&& !isWorkingCopyOrVersion(associationRef.getSourceRef())
 				&& !nodeService.hasAspect(associationRef.getSourceRef(), ContentModel.ASPECT_CHECKED_OUT)
 				&& !nodeService.hasAspect(associationRef.getTargetRef(), ContentModel.ASPECT_PENDING_DELETE)) {
-			NodeRef destRef = entityService.getOrCreateDocumentsFolder(associationRef.getTargetRef());
-
+			
+			String name = (String) nodeService.getProperty(associationRef.getSourceRef(), ContentModel.PROP_NAME);
+			
+			boolean isImage = mimetypeService.guessMimetype(name, contentService.getReader(associationRef.getSourceRef(), ContentModel.PROP_CONTENT)).startsWith(MimetypeMap.PREFIX_IMAGE);
+			
+			NodeRef destRef = null;
+			
+			if (isImage) {
+				destRef = entityService.getOrCreateImageFolder(associationRef.getTargetRef());
+			} else {
+				destRef = entityService.getOrCreateDocumentsFolder(associationRef.getTargetRef());
+			}
+			
 			deleteLink(associationRef.getSourceRef(), destRef);
 		}
 
@@ -172,7 +183,7 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 				for (NodeRef linkedNodeRef : linkedNodeRefs) {
 					NodeRef destRef = null;
 					if (isImage) {
-						destRef = entityService.getImageFolder(linkedNodeRef);
+						destRef = entityService.getOrCreateImageFolder(linkedNodeRef);
 					} else {
 						destRef = entityService.getOrCreateDocumentsFolder(linkedNodeRef);
 					}
