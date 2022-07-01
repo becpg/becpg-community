@@ -83,7 +83,7 @@
 				<association name="survey:slChoices">
 					<source>
 						<mandatory>true</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</source>
 					<target>
 						<class>survey:surveyQuestion</class>
