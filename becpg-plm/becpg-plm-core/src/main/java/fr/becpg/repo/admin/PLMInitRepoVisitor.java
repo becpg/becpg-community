@@ -1180,6 +1180,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 				dataLists.add(PackModel.TYPE_LABELING_LIST);
+				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 
@@ -1203,6 +1204,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
 
@@ -1223,6 +1225,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
 
@@ -1231,6 +1234,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 
