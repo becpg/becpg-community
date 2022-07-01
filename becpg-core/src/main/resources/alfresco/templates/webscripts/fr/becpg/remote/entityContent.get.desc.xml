@@ -21,5 +21,8 @@
 	<url>/becpg/remote/entity/content?nodeRef={nodeRef}</url>
 	<authentication>user</authentication>
 	<format default="">extension</format>
-	<transaction>required</transaction>
+	<!-- beCPG Do not remove buffersize=0 
+      buffersize wrap response for transactional concurrency failure but it will not work for large stream 
+    -->
+   <transaction buffersize="0" allow="readwrite" >required</transaction>
 </webscript>

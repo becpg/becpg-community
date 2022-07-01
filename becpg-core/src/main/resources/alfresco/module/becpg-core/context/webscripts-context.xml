@@ -215,6 +215,7 @@
       <property name="delegate" ref="webscript.content.streamer" />
       <property name="contentService" ref="contentService" />
       <property name="repository" ref="repositoryHelper" />
+      <property name="entityVersionService" ref="entityVersionService" />
 	</bean>
 
 
