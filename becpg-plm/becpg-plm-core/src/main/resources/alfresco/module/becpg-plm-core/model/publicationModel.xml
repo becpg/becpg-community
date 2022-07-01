@@ -95,14 +95,14 @@
 					</constraints>
 				</property>
 				<property name="bp:pubChannelBatchStartTime">
-					<type>d:date</type>
+					<type>d:datetime</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="bp:pubChannelBatchEndTime">
-					<type>d:date</type>
+					<type>d:datetime</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
@@ -166,7 +166,7 @@
 					</index>
 				</property>
 				<property name="bp:pubChannelListPublishedDate">
-					<type>d:date</type>
+					<type>d:datetime</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
@@ -194,7 +194,7 @@
 					</index>
 				</property>
 				<property name="bp:pubChannelListModifiedDate">
-					<type>d:date</type>
+					<type>d:datetime</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
