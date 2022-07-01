@@ -300,7 +300,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		batchInfo.setRunAsSystem(true);
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
-				.ofType(PLMModel.TYPE_PRODUCT).withAspect(BeCPGModel.ASPECT_AUTO_MERGE_ASPECT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+				.ofType(BeCPGModel.TYPE_ENTITY_V2).withAspect(BeCPGModel.ASPECT_AUTO_MERGE_ASPECT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
 			
