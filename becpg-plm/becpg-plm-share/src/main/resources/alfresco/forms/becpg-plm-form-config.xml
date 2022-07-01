@@ -7730,7 +7730,7 @@
 					<show id="gs1:tradeItemPriceUnit" />
 					<show id="gs1:dutyFeeTaxRef" />			
 					<show id="gs1:priceBasisQuantity" />	
-					<show id="gs1:priceBasisQuantityUnit" />	
+					<show id="gs1:priceBasisQuantityUnit" />
 			         <show id="bcpg:parentLevel"/>
 					 <show id="bcpg:startEffectivity" />	
 				     <show id="bcpg:endEffectivity" />			
@@ -7799,6 +7799,7 @@
 					<show id="gs1:priceBasisQuantityUnit" />	
 					<show id="gs1:cplUnitTotalCost"/>
 			        <show id="gs1:cplProfitabilityRatio"/>
+			        <show id="gs1:cplTurnover" />
 					<show id="bcpg:startEffectivity" />	
 				    <show id="bcpg:endEffectivity" />			
 				</field-visibility>			
