@@ -27,19 +27,23 @@ function main() {
 			}
 		}
 		
-		var signedDocument = search.findNode(notificationSignedDocument.content);
+		if (notificationSignedDocument && notificationSignedDocument.content) {
+			
+			var signedDocument = search.findNode(notificationSignedDocument.content);
+			
+			var documentName = signedDocument.properties["cm:name"];
+			var shareId = bcpg.shareContent(signedDocument);
+			
+			var templateArgs = {};
+			var templateModel = {};
+	
+			templateArgs['documentName'] = documentName;
+			templateArgs['shareId'] = shareId;
+			templateModel['args'] = templateArgs;
+			
+			bcpg.sendMail(suppliers, bcpg.getMessage("plm.supplier.portal.sign.mail.title", documentName), "/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:signature-notify-email.ftl", templateModel, true);
+		}
 		
-		var documentName = signedDocument.properties["cm:name"];
-		var shareId = bcpg.shareContent(signedDocument);
-		
-		var templateArgs = {};
-		var templateModel = {};
-
-		templateArgs['documentName'] = documentName;
-		templateArgs['shareId'] = shareId;
-		templateModel['args'] = templateArgs;
-		
-		bcpg.sendMail(suppliers, bcpg.getMessage("plm.supplier.portal.sign.mail.title", documentName), "/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:signature-notify-email.ftl", templateModel, true);
 	}
 }
 
