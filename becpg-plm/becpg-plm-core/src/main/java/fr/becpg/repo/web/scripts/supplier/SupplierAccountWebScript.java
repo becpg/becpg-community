@@ -154,7 +154,7 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 				associations = new ArrayList<>();
 			}
 
-			if (!authenticationService.authenticationExists(userName)) {
+			if (!personService.personExists(userName)) {
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Create external user: " + userName + " pwd: " + password);
