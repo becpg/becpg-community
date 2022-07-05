@@ -55,7 +55,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String SIGNATURE_URL = "plm.supplier.portal.deliverable.sign.url.name";
 	private static final String SIGNATURE_POST_SCRIPT = "plm.supplier.portal.deliverable.scripts.sign.post.name";
 	private static final String VALIDATE_PRE_SCRIPT = "plm.supplier.portal.deliverable.scripts.pre.name";
-	private static final String NOTIFICATION_SIGNED_DOCUMENT = "plm.supplier.portal.deliverable.notification.signed.name";
+	private static final String NOTIFICATION_SIGNED_DOCUMENT = "notificationSignedDocument";
 
 	private static final String SUPPLIER_SITE_PRESET = "supplier-site-dashboard";
 
@@ -204,8 +204,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			preValidationScript.setTasks(Collections.singletonList(notificationTask.getNodeRef()));
 			
 			DeliverableListDataItem notificationSignedDocument = new DeliverableListDataItem();
-			notificationSignedDocument.setName("notificationSignedDocument");
-			notificationSignedDocument.setDescription(I18NUtil.getMessage(NOTIFICATION_SIGNED_DOCUMENT));
+			notificationSignedDocument.setName(NOTIFICATION_SIGNED_DOCUMENT);
 			notificationSignedDocument.setTasks(Collections.singletonList(notificationTask.getNodeRef()));
 
 			for (NodeRef scriptNodeRef : scriptResources) {
