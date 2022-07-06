@@ -778,7 +778,7 @@ function  toISO8601(dateObject, options) {
  */
 function submitForm(entity, formDataJson) {
 	for (var key in formDataJson) {
-		if (key != "prop_cm_name" && key.startsWith("prop_")) {
+		if (key.startsWith("prop_")) {
 			var prop = key.split("prop_")[1].replace("_", ":");
 			entity.properties[prop] = formDataJson[key];
 			entity.save();
