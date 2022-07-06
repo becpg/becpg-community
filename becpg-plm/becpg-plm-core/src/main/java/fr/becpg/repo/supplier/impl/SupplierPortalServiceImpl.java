@@ -130,34 +130,29 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 		if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
 
-			NodeRef branchNodeRef = entityNodeRef;
+			NodeRef branchNodeRef = null; 
 				
-			NodeRef supplierDestFolder = getOrCreateSupplierDestFolder(supplierNodeRef, supplierAccountNodeRefs);
-
-			String branchName = createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate);
-			
-			if (!nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
-				branchNodeRef = entityVersionService.createBranch(entityNodeRef, destNodeRef);
-				associationService.update(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO, entityNodeRef);
-				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE,  VersionType.MAJOR.toString());
-				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_COMMENTS,  projectName);
-			} else {
+			if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
+				branchNodeRef = entityNodeRef;
+				
 				List<AssociationRef> assocs = nodeService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_BRANCH_FROM_ENTITY);
 				
 				if (!assocs.isEmpty()) {
-					NodeRef branchFromEntity = assocs.get(0).getTargetRef();
-					
-					branchName = createName(branchFromEntity, supplierNodeRef, entityNameTpl, currentDate);
+					entityNodeRef = assocs.get(0).getTargetRef();
 				}
+			} else {
+				branchNodeRef = entityVersionService.createBranch(entityNodeRef, destNodeRef);
 			}
 			
-			if (supplierDestFolder != null && nodeService.getChildByName(supplierDestFolder, ContentModel.ASSOC_CONTAINS, branchName) != null) {
-				throw new IllegalStateException(I18NUtil.getMessage("message.supplier.entity-already-exists", branchName));
-			}
+			NodeRef supplierDestFolder = getOrCreateSupplierDestFolder(supplierNodeRef, supplierAccountNodeRefs);
 			
+			String branchName = repoService.getAvailableName(supplierDestFolder, createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate), false);
+			
+			associationService.update(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO, entityNodeRef);
+			nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE,  VersionType.MAJOR.toString());
+			nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_COMMENTS,  projectName);
 			nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, branchName);
 			
-
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SUPPLIER_DOCUMENTS));
 			NodeRef documentsFolderNodeRef = nodeService.getChildByName(branchNodeRef, ContentModel.ASSOC_CONTAINS,
