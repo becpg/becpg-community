@@ -12,6 +12,7 @@ import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.cmr.admin.PatchException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
@@ -146,7 +147,13 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 			long minSearchNodeId = 0;
 			long maxSearchNodeId = INC;
 
+			@Override
 			public int getTotalEstimatedWorkSize() {
+				return result.size();
+			}
+			
+			@Override
+			public long getTotalEstimatedWorkSizeLong() {
 				return result.size();
 			}
 
@@ -203,7 +210,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 					
 					String nutrientProfileClass = (String) nodeService.getProperty(nutrientProfile, BeCPGModel.PROP_CHARACT_NAME);
 					
-					boolean nutrientProfileClassKnown = nutrientProfileClass.contains("Others") || nutrientProfileClass.contains("Beverages") || nutrientProfileClass.contains("Fats") || nutrientProfileClass.contains("Cheeses");
+					boolean nutrientProfileClassKnown = nutrientProfileClass != null && (nutrientProfileClass.contains("Others") || nutrientProfileClass.contains("Beverages") || nutrientProfileClass.contains("Fats") || nutrientProfileClass.contains("Cheeses"));
 					
 					if (nutrientProfileClassKnown) {
 						for (AssociationRef sourceAssoc : sourceAssocs) {
@@ -229,7 +236,11 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
 		};
 
-		batchProcessor.process(worker, true);
+		batchProcessor.processLong(worker, true);
+		
+		if (batchProcessor.getTotalErrorsLong() > 0) {
+			throw new PatchException("Error while applying " + this.getClass().getSimpleName() + " patch, abort");
+		}
 		
 		NodeRef companyHomeNodeRef = repository.getCompanyHome();
 		
