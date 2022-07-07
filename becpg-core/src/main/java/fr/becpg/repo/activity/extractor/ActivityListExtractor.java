@@ -315,7 +315,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
 			try {
-				if (propertyArray.get(i).toString().contains("workspace")) {
+				if (propertyDef == null && propertyArray.get(i).toString().contains("workspace") || propertyDef != null && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName())) {
 					NodeRef nodeRef = null;
 				 	String name = null;
 					if (Pattern.matches("\\(.*,.*\\)", propertyArray.get(i).toString())) {
