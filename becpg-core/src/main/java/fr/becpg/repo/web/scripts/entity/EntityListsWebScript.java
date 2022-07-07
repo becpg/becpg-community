@@ -562,10 +562,10 @@ public class EntityListsWebScript extends AbstractWebScript {
 						watch = new StopWatch();
 						watch.start();
 					}
-					boolean mlAware = MLPropertyInterceptor.isMLAware();
+					boolean mlAware = MLPropertyInterceptor.setMLAware(true);
 
 					try {
-						MLPropertyInterceptor.setMLAware(true);
+						
 						AuthenticationUtil.runAs(() -> {
 							RetryingTransactionCallback<Object> actionCallback = () -> {
 								policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
