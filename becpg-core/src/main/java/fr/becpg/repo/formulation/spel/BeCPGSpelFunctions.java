@@ -181,9 +181,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public String propMLValue(RepositoryEntity item, String qname, String locale) {
 			Serializable value;
 
-			boolean isMLAware = MLPropertyInterceptor.isMLAware();
+			boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
 			try {
-				MLPropertyInterceptor.setMLAware(true);
 				value = propValue(item, qname);
 			} finally {
 				MLPropertyInterceptor.setMLAware(isMLAware);
@@ -207,9 +206,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		public String propMLValue(NodeRef nodeRef, String qname, String locale) {
 			MLText value;
 
-			boolean isMLAware = MLPropertyInterceptor.isMLAware();
-			try {
-				MLPropertyInterceptor.setMLAware(true);
+			boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
+			try {	
 				value = (MLText) nodeService.getProperty(nodeRef, getQName(qname));
 				if(value!=null) {
 					return MLTextHelper.getClosestValue(value, MLTextHelper.parseLocale(locale));

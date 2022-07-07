@@ -282,12 +282,10 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		if (EntityFormat.JSON.equals(toFormat)) {
 			
-			boolean isMLAware = MLPropertyInterceptor.isMLAware();
-			
-			MLPropertyInterceptor.setMLAware(false);
+			boolean isMLAware = MLPropertyInterceptor.setMLAware(false);
 			
 			try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-				
+		
 				RemoteParams remoteParams = new RemoteParams(RemoteEntityFormat.json_all);
 				
 				JSONObject jsonParams = new JSONObject();

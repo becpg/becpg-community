@@ -359,6 +359,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 			boolean copy = true;
 			if (existingListNodeRef != null) {
 				if (override) {
+					nodeService.addAspect(existingListNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(existingListNodeRef);
 				} else {
 					copy = false;
@@ -502,6 +503,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		if (sourceListContainerNodeRef != null) {
 			if (targetListContainerNodeRef != null) {
+				nodeService.addAspect(targetListContainerNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 				nodeService.deleteNode(targetListContainerNodeRef);
 			}
 
