@@ -219,8 +219,8 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 					if ((entry.getValue() instanceof MLText)) {
 						boolean mlAware = MLPropertyInterceptor.isMLAware();
-						MLPropertyInterceptor.setMLAware(true);
 						try {
+							MLPropertyInterceptor.setMLAware(true);
 							nodeService.setProperty(entityListItemNodeRef, entry.getKey(), ImportHelper.mergeMLText((MLText) entry.getValue(),
 									(MLText) nodeService.getProperty(entityListItemNodeRef, entry.getKey())));
 						} finally {

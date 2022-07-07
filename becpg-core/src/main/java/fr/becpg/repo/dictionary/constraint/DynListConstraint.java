@@ -294,9 +294,10 @@ public class DynListConstraint extends ListOfValuesConstraint {
 						}
 
 						for (String path : paths) {
+							
 							boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
-
 							try {
+								
 								List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(
 										serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE),
 										"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(path) + "/*");

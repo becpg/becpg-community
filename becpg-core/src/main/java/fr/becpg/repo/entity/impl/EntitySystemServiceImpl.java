@@ -126,10 +126,8 @@ public class EntitySystemServiceImpl implements EntitySystemService {
 	}
 
 	private void mergeTitle(NodeRef entityNodeRef, MLText translatedPathMLText) {
-		boolean isMLAware = MLPropertyInterceptor.isMLAware();
+		boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
 		try {
-			MLPropertyInterceptor.setMLAware(true);
-
 			MLText title = (MLText) nodeService.getProperty(entityNodeRef, ContentModel.PROP_TITLE);
 			if (title == null) {
 				nodeService.setProperty(entityNodeRef, ContentModel.PROP_TITLE, translatedPathMLText);

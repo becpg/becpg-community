@@ -297,8 +297,8 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 					if ((entry.getValue() instanceof MLText)) {
 						boolean mlAware = MLPropertyInterceptor.isMLAware();
-						MLPropertyInterceptor.setMLAware(true);
 						try {
+							MLPropertyInterceptor.setMLAware(true);
 							nodeService.setProperty(nodeRef, entry.getKey(),
 									ImportHelper.mergeMLText((MLText) entry.getValue(), (MLText) nodeService.getProperty(nodeRef, entry.getKey())));
 						} finally {
