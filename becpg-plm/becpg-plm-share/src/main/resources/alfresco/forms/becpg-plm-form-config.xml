@@ -2856,7 +2856,7 @@
 					<show id="cm:description" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
-					
+					<show id="bcpg:eanCode" force="true" />
 					<show id="bcpg:supplierTel" />
 					<show id="bcpg:supplierEmail" />
 					<show id="bcpg:supplierFax" />
@@ -2901,6 +2901,7 @@
 				
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:eanCode" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:supplierHierarchy1">
@@ -2929,6 +2930,7 @@
 					<show id="bcpg:supplierHierarchy2" force="true"/>
 					<show id="bcpg:supplierState" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:eanCode" force="true" />
 					<show id="bcpg:supplierAccountRef" force="true"/>
 					<show id="bcpg:supplierTel" force="true"/>
 					<show id="bcpg:supplierEmail" force="true"/>
