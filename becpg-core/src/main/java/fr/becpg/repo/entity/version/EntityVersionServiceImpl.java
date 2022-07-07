@@ -949,7 +949,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 				StopWatch watch = null;
 
-				boolean mlAware = MLPropertyInterceptor.isMLAware();
+				boolean mlAware = 	MLPropertyInterceptor.setMLAware(true);
 				try {
 
 					if (logger.isDebugEnabled()) {
@@ -957,7 +957,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						watch.start();
 					}
 
-					MLPropertyInterceptor.setMLAware(true);
+				
 
 					final NodeRef internalBranchToNodeRef = branchToNodeRef;
 
@@ -1157,9 +1157,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		if (comments != null) {
 			for (NodeRef commentNodeRef : comments.getPage()) {
 				NodeRef newComment = null;
+				
+				boolean mlAware = 	MLPropertyInterceptor.setMLAware(false);
 				try {
 
-					MLPropertyInterceptor.setMLAware(false);
 					ContentReader reader = contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT);
 					String comment = reader.getContentString();
 					newComment = commentService.createComment(branchToNodeRef,
@@ -1174,7 +1175,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							nodeService.getProperty(commentNodeRef, ContentModel.PROP_MODIFIED));
 					commentService.deleteComment(commentNodeRef);
 				} finally {
-					MLPropertyInterceptor.setMLAware(true);
+					MLPropertyInterceptor.setMLAware(mlAware);
 					if (newComment != null) {
 						policyBehaviourFilter.enableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
 					}
@@ -1188,7 +1189,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	public NodeRef createBranch(NodeRef entityNodeRef, NodeRef parentRef) {
 		StopWatch watch = null;
 
-		boolean mlAware = MLPropertyInterceptor.isMLAware();
+		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
 		try {
 
 			if (logger.isDebugEnabled()) {
@@ -1196,7 +1197,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				watch.start();
 			}
 
-			MLPropertyInterceptor.setMLAware(true);
 
 			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
