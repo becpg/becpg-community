@@ -3,6 +3,7 @@ package fr.becpg.repo.entity.version;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -442,6 +443,23 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 			nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
 			nodeService.deleteNode(versionHistoryRef);
+		}
+		
+		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+		
+		if (versionHistory != null) {
+			Collection<Version> versions = versionHistory.getAllVersions();
+			
+			for (Version version : versions) {
+				NodeRef versionNode = getEntityVersion(version);
+				
+				NodeRef extractedVersion = findExtractedVersion(versionNode);
+				
+				if (extractedVersion != null) {
+					nodeService.addAspect(extractedVersion, ContentModel.ASPECT_TEMPORARY, null);
+					nodeService.deleteNode(extractedVersion);
+				}
+			}
 		}
 	}
 
@@ -1364,14 +1382,28 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	@Override
-	public NodeRef extractVersion(NodeRef nodeRef) {
+	public NodeRef extractVersion(NodeRef versionNodeRef) {
 
-		final NodeRef versionNodeRef = nodeRef;
+		NodeRef extractedVersion = findExtractedVersion(versionNodeRef);
+		
+		if (extractedVersion == null || !nodeService.exists(extractedVersion)) {
+		
+			extractedVersion = transactionService.getRetryingTransactionHelper().doInTransaction(() ->
+			
+			createExtractedVersion(versionNodeRef, dbNodeService.getType(versionNodeRef))
+			
+			, false, false);
+		}
+		
+		return extractedVersion;
+	}
 
+	private NodeRef findExtractedVersion(final NodeRef versionNodeRef) {
+		
 		NodeRef versionHistoryRef = getVersionHistoryNodeRef(versionNodeRef);
 
-		final String actualVersion = (String) dbNodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL);
-		
+		final String versionLabel = (String) dbNodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL);
+
 		// check if this is an old version node which has already been converted
 		if (versionHistoryRef == null) {
 
@@ -1385,30 +1417,33 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			}
 		}
 
-		if (versionHistoryRef == null) {
-			versionHistoryRef = createVersionHistory(getEntitiesHistoryFolder(), versionNodeRef);
+		if (versionHistoryRef != null) {
+			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(versionHistoryRef);
+			
+			for (ChildAssociationRef childAssoc : childAssocs) {
+				
+				String version = (String) nodeService.getProperty(childAssoc.getChildRef(), BeCPGModel.PROP_VERSION_LABEL);
+				
+				if (versionLabel.equals(version)) {
+					return childAssoc.getChildRef();
+				}
+			}
 		}
-
-		final NodeRef finalVersionHistoryRef = versionHistoryRef;
-
-		QName type = dbNodeService.getType(versionNodeRef);
-
-		NodeRef extracted = null;
 		
-		extracted = transactionService.getRetryingTransactionHelper().doInTransaction(() ->
-
-		internalExtractVersion(versionNodeRef, actualVersion, finalVersionHistoryRef, type)
-
-				, false, false);
-		
-		return extracted;
+		return null;
 	}
 
-	private NodeRef internalExtractVersion(final NodeRef versionNodeRef, final String actualVersion,
-			final NodeRef finalVersionHistoryRef, QName type) {
-		NodeRef entity = null;
+	private NodeRef createExtractedVersion(final NodeRef versionNodeRef, QName type) {
 
 		try {
+			
+			final String versionLabel = (String) dbNodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL);
+
+			NodeRef versionHistoryRef = getVersionHistoryNodeRef(versionNodeRef);
+
+			if (versionHistoryRef == null) {
+				versionHistoryRef = createVersionHistory(getEntitiesHistoryFolder(), versionNodeRef);
+			}
 
 			((RuleService) ruleService).disableRules();
 
@@ -1420,69 +1455,56 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 
-			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(finalVersionHistoryRef);
+			// create the temporary mirror node in EntitiesHistory folder
 
-			for (ChildAssociationRef childAssoc : childAssocs) {
-				
-				String version = (String) nodeService.getProperty(childAssoc.getChildRef(), BeCPGModel.PROP_VERSION_LABEL);
-				
-				if (actualVersion.equals(version)) {
-					entity = childAssoc.getChildRef();
-					break;
-				}
+			String entityJson = entityFormatService.getEntityData(versionNodeRef);
+
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(ContentModel.PROP_NAME, versionNodeRef.getId());
+			
+			ChildAssociationRef childAssoc = nodeService.createNode(versionHistoryRef, ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, versionNodeRef.getId()), type, props);
+
+			NodeRef extractedVersion = childAssoc.getChildRef();
+
+			ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
+
+			Location exportFrom = new Location(versionNodeRef);
+			crawlerParameters.setExportFrom(exportFrom);
+
+			crawlerParameters.setCrawlSelf(true);
+			crawlerParameters.setExcludeChildAssocs(new QName[] { QName.createQName(Version2Model.NAMESPACE_URI, VersionBaseModel.CHILD_VERSIONED_ASSOCS), RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
+
+			crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
+			
+			// reconstructs the folder hierarchy
+			exporterService.exportView(new VersionExporter(versionNodeRef, extractedVersion, nodeService, entityDictionaryService), crawlerParameters, null);
+
+			entityFormatService.createOrUpdateEntityFromJson(extractedVersion, entityJson);
+
+			if (lockService.isLocked(extractedVersion)) {
+				lockService.unlock(extractedVersion);
 			}
 			
-			// create the temporary mirror node in EntitiesHistory folder
-			if ((entity == null) || !nodeService.exists(entity)) {
+			String name = nodeService.getProperty(extractedVersion, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + versionLabel;
+			Map<QName, Serializable> versionAspectProperties = new HashMap<>(2);
+			versionAspectProperties.put(ContentModel.PROP_NAME, name);
+			versionAspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, versionLabel);
+			nodeService.addAspect(extractedVersion, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionAspectProperties);
 
-				String entityJson = entityFormatService.getEntityData(versionNodeRef);
+			nodeService.setProperty(extractedVersion, ContentModel.PROP_VERSION_LABEL, versionLabel);
 
-				Map<QName, Serializable> props = new HashMap<>();
-				props.put(ContentModel.PROP_NAME, versionNodeRef.getId());
+			// MNT-11911 fix, add ASPECT_INDEX_CONTROL and property that not create indexes for search and not visible files/folders at 'My Documents' dashlet
+			Map<QName, Serializable> aspectProperties = new HashMap<>(2);
+			aspectProperties.put(ContentModel.PROP_IS_INDEXED, Boolean.FALSE);
+			aspectProperties.put(ContentModel.PROP_IS_CONTENT_INDEXED, Boolean.FALSE);
+			nodeService.addAspect(extractedVersion, ContentModel.ASPECT_INDEX_CONTROL, aspectProperties);
 
-				ChildAssociationRef childAssoc = nodeService.createNode(finalVersionHistoryRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, versionNodeRef.getId()), type, props);
+			// add temporary aspect in order to delete the node later with VersionCleanerJob
+			nodeService.addAspect(extractedVersion, ContentModel.ASPECT_TEMPORARY, null);
 
-				entity = childAssoc.getChildRef();
-
-				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
-
-				Location exportFrom = new Location(versionNodeRef);
-				crawlerParameters.setExportFrom(exportFrom);
-
-				crawlerParameters.setCrawlSelf(true);
-				crawlerParameters.setExcludeChildAssocs(new QName[] { QName.createQName(Version2Model.NAMESPACE_URI, VersionBaseModel.CHILD_VERSIONED_ASSOCS), RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION, BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS});
-
-				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
-				
-				// reconstructs the folder hierarchy
-				exporterService.exportView(new VersionExporter(versionNodeRef, entity, nodeService, entityDictionaryService), crawlerParameters, null);
-
-				entityFormatService.createOrUpdateEntityFromJson(entity, entityJson);
-
-				if (lockService.isLocked(entity)) {
-					lockService.unlock(entity);
-				}
-				
-				String name = nodeService.getProperty(entity, ContentModel.PROP_NAME) + RepoConsts.VERSION_NAME_DELIMITER + actualVersion;
-				Map<QName, Serializable> versionAspectProperties = new HashMap<>(2);
-				versionAspectProperties.put(ContentModel.PROP_NAME, name);
-				versionAspectProperties.put(BeCPGModel.PROP_VERSION_LABEL, actualVersion);
-				nodeService.addAspect(entity, BeCPGModel.ASPECT_COMPOSITE_VERSION, versionAspectProperties);
-
-				nodeService.setProperty(entity, ContentModel.PROP_VERSION_LABEL, actualVersion);
-
-				// MNT-11911 fix, add ASPECT_INDEX_CONTROL and property that not create indexes for search and not visible files/folders at 'My Documents' dashlet
-				Map<QName, Serializable> aspectProperties = new HashMap<>(2);
-				aspectProperties.put(ContentModel.PROP_IS_INDEXED, Boolean.FALSE);
-				aspectProperties.put(ContentModel.PROP_IS_CONTENT_INDEXED, Boolean.FALSE);
-				nodeService.addAspect(entity, ContentModel.ASPECT_INDEX_CONTROL, aspectProperties);
-
-				// add temporary aspect in order to delete the node later with VersionCleanerJob
-				nodeService.addAspect(entity, ContentModel.ASPECT_TEMPORARY, null);
-
-			}
-
+			return extractedVersion;
+			
 		} finally {
 			((RuleService) ruleService).enableRules();
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
@@ -1493,8 +1515,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			policyBehaviourFilter.enableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 		}
-
-		return entity;
 	}
 
 }
