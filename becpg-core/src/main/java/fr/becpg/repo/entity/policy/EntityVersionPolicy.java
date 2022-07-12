@@ -211,10 +211,8 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 			// If we are permanently deleting the node then we need to
 			// remove
 			// the associated version history
-			if (!isNodeArchived )
-	        {
-				entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
-	        }
+			
+			entityVersionService.deleteVersionHistory(childAssocRef.getChildRef());
 		} finally {
 			ruleService.enableRules();
 		}
