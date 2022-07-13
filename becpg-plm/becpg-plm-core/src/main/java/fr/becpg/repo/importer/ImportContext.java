@@ -28,6 +28,8 @@ import fr.becpg.config.mapping.AbstractAttributeMapping;
  */
 public class ImportContext {
 
+	private static final int MAX_IMPORT_PRECISION = 9;
+
 	private ImportFileReader importFileReader;
 
 	private static final String FORMAT_DATE_FRENCH = "dd/MM/yyyy";
@@ -406,7 +408,7 @@ public class ImportContext {
 	 * <p>Constructor for ImportContext.</p>
 	 */
 	public ImportContext() {
-		propertyFormats = new PropertyFormats(true);
+		propertyFormats = new PropertyFormats(true, MAX_IMPORT_PRECISION);
 
 		String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH
 				: FORMAT_DATE_ENGLISH;
