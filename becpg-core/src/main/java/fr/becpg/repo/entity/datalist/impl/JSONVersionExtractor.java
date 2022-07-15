@@ -233,19 +233,20 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 		
 		NodeRef nodeRef = new NodeRef("workspace://SpacesStore/" + object.getString("id"));
 		
-		
 		String displayValue = null;
+		
+		if (object.has(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService))) {
+			displayValue = object.getString(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
+		} else if (object.has(ContentModel.PROP_NAME.toPrefixString(namespaceService))) {
+			displayValue = object.getString(ContentModel.PROP_NAME.toPrefixString(namespaceService));
+		}
 		
 		if (nodeService.exists(nodeRef)) {
 			QName type = nodeService.getType(nodeRef);
-			displayValue = attributeExtractorService.extractPropName(type, nodeRef);
-			ret.put(VALUE, nodeRef.toString());
-		} else {
-			if (object.has(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService))) {
-				displayValue = object.getString(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
-			} else {
-				displayValue = object.getString(ContentModel.PROP_NAME.toPrefixString(namespaceService));
+			if (displayValue == null) {
+				displayValue = attributeExtractorService.extractPropName(type, nodeRef);
 			}
+			ret.put(VALUE, nodeRef.toString());
 		}
 		
 		if (object.has(RemoteEntityService.ATTR_VERSION)) {
