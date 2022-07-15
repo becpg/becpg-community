@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +28,7 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.download.DownloadStatus;
 import org.alfresco.service.cmr.download.DownloadStatus.Status;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -38,6 +40,7 @@ import org.alfresco.service.cmr.view.ExporterContext;
 import org.alfresco.service.cmr.view.ExporterException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream.UnicodeExtraFieldPolicy;
@@ -79,17 +82,19 @@ public class ZipSearchDownloadExporter implements Exporter {
 		String path;
 		String name;
 		String destFolder;
+		String entityFilter;
 
-		public FileToExtract(String path, String name, String destFolder) {
+		public FileToExtract(String path, String name, String destFolder, String entityFilter) {
 			super();
 			this.path = path;
 			this.name = name;
 			this.destFolder = destFolder;
+			this.entityFilter = entityFilter;
 		}
 
 		@Override
 		public String toString() {
-			return "FileToExtract [path=" + path + ", name=" + name + ", destFolder=" + destFolder + "]";
+			return "FileToExtract [path=" + path + ", name=" + name + ", destFolder=" + destFolder + ", entityFilter = " + entityFilter + "]";
 		}
 
 	}
@@ -202,7 +207,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 		List<Node> columnNodes = queryElt.selectNodes("file");
 		for (Node columnNode : columnNodes) {
 
-			FileToExtract tmp = new FileToExtract(columnNode.valueOf("@path"), columnNode.valueOf("@name"), columnNode.valueOf("@destFolder"));
+			FileToExtract tmp = new FileToExtract(columnNode.valueOf("@path"), columnNode.valueOf("@name"), columnNode.valueOf("@destFolder"), columnNode.valueOf("@entityFilter"));
 
 			fileToExtract.add(tmp);
 		}
@@ -251,9 +256,10 @@ public class ZipSearchDownloadExporter implements Exporter {
 			if (toExtractNodes == null) {
 				toExtractNodes = new HashSet<>();
 
-				List<NodeRef> files = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef,
-						extractExpr(entityNodeRef, null, fileMapping.path));
-				toExtractNodes.addAll(files);
+				if (filterEntity(entityNodeRef, fileMapping.entityFilter)) {
+					List<NodeRef> files = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, extractExpr(entityNodeRef, null, fileMapping.path));
+					toExtractNodes.addAll(files);
+				}
 
 				cache.put(key, toExtractNodes);
 			}
@@ -317,6 +323,55 @@ public class ZipSearchDownloadExporter implements Exporter {
 			}
 		}
 
+	}
+
+	private boolean filterEntity(NodeRef entityNodeRef, String entityFilter) {
+		
+		if (entityFilter != null && !entityFilter.isBlank()) {
+			for (String condition : entityFilter.split(",")) {
+				
+				if (condition.contains("|")) {
+					String[] splittedCondition = condition.split("\\|");
+					
+					QName assocQName = QName.createQName(splittedCondition[0], namespaceService);
+					
+					Pair<QName, String> propertyCondition = extractPropertyConditon(splittedCondition[1]);
+					
+					boolean matchAssoc = false;
+					
+					for (AssociationRef assoc : nodeService.getTargetAssocs(entityNodeRef, assocQName)) {
+						
+						Serializable property = nodeService.getProperty(assoc.getTargetRef(), propertyCondition.getFirst());
+						if (property != null && property.toString().equals(propertyCondition.getSecond())) {
+							matchAssoc = true;
+							break;
+						}
+					}
+					
+					if (!matchAssoc) {
+						return false;
+					}
+				} else {
+					Pair<QName, String> propertyCondition = extractPropertyConditon(condition);
+					
+					Serializable property = nodeService.getProperty(entityNodeRef, propertyCondition.getFirst());
+					if (property == null || !property.toString().equals(propertyCondition.getSecond())) {
+						return false;
+					}
+				}
+			}
+		}
+		
+		return true;
+	}
+	
+	private Pair<QName, String> extractPropertyConditon(String condition) {
+		
+		String[] splittedCondition = condition.split("=");
+		
+		QName propQName = QName.createQName(splittedCondition[0], namespaceService);
+		
+		return new Pair<>(propQName, splittedCondition[1]);
 	}
 
 	/** {@inheritDoc} */
