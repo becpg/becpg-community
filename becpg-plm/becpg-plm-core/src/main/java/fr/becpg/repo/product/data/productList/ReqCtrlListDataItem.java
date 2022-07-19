@@ -151,6 +151,9 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		if(regulatoryCode!=null){
 			key+= regulatoryCode;
 		}
+		if(charact!=null){
+			key+= charact;
+		}
 		
 		return key;
 	}

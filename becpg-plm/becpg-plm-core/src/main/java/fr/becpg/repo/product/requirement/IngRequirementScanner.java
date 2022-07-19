@@ -1,9 +1,7 @@
 package fr.becpg.repo.product.requirement;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,7 +14,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
@@ -71,7 +68,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData productData, List<ProductSpecificationData> specifications) {
 
-		Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap = new HashMap<>();
+		List<ReqCtrlListDataItem> reqCtrlMap = new ArrayList<>();
 
 		if ((productData.getIngList() != null) && !productData.getIngList().isEmpty()) {
 
@@ -98,14 +95,47 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 				}
 
 				for (ForbiddenIngListDataItem fil : requirements) {
+					
+					
+					if (!RequirementType.Authorized.equals(fil.getReqType())) {
+						
+						Double qtyPerc = null;
+						
+						boolean isSum = Boolean.TRUE.toString().equals(fil.getIsSum());
+						
+						List<NodeRef> ingredientsConcerned = new ArrayList<>();
+						
+						if (isSum) {
+							for (IngListDataItem ingListDataItem : productData.getIngList()) {
+								
+								// Ings
+								if (!fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
+									
+									if (fil.getIngs().contains(ingListDataItem.getIng())) {
+										
+										ingredientsConcerned.add(ingListDataItem.getIng());
+										
+										if (qtyPerc == null) {
+											qtyPerc = computeQtyPerc(productData.getIngList(), ingListDataItem.getIng());
+										} else {
+											qtyPerc += computeQtyPerc(productData.getIngList(), ingListDataItem.getIng());
+										}
+									}
+								}
+							}
+						}
 
-					for (IngListDataItem ingListDataItem : productData.getIngList()) {
-						if (!RequirementType.Authorized.equals(fil.getReqType())) {
+						for (IngListDataItem ingListDataItem : productData.getIngList()) {
 							// Ings
 							if (!fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
+								
 								if (fil.getIngs().contains(ingListDataItem.getIng())) {
-
-									Double qtyPerc = computeQtyPerc(productData.getIngList(), ingListDataItem.getIng());
+									
+									if (!isSum) {
+										qtyPerc = computeQtyPerc(productData.getIngList(), ingListDataItem.getIng());
+										ingredientsConcerned = new ArrayList<>();
+										ingredientsConcerned.add(ingListDataItem.getIng());
+									}
 
 									if ((qtyPerc == null) || ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= qtyPerc))
 											|| Boolean.TRUE.equals(addInfoReqCtrl)) {
@@ -113,15 +143,11 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 										boolean isInfo = qtyPerc != null && fil.getQtyPercMaxi() != null && (fil.getQtyPercMaxi() > qtyPerc);
 
 										// req not respecte
-										ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
-										if (reqCtrl == null) {
-											reqCtrl = new ReqCtrlListDataItem(null, isInfo ? RequirementType.Info : fil.getReqType(),
-													fil.getReqMessage(), ingListDataItem.getIng(), new ArrayList<>(),
+										ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, isInfo ? RequirementType.Info : fil.getReqType(),
+													fil.getReqMessage(), isSum ? null : ingListDataItem.getIng(), new ArrayList<>(),
 													RequirementDataType.Specification);
-											reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
-										} else {
-											reqCtrl.setReqDataType(RequirementDataType.Specification);
-										}
+										reqCtrlMap.add(reqCtrl);
+										reqCtrl.setSources(ingredientsConcerned);
 
 										if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 											reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
@@ -144,14 +170,9 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 												mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 									}
 
-									ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
-									if (reqCtrl == null) {
-										reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<>(),
-												RequirementDataType.Specification);
-										reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
-									} else {
-										reqCtrl.setReqDataType(RequirementDataType.Specification);
-									}
+									ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<>(),
+											RequirementDataType.Specification);
+									reqCtrlMap.add(reqCtrl);
 
 									if (specification.getRegulatoryCode() != null) {
 										reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
@@ -163,10 +184,9 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 							}
 
-						} else {
-							checkAutorized = true;
 						}
-
+					} else {
+						checkAutorized = true;
 					}
 				}
 
@@ -183,7 +203,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 									autorized = true;
 									if ((fil.getReqMessage() != null) && (fil.getReqMessage().getDefaultValue() != null)
 											&& (!fil.getReqMessage().getDefaultValue().isEmpty())) {
-										addReqCtrl(reqCtrlMap, fil.getNodeRef(), RequirementType.Authorized, fil.getReqMessage(),
+										addReqCtrl(reqCtrlMap, RequirementType.Authorized, fil.getReqMessage(),
 												ingListDataItem.getIng(), specification, RequirementDataType.Specification);
 									}
 									break;
@@ -193,8 +213,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 						if (!autorized) {
 							String message = I18NUtil.getMessage(MESSAGE_NOTAUTHORIZED_ING);
-							addReqCtrl(reqCtrlMap, new NodeRef(RepoConsts.SPACES_STORE, "ing-notauhtorised"), RequirementType.Forbidden,
-									new MLText(message), ingListDataItem.getIng(), specification, RequirementDataType.Specification);
+							addReqCtrl(reqCtrlMap, RequirementType.Forbidden, new MLText(message), ingListDataItem.getIng(), specification, RequirementDataType.Specification);
 						}
 
 					}
@@ -203,7 +222,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 			}
 		}
 
-		return new LinkedList<>(reqCtrlMap.values());
+		return reqCtrlMap;
 
 	}
 
@@ -237,7 +256,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	 */
 	private void checkILOfPart(NodeRef productNodeRef, DeclarationType declType, ProductData componentProductData,
 			List<ForbiddenIngListDataItem> forbiddenIngredientsList, ProductSpecificationData specification,
-			Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, Set<NodeRef> visited) {
+			List<ReqCtrlListDataItem> reqCtrlMap, Set<NodeRef> visited) {
 
 		if (!PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(mlNodeService.getType(productNodeRef)) && !visited.contains(productNodeRef)) {
 
@@ -270,14 +289,9 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 									logger.debug("Adding not respected for: " + curMessage);
 								}
 
-								ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(fil.getNodeRef());
-								if (reqCtrl == null) {
-									reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<>(),
-											RequirementDataType.Specification);
-									reqCtrlMap.put(fil.getNodeRef(), reqCtrl);
-								} else {
-									reqCtrl.setReqDataType(RequirementDataType.Specification);
-								}
+								ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<>(),
+										RequirementDataType.Specification);
+								reqCtrlMap.add(reqCtrl);
 
 								if (!reqCtrl.getSources().contains(productNodeRef)) {
 									reqCtrl.getSources().add(productNodeRef);
@@ -385,16 +399,11 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		return true;
 	}
 
-	private void addReqCtrl(Map<NodeRef, ReqCtrlListDataItem> reqCtrlMap, NodeRef reqNodeRef, RequirementType requirementType, MLText message,
+	private void addReqCtrl(List<ReqCtrlListDataItem> reqCtrlMap, RequirementType requirementType, MLText message,
 			NodeRef sourceNodeRef, ProductSpecificationData specification, RequirementDataType requirementDataType) {
 
-		ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(reqNodeRef);
-		if (reqCtrl == null) {
-			reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<>(), requirementDataType);
-			reqCtrlMap.put(reqNodeRef, reqCtrl);
-		} else {
-			reqCtrl.setReqDataType(requirementDataType);
-		}
+		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<>(), requirementDataType);
+		reqCtrlMap.add(reqCtrl);
 
 		if (!reqCtrl.getSources().contains(sourceNodeRef)) {
 			reqCtrl.getSources().add(sourceNodeRef);
