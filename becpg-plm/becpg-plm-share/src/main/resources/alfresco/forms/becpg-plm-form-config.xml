@@ -1343,6 +1343,7 @@
 					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
                     <show id="bcpg:isDeleted"/>
+                    <show id="bcpg:ingAllergens" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -1370,6 +1371,11 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
 							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:ingAllergens">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
 				</appearance>
@@ -1400,6 +1406,7 @@
 					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />		
                     <show id="bcpg:isDeleted"/>
+                    <show id="bcpg:ingAllergens" />
                </field-visibility>
 
 				<appearance>
@@ -1429,6 +1436,11 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
 							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:ingAllergens">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
 				</appearance>
@@ -1496,6 +1508,7 @@
 					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
                     <show id="bcpg:isDeleted"/>
+                    <show id="bcpg:ingAllergens" />
 				</field-visibility>
 			</form>
 		</forms>
