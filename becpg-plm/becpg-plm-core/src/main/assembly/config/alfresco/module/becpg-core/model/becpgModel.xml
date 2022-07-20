@@ -1154,6 +1154,19 @@
 
 		<type name="bcpg:ing">
 			<parent>bcpg:charact</parent>
+			<associations>
+				<association name="bcpg:ingAllergens">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:allergen</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:ingTypeAspect</aspect>
 			</mandatory-aspects>

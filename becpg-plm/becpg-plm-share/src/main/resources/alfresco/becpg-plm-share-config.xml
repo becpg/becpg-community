@@ -194,7 +194,7 @@
 					formId="supplier" itemId="bcpg:rawMaterial"></step>
 				<step id="step2" labelId="becpg.wizard.supplier.ingList.label"
 					titleId="becpg.wizard.supplier.ingList.title" type="entityDataList"
-					listId="ingList" itemId="bcpg:ingList"></step>
+					listId="ingList" itemId="bcpg:ingList" nextStepWebScript="becpg/remote/formulate?nodeRef={nodeRef}&amp;format=json"></step>
 				<step id="step3" labelId="becpg.wizard.supplier.nutList.label"
 					titleId="becpg.wizard.supplier.nutList.title" type="entityDataList"
 					listId="nutList" itemId="bcpg:nutList"></step>
@@ -223,7 +223,7 @@
 					formId="supplier" itemId="bcpg:finishedProduct"></step>
 				<step id="step2" labelId="becpg.wizard.supplier.ingList.label"
 					titleId="becpg.wizard.supplier.ingList.title"
-					type="entityDataList" listId="ingList" itemId="bcpg:ingList"></step>
+					type="entityDataList" listId="ingList" itemId="bcpg:ingList" nextStepWebScript="becpg/remote/formulate?nodeRef={nodeRef}&amp;format=json"></step>
 				<step id="step3" labelId="becpg.wizard.supplier.nutList.label"
 					titleId="becpg.wizard.supplier.nutList.title"
 					type="entityDataList" listId="nutList" itemId="bcpg:nutList" ></step>
@@ -252,7 +252,7 @@
 					formId="supplier" itemId="bcpg:semiFinishedProduct"></step>
 				<step id="step2" labelId="becpg.wizard.supplier.ingList.label"
 					titleId="becpg.wizard.supplier.ingList.title"
-					type="entityDataList" listId="ingList" itemId="bcpg:ingList"></step>
+					type="entityDataList" listId="ingList" itemId="bcpg:ingList" nextStepWebScript="becpg/remote/formulate?nodeRef={nodeRef}&amp;format=json"></step>
 				<step id="step3" labelId="becpg.wizard.supplier.nutList.label"
 					titleId="becpg.wizard.supplier.nutList.title"
 					type="entityDataList" listId="nutList" itemId="bcpg:nutList" ></step>
