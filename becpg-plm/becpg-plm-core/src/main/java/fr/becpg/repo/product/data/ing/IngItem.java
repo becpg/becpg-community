@@ -4,6 +4,8 @@
 package fr.becpg.repo.product.data.ing;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -11,6 +13,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -43,6 +46,8 @@ public class IngItem extends CompositeLabeling {
 	private IngTypeItem ingType;
 	
 	private Set<NodeRef> pluralParents = new HashSet<>();
+	
+	private List<NodeRef> allergenList = new LinkedList<>();
 	
 	
 	/**
@@ -188,6 +193,21 @@ public class IngItem extends CompositeLabeling {
 	 */
 	public Set<NodeRef> getPluralParents() {
 		return pluralParents;
+	}
+	
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:ingAllergens")
+	public List<NodeRef> getAllergenList() {
+		return allergenList;
+	}
+	
+	/**
+	 * <p>Setter for the field <code>bioOrigin</code>.</p>
+	 *
+	 * @param bioOrigin a {@link java.util.List} object.
+	 */
+	public void setAllergenList(List<NodeRef> allergenList) {
+		this.allergenList = allergenList;
 	}
 	
 	/** {@inheritDoc} */
