@@ -45,8 +45,9 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 				List<T> tmp = new ArrayList<>();
 
 				mergeRequirements(tmp, extractRequirementsFromParent(specification.getProductSpecifications()));
-				if (getDataListVisited(specification) != null) {
-					mergeRequirements(tmp, getDataListVisited(specification));
+				List<T> dataListVisited = getDataListVisited(specification);
+				if (dataListVisited != null) {
+					mergeRequirements(tmp, dataListVisited);
 				}
 
 				ret.put(specification, tmp);
@@ -62,8 +63,9 @@ public abstract class AbstractRequirementScanner<T> implements RequirementScanne
 		if (specifications != null) {
 			for (ProductSpecificationData specification : specifications) {
 				mergeRequirements(ret, extractRequirementsFromParent(specification.getProductSpecifications()));
-				if (getDataListVisited(specification) != null) {
-					mergeRequirements(ret, getDataListVisited(specification));
+				List<T> dataListVisited = getDataListVisited(specification);
+				if (dataListVisited != null) {
+					mergeRequirements(ret, dataListVisited);
 				}
 			}
 		}

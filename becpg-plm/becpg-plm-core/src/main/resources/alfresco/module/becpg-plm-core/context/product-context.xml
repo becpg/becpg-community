@@ -52,9 +52,14 @@
 		<property name="entityListDAO" ref="entityListDAO"/>
 	</bean>
 
-	<bean id="ingListExtractor" parent="simpleExtractor" class="fr.becpg.repo.product.extractor.IngListExtractor">
+	<bean id="simpleCharactListExtractor" parent="simpleExtractor" class="fr.becpg.repo.product.extractor.SimpleCharactListExtractor">
 		<property name="defaultExtractor" value="false"/>
+		<property name="alfrescoRepository" ref="alfrescoRepository"/>
 	</bean>
 	
+	<bean id="ingListExtractor" parent="simpleCharactListExtractor" class="fr.becpg.repo.product.extractor.IngListExtractor">
+		<property name="defaultExtractor" value="false"/>
+		<property name="alfrescoRepository" ref="alfrescoRepository"/>
+	</bean>
 	
 </beans>
