@@ -2,6 +2,7 @@ package fr.becpg.repo.product.extractor;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
@@ -30,9 +32,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 public class SimpleCharactListExtractor extends SimpleExtractor {
 
-	private static final String ALLERGEN_LIST = "allergenList";
-	private static final String NUT_LIST = "nutList";
-	private static final String PHYSICO_LIST = "physicoChemList";
+	private static final List<String> APPLIED_LISTS = Arrays.asList("allergenList", "nutList", "physicoChemList", "labelClaimList");
 	
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
@@ -57,22 +57,27 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 
 								RepositoryEntity item = alfrescoRepository.findOne(nodeRef);
 								
+								NodeRef charact = null;
+								
 								if (item instanceof SimpleCharactDataItem) {
-									NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityListDAO.getEntity(nodeRef));
-									NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
+									charact = ((SimpleCharactDataItem) item).getCharactNodeRef();
+								} else if (item instanceof LabelClaimListDataItem) {
+									charact = ((LabelClaimListDataItem) item).getLabelClaim();
+								}
+								
+								NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityListDAO.getEntity(nodeRef));
+								NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
+								
+								if (listNodeRef != null) {
+									List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
 									
-									if (listNodeRef != null) {
-										List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
+									for (NodeRef itemNodeRef : results) {
 										
-										for (NodeRef itemNodeRef : results) {
-											
-											NodeRef charact = ((SimpleCharactDataItem) item).getCharactNodeRef();
-											
-											if ((charact != null) && charact.equals(associationService.getTargetAssoc(itemNodeRef, PLMModel.ASSOC_RCL_CHARACT))
-													|| associationService.getTargetAssocs(itemNodeRef, PLMModel.ASSOC_RCL_SOURCES).contains(charact)
-													) {
-												addExtracted(itemNodeRef, field, cache, mode, ret);
-											}
+										
+										if ((charact != null) && charact.equals(associationService.getTargetAssoc(itemNodeRef, PLMModel.ASSOC_RCL_CHARACT))
+												|| associationService.getTargetAssocs(itemNodeRef, PLMModel.ASSOC_RCL_SOURCES).contains(charact)
+												) {
+											addExtracted(itemNodeRef, field, cache, mode, ret);
 										}
 									}
 								}
@@ -133,8 +138,7 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
-		return (dataListFilter.getDataListName() != null) && (dataListFilter.getDataListName().equals(ALLERGEN_LIST)
-				|| (dataListFilter.getDataListName().equals(NUT_LIST) || dataListFilter.getDataListName().equals(PHYSICO_LIST)));
+		return (dataListFilter.getDataListName() != null) && APPLIED_LISTS.contains(dataListFilter.getDataListName());
 	}
 
 }

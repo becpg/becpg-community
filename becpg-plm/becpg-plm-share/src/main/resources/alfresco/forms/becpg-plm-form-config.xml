@@ -4427,6 +4427,7 @@
 					<show id="bcpg:allergenListVolSources" />
 					<show id="bcpg:allergenListInVolSources" />
 					<show id="fm:commentCount" force="true" />
+					<show id="dataList_bcpg:reqCtrlList" />
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
 				</field-visibility>
@@ -4434,6 +4435,7 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:allergenListDecisionTree" read-only="true" />
+					<field id="dataList_bcpg:reqCtrlList" label-id="becpg.forms.field.compliance.label" />
 				</appearance>
 			</form>
 			<form id="filter">
@@ -6410,11 +6412,13 @@
 					<show id="bcpg:lclIsFormulated" />
 					<show id="bcpg:lclFormulaErrorLog" />
 					<show id="rep:reportKinds" />
+					<show id="dataList_bcpg:reqCtrlList" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:lclMissingLabelClaims" read-only="true"/>
 					<field id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" label="hidden"/>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="dataList_bcpg:reqCtrlList" label-id="becpg.forms.field.compliance.label" />
 					<field id="bcpg:lclIsFormulated" label="hidden" />
 					<field id="bcpg:lclFormulaErrorLog" label="hidden" />
 				</appearance>
