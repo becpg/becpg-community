@@ -5227,8 +5227,7 @@
 					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden"></field>
 					<field id="bcpg:ingListQtyPercWithYield" read-only="true"  ></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
-					<field id="dataList_bcpg:reqCtrlList"
-						label-id="becpg.forms.field.compliance.label" />		
+					<field id="dataList_bcpg:reqCtrlList" label-id="becpg.forms.field.compliance.label" />		
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -5553,6 +5552,7 @@
 					<show id="bcpg:nutListFormulaErrorLog" />					
 					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
 					<show id="rep:reportKinds" />
+					<show id="dataList_bcpg:reqCtrlList" force="true" />
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
 				</field-visibility>
@@ -5571,6 +5571,7 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden"/>
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
+					<field id="dataList_bcpg:reqCtrlList" label-id="becpg.forms.field.compliance.label" />
 				</appearance>
 			</form>
 			<form id="customListDatagrid">
@@ -5813,6 +5814,7 @@
 					<show id="bcpg:physicoChemIsFormulated" />
 					<show id="bcpg:physicoChemFormulaErrorLog" />
 					<show id="rep:reportKinds" />
+					<show id="dataList_bcpg:reqCtrlList" force="true" />
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
 				</field-visibility>
@@ -5826,6 +5828,7 @@
 					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="dataList_bcpg:reqCtrlList" label-id="becpg.forms.field.compliance.label" />
 					<field id="bcpg:physicoChemIsFormulated" label="hidden"/>
 					<field id="bcpg:physicoChemFormulaErrorLog" label="hidden"/>
 				</appearance>
