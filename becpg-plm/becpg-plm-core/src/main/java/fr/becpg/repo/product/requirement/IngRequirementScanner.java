@@ -109,16 +109,18 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 							for (IngListDataItem ingListDataItem : productData.getIngList()) {
 								
 								// Ings
-								if (!fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
+								if (ingListDataItem.getParent() == null && !fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
 									
 									if (fil.getIngs().contains(ingListDataItem.getIng())) {
 										
 										ingredientsConcerned.add(ingListDataItem.getIng());
 										
+										Double ingQtyPerc = ingListDataItem.getQtyPerc();
+										
 										if (qtyPerc == null) {
-											qtyPerc = computeQtyPerc(productData.getIngList(), ingListDataItem.getIng());
-										} else {
-											qtyPerc += computeQtyPerc(productData.getIngList(), ingListDataItem.getIng());
+											qtyPerc = ingQtyPerc;
+										} else if (ingQtyPerc != null) {
+											qtyPerc += ingQtyPerc;
 										}
 									}
 								}
@@ -230,11 +232,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		Double qtyPerc = 0d;
 		for (IngListDataItem ingListDataItem : ingList) {
 			if ((ingListDataItem.getIng() != null) && ingListDataItem.getIng().equals(ing)) {
-				if (ingListDataItem.getQtyPerc() != null) {
+				if (ingListDataItem.getQtyPerc() != null && ingListDataItem.getParent() == null) {
 					qtyPerc += ingListDataItem.getQtyPerc();
-				} else {
-					qtyPerc = null;
-					break;
 				}
 			}
 		}
