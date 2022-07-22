@@ -141,7 +141,11 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		// MailTemplates
 		contentHelper.addFilesResources(beCPGMailService.getEmailNotifyTemplatesFolder(), "classpath*:beCPG/mails/notify/*.ftl");
+		contentHelper.addFilesResources(beCPGMailService.getEmailActivitiesTemplatesFolder(), "classpath*:alfresco/templates/activities-email-templates/*.ftl");
+		contentHelper.addFilesResources(beCPGMailService.getEmailInviteTemplatesFolder(), "classpath*:alfresco/templates/invite-email-templates/*.ftl");
+		contentHelper.addFilesResources(beCPGMailService.getEmailInviteTemplatesFolder(), "classpath*:alfresco/templates/new-user-templates/*.ftl");
 
+		
 		// license
 		visitFolder(systemNodeRef, RepoConsts.PATH_LICENSE);
 
