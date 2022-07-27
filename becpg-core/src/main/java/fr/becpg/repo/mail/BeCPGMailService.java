@@ -93,6 +93,10 @@ public interface BeCPGMailService {
 	 */
 	NodeRef getEmailNotifyTemplatesFolder();
 	
+	NodeRef getEmailActivitiesTemplatesFolder();
+	
+	NodeRef getEmailInviteTemplatesFolder();
+	
 	/**
 	 * <p>getEmailProjectTemplatesFolder.</p>
 	 *
