@@ -109,7 +109,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 							for (IngListDataItem ingListDataItem : productData.getIngList()) {
 								
 								// Ings
-								if (ingListDataItem.getParent() == null && !fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
+								if (!fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
 									
 									if (fil.getIngs().contains(ingListDataItem.getIng())) {
 										
@@ -232,7 +232,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 		Double qtyPerc = 0d;
 		for (IngListDataItem ingListDataItem : ingList) {
 			if ((ingListDataItem.getIng() != null) && ingListDataItem.getIng().equals(ing)) {
-				if (ingListDataItem.getQtyPerc() != null && ingListDataItem.getParent() == null) {
+				if (ingListDataItem.getQtyPerc() != null) {
 					qtyPerc += ingListDataItem.getQtyPerc();
 				}
 			}
