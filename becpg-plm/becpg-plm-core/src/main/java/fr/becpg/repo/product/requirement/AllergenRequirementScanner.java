@@ -39,7 +39,7 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 
 				requirements.forEach(specDataItem -> {
 					formulatedProduct.getAllergenList().forEach(listDataItem -> {
-						if (listDataItem.getAllergen().equals(specDataItem.getAllergen())) {
+						if (listDataItem.getAllergen() != null && listDataItem.getAllergen().equals(specDataItem.getAllergen())) {
 							if ((Boolean.TRUE.equals(listDataItem.getInVoluntary()) || Boolean.TRUE.equals(listDataItem.getVoluntary()))) {
 
 								boolean isAllergenAllowed = false;

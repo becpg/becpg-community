@@ -182,6 +182,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String EXPORT_INGLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportIngList.xlsx";
 	private static final String EXPORT_LABELCLAIMLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLabelClaimList.xlsx";
 	private static final String EXPORT_PHYSICOCHEMICALLIST_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportPhysicoChemicalList.xlsx";
+	private static final String EXPORT_COMPOSITIONPACKAGING_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCompositionPackaging.xlsx";
 
 	private static final String PRODUCT_REPORT_DE_RESOURCE = "beCPG/birt/document/product/default/ProductReport_de.properties";
 	private static final String PRODUCT_REPORT_EN_US_RESOURCE = "beCPG/birt/document/product/default/ProductReport_en_US.properties";
@@ -1618,6 +1619,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PHYSICOCHEMICALLIST),
 					TranslateHelper.getLocaleAwarePath(EXPORT_PHYSICOCHEMICALLIST_XLSX_PATH), reportTplInformation, false);
+			
+			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_COMPOSITIONPACKAGING),
+					TranslateHelper.getLocaleAwarePath(EXPORT_COMPOSITIONPACKAGING_XLSX_PATH), reportTplInformation, false);
 
 			reportTplInformation.setNodeType(PLMModel.TYPE_SUPPLIER);
 

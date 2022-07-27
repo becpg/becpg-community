@@ -313,7 +313,13 @@ public class ImportEntityJsonVisitor {
 			properties.putAll(jsonToProperties(entity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES), context));
 		}
 
-		String name = (String) properties.get(propName);
+		String name = null;
+		
+		if (properties.get(propName) instanceof String) {
+			name = (String) properties.get(propName);
+		} else if (properties.get(propName) instanceof MLText) {
+			name = ((MLText) properties.get(propName)).getDefaultValue();
+		}
 
 		if ((name == null) || name.trim().isEmpty()) {
 			name = RemoteEntityService.EMPTY_NAME_PREFIX + UUID.randomUUID().toString();
@@ -434,7 +440,14 @@ public class ImportEntityJsonVisitor {
 
 		for (Entry<QName, Serializable> entry : properties.entrySet()) {
 			if (entry.getValue() != null) {
-				queryBuilder = queryBuilder.andPropEquals(entry.getKey(), entry.getValue().toString());
+				
+				String stringValue = entry.getValue().toString();
+				
+				if (entry.getValue() instanceof MLText) {
+					stringValue = ((MLText) entry.getValue()).getDefaultValue();
+				}
+				
+				queryBuilder = queryBuilder.andPropEquals(entry.getKey(), stringValue);
 			}
 		}
 
