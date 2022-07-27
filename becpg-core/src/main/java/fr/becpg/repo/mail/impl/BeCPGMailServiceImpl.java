@@ -326,4 +326,15 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			throw new IllegalStateException("Cannot find the email template folder !");
 		}
 	}
+
+	@Override
+	public NodeRef getEmailActivitiesTemplatesFolder() {
+		return searchFolder("app:company_home/app:dictionary/app:email_templates/cm:activities/.");
+	}
+
+	@Override
+	public NodeRef getEmailInviteTemplatesFolder() {
+		return searchFolder("app:company_home/app:dictionary/app:email_templates/cm:invite/.");
+	}
+
 }

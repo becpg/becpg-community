@@ -405,9 +405,9 @@
 						if (last) {
 							var batchId = last.batchId;
 							var batchDescId = last.batchDescId;
-							var percentCompleted = last.percentCompleted;
+							var percentCompleted = last.percentCompleted.replace(/\s+/g, '');
 
-							var percent = percentCompleted.substring(0, percentCompleted.length - 2);
+							var percent = percentCompleted.substring(0, percentCompleted.length - 1);
 
 							if (ulCur.firstChild) {
 								ulCur.children[0].children[0].innerText = batchDescId;

@@ -51,6 +51,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	private Double qtyPercMaxi;
 	private String isGMO;
 	private String isIonized;
+	private String isSum;
 	private List<NodeRef> ings = new ArrayList<>();
 	private List<NodeRef> geoOrigins = new ArrayList<>();
 	private List<NodeRef> requiredGeoOrigins = new ArrayList<>();
@@ -162,6 +163,20 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	@AlfQname(qname="bcpg:filIsIonized")
 	public String getIsIonized() {
 		return isIonized;
+	}
+	
+	public void setIsSum(Boolean isSum) {
+		this.isSum = isSum!=null ? isSum.toString() : null;
+	}
+	
+	public void setIsSum(String isSum) {
+		this.isSum = isSum;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:filIsSum")
+	public String getIsSum() {
+		return isSum;
 	}
 
 	/**

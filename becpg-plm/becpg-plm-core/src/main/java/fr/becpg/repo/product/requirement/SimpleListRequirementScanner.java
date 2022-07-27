@@ -38,14 +38,16 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 		List<ReqCtrlListDataItem> ret = new LinkedList<>();
 
-		if ((getDataListVisited(formulatedProduct) != null) && !getDataListVisited(formulatedProduct).isEmpty()) {
+		List<T> dataListVisited = getDataListVisited(formulatedProduct);
+		
+		if ((dataListVisited != null) && !dataListVisited.isEmpty()) {
 
 			for (Map.Entry<ProductSpecificationData, List<T>> entry : extractRequirements(specifications).entrySet()) {
 				List<T> requirements = entry.getValue();
 				ProductSpecificationData specification = entry.getKey();
 
 				requirements.forEach(specDataItem -> {
-					getDataListVisited(formulatedProduct).forEach(listDataItem -> {
+					dataListVisited.forEach(listDataItem -> {
 						if (specDataItem instanceof MinMaxValueDataItem) {
 							if (specDataItem.getCharactNodeRef().equals(listDataItem.getCharactNodeRef())) {
 								boolean isCharactAllowed = true;
