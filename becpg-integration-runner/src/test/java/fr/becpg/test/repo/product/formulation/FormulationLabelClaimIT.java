@@ -20,12 +20,14 @@ import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
@@ -67,7 +69,13 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 			compoList1
 					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
 
+			List<PackagingListDataItem> packagingList = new ArrayList<>();
+			
+			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, true, packagingMaterial1NodeRef));
+			packagingList.add(new PackagingListDataItem(null, 1d, ProductUnit.kg, PackagingLevel.Primary, true, packagingMaterial2NodeRef));
+			
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
+			finishedProduct1.getPackagingListView().setPackagingList(packagingList);
 
 			finishedProduct1.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
@@ -202,6 +210,19 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 				rm12.getLabelClaimList().add(subProductLabelClaim7);
 				alfrescoRepository.save(rm12);
 			}
+			
+			ProductData packaging1 = alfrescoRepository.findOne(packagingMaterial1NodeRef);
+			if ((packaging1 != null) && (packaging1.getLabelClaimList() != null)) {
+				
+				LabelClaimListDataItem subPackagingProductLabelClaim6 = new LabelClaimListDataItem(labelClaimNodeRef6, LABEL_CLAIM_TYPE, Boolean.TRUE);
+				subPackagingProductLabelClaim6.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
+				LabelClaimListDataItem subPackagingProductLabelClaim7 = new LabelClaimListDataItem(labelClaimNodeRef7, LABEL_CLAIM_TYPE, Boolean.TRUE);
+
+				packaging1.getLabelClaimList().add(subPackagingProductLabelClaim6);
+				packaging1.getLabelClaimList().add(subPackagingProductLabelClaim7);
+				alfrescoRepository.save(packaging1);
+			}
+
 
 			product.getLabelClaimList().add(productLabelClaimFalse);
 			product.getLabelClaimList().add(productLabelClaimFalse2);
@@ -262,10 +283,14 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 				} else if ("Allégation 'labelClaim6' non renseignée".equals(rclDataItem.getReqMessage())) {
 					assertEquals(RequirementDataType.Labelclaim, rclDataItem.getReqDataType());
 					assertEquals(RequirementType.Info, rclDataItem.getReqType());
+					assertTrue(rclDataItem.getSources().contains(packagingMaterial1NodeRef));
+					assertTrue(rclDataItem.getSources().contains(rawMaterial12NodeRef));
 					checks++;
 				} else if ("Allégation 'labelClaim7' non renseignée".equals(rclDataItem.getReqMessage())) {
 					assertEquals(RequirementDataType.Labelclaim, rclDataItem.getReqDataType());
 					assertEquals(RequirementType.Info, rclDataItem.getReqType());
+					assertFalse(rclDataItem.getSources().contains(packagingMaterial1NodeRef));
+					assertTrue(rclDataItem.getSources().contains(rawMaterial12NodeRef));
 					checks++;
 				}
 
