@@ -35,6 +35,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.model.CompositionDataItem;
 
 /**
  * <p>LabelClaimFormulationHandler class.</p>
@@ -132,12 +133,19 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
+			
+			List<CompositionDataItem> compoItems = new ArrayList<>();
+			
 			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-
+				compoItems.addAll(productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			}
+			
+			if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				compoItems.addAll(productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			}
+			
+			if (!compoItems.isEmpty()) {
 		
-		
-				Set<NodeRef> resetedClaim = new HashSet<>();
-
 				productData.getLabelClaimList().forEach(l -> {
 
 					l.getMissingLabelClaims().clear();
@@ -149,15 +157,19 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					if ((isManual != null) && isManual) {
 						l.setIsManual(true);
 					}
-
 				});
+				
+				Set<NodeRef> resetedClaim = new HashSet<>();
 
 				Set<NodeRef> visitedProducts = new HashSet<>();
 
-				for (CompoListDataItem compoItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				for (CompositionDataItem compoItem : compoItems) {
 
-					NodeRef part = compoItem.getProduct();
-					if (!visitedProducts.contains(part) && (compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
+					NodeRef part = compoItem.getComponent();
+					
+					Double qty = compoItem instanceof CompoListDataItem ? ((CompoListDataItem) compoItem).getQtySubFormula() : compoItem.getQty();
+					
+					if (!visitedProducts.contains(part) && (qty != null) && (qty > 0)) {
 						ProductData partProduct = alfrescoRepository.findOne(part);
 						if (partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
@@ -169,6 +181,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						visitedProducts.add(part);
 					}
 				}
+				
 			}
 
 			computeClaimList(productData, parser, context);
