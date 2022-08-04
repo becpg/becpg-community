@@ -8,8 +8,10 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.audit.AuditModelVisitor;
 import fr.becpg.repo.audit.BeCPGAuditService;
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
+import fr.becpg.repo.audit.model.AuditModel;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 
@@ -18,6 +20,9 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 
 	@Autowired
 	private AuditPlugin[] auditPlugins;
+	
+	@Autowired
+	private AuditModelVisitor auditModelVisitor;
 
 	@Override
 	public void recordAuditEntry(AuditType type, Map<String, Serializable> auditValues) {
@@ -37,6 +42,11 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 		}
 		
 		throw new BeCPGAuditException("Audit plugin for type '" + type + "' is not implemented yet");
+	}
+
+	@Override
+	public void recordAuditEntry(AuditType type, AuditModel auditModel) {
+		recordAuditEntry(type, auditModel.accept(auditModelVisitor));
 	}
 	
 }
