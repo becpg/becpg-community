@@ -1,15 +1,12 @@
 package fr.becpg.repo.batch;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -38,8 +35,9 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.audit.AuditType;
+import fr.becpg.repo.audit.AuditModelVisitor;
 import fr.becpg.repo.audit.BeCPGAuditService;
+import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 @Service("batchQueueService")
@@ -66,6 +64,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	@Autowired
 	@Lazy
 	private BeCPGAuditService beCPGAuditService;
+	
+	@Autowired
+	private AuditModelVisitor auditModelVisitor;
 	
 	private BatchMonitor lastRunningBatch;
 	
@@ -255,7 +256,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				if (startTime == null) {
 					startTime = batchProcessor.getStartTime();
 					batchInfo.setStartTime(startTime);
-					recordBatchAudit();
+					beCPGAuditService.recordAuditEntry(AuditType.BATCH, batchInfo.accept(auditModelVisitor));
 				}
 				
 				endTime = batchProcessor.getEndTime();
@@ -318,29 +319,10 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			
 			batchInfo.setEndTime(endTime);
 			
-			recordBatchAudit();
+			beCPGAuditService.recordAuditEntry(AuditType.BATCH, batchInfo.accept(auditModelVisitor));
 			
 			cancelledBatches.remove(batchId);
 			
-		}
-
-		private void recordBatchAudit() {
-			Map<String, Serializable> auditValues = new HashMap<>();
-			
-			int batchHashCode = Objects.hash(batchInfo.hashCode(), batchInfo.getStartTime());
-
-			auditValues.put("batch/hashCode", batchHashCode);
-			auditValues.put("batch/batchUser", batchInfo.getBatchUser());
-			auditValues.put("batch/batchId", batchInfo.getBatchId());
-			auditValues.put("batch/totalItems", batchInfo.getTotalItems());
-			auditValues.put("batch/startedAt", batchInfo.getStartTime());
-			auditValues.put("batch/isCompleted", batchInfo.getIsCompleted());
-			if (batchInfo.getEndTime() != null)  {
-				auditValues.put("batch/completedAt", batchInfo.getEndTime());
-				auditValues.put("batch/duration", batchInfo.getEndTime().getTime() - batchInfo.getStartTime().getTime());
-			}
-
-			beCPGAuditService.recordAuditEntry(AuditType.BATCH, auditValues);
 		}
 
 		private BatchProcessWorkProvider<T> getNextWorkWrapper(BatchProcessWorkProvider<T> workProvider) {

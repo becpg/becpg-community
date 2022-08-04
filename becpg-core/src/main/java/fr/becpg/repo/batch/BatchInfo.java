@@ -2,11 +2,15 @@ package fr.becpg.repo.batch;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 
-public class BatchInfo implements Serializable {
+import fr.becpg.repo.audit.AuditModelVisitor;
+import fr.becpg.repo.audit.model.AuditModel;
+
+public class BatchInfo implements Serializable, AuditModel {
 	
 	/**
 	 * 
@@ -184,6 +188,11 @@ public class BatchInfo implements Serializable {
 				&& Objects.equals(batchUser, other.batchUser) && Objects.equals(mailAction, other.mailAction)
 				&& Objects.equals(mailActionUrl, other.mailActionUrl) && Objects.equals(notifyByMail, other.notifyByMail)
 				&& Objects.equals(runAsSystem, other.runAsSystem) && workerThreads == other.workerThreads;
+	}
+
+	@Override
+	public Map<String, Serializable> accept(AuditModelVisitor visitor) {
+		return visitor.visitBatchInfo(this);
 	}
 
 }

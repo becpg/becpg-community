@@ -8,9 +8,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.audit.AuditType;
 import fr.becpg.repo.audit.BeCPGAuditService;
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
+import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 
 @Service("beCPGAuditService")

@@ -10,7 +10,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.rest.api.model.AuditEntry;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.audit.AuditType;
+import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AbstractAuditPlugin;
 
 @Service
