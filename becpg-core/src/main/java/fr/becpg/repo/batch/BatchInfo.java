@@ -1,11 +1,18 @@
 package fr.becpg.repo.batch;
 
+import java.io.Serializable;
+import java.util.Date;
 import java.util.Objects;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 
-public class BatchInfo {
-
+public class BatchInfo implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7569652805526586359L;
+	
 	public static final int BATCH_THREAD = 3;
 	public static final int BATCH_SIZE = 15;
 
@@ -38,7 +45,13 @@ public class BatchInfo {
 
 	private int batchSize = BATCH_SIZE;
 	
+	private Date startTime;
+	
+	private Date endTime;
+	
 	private Boolean isCompleted = Boolean.FALSE;
+	
+	private int totalItems = 0;
 
 	public BatchInfo(String batchId, String batchDescId) {
 		super();
@@ -53,6 +66,22 @@ public class BatchInfo {
 		this.batchDescId = batchDescId;
 		this.entityDescription = entityDescription;
 		this.batchUser = AuthenticationUtil.getRunAsUser();
+	}
+	
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+	
+	public Date getEndTime() {
+		return endTime;
+	}
+	
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+	
+	public Date getStartTime() {
+		return startTime;
 	}
 
 	public String getBatchId() {
@@ -73,6 +102,14 @@ public class BatchInfo {
 	
 	public String getEntityDescription() {
 		return entityDescription;
+	}
+	
+	public int getTotalItems() {
+		return totalItems;
+	}
+	
+	public void setTotalItems(int totalItems) {
+		this.totalItems = totalItems;
 	}
 
 	public void enableNotifyByMail(String mailAction, String mailActionUrl) {
@@ -120,8 +157,6 @@ public class BatchInfo {
 	public void setBatchSize(int batchSize) {
 		this.batchSize = batchSize;
 	}
-	
-	
 
 	public Boolean getIsCompleted() {
 		return isCompleted;

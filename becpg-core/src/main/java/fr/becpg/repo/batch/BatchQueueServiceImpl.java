@@ -1,12 +1,15 @@
 package fr.becpg.repo.batch;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -30,10 +33,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.audit.AuditType;
+import fr.becpg.repo.audit.BeCPGAuditService;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 @Service("batchQueueService")
@@ -56,6 +62,10 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 	@Autowired
 	private TenantAdminService tenantAdminService;
+	
+	@Autowired
+	@Lazy
+	private BeCPGAuditService beCPGAuditService;
 	
 	private BatchMonitor lastRunningBatch;
 	
@@ -193,7 +203,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			Date startTime = null;
 			Date endTime = null;
 			
+			int totalItems = 0;
+			
 			for (BatchStep<T> batchStep : batchSteps) {
+				
+				totalItems += batchStep.getWorkProvider().getTotalEstimatedWorkSizeLong();
 				
 				if (batchStep.getBatchStepListener() != null) {
 					
@@ -235,15 +249,18 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						transactionService.getRetryingTransactionHelper(), getNextWorkWrapper(batchStep.getWorkProvider()),
 						batchInfo.getWorkerThreads(), batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
 
-				batchProcessor.process(runAsWrapper(batchStep.getProcessWorker()), true);
+				batchProcessor.processLong(runAsWrapper(batchStep.getProcessWorker()), true);
 
+				// first step only
 				if (startTime == null) {
 					startTime = batchProcessor.getStartTime();
+					batchInfo.setStartTime(startTime);
+					recordBatchAudit();
 				}
 				
 				endTime = batchProcessor.getEndTime();
 				
-				if (batchProcessor.getTotalErrors() > 0 && batchStep.getBatchStepListener() != null) {
+				if (batchProcessor.getTotalErrorsLong() > 0 && batchStep.getBatchStepListener() != null) {
 
 					hasError = true;
 					
@@ -283,10 +300,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			if (Boolean.TRUE.equals(batchInfo.getNotifyByMail())) {
 
 				final boolean finalHasError = hasError;
-				final Date finalEndTime = endTime;
-				final Date finalStartTime = startTime;
 				
-				int secondsBetween = (int) ((finalEndTime.getTime() - finalStartTime.getTime()) / 1000);
+				int secondsBetween = (int) ((endTime.getTime() - startTime.getTime()) / 1000);
 
 				AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -297,10 +312,35 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				}, true, false), batchInfo.getBatchUser());
 			}
 
+			batchInfo.setTotalItems(totalItems);
+			
 			batchInfo.setIsCompleted(true);
+			
+			batchInfo.setEndTime(endTime);
+			
+			recordBatchAudit();
 			
 			cancelledBatches.remove(batchId);
 			
+		}
+
+		private void recordBatchAudit() {
+			Map<String, Serializable> auditValues = new HashMap<>();
+			
+			int batchHashCode = Objects.hash(batchInfo.hashCode(), batchInfo.getStartTime());
+
+			auditValues.put("batch/hashCode", batchHashCode);
+			auditValues.put("batch/batchUser", batchInfo.getBatchUser());
+			auditValues.put("batch/batchId", batchInfo.getBatchId());
+			auditValues.put("batch/totalItems", batchInfo.getTotalItems());
+			auditValues.put("batch/startedAt", batchInfo.getStartTime());
+			auditValues.put("batch/isCompleted", batchInfo.getIsCompleted());
+			if (batchInfo.getEndTime() != null)  {
+				auditValues.put("batch/completedAt", batchInfo.getEndTime());
+				auditValues.put("batch/duration", batchInfo.getEndTime().getTime() - batchInfo.getStartTime().getTime());
+			}
+
+			beCPGAuditService.recordAuditEntry(AuditType.BATCH, auditValues);
 		}
 
 		private BatchProcessWorkProvider<T> getNextWorkWrapper(BatchProcessWorkProvider<T> workProvider) {
@@ -308,7 +348,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				@Override
 				public int getTotalEstimatedWorkSize() {
-					return workProvider.getTotalEstimatedWorkSize();
+					return (int) workProvider.getTotalEstimatedWorkSizeLong();
 				}
 				
 				@Override
