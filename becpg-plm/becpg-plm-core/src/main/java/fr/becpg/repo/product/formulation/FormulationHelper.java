@@ -198,13 +198,6 @@ public class FormulationHelper {
 			} else {
 				// Convert qty in L M KG or P
 				qty = qty / packagingListUnit.getUnitFactor();
-
-				ProductUnit productUnit = subProductData.getUnit();
-				// Convert cost or tare in product Unit
-				if (productUnit != null) {
-					qty = qty * productUnit.getUnitFactor();
-				}
-
 			}
 
 		}
