@@ -35,7 +35,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.audit.AuditModelVisitor;
 import fr.becpg.repo.audit.BeCPGAuditService;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -64,9 +63,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	@Autowired
 	@Lazy
 	private BeCPGAuditService beCPGAuditService;
-	
-	@Autowired
-	private AuditModelVisitor auditModelVisitor;
 	
 	private BatchMonitor lastRunningBatch;
 	
@@ -256,7 +252,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				if (startTime == null) {
 					startTime = batchProcessor.getStartTime();
 					batchInfo.setStartTime(startTime);
-					beCPGAuditService.recordAuditEntry(AuditType.BATCH, batchInfo.accept(auditModelVisitor));
+					beCPGAuditService.recordAuditEntry(AuditType.BATCH, batchInfo);
 				}
 				
 				endTime = batchProcessor.getEndTime();
@@ -319,7 +315,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			
 			batchInfo.setEndTime(endTime);
 			
-			beCPGAuditService.recordAuditEntry(AuditType.BATCH, batchInfo.accept(auditModelVisitor));
+			beCPGAuditService.recordAuditEntry(AuditType.BATCH, batchInfo);
 			
 			cancelledBatches.remove(batchId);
 			
