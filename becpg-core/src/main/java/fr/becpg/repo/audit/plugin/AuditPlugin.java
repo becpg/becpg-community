@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import fr.becpg.repo.audit.AuditType;
+import fr.becpg.repo.audit.model.AuditType;
 
 public interface AuditPlugin {
 
