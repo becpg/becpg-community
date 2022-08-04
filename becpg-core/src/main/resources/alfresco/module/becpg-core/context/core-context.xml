@@ -351,8 +351,15 @@
       <property name="maximumPoolSize" value="1" />
       <property name="threadPriority" value="4" />
     </bean>
-   
-   
+    
+    <bean name="auditModel.extractor.batchExtractor" class="fr.becpg.repo.audit.extractor.BatchInfoExtractor">
+      <property name="registry" ref="auditModel.extractorRegistry" />
+    </bean>
+    
+    <bean name="auditModel.extractor.stringExtractor" class="fr.becpg.repo.audit.extractor.StringExtractor">
+      <property name="registry" ref="auditModel.extractorRegistry" />
+    </bean>
+    
    <!-- 
     <bean id="search.fts.alfresco.db" class="org.alfresco.repo.search.impl.solr.DbAftsQueryLanguage" >
         <property name="dictionaryService" ref="cachedDictionaryService" />

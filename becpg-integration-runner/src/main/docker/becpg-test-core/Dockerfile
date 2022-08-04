@@ -52,3 +52,5 @@ COPY extensions/*.jar $TOMCAT_DIR/webapps/alfresco/WEB-INF/lib/
 COPY forms $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes/beCPG/forms/
 COPY becpg-plm $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes/alfresco/module/becpg-plm-core/
 
+COPY audit $TOMCAT_DIR/shared/classes/alfresco/extension/audit
+
