@@ -227,7 +227,7 @@
 		<property name="nodeService" ref="NodeService" />
 		<property name="paginatedSearchCache" ref="paginatedSearchCache"/>
 	</bean>
-
+	
 	<!-- beCPG Remote API -->
 
 	<bean id="abstractEntityWebScript" parent="webscript" abstract="true">
@@ -328,6 +328,10 @@
           <property name="attributeExtractorService" ref="attributeExtractorService" />
     </bean>
     
+	<!-- Statistics webscript -->
+	<bean id="webscript.fr.becpg.statistics.statistics.get" class="fr.becpg.repo.web.scripts.statistics.StatisticsWebScript" parent="webscript">
+		<property name="beCPGAuditService" ref="beCPGAuditService" />
+	</bean>
 
     
 </beans>
