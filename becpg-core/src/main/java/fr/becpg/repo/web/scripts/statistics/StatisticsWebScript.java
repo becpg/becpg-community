@@ -12,8 +12,8 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.audit.AuditType;
 import fr.becpg.repo.audit.BeCPGAuditService;
+import fr.becpg.repo.audit.model.AuditType;
 
 public class StatisticsWebScript extends AbstractWebScript {
 

@@ -1,4 +1,4 @@
-package fr.becpg.repo.audit;
+package fr.becpg.repo.audit.model;
 
 public enum AuditType {
 	
