@@ -1,21 +1,26 @@
 package fr.becpg.repo.audit.plugin.impl;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.rest.api.model.AuditEntry;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AbstractAuditPlugin;
+import fr.becpg.repo.audit.plugin.visitor.AuditModelVisitor;
 
 @Service
 public class BatchAuditPlugin extends AbstractAuditPlugin {
 
+	private static final String BATCH = "batch";
+
+	private static final String BATCH_AUDIT_ID = "beCPGBatchAudit";
+	
 	private static final Map<String, String> BATCH_KEY_MAP = new HashMap<>();
 	
 	static {
@@ -27,14 +32,19 @@ public class BatchAuditPlugin extends AbstractAuditPlugin {
 		BATCH_KEY_MAP.put("completedAt", "date");
 	}
 	
+	@Autowired
+	public BatchAuditPlugin(@Qualifier("batchAuditModelVisitor") AuditModelVisitor auditModelVisitor) {
+		super(auditModelVisitor);
+	}
+	
 	@Override
 	public String getAuditApplicationId() {
-		return "beCPGBatchAudit";
+		return BATCH_AUDIT_ID;
 	}
 
 	@Override
 	public String getAuditApplicationPath() {
-		return "/beCPGBatchAudit/batch";
+		return BATCH;
 	}
 
 	@Override
@@ -48,31 +58,23 @@ public class BatchAuditPlugin extends AbstractAuditPlugin {
 	}
 
 	@Override
-	public void recordAuditEntry(Map<String, Serializable> auditValues) {
+	public int recordAuditEntry(Map<String, Serializable> auditValues, boolean updateEntry) {
 		
 		AuthenticationUtil.pushAuthentication();
 		
 		AuthenticationUtil.setFullyAuthenticatedUser((String) auditValues.get("batch/batchUser"));
 		
-		AuditEntry entryToDelete = null;
-		
-		// delete the old entry
-		if ((boolean) auditValues.get("batch/isCompleted")) {
-			
-			Collection<AuditEntry> entries = listAuditEntries(10, "hashCode=" + auditValues.get("batch/hashCode"));
-			
-			if (!entries.isEmpty()) {
-				entryToDelete = entries.iterator().next();
-			}
-		}
-		
-		super.recordAuditEntry(auditValues);
-		
-		if (entryToDelete != null) {
-			auditComponent.deleteAuditEntries(Arrays.asList(entryToDelete.getId()));
-		}
+		int hashCode = super.recordAuditEntry(auditValues, updateEntry);
 		
 		AuthenticationUtil.popAuthentication();
+		
+		return hashCode;
+
+	}
+
+	@Override
+	protected int createHashCode(Map<String, Serializable> auditValues) {
+		return Objects.hash(auditValues.get("batch/batchUser"), auditValues.get("batch/batchId"), auditValues.get("batch/startedAt"));
 
 	}
 

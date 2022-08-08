@@ -7,8 +7,8 @@ import java.util.Objects;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 
-import fr.becpg.repo.audit.AuditModelVisitor;
 import fr.becpg.repo.audit.model.AuditModel;
+import fr.becpg.repo.audit.plugin.visitor.AuditModelVisitor;
 
 public class BatchInfo implements Serializable, AuditModel {
 	
@@ -192,7 +192,7 @@ public class BatchInfo implements Serializable, AuditModel {
 
 	@Override
 	public Map<String, Serializable> accept(AuditModelVisitor visitor) {
-		return visitor.visitBatchInfo(this);
+		return visitor.visit(this);
 	}
 
 }
