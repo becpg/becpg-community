@@ -711,7 +711,27 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return null;
 		}
 		
-		
+
+		/**
+		 * Helper @beCPG.groupingByFormula($range, groupingFormula)
+		 *
+		 * @param <T>
+		 * @param range
+		 * @param groupingFormula
+		 * @return group the list by formula
+		 */
+		public <T>  Map<Object,List<T>> groupingByFormula(Collection<T> range, String groupingFormula ){
+			if (range != null) {
+				ExpressionParser parser = formulaService.getSpelParser();
+				Expression exp = parser.parseExpression(groupingFormula);
+
+			 return range.stream().collect(Collectors.groupingBy(p -> {
+					return exp.getValue(formulaService.createItemSpelContext(entity, p));
+				}));
+			 
+			}
+			return null;
+		}
 		
 
 		/**
@@ -769,6 +789,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return ret;
 		}
 
+		
+		
 		/**
 		 * Helper @beCPG.formatNumber($number)
 		 *
@@ -1004,7 +1026,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		}
 
 	}
-
 
 
 }
