@@ -1,4 +1,4 @@
-package fr.becpg.repo.audit;
+package fr.becpg.repo.audit.plugin.visitor.impl;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -7,12 +7,18 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.audit.model.AuditModel;
+import fr.becpg.repo.audit.plugin.visitor.AuditModelVisitor;
 import fr.becpg.repo.batch.BatchInfo;
 
-@Service
-public class AuditModelVisitor {
+@Service("batchAuditModelVisitor")
+public class BatchAuditModelVisitor implements AuditModelVisitor {
 
-	public Map<String, Serializable> visitBatchInfo(BatchInfo batchInfo) {
+	@Override
+	public Map<String, Serializable> visit(AuditModel model) {
+
+		BatchInfo batchInfo = (BatchInfo) model;
+		
 		Map<String, Serializable> auditValues = new HashMap<>();
 		
 		int batchHashCode = Objects.hash(batchInfo.hashCode(), batchInfo.getStartTime());

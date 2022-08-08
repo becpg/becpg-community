@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.formulation.impl;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -35,6 +36,8 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.audit.BeCPGAuditService;
+import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationChain;
@@ -91,6 +94,12 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
+	}
+	
+	private BeCPGAuditService beCPGAuditService;
+	
+	public void setBeCPGAuditService(BeCPGAuditService beCPGAuditService) {
+		this.beCPGAuditService = beCPGAuditService;
 	}
 
 	/** {@inheritDoc} */
@@ -189,6 +198,17 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	public T formulate(T repositoryEntity, String chainId) {
 		try(Scope scope = tracer.spanBuilder("formulationService.FormulateEntity").startScopedSpan()) {
 			
+			Map<String, Serializable> auditValues = new HashMap<>();
+			
+			Date start = new Date();
+			
+			auditValues.put("formulation/chainId", chainId);
+			auditValues.put("formulation/startedAt", start);
+			auditValues.put("formulation/entityName", repositoryEntity.getName());
+			auditValues.put("formulation/entityNodeRef", repositoryEntity.getNodeRef().toString());
+
+			beCPGAuditService.recordAuditEntry(AuditType.FORMULATION, auditValues, false);
+			
 			if( repositoryEntity.getName()!=null) {
 				tracer.getCurrentSpan().putAttribute("becpg/entityName", AttributeValue.stringAttributeValue(repositoryEntity.getName()));
 			}
@@ -227,6 +247,20 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			} else {
 				logger.error("No formulation chain define for :" + repositoryEntity.getClass().getName());
 			}
+			
+			auditValues.clear();
+			
+			Date end = new Date();
+			
+			auditValues.put("formulation/chainId", chainId);
+			auditValues.put("formulation/startedAt", start);
+			auditValues.put("formulation/completedAt", end);
+			auditValues.put("formulation/duration", end.getTime() - start.getTime());
+			auditValues.put("formulation/entityName", repositoryEntity.getName());
+			auditValues.put("formulation/entityNodeRef", repositoryEntity.getNodeRef().toString());
+			
+			beCPGAuditService.recordAuditEntry(AuditType.FORMULATION, auditValues, true);
+
 		} catch (Throwable e) {
 
 			 if (RetryingTransactionHelper.extractRetryCause(e) != null) {

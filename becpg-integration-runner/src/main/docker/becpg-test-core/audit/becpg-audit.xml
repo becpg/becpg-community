@@ -24,6 +24,12 @@
         <PathMap source="/becpg/audit/batch/duration" target="/beCPGBatchAudit/batch/duration"/>
         <PathMap source="/becpg/audit/batch/startedAt" target="/beCPGBatchAudit/batch/startedAt"/>
         <PathMap source="/becpg/audit/batch/completedAt" target="/beCPGBatchAudit/batch/completedAt"/>
+        <PathMap source="/becpg/audit/formulation/hashCode" target="/beCPGFormulationAudit/formulation/hashCode"/>
+        <PathMap source="/becpg/audit/formulation/startedAt" target="/beCPGFormulationAudit/formulation/startedAt"/>
+        <PathMap source="/becpg/audit/formulation/completedAt" target="/beCPGFormulationAudit/formulation/completedAt"/>
+        <PathMap source="/becpg/audit/formulation/entityNodeRef" target="/beCPGFormulationAudit/formulation/entityNodeRef"/>
+        <PathMap source="/becpg/audit/formulation/entityName" target="/beCPGFormulationAudit/formulation/entityName"/>
+        <PathMap source="/becpg/audit/formulation/duration" target="/beCPGFormulationAudit/formulation/duration"/>
     </PathMappings>
 
     <Application name="beCPGBatchAudit" key="beCPGBatchAudit">
@@ -51,6 +57,29 @@
 	        </AuditPath>
         	<AuditPath key="completedAt">
 	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGBatchAudit/batch/completedAt"/>
+	        </AuditPath>
+        </AuditPath>
+    </Application>
+    
+    <Application name="beCPGFormulationAudit" key="beCPGFormulationAudit">
+        <AuditPath key="formulation">
+        	<AuditPath key="hashCode">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/hashCode"/>
+	        </AuditPath>
+        	<AuditPath key="entityNodeRef">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/entityNodeRef"/>
+	        </AuditPath>
+        	<AuditPath key="startedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGFormulationAudit/formulation/startedAt"/>
+	        </AuditPath>
+        	<AuditPath key="completedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGFormulationAudit/formulation/completedAt"/>
+	        </AuditPath>
+        	<AuditPath key="duration">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/duration"/>
+	        </AuditPath>
+        	<AuditPath key="entityName">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/entityName"/>
 	        </AuditPath>
         </AuditPath>
     </Application>

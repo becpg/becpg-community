@@ -24,8 +24,12 @@ import org.antlr.runtime.tree.CommonTree;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
+import fr.becpg.repo.audit.model.AuditModel;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.visitor.AuditModelVisitor;
 
 public abstract class AbstractAuditPlugin implements AuditPlugin {
 	
@@ -34,15 +38,52 @@ public abstract class AbstractAuditPlugin implements AuditPlugin {
 	private String whereClauseFormat;
 
 	@Autowired
-	protected AuditComponent auditComponent;
+	private AuditComponent auditComponent;
 	
 	@Autowired
 	@Qualifier("auditApi")
-	protected Audit audit;
+	@Lazy
+	private Audit audit;
+	
+	private final AuditModelVisitor auditModelVisitor;
+	
+	protected AbstractAuditPlugin(AuditModelVisitor auditModelVisitor) {
+		this.auditModelVisitor = auditModelVisitor;
+	}
 	
 	@Override
-	public void recordAuditEntry(Map<String, Serializable> auditValues) {
+	public int recordAuditEntry(AuditType type, AuditModel auditModel, boolean updateEntry) {
+		if (auditModelVisitor == null) {
+			throw new BeCPGAuditException("auditModelVisitor for type'" + type + "' is not implemented yet");
+		}
+		
+		return recordAuditEntry(auditModel.accept(auditModelVisitor), updateEntry);
+	}
+	
+	@Override
+	public int recordAuditEntry(Map<String, Serializable> auditValues, boolean updateEntry) {
+		
+		int hashCode = createHashCode(auditValues);
+		
+		auditValues.put(getAuditApplicationPath() + "/hashCode", hashCode);
+		
+		AuditEntry entryToDelete = null;
+
+		if (updateEntry) {
+			Collection<AuditEntry> entries = listAuditEntries(10, "hashCode=" + hashCode);
+			
+			if (!entries.isEmpty()) {
+				entryToDelete = entries.iterator().next();
+			}
+		}
+		
 		auditComponent.recordAuditValues(BECPG_AUDIT_PATH, auditValues);
+		
+		if (entryToDelete != null) {
+			auditComponent.deleteAuditEntries(Arrays.asList(entryToDelete.getId()));
+		}
+
+		return hashCode;
 	}
 	
 	@Override
@@ -57,8 +98,9 @@ public abstract class AbstractAuditPlugin implements AuditPlugin {
 			JSONObject statItem = new JSONObject();
 			
 			for (String auditKey : getStatisticsKeyMap().keySet()) {
-				if (auditEntry.getValues().containsKey(getAuditApplicationPath() + "/" + auditKey + "/value")) {
-					statItem.put(auditKey, auditEntry.getValues().get(getAuditApplicationPath() + "/" + auditKey + "/value"));
+				String key = "/" + getAuditApplicationId() + "/" + getAuditApplicationPath() + "/" + auditKey + "/value";
+				if (auditEntry.getValues().containsKey(key)) {
+					statItem.put(auditKey, auditEntry.getValues().get(key));
 				}
 			}
 			
@@ -73,51 +115,10 @@ public abstract class AbstractAuditPlugin implements AuditPlugin {
 		return statistics;
 		
 	}
-	
-	private class StatisticsComparator implements Comparator<JSONObject> {
 
-		private String comparisonFieldName;
-		
-		public StatisticsComparator(String comparisonFieldName) {
-			this.comparisonFieldName = comparisonFieldName;
-		}
-		
-		@Override
-		public int compare(JSONObject o1, JSONObject o2) {
-			
-			try {
-				
-				String field1 = o1.getString(comparisonFieldName);
-				String field2 = o2.getString(comparisonFieldName);
-				
-				if (field1 == null && field2 == null) {
-					return 0;
-				}
-				
-				if (field1 != null) {
-					
-					if (field2 == null) {
-						return ((Comparable<?>) field1).compareTo(null);
-					}
-					
-					if ("int".equals(getStatisticsKeyMap().get(comparisonFieldName))) {
-						Integer int1 = Integer.parseInt(field1);
-						Integer int2 = Integer.parseInt(field2);
-						return int1.compareTo(int2);
-					}
-					
-					return field1.compareTo(field2);
-				}
-				
-				return field2.compareTo(field1);
-				
-			} catch (IllegalArgumentException e) {
-				throw new BeCPGAuditException("Error while comparing fields : " + e.getMessage());
-			}
-		}
-	}
-	
-	protected Collection<AuditEntry> listAuditEntries(int maxResults, String filter) {
+	protected abstract int createHashCode(Map<String, Serializable> auditValues);
+
+	private Collection<AuditEntry> listAuditEntries(int maxResults, String filter) {
 		
 		String whereClause = buildWhereClause(filter);
 		
@@ -169,10 +170,54 @@ public abstract class AbstractAuditPlugin implements AuditPlugin {
 	
 	private String getWhereClauseFormat() {
 		if (whereClauseFormat == null) {
-			whereClauseFormat = "(valuesKey='" + getAuditApplicationPath() + "/%s/value' and valuesValue='%s')";
+			whereClauseFormat = "(valuesKey='" + "/" + getAuditApplicationId() + "/" + getAuditApplicationPath() + "/%s/value' and valuesValue='%s')";
 		}
 		
 		return whereClauseFormat;
+	}
+
+	private class StatisticsComparator implements Comparator<JSONObject> {
+	
+		private String comparisonFieldName;
+		
+		public StatisticsComparator(String comparisonFieldName) {
+			this.comparisonFieldName = comparisonFieldName;
+		}
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		@Override
+		public int compare(JSONObject o1, JSONObject o2) {
+			
+			try {
+				
+				Comparable field1 = (Comparable) o1.get(comparisonFieldName);
+				Comparable field2 = (Comparable) o2.get(comparisonFieldName);
+				
+				if (field1 == null && field2 == null) {
+					return 0;
+				}
+				
+				if (field1 != null) {
+					
+					if (field2 == null) {
+						return ((Comparable<?>) field1).compareTo(null);
+					}
+					
+					if ("int".equals(getStatisticsKeyMap().get(comparisonFieldName))) {
+						Integer int1 = Integer.parseInt(field1.toString());
+						Integer int2 = Integer.parseInt(field2.toString());
+						return int1.compareTo(int2);
+					}
+					
+					return field1.compareTo(field2);
+				}
+				
+				return field2.compareTo(field1);
+				
+			} catch (Exception e) {
+				throw new BeCPGAuditException("Error while comparing fields : " + e.getMessage());
+			}
+		}
 	}
 
 }
