@@ -25,6 +25,7 @@
 	<bean id="formulationService" class="fr.becpg.repo.formulation.impl.FormulationServiceImpl">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
+		<property name="beCPGAuditService" ref="beCPGAuditService" />
 	</bean>
 
 </beans>

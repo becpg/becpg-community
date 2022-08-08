@@ -13,8 +13,8 @@ public interface BeCPGAuditService {
 
 	List<JSONObject> buildAuditStatistics(AuditType type, Integer maxResults, String sortBy, String filter);
 
-	void recordAuditEntry(AuditType type, Map<String, Serializable> auditValues);
+	int recordAuditEntry(AuditType type, Map<String, Serializable> auditValues, boolean updateEntry);
 	
-	void recordAuditEntry(AuditType type, AuditModel auditModel);
+	int recordAuditEntry(AuditType type, AuditModel auditModel, boolean updateEntry);
 
 }

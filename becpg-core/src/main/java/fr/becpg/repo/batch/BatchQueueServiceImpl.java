@@ -30,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
@@ -61,7 +60,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	private TenantAdminService tenantAdminService;
 	
 	@Autowired
-	@Lazy
 	private BeCPGAuditService beCPGAuditService;
 	
 	private BatchMonitor lastRunningBatch;
@@ -252,7 +250,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				if (startTime == null) {
 					startTime = batchProcessor.getStartTime();
 					batchInfo.setStartTime(startTime);
-					beCPGAuditService.recordAuditEntry(AuditType.BATCH, batchInfo);
+					beCPGAuditService.recordAuditEntry(AuditType.BATCH, batchInfo, false);
 				}
 				
 				endTime = batchProcessor.getEndTime();
@@ -315,7 +313,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			
 			batchInfo.setEndTime(endTime);
 			
-			beCPGAuditService.recordAuditEntry(AuditType.BATCH, batchInfo);
+			beCPGAuditService.recordAuditEntry(AuditType.BATCH, batchInfo, true);
 			
 			cancelledBatches.remove(batchId);
 			
