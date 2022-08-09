@@ -27,9 +27,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
-import fr.becpg.repo.audit.model.AuditModel;
 import fr.becpg.repo.audit.model.AuditType;
-import fr.becpg.repo.audit.plugin.visitor.AuditModelVisitor;
 
 public abstract class AbstractAuditPlugin implements AuditPlugin {
 	
@@ -45,19 +43,21 @@ public abstract class AbstractAuditPlugin implements AuditPlugin {
 	@Lazy
 	private Audit audit;
 	
-	private final AuditModelVisitor auditModelVisitor;
+	protected abstract Map<String, String> getStatisticsKeyMap();
+
+	protected abstract String getAuditApplicationId();
+
+	protected abstract String getAuditApplicationPath();
 	
-	protected AbstractAuditPlugin(AuditModelVisitor auditModelVisitor) {
-		this.auditModelVisitor = auditModelVisitor;
+	protected abstract int createHashCode(Map<String, Serializable> auditValues);
+
+	protected Map<String, Serializable> extractModelValues(Object auditModel) {
+		throw new BeCPGAuditException("Not implemented yet");
 	}
-	
+
 	@Override
-	public int recordAuditEntry(AuditType type, AuditModel auditModel, boolean updateEntry) {
-		if (auditModelVisitor == null) {
-			throw new BeCPGAuditException("auditModelVisitor for type'" + type + "' is not implemented yet");
-		}
-		
-		return recordAuditEntry(auditModel.accept(auditModelVisitor), updateEntry);
+	public int recordAuditEntry(AuditType type, Object auditModel, boolean updateEntry) {
+		return recordAuditEntry(extractModelValues(auditModel), updateEntry);
 	}
 	
 	@Override
@@ -115,9 +115,7 @@ public abstract class AbstractAuditPlugin implements AuditPlugin {
 		return statistics;
 		
 	}
-
-	protected abstract int createHashCode(Map<String, Serializable> auditValues);
-
+	
 	private Collection<AuditEntry> listAuditEntries(int maxResults, String filter) {
 		
 		String whereClause = buildWhereClause(filter);

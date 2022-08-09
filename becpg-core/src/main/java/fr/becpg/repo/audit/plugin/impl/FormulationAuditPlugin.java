@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AbstractAuditPlugin;
-import fr.becpg.repo.audit.plugin.visitor.AuditModelVisitor;
 
 @Service
 public class FormulationAuditPlugin extends AbstractAuditPlugin {
@@ -28,27 +27,23 @@ public class FormulationAuditPlugin extends AbstractAuditPlugin {
 		FORMULATION_KEY_MAP.put("completedAt", "date");
 	}
 	
-	protected FormulationAuditPlugin(AuditModelVisitor auditModelVisitor) {
-		super(auditModelVisitor);
-	}
-	
-	@Override
-	public String getAuditApplicationId() {
-		return FORMULATION_AUDIT_ID;
-	}
-
-	@Override
-	public String getAuditApplicationPath() {
-		return FORMULATION;
-	}
-
 	@Override
 	public boolean applyTo(AuditType type) {
 		return AuditType.FORMULATION.equals(type);
 	}
-	
+
 	@Override
-	public Map<String, String> getStatisticsKeyMap() {
+	protected String getAuditApplicationId() {
+		return FORMULATION_AUDIT_ID;
+	}
+
+	@Override
+	protected String getAuditApplicationPath() {
+		return FORMULATION;
+	}
+
+	@Override
+	protected Map<String, String> getStatisticsKeyMap() {
 		return FORMULATION_KEY_MAP;
 	}
 
