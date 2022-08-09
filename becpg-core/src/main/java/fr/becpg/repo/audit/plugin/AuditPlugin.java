@@ -6,23 +6,16 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import fr.becpg.repo.audit.model.AuditModel;
 import fr.becpg.repo.audit.model.AuditType;
 
 public interface AuditPlugin {
 
-	String getAuditApplicationId();
-	
-	String getAuditApplicationPath();
-	
 	boolean applyTo(AuditType type);
 
-	Map<String, String> getStatisticsKeyMap();
-
-	int recordAuditEntry(Map<String, Serializable> auditValues, boolean updateEntry);
+	int recordAuditEntry(AuditType type, Object auditModel, boolean updateEntry);
 	
-	List<JSONObject> buildAuditStatistics(Integer maxResults, String sortBy, String filter);
+	int recordAuditEntry(Map<String, Serializable> auditValues, boolean updateEntry);
 
-	int recordAuditEntry(AuditType type, AuditModel auditModel, boolean updateEntry);
+	List<JSONObject> buildAuditStatistics(Integer maxResults, String sortBy, String filter);
 
 }

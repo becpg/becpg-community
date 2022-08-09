@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.BeCPGAuditService;
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
-import fr.becpg.repo.audit.model.AuditModel;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 
@@ -21,7 +20,7 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 	private AuditPlugin[] auditPlugins;
 	
 	@Override
-	public int recordAuditEntry(AuditType type, AuditModel auditModel, boolean updateEntry) {
+	public int recordAuditEntry(AuditType type, Object auditModel, boolean updateEntry) {
 		return getPlugin(type).recordAuditEntry(type, auditModel, updateEntry);
 	}
 	
