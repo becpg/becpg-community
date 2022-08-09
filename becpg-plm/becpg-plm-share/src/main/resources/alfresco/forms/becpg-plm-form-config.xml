@@ -3263,10 +3263,7 @@
 					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
-		
-		
-		</forms>
-		<form id="doclib-simple-metadata">
+		    <form id="doclib-simple-metadata">
 				<field-visibility>
 				    <show id="cm:name" />
 					<show id="cm:title" force="true" />
@@ -3326,6 +3323,9 @@
 					</field>
 				</appearance>
 			</form>
+		
+		</forms>
+		
 		
 	</config>
 
