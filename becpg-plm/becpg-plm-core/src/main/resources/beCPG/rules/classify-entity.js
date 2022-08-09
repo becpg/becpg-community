@@ -12,7 +12,9 @@ function main() {
 		} else if (document.isSubType("bcpg:supplier")) {
 			state = document.properties["bcpg:supplierState"];
 		}
-
+		
+		var oldParent = document.parent.nodeRef.toString();
+		
 		if (state == "Valid") {
 			classifyByHierarchy(document, getDocumentLibraryNodeRef(VALID_SITE_ID));
 		} else if ((state == "Simulation" || state == "ToValidate") && !isInSite(document, SUPPLIER_PORTAL_SITE_ID)) {
@@ -20,17 +22,38 @@ function main() {
 		} else if (state == "Archived") {
 			classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
 		} else if (document.isSubType("pjt:project")) {
-            if (!isInSite(document, SUPPLIER_PORTAL_SITE_ID)) {
-                if(document.properties["pjt:projectState"] == "Completed" || document.properties["pjt:projectState"] == "Cancelled"){
-                    classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
-                } else {
-                    classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
-                }
-            } else {
-                classifyByHierarchy(document, getDocumentLibraryNodeRef(SUPPLIER_PORTAL_SITE_ID));
-            }
-        }
-
+			if (!isInSite(document, SUPPLIER_PORTAL_SITE_ID)) {
+				if(document.properties["pjt:projectState"] == "Completed" || document.properties["pjt:projectState"] == "Cancelled"){
+					classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
+				} else {
+					classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
+				}
+			} else {
+				classifyByHierarchy(document, getDocumentLibraryNodeRef(SUPPLIER_PORTAL_SITE_ID));
+			}
+		} else if (document.isSubType("qa:qualityControl") ) {
+			var qcState = propValue(document, "qa:qcState");
+			if (!isEmpty(qcState)) {
+				
+				var qcStateDisplayValue = null;
+				
+				if (qcState == "Compliant") {
+					qcStateDisplayValue = bcpg.getMessage("becpg.quality.control.compliant");
+				} else if (qcState == "NonCompliant") {
+					qcStateDisplayValue = bcpg.getMessage("becpg.quality.control.non-compliant");
+				}
+				
+				classifyByDate(document, "/app:company_home/st:sites/cm:" + ARCHIVED_SITE_ID + "/cm:documentLibrary/cm:qualityControl/" + qcStateDisplayValue, document.properties["qa:batchStart"], "YYYY/MMMM");
+			} else {
+				classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
+			}
+		}
+		
+		// formulate if the document was moved
+		if (oldParent != getNode(document.nodeRef).parent.nodeRef.toString() && document.isSubType("bcpg:product")) {
+			formulate(document);
+		}
+		
 		//Rename Sample
 		//rename(document);
 	}

@@ -18,7 +18,10 @@
 package fr.becpg.repo.jscript;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -27,6 +30,7 @@ import java.util.Set;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
@@ -62,6 +66,8 @@ import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.formulation.FormulatedEntity;
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AutoNumHelper;
 import fr.becpg.repo.helper.CheckSumHelper;
@@ -130,11 +136,23 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	private EntityReportService entityReportService;
 	
+	private Repository repositoryHelper;
+	
+	private FormulationService<FormulatedEntity> formulationService;
+	
 	private boolean useBrowserLocale;
 
 	private boolean showEntitiesInTree = false;
 
 	private boolean showUnauthorizedWarning = true;
+	
+	public void setFormulationService(FormulationService<FormulatedEntity> formulationService) {
+		this.formulationService = formulationService;
+	}
+	
+	public void setRepositoryHelper(Repository repositoryHelper) {
+		this.repositoryHelper = repositoryHelper;
+	}
 
 	public void setVersionService(VersionService versionService) {
 		this.versionService = versionService;
@@ -404,7 +422,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
+		
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
+		
 		if (mlText != null) {
 			return MLTextHelper.getClosestValue(mlText, MLTextHelper.parseLocale(locale));
 		}
@@ -1234,5 +1254,28 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			entityReportService.generateReports(extractedNode, versionNode);
 		}
 	}
-
+	
+	public void classifyByDate(ScriptNode productNode, String path, Date date, String dateFormat) {
+		
+		if (date != null) {
+			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+			
+			String formattedDate = simpleDateFormat.format(date);
+			
+			path += "/" + formattedDate;
+			
+			NodeRef parentFolder = repoService.getOrCreateFolderByPaths(repositoryHelper.getRootHome(), Arrays.asList(path.split("/")));
+			
+			if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(parentFolder))) {
+				logger.warn("Incorrect destination node type:" + nodeService.getType(parentFolder));
+			} else {
+				repoService.moveNode(productNode.getNodeRef(), parentFolder);
+			}
+		}
+	}
+	
+	public void formulate(ScriptNode productNode) {
+		formulationService.formulate(productNode.getNodeRef());
+	}
+	
 }
