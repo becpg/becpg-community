@@ -427,6 +427,14 @@ function classifyByHierarchy(productNode, folderNode, propHierarchy) {
 	}
 }
 
+function classifyByDate(productNode, path, dateFormat, propDate) {
+	return bcpg.classifyByDate(productNode, path, dateFormat, propDate);
+}
+
+function formulate(product) {
+	bcpg.formulate(product);
+}
+
 
 /**
 * Classify node by Hierarchy
