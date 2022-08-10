@@ -39,6 +39,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -75,6 +76,7 @@ import fr.becpg.repo.helper.GTINHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -140,11 +142,23 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	private FormulationService<FormulatedEntity> formulationService;
 	
+	private HierarchyService hierarchyService;
+	
+	private FileFolderService fileFolderService;
+	
 	private boolean useBrowserLocale;
 
 	private boolean showEntitiesInTree = false;
 
 	private boolean showUnauthorizedWarning = true;
+	
+	public void setFileFolderService(FileFolderService fileFolderService) {
+		this.fileFolderService = fileFolderService;
+	}
+	
+	public void setHierarchyService(HierarchyService hierarchyService) {
+		this.hierarchyService = hierarchyService;
+	}
 	
 	public void setFormulationService(FormulationService<FormulatedEntity> formulationService) {
 		this.formulationService = formulationService;
@@ -1255,25 +1269,108 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		}
 	}
 	
-	public void classifyByDate(ScriptNode productNode, String path, Date date, String dateFormat) {
+	public boolean classifyByHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy) {
+		return classifyByHierarchy(productNode.getNodeRef(), folderNode.getNodeRef(), propHierarchy);
+	}
+
+	private boolean classifyByHierarchy(NodeRef productNode, NodeRef folderNode, String propHierarchy) {
 		
-		if (date != null) {
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-			
-			String formattedDate = simpleDateFormat.format(date);
-			
-			path += "/" + formattedDate;
-			
-			NodeRef parentFolder = repoService.getOrCreateFolderByPaths(repositoryHelper.getRootHome(), Arrays.asList(path.split("/")));
-			
-			if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(parentFolder))) {
-				logger.warn("Incorrect destination node type:" + nodeService.getType(parentFolder));
-			} else {
-				repoService.moveNode(productNode.getNodeRef(), parentFolder);
-			}
+		QName hierarchyQname = null;
+		
+		if (propHierarchy != null && !propHierarchy.isEmpty()) {
+			hierarchyQname = getQName(propHierarchy);
 		}
+		
+		return hierarchyService.classifyByHierarchy(folderNode, productNode, hierarchyQname, Locale.getDefault());
+	}
+
+	public boolean classifyByPropAndHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy, String propPathName, String locale) {
+		
+		if (propPathName == null || propPathName.isEmpty()) {
+			return classifyByHierarchy(productNode, folderNode, propHierarchy);
+		} else if (propPathName.split("\\|").length == 1) {
+			
+			QName propPathNameQName = getQName(propPathName);
+			
+			String subFolderName = nodeService.getProperty(productNode.getNodeRef(), propPathNameQName).toString();
+			
+			if (locale != null && !locale.isEmpty()) {
+				subFolderName = getMLConstraint(subFolderName, propPathName, locale);
+			}
+			
+			NodeRef childNodeRef = nodeService.getChildByName(folderNode.getNodeRef(), ContentModel.ASSOC_CONTAINS, subFolderName);
+			
+			if (childNodeRef == null) { 
+				childNodeRef = fileFolderService.create(folderNode.getNodeRef(), subFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+			}
+			
+			classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy);
+		} else {
+			String[] assocs = propPathName.split("\\|");
+			
+			String assocName = assocs[0];
+			
+			String property = assocs[assocs.length - 1];
+			
+			NodeRef finalAssoc = classifyPropAndHierarchyExtractAssoc(productNode.getNodeRef(), assocName, new ArrayList<>(Arrays.asList(assocs)));
+			
+			String subFolderName = nodeService.getProperty(finalAssoc, getQName(property)).toString();
+			
+			if (locale != null && !locale.isEmpty()) {
+				subFolderName = getMLConstraint(subFolderName, propPathName, locale);
+			}
+			
+			NodeRef childNodeRef = nodeService.getChildByName(folderNode.getNodeRef(), ContentModel.ASSOC_CONTAINS, subFolderName);
+			
+			if (childNodeRef == null) { 
+				childNodeRef = fileFolderService.create(folderNode.getNodeRef(), subFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+			}
+			
+			classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy);
+	
+		}
+		
+		return false;
+	}
+
+	private NodeRef classifyPropAndHierarchyExtractAssoc(NodeRef nodeRef, String assocName, List<String> assocList) {
+		
+		if (assocList.isEmpty()) {
+			return nodeRef;
+		}
+		
+		String nextAssocName = assocList.get(0);
+		
+		NodeRef nextNode = associationService.getTargetAssoc(nodeRef, getQName(assocName));
+		
+		if (nextNode == null) {
+			return nodeRef;
+		}
+		
+		 assocList.remove(0);
+		
+		return classifyPropAndHierarchyExtractAssoc(nextNode, nextAssocName, assocList);
 	}
 	
+	public boolean classifyByDate(ScriptNode productNode, String path, Date date, String dateFormat) {
+		
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		
+		String formattedDate = simpleDateFormat.format(date);
+		
+		path += "/" + formattedDate;
+		
+		NodeRef parentFolder = repoService.getOrCreateFolderByPaths(repositoryHelper.getRootHome(), Arrays.asList(path.split("/")));
+		
+		if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(parentFolder))) {
+			logger.warn("Incorrect destination node type:" + nodeService.getType(parentFolder));
+		} else {
+			return repoService.moveNode(productNode.getNodeRef(), parentFolder);
+		}
+		
+		return false;
+	}
+
 	public void formulate(ScriptNode productNode) {
 		formulationService.formulate(productNode.getNodeRef());
 	}
