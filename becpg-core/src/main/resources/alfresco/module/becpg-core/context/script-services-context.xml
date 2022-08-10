@@ -78,6 +78,8 @@
 		<property name="entityReportService" ref="entityReportService" />
 		<property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="formulationService" ref="formulationService" />
+		<property name="hierarchyService" ref="hierarchyService" />
+		<property name="fileFolderService" ref="fileFolderService" />
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">
