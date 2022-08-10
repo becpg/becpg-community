@@ -127,13 +127,11 @@ public class ImportExcelFileReader implements ImportFileReader {
 	public int getTotalLineCount() {
 		int rowCount = sheet.getLastRowNum() ;
 		
-		if(rowCount>1000) {
-			while(rowCount > 2) {
-				if( sheet.getRow(rowCount)!=null && sheet.getRow(rowCount).getCell(0)!=null && sheet.getRow(rowCount).getCell(0).getStringCellValue().equals("VALUES")) {
-					break;
-				}
-				rowCount --;
+		while (rowCount > 2) {
+			if( sheet.getRow(rowCount)!=null && sheet.getRow(rowCount).getCell(0)!=null && sheet.getRow(rowCount).getCell(0).getStringCellValue().equals("VALUES")) {
+				break;
 			}
+			rowCount --;
 		}
 		return rowCount + 1;
 	}

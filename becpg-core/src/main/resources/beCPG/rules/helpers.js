@@ -417,14 +417,11 @@ function concatName(name, value, separator) {
  * @returns void
  */
 function classifyByHierarchy(productNode, folderNode, propHierarchy) {
-	if (folderNode != null) {
-		var action = actions.create("classify-by-hierarchy");
-		action.parameters["destination-folder"] = folderNode;
-		if (propHierarchy) {
-			action.parameters["prop-hierarchy"] = propHierarchy;
-		}
-		action.execute(productNode.nodeRef);
+	if (propHierarchy) {
+		return bcpg.classifyByHierarchy(productNode, folderNode, propHierarchy);
 	}
+	return bcpg.classifyByHierarchy(productNode, folderNode, null);
+	
 }
 
 function classifyByDate(productNode, path, dateFormat, propDate) {
@@ -447,35 +444,7 @@ function formulate(product) {
 */
 //beta
 function classifyByPropAndHierarchy(productNode, folderNode, propHierarchy, propPathName, locale) {
-
-	if (isEmpty(propPathName)) {
-
-		classifyByHierarchy(productNode, folderNode, propHierarchy);
-
-	} else if (propPathName.split('|').length == 1) {
-
-		var subFolderName = propValue(productNode, propPathName);
-
-		if (!isEmpty(locale)) {
-			subFolderName = getMLConstraint(getProp(productNode, propPathName), propPathName, locale);
-		}
-
-		folderNode = getOrCreateFolder(folderNode, subFolderName);
-		classifyByHierarchy(productNode, folderNode, propHierarchy);
-
-	} else {
-
-		var assocs = propPathName.split('|'), assocName = assocs.shift(), property = assocs[assocs.length - 1], finalAssoc = classifyByPropAndHierarchy_extractAssoc(productNode,
-				assocName, assocs), subFolderName = propValue(finalAssoc, property);
-
-		if (!isEmpty(locale)) {
-			subFolderName = getMLConstraint(getProp(productNode, propPathName), propPathName, locale);
-		}
-
-		folderNode = getOrCreateFolder(folderNode, subFolderName);
-		classifyByHierarchy(productNode, folderNode, propHierarchy);
-
-	}
+	return bcpg.classifyByPropAndHierarchy(productNode, folderNode, propHierarchy, propPathName, locale);
 }
 
 function classifyByPropAndHierarchy_extractAssoc(node, assocName, assocsArray) {
