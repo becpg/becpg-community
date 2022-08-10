@@ -17,8 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.model;
 
-import java.io.Serializable;
-
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
@@ -43,7 +41,7 @@ public abstract class VariantAwareDataItem extends AbstractManualDataItem {
 	/**
 	 * <p>Constructor for VariantAwareDataItem.</p>
 	 */
-	public VariantAwareDataItem(){
+	protected VariantAwareDataItem(){
 		super();
 	}
 
@@ -52,7 +50,7 @@ public abstract class VariantAwareDataItem extends AbstractManualDataItem {
 	 *
 	 * @param a a {@link fr.becpg.repo.repository.model.VariantAwareDataItem} object.
 	 */
-	public VariantAwareDataItem(VariantAwareDataItem a) {
+	protected VariantAwareDataItem(VariantAwareDataItem a) {
 		super(a);
 	}
 
@@ -83,7 +81,7 @@ public abstract class VariantAwareDataItem extends AbstractManualDataItem {
 
 	public void setValue(Double value, String variantColumn) {
 		QName variantColumnName= QName.createQName(BeCPGModel.BECPG_URI, variantColumn.replace("bcpg_", ""));
-		this.getExtraProperties().put(variantColumnName, (Serializable) value);
+		this.getExtraProperties().put(variantColumnName, value);
 	}
 
 }
