@@ -274,7 +274,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if (shouldSkip) {
 				logger.debug("No render rule for " + formulatedProduct.getName() + " skipping ");
-				return true;
+				continue;
 			}
 
 			List<CompoListDataItem> compoList = new ArrayList<>();
