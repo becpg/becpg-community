@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.helper.MLTextHelper;
 
@@ -14,6 +15,7 @@ class RenameRule {
 	MLText pluralMlText;
 
 	Set<Locale> locales = new HashSet<>();
+	NodeRef replacement;
 
 	/**
 	 * <p>Constructor for RenameRule.</p>
@@ -22,9 +24,10 @@ class RenameRule {
 	 * @param pluralMlText a {@link org.alfresco.service.cmr.repository.MLText} object.
 	 * @param locales a {@link java.util.List} object.
 	 */
-	public RenameRule(MLText mlText, MLText pluralMlText, List<String> locales) {
+	public RenameRule(MLText mlText, MLText pluralMlText, List<String> locales,NodeRef replacement) {
 		this.mlText = mlText;
 		this.pluralMlText = pluralMlText;
+		this.replacement = replacement;
 
 		if (locales != null) {
 			for (String tmp : locales) {
@@ -64,4 +67,10 @@ class RenameRule {
 		return ret;
 	}
 
+	public NodeRef getReplacement() {
+		return replacement;
+	}
+
+	
+	
 }
