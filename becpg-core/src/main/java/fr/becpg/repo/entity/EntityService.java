@@ -73,6 +73,8 @@ public interface EntityService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getImageFolder(NodeRef entityNodeRef) ;
+	
+	NodeRef getOrCreateImageFolder(NodeRef entityNodeRef) ;
 
 	/**
 	 * <p>getImage.</p>
