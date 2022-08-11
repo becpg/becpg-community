@@ -11,10 +11,13 @@ import java.util.Set;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -43,6 +46,18 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 	private EntityService entityService;
 
 	private AssociationService associationService;
+	
+	private MimetypeService mimetypeService;
+	
+	private ContentService contentService;
+	
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
+	
+	public void setMimetypeService(MimetypeService mimetypeService) {
+		this.mimetypeService = mimetypeService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>entityService</code>.</p>
@@ -121,8 +136,19 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 				&& !isWorkingCopyOrVersion(associationRef.getSourceRef())
 				&& !nodeService.hasAspect(associationRef.getSourceRef(), ContentModel.ASPECT_CHECKED_OUT)
 				&& !nodeService.hasAspect(associationRef.getTargetRef(), ContentModel.ASPECT_PENDING_DELETE)) {
-			NodeRef destRef = entityService.getOrCreateDocumentsFolder(associationRef.getTargetRef());
-
+			
+			String name = (String) nodeService.getProperty(associationRef.getSourceRef(), ContentModel.PROP_NAME);
+			
+			boolean isImage = mimetypeService.guessMimetype(name, contentService.getReader(associationRef.getSourceRef(), ContentModel.PROP_CONTENT)).startsWith(MimetypeMap.PREFIX_IMAGE);
+			
+			NodeRef destRef = null;
+			
+			if (isImage) {
+				destRef = entityService.getOrCreateImageFolder(associationRef.getTargetRef());
+			} else {
+				destRef = entityService.getOrCreateDocumentsFolder(associationRef.getTargetRef());
+			}
+			
 			deleteLink(associationRef.getSourceRef(), destRef);
 		}
 
@@ -148,9 +174,20 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 		for (NodeRef entityNodeRef : pendingNodes) {
 			if (nodeService.exists(entityNodeRef) && !isWorkingCopyOrVersion(entityNodeRef)) {
+				
+				String name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+				
+				boolean isImage = mimetypeService.guessMimetype(name, contentService.getReader(entityNodeRef, ContentModel.PROP_CONTENT)).startsWith(MimetypeMap.PREFIX_IMAGE);
+				
 				List<NodeRef> linkedNodeRefs = associationService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_DOC_LINKED_ENTITIES);
 				for (NodeRef linkedNodeRef : linkedNodeRefs) {
-					NodeRef destRef = entityService.getOrCreateDocumentsFolder(linkedNodeRef);
+					NodeRef destRef = null;
+					if (isImage) {
+						destRef = entityService.getOrCreateImageFolder(linkedNodeRef);
+					} else {
+						destRef = entityService.getOrCreateDocumentsFolder(linkedNodeRef);
+					}
+					
 					createLink(entityNodeRef, destRef);
 				}
 			}
