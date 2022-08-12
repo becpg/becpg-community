@@ -200,6 +200,8 @@
       <property name="dictionaryService">
          <ref bean="cachedDictionaryService" />
       </property>
+      <property name="namespaceService" ref="namespaceService" />
+      <property name="disabledMLTextFields" value="${beCPG.multilinguale.disabledMLTextFields}" />
    </bean>
 
 

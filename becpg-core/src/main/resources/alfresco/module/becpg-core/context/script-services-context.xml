@@ -79,7 +79,10 @@
 		<property name="contentService" ref="contentService"/>
 		<property name="beCPGLicenseManager" ref="becpgLicenseManager"/>
 		<property name="beCPGMailService" ref="beCPGMailService"/>
-		
+                <property name="repositoryHelper" ref="repositoryHelper" />
+		<property name="formulationService" ref="formulationService" />
+		<property name="hierarchyService" ref="hierarchyService" />
+		<property name="fileFolderService" ref="fileFolderService" />
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">

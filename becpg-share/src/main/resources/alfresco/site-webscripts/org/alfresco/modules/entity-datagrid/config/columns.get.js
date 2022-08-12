@@ -77,10 +77,17 @@ function getFormConfig(itemId, formId, mode, prefixedSiteId, prefixedEntityType)
 				formConfig = formsConfig.getForm(formId);
 			}
 
+			if(formId == "export" && formConfig === null) { 
+				formConfig = getFormConfig(itemId, "datagrid", mode, prefixedSiteId, prefixedEntityType);
+			} else if(formId == "exportWUsed" && formConfig === null) { 
+				formConfig = getFormConfig(itemId, "datagridWUsed", mode, prefixedSiteId, prefixedEntityType);
+			}
+
 			if (mode == "bulk-edit" && formConfig === null) {
 				// look up the specific form
 				formConfig = formsConfig.getForm("create");
 			}
+			
 
 			// drop back to default form if formId config missing
 			if (formConfig === null && formId != "taskList") {
@@ -246,6 +253,9 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 				formId = "sub-datagrid";
 			}
 		} else {
+			if(formIdArgs == "export" && list != null && list.indexOf("WUsed") == 0){
+				formId = "exportWUsed";
+			}
 			formId = formIdArgs;
 		}
 
