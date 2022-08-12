@@ -327,7 +327,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			Double parentLossRatio, SimpleListQtyProvider qtyProvider, Map<NodeRef, List<NodeRef>> mandatoryCharacts, VariantData variant,
 			boolean isFormulatedProduct) {
 
-
 		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 			CompoListDataItem compoListDataItem = component.getData();
@@ -349,13 +348,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 					} else {
 
-					
-						
-						FormulatedQties qties = new FormulatedQties(qtyProvider.getQty(compoListDataItem, parentLossRatio, componentProduct), 
-								qtyProvider.getVolume(compoListDataItem, parentLossRatio, componentProduct), qtyProvider.getNetQty(), qtyProvider.getNetWeight());
-						
+						FormulatedQties qties = new FormulatedQties(qtyProvider.getQty(compoListDataItem, parentLossRatio, componentProduct),
+								qtyProvider.getVolume(compoListDataItem, parentLossRatio, componentProduct), qtyProvider.getNetQty(),
+								qtyProvider.getNetWeight());
+
 						if (qties.isNotNull()) {
-							visitPart(formulatedProduct, componentProduct, simpleListDataList, qties, mandatoryCharacts, totalQtiesValue,  FormulationHelper.getQtyInKg(compoListDataItem) , variant);
+							visitPart(formulatedProduct, componentProduct, simpleListDataList, qties, mandatoryCharacts, totalQtiesValue,
+									FormulationHelper.getQtyInKg(compoListDataItem), variant);
 						}
 
 					}
@@ -388,12 +387,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
 
 					Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, partProduct);
-					
-					FormulatedQties qties = new FormulatedQties(qty ,
-							qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight());
 
-					visitPart(formulatedProduct, partProduct, simpleListDataList, qties,
-							mandatoryCharacts2, null, null, variant);
+					FormulatedQties qties = new FormulatedQties(qty, qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight());
+
+					visitPart(formulatedProduct, partProduct, simpleListDataList, qties, mandatoryCharacts2, null, null, variant);
 				}
 			}
 
@@ -425,13 +422,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					}
 
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(processListDataItem.getResource());
-					
-					FormulatedQties qties = new FormulatedQties(qty ,
-							null, netQtyForCost, null );
-					
 
-					visitPart(formulatedProduct, partProduct, simpleListDataList, qties, mandatoryCharacts3, null, null,
-							variant);
+					FormulatedQties qties = new FormulatedQties(qty, null, netQtyForCost, null);
+
+					visitPart(formulatedProduct, partProduct, simpleListDataList, qties, mandatoryCharacts3, null, null, variant);
 				}
 			}
 
@@ -454,9 +448,26 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		for (SimpleListDataItem newSimpleListDataItem : simpleListDataList) {
 			if (totalQtiesValue.containsKey(newSimpleListDataItem.getCharactNodeRef())) {
 				Double totalQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
-				if ((newSimpleListDataItem.getValue() != null) && (netQty != null) && (totalQty != null) && (totalQty != 0d)) {
-					newSimpleListDataItem.setValue((newSimpleListDataItem.getValue() * netQty) / totalQty);
+				if ((netQty != null) && (totalQty != null) && (totalQty != 0d)) {
+
+					if ((newSimpleListDataItem.getValue() != null)) {
+						newSimpleListDataItem.setValue((newSimpleListDataItem.getValue() * netQty) / totalQty);
+					}
+
+					if (newSimpleListDataItem instanceof ForecastValueDataItem) {
+						if (((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue() != null) {
+							((ForecastValueDataItem) newSimpleListDataItem)
+									.setPreviousValue((((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue() * netQty) / totalQty);
+						}
+
+						if (((ForecastValueDataItem) newSimpleListDataItem).getFutureValue() != null) {
+							((ForecastValueDataItem) newSimpleListDataItem)
+									.setFutureValue((((ForecastValueDataItem) newSimpleListDataItem).getFutureValue() * netQty) / totalQty);
+						}
+
+					}
 				}
+
 			}
 		}
 	}
@@ -499,8 +510,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	protected void visitPart(ProductData formulatedProduct, ProductData partProduct, List<T> simpleListDataList, FormulatedQties qties , Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue,
-			 Double totalQtyUsed, VariantData variant) {
+	protected void visitPart(ProductData formulatedProduct, ProductData partProduct, List<T> simpleListDataList, FormulatedQties qties,
+			Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue, Double totalQtyUsed, VariantData variant) {
 
 		if (!(partProduct instanceof LocalSemiFinishedProductData)) {
 
@@ -553,21 +564,20 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							}
 
 							// calculate charact from qty or vol ?
-							Double qtyUsed = qties.getQtyUsed( formulateInVol);
+							Double qtyUsed = qties.getQtyUsed(formulateInVol);
 							Double netQty = qties.getNetQty(forceWeight);
 
 							// Calculate values
 							if ((qtyUsed != null)) {
 
-								calculate(formulatedProduct, partProduct, newSimpleListDataItem, slDataItem, qtyUsed, netQty,
-										variant);
+								calculate(formulatedProduct, partProduct, newSimpleListDataItem, slDataItem, qtyUsed, netQty, variant);
 
 								if ((totalQtiesValue != null) && (slDataItem.getValue() != null) && totalQtyUsed != null) {
 									Double currentQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
 									if (currentQty == null) {
 										currentQty = 0d;
 									}
-									
+
 									totalQtiesValue.put(newSimpleListDataItem.getCharactNodeRef(), currentQty + totalQtyUsed);
 								}
 							}
@@ -650,8 +660,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 			if (calculatedListItem instanceof ForecastValueDataItem) {
 				((ForecastValueDataItem) calculatedListItem)
-						.setPreviousValue(FormulationHelper.calculateValue(((ForecastValueDataItem) calculatedListItem).getPreviousValue(),
-								qtyUsed, ((ForecastValueDataItem) visitedListItem).getPreviousValue(), netQty));
+						.setPreviousValue(FormulationHelper.calculateValue(((ForecastValueDataItem) calculatedListItem).getPreviousValue(), qtyUsed,
+								((ForecastValueDataItem) visitedListItem).getPreviousValue(), netQty));
 				((ForecastValueDataItem) calculatedListItem)
 						.setFutureValue(FormulationHelper.calculateValue(((ForecastValueDataItem) calculatedListItem).getFutureValue(), qtyUsed,
 								((ForecastValueDataItem) visitedListItem).getFutureValue(), netQty));

@@ -2505,14 +2505,6 @@
 						<constraint ref="bcpg:nullableBoolean" />
 					</constraints>
 				</property>
-				<property name="bcpg:filIsSum">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
-					<constraints>
-						<constraint ref="bcpg:nullableBoolean" />
-					</constraints>
-				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:filIngs">

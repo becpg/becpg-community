@@ -452,13 +452,13 @@ public abstract class RuleParser {
 				} else if (formula != null) {
 					mlText = new MLText();
 
-					Set<Locale> availableLocales = new LinkedHashSet<>(getLocales());
+					Set<Locale> availableLocalesTmp = new LinkedHashSet<>(getLocales());
 
-					if (availableLocales.isEmpty()) {
-						availableLocales.add(new Locale(Locale.getDefault().getLanguage()));
+					if (availableLocalesTmp.isEmpty()) {
+						availableLocalesTmp.add(new Locale(Locale.getDefault().getLanguage()));
 					}
 
-					for (Locale locale : availableLocales) {
+					for (Locale locale : availableLocalesTmp) {
 						String val = I18NUtil.getMessage(formula, locale);
 						if (val == null) {
 							if (logger.isDebugEnabled()) {
@@ -470,7 +470,7 @@ public abstract class RuleParser {
 					}
 				}
 				if (mlText != null) {
-					renameRules.put(component, new RenameRule(mlText, pluralMlText, locales));
+					renameRules.put(component, new RenameRule(mlText, pluralMlText, locales, (replacement != null) && !replacement.isEmpty() ? replacement.get(0): null));
 				}
 			}
 		}

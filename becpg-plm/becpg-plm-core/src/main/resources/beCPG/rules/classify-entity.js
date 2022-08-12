@@ -1,5 +1,22 @@
 <import resource="classpath:/beCPG/rules/helpers.js">
 
+function classifyQualityControl(qualityControl) {
+	var qcState = propValue(qualityControl, "qa:qcState");
+	if (!isEmpty(qcState)) {
+		
+		var qcStateDisplayValue = null;
+		
+		if (qcState == "Compliant") {
+			qcStateDisplayValue = bcpg.getMessage("becpg.quality.control.compliant");
+		} else if (qcState == "NonCompliant") {
+			qcStateDisplayValue = bcpg.getMessage("becpg.quality.control.non-compliant");
+		}
+		
+		return classifyByDate(qualityControl, "/app:company_home/st:sites/cm:" + ARCHIVED_SITE_ID + "/cm:documentLibrary/cm:qualityControl/" + qcStateDisplayValue, qualityControl.properties["qa:batchStart"], "YYYY/MMMM");
+	} else {
+		return classifyByHierarchy(qualityControl, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
+	}
+}
 
 function main() {
 
@@ -12,25 +29,34 @@ function main() {
 		} else if (document.isSubType("bcpg:supplier")) {
 			state = document.properties["bcpg:supplierState"];
 		}
-
+		
+		var wasMoved = false;
+		
 		if (state == "Valid") {
-			classifyByHierarchy(document, getDocumentLibraryNodeRef(VALID_SITE_ID));
+			wasMoved = classifyByHierarchy(document, getDocumentLibraryNodeRef(VALID_SITE_ID));
 		} else if ((state == "Simulation" || state == "ToValidate") && !isInSite(document, SUPPLIER_PORTAL_SITE_ID)) {
-			classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
+			wasMoved = classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
 		} else if (state == "Archived") {
-			classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
+			wasMoved = classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
 		} else if (document.isSubType("pjt:project")) {
-            if (!isInSite(document, SUPPLIER_PORTAL_SITE_ID)) {
-                if(document.properties["pjt:projectState"] == "Completed" || document.properties["pjt:projectState"] == "Cancelled"){
-                    classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
-                } else {
-                    classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
-                }
-            } else {
-                classifyByHierarchy(document, getDocumentLibraryNodeRef(SUPPLIER_PORTAL_SITE_ID));
-            }
-        }
-
+			if (!isInSite(document, SUPPLIER_PORTAL_SITE_ID)) {
+				if(document.properties["pjt:projectState"] == "Completed" || document.properties["pjt:projectState"] == "Cancelled"){
+					wasMoved = classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
+				} else {
+					wasMoved = classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
+				}
+			} else {
+				wasMoved = classifyByHierarchy(document, getDocumentLibraryNodeRef(SUPPLIER_PORTAL_SITE_ID));
+			}
+		} else if (document.isSubType("qa:qualityControl") ) {
+			wasMoved = classifyQualityControl(document);
+		}
+		
+		// formulate if the document was moved
+		if (wasMoved && document.isSubType("bcpg:product")) {
+			formulate(document);
+		}
+		
 		//Rename Sample
 		//rename(document);
 	}

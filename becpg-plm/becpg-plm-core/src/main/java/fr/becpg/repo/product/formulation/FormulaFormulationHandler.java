@@ -206,7 +206,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private void computeNutrientProfile(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
-		if (productData.getNutrientProfile() != null) {
+		if (productData.getNutrientProfile() != null && nodeService.exists(productData.getNutrientProfile())) {
 			String scoreformula = (String) nodeService.getProperty(productData.getNutrientProfile(), PLMModel.PROP_NUTRIENT_PROFILE_SCORE_FORMULA);
 			if ((scoreformula != null) && (scoreformula.length() > 0)) {
 				try {
