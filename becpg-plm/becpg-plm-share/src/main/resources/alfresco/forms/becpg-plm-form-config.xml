@@ -3688,10 +3688,7 @@
 					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
-		
-		
-		</forms>
-		<form id="doclib-simple-metadata">
+		    <form id="doclib-simple-metadata">
 				<field-visibility>
 				    <show id="cm:name" />
 					<show id="cm:title" force="true" />
@@ -3751,6 +3748,9 @@
 					</field>
 				</appearance>
 			</form>
+		
+		</forms>
+		
 		
 	</config>
 
@@ -6367,7 +6367,6 @@
 					<show id="bcpg:filQtyPercMaxi" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
-					<show id="bcpg:filIsSum" />
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
@@ -6401,12 +6400,6 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:filIsSum">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
-							</control-param>
-						</control>
-					</field>
 					<field id="bcpg:filIngs">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -6432,7 +6425,6 @@
 					<show id="bcpg:filQtyPercMaxi" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
-					<show id="bcpg:filIsSum" />
 					<show id="entity_bcpg:filIngs_bcpg:ing" />
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
@@ -6456,12 +6448,6 @@
 						</control>
 					</field>
 					<field id="bcpg:filIsIonized">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:filIsSum">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
@@ -6493,7 +6479,6 @@
 					<show id="bcpg:filQtyPercMaxi" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
-					<show id="bcpg:filIsSum" />
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
@@ -6519,7 +6504,6 @@
 					<show id="bcpg:filQtyPercMaxi" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
-					<show id="bcpg:filIsSum" />
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
@@ -6548,12 +6532,6 @@
 						</control>
 					</field>
 					<field id="bcpg:filIsIonized">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:filIsSum">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>

@@ -383,7 +383,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 				logger.debug("report name: " + nodeService.getProperty(n, ContentModel.PROP_NAME));
 			}
 
-			assertEquals("There is 8 report", 8, reportTpls.size());
+			assertEquals("There is 9 report", 9, reportTpls.size());
 			assertEquals("Check report nodeRef", exportProductReportTpl, reportTpls.get(0));
 
 			return null;
