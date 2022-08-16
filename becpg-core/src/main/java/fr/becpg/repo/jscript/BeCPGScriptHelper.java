@@ -41,7 +41,8 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-(??)
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.quickshare.QuickShareDTO;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -82,6 +83,7 @@ import fr.becpg.repo.helper.GTINHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.license.BeCPGLicenseManager;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.olap.OlapService;
