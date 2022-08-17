@@ -50,6 +50,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.expressions.ExpressionService;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -79,17 +82,19 @@ public class ZipSearchDownloadExporter implements Exporter {
 		String path;
 		String name;
 		String destFolder;
+		String entityFilter;
 
-		public FileToExtract(String path, String name, String destFolder) {
+		public FileToExtract(String path, String name, String destFolder, String entityFilter) {
 			super();
 			this.path = path;
 			this.name = name;
 			this.destFolder = destFolder;
+			this.entityFilter = entityFilter;
 		}
 
 		@Override
 		public String toString() {
-			return "FileToExtract [path=" + path + ", name=" + name + ", destFolder=" + destFolder + "]";
+			return "FileToExtract [path=" + path + ", name=" + name + ", destFolder=" + destFolder + ", entityFilter = " + entityFilter + "]";
 		}
 
 	}
@@ -101,6 +106,8 @@ public class ZipSearchDownloadExporter implements Exporter {
 	private CheckOutCheckInService checkOutCheckInService;
 	private NodeService nodeService;
 	private ContentService contentService;
+	private ExpressionService<RepositoryEntity> expressionService;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/**
 	 * <p>
@@ -158,7 +165,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 	 */
 	public ZipSearchDownloadExporter(NamespaceService namespaceService, CheckOutCheckInService checkOutCheckInService, NodeService nodeService,
 			RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService, DownloadStorage downloadStorage,
-			ContentService contentService, NodeRef downloadNodeRef, NodeRef templateNodeRef) {
+			ContentService contentService, ExpressionService<RepositoryEntity> expressionService, AlfrescoRepository<RepositoryEntity> alfrescoRepository, NodeRef downloadNodeRef, NodeRef templateNodeRef) {
 
 		this.updateService = updateService;
 		this.transactionHelper = transactionHelper;
@@ -169,6 +176,8 @@ public class ZipSearchDownloadExporter implements Exporter {
 		this.nodeService = nodeService;
 		this.contentService = contentService;
 		this.namespaceService = namespaceService;
+		this.expressionService = expressionService;
+		this.alfrescoRepository = alfrescoRepository;
 
 		try {
 			readFileMapping(templateNodeRef);
@@ -202,7 +211,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 		List<Node> columnNodes = queryElt.selectNodes("file");
 		for (Node columnNode : columnNodes) {
 
-			FileToExtract tmp = new FileToExtract(columnNode.valueOf("@path"), columnNode.valueOf("@name"), columnNode.valueOf("@destFolder"));
+			FileToExtract tmp = new FileToExtract(columnNode.valueOf("@path"), columnNode.valueOf("@name"), columnNode.valueOf("@destFolder"), columnNode.valueOf("@entityFilter"));
 
 			fileToExtract.add(tmp);
 		}
@@ -251,9 +260,10 @@ public class ZipSearchDownloadExporter implements Exporter {
 			if (toExtractNodes == null) {
 				toExtractNodes = new HashSet<>();
 
-				List<NodeRef> files = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef,
-						extractExpr(entityNodeRef, null, fileMapping.path));
-				toExtractNodes.addAll(files);
+				if (testEntityCondition(fileMapping.entityFilter, alfrescoRepository.findOne(entityNodeRef))) {
+					List<NodeRef> files = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, extractExpr(entityNodeRef, null, fileMapping.path));
+					toExtractNodes.addAll(files);
+				}
 
 				cache.put(key, toExtractNodes);
 			}
@@ -316,6 +326,18 @@ public class ZipSearchDownloadExporter implements Exporter {
 				}
 			}
 		}
+
+	}
+	
+	private boolean testEntityCondition(String condition, RepositoryEntity entity) {
+
+		if ((condition != null) && !(condition.startsWith("spel") || condition.startsWith("js"))) {
+			condition = "spel(" + condition + ")";
+		}
+		
+		Object filter = expressionService.eval(condition, entity);
+		
+		return filter != null && Boolean.parseBoolean(filter.toString());
 
 	}
 
