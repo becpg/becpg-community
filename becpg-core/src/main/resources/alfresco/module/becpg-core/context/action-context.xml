@@ -70,6 +70,8 @@
       <property name="contentService" ref="reportContentServiceWrapper"/>
       <property name="updateService" ref="downloadStatusUpdateService"/>
       <property name="namespaceService" ref="namespaceService"/>
+      <property name="expressionService" ref="expressionService"/>
+      <property name="alfrescoRepository" ref="alfrescoRepository"/>
    </bean>
    
    <!-- Export Search actions -->
