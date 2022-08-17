@@ -363,6 +363,15 @@
 	</types>
 	
 	<aspects>
+	
+	    <aspect name="bcpg:customFormDefinitionsAspect">
+			<properties>
+				<property name="bcpg:customFormDefinitions">
+					<type>d:text</type>
+					<default>false</default>
+				</property>
+			</properties>
+		</aspect>
 
 		<aspect name="bcpg:compareWithAspect">
 			<associations>
