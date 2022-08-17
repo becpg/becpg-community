@@ -297,6 +297,14 @@
 				<bean id="productCollectionsFormulationHandler" class="fr.becpg.repo.collection.formulation.ProductCollectionFormulationHandler">
 					<property name="nodeService" ref="nodeService" />
 				</bean>
+				<bean class="fr.becpg.repo.formulation.impl.ScriptsFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+					<property name="namespaceService" ref="namespaceService" />
+					<property name="scriptService" ref="scriptService" />
+					<property name="formulaService" ref="formulaService" />
+					<property name="contentService" ref="contentService" />
+					<property name="associationService" ref="associationService" />
+				</bean>
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />
