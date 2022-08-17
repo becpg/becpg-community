@@ -39,6 +39,10 @@ import org.apache.commons.logging.LogFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.becpg.repo.expressions.ExpressionService;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
+
 /**
  * {@link org.alfresco.repo.action.executer.ActionExecuter} for creating an archive (ie. zip) file containing
  * content from the repository.
@@ -72,8 +76,17 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 	private DownloadStatusUpdateService updateService;
 	private ContentService contentService;
 	private NamespaceService namespaceService;
+	private ExpressionService<RepositoryEntity> expressionService;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	private long maximumContentSize = -1l;
 
+	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		this.alfrescoRepository = alfrescoRepository;
+	}
+	
+	public void setExpressionService(ExpressionService<RepositoryEntity> expressionService) {
+		this.expressionService = expressionService;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>checkOutCheckInService</code>.</p>
@@ -205,7 +218,7 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 		
 			
 			 ZipSearchDownloadExporter handler = new ZipSearchDownloadExporter(namespaceService, checkOutCheckInService, nodeService, transactionHelper,
-					updateService, downloadStorage, contentService, actionedUponNodeRef, templateNodeRef);
+					updateService, downloadStorage, contentService, expressionService, alfrescoRepository, actionedUponNodeRef, templateNodeRef);
 			
 			
 			exporterService.exportView(handler, crawlerParameters, null);

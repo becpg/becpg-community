@@ -1442,18 +1442,36 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	public boolean classifyByDate(ScriptNode productNode, String path, Date date, String dateFormat) {
 		
-		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
-		
-		String formattedDate = simpleDateFormat.format(date);
-		
-		path += "/" + formattedDate;
-		
-		NodeRef parentFolder = repoService.getOrCreateFolderByPaths(repositoryHelper.getRootHome(), Arrays.asList(path.split("/")));
-		
-		if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(parentFolder))) {
-			logger.warn("Incorrect destination node type:" + nodeService.getType(parentFolder));
-		} else {
-			return repoService.moveNode(productNode.getNodeRef(), parentFolder);
+		if (date != null && dateFormat != null) {
+			
+			StringBuilder pathBuilder = new StringBuilder(path);
+			
+			for (String formatPart : dateFormat.split("/")) {
+				
+				pathBuilder.append("/");
+				
+				boolean isFirstSubPart = true;
+				
+				for (String subFormatPart : formatPart.split(" - ")) {
+					
+					if (!isFirstSubPart) {
+						pathBuilder.append(" - ");
+					}
+					
+					SimpleDateFormat subFormat = new SimpleDateFormat(subFormatPart);
+					pathBuilder.append(subFormat.format(date));
+					
+					isFirstSubPart = false;
+				}
+			}
+			
+			NodeRef parentFolder = repoService.getOrCreateFolderByPaths(repositoryHelper.getRootHome(), Arrays.asList(pathBuilder.toString().split("/")));
+			
+			if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(parentFolder))) {
+				logger.warn("Incorrect destination node type:" + nodeService.getType(parentFolder));
+			} else {
+				return repoService.moveNode(productNode.getNodeRef(), parentFolder);
+			}
 		}
 		
 		return false;

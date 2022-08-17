@@ -1015,7 +1015,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:product</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>true</mandatory>
 						<many>false</many>
 					</target>
@@ -3057,7 +3057,16 @@
 			</properties>
 		</aspect>
        -->
-
+       
+       <aspect name="bcpg:customFormDefinitionsAspect">
+			<properties>
+				<property name="bcpg:customFormDefinitions">
+					<type>d:text</type>
+					<default>false</default>
+				</property>
+			</properties>
+		</aspect>
+       
 		<aspect name="bcpg:formulatedEntityAspect">
 			<properties>
 				<property name="bcpg:formulatedDate">
