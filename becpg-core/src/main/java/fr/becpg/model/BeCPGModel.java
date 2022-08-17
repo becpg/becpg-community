@@ -281,5 +281,12 @@ public final class BeCPGModel {
 	public static final QName PROP_IS_DEFAULT_VARIANT = QName.createQName(BECPG_URI, "isDefaultVariant");
 	/** Constant <code>PROP_IS_DEFAULT_VARIANT</code> */
 	public static final QName PROP_VARIANT_COLUMN = QName.createQName(BECPG_URI, "variantColumn");
+
 	
+	//forms
+	
+	public static final QName ASPECT_CUSTOM_FORM_DEFINITIONS = QName.createQName(BECPG_URI, "customFormDefinitionsAspect");
+	
+	public static final QName PROP_CUSTOM_FORM_DEFINITIONS = QName.createQName(BECPG_URI, "customFormDefinitions");
+
 }

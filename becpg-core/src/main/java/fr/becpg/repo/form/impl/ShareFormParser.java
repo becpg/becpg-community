@@ -1,5 +1,6 @@
 package fr.becpg.repo.form.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -20,6 +21,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import fr.becpg.common.dom.DOMUtils;
+import fr.becpg.repo.form.FormParser;
 
 /**
  * <p>ShareFormParser class.</p>
@@ -27,7 +29,7 @@ import fr.becpg.common.dom.DOMUtils;
  * @author matthieu
  * @version $Id: $Id
  */
-public class ShareFormParser {
+public class ShareFormParser implements FormParser{
 
 	private static Log logger = LogFactory.getLog(ShareFormParser.class);
 
@@ -54,7 +56,7 @@ public class ShareFormParser {
 	// <control-param name="name">value</control-param>
 	// </control>
 	// <constraint-handlers>
-	// <constraint type="id" validation-handler="function" [message-id="string"]
+	// <constraint type=BecpgFormDefinition.PROP_ID validation-handler="function" [message-id="string"]
 	// [message="string"] [event="string"] />
 	// </constraint-handlers>
 	// </field>
@@ -74,8 +76,9 @@ public class ShareFormParser {
 	 * @throws javax.xml.parsers.FactoryConfigurationError if any.
 	 * @throws org.json.JSONException if any.
 	 */
-	public void visitConfig(Map<String, Map<String, BecpgFormDefinition>> definitions, InputStream in)
-			throws SAXException, IOException, ParserConfigurationException, FactoryConfigurationError, JSONException {
+	@Override
+	public void visitConfig(Map<String, Map<String, BecpgFormDefinition>> definitions, InputStream in) throws JSONException, SAXException, IOException, ParserConfigurationException, FactoryConfigurationError
+		 {
 		logger.debug("visitConfigNodeRef");
 		if (in != null) {
 			Document doc = DOMUtils.parse(in);
@@ -95,6 +98,15 @@ public class ShareFormParser {
 		}
 
 	}
+	
+
+	@Override
+	public void visitConfig(Map<String, Map<String, BecpgFormDefinition>> definitions, String defs) throws IOException, JSONException, SAXException, ParserConfigurationException, FactoryConfigurationError  {
+		try(InputStream in = new ByteArrayInputStream(defs.getBytes())){
+			visitConfig(definitions, in);
+		}
+	}
+
 
 	private void visitFormElement(Element configEl, Map<String, BecpgFormDefinition> forms, String evaluator) throws JSONException {
 		logger.debug("visitFormElement");
@@ -102,7 +114,7 @@ public class ShareFormParser {
 		for (int i = 0; i < list.getLength(); i++) {
 			Element elem = (Element) list.item(i);
 
-			String formId = elem.getAttribute("id");
+			String formId = elem.getAttribute(BecpgFormDefinition.PROP_ID);
 
 			if ((formId == null) || ("-".equals(formId)) || formId.isEmpty()) {
 				if ("model".equals(evaluator)) {
@@ -165,9 +177,9 @@ public class ShareFormParser {
 			Element elem = (Element) list.item(i);
 			String parentId = elem.getAttribute("parent");
 
-			String setId = elem.getAttribute("id");
+			String setId = elem.getAttribute(BecpgFormDefinition.PROP_ID);
 
-			String label = elem.getAttribute("label");
+			String label = elem.getAttribute(BecpgFormDefinition.PROP_LABEL);
 			if ((label == null) || label.isEmpty()) {
 				label = I18NUtil.getMessage(elem.getAttribute("label-id"));
 			}
@@ -176,7 +188,7 @@ public class ShareFormParser {
 
 				JSONObject tab = new JSONObject();
 
-				tab.put("id", setId);
+				tab.put(BecpgFormDefinition.PROP_ID, setId);
 
 				if ((label != null) && !label.isEmpty()) {
 					tab.put("title", label);
@@ -188,12 +200,12 @@ public class ShareFormParser {
 
 				JSONObject set = new JSONObject();
 				set.put("fieldType", "ContainerRepresentation");
-				set.put("id", setId);
+				set.put(BecpgFormDefinition.PROP_ID, setId);
 
 			
 
 				if ((label != null) && !label.isEmpty()) {
-					set.put("name", label);
+					set.put(BecpgFormDefinition.PROP_LABEL, label);
 				}
 
 				// Header group ContainerWidgetComponent
@@ -263,11 +275,11 @@ public class ShareFormParser {
 		for (int i = 0; i < shows.getLength(); i++) {
 
 			Element elem = (Element) shows.item(i);
-			String fieldId = elem.getAttribute("id");
+			String fieldId = elem.getAttribute(BecpgFormDefinition.PROP_ID);
 			boolean added = false;
 			for (int j = 0; j < fields.getLength(); j++) {
 				Element field = (Element) fields.item(j);
-				if (fieldId.equals(field.getAttribute("id"))) {
+				if (fieldId.equals(field.getAttribute(BecpgFormDefinition.PROP_ID))) {
 					added = true;
 					createField(formDef, elem, field, show);
 				}
@@ -279,12 +291,12 @@ public class ShareFormParser {
 	}
 
 	private void createField(BecpgFormDefinition formDef, Element elem, Element field, boolean show) throws JSONException {
-		logger.debug("Create field with id :" + elem.getAttribute("id"));
+		logger.debug("Create field with id :" + elem.getAttribute(BecpgFormDefinition.PROP_ID));
 
 		JSONObject jsonField = new JSONObject();
 
-		String fieldName = elem.getAttribute("id");
-		jsonField.put("id", fieldName);
+		String fieldName = elem.getAttribute(BecpgFormDefinition.PROP_ID);
+		jsonField.put(BecpgFormDefinition.PROP_ID, fieldName);
 		if (!show) {
 			jsonField.put("hide", true);
 		}
@@ -296,7 +308,7 @@ public class ShareFormParser {
 		jsonField.put("fieldType", "FormFieldRepresentation");
 
 		boolean force = false;
-		if (!StringUtils.isEmpty(elem.getAttribute("force")) && "true".equals(elem.getAttribute("force"))) {
+		if (!StringUtils.isEmpty(elem.getAttribute(PROP_FORCE)) && "true".equals(elem.getAttribute(PROP_FORCE))) {
 			force = true;
 		}
 
@@ -305,18 +317,18 @@ public class ShareFormParser {
 		if (field != null) {
 			setId = field.getAttribute("set");
 
-			String label = field.getAttribute("label");
+			String label = field.getAttribute(BecpgFormDefinition.PROP_LABEL);
 			if ((label == null) || label.isEmpty()) {
 				label = I18NUtil.getMessage(field.getAttribute("label-id"));
 			}
 			if ((label != null) && !label.isEmpty()) {
-				jsonField.put("name", label);
+				jsonField.put(BecpgFormDefinition.PROP_LABEL, label);
 			}
 			if (!StringUtils.isEmpty(field.getAttribute("read-only"))) {
-				jsonField.put("readOnly", field.getAttribute("read-only"));
+				jsonField.put(PROP_READONLY, field.getAttribute("read-only"));
 			}
-			if (!StringUtils.isEmpty(field.getAttribute("mandatory"))) {
-				jsonField.put("required", field.getAttribute("mandatory"));
+			if (!StringUtils.isEmpty(field.getAttribute(BecpgFormDefinition.PROP_MANDATORY))) {
+				jsonField.put(BecpgFormDefinition.PROP_MANDATORY, field.getAttribute(BecpgFormDefinition.PROP_MANDATORY));
 			}
 
 			visitFormControl(jsonField, field);

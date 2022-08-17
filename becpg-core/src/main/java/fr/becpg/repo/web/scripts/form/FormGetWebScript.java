@@ -18,12 +18,16 @@
 package fr.becpg.repo.web.scripts.form;
 
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
+import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -50,11 +54,14 @@ public class FormGetWebScript extends AbstractWebScript {
 	private static final String PARAM_FORMID = "formId";
 
 	private static final String PARAM_RELOAD = "reload";
-	
+
 	private static final String PARAM_NODE_REF = "entityNodeRef";
 
+	private static final String PARAM_FIELDS = "fields";
+
+	private static final String PARAM_FORCEDFIELDS = "force";
+
 	private BecpgFormService becpgFormService;
-	
 
 	/**
 	 * <p>Setter for the field <code>becpgFormService</code>.</p>
@@ -65,7 +72,6 @@ public class FormGetWebScript extends AbstractWebScript {
 		this.becpgFormService = becpgFormService;
 	}
 
-
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
@@ -75,6 +81,58 @@ public class FormGetWebScript extends AbstractWebScript {
 		String formId = req.getParameter(PARAM_FORMID);
 		String siteId = req.getParameter(PARAM_SITEID);
 		String entityNodeRef = req.getParameter(PARAM_NODE_REF);
+		List<String> fields = new LinkedList<>();
+		List<String> forcedFields = new LinkedList<>();
+
+		/* Parse the JSON content */
+
+		String contentType = req.getContentType();
+		if ((contentType != null) && (contentType.indexOf(';') != -1)) {
+			contentType = contentType.substring(0, contentType.indexOf(';'));
+		}
+		try {
+
+			JSONObject json = new JSONObject(req.getContent().getContent());
+
+			if (json.has(PARAM_ITEMKIND)) {
+				itemKind = (String) json.get(PARAM_ITEMKIND);
+
+			}
+
+			if (json.has(PARAM_ITEMID)) {
+				itemId = (String) json.get(PARAM_ITEMID);
+
+			}
+
+			if (json.has(PARAM_FORMID)) {
+				formId = (String) json.get(PARAM_FORMID);
+			}
+
+			if (json.has(PARAM_SITEID)) {
+				formId = (String) json.get(PARAM_SITEID);
+			}
+
+			if (json.has(PARAM_NODE_REF)) {
+				entityNodeRef = (String) json.get(PARAM_NODE_REF);
+			}
+
+			if (json.has(PARAM_FIELDS)) {
+				org.json.JSONArray tmp = json.getJSONArray(PARAM_FIELDS);
+				for (int i = 0; i < tmp.length(); i++) {
+					fields.add(tmp.getString(i));
+				}
+			}
+
+			if (json.has(PARAM_FORCEDFIELDS)) {
+				org.json.JSONArray tmp = json.getJSONArray(PARAM_FORCEDFIELDS);
+				for (int i = 0; i < tmp.length(); i++) {
+					forcedFields.add(tmp.getString(i));
+				}
+			}
+
+		} catch (IOException | JSONException io) {
+			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid JSON: " + io.getMessage());
+		}
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -90,9 +148,10 @@ public class FormGetWebScript extends AbstractWebScript {
 				becpgFormService.reloadConfig();
 				ret.put("SUCCESS", true);
 			} else {
-				NodeRef nodeRef = (entityNodeRef != null && !entityNodeRef.isEmpty()) ? new NodeRef(entityNodeRef) : null;
-				ret = becpgFormService.getForm(itemKind, itemId, formId, siteId, nodeRef);
+				NodeRef nodeRef = ((entityNodeRef != null) && !entityNodeRef.isEmpty() ) ? new NodeRef(entityNodeRef) : null;
+				ret = becpgFormService.getForm(itemKind, itemId, formId, siteId, fields, forcedFields, nodeRef);
 
+				logger.info(ret.toString(3));
 			}
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");
@@ -101,7 +160,7 @@ public class FormGetWebScript extends AbstractWebScript {
 		} catch (Exception e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		} finally {
-			if (logger.isDebugEnabled() && watch!=null) {
+			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("MultilingualFieldWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
