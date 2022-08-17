@@ -12,7 +12,7 @@ function classifyQualityControl(qualityControl) {
 			qcStateDisplayValue = bcpg.getMessage("becpg.quality.control.non-compliant");
 		}
 		
-		return classifyByDate(qualityControl, "/app:company_home/st:sites/cm:" + ARCHIVED_SITE_ID + "/cm:documentLibrary/cm:qualityControl/" + qcStateDisplayValue, qualityControl.properties["qa:batchStart"], "YYYY/MMMM");
+		return classifyByDate(qualityControl, "/app:company_home/st:sites/cm:" + ARCHIVED_SITE_ID + "/cm:documentLibrary/cm:qualityControl/" + qcStateDisplayValue, qualityControl.properties["qa:batchStart"], "YYYY/MM - MMMM");
 	} else {
 		return classifyByHierarchy(qualityControl, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
 	}
