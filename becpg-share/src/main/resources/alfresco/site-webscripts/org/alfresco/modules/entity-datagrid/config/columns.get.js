@@ -160,11 +160,15 @@ function getVisibleFields(mode, formConfig) {
  *            The form configuration object
  * @return Object representing the POST body
  */
-function createPostBody(itemKind, itemId, visibleFields, formConfig, mode) {
+function createPostBody(itemKind, itemId, visibleFields, formConfig, mode, entityNodeRef) {
 	var postBody = {};
 
 	postBody.itemKind = itemKind;
 	postBody.itemId = itemId.replace(":/", "");
+	if(entityNodeRef!=null){
+		postBody.entityNodeRef = entityNodeRef;
+	}
+	postBody.formId = formConfig.id;
 
 	if (visibleFields !== null) {
 		// create list of fields to show and a list of
@@ -183,9 +187,6 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode) {
 					var preferences = AlfrescoUtil.getPreferences("fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
 					
 					if(existInPref(preferences) && isChecked(preferences)){
-						if (logger.isLoggingEnabled()) {
-							logger.log("CHECKED: fr.becpg.formulation.dashlet.custom.datagrid-prefs" + "." + itemId.replace(":", "_") + "." + fieldId.replace(":", "_"));
-						}
 						postBodyForcedFields.push(fieldId);
 					}
 					
@@ -211,7 +212,7 @@ function createPostBody(itemKind, itemId, visibleFields, formConfig, mode) {
 function main() {
 	var itemType = getArgument("itemType"), list = getArgument("list"), formId = getArgument("formId")
 	, mode = getArgument("mode"), noCache = getArgument("noCache"), siteId = getArgument("siteId")
-	, entityType = getArgument("entityType");
+	, entityType = getArgument("entityType"), entityNodeRef = getArgument("entityNodeRef");
 
 	
 	cache.maxAge = 3600; // in seconds
@@ -232,11 +233,11 @@ function main() {
 	}
 
 	// pass form ui model to FTL
-	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType);
+	model.columns = getColumns(itemType, list, formId, mode, prefixedSiteId, prefixedEntityType, entityNodeRef);
 
 }
 
-function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType ) {
+function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType, entityNodeRef ) {
 
 	var columns = [], defaultColumns = [], ret = [];
 
@@ -267,12 +268,14 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 			var visibleFields = getVisibleFields(mode == "bulk-edit" ? "edit" : "view", formConfig);
 
 			// build the JSON object to send to the server
-			var postBody = createPostBody("type", itemType, visibleFields, formConfig, mode);
+			var postBody = createPostBody("type", itemType, visibleFields, formConfig, mode,entityNodeRef);
 
 
 			// make remote call to service
 			var connector = remote.connect("alfresco");
-			var json = connector.post("/api/formdefinitions", jsonUtils.toJSONString(postBody), "application/json");
+		
+			
+			var json = connector.post("/becpg/form", jsonUtils.toJSONString(postBody), "application/json");
 
 			if (logger.isLoggingEnabled()) {
 				logger.log("json = " + json);
@@ -284,10 +287,12 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 			}
 
 			var formModel = eval('(' + json + ')');
+			var override = false;
 
 			// if we got a successful response attempt to render the form
 			if (json.status == 200) {
-				columns = formModel.data.definition.fields;
+				columns = formModel.fields;
+				override = formModel.override;
 			} else {
 				if (logger.isLoggingEnabled()) {
 					logger.log("error = " + formModel.message);
@@ -295,12 +300,12 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 				columns = [];
 			}
 			
-			// get default fields
+           	// get default fields
 			if(mode == "datagrid-prefs"){			
 				postBody.force = [];
-				var jsonDefaultFields = connector.post("/api/formdefinitions", jsonUtils.toJSONString(postBody), "application/json");
+				var jsonDefaultFields = connector.post("/becpg/form", jsonUtils.toJSONString(postBody), "application/json");
 				formModel = eval('(' + jsonDefaultFields + ')');			
-			    defaultColumns = formModel.data.definition.fields;
+			    defaultColumns = formModel.fields;
 			}
 
 
@@ -365,13 +370,16 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 
 					for (var j in columns) {
 						if (columns[j].name == fieldId) {
-							if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
-								columns[j].label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
-									: formConfig.fields[fieldId].labelId;
-							}
-
-							if (formConfig.fields[fieldId].getHelpText() != null) {
-								columns[j].help = formConfig.fields[fieldId].getHelpText();
+							if(!override){
+								
+								if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
+									columns[j].label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
+										: formConfig.fields[fieldId].labelId;
+								} 
+	
+								if (formConfig.fields[fieldId].getHelpText() != null) {
+									columns[j].help = formConfig.fields[fieldId].getHelpText();
+								}
 							}
 
 							columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
