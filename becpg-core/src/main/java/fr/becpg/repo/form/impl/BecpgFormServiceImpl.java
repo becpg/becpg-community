@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fr.becpg.repo.form.column.decorator.ColumnDecorator;
-import fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider;
 import org.alfresco.repo.forms.Form;
 import org.alfresco.repo.forms.FormService;
 import org.alfresco.repo.forms.Item;
@@ -29,7 +27,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.Resource;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.form.BecpgFormService;
+import fr.becpg.repo.form.column.decorator.ColumnDecorator;
+import fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider;
 
 /**
  * <p>BecpgFormServiceImpl class.</p>
@@ -46,7 +47,7 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 	List<String> configs;
 
 	List<ColumnDecorator> decorators;
-	
+
 	FormService formService;
 
 	private NodeService nodeService;
@@ -71,7 +72,6 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 	public FormService getFormService() {
 		return formService;
 	}
-
 
 	/**
 	 * <p>Setter for the field <code>decorators</code>.</p>
@@ -171,7 +171,7 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 	@Override
 	public void reloadConfig() throws IOException {
 		definitions = new HashMap<>();
-		
+
 		for (String config : processWildcards(configs)) {
 			Resource resource = applicationContext.getResource(config);
 			try (InputStream in = resource.getInputStream()) {
@@ -183,30 +183,60 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 		}
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
-	public JSONObject getForm(String itemKind, String itemId, String formId, String siteId, NodeRef entityNodeRef) throws BeCPGException, JSONException {
+	public JSONObject getForm(String itemKind, String itemId, String formId, String siteId, List<String> fields, List<String> forcedFields,
+			NodeRef entityNodeRef) throws BeCPGException, JSONException {
 
 		Item item = new Item(itemKind, itemId);
-
-		BecpgFormDefinition definition = getFormDefinition(item, formId, siteId);
 		DataGridFormFieldTitleProvider resolver = null;
-		if(entityNodeRef != null){
-			for(ColumnDecorator decorator : decorators) {
-				if(decorator.match(item)) {
+		BecpgFormDefinition definition = getFormDefinition(this.definitions, item, formId, siteId);
+		if (definition == null) {
+			definition = new BecpgFormDefinition(fields, forcedFields);
+		}
+
+		boolean override = false;
+		if (entityNodeRef != null) {
+			if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_CUSTOM_FORM_DEFINITIONS)) {
+				String customFormDefinition = (String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CUSTOM_FORM_DEFINITIONS);
+				if ((customFormDefinition != null) && !customFormDefinition.isBlank()) {
+					try {
+						BecpgFormDefinition customFormDef = getFormDefinition(parseDefinitions(customFormDefinition), item, formId, siteId);
+						if (customFormDef != null) {
+							definition = customFormDef;
+							override = true;
+						}
+					} catch (Exception e) {
+						logger.error("Cannot load config", e);
+					}
+				}
+			}
+			for (ColumnDecorator decorator : decorators) {
+				if (decorator.match(item)) {
 					resolver = decorator.createTitleResolver(entityNodeRef, item);
+					break;
 				}
 			}
 		}
 
-		Form form = formService.getForm(new Item(itemKind, itemId), definition.getFields(), definition.getForcedFields(), null);
+		Form form = formService.getForm(new Item(itemKind, itemId), definition.getFields(), definition.getForcedFields());
 
-		return definition.merge(form, resolver);
+		JSONObject ret = definition.merge(form, resolver);
+
+		ret.put("override", override);
+		return ret;
 	}
-	
 
-	private BecpgFormDefinition getFormDefinition(Item item, String formId, String siteId) throws BeCPGException {
+	private Map<String, Map<String, BecpgFormDefinition>> parseDefinitions(String customFormDefinition) throws Exception {
+		Map<String, Map<String, BecpgFormDefinition>> ret = new HashMap<>();
+		BecpgFormParser becpgFormParser = new BecpgFormParser();
+		becpgFormParser.visitConfig(ret, customFormDefinition);
+		return ret;
+	}
+
+	private BecpgFormDefinition getFormDefinition(Map<String, Map<String, BecpgFormDefinition>> defs, Item item, String formId, String siteId)
+			throws BeCPGException {
 
 		String id = item.getId();
 		if ("node".equals(item.getKind())) {
@@ -214,13 +244,13 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 		}
 
-		Map<String, BecpgFormDefinition> forms = definitions.get(id);
+		Map<String, BecpgFormDefinition> forms = defs.get(id);
 		if (forms != null) {
-			if (forms.containsKey(formId + "-" + siteId)) {
+			if ((siteId != null) && forms.containsKey(formId + "-" + siteId)) {
 				return forms.get(formId + "-" + siteId);
 			}
 
-			if (forms.containsKey(formId)) {
+			if ((formId != null) && forms.containsKey(formId)) {
 				return forms.get(formId);
 			}
 
@@ -229,7 +259,7 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 			}
 		}
 
-		throw new BeCPGException("No form exists for id:" + id + " formId: " + formId);
+		return null;
 	}
 
 	private List<String> processWildcards(List<String> configs) {
@@ -250,7 +280,7 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 			char separator = guessSeparator(sourceString);
 			logger.debug("processWildCards: " + sourceString);
 			File dir = new File(sourceString.substring(PREFIX_FILE.length(), sourceString.lastIndexOf(separator)));
-			if ((dir != null) && dir.exists()) {
+			if (dir.exists()) {
 				FileFilter fileFilter = new WildcardFileFilter(sourceString.substring(sourceString.lastIndexOf(separator) + 1));
 				File[] files = dir.listFiles(fileFilter);
 				if (files != null) {
