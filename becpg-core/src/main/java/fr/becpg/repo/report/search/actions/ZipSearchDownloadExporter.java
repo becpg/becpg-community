@@ -106,7 +106,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 	private CheckOutCheckInService checkOutCheckInService;
 	private NodeService nodeService;
 	private ContentService contentService;
-	private ExpressionService<RepositoryEntity> expressionService;
+	private ExpressionService expressionService;
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/**
@@ -165,7 +165,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 	 */
 	public ZipSearchDownloadExporter(NamespaceService namespaceService, CheckOutCheckInService checkOutCheckInService, NodeService nodeService,
 			RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService, DownloadStorage downloadStorage,
-			ContentService contentService, ExpressionService<RepositoryEntity> expressionService, AlfrescoRepository<RepositoryEntity> alfrescoRepository, NodeRef downloadNodeRef, NodeRef templateNodeRef) {
+			ContentService contentService, ExpressionService expressionService, AlfrescoRepository<RepositoryEntity> alfrescoRepository, NodeRef downloadNodeRef, NodeRef templateNodeRef) {
 
 		this.updateService = updateService;
 		this.transactionHelper = transactionHelper;
@@ -331,7 +331,11 @@ public class ZipSearchDownloadExporter implements Exporter {
 	
 	private boolean testEntityCondition(String condition, RepositoryEntity entity) {
 
-		if ((condition != null) && !(condition.startsWith("spel") || condition.startsWith("js"))) {
+		if (condition == null || condition.isBlank()) {
+			return true;
+		}
+		
+		if (!(condition.startsWith("spel") || condition.startsWith("js"))) {
 			condition = "spel(" + condition + ")";
 		}
 		
