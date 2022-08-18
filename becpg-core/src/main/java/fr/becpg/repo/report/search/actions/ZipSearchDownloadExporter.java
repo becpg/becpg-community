@@ -331,7 +331,11 @@ public class ZipSearchDownloadExporter implements Exporter {
 	
 	private boolean testEntityCondition(String condition, RepositoryEntity entity) {
 
-		if ((condition != null) && !(condition.startsWith("spel") || condition.startsWith("js"))) {
+		if (condition == null || condition.isBlank()) {
+			return true;
+		}
+		
+		if (!(condition.startsWith("spel") || condition.startsWith("js"))) {
 			condition = "spel(" + condition + ")";
 		}
 		
