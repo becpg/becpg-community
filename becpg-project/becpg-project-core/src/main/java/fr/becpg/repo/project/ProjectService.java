@@ -121,7 +121,7 @@ public interface ProjectService {
 	 * 
 	 * @param resource
 	 */
-	NodeRef getReassignedResource(NodeRef resource);
+	NodeRef getReassignedResource(NodeRef resource, Set<NodeRef> reassignedCandidates);
 
 	/**
 	 * 
