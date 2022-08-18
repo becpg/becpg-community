@@ -23,6 +23,8 @@
  * assocValue(node, assocName) returns assoc nodeRef array
  * 
  * assocValues(node, assocName) assoc nodeRef arrays
+ *
+ * sourceAssocValues(node, assocName) assoc nodeRef arrays
  * 
  * assocPropValues(node, assocName, propName) alias getAssoc(product, assocName, propName?) returns association property array of values
  * 
@@ -189,6 +191,16 @@ function assocValue(node, assocName) {
  */
 function assocValues(node, assocName) {
 	return isEmpty(node) ?  new Array() : orEmpty( bcpg.assocValues(node, assocName),new Array());
+}
+
+/**
+ * 
+ * @param node
+ * @param assocName
+ * @returns association nodeRef array
+ */
+function sourceAssocValues(node, assocName) {
+	return isEmpty(node) ?  new Array() : orEmpty( bcpg.sourceAssocValues(node, assocName),new Array());
 }
 
 /**

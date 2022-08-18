@@ -616,12 +616,48 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public Object assocValues(NodeRef nodeRef, String assocQname) {
 		return wrapValue(associationService.getTargetAssocs(nodeRef, getQName(assocQname)));
 	}
+	
+
+	/**
+	 * <p>sourceAssocValues.</p>
+	 *
+	 * @param sourceNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @param assocQname a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Object} object.
+	 */
+	public Object sourceAssocValues(ScriptNode sourceNode, String assocQname) {
+		return sourceAssocValues(sourceNode.getNodeRef(), assocQname);
+	}
+	
+	/**
+	 * <p>sourceAssocValues.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object.
+	 * @param assocQname a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Object} object.
+	 */
+	public Object sourceAssocValues(String nodeRef, String assocQname) {
+		return sourceAssocValues(new NodeRef(nodeRef), assocQname);
+	}
+
+	/**
+	 * <p>sourceAssocValues.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param assocQname a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Object} object.
+	 */
+	public Object sourceAssocValues(NodeRef nodeRef, String assocQname) {
+		return wrapValue(associationService.getSourcesAssocs(nodeRef, getQName(assocQname)));
+	}
+
 
 	// TODO Perfs
 	private Object wrapValue(Object object) {
 		return ScriptValueConverter.wrapValue(Context.getCurrentContext().initSafeStandardObjects(), object);
 	}
-
+	
+	
 	/**
 	 * <p>assocPropValues.</p>
 	 *
