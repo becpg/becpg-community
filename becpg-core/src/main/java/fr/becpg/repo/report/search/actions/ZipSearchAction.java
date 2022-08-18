@@ -76,7 +76,7 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 	private DownloadStatusUpdateService updateService;
 	private ContentService contentService;
 	private NamespaceService namespaceService;
-	private ExpressionService<RepositoryEntity> expressionService;
+	private ExpressionService expressionService;
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	private long maximumContentSize = -1l;
 
@@ -84,7 +84,7 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 		this.alfrescoRepository = alfrescoRepository;
 	}
 	
-	public void setExpressionService(ExpressionService<RepositoryEntity> expressionService) {
+	public void setExpressionService(ExpressionService expressionService) {
 		this.expressionService = expressionService;
 	}
 	
