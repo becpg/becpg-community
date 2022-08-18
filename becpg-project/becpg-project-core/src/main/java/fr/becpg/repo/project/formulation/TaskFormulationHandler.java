@@ -616,7 +616,7 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 			List<NodeRef> resources = new ArrayList<>();
 
 			for (NodeRef resource : projectService.extractResources(projectData.getNodeRef(), taskListDataItem.getResources())) {
-				NodeRef reassignResource = projectService.getReassignedResource(resource);
+				NodeRef reassignResource = projectService.getReassignedResource(resource, new HashSet<>());
 				
 				NodeRef toAdd = resource;
 				// check delegation

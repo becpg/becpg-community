@@ -431,7 +431,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 			NodeRef userNodeRef = authorityDAO.getAuthorityNodeRefOrNull(user);
 			if (userNodeRef != null) {
 				List<NodeRef> resources = associationService.getTargetAssocs(taskNodeRef, ProjectModel.ASSOC_TL_RESOURCES);
-				if ((resources.size() == 1) && !resources.contains(userNodeRef) && !resources.contains(getReassignedResource(userNodeRef))) {
+				if ((resources.size() == 1) && !resources.contains(userNodeRef) && !resources.contains(getReassignedResource(userNodeRef, new HashSet<>()))) {
 					QName type = nodeService.getType(resources.get(0));
 					if (!type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
 						associationService.update(taskNodeRef, ProjectModel.ASSOC_TL_RESOURCES, Arrays.asList(userNodeRef));
@@ -502,7 +502,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef getReassignedResource(NodeRef resource) {
+	public NodeRef getReassignedResource(NodeRef resource, Set<NodeRef> reassignedCandidates) {
 
 		if ((resource != null) && (nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE) != null)
 				&& (Boolean.TRUE.equals(nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_STATE)))) {
@@ -513,14 +513,21 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 			if ((delegationStart == null) || ((delegationStart.before(new Date()) || delegationStart.equals(new Date()))
 					&& ((delegationEnd == null) || delegationEnd.after(new Date()) || delegationEnd.equals(new Date())))) {
 
-				NodeRef reassignResource = getReassignedResource(
-						associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE));
-
-				if (reassignResource != null) {
-					return reassignResource;
-				} else {
-					return associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE);
+				NodeRef reassignedResource = associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE);
+				
+				if (reassignedCandidates.contains(reassignedResource)) {
+					return resource;
 				}
+				
+				reassignedCandidates.add(reassignedResource);
+					
+				NodeRef nextReassignResource = getReassignedResource(reassignedResource, reassignedCandidates);
+				
+				if (nextReassignResource != null) {
+					return nextReassignResource;
+				}
+				
+				return reassignedResource;
 			}
 		}
 		return null;
