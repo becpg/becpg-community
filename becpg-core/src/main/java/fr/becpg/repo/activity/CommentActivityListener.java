@@ -106,6 +106,8 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 	private void sendCommentNotification(String comment, NodeRef entityNodeRef, NodeRef commentNodeRef) {
 
 		if (comment != null && !comment.isBlank()) {
+			
+			comment = escapeHtml(comment);
 
 			String itemName = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 
@@ -114,7 +116,7 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 			ArrayList<String> usernames = new ArrayList<>();
 
 			String commentText = comment;
-
+			
 			while (matcher.find()) {
 				String match = matcher.group();
 				String username = match.substring(1);
@@ -123,16 +125,6 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 
 				commentText = commentText.replace(match + " ", "");
 			}
-
-			HtmlCleaner cleaner = new HtmlCleaner(commentText);
-
-			try {
-				cleaner.clean();
-			} catch (IOException e) {
-				logger.error("Could not parse HTML comment", e);
-			}
-			
-			commentText = parseHtmlContent(cleaner.getBodyNode(), null);
 			
 			for (String username : usernames) {
 
@@ -178,8 +170,20 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 			}
 		}
 	}
+	
+	private String escapeHtml(String htmlContent) {
+		HtmlCleaner cleaner = new HtmlCleaner(htmlContent);
+		
+		try {
+			cleaner.clean();
+		} catch (IOException e) {
+			logger.error("Could not parse HTML comment", e);
+		}
+		
+		return escapeHtml(cleaner.getBodyNode(), null);
+	}
 
-	private String parseHtmlContent(TagNode node, StringBuilder contentBuilder) {
+	private String escapeHtml(TagNode node, StringBuilder contentBuilder) {
 
 		if (contentBuilder == null) {
 			contentBuilder = new StringBuilder();
@@ -189,7 +193,7 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 			if (child instanceof ContentToken) {
 				contentBuilder.append(StringEscapeUtils.unescapeHtml4(((ContentToken) child).getContent()));
 			} else if (child instanceof TagNode) {
-				parseHtmlContent((TagNode) child, contentBuilder);
+				escapeHtml((TagNode) child, contentBuilder);
 			}
 		}
 		
