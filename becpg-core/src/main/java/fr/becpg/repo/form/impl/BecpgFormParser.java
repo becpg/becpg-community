@@ -28,7 +28,7 @@ public class BecpgFormParser implements FormParser {
 	 *     id: "",
 	 *     label: "",
 	 *     help: "",
-	 *     readonly : "",
+	 *     readOnly : "",
 	 *     mandatory: "",
 	 *     force: ""
 	 *

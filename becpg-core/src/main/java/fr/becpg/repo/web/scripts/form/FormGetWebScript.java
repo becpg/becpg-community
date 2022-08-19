@@ -103,9 +103,10 @@ public class FormGetWebScript extends AbstractWebScript {
 				itemId = (String) json.get(PARAM_ITEMID);
 
 			}
-
+			
 			if (json.has(PARAM_FORMID) && !JSONObject.NULL.equals(json.get(PARAM_FORMID))) {
 				formId = (String) json.get(PARAM_FORMID);
+				
 			}
 
 			if (json.has(PARAM_SITEID) && !JSONObject.NULL.equals(json.get(PARAM_SITEID))) {
@@ -129,6 +130,8 @@ public class FormGetWebScript extends AbstractWebScript {
 					forcedFields.add(tmp.getString(i));
 				}
 			}
+			
+		
 
 		} catch (IOException | JSONException io) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Invalid JSON: " + io.getMessage());
@@ -151,7 +154,9 @@ public class FormGetWebScript extends AbstractWebScript {
 				NodeRef nodeRef = ((entityNodeRef != null) && !entityNodeRef.isEmpty() ) ? new NodeRef(entityNodeRef) : null;
 				ret = becpgFormService.getForm(itemKind, itemId, formId, siteId, fields, forcedFields, nodeRef);
 
+				
 				if(logger.isDebugEnabled()) {
+					logger.debug(itemKind+"/"+itemId+"/"+siteId+"/"+formId+"/"+entityNodeRef);
 					logger.debug(ret.toString(3));
 				}
 			}
