@@ -2821,8 +2821,8 @@
                         onDataGridRefresh : function EntityDataGrid_onDataGridRefresh(layer, args)
                         {
                         	this.queryExecutionId = null;
-                        	
-                        	 if(obj.clearCache!=null && obj.clearCache == true && obj.cacheTimeStamp){	    
+                        	 var obj = args[1];
+                        	 if((obj !== null) && obj.clearCache!=null && obj.clearCache == true && obj.cacheTimeStamp){	    
 							      this.cacheTimeStamp = obj.cacheTimeStamp;                        	
 	                              this.services.preferences.set("fr.becpg.column.cache", {"timeStamp": obj.cacheTimeStamp});
 	                          }

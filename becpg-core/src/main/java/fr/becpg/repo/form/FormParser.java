@@ -8,7 +8,7 @@ import fr.becpg.repo.form.impl.BecpgFormDefinition;
 public interface FormParser {
 
 	public static final String PROP_FORCE =  "force";
-	public static final String PROP_READONLY = "readonly";
+	public static final String PROP_READONLY = "readOnly";
 	
 	void visitConfig(Map<String, Map<String, BecpgFormDefinition>> definitions, InputStream in) throws  Exception;
 	void visitConfig(Map<String, Map<String, BecpgFormDefinition>> definitions, String in) throws  Exception;
