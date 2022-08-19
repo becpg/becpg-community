@@ -1,4 +1,5 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
+
 /*******************************************************************************
  *  Copyright (C) 2010-2021 beCPG. 
  *   
@@ -308,6 +309,13 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 			    defaultColumns = formModel.fields;
 			}
 
+			
+			if(override){
+				visibleFields = [];
+				for (var j in columns) {
+					visibleFields.push(columns[j].name);
+				}
+			}
 
 			for (var i in visibleFields) {
 
@@ -322,14 +330,17 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 						name: name,
 						"dataType": "nested"
 					};
+					
+					if(!override){
 
-					if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
-						column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
-							: formConfig.fields[fieldId].labelId;
-					}
-
-					if (formConfig.fields[fieldId].getHelpText() != null) {
-						column.help = formConfig.fields[fieldId].getHelpText();
+						if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
+							column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
+								: formConfig.fields[fieldId].labelId;
+						}
+	
+						if (formConfig.fields[fieldId].getHelpText() != null) {
+							column.help = formConfig.fields[fieldId].getHelpText();
+						}
 					}
 
 
@@ -346,13 +357,15 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 						"dataType": "nested"
 					};
 
-					if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
-						column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
-							: formConfig.fields[fieldId].labelId;
-					}
-
-					if (formConfig.fields[fieldId].getHelpText() != null) {
-						column.help = formConfig.fields[fieldId].getHelpText();
+					if(!override){
+						if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
+							column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label
+								: formConfig.fields[fieldId].labelId;
+						}
+	
+						if (formConfig.fields[fieldId].getHelpText() != null) {
+							column.help = formConfig.fields[fieldId].getHelpText();
+						}
 					}
 					
 					if (splitted[1].includes("@")) {
@@ -380,9 +393,12 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 								if (formConfig.fields[fieldId].getHelpText() != null) {
 									columns[j].help = formConfig.fields[fieldId].getHelpText();
 								}
+								
+								
+								columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
+								
 							}
 
-							columns[j].readOnly = formConfig.fields[fieldId].isReadOnly();
 
 							if (mode == "datagrid-prefs") {
 
