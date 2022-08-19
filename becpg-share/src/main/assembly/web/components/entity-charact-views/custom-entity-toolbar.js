@@ -242,7 +242,8 @@
 											text: this.msg("message.formulate.success")
 										});
 
-										YAHOO.Bubbling.fire("refreshDataGrids");
+										YAHOO.Bubbling.fire("refreshDataGrids",{ clearCache :true,
+			            	    		  cacheTimeStamp : (new Date()).getTime() });
 										Dom.removeClass(formulateButton, "loading");
 									},
 									scope: this
