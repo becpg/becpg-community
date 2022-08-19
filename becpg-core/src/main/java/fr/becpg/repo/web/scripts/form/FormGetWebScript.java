@@ -104,15 +104,15 @@ public class FormGetWebScript extends AbstractWebScript {
 
 			}
 
-			if (json.has(PARAM_FORMID)) {
+			if (json.has(PARAM_FORMID) && !JSONObject.NULL.equals(json.get(PARAM_FORMID))) {
 				formId = (String) json.get(PARAM_FORMID);
 			}
 
-			if (json.has(PARAM_SITEID)) {
-				formId = (String) json.get(PARAM_SITEID);
+			if (json.has(PARAM_SITEID) && !JSONObject.NULL.equals(json.get(PARAM_SITEID))) {
+				siteId = (String) json.get(PARAM_SITEID);
 			}
 
-			if (json.has(PARAM_NODE_REF)) {
+			if (json.has(PARAM_NODE_REF) && !JSONObject.NULL.equals(json.get(PARAM_NODE_REF))) {
 				entityNodeRef = (String) json.get(PARAM_NODE_REF);
 			}
 
@@ -151,7 +151,9 @@ public class FormGetWebScript extends AbstractWebScript {
 				NodeRef nodeRef = ((entityNodeRef != null) && !entityNodeRef.isEmpty() ) ? new NodeRef(entityNodeRef) : null;
 				ret = becpgFormService.getForm(itemKind, itemId, formId, siteId, fields, forcedFields, nodeRef);
 
-				logger.info(ret.toString(3));
+				if(logger.isDebugEnabled()) {
+					logger.debug(ret.toString(3));
+				}
 			}
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");
