@@ -77,7 +77,7 @@ public class ProductCollectionFormulationHandler extends FormulationBaseHandler<
 		
 		
 		if ((priceListItem.getPriceBasisQuantity() != null) && (priceListItem.getPrice() != null)) {
-			priceListItem.setTurnover(priceListItem.getPrice() *priceListItem.getUnitTotalCost());
+			priceListItem.setTurnover(priceListItem.getPriceBasisQuantity() *priceListItem.getPrice());
 		} else {
 			priceListItem.setTurnover(null);
 		}
