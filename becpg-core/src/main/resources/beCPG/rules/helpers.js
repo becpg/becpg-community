@@ -102,7 +102,7 @@ const SUPPLIER_PORTAL_SITE_ID = "supplier-portal";
  * @returns true if value is empty or null 
  */
 function isNullOrEmpty(value) {
-	return value == null || value == ""
+	return value == null || value == "";
 }
 
 function isEmpty(value){
@@ -130,7 +130,7 @@ function getProp(node, propName) {
 }
 
 function propValue(node, propName){
-	return getProp(node,propName)
+	return getProp(node,propName);
 }
 
 
