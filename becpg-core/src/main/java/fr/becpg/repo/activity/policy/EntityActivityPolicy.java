@@ -102,6 +102,10 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
+	public static void registerIngoredType(QName type) {
+		isIgnoredTypes.add(type);
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 *
