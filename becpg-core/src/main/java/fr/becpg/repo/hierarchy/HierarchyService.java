@@ -64,6 +64,10 @@ public interface HierarchyService {
 	 * @param value a {@link java.lang.String} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
+	
+	List<NodeRef> getAllHierarchiesByDepthLevel(String path, String query, String depthLevel);
+	
+	
 	NodeRef createRootHierarchy(NodeRef dataListNodeRef, String value);
 	/**
 	 * <p>createHierarchy.</p>
