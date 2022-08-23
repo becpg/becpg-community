@@ -706,10 +706,14 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 
 							propDef = dictionaryService.getAssociation(fieldQname);
 
-							// only check assoc when lang is null
-							logger.debug("Checking if assoc is found");
-							if (associationService.getTargetAssoc(formulatedEntity.getNodeRef(), fieldQname) != null) {
-								present = true;
+							if (propDef == null) {
+								ignore = true;
+							} else {
+								// only check assoc when lang is null
+								logger.debug("Checking if assoc is found");
+								if (associationService.getTargetAssoc(formulatedEntity.getNodeRef(), fieldQname) != null) {
+									present = true;
+								}
 							}
 
 						} else {
