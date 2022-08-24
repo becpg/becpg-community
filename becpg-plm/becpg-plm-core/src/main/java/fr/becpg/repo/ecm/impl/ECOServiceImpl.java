@@ -965,6 +965,8 @@ public class ECOServiceImpl implements ECOService {
 		
 		Set<T> newItems = new HashSet<>();
 		
+		Set<T> toRemoveItems = new HashSet<>();
+		
 		for (T item : items) {
 			if (itemToWUsedData.containsKey(item)) {
 				WUsedListDataItem wUsedData = itemToWUsedData.get(item);
@@ -989,35 +991,36 @@ public class ECOServiceImpl implements ECOService {
 
 					for (ReplacementListDataItem replacement : ecoData.getReplacementList()) {
 						
-						if (!((replacement.getSourceItems() != null) && (replacement.getTargetItem() != null)
-								&& (replacement.getQtyPerc() != null) && (replacement.getSourceItems().size() == 1)
-								&& replacement.getSourceItems().contains(replacement.getTargetItem())
-								&& (replacement.getQtyPerc() == 100))) {
-							List<NodeRef> sourceItems = getSourceItems(ecoData, replacement);
-							
-							NodeRef target = null;
-							
-							if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
-								target = replacement.getSourceItems().get(0);
-							} else {
-								target = replacement.getTargetItem();
-							}
-							
-							if (sourceItems.contains(item.getComponent())) {
-								T newItem = applyToComponent(effectiveDate, item, replacement, target, wUsedData, isFuture);
-								
-								if (newItem != null) {
-									newItems.add(newItem);
-								}
-							}
+						List<NodeRef> sourceItems = getSourceItems(ecoData, replacement);
+						
+						NodeRef target = null;
+						
+						if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
+							target = replacement.getSourceItems().get(0);
+						} else {
+							target = replacement.getTargetItem();
 						}
 						
+						if (sourceItems.contains(item.getComponent())) {
+							
+							T newItem = createNewItem(item, replacement, target, wUsedData);
+							
+							newItems.add(newItem);
+							
+							if (isFuture) {
+								item.setEndEffectivity(effectiveDate);
+								newItem.setStartEffectivity(effectiveDate);
+							} else {
+								toRemoveItems.add(item);
+							}
+						}
 					}
 				}
 			}
 		}
 		
 		items.addAll(newItems);
+		items.removeAll(toRemoveItems);
 		
 	}
 
@@ -1068,7 +1071,7 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends CompositionDataItem> T applyToComponent(Date effectiveDate, T item, ReplacementListDataItem replacement, NodeRef target, WUsedListDataItem wUsedData, boolean isFuture) {
+	private <T extends CompositionDataItem> T createNewItem(T item, ReplacementListDataItem replacement, NodeRef target, WUsedListDataItem wUsedData) {
 		
 		Double newQuantity = wUsedData.getQty();
 		
@@ -1090,18 +1093,12 @@ public class ECOServiceImpl implements ECOService {
 			newLoss = replacement.getLoss();
 		}
 		
-		if (!isFuture) {
-			updateComponent(item, target, newQuantity, newLoss);
-			return null;
-		} else {
-			T origComponent = item;
-			T newCompoListDataItem = (T) origComponent.clone();
-			newCompoListDataItem.setNodeRef(null);
-			updateComponent(newCompoListDataItem, target, newQuantity, newLoss);
-			origComponent.setEndEffectivity(effectiveDate);
-			newCompoListDataItem.setStartEffectivity(effectiveDate);
-			return newCompoListDataItem;
-		}
+		T origComponent = item;
+		T newCompoListDataItem = (T) origComponent.clone();
+		newCompoListDataItem.setNodeRef(null);
+		updateComponent(newCompoListDataItem, target, newQuantity, newLoss);
+		
+		return newCompoListDataItem;
 	}
 
 	private boolean isFuture(Date effectiveDate) {
