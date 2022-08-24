@@ -2340,7 +2340,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		boolean shouldSkip = !((qtyPerc == null) || (toApplyThresholdItems.contains(nodeRef) && (qtyPerc > qtyPrecisionThreshold))
 				|| (!toApplyThresholdItems.contains(nodeRef) && (qtyPerc > 0)));
 
-		if (!shouldSkip) {
+		if (!shouldSkip && qtyPerc != null) {
 
 			Locale currentLocale = I18NUtil.getLocale();
 
