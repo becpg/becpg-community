@@ -916,7 +916,7 @@ span.nc,
     background-repeat: no-repeat
 }
 
-span.controlPlan
+span.controlPlan,
 .entity.qa-controlPlan,
 .entity.controlPlan
  {
@@ -933,7 +933,7 @@ span.productSpecification,
     padding-left: 20px;
     background-repeat: no-repeat
 }
-span.qualityControl
+span.qualityControl,
 .entity.qa-qualityControl,
 .entity.qualityControl {
     background-image: url("../../components/images/filetypes/generic-qualityControl-16.png") !important;
@@ -941,7 +941,7 @@ span.qualityControl
     background-repeat: no-repeat
 }
 
-span.batch
+span.batch,
 .entity.qa-batch,
 .entity.batch {
     background-image: url("../../components/images/filetypes/generic-batch-16.png") !important;
