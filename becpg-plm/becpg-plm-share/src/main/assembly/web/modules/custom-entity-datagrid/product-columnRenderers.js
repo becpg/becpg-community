@@ -208,9 +208,31 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 	});
 
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName: "cm:name",
+		renderer: function(oRecord, data, label, scope) {
+			
+			var type = oRecord.getData("itemType");
+			
+			if (type && type.split(":").length > 1) {
+				var metadata = type.split(":")[1];
+				
+				if (metadata) {
+					var entityUrl = beCPG.util.entityURL(oRecord.getData("siteId"), oRecord.getData("nodeRef"), type, null, "View-properties");
+					
+					if (entityUrl) {
+						return '<span class="' + metadata + '" ><a class="theme-color-1" href="' + entityUrl + '">' + Alfresco.util.encodeHTML(data.value) + '</a></span>';
+					}
+				}
+			}
+
+			return Alfresco.util.encodeHTML(data.value);
+		}
+
+	});
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName : [ "qa:clState","qa:slSampleState" ],
+		propertyName : [ "qa:clState","qa:slSampleState", "qa:qcState" ],
 		renderer : function(oRecord, data, label, scope) {
 			if(data.value!=null){
 				if(data.value=="Compliant"){
