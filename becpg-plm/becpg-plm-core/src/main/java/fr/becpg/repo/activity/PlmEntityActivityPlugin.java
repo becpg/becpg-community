@@ -1,11 +1,14 @@
 package fr.becpg.repo.activity;
 
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
+import fr.becpg.repo.activity.extractor.ActivityListExtractor;
+import fr.becpg.repo.activity.policy.EntityActivityPolicy;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
 /**
@@ -15,7 +18,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
  * @version $Id: $Id
  */
 @Service
-public class PlmEntityActivityPlugin extends DefaultEntityActivityPlugin implements EntityActivityPlugin {	
+public class PlmEntityActivityPlugin extends DefaultEntityActivityPlugin implements EntityActivityPlugin, InitializingBean {	
 	
 	@Autowired
 	EntityDictionaryService entityDictionaryService;
@@ -32,6 +35,12 @@ public class PlmEntityActivityPlugin extends DefaultEntityActivityPlugin impleme
 	public boolean isMatchingEntityType(QName entityType) {
 		
 		return entityDictionaryService.isSubClass(entityType, PLMModel.TYPE_PRODUCT) || PLMModel.TYPE_SUPPLIER.isMatch(entityType);
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		ActivityListExtractor.registerIgnoredType(PLMModel.PROP_ILL_LOG_VALUE);
+		EntityActivityPolicy.registerIngoredType(PLMModel.PROP_ILL_LOG_VALUE);
 	}
 
 
