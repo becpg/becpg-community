@@ -19,6 +19,7 @@
 package fr.becpg.repo.hierarchy.impl;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -104,6 +105,29 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return getLuceneQuery(path, null, BeCPGModel.PROP_LKV_VALUE, value, true).list();
 	}
 
+	@Override
+	public List<NodeRef> getAllHierarchiesByDepthLevel(String parentPath, String query, String depthLevel) {
+		
+		List<NodeRef> ret = new ArrayList<>();
+		
+		NodeRef parentNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), AbstractBeCPGQueryBuilder.encodePath(parentPath));
+
+		List<NodeRef> listContainers = BeCPGQueryBuilder.createQuery().ofType(ContentModel.TYPE_FOLDER).parent(parentNodeRef).list();
+
+		for (NodeRef listContainerNodeRef : listContainers) {
+			
+			BeCPGQueryBuilder luceneQuery = buildLuceneQuery(null, BeCPGModel.PROP_LKV_VALUE, query, true, listContainerNodeRef);
+		
+			if (depthLevel != null) {
+				luceneQuery = luceneQuery.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, depthLevel);
+			}
+			
+			ret.addAll(luceneQuery.list());
+		}
+		
+		return ret;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createRootHierarchy(NodeRef dataListNodeRef, String hierachy1) {
@@ -156,6 +180,10 @@ public class HierarchyServiceImpl implements HierarchyService {
 		NodeRef listContainerNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 				AbstractBeCPGQueryBuilder.encodePath(path));
 
+		return buildLuceneQuery(parentNodeRef, property, value, all, listContainerNodeRef);
+	}
+
+	private BeCPGQueryBuilder buildLuceneQuery(NodeRef parentNodeRef, QName property, String value, boolean all, NodeRef listContainerNodeRef) {
 		BeCPGQueryBuilder ret = BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_LINKED_VALUE).parent(listContainerNodeRef)
 				.maxResults(RepoConsts.MAX_SUGGESTIONS);
 
@@ -188,7 +216,6 @@ public class HierarchyServiceImpl implements HierarchyService {
 		} else {
 			ret.inDB();
 		}
-
 		return ret;
 	}
 
