@@ -69,7 +69,9 @@
 
                      toolBarInstance : null,
 
-                     formWidth : "34em"
+                     formWidth : "34em",
+                     
+                     edit: false
 
                   },
 
@@ -126,6 +128,7 @@
                         lazyloadmenu : false
                      });
 
+
                      this.widgets.createVariantButton = this.createYUIButton(this, "create-variant",
                            this.onCreateVariant);
 
@@ -135,6 +138,10 @@
                      
                      this.widgets.deleteVariantButton = this.createYUIButton(this, "delete-variant",
                            this.onDeleteVariant);
+                           
+					if(!this.options.edit){
+						Dom.setStyle(this.widgets.createVariantButton, 'display', 'none');
+					}     
 
                      Dom.setStyle(this.widgets.editVariantButton, 'display', 'none');
                      Dom.setStyle(this.widgets.duplicateVariantButton, 'display', 'none');
@@ -172,7 +179,10 @@
                         if ("all" === value || "common" === value) {
 
                            this.currentVariantNodeRef = null;
-                           Dom.setStyle(this.widgets.createVariantButton, 'display', '');
+                           
+                           if(this.options.edit){
+                           	Dom.setStyle(this.widgets.createVariantButton, 'display', '');
+                           }
                            Dom.setStyle(this.widgets.editVariantButton, 'display', 'none');
                            Dom.setStyle(this.widgets.duplicateVariantButton, 'display', 'none');
                            Dom.setStyle(this.widgets.deleteVariantButton, 'display', 'none');
@@ -185,7 +195,7 @@
                               YAHOO.Bubbling.fire("changeFilter", {
                                  filterOwner : this.id,
                                  filterId : "fts",
-                                 filterData : "ISNULL:bcpg\\:variantIds OR ISUNSET:bcpg\\:variantIds"
+                                 filterData : "ISNULL:bcpg\\:variantIds OR ISUNSET:bcpg\\:variantIds OR NOT EXISTS:bcpg\\:variantIds"
                               });
                            }
                         } else {
@@ -195,7 +205,7 @@
                                        {
                                           filterOwner : this.id,
                                           filterId : "fts",
-                                          filterData : "@bcpg\\:variantIds:\"" + p_oItem.value + "\" OR ISNULL:bcpg\\:variantIds OR ISUNSET:bcpg\\:variantIds"
+                                          filterData : "@bcpg\\:variantIds:\"" + p_oItem.value + "\" OR ISNULL:bcpg\\:variantIds OR ISUNSET:bcpg\\:variantIds OR NOT EXISTS:bcpg\\:variantIds"
                                        });
 
                            this.currentVariantNodeRef = p_oItem.value;
@@ -211,13 +221,17 @@
 							}
 
                            Dom.setStyle(this.widgets.createVariantButton, 'display', 'none');
-                           Dom.setStyle(this.widgets.editVariantButton, 'display', '');
-                           Dom.setStyle(this.widgets.duplicateVariantButton, 'display', '');
+                           if(this.options.edit){
+                           		Dom.setStyle(this.widgets.editVariantButton, 'display', '');
+                          	    Dom.setStyle(this.widgets.duplicateVariantButton, 'display', '');
+                           }
 								
 							if (currentVariant.isModelVariant && this.options.entity.nodeRef != currentVariant.variantParent) {
 	                           Dom.setStyle(this.widgets.deleteVariantButton, 'display', 'none');
 							} else {
-	                           Dom.setStyle(this.widgets.deleteVariantButton, 'display', '');
+							   if(this.options.edit){
+	                             Dom.setStyle(this.widgets.deleteVariantButton, 'display', '');
+	                           }
 							}
 							
                         }
