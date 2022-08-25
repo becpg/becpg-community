@@ -514,7 +514,7 @@
 					actionName: "variant-picker",
 					right: true,
 					evaluate: function(asset, entity) {
-						return entity != null && entity.userAccess.edit && (beCPG.util.contains(entity.aspects,
+						return entity != null && (beCPG.util.contains(entity.aspects,
 							"bcpg:entityVariantAspect") && (asset.name != null && (asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList")));
 
 					},
@@ -532,7 +532,8 @@
 							entityNodeRef: instance.options.entityNodeRef,
 							entity: instance.entity,
 							containerDiv: divEl,
-							toolBarInstance: instance
+							toolBarInstance: instance,
+							edit: instance.entity.userAccess.edit
 						});
 					}
 				});
