@@ -662,7 +662,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     private Locale getLocale( QName propertyQName) {
     	if(disabledMLTextFields!=null && !disabledMLTextFields.isBlank()
     			&& propertyQName!=null && disabledMLTextFields.contains(propertyQName.toPrefixString(namespaceService))){
-    		return I18NUtil.getLocale();
+    		return Locale.getDefault();
     	}
 		return I18NUtil.getContentLocale();
 	}
