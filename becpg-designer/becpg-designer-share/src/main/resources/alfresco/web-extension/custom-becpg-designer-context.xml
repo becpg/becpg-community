@@ -57,8 +57,8 @@
          </list>
       </property>
    </bean>
-
-	<!-- Custom webscript -->
+   
+     <!-- Custom webscript -->
 	 <bean id="webscript.org.alfresco.components.console.reload-config.get" parent="webscript" class="fr.becpg.repo.designer.web.scripts.ReloadConfigWebscript" >
 	 	<property name="configService" ref="web.config" />
 	 </bean>
@@ -73,13 +73,13 @@
 		<property name="configPath" value="${beCPG.designer.configPath}" />
 	</bean>
 
-	<bean id="evaluator.becpg.doclib.action.hasDesignerConfigAspect" parent="evaluator.doclib.action.hasAspect">
+	<bean id="evaluator.becpg.doclib.action.hasAnyDesignerAspect" parent="evaluator.doclib.action.hasAnyAspect">
 		<property name="aspects">
 			<list>
 				<value>dsg:configAspect</value>
+				<value>dsg:modelAspect</value>
 			</list>
 		</property>
 	</bean>
 	
-
 </beans>
