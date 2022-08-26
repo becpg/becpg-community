@@ -40,7 +40,7 @@ public class ProductCollectionFormulationHandler extends FormulationBaseHandler<
 		}
 
 		if (priceListItem.getPriceTaxIncl() != null) {
-			if (taxRate != null) {
+			if (taxRate != null && taxRate != 0) {
 				//Taux TVA (en %) x Prix TTC (en €) / (1 + Taux TVA (en %) )
 				Double price = (taxRate * priceListItem.getPriceTaxIncl()) / (1 + taxRate);
 
@@ -66,11 +66,12 @@ public class ProductCollectionFormulationHandler extends FormulationBaseHandler<
 		if ((priceListItem.getPrice() != null) && (priceListItem.getUnitTotalCost() != null)) {
 
 			// profitability
-			double profit = priceListItem.getPrice() - priceListItem.getUnitTotalCost();
-			Double profitabilityRatio = priceListItem.getPrice() / profit;
-
-			priceListItem.setProfitabilityRatio(profitabilityRatio);
-
+			Double profit = priceListItem.getPrice() - priceListItem.getUnitTotalCost();
+			if(profit!=0) {
+				Double profitabilityRatio = priceListItem.getPrice() / profit;
+	
+				priceListItem.setProfitabilityRatio(profitabilityRatio);
+			}
 		} else {
 			priceListItem.setProfitabilityRatio(null);
 		}
