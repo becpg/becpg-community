@@ -28,6 +28,7 @@ public class ResourceParamListItem  extends AbstractManualVariantListDataItem {
 	private NodeRef step;	
 	private NodeRef param;
 	private NodeRef resource;
+	private NodeRef product;
 	
 	
 	/**
@@ -128,6 +129,27 @@ public class ResourceParamListItem  extends AbstractManualVariantListDataItem {
 	
 	
 	/**
+	 * <p>Getter for the field <code>product</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	@AlfSingleAssoc
+	@AlfQname(qname = "mpm:rplProductRef")
+	public NodeRef getProduct() {
+		return product;
+	}
+
+	/**
+	 * <p>Setter for the field <code>product</code>.</p>
+	 *
+	 * @param product a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	public void setProduct(NodeRef product) {
+		this.product = product;
+	}
+
+	
+	/**
 	 * <p>Constructor for ResourceParamListItem.</p>
 	 */
 	public ResourceParamListItem() {
@@ -150,6 +172,7 @@ public class ResourceParamListItem  extends AbstractManualVariantListDataItem {
 		result = prime * result + ((paramType == null) ? 0 : paramType.hashCode());
 		result = prime * result + ((paramValue == null) ? 0 : paramValue.hashCode());
 		result = prime * result + ((resource == null) ? 0 : resource.hashCode());
+		result = prime * result + ((product == null) ? 0 : product.hashCode());
 		result = prime * result + ((step == null) ? 0 : step.hashCode());
 		return result;
 	}
@@ -182,6 +205,11 @@ public class ResourceParamListItem  extends AbstractManualVariantListDataItem {
 			if (other.resource != null)
 				return false;
 		} else if (!resource.equals(other.resource))
+			return false;
+		if (product == null) {
+			if (other.product != null)
+				return false;
+		} else if (!product.equals(other.product))
 			return false;
 		if (step == null) {
 			if (other.step != null)
