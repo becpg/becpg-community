@@ -780,6 +780,9 @@
 					<show id="qa:claimDescription" force="true"/>
 
 				</field-visibility>
+				<appearance>
+					<field id="cm:name" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -1174,6 +1177,9 @@
 					<show id="qa:batchStart" />
 					<show id="qa:batchComment" />
 				</field-visibility>
+				<appearance>
+					<field id="cm:name" read-only="true"/>
+				</appearance>
 			</form>
 		</forms>
 	</config>
