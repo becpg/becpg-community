@@ -127,10 +127,11 @@ public class FormulationHelper {
 			} else if (componentProductUnit.isVolume()) {
 				return FormulationHelper.getQtyWithLoss(qtyInL, lossPerc) * unitFactor;
 			} else if (componentProductUnit.isP()) {
+				Double nbP = componentProduct.getQty()!=null ? componentProduct.getQty() : 1d;
 				if ((!compoListUnit.isP()) && (componentNetWeight != null) && (componentNetWeight != 0)) {
-					return (FormulationHelper.getQtyWithLoss(qtyInKg, lossPerc) * unitFactor) / componentNetWeight;
+					return ((FormulationHelper.getQtyWithLoss(qtyInKg, lossPerc) * unitFactor) / componentNetWeight) * nbP;
 				} else {
-					return FormulationHelper.getQtyWithLossAndYield(qtySubFormula, lossPerc, yieldPerc) * unitFactor;
+					return (FormulationHelper.getQtyWithLossAndYield(qtySubFormula, lossPerc, yieldPerc) * unitFactor) * nbP;
 				}
 			}
 		}
