@@ -18,6 +18,7 @@
 package fr.becpg.repo.formulation.impl;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -26,6 +27,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -40,7 +42,10 @@ import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationChain;
 import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
+import fr.becpg.repo.formulation.ReportableEntity;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import io.opencensus.common.Scope;
 import io.opencensus.trace.AttributeValue;
 import io.opencensus.trace.Tracer;
@@ -57,6 +62,10 @@ import io.opencensus.trace.Tracing;
  * @version $Id: $Id
  */
 public class FormulationServiceImpl<T extends FormulatedEntity> implements FormulationService<T>, FormulationPlugin {
+
+	private static final String MESSAGE_FORMULATE_FAILURE_LOOP = "message.formulate.failure.loop";
+
+	private static final String MESSAGE_FORMULATE_FAILURE = "message.formulate.failure";
 
 	private AlfrescoRepository<T> alfrescoRepository;
 
@@ -99,6 +108,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		if (logger.isDebugEnabled()) {
 			logger.debug("Register  chain for: " + clazz.getName());
 		}
+		
 		Map<String, FormulationChain<T>> chains = formulationChains.get(clazz);
 		if (chains == null) {
 			chains = new HashMap<>();
@@ -159,7 +169,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 				watch = new StopWatch();
 				watch.start();
 			}
-
+			
 			entity = formulate(entity, chainId);
 
 			if (logger.isDebugEnabled() && (watch != null)) {
@@ -229,21 +239,34 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			}
 		} catch (Throwable e) {
 
-			 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-				 throw e;
-              }
-
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				throw e;
+			}
+			 
 			if (e instanceof FormulateException) {
-				throw (FormulateException) e;
+				
+				if (L2CacheSupport.isSilentModeEnable() && repositoryEntity instanceof ReportableEntity) {
+					MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORMULATE_FAILURE, repositoryEntity.getNodeRef());
+					((ReportableEntity) repositoryEntity).addError(message, chainId, Collections.emptyList());
+					((ReportableEntity) repositoryEntity).merge();
+				} else {
+					throw (FormulateException) e;
+				}
+			} else if (e instanceof StackOverflowError) {
+				if (L2CacheSupport.isSilentModeEnable() && repositoryEntity instanceof ReportableEntity) {
+					MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORMULATE_FAILURE_LOOP, repositoryEntity.getName(), repositoryEntity.getNodeRef());
+					((ReportableEntity) repositoryEntity).addError(message, chainId, Collections.emptyList());
+					((ReportableEntity) repositoryEntity).merge();
+				} else {
+					throw new FormulateException(I18NUtil.getMessage(MESSAGE_FORMULATE_FAILURE_LOOP, repositoryEntity.getName(), repositoryEntity.getNodeRef()), e);
+				}
+			} else if (L2CacheSupport.isSilentModeEnable() && repositoryEntity instanceof ReportableEntity) {
+				MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORMULATE_FAILURE, repositoryEntity.getNodeRef());
+				((ReportableEntity) repositoryEntity).addError(message, chainId, Collections.emptyList());
+				((ReportableEntity) repositoryEntity).merge();
+			} else {
+				throw new FormulateException(I18NUtil.getMessage(MESSAGE_FORMULATE_FAILURE, repositoryEntity != null ? repositoryEntity.getNodeRef() : null), e);
 			}
-
-			if (e instanceof StackOverflowError) {
-				throw new FormulateException(
-						I18NUtil.getMessage("message.formulate.failure.loop", repositoryEntity.getName(), repositoryEntity.getNodeRef()), e);
-			}
-
-			throw new FormulateException(
-					I18NUtil.getMessage("message.formulate.failure", repositoryEntity != null ? repositoryEntity.getNodeRef() : null), e);
 
 		}
 
