@@ -253,7 +253,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 	public void startNode(NodeRef entityNodeRef) {
 
 		for (FileToExtract fileMapping : fileToExtract) {
-			String key = fileMapping.path + entityNodeRef.toString();
+			String key = fileMapping.path + fileMapping.path + fileMapping.entityFilter + entityNodeRef.toString();
 
 			Set<NodeRef> toExtractNodes = cache.get(key);
 
