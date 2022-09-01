@@ -1,19 +1,16 @@
 package fr.becpg.repo.audit;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONObject;
 
-import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.impl.BeCPGAuditServiceImpl.AuditScopeBuilder;
+import fr.becpg.repo.audit.model.DatabaseAuditType;
 
 public interface BeCPGAuditService {
-
-	List<JSONObject> buildAuditStatistics(AuditType type, Integer maxResults, String sortBy, String filter);
-
-	int recordAuditEntry(AuditType type, Map<String, Serializable> auditValues, boolean updateEntry);
 	
-	int recordAuditEntry(AuditType type, Object auditModel, boolean updateEntry);
+	AuditScopeBuilder createAudit();
+
+	List<JSONObject> buildAuditStatistics(DatabaseAuditType type, Integer maxResults, String sortBy, String filter);
 
 }

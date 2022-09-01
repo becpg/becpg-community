@@ -6,8 +6,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.alfresco.repo.audit.AuditComponent;
 import org.alfresco.rest.api.Audit;
@@ -27,12 +31,24 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
-import fr.becpg.repo.audit.model.AuditType;
 
-public abstract class AbstractAuditPlugin implements AuditPlugin {
+public abstract class AbstractDatabaseAuditPlugin implements DatabaseAuditPlugin {
 	
-	protected static final String BECPG_AUDIT_PATH = "/becpg/audit";
+	private static final String ID = "id";
+	private static final String STARTED_AT = "startedAt";
+	private static final String COMPLETED_AT = "completedAt";
+	private static final String DURATION = "duration";
 	
+	private static final String BECPG_AUDIT_PATH = "/becpg/audit";
+	
+	protected static final Map<String, String> KEY_MAP = new HashMap<>();
+
+	static {
+		KEY_MAP.put(STARTED_AT, "date");
+		KEY_MAP.put(COMPLETED_AT, "date");
+		KEY_MAP.put(DURATION, "int");
+	}
+
 	private String whereClauseFormat;
 
 	@Autowired
@@ -43,47 +59,48 @@ public abstract class AbstractAuditPlugin implements AuditPlugin {
 	@Lazy
 	private Audit audit;
 	
-	protected abstract Map<String, String> getStatisticsKeyMap();
-
 	protected abstract String getAuditApplicationId();
 
 	protected abstract String getAuditApplicationPath();
 	
-	protected abstract int createHashCode(Map<String, Serializable> auditValues);
-
-	protected Map<String, Serializable> extractModelValues(Object auditModel) {
-		throw new BeCPGAuditException("Not implemented yet");
-	}
-
 	@Override
-	public int recordAuditEntry(AuditType type, Object auditModel, boolean updateEntry) {
-		return recordAuditEntry(extractModelValues(auditModel), updateEntry);
-	}
-	
-	@Override
-	public int recordAuditEntry(Map<String, Serializable> auditValues, boolean updateEntry) {
+	public int recordAuditEntry(Map<String, Serializable> auditValues, boolean open) {
 		
-		int hashCode = createHashCode(auditValues);
-		
-		auditValues.put(getAuditApplicationPath() + "/hashCode", hashCode);
+		Integer id = null;
 		
 		AuditEntry entryToDelete = null;
 
-		if (updateEntry) {
-			Collection<AuditEntry> entries = listAuditEntries(10, "hashCode=" + hashCode);
+		if (open) {
+			
+			auditValues.put(STARTED_AT, new Date());
+			
+			id = Objects.hash(auditValues);
+			auditValues.put(ID, id);
+		} else {
+			
+			id = (int) auditValues.get(ID);
+			Date end = new Date();
+			
+			auditValues.put(COMPLETED_AT, end);
+			
+			Date start = (Date) auditValues.get(STARTED_AT);
+			
+			auditValues.put(DURATION, end.getTime() - start.getTime());
+
+			Collection<AuditEntry> entries = listAuditEntries(10, "id=" + id);
 			
 			if (!entries.isEmpty()) {
 				entryToDelete = entries.iterator().next();
 			}
 		}
 		
-		auditComponent.recordAuditValues(BECPG_AUDIT_PATH, auditValues);
+		auditComponent.recordAuditValues(BECPG_AUDIT_PATH, recreateAuditMap(auditValues));
 		
 		if (entryToDelete != null) {
 			auditComponent.deleteAuditEntries(Arrays.asList(entryToDelete.getId()));
 		}
 
-		return hashCode;
+		return id;
 	}
 	
 	@Override
@@ -115,7 +132,22 @@ public abstract class AbstractAuditPlugin implements AuditPlugin {
 		return statistics;
 		
 	}
-	
+
+	private Map<String, Serializable> recreateAuditMap(Map<String, Serializable> auditValues) {
+		
+		Map<String, Serializable> auditMap = new HashMap<>();
+		
+		for (Entry<String, Serializable> entry : auditValues.entrySet()) {
+			auditMap.put(getAuditApplicationPath() + "/" + entry.getKey(), entry.getValue());
+		}
+		
+		return auditMap;
+	}
+
+	private Map<String, String> getStatisticsKeyMap() {
+		return KEY_MAP;
+	}
+
 	private Collection<AuditEntry> listAuditEntries(int maxResults, String filter) {
 		
 		String whereClause = buildWhereClause(filter);
@@ -188,8 +220,8 @@ public abstract class AbstractAuditPlugin implements AuditPlugin {
 			
 			try {
 				
-				Comparable field1 = (Comparable) o1.get(comparisonFieldName);
-				Comparable field2 = (Comparable) o2.get(comparisonFieldName);
+				Comparable field1 = o1.has(comparisonFieldName) ? (Comparable) o1.get(comparisonFieldName) : null;
+				Comparable field2 = o2.has(comparisonFieldName) ? (Comparable) o2.get(comparisonFieldName) : null;
 				
 				if (field1 == null && field2 == null) {
 					return 0;
@@ -198,7 +230,7 @@ public abstract class AbstractAuditPlugin implements AuditPlugin {
 				if (field1 != null) {
 					
 					if (field2 == null) {
-						return ((Comparable<?>) field1).compareTo(null);
+						return 1;
 					}
 					
 					if ("int".equals(getStatisticsKeyMap().get(comparisonFieldName))) {
@@ -210,7 +242,7 @@ public abstract class AbstractAuditPlugin implements AuditPlugin {
 					return field1.compareTo(field2);
 				}
 				
-				return field2.compareTo(field1);
+				return -1;
 				
 			} catch (Exception e) {
 				throw new BeCPGAuditException("Error while comparing fields : " + e.getMessage());
