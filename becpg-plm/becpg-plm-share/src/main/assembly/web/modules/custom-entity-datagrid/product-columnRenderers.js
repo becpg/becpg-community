@@ -103,6 +103,8 @@ if (beCPG.module.EntityDataGridRenderers) {
                 return '<span class="red">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
             } else if("suitable" === data.value){
             	return '<span class="blue">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+            }else if("certified" === data.value){
+            	return '<span class="green">' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
             }
             return Alfresco.util.encodeHTML(data.displayValue);
         }
