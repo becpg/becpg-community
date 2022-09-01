@@ -642,7 +642,7 @@ public class EntityTplServiceImpl implements EntityTplService {
 						logger.debug("Formulate : " + entityNodeRef);
 					}
 					formulationService.formulate(entityNodeRef);
-				}, false, true);
+				}, false, true, true);
 
 			}
 		};
