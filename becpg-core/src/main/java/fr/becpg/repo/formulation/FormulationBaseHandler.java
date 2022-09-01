@@ -72,4 +72,11 @@ public abstract class FormulationBaseHandler<T> implements FormulationHandler<T>
             nextHandler.start(context);
         }
     }
+    
+    @Override
+    public void onError(T repositoryEntity) {
+    	if (nextHandler != null) {
+    		nextHandler.onError(repositoryEntity);
+    	}
+    }
 }
