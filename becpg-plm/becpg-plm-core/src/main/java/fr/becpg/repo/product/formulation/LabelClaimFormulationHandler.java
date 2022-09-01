@@ -2,12 +2,10 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -139,9 +137,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		
-		
-		
-		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
+	
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
 			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -167,8 +163,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						if (!LabelClaimListDataItem.VALUE_CERTIFIED.equals(labelClaimItem.getLabelClaimValue())) {
 							labelClaimItem.setLabelClaimValue(null);
 						}
-						labelClaimItem.setPercentApplicable(0d);
-						labelClaimItem.setPercentClaim(0d);
+						labelClaimItem.setPercentApplicable(null);
+						labelClaimItem.setPercentClaim(null);
 					}
 
 				});
@@ -186,7 +182,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						if (! partProduct.isLocalSemiFinished() && partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
 
-								visitPart(productData, partProduct, qtyUsed , netQty, labelClaim, errors);
+								visitPart(productData, partProduct, qtyUsed , netQty, labelClaim);
 
 							}
 						}
@@ -201,6 +197,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		return true;
 	}
 
+	
 	
 
 	private Set<ProductSpecificationData> extractSpecifications(List<ProductSpecificationData> specifications) {
@@ -265,7 +262,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		}
 	}
 
-	private void visitPart(ProductData productData, ProductData partProduct, Double qtyUsed, Double netQty, LabelClaimListDataItem subLabelClaimItem, Map<String, ReqCtrlListDataItem> errors) {
+	private void visitPart(ProductData productData, ProductData partProduct, Double qtyUsed, Double netQty, LabelClaimListDataItem subLabelClaimItem) {
 		for (LabelClaimListDataItem labelClaimItem : productData.getLabelClaimList()) {
 			
 			if (((labelClaimItem.getIsManual() == null) || !Boolean.TRUE.equals(labelClaimItem.getIsManual()))
@@ -380,26 +377,23 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					}
 					
 				} else {
-					String message = I18NUtil.getMessage(MESSAGE_NULL_PERC, extractName(subLabelClaimItem.getLabelClaim()));
-					ReqCtrlListDataItem error = errors.get(message);
-					
-					if(qtyUsed!=null) {
+						
+					if(percApplicable!=null && qtyUsed!=null) {
 						
 						Double value = percApplicable * qtyUsed;
 						if ((netQty != null) && (netQty != 0d)) {
 							value = value / netQty;
 						}
-						
-						value += labelClaimItem.getPercentApplicable();
+						if(labelClaimItem.getPercentApplicable()!=null) {
+							value += labelClaimItem.getPercentApplicable();
+						}
 
 						labelClaimItem.setPercentApplicable(value);
 						
 					}
 					
-					if (percClaim!=null && qtyUsed!=null && ((labelClaimItem.getPercentClaim() != null) || (error == null))) {
-						if (labelClaimItem.getPercentClaim() == null) {
-							labelClaimItem.setPercentClaim(0d);
-						}
+					if (percClaim!=null && qtyUsed!=null) {
+						
 
 						Double value = percClaim * qtyUsed;
 						if ((netQty != null) && (netQty != 0d)) {
@@ -411,49 +405,14 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 									+ percClaim + "% * " + qtyUsed + " / " + netQty + "(=" + value + " ) kg to "
 									+ labelClaimItem.getPercentClaim());
 						}
-
-						value += labelClaimItem.getPercentClaim();
+						if(labelClaimItem.getPercentClaim()!=null) {
+							value += labelClaimItem.getPercentClaim();
+						}
 
 						labelClaimItem.setPercentClaim(value);
 
-					} else {
-
-						Double regulatoryThreshold = (Double) nodeService.getProperty(subLabelClaimItem.getLabelClaim(),
-								PLMModel.PROP_CLAIM_REGULATORY_THRESHOLD);
-
-						if (error != null) {
-							if ((subLabelClaimItem.getPercentClaim() == null) || (qtyUsed == null)) {
-								if (!error.getSources().contains(partProduct.getNodeRef())) {
-									error.getSources().add(partProduct.getNodeRef());
-								}
-							}
-						} else {
-							List<NodeRef> sourceNodeRefs = new ArrayList<>();
-							sourceNodeRefs.add(partProduct.getNodeRef());
-
-							error = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-									MLTextHelper.getI18NMessage(MESSAGE_NULL_PERC,
-											mlNodeService.getProperty(subLabelClaimItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME)),
-									subLabelClaimItem.getLabelClaim(), sourceNodeRefs, RequirementDataType.Labelclaim);
-							errors.put(message, error);
-
-							if (regulatoryThreshold != null) {
-								if (logger.isDebugEnabled()) {
-									logger.debug("Adding labelClaim error " + error.toString());
-								}
-
-								//ret.add(error);
-							}
-						}
+					} 
 						
-						
-						if (regulatoryThreshold == null) {
-							// Reset
-							labelClaimItem.setPercentClaim(null);
-						} else if (labelClaimItem.getPercentClaim() == null) {
-							labelClaimItem.setPercentClaim(0d);
-						}
-					}
 
 				}
 
