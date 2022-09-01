@@ -73,6 +73,8 @@ public interface ListValueService {
 
 	/** Constant <code>PROP_EXCLUDE_PROPS="excludeProps"</code> */
 	String PROP_EXCLUDE_PROPS = "excludeProps";
+
+	String PROP_AND_PROPS = "andProps";
 	
 	
 	/**

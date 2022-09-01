@@ -341,6 +341,7 @@ public interface PLMModel {
 	/** Constant <code>ASSOC_LCL_MISSING_LABELCLAIMS</code> */
 	QName ASSOC_LCL_MISSING_LABELCLAIMS = QName.createQName(BeCPGModel.BECPG_URI, "lclMissingLabelClaims");
 	
+	
 	// allergen
 	/** Constant <code>TYPE_ALLERGEN</code> */
 	QName TYPE_ALLERGEN = QName.createQName(BeCPGModel.BECPG_URI, "allergen");
@@ -582,6 +583,8 @@ public interface PLMModel {
 	QName PROP_LABEL_CLAIM_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimType");
 	/** Constant <code>PROP_LABEL_CLAIM_FORMULA</code> */
 	QName PROP_LABEL_CLAIM_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "labelClaimFormula");
+	
+	QName PROP_CLAIM_REGULATORY_THRESHOLD =  QName.createQName(BeCPGModel.BECPG_URI, "labelClaimRegulatoryThreshold");
 
 	// storageConditions
 	/** Constant <code>TYPE_STORAGE_CONDITIONS</code> */
@@ -687,5 +690,6 @@ public interface PLMModel {
 	QName PROP_GLOP_TARGET =  QName.createQName(BeCPGModel.BECPG_URI, "glopTarget");
 	
 	QName PROP_GLOP_VALUE =  QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
+
 	
 }

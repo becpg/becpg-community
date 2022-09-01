@@ -56,11 +56,14 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 	public static final String VALUE_NA = "na";
 	/** Constant <code>VALUE_SUITABLE="suitable"</code> */
 	public static final String VALUE_SUITABLE = "suitable";
-	
+	/** Constant <code>VALUE_SUITABLE="suitable"</code> */
+	public static final String VALUE_CERTIFIED = "certified";
 	
 	private NodeRef labelClaim;
 	private String type;
 	private String labelClaimValue;
+	private Double percentClaim;
+	private Double percentApplicable;
 	private Boolean isFormulated;
 	private String errorLog;
 	private List<NodeRef> missingLabelClaims = new ArrayList<>();
@@ -124,13 +127,32 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 		this.labelClaimValue = labelClaimValue;
 	}
 	
+	
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:lclPercentClaim")
+	public Double getPercentClaim() {
+		return percentClaim;
+	}
+	public void setPercentClaim(Double percentClaim) {
+		this.percentClaim = percentClaim;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:lclPercentApplicable")
+	public Double getPercentApplicable() {
+		return percentApplicable;
+	}
+	public void setPercentApplicable(Double percentApplicable) {
+		this.percentApplicable = percentApplicable;
+	}
 	/**
 	 * <p>getIsClaimed.</p>
 	 *
 	 * @return a {@link java.lang.Boolean} object.
 	 */
 	public Boolean getIsClaimed() {
-		return VALUE_TRUE.equals(labelClaimValue);
+		return VALUE_TRUE.equals(labelClaimValue) || VALUE_CERTIFIED.equals(labelClaimValue);
 	}
 	
 	/**
@@ -251,7 +273,8 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(errorLog, isFormulated, labelClaim, labelClaimValue, missingLabelClaims, type);
+		result = prime * result
+				+ Objects.hash(errorLog, isFormulated, labelClaim, labelClaimValue, missingLabelClaims, percentApplicable, percentClaim, type);
 		return result;
 	}
 	@Override
@@ -265,7 +288,8 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 		LabelClaimListDataItem other = (LabelClaimListDataItem) obj;
 		return Objects.equals(errorLog, other.errorLog) && Objects.equals(isFormulated, other.isFormulated)
 				&& Objects.equals(labelClaim, other.labelClaim) && Objects.equals(labelClaimValue, other.labelClaimValue)
-				&& Objects.equals(missingLabelClaims, other.missingLabelClaims) && Objects.equals(type, other.type);
+				&& Objects.equals(missingLabelClaims, other.missingLabelClaims) && Objects.equals(percentApplicable, other.percentApplicable)
+				&& Objects.equals(percentClaim, other.percentClaim) && Objects.equals(type, other.type);
 	}
 	
 	/** {@inheritDoc} */
