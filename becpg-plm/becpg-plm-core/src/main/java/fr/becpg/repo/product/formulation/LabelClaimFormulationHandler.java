@@ -2,10 +2,12 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -51,6 +53,11 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 	/** Constant <code>MESSAGE_LABELCLAIM_ERROR="message.formulate.labelClaim.error"</code> */
 	public static final String MESSAGE_LABELCLAIM_ERROR = "message.formulate.labelClaim.error";
+	
+
+	/** Constant <code>MESSAGE_NULL_PERC="message.formulate.allergen.error.nullQt"{trunked}</code> */
+	public static final String MESSAGE_NULL_PERC = "message.formulate.labelClaim.error.nullQtyPerc";
+
 
 	private NodeService nodeService;
 
@@ -131,42 +138,58 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		ExpressionParser parser = formulaService.getSpelParser();
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
+		
+		
+		
+		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
+
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
 			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-		
-		
-				Set<NodeRef> resetedClaim = new HashSet<>();
 
-				productData.getLabelClaimList().forEach(l -> {
+				Double netQty = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
+				
+			
+				productData.getLabelClaimList().forEach(labelClaimItem -> {
 
-					l.getMissingLabelClaims().clear();
+					labelClaimItem.getMissingLabelClaims().clear();
 
-					l.setType((String) nodeService.getProperty(l.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_TYPE));
+					labelClaimItem.setType((String) nodeService.getProperty(labelClaimItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_TYPE));
 
-					Boolean isManual = (Boolean) nodeService.getProperty(l.getLabelClaim(), BeCPGModel.PROP_IS_MANUAL_LISTITEM);
+					Boolean isManual = (Boolean) nodeService.getProperty(labelClaimItem.getLabelClaim(), BeCPGModel.PROP_IS_MANUAL_LISTITEM);
 
 					if ((isManual != null) && isManual) {
-						l.setIsManual(true);
+						labelClaimItem.setIsManual(true);
+					}
+					
+					if((labelClaimItem.getIsManual() == null) || !Boolean.TRUE.equals(labelClaimItem.getIsManual())){
+					
+						if (!LabelClaimListDataItem.VALUE_CERTIFIED.equals(labelClaimItem.getLabelClaimValue())) {
+							labelClaimItem.setLabelClaimValue(null);
+						}
+						labelClaimItem.setPercentApplicable(0d);
+						labelClaimItem.setPercentClaim(0d);
 					}
 
 				});
 
-				Set<NodeRef> visitedProducts = new HashSet<>();
 
 				for (CompoListDataItem compoItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					
 
 					NodeRef part = compoItem.getProduct();
-					if (!visitedProducts.contains(part) && (compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
+					if ( (compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
 						ProductData partProduct = alfrescoRepository.findOne(part);
-						if (partProduct.getLabelClaimList() != null) {
+						
+						Double qtyUsed = FormulationHelper.getQtyInKg(compoItem);
+						
+						if (! partProduct.isLocalSemiFinished() && partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
 
-								visitPart(productData, partProduct, labelClaim, resetedClaim);
+								visitPart(productData, partProduct, qtyUsed , netQty, labelClaim, errors);
 
 							}
 						}
-						visitedProducts.add(part);
 					}
 				}
 			}
@@ -177,6 +200,8 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 		return true;
 	}
+
+	
 
 	private Set<ProductSpecificationData> extractSpecifications(List<ProductSpecificationData> specifications) {
 
@@ -240,50 +265,68 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		}
 	}
 
-	private void visitPart(ProductData productData, ProductData partProduct, LabelClaimListDataItem subLabelClaimItem, Set<NodeRef> resetedClaim) {
+	private void visitPart(ProductData productData, ProductData partProduct, Double qtyUsed, Double netQty, LabelClaimListDataItem subLabelClaimItem, Map<String, ReqCtrlListDataItem> errors) {
 		for (LabelClaimListDataItem labelClaimItem : productData.getLabelClaimList()) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Visiting labelClaim " + extractName(labelClaimItem.getLabelClaim()) + " isManual: " + labelClaimItem.getIsManual()
-						+ " equals to subLabelClaimItem: " + subLabelClaimItem.equals(labelClaimItem));
-			}
-			if (((labelClaimItem.getIsManual() == null) || !labelClaimItem.getIsManual())
+			
+			if (((labelClaimItem.getIsManual() == null) || !Boolean.TRUE.equals(labelClaimItem.getIsManual()))
 					&& ((labelClaimItem.getLabelClaim() != null) && labelClaimItem.getLabelClaim().equals(subLabelClaimItem.getLabelClaim()))) {
 
-				if (!resetedClaim.contains(labelClaimItem.getLabelClaim())) {
-
-					if ((labelClaimItem.getIsManual() == null) || !labelClaimItem.getIsManual()) {
-						labelClaimItem.setLabelClaimValue(null);
-					}
-
-					resetedClaim.add(labelClaimItem.getLabelClaim());
+				if (logger.isDebugEnabled()) {
+					logger.debug("Visiting labelClaim " + extractName(labelClaimItem.getLabelClaim()) + " isManual: " + labelClaimItem.getIsManual()
+							+ " equals to subLabelClaimItem: " + subLabelClaimItem.equals(labelClaimItem));
 				}
+				
+				Double percApplicable = subLabelClaimItem.getPercentApplicable();
 
+				if(percApplicable == null) {
+					percApplicable = 100d;
+				}
+				
+				Double percClaim = subLabelClaimItem.getPercentClaim();
+				
+				
 				if (subLabelClaimItem.getLabelClaimValue() != null) {
 					switch (subLabelClaimItem.getLabelClaimValue()) {
 					case LabelClaimListDataItem.VALUE_TRUE:
+					case LabelClaimListDataItem.VALUE_CERTIFIED:	
 						if ((labelClaimItem.getLabelClaimValue() == null)
-								|| LabelClaimListDataItem.VALUE_NA.toString().equals(labelClaimItem.getLabelClaimValue())) {
+								|| LabelClaimListDataItem.VALUE_NA.equals(labelClaimItem.getLabelClaimValue())) {
 							labelClaimItem.setIsClaimed(true);
 						}
+					
+						if(percClaim == null) {
+							percClaim = 100d;
+						}
+						
 						break;
 					case LabelClaimListDataItem.VALUE_NA:
 						if (labelClaimItem.getLabelClaimValue() == null) {
 							labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_NA);
 						}
+						
+						percApplicable = 0d;
+						percClaim = 0d;
+						
 						break;
 					case LabelClaimListDataItem.VALUE_SUITABLE:
-						if (labelClaimItem.getIsClaimed() || (labelClaimItem.getLabelClaimValue() == null)
-								|| LabelClaimListDataItem.VALUE_NA.toString().equals(labelClaimItem.getLabelClaimValue())) {
+						if (Boolean.TRUE.equals(labelClaimItem.getIsClaimed() || (labelClaimItem.getLabelClaimValue() == null))
+								|| LabelClaimListDataItem.VALUE_NA.equals(labelClaimItem.getLabelClaimValue())) {
 							labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_SUITABLE);
 						}
+						
+						if(percClaim == null) {
+							percClaim = 100d;
+						}
+						
 						break;
 					case LabelClaimListDataItem.VALUE_FALSE:
 						if ((labelClaimItem.getLabelClaimValue() == null) || !labelClaimItem.getLabelClaimValue().isEmpty()) {
 							labelClaimItem.setIsClaimed(false);
 						}
-						if ((labelClaimItem.getIsFormulated() == null) || !labelClaimItem.getIsFormulated()) {
+						if ( !Boolean.TRUE.equals(labelClaimItem.getIsFormulated())) {
 							addMissingLabelClaims(partProduct, labelClaimItem);
 						}
+						percClaim = 0d;
 
 						break;
 					case LabelClaimListDataItem.VALUE_EMPTY:
@@ -292,10 +335,12 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 							logger.debug("case empty/default for " + extractName(subLabelClaimItem.getLabelClaim()) + " (value is: \""
 									+ subLabelClaimItem.getLabelClaimValue() + "\")");
 						}
-						if (!labelClaimItem.getIsFormulated()) {
+						if ( !Boolean.TRUE.equals(labelClaimItem.getIsFormulated())) {
 							addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
 							addMissingLabelClaims(partProduct, labelClaimItem);
 						}
+						
+						percClaim = 0d;
 
 						labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 						break;
@@ -304,8 +349,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					if (logger.isDebugEnabled()) {
 						logger.debug(extractName(subLabelClaimItem.getLabelClaim()) + " has null label claim value");
 					}
-
-					if ((labelClaimItem.getIsFormulated() == null) || !labelClaimItem.getIsFormulated()) {
+					percClaim = 0d;
+					
+					if ( !Boolean.TRUE.equals(labelClaimItem.getIsFormulated())) {
 						addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
 						addMissingLabelClaims(partProduct, labelClaimItem);
 
@@ -313,13 +359,115 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 					labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
 				}
+				
+				
+				
+				// Add qty
+				if (productData.isGeneric()) {
+					// Generic raw material
+					if (subLabelClaimItem.getPercentClaim() != null) {
+						if ((labelClaimItem.getPercentClaim() == null)
+								|| (labelClaimItem.getPercentClaim() > subLabelClaimItem.getPercentClaim())) {
+							labelClaimItem.setPercentClaim(subLabelClaimItem.getPercentClaim());
+						}
+					}
+					
+					if (subLabelClaimItem.getPercentApplicable() != null) {
+						if ((labelClaimItem.getPercentApplicable() == null)
+								|| (labelClaimItem.getPercentApplicable() < subLabelClaimItem.getPercentApplicable())) {
+							labelClaimItem.setPercentApplicable(subLabelClaimItem.getPercentApplicable());
+						}
+					}
+					
+				} else {
+					String message = I18NUtil.getMessage(MESSAGE_NULL_PERC, extractName(subLabelClaimItem.getLabelClaim()));
+					ReqCtrlListDataItem error = errors.get(message);
+					
+					if(qtyUsed!=null) {
+						
+						Double value = percApplicable * qtyUsed;
+						if ((netQty != null) && (netQty != 0d)) {
+							value = value / netQty;
+						}
+						
+						value += labelClaimItem.getPercentApplicable();
+
+						labelClaimItem.setPercentApplicable(value);
+						
+					}
+					
+					if (percClaim!=null && qtyUsed!=null && ((labelClaimItem.getPercentClaim() != null) || (error == null))) {
+						if (labelClaimItem.getPercentClaim() == null) {
+							labelClaimItem.setPercentClaim(0d);
+						}
+
+						Double value = percClaim * qtyUsed;
+						if ((netQty != null) && (netQty != 0d)) {
+							value = value / netQty;
+						}
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Add " + extractName(subLabelClaimItem.getLabelClaim()) + "[" + partProduct.getName() + "] - "
+									+ percClaim + "% * " + qtyUsed + " / " + netQty + "(=" + value + " ) kg to "
+									+ labelClaimItem.getPercentClaim());
+						}
+
+						value += labelClaimItem.getPercentClaim();
+
+						labelClaimItem.setPercentClaim(value);
+
+					} else {
+
+						Double regulatoryThreshold = (Double) nodeService.getProperty(subLabelClaimItem.getLabelClaim(),
+								PLMModel.PROP_CLAIM_REGULATORY_THRESHOLD);
+
+						if (error != null) {
+							if ((subLabelClaimItem.getPercentClaim() == null) || (qtyUsed == null)) {
+								if (!error.getSources().contains(partProduct.getNodeRef())) {
+									error.getSources().add(partProduct.getNodeRef());
+								}
+							}
+						} else {
+							List<NodeRef> sourceNodeRefs = new ArrayList<>();
+							sourceNodeRefs.add(partProduct.getNodeRef());
+
+							error = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+									MLTextHelper.getI18NMessage(MESSAGE_NULL_PERC,
+											mlNodeService.getProperty(subLabelClaimItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME)),
+									subLabelClaimItem.getLabelClaim(), sourceNodeRefs, RequirementDataType.Labelclaim);
+							errors.put(message, error);
+
+							if (regulatoryThreshold != null) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("Adding labelClaim error " + error.toString());
+								}
+
+								//ret.add(error);
+							}
+						}
+						
+						
+						if (regulatoryThreshold == null) {
+							// Reset
+							labelClaimItem.setPercentClaim(null);
+						} else if (labelClaimItem.getPercentClaim() == null) {
+							labelClaimItem.setPercentClaim(0d);
+						}
+					}
+
+				}
+
+				
+				
 			}
 		}
 	}
 
 	private void addMissingLabelClaims(ProductData partProduct, LabelClaimListDataItem labelClaimItem) {
 		if(!labelClaimItem.getMissingLabelClaims().contains(partProduct.getNodeRef())) {
-			logger.debug("Adding part " + partProduct.getName() + " (" + partProduct.getNodeRef() + ") to missing list");
+			if(logger.isDebugEnabled()) {
+				logger.debug("Adding part " + partProduct.getName() + " (" + partProduct.getNodeRef() + ") to missing list");
+			}
 			labelClaimItem.getMissingLabelClaims().add(partProduct.getNodeRef());
 			List<LabelClaimListDataItem> partMatchingLclItems = getLclItemFromProduct(partProduct, labelClaimItem.getLabelClaim());
 			for (LabelClaimListDataItem matchingLclItem : partMatchingLclItems) {

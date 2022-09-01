@@ -515,6 +515,7 @@
 					<value>na</value>
 					<value>suitable</value>
 					<value>true</value>
+					<value>certified</value>
 					<value>false</value>
 				</list>
 			</parameter>
@@ -1978,16 +1979,7 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:ingListIsGMO">
-					<type>d:boolean</type>
-					<mandatory enforced="true">true</mandatory>
-					<default>false</default>
-				</property>
-				<property name="bcpg:ingListIsIonized">
-					<type>d:boolean</type>
-					<mandatory enforced="true">true</mandatory>
-					<default>false</default>
-				</property>
+			
 				<property name="bcpg:ingListIsProcessingAid">
 					<type>d:boolean</type>
 					<mandatory enforced="true">true</mandatory>
@@ -2005,6 +1997,18 @@
 					<constraints>
 						<constraint ref="bcpg:declarationTypes" />
 					</constraints>
+				</property>
+				
+				<!-- Deprecated -->
+				<property name="bcpg:ingListIsGMO">
+					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
+				</property>
+				<property name="bcpg:ingListIsIonized">
+					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
 				</property>
 			</properties>
 			<associations>
@@ -2048,6 +2052,17 @@
 					</source>
 					<target>
 						<class>bcpg:bioOrigin</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:ingListClaims">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:labelClaim</class>
 						<mandatory>false</mandatory>
 						<many>true</many>
 					</target>
@@ -2536,6 +2551,14 @@
 						<constraint ref="bcpg:labelClaimValues"></constraint>
 					</constraints>
 				</property>
+				<property name="bcpg:lclPercentClaim">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:lclPercentApplicable">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:lclComments">
 					<type>d:text</type>
 					<index enabled="false" />
@@ -2558,6 +2581,17 @@
 					<target>
 						<class>bcpg:labelClaim</class>
 						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:lclCertification">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:certification</class>
+						<mandatory>false</mandatory>
 						<many>false</many>
 					</target>
 				</association>
@@ -2661,6 +2695,10 @@
 				</property>
 				<property name="bcpg:labelClaimFormula">
 					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:labelClaimRegulatoryThreshold">
+					<type>d:double</type>
 					<index enabled="false" />
 				</property>
 			</properties>

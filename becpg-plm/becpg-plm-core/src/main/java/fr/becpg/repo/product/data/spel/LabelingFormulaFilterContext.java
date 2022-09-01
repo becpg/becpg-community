@@ -19,12 +19,16 @@ package fr.becpg.repo.product.data.spel;
 
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+
 import fr.becpg.repo.formulation.spel.DataListItemSpelContext;
 import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
  * <p>DeclarationFilterContext class.</p>
@@ -79,6 +83,32 @@ public class LabelingFormulaFilterContext extends DataListItemSpelContext<Produc
 
 	public IngTypeItem getIngTypeItem() {
 		return ingTypeItem;
+	}
+	
+	/**
+	 * Spel Helper do not remove
+	 * @param claimNodeRefStr
+	 * @return Check for claim on ingredient or product 
+	 */
+	public boolean isClaimed(String claimNodeRefStr) {
+		return isClaimed(new NodeRef(claimNodeRefStr));
+	}
+
+	public boolean isClaimed(NodeRef claimNodeRef) {
+		if (ingListDataItem != null) {
+			return (ingListDataItem.getClaims() != null) && ingListDataItem.getClaims().contains(claimNodeRef);
+		}
+
+		RepositoryEntity entity = getDataListItemEntity();
+
+		if (entity instanceof ProductData) {
+			for (LabelClaimListDataItem claim : ((ProductData) entity).getLabelClaimList()) {
+				if (claim.getLabelClaim().equals(claimNodeRef)) {
+					return claim.getIsClaimed();
+				}
+			}
+		}
+		return false;
 	}
 
 	/** {@inheritDoc} */

@@ -64,6 +64,8 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	private List<NodeRef> bioOrigin = new LinkedList<>();
 	
+	private List<NodeRef> claims = new LinkedList<>();
+	
 	private Boolean isGMO = false;
 	
 	private Boolean isIonized = false;	
@@ -239,6 +241,18 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	 */
 	public void setBioOrigin(List<NodeRef> bioOrigin) {
 		this.bioOrigin = bioOrigin;
+	}
+
+	
+	
+	@AlfMultiAssoc
+	@AlfQname(qname="bcpg:ingListClaims")
+	public List<NodeRef> getClaims() {
+		return claims;
+	}
+
+	public void setClaims(List<NodeRef> claims) {
+		this.claims = claims;
 	}
 
 	/**
@@ -525,11 +539,11 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	 * @param i a {@link fr.becpg.repo.product.data.productList.IngListDataItem} object.
 	 */
 	public IngListDataItem(IngListDataItem i){
-		
 		setNodeRef(i.getNodeRef());
 		setQtyPerc(i.getQtyPerc());
 		setGeoOrigin(i.getGeoOrigin());
 		setBioOrigin(i.getBioOrigin());
+		setClaims(i.getClaims());
 		setIsGMO(i.getIsGMO());
 		setIsIonized(i.getIsIonized());
 		setIng(i.getIng());
@@ -542,7 +556,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(bioOrigin, depthLevel, geoOrigin, geoTransfo, ing, isGMO, isIonized, isProcessingAid, isSupport, maxi,
+		result = prime * result + Objects.hash(bioOrigin, claims , depthLevel, geoOrigin, geoTransfo, ing, isGMO, isIonized, isProcessingAid, isSupport, maxi,
 				mini, parent, qtyPerc, qtyPercWithYield, volumeQtyPerc);
 		return result;
 	}
@@ -556,7 +570,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 		if (getClass() != obj.getClass())
 			return false;
 		IngListDataItem other = (IngListDataItem) obj;
-		return Objects.equals(bioOrigin, other.bioOrigin) && Objects.equals(depthLevel, other.depthLevel)
+		return Objects.equals(bioOrigin, other.bioOrigin) &&  Objects.equals(claims, other.claims) && Objects.equals(depthLevel, other.depthLevel)
 				&& Objects.equals(geoOrigin, other.geoOrigin) && Objects.equals(geoTransfo, other.geoTransfo) && Objects.equals(ing, other.ing)
 				&& Objects.equals(isGMO, other.isGMO) && Objects.equals(isIonized, other.isIonized)
 				&& Objects.equals(isProcessingAid, other.isProcessingAid) && Objects.equals(isSupport, other.isSupport)
