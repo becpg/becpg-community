@@ -271,6 +271,19 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 			String excluseProps = (String) props.get(ListValueService.PROP_EXCLUDE_PROPS);
 			String[] arrExcluseProps = excluseProps != null ? excluseProps.split(PARAM_VALUES_SEPARATOR) : null;
 			excludeByProp(queryBuilder, arrExcluseProps);
+			
+			String andProps = (String) props.get(ListValueService.PROP_AND_PROPS);
+			String[] arrAndProps = andProps != null ? andProps.split(PARAM_VALUES_SEPARATOR) : null;
+			if (arrAndProps != null) {
+				for (String andProp : arrAndProps) {
+					if (andProp.contains("|")) {
+						String[] splitted = andProp.split("\\|");
+						QName propName = QName.createQName(splitted[0], namespaceService);
+						queryBuilder.andPropEquals(propName, splitted[1]);
+					}
+				}
+			}
+			
 
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {

@@ -455,7 +455,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 									return true;
 								})
 
-							, false, true);
+							, false, true, true);
 
 						} catch (Exception e) {
 							 if (RetryingTransactionHelper.extractRetryCause(e) != null) {

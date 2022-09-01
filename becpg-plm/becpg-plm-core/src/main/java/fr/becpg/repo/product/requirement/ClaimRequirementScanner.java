@@ -65,7 +65,9 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 										|| (LabelClaimListDataItem.VALUE_FALSE.equals(specDataItem.getLabelClaimValue())
 												&& !LabelClaimListDataItem.VALUE_FALSE.equals(listDataItem.getLabelClaimValue()))
 										|| (LabelClaimListDataItem.VALUE_SUITABLE.equals(specDataItem.getLabelClaimValue())
-												&& !LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue()))) {
+												&& !LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue()))
+										|| (LabelClaimListDataItem.VALUE_CERTIFIED.equals(specDataItem.getLabelClaimValue())
+												&& !LabelClaimListDataItem.VALUE_CERTIFIED.equals(listDataItem.getLabelClaimValue()))) {
 									add = true;
 								}
 							}

@@ -13,8 +13,12 @@ import org.json.JSONObject;
  */
 public class CheckSumHelper {
 	
-     private final static Log logger = LogFactory.getLog(CheckSumHelper.class);
+     private static final  Log logger = LogFactory.getLog(CheckSumHelper.class);
 	
+     private CheckSumHelper() {
+    	 super();
+     }
+     
 	/**
 	 * <p>updateChecksum.</p>
 	 *
