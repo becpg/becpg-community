@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.formulation.impl;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -33,21 +32,18 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
-import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.audit.BeCPGAuditService;
-import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.model.AuditScope;
+import fr.becpg.repo.audit.model.DatabaseAuditType;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationChain;
 import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import io.opencensus.common.Scope;
 import io.opencensus.trace.AttributeValue;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * <p>
@@ -69,7 +65,6 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	private static final Log logger = LogFactory.getLog(FormulationServiceImpl.class);
 
-	private static final Tracer tracer = Tracing.getTracer();
 
 	/**
 	 * <p>
@@ -148,45 +143,32 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	public T formulate(NodeRef entityNodeRef, String chainId)  {
 		Locale currentLocal = I18NUtil.getLocale();
 		Locale currentContentLocal = I18NUtil.getContentLocale();
-		try(Scope scope = tracer.spanBuilder("formulationService.Formulate").startScopedSpan()) {
+		
+		try(AuditScope auditScope = beCPGAuditService.createAudit().withTracer("formulationService.Formulate").withStopWatch(logger, "Formulate : " + this.getClass().getName()).startAudit()) {
 			
 			I18NUtil.setLocale(Locale.getDefault());
 			I18NUtil.setContentLocale(null);
 			
 			if(entityNodeRef!=null) {
-				tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
+				auditScope.putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
 			}
 			if(chainId!=null) {
-				tracer.getCurrentSpan().putAttribute("becpg/chainId", AttributeValue.stringAttributeValue(chainId));
+				auditScope.putAttribute("becpg/chainId", AttributeValue.stringAttributeValue(chainId));
 			}
-			tracer.getCurrentSpan().addAnnotation("findOne");
+			auditScope.addAnnotation("findOne");
 			
 			T entity = alfrescoRepository.findOne(entityNodeRef);
 
-			StopWatch watch = null;
-			if (logger.isDebugEnabled()) {
-				watch = new StopWatch();
-				watch.start();
-			}
-
 			entity = formulate(entity, chainId);
 
-			if (logger.isDebugEnabled() && (watch != null)) {
-				watch.stop();
-				logger.debug("Formulate : " + this.getClass().getName() + " takes " + watch.getTotalTimeSeconds() + " seconds");
-				watch = new StopWatch();
-				watch.start();
+			try (AuditScope auditScope2 = beCPGAuditService.createAudit().withStopWatch(logger, "Save : " + this.getClass().getName()).startAudit()) {
+				auditScope.addAnnotation("save");
+				alfrescoRepository.save(entity);
+				
+				return entity;
 			}
-
-			tracer.getCurrentSpan().addAnnotation("save");
-			alfrescoRepository.save(entity);
-
-			if (logger.isDebugEnabled() && (watch != null)) {
-				watch.stop();
-				logger.debug("Save : " + this.getClass().getName() + " takes " + watch.getTotalTimeSeconds() + " seconds");
-			}
-
-			return entity;
+			
+			
 		} finally {
 			I18NUtil.setLocale(currentLocal);
 			I18NUtil.setContentLocale(currentContentLocal);
@@ -196,24 +178,17 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	/** {@inheritDoc} */
 	@Override
 	public T formulate(T repositoryEntity, String chainId) {
-		try(Scope scope = tracer.spanBuilder("formulationService.FormulateEntity").startScopedSpan()) {
-			
-			Map<String, Serializable> auditValues = new HashMap<>();
-			
-			Date start = new Date();
-			
-			auditValues.put("formulation/chainId", chainId);
-			auditValues.put("formulation/startedAt", start);
-			auditValues.put("formulation/entityName", repositoryEntity.getName());
-			auditValues.put("formulation/entityNodeRef", repositoryEntity.getNodeRef().toString());
 
-			beCPGAuditService.recordAuditEntry(AuditType.FORMULATION, auditValues, false);
-			
-			if( repositoryEntity.getName()!=null) {
-				tracer.getCurrentSpan().putAttribute("becpg/entityName", AttributeValue.stringAttributeValue(repositoryEntity.getName()));
+		try (AuditScope auditScope = beCPGAuditService.createAudit().withDatabaseRecords(DatabaseAuditType.FORMULATION)
+				.auditValue("chainId", chainId).auditValue("entityName", repositoryEntity.getName())
+				.auditValue("entityNodeRef", repositoryEntity.getNodeRef().toString())
+				.withTracer("formulationService.FormulateEntity").startAudit()) {
+
+			if (repositoryEntity.getName() != null) {
+				auditScope.putAttribute("becpg/entityName", AttributeValue.stringAttributeValue(repositoryEntity.getName()));
 			}
-			if( repositoryEntity.getNodeRef()!=null) {
-				tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(repositoryEntity.getNodeRef().toString()));
+			if (repositoryEntity.getNodeRef() != null) {
+				auditScope.putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(repositoryEntity.getNodeRef().toString()));
 			}
 
 			FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);
@@ -236,7 +211,8 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 					repositoryEntity.setCurrentReformulateCount(i);
 					repositoryEntity.setFormulationChainId(chainId);
 					chain.executeChain(repositoryEntity);
-				} while ((repositoryEntity.getReformulateCount() != null) && (i++ < repositoryEntity.getReformulateCount()));
+				} while ((repositoryEntity.getReformulateCount() != null)
+						&& (i++ < repositoryEntity.getReformulateCount()));
 				if (chain.shouldUpdateFormulatedDate() && repositoryEntity.shouldUpdateFormulatedDate()) {
 					repositoryEntity.setFormulatedDate(Calendar.getInstance().getTime());
 				}
@@ -247,37 +223,27 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			} else {
 				logger.error("No formulation chain define for :" + repositoryEntity.getClass().getName());
 			}
-			
-			auditValues.clear();
-			
-			Date end = new Date();
-			
-			auditValues.put("formulation/chainId", chainId);
-			auditValues.put("formulation/startedAt", start);
-			auditValues.put("formulation/completedAt", end);
-			auditValues.put("formulation/duration", end.getTime() - start.getTime());
-			auditValues.put("formulation/entityName", repositoryEntity.getName());
-			auditValues.put("formulation/entityNodeRef", repositoryEntity.getNodeRef().toString());
-			
-			beCPGAuditService.recordAuditEntry(AuditType.FORMULATION, auditValues, true);
+
+			// Warning only on integrity check for formulation
+			IntegrityChecker.setWarnInTransaction();
 
 		} catch (Throwable e) {
 
-			 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-				 throw e;
-              }
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+				throw e;
+			}
 
 			if (e instanceof FormulateException) {
 				throw (FormulateException) e;
 			}
 
 			if (e instanceof StackOverflowError) {
-				throw new FormulateException(
-						I18NUtil.getMessage("message.formulate.failure.loop", repositoryEntity.getName(), repositoryEntity.getNodeRef()), e);
+				throw new FormulateException(I18NUtil.getMessage("message.formulate.failure.loop",
+						repositoryEntity.getName(), repositoryEntity.getNodeRef()), e);
 			}
 
-			throw new FormulateException(
-					I18NUtil.getMessage("message.formulate.failure", repositoryEntity != null ? repositoryEntity.getNodeRef() : null), e);
+			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure",
+					repositoryEntity != null ? repositoryEntity.getNodeRef() : null), e);
 
 		}
 
