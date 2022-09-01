@@ -13,7 +13,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.audit.BeCPGAuditService;
-import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.model.DatabaseAuditType;
 
 public class StatisticsWebScript extends AbstractWebScript {
 
@@ -44,17 +44,17 @@ public class StatisticsWebScript extends AbstractWebScript {
 			maxResults = Integer.parseInt(reqMaxResults);
 		}
 		
-		AuditType type = null;
+		DatabaseAuditType type = null;
 		
 		switch (reqType) {
 		case "batch":
-			type = AuditType.BATCH;
+			type = DatabaseAuditType.BATCH;
 			break;
 		case "formulation":
-			type = AuditType.FORMULATION;
+			type = DatabaseAuditType.FORMULATION;
 			break;
 		case "activity":
-			type = AuditType.ACTIVITY;
+			type = DatabaseAuditType.ACTIVITY;
 			break;
 		default:
 			throw new WebScriptException("Unknown audit type : '" + reqType + "'");

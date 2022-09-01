@@ -16,7 +16,7 @@
     </DataGenerators>
     
     <PathMappings>
-        <PathMap source="/becpg/audit/batch/hashCode" target="/beCPGBatchAudit/batch/hashCode"/>
+        <PathMap source="/becpg/audit/batch/id" target="/beCPGBatchAudit/batch/id"/>
         <PathMap source="/becpg/audit/batch/batchUser" target="/beCPGBatchAudit/batch/batchUser"/>
         <PathMap source="/becpg/audit/batch/batchId" target="/beCPGBatchAudit/batch/batchId"/>
         <PathMap source="/becpg/audit/batch/isCompleted" target="/beCPGBatchAudit/batch/isCompleted"/>
@@ -24,7 +24,8 @@
         <PathMap source="/becpg/audit/batch/duration" target="/beCPGBatchAudit/batch/duration"/>
         <PathMap source="/becpg/audit/batch/startedAt" target="/beCPGBatchAudit/batch/startedAt"/>
         <PathMap source="/becpg/audit/batch/completedAt" target="/beCPGBatchAudit/batch/completedAt"/>
-        <PathMap source="/becpg/audit/formulation/hashCode" target="/beCPGFormulationAudit/formulation/hashCode"/>
+        <PathMap source="/becpg/audit/formulation/id" target="/beCPGFormulationAudit/formulation/id"/>
+        <PathMap source="/becpg/audit/formulation/chainId" target="/beCPGFormulationAudit/formulation/chainId"/>
         <PathMap source="/becpg/audit/formulation/startedAt" target="/beCPGFormulationAudit/formulation/startedAt"/>
         <PathMap source="/becpg/audit/formulation/completedAt" target="/beCPGFormulationAudit/formulation/completedAt"/>
         <PathMap source="/becpg/audit/formulation/entityNodeRef" target="/beCPGFormulationAudit/formulation/entityNodeRef"/>
@@ -34,8 +35,8 @@
 
     <Application name="beCPGBatchAudit" key="beCPGBatchAudit">
         <AuditPath key="batch">
-        	<AuditPath key="hashCode">
-	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGBatchAudit/batch/hashCode"/>
+        	<AuditPath key="id">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGBatchAudit/batch/id"/>
 	        </AuditPath>
         	<AuditPath key="batchUser">
 	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGBatchAudit/batch/batchUser"/>
@@ -63,8 +64,11 @@
     
     <Application name="beCPGFormulationAudit" key="beCPGFormulationAudit">
         <AuditPath key="formulation">
-        	<AuditPath key="hashCode">
-	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/hashCode"/>
+        	<AuditPath key="id">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/id"/>
+	        </AuditPath>
+        	<AuditPath key="chainId">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/chainId"/>
 	        </AuditPath>
         	<AuditPath key="entityNodeRef">
 	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/entityNodeRef"/>
