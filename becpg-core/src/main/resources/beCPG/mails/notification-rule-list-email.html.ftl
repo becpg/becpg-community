@@ -106,7 +106,7 @@ margin-top:3px;
                                                
                                                <#list args.entities as item> 
                                                		<#assign node=item.node/>
-                                               		<#if args.versions?? ?>
+                                               		<#if args.versions??>
 	                                               		<#list args.versions[node.nodeRef]?keys as key >
 	                                               			<#assign version=args.versions[node.nodeRef][key]>
 															<tr> 
@@ -126,7 +126,7 @@ margin-top:3px;
 															<td class="becpg_rowBorderTopLeftRight">
 																<a href="${shareUrl}/page/<#if node.siteShortName??>site/${node.siteShortName}/</#if><#if item.isEntityV2SubType>entity-data-lists<#else>document-details</#if>?nodeRef=${node.nodeRef}">${node.name}</a>
 															</td>
-	                                               			<td class="becpg_rowBorderTopLeftRight"><#if node.properties[dateField]??>${node.properties[dateField]?date}</#if</td>
+	                                               			<td class="becpg_rowBorderTopLeftRight"><#if node.properties[dateField]??>${node.properties[dateField]?date}</#if></td>
 	                                               		</tr>	
 													</#if>
 														
