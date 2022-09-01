@@ -74,6 +74,11 @@ public class ReportTypePatch extends AbstractBeCPGPatch {
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
+			
+			@Override
+			public long getTotalEstimatedWorkSizeLong() {
+				return getTotalEstimatedWorkSize();
+			}
 
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
@@ -139,7 +144,7 @@ public class ReportTypePatch extends AbstractBeCPGPatch {
 
 		// Now set the batch processor to work
 
-		batchProcessor.process(worker, true);
+		batchProcessor.processLong(worker, true);
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
