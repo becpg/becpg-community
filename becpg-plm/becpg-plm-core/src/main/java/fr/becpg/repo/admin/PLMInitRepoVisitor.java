@@ -1495,10 +1495,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			resources = new ArrayList<>();
 			resources.addAll(commonResources);
-			resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, NC_REPORT_RESOURCE, true));
+			resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, NC_REPORT_RESOURCE, false));
 
 			for (String lang : supportedLocale) {
-				resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, String.format(NC_REPORT_RESOURCE_BY_LOCALE, lang), true));
+				resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, String.format(NC_REPORT_RESOURCE_BY_LOCALE, lang), false));
 			}
 
 			ReportTplInformation reportTplInformation = new ReportTplInformation();
@@ -1519,11 +1519,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			resources = new ArrayList<>();
 			resources.addAll(commonResources);
-			resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, QUALITY_REPORT_RESOURCE, true));
+			resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, QUALITY_REPORT_RESOURCE, false));
 
 			for (String lang : supportedLocale) {
 				resources
-						.add(reportTplService.createTplRessource(qualityFolderNodeRef, String.format(QUALITY_REPORT_RESOURCE_BY_LOCALE, lang), true));
+						.add(reportTplService.createTplRessource(qualityFolderNodeRef, String.format(QUALITY_REPORT_RESOURCE_BY_LOCALE, lang), false));
 			}
 
 			reportTplInformation = new ReportTplInformation();
