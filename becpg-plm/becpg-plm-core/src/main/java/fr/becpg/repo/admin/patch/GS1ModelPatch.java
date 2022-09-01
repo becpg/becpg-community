@@ -200,7 +200,7 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 				if (nodeService.exists(productNodeRef)) {
-					if (!nodeService.hasAspect(productNodeRef, GS1Model.ASPECT_GS1_ASPECT)) {
+					if (nodeService.hasAspect(productNodeRef, GS1Model.ASPECT_GS1_ASPECT)) {
 						
 						if (lockService.isLocked(productNodeRef)) {
 							lockService.unlock(productNodeRef);
