@@ -84,6 +84,11 @@ public class AddDocumentsViewPatch extends AbstractBeCPGPatch {
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
+			
+			@Override
+			public long getTotalEstimatedWorkSizeLong() {
+				return getTotalEstimatedWorkSize();
+			}
 
 			@Override
 			public Collection<NodeRef> getNextWork() {
@@ -156,7 +161,7 @@ public class AddDocumentsViewPatch extends AbstractBeCPGPatch {
 
 		};
 
-		batchProcessor.process(worker, true);
+		batchProcessor.processLong(worker, true);
 
 	}
 
