@@ -192,5 +192,11 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 			}
 		}
 	}
+	
+	@Override
+	public void onError(ScorableEntity repositoryEntity) {
+		repositoryEntity.merge();
+		super.onError(repositoryEntity);
+	}
 
 }
