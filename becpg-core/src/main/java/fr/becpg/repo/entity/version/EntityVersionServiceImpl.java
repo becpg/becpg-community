@@ -907,7 +907,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef mergeBranch(NodeRef branchNodeRef) {
+	public NodeRef mergeBranch(NodeRef branchNodeRef, Date newEffectivity) {
 
 		String versionType = (String) nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE);
 		if (versionType == null) {
