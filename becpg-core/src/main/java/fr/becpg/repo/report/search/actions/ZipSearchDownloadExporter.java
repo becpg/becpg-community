@@ -7,7 +7,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +27,6 @@ import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
 import org.alfresco.service.cmr.download.DownloadStatus;
 import org.alfresco.service.cmr.download.DownloadStatus.Status;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -40,7 +38,6 @@ import org.alfresco.service.cmr.view.ExporterContext;
 import org.alfresco.service.cmr.view.ExporterException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.Pair;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream.UnicodeExtraFieldPolicy;
@@ -53,6 +50,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.becpg.model.ReportModel;
+import fr.becpg.repo.expressions.ExpressionService;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -106,6 +106,8 @@ public class ZipSearchDownloadExporter implements Exporter {
 	private CheckOutCheckInService checkOutCheckInService;
 	private NodeService nodeService;
 	private ContentService contentService;
+	private ExpressionService expressionService;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/**
 	 * <p>
@@ -163,7 +165,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 	 */
 	public ZipSearchDownloadExporter(NamespaceService namespaceService, CheckOutCheckInService checkOutCheckInService, NodeService nodeService,
 			RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService, DownloadStorage downloadStorage,
-			ContentService contentService, NodeRef downloadNodeRef, NodeRef templateNodeRef) {
+			ContentService contentService, ExpressionService expressionService, AlfrescoRepository<RepositoryEntity> alfrescoRepository, NodeRef downloadNodeRef, NodeRef templateNodeRef) {
 
 		this.updateService = updateService;
 		this.transactionHelper = transactionHelper;
@@ -174,6 +176,8 @@ public class ZipSearchDownloadExporter implements Exporter {
 		this.nodeService = nodeService;
 		this.contentService = contentService;
 		this.namespaceService = namespaceService;
+		this.expressionService = expressionService;
+		this.alfrescoRepository = alfrescoRepository;
 
 		try {
 			readFileMapping(templateNodeRef);
@@ -249,14 +253,14 @@ public class ZipSearchDownloadExporter implements Exporter {
 	public void startNode(NodeRef entityNodeRef) {
 
 		for (FileToExtract fileMapping : fileToExtract) {
-			String key = fileMapping.path + entityNodeRef.toString();
+			String key = fileMapping.path + fileMapping.path + fileMapping.entityFilter + entityNodeRef.toString();
 
 			Set<NodeRef> toExtractNodes = cache.get(key);
 
 			if (toExtractNodes == null) {
 				toExtractNodes = new HashSet<>();
 
-				if (filterEntity(entityNodeRef, fileMapping.entityFilter)) {
+				if (testEntityCondition(fileMapping.entityFilter, alfrescoRepository.findOne(entityNodeRef))) {
 					List<NodeRef> files = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, extractExpr(entityNodeRef, null, fileMapping.path));
 					toExtractNodes.addAll(files);
 				}
@@ -324,54 +328,21 @@ public class ZipSearchDownloadExporter implements Exporter {
 		}
 
 	}
+	
+	private boolean testEntityCondition(String condition, RepositoryEntity entity) {
 
-	private boolean filterEntity(NodeRef entityNodeRef, String entityFilter) {
-		
-		if (entityFilter != null && !entityFilter.isBlank()) {
-			for (String condition : entityFilter.split(",")) {
-				
-				if (condition.contains("|")) {
-					String[] splittedCondition = condition.split("\\|");
-					
-					QName assocQName = QName.createQName(splittedCondition[0], namespaceService);
-					
-					Pair<QName, String> propertyCondition = extractPropertyConditon(splittedCondition[1]);
-					
-					boolean matchAssoc = false;
-					
-					for (AssociationRef assoc : nodeService.getTargetAssocs(entityNodeRef, assocQName)) {
-						
-						Serializable property = nodeService.getProperty(assoc.getTargetRef(), propertyCondition.getFirst());
-						if (property != null && property.toString().equals(propertyCondition.getSecond())) {
-							matchAssoc = true;
-							break;
-						}
-					}
-					
-					if (!matchAssoc) {
-						return false;
-					}
-				} else {
-					Pair<QName, String> propertyCondition = extractPropertyConditon(condition);
-					
-					Serializable property = nodeService.getProperty(entityNodeRef, propertyCondition.getFirst());
-					if (property == null || !property.toString().equals(propertyCondition.getSecond())) {
-						return false;
-					}
-				}
-			}
+		if (condition == null || condition.isBlank()) {
+			return true;
 		}
 		
-		return true;
-	}
-	
-	private Pair<QName, String> extractPropertyConditon(String condition) {
+		if (!(condition.startsWith("spel") || condition.startsWith("js"))) {
+			condition = "spel(" + condition + ")";
+		}
 		
-		String[] splittedCondition = condition.split("=");
+		Object filter = expressionService.eval(condition, entity);
 		
-		QName propQName = QName.createQName(splittedCondition[0], namespaceService);
-		
-		return new Pair<>(propQName, splittedCondition[1]);
+		return filter != null && Boolean.parseBoolean(filter.toString());
+
 	}
 
 	/** {@inheritDoc} */

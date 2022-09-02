@@ -135,6 +135,11 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 					public int getTotalEstimatedWorkSize() {
 						return result.size();
 					}
+					
+					@Override
+					public long getTotalEstimatedWorkSizeLong() {
+						return getTotalEstimatedWorkSize();
+					}
 
 					@Override
 					public Collection<NodeRef> getNextWork() {

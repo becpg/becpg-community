@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.repository.model;
 
+import java.util.Objects;
+
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.InternalField;
@@ -37,7 +39,7 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 	/**
 	 * <p>Constructor for AbstractManualDataItem.</p>
 	 */
-	public AbstractManualDataItem(){
+	protected AbstractManualDataItem(){
 		super();
 	}
 	
@@ -46,7 +48,7 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 	 *
 	 * @param a a {@link fr.becpg.repo.repository.model.AbstractManualDataItem} object.
 	 */
-	public AbstractManualDataItem(AbstractManualDataItem a) {
+	protected AbstractManualDataItem(AbstractManualDataItem a) {
 		super(a);
 		this.isManual = a.isManual;
 		this.sort = a.sort;
@@ -86,31 +88,24 @@ public abstract class AbstractManualDataItem extends BeCPGDataObject implements 
 		this.sort = sort;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((isManual == null) ? 0 : isManual.hashCode());
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(isManual, sort);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
+		if (!super.equals(obj))
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
 		AbstractManualDataItem other = (AbstractManualDataItem) obj;
-		if (isManual == null) {
-			if (other.isManual != null)
-				return false;
-		} else if (!isManual.equals(other.isManual))
-			return false;
-		return true;
+		return Objects.equals(isManual, other.isManual) && Objects.equals(sort, other.sort);
 	}
 
 	

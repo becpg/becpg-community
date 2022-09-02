@@ -178,6 +178,8 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	/** {@inheritDoc} */
 	@Override
 	public T formulate(T repositoryEntity, String chainId) {
+		
+		FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);
 
 		try (AuditScope auditScope = beCPGAuditService.createAudit().withDatabaseRecords(DatabaseAuditType.FORMULATION)
 				.auditValue("chainId", chainId).auditValue("entityName", repositoryEntity.getName())
@@ -191,7 +193,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 				auditScope.putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(repositoryEntity.getNodeRef().toString()));
 			}
 
-			FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);
+		}
 
 			if ((chain == null) && (repositoryEntity.getClass().getSuperclass() != null)) {
 				// look from superclass
@@ -232,19 +234,25 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
 				throw e;
 			}
-
-			if (e instanceof FormulateException) {
-				throw (FormulateException) e;
-			}
-
+			
+			MLText message = null;
+			
 			if (e instanceof StackOverflowError) {
-				throw new FormulateException(I18NUtil.getMessage("message.formulate.failure.loop",
-						repositoryEntity.getName(), repositoryEntity.getNodeRef()), e);
+				message = MLTextHelper.getI18NMessage(MESSAGE_FORMULATE_FAILURE_LOOP, repositoryEntity.getName(), repositoryEntity.getNodeRef());
+			} else {
+				message = MLTextHelper.getI18NMessage(MESSAGE_FORMULATE_FAILURE, repositoryEntity != null ? repositoryEntity.getNodeRef() : null);
 			}
-
-			throw new FormulateException(I18NUtil.getMessage("message.formulate.failure",
-					repositoryEntity != null ? repositoryEntity.getNodeRef() : null), e);
-
+			
+			if (L2CacheSupport.isSilentModeEnable() && repositoryEntity instanceof ReportableEntity && chain != null) {
+				((ReportableEntity) repositoryEntity).addError(message, chainId, Collections.emptyList());
+				chain.onError(repositoryEntity);
+			} else {
+				if (e instanceof FormulateException) {
+					throw e;
+				}
+				
+				throw new FormulateException(message.getDefaultValue(), e);
+			}
 		}
 
 		return repositoryEntity;

@@ -461,6 +461,7 @@
 					<show id="mpm:rplParamValue" />										
 					<show id="mpm:rplResourceRef" />
 					<show id="mpm:rplStepRef" />
+				<!--  	<show id="mpm:rplProductRef" /> -->
 				</field-visibility>
 				<appearance>	
 					<field id="mpm:rplParamType">
@@ -484,6 +485,10 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
+				<!-- 	<field id="mpm:rplProductRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field> -->
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
@@ -492,6 +497,7 @@
 					<show id="bcpg:variantIds" force="true" />
 					<show id="mpm:rplStepRef" />
 					<show id="mpm:rplResourceRef" />
+					<!--  	<show id="mpm:rplProductRef" /> -->
 					<show id="mpm:rplParamType" />
 					<show id="mpm:rplParamRef" />
 					<show id="mpm:rplParamValue" />	
@@ -535,6 +541,7 @@
 					<show id="mpm:rplParamValue" />										
 					<show id="mpm:rplResourceRef" />
 					<show id="mpm:rplStepRef" />
+					<!--  	<show id="mpm:rplProductRef" /> -->
 				</field-visibility>
 				<appearance>					
 					<field id="mpm:rplParamRef">
@@ -552,6 +559,10 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
+					<!-- 	<field id="mpm:rplProductRef">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field> -->
 				</appearance>
 			</form>
 			

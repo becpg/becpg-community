@@ -18,9 +18,11 @@
 package fr.becpg.repo.activity.extractor;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.alfresco.error.AlfrescoRuntimeException;
@@ -67,7 +69,9 @@ public class ActivityListExtractor extends SimpleExtractor {
 	private SecurityService securityService;
 
 	static final String ACTIVITYEVENT_UPDATE = "Update";
-
+	
+	private static final Set<QName> isIgnoredTypes = new HashSet<>();
+	
 	/**
 	 * <p>Setter for the field <code>entityActivityService</code>.</p>
 	 *
@@ -93,6 +97,10 @@ public class ActivityListExtractor extends SimpleExtractor {
 	 */
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
+	}
+	
+	public static void registerIgnoredType(QName type) {
+		isIgnoredTypes.add(type);
 	}
 
 	/** {@inheritDoc} */
@@ -182,7 +190,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 								QName propertyName = QName.createQName(activityProperty.getString(EntityActivityService.PROP_TITLE));
 	
 								if ((entityType != null)
-										&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS)) {
+										&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS) && !isIgnoredTypes.contains(propertyName)) {
 									// Property Title
 									PropertyDefinition propertyDef = dictionaryService.getProperty(propertyName);
 									ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
@@ -315,7 +323,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
 			try {
-				if (propertyDef == null && propertyArray.get(i).toString().contains("workspace") || propertyDef != null && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName())) {
+				if (propertyDef == null && propertyArray.get(i).toString().contains("workspace") || propertyDef != null && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && !"null".equals(propertyArray.get(i).toString())) {
 					NodeRef nodeRef = null;
 				 	String name = null;
 					if (Pattern.matches("\\(.*,.*\\)", propertyArray.get(i).toString())) {

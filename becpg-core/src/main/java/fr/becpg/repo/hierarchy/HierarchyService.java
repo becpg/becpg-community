@@ -64,6 +64,10 @@ public interface HierarchyService {
 	 * @param value a {@link java.lang.String} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
+	
+	List<NodeRef> getAllHierarchiesByDepthLevel(String path, String query, String depthLevel);
+	
+	
 	NodeRef createRootHierarchy(NodeRef dataListNodeRef, String value);
 	/**
 	 * <p>createHierarchy.</p>
@@ -89,7 +93,7 @@ public interface HierarchyService {
 	 * @param hierarchyQname a {@link org.alfresco.service.namespace.QName} object.
 	 * @param locale a {@link java.util.Locale} object.
 	 */
-	void classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef, QName hierarchyQname, Locale locale);
+	boolean classifyByHierarchy(NodeRef containerNodeRef, NodeRef entityNodeRef, QName hierarchyQname, Locale locale);
 	/**
 	 * <p>getOrCreateHierachyFolder.</p>
 	 *

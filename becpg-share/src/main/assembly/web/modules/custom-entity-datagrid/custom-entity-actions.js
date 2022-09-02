@@ -124,7 +124,7 @@
 
 									var propName = this._buildFormsName(column);
 									var propLabel = column.label;
-									if (!column.protectedField && !column.disabled && propLabel!="hidden" && !column.readOnly ) {
+									if (!column.protectedField && !column.disabled && propLabel!="hidden" && propLabel!="datasource" && !column.readOnly ) {
 
 										var className = "";
 										if (colCount < Math.floor(inc / 5)) {

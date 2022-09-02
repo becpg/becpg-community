@@ -195,6 +195,17 @@
 						<many>false</many>
 					</target>
 				</association>
+				<association name="mpm:rplProductRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 				<association name="mpm:rplParamRef">
 					<source>
 						<mandatory>false</mandatory>

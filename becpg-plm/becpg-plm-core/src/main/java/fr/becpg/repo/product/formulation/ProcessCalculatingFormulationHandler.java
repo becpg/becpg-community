@@ -109,11 +109,13 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 						boolean isFound = false;
 						for (ResourceParamListItem param2 : formulatedProduct.getResourceParamList()) {
 							if ((Objects.equals(param2.getParam(), param.getParam()) && Objects.equals(param2.getResource(), resource.getNodeRef())
+									&& Objects.equals(param2.getProduct(), p.getProduct())
 									&& Objects.equals(param2.getStep(), p.getStep()) && Objects.equals(param2.getParamType(), param.getParamType())
 									&& Objects.equals(param2.getVariants(), p.getVariants()))
 
 									|| (isMultiLevel && Objects.equals(param2.getParam(), param.getParam())
 											&& Objects.equals(param2.getResource(), param.getResource())
+											&& Objects.equals(param2.getProduct(), param.getProduct())
 											&& Objects.equals(param2.getStep(), param.getStep())
 											&& Objects.equals(param2.getParamType(), param.getParamType())
 											&& Objects.equals(param2.getVariants(), p.getVariants()))) {
@@ -131,6 +133,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 							if (!isMultiLevel || (param.getResource() == null)) {
 								param.setStep(p.getStep());
 								param.setResource(resource.getNodeRef());
+								param.setProduct(p.getProduct());
 							}
 							param.setVariants(p.getVariants());
 
@@ -148,6 +151,7 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 					for (ResourceParamListItem paramTpl : templatePl) {
 						for (ResourceParamListItem param : formulatedProduct.getResourceParamList()) {
 							if (Objects.equals(param.getParam(), paramTpl.getParam()) && Objects.equals(param.getResource(), paramTpl.getResource())
+									&& Objects.equals(param.getProduct(), paramTpl.getProduct())
 									&& Objects.equals(param.getStep(), paramTpl.getStep())
 									&& Objects.equals(param.getParamType(), paramTpl.getParamType()) && (paramTpl.getParamValue() != null)
 									&& !paramTpl.getParamValue().isEmpty() && ((param.getVariants() == null) || param.getVariants().isEmpty())) {

@@ -37,7 +37,45 @@ public class BecpgFormDefinition {
 	private Map<String, JSONObject> sets = new LinkedHashMap<>();
 	private Map<String, List<JSONObject>> tree = new LinkedHashMap<>();
 
-	private static String ROOT = "root";
+	private static final String PROP_ROOT = "root";
+
+	private static final String PROP_FIELDS = "fields";
+	private static final String PROP_TAB = "tab";
+	private static final String PROP_TABS = "tabs";
+	private static final String LOADED = "loaded";
+
+	static final String PROP_ID = "id";
+	static final String PROP_DATAKEY = "dataKey";
+	static final String PROP_NAME = "name";
+	static final String PROP_LABEL = "label";
+	static final String PROP_HELP = "help";
+	static final String PROP_TYPE = "type";
+	static final String PROP_MANDATORY = "mandatory";
+
+	public BecpgFormDefinition() {
+	}
+
+	public BecpgFormDefinition(List<String> fields, List<String> forcedFields) throws JSONException {
+
+		if (fields != null) {
+			for (String field : fields) {
+				JSONObject jsonField = new JSONObject();
+				jsonField.put(PROP_ID, field);
+				addField(null, jsonField, (forcedFields != null) && forcedFields.contains(field));
+			}
+		}
+
+		if (forcedFields != null) {
+			for (String field : forcedFields) {
+				if ((fields == null) || !fields.contains(field)) {
+					JSONObject jsonField = new JSONObject();
+					jsonField.put(PROP_ID, field);
+					addField(null, jsonField, true);
+				}
+			}
+		}
+
+	}
 
 	private static boolean isContainerRepresentation(final JSONObject object) {
 		try {
@@ -64,7 +102,7 @@ public class BecpgFormDefinition {
 		JSONArray result = new JSONArray();
 		for (int i = 0; i < size; i++) {
 			JSONObject element = tabs.getJSONObject(i);
-			if (tabIds.contains(element.getString("id"))) {
+			if (tabIds.contains(element.getString(PROP_ID))) {
 				result.put(element);
 			}
 		}
@@ -76,7 +114,7 @@ public class BecpgFormDefinition {
 			if (isContainerRepresentation(object)) {
 				JSONObject fields;
 				try {
-					fields = object.getJSONObject("fields");
+					fields = object.getJSONObject(PROP_FIELDS);
 				} catch (JSONException e) {
 					return null;
 				}
@@ -92,19 +130,19 @@ public class BecpgFormDefinition {
 					}
 				}
 				if (filteredFields.length() > 0) {
-					object.put("fields", filteredFields);
+					object.put(PROP_FIELDS, filteredFields);
 				} else {
 					return null;
 				}
-				tabIds.add(object.getString("tab"));
+				tabIds.add(object.getString(PROP_TAB));
 			} else {
-				JSONArray array = object.getJSONArray("fields");
+				JSONArray array = object.getJSONArray(PROP_FIELDS);
 				JSONArray filteredArray = filterArray(array, tabIds);
-				object.put("fields", filteredArray);
+				object.put(PROP_FIELDS, filteredArray);
 				try {
-					JSONArray tabs = object.getJSONArray("tabs");
+					JSONArray tabs = object.getJSONArray(PROP_TABS);
 					JSONArray filteredTabs = filterTabs(tabs, tabIds);
-					object.put("tabs", filteredTabs);
+					object.put(PROP_TABS, filteredTabs);
 				} catch (JSONException e) {
 					// Ignore exception; this will simply skip tab filtering
 				}
@@ -136,7 +174,7 @@ public class BecpgFormDefinition {
 
 		for (JSONObject tab : tabs.values()) {
 
-			ret.append("tabs", tab);
+			ret.append(PROP_TABS, tab);
 		}
 		Map<String, JSONObject> cloned = new LinkedHashMap<>();
 
@@ -147,7 +185,7 @@ public class BecpgFormDefinition {
 
 			for (JSONObject toClone : tree.get(entry)) {
 
-				String id = toClone.getString("id");
+				String id = toClone.getString(PROP_ID);
 
 				boolean found = true;
 
@@ -163,17 +201,17 @@ public class BecpgFormDefinition {
 
 				if (!sets.containsKey(id)) {
 					loadData(field, form);
-					if (field.has("dataKey")) {
-						field.put("id", field.getString("dataKey"));
-						field.remove("dataKey");
-						field.remove("loaded");
+					if (field.has(PROP_DATAKEY)) {
+						field.put(PROP_ID, field.getString(PROP_DATAKEY));
+						field.remove(PROP_DATAKEY);
+						field.remove(LOADED);
 					}
 				}
 
 				if (found) {
-					if (ROOT.equals(entry)) {
+					if (PROP_ROOT.equals(entry)) {
 
-						ret.append("fields", field);
+						ret.append(PROP_FIELDS, field);
 
 					} else {
 
@@ -192,15 +230,15 @@ public class BecpgFormDefinition {
 
 						String colName = "" + ((i % column) + 1);
 						JSONArray columnJson = new JSONArray();
-						if ((set != null) && set.has("fields") && set.getJSONObject("fields").has(colName)) {
-							columnJson = set.getJSONObject("fields").getJSONArray(colName);
+						if ((set != null) && set.has(PROP_FIELDS) && set.getJSONObject(PROP_FIELDS).has(colName)) {
+							columnJson = set.getJSONObject(PROP_FIELDS).getJSONArray(colName);
 						} else {
 							JSONObject tmp = new JSONObject();
 							if (set != null) {
-								if (set.has("fields")) {
-									tmp = set.getJSONObject("fields");
+								if (set.has(PROP_FIELDS)) {
+									tmp = set.getJSONObject(PROP_FIELDS);
 								} else {
-									set.put("fields", tmp);
+									set.put(PROP_FIELDS, tmp);
 								}
 							}
 
@@ -214,12 +252,12 @@ public class BecpgFormDefinition {
 			}
 		}
 
-		return filter(ret, new HashSet<String>());
+		return filter(ret, new HashSet<>());
 	}
 
 	private void loadData(JSONObject field, Form form) throws JSONException {
-		if (field.has("dataKey")) {
-			String key = field.getString("dataKey");
+		if (field.has(PROP_DATAKEY)) {
+			String key = field.getString(PROP_DATAKEY);
 			if ((key != null) && (form.getFormData() != null)) {
 				FieldData data = form.getFormData().getFieldData(key);
 
@@ -230,13 +268,12 @@ public class BecpgFormDefinition {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean loadDef(JSONObject field, Form form, DataGridFormFieldTitleProvider resolver) throws JSONException {
-		String id = field.getString("id");
+		String id = field.getString(PROP_ID);
 
 		boolean loaded = false;
-		if (field.has("loaded")) {
-			loaded = field.getBoolean("loaded");
+		if (field.has(LOADED)) {
+			loaded = field.getBoolean(LOADED);
 		}
 
 		boolean found = false;
@@ -251,140 +288,160 @@ public class BecpgFormDefinition {
 						field.put("value", fieldDefinition.getDefaultValue());
 					}
 
+					field.put(PROP_NAME, fieldDefinition.getName());
+
 					QName fieldQName = QName.createQName(id);
-					if (!field.has("name") || ((resolver != null) && resolver.isAllowed(fieldQName))) {
+					if (!field.has(PROP_LABEL) || ((resolver != null) && resolver.isAllowed(fieldQName))) {
 						if ((resolver != null) && resolver.isAllowed(fieldQName)) {
-							field.put("name", resolver.getTitle(fieldQName));
+							field.put(PROP_LABEL, resolver.getTitle(fieldQName));
 						} else {
-							field.put("name", fieldDefinition.getLabel());
+							field.put(PROP_LABEL, fieldDefinition.getLabel());
 						}
 					}
 
-					field.put("dataKey", fieldDefinition.getDataKeyName());
+					field.put(PROP_DATAKEY, fieldDefinition.getDataKeyName());
 
-					String formWidget = "text";
+					//					String formWidget = "text";
 
 					if (fieldDefinition instanceof PropertyFieldDefinition) {
 
-						boolean isList = false;
+						field.put(PROP_TYPE, "property");
+						if (((PropertyFieldDefinition) fieldDefinition).getDataType() != null) {
+							field.put("dataType", ((PropertyFieldDefinition) fieldDefinition).getDataType());
+						}
+						if (((PropertyFieldDefinition) fieldDefinition).getDataTypeParameters() != null) {
+							field.put("dataTypeParameters", ((PropertyFieldDefinition) fieldDefinition).getDataTypeParameters().getAsJSON());
+						}
+
+						//						boolean isList = false;
 						if (((PropertyFieldDefinition) fieldDefinition).getConstraints() != null) {
+
+							JSONArray constraints = new JSONArray();
+							field.put("constraints", constraints);
+
 							for (FieldConstraint constraint : ((PropertyFieldDefinition) fieldDefinition).getConstraints()) {
 
-								if ( "LIST".equals(constraint.getType())) {
-									isList = true;
-									if (constraint.getParameters().containsKey("allowedValues")) {
-
-										for (String option : ((List<String>) constraint.getParameters().get("allowedValues"))) {
-											JSONObject optionJson = new JSONObject();
-											if (option.indexOf('|') > 0) {
-												optionJson.put("id", option.split("\\|")[0]);
-												optionJson.put("name", option.split("\\|")[1]);
-											} else {
-												optionJson.put("id", option);
-												optionJson.put("name", option);
-											}
-											field.append("options", optionJson);
-										}
-
-									}
-								} else if ("REGEXP".equals(constraint.getType()) ) {
-									if (constraint.getParameters().containsKey("expression")) {
-										field.put("regexPattern", constraint.getParameters().get("expression"));
-									}
-									if (constraint.getParameters().containsKey("requiresMatch")) {
-										// TODO
-									}
-								} else if ("MIN-MAX".equals(constraint.getType() ) ) {
-									if (constraint.getParameters().containsKey("minValue")) {
-										field.put("minValue", constraint.getParameters().get("minValue"));
-									}
-									if (constraint.getParameters().containsKey("maxValue")) {
-										field.put("maxValue", constraint.getParameters().get("maxValue"));
-									}
-								} else if ("LENGTH".equals(constraint.getType())) {
-									if (constraint.getParameters().containsKey("minLength")) {
-										field.put("minLength", constraint.getParameters().get("minLength"));
-
-									}
-									if (constraint.getParameters().containsKey("maxLength")) {
-										field.put("maxLength", constraint.getParameters().get("maxLength"));
-
-									}
+								JSONObject constraintJson = new JSONObject();
+								constraints.put(constraintJson);
+								constraintJson.put(PROP_TYPE, constraint.getType());
+								if (constraint.getParametersAsJSON() != null) {
+									constraintJson.put("parameters", constraint.getParametersAsJSON());
 								}
+								//
+								//								if ("LIST".equals(constraint.getType())) {
+								//									isList = true;
+								//									if (constraint.getParameters().containsKey("allowedValues")) {
+								//
+								//										for (String option : ((List<String>) constraint.getParameters().get("allowedValues"))) {
+								//											JSONObject optionJson = new JSONObject();
+								//											if (option.indexOf('|') > 0) {
+								//												optionJson.put(PROP_ID, option.split("\\|")[0]);
+								//												optionJson.put(PROP_NAME, option.split("\\|")[1]);
+								//											} else {
+								//												optionJson.put(PROP_ID, option);
+								//												optionJson.put(PROP_NAME, option);
+								//											}
+								//											field.append("options", optionJson);
+								//										}
+								//
+								//									}
+								//								} else if ("REGEXP".equals(constraint.getType())) {
+								//									if (constraint.getParameters().containsKey("expression")) {
+								//										field.put("regexPattern", constraint.getParameters().get("expression"));
+								//									}
+								//									if (constraint.getParameters().containsKey("requiresMatch")) {
+
+								//									}
+								//								} else if ("MIN-MAX".equals(constraint.getType())) {
+								//									if (constraint.getParameters().containsKey("minValue")) {
+								//										field.put("minValue", constraint.getParameters().get("minValue"));
+								//									}
+								//									if (constraint.getParameters().containsKey("maxValue")) {
+								//										field.put("maxValue", constraint.getParameters().get("maxValue"));
+								//									}
+								//								} else if ("LENGTH".equals(constraint.getType())) {
+								//									if (constraint.getParameters().containsKey("minLength")) {
+								//										field.put("minLength", constraint.getParameters().get("minLength"));
+								//
+								//									}
+								//									if (constraint.getParameters().containsKey("maxLength")) {
+								//										field.put("maxLength", constraint.getParameters().get("maxLength"));
+								//
+								//									}
+								//								}
 
 							}
 						}
-
-						switch (((PropertyFieldDefinition) fieldDefinition).getDataType()) {
-						case "text":
-							if (isList) {
-								if (((PropertyFieldDefinition) fieldDefinition).isRepeating()) {
-									formWidget = "dropdown";
-								} else {
-									formWidget = "dropdown";
-								}
-							} else {
-								formWidget = "text";
-							}
-							break;
-						case "boolean":
-							formWidget = "boolean";
-							break;
-						case "mltext":
-							formWidget = "mtlangue";
-							break;
-						case "integer":
-							formWidget = "integer";
-							break;
-						case "double":
-							formWidget = "integer";
-							break;
-						case "long":
-							formWidget = "integer";
-							break;
-						case "float":
-							formWidget = "integer";
-							break;
-						case "noderef":
-							formWidget = "text";
-							break;
-						case "date":
-							formWidget = "date";
-							break;
-						case "datetime":
-							formWidget = "datetime";
-							break;
-
-						}
+						//
+						//						switch (((PropertyFieldDefinition) fieldDefinition).getDataType()) {
+						//						case "text":
+						//							if (isList) {
+						//								if (((PropertyFieldDefinition) fieldDefinition).isRepeating()) {
+						//									formWidget = "dropdown";
+						//								} else {
+						//									formWidget = "dropdown";
+						//								}
+						//							} else {
+						//								formWidget = "text";
+						//							}
+						//							break;
+						//						case "boolean":
+						//							formWidget = "boolean";
+						//							break;
+						//						case "mltext":
+						//							formWidget = "mtlangue";
+						//							break;
+						//						case "integer":
+						//							formWidget = "integer";
+						//							break;
+						//						case "double":
+						//							formWidget = "integer";
+						//							break;
+						//						case "long":
+						//							formWidget = "integer";
+						//							break;
+						//						case "float":
+						//							formWidget = "integer";
+						//							break;
+						//						case "noderef":
+						//							formWidget = "text";
+						//							break;
+						//						case "date":
+						//							formWidget = "date";
+						//							break;
+						//						case "datetime":
+						//							formWidget = "datetime";
+						//							break;
+						//
+						//						}
 
 						if (((PropertyFieldDefinition) fieldDefinition).isMandatory()) {
-							field.put("required", true);
+							field.put(PROP_MANDATORY, true);
 						}
 
-					}
-					if (fieldDefinition instanceof AssociationFieldDefinition) {
-						JSONObject jsonParams = new JSONObject();
-						if (field.has("params")) {
-							jsonParams = field.getJSONObject("params");
-						} else {
-							field.put("params", jsonParams);
+						if (((PropertyFieldDefinition) fieldDefinition).isRepeating()) {
+							field.put("repeating", true);
 						}
+					} else if (fieldDefinition instanceof AssociationFieldDefinition) {
 
-						jsonParams.put("endpointType", ((AssociationFieldDefinition) fieldDefinition).getEndpointType());
-						jsonParams.put("endpointMany", ((AssociationFieldDefinition) fieldDefinition).isEndpointMany());
+						field.put(PROP_TYPE, "association");
+						field.put("endpointType", ((AssociationFieldDefinition) fieldDefinition).getEndpointType());
+						field.put("endpointDirection", ((AssociationFieldDefinition) fieldDefinition).getEndpointDirection());
+						field.put("endpointMany", ((AssociationFieldDefinition) fieldDefinition).isEndpointMany());
 
 						if (((AssociationFieldDefinition) fieldDefinition).isEndpointMandatory()) {
-							field.put("required", true);
+							field.put("endpointMandatory", true);
+							field.put(PROP_MANDATORY, true);
 						}
 
-						formWidget = "autocomplete";
+						//						formWidget = "autocomplete";
 					}
 
-					if (!field.has("type")) {
-						field.put("type", formWidget);
-					}
+					//					if (!field.has("widget")) {
+					//						field.put("widget", formWidget);
+					//					}
 
-					field.put("loaded", true);
+					field.put(LOADED, true);
 
 					break;
 				}
@@ -451,13 +508,13 @@ public class BecpgFormDefinition {
 	 */
 	public void addSet(String parentId, JSONObject set) throws JSONException {
 		if (tabs.containsKey(parentId)) {
-			set.put("tab", parentId);
-			parentId = ROOT;
+			set.put(PROP_TAB, parentId);
+			parentId = PROP_ROOT;
 
 		}
 
 		if ((parentId == null) || parentId.isEmpty()) {
-			parentId = ROOT;
+			parentId = PROP_ROOT;
 		}
 
 		List<JSONObject> tmp = new LinkedList<>();
@@ -469,7 +526,7 @@ public class BecpgFormDefinition {
 
 		tmp.add(set);
 
-		sets.put(set.getString("id"), set);
+		sets.put(set.getString(PROP_ID), set);
 
 	}
 
@@ -489,13 +546,13 @@ public class BecpgFormDefinition {
 	 */
 	public void addField(String parentId, JSONObject field, boolean force) throws JSONException {
 		if (tabs.containsKey(parentId)) {
-			field.put("tab", parentId);
-			parentId = ROOT;
+			field.put(PROP_TAB, parentId);
+			parentId = PROP_ROOT;
 
 		}
 
 		if ((parentId == null) || parentId.isEmpty()) {
-			parentId = ROOT;
+			parentId = PROP_ROOT;
 		}
 
 		List<JSONObject> tmp = new LinkedList<>();
@@ -507,7 +564,7 @@ public class BecpgFormDefinition {
 
 		tmp.add(field);
 
-		String fieldId = field.getString("id");
+		String fieldId = field.getString(PROP_ID);
 
 		if (force) {
 			forcedFields.add(fieldId);

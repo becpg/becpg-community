@@ -27,7 +27,7 @@
 			</form>
 		</forms>
 	</config>
-
+	
 	<config evaluator="node-type" condition="bcpg:entityV2">
 		<forms>
 			<!-- Document Library Common form -->
@@ -151,7 +151,7 @@
 	 <!-- cm:content type (existing nodes) -->
    <config evaluator="node-type" condition="cm:content">
       <forms>
- 
+      
          <!-- Document Library pop-up Edit Metadata form -->
          <form id="doclib-simple-metadata">
             <field-visibility>
