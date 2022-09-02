@@ -257,8 +257,9 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 		} else {
 			if(formIdArgs == "export" && list != null && list.indexOf("WUsed") == 0){
 				formId = "exportWUsed";
+			} else {
+				formId = formIdArgs;
 			}
-			formId = formIdArgs;
 		}
 
 		var formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId, prefixedEntityType);
