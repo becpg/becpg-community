@@ -264,5 +264,11 @@ public class ScoreCalculatingFormulationHandler extends FormulationBaseHandler<S
 
 		return res;
 	}
+	
+	@Override
+	public void onError(ScorableEntity repositoryEntity) {
+		process(repositoryEntity);
+		super.onError(repositoryEntity);
+	}
 
 }

@@ -314,8 +314,15 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 					}
 					try {
 						AuthenticationUtil.runAsSystem(() -> {
-							entityVersionService.mergeBranch(entityNodeRef);
-
+							
+							Date autoMergeDate = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE);
+							
+							NodeRef mergedBranch = entityVersionService.mergeBranch(entityNodeRef);
+							
+							if (autoMergeDate != null && nodeService.hasAspect(mergedBranch, BeCPGModel.ASPECT_EFFECTIVITY)) {
+								nodeService.setProperty(mergedBranch, BeCPGModel.PROP_START_EFFECTIVITY, autoMergeDate);
+							}
+							
 							return true;
 						});
 
