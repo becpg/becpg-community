@@ -60,7 +60,7 @@ public interface RepoService {
 	 * @param nodeRefToMove a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param destionationNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	void moveNode(NodeRef nodeRefToMove, NodeRef destionationNodeRef);
+	boolean moveNode(NodeRef nodeRefToMove, NodeRef destionationNodeRef);
 	
 	/**
 	 * Calculate the name in order to get an available name ie: name (1)

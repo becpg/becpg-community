@@ -49,4 +49,6 @@ public interface FormulationHandler<T> {
      * @throws fr.becpg.repo.formulation.FormulateException
      */
     void start(T context);
+
+	void onError(T repositoryEntity);
 }

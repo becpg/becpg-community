@@ -208,6 +208,47 @@
 		
 				</appearance>
 			</form>
+			
+			  <form id="doclib-simple-metadata">
+				<field-visibility>
+				    <show id="cm:name" />
+					<show id="cm:description" />
+					<!-- tags and categories -->
+					<show id="cm:taggable" for-mode="edit" force="true" />
+					<show id="cm:categories" />
+				</field-visibility>
+				<edit-form template="../documentlibrary/forms/doclib-simple-metadata.ftl" />
+				<appearance>
+					<field id="cm:name">
+						<control>
+							<control-param name="maxLength">255</control-param>
+						</control>
+					</field>
+					
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					
+			       
+					<field id="cm:taggable">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
 			<form id="formulation">
 				<field-visibility>
 					<show id="qa:batchState"/>
@@ -739,6 +780,9 @@
 					<show id="qa:claimDescription" force="true"/>
 
 				</field-visibility>
+				<appearance>
+					<field id="cm:name" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -1133,6 +1177,9 @@
 					<show id="qa:batchStart" />
 					<show id="qa:batchComment" />
 				</field-visibility>
+				<appearance>
+					<field id="cm:name" read-only="true"/>
+				</appearance>
 			</form>
 		</forms>
 	</config>

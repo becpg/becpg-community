@@ -227,11 +227,11 @@
 		<actions>
 			<action id="publish-file" type="javascript" icon="document-edit-properties"	label="actions.entity.publish-file">
 				<param name="function">onActionPublishFile</param>
-				<evaluator>evaluator.becpg.doclib.action.hasDesignerConfigAspect</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.hasAnyDesignerAspect</evaluator>
 			</action>
 			<action id="unpublish-file" type="javascript" icon="document-edit-properties"	label="actions.entity.unpublish-file">
 				<param name="function">onActionUnpublishFile</param>
-				<evaluator>evaluator.becpg.doclib.action.hasDesignerConfigAspect</evaluator>
+				<evaluator>evaluator.becpg.doclib.action.hasAnyDesignerAspect</evaluator>
 			</action>
 		</actions>
 		<actionGroups>

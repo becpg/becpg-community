@@ -40,6 +40,7 @@ import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.EqualsHelper;
 import org.aopalliance.intercept.MethodInterceptor;
@@ -81,8 +82,21 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     
     /** Used to access property definitions */
     private DictionaryService dictionaryService;
+    
+    private String disabledMLTextFields; 
+    
+    private NamespaceService namespaceService;
    
-    /**
+    
+    public void setDisabledMLTextFields(String disabledMLTextFields) {
+		this.disabledMLTextFields = disabledMLTextFields;
+	}
+
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+
+	/**
      * <p>isMLAware.</p>
      *
      * @return Returns <tt>true</tt> if the current thread has marked itself
@@ -140,8 +154,6 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
         {
             logger.debug("Intercepting method " + invocation.getMethod().getName() + " using content filter " + I18NUtil.getContentLocale());
         }
-        
-        Locale contentLocale = I18NUtil.getContentLocale();
         
         Object ret = null;
         
@@ -202,7 +214,6 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Map<QName, Serializable> convertedProperties = convertInboundProperties(
                     currentProperties,
                     newProperties,
-                    contentLocale,
                     nodeRef,
                     pivotNodeRef);
             // Now complete the call by passing the converted properties
@@ -223,7 +234,6 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Map<QName, Serializable> convertedProperties = convertInboundProperties(
                     currentProperties,
                     newProperties,
-                    contentLocale,
                     nodeRef,
                     pivotNodeRef);
             // Now complete the call by passing the converted properties
@@ -240,7 +250,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             NodeRef pivotNodeRef = getPivotNodeRef(nodeRef);
             
             // Convert the property
-            inboundValue = convertInboundProperty(contentLocale, nodeRef, pivotNodeRef, propertyQName, inboundValue, null);
+            inboundValue = convertInboundProperty(nodeRef, pivotNodeRef, propertyQName, inboundValue, null);
             
             // Pass this through to the node service
             nodeService.setProperty(nodeRef, propertyQName, inboundValue);
@@ -266,7 +276,6 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Map<QName, Serializable> convertedProperties = convertInboundProperties(
                     null,
                     newProperties,
-                    contentLocale,
                     nodeRef,
                     pivotNodeRef);
             // Now complete the call by passing the converted properties
@@ -288,7 +297,6 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
             Map<QName, Serializable> convertedProperties = convertInboundProperties(
                     currentProperties,
                     newProperties,
-                    contentLocale,
                     nodeRef,
                     pivotNodeRef);
             // Now complete the call by passing the converted properties
@@ -343,7 +351,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
         {
             // It is MLText
             MLText mlText = (MLText) outboundValue;
-            ret = MLTextHelper.getClosestValue(mlText, I18NUtil.getContentLocale());
+            ret = MLTextHelper.getClosestValue(mlText, getLocale(propertyQName));
         }
         else if(isCollectionOfMLText(outboundValue))
         {
@@ -477,7 +485,6 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     private Map<QName, Serializable> convertInboundProperties(
             Map<QName, Serializable> currentProperties,
             Map<QName, Serializable> newProperties,
-            Locale contentLocale,
             NodeRef nodeRef,
             NodeRef pivotNodeRef)
     {
@@ -489,7 +496,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
              // Get the current property value
              Serializable currentValue = currentProperties == null ? null : currentProperties.get(propertyQName);
              // Convert the inbound property value
-             inboundValue = convertInboundProperty(contentLocale, nodeRef, pivotNodeRef, propertyQName, inboundValue, currentValue);
+             inboundValue = convertInboundProperty( nodeRef, pivotNodeRef, propertyQName, inboundValue, currentValue);
              // Put the value into the map
              convertedProperties.put(propertyQName, inboundValue);
         }
@@ -503,7 +510,6 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
      * @return                  Returns a potentially converted property that conforms to the model
      */
     private Serializable convertInboundProperty(
-            Locale contentLocale,
             NodeRef nodeRef,
             NodeRef pivotNodeRef,
             QName propertyQName,
@@ -562,7 +568,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                         {
                             newMLValue = new MLText();
                         }
-                        replaceTextForLanguage(contentLocale, current, newMLValue);
+                        replaceTextForLanguage(getLocale(propertyQName ), current, newMLValue);
                         if(count < returnMLList.size())
                         {
                             returnMLList.set(count, newMLValue);
@@ -582,7 +588,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                         {
                             newMLValue.putAll(currentMLValue);
                         }
-                        newMLValue.remove(contentLocale);
+                        newMLValue.remove(getLocale(propertyQName ));
                         returnMLList.set(i, newMLValue);
                     }
                     // tidy up empty locales
@@ -614,7 +620,7 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
                 // Force the inbound value to be a String (it isn't MLText)
                 String inboundValueStr = DefaultTypeConverter.INSTANCE.convert(String.class, inboundValue);
                 // Update the text for the appropriate language.
-                replaceTextForLanguage(contentLocale, inboundValueStr, returnMLValue);
+                replaceTextForLanguage(getLocale(propertyQName ), inboundValueStr, returnMLValue);
                 // Done
                 ret = returnMLValue;
             }
@@ -653,7 +659,15 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
         return ret;
     }
 
-    /**
+    private Locale getLocale( QName propertyQName) {
+    	if(disabledMLTextFields!=null && !disabledMLTextFields.isBlank()
+    			&& propertyQName!=null && disabledMLTextFields.contains(propertyQName.toPrefixString(namespaceService))){
+    		return Locale.getDefault();
+    	}
+		return I18NUtil.getContentLocale();
+	}
+
+	/**
      * Replace any text in mlText having the same language (but any variant) as contentLocale
      * with updatedText keyed by the language of contentLocale. This ensures that the mlText
      * will have no more than one entry for the particular language.

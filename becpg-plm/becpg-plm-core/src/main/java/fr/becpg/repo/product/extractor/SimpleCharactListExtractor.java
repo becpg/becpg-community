@@ -10,6 +10,8 @@ import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.PLMModel;
@@ -17,7 +19,6 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
-import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -36,6 +37,8 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 	private static final List<String> APPLIED_LISTS = Arrays.asList("allergenList", "nutList", "physicoChemList", "labelClaimList");
 	
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	private static final Log logger = LogFactory.getLog(SimpleCharactListExtractor.class);
 	
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
@@ -56,38 +59,37 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 
 							if (PLMModel.TYPE_REQCTRLLIST.equals(field.getFieldQname())) {
 
-								RepositoryEntity item = alfrescoRepository.findOne(nodeRef);
-								
-								NodeRef charact = null;
-								
-								if (item instanceof IngListDataItem) {
-									// no not extract requirements for sub ingredients 
-									if (((IngListDataItem) item).getParent() == null) {
-										charact = ((IngListDataItem) item).getIng();
+								try {
+									NodeRef charact = null;
+
+									RepositoryEntity item = alfrescoRepository.findOne(nodeRef);
+
+									if (item instanceof SimpleCharactDataItem) {
+										charact = ((SimpleCharactDataItem) item).getCharactNodeRef();
+									} else if (item instanceof LabelClaimListDataItem) {
+										charact = ((LabelClaimListDataItem) item).getLabelClaim();
 									}
-								} else if (item instanceof SimpleCharactDataItem) {
-									charact = ((SimpleCharactDataItem) item).getCharactNodeRef();
-								} else if (item instanceof LabelClaimListDataItem) {
-									charact = ((LabelClaimListDataItem) item).getLabelClaim();
-								}
-								
-								NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityListDAO.getEntity(nodeRef));
-								NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
-								
-								if (listNodeRef != null) {
-									List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
-									
-									for (NodeRef itemNodeRef : results) {
-										
-										
-										if ((charact != null) && charact.equals(associationService.getTargetAssoc(itemNodeRef, PLMModel.ASSOC_RCL_CHARACT))
-												|| associationService.getTargetAssocs(itemNodeRef, PLMModel.ASSOC_RCL_SOURCES).contains(charact)
-												) {
-											addExtracted(itemNodeRef, field, cache, mode, ret);
+
+									NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityListDAO.getEntity(nodeRef));
+									NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
+
+									if (listNodeRef != null) {
+										List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
+
+										for (NodeRef itemNodeRef : results) {
+
+											if ((charact != null)
+													&& charact.equals(associationService.getTargetAssoc(itemNodeRef, PLMModel.ASSOC_RCL_CHARACT))
+													|| associationService.getTargetAssocs(itemNodeRef, PLMModel.ASSOC_RCL_SOURCES)
+															.contains(charact)) {
+												addExtracted(itemNodeRef, field, cache, mode, ret);
+											}
 										}
 									}
+								} catch (StackOverflowError e) {
+									logger.debug("Infinity loop : " + nodeRef, e);
 								}
-								
+
 							} else {
 								NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 								NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());

@@ -84,8 +84,7 @@
 
 					<field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/sec:aclGroup?&amp;excludeProps=sec:isLocalPermission%7Cfalse</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -2709,6 +2708,7 @@
 					<show id="bcpg:labelClaimType" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:labelClaimFormula" />
+					<show id="bcpg:labelClaimRegulatoryThreshold" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" force="true" />
@@ -2752,6 +2752,7 @@
 					<show id="bcpg:labelClaimType" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:labelClaimFormula" />
+					<show id="bcpg:labelClaimRegulatoryThreshold" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" force="true" />
@@ -3688,10 +3689,7 @@
 					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
-		
-		
-		</forms>
-		<form id="doclib-simple-metadata">
+		    <form id="doclib-simple-metadata">
 				<field-visibility>
 				    <show id="cm:name" />
 					<show id="cm:title" force="true" />
@@ -3751,6 +3749,9 @@
 					</field>
 				</appearance>
 			</form>
+		
+		</forms>
+		
 		
 	</config>
 
@@ -4338,7 +4339,7 @@
 					<field id="bcpg:productListProduct" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct,bcpg:productCollection&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
 						</control>
 					</field>
 					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel" >
@@ -4370,7 +4371,7 @@
 					<field id="bcpg:productListProduct">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct%5E4,bcpg:semiFinishedProduct</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct,bcpg:productCollection&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
 						</control>
 					</field>
 			
@@ -4411,7 +4412,7 @@
 					<field id="bcpg:productListProduct" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:finishedProduct%5E4,bcpg:semiFinishedProduct</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2?classNames=bcpg:rawMaterial,bcpg:finishedProduct,bcpg:localSemiFinishedProduct,bcpg:semiFinishedProduct,bcpg:productCollection&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
 						</control>
 					</field>
 					<field id="bcpg:parentLevel" help-id="becpg.forms.help.parentLevel">
@@ -5577,14 +5578,15 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
-					<show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" />
+					<!--  <show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" /> -->
 					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListDeclType" />
+					<show id="bcpg:ingListClaims" />
 					<show id="bcpg:parentLevel" />
 				</field-visibility>
 
@@ -5619,6 +5621,12 @@
 							<control-param name="options">Declare|data.declarationtype.declare,DoNotDetails|data.declarationtype.donotdetails,Detail|data.declarationtype.detail,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare</control-param>
 						</control>
 					</field>
+
+					<field id="bcpg:ingListClaims" >
+					     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7Certification</control-param>
+			            </control>
+			         </field>
 					
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -5637,8 +5645,8 @@
 					<show id="bcpg:ingListVolumeQtyPerc" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyPercWithYield" />
-					<show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" />
+						<!--  <show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" /> -->
 					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
@@ -5690,13 +5698,14 @@
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
-					<show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" />
+					<!--  <show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" /> -->
 					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
+					<show id="bcpg:ingListClaims" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -5711,8 +5720,8 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
-					<show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" />
+					<!--  <show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" /> -->
 					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
@@ -5732,7 +5741,7 @@
 						</control>
 					</field>
 					
-					<field id="bcpg:ingListIsGMO">
+			<!--		<field id="bcpg:ingListIsGMO">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
@@ -5743,7 +5752,7 @@
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
 						</control>
-					</field>
+					</field>  -->
 					<field id="bcpg:ingListIsProcessingAid">
 					<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
@@ -5785,14 +5794,15 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
-					<show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" />
+				<!--  <show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" /> -->	
 					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListDeclType" />
+					<show id="bcpg:ingListClaims" />
 					<show id="bcpg:parentLevel" />
 				</field-visibility>
 
@@ -5826,6 +5836,11 @@
 							<control-param name="options">Declare|data.declarationtype.declare,DoNotDetails|data.declarationtype.donotdetails,Detail|data.declarationtype.detail,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare</control-param>	
 						</control>
 					</field>
+					<field id="bcpg:ingListClaims" >
+					     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7Certification</control-param>
+			            </control>
+			         </field>					
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng
@@ -6367,7 +6382,6 @@
 					<show id="bcpg:filQtyPercMaxi" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
-					<show id="bcpg:filIsSum" />
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
@@ -6401,12 +6415,6 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:filIsSum">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
-							</control-param>
-						</control>
-					</field>
 					<field id="bcpg:filIngs">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -6432,7 +6440,6 @@
 					<show id="bcpg:filQtyPercMaxi" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
-					<show id="bcpg:filIsSum" />
 					<show id="entity_bcpg:filIngs_bcpg:ing" />
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
@@ -6456,12 +6463,6 @@
 						</control>
 					</field>
 					<field id="bcpg:filIsIonized">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:filIsSum">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
@@ -6493,7 +6494,6 @@
 					<show id="bcpg:filQtyPercMaxi" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
-					<show id="bcpg:filIsSum" />
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
@@ -6519,7 +6519,6 @@
 					<show id="bcpg:filQtyPercMaxi" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
-					<show id="bcpg:filIsSum" />
 					<show id="bcpg:filIngs" />
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
@@ -6548,12 +6547,6 @@
 						</control>
 					</field>
 					<field id="bcpg:filIsIonized">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:filIsSum">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
@@ -6786,8 +6779,11 @@
 				<field-visibility>
 					<show id="bcpg:lclLabelClaim" />
 					<show id="bcpg:lclClaimValue" />
+					<show id="bcpg:lclPercentClaim" />
+					<show id="bcpg:lclPercentApplicable" />
 					<show id="bcpg:lclComments"  />
-					<show id="bcpg:certificateDate" force="true" />
+					<show id="bcpg:lclCertification" />
+					<show id="bcpg:certificateDate" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
@@ -6797,6 +6793,11 @@
 							<control-param name="rows">10</control-param>
 						</control>
 					</field>
+					<field id="bcpg:lclCertification">
+			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			              <control-param name="ds">becpg/autocomplete/certification</control-param>
+			            </control>
+			          </field>
 				</appearance>
 			</form>
 			
@@ -6831,6 +6832,8 @@
 					<show id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" />
 					<show id="bcpg:lclType" />
 					<show id="bcpg:lclClaimValue" />
+					<show id="bcpg:lclPercentClaim" />
+					<show id="bcpg:lclPercentApplicable" />
 					<show id="bcpg:lclMissingLabelClaims" force="true"/>
 					<show id="bcpg:lclComments" force="true" />
 					<show id="fm:commentCount" force="true" />
@@ -6854,6 +6857,7 @@
 					<show id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" />
 					<show id="bcpg:lclType" />
 					<show id="bcpg:lclClaimValue" />
+					<show id="bcpg:lclPercentClaim" />
 					<show id="bcpg:lclMissingLabelClaims" force="true"/>
 					<show id="bcpg:lclComments" force="true" />
 					<show id="fm:commentCount" force="true" />
@@ -6879,9 +6883,12 @@
 				<field-visibility>
 					<show id="bcpg:lclLabelClaim" />
 					<show id="bcpg:lclClaimValue" />
+					<show id="bcpg:lclPercentClaim" />
+					<show id="bcpg:lclPercentApplicable" />
 					<show id="bcpg:lclComments" />
 					<show id="bcpg:lclMissingLabelClaims" force="true"/>
-					<show id="bcpg:certificateDate" force="true" />
+					<show id="bcpg:lclCertification" />
+					<show id="bcpg:certificateDate" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
@@ -6892,6 +6899,11 @@
 							<control-param name="rows">10</control-param>
 						</control>
 					</field>
+					<field id="bcpg:lclCertification">
+			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+			              <control-param name="ds">becpg/autocomplete/certification</control-param>
+			            </control>
+			          </field>
 				</appearance>
 			</form>
 		</forms>

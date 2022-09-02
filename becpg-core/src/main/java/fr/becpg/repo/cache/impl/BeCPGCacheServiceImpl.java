@@ -206,7 +206,7 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 		}
 		SimpleCache<String, ?> cache = caches.get(cacheName);
 		if (isDebugEnable && (cache.get(cacheKey) == null)) {
-			logger.info("Cache " + cacheKey + " object doesn't exists");
+			logger.debug("Cache " + cacheKey + " object doesn't exists");
 		}
 		cache.remove(cacheKey);
 
@@ -252,12 +252,12 @@ public class BeCPGCacheServiceImpl implements BeCPGCacheService, InitializingBea
 	public void onRefreshableCacheEvent(RefreshableCacheEvent refreshableCacheEvent) {
 		if (getCacheId().equals(refreshableCacheEvent.getCacheId())) {
 			if ("all".equals(refreshableCacheEvent.getKey())) {
-				logger.info("Clear all cache");
+				logger.debug("Clear all cache");
 				for (SimpleCache<String, ?> cache : caches.values()) {
 					cache.clear();
 				}
 			} else {
-				logger.info("Clear specific cache: " + refreshableCacheEvent.getKey());
+				logger.debug("Clear specific cache: " + refreshableCacheEvent.getKey());
 				SimpleCache<String, ?> cache = caches.get(refreshableCacheEvent.getKey());
 				cache.clear();
 			}

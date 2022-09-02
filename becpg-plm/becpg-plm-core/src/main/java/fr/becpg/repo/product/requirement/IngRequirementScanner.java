@@ -101,27 +101,23 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 						
 						Double qtyPerc = null;
 						
-						boolean isSum = Boolean.TRUE.toString().equals(fil.getIsSum());
-						
 						List<NodeRef> ingredientsConcerned = new ArrayList<>();
 						
-						if (isSum) {
-							for (IngListDataItem ingListDataItem : productData.getIngList()) {
+						for (IngListDataItem ingListDataItem : productData.getIngList()) {
+							
+							// Ings
+							if (!fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
 								
-								// Ings
-								if (ingListDataItem.getParent() == null && !fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
+								if (fil.getIngs().contains(ingListDataItem.getIng())) {
 									
-									if (fil.getIngs().contains(ingListDataItem.getIng())) {
-										
-										ingredientsConcerned.add(ingListDataItem.getIng());
-										
-										Double ingQtyPerc = ingListDataItem.getQtyPerc();
-										
-										if (qtyPerc == null) {
-											qtyPerc = ingQtyPerc;
-										} else if (ingQtyPerc != null) {
-											qtyPerc += ingQtyPerc;
-										}
+									ingredientsConcerned.add(ingListDataItem.getIng());
+									
+									Double ingQtyPerc = ingListDataItem.getQtyPerc();
+									
+									if (qtyPerc == null) {
+										qtyPerc = ingQtyPerc;
+									} else if (ingQtyPerc != null) {
+										qtyPerc += ingQtyPerc;
 									}
 								}
 							}
@@ -133,12 +129,6 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 								
 								if (fil.getIngs().contains(ingListDataItem.getIng())) {
 									
-									if (!isSum) {
-										qtyPerc = computeQtyPerc(productData.getIngList(), ingListDataItem.getIng());
-										ingredientsConcerned = new ArrayList<>();
-										ingredientsConcerned.add(ingListDataItem.getIng());
-									}
-
 									if ((qtyPerc == null) || ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= qtyPerc))
 											|| Boolean.TRUE.equals(addInfoReqCtrl)) {
 
@@ -146,7 +136,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 										// req not respecte
 										ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, isInfo ? RequirementType.Info : fil.getReqType(),
-													fil.getReqMessage(), isSum ? null : ingListDataItem.getIng(), new ArrayList<>(),
+													fil.getReqMessage(), null, new ArrayList<>(),
 													RequirementDataType.Specification);
 										reqCtrlMap.add(reqCtrl);
 										reqCtrl.setSources(ingredientsConcerned);
@@ -226,19 +216,6 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 		return reqCtrlMap;
 
-	}
-
-	private Double computeQtyPerc(List<IngListDataItem> ingList, NodeRef ing) {
-		Double qtyPerc = 0d;
-		for (IngListDataItem ingListDataItem : ingList) {
-			if ((ingListDataItem.getIng() != null) && ingListDataItem.getIng().equals(ing)) {
-				if (ingListDataItem.getQtyPerc() != null && ingListDataItem.getParent() == null) {
-					qtyPerc += ingListDataItem.getQtyPerc();
-				}
-			}
-		}
-
-		return qtyPerc;
 	}
 
 	/**

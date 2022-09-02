@@ -281,6 +281,11 @@ public class NutrientTypeCodePatch extends AbstractBeCPGPatch {
 			}
 
 			@Override
+			public long getTotalEstimatedWorkSizeLong() {
+				return getTotalEstimatedWorkSize();
+			}
+			
+			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();

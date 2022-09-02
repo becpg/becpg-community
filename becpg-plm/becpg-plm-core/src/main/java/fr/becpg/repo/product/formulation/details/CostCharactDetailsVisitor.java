@@ -135,7 +135,7 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	public CharactDetails visitRecurCost(ProductData formulatedProduct, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subQuantity,
+	private CharactDetails visitRecurCost(ProductData formulatedProduct, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subQuantity,
 			Double netQty, SimpleCharactUnitProvider unitProvider) throws FormulateException {
 
 		if (formulatedProduct.getDefaultVariantPackagingData() == null) {
@@ -326,7 +326,12 @@ public class CostCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
 	private void visitCompoListChildren(ProductData productData, Composite<CompoListDataItem> composite, CharactDetails ret, Double parentLossRatio,
 			Double subQty, Double netQty, Integer currLevel, Integer maxLevel, SimpleCharactUnitProvider unitProvider) throws FormulateException {
-
+		
+			
+		if (productData.isGeneric()) {
+			return;
+		}
+		
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 
 			CompoListDataItem compoListDataItem = component.getData();

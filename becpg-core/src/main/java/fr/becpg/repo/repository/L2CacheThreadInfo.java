@@ -14,6 +14,7 @@ class L2CacheThreadInfo implements Serializable{
 	private boolean isCacheOnlyEnable = false;
 	private boolean isThreadLockEnable = false;
 	private boolean isThreadCacheEnable = false;
+	private boolean isSilentModeEnable = false;
 	private Map<NodeRef, RepositoryEntity> cache = new HashMap<>(500);
 	
 	/**
@@ -23,11 +24,12 @@ class L2CacheThreadInfo implements Serializable{
 	 * @param isThreadCacheEnable a boolean.
 	 * @param isThreadLockEnable a boolean.
 	 */
-	public L2CacheThreadInfo(boolean isCacheOnlyEnable, boolean isThreadCacheEnable, boolean isThreadLockEnable ) {
+	public L2CacheThreadInfo(boolean isCacheOnlyEnable, boolean isThreadCacheEnable, boolean isThreadLockEnable, boolean isSilentModeEnable) {
 		super();
 		this.isCacheOnlyEnable = isCacheOnlyEnable;
 		this.isThreadCacheEnable = isThreadCacheEnable;
 		this.isThreadLockEnable = isThreadLockEnable;
+		this.isSilentModeEnable = isSilentModeEnable;
 	}
 
 	
@@ -48,6 +50,10 @@ class L2CacheThreadInfo implements Serializable{
 	public boolean isThreadLockEnable() {
 		return isThreadLockEnable;
 	}
+	
+	public boolean isSilentModeEnable() {
+		return isSilentModeEnable;
+	}
 
 
 	/**
@@ -60,12 +66,12 @@ class L2CacheThreadInfo implements Serializable{
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "L2CacheThreadInfo [isCacheOnlyEnable=" + isCacheOnlyEnable + ", isThreadCacheEnable=" + isThreadCacheEnable + ", isThreadLockEnable=" + isThreadLockEnable + "]";
+		return "L2CacheThreadInfo [isCacheOnlyEnable=" + isCacheOnlyEnable + ", isThreadCacheEnable=" + isThreadCacheEnable + ", isThreadLockEnable=" + isThreadLockEnable + ", isSilentModeEnable=" + isSilentModeEnable + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(cache, isCacheOnlyEnable, isThreadCacheEnable, isThreadLockEnable);
+		return Objects.hash(cache, isCacheOnlyEnable, isThreadCacheEnable, isThreadLockEnable, isSilentModeEnable);
 	}
 
 	@Override
@@ -78,7 +84,7 @@ class L2CacheThreadInfo implements Serializable{
 			return false;
 		L2CacheThreadInfo other = (L2CacheThreadInfo) obj;
 		return Objects.equals(cache, other.cache) && isCacheOnlyEnable == other.isCacheOnlyEnable && isThreadCacheEnable == other.isThreadCacheEnable
-				&& isThreadLockEnable == other.isThreadLockEnable;
+				&& isThreadLockEnable == other.isThreadLockEnable && isSilentModeEnable == other.isSilentModeEnable;
 	}
 	
 	

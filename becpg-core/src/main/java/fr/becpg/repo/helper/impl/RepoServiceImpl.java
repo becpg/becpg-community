@@ -104,7 +104,7 @@ public class RepoServiceImpl implements RepoService {
 
 	/** {@inheritDoc} */
 	@Override
-	public void moveNode(NodeRef nodeRefToMove, NodeRef destinationNodeRef) {
+	public boolean moveNode(NodeRef nodeRefToMove, NodeRef destinationNodeRef) {
 
 		logger.debug("start moveNode");
 
@@ -113,7 +113,7 @@ public class RepoServiceImpl implements RepoService {
 		if (destinationNodeRef.equals(parentOfNodeRefToMove)) {
 			// nothing to do...
 			logger.debug("nodeRefToMove is not already moved, nothing to do...");
-			return;
+			return false;
 		}
 		FileExistsException ex = null;
 		try {
@@ -144,6 +144,8 @@ public class RepoServiceImpl implements RepoService {
 		if (ex != null) {
 			throw ex;
 		}
+		
+		return true;
 
 	}
 

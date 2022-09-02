@@ -236,6 +236,18 @@ public class ProductCollectionData extends BeCPGDataObject implements Hierarchic
 		this.formulationChainId = formulationChainId;
 	}
 
+	
+	//Javascript helpers do not remove
+	
+	public CollectionPriceListDataItem createCollectionPriceListDataItem() {
+		return new CollectionPriceListDataItem();
+	}
+	
+	public ProductListDataItem createProductListDataItemDataItem() {
+		return new ProductListDataItem();
+	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
