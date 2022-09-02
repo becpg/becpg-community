@@ -36,11 +36,62 @@
                         var dt = Alfresco.util.ComponentManager.find({
                            name : "beCPG.module.EntityDataGrid"
                         })[0];
-
-					   var MAX_RESULTS_UNLIMITED = -1;
-							
- 					   beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx", dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
-                              .stringify(dt._buildDataGridParams({"filter":dt.currentFilter}))));  
+                        
+                        
+	                     Alfresco.util.Ajax
+	                     .jsonGet({
+	                        url : dt._getColumnUrl("export"),
+	                        successCallback : {
+	                           fn : function(response) {
+	                              
+	
+	                              var requestParams = {
+	                                 fields : [],
+	                                 filter : dt.currentFilter,
+	                                 page : 1,
+	                                 extraParams : dt.options.extraParams
+	                              };
+	                              
+	                              requestParams.filter.filterParams = dt._createFilterURLParameters(dt.currentFilter, dt.options.filterParameters);
+	
+	                              for ( var i = 0, ii = response.json.columns.length; i < ii; i++) {
+	                                 var column = response.json.columns[i], columnName = column.name.replace(":", "_");
+	                                 if (column.dataType == "nested" && column.columns) {
+	                                    for ( var j = 0; j < column.columns.length; j++) {                                             
+	                                      var col = column.columns[j];                                      
+	                                       columnName += "|" + col.name.replace(":", "_");                                             
+	                                    }
+	                                 }
+	
+	                                 requestParams.fields.push(columnName);
+	                              }
+	
+	                              var MAX_RESULTS_UNLIMITED = -1;
+	                              
+	                              var name = "export";
+	                              if(dt.datalistMeta){
+									if(dt.datalistMeta.entityName){
+										name  += " - "+dt.datalistMeta.entityName;
+									}
+									
+									if( dt.datalistMeta.title){
+									  	name+= " - "+dt.datalistMeta.title;
+									} else if( dt.datalistMeta.name){
+										name+= " - "+dt.datalistMeta.name;
+									}
+									
+								  }
+								  name +=".xlsx"
+								
+	 							 beCPG.util.launchAsyncDownload(name, name, dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+	                                    .stringify(requestParams)));  
+	                 
+	
+	                           },
+	                           scope : this
+	                        }
+	                     });
+                   
 
                      }
                   });
@@ -206,7 +257,8 @@
 											text: this.msg("message.formulate.success")
 										});
 
-										YAHOO.Bubbling.fire("refreshDataGrids");
+										YAHOO.Bubbling.fire("refreshDataGrids",{ clearCache :true,
+			            	    		  cacheTimeStamp : (new Date()).getTime() });
 										Dom.removeClass(formulateButton, "loading");
 									},
 									scope: this

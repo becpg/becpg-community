@@ -19,6 +19,7 @@ package fr.becpg.repo.listvalue;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -74,6 +75,7 @@ public class CertificationValuePlugin extends EntityListValuePlugin {
 				&& NodeRef.isNodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF))) {
 			entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF));
 		}
+	
 
 		if (entityNodeRef != null) {
 			String listName = null;
@@ -81,26 +83,45 @@ public class CertificationValuePlugin extends EntityListValuePlugin {
 			if (BeCPGModel.TYPE_SYSTEM_ENTITY.equals(nodeService.getType(entityNodeRef))) {
 				listName = PlmRepoConsts.PATH_CERTIFICATIONS;
 			}
-
-			NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-			if (listsContainerNodeRef != null) {
-				NodeRef dataListNodeRef;
-				if (listName == null) {
-					dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, PLMModel.TYPE_CERTIFICATION);
-				} else {
-					dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, listName);
+			
+			if(entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), PLMModel.TYPE_PRODUCT)) {
+				
+				List<NodeRef> ret = new LinkedList<>();
+				
+				for(NodeRef plant : associationService.getTargetAssocs(entityNodeRef, PLMModel.ASSOC_PLANTS)) {
+					
+					ret.addAll(associationService.getTargetAssocs(plant, PLMModel.ASSOC_PLANT_CERTIFICATIONS));
 				}
-				if (dataListNodeRef != null) {
-
-					BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_CERTIFICATION).parent(dataListNodeRef);
-					beCPGQueryBuilder.andPropQuery(org.alfresco.model.ContentModel.PROP_NAME, prepareQuery(query));
-
-					List<NodeRef> ret = beCPGQueryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS).list();
-					return new ListValuePage(ret, pageNum, pageSize,
-							new NodeRefListValueExtractor(org.alfresco.model.ContentModel.PROP_NAME, nodeService));
-
-				} else {
-					logger.warn("No datalists found for type: " + (listName != null ? listName : PLMModel.TYPE_CERTIFICATION));
+				
+				for(NodeRef plant : associationService.getTargetAssocs(entityNodeRef, PLMModel.ASSOC_SUPPLIER_PLANTS)) {
+					
+					ret.addAll(associationService.getTargetAssocs(plant, PLMModel.ASSOC_PLANT_CERTIFICATIONS));
+				}
+				
+				return new ListValuePage(ret, pageNum, pageSize,
+						new NodeRefListValueExtractor(org.alfresco.model.ContentModel.PROP_NAME, nodeService));
+			} else {
+			
+				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+				if (listsContainerNodeRef != null) {
+					NodeRef dataListNodeRef;
+					if (listName == null) {
+						dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, PLMModel.TYPE_CERTIFICATION);
+					} else {
+						dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, listName);
+					}
+					if (dataListNodeRef != null) {
+	
+						BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_CERTIFICATION).parent(dataListNodeRef);
+						beCPGQueryBuilder.andPropQuery(org.alfresco.model.ContentModel.PROP_NAME, prepareQuery(query));
+	
+						List<NodeRef> ret = beCPGQueryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS).list();
+						return new ListValuePage(ret, pageNum, pageSize,
+								new NodeRefListValueExtractor(org.alfresco.model.ContentModel.PROP_NAME, nodeService));
+	
+					} else {
+						logger.warn("No datalists found for type: " + (listName != null ? listName : PLMModel.TYPE_CERTIFICATION));
+					}
 				}
 			}
 		}

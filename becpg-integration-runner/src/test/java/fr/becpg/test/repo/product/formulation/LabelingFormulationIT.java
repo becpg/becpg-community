@@ -1775,7 +1775,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// └──[ing4 french (false) - 200.0 ( vol : 200.0) ]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"pâte french 50% (legal Raw material 12 22,5% (ing2 french 16,9%, ing1 french 5,6%), ing2 french 15%, ing1 french 7,5%, pâte french 2,5% (legal Raw material 12 1,7% (ing2 french 1,2%, ing1 french 0,4%), ing2 french 0,6%, ing1 french 0,3%), garniture french 2,5% (ing3 french 2,1%, ing4 french 0,4%)), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)",
+				"pâte french 50% (legal Raw material 12 22,5% (ing2 french 16,9%, ing1 french 5,6%), ing2 french 15%, ing1 french 7,5%, pâte french 2,5% (legal Raw material 12 1,7% (ing2 french 1,3%, ing1 french 0,4%), ing2 french 0,6%, ing1 french 0,3%), garniture french 2,5% (ing3 french 2,1%, ing4 french 0,4%)), garniture french 50% (ing3 french 41,7%, ing4 french 8,3%)",
 				Locale.FRENCH);
 
 		// TODO //Do not Declare ????

@@ -271,6 +271,19 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 			String excluseProps = (String) props.get(ListValueService.PROP_EXCLUDE_PROPS);
 			String[] arrExcluseProps = excluseProps != null ? excluseProps.split(PARAM_VALUES_SEPARATOR) : null;
 			excludeByProp(queryBuilder, arrExcluseProps);
+			
+			String andProps = (String) props.get(ListValueService.PROP_AND_PROPS);
+			String[] arrAndProps = andProps != null ? andProps.split(PARAM_VALUES_SEPARATOR) : null;
+			if (arrAndProps != null) {
+				for (String andProp : arrAndProps) {
+					if (andProp.contains("|")) {
+						String[] splitted = andProp.split("\\|");
+						QName propName = QName.createQName(splitted[0], namespaceService);
+						queryBuilder.andPropEquals(propName, splitted[1]);
+					}
+				}
+			}
+			
 
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
@@ -344,11 +357,12 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 
 		NodeRef itemIdNodeRef = null;
 
+		@SuppressWarnings("unchecked")
+		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
+		
 		if (path == null) {
 			NodeRef entityNodeRef = null;
 
-			@SuppressWarnings("unchecked")
-			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
 				if ((extras.get("destination") != null) && NodeRef.isNodeRef(extras.get("destination"))) {
 					entityNodeRef = new NodeRef(extras.get("destination"));
@@ -367,9 +381,7 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 				if (entityNodeRef != null) {
 					path = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
 				}
-
 			}
-
 		}
 
 		query = prepareQuery(query);
@@ -383,8 +395,10 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 				NodeRef parentNodeRef = (parent != null) && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
 				ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
 			}
+		} else if (extras != null && extras.containsKey("depthLevel")) {
+			String depthLevel = extras.get("depthLevel");
+			ret = hierarchyService.getAllHierarchiesByDepthLevel(path, query, depthLevel);
 		} else {
-
 			ret = hierarchyService.getAllHierarchiesByPath(path, query);
 		}
 
@@ -396,7 +410,7 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 		return new ListValuePage(ret, pageNum, pageSize,
 				all ? hierarchyValueExtractor : new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE, nodeService));
 	}
-
+	
 	/**
 	 * Suggest list value according to query
 	 *

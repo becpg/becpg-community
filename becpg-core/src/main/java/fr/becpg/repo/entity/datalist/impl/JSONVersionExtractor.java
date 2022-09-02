@@ -81,6 +81,13 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 	private static final String[] AL_DATA_PROPS = {"datalistType", "charactType", "entityType", "datalistNodeRef", "entityNodeRef", "className", "title", "charactNodeRef" };
 	
 	private static final String BCPG_PREFIX = "bcpg:";
+	
+	/**
+	 * Regular expression to match any Universally Unique Identifier (UUID), in a case-insensitive
+	 * fashion.
+	 */
+	public static final String UUID_STRING = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}";
+
 			
 	@Autowired
 	protected NamespaceService namespaceService;
@@ -243,10 +250,14 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 		
 		if (nodeService.exists(nodeRef)) {
 			QName type = nodeService.getType(nodeRef);
-			if (displayValue == null) {
+			if (displayValue == null || displayValue.matches(UUID_STRING)) {
 				displayValue = attributeExtractorService.extractPropName(type, nodeRef);
 			}
 			ret.put(VALUE, nodeRef.toString());
+		}
+		
+		if (displayValue == null) {
+			displayValue = "";
 		}
 		
 		if (object.has(RemoteEntityService.ATTR_VERSION)) {

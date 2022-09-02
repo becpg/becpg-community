@@ -23,6 +23,8 @@
  * assocValue(node, assocName) returns assoc nodeRef array
  * 
  * assocValues(node, assocName) assoc nodeRef arrays
+ *
+ * sourceAssocValues(node, assocName) assoc nodeRef arrays
  * 
  * assocPropValues(node, assocName, propName) alias getAssoc(product, assocName, propName?) returns association property array of values
  * 
@@ -102,7 +104,7 @@ const SUPPLIER_PORTAL_SITE_ID = "supplier-portal";
  * @returns true if value is empty or null 
  */
 function isNullOrEmpty(value) {
-	return value == null || value == ""
+	return value == null || value == "";
 }
 
 function isEmpty(value){
@@ -130,7 +132,7 @@ function getProp(node, propName) {
 }
 
 function propValue(node, propName){
-	return getProp(node,propName)
+	return getProp(node,propName);
 }
 
 
@@ -189,6 +191,16 @@ function assocValue(node, assocName) {
  */
 function assocValues(node, assocName) {
 	return isEmpty(node) ?  new Array() : orEmpty( bcpg.assocValues(node, assocName),new Array());
+}
+
+/**
+ * 
+ * @param node
+ * @param assocName
+ * @returns association nodeRef array
+ */
+function sourceAssocValues(node, assocName) {
+	return isEmpty(node) ?  new Array() : orEmpty( bcpg.sourceAssocValues(node, assocName),new Array());
 }
 
 /**
@@ -417,14 +429,19 @@ function concatName(name, value, separator) {
  * @returns void
  */
 function classifyByHierarchy(productNode, folderNode, propHierarchy) {
-	if (folderNode != null) {
-		var action = actions.create("classify-by-hierarchy");
-		action.parameters["destination-folder"] = folderNode;
-		if (propHierarchy) {
-			action.parameters["prop-hierarchy"] = propHierarchy;
-		}
-		action.execute(productNode.nodeRef);
+	if (propHierarchy) {
+		return bcpg.classifyByHierarchy(productNode, folderNode, propHierarchy);
 	}
+	return bcpg.classifyByHierarchy(productNode, folderNode, null);
+	
+}
+
+function classifyByDate(productNode, path, dateFormat, propDate) {
+	return bcpg.classifyByDate(productNode, path, dateFormat, propDate);
+}
+
+function formulate(product) {
+	bcpg.formulate(product);
 }
 
 
@@ -439,35 +456,7 @@ function classifyByHierarchy(productNode, folderNode, propHierarchy) {
 */
 //beta
 function classifyByPropAndHierarchy(productNode, folderNode, propHierarchy, propPathName, locale) {
-
-	if (isEmpty(propPathName)) {
-
-		classifyByHierarchy(productNode, folderNode, propHierarchy);
-
-	} else if (propPathName.split('|').length == 1) {
-
-		var subFolderName = propValue(productNode, propPathName);
-
-		if (!isEmpty(locale)) {
-			subFolderName = getMLConstraint(getProp(productNode, propPathName), propPathName, locale);
-		}
-
-		folderNode = getOrCreateFolder(folderNode, subFolderName);
-		classifyByHierarchy(productNode, folderNode, propHierarchy);
-
-	} else {
-
-		var assocs = propPathName.split('|'), assocName = assocs.shift(), property = assocs[assocs.length - 1], finalAssoc = classifyByPropAndHierarchy_extractAssoc(productNode,
-				assocName, assocs), subFolderName = propValue(finalAssoc, property);
-
-		if (!isEmpty(locale)) {
-			subFolderName = getMLConstraint(getProp(productNode, propPathName), propPathName, locale);
-		}
-
-		folderNode = getOrCreateFolder(folderNode, subFolderName);
-		classifyByHierarchy(productNode, folderNode, propHierarchy);
-
-	}
+	return bcpg.classifyByPropAndHierarchy(productNode, folderNode, propHierarchy, propPathName, locale);
 }
 
 function classifyByPropAndHierarchy_extractAssoc(node, assocName, assocsArray) {

@@ -314,7 +314,10 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 					}
 					try {
 						AuthenticationUtil.runAsSystem(() -> {
-							entityVersionService.mergeBranch(entityNodeRef);
+							
+							Date newEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE);
+
+							entityVersionService.mergeBranch(entityNodeRef, newEffectivity);
 
 							return true;
 						});
@@ -455,7 +458,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 									return true;
 								})
 
-							, false, true);
+							, false, true, true);
 
 						} catch (Exception e) {
 							 if (RetryingTransactionHelper.extractRetryCause(e) != null) {

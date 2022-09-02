@@ -341,6 +341,19 @@
 			</parameter>
 		</constraint>
 
+       <constraint name="gs1:organicProductPlaceOfFarmingCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				    <value></value>
+					<value>EU_AGRICULTURE</value>
+					<value>EU_OR_NON_EU_AGRICULTURE</value>
+					<value>FARMING_COUNTRY_OF_ORIGIN</value>
+					<value>NON_EU_AGRICULTURE</value>
+				</list>
+			</parameter>
+		</constraint>
+       
+
 
 		<constraint name="gs1:speciesForFisheryStatisticsPurposesCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
@@ -580,7 +593,7 @@
 						<many>true</many>
 					</source>
 					<target>
-						<class>bcpg:product</class>
+						<class>bcpg:entityV2</class>
 						<mandatory>true</mandatory>
 						<many>false</many>
 					</target>
@@ -623,6 +636,19 @@
 
 
 	<aspects>
+	
+	<aspect name="gs1:organicAspect">
+		<properties>
+			<property name="gs1:organicProductPlaceOfFarmingCode">
+				<type>d:text</type>
+				<index enabled="false" />
+				<constraints>
+						<constraint ref="gs1:organicProductPlaceOfFarmingCodes" />
+				</constraints>
+			</property>
+		</properties>
+	</aspect>
+	
 	<aspect name="gs1:dutyFeeTaxAspect">
 	   <properties>
 				<property name="gs1:dutyFeeTaxAmount">

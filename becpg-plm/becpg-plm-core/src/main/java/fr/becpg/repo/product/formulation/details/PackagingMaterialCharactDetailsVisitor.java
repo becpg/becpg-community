@@ -209,7 +209,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 	public CharactDetails visitRecurPMaterial(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight,
 			Double subVol, Double netQty)  {
 
-		if (subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+		if (!subProductData.isGeneric() && subProductData.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 			for (CompoListDataItem compoListDataItem : subProductData
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {

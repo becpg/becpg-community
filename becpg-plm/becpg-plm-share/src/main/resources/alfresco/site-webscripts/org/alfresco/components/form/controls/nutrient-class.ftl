@@ -1,7 +1,7 @@
 <#assign fieldValue = field.value>
 <div class="form-field">
    <div class="viewmode-field">
-      <span class="viewmode-label">${field.label?html}:</span
+      <span class="viewmode-label">${field.label?html}:</span>
       <#if fieldValue != "" && fieldValue?eval??>
 		<#assign nutrientDetails = fieldValue?eval>
 	      <span class="viewmode-value nutrient-class">

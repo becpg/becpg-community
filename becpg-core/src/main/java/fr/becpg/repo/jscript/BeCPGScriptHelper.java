@@ -18,7 +18,10 @@
 package fr.becpg.repo.jscript;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -29,6 +32,7 @@ import java.util.stream.Collectors;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
+import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
@@ -37,6 +41,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.quickshare.QuickShareDTO;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
 import org.alfresco.service.cmr.repository.ContentIOException;
@@ -69,6 +74,8 @@ import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.formulation.FormulatedEntity;
+import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AutoNumHelper;
 import fr.becpg.repo.helper.CheckSumHelper;
@@ -76,6 +83,7 @@ import fr.becpg.repo.helper.GTINHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
+import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.license.BeCPGLicenseManager;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.olap.OlapService;
@@ -145,11 +153,35 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private BeCPGMailService beCPGMailService;
 
+	private Repository repositoryHelper;
+	
+	private FormulationService<FormulatedEntity> formulationService;
+	
+	private HierarchyService hierarchyService;
+	
+	private FileFolderService fileFolderService;
+	
 	private boolean useBrowserLocale;
 
 	private boolean showEntitiesInTree = false;
 
 	private boolean showUnauthorizedWarning = true;
+	
+	public void setFileFolderService(FileFolderService fileFolderService) {
+		this.fileFolderService = fileFolderService;
+	}
+	
+	public void setHierarchyService(HierarchyService hierarchyService) {
+		this.hierarchyService = hierarchyService;
+	}
+	
+	public void setFormulationService(FormulationService<FormulatedEntity> formulationService) {
+		this.formulationService = formulationService;
+	}
+	
+	public void setRepositoryHelper(Repository repositoryHelper) {
+		this.repositoryHelper = repositoryHelper;
+	}
 
 	public void setBeCPGLicenseManager(BeCPGLicenseManager beCPGLicenseManager) {
 		this.beCPGLicenseManager = beCPGLicenseManager;
@@ -438,7 +470,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
+		
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
+		
 		if (mlText != null) {
 			return MLTextHelper.getClosestValue(mlText, MLTextHelper.parseLocale(locale));
 		}
@@ -582,12 +616,48 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public Object assocValues(NodeRef nodeRef, String assocQname) {
 		return wrapValue(associationService.getTargetAssocs(nodeRef, getQName(assocQname)));
 	}
+	
+
+	/**
+	 * <p>sourceAssocValues.</p>
+	 *
+	 * @param sourceNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
+	 * @param assocQname a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Object} object.
+	 */
+	public Object sourceAssocValues(ScriptNode sourceNode, String assocQname) {
+		return sourceAssocValues(sourceNode.getNodeRef(), assocQname);
+	}
+	
+	/**
+	 * <p>sourceAssocValues.</p>
+	 *
+	 * @param nodeRef a {@link java.lang.String} object.
+	 * @param assocQname a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Object} object.
+	 */
+	public Object sourceAssocValues(String nodeRef, String assocQname) {
+		return sourceAssocValues(new NodeRef(nodeRef), assocQname);
+	}
+
+	/**
+	 * <p>sourceAssocValues.</p>
+	 *
+	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @param assocQname a {@link java.lang.String} object.
+	 * @return a {@link java.lang.Object} object.
+	 */
+	public Object sourceAssocValues(NodeRef nodeRef, String assocQname) {
+		return wrapValue(associationService.getSourcesAssocs(nodeRef, getQName(assocQname)));
+	}
+
 
 	// TODO Perfs
 	private Object wrapValue(Object object) {
 		return ScriptValueConverter.wrapValue(Context.getCurrentContext().initSafeStandardObjects(), object);
 	}
-
+	
+	
 	/**
 	 * <p>assocPropValues.</p>
 	 *
@@ -1322,5 +1392,129 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			entityReportService.generateReports(extractedNode, versionNode);
 		}
 	}
+	
+	public boolean classifyByHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy) {
+		return classifyByHierarchy(productNode.getNodeRef(), folderNode.getNodeRef(), propHierarchy);
+	}
 
+	private boolean classifyByHierarchy(NodeRef productNode, NodeRef folderNode, String propHierarchy) {
+		
+		QName hierarchyQname = null;
+		
+		if (propHierarchy != null && !propHierarchy.isEmpty()) {
+			hierarchyQname = getQName(propHierarchy);
+		}
+		
+		return hierarchyService.classifyByHierarchy(folderNode, productNode, hierarchyQname, Locale.getDefault());
+	}
+
+	public boolean classifyByPropAndHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy, String propPathName, String locale) {
+		
+		if (propPathName == null || propPathName.isEmpty()) {
+			return classifyByHierarchy(productNode, folderNode, propHierarchy);
+		} else if (propPathName.split("\\|").length == 1) {
+			
+			QName propPathNameQName = getQName(propPathName);
+			
+			String subFolderName = nodeService.getProperty(productNode.getNodeRef(), propPathNameQName).toString();
+			
+			if (locale != null && !locale.isEmpty()) {
+				subFolderName = getMLConstraint(subFolderName, propPathName, locale);
+			}
+			
+			NodeRef childNodeRef = nodeService.getChildByName(folderNode.getNodeRef(), ContentModel.ASSOC_CONTAINS, subFolderName);
+			
+			if (childNodeRef == null) { 
+				childNodeRef = fileFolderService.create(folderNode.getNodeRef(), subFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+			}
+			
+			classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy);
+		} else {
+			String[] assocs = propPathName.split("\\|");
+			
+			String assocName = assocs[0];
+			
+			String property = assocs[assocs.length - 1];
+			
+			NodeRef finalAssoc = classifyPropAndHierarchyExtractAssoc(productNode.getNodeRef(), assocName, new ArrayList<>(Arrays.asList(assocs)));
+			
+			String subFolderName = nodeService.getProperty(finalAssoc, getQName(property)).toString();
+			
+			if (locale != null && !locale.isEmpty()) {
+				subFolderName = getMLConstraint(subFolderName, propPathName, locale);
+			}
+			
+			NodeRef childNodeRef = nodeService.getChildByName(folderNode.getNodeRef(), ContentModel.ASSOC_CONTAINS, subFolderName);
+			
+			if (childNodeRef == null) { 
+				childNodeRef = fileFolderService.create(folderNode.getNodeRef(), subFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
+			}
+			
+			classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy);
+	
+		}
+		
+		return false;
+	}
+
+	private NodeRef classifyPropAndHierarchyExtractAssoc(NodeRef nodeRef, String assocName, List<String> assocList) {
+		
+		if (assocList.isEmpty()) {
+			return nodeRef;
+		}
+		
+		String nextAssocName = assocList.get(0);
+		
+		NodeRef nextNode = associationService.getTargetAssoc(nodeRef, getQName(assocName));
+		
+		if (nextNode == null) {
+			return nodeRef;
+		}
+		
+		 assocList.remove(0);
+		
+		return classifyPropAndHierarchyExtractAssoc(nextNode, nextAssocName, assocList);
+	}
+	
+	public boolean classifyByDate(ScriptNode productNode, String path, Date date, String dateFormat) {
+		
+		if (date != null && dateFormat != null) {
+			
+			StringBuilder pathBuilder = new StringBuilder(path);
+			
+			for (String formatPart : dateFormat.split("/")) {
+				
+				pathBuilder.append("/");
+				
+				boolean isFirstSubPart = true;
+				
+				for (String subFormatPart : formatPart.split(" - ")) {
+					
+					if (!isFirstSubPart) {
+						pathBuilder.append(" - ");
+					}
+					
+					SimpleDateFormat subFormat = new SimpleDateFormat(subFormatPart);
+					pathBuilder.append(subFormat.format(date));
+					
+					isFirstSubPart = false;
+				}
+			}
+			
+			NodeRef parentFolder = repoService.getOrCreateFolderByPaths(repositoryHelper.getRootHome(), Arrays.asList(pathBuilder.toString().split("/")));
+			
+			if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(parentFolder))) {
+				logger.warn("Incorrect destination node type:" + nodeService.getType(parentFolder));
+			} else {
+				return repoService.moveNode(productNode.getNodeRef(), parentFolder);
+			}
+		}
+		
+		return false;
+	}
+
+	public void formulate(ScriptNode productNode) {
+		formulationService.formulate(productNode.getNodeRef());
+	}
+	
 }

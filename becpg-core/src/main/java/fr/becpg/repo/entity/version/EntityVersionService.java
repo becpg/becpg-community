@@ -4,6 +4,7 @@
 package fr.becpg.repo.entity.version;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -170,7 +171,7 @@ public interface EntityVersionService {
 	 * @param branchNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	NodeRef mergeBranch(NodeRef branchNodeRef);
+	NodeRef mergeBranch(NodeRef branchNodeRef, Date newEffectivity);
 
 
 	/**
