@@ -333,6 +333,10 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public void createInitialVersion(NodeRef entityNodeRef) {
+		internalCreateInitialVersion(entityNodeRef, null);
+	}
+
+	private void internalCreateInitialVersion(NodeRef entityNodeRef, Date newEffectivity) {
 		if (!nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 			// Create the initial-version
 			Map<String, Serializable> versionProperties = new HashMap<>(1);
@@ -347,7 +351,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			Map<QName, Serializable> aspectProperties = new HashMap<>();
 			aspectProperties.put(ContentModel.PROP_AUTO_VERSION_PROPS, false);
 			nodeService.addAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE, aspectProperties);
-			NodeRef versionNode = createVersion(entityNodeRef, versionProperties);
+			NodeRef versionNode = internalCreateVersion(entityNodeRef, versionProperties, newEffectivity);
 			
 			// we need to retrieve the AUDITABLE properties because Version2ServiceImpl only freezes these properties
 			nodeService.setProperty(versionNode, ContentModel.PROP_CREATED, nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
@@ -710,7 +714,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef mergeBranch(NodeRef branchNodeRef) {
+	public NodeRef mergeBranch(NodeRef branchNodeRef, Date newEffectivity) {
 
 		String versionType = (String) nodeService.getProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE);
 		if (versionType == null) {
@@ -726,7 +730,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 			description = "";
 		}
 		
-		NodeRef newEntityNodeRef = mergeBranch(branchNodeRef, null, VersionType.valueOf(versionType), description, impactWused, false);
+		NodeRef newEntityNodeRef = internalMergeBranch(branchNodeRef, null, VersionType.valueOf(versionType), description, impactWused, false, newEffectivity);
 
 		if (impactWused) {
 			impactWUsed(newEntityNodeRef, VersionType.valueOf(versionType), description);
@@ -746,7 +750,12 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	@Override
 	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused,
 			boolean rename) {
+		return internalMergeBranch(branchNodeRef, branchToNodeRef, versionType, description, impactWused, rename, null);
+	}
 
+	private NodeRef internalMergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused,
+			boolean rename, Date newEffectivity) {
+	
 		if (branchToNodeRef == null) {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
 		}
@@ -779,8 +788,8 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 							policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_VERSIONABLE);
 							policyBehaviourFilter.disableBehaviour(ImapModel.ASPECT_IMAP_CONTENT);
-
-							createInitialVersion(internalBranchToNodeRef);
+	
+							internalCreateInitialVersion(internalBranchToNodeRef, newEffectivity);
 							
 							/**
 							 *
@@ -902,8 +911,8 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							if (impactWused) {
 								versionProperties.put(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF, null);
 							}
-
-							createVersion(internalBranchToNodeRef, versionProperties);
+	
+							internalCreateVersion(internalBranchToNodeRef, versionProperties, newEffectivity);
 							
 							if (rename) {
 								Version currentVersion = versionService.getCurrentVersion(internalBranchToNodeRef);
@@ -953,7 +962,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							associationService.removeAllCacheAssocs(internalBranchToNodeRef);
 							
 							if (nodeService.hasAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
-								nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
+								nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, newEffectivity == null ? new Date() : newEffectivity);
 								nodeService.removeProperty(internalBranchToNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
 							}
 							
@@ -996,6 +1005,10 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties) {
+		return internalCreateVersion(entityNodeRef, versionProperties, null);
+	}
+
+	private NodeRef internalCreateVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date newEffectivity) {
 		if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 
 			StopWatch watch = null;
@@ -1011,11 +1024,19 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
 
 					// Set effectivity
-					Date newEffectivity = new Date();
+					if (newEffectivity == null) {
+						newEffectivity = new Date();
+					}
+						
 					Date oldEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY);
 					if (oldEffectivity == null) {
 						oldEffectivity = newEffectivity;
 					}
+					
+					if (oldEffectivity.compareTo(newEffectivity) > 0) {
+						newEffectivity = oldEffectivity;
+					}
+					
 					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, oldEffectivity);
 					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
 				}
@@ -1054,7 +1075,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				
 
 				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
-					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, new Date());
+					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, newEffectivity == null ? new Date() : newEffectivity);
 					nodeService.removeProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
 				}
 				
