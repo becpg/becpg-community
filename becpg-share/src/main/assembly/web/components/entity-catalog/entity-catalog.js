@@ -226,9 +226,11 @@
 								.replace("-mgr", "").replace("%%%", "wizard-mgr");
 
 
+
+
 							YAHOO.util.Event.onAvailable(insertId + "-form", function() {
 								
-								if (this.id.indexOf("wizard-mgr") < 1) {
+								if (instance.id.indexOf("wizard-mgr") < 1) {
 									var form = YAHOO.util.Dom.get(insertId + "-form");
 	
 									if (form !== undefined && form != null) {
@@ -238,7 +240,7 @@
 										YAHOO.util.Dom.addClass(catalogsDiv, "inline-block");
 										YAHOO.util.Dom.addClass(catalogsDiv, "catalogs");
 										YAHOO.util.Dom.insertAfter(catalogsDiv, pageContent);
-										YAHOO.util.Dom.removeClass(this.id + "-entity-catalog", "hidden");
+										YAHOO.util.Dom.removeClass(instance.id + "-entity-catalog", "hidden");
 	
 									}
 									
