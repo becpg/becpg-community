@@ -258,7 +258,7 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 
 		List<ListValueEntry> result = new ArrayList<>();
 		for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, datalistType)) {
-			if (!dataListItemNodeRef.equals(itemId)) {
+			if (accepts(dataListItemNodeRef, itemId, sourceType)) {
 				NodeRef targetNode = associationService.getTargetAssoc(dataListItemNodeRef, associationQName);
 
 				if (targetNode != null) {
@@ -278,4 +278,33 @@ public class ParentValuePlugin extends EntityListValuePlugin {
 		}
 		return new ListValuePage(result, pageNum, pageSize, null);
 	}
+
+	private boolean accepts(NodeRef dataListItemNodeRef, NodeRef itemId, String sourceType) {
+		
+		if (dataListItemNodeRef.equals(itemId)) {
+			return false;
+		}
+		
+		if (SOURCE_TYPE_PARENT_VALUE.equals(sourceType)) {
+			return !isChildOf(dataListItemNodeRef, itemId);
+		}
+		
+		return true;
+	}
+
+	private boolean isChildOf(NodeRef dataListItemNodeRef, NodeRef itemId) {
+		
+		NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(dataListItemNodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+		
+		if (parentNodeRef != null) {
+			if (parentNodeRef.equals(itemId)) {
+				return true;
+			}
+			return isChildOf(parentNodeRef, itemId);
+		}
+		
+		return false;
+	}
+	
+	
 }
