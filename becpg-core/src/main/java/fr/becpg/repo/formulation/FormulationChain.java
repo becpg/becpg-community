@@ -163,4 +163,10 @@ public class FormulationChain<T extends FormulatedEntity> {
 	public boolean shouldUpdateFormulatedDate() {
 		return updateFormulatedDate;
 	}
+
+	public void onError(T repositoryEntity) {
+		if (handlers != null && !handlers.isEmpty()) {
+			handlers.get(0).onError(repositoryEntity);
+		}
+	}
 }
