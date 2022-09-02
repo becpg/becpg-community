@@ -18,6 +18,7 @@
 package fr.becpg.repo.formulation.impl;
 
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -26,6 +27,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -42,7 +44,10 @@ import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationChain;
 import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
+import fr.becpg.repo.formulation.ReportableEntity;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import io.opencensus.trace.AttributeValue;
 
 /**
@@ -56,6 +61,10 @@ import io.opencensus.trace.AttributeValue;
  * @version $Id: $Id
  */
 public class FormulationServiceImpl<T extends FormulatedEntity> implements FormulationService<T>, FormulationPlugin {
+
+	private static final String MESSAGE_FORMULATE_FAILURE_LOOP = "message.formulate.failure.loop";
+
+	private static final String MESSAGE_FORMULATE_FAILURE = "message.formulate.failure";
 
 	private AlfrescoRepository<T> alfrescoRepository;
 
@@ -192,8 +201,6 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			if (repositoryEntity.getNodeRef() != null) {
 				auditScope.putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(repositoryEntity.getNodeRef().toString()));
 			}
-
-		}
 
 			if ((chain == null) && (repositoryEntity.getClass().getSuperclass() != null)) {
 				// look from superclass
