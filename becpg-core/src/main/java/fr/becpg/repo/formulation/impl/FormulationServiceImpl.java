@@ -197,6 +197,18 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	/** {@inheritDoc} */
 	@Override
 	public T formulate(T repositoryEntity, String chainId) {
+		
+		FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);
+
+		if ((chain == null) && (repositoryEntity.getClass().getSuperclass() != null)) {
+			// look from superclass
+			if (logger.isDebugEnabled()) {
+				logger.debug("Look for superClass :" + repositoryEntity.getClass().getSuperclass().getName());
+			}
+			chain = getChain(repositoryEntity.getClass().getSuperclass(), chainId);
+
+		}
+
 		try(Scope scope = tracer.spanBuilder("formulationService.FormulateEntity").startScopedSpan()) {
 			
 			if( repositoryEntity.getName()!=null) {
@@ -204,17 +216,6 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			}
 			if( repositoryEntity.getNodeRef()!=null) {
 				tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(repositoryEntity.getNodeRef().toString()));
-			}
-
-			FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);
-
-			if ((chain == null) && (repositoryEntity.getClass().getSuperclass() != null)) {
-				// look from superclass
-				if (logger.isDebugEnabled()) {
-					logger.debug("Look for superClass :" + repositoryEntity.getClass().getSuperclass().getName());
-				}
-				chain = getChain(repositoryEntity.getClass().getSuperclass(), chainId);
-
 			}
 
 			if (chain != null) {
@@ -242,34 +243,27 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
 				throw e;
 			}
-			 
-			if (e instanceof FormulateException) {
-				
-				if (L2CacheSupport.isSilentModeEnable() && repositoryEntity instanceof ReportableEntity) {
-					MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORMULATE_FAILURE, repositoryEntity.getNodeRef());
-					((ReportableEntity) repositoryEntity).addError(message, chainId, Collections.emptyList());
-					((ReportableEntity) repositoryEntity).merge();
-				} else {
-					throw (FormulateException) e;
-				}
-			} else if (e instanceof StackOverflowError) {
-				if (L2CacheSupport.isSilentModeEnable() && repositoryEntity instanceof ReportableEntity) {
-					MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORMULATE_FAILURE_LOOP, repositoryEntity.getName(), repositoryEntity.getNodeRef());
-					((ReportableEntity) repositoryEntity).addError(message, chainId, Collections.emptyList());
-					((ReportableEntity) repositoryEntity).merge();
-				} else {
-					throw new FormulateException(I18NUtil.getMessage(MESSAGE_FORMULATE_FAILURE_LOOP, repositoryEntity.getName(), repositoryEntity.getNodeRef()), e);
-				}
-			} else if (L2CacheSupport.isSilentModeEnable() && repositoryEntity instanceof ReportableEntity) {
-				MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORMULATE_FAILURE, repositoryEntity.getNodeRef());
-				((ReportableEntity) repositoryEntity).addError(message, chainId, Collections.emptyList());
-				((ReportableEntity) repositoryEntity).merge();
+			
+			MLText message = null;
+			
+			if (e instanceof StackOverflowError) {
+				message = MLTextHelper.getI18NMessage(MESSAGE_FORMULATE_FAILURE_LOOP, repositoryEntity.getName(), repositoryEntity.getNodeRef());
 			} else {
-				throw new FormulateException(I18NUtil.getMessage(MESSAGE_FORMULATE_FAILURE, repositoryEntity != null ? repositoryEntity.getNodeRef() : null), e);
+				message = MLTextHelper.getI18NMessage(MESSAGE_FORMULATE_FAILURE, repositoryEntity != null ? repositoryEntity.getNodeRef() : null);
 			}
-
+			
+			if (L2CacheSupport.isSilentModeEnable() && repositoryEntity instanceof ReportableEntity && chain != null) {
+				((ReportableEntity) repositoryEntity).addError(message, chainId, Collections.emptyList());
+				chain.onError(repositoryEntity);
+			} else {
+				if (e instanceof FormulateException) {
+					throw e;
+				}
+				
+				throw new FormulateException(message.getDefaultValue(), e);
+			}
 		}
-
+			
 		return repositoryEntity;
 	}
 

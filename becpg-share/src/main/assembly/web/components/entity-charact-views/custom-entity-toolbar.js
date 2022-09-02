@@ -67,8 +67,23 @@
 	                              }
 	
 	                              var MAX_RESULTS_UNLIMITED = -1;
+	                              
+	                              var name = "export";
+	                              if(dt.datalistMeta){
+									if(dt.datalistMeta.entityName){
+										name  += " - "+dt.datalistMeta.entityName;
+									}
+									
+									if( dt.datalistMeta.title){
+									  	name+= " - "+dt.datalistMeta.title;
+									} else if( dt.datalistMeta.name){
+										name+= " - "+dt.datalistMeta.name;
+									}
+									
+								  }
+								  name +=".xlsx"
 								
-	 							 beCPG.util.launchAsyncDownload("export.xlsx", "export.xlsx", dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
+	 							 beCPG.util.launchAsyncDownload(name, name, dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
 	                                    .stringify(requestParams)));  
 	                 
 	
