@@ -140,7 +140,7 @@
                             var me = this, previewTooltip = null, q = "";
 
                             // Start by loading new Item
-                            if (me.options.multipleSelectMode || me.isAssoc)
+                            if (!(this.options.multipleSelectMode || this.isAssoc))
                             {
                                 me.loadItems();
                             }
