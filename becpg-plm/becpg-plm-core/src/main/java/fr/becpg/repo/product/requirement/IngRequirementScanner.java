@@ -134,12 +134,17 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 										boolean isInfo = qtyPerc != null && fil.getQtyPercMaxi() != null && (fil.getQtyPercMaxi() > qtyPerc);
 
+										NodeRef rclCharact = null;
+										
+										if (ingredientsConcerned.size() == 1) {
+											rclCharact = ingredientsConcerned.get(0);
+										}
+										
 										// req not respecte
 										ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, isInfo ? RequirementType.Info : fil.getReqType(),
-													fil.getReqMessage(), null, new ArrayList<>(),
+													fil.getReqMessage(), rclCharact, new ArrayList<>(),
 													RequirementDataType.Specification);
 										reqCtrlMap.add(reqCtrl);
-										reqCtrl.setSources(ingredientsConcerned);
 
 										if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 											reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
@@ -181,7 +186,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 						checkAutorized = true;
 					}
 				}
-
+ 
 				// Check autorized
 
 				if (checkAutorized) {
