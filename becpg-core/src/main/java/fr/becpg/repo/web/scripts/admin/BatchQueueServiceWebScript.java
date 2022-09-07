@@ -28,6 +28,8 @@ import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
  */
 public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 
+	private static final String UNKNOWN = "unknown";
+
 	private static final Log logger = LogFactory.getLog(BatchQueueServiceWebScript.class);
 	
 	private static final String BATCH_DESC_ID = "batchDescId";
@@ -80,20 +82,28 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 				if (lastRunningBatch != null) {
 					JSONObject last = new JSONObject();
 					
-					JSONObject batchInfo = new JSONObject(lastRunningBatch.getProcessName());
-					
-					String entityDescription = null;
-					
-					if (batchInfo.has("entityDescription")) {
-						entityDescription = batchInfo.getString("entityDescription");
+					try {
+						JSONObject batchInfo = new JSONObject(lastRunningBatch.getProcessName());
+						String entityDescription = null;
+						
+						if (batchInfo.has("entityDescription")) {
+							entityDescription = batchInfo.getString("entityDescription");
+						}
+						
+						last.put(BATCH_ID, batchInfo.getString(BATCH_ID));
+						last.put(BATCH_USER, batchInfo.getString(BATCH_USER));
+						String descriptionLabel = I18NUtil.getMessage(batchInfo.getString(BATCH_DESC_ID), entityDescription);
+						last.put(BATCH_DESC_ID, descriptionLabel != null ? descriptionLabel : batchInfo.getString(BATCH_DESC_ID));
+					} catch (JSONException e) {
+						last.put(BATCH_ID, lastRunningBatch.getProcessName());
+						last.put(BATCH_DESC_ID, lastRunningBatch.getProcessName());
+						last.put(BATCH_USER, UNKNOWN);
+						logger.warn("Could not parse JSON : " + lastRunningBatch.getProcessName());
 					}
-					
-					last.put(BATCH_ID, batchInfo.getString(BATCH_ID));
-					last.put(BATCH_USER, batchInfo.getString(BATCH_USER));
-					String descriptionLabel = I18NUtil.getMessage(batchInfo.getString(BATCH_DESC_ID), entityDescription);
-					last.put(BATCH_DESC_ID, descriptionLabel != null ? descriptionLabel : batchInfo.getString(BATCH_DESC_ID));
+						
 					last.put("percentCompleted", lastRunningBatch.getPercentComplete());
 					ret.put("last", last);
+					
 				}
 
 			} else if (CANCEL_ACTION.equals(action)) {
