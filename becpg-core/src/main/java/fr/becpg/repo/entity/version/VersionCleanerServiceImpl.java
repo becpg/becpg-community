@@ -144,8 +144,11 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 					
 					for (ChildAssociationRef subChildAssoc : subChildAssocs) {
 						
-						if (entityDictionaryService.isSubClass(nodeService.getType(subChildAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
-							initialList.add(subChildAssoc.getChildRef());
+						Date modified = (Date) nodeService.getProperty(subChildAssoc.getChildRef(), ContentModel.PROP_MODIFIED);
+						if (cal.getTime().compareTo(modified) > 0) {
+							if (entityDictionaryService.isSubClass(nodeService.getType(subChildAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
+								initialList.add(subChildAssoc.getChildRef());
+							}
 						}
 						
 						if (initialList.size() >= maxProcessedNodes) {
