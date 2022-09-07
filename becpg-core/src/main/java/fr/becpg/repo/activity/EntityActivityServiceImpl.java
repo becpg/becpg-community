@@ -80,7 +80,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	public static final int ML_TEXT_SIZE_LIMIT = 200;
 
 	private static final String EXPORT_ACTIVITY = "fr.becpg.export";
-	
+
 	private static final Map<String, Boolean> SORT_MAP;
 	static {
 		SORT_MAP = new LinkedHashMap<>();
@@ -134,7 +134,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Autowired
 	private BatchQueueService batchQueueService;
-	
+
 	@Autowired
 	private ActivityService activityService;
 
@@ -1089,107 +1089,105 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
 			@Override
-			public void beforeProcess() throws Throwable {
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			}
-
-			@Override
-			public void afterProcess() throws Throwable {
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			}
-
-			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("group activities of entity : " + entityNodeRef);
-				}
+				try {
 
-				NodeRef activityListNodeRef = getActivityList(entityNodeRef);
-				if (activityListNodeRef != null) {
-
-					Set<String> users = new HashSet<>();
-					Date cronDate = new Date();
-
-					//Clear all activities of entity templates
-					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
-						clearAllActivities(entityNodeRef);
-					}
-
-					// Get Activity list ordered by the date of creation
-					List<NodeRef> activityListDataItemNodeRefs = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST,
-							SORT_MAP);
-					Collections.reverse(activityListDataItemNodeRefs);
-
-					int nbrActivity = activityListDataItemNodeRefs.size();
-					// Keep the first 50 activities
-					activityListDataItemNodeRefs = activityListDataItemNodeRefs.subList(nbrActivity > MAX_PAGE ? MAX_PAGE : 0,
-							nbrActivity > MAX_PAGE ? nbrActivity : 0);
-
-					nbrActivity = activityListDataItemNodeRefs.size();
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 
 					if (logger.isDebugEnabled()) {
-						logger.debug("nbrActivity: " + nbrActivity);
+						logger.debug("group activities of entity : " + entityNodeRef);
 					}
 
-					// Clean activities which are not in the first page.
-					if (nbrActivity > 0) {
-						Map<ActivityType, List<NodeRef>> activitiesByType = new HashMap<>();
-						ActivityListDataItem activity;
-						int activityInPage = 0;
-						boolean hasFormulation = false;
-						boolean hasReport = false;
+					NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+					if (activityListNodeRef != null) {
 
-						for (NodeRef activityItemNodeRef : activityListDataItemNodeRefs) {
-							if (activityInPage == MAX_PAGE) {
-								hasFormulation = false;
-								hasReport = false;
-								activityInPage = 0;
-							}
+						Set<String> users = new HashSet<>();
+						Date cronDate = new Date();
 
-							Date created = (Date) nodeService.getProperty(activityItemNodeRef, ContentModel.PROP_CREATED);
-							if (cronDate.after(created)) {
-								cronDate = created;
-							}
+						//Clear all activities of entity templates
+						if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
+							clearAllActivities(entityNodeRef);
+						}
 
-							activity = alfrescoRepository.findOne(activityItemNodeRef);
-							ActivityType activityType = activity.getActivityType();
+						// Get Activity list ordered by the date of creation
+						List<NodeRef> activityListDataItemNodeRefs = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST,
+								SORT_MAP);
+						Collections.reverse(activityListDataItemNodeRefs);
 
-							if ((activityType.equals(ActivityType.Formulation) && hasFormulation)
-									|| (activityType.equals(ActivityType.Report) && hasReport)) {
-								nodeService.addAspect(activityItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-								nodeService.deleteNode(activityItemNodeRef);
-								nbrActivity--;
-								continue;
-							}
-							// Arrange activities by type
-							else {
-								if (!activitiesByType.containsKey(activityType)) {
-									activitiesByType.put(activityType, new ArrayList<>());
+						int nbrActivity = activityListDataItemNodeRefs.size();
+						// Keep the first 50 activities
+						activityListDataItemNodeRefs = activityListDataItemNodeRefs.subList(nbrActivity > MAX_PAGE ? MAX_PAGE : 0,
+								nbrActivity > MAX_PAGE ? nbrActivity : 0);
+
+						nbrActivity = activityListDataItemNodeRefs.size();
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("nbrActivity: " + nbrActivity);
+						}
+
+						// Clean activities which are not in the first page.
+						if (nbrActivity > 0) {
+							Map<ActivityType, List<NodeRef>> activitiesByType = new HashMap<>();
+							ActivityListDataItem activity;
+							int activityInPage = 0;
+							boolean hasFormulation = false;
+							boolean hasReport = false;
+
+							for (NodeRef activityItemNodeRef : activityListDataItemNodeRefs) {
+								if (activityInPage == MAX_PAGE) {
+									hasFormulation = false;
+									hasReport = false;
+									activityInPage = 0;
 								}
-								hasFormulation = activityType.equals(ActivityType.Formulation) ? true : hasFormulation;
-								hasReport = activityType.equals(ActivityType.Report) ? true : hasReport;
-								activitiesByType.get(activityType).add(activityItemNodeRef);
-								users.add(activity.getUserId());
-							}
-						}
 
-						List<NodeRef> dlActivities = activitiesByType.get(ActivityType.Datalist);
-						if (dlActivities != null) {
-							// Group list by day/week/month/year
-							int[] groupTime = { Calendar.DAY_OF_YEAR, Calendar.WEEK_OF_YEAR, Calendar.MONTH, Calendar.YEAR };
-							for (int i = 0; (i < groupTime.length) && (nbrActivity > MAX_PAGE); i++) {
-								dlActivities = group(dlActivities, users, groupTime[i], cronDate);
-								nbrActivity += (dlActivities.size() - activitiesByType.get(ActivityType.Datalist).size());
+								Date created = (Date) nodeService.getProperty(activityItemNodeRef, ContentModel.PROP_CREATED);
+								if (cronDate.after(created)) {
+									cronDate = created;
+								}
+
+								activity = alfrescoRepository.findOne(activityItemNodeRef);
+								ActivityType activityType = activity.getActivityType();
+
+								if ((activityType.equals(ActivityType.Formulation) && hasFormulation)
+										|| (activityType.equals(ActivityType.Report) && hasReport)) {
+									nodeService.addAspect(activityItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+									nodeService.deleteNode(activityItemNodeRef);
+									nbrActivity--;
+									continue;
+								}
+								// Arrange activities by type
+								else {
+									if (!activitiesByType.containsKey(activityType)) {
+										activitiesByType.put(activityType, new ArrayList<>());
+									}
+									hasFormulation = activityType.equals(ActivityType.Formulation) ? true : hasFormulation;
+									hasReport = activityType.equals(ActivityType.Report) ? true : hasReport;
+									activitiesByType.get(activityType).add(activityItemNodeRef);
+									users.add(activity.getUserId());
+								}
+							}
+
+							List<NodeRef> dlActivities = activitiesByType.get(ActivityType.Datalist);
+							if (dlActivities != null) {
+								// Group list by day/week/month/year
+								int[] groupTime = { Calendar.DAY_OF_YEAR, Calendar.WEEK_OF_YEAR, Calendar.MONTH, Calendar.YEAR };
+								for (int i = 0; (i < groupTime.length) && (nbrActivity > MAX_PAGE); i++) {
+									dlActivities = group(dlActivities, users, groupTime[i], cronDate);
+									nbrActivity += (dlActivities.size() - activitiesByType.get(ActivityType.Datalist).size());
+								}
 							}
 						}
 					}
+
+				} finally {
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				}
 
 			}
 		};
 
-		batchQueueService.queueBatch(batchInfo, workProvider, processWorker,null);
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
 
 		return batchInfo;
 	}
@@ -1321,13 +1319,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Override
 	public void postExportActivity(NodeRef entityNodeRef, QName dataType, String fileName) {
-	   logger.info("Exporting:"+ fileName+ " "+ dataType+ " "+ entityNodeRef+ " "+ AuthenticationUtil.getFullyAuthenticatedUser());
-		
-	   if (entityNodeRef != null) {
-		   postEntityExportActivity(entityNodeRef, dataType, fileName);
-	   } else {
+		logger.info("Exporting:" + fileName + " " + dataType + " " + entityNodeRef + " " + AuthenticationUtil.getFullyAuthenticatedUser());
+
+		if (entityNodeRef != null) {
+			postEntityExportActivity(entityNodeRef, dataType, fileName);
+		} else {
 			postAlfrescoExportActivity(fileName);
-	   }
+		}
 	}
 
 	private void postAlfrescoExportActivity(String fileName) {
@@ -1353,11 +1351,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
 				NodeRef datalistNodeRef = null;
-				
+
 				if (listContainerNodeRef != null) {
 					datalistNodeRef = entityListDAO.getList(listContainerNodeRef, dataType);
 				}
-				
+
 				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
 				// Don't save System activities
 				if (!AuthenticationUtil.getSystemUserName().equals(activityListDataItem.getUserId())) {
