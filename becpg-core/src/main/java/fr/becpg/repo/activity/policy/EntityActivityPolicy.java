@@ -75,6 +75,7 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 		isIgnoredTypes.add(ContentModel.PROP_MODIFIER);
 		isIgnoredTypes.add(ForumModel.PROP_COMMENT_COUNT);
 		isIgnoredTypes.add(BeCPGModel.PROP_SORT);
+		isIgnoredTypes.add(BeCPGModel.PROP_ENTITY_SCORE);
 		isIgnoredTypes.add(BeCPGModel.PROP_STATE_ACTIVITY_PREVIOUSSTATE);
 		isIgnoredTypes.add(BeCPGModel.PROP_STATE_ACTIVITY_MODIFIED);
 		isIgnoredTypes.add(BeCPGModel.PROP_STATE_ACTIVITY_MODIFIER);
