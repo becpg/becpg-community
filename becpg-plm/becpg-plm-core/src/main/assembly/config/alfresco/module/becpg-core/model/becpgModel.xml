@@ -2798,7 +2798,10 @@
 				<property name="bcpg:dynamicCharactTitle">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
-					<index enabled="false"/>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="bcpg:dynamicCharactFormula">
 					<type>d:text</type>
