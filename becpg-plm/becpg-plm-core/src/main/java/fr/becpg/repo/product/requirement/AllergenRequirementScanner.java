@@ -49,9 +49,9 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 									isAllergenAllowed = true;
 								}
 
-								if (!isAllergenAllowed) {
+								if (!isAllergenAllowed || Boolean.TRUE.equals(addInfoReqCtrl)) {
 									MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
-									ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
+									ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, isAllergenAllowed ? RequirementType.Info : RequirementType.Forbidden, message,
 											listDataItem.getAllergen(), new ArrayList<>(), RequirementDataType.Specification);
 
 									if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
