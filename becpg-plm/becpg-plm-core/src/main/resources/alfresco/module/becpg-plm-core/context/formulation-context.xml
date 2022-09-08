@@ -269,6 +269,7 @@
 			<list>
 				<bean class="fr.becpg.repo.product.requirement.AllergenRequirementScanner">
 					<property name="mlNodeService" ref="mlAwareNodeService" />
+					<property name="addInfoReqCtrl" value="${beCPG.formulation.specification.addInfoReqCtrl}" />
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.IngRequirementScanner">
 					<property name="mlNodeService" ref="mlAwareNodeService" />
@@ -277,12 +278,15 @@
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.NutsRequirementScanner">
 					<property name="mlNodeService" ref="mlAwareNodeService" />
+					<property name="addInfoReqCtrl" value="${beCPG.formulation.specification.addInfoReqCtrl}" />
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.PhysicoRequirementScanner">
 					<property name="mlNodeService" ref="mlAwareNodeService" />
+					<property name="addInfoReqCtrl" value="${beCPG.formulation.specification.addInfoReqCtrl}" />
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.ClaimRequirementScanner">
 					<property name="mlNodeService" ref="mlAwareNodeService" />
+					<property name="addInfoReqCtrl" value="${beCPG.formulation.specification.addInfoReqCtrl}" />
 				</bean>
 				<bean class="fr.becpg.repo.product.requirement.DecernisRequirementsScanner">
 					<property name="decernisService" ref="decernisService" />
