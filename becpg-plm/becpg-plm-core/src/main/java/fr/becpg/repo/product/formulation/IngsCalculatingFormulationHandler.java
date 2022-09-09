@@ -604,8 +604,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				il.setSort(i);
 
 			}
-
-			ingList.sort(Comparator.comparingInt(IngListDataItem::getSort));
+			
+			ingList.sort(Comparator.comparing(IngListDataItem::getSort, Comparator.nullsLast(Comparator.naturalOrder())));
 		}
 
 	}
