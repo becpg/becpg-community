@@ -893,10 +893,10 @@
 		
 		<Dimension name="project" caption="${msg("jsolap.project.title")}">
 			<Hierarchy name="project_dim" hasAll="true" allMemberCaption="${msg("jsolap.project.caption")}">
-				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" column="projectNodeRef" nameColumn="projectName" type="String" highCardinality="true"  />
 				<Level name="projectHierarchy1" caption="${msg("jsolap.projectFamily.title")}" column="projectHierarchy1" type="String"   />
 				<Level name="projectHierarchy2" caption="${msg("jsolap.projectSubFamily.title")}" column="projectHierarchy2" type="String"   />
-				</Hierarchy>
+				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" column="projectNodeRef" nameColumn="projectName" type="String" highCardinality="true"  />
+			</Hierarchy>
 		</Dimension>
 		
 		<Dimension  name="state" caption="${msg("jsolap.projectState.title")}" >
