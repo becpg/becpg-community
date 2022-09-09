@@ -140,7 +140,7 @@
                             var me = this, previewTooltip = null, q = "";
 
                             // Start by loading new Item
-                            if (me.options.multipleSelectMode || me.isAssoc)
+                            if (this.options.multipleSelectMode || this.isAssoc)
                             {
                                 me.loadItems();
                             }
@@ -849,7 +849,7 @@
                         	 basket.innerHTML = "";
                         	}
                         	this.options.currentValue = args[1];
-                        	 if (this.options.multipleSelectMode || this.isAssoc)
+ 							if (!(this.options.multipleSelectMode || this.isAssoc))
                              {
                         		 this.loadItems();
                              }
