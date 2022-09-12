@@ -34,9 +34,9 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.audit.BeCPGAuditService;
 import fr.becpg.repo.audit.model.AuditScope;
-import fr.becpg.repo.audit.model.DatabaseAuditType;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 @Service("batchQueueService")
@@ -201,10 +201,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			
 			int totalItems = 0;
 			
-			try (AuditScope auditScope = beCPGAuditService.createAudit().withDatabaseRecords(DatabaseAuditType.BATCH)
-					.auditValue("batchUser", batchInfo.getBatchUser())
-					.auditValue("batchId", batchInfo.getBatchId())
-					.auditValue("isCompleted", batchInfo.getIsCompleted()).startAudit()) {
+			try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.BATCH)) {
+				
+				auditScope.putAttribute("batchUser", batchInfo.getBatchUser());
+				auditScope.putAttribute("batchId", batchInfo.getBatchId());
+				auditScope.putAttribute("isCompleted", batchInfo.getIsCompleted());
 				
 				for (BatchStep<T> batchStep : batchSteps) {
 					
@@ -298,10 +299,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				
 				batchInfo.setIsCompleted(true);
 				
-				auditScope.auditValue("isCompleted", batchInfo.getIsCompleted());
+				auditScope.putAttribute("isCompleted", batchInfo.getIsCompleted());
 				
 			}
-				
 			
 			if (Boolean.TRUE.equals(batchInfo.getNotifyByMail())) {
 

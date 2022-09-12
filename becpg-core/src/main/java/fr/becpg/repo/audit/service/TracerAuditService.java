@@ -1,6 +1,4 @@
-package fr.becpg.repo.audit.plugin;
-
-import io.opencensus.trace.AttributeValue;
+package fr.becpg.repo.audit.service;
 
 public interface TracerAuditService {
 
@@ -8,7 +6,7 @@ public interface TracerAuditService {
 
 	void stop(AutoCloseable scope);
 
-	void putAttribute(String string, AttributeValue stringAttributeValue);
+	void putAttribute(String string, Object attribute);
 
 	void addAnnotation(String string);
 
