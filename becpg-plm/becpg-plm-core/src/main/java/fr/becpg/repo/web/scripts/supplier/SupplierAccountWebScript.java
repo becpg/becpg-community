@@ -164,7 +164,7 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 
 				Map<QName, Serializable> propMap = new HashMap<>();
 				propMap.put(ContentModel.PROP_USERNAME, userName);
-				propMap.put(ContentModel.PROP_LASTNAME, userName);
+				propMap.put(ContentModel.PROP_LASTNAME, userName + "_" + supplierEmail);
 				propMap.put(ContentModel.PROP_FIRSTNAME, nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
 				propMap.put(ContentModel.PROP_EMAIL, supplierEmail);
 				NodeRef userRef = personService.createPerson(propMap);
@@ -176,14 +176,14 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 				mailService.sendMailNewUser(personService.getPersonOrNull(creator), userName, password, true);
 
 				// notify supplier
-				if (notifySupplier) {
+				if (Boolean.TRUE.equals(notifySupplier)) {
 					mailService.sendMailNewUser(userRef, userName, password, false);
 				}
 
 			} else {
 
 				if (logger.isDebugEnabled()) {
-					logger.debug("Reassign to an existed user");
+					logger.debug("Reassign to an existing user");
 				}
 
 				associations.add(personService.getPerson(userName));
