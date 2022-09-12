@@ -1,10 +1,10 @@
-package fr.becpg.repo.audit.plugin.impl;
+package fr.becpg.repo.audit.service.impl;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.audit.plugin.TracerAuditService;
+import fr.becpg.repo.audit.service.TracerAuditService;
 import io.opencensus.trace.AttributeValue;
 import io.opencensus.trace.Tracer;
 import io.opencensus.trace.Tracing;
@@ -31,8 +31,10 @@ public class TracerAuditServiceImpl implements TracerAuditService {
 	}
 
 	@Override
-	public void putAttribute(String string, AttributeValue stringAttributeValue) {
-		tracer.getCurrentSpan().putAttribute(string, stringAttributeValue);
+	public void putAttribute(String string, Object attribute) {
+		if (attribute != null) {
+			tracer.getCurrentSpan().putAttribute(string, AttributeValue.stringAttributeValue(attribute.toString()));
+		}
 	}
 
 	@Override

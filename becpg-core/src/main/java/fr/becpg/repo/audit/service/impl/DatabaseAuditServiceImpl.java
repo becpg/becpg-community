@@ -1,4 +1,4 @@
-package fr.becpg.repo.audit.plugin;
+package fr.becpg.repo.audit.service.impl;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -6,12 +6,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 
 import org.alfresco.repo.audit.AuditComponent;
 import org.alfresco.rest.api.Audit;
@@ -29,84 +27,63 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
+import fr.becpg.repo.audit.plugin.AuditPlugin;
+import fr.becpg.repo.audit.service.DatabaseAuditService;
 
-public abstract class AbstractDatabaseAuditPlugin implements DatabaseAuditPlugin {
-	
-	private static final String ID = "id";
-	private static final String STARTED_AT = "startedAt";
-	private static final String COMPLETED_AT = "completedAt";
-	private static final String DURATION = "duration";
+@Service
+public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	
 	private static final String BECPG_AUDIT_PATH = "/becpg/audit";
-	
-	protected static final Map<String, String> KEY_MAP = new HashMap<>();
 
-	static {
-		KEY_MAP.put(STARTED_AT, "date");
-		KEY_MAP.put(COMPLETED_AT, "date");
-		KEY_MAP.put(DURATION, "int");
-	}
-
-	private String whereClauseFormat;
-
-	@Autowired
-	private AuditComponent auditComponent;
-	
 	@Autowired
 	@Qualifier("auditApi")
 	@Lazy
 	private Audit audit;
 	
-	protected abstract String getAuditApplicationId();
+	@Autowired
+	private AuditComponent auditComponent;
 
-	protected abstract String getAuditApplicationPath();
-	
 	@Override
-	public int recordAuditEntry(Map<String, Serializable> auditValues, boolean open) {
+	public int recordAuditEntry(AuditPlugin auditPlugin, Map<String, Serializable> auditValues, boolean deleteOldEntry) {
 		
-		Integer id = null;
+		auditPlugin.beforeRecordAuditEntry(auditValues);
 		
-		AuditEntry entryToDelete = null;
+		try {
+			
+			AuditEntry entryToDelete = null;
+			
+			int id = (int) auditValues.get("id");
 
-		if (open) {
-			
-			auditValues.put(STARTED_AT, new Date());
-			
-			id = Objects.hash(auditValues);
-			auditValues.put(ID, id);
-		} else {
-			
-			id = (int) auditValues.get(ID);
-			Date end = new Date();
-			
-			auditValues.put(COMPLETED_AT, end);
-			
-			Date start = (Date) auditValues.get(STARTED_AT);
-			
-			auditValues.put(DURATION, end.getTime() - start.getTime());
-
-			Collection<AuditEntry> entries = listAuditEntries(10, "id=" + id);
-			
-			if (!entries.isEmpty()) {
-				entryToDelete = entries.iterator().next();
+			if (deleteOldEntry) {
+				
+				Collection<AuditEntry> entries = listAuditEntries(auditPlugin, 10, "id=" + id);
+				
+				if (!entries.isEmpty()) {
+					entryToDelete = entries.iterator().next();
+				}
 			}
+			
+			auditComponent.recordAuditValues(BECPG_AUDIT_PATH, recreateAuditMap(auditPlugin, auditValues));
+			
+			if (entryToDelete != null) {
+				auditComponent.deleteAuditEntries(Arrays.asList(entryToDelete.getId()));
+			}
+			
+			return id;
+			
+		} finally {
+			auditPlugin.afterRecordAuditEntry(auditValues);
 		}
 		
-		auditComponent.recordAuditValues(BECPG_AUDIT_PATH, recreateAuditMap(auditValues));
-		
-		if (entryToDelete != null) {
-			auditComponent.deleteAuditEntries(Arrays.asList(entryToDelete.getId()));
-		}
-
-		return id;
 	}
-	
+
 	@Override
-	public List<JSONObject> buildAuditStatistics(Integer maxResults, String sortBy, String filter) {
+	public List<JSONObject> getAuditStatistics(AuditPlugin plugin, Integer maxResults, String sortBy, String filter) {
 		
-		Collection<AuditEntry> auditEntries = listAuditEntries(maxResults, filter);
+		Collection<AuditEntry> auditEntries = listAuditEntries(plugin, maxResults, filter);
 		
 		List<JSONObject> statistics = new ArrayList<>();
 		
@@ -114,8 +91,8 @@ public abstract class AbstractDatabaseAuditPlugin implements DatabaseAuditPlugin
 			
 			JSONObject statItem = new JSONObject();
 			
-			for (String auditKey : getStatisticsKeyMap().keySet()) {
-				String key = "/" + getAuditApplicationId() + "/" + getAuditApplicationPath() + "/" + auditKey + "/value";
+			for (String auditKey : plugin.getStatisticsKeyMap().keySet()) {
+				String key = "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + auditKey + "/value";
 				if (auditEntry.getValues().containsKey(key)) {
 					statItem.put(auditKey, auditEntry.getValues().get(key));
 				}
@@ -126,31 +103,16 @@ public abstract class AbstractDatabaseAuditPlugin implements DatabaseAuditPlugin
 		}
 		
 		if (sortBy != null && !sortBy.isBlank()) {
-			Collections.sort(statistics, new StatisticsComparator(sortBy));
+			Collections.sort(statistics, new StatisticsComparator(plugin.getStatisticsKeyMap(), sortBy));
 		}
 		
 		return statistics;
 		
 	}
 
-	private Map<String, Serializable> recreateAuditMap(Map<String, Serializable> auditValues) {
+	private Collection<AuditEntry> listAuditEntries(AuditPlugin plugin, int maxResults, String filter) {
 		
-		Map<String, Serializable> auditMap = new HashMap<>();
-		
-		for (Entry<String, Serializable> entry : auditValues.entrySet()) {
-			auditMap.put(getAuditApplicationPath() + "/" + entry.getKey(), entry.getValue());
-		}
-		
-		return auditMap;
-	}
-
-	private Map<String, String> getStatisticsKeyMap() {
-		return KEY_MAP;
-	}
-
-	private Collection<AuditEntry> listAuditEntries(int maxResults, String filter) {
-		
-		String whereClause = buildWhereClause(filter);
+		String whereClause = buildWhereClause(plugin, filter);
 		
 		Query query = buildQuery(whereClause);
 		
@@ -159,13 +121,13 @@ public abstract class AbstractDatabaseAuditPlugin implements DatabaseAuditPlugin
 		RecognizedParams recognizedParams = new RecognizedParams(null, paging, null, null, Arrays.asList("values"),
 				null, query, null, false);
 		
-		Parameters params = Params.valueOf(recognizedParams, getAuditApplicationId(), null, null);
-
-		return audit.listAuditEntries(getAuditApplicationId(), params).getCollection();
-	}
+		Parameters params = Params.valueOf(recognizedParams, plugin.getAuditApplicationId(), null, null);
 	
-	private String buildWhereClause(String filter) {
+		return audit.listAuditEntries(plugin.getAuditApplicationId(), params).getCollection();
+	}
 
+	private String buildWhereClause(AuditPlugin plugin, String filter) {
+	
 		if (filter != null) {
 			
 			String[] splitted = filter.split("=");
@@ -177,7 +139,7 @@ public abstract class AbstractDatabaseAuditPlugin implements DatabaseAuditPlugin
 			String valuesKey = splitted[0];
 			String valuesValue = splitted[1];
 			
-			return String.format(getWhereClauseFormat(), valuesKey, valuesValue);
+			return String.format(getWhereClauseFormat(plugin), valuesKey, valuesValue);
 			
 		}
 		
@@ -197,20 +159,29 @@ public abstract class AbstractDatabaseAuditPlugin implements DatabaseAuditPlugin
 		
 		return null;
 	}
+
+	private String getWhereClauseFormat(AuditPlugin plugin) {
+		return "(valuesKey='" + "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/%s/value' and valuesValue='%s')";
+	}
 	
-	private String getWhereClauseFormat() {
-		if (whereClauseFormat == null) {
-			whereClauseFormat = "(valuesKey='" + "/" + getAuditApplicationId() + "/" + getAuditApplicationPath() + "/%s/value' and valuesValue='%s')";
+	private Map<String, Serializable> recreateAuditMap(AuditPlugin plugin, Map<String, Serializable> auditValues) {
+		
+		Map<String, Serializable> auditMap = new HashMap<>();
+		
+		for (Entry<String, Serializable> entry : auditValues.entrySet()) {
+			auditMap.put(plugin.getAuditApplicationPath() + "/" + entry.getKey(), entry.getValue());
 		}
 		
-		return whereClauseFormat;
+		return auditMap;
 	}
 
 	private class StatisticsComparator implements Comparator<JSONObject> {
-	
-		private String comparisonFieldName;
 		
-		public StatisticsComparator(String comparisonFieldName) {
+		private String comparisonFieldName;
+		private Map<String, String> statisticsMap;
+		
+		public StatisticsComparator(Map<String, String> statisticsMap, String comparisonFieldName) {
+			this.statisticsMap = statisticsMap;
 			this.comparisonFieldName = comparisonFieldName;
 		}
 		
@@ -233,7 +204,7 @@ public abstract class AbstractDatabaseAuditPlugin implements DatabaseAuditPlugin
 						return 1;
 					}
 					
-					if ("int".equals(getStatisticsKeyMap().get(comparisonFieldName))) {
+					if ("int".equals(statisticsMap.get(comparisonFieldName))) {
 						Integer int1 = Integer.parseInt(field1.toString());
 						Integer int2 = Integer.parseInt(field2.toString());
 						return int1.compareTo(int2);

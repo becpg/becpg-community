@@ -36,9 +36,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.audit.BeCPGAuditService;
 import fr.becpg.repo.audit.model.AuditScope;
-import fr.becpg.repo.audit.model.DatabaseAuditType;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationChain;
@@ -48,7 +48,6 @@ import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
-import io.opencensus.trace.AttributeValue;
 
 /**
  * <p>
@@ -153,29 +152,17 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		Locale currentLocal = I18NUtil.getLocale();
 		Locale currentContentLocal = I18NUtil.getContentLocale();
 		
-		try(AuditScope auditScope = beCPGAuditService.createAudit().withTracer("formulationService.Formulate").withStopWatch(logger, "Formulate : " + this.getClass().getName()).startAudit()) {
-			
+		try {
 			I18NUtil.setLocale(Locale.getDefault());
 			I18NUtil.setContentLocale(null);
-			
-			if(entityNodeRef!=null) {
-				auditScope.putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
-			}
-			if(chainId!=null) {
-				auditScope.putAttribute("becpg/chainId", AttributeValue.stringAttributeValue(chainId));
-			}
-			auditScope.addAnnotation("findOne");
 			
 			T entity = alfrescoRepository.findOne(entityNodeRef);
 
 			entity = formulate(entity, chainId);
 
-			try (AuditScope auditScope2 = beCPGAuditService.createAudit().withStopWatch(logger, "Save : " + this.getClass().getName()).startAudit()) {
-				auditScope.addAnnotation("save");
-				alfrescoRepository.save(entity);
-				
-				return entity;
-			}
+			alfrescoRepository.save(entity);
+			
+			return entity;
 			
 			
 		} finally {
@@ -190,17 +177,11 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		
 		FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);
 
-		try (AuditScope auditScope = beCPGAuditService.createAudit().withDatabaseRecords(DatabaseAuditType.FORMULATION)
-				.auditValue("chainId", chainId).auditValue("entityName", repositoryEntity.getName())
-				.auditValue("entityNodeRef", repositoryEntity.getNodeRef().toString())
-				.withTracer("formulationService.FormulateEntity").startAudit()) {
+		try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.FORMULATION)) {
 
-			if (repositoryEntity.getName() != null) {
-				auditScope.putAttribute("becpg/entityName", AttributeValue.stringAttributeValue(repositoryEntity.getName()));
-			}
-			if (repositoryEntity.getNodeRef() != null) {
-				auditScope.putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(repositoryEntity.getNodeRef().toString()));
-			}
+			auditScope.putAttribute("chainId", chainId);
+			auditScope.putAttribute("entityName", repositoryEntity.getName());
+			auditScope.putAttribute("entityNodeRef", repositoryEntity.getNodeRef());
 
 			if ((chain == null) && (repositoryEntity.getClass().getSuperclass() != null)) {
 				// look from superclass
@@ -214,9 +195,9 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			if (chain != null) {
 				int i = 0;
 				do {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Execute formulation chain  - " + i + " for " + repositoryEntity.getName());
-					}
+					
+					auditScope.addAnnotation("Execute formulation chain  - " + i + " for " + repositoryEntity.getName());
+					
 					repositoryEntity.setCurrentReformulateCount(i);
 					repositoryEntity.setFormulationChainId(chainId);
 					chain.executeChain(repositoryEntity);
