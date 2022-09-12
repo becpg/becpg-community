@@ -1,6 +1,6 @@
 package fr.becpg.repo.audit.model;
 
-public enum DatabaseAuditType {
+public enum AuditType {
 	
 	BATCH,
 	FORMULATION,

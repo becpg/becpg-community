@@ -12,8 +12,8 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.audit.BeCPGAuditService;
-import fr.becpg.repo.audit.model.DatabaseAuditType;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 
 public class StatisticsWebScript extends AbstractWebScript {
 
@@ -44,23 +44,23 @@ public class StatisticsWebScript extends AbstractWebScript {
 			maxResults = Integer.parseInt(reqMaxResults);
 		}
 		
-		DatabaseAuditType type = null;
+		AuditType type = null;
 		
 		switch (reqType) {
 		case "batch":
-			type = DatabaseAuditType.BATCH;
+			type = AuditType.BATCH;
 			break;
 		case "formulation":
-			type = DatabaseAuditType.FORMULATION;
+			type = AuditType.FORMULATION;
 			break;
 		case "activity":
-			type = DatabaseAuditType.ACTIVITY;
+			type = AuditType.ACTIVITY;
 			break;
 		default:
 			throw new WebScriptException("Unknown audit type : '" + reqType + "'");
 		}
 		
-		List<JSONObject> statistics = beCPGAuditService.buildAuditStatistics(type, maxResults, sortBy, filter);
+		List<JSONObject> statistics = beCPGAuditService.getAuditStatistics(type, maxResults, sortBy, filter);
 		
 		try {
 			JSONObject ret = new JSONObject();

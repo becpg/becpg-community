@@ -1,79 +1,87 @@
 package fr.becpg.repo.audit.model;
 
-import java.io.Serializable;
-import java.util.Map;
+import org.apache.commons.logging.LogFactory;
 
-import org.apache.commons.logging.Log;
-import org.springframework.util.StopWatch;
-
-import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
-import fr.becpg.repo.audit.plugin.StopWatchAuditService;
-import fr.becpg.repo.audit.plugin.TracerAuditService;
-import io.opencensus.trace.AttributeValue;
+import fr.becpg.repo.audit.plugin.AuditPlugin;
+import fr.becpg.repo.audit.service.DatabaseAuditService;
+import fr.becpg.repo.audit.service.DatabaseServiceWrapper;
+import fr.becpg.repo.audit.service.StopWatchAuditService;
+import fr.becpg.repo.audit.service.StopWatchServiceWrapper;
+import fr.becpg.repo.audit.service.TracerAuditService;
+import fr.becpg.repo.audit.service.TracerServiceWrapper;
 
 public class AuditScope implements AutoCloseable {
 
-	private DatabaseAuditPlugin databaseAuditPlugin;
-	private TracerAuditService tracerAuditService;
-	private StopWatchAuditService stopWatchAuditService;
-	private String stopWatchName;
-	private Map<String, Serializable> auditValues;
-	private String tracerScopeName;
-	private AutoCloseable tracerScope;
-	private StopWatch stopWatch;
-	private Log logger;
+	private DatabaseServiceWrapper databaseService;
 	
-	public AuditScope(DatabaseAuditPlugin auditPlugin, Map<String, Serializable> auditValues, TracerAuditService tracerAuditPlugin, String tracerScopeName, StopWatchAuditService loggerAuditPlugin, String stopWatchName, Log logger) {
-		this.databaseAuditPlugin = auditPlugin;
-		this.tracerAuditService = tracerAuditPlugin;
-		this.auditValues = auditValues;
-		this.tracerScopeName = tracerScopeName;
-		this.stopWatchAuditService = loggerAuditPlugin;
-		this.stopWatchName = stopWatchName;
-		this.logger = logger;
-	}
+	private StopWatchServiceWrapper stopWatchService;
 	
-	public void auditValue(String key, Serializable value) {
-		auditValues.put(key, value);
+	private TracerServiceWrapper tracerService;
+	
+	public AuditScope(AuditPlugin plugin, DatabaseAuditService databaseAuditService, StopWatchAuditService stopWatchAuditService, TracerAuditService tracerAuditService) {
+		if (plugin.isDatabaseEnable()) {
+			databaseService = new DatabaseServiceWrapper(plugin, databaseAuditService);
+		}
+		
+		if (plugin.isStopWatchEnable()) {
+			stopWatchService = new StopWatchServiceWrapper(stopWatchAuditService, plugin.getAuditApplicationPath() + " : " + plugin.getAuditClass().getName(), LogFactory.getLog(plugin.getAuditClass()));
+		}
+		
+		if (plugin.isTracerEnable()) {
+			tracerService = new TracerServiceWrapper(tracerAuditService, plugin.getAuditApplicationPath());
+		}
 	}
 
-	public void open() {
-		if (databaseAuditPlugin != null) {
-			databaseAuditPlugin.recordAuditEntry(auditValues, true);
-		}
-		
-		if (tracerAuditService != null) {
-			tracerScope = tracerAuditService.start(tracerScopeName);
-		}
-		
-		if (stopWatchAuditService != null) {
-			stopWatch = stopWatchAuditService.start(logger);
-		}
-	}
-	
 	@Override
 	public void close() {
-		if (databaseAuditPlugin != null) {
-			databaseAuditPlugin.recordAuditEntry(auditValues, false);
+		
+		if (databaseService != null) {
+			databaseService.stop();
 		}
-		if (tracerAuditService != null) {
-			tracerAuditService.stop(tracerScope);
+		
+		if (stopWatchService != null) {
+			stopWatchService.stop();
 		}
-		if (stopWatchAuditService != null) {
-			stopWatchAuditService.stop(logger, stopWatch, stopWatchName);
+		
+		if (tracerService != null) {
+			tracerService.stop();
 		}
+		
 	}
 
-	public void putAttribute(String string, AttributeValue stringAttributeValue) {
-		if (tracerAuditService != null) {
-			tracerAuditService.putAttribute(string, stringAttributeValue);
+	public void putAttribute(String string, Object attribute) {
+		if (databaseService != null) {
+			databaseService.putAttribute(string, attribute);
+		}
+		if (tracerService != null) {
+			tracerService.putAttribute(string, attribute);
 		}
 	}
 
 	public void addAnnotation(String string) {
-		if (tracerAuditService != null) {
-			tracerAuditService.addAnnotation(string);
+		if (stopWatchService != null) {
+			stopWatchService.addAnnotation(string);
 		}
+		if (tracerService != null) {
+			tracerService.addAnnotation(string);
+		}
+	}
+
+	public AuditScope start() {
+		
+		if (databaseService != null) {
+			databaseService.start();
+		}
+		
+		if (stopWatchService != null) {
+			stopWatchService.start();
+		}
+		
+		if (tracerService != null) {
+			tracerService.start();
+		}
+		
+		return this;
 	}
 
 }
