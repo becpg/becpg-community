@@ -141,7 +141,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RD_PATH = "beCPG/birt/document/product/default/ProductReport_RD.rptdesign";
 	private static final String PRODUCT_REPORT_RD_NAME = "path.productreportrdtemplate";
 	private static final String PRODUCT_REPORT_TECHNICAL_SHEET_NAME = "path.productreporttechnicalsheettemplate";
-
+	
+	private static final String PRODUCT_REPORT_SUPPLIER_PATH = "beCPG/birt/document/product/default/SupplierReport.rptdesign";
+	private static final String PRODUCT_REPORT_SUPPLIER_NAME = "path.productreportsuppliertemplate";
+	
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String QUALITY_CONTROL_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlReport.rptdesign";
 	private static final String QUALITY_CONTROL_AGING_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlAgingReport.rptdesign";
@@ -164,12 +167,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private static final Map<String, String> reportKindCodes = new HashMap<>();
 	private static final String NONE_KIND_REPORT = "none";
-	private static final String SUPPLIER_KIND_REPORT = "supplier";
 
 	static {
 		reportKindCodes.put(PRODUCT_REPORT_CLIENT_PATH, "CustomerSheet");
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
-		reportKindCodes.put(SUPPLIER_KIND_REPORT, "SupplierSheet");
+		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_PATH, "SupplierSheet");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
 	
@@ -1370,26 +1372,27 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			// product report templates
 			NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
 			String productReportClientName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME, Locale.getDefault());
-			String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
+			String productReportTechnicalName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
 			String productReportProductionName = I18NUtil.getMessage(PRODUCT_REPORT_PRODUCTION_NAME, Locale.getDefault());
 			String productReportPackagingName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
 			String productReportCostName = I18NUtil.getMessage(PRODUCT_REPORT_COST_NAME, Locale.getDefault());
 			String productReportRDName = I18NUtil.getMessage(PRODUCT_REPORT_RD_NAME, Locale.getDefault());
 			String qualityControlAgingName = I18NUtil.getMessage(QUALITY_CONTROL_AGING_NAME, Locale.getDefault());
+			String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_SUPPLIER_NAME, Locale.getDefault());
 
 			List<NodeRef> commonResources = new ArrayList<>();
 
 			List<String> supportedLocale = Arrays.asList("fr", "en", "es", "en_US", "it", "nl", "sv_SE", "fi", "ru", "pt");
 
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
-					PLMModel.TYPE_PACKAGINGMATERIAL };
+					PLMModel.TYPE_PACKAGINGMATERIAL, PLMModel.TYPE_SUPPLIER };
 			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH,
-					PRODUCT_REPORT_PACKAGING_PATH };
-			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName,
-					productReportPackagingName };
+					PRODUCT_REPORT_PACKAGING_PATH, PRODUCT_REPORT_SUPPLIER_PATH };
+			String[] defaultReportName = { productReportClientName, productReportTechnicalName, productReportProductionName,
+					productReportPackagingName, productReportSupplierName };
 
-			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH }, null, null, null };
-			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName }, null, null, null };
+			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH }, null, null, null, null };
+			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName }, null, null, null, null };
 
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
 					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FI_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE,
@@ -1403,7 +1406,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			Map<String, Map<QName, Serializable>> reportKindTplAssoc = new HashMap<>();
 			List<String> defaultKindReport = new ArrayList<>(Arrays.asList(defaultReport));
 			defaultKindReport.add(NONE_KIND_REPORT);
-			defaultKindReport.add(SUPPLIER_KIND_REPORT);
 
 			for (String reportKind : defaultKindReport) {
 				if (PRODUCT_REPORT_RAWMATERIAL_PATH.equals(reportKind) || PRODUCT_REPORT_PACKAGING_PATH.equals(reportKind)
