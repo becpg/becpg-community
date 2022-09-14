@@ -742,6 +742,7 @@ public class ECOServiceImpl implements ECOService {
 					parent.setIsWUsedImpacted(true);
 					parent.setDepthLevel(1);
 					parent.setSort(sort++);
+					parent.setTargetItem(replacementListDataItem.getTargetItem());
 
 					ecoData.getWUsedList().add(parent);
 
@@ -754,7 +755,7 @@ public class ECOServiceImpl implements ECOService {
 
 						QName datalistQName = evaluateListFromAssociation(associationQName);
 						sort = calculateWUsedList(ecoData, wUsedData, datalistQName, parent,
-								ChangeOrderType.Merge.equals(ecoData.getEcoType()) || isWUsedImpacted, sort);
+								ChangeOrderType.Merge.equals(ecoData.getEcoType()) || isWUsedImpacted, sort, replacementListDataItem.getTargetItem());
 					}
 				}
 			}
@@ -792,7 +793,7 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	private int calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent,
-			boolean isWUsedImpacted, int sort) {
+			boolean isWUsedImpacted, int sort, NodeRef targetItem) {
 
 		for (Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()) {
 
@@ -803,11 +804,12 @@ public class ECOServiceImpl implements ECOService {
 			wUsedListDataItem.setIsWUsedImpacted(isWUsedImpacted);
 			wUsedListDataItem.setSourceItems(kv.getValue().getEntityNodeRefs());
 			wUsedListDataItem.setSort(sort++);
+			wUsedListDataItem.setTargetItem(targetItem);
 
 			ecoData.getWUsedList().add(wUsedListDataItem);
 
 			// recursive
-			sort = calculateWUsedList(ecoData, kv.getValue(), dataListQName, wUsedListDataItem, isWUsedImpacted, sort);
+			sort = calculateWUsedList(ecoData, kv.getValue(), dataListQName, wUsedListDataItem, isWUsedImpacted, sort, targetItem);
 		}
 
 		return sort;
