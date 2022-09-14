@@ -207,6 +207,17 @@
 						<many>true</many>
 					</target>
 				</association>	
+				<association name="ecm:wulTargetItem">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:entityV2</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
