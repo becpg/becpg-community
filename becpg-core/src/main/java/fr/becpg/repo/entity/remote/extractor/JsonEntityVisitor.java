@@ -464,17 +464,16 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 		if(assocName == null) {
 			if(params.getFilteredProperties() != null && !params.getFilteredProperties().isEmpty()) {
-				return !checkFilter;
-			} else {
 				return params.getFilteredProperties().contains(propName);
+			} else {
+				return !checkFilter;
 			}
 			
 		} else {
-			if((params.getFilteredAssocProperties() != null) && !params.getFilteredAssocProperties().isEmpty()
-					&& (!params.getFilteredAssocProperties().containsKey(assocName))) {
-				return !checkFilter;
+			if((params.getFilteredAssocProperties() != null) && !params.getFilteredAssocProperties().isEmpty()) {
+				return params.getFilteredAssocProperties().containsKey(assocName) && params.getFilteredAssocProperties().get(assocName).contains(propName);
 			} else {
-				return params.getFilteredAssocProperties().get(assocName).contains(propName);
+				return !checkFilter;
 			}
 		}
 		
