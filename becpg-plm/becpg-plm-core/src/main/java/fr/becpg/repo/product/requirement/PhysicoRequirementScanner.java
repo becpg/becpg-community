@@ -21,9 +21,17 @@ public class PhysicoRequirementScanner extends SimpleListRequirementScanner<Phys
 		return MESSAGE_PHYSICO_NOT_IN_RANGE;
 	}
 	
+	/** {@inheritDoc} */
+	@Override
+	protected String getSpecInfoMessageKey() {
+		return MESSAGE_PHYSICO_NOT_IN_RANGE_INFO;
+	}
+	
 
 	/** Constant <code>MESSAGE_PHYSICO_NOT_IN_RANGE="message.formulate.physicoChem.notInRang"{trunked}</code> */
 	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE = "message.formulate.physicoChem.notInRangeValue";
+	
+	public static final String MESSAGE_PHYSICO_NOT_IN_RANGE_INFO = "message.formulate.info.physicoChem.notInRangeValue";
 	
 
 	/** {@inheritDoc} */
