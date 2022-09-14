@@ -22,6 +22,13 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 public abstract class AbstractRequirementScanner<T> implements RequirementScanner {
 
 	protected NodeService mlNodeService;
+	
+	protected Boolean addInfoReqCtrl;
+	
+	public void setAddInfoReqCtrl(Boolean addInfoReqCtrl) {
+		this.addInfoReqCtrl = addInfoReqCtrl;
+	}
+
 
 	/**
 	 * <p>Setter for the field <code>mlNodeService</code>.</p>
