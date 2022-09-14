@@ -1114,7 +1114,10 @@ public class ECOServiceImpl implements ECOService {
 			component.setQty(newQuantity);
 		}
 		
-		component.setLossPerc(newLoss);
+		if (newLoss != null) {
+			component.setLossPerc(newLoss);
+		}
+		
 	}
 
 	private NodeRef getProductToImpact(ChangeUnitDataItem changeUnitDataItem, boolean isSimulation) {
