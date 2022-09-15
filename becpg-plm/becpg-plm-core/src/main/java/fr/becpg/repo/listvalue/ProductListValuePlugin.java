@@ -38,6 +38,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.listvalue.impl.EntityListValuePlugin;
 import fr.becpg.repo.listvalue.impl.NodeRefListValueExtractor;
@@ -56,6 +57,8 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 	private static final String SOURCE_TYPE_PRODUCT = "product";
 
+	private static final String SOURCE_TYPE_COLLECTION_PRODUCT = "collectionproduct";
+
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
 
 	private static final Log logger = LogFactory.getLog(ProductListValuePlugin.class);
@@ -63,17 +66,19 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
-
 	@Value("${beCPG.product.searchTemplate}")
 	private String productSearchTemplate = "%(cm:name bcpg:erpCode bcpg:code bcpg:legalName)";
 
 	@Autowired
 	private ReportTplService reportTplService;
 
+	@Autowired
+	private EntityListDAO entityListDAO;
+
 	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
-		return new String[] { SOURCE_TYPE_PRODUCT, SOURCE_TYPE_PRODUCT_REPORT };
+		return new String[] { SOURCE_TYPE_PRODUCT, SOURCE_TYPE_PRODUCT_REPORT, SOURCE_TYPE_COLLECTION_PRODUCT };
 	}
 
 	/** {@inheritDoc} */
@@ -91,11 +96,77 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 			QName productTypeQName = QName.createQName(productType, namespaceService);
 			return suggestProductReportTemplates(productTypeQName, query, pageNum, pageSize);
 
+		} else if (sourceType.equals(SOURCE_TYPE_COLLECTION_PRODUCT)) {
+			String parent = (String) props.get(ListValueService.PROP_PARENT);
+			if ((parent == null) || parent.isEmpty() || !NodeRef.isNodeRef(parent)) {
+				return suggestProducts(query, pageNum, pageSize, arrClassNames, props);
+			} else {
+				return suggestByDataListAssoc(query, pageNum, pageSize, arrClassNames, new NodeRef(parent), PLMModel.TYPE_PRODUCTLIST,
+						PLMModel.ASSOC_PRODUCTLIST_PRODUCT);
+			}
+
 		}
 
 		return null;
 	}
 
+	private ListValuePage suggestByDataListAssoc(String query, Integer pageNum, Integer pageSize, String[] arrClassNames, NodeRef entityNodeRef,
+			QName listQName, QName assocQName) {
+
+		NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+		if (listsContainerNodeRef != null) {
+			NodeRef dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, listQName);
+
+			if (dataListNodeRef != null) {
+
+				List<ListValueEntry> result = new ArrayList<>();
+				for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, listQName)) {
+					NodeRef targetNode = associationService.getTargetAssoc(dataListItemNodeRef, assocQName);
+
+					if (targetNode != null) {
+						QName type = nodeService.getType(targetNode);
+						String name = attributeExtractorService.extractPropName(type, targetNode);
+						if (isQueryMatch(query, name) && accept(type, arrClassNames)) {
+							String cssClass = attributeExtractorService.extractMetadata(type, targetNode);
+							result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, cssClass));
+						}
+					}
+				}
+				return new ListValuePage(result, pageNum, pageSize, null);
+
+			} else {
+				logger.warn("No datalists productList found ");
+			}
+		}
+		return null;
+	}
+
+	private boolean accept(QName type, String[] arrClassNames) {
+		if (arrClassNames != null && arrClassNames.length > 0) {
+
+			for (String className : arrClassNames) {
+				QName classQName;
+				if (className.contains("^")) {
+					String[] splitted = className.split("\\^");
+					classQName = QName.createQName(splitted[0], namespaceService);
+				} else {
+					if (className.startsWith("inc_")) {
+						classQName = QName.createQName(className.replace("inc_", ""), namespaceService);
+					} else {
+						classQName = QName.createQName(className, namespaceService);
+					}
+				}
+
+				if (type.equals(classQName)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return true;
+	}
+
+	@SuppressWarnings("unchecked")
 	private ListValuePage suggestProducts(String query, Integer pageNum, Integer pageSize, String[] arrClassNames, Map<String, Serializable> props) {
 		if (logger.isDebugEnabled()) {
 			if (arrClassNames != null) {
@@ -133,7 +204,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		queryBuilder.andFTSQuery(ftsQuery.toString());
 
 		NodeRef entityNodeRef = null;
-		if (props.get(ListValueService.PROP_ENTITYNODEREF) != null && !((String)props.get(ListValueService.PROP_ENTITYNODEREF)).isEmpty() ) {
+		if ((props.get(ListValueService.PROP_ENTITYNODEREF) != null) && !((String) props.get(ListValueService.PROP_ENTITYNODEREF)).isEmpty()) {
 			entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF));
 			queryBuilder.andNotID(entityNodeRef);
 		}
@@ -145,7 +216,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 			String filterValue = splitted[1];
 			String propQName = splitted[0];
-			if ((filterValue != null) && !filterValue.isEmpty()) {		
+			if ((filterValue != null) && !filterValue.isEmpty()) {
 				if (filterValue.contains("{")) {
 					if (entityNodeRef != null) {
 						filterValue = attributeExtractorService.extractExpr(filterValue, entityNodeRef);
@@ -153,13 +224,13 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 				}
 				if ((filterValue != null) && !filterValue.isEmpty() && !filterValue.contains("{")) {
 					boolean isOrOperand = false;
-					if(propQName.endsWith("_or")) {
+					if (propQName.endsWith("_or")) {
 						isOrOperand = true;
 						propQName = propQName.replace("_or", "");
 					}
-					
+
 					if (filterValue.contains(",")) {
-						if(isOrOperand)  {
+						if (isOrOperand) {
 							queryBuilder.andPropQuery(QName.createQName(propQName, namespaceService), filterValue.replace(",", " or "));
 						} else {
 							queryBuilder.andPropQuery(QName.createQName(propQName, namespaceService), filterValue.replace(",", " and "));
@@ -182,13 +253,13 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		if (extras != null) {
 			String filterByAssoc = extras.get(PROP_FILTER_BY_ASSOC);
 			if ((filterByAssoc != null) && (filterByAssoc.length() > 0) && (entityNodeRef != null)) {
-				
+
 				boolean isOrOperand = false;
-				if(filterByAssoc.endsWith("_or")) {
+				if (filterByAssoc.endsWith("_or")) {
 					isOrOperand = true;
 					filterByAssoc = filterByAssoc.replace("_or", "");
 				}
-				
+
 				QName assocQName = QName.createQName(filterByAssoc, namespaceService);
 
 				List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(entityNodeRef, assocQName);
@@ -198,7 +269,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 					List<NodeRef> nodesToKeep = new ArrayList<>();
 
 					for (NodeRef assocNodeRef : targetNodeRefs) {
-						if(isOrOperand) {
+						if (isOrOperand) {
 							nodesToKeep.addAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
 						} else {
 							nodesToKeep.retainAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
