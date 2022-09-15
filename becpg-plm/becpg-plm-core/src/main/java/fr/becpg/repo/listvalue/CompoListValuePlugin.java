@@ -69,9 +69,6 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 	private EntityListDAO entityListDAO;
 
 	@Autowired
-	private AssociationService associationService;
-
-	@Autowired
 	private PermissionService permissionService;
 
 	/** {@inheritDoc} */
@@ -83,6 +80,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 	/** {@inheritDoc} */
 	@Override
 	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+
 
 		NodeRef entityNodeRef = new NodeRef((String) props.get(ListValueService.PROP_ENTITYNODEREF));
 		logger.debug("CompoListValuePlugin sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
@@ -132,6 +130,7 @@ public class CompoListValuePlugin extends EntityListValuePlugin {
 		}
 		return null;
 	}
+
 
 	private List<ListValueEntry> getSimpleResults(NodeRef entityNodeRef, String query, NodeRef itemId) {
 
