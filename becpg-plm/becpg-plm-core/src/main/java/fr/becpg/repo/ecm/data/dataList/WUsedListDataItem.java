@@ -49,6 +49,7 @@ public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataI
 	private Boolean isWUsedImpacted;
 	private QName impactedDataList;
 	private NodeRef link;
+	private NodeRef targetItem;
 	private List<NodeRef> sourceItems;
 	private WUsedListDataItem parent;
 	private Integer sort;
@@ -228,6 +229,16 @@ public class WUsedListDataItem extends BeCPGDataObject implements CompositeDataI
 	 */
 	public void setLink(NodeRef link) {
 		this.link = link;
+	}
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "ecm:wulTargetItem")
+	public NodeRef getTargetItem() {
+		return targetItem;
+	}
+	
+	public void setTargetItem(NodeRef targetItem) {
+		this.targetItem = targetItem;
 	}
 
 	/**

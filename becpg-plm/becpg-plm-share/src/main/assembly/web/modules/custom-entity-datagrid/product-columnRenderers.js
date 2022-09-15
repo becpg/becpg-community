@@ -209,6 +209,17 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "ecm:wulTargetItem" ],
+		renderer : function(oRecord, data, label, scope) {
+			
+			var url = beCPG.util.entityURL(data.siteId, data.value);
+			
+			return '<span class="' + data.metadata + '" '+'>' +(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+'</span>';
+		}
+
+	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName: "cm:name",
