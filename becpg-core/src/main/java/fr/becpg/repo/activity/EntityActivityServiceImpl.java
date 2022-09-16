@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -72,6 +73,8 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 @Service("entityActivityService")
 public class EntityActivityServiceImpl implements EntityActivityService {
+
+	private static final String NO_ACTIVITY_MESSAGE = "No activity on entity template or pending delete node";
 
 	private static Log logger = LogFactory.getLog(EntityActivityServiceImpl.class);
 
@@ -183,7 +186,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
-						logger.debug("No activity on entity template or pending delete node");
+						logger.debug(NO_ACTIVITY_MESSAGE);
 						return null;
 					}
 
@@ -260,7 +263,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
-						logger.debug("No activity on entity template or pending delete node");
+						logger.debug(NO_ACTIVITY_MESSAGE);
 						return false;
 					}
 
@@ -306,7 +309,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 					if (nodeService.hasAspect(branchToNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
-						logger.debug("No activity on entity template or pending delete node");
+						logger.debug(NO_ACTIVITY_MESSAGE);
 						return false;
 					}
 
@@ -351,7 +354,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
-						logger.debug("No activity on entity template or pending delete node");
+						logger.debug(NO_ACTIVITY_MESSAGE);
 						return false;
 					}
 
@@ -560,11 +563,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 	// TODO Slow better to have it async
-	private void mergeWithLastActivity(ActivityListDataItem item) {
+	private void mergeWithLastActivity(ActivityListDataItem newActivity) {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, -1);
 
-		NodeRef activityListNodeRef = item.getParentNodeRef();
+		NodeRef activityListNodeRef = newActivity.getParentNodeRef();
 		// Activities in the last hour
 		BeCPGQueryBuilder query = BeCPGQueryBuilder
 				.createQuery().parent(activityListNodeRef).ofType(BeCPGModel.TYPE_ACTIVITY_LIST).andBetween(ContentModel.PROP_CREATED,
@@ -578,37 +581,51 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			sortedActivityList = BeCPGQueryBuilder.createQuery().parent(activityListNodeRef).ofType(BeCPGModel.TYPE_ACTIVITY_LIST)
 					.addSort(ContentModel.PROP_CREATED, false).maxResults(1).inDB().list();
 		}
-
+		
 		for (NodeRef activityListItemNodeRef : sortedActivityList) {
 
-			ActivityListDataItem activity = alfrescoRepository.findOne(activityListItemNodeRef);
+			ActivityListDataItem lastActivity = alfrescoRepository.findOne(activityListItemNodeRef);
 
-			JSONObject activityData = null, itemData = null;
+			JSONObject lastActivityData = null;
+			
+			JSONObject newActivityData = null;
 			try {
-				activityData = new JSONObject(activity.getActivityData());
-				itemData = new JSONObject(item.getActivityData());
-				if (((activity.getActivityData().equals(item.getActivityData()))
-						|| (!itemData.has(PROP_TITLE) && !activityData.has(PROP_TITLE) && item.getActivityType().equals(ActivityType.Datalist)
-								&& activityData.get(PROP_CLASSNAME).equals(itemData.get(PROP_CLASSNAME))
-								&& activityData.get(PROP_ACTIVITY_EVENT).equals(itemData.get(PROP_ACTIVITY_EVENT))))
-						&& activity.getUserId().equals(item.getUserId()) && activity.getActivityType().equals(item.getActivityType())) {
+				lastActivityData = new JSONObject(lastActivity.getActivityData());
+				newActivityData = new JSONObject(newActivity.getActivityData());
+				if (((lastActivity.getActivityData().equals(newActivity.getActivityData()))
+						|| (!newActivityData.has(PROP_TITLE) && !lastActivityData.has(PROP_TITLE) && newActivity.getActivityType().equals(ActivityType.Datalist)
+								&& lastActivityData.get(PROP_CLASSNAME).equals(newActivityData.get(PROP_CLASSNAME))
+								&& lastActivityData.get(PROP_ACTIVITY_EVENT).equals(newActivityData.get(PROP_ACTIVITY_EVENT))))
+						&& lastActivity.getUserId().equals(newActivity.getUserId()) && lastActivity.getActivityType().equals(newActivity.getActivityType())) {
 					nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(activityListItemNodeRef);
 
 					if (logger.isDebugEnabled()) {
-						logger.debug("Merge with the last activity " + activity.getActivityType());
+						logger.debug("Merge with the last activity " + lastActivity.getActivityType());
 					}
 
 					return;
 					// Add previous updated properties in the data of the last activity
-				} else if (itemData.has(PROP_PROPERTIES) && activityData.has(PROP_PROPERTIES)
-						&& itemData.get(PROP_ACTIVITY_EVENT).equals(activityData.get(PROP_ACTIVITY_EVENT))
-						&& item.getUserId().equals(activity.getUserId()) && item.getActivityType().equals(activity.getActivityType())
-						&& itemData.has(PROP_TITLE) && activityData.has(PROP_TITLE) && itemData.get(PROP_TITLE).equals(activityData.get(PROP_TITLE))
-						&& ((!itemData.has(PROP_CLASSNAME) && !activityData.has(PROP_CLASSNAME)) || (itemData.has(PROP_CLASSNAME)
-								&& activityData.has(PROP_CLASSNAME) && itemData.get(PROP_CLASSNAME).equals(activityData.get(PROP_CLASSNAME))))) {
-					JSONArray activityProperties = activityData.getJSONArray(PROP_PROPERTIES);
-					JSONArray itemProperties = itemData.getJSONArray(PROP_PROPERTIES);
+				} else if (newActivityData.has(PROP_PROPERTIES) && lastActivityData.has(PROP_PROPERTIES)
+						&& newActivityData.get(PROP_ACTIVITY_EVENT).equals(lastActivityData.get(PROP_ACTIVITY_EVENT))
+						&& newActivity.getUserId().equals(lastActivity.getUserId()) && newActivity.getActivityType().equals(lastActivity.getActivityType())
+						&& newActivityData.has(PROP_TITLE) && lastActivityData.has(PROP_TITLE) && newActivityData.get(PROP_TITLE).equals(lastActivityData.get(PROP_TITLE))
+						&& ((!newActivityData.has(PROP_CLASSNAME) && !lastActivityData.has(PROP_CLASSNAME)) || (newActivityData.has(PROP_CLASSNAME)
+								&& lastActivityData.has(PROP_CLASSNAME) && newActivityData.get(PROP_CLASSNAME).equals(lastActivityData.get(PROP_CLASSNAME))))) {
+					
+					
+					// Check if the last activity is less than 4 hours old, otherwise do not merge it
+					if (sortedActivityList.size() == 1) {
+						cal.add(Calendar.HOUR, -3);
+						Date createdDate = (Date) nodeService.getProperty(activityListItemNodeRef, ContentModel.PROP_CREATED);
+						
+						if (createdDate != null && createdDate.compareTo(cal.getTime()) < 0) {
+							continue;
+						}
+					}
+					
+					JSONArray activityProperties = lastActivityData.getJSONArray(PROP_PROPERTIES);
+					JSONArray itemProperties = newActivityData.getJSONArray(PROP_PROPERTIES);
 					for (int i = 0; i < activityProperties.length(); i++) {
 						JSONObject activityProperty = activityProperties.getJSONObject(i);
 						boolean isSameProperty = false;
@@ -618,7 +635,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								isSameProperty = true;
 								PropertyDefinition property = dictionaryService
 										.getProperty(QName.createQName((String) activityProperty.get(PROP_TITLE)));
-
+								
 								if ((property == null) || (property.getDataType() == null)
 										|| (!DataTypeDefinition.TEXT.equals(property.getDataType().getName())
 												&& !DataTypeDefinition.MLTEXT.equals(property.getDataType().getName()))) {
@@ -628,19 +645,20 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 										itemProperty.put(BEFORE, "");
 									}
 								}
-
+								
 							}
 						}
 						if (!isSameProperty) {
 							itemProperties.put(activityProperty);
 						}
 					}
-					itemData.put(PROP_PROPERTIES, itemProperties);
-					item.setActivityData(itemData.toString());
-					alfrescoRepository.save(item);
-
+					newActivityData.put(PROP_PROPERTIES, itemProperties);
+					newActivity.setActivityData(newActivityData.toString());
+					alfrescoRepository.save(newActivity);
+					
 					nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					nodeService.deleteNode(activityListItemNodeRef);
+					
 
 				}
 
@@ -664,7 +682,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
-						logger.debug("No activity on entity template or pending delete node");
+						logger.debug(NO_ACTIVITY_MESSAGE);
 						return false;
 					}
 
@@ -730,7 +748,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
-						logger.debug("No activity on entity template or pending delete node");
+						logger.debug(NO_ACTIVITY_MESSAGE);
 						return false;
 					}
 
@@ -797,7 +815,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
 						|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
-					logger.debug("No activity on entity template or pending delete node");
+					logger.debug(NO_ACTIVITY_MESSAGE);
 					return false;
 				}
 
@@ -1116,7 +1134,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 						// Clean activities which are not in the first page.
 						if (nbrActivity > 0) {
-							Map<ActivityType, List<NodeRef>> activitiesByType = new HashMap<>();
+							Map<ActivityType, List<NodeRef>> activitiesByType = new EnumMap<>(ActivityType.class);
 							ActivityListDataItem activity;
 							int activityInPage = 0;
 							boolean hasFormulation = false;
@@ -1142,7 +1160,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									nodeService.addAspect(activityItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 									nodeService.deleteNode(activityItemNodeRef);
 									nbrActivity--;
-									continue;
 								}
 								// Arrange activities by type
 								else {
