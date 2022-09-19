@@ -427,7 +427,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Override
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes) {
-		// for CompositionDataItem, description is already added
 		loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, false);
 	}
 
@@ -435,7 +434,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 		private Double qtyForProduct;
 		private Double qtyForCost;
-	//	private Double lossRatio;
+		private Double lossRatio;
 		private ProductData componentProductData;
 		private CompoListDataItem compoListItem;
 
@@ -444,13 +443,11 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			this.compoListItem = compoListItem;
 			this.componentProductData = (ProductData) alfrescoRepository.findOne(compoListItem.getProduct());
 			
+			this.lossRatio =  FormulationHelper.getComponentLossPerc(componentProductData, compoListItem);
 			this.qtyForProduct = compoListItem.getQty() != null ? compoListItem.getQty() : 0d;
 			this.qtyForCost = FormulationHelper.getQtyForCost(compoListItem, 0d, componentProductData,
 					CostsCalculatingFormulationHandler.keepProductUnit);
 			
-			
-			System.out.println("PWET 1- "+ componentProductData.getName() +  " " + qtyForCost);
-
 		}
 
 		public CurrentLevelQuantities(CompoListDataItem compoListItem, CurrentLevelQuantities currentLevelQuantities) {
@@ -466,8 +463,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					CostsCalculatingFormulationHandler.keepProductUnit)
 					/ FormulationHelper.getNetQtyForCost(currentLevelQuantities.getComponentProductData())) * currentLevelQuantities.getQtyForCost();
 			
-			System.out.println(componentProductData.getName() + " " + qtyForCost);
-
 		}
 
 		public Double getQtyForProduct() {
@@ -478,7 +473,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			return qtyForCost;
 		}
 
-
+		public Double getLossRatio() {
+			return lossRatio;
+		}
 
 		public ProductData getComponentProductData() {
 			return componentProductData;
