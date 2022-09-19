@@ -2236,7 +2236,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (product.getAllergenList() != null) {
 						for (AllergenListDataItem allergenListDataItem : product.getAllergenList()) {
 							if (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())
-									&& allergenListDataItem.getVoluntarySources().contains(ingNodeRef)) {
+									&& (allergenListDataItem.getVoluntarySources().contains(ingNodeRef)
+										|| (DeclarationType.DoNotDetails.equals(ingDeclarationType)
+												 && allergenMatchSubIngs(allergenListDataItem.getVoluntarySources(), ingListItem)
+												)  )
+									) {
 								if (AllergenType.Major.toString()
 										.equals(nodeService.getProperty(allergenListDataItem.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE))) {
 									ingLabelItem.getAllergens().add(allergenListDataItem.getAllergen());
@@ -2397,6 +2401,19 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		return parent;
+	}
+
+	private boolean allergenMatchSubIngs(List<NodeRef> voluntarySources, Composite<IngListDataItem> ingListItem) {
+		if(voluntarySources!=null && !voluntarySources.isEmpty() && !ingListItem.isLeaf()) {
+			for(Composite<IngListDataItem> child : ingListItem.getChildren()) {
+				if(voluntarySources.contains(child.getData().getIng()) || allergenMatchSubIngs(voluntarySources, child)) {
+					return true;
+				}
+				
+			}
+			
+		}
+		return false;
 	}
 
 	private Boolean addGeo(LabelingComponent labelingComponent, List<NodeRef> geoOrigins, PlaceOfActivityTypeCode defaultActivity) {
