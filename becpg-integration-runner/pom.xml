@@ -416,6 +416,19 @@
 									<tag>${docker.becpg.tag}</tag>
 								</configuration>
 							</execution>
+							<execution>
+								<id>becpg-glop</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+								<configuration>
+									<repository>${docker.becpg.url}/becpg-glop</repository>
+									<contextDirectory>${project.build.directory}/becpg-glop</contextDirectory>
+									<pullNewerImage>true</pullNewerImage>
+									<tag>${docker.becpg.tag}</tag>
+								</configuration>
+							</execution>
 						</executions>
 					</plugin>
 				</plugins>
