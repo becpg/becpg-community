@@ -1,7 +1,7 @@
 package fr.becpg.config.format;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class PropertyFormatService {
 	/** Constant <code>PROCESS_DATETIME_FORMAT="dd MMMM, yyyy"</code> */
 	public static final String PROCESS_DATETIME_FORMAT = "dd MMMM, yyyy";
 
-	Map<String, PropertyFormats> cache = new HashMap<>();
+	Map<String, PropertyFormats> cache = new ConcurrentHashMap<>();
 
 	/**
 	 * <p>Getter for the field <code>propertyFormats</code>.</p>
