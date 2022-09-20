@@ -2,8 +2,15 @@ package fr.becpg.repo.entity.remote.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.net.ssl.SSLContext;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
@@ -16,8 +23,14 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -71,8 +84,9 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 	}
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("deprecation")
 	@Override
-	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache)  {
+	public NodeRef provideNode(NodeRef nodeRef, NodeRef destNodeRef, Map<NodeRef, NodeRef> cache) {
 		try {
 			String url = remoteServer + "?nodeRef=" + nodeRef.toString();
 			logger.debug("Try getting nodeRef  from : " + url);
@@ -104,8 +118,8 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 							remoteEntityService.getPolicyBehaviourFilter().disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 							remoteEntityService.getPolicyBehaviourFilter().disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
 
-							return remoteEntityService.internalCreateOrUpdateEntity(nodeRef, destNodeRef, entityStream, new RemoteParams(RemoteEntityFormat.xml), this,
-									cache);
+							return remoteEntityService.internalCreateOrUpdateEntity(nodeRef, destNodeRef, entityStream,
+									new RemoteParams(RemoteEntityFormat.xml), this, cache);
 
 						}, false, false);
 
@@ -116,7 +130,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 				}
 
 			} else {
-				if(logger.isDebugEnabled()) {
+				if (logger.isDebugEnabled()) {
 					logger.debug("Error calling " + url + " " + EntityUtils.toString(httpResponse.getEntity(), "UTF-8") + " status "
 							+ httpResponse.getStatusLine().getStatusCode());
 				}
@@ -124,7 +138,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 				return null;
 			}
 
-		} catch (IOException e) {
+		} catch (IOException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException e) {
 			throw new BeCPGException(e);
 		}
 
@@ -132,7 +146,7 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 
 	/** {@inheritDoc} */
 	@Override
-	public void provideContent(NodeRef origNodeRef, NodeRef destNodeRef){
+	public void provideContent(NodeRef origNodeRef, NodeRef destNodeRef) {
 
 		try {
 			String url = remoteServer + "/data?nodeRef=" + origNodeRef.toString();
@@ -148,15 +162,33 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 			try (InputStream dataStream = responseEntity.getContent()) {
 				remoteEntityService.addOrUpdateEntityData(destNodeRef, dataStream, new RemoteParams(RemoteEntityFormat.xml));
 			}
-		} catch (IOException e) {
+		} catch (IOException | NoSuchAlgorithmException | KeyStoreException | KeyManagementException e) {
 			throw new BeCPGException(e);
 		}
 
 	}
 
-	private HttpResponse getResponse(HttpGet entityUrl) throws IOException {
+	private HttpResponse getResponse(HttpGet entityUrl) throws IOException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
 
 		HttpClientBuilder cb = HttpClientBuilder.create();
+		
+		if ("true".equals(System.getProperty("remote.ssl.trustAll"))) {
+			SSLContextBuilder builder = org.apache.http.ssl.SSLContexts.custom();
+			builder.loadTrustMaterial(null, new TrustStrategy() {
+				@Override
+				public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+					return true;
+				}
+			});
+	
+			SSLContext sslContext = builder.build();
+			SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslContext, (hostname, session) -> true);
+	
+			PoolingHttpClientConnectionManager cm = new PoolingHttpClientConnectionManager(
+					RegistryBuilder.<ConnectionSocketFactory> create().register("https", sslsf).build());
+	
+			cb.setConnectionManager(cm);
+		}
 
 		HttpClientContext httpContext = HttpClientContext.create();
 

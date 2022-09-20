@@ -110,6 +110,8 @@
          filters: {}
       },
 
+	  searchTerm : null,
+	  
       /**
        * Fired by YUI when parent element is available for scripting
        * @method onReady
@@ -163,6 +165,10 @@
                   // Reuse method form WorkflowActions
                   var filter = this.widgets.filterMenuButton.value;
                   var filterParameters = this.options.filters[filter];
+                  if(this.searchTerm!=null){
+				      filterParameters += "&q="+this.searchTerm;
+				   }
+                  
                   return this.substituteParameters(filterParameters) || "";
                })
             },
@@ -483,7 +489,7 @@
          this._cleanSearchText();
          this.setDefaultSearchText();
          
-         this.widgets.alfrescoDataTable.loadDataTable("q="+this.searchTerm);
+         this.widgets.alfrescoDataTable.loadDataTable();
          
       }
 
