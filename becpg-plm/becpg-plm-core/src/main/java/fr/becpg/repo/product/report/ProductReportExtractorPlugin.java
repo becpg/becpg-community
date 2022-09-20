@@ -427,7 +427,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	@Override
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes) {
-		// for CompositionDataItem, description is already added
 		loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, false);
 	}
 
@@ -443,31 +442,27 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			this.compoListItem = compoListItem;
 			this.componentProductData = (ProductData) alfrescoRepository.findOne(compoListItem.getProduct());
-			this.lossRatio = FormulationHelper.getComponentLossPerc(componentProductData, compoListItem);
-
-			//					Double qtyForProduct = FormulationHelper.getPackagingListQtyForProduct(compoListItem, componentProductData)
-			//						.multiply(BigDecimal.valueOf(parentQty)).doubleValue();
-
+			
+			this.lossRatio =  FormulationHelper.getComponentLossPerc(componentProductData, compoListItem);
 			this.qtyForProduct = compoListItem.getQty() != null ? compoListItem.getQty() : 0d;
 			this.qtyForCost = FormulationHelper.getQtyForCost(compoListItem, 0d, componentProductData,
 					CostsCalculatingFormulationHandler.keepProductUnit);
-
+			
 		}
 
 		public CurrentLevelQuantities(CompoListDataItem compoListItem, CurrentLevelQuantities currentLevelQuantities) {
 
 			this(compoListItem);
-
 			this.qtyForProduct = (FormulationHelper.getNetWeight(currentLevelQuantities.getComponentProductData(),
 					FormulationHelper.DEFAULT_NET_WEIGHT) != 0) && (compoListItem.getQty() != null)
 							? (currentLevelQuantities.getQtyForProduct() * compoListItem.getQty()) / FormulationHelper
 									.getNetWeight(currentLevelQuantities.getComponentProductData(), FormulationHelper.DEFAULT_NET_WEIGHT)
 							: 0d;
 
-			this.qtyForCost = (FormulationHelper.getQtyForCost(compoListItem, currentLevelQuantities.getLossRatio(), componentProductData,
+			this.qtyForCost = (FormulationHelper.getQtyForCost(compoListItem, 0d, componentProductData,
 					CostsCalculatingFormulationHandler.keepProductUnit)
 					/ FormulationHelper.getNetQtyForCost(currentLevelQuantities.getComponentProductData())) * currentLevelQuantities.getQtyForCost();
-
+			
 		}
 
 		public Double getQtyForProduct() {

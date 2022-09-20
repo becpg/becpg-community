@@ -19,7 +19,7 @@ function main()
 
       // Show always Download button for ai, images #4984
       model.showDownload = "true";
-      model.shareId = shareId;
+      model.shareId = encodeURIComponent(shareId); // #14701
 
       var isImage = (nodeMetadata.mimetype && nodeMetadata.mimetype.match("^image/"));
       var nodeRef= nodeMetadata.nodeRef;
