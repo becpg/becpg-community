@@ -119,6 +119,8 @@
          columnsUrl : Alfresco.constants.URL_SERVICECONTEXT + "module/entity-datagrid/config/columns"
       },
 
+	  searchTerm : null,
+
       /**
        * Fired by YUI when parent element is available for scripting.
        * Initial History Manager event registration
@@ -259,8 +261,13 @@
                 },
                 filterResolver: this.bind(function(filter)
                 {
-                   // Reuse method form WorkflowActions
-                   return this.createFilterURLParameters(filter, this.options.filterParameters);
+                   // Reuse method form WorkflowActions     
+			      var filterParameters = this.createFilterURLParameters(filter, this.options.filterParameters);
+                  if(this.searchTerm!=null){
+				      filterParameters += "&q="+this.searchTerm;
+				   }
+	
+                   return filterParameters;
                 })
              },
              paginator:
@@ -365,15 +372,17 @@
       /**
        * Fired when the currently active filter has changed
        *
-       * @method onFilterChanged
+       * @method onFilterSearch
        * @param layer {string} the event source
        * @param args {object} arguments object
        */
-      onFilterSearch: function BaseFilter_onFilterChanged(layer, args)
+      onFilterSearch: function BaseFilter_onFilterSearch(layer, args)
       {
          var filter = Alfresco.util.cleanBubblingObject(args[1]);
+         this.searchTerm = filter.filterData;
+         
          this.widgets.pagingDataTable.setPagingState("|");
-         this.widgets.pagingDataTable.loadDataTable("q="+filter.filterData);
+         this.widgets.pagingDataTable.loadDataTable();
          
       },
 
