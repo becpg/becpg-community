@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -841,6 +842,26 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return new java.text.SimpleDateFormat(format).format(date);
 		}
 
+		
+		
+		/**
+		 * @beCPG.updateDate($date, $field, $amount )
+		 *
+		 *  Example: @beCPG.updateDate(new
+		 *                          java.util.Date(), java.util.Calendar.DAY_OF_MONTH, -5 )
+		 *  cf Calendar JavaDoc                        
+		 *
+		 * @param date
+		 * @return date
+		 */
+		public Date updateDate(Date date, int field, int amount) {
+			Calendar  cal = Calendar.getInstance();			
+			cal.setTime(date);
+			cal.add(field, amount);
+			return cal.getTime();
+		}
+		
+		
 		/**
 		 *
 		 * Helper  @beCPG.copy($fromNodeRef, $propQNames, $listQNames)
