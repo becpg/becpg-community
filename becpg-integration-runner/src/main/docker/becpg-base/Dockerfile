@@ -34,6 +34,7 @@ RUN set -x \
       && apt-get install -y --no-install-recommends \
                   imagemagick \
                  ghostscript \
+                 unzip \
       && apt-get clean \
       && rm -rf /var/lib/apt/lists/*
       
