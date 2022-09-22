@@ -395,6 +395,10 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
   });
+  
+  
+
+  
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : ["bcpg:nutListValuePerServing"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
@@ -877,7 +881,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			}
 			
 			if (data.value != null) {
-				return Alfresco.util.formatDate(data.value,"yyyy-mm-dd");
+				return Alfresco.util.formatDate(data.value,"shortDate");
 			} 
 			return "";
 		}
