@@ -395,6 +395,33 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
   });
+  
+  
+  	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : ["bcpg:nutListValuePrepared"],
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+          var ret = "";
+          
+          var unit = oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value;
+          if(unit == null){
+			  unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
+		  }
+          if(oColumn.label!=null && oColumn.label.indexOf && oColumn.label.indexOf("100g")>0){
+        	  unit = unit.replace("/100g","");
+          }
+          
+      
+          if (data.value != null) {
+        	  ret+=data.value+" "+unit;
+          }
+     
+          
+         return ret;
+      }
+
+  });
+  
+  
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : ["bcpg:nutListValuePerServing"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
@@ -877,7 +904,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			}
 			
 			if (data.value != null) {
-				return Alfresco.util.formatDate(data.value,"yyyy-mm-dd");
+				return Alfresco.util.formatDate(data.value,"shortDate");
 			} 
 			return "";
 		}
