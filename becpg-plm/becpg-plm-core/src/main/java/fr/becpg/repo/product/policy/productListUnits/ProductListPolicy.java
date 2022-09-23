@@ -121,7 +121,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 	@Override
 	public void onUpdateProperties(NodeRef productNodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 
-		if (isPropChanged(before, after, PLMModel.PROP_PRODUCT_UNIT) || isPropChanged(before, after, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT)) {
+		if (isPropChanged(before, after, PLMModel.PROP_PRODUCT_UNIT) || isPropChanged(before, after, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT)
+				|| isPropChanged(before, after, PLMModel.PROP_NUTRIENT_PREPARED_UNIT)) {
 			queueNode(KEY_PRODUCTS, productNodeRef);
 		}
 	}
@@ -214,11 +215,14 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 							
 							ProductUnit servingSizeUnit = ProductUnit
 									.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT));
+							ProductUnit nutrientPreparedUnit = ProductUnit
+									.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_NUTRIENT_PREPARED_UNIT));
+							
 							
 							for (NodeRef productListItemNodeRef : entityListDAO.getListItems(nutListNodeRef, PLMModel.TYPE_NUTLIST)) {
 
 								String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
-
+								String nutListUnitPrepared = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT_PREPARED);
 								NodeRef nutNodeRef = associationService.getTargetAssoc(productListItemNodeRef, PLMModel.ASSOC_NUTLIST_NUT);
 								if (nutNodeRef != null) {
 									String nutUnit = (String) nodeService.getProperty(nutNodeRef, PLMModel.PROP_NUTUNIT);
@@ -229,6 +233,15 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 						
 										nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT,
 												NutsCalculatingFormulationHandler.calculateUnit(productUnit, servingSizeUnit, nutUnit));
+									}
+									
+									
+									if ( !((nutListUnitPrepared != null) && !nutListUnitPrepared.isEmpty() && nutListUnitPrepared
+											.endsWith(NutsCalculatingFormulationHandler.calculateSuffixUnit(productUnit, nutrientPreparedUnit))) 
+											&& nodeService.hasAspect(productListItemNodeRef,PLMModel.ASPECT_NUTLIST_PREPARED)) {
+						
+										nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT_PREPARED,
+												NutsCalculatingFormulationHandler.calculateUnit(productUnit, nutrientPreparedUnit, nutUnit));
 									}
 								}
 							}
@@ -296,6 +309,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 					} else if (type.equals(PLMModel.TYPE_NUTLIST)) {
 						String nutUnit = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_NUTUNIT);
 						String nutListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT);
+						String nutListUnitPrepared = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT_PREPARED);
 
 						// nutListUnit
 						if (!((nutListUnit != null) && !nutListUnit.isEmpty()
@@ -309,6 +323,25 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 							}
 
 						}
+						
+						if (!((nutListUnitPrepared != null) && !nutListUnitPrepared.isEmpty()
+								&& nutListUnitPrepared.startsWith(nutUnit + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR)) && 	
+								nodeService.hasAspect(productListItemNodeRef,PLMModel.ASPECT_NUTLIST_PREPARED) ) {
+
+							ProductUnit unit = getProductUnit(productListItemNodeRef);
+
+							if (unit != null) {
+								
+							
+								nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_UNIT,
+										NutsCalculatingFormulationHandler.calculateUnit(unit, getNutrientPreparationUnit(productListItemNodeRef), nutUnit));
+							}
+
+						}
+						
+						
+						
+						
 
 						// nutListGroup
 						String nutGroup = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_NUTGROUP);
@@ -356,6 +389,16 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 		NodeRef productNodeRef = entityListDAO.getEntity(listNodeRef);
 		if ((productNodeRef != null) && nodeService.exists(productNodeRef)) {
 			return ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT));
+		}
+
+		return null;
+	}
+	
+	private ProductUnit getNutrientPreparationUnit(NodeRef listNodeRef) {
+
+		NodeRef productNodeRef = entityListDAO.getEntity(listNodeRef);
+		if ((productNodeRef != null) && nodeService.exists(productNodeRef)) {
+			return ProductUnit.getUnit((String) nodeService.getProperty(productNodeRef, PLMModel.PROP_NUTRIENT_PREPARED_UNIT));
 		}
 
 		return null;
