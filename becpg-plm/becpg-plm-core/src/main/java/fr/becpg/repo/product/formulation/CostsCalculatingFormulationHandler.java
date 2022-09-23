@@ -30,6 +30,7 @@ import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.helper.SimulationCostHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
@@ -134,7 +135,12 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 
 				@Override
 				public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
-					return  FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, componentProduct);
+					return  FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem,componentProduct);
+				}
+				
+				@Override
+				public Double getQty(ProcessListDataItem processListDataItem) {
+					return  FormulationHelper.getQtyForCost(formulatedProduct, processListDataItem);
 				}
 
 				
@@ -152,6 +158,8 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 				public Boolean omitElement(CompoListDataItem compoListDataItem) {
 					return false;
 				}
+
+			
 
 				
 			},  hasCompoEl);
