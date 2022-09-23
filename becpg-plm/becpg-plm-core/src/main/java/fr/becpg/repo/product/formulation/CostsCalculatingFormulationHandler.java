@@ -29,6 +29,7 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.helper.SimulationCostHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
@@ -130,6 +131,13 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					return getQty(compoListDataItem, parentLossRatio, componentProduct);
 				}
 
+
+				@Override
+				public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
+					return  FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, componentProduct);
+				}
+
+				
 				@Override
 				public Double getNetWeight() {
 					return netQty;
