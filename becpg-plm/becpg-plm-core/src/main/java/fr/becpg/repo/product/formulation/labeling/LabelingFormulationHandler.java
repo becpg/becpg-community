@@ -291,7 +291,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			CompositeLabeling compositeLabeling = new CompositeLabeling(CompositeLabeling.ROOT);
 
-			visitCompoList(compositeLabeling, compositeDefaultVariant, labelingFormulaContext, 1d,
+			visitCompoList(compositeLabeling, compositeDefaultVariant, labelingFormulaContext, 1d, 1d,
 					labelingFormulaContext.getYield() != null ? labelingFormulaContext.getYield() : formulatedProduct.getYield(),
 					formulatedProduct.getRecipeQtyUsed(), true);
 
@@ -1476,7 +1476,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite, LabelingFormulaContext labelingFormulaContext,
-			final Double ratio, final Double currYield, final Double recipeQtyUsed, final boolean apply) {
+			final Double ratio, final Double ratioWithYield, final Double currYield, final Double recipeQtyUsed, final boolean apply) {
 
 		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
 
@@ -1532,7 +1532,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if (ratio != null) {
 						qty *= ratio;
-						qtyWithYield *= ratio;
+						qtyWithYield *= ratioWithYield;
 					}
 
 				}
@@ -1549,7 +1549,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if (ratio != null) {
 						volume *= ratio;
-						volumeWithYield *= ratio;
+						volumeWithYield *= ratioWithYield;
 					}
 
 				}
@@ -1732,6 +1732,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 										compositeLabeling.setQtyTotalWithYield(yieldQty);
 										compositeLabeling.setEvaporatedQty(evaporatingLoss);
+										
 									}
 
 									if ((volumeWithYield != null) && (calculatedYield != null)) {
@@ -1782,6 +1783,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						Double computedRatio = 1d;
+						Double computedRatioWithYield = 1d;
 						if (DeclarationType.Declare.equals(declarationType) && isMultiLevel && (qty != null)) {
 							//
 
@@ -1790,6 +1792,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							if ((qtyTotal != null) && (qtyTotal != 0d)) {
 								computedRatio = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR);
 							}
+							
+							
+							qtyTotal = FormulationHelper.getNetWeight(productData,  FormulationHelper.DEFAULT_NET_WEIGHT);
+							if ((qtyTotal != null) && (qtyTotal != 0d)) {
+								computedRatioWithYield = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR) ;
+							}
+							
 							if (logger.isTraceEnabled()) {
 								logger.trace(
 										"Declare ratio for :" + productData.getName() + " " + computedRatio + " total:" + qtyTotal + " qty:" + qty);
@@ -1804,7 +1813,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							Double recurYield = calculatedYield;
 							Double recurRecipeQtyUsed = recipeQtyUsed;
-							if (!isLocalSemiFinished) {
+							if (!isLocalSemiFinished ) {
+								
 								recurYield = computeYield(productData);
 
 								if ((calculatedYield != null) && (calculatedYield != 100d) && (recurYield != null)) {
@@ -1812,7 +1822,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								}
 
 								recurRecipeQtyUsed = productData.getRecipeQtyUsed();
-							} else if (!DeclarationType.Declare.equals(declarationType)) {
+							} else if(!DeclarationType.Declare.equals(declarationType)) {
 								recurYield = 100d;
 							}
 
@@ -1821,7 +1831,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								logger.trace(" -- Recur yield " + recurYield + " recur recipeQtyUsed " + recurRecipeQtyUsed);
 							}
 
-							visitCompoList(compositeLabeling, composite, labelingFormulaContext, computedRatio, recurYield, recurRecipeQtyUsed,
+							visitCompoList(compositeLabeling, composite, labelingFormulaContext, computedRatio, computedRatioWithYield, recurYield, recurRecipeQtyUsed,
 									!parent.equals(compositeLabeling));
 						}
 					}
@@ -1904,7 +1914,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					if (logger.isTraceEnabled()) {
 						logger.trace("Add to totalQtyWithYield: " + yieldQty + " yield: " + currYield);
-
 					}
 
 					compositeLabeling.setQtyTotalWithYield(yieldQty + compositeLabeling.getQtyTotalWithYield());
@@ -1915,7 +1924,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					double evaporatedQty = qtyWithYield - yieldQty;
 					if (logger.isTraceEnabled()) {
 						logger.trace("Add to evaporate qty: " + evaporatedQty);
-
 					}
 					compositeLabeling.setEvaporatedQty(evaporatedQty + compositeLabeling.getEvaporatedQty());
 				}

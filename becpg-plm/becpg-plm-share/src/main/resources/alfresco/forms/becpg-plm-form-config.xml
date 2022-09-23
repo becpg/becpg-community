@@ -5937,6 +5937,7 @@
 				<field-visibility>
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
+					<show id="bcpg:nutListValuePrepared" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListLossPerc" />
@@ -5976,6 +5977,8 @@
 					<show id="bcpg:nutListValue" />
 					<show id="bcpg:nutListFormulatedValue" />
 					<show id="bcpg:nutListUnit" />
+					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListUnitPrepared"  force="true" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListFormulatedMini" />
@@ -5994,7 +5997,6 @@
 					<show id="bcpg:nutListFormulaErrorLog" />					
 					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
 					<show id="rep:reportKinds" />
-					<show id="dataList_bcpg:reqCtrlList" force="true" />
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
 				</field-visibility>
@@ -6005,6 +6007,7 @@
 				    <field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
+					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
@@ -6013,7 +6016,6 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden"/>
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
-					<field id="dataList_bcpg:reqCtrlList" label-id="becpg.forms.field.compliance.label" />
 				</appearance>
 			</form>
 			<form id="customListDatagrid">
@@ -6054,6 +6056,8 @@
 					<show id="bcpg:nutListValue" />
 					<show id="bcpg:nutListFormulatedValue" />
 					<show id="bcpg:nutListUnit" />
+					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListUnitPrepared" force="true"/>
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListFormulatedMini" />
@@ -6075,13 +6079,13 @@
 				    <field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
+					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden"/>
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
 				</appearance>
 			</form>
 			
-
 			<form id="filter">
 				<field-visibility>
 				    <show id="entity_bcpg:nutListNut_bcpg:product" for-mode="view"/>
@@ -6112,6 +6116,8 @@
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
 					<show id="bcpg:nutListUnit"  />
+					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListUnitPrepared" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListLossPerc" />
@@ -6134,6 +6140,7 @@
 						</control>
 					</field>
 					<field id="bcpg:nutListUnit" read-only="true"/>
+					<field id="bcpg:nutListUnitPrepared" read-only="true"/>
 					
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">

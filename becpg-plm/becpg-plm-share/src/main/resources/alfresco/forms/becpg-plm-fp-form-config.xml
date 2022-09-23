@@ -54,6 +54,9 @@
           <show force="true" id="bcpg:servingSizeUnit"/>
           <show force="true" id="bcpg:servingSizeText"/>
           <show force="true" id="bcpg:numberOfServings"/>
+          <show force="true" id="bcpg:nutrientPreparationState"/>
+          <show force="true" id="bcpg:nutrientPreparedUnit"/>
+          
           <show force="false" id="bcpg:productSpecifications"/>
           <show for-mode="view" force="false" id="bcpg:ecoScore"/>
           <show for-mode="view" force="false" id="bcpg:ecoScoreDetails"/>
@@ -345,7 +348,9 @@
           </field>
           <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
-          </field>
+          </field>   
+          <field  help-id="becpg.forms.help.nutrientPreparationState" id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
           <field help-id="becpg.forms.help.productSpecifications" id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
@@ -1040,6 +1045,8 @@
           <show force="true" id="bcpg:servingSizeUnit"/>
           <show force="true" id="bcpg:servingSizeText"/>
           <show force="true" id="bcpg:numberOfServings"/>
+          <show force="true" id="bcpg:nutrientPreparationState"/>
+          <show force="true" id="bcpg:nutrientPreparedUnit"/>
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingScore"/>
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingDetails"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
@@ -1320,6 +1327,8 @@
           <show force="true" id="bcpg:servingSizeUnit"/>
           <show force="true" id="bcpg:servingSizeText"/>
           <show force="true" id="bcpg:numberOfServings"/>
+          <show force="true" id="bcpg:nutrientPreparationState"/>
+          <show force="true" id="bcpg:nutrientPreparedUnit"/>
           <show force="false" id="bcpg:productSpecifications"/>
           <show force="true" id="bcpg:useByDate"/>
           <show force="true" id="bcpg:bestBeforeDate"/>
@@ -1437,6 +1446,9 @@
           <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
+           <field  id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
+           <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
+          
           <field id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
@@ -1594,6 +1606,8 @@
           <show force="true" id="bcpg:servingSizeUnit"/>
           <show force="true" id="bcpg:servingSizeText"/>
           <show force="true" id="bcpg:numberOfServings"/>
+          <show force="true" id="bcpg:nutrientPreparationState"/>
+          <show force="true" id="bcpg:nutrientPreparedUnit"/>
           <show force="true" id="bcpg:productSpecifications"/>
           <show for-mode="view" force="true" id="bcpg:ecoScore"/>
           <show for-mode="view" force="true" id="bcpg:ecoScoreDetails"/>
@@ -1870,6 +1884,8 @@
           <field help-id="becpg.forms.help.numberOfServings" id="bcpg:numberOfServings" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
           </field>
+          <field help-id="becpg.forms.help.nutrientPreparationState" id="bcpg:nutrientPreparationState" mandatory="false" read-only="false" set="formulation"> </field>
+          <field  id="bcpg:nutrientPreparedUnit" mandatory="false" read-only="false" set="formulation"> </field>
           <field help-id="becpg.forms.help.productSpecifications" id="bcpg:productSpecifications" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
