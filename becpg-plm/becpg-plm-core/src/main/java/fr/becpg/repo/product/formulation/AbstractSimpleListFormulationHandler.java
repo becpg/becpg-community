@@ -261,14 +261,18 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct);
 
 		Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct);
+		
+
+		Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct);
+
+		Double getQty(ProcessListDataItem processListDataItem);
+
 
 		Double getNetWeight();
 
 		Double getNetQty();
 
 		Boolean omitElement(CompoListDataItem compoListDataItem);
-
-		Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct);
 
 	}
 
@@ -417,7 +421,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
 							(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
 
-				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
+				Double qty = qtyProvider.getQty(processListDataItem);
 
 				if ((processListDataItem.getResource() != null) && (qty != null)) {
 					if (ProductUnit.P.equals(processListDataItem.getUnit()) && ProductUnit.P.equals(formulatedProduct.getUnit())) {
