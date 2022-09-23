@@ -175,8 +175,13 @@ public interface PLMModel {
 	QName PROP_NUTLIST_FORMULATED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedValue");
 	/** Constant <code>PROP_NUTLIST_UNIT</code> */
 	QName PROP_NUTLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutListUnit");
+	
+	QName PROP_NUTLIST_UNIT_PREPARED = QName.createQName(BeCPGModel.BECPG_URI, "nutListUnitPrepared");
 	/** Constant <code>PROP_NUTLIST_MINI</code> */
 	QName PROP_NUTLIST_MINI = QName.createQName(BeCPGModel.BECPG_URI, "nutListMini");
+	
+	
+	QName ASPECT_NUTLIST_PREPARED = QName.createQName(BeCPGModel.BECPG_URI,"nutListPreparedAspect");
 	
 
 	QName PROP_NUTLIST_FORMULATED_MINI = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedMini");
@@ -500,6 +505,8 @@ public interface PLMModel {
 	
 	/** Constant <code>PROP_PRODUCT_SERVING_SIZE_UNIT</code> */
 	QName PROP_PRODUCT_SERVING_SIZE_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "servingSizeUnit");
+	
+	QName PROP_NUTRIENT_PREPARED_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "nutrientPreparedUnit");
 	
 	// transformation
 	/** Constant <code>ASPECT_TRANSFORMATION</code> */

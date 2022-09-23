@@ -38,6 +38,16 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		
+		<constraint name="bcpg:nutrientPreparationStates" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>Prepared</value>
+					<value>Unprepared</value>
+				</list>
+			</parameter>
+		</constraint>
 
 
 		<constraint name="bcpg:systemState" type="LIST">
@@ -3534,6 +3544,23 @@
 				<property name="bcpg:numberOfServings">
 					<type>d:mltext</type>
 				</property>
+				
+				<property name="bcpg:nutrientPreparationState">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<constraints>
+						<constraint ref="bcpg:nutrientPreparationStates" />
+					</constraints>
+				</property>
+				
+				<property name="bcpg:nutrientPreparedUnit">
+					<type>d:text</type>
+					<default>g</default>
+					<constraints>
+						<constraint ref="bcpg:servingSizeUnit" />
+					</constraints>
+				</property>
+				
 				<property name="bcpg:preparationTips">
 					<type>d:mltext</type>
 				</property>
@@ -4092,6 +4119,24 @@
 				</property>
 			</properties>
 		</aspect>
+		
+			<aspect name="bcpg:nutListPreparedAspect">
+			<properties>
+				<property name="bcpg:nutListValuePrepared">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:nutListUnitPrepared">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:nutListUnit" />
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+		
 
 
 		<aspect name="bcpg:nutrientProfilingScoreAspect">
