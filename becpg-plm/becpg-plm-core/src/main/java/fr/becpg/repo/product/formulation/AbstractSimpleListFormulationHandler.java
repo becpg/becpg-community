@@ -268,6 +268,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 		Boolean omitElement(CompoListDataItem compoListDataItem);
 
+		Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct);
+
 	}
 
 	/**
@@ -386,9 +388,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
 
-					Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, partProduct);
-
-					FormulatedQties qties = new FormulatedQties(qty, qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight());
+					Double qty = qtyProvider.getQty(packagingListDataItem, partProduct);
+					
+					FormulatedQties qties = new FormulatedQties(qty, 
+							qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight());
 
 					visitPart(formulatedProduct, partProduct, simpleListDataList, qties, mandatoryCharacts2, null, null, variant);
 				}

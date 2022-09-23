@@ -23,6 +23,7 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
@@ -96,6 +97,11 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 				@Override
 				public Boolean omitElement(CompoListDataItem compoListDataItem) {
 					return DeclarationType.Omit.equals(compoListDataItem.getDeclType());
+				}
+
+				@Override
+				public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
+					return  FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, componentProduct);
 				}
 
 				
