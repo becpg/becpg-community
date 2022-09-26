@@ -20,6 +20,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -231,7 +232,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 					productData.setNutrientClass(MLTextHelper.getClosestValue(errorMsg, Locale.getDefault()));
 
-					productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, errorMsg, null, new ArrayList<>(),
+					productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, errorMsg, null, Arrays.asList(productData.getNodeRef()),
 							RequirementDataType.Formulation));
 
 					if (logger.isDebugEnabled()) {
@@ -378,7 +379,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								.add(new ReqCtrlListDataItem(
 										null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.formula.error",
 												dynamicCharactListItem.getTitle(), e.getLocalizedMessage()),
-										null, new ArrayList<>(), RequirementDataType.Formulation));
+										null, Arrays.asList(productData.getNodeRef()), RequirementDataType.Formulation));
 
 						if (logger.isDebugEnabled()) {
 							logger.warn("Error in formula : [" + dynamicCharactListItem.getTitle() + "] - " + dynamicCharactListItem.getFormula());
