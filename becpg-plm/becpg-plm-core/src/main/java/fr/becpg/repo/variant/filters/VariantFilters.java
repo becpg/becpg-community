@@ -74,7 +74,7 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 	public Predicate<T> createPredicate(final ProductData entity) {
 		if ((variantNodeRefs.isEmpty()) && (entity.getVariants() != null)) {			
 			for (VariantData variant : entity.getVariants()) {
-				if (variant.getIsDefaultVariant()) {
+				if (Boolean.TRUE.equals(variant.getIsDefaultVariant())) {
 					this.variantNodeRefs.add(variant.getNodeRef());
 				}
 			}
@@ -85,11 +85,11 @@ public class VariantFilters<T extends VariantDataItem> implements DataListFilter
 				VariantDataItem item = (obj);
 				if (!variantNodeRefs.isEmpty()) {
 					if (isDefaultVariant != null) {
-						if (isDefaultVariant && (item.getVariants() == null) || item.getVariants().isEmpty()) {
+						if (Boolean.TRUE.equals(isDefaultVariant) && (item.getVariants() == null) || item.getVariants().isEmpty()) {
 							return true;
 						}
 						for(NodeRef variantNodeRef : variantNodeRefs) {
-							if (isDefaultVariant && item.getVariants().contains(variantNodeRef)) {
+							if (Boolean.TRUE.equals(isDefaultVariant) && item.getVariants().contains(variantNodeRef)) {
 								return true;
 							}
 						}
