@@ -30,7 +30,7 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
-import org.alfresco.service.cmr.repository.InvalidNodeRefException;
+import org.alfresco.service.cmr.repository.MalformedNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -336,7 +336,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 				String stringVal = propertyArray.getString(i);
 				if (((propertyDef == null) && stringVal.contains("workspace"))
 						|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && (stringVal != null)
-								&& !stringVal.isBlank() && !"null".equals(stringVal))) {
+								&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
 					NodeRef nodeRef = null;
 					String name = null;
 					if (Pattern.matches("\\(.*,.*\\)", stringVal)) {
@@ -374,7 +374,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 					}
 
 				}
-			} catch (JSONException | InvalidNodeRefException e) {
+			} catch (JSONException | MalformedNodeRefException e) {
 				logger.error(e, e);
 			}
 		}
