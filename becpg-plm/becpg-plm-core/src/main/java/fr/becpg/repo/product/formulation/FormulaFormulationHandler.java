@@ -232,7 +232,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 					productData.setNutrientClass(MLTextHelper.getClosestValue(errorMsg, Locale.getDefault()));
 
-					productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, errorMsg, null, Arrays.asList(productData.getNodeRef()),
+					productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, errorMsg, null, new ArrayList<>(Arrays.asList(productData.getNodeRef())),
 							RequirementDataType.Formulation));
 
 					if (logger.isDebugEnabled()) {
@@ -379,7 +379,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 								.add(new ReqCtrlListDataItem(
 										null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.formula.error",
 												dynamicCharactListItem.getTitle(), e.getLocalizedMessage()),
-										null, Arrays.asList(productData.getNodeRef()), RequirementDataType.Formulation));
+										null, new ArrayList<>(Arrays.asList(productData.getNodeRef())), RequirementDataType.Formulation));
 
 						if (logger.isDebugEnabled()) {
 							logger.warn("Error in formula : [" + dynamicCharactListItem.getTitle() + "] - " + dynamicCharactListItem.getFormula());
