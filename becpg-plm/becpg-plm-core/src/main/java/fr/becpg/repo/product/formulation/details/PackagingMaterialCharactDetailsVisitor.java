@@ -39,6 +39,7 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.formulation.FormulatedQties;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
@@ -244,9 +245,11 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 
 					compoProductQty = FormulationHelper.getNetQtyInLorKg(compoListProduct, 1d);
 				}
+				
+				FormulatedQties qties = new FormulatedQties(weightUsed, volUsed, compoProductQty, compoProductQty);
+				
 
-				visitPart(subProductData, compoListProduct, compoListDataItem.getNodeRef(), ret, weightUsed, volUsed, compoProductQty,
-						compoProductQty, currLevel, null);
+				visitPart(subProductData, compoListProduct, compoListDataItem.getNodeRef(), ret, qties, currLevel, null);
 				if (((maxLevel < 0) || (currLevel < maxLevel))
 						&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
 					visitRecur(compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
