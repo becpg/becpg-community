@@ -256,25 +256,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
-	protected interface SimpleListQtyProvider {
-
-		Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct);
-
-		Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct);
-		
-
-		Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct);
-
-		Double getQty(ProcessListDataItem processListDataItem);
-
-
-		Double getNetWeight();
-
-		Double getNetQty();
-
-		Boolean omitElement(CompoListDataItem compoListDataItem);
-
-	}
 
 	/**
 	 * <p>formulateSimpleList.</p>
