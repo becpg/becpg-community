@@ -159,7 +159,7 @@ public class FormulationHelper {
 		return ((1 + (lossPerc / 100)) * qty) / (yieldPerc / 100);
 	}
 
-	static Double getQtyWithLoss(double qty, double lossPerc) {
+	public static Double getQtyWithLoss(double qty, double lossPerc) {
 		return (1 + (lossPerc / 100)) * qty;
 	}
 
