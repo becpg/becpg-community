@@ -1714,7 +1714,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								if (composite.isLeaf()) {
 
 									if (logger.isTraceEnabled()) {
-										logger.trace("Set total qty: " + qty + " volume:" + volume);
+										logger.trace("Set total qty ("+compositeLabeling.getName()+"): " + qty + " volume:" + volume);
 									}
 									compositeLabeling.setQtyTotal(qty);
 									compositeLabeling.setVolumeTotal(volume);
@@ -1777,7 +1777,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							visitIngList(compositeLabeling, productData, CompositeHelper.getHierarchicalCompoList(productData.getIngList()), null,
 									qty, volume, qtyWithYield, volumeWithYield,
-									((DeclarationType.Detail.equals(declarationType) || !aggregateRules.isEmpty())) ? calculatedYield : null,
 									labelingFormulaContext, compoListDataItem, errors);
 
 						}
@@ -1790,22 +1789,23 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							Double qtyTotal = FormulationHelper.getQtyFromComposition(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 							if ((qtyTotal != null) && (qtyTotal != 0d)) {
-								computedRatio = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR);
+								computedRatio = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR) * ratio;
 							}
 							
 							
 							qtyTotal = FormulationHelper.getNetWeight(productData,  FormulationHelper.DEFAULT_NET_WEIGHT);
 							if ((qtyTotal != null) && (qtyTotal != 0d)) {
-								computedRatioWithYield = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR) ;
+								computedRatioWithYield = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR) * ratioWithYield;
 							}
 							
 							if (logger.isTraceEnabled()) {
 								logger.trace(
-										"Declare ratio for :" + productData.getName() + " " + computedRatio + " total:" + qtyTotal + " qty:" + qty);
+										"Declare ratio for :" + productData.getName() + " " + computedRatio +" "+ computedRatioWithYield  + " total:" + qtyTotal + " qty:" + qty);
 							}
 
 						} else if (DeclarationType.Declare.equals(declarationType) && isLocalSemiFinished) {
 							computedRatio = ratio;
+							computedRatioWithYield = ratioWithYield;
 						}
 
 						// Recur
@@ -1822,10 +1822,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								}
 
 								recurRecipeQtyUsed = productData.getRecipeQtyUsed();
-							} else if(!DeclarationType.Declare.equals(declarationType)) {
-								recurYield = 100d;
-							}
-
+							} 
+							
 							if (logger.isTraceEnabled()) {
 								logger.trace(" -- Recur call " + productData.getName() + " yield " + computeYield(productData) + " ratio " + ratio);
 								logger.trace(" -- Recur yield " + recurYield + " recur recipeQtyUsed " + recurRecipeQtyUsed);
@@ -1895,14 +1893,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if ((qty != null) && (compositeLabeling.getQtyTotal() != null)) {
 				if (logger.isTraceEnabled()) {
-					logger.trace("Add to totalQty: " + qty);
+					logger.trace("Add to totalQty ("+compositeLabeling.getName()+"): " + qty);
 				}
 				compositeLabeling.setQtyTotal(qty + compositeLabeling.getQtyTotal());
 			}
 
 			if ((volume != null) && (compositeLabeling.getVolumeTotal() != null)) {
 				if (logger.isTraceEnabled()) {
-					logger.trace("Add to totalVolume: " + volume);
+					logger.trace("Add to totalVolume ( "+compositeLabeling.getName()+"): " +  + volume);
 				}
 				compositeLabeling.setVolumeTotal(volume + compositeLabeling.getVolumeTotal());
 			}
@@ -1973,8 +1971,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	// Why not productData.getYield
-	@Deprecated
 	private Double computeYield(ProductData productData) {
 		Double qtyUsed = productData.getRecipeQtyUsed();
 		Double netWeight = productData.getNetWeight();
@@ -2157,7 +2153,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private CompositeLabeling visitIngList(CompositeLabeling parent, ProductData product, Composite<IngListDataItem> compositeIngList,
-			Double omitQtyPerc, Double qty, Double volume, Double qtyWithYield, Double volumeWithYield, Double currYield,
+			Double omitQtyPerc, Double qty, Double volume, Double qtyWithYield, Double volumeWithYield,
 			LabelingFormulaContext labelingFormulaContext, CompoListDataItem compoListDataItem, Map<String, ReqCtrlListDataItem> errors) {
 
 		boolean applyThreshold = false;
@@ -2203,7 +2199,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (DeclarationType.Declare.equals(ingDeclarationType) && !ingListItem.isLeaf()
 						&& hasVisibleSubIng(compoListDataItem, ingListItem, labelingFormulaContext)) {
 					logger.debug("Declaring ingredient: ");
-					visitIngList(parent, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield, currYield,
+					visitIngList(parent, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield,
 							labelingFormulaContext, compoListDataItem, errors);
 				} else {
 
@@ -2336,10 +2332,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						if ((ingLabelItem.getQtyWithYield() != null) && (qtyWithYield != null)) {
 							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100));
-							if ((currYield != null) && (currYield != 0)) {
-								ingLabelItem.setQtyWithYield((ingLabelItem.getQtyWithYield() * currYield) / 100d);
-
-							}
+//							if ((currYield != null) && (currYield != 0)) {
+//								ingLabelItem.setQtyWithYield((ingLabelItem.getQtyWithYield() * currYield) / 100d);
+//
+//							}
 
 							ingLabelItem.setQtyTotalWithYield(ingLabelItem.getQtyWithYield());
 
@@ -2347,10 +2343,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						if ((ingLabelItem.getVolumeWithYield() != null) && (volumeWithYield != null)) {
 							ingLabelItem.setVolumeWithYield(ingLabelItem.getVolumeWithYield() + ((volumeWithYield * volumeWithYield) / 100));
-							if ((currYield != null) && (currYield != 0)) {
-								ingLabelItem.setVolumeWithYield((ingLabelItem.getVolumeWithYield() * currYield) / 100d);
-
-							}
+//							if ((currYield != null) && (currYield != 0)) {
+//								ingLabelItem.setVolumeWithYield((ingLabelItem.getVolumeWithYield() * currYield) / 100d);
+//
+//							}
 
 							ingLabelItem.setVolumeTotalWithYield(ingLabelItem.getVolumeWithYield());
 
@@ -2397,7 +2393,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							logger.trace(" -- Adding subings " + ingListItem.getChildren().size());
 						}
 
-						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield, currYield,
+						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield,
 								labelingFormulaContext, compoListDataItem, errors);
 
 					} else if (DeclarationType.Detail.equals(ingDeclarationType)) {
