@@ -69,9 +69,9 @@ public class ActivityListExtractor extends SimpleExtractor {
 	private SecurityService securityService;
 
 	static final String ACTIVITYEVENT_UPDATE = "Update";
-	
+
 	private static final Set<QName> isIgnoredTypes = new HashSet<>();
-	
+
 	/**
 	 * <p>Setter for the field <code>entityActivityService</code>.</p>
 	 *
@@ -98,7 +98,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}
-	
+
 	public static void registerIgnoredType(QName type) {
 		isIgnoredTypes.add(type);
 	}
@@ -137,7 +137,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 	 * @param mode a {@link fr.becpg.config.format.FormatMode} object.
 	 */
 	protected void postLookupActivity(NodeRef nodeRef, Map<String, Object> ret, Map<QName, Serializable> properties, FormatMode mode) {
-		
+
 		String activityType = (String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE);
 		if (activityType != null) {
 
@@ -145,7 +145,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 			JSONObject postLookup = entityActivityService.postActivityLookUp(
 					ActivityType.valueOf((String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE)),
 					(String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_DATA));
-			if(postLookup!=null) {
+			if (postLookup != null) {
 				if (FormatMode.JSON.equals(mode) || FormatMode.XLSX.equals(mode)) {
 					NodeRef entityNodeRef = null;
 					NodeRef charactNodeRef = null;
@@ -155,23 +155,23 @@ public class ActivityListExtractor extends SimpleExtractor {
 								&& nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF)))) {
 							entityNodeRef = new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF));
 						}
-	
+
 						if (postLookup.has(EntityActivityService.PROP_CHARACT_NODEREF)
 								&& nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF)))) {
 							charactNodeRef = new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF));
 						}
-	
+
 						if (postLookup.has(EntityActivityService.PROP_ENTITY_TYPE)) {
 							entityType = QName.createQName(postLookup.getString(EntityActivityService.PROP_ENTITY_TYPE));
 						} else if (entityNodeRef != null) {
 							entityType = nodeService.getType(entityNodeRef);
 						}
-	
+
 						if (((entityType != null)
-								&& (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityNodeRef, entityType,
-										postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS)))
+								&& (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityNodeRef,
+										entityType, postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS)))
 								|| ((charactNodeRef != null) && (permissionService.hasPermission(charactNodeRef, "Read") != AccessStatus.ALLOWED))) {
-	
+
 							// Entity Title
 							if (postLookup.has(EntityActivityService.PROP_TITLE)) {
 								postLookup.put(EntityActivityService.PROP_TITLE, I18NUtil.getMessage("message.becpg.access.denied"));
@@ -179,7 +179,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 							if (postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
 								postLookup.remove(EntityActivityService.PROP_PROPERTIES);
 							}
-	
+
 						} else if (postLookup.has("activityEvent") && postLookup.get("activityEvent").equals(ACTIVITYEVENT_UPDATE)
 								&& postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
 							JSONArray activityProperties = postLookup.getJSONArray(EntityActivityService.PROP_PROPERTIES);
@@ -188,9 +188,10 @@ public class ActivityListExtractor extends SimpleExtractor {
 								JSONObject activityProperty = activityProperties.getJSONObject(i);
 								JSONObject postProperty = activityProperty;
 								QName propertyName = QName.createQName(activityProperty.getString(EntityActivityService.PROP_TITLE));
-	
+
 								if ((entityType != null)
-										&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS) && !isIgnoredTypes.contains(propertyName)) {
+										&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS)
+										&& !isIgnoredTypes.contains(propertyName)) {
 									// Property Title
 									PropertyDefinition propertyDef = dictionaryService.getProperty(propertyName);
 									ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
@@ -204,58 +205,64 @@ public class ActivityListExtractor extends SimpleExtractor {
 									if (activityProperty.has(EntityActivityService.BEFORE)) {
 										Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
 										if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
-											
+
 											if (activityProperty.has(EntityActivityService.AFTER)) {
 												Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
-												
+
 												if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
 													adaptProperty((JSONArray) beforeProperty, (JSONArray) afterProperty);
 												}
 											}
-											
+
 											postProperty.put(EntityActivityService.BEFORE, checkProperty((JSONArray) beforeProperty, propertyDef));
 										} else {
-											if (beforeProperty instanceof String && propertyDef != null && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName()) || DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
+											if (beforeProperty instanceof String && propertyDef != null
+													&& (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
+															|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
 												postProperty.put(EntityActivityService.BEFORE, extractDate((String) beforeProperty));
 											} else {
 												postProperty.put(EntityActivityService.BEFORE, beforeProperty);
 											}
 										}
 									}
-									
+
 									// AfterProperty
 									if (activityProperty.has(EntityActivityService.AFTER)) {
 										Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
 										if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
-											
+
 											if (activityProperty.has(EntityActivityService.BEFORE)) {
 												Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
-												
+
 												if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
 													adaptProperty((JSONArray) afterProperty, (JSONArray) beforeProperty);
 												}
 											}
-											
+
 											postProperty.put(EntityActivityService.AFTER, checkProperty((JSONArray) afterProperty, propertyDef));
 										} else {
-											
-											if (afterProperty instanceof String && propertyDef != null && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName()) || DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
+
+											if (afterProperty instanceof String && propertyDef != null
+													&& (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
+															|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
 												postProperty.put(EntityActivityService.AFTER, extractDate((String) afterProperty));
 											} else {
 												postProperty.put(EntityActivityService.AFTER, afterProperty);
 											}
 										}
 									}
-									
-									if (!postProperty.has(EntityActivityService.BEFORE) || !postProperty.has(EntityActivityService.AFTER) || areStringsDifferent(postProperty.get(EntityActivityService.BEFORE), postProperty.get(EntityActivityService.AFTER))) {
+
+									if (!postProperty.has(EntityActivityService.BEFORE) || !postProperty.has(EntityActivityService.AFTER)
+											|| areStringsDifferent(postProperty.get(EntityActivityService.BEFORE),
+													postProperty.get(EntityActivityService.AFTER))) {
 										postActivityProperties.put(postProperty);
 									}
-									
+
 								}
 							}
-							
+
 							postLookup.put(EntityActivityService.PROP_PROPERTIES, postActivityProperties);
-							
+
 						}
 					} catch (JSONException e) {
 						logger.error(e, e);
@@ -280,15 +287,15 @@ public class ActivityListExtractor extends SimpleExtractor {
 	}
 
 	private boolean areStringsDifferent(Object object, Object object2) {
-		
+
 		if (object == null && object2 == null) {
 			return false;
 		}
-		
+
 		if (object == null || object2 == null) {
 			return true;
 		}
-		
+
 		return !object.toString().equals(object2.toString());
 	}
 
@@ -323,9 +330,11 @@ public class ActivityListExtractor extends SimpleExtractor {
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
 			try {
-				if (propertyDef == null && propertyArray.get(i).toString().contains("workspace") || propertyDef != null && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && !"null".equals(propertyArray.get(i).toString())) {
+				if (propertyDef == null && propertyArray.get(i).toString().contains("workspace")
+						|| propertyDef != null && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName())
+								&& !"null".equals(propertyArray.get(i).toString())) {
 					NodeRef nodeRef = null;
-				 	String name = null;
+					String name = null;
 					if (Pattern.matches("\\(.*,.*\\)", propertyArray.get(i).toString())) {
 						String nodeRefString = propertyArray.get(i).toString().substring(propertyArray.get(i).toString().indexOf("(") + 1,
 								propertyArray.get(i).toString().indexOf(","));
@@ -334,19 +343,20 @@ public class ActivityListExtractor extends SimpleExtractor {
 								propertyArray.get(i).toString().indexOf(")"));
 
 					} else {
-						
+
 						String nodeRefString = propertyArray.get(i).toString();
-						
-				        int lastForwardSlash = nodeRefString.lastIndexOf('/');
-				        
-				        // case of malformed activities
-				        if(lastForwardSlash == -1) {
-				        	JSONObject jsonNodeRef = new JSONObject(nodeRefString);
-				        	nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://" + jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
-				        } else {
-				        	nodeRef = new NodeRef(propertyArray.get(i).toString());
-				        }
-						
+
+						int lastForwardSlash = nodeRefString.lastIndexOf('/');
+
+						// case of malformed activities
+						if (lastForwardSlash == -1) {
+							JSONObject jsonNodeRef = new JSONObject(nodeRefString);
+							nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://"
+									+ jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
+						} else {
+							nodeRef = new NodeRef(propertyArray.get(i).toString());
+						}
+
 					}
 					if (nodeService.exists(nodeRef)) {
 						if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
@@ -366,19 +376,20 @@ public class ActivityListExtractor extends SimpleExtractor {
 					}
 				} else {
 					Object prop = propertyArray.get(i);
-					
-					if (prop instanceof String && propertyDef != null && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName()) || DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
+
+					if (prop instanceof String && propertyDef != null && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
+							|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
 						postproperty.put(extractDate((String) prop));
 					} else {
 						postproperty.put(prop);
 					}
-					
+
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
 			}
 		}
-		
+
 		return postproperty;
 	}
 
@@ -389,7 +400,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 			return prop;
 		}
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean applyTo(DataListFilter dataListFilter) {
