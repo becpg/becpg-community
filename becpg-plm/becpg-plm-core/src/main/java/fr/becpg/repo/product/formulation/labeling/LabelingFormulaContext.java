@@ -1573,7 +1573,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d);
 					Double volumePerc = computeVolumePerc(lblCompositeContext, component, 1d);
 
-					Double subRatio = computeQtyPerc(lblCompositeContext, component, 1d, false);
+				
 					
 					Double qtyPercWithYield = computeQtyPerc(lblCompositeContext, component, 1d, true);
 					Double volumePercWithYield = computeVolumePerc(lblCompositeContext, component, 1d, true);
@@ -1595,7 +1595,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 						String subLabel = "";
 						if (component instanceof CompositeLabeling) {
-
+							Double subRatio = computeQtyPerc(lblCompositeContext, component, 1d, false);
+							
 							if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
 								subRatio = 1d;
 							}
@@ -1863,7 +1864,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				Double qtyPerc = computeQtyPerc(parent, component, ratio);
 				Double volumePerc = computeVolumePerc(parent, component, ratio);
-				Double subRatio = computeQtyPerc(parent, component, ratio, false);
+			
 
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
@@ -1891,7 +1892,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 					if (component instanceof CompositeLabeling) {
-						
+						Double subRatio = computeQtyPerc(parent, component, ratio, false);
 						if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
 							subRatio = 1d;
 						}
@@ -2127,7 +2128,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			Double qtyPerc = computeQtyPerc(parent, component, ratio);
 			Double volumePerc = computeVolumePerc(parent, component, ratio);
-			Double subRatio = computeQtyPerc(parent, component, ratio, false);
+			
 			
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 			if (first && (total != null)) {
@@ -2155,7 +2156,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if (component instanceof CompositeLabeling) {
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc);
-					
+					Double subRatio = computeQtyPerc(parent, component, ratio, false);
 					
 					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
 						subRatio = 1d;
