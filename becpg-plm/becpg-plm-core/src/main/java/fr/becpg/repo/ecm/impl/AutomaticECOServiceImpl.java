@@ -351,13 +351,17 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		String ftsQuery = String.format("@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX]", dateRange, dateRange);
 
-		logger.debug("Start of reformulate changed entities for: " + ftsQuery);
 
 		BatchInfo batchInfo = new BatchInfo("reformulateChangedEntities", "becpg.batch.automaticECO.reformulateChangedEntities");
 		batchInfo.setRunAsSystem(true);
+		batchInfo.setWorkerThreads(2);
+		batchInfo.setBatchSize(1);
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
 				.ofType(PLMModel.TYPE_PRODUCT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+		
+
+		logger.info("Start of reformulate changed entities of size :"+ nodeRefs.size());
 
 		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker();
 		

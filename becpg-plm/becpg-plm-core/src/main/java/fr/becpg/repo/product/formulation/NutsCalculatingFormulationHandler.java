@@ -31,6 +31,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
@@ -129,6 +130,13 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						return  0d;
 					}
 
+
+					@Override
+					public Double getQty(ProcessListDataItem processListDataItem) {
+						return  0d;
+					}
+
+					
 					@Override
 					public Double getNetWeight() {
 						return netWeight;

@@ -76,6 +76,7 @@ import fr.becpg.repo.product.data.ing.CompositeLabeling;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.ing.LabelingComponent;
+import fr.becpg.repo.product.data.meat.MeatType;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -1572,6 +1573,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d);
 					Double volumePerc = computeVolumePerc(lblCompositeContext, component, 1d);
 
+				
+					
 					Double qtyPercWithYield = computeQtyPerc(lblCompositeContext, component, 1d, true);
 					Double volumePercWithYield = computeVolumePerc(lblCompositeContext, component, 1d, true);
 
@@ -1592,8 +1595,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 						String subLabel = "";
 						if (component instanceof CompositeLabeling) {
-
-							Double subRatio = qtyPerc;
+							Double subRatio = computeQtyPerc(lblCompositeContext, component, 1d, false);
+							
 							if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
 								subRatio = 1d;
 							}
@@ -1861,6 +1864,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				Double qtyPerc = computeQtyPerc(parent, component, ratio);
 				Double volumePerc = computeVolumePerc(parent, component, ratio);
+			
 
 				qtyPerc = (useVolume ? volumePerc : qtyPerc);
 
@@ -1888,8 +1892,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				if (!shouldSkip(component.getNodeRef(), qtyPerc)) {
 					if (component instanceof CompositeLabeling) {
-
-						Double subRatio = qtyPerc;
+						Double subRatio = computeQtyPerc(parent, component, ratio, false);
 						if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
 							subRatio = 1d;
 						}
@@ -2125,6 +2128,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			Double qtyPerc = computeQtyPerc(parent, component, ratio);
 			Double volumePerc = computeVolumePerc(parent, component, ratio);
+			
+			
 			qtyPerc = (useVolume ? volumePerc : qtyPerc);
 			if (first && (total != null)) {
 				BigDecimal diffValue = BigDecimal.valueOf(1d).subtract(total);
@@ -2151,7 +2156,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if (component instanceof CompositeLabeling) {
 
 					MessageFormat formater = getIngTextFormat(component, qtyPerc);
-					Double subRatio = qtyPerc;
+					Double subRatio = computeQtyPerc(parent, component, ratio, false);
+					
 					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType())) {
 						subRatio = 1d;
 					} else if (first && (total != null)) {
@@ -2641,8 +2647,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					boolean shouldBreak = false;
 					for (DeclarationFilterRule declarationFilter : nodeDeclarationFilters.get(ingType.getNodeRef())) {
 						if (DeclarationType.Omit.equals(declarationFilter.getDeclarationType())
+								&& declarationFilter.matchLocale(currentLocale)
 								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, ingType))
-								&& declarationFilter.matchLocale(currentLocale)) {
+								) {
 							shouldBreak = true;
 							break;
 						} else if ((DeclarationType.DoNotDeclare.equals(declarationFilter.getDeclarationType()) && !declarationFilter.isThreshold()
@@ -2652,8 +2659,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							ingType.setIsDoNotDeclare(true);
 						} else if ((DeclarationType.DoNotDetailsAtEnd.equals(declarationFilter.getDeclarationType())
 								&& !declarationFilter.isThreshold()
+								&& declarationFilter.matchLocale(currentLocale))
 								&& matchFormule(declarationFilter, new LabelingFormulaFilterContext(formulaService, ingType))
-								&& declarationFilter.matchLocale(currentLocale))) {
+								) {
 							ingType = ingType.createCopy();
 							ingType.setIsLastGroup(true);
 						}
@@ -2855,32 +2863,35 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public boolean matchFormule(AbstractFormulaFilterRule formulaFilter, LabelingFormulaFilterContext formulaFilterContext) {
 		if ((formulaFilter.getFormula() != null) && !formulaFilter.getFormula().isEmpty()) {
-
-			try {
-				ExpressionParser parser = new SpelExpressionParser();
-
-				StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(entity, formulaFilterContext, false);
-
-				Expression exp = parser.parseExpression(SpelHelper.formatFormula(formulaFilter.getFormula()));
-
-				boolean ret = exp.getValue(dataContext, Boolean.class);
-
-				if (ret && logger.isDebugEnabled()) {
-					logger.debug("Matching formula :" + formulaFilter.getFormula());
-				}
-
-				return ret;
-			} catch (Exception e) {
-
-				getEntity().getReqCtrlList()
-						.add(new ReqCtrlListDataItem(
-								null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
-										formulaFilter.getRuleName(), e.getLocalizedMessage()),
-								null, new ArrayList<>(), RequirementDataType.Labelling));
-				if (logger.isDebugEnabled()) {
-					logger.debug("Cannot evaluate formula :" + formulaFilter.getFormula() + " on " + formulaFilterContext.toString(), e);
+			if (MeatType.isMeatType(formulaFilter.getFormula())) {
+				try {
+					ExpressionParser parser = new SpelExpressionParser();
+	
+					StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(entity, formulaFilterContext, false);
+	
+					Expression exp = parser.parseExpression(SpelHelper.formatFormula(formulaFilter.getFormula()));
+	
+					boolean ret = exp.getValue(dataContext, Boolean.class);
+	
+					if (ret && logger.isDebugEnabled()) {
+						logger.debug("Matching formula :" + formulaFilter.getFormula());
+					}
+	
+					return ret;
+				} catch (Exception e) {
+	
+					getEntity().getReqCtrlList()
+							.add(new ReqCtrlListDataItem(
+									null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
+											formulaFilter.getRuleName(), e.getLocalizedMessage()),
+									null, new ArrayList<>(), RequirementDataType.Labelling));
+					if (logger.isDebugEnabled()) {
+						logger.debug("Cannot evaluate formula :" + formulaFilter.getFormula() + " on " + formulaFilterContext.toString(), e);
+					}
 				}
 			}
+
+			return false;
 		}
 		return true;
 	}

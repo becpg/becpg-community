@@ -30,6 +30,7 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
+import org.alfresco.service.cmr.repository.MalformedNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -68,7 +69,9 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	private SecurityService securityService;
 
-	static final String ACTIVITYEVENT_UPDATE = "Update";
+	private static final String ACTIVITYEVENT_UPDATE = "Update";
+	private static final String PROP_BECPG_ALDATA = "prop_bcpg_alData";
+	
 
 	private static final Set<QName> isIgnoredTypes = new HashSet<>();
 
@@ -216,7 +219,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 											postProperty.put(EntityActivityService.BEFORE, checkProperty((JSONArray) beforeProperty, propertyDef));
 										} else {
-											if (beforeProperty instanceof String && propertyDef != null
+											if ((beforeProperty instanceof String) && (propertyDef != null)
 													&& (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
 															|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
 												postProperty.put(EntityActivityService.BEFORE, extractDate((String) beforeProperty));
@@ -242,7 +245,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 											postProperty.put(EntityActivityService.AFTER, checkProperty((JSONArray) afterProperty, propertyDef));
 										} else {
 
-											if (afterProperty instanceof String && propertyDef != null
+											if ((afterProperty instanceof String) && (propertyDef != null)
 													&& (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
 															|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
 												postProperty.put(EntityActivityService.AFTER, extractDate((String) afterProperty));
@@ -267,13 +270,13 @@ public class ActivityListExtractor extends SimpleExtractor {
 					} catch (JSONException e) {
 						logger.error(e, e);
 					}
-					ret.put("prop_bcpg_alData", postLookup);
+					ret.put(PROP_BECPG_ALDATA, postLookup);
 				} else {
 					try {
 						if (postLookup.has("content")) {
-							ret.put("prop_bcpg_alData", postLookup.get("content"));
+							ret.put(PROP_BECPG_ALDATA, postLookup.get("content"));
 						} else {
-							ret.put("prop_bcpg_alData", "");
+							ret.put(PROP_BECPG_ALDATA, "");
 						}
 					} catch (JSONException e) {
 						logger.error(e, e);
@@ -288,11 +291,11 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	private boolean areStringsDifferent(Object object, Object object2) {
 
-		if (object == null && object2 == null) {
+		if ((object == null) && (object2 == null)) {
 			return false;
 		}
 
-		if (object == null || object2 == null) {
+		if ((object == null) || (object2 == null)) {
 			return true;
 		}
 
@@ -301,7 +304,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 	private void adaptProperty(JSONArray propToAdapt, JSONArray propRef) throws JSONException {
 
-		if (propToAdapt.get(0) == JSONObject.NULL && propRef.get(0) instanceof JSONArray) {
+		if ((propToAdapt.get(0) == JSONObject.NULL) && (propRef.get(0) instanceof JSONArray)) {
 
 			JSONArray newArray = new JSONArray();
 
@@ -311,9 +314,9 @@ public class ActivityListExtractor extends SimpleExtractor {
 
 			propToAdapt.put(0, newArray);
 
-		} else if (propToAdapt.get(0) instanceof JSONArray && propRef.get(0) instanceof JSONArray
-				&& ((JSONArray) propToAdapt.get(0)).length() < ((JSONArray) propRef.get(0)).length()) {
-			for (int k = 0; k < ((JSONArray) propRef.get(0)).length() - ((JSONArray) propToAdapt.get(0)).length(); k++) {
+		} else if ((propToAdapt.get(0) instanceof JSONArray) && (propRef.get(0) instanceof JSONArray)
+				&& (((JSONArray) propToAdapt.get(0)).length() < ((JSONArray) propRef.get(0)).length())) {
+			for (int k = 0; k < (((JSONArray) propRef.get(0)).length() - ((JSONArray) propToAdapt.get(0)).length()); k++) {
 				((JSONArray) propToAdapt.get(0)).put("");
 			}
 		}
@@ -330,33 +333,29 @@ public class ActivityListExtractor extends SimpleExtractor {
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
 			try {
-				if (propertyDef == null && propertyArray.get(i).toString().contains("workspace")
-						|| propertyDef != null && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName())
-								&& !"null".equals(propertyArray.get(i).toString())) {
+				String stringVal = propertyArray.getString(i);
+				if (((propertyDef == null) && stringVal.contains("workspace"))
+						|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && (stringVal != null)
+								&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
 					NodeRef nodeRef = null;
 					String name = null;
-					if (Pattern.matches("\\(.*,.*\\)", propertyArray.get(i).toString())) {
-						String nodeRefString = propertyArray.get(i).toString().substring(propertyArray.get(i).toString().indexOf("(") + 1,
-								propertyArray.get(i).toString().indexOf(","));
+					if (Pattern.matches("\\(.*,.*\\)", stringVal)) {
+						String nodeRefString = stringVal.substring(stringVal.indexOf("(") + 1, stringVal.indexOf(","));
 						nodeRef = new NodeRef(nodeRefString);
-						name = propertyArray.get(i).toString().substring(propertyArray.get(i).toString().indexOf(",") + 1,
-								propertyArray.get(i).toString().indexOf(")"));
+						name = stringVal.substring(stringVal.indexOf(",") + 1, stringVal.indexOf(")"));
 
 					} else {
-
-						String nodeRefString = propertyArray.get(i).toString();
-
-						int lastForwardSlash = nodeRefString.lastIndexOf('/');
+						
+						int lastForwardSlash = stringVal.lastIndexOf('/');
 
 						// case of malformed activities
 						if (lastForwardSlash == -1) {
-							JSONObject jsonNodeRef = new JSONObject(nodeRefString);
+							JSONObject jsonNodeRef = new JSONObject(stringVal);
 							nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://"
 									+ jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
 						} else {
-							nodeRef = new NodeRef(propertyArray.get(i).toString());
+							nodeRef = new NodeRef(stringVal);
 						}
-
 					}
 					if (nodeService.exists(nodeRef)) {
 						if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
@@ -377,7 +376,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 				} else {
 					Object prop = propertyArray.get(i);
 
-					if (prop instanceof String && propertyDef != null && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
+					if ((prop instanceof String) && (propertyDef != null) && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
 							|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
 						postproperty.put(extractDate((String) prop));
 					} else {
@@ -385,7 +384,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 					}
 
 				}
-			} catch (JSONException e) {
+			} catch (JSONException | MalformedNodeRefException e) {
 				logger.error(e, e);
 			}
 		}

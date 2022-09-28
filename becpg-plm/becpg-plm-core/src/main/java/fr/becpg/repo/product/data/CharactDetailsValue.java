@@ -77,7 +77,7 @@ public class CharactDetailsValue {
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public Double getValue() {
-		return value != 0d ? value : null;
+		return value!=null && value != 0d && !value.isInfinite() && !value.isNaN() ? value : null;
 	}
 	
 	
