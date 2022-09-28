@@ -465,9 +465,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			
 		}
 
+
+		
 		
 		public CurrentLevelQuantities(ProductData productData, CompoListDataItem compoListItem) {
 
+			this.compoListItem = compoListItem;
+			this.componentProductData = (ProductData) alfrescoRepository.findOne(compoListItem.getProduct());
 				
 			this.lossRatio =  FormulationHelper.calculateLossPerc(productData.getProductLossPerc() != null ? productData.getProductLossPerc() : 0d,
 				FormulationHelper.getComponentLossPerc(componentProductData, compoListItem));
