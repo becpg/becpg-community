@@ -1822,10 +1822,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								}
 
 								recurRecipeQtyUsed = productData.getRecipeQtyUsed();
-							} else if(!DeclarationType.Declare.equals(declarationType)) {
-								recurYield = 100d;
-							}
-
+							} 
+							
 							if (logger.isTraceEnabled()) {
 								logger.trace(" -- Recur call " + productData.getName() + " yield " + computeYield(productData) + " ratio " + ratio);
 								logger.trace(" -- Recur yield " + recurYield + " recur recipeQtyUsed " + recurRecipeQtyUsed);
