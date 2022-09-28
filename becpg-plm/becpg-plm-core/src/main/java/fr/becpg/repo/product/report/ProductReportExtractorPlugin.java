@@ -451,11 +451,24 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			
 		}
 		
-		public CurrentLevelQuantities(ProductData productData, CompoListDataItem compoListItem) {
+
+		public CurrentLevelQuantities(CompoListDataItem compoListItem) {
 
 			this.compoListItem = compoListItem;
 			this.componentProductData = (ProductData) alfrescoRepository.findOne(compoListItem.getProduct());
 			
+			this.lossRatio =  FormulationHelper.getComponentLossPerc(componentProductData, compoListItem);
+			this.qtyForProduct = compoListItem.getQty() != null ? compoListItem.getQty() : 0d;
+			this.qtyForCost = FormulationHelper.getQtyForCost(compoListItem, 0d, componentProductData,
+					CostsCalculatingFormulationHandler.keepProductUnit);
+			this.netQtyForCost = 1d;
+			
+		}
+
+		
+		public CurrentLevelQuantities(ProductData productData, CompoListDataItem compoListItem) {
+
+				
 			this.lossRatio =  FormulationHelper.calculateLossPerc(productData.getProductLossPerc() != null ? productData.getProductLossPerc() : 0d,
 				FormulationHelper.getComponentLossPerc(componentProductData, compoListItem));
 			this.qtyForProduct = compoListItem.getQty() != null ? compoListItem.getQty() : 0d;
