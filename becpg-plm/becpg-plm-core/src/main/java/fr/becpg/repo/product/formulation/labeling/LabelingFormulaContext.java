@@ -2863,7 +2863,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	public boolean matchFormule(AbstractFormulaFilterRule formulaFilter, LabelingFormulaFilterContext formulaFilterContext) {
 		if ((formulaFilter.getFormula() != null) && !formulaFilter.getFormula().isEmpty()) {
-			if (MeatType.isMeatType(formulaFilter.getFormula())) {
+			if (!MeatType.isMeatType(formulaFilter.getFormula())) {
 				try {
 					ExpressionParser parser = new SpelExpressionParser();
 	
@@ -2890,7 +2890,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					}
 				}
 			}
-
 			return false;
 		}
 		return true;
