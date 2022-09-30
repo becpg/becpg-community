@@ -191,7 +191,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 	private void visitGroups() {
 
-		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(), SystemGroup.ExternalUser.toString(),
+		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(),SystemGroup.ExternalUserMgr.toString(), SystemGroup.ExternalUser.toString(),
 				SystemGroup.SecurityRole.toString(), SystemGroup.LanguageMgr.toString() });
 
 		createGroups(new String[] { SystemGroup.LicenseReadConcurrent.toString(), SystemGroup.LicenseWriteConcurrent.toString(),
