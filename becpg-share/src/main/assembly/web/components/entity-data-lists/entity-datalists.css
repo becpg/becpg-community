@@ -1,7 +1,4 @@
 
-.yui-skin-becpg .yui-dt th .yui-dt-liner {
-	width: 100%;
-}
 
 .datalists .header-bar
 {
@@ -44,7 +41,6 @@
 
 .datalists .entity {
   padding-left: 20px;
-  vertical-align: sub;
   background-image: url(../images/filetypes/generic-entity-16.png);
   background-repeat: no-repeat;
   text-overflow: ellipsis;

@@ -282,16 +282,6 @@
 		
 	</config>
 
-	 <config evaluator="string-compare" condition="WebFramework" replace="false">
-          <web-framework>
-            <dojo-pages> 
-                <packages> 
-                    <package name="floatthead" location="modules/entity-datagrid/lib" main="floatthead-min"/> 
-                </packages>
-            </dojo-pages>
-          </web-framework>
-        </config>
-	
 
 	<config evaluator="string-compare" condition="DocLibCustom">
 		<dependencies>
