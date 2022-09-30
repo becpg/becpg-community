@@ -143,10 +143,11 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 		String supplierEmail = req.getParameter(PARAM_EMAIL_ADDRESS);
 
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		final boolean isAdmin  = authorityService.hasAdminAuthority();
 
 		AuthenticationUtil.runAsSystem(() -> {
 
-			if (authorityService.hasAdminAuthority() || authorityService.getAuthoritiesForUser(currentUser)
+			if ( isAdmin || authorityService.getAuthoritiesForUser(currentUser)
 					.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUserMgr.toString())) {
 
 				return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
