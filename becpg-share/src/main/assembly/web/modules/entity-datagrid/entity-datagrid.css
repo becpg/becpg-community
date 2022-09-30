@@ -135,7 +135,7 @@
 	max-width: 100%;
 	min-height: 250px;
 	height: calc(100vh - 310px);
-	overflow: scroll;
+	overflow: auto;
 	position: relative;
 }
 
