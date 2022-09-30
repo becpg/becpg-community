@@ -364,10 +364,6 @@
                              */
                             filterFormId : "filter",
                             
-                            /**
-                             * Floating header
-                             */
-                            floatingHeader : !(YAHOO.env.ua.ie > 0),
                             
                             /**
                              * Allow to customize column
@@ -737,30 +733,6 @@
                             Bubbling.addDefaultAction(me.id + "-action-link", fnActionHandler);
                             Bubbling.addDefaultAction(me.id + "-show-more", fnActionHandler);
                             
-//                            // Hook filter change events
-//                            var fnChangeFilterHandler = function EntityDataGrid_fnChangeFilterHandler(layer, args)
-//                            {
-//                                var owner = args[1].anchor;
-//                                if (owner !== null)
-//                                {
-//                                    var filter = owner.rel, filters, filterObj = {};
-//                                    if (filter && filter !== "")
-//                                    {
-//                                        args[1].stop = true;
-//                                        filters = filter.split("|");
-//                                        filterObj =
-//                                        {
-//                                            filterOwner : window.unescape(filters[0] || ""),
-//                                            filterId : window.unescape(filters[1] || ""),
-//                                            filterData : window.unescape(filters[2] || "").replace("$ML$", "|"),
-//                                            filterDisplay : window.unescape(filters[3] || "")
-//                                        };
-//                                        Bubbling.fire(this.scopeId + "changeFilter", filterObj);
-//                                    }
-//                                }
-//                                return true;
-//                            };
-//                            Bubbling.addDefaultAction("filter-change", fnChangeFilterHandler);
 
                             // DataList Actions module
                             this.modules.actions = new Alfresco.module.DataListActions();
@@ -1361,10 +1333,13 @@
                                 label : this.fnRenderCellSelectedHeader(),
                                 sortable : false,
                                 formatter : this.fnRenderCellSelected(),
+                                className : "sticky",
                                 width : 16
                             } ];
                             
                             delete me.widgets.itemSelect;
+                            
+                            var sticky = true;
                             
                             for (var i = 0, ii = this.datalistColumns.length; i < ii; i++)
                             {
@@ -1374,12 +1349,13 @@
                                         this.options.hiddenColumns, key)) && column.label != "datasource")
                                 {
                              
+                             		var hidden =  column.label == "hidden" || (beCPG.util.contains(
+                                                    this.options.hiddenOnlyColumns, key));
                                 	
                                 	var colDef = {
                                             key : key,
                                             label : column.label == "hidden" ? "" : column.label,
-                                            hidden : column.label == "hidden" || (beCPG.util.contains(
-                                                    this.options.hiddenOnlyColumns, key)),
+                                            hidden : hidden,
                                             sortable : (column.type == "property"),
                                             sortOptions :
                                             {
@@ -1390,6 +1366,12 @@
                                             editor : this.options.saveFieldUrl != null ? this.rendererHelper.getCellEditor(
                                                     this, column, this.options.saveFieldUrl) : null
                                         };
+                                	
+                                	
+                                	if(sticky && !hidden ){
+										colDef.className="sticky";
+	                                	sticky = false;
+									}
                                 	
                                 	
                                 	if(column.options!=null ){
@@ -1407,8 +1389,7 @@
                                 		} catch(e){
                                 			console.log("ERROR cannot parse options: "+column.options)
                                 		}
-                                	} else if(column.label == "hidden" || (beCPG.util.contains(
-                                                this.options.hiddenOnlyColumns, key))){
+                                	} else if(hidden){
                                     	colDef.width = 0;
                                     }
                                 	
@@ -1700,41 +1681,7 @@
 	                   			    }
 		                   				
                                 }
-                            	
-                                
-                                if(this.options.floatingHeader){
-                             	   
-    	                            require(dojoConfig,[
-    	                        	         "jquery", "floatthead"
-    	                        	       ], function(jQuery) {
-    	                            		try {
-    	                            			if(jQuery && jQuery.floatThead){
-		       	                            		if(!me.widgets.floatingHeader || !me.widgets.floatingHeader.floatThead ){
-		       	                            			me.widgets.floatingHeader = jQuery(me.widgets.dataTable._elTable);
-		       	    	                            	me.widgets.floatingHeader.floatThead({zIndex:2, scrollContainer: function(table){
-		       	    	                                    return me.widgets.floatingHeader.closest('.scrollableList');
-		       	    	                                },floatContainerClass:"floatThead-container grid yui-dt"});
-		       	    	                            
-		       	    	                            	
-		       	                            		} else {
-		       	                            			if(isResize){
-		       	                            				me.widgets.floatingHeader.floatThead('destroy');
-		       	                            				me.widgets.floatingHeader = jQuery(me.widgets.dataTable._elTable);
-			       	    	                            	me.widgets.floatingHeader.floatThead({zIndex:2, scrollContainer: function(table){
-			       	    	                                    return me.widgets.floatingHeader.closest('.scrollableList');
-			       	    	                                },floatContainerClass:"floatThead-container grid yui-dt"});
-		       	                            			} else {
-		       	                            				me.widgets.floatingHeader.floatThead('reflow');
-		       	                            			}
-		       	                            		}
-    	                            			}
-    	                            		} catch (exep){
-    	                            			//Nothing I can do
-    	                            		}
-    	                            });
-                             	   
-                                }
-                            	
+                          
                              // Item Select menu button
                                 if( this.widgets.itemSelect ==null){
                                    this.widgets.itemSelect = Alfresco.util.createYUIButton(this, me.timeStampId+"itemSelect-button",
@@ -1747,22 +1694,7 @@
 
                                  // Enable item select menu
                                     Dom.removeClass(me.id +"-"+me.timeStampId+"itemSelect-div", "hidden");
-                                    
-                                    if(this.options.floatingHeader){
-	    	                             this.widgets.itemSelect.getMenu().subscribe("show",function(){
-	                             		   
-	                             		   var floatTheadDiv = YAHOO.util.Selector.query('div.floatThead-container');
-	                             		   Dom.addClass(floatTheadDiv,"itemSelect-open");
-	                             		   
-	                             	   },  this.widgets.itemSelect, this);
-	                             	   
-	                             	   
-	                             	   this.widgets.itemSelect.getMenu().subscribe("hide",function(){
-	                             		   var floatTheadDiv = YAHOO.util.Selector.query('div.floatThead-container');
-	                             		   Dom.removeClass(floatTheadDiv,"itemSelect-open");
-	                             		   
-	                             	   },  this.widgets.itemSelect, this);
-                                    }	 
+                               
                                     
                                 }
 
@@ -2043,16 +1975,6 @@
                             }
                             
 
-                            if(this.options.floatingHeader){	
-	                           YAHOO.Bubbling
-	                                 .on("refreshFloatingHeader", function(){
-	                                	 if(me.widgets.floatingHeader){
-	                                		 me.widgets.floatingHeader.floatThead('reflow');
-	                                	 }
-	                                 },this);
-
-	                           
-                            }
 
                         },
 
@@ -2723,11 +2645,6 @@
                             		this.options.extraDataParams = obj.extraDataParams;
                             	}
                             	
-                                if(this.widgets.floatingHeader && this.widgets.floatingHeader!=null ){
-                                	this.widgets.floatingHeader.floatThead('destroy');
-                                	this.widgets.floatingHeader = null;
-                                }
-                                
                                 if(obj.entity){
                                 	this.entity = obj.entity;
                                 }
@@ -3084,10 +3001,7 @@
                                     oColumn.label = obj.label;
                                     this.widgets.dataTable.formatTheadCell(oColumn._elThLabel, oColumn,
                                             this.widgets.dataTable.get("sortedBy"));
-                                    
-                                    if(reflow && this.widgets.floatingHeader && this.widgets.floatingHeader!=null){
-                               		  this.widgets.floatingHeader.floatThead('reflow');
-                               	 	}
+
 
                                 }
                             }
