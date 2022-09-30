@@ -211,9 +211,8 @@
 						},
 						failureCallback: {
 							fn: function(response) {
-								var login = response.json.message;
 								Alfresco.util.PopupManager.displayMessage({
-									text: this.msg("message.createSupplier.failure", login.match(/supplier.*$/)[0]),
+									text: this.msg("message.createSupplier.failure"),
 									displayTime: 5
 								});
 							},
