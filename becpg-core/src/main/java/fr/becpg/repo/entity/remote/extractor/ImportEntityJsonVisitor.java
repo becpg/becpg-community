@@ -803,7 +803,7 @@ public class ImportEntityJsonVisitor {
 	public QName createQName(String qnameStr) {
 		try {
 			if ((qnameStr != null) && qnameStr.contains("|")) {
-				qnameStr = qnameStr.split("|")[0];
+				qnameStr = qnameStr.split("\\|")[0];
 			}
 
 			QName qname;
