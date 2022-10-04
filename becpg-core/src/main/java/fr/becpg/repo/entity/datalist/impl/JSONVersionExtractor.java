@@ -614,7 +614,13 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 				return ret;
 			}
 			
-			JSONArray dataListJsonArray = (JSONArray) datalists.get(dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString());
+			String filterName = dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString();
+			
+			if (dataListFilter.getDataListName().contains("@")) {
+				filterName += "|" + dataListFilter.getDataListName();
+			}
+			
+			JSONArray dataListJsonArray = (JSONArray) datalists.get(filterName);
 
 			JSONArray filteredList = filterList(dataListJsonArray, dataListFilter);
 			
