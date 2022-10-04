@@ -503,11 +503,14 @@ public class ImportEntityJsonVisitor {
 		while (iterator.hasNext()) {
 			String key = iterator.next();
 			QName dataListQName = createQName(key);
+			
+			String dataListName = getListName(key);
 
-			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataListQName);
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataListName);
 			if (listNodeRef == null) {
 				logger.debug("Creating list: " + dataListQName + " in " + listContainerNodeRef);
 				listNodeRef = entityListDAO.createList(listContainerNodeRef, dataListQName);
+				nodeService.setProperty(listNodeRef, ContentModel.PROP_NAME, dataListName);
 			}
 
 			Set<NodeRef> listItemToKeep = new HashSet<>();
@@ -540,6 +543,21 @@ public class ImportEntityJsonVisitor {
 			}
 		}
 
+	}
+	
+	private String getListName(String qnameStr) {
+		if ((qnameStr != null) && qnameStr.contains("|")) {
+			return qnameStr.split("\\|")[1];
+		}
+		
+		QName qname;
+		
+		if ((qnameStr != null) && (qnameStr.indexOf(QName.NAMESPACE_BEGIN) != -1)) {
+			qname = QName.createQName(qnameStr);
+		} else {
+			qname = QName.createQName(qnameStr, namespaceService);
+		}
+		return qname.getLocalName();
 	}
 
 	@SuppressWarnings("unchecked")
