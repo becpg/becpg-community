@@ -180,7 +180,9 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "OrganoListDataItem [nodeRef=" + nodeRef + ", textCriteria=" + textCriteria + ", organo=" + organo + "]";
+		return "OrganoListDataItem [textCriteria=" + textCriteria + ", organo=" + organo + ", nodeRef=" + nodeRef + ", parentNodeRef=" + parentNodeRef
+				+ ", name=" + name + ", aspects=" + aspects + ", aspectsToRemove=" + aspectsToRemove + ", extraProperties=" + extraProperties
+				+ ", isTransient=" + isTransient + "]";
 	}
 
 }
