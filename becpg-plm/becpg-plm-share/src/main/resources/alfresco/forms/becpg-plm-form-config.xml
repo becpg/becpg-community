@@ -3267,6 +3267,7 @@
 					</field>
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					<field id="bcpg:erpCode" set="mainInfo" />
+					<field id="bcpg:eanCode" set="mainInfo" />
 					<field id="bcpg:supplierAccountRef" set="mainInfo" />
 					<field id="bcpg:supplierTel" set="mainInfo" />
 					<field id="bcpg:supplierEmail" set="mainInfo">
