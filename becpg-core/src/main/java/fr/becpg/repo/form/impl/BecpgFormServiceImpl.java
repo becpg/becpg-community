@@ -228,7 +228,7 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 		return ret;
 	}
 
-	private Map<String, Map<String, BecpgFormDefinition>> parseDefinitions(String customFormDefinition) throws Exception {
+	private Map<String, Map<String, BecpgFormDefinition>> parseDefinitions(String customFormDefinition) throws JSONException {
 		Map<String, Map<String, BecpgFormDefinition>> ret = new HashMap<>();
 		BecpgFormParser becpgFormParser = new BecpgFormParser();
 		becpgFormParser.visitConfig(ret, customFormDefinition);
