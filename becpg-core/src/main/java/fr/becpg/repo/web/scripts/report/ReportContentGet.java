@@ -40,9 +40,6 @@ import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AttachmentHelper;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.report.client.ReportFormat;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  *
@@ -54,8 +51,6 @@ import io.opencensus.trace.Tracing;
  */
 public class ReportContentGet extends ContentGet {
 	private static final Log logger = LogFactory.getLog(ReportContentGet.class);
-
-	protected static final Tracer tracer = Tracing.getTracer();
 
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 	/** Constant <code>PARAM_STORE_TYPE="store_type"</code> */
@@ -70,9 +65,9 @@ public class ReportContentGet extends ContentGet {
 	private EntityReportService entityReportService;
 
 	private NamespaceService namespaceService;
-	
+
 	private EntityVersionService entityVersionService;
-	
+
 	public void setEntityVersionService(EntityVersionService entityVersionService) {
 		this.entityVersionService = entityVersionService;
 	}
@@ -96,96 +91,89 @@ public class ReportContentGet extends ContentGet {
 	@Override
 	public void execute(final WebScriptRequest req, final WebScriptResponse res) throws IOException {
 
-		try (Scope scope = tracer.spanBuilder("/internal/report/get").startScopedSpan()) {
-			NodeRef nodeRef = null;
-			
-			// create map of template vars
-			Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
-			if (templateArgs != null) {
-				String storeType = templateArgs.get(PARAM_STORE_TYPE);
-				String storeId = templateArgs.get(PARAM_STORE_ID);
-				String nodeId = templateArgs.get(PARAM_ID);
-				if ((storeType != null) && (storeId != null) && (nodeId != null)) {
-					nodeRef = new NodeRef(storeType, storeId, nodeId);
-				}
+		NodeRef nodeRef = null;
+
+		// create map of template vars
+		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
+		if (templateArgs != null) {
+			String storeType = templateArgs.get(PARAM_STORE_TYPE);
+			String storeId = templateArgs.get(PARAM_STORE_ID);
+			String nodeId = templateArgs.get(PARAM_ID);
+			if ((storeType != null) && (storeId != null) && (nodeId != null)) {
+				nodeRef = new NodeRef(storeType, storeId, nodeId);
 			}
-			if (nodeRef == null) {
-				throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No report provided");
-			}
-			
-			
-			// render content
-			QName propertyQName = ContentModel.PROP_CONTENT;
-			String contentPart = templateArgs.get(PARAM_PROPERTY);
-			if ((contentPart.length() > 0) && (contentPart.charAt(0) == ';')) {
-				if (contentPart.length() < 2) {
-					throw new WebScriptException(HttpServletResponse.SC_BAD_REQUEST, "Content property malformed");
-				}
-				String propertyName = contentPart.substring(1);
-				if (propertyName.length() > 0) {
-					propertyQName = QName.createQName(propertyName, namespaceService);
-				}
-			}
-			
-			String format = req.getParameter("format");
-			String isSearch = req.getParameter("isSearch");
-			// determine attachment
-			boolean attach = Boolean.parseBoolean(req.getParameter("a"));
-			
-			if (!"true".equals(isSearch)) {
-				
-				String entityNodeRefParam = req.getParameter(PARAM_ENTITY_NODEREF);
-				NodeRef entityNodeRef = null;
-				if ((entityNodeRefParam != null) && !entityNodeRefParam.isEmpty()) {
-					entityNodeRef = new NodeRef(entityNodeRefParam);
-				} else {
-					entityNodeRef = entityReportService.getEntityNodeRef(nodeRef);
-				}
-				
-				if (entityVersionService.isVersion(nodeRef)) {
-					entityNodeRef = entityVersionService.extractVersion(entityReportService.getEntityNodeRef(nodeRef));
-				}
-				
-				if ((entityNodeRef != null) && nodeService.hasAspect(entityNodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
-					entityNodeRef = new NodeRef((String) nodeService.getProperty(entityNodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
-				}
-				
-				if (entityNodeRef == null) {
-					throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No entity provided");
-				}
-				
-				nodeRef = entityReportService.getOrRefreshReport(entityNodeRef, nodeRef);
-				
-				if ((format != null) && attach) {
-					
-					ReportFormat reportFormat = ReportFormat.valueOf(format.toUpperCase());
-					
-					String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-					
-					String mimeType = mimetypeService.getMimetype(format);
-					
-					name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
-					
-					logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
-					
-					res.setContentType(mimeType);
-					AttachmentHelper.setAttachment(req, res, name);
-					
-					entityReportService.generateReport(entityNodeRef, nodeRef, reportFormat, res.getOutputStream());
-					
-					
-					return;
-				}
-				
-				// Stream the content
-				streamContentLocal(req, res, nodeRef, attach, propertyQName, null);
-			} else {
-				streamContent(req, res, nodeRef, propertyQName, attach, null, null);
-			}
-			
+		}
+		if (nodeRef == null) {
+			throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No report provided");
 		}
 
-	
+		// render content
+		QName propertyQName = ContentModel.PROP_CONTENT;
+		String contentPart = templateArgs.get(PARAM_PROPERTY);
+		if ((contentPart.length() > 0) && (contentPart.charAt(0) == ';')) {
+			if (contentPart.length() < 2) {
+				throw new WebScriptException(HttpServletResponse.SC_BAD_REQUEST, "Content property malformed");
+			}
+			String propertyName = contentPart.substring(1);
+			if (propertyName.length() > 0) {
+				propertyQName = QName.createQName(propertyName, namespaceService);
+			}
+		}
+
+		String format = req.getParameter("format");
+		String isSearch = req.getParameter("isSearch");
+		// determine attachment
+		boolean attach = Boolean.parseBoolean(req.getParameter("a"));
+
+		if (!"true".equals(isSearch)) {
+
+			String entityNodeRefParam = req.getParameter(PARAM_ENTITY_NODEREF);
+			NodeRef entityNodeRef = null;
+			if ((entityNodeRefParam != null) && !entityNodeRefParam.isEmpty()) {
+				entityNodeRef = new NodeRef(entityNodeRefParam);
+			} else {
+				entityNodeRef = entityReportService.getEntityNodeRef(nodeRef);
+			}
+
+			if (entityVersionService.isVersion(nodeRef)) {
+				entityNodeRef = entityVersionService.extractVersion(entityReportService.getEntityNodeRef(nodeRef));
+			}
+
+			if ((entityNodeRef != null) && nodeService.hasAspect(entityNodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
+				entityNodeRef = new NodeRef((String) nodeService.getProperty(entityNodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
+			}
+
+			if (entityNodeRef == null) {
+				throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "No entity provided");
+			}
+
+			nodeRef = entityReportService.getOrRefreshReport(entityNodeRef, nodeRef);
+
+			if ((format != null) && attach) {
+
+				ReportFormat reportFormat = ReportFormat.valueOf(format.toUpperCase());
+
+				String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+
+				String mimeType = mimetypeService.getMimetype(format);
+
+				name = FilenameUtils.removeExtension(name) + FilenameUtils.EXTENSION_SEPARATOR_STR + mimetypeService.getExtension(mimeType);
+
+				logger.debug("Rendering report at format :" + reportFormat.toString() + " mimetype: " + mimeType + " name " + name);
+
+				res.setContentType(mimeType);
+				AttachmentHelper.setAttachment(req, res, name);
+
+				entityReportService.generateReport(entityNodeRef, nodeRef, reportFormat, res.getOutputStream());
+
+				return;
+			}
+
+			// Stream the content
+			streamContentLocal(req, res, nodeRef, attach, propertyQName, null);
+		} else {
+			streamContent(req, res, nodeRef, propertyQName, attach, null, null);
+		}
 
 	}
 
