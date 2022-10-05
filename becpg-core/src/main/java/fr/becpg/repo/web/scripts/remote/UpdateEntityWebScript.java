@@ -32,7 +32,6 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.entity.version.EntityVersionService;
-import io.opencensus.common.Scope;
 
 /**
  * Update entity with POST xml
@@ -55,37 +54,36 @@ public class UpdateEntityWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-		try (Scope scope = tracer.spanBuilder("/remote/post").startScopedSpan()) {
-			NodeRef entityNodeRef = findEntity(req);
+		NodeRef entityNodeRef = findEntity(req);
 
-			if ("true".equals(req.getParameter(PARAM_CREATE_VERSION))) {
-				String description = "";
+		if ("true".equals(req.getParameter(PARAM_CREATE_VERSION))) {
+			String description = "";
 
-				if (req.getParameter(PARAM_DESCRIPTION) != null) {
-					description = req.getParameter(PARAM_DESCRIPTION);
-				}
-
-				VersionType versionType = VersionType.MINOR;
-
-				if (req.getParameter(PARAM_MAJOR_VERSION) != null) {
-					versionType = "true".equals(req.getParameter(PARAM_MAJOR_VERSION)) ? VersionType.MAJOR : VersionType.MINOR;
-				}
-
-				Map<String, Serializable> properties = new HashMap<>();
-				properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
-				properties.put(Version.PROP_DESCRIPTION, description);
-
-				// Create first version if needed
-				entityVersionService.createInitialVersion(entityNodeRef);
-
-				entityVersionService.createVersion(entityNodeRef, properties);
-
+			if (req.getParameter(PARAM_DESCRIPTION) != null) {
+				description = req.getParameter(PARAM_DESCRIPTION);
 			}
-			logger.debug("Update entity: " + entityNodeRef);
-			RemoteEntityFormat format = getFormat(req);
-			NodeRef newNodeRef = remoteEntityService.createOrUpdateEntity(entityNodeRef, req.getContent().getInputStream(), new RemoteParams(format),
-					getEntityProviderCallback(req));
-			sendOKStatus(newNodeRef, resp, format);
+
+			VersionType versionType = VersionType.MINOR;
+
+			if (req.getParameter(PARAM_MAJOR_VERSION) != null) {
+				versionType = "true".equals(req.getParameter(PARAM_MAJOR_VERSION)) ? VersionType.MAJOR : VersionType.MINOR;
+			}
+
+			Map<String, Serializable> properties = new HashMap<>();
+			properties.put(VersionBaseModel.PROP_VERSION_TYPE, versionType);
+			properties.put(Version.PROP_DESCRIPTION, description);
+
+			// Create first version if needed
+			entityVersionService.createInitialVersion(entityNodeRef);
+
+			entityVersionService.createVersion(entityNodeRef, properties);
+
 		}
+		logger.debug("Update entity: " + entityNodeRef);
+		RemoteEntityFormat format = getFormat(req);
+		NodeRef newNodeRef = remoteEntityService.createOrUpdateEntity(entityNodeRef, req.getContent().getInputStream(), new RemoteParams(format),
+				getEntityProviderCallback(req));
+		sendOKStatus(newNodeRef, resp, format);
+
 	}
 }

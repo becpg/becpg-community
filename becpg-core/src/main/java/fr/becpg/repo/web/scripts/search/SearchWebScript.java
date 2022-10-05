@@ -30,9 +30,6 @@ import fr.becpg.repo.helper.extractors.LinkDataExtractor;
 import fr.becpg.repo.helper.extractors.NodeDataExtractor;
 import fr.becpg.repo.helper.extractors.WikiDataExtractor;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * Webscript that send the result of a search
@@ -43,8 +40,6 @@ import io.opencensus.trace.Tracing;
 public class SearchWebScript extends AbstractSearchWebScript {
 
 	private static final Log logger = LogFactory.getLog(SearchWebScript.class);
-
-	private static final Tracer tracer = Tracing.getTracer();
 
 	private ServiceRegistry serviceRegistry;
 
@@ -73,53 +68,50 @@ public class SearchWebScript extends AbstractSearchWebScript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 
-		try (Scope scope = tracer.spanBuilder("/internal/search").startScopedSpan()) {
-			StopWatch watch = null;
-			if (logger.isDebugEnabled()) {
-				watch = new StopWatch();
-				watch.start();
-				logger.debug("SearchWebScript executeImpl()");
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+			logger.debug("SearchWebScript executeImpl()");
+		}
+
+		Integer maxResults = getNumParameter(req, PARAM_MAX_RESULTS);
+		Integer page = getNumParameter(req, PARAM_PAGE);
+		Integer pageSize = getNumParameter(req, PARAM_PAGE_SIZE);
+		List<String> metadataFields = WebscriptHelper.extractMetadataFields(req);
+
+		try {
+			List<NodeRef> results = doSearch(req, maxResults);
+
+			if (page == null) {
+				page = 1;
 			}
 
-			Integer maxResults = getNumParameter(req, PARAM_MAX_RESULTS);
-			Integer page = getNumParameter(req, PARAM_PAGE);
-			Integer pageSize = getNumParameter(req, PARAM_PAGE_SIZE);
-			List<String> metadataFields = WebscriptHelper.extractMetadataFields(req);
+			if (pageSize == null) {
+				pageSize = 25;
+			}
+			int size = results.size();
 
-			try {
-				List<NodeRef> results = doSearch(req, maxResults);
+			// Pagination
+			if (size > 0) {
+				results = results.subList(Math.max((page - 1) * pageSize, 0), Math.min(page * pageSize, size));
+			}
 
-				if (page == null) {
-					page = 1;
-				}
+			JSONObject ret = processResults(results, metadataFields);
+			ret.put("page", page);
+			ret.put("pageSize", pageSize);
+			ret.put("fullListSize", size);
 
-				if (pageSize == null) {
-					pageSize = 25;
-				}
-				int size = results.size();
+			res.setContentType("application/json");
+			res.setContentEncoding("UTF-8");
+			res.getWriter().write(ret.toString(3));
 
-				// Pagination
-				if (size > 0) {
-					results = results.subList(Math.max((page - 1) * pageSize, 0), Math.min(page * pageSize, size));
-				}
-
-				JSONObject ret = processResults(results, metadataFields);
-				ret.put("page", page);
-				ret.put("pageSize", pageSize);
-				ret.put("fullListSize", size);
-
-				res.setContentType("application/json");
-				res.setContentEncoding("UTF-8");
-				res.getWriter().write(ret.toString(3));
-
-			} catch (JSONException e) {
-				throw new WebScriptException("Unable to serialize JSON");
-			} finally {
-				if (logger.isDebugEnabled()) {
-					watch.stop();
-					logger.debug("SearchWebScript execute in " + watch.getTotalTimeSeconds() + "s");
-				}
-
+		} catch (JSONException e) {
+			throw new WebScriptException("Unable to serialize JSON");
+		} finally {
+			if (logger.isDebugEnabled()) {
+				watch.stop();
+				logger.debug("SearchWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
 
 		}
