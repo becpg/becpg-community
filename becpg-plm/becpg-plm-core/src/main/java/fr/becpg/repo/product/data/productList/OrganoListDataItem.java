@@ -3,6 +3,8 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import java.util.Objects;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -72,13 +74,13 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef organo) {
-		this.organo = organo;
+		setOrgano(organo);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getCharactNodeRef() {
-		return organo;
+		return getOrgano();
 	}
 
 	/** {@inheritDoc} */
@@ -90,14 +92,14 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 	/** {@inheritDoc} */
 	@Override
 	public void setValue(Double value) {
-
+		//Not implemented
 	}
 
 	/**
 	 * <p>Constructor for OrganoListDataItem.</p>
 	 */
 	public OrganoListDataItem() {
-
+		super();
 	}
 
 	/**
@@ -108,6 +110,7 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 	 * @param organo a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	public OrganoListDataItem(NodeRef nodeRef, String textCriteria, NodeRef organo) {
+		super();
 		setNodeRef(nodeRef);
 		setTextCriteria(textCriteria);
 		setOrgano(organo);
@@ -119,63 +122,34 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 	 * @param o a {@link fr.becpg.repo.product.data.productList.OrganoListDataItem} object.
 	 */
 	public OrganoListDataItem(OrganoListDataItem o) {
-		setNodeRef(nodeRef);
-		setTextCriteria(textCriteria);
-		setOrgano(organo);
+		super(o);
+		this.textCriteria = o.textCriteria;
+		this.organo = o.organo;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
-		int result = 1;
-		result = (prime * result) + ((nodeRef == null) ? 0 : nodeRef.hashCode());
-		result = (prime * result) + ((organo == null) ? 0 : organo.hashCode());
-		result = (prime * result) + ((textCriteria == null) ? 0 : textCriteria.hashCode());
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(organo, textCriteria);
 		return result;
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (!super.equals(obj))
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		OrganoListDataItem other = (OrganoListDataItem) obj;
-		if (nodeRef == null) {
-			if (other.nodeRef != null) {
-				return false;
-			}
-		} else if (!nodeRef.equals(other.nodeRef)) {
-			return false;
-		}
-		if (organo == null) {
-			if (other.organo != null) {
-				return false;
-			}
-		} else if (!organo.equals(other.organo)) {
-			return false;
-		}
-		if (textCriteria == null) {
-			if (other.textCriteria != null) {
-				return false;
-			}
-		} else if (!textCriteria.equals(other.textCriteria)) {
-			return false;
-		}
-		return true;
+		return Objects.equals(organo, other.organo) && Objects.equals(textCriteria, other.textCriteria);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "OrganoListDataItem [nodeRef=" + nodeRef + ", textCriteria=" + textCriteria + ", organo=" + organo + "]";
+		return "OrganoListDataItem [textCriteria=" + textCriteria + ", organo=" + organo + "]";
 	}
 
 }
