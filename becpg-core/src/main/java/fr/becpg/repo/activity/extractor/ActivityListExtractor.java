@@ -333,7 +333,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
 			try {
-				String stringVal = propertyArray.getString(i);
+				String stringVal = propertyArray.get(i).toString();
 				if (((propertyDef == null) && stringVal.contains("workspace"))
 						|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && (stringVal != null)
 								&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
