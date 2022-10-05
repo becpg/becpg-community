@@ -2820,6 +2820,7 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" force="true" />
 					<show id="bcpg:isDeleted"/>
+					<show id="cm:content"  />
 				</field-visibility>
 			</form>
 			
