@@ -82,11 +82,10 @@
 		<property name="authenticationService" ref="AuthenticationService" />
 		<property name="contentService" ref="contentService" />
 		<property name="nodeService" ref="nodeService" />
-		<property name="personService" ref="personService" />
+		<property name="beCPGUserAccountService" ref="beCPGUserAccountService" />
 		<property name="siteService" ref="siteService" />
-		<property name="authorityService" ref="authorityService" />
-		<property name="beCPGMailService" ref="beCPGMailService" />
 		<property name="namespacePrefixResolver" ref="namespaceService" />
+		<property name="sysAdminParams" ref="sysAdminParams"/>
 	</bean>
 
     <!-- Variant -->
@@ -189,13 +188,9 @@
 	
 	<bean id="webscript.fr.becpg.supplier.createSupplier.post" class="fr.becpg.repo.web.scripts.supplier.SupplierAccountWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
-		<property name="personService" ref="PersonService" />
 		<property name="authorityService" ref="AuthorityService" />
 		<property name="associationService" ref="associationService"/>
-		<property name="authenticationService" ref="authenticationService"/>
-		<property name="mailService" ref="beCPGMailService"/>
-		<property name="transactionService" ref="transactionService"/>
-		<property name="tenantAdminService" ref="tenantAdminService"/>
+		<property name="beCPGUserAccountService" ref="beCPGUserAccountService"/>
 	</bean>
 	
 	
