@@ -452,7 +452,7 @@
 				<action index="104" id="entity-merge" />
 				<action index="105" id="entity-view-original" />
 				<action index="106" id="entity-view-working-copy" />
-				<action index="114" id="document-approve" icon="document-approve" />
+				<action index="115" id="document-approve" icon="document-approve" />
 				<action index="120" id="document-reject" icon="document-reject" />
 				<action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
 				<action index="131" id="datalist-copy-to" icon="folder-copy-to" label="actions.datalist.copy-to" />
