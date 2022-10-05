@@ -21,9 +21,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
-
 /**
  * <p>Abstract FormulationBaseHandler class.</p>
  *
@@ -34,8 +31,6 @@ public abstract class FormulationBaseHandler<T> implements FormulationHandler<T>
  
 
 	private static final Log logger = LogFactory.getLog(FormulationBaseHandler.class);
-	
-	private static final Tracer tracer = Tracing.getTracer();
 	
     private FormulationHandler<T> nextHandler;
  
@@ -57,8 +52,6 @@ public abstract class FormulationBaseHandler<T> implements FormulationHandler<T>
 		   watch = new StopWatch();
 			watch.start();
 		}
-    	
-		tracer.getCurrentSpan().addAnnotation(this.getClass().getSimpleName());
 		
         boolean processed = process(context);
         

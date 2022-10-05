@@ -47,9 +47,6 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.lexer.CompositionLexer;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * <p>ProductServiceImpl class.</p>
@@ -60,10 +57,7 @@ import io.opencensus.trace.Tracing;
 @Service("productService")
 public class ProductServiceImpl implements ProductService, InitializingBean, FormulationPlugin {
 
-
 	private static final Log logger = LogFactory.getLog(ProductServiceImpl.class);
-	
-	private static final Tracer tracer = Tracing.getTracer();
 
 	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
@@ -85,7 +79,6 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	@Autowired
 	private EntityTplService entityTplService;
-	
 
 	/** {@inheritDoc} */
 	@Override
@@ -96,28 +89,27 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	/** {@inheritDoc} */
 	@Override
-	public void formulate(NodeRef productNodeRef){
+	public void formulate(NodeRef productNodeRef) {
 		formulate(productNodeRef, null);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void formulate(NodeRef productNodeRef, String chainId) {
-		try (Scope scope = tracer.spanBuilder("productService.Formulate").startScopedSpan()){
+		try {
 			policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
-			L2CacheSupport.doInCacheContext(() -> 
-				AuthenticationUtil.runAsSystem(() -> {
-					if (chainId == null) {
-						formulationService.formulate(productNodeRef);
-						entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
-					} else {
-						formulationService.formulate(productNodeRef, chainId);
-					}
-					return true;
-				}), false, true);
+			L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
+				if (chainId == null) {
+					formulationService.formulate(productNodeRef);
+					entityActivityService.postEntityActivity(productNodeRef, ActivityType.Formulation, ActivityEvent.Update, null);
+				} else {
+					formulationService.formulate(productNodeRef, chainId);
+				}
+				return true;
+			}), false, true);
 
 		} finally {
 			policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
@@ -135,8 +127,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	/** {@inheritDoc} */
 	@Override
-	public CharactDetails formulateDetails(NodeRef productNodeRef, QName datatType, String dataListName, List<NodeRef> elements, Integer level)
-		{
+	public CharactDetails formulateDetails(NodeRef productNodeRef, QName datatType, String dataListName, List<NodeRef> elements, Integer level) {
 		ProductData productData = alfrescoRepository.findOne(productNodeRef);
 
 		CharactDetailsVisitor visitor = charactDetailsVisitorFactory.getCharactDetailsVisitor(datatType, dataListName);
@@ -151,7 +142,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 
 	/** {@inheritDoc} */
 	@Override
-	public ProductData formulateText(String recipe){
+	public ProductData formulateText(String recipe) {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Formulate text: " + recipe);
@@ -171,17 +162,15 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 		productData.getProcessListView().setProcessList(new ArrayList<>());
 		productData.getProcessListView().setDynamicCharactList(new ArrayList<>());
 		productData.getLabelingListView().setIngLabelingList(new ArrayList<>());
-		
+
 		if (logger.isDebugEnabled()) {
 			logger.debug("Lexer result: " + productData);
 		}
 
-		L2CacheSupport.doInCacheOnly(() -> 
-			AuthenticationUtil.runAsSystem(() -> {
-				formulationService.formulate(productData);
-				return true;
-			})
-		);
+		L2CacheSupport.doInCacheOnly(() -> AuthenticationUtil.runAsSystem(() -> {
+			formulationService.formulate(productData);
+			return true;
+		}));
 
 		return productData;
 	}

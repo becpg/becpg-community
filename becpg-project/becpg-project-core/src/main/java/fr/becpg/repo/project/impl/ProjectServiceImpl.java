@@ -70,9 +70,6 @@ import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 
 /**
@@ -86,8 +83,6 @@ import io.opencensus.trace.Tracing;
 public class ProjectServiceImpl implements ProjectService, FormulationPlugin, SecurityServicePlugin {
 
 	private static final Log logger = LogFactory.getLog(ProjectServiceImpl.class);
-
-	private static final Tracer tracer = Tracing.getTracer();
 	
 	@Autowired
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
@@ -246,7 +241,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	@Override
 	public void formulate(NodeRef projectNodeRef)  {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
-			try (Scope scope = tracer.spanBuilder("projectService.Formulate").startScopedSpan()){
+			try {
 
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
