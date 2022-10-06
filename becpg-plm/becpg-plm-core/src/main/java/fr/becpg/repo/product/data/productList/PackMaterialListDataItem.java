@@ -136,6 +136,18 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		this.pmlWeight = pmlWeight;
 		this.pkgLevel = pkgLevel;
 	}
+	
+	public PackMaterialListDataItem(PackMaterialListDataItem o) {
+		super(o);
+		this.pmlMaterial = o.pmlMaterial;
+		this.pmlWeight = o.pmlWeight;
+		this.pkgLevel = o.pkgLevel;
+	}
+
+	@Override
+	public PackMaterialListDataItem copy() {
+		return new PackMaterialListDataItem(this);
+	}
 
 
 	@Override
