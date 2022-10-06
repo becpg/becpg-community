@@ -197,12 +197,18 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	 * @param m a {@link fr.becpg.repo.product.data.productList.MicrobioListDataItem} object.
 	 */
 	public MicrobioListDataItem(MicrobioListDataItem m){
+		super(m);
 		setNodeRef(m.getNodeRef());
 		setValue(m.getValue());
 		setUnit(m.getUnit());
 		setMaxi(m.getMaxi());
 		setTextCriteria(m.getTextCriteria());
 		setMicrobio(m.getMicrobio());
+	}
+	
+	@Override
+	public MicrobioListDataItem copy() {
+		return new MicrobioListDataItem(this);
 	}
 
 	/** {@inheritDoc} */
