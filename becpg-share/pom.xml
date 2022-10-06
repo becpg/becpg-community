@@ -79,4 +79,22 @@
             </plugin>
 		</plugins>
 	</build>
+	<reporting>
+		 <plugins>
+		 <plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<configuration>
+                    <skipProvidedScope>true</skipProvidedScope>
+                </configuration>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>aggregate</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+		</plugins>	
+	</reporting>
 </project>
