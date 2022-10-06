@@ -40,8 +40,6 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	private Boolean onLine = null;
 	private Boolean isCleaned = null;
 	
-
-	
 	private String allergenValue = null; 
 	private List<NodeRef> voluntarySources = new ArrayList<>();
 	private List<NodeRef> inVoluntarySources = new ArrayList<>();
@@ -290,6 +288,28 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 		this.inVoluntarySources = inVoluntarySources;
 		this.allergen = allergen;
 		this.isManual = isManual;
+	}
+	
+	
+	
+	public AllergenListDataItem(AllergenListDataItem allergenListDataItem) {
+		super(allergenListDataItem);
+		
+		this.qtyPerc = allergenListDataItem.qtyPerc;
+		this.voluntary = allergenListDataItem.voluntary;
+		this.inVoluntary = allergenListDataItem.inVoluntary;
+		this.onSite = allergenListDataItem.onSite;
+		this.onLine = allergenListDataItem.onLine;
+		this.isCleaned = allergenListDataItem.isCleaned;
+		this.allergenValue = allergenListDataItem.allergenValue; 
+		this.voluntarySources = new ArrayList<>(allergenListDataItem.voluntarySources);
+		this.inVoluntarySources = new ArrayList<>(allergenListDataItem.inVoluntarySources);
+		this.allergen = allergenListDataItem.allergen;
+	}
+
+	@Override
+	public AllergenListDataItem copy() {
+		return new AllergenListDataItem(this);
 	}
 	
 	@Override
