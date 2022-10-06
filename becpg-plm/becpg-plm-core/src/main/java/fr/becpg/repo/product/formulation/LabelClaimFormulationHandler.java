@@ -227,7 +227,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						}
 					}
 					if (!isFound) {
-						LabelClaimListDataItem toAdd = tsl.clone();
+						LabelClaimListDataItem toAdd = tsl.copy();
 						toAdd.setName(null);
 						toAdd.setNodeRef(null);
 						toAdd.setParentNodeRef(null);

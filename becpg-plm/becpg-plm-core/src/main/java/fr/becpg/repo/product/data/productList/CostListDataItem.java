@@ -408,7 +408,7 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	
 	/** {@inheritDoc} */
 	@Override
-	public CostListDataItem clone() {
+	public CostListDataItem copy() {
 		return new CostListDataItem(this);
 	}
 
