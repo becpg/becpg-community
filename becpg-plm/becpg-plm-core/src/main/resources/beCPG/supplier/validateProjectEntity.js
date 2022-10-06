@@ -2,9 +2,11 @@ function main() {
 	var projectEntity = null;
 
 	var projectNodeRef = search.findNode(project.nodeRef);
-	var supplier = projectNodeRef.assocs["bcpg:supplierAccountRef"][0];
-
-	if (project.entities != null && project.entities.size() > 0) {
+	
+	if (project.entities != null && project.entities.size() > 0 && projectNodeRef.assocs["bcpg:supplierAccountRef"] && projectNodeRef.assocs["bcpg:supplierAccountRef"].length > 0) {
+		
+		var supplier = projectNodeRef.assocs["bcpg:supplierAccountRef"][0];
+		
 		projectEntity = search.findNode(project.entities.get(0));
 		/*
 		  if no autoMerge date is specified  merge and validate entity 

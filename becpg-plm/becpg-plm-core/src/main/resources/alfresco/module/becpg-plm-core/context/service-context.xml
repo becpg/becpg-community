@@ -178,6 +178,7 @@
 		<property name="projectService" ref="projectService"/>
 		<property name="supplierPortalService" ref="supplierPortalService"/>
 		<property name="entityVersionService" ref="entityVersionService"/>
+		<property name="entityDictionaryService" ref="entityDictionaryService"/>
 	</bean>
 
 	
