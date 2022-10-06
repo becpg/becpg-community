@@ -54,6 +54,7 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.impl.LazyLoadingDataList;
 import fr.becpg.repo.repository.model.BaseObject;
+import fr.becpg.repo.repository.model.CopiableDataItem;
 
 /**
  *
@@ -889,16 +890,16 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 											if(oldData instanceof LazyLoadingDataList) {
 												((LazyLoadingDataList) oldData).clear();
-												((LazyLoadingDataList) oldData).addAll(((LazyLoadingDataList) data).copy());
+												((LazyLoadingDataList) oldData).addAll((clone((LazyLoadingDataList)data)));
 											} else {
-												PropertyUtils.setProperty(to, pd.getName(),((LazyLoadingDataList) data).copy() );
+												PropertyUtils.setProperty(to, pd.getName(), clone((LazyLoadingDataList)data) );
 											}
 										} else if(data instanceof Collection){
 											if(oldData instanceof LazyLoadingDataList) {
 												((LazyLoadingDataList) oldData).clear();
-												((LazyLoadingDataList) oldData).addAll((Collection)data);
+												((LazyLoadingDataList) oldData).addAll(clone((Collection) data));
 											} else {
-												PropertyUtils.setProperty(to, pd.getName(),data );
+												PropertyUtils.setProperty(to, pd.getName(),clone((Collection) data) );
 											}
 										}
 										treatedList.add(listQName);
@@ -931,16 +932,16 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 														if(oldData instanceof LazyLoadingDataList) {
 															((LazyLoadingDataList) oldData).clear();
-															((LazyLoadingDataList) oldData).addAll(((LazyLoadingDataList) data).copy());
+															((LazyLoadingDataList) oldData).addAll(clone((LazyLoadingDataList)data));
 														} else {
-															PropertyUtils.setProperty(toView, pdView.getName(),((LazyLoadingDataList) data).copy() );
+															PropertyUtils.setProperty(toView, pdView.getName(),clone((LazyLoadingDataList)data) );
 														}
 													} else if(data instanceof Collection){
 														if(oldData instanceof LazyLoadingDataList) {
 															((LazyLoadingDataList) oldData).clear();
-															((LazyLoadingDataList) oldData).addAll((Collection)data);
+															((LazyLoadingDataList) oldData).addAll(clone((Collection)data));
 														} else {
-															PropertyUtils.setProperty(toView, pdView.getName(),data );
+															PropertyUtils.setProperty(toView, pdView.getName(),clone((Collection)data) );
 														}
 													}
 
@@ -1003,6 +1004,21 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 				logger.error(e, e);
 			}
+		}
+
+		private List<Object> clone( Collection<?>  data) {
+			   List<Object> ret = new java.util.LinkedList<>();
+			   	for(Object item : data) {
+			   		if(item instanceof CopiableDataItem) {
+			   			item = ((CopiableDataItem)item).copy();
+			   		} 
+			   		if(item instanceof RepositoryEntity) {
+			   			((RepositoryEntity)item).setNodeRef(null);
+			   			((RepositoryEntity)item).setParentNodeRef(null);
+			   		}
+			   		ret.add(item);
+			   	}
+				return ret;
 		}
 
 	}

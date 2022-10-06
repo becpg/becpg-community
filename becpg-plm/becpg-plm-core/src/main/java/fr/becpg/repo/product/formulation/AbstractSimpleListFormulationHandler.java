@@ -782,7 +782,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						}
 					}
 					if (!isFound) {
-						T toAdd = (T) tsl.clone();
+						T toAdd = (T) tsl.copy();
 						toAdd.setName(null);
 						toAdd.setNodeRef(null);
 						toAdd.setParentNodeRef(null);
