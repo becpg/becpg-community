@@ -75,8 +75,7 @@ public class SearchConfig {
 
 			JSONObject filters = jsonObject.getJSONObject("dataListSearchFilters");
 
-			for (@SuppressWarnings("unchecked")
-			Iterator<String> iterator = filters.keys(); iterator.hasNext();) {
+			for (Iterator<String> iterator = filters.keys(); iterator.hasNext();) {
 				String filterName = iterator.next();
 
 				JSONArray jsonArray = filters.getJSONArray(filterName);
