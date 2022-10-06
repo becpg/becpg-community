@@ -270,7 +270,7 @@ public class PackagingHelper implements InitializingBean {
 
 				if (!PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
 
-					PackagingListDataItem item = dataItem.clone();
+					PackagingListDataItem item = dataItem.copy();
 					item.setQty(item.getQty() * subQty);
 
 					ret.add(item);

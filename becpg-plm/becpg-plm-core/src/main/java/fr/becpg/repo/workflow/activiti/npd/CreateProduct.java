@@ -224,14 +224,14 @@ public class CreateProduct extends BaseJavaDelegate {
 		if (typeCompolist.equals(PLMModel.TYPE_PACKAGINGLIST)) {
 
 			for (PackagingListDataItem packagingListDataItem : sourceData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.FUTUR))) {
-				PackagingListDataItem toAdd = packagingListDataItem.clone();
+				PackagingListDataItem toAdd = packagingListDataItem.copy();
 				toAdd.setNodeRef(null);
 				productData.getPackagingList().add(toAdd);
 			}
 		} else if (typeCompolist.equals(PLMModel.TYPE_COMPOLIST)) {
 
 			for (CompoListDataItem compoListDataItem : sourceData.getCompoList(new EffectiveFilters<>(EffectiveFilters.FUTUR))) {
-				CompoListDataItem toAdd = compoListDataItem.clone();
+				CompoListDataItem toAdd = compoListDataItem.copy();
 				toAdd.setNodeRef(null);
 				productData.getCompoList().add(toAdd);
 			}
