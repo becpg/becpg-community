@@ -1185,7 +1185,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		} else {
 			return "The node couldn't be converted";
 		}
-		
+
 	}
 	
 	public void generateVersionReport(ScriptNode node, String versionLabel) {
