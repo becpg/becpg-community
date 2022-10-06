@@ -14,26 +14,27 @@ function main() {
 		if (report != null) {
 
 			var destFolder = entity.childByNamePath(bcpg.getTranslatedPath('SupplierDocuments'));
+			
+			if (destFolder == null) {
+				destFolder = entity.createFolderPath(bcpg.getTranslatedPath('SupplierDocuments'));
+			}
+			
+			var signedReport = destFolder.createNode(bcpg.getAvailableName(destFolder, report.name, true), "cm:content");
 
-			if (destFolder != null) {
+			updateAssoc(signedReport, "sign:recipients", recipients);
 
-				var signedReport = destFolder.createNode(bcpg.getAvailableName(destFolder, report.name, true), "cm:content");
+			bcpg.copyContent(report, signedReport);
 
-				updateAssoc(signedReport, "sign:recipients", recipients);
+			bSign.prepareForSignature(signedReport, recipients);
 
-				bcpg.copyContent(report, signedReport);
+			for (var i = 0; i < project.deliverableList.size(); i++) {
+				var deliverable = project.deliverableList.get(i);
+				if (deliverable.description == bcpg.getMessage("plm.supplier.portal.deliverable.sign.url.name")) {
 
-				bSign.prepareForSignature(signedReport, recipients);
+					var signatureUrl = bSign.getSignatureView(signedReport, recipients[0], task.nodeRef);
 
-				for (var i = 0; i < project.deliverableList.size(); i++) {
-					var deliverable = project.deliverableList.get(i);
-					if (deliverable.description == bcpg.getMessage("plm.supplier.portal.deliverable.sign.url.name")) {
-
-						var signatureUrl = bSign.getSignatureView(signedReport, recipients[0], task.nodeRef);
-
-						deliverable.url = signatureUrl;
-						break;
-					}
+					deliverable.url = signatureUrl;
+					break;
 				}
 			}
 
