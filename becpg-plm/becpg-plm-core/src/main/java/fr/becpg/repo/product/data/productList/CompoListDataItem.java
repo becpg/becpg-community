@@ -467,7 +467,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 
 	/** {@inheritDoc} */
 	@Override
-	public CompoListDataItem clone() {
+	public CompoListDataItem copy() {
 		return new CompoListDataItem(this);
 	}
 

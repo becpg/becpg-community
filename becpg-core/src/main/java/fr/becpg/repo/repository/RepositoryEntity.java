@@ -29,7 +29,7 @@ import org.alfresco.service.namespace.QName;
  * @author matthieu
  * @version $Id: $Id
  */
-public interface RepositoryEntity extends Serializable{
+public interface RepositoryEntity extends Serializable {
 
 	/**
 	 * <p>getNodeRef.</p>
