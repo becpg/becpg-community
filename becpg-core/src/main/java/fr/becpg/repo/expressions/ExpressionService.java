@@ -17,5 +17,9 @@ public interface ExpressionService {
 
 	<T extends RepositoryEntity> Object eval(String condition, T formulatedEntity);
 
+	String extractExpr(NodeRef nodeRef, String exprFormat);
+
+	String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat);
+
 
 }
