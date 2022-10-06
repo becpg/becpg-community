@@ -1645,7 +1645,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
 							if ((sfComposite.getChildren() != null) && !sfComposite.getChildren().isEmpty()) {
 								for (Composite<CompoListDataItem> sfChild : sfComposite.getChildren()) {
-									CompoListDataItem clone = sfChild.getData().clone();
+									CompoListDataItem clone = sfChild.getData().copy();
 									clone.setParent(compoListDataItem);
 									sfChild.setData(clone);
 									composite.addChild(sfChild);

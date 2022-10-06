@@ -119,9 +119,14 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 	 * @param o a {@link fr.becpg.repo.product.data.productList.OrganoListDataItem} object.
 	 */
 	public OrganoListDataItem(OrganoListDataItem o) {
-		setNodeRef(nodeRef);
+		super(o);
 		setTextCriteria(textCriteria);
 		setOrgano(organo);
+	}
+	
+	@Override
+	public OrganoListDataItem copy() {
+		return new OrganoListDataItem(this);
 	}
 
 	/** {@inheritDoc} */
