@@ -29,7 +29,7 @@ import fr.becpg.repo.variant.model.VariantDataItem;
  * @author matthieu
  * @version $Id: $Id
  */
-public interface CompositionDataItem extends RepositoryEntity, Cloneable, EffectiveDataItem, VariantDataItem {
+public interface CompositionDataItem extends RepositoryEntity, CopiableDataItem, EffectiveDataItem, VariantDataItem {
 
 	/**
 	 * <p>getComponent.</p>
@@ -79,12 +79,6 @@ public interface CompositionDataItem extends RepositoryEntity, Cloneable, Effect
 	 * @param d a {@link java.lang.Double} object.
 	 */
 	void setLossPerc(Double d);
-	
-	/**
-	 * <p>clone.</p>
-	 *
-	 * @return a {@link fr.becpg.repo.repository.model.CompositionDataItem} object.
-	 */
-	CompositionDataItem clone();
+
 
 }

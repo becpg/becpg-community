@@ -134,7 +134,7 @@
 .datagrid div.grid {
 	max-width: 100%;
 	min-height: 250px;
-	height: calc(100vh - 310px);
+	height: calc(100vh - 330px);
 	overflow: auto;
 	position: relative;
 }
@@ -159,16 +159,16 @@
   position: sticky;
   background-color: white;
   top: 0;
-  z-index: 1;
+  z-index: 0;
 }
 
 .datagrid .yui-dt thead th.sticky {
   left: 0;
-  z-index: 2;
+  z-index: 1;
 }
 
 .datagrid .yui-dt thead th.sticky.yui-dt-first {
-  z-index: 3;
+  z-index: 2;
 }
 
 
@@ -177,18 +177,11 @@
   position: -webkit-sticky; /* for Safari */
   position: sticky;
   left: 0;
-  z-index: 1;
+  z-index: 0;
+  background-color : inherit;
 }
 
 
-.datagrid .yui-dt tbody .yui-dt-even td.sticky {
-	background-color: #fff;
-}
-
-
-.datagrid .yui-dt tbody .yui-dt-odd td.sticky {
-	background-color: #f8f8f8;
-}
 
 
 .datagrid .grid tbody {

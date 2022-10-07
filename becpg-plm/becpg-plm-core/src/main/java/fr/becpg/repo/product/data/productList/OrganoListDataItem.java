@@ -126,6 +126,11 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 		this.textCriteria = o.textCriteria;
 		this.organo = o.organo;
 	}
+	
+	@Override
+	public OrganoListDataItem copy() {
+		return new OrganoListDataItem(this);
+	}
 
 	@Override
 	public int hashCode() {

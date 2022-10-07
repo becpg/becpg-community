@@ -916,8 +916,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param param a {@link java.lang.Object} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String getMessage(String messageKey, Object... param) {
-		return I18NUtil.getMessage(messageKey, param);
+	public String getMessage(String messageKey, Object param) {
+		return I18NUtil.getMessage(messageKey, param, I18NUtil.getLocale());
 	}
 
 	/**

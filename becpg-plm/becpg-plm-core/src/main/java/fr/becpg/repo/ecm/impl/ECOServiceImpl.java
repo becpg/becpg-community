@@ -1096,7 +1096,7 @@ public class ECOServiceImpl implements ECOService {
 		}
 		
 		T origComponent = item;
-		T newCompoListDataItem = (T) origComponent.clone();
+		T newCompoListDataItem = (T) origComponent.copy();
 		newCompoListDataItem.setNodeRef(null);
 		updateComponent(newCompoListDataItem, target, newQuantity, newLoss);
 		
