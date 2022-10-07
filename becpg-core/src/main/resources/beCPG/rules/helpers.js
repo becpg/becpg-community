@@ -482,6 +482,15 @@ function getOrCreateFolder(folderNode, targetFolder) {
 	}
 }
 
+function getOrCreateFolderByPath(entity, path) {
+	var folder = entity.childByNamePath(bcpg.getTranslatedPath(path));
+		
+	if (folder == null) {
+		folder = entity.createFolderPath(bcpg.getTranslatedPath(path));
+	}
+	
+	return folder;
+}
 
 /**
  * 
