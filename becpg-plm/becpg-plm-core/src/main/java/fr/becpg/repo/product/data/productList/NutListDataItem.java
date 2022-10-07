@@ -586,7 +586,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 
 	/** {@inheritDoc} */
 	@Override
-	public NutListDataItem clone() {
+	public NutListDataItem copy() {
 		return new NutListDataItem(this);
 	}
 
