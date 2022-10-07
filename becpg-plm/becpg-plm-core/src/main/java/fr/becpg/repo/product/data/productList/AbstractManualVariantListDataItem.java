@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.productList;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -41,7 +40,7 @@ public abstract class AbstractManualVariantListDataItem extends AbstractManualDa
 	 * 
 	 */
 	private static final long serialVersionUID = 910812503752985666L;
-	private List<NodeRef> variants = new ArrayList<>();
+	private List<NodeRef> variants;
 
 	
 	
@@ -51,7 +50,7 @@ public abstract class AbstractManualVariantListDataItem extends AbstractManualDa
 
 	protected AbstractManualVariantListDataItem(AbstractManualVariantListDataItem a) {
 		super(a);
-		this.variants = new ArrayList<>(a.variants);
+		//DO not copy variants
 	}
 
 	/**
