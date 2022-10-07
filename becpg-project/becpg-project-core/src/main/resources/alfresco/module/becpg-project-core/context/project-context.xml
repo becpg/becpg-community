@@ -240,6 +240,8 @@
 		<property name="nodeService" ref="NodeService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="entityListDAO" ref="entityListDAO" />
+		<property name="projectService" ref="projectService" />
+		<property name="serviceRegistry" ref="ServiceRegistry" />
 	</bean>
     
 
