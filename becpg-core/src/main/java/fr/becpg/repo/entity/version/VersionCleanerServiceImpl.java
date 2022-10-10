@@ -82,6 +82,10 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 		
+		if (path == null) {
+			path = RepoConsts.ENTITIES_HISTORY_XPATH;
+		}
+		
 		try {
 			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getSystemUserName());
 			convertAndDeleteVersions(maxProcessedNodes, DEFAULT, path);
@@ -121,39 +125,43 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			this.maxProcessedNodes = maxProcessedNodes;
 			this.path = path;
 			
-			if (path == null) {
-				path = RepoConsts.ENTITIES_HISTORY_XPATH;
-			}
+			cal.add(Calendar.DAY_OF_YEAR, -1);
 			
 			NodeRef parentNode = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE), path);
 			
-			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(parentNode, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
-			
-			for (ChildAssociationRef childAssoc : childAssocs) {
+			if (parentNode != null && nodeService.exists(parentNode)) {
 				
-				List<ChildAssociationRef> subChildAssocs = nodeService.getChildAssocs(childAssoc.getChildRef(), ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
+				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(parentNode, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
 				
-				if (subChildAssocs.isEmpty()) {
-					deleteNode(childAssoc.getChildRef());
-					logger.debug("delete empty folder : " + childAssoc.getChildRef());
-				}
-				
-				for (ChildAssociationRef subChildAssoc : subChildAssocs) {
+				for (ChildAssociationRef childAssoc : childAssocs) {
 					
-					if (entityDictionaryService.isSubClass(nodeService.getType(subChildAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
-						initialList.add(subChildAssoc.getChildRef());
+					List<ChildAssociationRef> subChildAssocs = nodeService.getChildAssocs(childAssoc.getChildRef(), ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
+					
+					if (subChildAssocs.isEmpty()) {
+						deleteNode(childAssoc.getChildRef());
+						logger.debug("delete empty folder : " + childAssoc.getChildRef());
 					}
 					
+					for (ChildAssociationRef subChildAssoc : subChildAssocs) {
+						
+						Date modified = (Date) nodeService.getProperty(subChildAssoc.getChildRef(), ContentModel.PROP_MODIFIED);
+						if (cal.getTime().compareTo(modified) > 0) {
+							if (entityDictionaryService.isSubClass(nodeService.getType(subChildAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
+								initialList.add(subChildAssoc.getChildRef());
+							}
+						}
+						
+						if (initialList.size() >= maxProcessedNodes) {
+							break;
+						}
+					}
 					if (initialList.size() >= maxProcessedNodes) {
 						break;
 					}
 				}
-				if (initialList.size() >= maxProcessedNodes) {
-					break;
-				}
+			} else {
+				logger.warn("node doen't exist for path : " + path);
 			}
-			
-			cal.add(Calendar.DAY_OF_YEAR, -1);
 		}
 
 		@Override
@@ -214,7 +222,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 
 	private void convertAndDeleteVersions(int maxProcessedNodes, String tenantDomain, String path) {
-		BatchInfo batchInfo = new BatchInfo("cleanVersions", "becpg.batch.versionCleaner.cleanVersions." + tenantDomain);
+		BatchInfo batchInfo = new BatchInfo("cleanVersions." + tenantDomain, "becpg.batch.versionCleaner.cleanVersions");
 		batchInfo.setRunAsSystem(true);
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
@@ -286,7 +294,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 	private void cleanOrphanVersions(String tenantDomain) {
 		
-		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions", "becpg.batch.versionCleaner.cleanOrphanVersions." + tenantDomain);
+		BatchInfo batchInfo = new BatchInfo("cleanOrphanVersions." + tenantDomain, "becpg.batch.versionCleaner.cleanOrphanVersions");
 		batchInfo.setRunAsSystem(true);
 		
 		List<NodeRef> entityNodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
