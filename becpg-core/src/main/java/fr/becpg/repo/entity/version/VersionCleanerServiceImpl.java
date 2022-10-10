@@ -82,6 +82,10 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 		
+		if (path == null) {
+			path = RepoConsts.ENTITIES_HISTORY_XPATH;
+		}
+		
 		try {
 			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getSystemUserName());
 			convertAndDeleteVersions(maxProcessedNodes, DEFAULT, path);
@@ -122,10 +126,6 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			this.path = path;
 			
 			cal.add(Calendar.DAY_OF_YEAR, -1);
-			
-			if (path == null) {
-				path = RepoConsts.ENTITIES_HISTORY_XPATH;
-			}
 			
 			NodeRef parentNode = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE), path);
 			
