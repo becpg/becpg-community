@@ -509,8 +509,7 @@ public class ImportEntityJsonVisitor {
 			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataListName);
 			if (listNodeRef == null) {
 				logger.debug("Creating list: " + dataListQName + " in " + listContainerNodeRef);
-				listNodeRef = entityListDAO.createList(listContainerNodeRef, dataListQName);
-				nodeService.setProperty(listNodeRef, ContentModel.PROP_NAME, dataListName);
+				listNodeRef = entityListDAO.createList(listContainerNodeRef, dataListName, dataListQName);
 			}
 
 			Set<NodeRef> listItemToKeep = new HashSet<>();
