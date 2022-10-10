@@ -55,8 +55,6 @@ function createSigningTask(project, doc, recipient) {
 	
 	createSigningDeliverable(deliverableList, doc, signTask, recipient);
 	
-	logger.info("OUI");
-	
 	return signTask;
 }
 
@@ -137,12 +135,27 @@ function findDefaultTemplate() {
 	}
 }
 
-function extractRecipients(entity) {
+function extractRecipients(projectNode) {
+	
+	var originalAssocs = projectNode.assocs["sign:recipients"];
+	
+	for (var i in originalAssocs) {
+		var assoc = originalAssocs[i];
+		projectNode.removeAssociation(assoc, "sign:recipients");
+	}
+	
+	var newAssocs = bProject.extractResources(projectNode, originalAssocs);
+	
+	for (var i in newAssocs) {
+		var assoc = newAssocs[i];
+		projectNode.createAssociation(assoc, "sign:recipients");
+	}
+	
 	var recipients = [];
-			
-	for (var i in entity.assocs["sign:recipients"]) {
+	
+	for (var i in newAssocs) {
 		
-		var authority = entity.assocs["sign:recipients"][i];
+		var authority = newAssocs[i];
 		
 		if (authority.type == "{http://www.alfresco.org/model/content/1.0}authorityContainer") {
 			
