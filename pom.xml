@@ -487,6 +487,7 @@
 					<skipTestScope>true</skipTestScope>
 					<archiveAnalyzerEnabled>false</archiveAnalyzerEnabled>
 					<failOnError>false</failOnError>
+					<formats>HTML,JSON,XML</formats>
 				</configuration>
 			</plugin>
 
