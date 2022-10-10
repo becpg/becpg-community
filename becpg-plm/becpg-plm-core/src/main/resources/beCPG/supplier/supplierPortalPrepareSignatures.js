@@ -7,7 +7,7 @@ function findDocumentsToSign(folder) {
 	var children = folder.childAssocs["cm:contains"];
 
 	for (var i in children) {
-		if (children[i].type == "{http://www.alfresco.org/model/content/1.0}content" && children[i].assocs["sign:recipients"]) {
+		if (children[i].type == "{http://www.alfresco.org/model/content/1.0}content" && children[i].assocs["sign:recipients"] && children[i].properties["sign:status"] != "Signed") {
 			docs.push(children[i]);
 		} else if (children[i].type == "{http://www.alfresco.org/model/content/1.0}folder") {
 			docs = docs.concat(findDocumentsToSign(children[i]));
