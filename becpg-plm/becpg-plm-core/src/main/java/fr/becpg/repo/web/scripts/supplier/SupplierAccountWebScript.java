@@ -49,11 +49,9 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 
 	BeCPGUserAccountService beCPGUserAccountService;
 
-
 	public void setBeCPGUserAccountService(BeCPGUserAccountService beCPGUserAccountService) {
 		this.beCPGUserAccountService = beCPGUserAccountService;
 	}
-
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -64,7 +62,6 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 		this.nodeService = nodeService;
 	}
 
-
 	/**
 	 * <p>Setter for the field <code>authorityService</code>.</p>
 	 *
@@ -73,7 +70,6 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 	public void setAuthorityService(AuthorityService authorityService) {
 		this.authorityService = authorityService;
 	}
-
 
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
@@ -107,17 +103,18 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 			supplierLastName = SUPPLIER_PREFIX + "-" + (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
 		}
 
-		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
-
 		try {
 
-			if (authorityService.hasAdminAuthority() || authorityService.getAuthoritiesForUser(currentUser)
-					.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUserMgr.toString())) {
+			boolean hasAccess = AuthenticationUtil.runAsSystem(() -> {
+				return authorityService.hasAdminAuthority() || authorityService.getAuthoritiesForUser(AuthenticationUtil.getFullyAuthenticatedUser())
+						.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUserMgr.toString());
+			});
+
+			if (hasAccess) {
 
 				BasicPasswordGenerator pwdGen = new BasicPasswordGenerator();
 				pwdGen.setPasswordLength(10);
-			
-				
+
 				BeCPGUserAccount userAccount = new BeCPGUserAccount();
 				userAccount.setEmail(supplierEmail);
 				userAccount.setUserName(supplierEmail);
