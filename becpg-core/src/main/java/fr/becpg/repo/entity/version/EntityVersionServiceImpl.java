@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
@@ -490,6 +491,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				List<ChildAssociationRef> versionAssocs = getVersionAssocs(entityNodeRef);
 
 				NodeRef branchFromNodeRef = getBranchFromNodeRef(entityNodeRef);
+				
+				Optional<Version> lowestVersion = versionHistory.getAllVersions().stream().min(((o1, o2) -> o1.getVersionLabel().compareTo(o2.getVersionLabel())));
+				
 				for (Version version : versionHistory.getAllVersions()) {
 					NodeRef entityVersionNodeRef = getEntityVersion(versionAssocs, version);
 					EntityVersion entityVersion = null;
@@ -500,7 +504,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								getEntityVersion(version),
 								branchFromNodeRef);
 					}
-					if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel())) {
+					if (RepoConsts.INITIAL_VERSION.equals(version.getVersionLabel()) || lowestVersion.isPresent() && version == lowestVersion.get()) {
 						entityVersion.setCreatedDate((Date) nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
 					}
 					entityVersions.add(entityVersion);
