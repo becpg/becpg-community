@@ -57,6 +57,7 @@
 	<bean id="entityTplRefAspectPolicy" class="fr.becpg.repo.entity.policy.EntityTplRefAspectPolicy" init-method="init" parent="abstractBeCPGPolicy">
 		<property name="associationService" ref="associationService" />
 		<property name="entityTplService" ref="entityTplService" />
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
 	</bean>
 
 	<bean id="effectivityAspectPolicy" class="fr.becpg.repo.entity.policy.EffectivityAspectPolicy" init-method="init" parent="abstractBeCPGPolicy">
