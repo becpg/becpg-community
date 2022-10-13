@@ -445,7 +445,7 @@ public class ImportServiceImpl implements ImportService {
 					}
 
 					importContext = importNodeVisitor.loadMappingColumns(mappingElt, columns, importContext);
-
+					
 				} else if (prefix.equals(ImportHelper.PFX_COLUMNS_PARAMS)) {
 					@SuppressWarnings("unchecked")
 					List<List<String>> columnsParams = (List<List<String>>) annotationMapping.get(ImportHelper.PFX_COLUMNS_PARAMS);
