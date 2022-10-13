@@ -263,26 +263,12 @@ public class XmlMappingLoader implements MappingLoader {
 					}
 				}
 
-				ClassAttributeDefinition parentLevelAttributeDef = null;
-
-				if ((columnNode.valueOf(ImportHelper.QUERY_ATTR_GET_PARENT_LEVEL_ATTRIBUTE) != null)
-						&& !columnNode.valueOf(ImportHelper.QUERY_ATTR_GET_PARENT_LEVEL_ATTRIBUTE).isEmpty()) {
-					attribute = QName.createQName(columnNode.valueOf(ImportHelper.QUERY_ATTR_GET_PARENT_LEVEL_ATTRIBUTE), namespaceService);
-
-					parentLevelAttributeDef = dictionaryService.getProperty(attribute);
-					if (parentLevelAttributeDef == null) {
-
-						parentLevelAttributeDef = dictionaryService.getAssociation(attribute);
-						if (parentLevelAttributeDef == null) {
-							throw new MappingException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_MAPPING_ATTR_FAILED, typeQName, attribute));
-						}
-					}
-				}
+			
 
 				AbstractAttributeMapping attributeMapping = new HierarchyMapping(columnNode.valueOf(ImportHelper.QUERY_ATTR_GET_ID), attributeDef,
 						(columnNode.valueOf(ImportHelper.QUERY_ATTR_GET_PARENT_LEVEL) != null) && !columnNode.valueOf(ImportHelper.QUERY_ATTR_GET_PARENT_LEVEL).isEmpty()
 								? columnNode.valueOf(ImportHelper.QUERY_ATTR_GET_PARENT_LEVEL) : null,
-						columnNode.valueOf(ImportHelper.QUERY_ATTR_GET_PATH), parentLevelAttributeDef);
+						columnNode.valueOf(ImportHelper.QUERY_ATTR_GET_PATH), null);
 				classMapping.getColumns().add(attributeMapping);
 			}
 
