@@ -154,6 +154,7 @@
           <show force="false" id="gs1:productHierarchy2"/>
           <show force="false" id="gs1:productHierarchy3"/>
           <show force="false" id="gs1:productHierarchy4"/>
+          <show force="false" id="gs1:productHierarchy5"/>
           <show force="false" id="gs1:dataCarrierTypeCode"/>
           <show force="false" id="bcpg:customsCodeRef"/>
           <show force="false" id="gs1:isTradeItemAVariableUnit"/>
@@ -689,6 +690,13 @@
               <control-param name="parent">gs1_productHierarchy3</control-param>
             </control>
           </field>
+          <field id="gs1:productHierarchy5" mandatory="false" read-only="false" set="hierarchyPanel">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy</control-param>
+              <control-param name="multiple">true</control-param>
+              <control-param name="parent">gs1_productHierarchy4</control-param>
+            </control>
+          </field>
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:dataCarrierTypeCode" mandatory="false" read-only="false" set="hierarchyPanel"/>
           <field id="bcpg:customsCodeRef" mandatory="false" read-only="false" set="hierarchyPanel">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -698,7 +706,7 @@
           <field help-id="becpg.forms.help.gs1.isTradeItemAVariableUnit" id="gs1:isTradeItemAVariableUnit" mandatory="false" read-only="false" set="hierarchyPanel">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
             <constraint-handlers>
-              <constraint event="change@[                       {'prop':'prop_gs1_variableWeightAllowableDeviationPercentage', 'condition' : '|false'},                          {'prop':'prop_gs1_variableWeightRangeMinimum', 'condition' : '|false'},                       {'prop':'prop_gs1_variableWeightRangeMaximum', 'condition' : '|false'},                       {'prop':'prop_gs1_variableTradeItemType', 'condition' : '|false'},                       {'prop':'prop_gs1_eanCodeWeight', 'condition' : '|false'}                       ]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
+              <constraint event="change@[{'prop':'prop_gs1_variableWeightAllowableDeviationPercentage', 'condition' : '|false'},{'prop':'prop_gs1_variableWeightRangeMinimum', 'condition' : '|false'},                       {'prop':'prop_gs1_variableWeightRangeMaximum', 'condition' : '|false'},                       {'prop':'prop_gs1_variableTradeItemType', 'condition' : '|false'},                       {'prop':'prop_gs1_eanCodeWeight', 'condition' : '|false'}                       ]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
             </constraint-handlers>
           </field>
           <field id="gs1:variableTradeItemType" mandatory="false" read-only="false" set="hierarchyPanel"/>
@@ -722,7 +730,7 @@
           <field help-id="becpg.forms.help.gs1.isTradeItemAPromotionalItem" id="gs1:isTradeItemAPromotionalItem" mandatory="false" read-only="false" set="promotionalPanel">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
             <constraint-handlers>
-              <constraint event="change@[                       {'prop':'assoc_gs1_promotionalArticleRef', 'condition' : '|false'},                          {'prop':'prop_gs1_freeQuantityOfProduct', 'condition' : '|false'},                       {'prop':'prop_gs1_freeQuantityOfProductUnit', 'condition' : '|false'},                       {'prop':'prop_gs1_freeQuantityOfProductPercent', 'condition' : '|false'},                       {'prop':'prop_gs1_promotionTypeCode', 'condition' : '|false'},                       {'prop':'prop_gs1_offerOnPack', 'condition' : '|false'}                       ]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
+              <constraint event="change@[{'prop':'assoc_gs1_promotionalArticleRef', 'condition' : '|false'}, {'prop':'prop_gs1_freeQuantityOfProduct', 'condition' : '|false'},{'prop':'prop_gs1_freeQuantityOfProductUnit', 'condition' : '|false'},                       {'prop':'prop_gs1_freeQuantityOfProductPercent', 'condition' : '|false'},                       {'prop':'prop_gs1_promotionTypeCode', 'condition' : '|false'},                       {'prop':'prop_gs1_offerOnPack', 'condition' : '|false'}                       ]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
             </constraint-handlers>
           </field>
           <field help-id="becpg.forms.help.gs1.offerOnPack" id="gs1:offerOnPack" mandatory="false" read-only="false" set="promotionalPanel"/>
@@ -1679,6 +1687,7 @@
           <show force="true" id="gs1:productHierarchy2"/>
           <show force="true" id="gs1:productHierarchy3"/>
           <show force="true" id="gs1:productHierarchy4"/>
+          <show force="true" id="gs1:productHierarchy5"/>
           <show force="true" id="gs1:dataCarrierTypeCode"/>
           <show force="true" id="bcpg:customsCodeRef"/>
           <show force="true" id="gs1:isTradeItemAVariableUnit"/>
@@ -2194,6 +2203,13 @@
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy</control-param>
               <control-param name="parent">gs1_productHierarchy3</control-param>
+            </control>
+          </field>
+          <field id="gs1:productHierarchy5" mandatory="false" read-only="false" set="hierarchyPanel">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/gs1_Hierarchy</control-param>
+              <control-param name="multiple">true</control-param>
+              <control-param name="parent">gs1_productHierarchy4</control-param>
             </control>
           </field>
           <field help-id="becpg.forms.help.gs1.dataCarrierTypeCode" id="gs1:dataCarrierTypeCode" mandatory="false" read-only="false" set="hierarchyPanel"/>
