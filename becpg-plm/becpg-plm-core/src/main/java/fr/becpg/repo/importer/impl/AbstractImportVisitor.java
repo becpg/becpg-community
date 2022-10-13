@@ -17,6 +17,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -870,7 +871,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		ClassMapping classMapping = importContext.getClassMappings().get(importContext.getType());
 		
 		// check COLUMNS respects the mapping and the class attributes
-		List<AbstractAttributeMapping> columnsAttributeMapping = new ArrayList<>();
+		List<AbstractAttributeMapping> columnsAttributeMapping = new LinkedList<>();
 		List<String> unknownColumns = new ArrayList<>();
 		boolean isMLPropertyDef = false;
 		for (String column : columns) {
@@ -954,7 +955,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		importContext.setColumns(columnsAttributeMapping);
 
 		if (logger.isTraceEnabled()) {
-			logger.trace("importContext.getColumns() " + importContext.getColumns());
+			logger.trace("importContext.getColumns() " + columnsAttributeMapping.size() + " / "+ importContext.getColumns().size() + importContext.getColumns().toString());
 		}
 
 		return importContext;
@@ -1204,6 +1205,11 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			if ((((HierarchyMapping) attributeMapping).getPath() != null) && !((HierarchyMapping) attributeMapping).getPath().isEmpty()) {
 				path = ((HierarchyMapping) attributeMapping).getPath();
 			}
+			
+			QName key = null;
+			if( ((HierarchyMapping) attributeMapping).getKey()!=null) {
+				key =  QName.createQName( ((HierarchyMapping) attributeMapping).getKey(), namespaceService);
+			}
 
 			logger.debug("Case hierarchy mapping");
 			NodeRef hierarchyNodeRef;
@@ -1211,20 +1217,23 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					&& !((HierarchyMapping) attributeMapping).getParentLevelColumn().isEmpty()) {
 				NodeRef parentHierachyNodeRef = (NodeRef) properties
 						.get(QName.createQName(((HierarchyMapping) attributeMapping).getParentLevelColumn(), namespaceService));
+			
 				if (parentHierachyNodeRef != null) {
-					hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, parentHierachyNodeRef, value);
+					hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, parentHierachyNodeRef, key , value);
 				} else {
 					if (logger.isDebugEnabled()) {
-						logger.debug("No parent for column " + attributeMapping.getAttribute().getName() + " prop "
+						logger.debug("No parent for column " + attributeMapping.getId() + " prop "
 								+ ((HierarchyMapping) attributeMapping).getParentLevelColumn());
 					}
 					throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_GET_ASSOC_TARGET, propDef.getName(), value));
 				}
 			} else {
+				
+				hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, null, key , value);
+				
 				if (logger.isDebugEnabled()) {
-					logger.debug("Look for hierarchy " + attributeMapping.getAttribute().getName() + ": " + value + " at path " + path);
+					logger.debug("Look for hierarchy " + value + " at path " + path+ " for attribute : "+ attributeMapping.getId()+" "+hierarchyNodeRef  );
 				}
-				hierarchyNodeRef = hierarchyService.getHierarchyByPath(path, null, value);
 			}
 
 			if (hierarchyNodeRef != null) {

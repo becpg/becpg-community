@@ -91,12 +91,10 @@ public class Hierarchy extends Annotation {
 				&& Objects.equals(path, other.path);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "Hierarchy [path=" + path + ", parentLevelColumn=" + parentLevelColumn + ", parentLevelAttribute="
-				+ parentLevelAttribute + ", id=" + id + ", attribute=" + attribute + ", targetClass=" + targetClass
-				+ ", targetKey=" + targetKey + "]";
+		return "Hierarchy [path=" + path + ", parentLevelColumn=" + parentLevelColumn + ", parentLevelAttribute=" + parentLevelAttribute + ", id="
+				+ id + ", key=" + key + "]";
 	}
 	
 	
