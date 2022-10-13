@@ -791,7 +791,13 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				if (activityListNodeRef != null) {
 
 					for (NodeRef listItem : entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST)) {
-						nodeService.moveNode(listItem, toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+						
+						String name = (String) nodeService.getProperty(listItem, ContentModel.PROP_NAME);
+						
+						if (nodeService.getChildByName(toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, name) == null) {
+							nodeService.moveNode(listItem, toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+						}
+						
 					}
 				}
 			}
