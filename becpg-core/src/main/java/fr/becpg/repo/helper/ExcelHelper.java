@@ -18,7 +18,9 @@ import org.apache.poi.ss.formula.ptg.RefPtgBase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -271,5 +273,30 @@ public class ExcelHelper {
 		
 		return null;
 	}
+	
+	public static XSSFColor createGreenColor() {
+		byte[] rgb = { (byte) 0, (byte) 255, (byte) 0 };
+		return new XSSFColor(rgb, new DefaultIndexedColorMap());
+	}
+	
+
+	public static XSSFColor createRedColor() {
+		byte[] rgb = { (byte) 255, (byte) 0, (byte) 0 };
+		return new XSSFColor(rgb, new DefaultIndexedColorMap());
+	}
+
+	public static XSSFColor beCPGHeaderColor() {
+		byte[] rgb = { (byte) 242, (byte) 247, (byte) 250 };
+		return new XSSFColor(rgb, new DefaultIndexedColorMap());
+	}
+
+	
+	public static XSSFColor beCPGHeaderTextColor() {
+		byte[] rgb = { (byte) 0, (byte) 66, (byte) 84 };
+		return new XSSFColor(rgb, new DefaultIndexedColorMap());
+	}
+
+
+
 
 }
