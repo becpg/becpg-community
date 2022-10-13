@@ -3,25 +3,25 @@ package fr.becpg.repo.importer.impl;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.ContentWriter;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.config.mapping.AbstractAttributeMapping;
+import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.importer.ImportFileReader;
 import fr.becpg.repo.importer.ImporterException;
 
@@ -69,7 +69,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 		return line;
 	}
 
-	private String[] extractRow(Row row, List<AbstractAttributeMapping> columns) throws ImporterException{
+	private String[] extractRow(Row row, List<AbstractAttributeMapping> columns) {
 		
 		List<String> line = new LinkedList<>();
 		for (int i = 0; i < row.getLastCellNum(); i++) {
@@ -79,7 +79,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 			} else {
 				
 				AbstractAttributeMapping attributeMapping = null;
-				if(columns!=null && columns.size()>=i && i>1){
+				if(columns!=null && columns.size()>(i-1) && i>0){
 				  attributeMapping = columns.get(i-1);	
 				}
 
@@ -99,11 +99,13 @@ public class ImportExcelFileReader implements ImportFileReader {
 				case NUMERIC:	
 					if(attributeMapping!=null && attributeMapping.getAttribute() instanceof PropertyDefinition
 					&& (DataTypeDefinition.TEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName())
-					|| DataTypeDefinition.MLTEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName()))
+					|| DataTypeDefinition.MLTEXT.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName())
+					|| DataTypeDefinition.NODE_REF.equals(((PropertyDefinition)attributeMapping.getAttribute()).getDataType().getName())
+							)
 						 ){
-						throw new ImporterException(I18NUtil.getMessage(ImportHelper.MSG_ERROR_FIELD_TYPE, attributeMapping.getAttribute().getName()));
+						line.add(new DecimalFormat("#########.###").format(cell.getNumericCellValue()));
 					} else	
-					if (HSSFDateUtil.isCellDateFormatted(cell) || HSSFDateUtil.isCellInternalDateFormatted(cell)) {
+					if (DateUtil.isCellDateFormatted(cell) || DateUtil.isCellInternalDateFormatted(cell)) {
 						line.add(propertyFormats.formatDate(cell.getDateCellValue()));
 					} else {
 						line.add(propertyFormats.formatDecimal(cell.getNumericCellValue()));
@@ -143,10 +145,9 @@ public class ImportExcelFileReader implements ImportFileReader {
 			Row row = sheet.getRow(importIndex);
 			if (row != null) {
 				XSSFCellStyle style = workbook.createCellStyle();
+			
 
-				XSSFColor green = new XSSFColor(new java.awt.Color(255, 0, 0));
-
-				style.setFillForegroundColor(green);
+				style.setFillForegroundColor(ExcelHelper.createRedColor());
 				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 				Cell cell = row.createCell(columnIdx + 1);
@@ -183,9 +184,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 			if (row != null) {
 				XSSFCellStyle style = workbook.createCellStyle();
 
-				XSSFColor green = new XSSFColor(new java.awt.Color(0, 255, 0));
-
-				style.setFillForegroundColor(green);
+				style.setFillForegroundColor(ExcelHelper.createGreenColor());
 				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 				for (int i = 0; i < row.getLastCellNum(); i++) {

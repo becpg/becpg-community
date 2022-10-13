@@ -37,9 +37,7 @@ import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -299,9 +297,8 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 				XSSFCellStyle style = workbook.createCellStyle();
 
-				byte[] rgb = { (byte) 242, (byte) 247, (byte) 250 };
 
-				style.setFillForegroundColor(new XSSFColor(rgb, new DefaultIndexedColorMap()));
+				style.setFillForegroundColor(ExcelHelper.beCPGHeaderColor());
 				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 				int rownum = 0;
@@ -402,9 +399,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 				XSSFCellStyle headerStyle = workbook.createCellStyle();
 
-				byte[] rgb2 = { (byte) 0, (byte) 66, (byte) 84 };
-
-				headerStyle.setFillForegroundColor(new XSSFColor(rgb2, new DefaultIndexedColorMap()));
+				headerStyle.setFillForegroundColor(ExcelHelper.beCPGHeaderTextColor());
 				headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 				XSSFFont font = workbook.createFont();
 				font.setColor(HSSFColorPredefined.WHITE.getIndex());
