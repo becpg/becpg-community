@@ -131,6 +131,11 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 			NodeRef branchNodeRef = null; 
 				
+
+			NodeRef supplierDestFolder = getOrCreateSupplierDestFolder(supplierNodeRef, supplierAccountNodeRefs);
+			
+			String branchName = repoService.getAvailableName(supplierDestFolder, createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate), false);
+			
 			if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
 				branchNodeRef = entityNodeRef;
 				
@@ -140,12 +145,9 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 					entityNodeRef = assocs.get(0).getTargetRef();
 				}
 			} else {
-				branchNodeRef = entityVersionService.createBranch(entityNodeRef, destNodeRef);
+				branchNodeRef = entityVersionService.createBranch(entityNodeRef, supplierDestFolder);
 			}
 			
-			NodeRef supplierDestFolder = getOrCreateSupplierDestFolder(supplierNodeRef, supplierAccountNodeRefs);
-			
-			String branchName = repoService.getAvailableName(supplierDestFolder, createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate), false);
 			
 			associationService.update(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO, entityNodeRef);
 			nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE,  VersionType.MAJOR.toString());
