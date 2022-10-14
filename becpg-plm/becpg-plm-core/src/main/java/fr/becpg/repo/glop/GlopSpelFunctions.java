@@ -232,7 +232,7 @@ public class GlopSpelFunctions implements CustomSpelFunctions {
 										glopTarget = glopTarget.replace(glopTarget.split("\\(")[1], "").replace("(", "");
 									}
 									
-									String[] split = glopTarget.split("-");
+									String[] split = glopTarget.split(";");
 									
 									Double minValue = Double.parseDouble(split[0]) * (item instanceof SimpleListDataItem ? totalQuantity : 1d);
 									Double maxValue = split.length < 2 ? minValue : Double.parseDouble(split[1]) * (item instanceof SimpleListDataItem ? totalQuantity : 1d);
