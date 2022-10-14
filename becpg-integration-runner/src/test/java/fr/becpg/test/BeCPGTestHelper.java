@@ -88,7 +88,7 @@ public class BeCPGTestHelper {
 	}
 
 	public static NodeRef createUser(String userName) {
-		if (!RepoBaseTestCase.INSTANCE.authenticationService.authenticationExists(userName)) {
+		if (!RepoBaseTestCase.INSTANCE.personService.personExists(userName)) {
 			RepoBaseTestCase.INSTANCE.authenticationService.createAuthentication(userName, "PWD".toCharArray());
 
 			PropertyMap ppOne = new PropertyMap(4);
