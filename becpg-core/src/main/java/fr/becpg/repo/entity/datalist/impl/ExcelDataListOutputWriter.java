@@ -431,7 +431,7 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 					if (extractedItems instanceof AsyncPaginatedExtractorWrapper) {
 						items = plugin.decorate(((AsyncPaginatedExtractorWrapper) extractedItems).getNextWork());
 					} else {
-						plugin.decorate(extractedItems.getPageItems());
+						items = plugin.decorate(extractedItems.getPageItems());
 					}
 
 					while ((items != null) && !items.isEmpty()) {
