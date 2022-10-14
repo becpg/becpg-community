@@ -15,7 +15,6 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -148,9 +147,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 				XSSFCellStyle style = workbook.createCellStyle();
 			
 
-(??)				XSSFColor green = new XSSFColor(new java.awt.Color(255, 0, 0));
-(??)
-(??)				style.setFillForegroundColor(green);
+				style.setFillForegroundColor(ExcelHelper.createRedColor());
 				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 				Cell cell = row.createCell(columnIdx + 1);
@@ -187,9 +184,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 			if (row != null) {
 				XSSFCellStyle style = workbook.createCellStyle();
 
-(??)				XSSFColor green = new XSSFColor(new java.awt.Color(0, 255, 0));
-(??)
-(??)				style.setFillForegroundColor(green);
+				style.setFillForegroundColor(ExcelHelper.createGreenColor());
 				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
 				for (int i = 0; i < row.getLastCellNum(); i++) {
