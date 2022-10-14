@@ -529,7 +529,7 @@
         		downloadMenu.push({ text: this.wp.msg("link.downloadPdf"), value: "", onclick: { fn: this.onDownloadbPDFClick, scope: this } });
         		if(this.wp.getContentUrl().indexOf(".docx")>0){
         			downloadMenu.push({ text: this.wp.msg("link.downloadXlsx"), value: "", onclick: { fn: this.onDownloadXLSXClick, scope: this } });
-        		} else {name
+        		} else {
         			downloadMenu.push({ text: this.wp.msg("link.downloadDocx"), value: "", onclick: { fn: this.onDownloadDOCXClick, scope: this } });
         		}
         		
