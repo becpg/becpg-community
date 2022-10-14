@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.config.mapping;
 
+import java.util.Objects;
+
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.namespace.QName;
 
@@ -82,11 +84,29 @@ public class AttributeMapping extends AbstractAttributeMapping {
 		super(id, attribute);
 	}
 
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "AttributeMapping [targetClass=" + targetClass + ", isMLText=" + isMLText + ", getId()=" + getId()
-				+ ", getAttribute()=" + getAttribute() + ", getClass()=" + getClass() + "]";
+		return "AttributeMapping [targetClass=" + targetClass + ", isMLText=" + isMLText + ", id=" + id + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(isMLText, targetClass);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AttributeMapping other = (AttributeMapping) obj;
+		return isMLText == other.isMLText && Objects.equals(targetClass, other.targetClass);
 	}
 
 	

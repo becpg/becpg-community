@@ -28,6 +28,10 @@ import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
  */
 public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 
+	private static final String STEPS_MAX = "stepsMax";
+
+	private static final String STEP_COUNT = "stepCount";
+
 	private static final String UNKNOWN = "unknown";
 
 	private static final Log logger = LogFactory.getLog(BatchQueueServiceWebScript.class);
@@ -80,30 +84,7 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 				BatchMonitor lastRunningBatch = batchQueueService.getLastRunningBatch();
 
 				if (lastRunningBatch != null) {
-					JSONObject last = new JSONObject();
-					
-					try {
-						JSONObject batchInfo = new JSONObject(lastRunningBatch.getProcessName());
-						String entityDescription = null;
-						
-						if (batchInfo.has("entityDescription")) {
-							entityDescription = batchInfo.getString("entityDescription");
-						}
-						
-						last.put(BATCH_ID, batchInfo.getString(BATCH_ID));
-						last.put(BATCH_USER, batchInfo.getString(BATCH_USER));
-						String descriptionLabel = I18NUtil.getMessage(batchInfo.getString(BATCH_DESC_ID), entityDescription);
-						last.put(BATCH_DESC_ID, descriptionLabel != null ? descriptionLabel : batchInfo.getString(BATCH_DESC_ID));
-					} catch (JSONException e) {
-						last.put(BATCH_ID, lastRunningBatch.getProcessName());
-						last.put(BATCH_DESC_ID, lastRunningBatch.getProcessName());
-						last.put(BATCH_USER, UNKNOWN);
-						logger.warn("Could not parse JSON : " + lastRunningBatch.getProcessName());
-					}
-						
-					last.put("percentCompleted", lastRunningBatch.getPercentComplete());
-					ret.put("last", last);
-					
+					ret.put("last", buildLastBatchJson(lastRunningBatch));
 				}
 
 			} else if (CANCEL_ACTION.equals(action)) {
@@ -124,5 +105,38 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 		} catch (JSONException e) {
 			logger.error(e, e);
 		}
+	}
+
+	private JSONObject buildLastBatchJson(BatchMonitor lastRunningBatch) throws JSONException {
+		JSONObject last = new JSONObject();
+			
+		try {
+					
+			JSONObject batchInfo = new JSONObject(lastRunningBatch.getProcessName());
+			String entityDescription = null;
+			
+			if (batchInfo.has("entityDescription")) {
+				entityDescription = batchInfo.getString("entityDescription");
+			}
+			
+			if (batchInfo.has(STEP_COUNT) && batchInfo.has(STEPS_MAX)) {
+				last.put(STEP_COUNT, batchInfo.getString(STEP_COUNT));
+				last.put(STEPS_MAX, batchInfo.getString(STEPS_MAX));
+			}
+			
+			last.put(BATCH_ID, batchInfo.getString(BATCH_ID));
+			last.put(BATCH_USER, batchInfo.getString(BATCH_USER));
+			String descriptionLabel = I18NUtil.getMessage(batchInfo.getString(BATCH_DESC_ID), entityDescription);
+			last.put(BATCH_DESC_ID, descriptionLabel != null ? descriptionLabel : batchInfo.getString(BATCH_DESC_ID));
+		} catch (JSONException e) {
+			last.put(BATCH_ID, lastRunningBatch.getProcessName());
+			last.put(BATCH_DESC_ID, lastRunningBatch.getProcessName());
+			last.put(BATCH_USER, UNKNOWN);
+			logger.warn("Could not parse JSON : " + lastRunningBatch.getProcessName());
+		}
+		
+		last.put("percentCompleted", lastRunningBatch.getPercentComplete());
+		
+		return last;
 	}
 }

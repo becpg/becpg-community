@@ -3,6 +3,8 @@
  */
 package fr.becpg.config.mapping;
 
+import java.util.Objects;
+
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 
 
@@ -15,10 +17,10 @@ import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 public abstract class AbstractAttributeMapping{
 
 	/** The id. */
-	private String id;
+	protected String id;
 	
 	/** The attribute. */
-	private ClassAttributeDefinition attribute;	
+	protected ClassAttributeDefinition attribute;	
 
 	/**
 	 * Gets the id.
@@ -62,8 +64,28 @@ public abstract class AbstractAttributeMapping{
 	 * @param id the id
 	 * @param attribute the attribute
 	 */
-	public AbstractAttributeMapping(String id, ClassAttributeDefinition attribute){
+	protected AbstractAttributeMapping(String id, ClassAttributeDefinition attribute){
 		this.id = id;
 		this.attribute = attribute;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(attribute, id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AbstractAttributeMapping other = (AbstractAttributeMapping) obj;
+		return Objects.equals(attribute, other.attribute) && Objects.equals(id, other.id);
+	}
+
+	
+	
 }

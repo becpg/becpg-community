@@ -3,8 +3,8 @@
  */
 package fr.becpg.repo.importer;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,13 +25,13 @@ public class ClassMapping {
 	private QName type;	
 	
 	/** The node column keys. */
-	private List<QName> nodeColumnKeys = new ArrayList<>();
+	private List<QName> nodeColumnKeys = new LinkedList<>();
 	
 	/** The data list column keys. */
-	private List<QName> dataListColumnKeys = new ArrayList<>();
+	private List<QName> dataListColumnKeys = new LinkedList<>();
 	
 	/** The columns. */
-	private List<AbstractAttributeMapping> columns = new ArrayList<>();
+	private List<AbstractAttributeMapping> columns = new LinkedList<>();
 	
 	private Map<QName, String> paths = new HashMap<>();
 	

@@ -7,8 +7,6 @@ import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.listvalue.ListValueEntry;
@@ -22,11 +20,14 @@ import fr.becpg.repo.listvalue.ListValueExtractor;
  * @author matthieu
  * @version $Id: $Id
  */
-@Service("hierarchyValueExtractor")
 public class HierarchyValueExtractor implements ListValueExtractor<NodeRef> {
 
-	@Autowired
 	private NodeService nodeService;
+
+	public HierarchyValueExtractor(NodeService nodeService) {
+		super();
+		this.nodeService = nodeService;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -34,7 +35,7 @@ public class HierarchyValueExtractor implements ListValueExtractor<NodeRef> {
 		List<ListValueEntry> suggestions = new ArrayList<>();
 		if (hierarchies != null) {
 			for (NodeRef hierarchy : hierarchies) {
-				String currentHierarchyPath = colorizeHierarchy(extractHierarchyFullName(hierarchy, new HashSet<>()));
+				String currentHierarchyPath = extractHierarchyFullName(hierarchy, new HashSet<>());
 				suggestions.add(new ListValueEntry(hierarchy.toString(), currentHierarchyPath, ""));
 			}
 		}
@@ -48,6 +49,7 @@ public class HierarchyValueExtractor implements ListValueExtractor<NodeRef> {
 		String res = extractHierarchyName(hierarchy);
 		NodeRef parent = (NodeRef) nodeService.getProperty(hierarchy, BeCPGModel.PROP_PARENT_LEVEL);
 		if ((parent != null) && !visited.contains(parent)) {
+
 			res = extractHierarchyFullName(parent, visited) + " > " + res;
 		}
 
@@ -56,13 +58,6 @@ public class HierarchyValueExtractor implements ListValueExtractor<NodeRef> {
 
 	private String extractHierarchyName(NodeRef hierarchy) {
 		return (String) nodeService.getProperty(hierarchy, BeCPGModel.PROP_LKV_VALUE);
-	}
-
-	private String colorizeHierarchy(String hierarchyString) {
-		String res = hierarchyString;
-
-		// .yui-skin-becpg .form-fields label
-		return res;
 	}
 
 }
