@@ -404,7 +404,7 @@
 
 						if (last) {
 							var batchId = last.batchId;
-							var batchDescId = last.batchDescId;
+							var batchDescId = last.batchDescId + (last.stepCount ? (" (" + last.stepCount + "/" + last.stepsMax + ")") : "");
 							var percentCompleted = last.percentCompleted.replace(/\s+/g, '');
 
 							var percent = percentCompleted.substring(0, percentCompleted.length - 1);
