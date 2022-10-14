@@ -63,7 +63,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
 import fr.becpg.repo.batch.BatchInfo;
-import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntitySystemService;
@@ -271,14 +270,17 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 			if (folderNodeRef != null) {
 
-				ruleService.disableRules();
 				try {
+					ruleService.disableRules();
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
+					
 					IntegrityChecker.setWarnInTransaction();
 					nodeService.addAspect(folderNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 					logger.debug("Delete test folder");
 					nodeService.deleteNode(folderNodeRef);
 				} finally {
 					ruleService.enableRules();
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 				}
 
 			}
