@@ -2,7 +2,6 @@ package fr.becpg.repo.batch;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -193,6 +192,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			Date startTime = null;
 			Date endTime = null;
 
+			Integer stepCount = batchSteps.size() > 1 ? 1 : null;
+			
 			for (BatchStep<T> batchStep : batchSteps) {
 				try {
 					if (batchStep.getBatchStepListener() != null) {
@@ -226,6 +227,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					jsonBatch.put("batchDescId", batchInfo.getBatchDescId());
 					jsonBatch.put("batchUser", batchInfo.getBatchUser());
 					jsonBatch.put("entityDescription", batchInfo.getEntityDescription());
+					if (stepCount != null) {
+						jsonBatch.put("stepCount", stepCount);
+						jsonBatch.put("stepsMax", batchSteps.size());
+						stepCount++;
+					}
 
 				BatchProcessor<T> batchProcessor = new BatchProcessor<>(jsonBatch.toString(),
 						transactionService.getRetryingTransactionHelper(), getNextWorkWrapper(batchStep.getWorkProvider()),
@@ -319,12 +325,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				@Override
 				public Collection<T> getNextWork() {
-					if (cancelledBatches.contains(batchId)) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Stop providing next work for batch '" + batchId + "' as it was cancelled");
-						}
-						return Collections.emptyList();
-					}
 					return workProvider.getNextWork();
 				}
 

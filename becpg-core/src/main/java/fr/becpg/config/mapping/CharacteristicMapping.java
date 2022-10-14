@@ -3,11 +3,11 @@
  */
 package fr.becpg.config.mapping;
 
+import java.util.Objects;
+
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-
-
 
 /**
  * Class that represent the mapping for importing a characteristic
@@ -18,17 +18,17 @@ import org.alfresco.service.namespace.QName;
  * @author querephi
  * @version $Id: $Id
  */
-public class CharacteristicMapping extends AbstractAttributeMapping{
-	
+public class CharacteristicMapping extends AbstractAttributeMapping {
+
 	/** The data list q name. */
-	private QName dataListQName;	
-	
+	private QName dataListQName;
+
 	/** The charact q name. */
 	private QName charactQName;
-	
+
 	/** The charact node ref. */
 	private NodeRef charactNodeRef;
-		
+
 	/**
 	 * Gets the data list q name.
 	 *
@@ -37,7 +37,7 @@ public class CharacteristicMapping extends AbstractAttributeMapping{
 	public QName getDataListQName() {
 		return dataListQName;
 	}
-	
+
 	/**
 	 * Sets the data list q name.
 	 *
@@ -46,7 +46,7 @@ public class CharacteristicMapping extends AbstractAttributeMapping{
 	public void setDataListQName(QName dataListQName) {
 		this.dataListQName = dataListQName;
 	}
-	
+
 	/**
 	 * Gets the charact q name.
 	 *
@@ -55,7 +55,7 @@ public class CharacteristicMapping extends AbstractAttributeMapping{
 	public QName getCharactQName() {
 		return charactQName;
 	}
-	
+
 	/**
 	 * Sets the charact q name.
 	 *
@@ -64,7 +64,7 @@ public class CharacteristicMapping extends AbstractAttributeMapping{
 	public void setCharactQName(QName charactQName) {
 		this.charactQName = charactQName;
 	}
-	
+
 	/**
 	 * Gets the charact node ref.
 	 *
@@ -73,7 +73,7 @@ public class CharacteristicMapping extends AbstractAttributeMapping{
 	public NodeRef getCharactNodeRef() {
 		return charactNodeRef;
 	}
-	
+
 	/**
 	 * Sets the charact node ref.
 	 *
@@ -82,7 +82,7 @@ public class CharacteristicMapping extends AbstractAttributeMapping{
 	public void setCharactNodeRef(NodeRef charactNodeRef) {
 		this.charactNodeRef = charactNodeRef;
 	}
-	
+
 	/**
 	 * Instantiates a new characteristic mapping.
 	 *
@@ -92,10 +92,37 @@ public class CharacteristicMapping extends AbstractAttributeMapping{
 	 * @param charactQName the charact q name
 	 * @param charactNodeRef the charact node ref
 	 */
-	public CharacteristicMapping(String id, ClassAttributeDefinition attribute, QName dataListQName, QName charactQName, NodeRef charactNodeRef){
+	public CharacteristicMapping(String id, ClassAttributeDefinition attribute, QName dataListQName, QName charactQName, NodeRef charactNodeRef) {
 		super(id, attribute);
 		this.dataListQName = dataListQName;
 		this.charactQName = charactQName;
 		this.charactNodeRef = charactNodeRef;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(charactNodeRef, charactQName, dataListQName);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CharacteristicMapping other = (CharacteristicMapping) obj;
+		return Objects.equals(charactNodeRef, other.charactNodeRef) && Objects.equals(charactQName, other.charactQName)
+				&& Objects.equals(dataListQName, other.dataListQName);
+	}
+
+	@Override
+	public String toString() {
+		return "CharacteristicMapping [dataListQName=" + dataListQName + ", charactQName=" + charactQName + ", charactNodeRef=" + charactNodeRef
+				+ ", id=" + id + ", attribute=" + attribute + "]";
 	}
 }

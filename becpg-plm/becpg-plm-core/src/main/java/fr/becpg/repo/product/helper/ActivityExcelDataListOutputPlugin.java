@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ForumModel;
-import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,11 +15,9 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.ExcelDataListOutputPlugin;
-import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
-import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.entity.datalist.impl.StandardExcelDataListOutputPlugin;
 
 /**
  * <p>ActivityExcelDataListOutputPlugin class.</p>
@@ -30,10 +26,8 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
  * @version $Id: $Id
  */
 @Service
-public class ActivityExcelDataListOutputPlugin implements ExcelDataListOutputPlugin {
+public class ActivityExcelDataListOutputPlugin extends StandardExcelDataListOutputPlugin implements ExcelDataListOutputPlugin {
 
-	@Autowired
-	private DictionaryService dictionaryService;
 
 	@Autowired
 	protected EntityListDAO entityListDAO;
@@ -87,7 +81,7 @@ public class ActivityExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 										I18NUtil.getMessage("data.state." + data.getString("beforeState").toLowerCase()),
 										I18NUtil.getMessage("data.state." + data.getString("afterState").toLowerCase()));
 							} else if (activityType.equals(I18NUtil.getMessage("entity.activity.type.datalist"))) {
-								if (!data.has("title") || data.getString("title").indexOf(className) > 0) {
+								if (!data.has("title") || data.getString("title").indexOf(className) > -1) {
 									title = I18NUtil.getMessage("entity.activity.datalist.simple", I18NUtil.getMessage("data.list." + className));
 								} else {
 									title = I18NUtil.getMessage("entity.activity.datalist." + activityEvent, title,
@@ -128,27 +122,5 @@ public class ActivityExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 		return items;
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public ExcelFieldTitleProvider getExcelFieldTitleProvider(DataListFilter dataListFilter) {
-		return new ExcelFieldTitleProvider() {
-
-			@Override
-			public String getTitle(AttributeExtractorStructure field) {
-				return field.getFieldDef().getTitle(dictionaryService);
-			}
-
-			@Override
-			public boolean isAllowed(AttributeExtractorStructure field) {
-				return !ForumModel.PROP_COMMENT_COUNT.equals(field.getFieldDef().getName());
-			}
-
-		};
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public PaginatedExtractedItems extractExtrasSheet(DataListFilter dataListFilter) {
-		return null;
-	}
+	
 }
