@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.config.mapping;
 
+import java.util.Objects;
+
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 
 /**
@@ -33,8 +35,9 @@ public class HierarchyMapping extends AbstractAttributeMapping {
 	private String parentLevelColumn;
 	
 	private String path;
+	
+	private String key;
 
-	private ClassAttributeDefinition parentLevelAttribute;
 
 	/**
 	 * <p>Getter for the field <code>parentLevelColumn</code>.</p>
@@ -73,25 +76,18 @@ public class HierarchyMapping extends AbstractAttributeMapping {
 		this.path = path;
 	}
 
+	
+	
 
-	/**
-	 * <p>Getter for the field <code>parentLevelAttribute</code>.</p>
-	 *
-	 * @return a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
-	 */
-	public ClassAttributeDefinition getParentLevelAttribute() {
-		return parentLevelAttribute;
+	public String getKey() {
+		return key;
 	}
 
-	/**
-	 * <p>Setter for the field <code>parentLevelAttribute</code>.</p>
-	 *
-	 * @param parentLevelAttribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
-	 */
-	public void setParentLevelAttribute(ClassAttributeDefinition parentLevelAttribute) {
-		this.parentLevelAttribute = parentLevelAttribute;
+	public void setKey(String key) {
+		this.key = key;
 	}
 
+	
 	/**
 	 * <p>Constructor for HierarchyMapping.</p>
 	 *
@@ -101,11 +97,38 @@ public class HierarchyMapping extends AbstractAttributeMapping {
 	 * @param path a {@link java.lang.String} object.
 	 * @param parentLevelAttribute a {@link org.alfresco.service.cmr.dictionary.ClassAttributeDefinition} object.
 	 */
-	public HierarchyMapping(String id, ClassAttributeDefinition attribute, String parentLevelColumn, String path,  ClassAttributeDefinition parentLevelAttribute) {
+	public HierarchyMapping(String id, ClassAttributeDefinition attribute, String parentLevelColumn, String path,  String key) {
 		super(id, attribute);
 		this.parentLevelColumn = parentLevelColumn;
-		this.parentLevelAttribute = parentLevelAttribute;
+		this.key = key;
 		this.path = path;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(key, parentLevelColumn, path);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		HierarchyMapping other = (HierarchyMapping) obj;
+		return Objects.equals(key, other.key) && Objects.equals(parentLevelColumn, other.parentLevelColumn) && Objects.equals(path, other.path);
+	}
+
+	@Override
+	public String toString() {
+		return "HierarchyMapping [parentLevelColumn=" + parentLevelColumn + ", path=" + path + ", key=" + key + ", id=" + id + "]";
+	}
+	
+	
 
 }

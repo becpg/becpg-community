@@ -207,12 +207,15 @@ public class AnnotationMappingLoader implements MappingLoader {
 							columnQname = QName.createQName(strAttribute, namespaceService);
 							attributeDef = dictionaryService.getProperty(columnQname);
 							if (attributeDef == null) {
-								attributeDef = dictionaryService.getAssociation(columnQname);
-								if (attributeDef == null) {
-									throw new MappingException(
-											I18NUtil.getMessage(ImportHelper.MSG_ERROR_MAPPING_ATTR_FAILED, targetClassQName, columnQname));
+								if (annotation instanceof Hierarchy) {
+									attributeDef = dictionaryService.getProperty(BeCPGModel.PROP_PARENT_LEVEL);
+								} else {
+									attributeDef = dictionaryService.getAssociation(columnQname);
+									if (attributeDef == null) {
+										throw new MappingException(
+												I18NUtil.getMessage(ImportHelper.MSG_ERROR_MAPPING_ATTR_FAILED, targetClassQName, columnQname));
+									}
 								}
-
 							}
 						}
 
@@ -271,21 +274,9 @@ public class AnnotationMappingLoader implements MappingLoader {
 						// Hierarchy
 						if (annotation instanceof Hierarchy) {
 							Hierarchy hierarchyAnnot = (Hierarchy) annotation;
-							ClassAttributeDefinition parentLevelAttributeDef = null;
-							if ((hierarchyAnnot.getParentLevelAttribute() != null) && !hierarchyAnnot.getParentLevelAttribute().isEmpty()) {
-
-								columnQname = QName.createQName(hierarchyAnnot.getParentLevelAttribute(), namespaceService);
-								parentLevelAttributeDef = dictionaryService.getProperty(columnQname);
-								if (parentLevelAttributeDef == null) {
-									parentLevelAttributeDef = dictionaryService.getAssociation(columnQname);
-									if (parentLevelAttributeDef == null) {
-										throw new MappingException(
-												I18NUtil.getMessage(ImportHelper.MSG_ERROR_MAPPING_ATTR_FAILED, targetClassQName, columnQname));
-									}
-								}
-							}
+							
 							AbstractAttributeMapping attributeMapping = new HierarchyMapping(hierarchyAnnot.getId(), attributeDef,
-									hierarchyAnnot.getParentLevelColumn(), hierarchyAnnot.getPath(), parentLevelAttributeDef);
+									hierarchyAnnot.getParentLevelColumn(), hierarchyAnnot.getPath(), hierarchyAnnot.getKey());
 							classMapping.getColumns().add(attributeMapping);
 						}
 
