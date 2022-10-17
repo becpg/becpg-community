@@ -59,9 +59,9 @@ public class GlopIT extends AbstractFinishedProductTest {
 		JSONObject request = new JSONObject();
 		
 		// variables
-		JSONArray variables = new JSONArray();
-		variables.put("x");
-		variables.put("y");
+		JSONObject variables = new JSONObject();
+		variables.put("x", 0);
+		variables.put("y", 0);
 		request.put("variables", variables);
 		
 		// constraints
