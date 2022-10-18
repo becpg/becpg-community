@@ -153,6 +153,42 @@
 		   	return true;
 
 	 }; 
+	 
+	 
+	  beCPG.forms.validation.filterBy = function mandatory(field, args, event, form, silent, message)
+       {    
+            var indexes = [];
+
+               for (var i in args) {
+                   var propName = form.formId.substring(0, form.formId.length-5) + "_" + args[i].prop;
+                   var parentEl = YAHOO.util.Dom.get(propName);
+
+                   if (parentEl!=null && args[i].condition == "STARTWITH") {
+                    var regex = new RegExp("^" + parentEl.value);
+
+                    for (var j = 0; j < field.options.length; j++) {
+                        if (field.options[j].value.match(regex) == null) {
+                            YAHOO.util.Dom.addClass(field.options[j], "hidden");
+                            if (indexes.indexOf(j) != -1) { indexes.splice(j, 1); }
+                        } else {
+                            YAHOO.util.Dom.removeClass(field.options[j], "hidden");
+                            if (indexes.indexOf(j) == -1) { indexes.push(j); }
+                        }
+                    }
+                   }
+               }
+
+               // Update child selected option after filtering
+               if (YAHOO.util.Dom.hasClass(field.options[field.selectedIndex], "hidden")) {
+                if (indexes.length > 0) {
+                    field.selectedIndex = indexes[0];
+                } else {
+                    field.selectedIndex = -1;
+                }
+            }
+
+            return true;
+     };
 	   
 
 })();
