@@ -1,17 +1,23 @@
 package fr.becpg.repo.product.formulation.score;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.MLText;
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.GS1Model;
+import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.importer.impl.ImportHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -30,6 +36,20 @@ public class NutriScore implements ScoreCalculatingPlugin {
 
 	private static final Log logger = LogFactory.getLog(NutriScore.class);
 
+	public static final String ENERGY_CODE = "ENER-KJO";
+	public static final String SATFAT_CODE = "FASAT";
+	public static final String FAT_CODE = "FAT";
+	public static final String SUGAR_CODE = "SUGAR";
+	public static final String SODIUM_CODE = "NA";
+	public static final String NSP_CODE = "PSACNS";
+	public static final String AOAC_CODE = "FIBTG";
+	public static final String PROTEIN_CODE = "PRO-";
+	
+	public static final String FRUIT_VEGETABLE_CODE = "FRUIT_VEGETABLE";
+	
+	private static final String[] NUTRIENT_CODE_LIST = { ENERGY_CODE, SATFAT_CODE, FAT_CODE, SUGAR_CODE, SODIUM_CODE, NSP_CODE, AOAC_CODE, PROTEIN_CODE };
+	private static final String[] PHYSICO_CODE_LIST = { FRUIT_VEGETABLE_CODE };
+	
 	@Autowired
 	private NodeService nodeService;
 	
@@ -45,52 +65,13 @@ public class NutriScore implements ScoreCalculatingPlugin {
 	public boolean formulateScore(ScorableEntity scorableEntity) {
 		ProductData productData  = (ProductData) scorableEntity;
 		
-		String nutrientProfileCategory = productData.getNutrientProfileCategory();
+		NutriScoreContext nutriScoreContext = buildNutriScoreContext(productData);
 		
-		if (nutrientProfileCategory != null && !nutrientProfileCategory.isBlank()) {
-			
+		if (nutriScoreContext != null) {
 			try {
-				
-				NutriScoreContext nutriScoreContext = new NutriScoreContext();
-				
-				nutriScoreContext.setWater(productData.getAspects().contains(PLMModel.ASPECT_WATER));
-				
-				nutriScoreContext.setCategory(nutrientProfileCategory);
-
-				for (NutListDataItem nutList : productData.getNutList()) {
-					
-					NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(nutList.getNut());
-					
-					if ("ENER-KJO".equals(nut.getNutCode())) {
-						nutriScoreContext.setEnergy(new NutriScoreFrame(nutList.value("EU")));
-					} else if ("FASAT".equals(nut.getNutCode())) {
-						nutriScoreContext.setSatFat(new NutriScoreFrame(nutList.value("EU")));
-					} else if ("FAT".equals(nut.getNutCode())) {
-						nutriScoreContext.setTotalFat(new NutriScoreFrame(nutList.value("EU")));
-					} else if ("SUGAR".equals(nut.getNutCode())) {
-						nutriScoreContext.setTotalSugar(new NutriScoreFrame(nutList.value("EU")));
-					} else if ("NA".equals(nut.getNutCode())) {
-						nutriScoreContext.setSodium(new NutriScoreFrame(nutList.value("EU") == null ? null : nutList.value("EU") * 1000));
-					} else if ("PSACNS".equals(nut.getNutCode())) {
-						nutriScoreContext.setNspFibre(new NutriScoreFrame(nutList.value("EU")));
-					} else if ("FIBTG".equals(nut.getNutCode())) {
-						nutriScoreContext.setAoacFibre(new NutriScoreFrame(nutList.value("EU")));
-					} else if ("PRO-".equals(nut.getNutCode())) {
-						nutriScoreContext.setProtein(new NutriScoreFrame(nutList.value("EU")));
-					}
-				}
-				
-				for (PhysicoChemListDataItem physico : productData.getPhysicoChemList()) {
-					if ("FRUIT_VEGETABLE".equals(nodeService.getProperty(physico.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_CODE))) {
-						nutriScoreContext.setPercFruitsAndVetgs(new NutriScoreFrame(physico.getValue()));
-						break;
-					}
-				}
-				
 				productData.setNutrientScore((double) Nutrient5C2021Helper.build5CScore(nutriScoreContext));
 				productData.setNutrientClass(Nutrient5C2021Helper.buildNutrientClass(nutriScoreContext));
 				productData.setNutrientDetails(nutriScoreContext.toJSON().toString());
-				
 			} catch (Exception e) {
 				MLText errorMsg = MLTextHelper.getI18NMessage("message.formulate.formula.incorrect.nutrientProfile", e.getLocalizedMessage());
 				
@@ -113,6 +94,129 @@ public class NutriScore implements ScoreCalculatingPlugin {
 		}
 		
 		return true;
+	}
+	
+	private NutriScoreContext buildNutriScoreContext(ProductData productData) {
+		
+		String nutrientProfileCategory = productData.getNutrientProfileCategory();
+		
+		if (nutrientProfileCategory != null && !nutrientProfileCategory.isBlank() && !NutrientProfileCategory.NonApplicable.equals(NutrientProfileCategory.valueOf(nutrientProfileCategory))) {
+			NutriScoreContext nutriScoreContext = new NutriScoreContext();
+			
+			nutriScoreContext.setWater(productData.getAspects().contains(PLMModel.ASPECT_WATER));
+			
+			nutriScoreContext.setCategory(nutrientProfileCategory);
+
+			List<NodeRef> missingCharacts = new ArrayList<>();
+			
+			for (String nutrientCode : NUTRIENT_CODE_LIST) {
+				checkAndFillNutrient(productData, nutriScoreContext, nutrientCode, missingCharacts);
+			}
+			
+			for (String physicoCode : PHYSICO_CODE_LIST) {
+				checkAndFillPhysico(productData, nutriScoreContext, physicoCode, missingCharacts);
+			}
+			
+			if (!missingCharacts.isEmpty()) {
+				productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("nutriscore.message.missingCharacts"), null, missingCharacts, RequirementDataType.Formulation));
+				return null;
+			}
+			
+			return nutriScoreContext;
+		}
+		
+		return null;
+	}
+
+	private void checkAndFillPhysico(ProductData productData, NutriScoreContext nutriScoreContext, String physicoCode, List<NodeRef> missingCharacts) {
+		PhysicoChemListDataItem physicoListItem = findPhysico(productData, physicoCode, missingCharacts);
+		
+		if (physicoListItem == null) {
+			missingCharacts.add(ImportHelper.findCharact(PLMModel.TYPE_PHYSICO_CHEM, PLMModel.PROP_PHYSICO_CHEM_CODE, physicoCode, nodeService));
+			return;
+		}
+		
+		Double value = physicoListItem.getValue();
+		
+		if (value == null) {
+			missingCharacts.add(physicoListItem.getPhysicoChem());
+			return;
+		}
+		
+		JSONObject nutrientPart = new JSONObject();
+		
+		nutrientPart.put(NutriScoreContext.VALUE, value);
+		
+		nutriScoreContext.getParts().put(physicoCode, nutrientPart);
+				
+	}
+	
+	private void checkAndFillNutrient(ProductData productData, NutriScoreContext nutriScoreContext, String nutrientCode, List<NodeRef> missingCharacts) {
+		NutListDataItem nutListItem = findNutrient(productData, nutrientCode, missingCharacts);
+		
+		if (nutListItem == null) {
+			missingCharacts.add(ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, nutrientCode, nodeService));
+			return;
+		}
+		
+		Double value = nutListItem.value("EU");
+		
+		if (value == null) {
+			missingCharacts.add(nutListItem.getNut());
+			return;
+		}
+		
+		JSONObject nutrientPart = new JSONObject();
+		
+		nutrientPart.put(NutriScoreContext.VALUE, value);
+		
+		// specific case of Sodium
+		if ("NA".equals(nutrientCode)) {
+			nutrientPart.put(NutriScoreContext.VALUE, value * 1000);
+		}
+		
+		nutriScoreContext.getParts().put(nutrientCode, nutrientPart);
+		
+	}
+	
+	private PhysicoChemListDataItem findPhysico(ProductData productData, String physicoCode, List<NodeRef> missingCharacts) {
+		for (PhysicoChemListDataItem physico : productData.getPhysicoChemList()) {
+			
+			if (physicoCode.equals(nodeService.getProperty(physico.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_CODE))) {
+				
+				for (ReqCtrlListDataItem reqCtrl : productData.getReqCtrlList()) {
+					if (RequirementType.Forbidden.equals(reqCtrl.getReqType()) && RequirementDataType.Physicochem.equals(reqCtrl.getReqDataType()) && physico.getPhysicoChem().equals(reqCtrl.getCharact())) {
+						missingCharacts.add(reqCtrl.getCharact());
+						break;
+					}
+				}
+				
+				return physico;
+			}
+		}
+		
+		return null;
+	}
+	
+	private NutListDataItem findNutrient(ProductData productData, String nutrientCode, List<NodeRef> missingCharacts) {
+		for (NutListDataItem nutList : productData.getNutList()) {
+			
+			NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(nutList.getNut());
+			
+			if (nutrientCode.equals(nut.getNutCode())) {
+				
+				for (ReqCtrlListDataItem reqCtrl : productData.getReqCtrlList()) {
+					if (RequirementType.Forbidden.equals(reqCtrl.getReqType()) && RequirementDataType.Nutrient.equals(reqCtrl.getReqDataType()) && nutList.getNut().equals(reqCtrl.getCharact())) {
+						missingCharacts.add(reqCtrl.getCharact());
+						break;
+					}
+				}
+				
+				return nutList;
+			}
+		}
+		
+		return null;
 	}
 	
 }
