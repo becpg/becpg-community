@@ -297,10 +297,18 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				"pâte french (legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%)", Locale.FRENCH);
 
 		// En ingrédient:
-		// A -> Rdm1
-		// --- EAU
-		// --- MP1
-		// --- MP2
+//		Qty	Meo	netQty	Rdmt	Qty perc	Qty with yield
+//		B	3	3	2	66,6666666666667	100	150
+//		MP2	2	3	2	44,4444444444444	66,6666666666667	150
+//		--- ing1	25,00 %			44,4	16,6666666666667	37,5375375375375
+//		--- ing2	75,00 %			44,4	50	112,612612612613
+//		C	1	3	2	44,4444444444444	33,3333333333333	75
+//		MP1	1	2	2	44,4444444444444	16,6666666666667	37,5
+//		-- ing1	33,00 %			44,4	5,5	12,3873873873874
+//		-- ing2	66,00 %			44,4	11	24,7747747747748
+//		EAU	1	2	2	44,4444444444444	16,6666666666667	37,5
+
+
 		//
 
 		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -342,7 +350,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		//
 		// En ingrédient:
 		// A -> Rdm1 Decl.
-		// --- B -> Rdm2 Decl.
+		// -- B -> Rdm2 Decl.
 		// --- C
 		// ---- MP1
 		// ---- EAU
