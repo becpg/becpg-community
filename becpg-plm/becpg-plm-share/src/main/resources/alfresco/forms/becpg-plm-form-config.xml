@@ -2610,6 +2610,7 @@
 					<show id="bcpg:labelClaimType" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" force="true" />
+					<show id="cm:content"  />
 				</field-visibility>
 			</form>
 			

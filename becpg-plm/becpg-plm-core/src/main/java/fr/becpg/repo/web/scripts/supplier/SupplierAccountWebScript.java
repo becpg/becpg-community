@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -16,6 +17,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
@@ -37,7 +39,7 @@ import fr.becpg.repo.mail.BeCPGMailService;
 /**
  * <p>SupplierAccountWebScript class.</p>
  *
- * @author matthieu
+ * @author rabah
  * @version $Id: $Id
  */
 public class SupplierAccountWebScript extends AbstractWebScript {
@@ -62,7 +64,7 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 	MutableAuthenticationService authenticationService;
 
 	AssociationService associationService;
-	
+
 	TenantAdminService tenantAdminService;
 
 	/**
@@ -127,7 +129,7 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
-	
+
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
 		this.tenantAdminService = tenantAdminService;
 	}
@@ -140,70 +142,81 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 		Boolean notifySupplier = Boolean.parseBoolean(req.getParameter(PARAM_NOTIFY_SUPPLIER));
 		String supplierEmail = req.getParameter(PARAM_EMAIL_ADDRESS);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		final boolean isAdmin  = authorityService.hasAdminAuthority();
 
-			String userName = SUPPLIER_PREFIX + "-" + (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
-			if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
-				userName += "@" + tenantAdminService.getCurrentUserDomain();
-			}
-			
-			String password = UUID.randomUUID().toString();
-			
-			List<NodeRef> associations = associationService.getTargetAssocs(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
-			if (associations == null) {
-				associations = new ArrayList<>();
-			}
+		AuthenticationUtil.runAsSystem(() -> {
 
-			if (!personService.personExists(userName)) {
+			if ( isAdmin || authorityService.getAuthoritiesForUser(currentUser)
+					.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUserMgr.toString())) {
 
-				if (logger.isDebugEnabled()) {
-					logger.debug("Create external user: " + userName + " pwd: " + password);
-				}
+				return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-				authenticationService.createAuthentication(userName, password.toCharArray());
+					String userName = SUPPLIER_PREFIX + "-" + (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
+					if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
+						userName += "@" + tenantAdminService.getCurrentUserDomain();
+					}
 
-				Map<QName, Serializable> propMap = new HashMap<>();
-				propMap.put(ContentModel.PROP_USERNAME, userName);
-				propMap.put(ContentModel.PROP_LASTNAME, userName);
-				propMap.put(ContentModel.PROP_FIRSTNAME, nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-				propMap.put(ContentModel.PROP_EMAIL, supplierEmail);
-				NodeRef userRef = personService.createPerson(propMap);
-				authorityService.addAuthority(authorityService.getName(AuthorityType.GROUP, SystemGroup.ExternalUser.toString()), userName);
+					String password = UUID.randomUUID().toString();
 
-				associations.add(userRef);
+					final List<NodeRef> associations = new ArrayList<>();
+					associations.addAll(associationService.getTargetAssocs(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS));
 
-				String creator = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR);
-				mailService.sendMailNewUser(personService.getPersonOrNull(creator), userName, password, true);
+					if (!personService.personExists(userName)) {
 
-				// notify supplier
-				if (notifySupplier) {
-					mailService.sendMailNewUser(userRef, userName, password, false);
-				}
+						if (logger.isDebugEnabled()) {
+							logger.debug("Create external user: " + userName + " pwd: " + password);
+						}
 
+						authenticationService.createAuthentication(userName, password.toCharArray());
+
+						Map<QName, Serializable> propMap = new HashMap<>();
+						propMap.put(ContentModel.PROP_USERNAME, userName);
+						propMap.put(ContentModel.PROP_LASTNAME,  userName + "_" + supplierEmail);
+						propMap.put(ContentModel.PROP_FIRSTNAME, nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+						propMap.put(ContentModel.PROP_EMAIL, supplierEmail);
+						NodeRef userRef = personService.createPerson(propMap);
+						authorityService.addAuthority(authorityService.getName(AuthorityType.GROUP, SystemGroup.ExternalUser.toString()), userName);
+
+						associations.add(userRef);
+
+						mailService.sendMailNewUser(personService.getPersonOrNull(currentUser), userName, password, true);
+
+						// notify supplier
+						if (Boolean.TRUE.equals(notifySupplier)) {
+							mailService.sendMailNewUser(userRef, userName, password, false);
+						}
+
+					} else {
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Reassign to an existing user");
+						}
+
+						associations.add(personService.getPerson(userName));
+
+					}
+					AuthenticationUtil.runAs(() -> {
+						associationService.update(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, associations);
+						return true;
+					}, currentUser);
+
+					try {
+						JSONObject ret = new JSONObject();
+						ret.put("login", userName);
+						res.setContentType("application/json");
+						res.setContentEncoding("UTF-8");
+						ret.write(res.getWriter());
+					} catch (JSONException e) {
+						throw new WebScriptException("Unable to serialize JSON", e);
+					}
+
+					return null;
+				}, true, false);
 			} else {
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Reassign to an existed user");
-				}
-
-				associations.add(personService.getPerson(userName));
-
+				throw new IllegalAccessError("You should be member of ExternalUserMgr");
 			}
-
-			associationService.update(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, associations);
-
-			try {
-				JSONObject ret = new JSONObject();
-				ret.put("login", userName);
-				res.setContentType("application/json");
-				res.setContentEncoding("UTF-8");
-				ret.write(res.getWriter());
-			} catch (JSONException e) {
-				throw new WebScriptException("Unable to serialize JSON", e);
-			}
-
-			return null;
-		}, true, false);
+		});
 
 	}
 
