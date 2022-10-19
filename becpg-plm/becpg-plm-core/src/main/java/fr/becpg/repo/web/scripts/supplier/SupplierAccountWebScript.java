@@ -143,10 +143,11 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 		String supplierEmail = req.getParameter(PARAM_EMAIL_ADDRESS);
 
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
+		final boolean isAdmin  = authorityService.hasAdminAuthority();
 
 		AuthenticationUtil.runAsSystem(() -> {
 
-			if (authorityService.hasAdminAuthority() || authorityService.getAuthoritiesForUser(currentUser)
+			if ( isAdmin || authorityService.getAuthoritiesForUser(currentUser)
 					.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUserMgr.toString())) {
 
 				return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -171,7 +172,7 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 
 						Map<QName, Serializable> propMap = new HashMap<>();
 						propMap.put(ContentModel.PROP_USERNAME, userName);
-						propMap.put(ContentModel.PROP_LASTNAME, userName);
+						propMap.put(ContentModel.PROP_LASTNAME,  userName + "_" + supplierEmail);
 						propMap.put(ContentModel.PROP_FIRSTNAME, nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
 						propMap.put(ContentModel.PROP_EMAIL, supplierEmail);
 						NodeRef userRef = personService.createPerson(propMap);
@@ -189,7 +190,7 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 					} else {
 
 						if (logger.isDebugEnabled()) {
-							logger.debug("Reassign to an existed user");
+							logger.debug("Reassign to an existing user");
 						}
 
 						associations.add(personService.getPerson(userName));
