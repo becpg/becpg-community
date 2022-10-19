@@ -87,6 +87,7 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 		NodeRef nodeRef = new NodeRef(req.getParameter(PARAM_ENTITY_NODEREF));
 		Boolean notifySupplier = Boolean.parseBoolean(req.getParameter(PARAM_NOTIFY_SUPPLIER));
 		String supplierEmail = req.getParameter(PARAM_EMAIL_ADDRESS);
+                final boolean isAdmin  = authorityService.hasAdminAuthority();
 
 		if (supplierEmail == null || supplierEmail.isBlank()) {
 			throw new IllegalStateException(I18NUtil.getMessage("message.supplier.missing-email"));
@@ -106,7 +107,7 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 		try {
 
 			boolean hasAccess = AuthenticationUtil.runAsSystem(() -> {
-				return authorityService.hasAdminAuthority() || authorityService.getAuthoritiesForUser(AuthenticationUtil.getFullyAuthenticatedUser())
+				return isAdmin || authorityService.getAuthoritiesForUser(AuthenticationUtil.getFullyAuthenticatedUser())
 						.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUserMgr.toString());
 			});
 

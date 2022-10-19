@@ -174,7 +174,13 @@
          var errorMsg = this.msg("create-content-mgr.create.failed");
          if (response.json && response.json.message)
          {
-            errorMsg = errorMsg + ": " + response.json.message;
+			 var pattern = "Failed to execute script 'workspace:\/\/SpacesStore\/[a-zA-Z-0-9]{8}-[a-zA-Z-0-9]{4}-[a-zA-Z-0-9]{4}-[a-zA-Z-0-9]{4}-[a-zA-Z-0-9]{12}': [0-9]{8}";
+			 var match = response.json.message.match(pattern);
+			 if (match) {
+				 errorMsg = errorMsg + ": " + response.json.message.split(match)[1];
+			 } else {
+				 errorMsg = errorMsg + ": " + response.json.message;
+			}
          }
          
          Alfresco.util.PopupManager.displayPrompt(

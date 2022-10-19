@@ -20,17 +20,19 @@ public class CostCalculatingHelper {
 			boolean matchPlant = false;
 
 			for (PriceListDataItem priceListDataItem : partProduct.getPriceList()) {
-				if ((priceListDataItem.getPlants().isEmpty() || formulatedProduct.getPlants().containsAll(priceListDataItem.getPlants()))) {
-					matchPlant = true;
-					if ((priceListDataItem.getCost() != null) && priceListDataItem.getCost().equals(simpleCharact.getCharactNodeRef())) {
+				if (((priceListDataItem.getStartEffectivity() == null)
+						|| (priceListDataItem.getStartEffectivity().getTime() <= effectiveDate.getTime()))
+						&& ((priceListDataItem.getEndEffectivity() == null)
+								|| (priceListDataItem.getEndEffectivity().getTime() > effectiveDate.getTime()))) {
+					if ((priceListDataItem.getPlants().isEmpty() || formulatedProduct.getPlants().containsAll(priceListDataItem.getPlants()))) {
+						matchPlant = true;
+						if ((priceListDataItem.getCost() != null) && priceListDataItem.getCost().equals(simpleCharact.getCharactNodeRef())) {
 
-						if (((item == null) || (item.getPrefRank() == null)) || ((priceListDataItem.getPrefRank() != null)
-								&& (priceListDataItem.getPrefRank() < item.getPrefRank() && (priceListDataItem.getPrefRank() > 0 || item == null)))
-								|| ((priceListDataItem.getPrefRank() != null) && (item.getPrefRank() != null && item.getPrefRank() < 0))) {
-							if (((priceListDataItem.getStartEffectivity() == null)
-									|| (priceListDataItem.getStartEffectivity().getTime() <= effectiveDate.getTime()))
-									&& ((priceListDataItem.getEndEffectivity() == null)
-											|| (priceListDataItem.getEndEffectivity().getTime() > effectiveDate.getTime()))) {
+							if (((item == null) || (item.getPrefRank() == null))
+									|| ((priceListDataItem.getPrefRank() != null) && (priceListDataItem.getPrefRank() < item.getPrefRank()
+											&& (priceListDataItem.getPrefRank() > 0 || item == null)))
+									|| ((priceListDataItem.getPrefRank() != null) && (item.getPrefRank() != null && item.getPrefRank() < 0))) {
+
 								item = priceListDataItem;
 							}
 						}
