@@ -76,6 +76,8 @@ public interface ListValueService {
 
 	String PROP_AND_PROPS = "andProps";
 	
+	String PROP_AND_PROPS = "andProps";
+	
 	
 	/**
 	 * <p>suggestBySourceType.</p>
