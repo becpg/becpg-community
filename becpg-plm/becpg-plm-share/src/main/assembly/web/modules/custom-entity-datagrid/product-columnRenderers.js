@@ -1422,6 +1422,13 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 				   if (idx == 0) {
 					   
+					   Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+		
+					   YAHOO.Bubbling.fire("columnRenamed", {
+						   columnId: "dt_bcpg_reqCtrlList",
+						   label: scope.msg("becpg.forms.field.compliance.label")
+					   });
+		
 					   var reqCtrlList = oRecord.getData("itemData")["dt_bcpg_reqCtrlList"];
 
 					   var reqHtlm = "<ul>";

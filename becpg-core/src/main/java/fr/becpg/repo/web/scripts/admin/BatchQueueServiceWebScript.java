@@ -120,8 +120,8 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 			}
 			
 			if (batchInfo.has(STEP_COUNT) && batchInfo.has(STEPS_MAX)) {
-				last.put(STEP_COUNT, batchInfo.getString(STEP_COUNT));
-				last.put(STEPS_MAX, batchInfo.getString(STEPS_MAX));
+				last.put(STEP_COUNT, batchInfo.get(STEP_COUNT));
+				last.put(STEPS_MAX, batchInfo.get(STEPS_MAX));
 			}
 			
 			last.put(BATCH_ID, batchInfo.getString(BATCH_ID));
