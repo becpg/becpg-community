@@ -1,6 +1,7 @@
 package fr.becpg.repo.batch;
 
 import java.util.List;
+import java.util.Set;
 
 import org.alfresco.repo.batch.BatchMonitor;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -20,5 +21,7 @@ public interface BatchQueueService {
 	BatchMonitor getLastRunningBatch();
 	
 	boolean cancelBatch(String batchId);
+	
+	Set<String> getCancelledBatches();
 	
 }

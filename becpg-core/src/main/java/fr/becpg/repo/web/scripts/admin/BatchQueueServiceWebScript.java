@@ -128,6 +128,9 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 			last.put(BATCH_USER, batchInfo.getString(BATCH_USER));
 			String descriptionLabel = I18NUtil.getMessage(batchInfo.getString(BATCH_DESC_ID), entityDescription);
 			last.put(BATCH_DESC_ID, descriptionLabel != null ? descriptionLabel : batchInfo.getString(BATCH_DESC_ID));
+			if (batchQueueService.getCancelledBatches().contains(batchInfo.getString(BATCH_ID))) {
+				last.put("cancelled", true);
+			}
 		} catch (JSONException e) {
 			last.put(BATCH_ID, lastRunningBatch.getProcessName());
 			last.put(BATCH_DESC_ID, lastRunningBatch.getProcessName());

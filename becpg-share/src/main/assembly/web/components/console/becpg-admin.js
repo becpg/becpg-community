@@ -415,7 +415,7 @@
 								ulCur.children[1].children[0].firstChild.title = percentCompleted;
 								ulCur.children[1].children[1].firstChild.id = batchId;
 								ulCur.children[1].children[1].firstChild.style = "cursor:pointer";
-								if (percent == 100) {
+								if (percent == 100 || last.cancelled) {
 									ulCur.children[1].children[1].firstChild.style = "display:none";
 								}
 							} else {
@@ -442,7 +442,7 @@
 								spanButton.appendChild(button);
 								button.classList.add("removeIcon");
 								button.style = "cursor:pointer";
-								if (percent == 100) {
+								if (percent == 100 || last.cancelled) {
 									button.style = "display:none";
 								}
 								button.id = batchId;
