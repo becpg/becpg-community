@@ -120,6 +120,12 @@
                                                    </b>
                                                 </#if>
                                                 <br>
+                                                <#if (args.fromPersonFullName)??>                                             
+		                                               Assigned by :&nbsp;&nbsp;
+	                                                   <b>
+	                                                   	${args.fromPersonFullName}
+	                                                   </b>
+	                                             </#if>
                                              </p>  
 
                                              <a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}"><button ><b>Display</b></button></a>  
