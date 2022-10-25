@@ -5,6 +5,7 @@ package fr.becpg.repo.action.executer;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
@@ -173,7 +174,9 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 					/*
 					 * need a new transaction, otherwise impossible to do another action like create a content do it in several transaction to avoid timeout connection
 					 */
-					List<String> errors = importService.importText(nodeRef, true, true);
+					List<String> errors = new ArrayList<>();
+							
+					importService.importText(nodeRef, true, true, errors);
 
 					if ((errors != null) && !errors.isEmpty()) {
 						int limit = 0;
