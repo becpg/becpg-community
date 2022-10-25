@@ -162,6 +162,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 		return false;
 	}
+	
+	@Override
+	public Set<String> getCancelledBatches() {
+		return cancelledBatches;
+	}
 
 	public class BatchCommand<T> implements Runnable {
 
