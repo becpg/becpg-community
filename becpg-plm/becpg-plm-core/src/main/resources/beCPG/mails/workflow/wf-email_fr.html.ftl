@@ -118,6 +118,12 @@
                                                    </b>
                                                 </#if>
                                                 <br>
+                                                 <#if (args.fromPersonFullName)??>                                             
+		                                               Assignée par :&nbsp;&nbsp;
+	                                                   <b>
+	                                                   	${args.fromPersonFullName}
+	                                                   </b>
+	                                             </#if>
                                              </p>  
 
                                              <a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}"><button ><b>Afficher</b></button></a>  
