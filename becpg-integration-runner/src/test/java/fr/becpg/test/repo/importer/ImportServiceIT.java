@@ -35,6 +35,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.PlmRepoConsts;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
@@ -107,11 +108,12 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	 *             Signals that an I/O exception has occurred.
 	 * @throws ImporterException
 	 *             the be cpg exception
+	 * @throws InterruptedException 
 	 */
 	@Test
-	public void testImportText() throws IOException, ImporterException {
+	public void testImportText() throws IOException, ImporterException, InterruptedException {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		BatchInfo batchInfo = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Create file to import --*/
 			logger.debug("create file to import");
@@ -137,7 +139,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 			logger.debug("Start import");
 
 			try {
-			importService.importText(nodeRef, true, false);
+				return importService.importText(nodeRef, true, false, null);
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -147,6 +149,8 @@ public class ImportServiceIT extends PLMBaseTestCase {
 
 		}, false, true);
 
+		waitForBatchEnd(batchInfo);
+		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Check MLText property --*/
@@ -246,7 +250,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 		 * Create file
 		 */
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		BatchInfo batchInfo = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			logger.debug("create file to import");
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -268,11 +272,12 @@ public class ImportServiceIT extends PLMBaseTestCase {
 			writer.putContent(in);
 
 			logger.debug("Start import");
-			importService.importText(nodeRef, true, false);
-
-			return null;
-
+			
+			return importService.importText(nodeRef, true, false, null);
+			
 		}, false, true);
+		
+		waitForBatchEnd(batchInfo);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -467,7 +472,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 		 * Test the catch of integrity exception during import
 		 */
 		try {
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			BatchInfo batchInfo = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 				/*-- Clean costs --*/
 				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
@@ -498,19 +503,33 @@ public class ImportServiceIT extends PLMBaseTestCase {
 				writer.putContent(in);
 
 				logger.debug("Start import");
-				importService.importText(nodeRef, true, false);
-
-				/*-- check nothing is imported --*/
-				systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
-				costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
-						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));
-				assertNull("costs should not exist", costsFolder);
-
+				
+				importService.importText(nodeRef, true, false, null);
+				
 				return null;
 
 			}, false, true);
+			
+			waitForBatchEnd(batchInfo);
+			
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
+				/*-- Clean costs --*/
+				NodeRef systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
+						ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+				NodeRef costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));
+
+				/*-- check nothing is imported --*/
+				systemFolder = nodeService.getChildByName(repositoryHelper.getCompanyHome(),
+						ContentModel.ASSOC_CONTAINS, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM));
+				costsFolder = nodeService.getChildByName(systemFolder, ContentModel.ASSOC_CONTAINS,
+						TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_COSTS));
+				assertNull("costs should not exist", costsFolder);
+				return null;
+
+			}, false, true);
+			
 		} catch (Exception e) {
 			// logger.error("error as expected while importing file.", e);
 			exception = e;
@@ -526,11 +545,12 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	 *             Signals that an I/O exception has occurred.
 	 * @throws ImporterException
 	 *             the be cpg exception
+	 * @throws InterruptedException 
 	 */
 	@Test
-	public void testImportProductLists() throws IOException, ImporterException {
+	public void testImportProductLists() throws IOException, ImporterException, InterruptedException {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		BatchInfo batchInfo = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Delete temp, products folder --*/
 			NodeRef tempNodeRef = nodeService.getChildByName(repositoryHelper.getCompanyHome(), ContentModel.ASSOC_CONTAINS, PATH_TEMP);
@@ -559,11 +579,12 @@ public class ImportServiceIT extends PLMBaseTestCase {
 			writer.putContent(in);
 
 			logger.debug("Start import");
-			importService.importText(nodeRef, true, false);
-
-			return null;
-
+			
+			return importService.importText(nodeRef, true, false, null);
+			
 		}, false, true);
+		
+		waitForBatchEnd(batchInfo);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -621,9 +642,10 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	 *             Signals that an I/O exception has occurred.
 	 * @throws ImporterException
 	 *             the be cpg exception
+	 * @throws InterruptedException 
 	 */
 	@Test
-	public void testImportHierarchies() throws IOException, ImporterException {
+	public void testImportHierarchies() throws IOException, ImporterException, InterruptedException {
 
 		importHierarchies();
 
@@ -654,8 +676,8 @@ public class ImportServiceIT extends PLMBaseTestCase {
 		}, false, true);
 	}
 
-	private void importHierarchiesFile(final int i) {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+	private void importHierarchiesFile(final int i) throws InterruptedException {
+		BatchInfo batchInfo = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Create file to import --*/
 			logger.debug("create file to import");
@@ -678,14 +700,15 @@ public class ImportServiceIT extends PLMBaseTestCase {
 			writer.putContent(in);
 
 			logger.debug("Start import");
-			importService.importText(nodeRef, true, false);
-
-			return null;
-
+			
+			return importService.importText(nodeRef, true, false, null);
+			
 		}, false, true);
+		
+		waitForBatchEnd(batchInfo);
 	}
 
-	private void importHierarchies() {
+	private void importHierarchies() throws InterruptedException {
 		/*-- Check hierarchies --*/
 		logger.debug("Check hierarchies");
 		importHierarchiesFile(1);
@@ -742,9 +765,9 @@ public class ImportServiceIT extends PLMBaseTestCase {
 	}
 
 	@Test
-	public void testImportFormula() throws IOException, ImporterException {
+	public void testImportFormula() throws IOException, ImporterException, InterruptedException {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		BatchInfo batchInfo = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/*-- Create file to import --*/
 			logger.debug("create file to import");
@@ -762,11 +785,12 @@ public class ImportServiceIT extends PLMBaseTestCase {
 			writer.putContent(in);
 
 			logger.debug("Start import");
-			importService.importText(nodeRef, true, false);
-
-			return null;
-
+			
+			return importService.importText(nodeRef, true, false, null);
+			
 		}, false, true);
+		
+		waitForBatchEnd(batchInfo);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
