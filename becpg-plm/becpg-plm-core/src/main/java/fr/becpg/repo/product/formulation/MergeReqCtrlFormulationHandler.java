@@ -157,7 +157,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 			if (logger.isDebugEnabled()) {
 				logger.debug("r " + r.getReqMessage() + " " + r.getCharact());
 			}
-			if (r.getCharact() != null) {
+			if (r.getCharact() != null && !RequirementDataType.Specification.equals(r.getReqDataType())) {
 				QName type = nodeService.getType(r.getCharact());
 				List<FormulatedCharactDataItem> simpleList = new ArrayList<>();
 				if (PLMModel.TYPE_NUT.equals(type)) {
