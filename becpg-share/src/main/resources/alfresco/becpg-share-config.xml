@@ -173,9 +173,7 @@
        <showAdditionalDownloadLinks>true</showAdditionalDownloadLinks>	
    </config>
 
-  <config evaluator="string-compare" condition="SAML">
-	  <enable>false</enable>
-   </config>
+	
 
 	<config>
 		<forms>
@@ -233,7 +231,12 @@
 		   <list id="activityList" index="900" />
 		   <list id="WUsed" index="1000" view="true"/>
 		</lists>
+		<dependencies>
+		<!-- <css src="/modules/my-module/my-custom-css.css" />
+			 <js src="/modules/my-module/my-custom-js.js" /> -->
+		</dependencies>
 	</config>
+
 	
 	
 	<config evaluator="string-compare" condition="DocumentLibrary">
