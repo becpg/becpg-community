@@ -67,6 +67,59 @@
 		</dependency>
 
 
+		<!-- Traces -->
+
+		<dependency>
+			<groupId>io.opencensus</groupId>
+			<artifactId>opencensus-api</artifactId>
+			<version>0.31.1</version>
+		</dependency>
+		<dependency>
+			<groupId>io.opencensus</groupId>
+			<artifactId>opencensus-exporter-trace-stackdriver</artifactId>
+			<version>0.31.1</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.code.gson</groupId>
+					<artifactId>gson</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.core</groupId>
+					<artifactId>jackson-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>error_prone_annotations</artifactId>
+					<groupId>com.google.errorprone</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+				<exclusion>
+				     <groupId>com.google.code.findbugs</groupId>
+				     <artifactId>jsr305</artifactId>
+				  </exclusion>
+				  <exclusion>
+			      <groupId>org.apache.commons</groupId>
+			  	 <artifactId>commons-lang3</artifactId>
+			  </exclusion>
+			</exclusions>
+
+		</dependency>
+		<dependency>
+			<groupId>io.opencensus</groupId>
+			<artifactId>opencensus-impl</artifactId>
+			<version>0.31.1</version>
+
+			<scope>runtime</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
 		<!-- Common -->
 		
 		<dependency>
@@ -106,7 +159,6 @@
 			<artifactId>lucene-analyzers-common</artifactId>
 			<version>8.11.2</version>
 		</dependency>
-	
 
 	</dependencies>
 	<build>
