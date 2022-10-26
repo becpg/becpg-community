@@ -386,8 +386,8 @@ public class CompositeLabeling extends LabelingComponent {
 	private void print(StringBuilder sb, String prefix, boolean isTail) {
 		sb.append(prefix).append(isTail ? "└──[" : "├──[")
 				.append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? ROOT : getLegalName(I18NUtil.getContentLocaleLang()))
-				.append(" ( allergens:" + getAllergens() + ") ").append(" ( plural:" + isPlural() + ") ").append(" - ").append(getQty()).append("/").append(getQtyWithYield()).append(" (")
-				.append(getQtyTotal()).append("/").append(getQtyTotalWithYield()).append(") ")
+				.append(" ( allergens:" + getAllergens() + ") ").append(" ( plural:" + isPlural() + ") ").append(" - ").append(getQty()).append("/").append(getQtyTotal()).append(" (")
+				.append(getQtyWithYield()).append("/").append(getQtyTotalWithYield()).append(") ")
 				.append(declarationType != null ? declarationType.toString() : "").append("]\n");
 		for (Iterator<CompositeLabeling> iterator = ingList.values().iterator(); iterator.hasNext();) {
 			CompositeLabeling labelingComponent = iterator.next();
@@ -397,7 +397,7 @@ public class CompositeLabeling extends LabelingComponent {
 				sb.append(prefix).append(isTail ? "    " : "│   ").append(!iterator.hasNext() ? "└──[" : "├──[")
 						.append(labelingComponent.getLegalName(I18NUtil.getContentLocaleLang()))
 						.append(" ( plural:" + labelingComponent.isPlural() + " ) ").append(" - ").append(labelingComponent.getQty())
-						.append("/").append(labelingComponent.getQtyWithYield()).append(" ]\n");
+						.append(" (").append(labelingComponent.getQtyWithYield()+") ").append(" ]\n");
 			}
 
 		}

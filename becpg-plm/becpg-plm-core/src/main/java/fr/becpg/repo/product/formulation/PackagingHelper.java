@@ -272,7 +272,7 @@ public class PackagingHelper implements InitializingBean {
 
 				if (!PLMModel.TYPE_PACKAGINGKIT.equals(nodeType)) {
 
-					PackagingListDataItem item = dataItem.clone();
+					PackagingListDataItem item = dataItem.copy();
 					item.setQty(item.getQty() * subQty);
 
 					ret.add(item);
@@ -281,7 +281,7 @@ public class PackagingHelper implements InitializingBean {
 					
 					if(!(nodeService.hasAspect(dataItem.getProduct(), PackModel.ASPECT_PALLET) && PackagingLevel.Secondary.equals(dataItem.getPkgLevel())
 								&& ProductUnit.PP.equals(dataItem.getPackagingListUnit()))	) {
-						subQty *= FormulationHelper.getQty(dataItem, subProduct);
+						subQty *= FormulationHelper.getQty(dataItem);
 					}
 					
 					

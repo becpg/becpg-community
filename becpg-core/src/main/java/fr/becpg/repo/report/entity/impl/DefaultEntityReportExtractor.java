@@ -75,6 +75,7 @@ import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.expressions.ExpressionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.SiteHelper;
@@ -89,6 +90,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.CompositionDataItem;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * <p>DefaultEntityReportExtractor class.</p>
@@ -134,6 +136,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String ATTR_ENTITY_TYPE = "entityType";
 	/** Constant <code>PRODUCT_IMG_ID="Img%d"</code> */
 	protected static final String PRODUCT_IMG_ID = "Img%d";
+
+	protected static final String EXTRA_IMG_ID = "Extra%d";
 	/** Constant <code>ATTR_IMAGE_ID="id"</code> */
 	protected static final String ATTR_IMAGE_ID = "id";
 	/** Constant <code>AVATAR_IMG_ID="avatar"</code> */
@@ -173,6 +177,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Value("${beCPG.product.report.assocsToExtractWithImage}")
 	protected String assocsToExtractWithImage = "";
+
+	@Value("${beCPG.product.report.extraImagePaths:#{null}}")
+	protected String extraImagePaths = "";
 
 	@Value("${beCPG.product.report.assocsToExtract}")
 	protected String assocsToExtract = "";
@@ -228,7 +235,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 	@Autowired
 	protected EntityReportService entityReportService;
-	
+
+	@Autowired
+	private ExpressionService expressionService;
+
 
 	protected interface DefaultExtractorContextCallBack {
 		public void run();
@@ -240,11 +250,11 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		Map<String, String> preferences;
 		Map<String, Boolean> cache = new HashMap<>(4);
-		
+
 		Set<NodeRef> extractedNodes = new HashSet<>();
 
 		EntityReportData reportData = new EntityReportData();
-		
+
 		public DefaultExtractorContext(Map<String, String> preferences) {
 			super();
 			this.preferences = preferences;
@@ -263,18 +273,14 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		public Set<NodeRef> getExtractedNodes() {
 			return extractedNodes;
 		}
-		
+
 
 		public EntityReportData getReportData() {
 			return reportData;
 		}
 
 		public boolean prefsContains(String key, String defaultValue, String query) {
-			if ((defaultValue != null) && defaultValue.contains(query)) {
-				return true;
-			}
-
-			if (preferences.containsKey(key) && preferences.get(key).contains(query)) {
+			if (((defaultValue != null) && defaultValue.contains(query)) || (preferences.containsKey(key) && preferences.get(key).contains(query))) {
 				return true;
 			}
 
@@ -282,11 +288,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 
 		public boolean multiPrefsEquals(String key, String defaultValue, String query) {
-			if ((defaultValue != null) && Arrays.asList(defaultValue.split(",")).contains(query)) {
-				return true;
-			}
-
-			if (preferences.containsKey(key) && Arrays.asList(preferences.get(key).split(",")).contains(query)) {
+			if (((defaultValue != null) && Arrays.asList(defaultValue.split(",")).contains(query)) || (preferences.containsKey(key) && Arrays.asList(preferences.get(key).split(",")).contains(query))) {
 				return true;
 			}
 
@@ -294,19 +296,15 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 
 		public boolean isPrefOn(String key, Boolean defaultValue) {
-			if (Boolean.TRUE.equals(defaultValue)) {
-				return true;
-			}
-
-			if (preferences.containsKey(key) && "true".equalsIgnoreCase(preferences.get(key))) {
+			if (Boolean.TRUE.equals(defaultValue) || (preferences.containsKey(key) && "true".equalsIgnoreCase(preferences.get(key)))) {
 				return true;
 			}
 
 			return false;
 		}
-		
+
 		public String getPrefValue(String key, String defaultValue) {
-			
+
 
 			if (preferences.containsKey(key) ) {
 				return preferences.get(key);
@@ -316,11 +314,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		}
 
 		public boolean isNotEmptyPrefs(String key, String defaultValue) {
-			if ((defaultValue != null) && !defaultValue.isEmpty()) {
-				return true;
-			}
-
-			if (preferences.containsKey(key) && !preferences.get(key).isEmpty()) {
+			if (((defaultValue != null) && !defaultValue.isEmpty()) || (preferences.containsKey(key) && !preferences.get(key).isEmpty())) {
 				return true;
 			}
 
@@ -352,33 +346,33 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				watch = new StopWatch();
 				watch.start();
 			}
-			
-			
+
+
 			DefaultExtractorContext context = new DefaultExtractorContext(preferences);
-			
+
 			Document document = DocumentHelper.createDocument();
 			Element entityElt = document.addElement(TAG_ENTITY);
-			
-			
+
+
 			Element prefs = entityElt.addElement(TAG_PREFERENCES);
-			
+
 
 			for (Map.Entry<String,String> perfEntry : preferences.entrySet()) {
 				Element pref = prefs.addElement(TAG_PREFERENCE);
 				pref.addAttribute("key", perfEntry.getKey());
 				pref.addAttribute("value", perfEntry.getValue());
 			}
-			
-			
+
+
 			extractEntity(entityNodeRef, entityElt, context);
-			
+
 			context.getReportData().setXmlDataSource(entityElt);
-			
+
 			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
 				logger.debug("extract datasource in  " + watch.getTotalTimeSeconds() + " seconds for node " + entityNodeRef);
 			}
-			
+
 			return context.getReportData();
 
 	}
@@ -398,7 +392,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		// extract site info
 		extractSiteInfo(entityNodeRef, entityElt);
-		
+
 		// add attributes at <product/> tag
 		loadNodeAttributes(entityNodeRef, entityElt, true, context);
 
@@ -450,6 +444,23 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				cnt++;
 			}
 		}
+
+		if(context.isNotEmptyPrefs("extraImagePaths", extraImagePaths)) {
+			String entityPath = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
+			String[] paths = context.getPrefValue("extraImagePaths",extraImagePaths).split(";");
+			for(String path : paths) {
+				List<NodeRef> imgNodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef,expressionService.extractExpr(entityNodeRef,path));
+				for(NodeRef imgNodeRef: imgNodeRefs) {
+
+					String nodePath = nodeService.getPath(imgNodeRef).toPrefixString(namespaceService).replace(entityPath, "");
+					extractImage(entityNodeRef, imgNodeRef, nodePath, imgsElt, context);
+
+				}
+
+
+			}
+		}
+
 	}
 
 	/**
@@ -469,19 +480,18 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		if (imgNodeRef != null) {
 			EntityImageInfo imgInfo = new EntityImageInfo(imgId,imgNodeRef);
-			
-			
+
+
 			imgInfo.setName((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_NAME));
 			imgInfo.setTitle((String) nodeService.getProperty(imgNodeRef, ContentModel.PROP_TITLE));
 			imgInfo.setDescription((String)nodeService.getProperty(imgNodeRef, ContentModel.PROP_DESCRIPTION));
-			
-			
+
 
 			Element imgElt = imgsElt.addElement(TAG_IMAGE);
 			if(entityNodeRef!=null) {
 				imgElt.addAttribute(ATTR_ENTITY_NODEREF, entityNodeRef.toString());
 				imgElt.addAttribute(ATTR_ENTITY_TYPE, nodeService.getType(entityNodeRef).getLocalName());
-				imgElt.addAttribute(ATTR_ENTITY_NAME, XMLTextHelper.writeAttribute((String) nodeService.getProperty(entityNodeRef, 
+				imgElt.addAttribute(ATTR_ENTITY_NAME, XMLTextHelper.writeAttribute((String) nodeService.getProperty(entityNodeRef,
 						ContentModel.PROP_NAME)));
 				if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_CODE)) {
 					imgElt.addAttribute(ATTR_ENTITY_CODE, XMLTextHelper.writeAttribute((String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_CODE)));
@@ -511,7 +521,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			boolean extractDataList = false;
 			boolean extractAssoc = false;
 			String prefixedAssocName = entityDictionaryService.toPrefixString(assocDef.getName());
-			
+
 			if (context.prefsContains("assocsToExtractWithDataList", assocsToExtractWithDataList,
 					prefixedAssocName)) {
 				extractDataList = true;
@@ -580,7 +590,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			for (NodeRef listNodeRef : listNodeRefs) {
 				QName dataListQName = QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE),
 						namespaceService);
-			
+
 				Class<RepositoryEntity> entityClass = repositoryEntityDefReader.getEntityClass(dataListQName);
 				if (entityClass != null) {
 					List<BeCPGDataObject> dataListItems = alfrescoRepository.loadDataList(listNodeRef, dataListQName);
@@ -617,12 +627,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				} else {
 					xmlNode.addAttribute(BeCPGModel.PROP_ENTITYLIST_STATE.getLocalName(), SystemState.ToValidate.toString());
 				}
-				
+
 				String title = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_TITLE);
 				if (title != null) {
 					xmlNode.addAttribute( ContentModel.PROP_TITLE.getLocalName(), title);
 				}
-				
+
 				String name = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
 				if (name != null) {
 					xmlNode.addAttribute( ContentModel.PROP_NAME.getLocalName(), name);
@@ -644,7 +654,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		if ((dataListItems != null) && !dataListItems.isEmpty()) {
 			Element dataListElt = dataListsElt.addElement(dataListQName.getLocalName() + "s");
 			addDataListStateAndName(dataListElt, listNodeRef);
-			
+
 			for (NodeRef dataListItem : dataListItems) {
 				Element nodeElt = dataListElt.addElement(dataListQName.getLocalName());
 				loadDataListItemAttributes(dataListItem, nodeElt, context);
@@ -690,7 +700,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			List<QName> hiddentAttributes) {
 		loadDataListItemAttributes(dataListItem, nodeElt, context, hiddentAttributes, true);
 	}
-	
+
 	protected void loadDataListItemAttributes(BeCPGDataObject dataListItem, Element nodeElt, DefaultExtractorContext context,
 			List<QName> hiddentAttributes, boolean addDescription) {
 		hiddentAttributes.addAll(hiddenNodeAttributes);
@@ -705,12 +715,12 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				if ((kv.getValue() instanceof NodeRef) && nodeService.hasAspect((NodeRef) kv.getValue(), BeCPGModel.ASPECT_LEGAL_NAME)) {
 					nodeElt.addAttribute(BeCPGModel.PROP_LEGAL_NAME.getLocalName(),
 							XMLTextHelper.writeAttribute((String) nodeService.getProperty((NodeRef) kv.getValue(), BeCPGModel.PROP_LEGAL_NAME)));
-					
+
 					if (addDescription || !(dataListItem instanceof CompositionDataItem)) {
 						addCDATA(nodeElt, ContentModel.PROP_DESCRIPTION,
 								(String) nodeService.getProperty((NodeRef) kv.getValue(), ContentModel.PROP_DESCRIPTION), null);
 					}
-					
+
 					break;
 				}
 			}
@@ -783,7 +793,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					logger.debug("This property doesn't exist. Name: " + property.getKey() + " nodeRef : " + nodeRef);
 					continue;
 				}
-				
+
 				String value = attributeExtractorService.extractPropertyForReport(propertyDef, property.getValue(), false);
 
 				boolean isDyn = false;
@@ -806,22 +816,22 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						}
 					}
 				}
-				
+
 
 				if (DataTypeDefinition.NODE_REF.toString().equals(propertyDef.getDataType().toString()) && context.prefsContains("assocsToExtract", assocsToExtract, propertyDef.getName().toPrefixString(namespaceService))) {
-					
+
 					NodeRef dNodeRef = (NodeRef) property.getValue();
-					
+
 					if (dNodeRef != null) {
 						Element newElement = nodeElt.addElement(propertyDef.getName().getLocalName());
-						
+
 						appendPrefix(propertyDef.getName(), newElement);
-						
+
 						if (entityDictionaryService.isSubClass(propertyDef.getName(), BeCPGModel.TYPE_CHARACT)) {
 							List<QName> hiddentAttributes = new ArrayList<>();
 							hiddentAttributes.addAll(hiddenNodeAttributes);
 							hiddentAttributes.addAll(hiddenDataListItemAttributes);
-							
+
 							loadAttributes(dNodeRef, newElement, true, hiddentAttributes, context);
 						} else {
 							loadNodeAttributes(dNodeRef, newElement, true, context);
@@ -917,7 +927,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 						&& !associationDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
 						&& !associationDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !associationDef.isChild()) {
 
-					if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, context) || (Boolean.FALSE.equals(useCData))) {
+					if (!loadTargetAssoc(nodeRef, associationDef, nodeElt, context) || (!useCData)) {
 
 						List<NodeRef> assocNodes = associationService.getTargetAssocs(nodeRef, associationDef.getName());
 
@@ -940,7 +950,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			QName propNameOfType = getPropNameOfType(targetClass);
 
 			if (propNameOfType != null) {
-				
+
 				return (String) nodeService.getProperty(nodeRef, propNameOfType);
 			}
 
@@ -1091,10 +1101,10 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			} else  {
 				value = new StringBuilder();
 			}
-			
+
 			value.append( entityDictionaryService.toPrefixString(aspect));
 		}
-		
+
 		return value == null ? VALUE_NULL : value.toString();
 	}
 
@@ -1196,7 +1206,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if ((modified == null) || (generatedReportDate == null) || (modified.getTime() > generatedReportDate.getTime())) {
 				return true;
 			}
-			
+
 		}
 		return false;
 	}

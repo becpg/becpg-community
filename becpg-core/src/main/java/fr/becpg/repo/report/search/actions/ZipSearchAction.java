@@ -30,7 +30,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.view.ExporterCrawlerParameters;
 import org.alfresco.service.cmr.view.ExporterService;
 import org.alfresco.service.cmr.view.Location;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ParameterCheck;
 import org.alfresco.util.TempFileProvider;
@@ -75,7 +74,6 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 	private RetryingTransactionHelper transactionHelper;
 	private DownloadStatusUpdateService updateService;
 	private ContentService contentService;
-	private NamespaceService namespaceService;
 	private ExpressionService expressionService;
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	private long maximumContentSize = -1l;
@@ -170,17 +168,6 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 	}
 
 	
-	
-	
-	/**
-	 * <p>Setter for the field <code>namespaceService</code>.</p>
-	 *
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
 	/**
 	 * {@inheritDoc}
 	 *
@@ -217,7 +204,7 @@ public class ZipSearchAction extends ActionExecuterAbstractBase {
 			// Get an estimate of the size for statuses
 		
 			
-			 ZipSearchDownloadExporter handler = new ZipSearchDownloadExporter(namespaceService, checkOutCheckInService, nodeService, transactionHelper,
+			 ZipSearchDownloadExporter handler = new ZipSearchDownloadExporter( checkOutCheckInService, nodeService, transactionHelper,
 					updateService, downloadStorage, contentService, expressionService, alfrescoRepository, actionedUponNodeRef, templateNodeRef);
 			
 			

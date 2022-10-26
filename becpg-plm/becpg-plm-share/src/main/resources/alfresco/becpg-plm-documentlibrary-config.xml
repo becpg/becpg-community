@@ -291,7 +291,7 @@
 				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
 			</action>
 			
-			<!-- Supplier portal -->
+			<!-- Supplier portal
 			
 			<action id="send-to-supplier" type="javascript" label="actions.entity.send-to-supplier" icon="user">
 				<param name="function">onActionSendToSupplier</param>
@@ -299,6 +299,7 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
 			</action>
+			 -->
 			
 			<!-- Create supplier -->
 			
@@ -319,11 +320,10 @@
 
 			<actionGroup id="entity-details">
 				<action index="110" id="entity-compare" icon="compare" />
-				<action index="110" id="send-to-supplier"  />
-				<action index="110" id="create-supplier" />
-				<action index="111" id="entityTpl-synchronize-entities" />
-				<action index="112" id="entityTpl-formulate-entities" />
-				<action index="113" id="entityTpl-wused" />
+				<action index="111" id="create-supplier" />
+				<action index="112" id="entityTpl-synchronize-entities" />
+				<action index="113" id="entityTpl-formulate-entities" />
+				<action index="114" id="entityTpl-wused" />
 			</actionGroup>
 
 			<actionGroup id="entity-browse">

@@ -14,6 +14,7 @@ function main() {
 		if (project) {
             formDataJson.assoc_bcpg_entityTplRef_added = "";
             formDataJson.assoc_bcpg_supplierAccountRef_added = "";
+            formDataJson.assoc_pjt_projectEntity_added = "";
 			submitForm(project, formDataJson);
 
 			return project.nodeRef;

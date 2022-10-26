@@ -92,16 +92,6 @@ public class LazyLoadingDataList<E extends RepositoryEntity> implements List<E>,
 	
 	
 
-	public List<E> copy() {
-	   List<E> ret = new java.util.LinkedList<>();
-	   	for(E item : getList()) {
-	   		item.setNodeRef(null);
-	   		ret.add(item);
-	   	}
-		return ret;
-	}
-
-
 	// List interfaces methods
 	
 	/** {@inheritDoc} */

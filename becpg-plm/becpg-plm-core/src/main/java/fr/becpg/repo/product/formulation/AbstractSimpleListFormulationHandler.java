@@ -256,19 +256,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
-	protected interface SimpleListQtyProvider {
-
-		Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct);
-
-		Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct);
-
-		Double getNetWeight();
-
-		Double getNetQty();
-
-		Boolean omitElement(CompoListDataItem compoListDataItem);
-
-	}
 
 	/**
 	 * <p>formulateSimpleList.</p>
@@ -386,9 +373,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
 
-					Double qty = FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, partProduct);
-
-					FormulatedQties qties = new FormulatedQties(qty, qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight());
+					Double qty = qtyProvider.getQty(packagingListDataItem, partProduct);
+					
+					FormulatedQties qties = new FormulatedQties(qty, 
+							qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight());
 
 					visitPart(formulatedProduct, partProduct, simpleListDataList, qties, mandatoryCharacts2, null, null, variant);
 				}
@@ -414,7 +402,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
 							(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
 
-				Double qty = FormulationHelper.getQty(formulatedProduct, processListDataItem);
+				Double qty = qtyProvider.getQty(processListDataItem);
 
 				if ((processListDataItem.getResource() != null) && (qty != null)) {
 					if (ProductUnit.P.equals(processListDataItem.getUnit()) && ProductUnit.P.equals(formulatedProduct.getUnit())) {
@@ -903,7 +891,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						}
 					}
 					if (!isFound) {
-						T toAdd = (T) tsl.clone();
+						T toAdd = (T) tsl.copy();
 						toAdd.setName(null);
 						toAdd.setNodeRef(null);
 						toAdd.setParentNodeRef(null);

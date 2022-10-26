@@ -20,9 +20,6 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.report.entity.EntityReportService;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * <p>ReportWebScript class.</p>
@@ -33,8 +30,6 @@ import io.opencensus.trace.Tracing;
 public class ReportWebScript extends AbstractWebScript {
 
 	private static final Log logger = LogFactory.getLog(ReportWebScript.class);
-
-	private static final Tracer tracer = Tracing.getTracer();
 
 	private static final String ACTION_CHECK = "check";
 	private static final String ACTION_FORCE = "force";
@@ -84,46 +79,45 @@ public class ReportWebScript extends AbstractWebScript {
 		logger.debug("start report webscript");
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 		String action = templateArgs.get(PARAM_ACTION);
-		try (Scope scope = tracer.spanBuilder("/internal/report/" + (ACTION_FORCE.equals(action) ? "generate" : ACTION_CHECK)).startScopedSpan()) {
-			String storeType = templateArgs.get(PARAM_STORE_TYPE);
-			String storeId = templateArgs.get(PARAM_STORE_ID);
-			String nodeId = templateArgs.get(PARAM_ID);
+		String storeType = templateArgs.get(PARAM_STORE_TYPE);
+		String storeId = templateArgs.get(PARAM_STORE_ID);
+		String nodeId = templateArgs.get(PARAM_ID);
 
-			NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
-			boolean generateReport = false;
+		NodeRef nodeRef = new NodeRef(storeType, storeId, nodeId);
+		boolean generateReport = false;
 
-			if (nodeService.exists(nodeRef) && (lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK)) {
+		if (nodeService.exists(nodeRef) && (lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK)) {
 
-				if (ACTION_CHECK.equals(action)) {
-					generateReport = entityReportService.shouldGenerateReport(nodeRef, null);
-				} else if (ACTION_FORCE.equals(action)) {
-					generateReport = true;
-				} else {
-					String error = "Unsupported action: " + action;
-					logger.error(error);
-					throw new WebScriptException(error);
-				}
-
-				if (generateReport) {
-					entityReportService.generateReports(nodeRef);
-				}
-
+			if (ACTION_CHECK.equals(action)) {
+				generateReport = entityReportService.shouldGenerateReport(nodeRef, null);
+			} else if (ACTION_FORCE.equals(action)) {
+				generateReport = true;
+			} else {
+				String error = "Unsupported action: " + action;
+				logger.error(error);
+				throw new WebScriptException(error);
 			}
 
-			try {
-
-				JSONObject ret = new JSONObject();
-
-				ret.put("generateReport", generateReport);
-				ret.put("status", "SUCCESS");
-
-				res.setContentType("application/json");
-				res.setContentEncoding("UTF-8");
-				ret.write(res.getWriter());
-
-			} catch (JSONException e) {
-				throw new WebScriptException("Unable to serialize JSON", e);
+			if (generateReport) {
+				entityReportService.generateReports(nodeRef);
 			}
+
 		}
+
+		try {
+
+			JSONObject ret = new JSONObject();
+
+			ret.put("generateReport", generateReport);
+			ret.put("status", "SUCCESS");
+
+			res.setContentType("application/json");
+			res.setContentEncoding("UTF-8");
+			ret.write(res.getWriter());
+
+		} catch (JSONException e) {
+			throw new WebScriptException("Unable to serialize JSON", e);
+		}
+
 	}
 }

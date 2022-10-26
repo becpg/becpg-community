@@ -379,6 +379,11 @@
 				// Since it's a WorkflowException (expected), no need to show the Exception-type to the user, only
 				// the message and error-number will do.
 				message = message.replace("org.alfresco.service.cmr.workflow.WorkflowException:", "");
+				var pattern = "Failed to execute script 'workspace:\/\/SpacesStore\/[a-zA-Z-0-9]{8}-[a-zA-Z-0-9]{4}-[a-zA-Z-0-9]{4}-[a-zA-Z-0-9]{4}-[a-zA-Z-0-9]{12}': [0-9]{8}";
+				var match = message.match(pattern);
+				if (match) {
+					message = message.split(match)[1];
+				}
 				Alfresco.util.PopupManager.displayPrompt(
 					{
 						title: this.msg(this.options.failureMessageKey),

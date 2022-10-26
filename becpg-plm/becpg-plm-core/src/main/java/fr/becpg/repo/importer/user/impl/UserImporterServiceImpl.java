@@ -25,10 +25,9 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationException;
+import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.ContentIOException;
@@ -36,24 +35,21 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.MutableAuthenticationService;
-import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.site.SiteVisibility;
 import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.PropertyMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.common.csv.CSVReader;
+import fr.becpg.repo.authentication.BeCPGUserAccount;
+import fr.becpg.repo.authentication.BeCPGUserAccountService;
 import fr.becpg.repo.importer.ImporterException;
 import fr.becpg.repo.importer.impl.ImportHelper;
 import fr.becpg.repo.importer.user.UserImporterService;
-import fr.becpg.repo.mail.BeCPGMailService;
 
 /**
  * <p>UserImporterServiceImpl class.</p>
@@ -84,9 +80,6 @@ public class UserImporterServiceImpl implements UserImporterService {
 	/** Constant <code>FIELD_SEPARATOR="\\|"</code> */
 	protected static final String FIELD_SEPARATOR = "\\|";
 
-	/** Constant <code>PATH_SEPARATOR="\\/"</code> */
-	protected static final String PATH_SEPARATOR = "\\/";
-
 	/** Constant <code>DEFAULT_PRESET="site-dashboard"</code> */
 	protected static final String DEFAULT_PRESET = "site-dashboard";
 
@@ -96,15 +89,20 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 	private SiteService siteService;
 
-	private AuthorityService authorityService;
-
-	private BeCPGMailService beCPGMailService;
-
 	private MutableAuthenticationService authenticationService;
 
-	private PersonService personService;
+	private BeCPGUserAccountService beCPGUserAccountService;
 
 	private NamespacePrefixResolver namespacePrefixResolver;
+
+	private SysAdminParams sysAdminParams;
+	
+	
+	
+	
+	public void setSysAdminParams(SysAdminParams sysAdminParams) {
+		this.sysAdminParams = sysAdminParams;
+	}
 
 	/**
 	 * <p>Setter for the field <code>namespacePrefixResolver</code>.</p>
@@ -134,24 +132,6 @@ public class UserImporterServiceImpl implements UserImporterService {
 	}
 
 	/**
-	 * <p>Setter for the field <code>beCPGMailService</code>.</p>
-	 *
-	 * @param beCPGMailService a {@link fr.becpg.repo.mail.BeCPGMailService} object.
-	 */
-	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
-		this.beCPGMailService = beCPGMailService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>personService</code>.</p>
-	 *
-	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object.
-	 */
-	public void setPersonService(PersonService personService) {
-		this.personService = personService;
-	}
-
-	/**
 	 * <p>Setter for the field <code>siteService</code>.</p>
 	 *
 	 * @param siteService a {@link org.alfresco.service.cmr.site.SiteService} object.
@@ -160,20 +140,12 @@ public class UserImporterServiceImpl implements UserImporterService {
 		this.siteService = siteService;
 	}
 
-	/**
-	 * <p>Setter for the field <code>authorityService</code>.</p>
-	 *
-	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
-	 */
-	public void setAuthorityService(AuthorityService authorityService) {
-		this.authorityService = authorityService;
+	public void setBeCPGUserAccountService(BeCPGUserAccountService beCPGUserAccountService) {
+		this.beCPGUserAccountService = beCPGUserAccountService;
 	}
 
-	/**
-	 * <p>Setter for the field <code>authenticationService</code>.</p>
-	 *
-	 * @param authenticationService a {@link org.alfresco.service.cmr.security.MutableAuthenticationService} object.
-	 */
+
+
 	public void setAuthenticationService(MutableAuthenticationService authenticationService) {
 		this.authenticationService = authenticationService;
 	}
@@ -241,9 +213,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 	private void processCSVUpload(InputStream input, Charset charset) throws IOException, ImporterException {
 
 		try (InputStreamReader reader = new InputStreamReader(input, charset)) {
-
-			CSVReader csvReader = new CSVReader(reader, SEPARATOR);
-			try {
+			try (CSVReader csvReader = new CSVReader(reader, SEPARATOR)) {
 				String[] splitted;
 				boolean isFirst = true;
 				Map<String, Integer> headers = new HashMap<>();
@@ -255,8 +225,6 @@ public class UserImporterServiceImpl implements UserImporterService {
 						processRow(headers, splitted);
 					}
 				}
-			} finally {
-				csvReader.close();
 			}
 		}
 
@@ -265,92 +233,32 @@ public class UserImporterServiceImpl implements UserImporterService {
 	private void processRow(final Map<String, Integer> headers, final String[] splitted) {
 
 		if ((splitted != null) && (headers != null)) {
-			final String username = splitted[headers.get(USERNAME)];
-			final String password = splitted[headers.get(PASSWORD)];
+			BeCPGUserAccount userAccount = new BeCPGUserAccount();
 
-			AuthenticationUtil.runAsSystem(() -> {
+			userAccount.setUserName(splitted[headers.get(USERNAME)]);
+			userAccount.setPassword(splitted[headers.get(PASSWORD)]);
+			userAccount.setNotify(headers.containsKey(NOTIFY) && Boolean.parseBoolean(splitted[headers.get(NOTIFY)]));
 
-				try {
-					// create user
-					authenticationService.createAuthentication(username, password.toCharArray());
+			for (Map.Entry<String, Integer> entry : headers.entrySet()) {
+				if (isPropQname(entry.getKey()) && !splitted[entry.getValue()].isEmpty()) {
+					QName prop = QName.resolveToQName(namespacePrefixResolver, entry.getKey());
+					String value = splitted[entry.getValue()];
 
-				} catch (AuthenticationException e) {
-					// Do nothing
-					logger.debug(e,e);
+					logger.debug("Adding : " + prop + " " + value);
+					userAccount.getExtraProps().put(prop, value);
+
 				}
 
-				if (!personService.personExists(username)) {
-
-					PropertyMap personProps = new PropertyMap();
-
-					personProps.put(ContentModel.PROP_USERNAME, username);
-
-					for (String key : headers.keySet()) {
-						if (isPropQname(key) && !splitted[headers.get(key)].isEmpty()) {
-							QName prop = QName.resolveToQName(namespacePrefixResolver, key);
-							String value = splitted[headers.get(key)];
-
-							logger.debug("Adding : " + prop + " " + value);
-							personProps.put(prop, value);
-						}
-
-					}
-
-					NodeRef person = personService.createPerson(personProps);
-
-					if (headers.containsKey(NOTIFY) && Boolean.parseBoolean(splitted[headers.get(NOTIFY)])) {
-
-						sendMail(person, username, password);
-					}
-
-				} else {
-					logger.info("User " + username + " already exist");
-				}
-
-				return null;
-
-			});
+			}
 
 			if (headers.containsKey(GROUPS)) {
 				String[] groups = splitted[headers.get(GROUPS)].split(FIELD_SEPARATOR);
-
-				Set<String> userGroups = authorityService.getContainingAuthorities(AuthorityType.GROUP, username, false);
-				userGroups.forEach(group -> {
-					logger.info("Group: " + group + ", user: " + username);
-					if (!group.startsWith("GROUP_site_")) {
-						authorityService.removeAuthority(group, username);
-					}
-				});
-
 				for (String group : groups) {
-					String[] grp = group.split(PATH_SEPARATOR);
-					String currGroup = null;
-					for (String aGrp : grp) {
-						String tmp = aGrp;
-						if ((tmp != null) && !tmp.isEmpty()) {
-							if (!authorityService.authorityExists(authorityService.getName(AuthorityType.GROUP, tmp))) {
-								tmp = authorityService.createAuthority(AuthorityType.GROUP, tmp);
-								logger.debug("Create group : " + tmp);
-								if ((currGroup != null) && !currGroup.isEmpty()) {
-									logger.debug("Add group  " + tmp + " to " + currGroup);
-									authorityService.addAuthority(currGroup, tmp);
-
-								}
-							} else {
-								tmp = authorityService.getName(AuthorityType.GROUP, tmp);
-							}
-							currGroup = tmp;
-						}
-					}
-
-					if ((currGroup != null) && !currGroup.isEmpty()) {
-						logger.debug("Add user  " + username + " to " + currGroup);
-
-						authorityService.addAuthority(currGroup, username);
-					}
-
+					userAccount.getAuthorities().add(group);
 				}
 			}
+
+			 beCPGUserAccountService.getOrCreateUser(userAccount);
 
 			if (headers.containsKey(MEMBERSHIPS)) {
 				AuthenticationUtil.runAsSystem(() -> {
@@ -367,10 +275,10 @@ public class UserImporterServiceImpl implements UserImporterService {
 							}
 
 							if (logger.isDebugEnabled()) {
-								logger.debug("Adding role " + role + " to " + username + " on site " + siteName);
+								logger.debug("Adding role " + role + " to " + userAccount.getUserName() + " on site " + siteName);
 							}
 							if (siteService.getSite(cleanSiteName(siteName)) != null) {
-								siteService.setMembership(cleanSiteName(siteName), username, role);
+								siteService.setMembership(cleanSiteName(siteName), userAccount.getUserName(), role);
 							} else {
 								logger.debug("Site " + siteName + " doesn't exist.");
 
@@ -378,7 +286,8 @@ public class UserImporterServiceImpl implements UserImporterService {
 										SiteVisibility.PUBLIC);
 								try {
 
-									URL url = new URL("http://becpg:8080/share/service/modules/enable-site?url=" + siteInfo.getShortName()
+									URL url = new URL(sysAdminParams.getShareProtocol()+"://"+sysAdminParams.getShareHost()
+									+":"+sysAdminParams.getSharePort()+"/share/service/modules/enable-site?url=" + siteInfo.getShortName()
 											+ "&preset=" + DEFAULT_PRESET + "&alf_ticket=" + authenticationService.getCurrentTicket());
 									URLConnection con = url.openConnection();
 
@@ -391,7 +300,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 									logger.error("Unable to enable site", e);
 								}
 
-								siteService.setMembership(siteInfo.getShortName(), username, role);
+								siteService.setMembership(siteInfo.getShortName(), userAccount.getUserName(), role);
 
 							}
 
@@ -405,14 +314,9 @@ public class UserImporterServiceImpl implements UserImporterService {
 	}
 
 	private String cleanSiteName(String siteName) {
-		return siteName.toLowerCase().replaceAll("&", "").replaceAll("\\s", "").replaceAll("[àáâãäå]", "a").replaceAll("æ", "ae").replaceAll("ç", "c")
-				.replaceAll("[èéêë]", "e").replaceAll("[ìíîï]", "i").replaceAll("ñ", "n").replaceAll("[òóôõö]", "o").replaceAll("œ", "oe")
+		return siteName.toLowerCase().replace("&", "").replaceAll("\\s", "").replaceAll("[àáâãäå]", "a").replace("æ", "ae").replace("ç", "c")
+				.replaceAll("[èéêë]", "e").replaceAll("[ìíîï]", "i").replace("ñ", "n").replaceAll("[òóôõö]", "o").replace("œ", "oe")
 				.replaceAll("[ùúûü]", "u").replaceAll("[ýÿ]", "y");
-	}
-
-	private void sendMail(NodeRef person, String username, String password) {
-		logger.debug("Notify user " + nodeService.getProperty(person, ContentModel.PROP_FIRSTNAME));
-		beCPGMailService.sendMailNewUser(person, username, password, false);
 	}
 
 	private boolean isPropQname(String key) {
@@ -450,7 +354,7 @@ public class UserImporterServiceImpl implements UserImporterService {
 	}
 
 	private String formatSiteName(String siteName) {
-		return siteName.replaceAll(" ", "");
+		return siteName.replace(" ", "");
 	}
 
 }

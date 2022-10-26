@@ -44,8 +44,6 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 	private static final String MESSAGE_FORBIDDEN_ING = "message.formulate.ingredient.forbidden";
 
-	private Boolean addInfoReqCtrl;
-
 	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/**
@@ -58,10 +56,6 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	 */
 	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
-	}
-
-	public void setAddInfoReqCtrl(Boolean addInfoReqCtrl) {
-		this.addInfoReqCtrl = addInfoReqCtrl;
 	}
 
 	/** {@inheritDoc} */

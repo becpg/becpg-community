@@ -3,15 +3,11 @@
 	z-index:3;
 }
 
-/* 
-.datagrid  .yui-dt th .yui-dt-liner {
-	width: 100%;
-}
- */
  
 .datagrid {
 	padding-top: 0.5em;
 	visibility: hidden;
+	height: 100%;
 }
 
 .datagrid .datagrid-description {
@@ -133,11 +129,60 @@
 }
 
 
+
 /* Data Table */
+.datagrid div.grid {
+	max-width: 100%;
+	min-height: 250px;
+	height: calc(100vh - 330px);
+	overflow: auto;
+	position: relative;
+}
+
+.datagrid.dashlet div.grid {
+	height: 100%;
+	max-height: 100%;
+}
+
 .datagrid .grid table {
 	border-color: #e0e0e0;
 	width: 100%;
 }
+
+
+.datagrid .yui-dt thead {
+	background-color: white;
+}
+
+.datagrid .yui-dt thead th {
+  position: -webkit-sticky; /* for Safari */
+  position: sticky;
+  background-color: white;
+  top: 0;
+  z-index: 0;
+}
+
+.datagrid .yui-dt thead th.sticky {
+  left: 0;
+  z-index: 1;
+}
+
+.datagrid .yui-dt thead th.sticky.yui-dt-first {
+  z-index: 2;
+}
+
+
+
+.datagrid .yui-dt td.sticky  {
+  position: -webkit-sticky; /* for Safari */
+  position: sticky;
+  left: 0;
+  z-index: 0;
+  background-color : inherit;
+}
+
+
+
 
 .datagrid .grid tbody {
 	outline: none;
@@ -145,6 +190,8 @@
 
 .datagrid .grid .yui-dt table {
 	border: none;
+	position: relative;
+    border-collapse: collapse;
 }
 
 .datagrid .grid.yui-dt .yui-dt-data td {
@@ -166,10 +213,6 @@
 
 .datagrid .yui-dt-liner {
 	padding: 4px;
-}
-
-.datagrid .yui-dt thead {
-	background-color: white;
 }
 
 

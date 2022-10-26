@@ -32,9 +32,6 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteParams;
-import fr.becpg.repo.telemetry.OpenCensusConfiguration;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.samplers.Samplers;
 
 /**
  * Get entity as XML
@@ -49,38 +46,35 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-		try (Scope scope = tracer.spanBuilder("/remote/get").setSampler(Samplers.probabilitySampler(OpenCensusConfiguration.REMOTE_GET_SAMPLING_PROBABILITY)).startScopedSpan()) {
-			NodeRef entityNodeRef = findEntity(req);
+		NodeRef entityNodeRef = findEntity(req);
 
-			logger.debug("Get entity: " + entityNodeRef);
+		logger.debug("Get entity: " + entityNodeRef);
 
-			try (OutputStream out = resp.getOutputStream()) {
+		try (OutputStream out = resp.getOutputStream()) {
 
-				RemoteParams params = new RemoteParams(getFormat(req));
-				params.setFilteredFields(extractFields(req), namespaceService);
-				params.setFilteredLists(extractLists(req));
-				params.setJsonParams(extractParams(req));
-				resp.setContentType(getContentType(req));
-				resp.setContentEncoding("UTF-8");
+			RemoteParams params = new RemoteParams(getFormat(req));
+			params.setFilteredFields(extractFields(req), namespaceService);
+			params.setFilteredLists(extractLists(req));
+			params.setJsonParams(extractParams(req));
+			resp.setContentType(getContentType(req));
+			resp.setContentEncoding("UTF-8");
 
-				remoteEntityService.getEntity(entityNodeRef, out, params);
+			remoteEntityService.getEntity(entityNodeRef, out, params);
 
-			
-				resp.setStatus(Status.STATUS_OK);
-			} catch (BeCPGException e) {
-				logger.error("Cannot export entity", e);
-				throw new WebScriptException(e.getMessage());
-			} catch (AccessDeniedException e) {
-				throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
-			} catch (SocketException e1) {
+			resp.setStatus(Status.STATUS_OK);
+		} catch (BeCPGException e) {
+			logger.error("Cannot export entity", e);
+			throw new WebScriptException(e.getMessage());
+		} catch (AccessDeniedException e) {
+			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
+		} catch (SocketException e1) {
 
-				// the client cut the connection - our mission was accomplished
-				// apart from a little error message
-				if (logger.isInfoEnabled()) {
-					logger.info("Client aborted stream read:\n\tcontent", e1);
-				}
-
+			// the client cut the connection - our mission was accomplished
+			// apart from a little error message
+			if (logger.isInfoEnabled()) {
+				logger.info("Client aborted stream read:\n\tcontent", e1);
 			}
+
 		}
 
 	}

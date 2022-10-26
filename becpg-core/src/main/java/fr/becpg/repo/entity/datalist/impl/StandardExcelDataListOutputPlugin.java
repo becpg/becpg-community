@@ -23,10 +23,8 @@ import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtracto
 @Service
 public class StandardExcelDataListOutputPlugin implements ExcelDataListOutputPlugin {
 
-
 	@Autowired
-	private DictionaryService dictionaryService;
-	
+	protected DictionaryService dictionaryService;
 	
 	/** {@inheritDoc} */
 	@Override
@@ -43,6 +41,7 @@ public class StandardExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 	/** {@inheritDoc} */
 	@Override
 	public ExcelFieldTitleProvider getExcelFieldTitleProvider(DataListFilter dataListFilter) {
+	
 		return new  ExcelFieldTitleProvider(){
 
 			@Override

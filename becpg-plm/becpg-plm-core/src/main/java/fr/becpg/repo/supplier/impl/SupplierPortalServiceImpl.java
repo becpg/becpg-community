@@ -27,10 +27,9 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
-
-import com.google.api.client.util.Value;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
@@ -132,6 +131,11 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 			NodeRef branchNodeRef = null; 
 				
+
+			NodeRef supplierDestFolder = getOrCreateSupplierDestFolder(supplierNodeRef, supplierAccountNodeRefs);
+			
+			String branchName = repoService.getAvailableName(supplierDestFolder, createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate), false);
+			
 			if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
 				branchNodeRef = entityNodeRef;
 				
@@ -141,12 +145,9 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 					entityNodeRef = assocs.get(0).getTargetRef();
 				}
 			} else {
-				branchNodeRef = entityVersionService.createBranch(entityNodeRef, destNodeRef);
+				branchNodeRef = entityVersionService.createBranch(entityNodeRef, supplierDestFolder);
 			}
 			
-			NodeRef supplierDestFolder = getOrCreateSupplierDestFolder(supplierNodeRef, supplierAccountNodeRefs);
-			
-			String branchName = repoService.getAvailableName(supplierDestFolder, createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate), false);
 			
 			associationService.update(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO, entityNodeRef);
 			nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE,  VersionType.MAJOR.toString());

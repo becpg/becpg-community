@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
@@ -253,6 +254,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 		NodeRef nutrientProfilesCategoryNodeRef = repoService.getFolderByPath(entityListNodeRef, PATH_NUTRIENTPROFILES);
 
 		if (nutrientProfilesCategoryNodeRef != null && nodeService.exists(nutrientProfilesCategoryNodeRef)) {
+			nodeService.addAspect(nutrientProfilesCategoryNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 			nodeService.deleteNode(nutrientProfilesCategoryNodeRef);
 		}
 
