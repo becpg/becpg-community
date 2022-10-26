@@ -2,7 +2,6 @@ package fr.becpg.repo.batch;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -250,11 +249,16 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						jsonBatch.put("batchDescId", batchInfo.getBatchDescId());
 						jsonBatch.put("batchUser", batchInfo.getBatchUser());
 						jsonBatch.put("entityDescription", batchInfo.getEntityDescription());
-					if (stepCount != null) {
-						jsonBatch.put("stepCount", stepCount);
-						jsonBatch.put("stepsMax", batchSteps.size());
-						stepCount++;
+						
+						if (stepCount != null) {
+							jsonBatch.put("stepCount", stepCount);
+							jsonBatch.put("stepsMax", batchSteps.size());
+							stepCount++;
+						}
+					} catch (JSONException e) {
+						logger.error("Failed to fill JSON information", e);
 					}
+					
 					
 					BatchProcessor<T> batchProcessor = new BatchProcessor<>(jsonBatch.toString(),
 							transactionService.getRetryingTransactionHelper(), getNextWorkWrapper(batchStep.getWorkProvider()),
@@ -342,7 +346,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				@Override
 				public int getTotalEstimatedWorkSize() {
-					return workProvider.getTotalEstimatedWorkSize();
+					return (int) workProvider.getTotalEstimatedWorkSizeLong();
 				}
 				
 				@Override
