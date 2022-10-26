@@ -4,22 +4,21 @@ ENV TOMCAT_DIR=/usr/local/tomcat
 
 # HOTSWAP AGENT
 # Install and configure Trava OpenJDK (OpenJDK pre-built with DCEVM and hotswap agent for Java 11)
-
-
-
-RUN curl -sL  https://github.com/TravaOpenJDK/trava-jdk-11-dcevm/releases/download/dcevm-11.0.15%2B1/Openjdk11u-dcevm-linux-x64.tar.gz \
+RUN curl -sL  https://github.com/TravaOpenJDK/trava-jdk-11-dcevm-newgen/releases/download/dcevm-11.0.10%2B6/java11-openjdk-dcevm-linux-amd64.tar.gz \
       -o $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz
 RUN mkdir -p /usr/java && tar -xvf $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz -C /usr/java/ && \
     rm $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz && \
-    update-alternatives --install /usr/bin/java java /usr/java/dcevm-11.0.15+1/bin/java 40000 && \
-    update-alternatives --install /usr/bin/javac javac /usr/java/dcevm-11.0.15+1/bin/javac 40000 && \
-    update-alternatives --install /usr/bin/jar jar /usr/java/dcevm-11.0.15+1/bin/jar 40000 && \
-    update-alternatives --set java /usr/java/dcevm-11.0.15+1/bin/java && \
-    update-alternatives --set javac /usr/java/dcevm-11.0.15+1/bin/javac && \
-    update-alternatives --set jar /usr/java/dcevm-11.0.15+1/bin/jar && \
-    ln -sfn /usr/java/dcevm-11.0.15+1 /usr/java/latest && \
-    ln -sfn /usr/java/dcevm-11.0.15+1 /usr/java/default
+    update-alternatives --install /usr/bin/java java /usr/java/dcevm-11.0.10+5/bin/java 40000 && \
+    update-alternatives --install /usr/bin/javac javac /usr/java/dcevm-11.0.10+5/bin/javac 40000 && \
+    update-alternatives --install /usr/bin/jar jar /usr/java/dcevm-11.0.10+5/bin/jar 40000 && \
+    update-alternatives --set java /usr/java/dcevm-11.0.10+5/bin/java && \
+    update-alternatives --set javac /usr/java/dcevm-11.0.10+5/bin/javac && \
+    update-alternatives --set jar /usr/java/dcevm-11.0.10+5/bin/jar && \
+    ln -sfn /usr/java/dcevm-11.0.10+5 /usr/java/latest && \
+    ln -sfn /usr/java/dcevm-11.0.10+5 /usr/java/default
 
+
+ENV JAVA_HOME=/usr/java/default
 ENV PATH $JAVA_HOME/bin:$PATH
 
 #Jacoco Agent

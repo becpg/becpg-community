@@ -30,6 +30,8 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
@@ -122,7 +124,19 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					public Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
 						return FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
 					}
+					
+					@Override
+					public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
+						return  0d;
+					}
 
+
+					@Override
+					public Double getQty(ProcessListDataItem processListDataItem) {
+						return  0d;
+					}
+
+					
 					@Override
 					public Double getNetWeight() {
 						return netWeight;
@@ -220,6 +234,18 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							}
 						}
 					}
+					
+
+					if ((formulatedProduct.getSecondaryYield() != null) && (formulatedProduct.getSecondaryYield() != 0d)) {
+						Double preparedValue = n.getValue();
+						if (preparedValue != null) {
+							if ((formulatedProduct.getYield() != null) && (formulatedProduct.getYield() != 0d)) {
+								preparedValue = preparedValue * (formulatedProduct.getYield() / 100d);
+							}
+							preparedValue = preparedValue / (formulatedProduct.getSecondaryYield() / 100d);
+						   n.setPreparedValue(preparedValue);
+						}
+					}
 
 					Double servingSize = FormulationHelper.getServingSizeInLorKg(formulatedProduct);
 					if ((servingSize != null) && (n.getValue() != null)) {
@@ -242,7 +268,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						n.setValuePerServing(null);
 						n.setGdaPerc(null);
 					}
-
+					
+					
+					
 					if (isCharactFormulated(n) && hasCompo) {
 						if (n.getManualValue() == null) {
 							n.setMethod(NUT_FORMULATED);

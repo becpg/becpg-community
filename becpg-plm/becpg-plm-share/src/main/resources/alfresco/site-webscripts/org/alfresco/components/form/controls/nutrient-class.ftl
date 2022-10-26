@@ -8,35 +8,35 @@
 	      <#assign class = nutrientDetails.nutrientClass>
 	      
 	      <#if nutrientDetails.category == "Fats">
-	      	<#assign totalFat = msg("nutriscore.display.totalfat", nutrientDetails.totalFat.lowerValue, nutrientDetails.totalFat.value, nutrientDetails.totalFat.upperValue, nutrientDetails.totalFat.score)
+	      	<#assign totalFat = msg("nutriscore.display.totalfat", nutrientDetails.parts['FAT'].lowerValue, nutrientDetails.parts['FAT'].value, nutrientDetails.parts['FAT'].upperValue, nutrientDetails.parts['FAT'].score)
 	      						+ "\n">
 	        <#assign satFat = "">
 	      <#else>
 	        <#assign totalFat = "">
-	        <#assign satFat = msg("nutriscore.display.satfat", nutrientDetails.satFat.lowerValue, nutrientDetails.satFat.value, nutrientDetails.satFat.upperValue, nutrientDetails.satFat.score)
+	        <#assign satFat = msg("nutriscore.display.satfat", nutrientDetails.parts['FASAT'].lowerValue, nutrientDetails.parts['FASAT'].value, nutrientDetails.parts['FASAT'].upperValue, nutrientDetails.parts['FASAT'].score)
 	      						+ "\n">
 	      </#if>
 	      
 	      <#assign displayValue = msg("nutriscore.display.negative") 
 	      						+ "\n"
-	      						+ msg("nutriscore.display.energy", nutrientDetails.energy.lowerValue, nutrientDetails.energy.value, nutrientDetails.energy.upperValue, nutrientDetails.energy.score)
+	      						+ msg("nutriscore.display.energy", nutrientDetails.parts['ENER-KJO'].lowerValue, nutrientDetails.parts['ENER-KJO'].value, nutrientDetails.parts['ENER-KJO'].upperValue, nutrientDetails.parts['ENER-KJO'].score)
 	      						+ "\n"
 	      						+ satFat
 	      						+ totalFat
-	      						+ msg("nutriscore.display.totalsugar", nutrientDetails.totalSugar.lowerValue, nutrientDetails.totalSugar.value, nutrientDetails.totalSugar.upperValue, nutrientDetails.totalSugar.score)
+	      						+ msg("nutriscore.display.totalsugar", nutrientDetails.parts['SUGAR'].lowerValue, nutrientDetails.parts['SUGAR'].value, nutrientDetails.parts['SUGAR'].upperValue, nutrientDetails.parts['SUGAR'].score)
 	      						+ "\n"
-	      						+ msg("nutriscore.display.sodium", nutrientDetails.sodium.lowerValue, nutrientDetails.sodium.value, nutrientDetails.sodium.upperValue, nutrientDetails.sodium.score)
+	      						+ msg("nutriscore.display.sodium", nutrientDetails.parts['NA'].lowerValue, nutrientDetails.parts['NA'].value, nutrientDetails.parts['NA'].upperValue, nutrientDetails.parts['NA'].score)
 	      						+ "\n"
 	      						+ "\n"
 	      						+ msg("nutriscore.display.positive")
 	      						+ "\n"
-	      						+ msg("nutriscore.display.protein", nutrientDetails.protein.lowerValue, nutrientDetails.protein.value, nutrientDetails.protein.upperValue, nutrientDetails.protein.score)
+	      						+ msg("nutriscore.display.protein", nutrientDetails.parts['PRO-'].lowerValue, nutrientDetails.parts['PRO-'].value, nutrientDetails.parts['PRO-'].upperValue, nutrientDetails.parts['PRO-'].score)
 	      						+ "\n"
-	      						+ msg("nutriscore.display.percfruitsandveg", nutrientDetails.percFruitsAndVetgs.lowerValue, nutrientDetails.percFruitsAndVetgs.value, nutrientDetails.percFruitsAndVetgs.upperValue, nutrientDetails.percFruitsAndVetgs.score)
+	      						+ msg("nutriscore.display.percfruitsandveg", nutrientDetails.parts['FRUIT_VEGETABLE'].lowerValue, nutrientDetails.parts['FRUIT_VEGETABLE'].value, nutrientDetails.parts['FRUIT_VEGETABLE'].upperValue, nutrientDetails.parts['FRUIT_VEGETABLE'].score)
 	      						+ "\n"
-	      						+ msg("nutriscore.display.nspfibre", nutrientDetails.nspFibre.lowerValue, nutrientDetails.nspFibre.value, nutrientDetails.nspFibre.upperValue, nutrientDetails.nspFibre.score)
+	      						+ msg("nutriscore.display.nspfibre", nutrientDetails.parts['PSACNS'].lowerValue, nutrientDetails.parts['PSACNS'].value, nutrientDetails.parts['PSACNS'].upperValue, nutrientDetails.parts['PSACNS'].score)
 	      						+ "\n"
-	      						+ msg("nutriscore.display.aoacfibre", nutrientDetails.aoacFibre.lowerValue, nutrientDetails.aoacFibre.value, nutrientDetails.aoacFibre.upperValue, nutrientDetails.aoacFibre.score)
+	      						+ msg("nutriscore.display.aoacfibre", nutrientDetails.parts['FIBTG'].lowerValue, nutrientDetails.parts['FIBTG'].value, nutrientDetails.parts['FIBTG'].upperValue, nutrientDetails.parts['FIBTG'].score)
 	      						+ "\n"
 	      						+ "\n"
 	      						+ msg("nutriscore.display.finalScore", nutrientDetails.aScore, nutrientDetails.cScore, nutrientDetails.nutriScore)

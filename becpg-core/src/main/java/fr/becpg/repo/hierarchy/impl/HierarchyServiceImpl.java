@@ -19,7 +19,6 @@
 package fr.becpg.repo.hierarchy.impl;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -76,21 +75,31 @@ public class HierarchyServiceImpl implements HierarchyService {
 	@Autowired
 	private Repository repositoryHelper;
 
+	@Override
+	public NodeRef getHierarchyByPath(String path, NodeRef parentNodeRef, QName key, String value) {
+		if (key == null) {
+			return getHierarchyByPath(path, parentNodeRef, value);
+		}
+
+		return getLuceneQuery(path, parentNodeRef, key, value, false).singleValue();
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getHierarchyByPath(String path, NodeRef parentNodeRef, String value) {
 
-		NodeRef hierarchyNodeRef = getHierarchyByQuery(getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_CODE, value, false), value);
+		NodeRef hierarchyNodeRef = getHierarchyByPath(path, parentNodeRef, BeCPGModel.PROP_CODE, value);
 
 		if (hierarchyNodeRef == null) {
-			hierarchyNodeRef = getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value, false).singleValue();
+			hierarchyNodeRef = getHierarchyByPath(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value);
 		}
-		
+
 		if (hierarchyNodeRef == null) {
-			hierarchyNodeRef = getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_ERP_CODE, value, false).singleValue();
+			hierarchyNodeRef = getHierarchyByPath(path, parentNodeRef, BeCPGModel.PROP_ERP_CODE, value);
 		}
 
 		return hierarchyNodeRef;
+
 	}
 
 	/** {@inheritDoc} */
@@ -107,25 +116,17 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 	@Override
 	public List<NodeRef> getAllHierarchiesByDepthLevel(String parentPath, String query, String depthLevel) {
-		
-		List<NodeRef> ret = new ArrayList<>();
-		
-		NodeRef parentNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(), AbstractBeCPGQueryBuilder.encodePath(parentPath));
 
-		List<NodeRef> listContainers = BeCPGQueryBuilder.createQuery().ofType(ContentModel.TYPE_FOLDER).parent(parentNodeRef).list();
+		NodeRef listContainerNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+				AbstractBeCPGQueryBuilder.encodePath(parentPath));
 
-		for (NodeRef listContainerNodeRef : listContainers) {
-			
-			BeCPGQueryBuilder luceneQuery = buildLuceneQuery(null, BeCPGModel.PROP_LKV_VALUE, query, true, listContainerNodeRef);
-		
-			if (depthLevel != null) {
-				luceneQuery = luceneQuery.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, depthLevel);
-			}
-			
-			ret.addAll(luceneQuery.list());
+		BeCPGQueryBuilder luceneQuery = buildLuceneQuery(null, BeCPGModel.PROP_LKV_VALUE, query, true, listContainerNodeRef);
+
+		if (depthLevel != null) {
+			luceneQuery = luceneQuery.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, depthLevel);
 		}
-		
-		return ret;
+
+		return luceneQuery.list();
 	}
 
 	/** {@inheritDoc} */
@@ -158,23 +159,6 @@ public class HierarchyServiceImpl implements HierarchyService {
 		return entityNodeRef;
 	}
 
-	private NodeRef getHierarchyByQuery(BeCPGQueryBuilder queryBuilder, String value) {
-
-		List<NodeRef> ret = queryBuilder.list();
-
-		if (ret.size() == 1) {
-			return ret.get(0);
-		} else if (ret.size() > 1) {
-			for (NodeRef n : ret) {
-				if (value.equals(nodeService.getProperty(n, BeCPGModel.PROP_LKV_VALUE))) {
-					return n;
-				}
-			}
-		}
-
-		return null;
-	}
-
 	private BeCPGQueryBuilder getLuceneQuery(String path, NodeRef parentNodeRef, QName property, String value, boolean all) {
 
 		NodeRef listContainerNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
@@ -190,22 +174,21 @@ public class HierarchyServiceImpl implements HierarchyService {
 		if (parentNodeRef != null) {
 			ret.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parentNodeRef.toString());
 			if (value.contains(SUFFIX_ALL)) {
-				ret.addSort(BeCPGModel.PROP_LKV_VALUE,true);
+				ret.addSort(BeCPGModel.PROP_LKV_VALUE, true);
 			} else {
-				ret.addSort(BeCPGModel.PROP_SORT,true);
+				ret.addSort(BeCPGModel.PROP_SORT, true);
 			}
 		} else if (!all) {
 			ret.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, "1");
 			if (value.contains(SUFFIX_ALL)) {
-				ret.addSort(BeCPGModel.PROP_LKV_VALUE,true);
+				ret.addSort(BeCPGModel.PROP_LKV_VALUE, true);
 			} else {
-				ret.addSort(BeCPGModel.PROP_SORT,true);
+				ret.addSort(BeCPGModel.PROP_SORT, true);
 			}
 		} else {
-			ret.addSort(BeCPGModel.PROP_SORT,true);
+			ret.addSort(BeCPGModel.PROP_SORT, true);
 		}
 
-		
 		// value == * -> return all
 		if (!isAllQuery(value)) {
 			if (value.contains(SUFFIX_ALL)) {
@@ -242,29 +225,29 @@ public class HierarchyServiceImpl implements HierarchyService {
 			try {
 				I18NUtil.setLocale(locale);
 				I18NUtil.setContentLocale(null);
-				
-					QName type = nodeService.getType(entityNodeRef);
-					ClassDefinition classDef = dictionaryService.getClass(type);
-					
-					NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(),
-							classDef.getTitle(dictionaryService));
 
-					destinationNodeRef = getOrCreateHierachyFolder(entityNodeRef, hierarchyQname, destinationNodeRef);
+				QName type = nodeService.getType(entityNodeRef);
+				ClassDefinition classDef = dictionaryService.getClass(type);
 
-					if (destinationNodeRef != null) {
-						if (destinationNodeRef != entityNodeRef) {
-							// classify
-							if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(destinationNodeRef))) {
-								logger.warn("Incorrect destination node type:" + nodeService.getType(destinationNodeRef));
-							} else {
-								return repoService.moveNode(entityNodeRef, destinationNodeRef);
-							}
+				NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(containerNodeRef, type.getLocalName(),
+						classDef.getTitle(dictionaryService));
+
+				destinationNodeRef = getOrCreateHierachyFolder(entityNodeRef, hierarchyQname, destinationNodeRef);
+
+				if (destinationNodeRef != null) {
+					if (destinationNodeRef != entityNodeRef) {
+						// classify
+						if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(destinationNodeRef))) {
+							logger.warn("Incorrect destination node type:" + nodeService.getType(destinationNodeRef));
 						} else {
-							logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef + " cannot classify into itselfs");
+							return repoService.moveNode(entityNodeRef, destinationNodeRef);
 						}
 					} else {
-						logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef);
+						logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef + " cannot classify into itselfs");
 					}
+				} else {
+					logger.warn("Failed to classify entity. entityNodeRef: " + entityNodeRef);
+				}
 
 				return false;
 
@@ -300,17 +283,17 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef getOrCreateHierachyFolder(NodeRef entityNodeRef,  QName hierarchyQname , NodeRef destinationNodeRef) {
-		
+	public NodeRef getOrCreateHierachyFolder(NodeRef entityNodeRef, QName hierarchyQname, NodeRef destinationNodeRef) {
+
 		NodeRef hierarchyNodeRef = getHierarchyNodeRef(entityNodeRef, hierarchyQname);
-		
+
 		if (hierarchyNodeRef != null) {
 			destinationNodeRef = getOrCreateHierachyFolder(hierarchyNodeRef, destinationNodeRef);
 		}
 
 		return destinationNodeRef;
 	}
-	
+
 	private NodeRef getOrCreateHierachyFolder(NodeRef hierarchyNodeRef, NodeRef parentNodeRef) {
 		NodeRef destinationNodeRef = null;
 

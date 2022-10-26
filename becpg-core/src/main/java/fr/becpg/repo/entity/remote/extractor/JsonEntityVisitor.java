@@ -427,7 +427,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 
-					if (!matchProp(assocName, nodeType)) {
+					if (!matchProp(assocName, nodeType, false)) {
 						continue;
 					}
 
@@ -460,19 +460,23 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	private boolean matchProp(QName assocName, QName propName) {
+	private boolean matchProp(QName assocName, QName propName, boolean checkFilter) {
 
-		if (((assocName == null) && (params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()
-				&& !params.getFilteredProperties().contains(propName))
-				|| ((assocName != null) && (params.getFilteredAssocProperties() != null) && !params.getFilteredAssocProperties().isEmpty()
-						&& (!params.getFilteredAssocProperties().containsKey(assocName)
-								|| !params.getFilteredAssocProperties().get(assocName).contains(propName)))
-
-		) {
-			return false;
+		if(assocName == null) {
+			if(params.getFilteredProperties() != null && !params.getFilteredProperties().isEmpty()) {
+				return params.getFilteredProperties().contains(propName);
+			} else {
+				return !checkFilter;
+			}
+			
+		} else {
+			if((params.getFilteredAssocProperties() != null) && !params.getFilteredAssocProperties().isEmpty()) {
+				return params.getFilteredAssocProperties().containsKey(assocName) && params.getFilteredAssocProperties().get(assocName).contains(propName);
+			} else {
+				return !checkFilter;
+			}
 		}
-
-		return true;
+		
 
 	}
 
@@ -482,16 +486,17 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 		if (props != null) {
 			for (Map.Entry<QName, Serializable> entry : props.entrySet()) {
 				QName propQName = entry.getKey();
+				QName propName = entry.getKey().getPrefixedQName(namespaceService);
 				if ((entry.getValue() != null) && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
-						&& !propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) && !propQName.equals(ContentModel.PROP_CONTENT)
+						&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || matchProp(assocName, propName, true)) && !propQName.equals(ContentModel.PROP_CONTENT)
 						&& params.shouldExtractField(propQName)) {
 					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
-						QName propName = entry.getKey().getPrefixedQName(namespaceService);
+					
 
 						// Assoc properties filter
-						if (!matchProp(assocName, propName)) {
+						if (!matchProp(assocName, propName, false)) {
 							continue;
 						}
 

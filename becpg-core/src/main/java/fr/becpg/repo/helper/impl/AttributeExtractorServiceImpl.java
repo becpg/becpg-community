@@ -1178,6 +1178,18 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					if (!value.startsWith(compValue) && !displayValue.startsWith(compValue)) {
 						return false;
 					}
+				} else if ((compValue != null) && compValue.contains("..")) {
+					String[] bounds = compValue.split("\\.\\.");
+					
+					if (bounds.length > 1) {
+						String lowerBound = bounds[0];
+						String upperBound = bounds[1];
+						
+						if ((value.compareTo(lowerBound) < 0 || value.compareTo(upperBound) > 0) && (displayValue.compareTo(lowerBound) < 0 || displayValue.compareTo(lowerBound) > 0)) {
+							return false;
+						}
+						
+					}
 				} else if ((compValue != null) && (!value.equals(compValue) && !displayValue.equals(compValue))) {
 					return false;
 

@@ -344,7 +344,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 
 	/** {@inheritDoc} */
 	@Override
-	public PackagingListDataItem clone() {
+	public PackagingListDataItem copy() {
 		return new PackagingListDataItem(this);
 	}
 

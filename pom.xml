@@ -162,6 +162,8 @@
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths>
 		<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+		<sonar.dependencyCheck.jsonReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
+		<sonar.dependencyCheck.htmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.ws.timeout>3600</sonar.ws.timeout>
 		<sonar.language>java</sonar.language>
@@ -474,6 +476,27 @@
 				</configuration>
 			</plugin>
 
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>7.2.1</version>
+				<configuration>
+					<skipProvidedScope>false</skipProvidedScope>
+					<skipRuntimeScope>true</skipRuntimeScope>
+					<skipSystemScope>true</skipSystemScope>
+					<skipTestScope>true</skipTestScope>
+					<archiveAnalyzerEnabled>false</archiveAnalyzerEnabled>
+					<failOnError>false</failOnError>
+					<formats>HTML,JSON,XML</formats>
+				</configuration>
+			</plugin>
+
+
+			<plugin>
+				<groupId>org.sonarsource.scanner.maven</groupId>
+				<artifactId>sonar-maven-plugin</artifactId>
+				<version>3.9.1.2184</version>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -500,6 +523,25 @@
 					<reportSet>
 						<reports>
 							<report>aggregate-no-fork</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>7.2.1</version>
+				<configuration>
+					<skipProvidedScope>false</skipProvidedScope>
+					<skipRuntimeScope>true</skipRuntimeScope>
+					<skipSystemScope>true</skipSystemScope>
+					<skipTestScope>true</skipTestScope>
+					<archiveAnalyzerEnabled>false</archiveAnalyzerEnabled>
+				</configuration>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>aggregate</report>
 						</reports>
 					</reportSet>
 				</reportSets>

@@ -30,6 +30,8 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	
+	private static final int MAX_SIBLING_LISTS = 10;
+
 	private static final Log logger = LogFactory.getLog(InitEntityListPolicy.class);
 
 	/** The namespace service. */
@@ -110,7 +112,7 @@ public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeSer
 			count = Integer.parseInt(localName.split("@")[1]);
 		}
 		count++;
-		if ((count < 5) && (nodeService.getChildByName(nodeService.getPrimaryParent(dataListNodeRef).getParentRef(), ContentModel.ASSOC_CONTAINS, localName) != null)) {
+		if ((count < MAX_SIBLING_LISTS) && (nodeService.getChildByName(nodeService.getPrimaryParent(dataListNodeRef).getParentRef(), ContentModel.ASSOC_CONTAINS, localName) != null)) {
 			return createName(dataListNodeRef, localName.split("@")[0] + "@" + count);
 		}
 		return localName;

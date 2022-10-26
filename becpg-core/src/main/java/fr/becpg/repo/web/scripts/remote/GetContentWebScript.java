@@ -24,7 +24,6 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.report.entity.EntityReportService;
-import io.opencensus.common.Scope;
 
 /**
  * <p>GetContentWebScript class.</p>
@@ -35,7 +34,7 @@ import io.opencensus.common.Scope;
 public class GetContentWebScript extends AbstractEntityWebScript {
 
 	private static final String PARAM_SHARE = "share";
-	
+
 	private EntityReportService entityReportService;
 	private AssociationService associationService;
 	private ContentService contentService;
@@ -75,73 +74,70 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
-		try (Scope scope = tracer.spanBuilder("/remote/content").startScopedSpan()) {
-			NodeRef documentNodeRef = findEntity(req);
+		NodeRef documentNodeRef = findEntity(req);
 
-			try  {
+		try {
 
-				if ("true".equalsIgnoreCase(req.getParameter(PARAM_SHARE))) {
-					if (AccessStatus.ALLOWED.equals(permissionService.hasPermission(documentNodeRef, PermissionService.WRITE))) {
-						String sharedId = quickShareService.shareContent(documentNodeRef).getId();
-						res.getOutputStream().write(sharedId.getBytes());
-					} else {
-						throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to share this node");
-					}
+			if ("true".equalsIgnoreCase(req.getParameter(PARAM_SHARE))) {
+				if (AccessStatus.ALLOWED.equals(permissionService.hasPermission(documentNodeRef, PermissionService.WRITE))) {
+					String sharedId = quickShareService.shareContent(documentNodeRef).getId();
+					res.getOutputStream().write(sharedId.getBytes());
 				} else {
-					if (ReportModel.TYPE_REPORT.equals(nodeService.getType(documentNodeRef))) {
-						List<NodeRef> sourceAssocList = associationService.getSourcesAssocs(documentNodeRef, ReportModel.ASSOC_REPORTS);
+					throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to share this node");
+				}
+			} else {
+				if (ReportModel.TYPE_REPORT.equals(nodeService.getType(documentNodeRef))) {
+					List<NodeRef> sourceAssocList = associationService.getSourcesAssocs(documentNodeRef, ReportModel.ASSOC_REPORTS);
 
-						if (!sourceAssocList.isEmpty()) {
-							entityReportService.getOrRefreshReport(sourceAssocList.get(0), documentNodeRef);
-						}
+					if (!sourceAssocList.isEmpty()) {
+						entityReportService.getOrRefreshReport(sourceAssocList.get(0), documentNodeRef);
 					}
-
-					// get the content reader
-					ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
-					if ((reader == null) || !reader.exists()) {
-						throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef);
-					}
-
-					String mimetype = reader.getMimetype();
-					String extensionPath = req.getExtensionPath();
-					if ((mimetype == null) || (mimetype.length() == 0)) {
-						mimetype = MimetypeMap.MIMETYPE_BINARY;
-						int extIndex = extensionPath.lastIndexOf('.');
-						if (extIndex != -1) {
-							String ext = extensionPath.substring(extIndex + 1);
-							mimetype = mimetypeService.getMimetype(ext);
-						}
-					}
-					final String encoding = reader.getEncoding();
-
-
-					// set mimetype for the content and the character encoding for the stream
-					res.setContentType(mimetype);
-					res.setContentEncoding(encoding);
-
-					// get the content and stream directly to the response output stream
-					// assuming the repository is capable of streaming in chunks, this should allow large files
-					// to be streamed directly to the browser response stream.
-					reader.getContent(res.getOutputStream());
-
 				}
 
-			} catch (BeCPGException e) {
-				logger.error("Cannot export content", e);
-				throw new WebScriptException(e.getMessage());
-			} catch (AccessDeniedException e) {
-				throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
-			} catch (SocketException e1) {
-
-				// the client cut the connection - our mission was accomplished
-				// apart from a little error message
-				if (logger.isInfoEnabled()) {
-					logger.info("Client aborted stream read:\n\tcontent", e1);
+				// get the content reader
+				ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
+				if ((reader == null) || !reader.exists()) {
+					throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef);
 				}
+
+				String mimetype = reader.getMimetype();
+				String extensionPath = req.getExtensionPath();
+				if ((mimetype == null) || (mimetype.length() == 0)) {
+					mimetype = MimetypeMap.MIMETYPE_BINARY;
+					int extIndex = extensionPath.lastIndexOf('.');
+					if (extIndex != -1) {
+						String ext = extensionPath.substring(extIndex + 1);
+						mimetype = mimetypeService.getMimetype(ext);
+					}
+				}
+				final String encoding = reader.getEncoding();
+
+				// set mimetype for the content and the character encoding for the stream
+				res.setContentType(mimetype);
+				res.setContentEncoding(encoding);
+
+				// get the content and stream directly to the response output stream
+				// assuming the repository is capable of streaming in chunks, this should allow large files
+				// to be streamed directly to the browser response stream.
+				reader.getContent(res.getOutputStream());
 
 			}
 
+		} catch (BeCPGException e) {
+			logger.error("Cannot export content", e);
+			throw new WebScriptException(e.getMessage());
+		} catch (AccessDeniedException e) {
+			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
+		} catch (SocketException e1) {
+
+			// the client cut the connection - our mission was accomplished
+			// apart from a little error message
+			if (logger.isInfoEnabled()) {
+				logger.info("Client aborted stream read:\n\tcontent", e1);
+			}
+
 		}
+
 	}
 
 }

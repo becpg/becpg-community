@@ -30,6 +30,8 @@ import org.alfresco.service.namespace.QName;
  * @version $Id: $Id
  */
 public interface HierarchyService {
+	
+	NodeRef getHierarchyByPath(String path, NodeRef parentHierachyNodeRef, QName key, String value);
 
 	/**
 	 * <p>getHierarchyByPath.</p>
@@ -103,5 +105,6 @@ public interface HierarchyService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getOrCreateHierachyFolder(NodeRef entityNodeRef, QName hierarchyQname, NodeRef destinationNodeRef);
+
 	
 }

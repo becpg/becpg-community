@@ -27,7 +27,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @author matthieu
  * @version $Id: $Id
  */
-public interface SimpleCharactDataItem extends RepositoryEntity {
+public interface SimpleCharactDataItem extends RepositoryEntity, CopiableDataItem {
 
 	/**
 	 * <p>setCharactNodeRef.</p>

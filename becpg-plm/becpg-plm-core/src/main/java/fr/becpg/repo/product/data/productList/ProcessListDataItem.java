@@ -276,7 +276,7 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 
 	/** {@inheritDoc} */
 	@Override
-	public CompositionDataItem clone() {
+	public CompositionDataItem copy() {
 		return new ProcessListDataItem(this);
 	}
 

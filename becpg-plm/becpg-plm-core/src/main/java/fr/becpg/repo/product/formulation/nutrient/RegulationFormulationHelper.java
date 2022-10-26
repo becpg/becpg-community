@@ -84,7 +84,7 @@ public class RegulationFormulationHelper {
 		regulations.put("UY", new BrazilianNutrientRegulation("beCPG/databases/nuts/UruguayanNutrientRegulation.csv"));
 		regulations.put("BR", new BrazilianNutrientRegulation("beCPG/databases/nuts/BrazilianNutrientRegulation.csv"));
 		regulations.put("CTA", new CentralAmericanNutrientRegulation("beCPG/databases/nuts/CentralAmericanNutrientRegulation.csv"));
-		
+
 	}
 
 	/**
@@ -185,7 +185,11 @@ public class RegulationFormulationHelper {
 	public static Double extractValue(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_VALUE, key);
 	}
-	
+
+	public static Double extractPreparedValue(String roundedValue, String key) {
+		return extractValueByKey(roundedValue, KEY_SECONDARY_VALUE, key);
+	}
+
 	/**
 	 * <p>extractValue.</p>
 	 *
@@ -236,7 +240,7 @@ public class RegulationFormulationHelper {
 				|| locale.getCountry().equals("PK") || locale.getCountry().equals("ZA") || locale.getCountry().equals("TN")
 				|| locale.getCountry().equals("EG") || locale.getCountry().equals("CL") || locale.getCountry().equals("UY")
 				|| locale.getCountry().equals("BR") || locale.getCountry().equals("TT") || locale.getCountry().equals("DO")
-				|| locale.getCountry().equals("PE")){
+				|| locale.getCountry().equals("PE")) {
 			return locale.getCountry();
 		} else if (locale.getLanguage().equals("zh")) {
 			return "CN";
@@ -256,7 +260,7 @@ public class RegulationFormulationHelper {
 		} else if (locale.getCountry().equals("KE") || locale.getCountry().equals("NG") || locale.getCountry().equals("GH")
 				|| locale.getCountry().equals("CI") || locale.getCountry().equals("UG") || locale.getCountry().equals("MZ")
 				|| locale.getCountry().equals("MW") || locale.getCountry().equals("TZ") || locale.getCountry().equals("ZM")
-				|| locale.getCountry().equals("ZW") || locale.getCountry().equals("KH") || locale.getCountry().equals("MM") 
+				|| locale.getCountry().equals("ZW") || locale.getCountry().equals("KH") || locale.getCountry().equals("MM")
 				|| locale.getCountry().equals("JO") || locale.getCountry().equals("IQ") || locale.getCountry().equals("PS")) {
 			return "CODEX";
 		} else if (locale.getCountry().equals("CO")) {
@@ -285,17 +289,18 @@ public class RegulationFormulationHelper {
 				JSONObject jsonRound = new JSONObject(tokener);
 
 				for (String locKey : getAvailableRegulations()) {
-					
-					if(locKey.equals(localKey) || "all".equals(localesToDisplay) || (localesToDisplay!=null && localesToDisplay.contains(locKey))) {
-					
+
+					if (locKey.equals(localKey) || "all".equals(localesToDisplay)
+							|| (localesToDisplay != null && localesToDisplay.contains(locKey))) {
+
 						NutrientRegulation regulation = getRegulation(locKey);
 						NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
-	
+
 						String suffix = "";
 						if (!locKey.equals(localKey)) {
 							suffix = "_" + locKey;
 						}
-	
+
 						if (def != null) {
 							if (def.getSort() != null) {
 								nutListElt.addAttribute("regulSort" + suffix, "" + def.getSort());
@@ -303,7 +308,7 @@ public class RegulationFormulationHelper {
 							if (def.getDepthLevel() != null) {
 								nutListElt.addAttribute("regulDepthLevel" + suffix, "" + def.getDepthLevel());
 							}
-	
+
 							if (isDisplayed) {
 								if (Boolean.TRUE.equals(def.getMandatory())) {
 									nutListElt.addAttribute("regulDisplayMode" + suffix, "M");
@@ -311,7 +316,7 @@ public class RegulationFormulationHelper {
 									nutListElt.addAttribute("regulDisplayMode" + suffix, "O");
 								}
 							}
-	
+
 							if (def.getBold() != null) {
 								nutListElt.addAttribute("regulBold" + suffix, "" + def.getBold());
 							}
@@ -328,7 +333,7 @@ public class RegulationFormulationHelper {
 								nutListElt.addAttribute("regulShowGDAPerc" + suffix, "" + def.getShowGDAPerc());
 							}
 						}
-	
+
 						for (Iterator<?> i = jsonRound.keys(); i.hasNext();) {
 							String valueKey = (String) i.next();
 							JSONObject value = (JSONObject) jsonRound.get(valueKey);
@@ -336,7 +341,7 @@ public class RegulationFormulationHelper {
 								nutListElt.addAttribute("rounded" + keyToXml(valueKey) + suffix, "" + value.get(locKey));
 							}
 						}
-	
+
 						if ((nutListValue != null) && (!nutListValue.equals(""))) {
 							nutListElt.addAttribute("roundedDisplayValue" + suffix, RegulationFormulationHelper
 									.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutCode, locale, locKey));
@@ -347,8 +352,9 @@ public class RegulationFormulationHelper {
 							}
 						}
 						if ((nutListValuePerServing != null) && (!nutListValuePerServing.equals(""))) {
-							nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix, RegulationFormulationHelper.displayValue(
-									Double.parseDouble(nutListValuePerServing), extractValuePerServing(roundedValue, locKey), nutCode, locale, locKey));
+							nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix,
+									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing),
+											extractValuePerServing(roundedValue, locKey), nutCode, locale, locKey));
 						}
 					}
 				}
@@ -367,10 +373,10 @@ public class RegulationFormulationHelper {
 			return ((Number) vps).doubleValue();
 		} else if (vps instanceof String) {
 			try {
-			 return Double.valueOf((String) vps);
+				return Double.valueOf((String) vps);
 			} catch (NumberFormatException e) {
-				logger.error("Cannot parse number:"+ (String) vps);
-				return null;	
+				logger.error("Cannot parse number:" + (String) vps);
+				return null;
 			}
 		}
 		return (Double) vps;
@@ -440,7 +446,7 @@ public class RegulationFormulationHelper {
 			JSONObject valuePerContainer = new JSONObject();
 			JSONObject gdaPerContainer = new JSONObject();
 			Map<String, JSONObject> variants = new HashMap<>();
-			
+
 			for (String key : getAvailableRegulations()) {
 
 				String nutUnit = n.getUnit();
@@ -448,19 +454,21 @@ public class RegulationFormulationHelper {
 				NutrientRegulation regulation = getRegulation(key);
 				NutrientDefinition def = regulation.getNutrientDefinition(nutCode);
 				value.put(key, regulation.round(n.getValue(), nutCode, nutUnit));
+				secondaryValue.put(key, regulation.round(n.getPreparedValue(), nutCode, nutUnit));
 				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
 				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
-				
+
 				if (n instanceof VariantAwareDataItem) {
-					for (int i=1; i<=VariantAwareDataItem.VARIANT_COLUMN_SIZE ; i++) {
-						if (((VariantAwareDataItem)n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i) != null){
+					for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
+						if (((VariantAwareDataItem) n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i) != null) {
 							JSONObject variant = new JSONObject();
-							variant.put(key, regulation.round(((VariantAwareDataItem)n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME+i), nutCode, nutUnit));
-							variants.put(VariantAwareDataItem.VARIANT_COLUMN_NAME+i, variant);
+							variant.put(key, regulation.round(((VariantAwareDataItem) n).getValue(VariantAwareDataItem.VARIANT_COLUMN_NAME + i),
+									nutCode, nutUnit));
+							variants.put(VariantAwareDataItem.VARIANT_COLUMN_NAME + i, variant);
 						}
 					}
 				}
-					
+
 				Double servingSize = getServingSize(key, formulatedProduct);
 
 				if ((n.getValue() != null) && (servingSize != null)) {
@@ -472,23 +480,11 @@ public class RegulationFormulationHelper {
 					}
 				}
 
-				if ((formulatedProduct.getSecondaryYield() != null) && (formulatedProduct.getSecondaryYield() != 0d)) {
-					Double tmp = n.getValue();
-					if (tmp != null) {
-						if ((formulatedProduct.getYield() != null) && (formulatedProduct.getYield() != 0d)) {
-							tmp = tmp * (formulatedProduct.getYield() / 100d);
-						}
-						tmp = tmp / (formulatedProduct.getSecondaryYield() / 100d);
-
-						secondaryValue.put(key, regulation.round(tmp, nutCode, nutUnit));
-
-						if (servingSize != null) {
-							Double tmpPerServing = tmp * (servingSize / 100d);
-							secondaryValuePerServing.put(key, regulation.round(tmpPerServing, nutCode, nutUnit));
-						}
-					}
+				if ((n.getPreparedValue() != null) && (servingSize != null)) {
+					Double valuePerserving = (n.getPreparedValue() * (servingSize * 1000d)) / 100;
+					secondaryValuePerServing.put(key, regulation.round(valuePerserving, nutCode, nutUnit));
 				}
-				
+
 				Double containerQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
 				if ((key.equals("US") || key.equals("US_2013")) && (n.getValue() != null)) {
 					Double vpc = regulation.round(n.getValue() * containerQty * 10, nutCode, nutUnit);
@@ -497,22 +493,20 @@ public class RegulationFormulationHelper {
 						gdaPerContainer.put(key, regulation.roundGDA((100 * vpc) / def.getGda(), nutCode));
 					}
 				}
-			
 
-			jsonRound.put(KEY_VALUE, value);
-			jsonRound.put(KEY_SECONDARY_VALUE, secondaryValue);
-			jsonRound.put(KEY_SECONDARY_VALUE_PER_SERVING, secondaryValuePerServing);
-			jsonRound.put(KEY_MINI, mini);
-			jsonRound.put(KEY_MAXI, maxi);
-			jsonRound.put(KEY_VALUE_PER_SERVING, valuePerServing);
-			jsonRound.put(KEY_GDA_PERC, gda);
-			jsonRound.put(KEY_VALUE_PER_CONTAINER, valuePerContainer);
-			jsonRound.put(KEY_GDA_PERC_PER_CONTAINER, gdaPerContainer);
-			
-			for (String variantKey : variants.keySet()) 
-				jsonRound.put(variantKey, variants.get(variantKey));
+				jsonRound.put(KEY_VALUE, value);
+				jsonRound.put(KEY_SECONDARY_VALUE, secondaryValue);
+				jsonRound.put(KEY_SECONDARY_VALUE_PER_SERVING, secondaryValuePerServing);
+				jsonRound.put(KEY_MINI, mini);
+				jsonRound.put(KEY_MAXI, maxi);
+				jsonRound.put(KEY_VALUE_PER_SERVING, valuePerServing);
+				jsonRound.put(KEY_GDA_PERC, gda);
+				jsonRound.put(KEY_VALUE_PER_CONTAINER, valuePerContainer);
+				jsonRound.put(KEY_GDA_PERC_PER_CONTAINER, gdaPerContainer);
+
+				for (String variantKey : variants.keySet())
+					jsonRound.put(variantKey, variants.get(variantKey));
 			}
-			
 
 		} catch (JSONException e) {
 			logger.error(e, e);
@@ -528,8 +522,8 @@ public class RegulationFormulationHelper {
 					String txt = formulatedProduct.getServingSizeByCountry().get(locale);
 					if ((txt != null) && !txt.isEmpty()) {
 						servingSize = parseDouble(txt);
-						if(servingSize == null) {
-							formulatedProduct.addError(I18NUtil.getMessage("message.formulate.nut.wrongServingSize",txt,key));
+						if (servingSize == null) {
+							formulatedProduct.addError(I18NUtil.getMessage("message.formulate.nut.wrongServingSize", txt, key));
 						}
 						break;
 					}
@@ -626,17 +620,17 @@ public class RegulationFormulationHelper {
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("pt_BR")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PY"))) {
 			ret.add("BR");
 		}
-		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_TT"))){
-			ret.add("TT"); 
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_TT"))) {
+			ret.add("TT");
 		}
-		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_DO"))){
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_DO"))) {
 			ret.add("DO");
 		}
-		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PE"))){
+		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PE"))) {
 			ret.add("PE");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PA")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_SV"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_GT"))){
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_GT"))) {
 			ret.add("CTA");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_AE")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_BH"))
@@ -647,13 +641,20 @@ public class RegulationFormulationHelper {
 			ret.add("GSO");
 		}
 		if (MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ee_GH")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_GH"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_NG")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ig_NG"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_KE")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("pt_MZ"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("sw_TZ")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("fr_CI"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_UG")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_MW"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_ZW")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("bem_ZM"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("km_KH")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("my_MM"))
-				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_IQ")) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_JO"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_NG"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ig_NG"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_KE"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("pt_MZ"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("sw_TZ"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("fr_CI"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_UG"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_MW"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("en_ZW"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("bem_ZM"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("km_KH"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("my_MM"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_IQ"))
+				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_JO"))
 				|| MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("ar_PS"))) {
 			ret.add("CODEX");
 		}

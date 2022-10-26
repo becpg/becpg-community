@@ -23,8 +23,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import io.opencensus.common.Scope;
-
 /**
  * Delete corresponding entity
  *
@@ -36,17 +34,14 @@ public class DeleteEntityWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-		try (Scope scope = tracer.spanBuilder("/remote/delete").startScopedSpan()) {
-			NodeRef entityNodeRef = findEntity(req);
+		NodeRef entityNodeRef = findEntity(req);
 
-			if (logger.isDebugEnabled()) {
-				logger.debug("Deleting entity: " + entityNodeRef);
-			}
-			nodeService.deleteNode(entityNodeRef);
-
-			sendOKStatus(entityNodeRef, resp, getFormat(req));
+		if (logger.isDebugEnabled()) {
+			logger.debug("Deleting entity: " + entityNodeRef);
 		}
+		nodeService.deleteNode(entityNodeRef);
 
+		sendOKStatus(entityNodeRef, resp, getFormat(req));
 	}
 
 }

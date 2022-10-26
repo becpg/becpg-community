@@ -20,7 +20,7 @@ def make_variables(data_vars, solver):
 		if var_name in var_dict:
 			raise ProgramSpecificationError("Multiple variables named {}".format(var_name))
 
-		var_dict[var_name] = solver.NumVar(0, solver.infinity(), var_name)
+		var_dict[var_name] = solver.NumVar(data_vars[var_name], solver.infinity(), var_name)
 	return var_dict
 
 def solve(content):

@@ -46,16 +46,10 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private static final String SUPPLIER_PJT_TPL_NAME = "plm.supplier.portal.project.tpl.name";
 	private static final String SUPPLIER_TASK_NAME = "plm.supplier.portal.task.supplier.name";
-	private static final String NOTIFICATION_TASK_NAME = "plm.supplier.portal.task.notification.name";
-	private static final String SIGNATURE_TASK_NAME = "plm.supplier.portal.task.signature.name";
 	private static final String VALIDATION_TASK_NAME = "plm.supplier.portal.task.validation.name";
 	private static final String SUPPLIER_WIZARD_NAME = "plm.supplier.portal.deliverable.wizard.name";
 	private static final String SUPPLIER_PRE_SCRIPT = "plm.supplier.portal.deliverable.scripts.pre.name";
-	private static final String SIGNATURE_PRE_SCRIPT = "plm.supplier.portal.deliverable.scripts.sign.pre.name";
-	private static final String SIGNATURE_URL = "plm.supplier.portal.deliverable.sign.url.name";
-	private static final String SIGNATURE_POST_SCRIPT = "plm.supplier.portal.deliverable.scripts.sign.post.name";
-	private static final String VALIDATE_PRE_SCRIPT = "plm.supplier.portal.deliverable.scripts.pre.name";
-	private static final String NOTIFICATION_SIGNED_DOCUMENT = "notificationSignedDocument";
+	private static final String SIGNATURES_PREPARATION_SCRIPT = "plm.supplier.portal.deliverable.scripts.signature.name";
 
 	private static final String SUPPLIER_SITE_PRESET = "supplier-site-dashboard";
 
@@ -152,26 +146,10 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			task2.setRefusedTask(task1);
 
 			pjtTpl.getTaskList().add(task2);
-			
-
-			TaskListDataItem signatureTask = new TaskListDataItem();
-			signatureTask.setTaskName(I18NUtil.getMessage(SIGNATURE_TASK_NAME));
-			signatureTask.setDuration(5);
-
-			pjtTpl.getTaskList().add(signatureTask);
-			
-			TaskListDataItem notificationTask = new TaskListDataItem();
-			notificationTask.setTaskName(I18NUtil.getMessage(NOTIFICATION_TASK_NAME));
-			notificationTask.setDuration(1);
-			notificationTask.setResources(Collections.singletonList(qualityNodeRef));
-
-			pjtTpl.getTaskList().add(notificationTask);
 
 			alfrescoRepository.save(pjtTpl);
 
 			task2.setPrevTasks(Collections.singletonList(task1.getNodeRef()));
-			signatureTask.setPrevTasks(Collections.singletonList(task2.getNodeRef()));
-			notificationTask.setPrevTasks(Collections.singletonList(signatureTask.getNodeRef()));
 
 			DeliverableListDataItem supplierMPWizard = new DeliverableListDataItem();
 			supplierMPWizard.setDescription(I18NUtil.getMessage(SUPPLIER_WIZARD_NAME));
@@ -182,51 +160,24 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 			preSupplierScript.setDescription(I18NUtil.getMessage(SUPPLIER_PRE_SCRIPT));
 			preSupplierScript.setScriptOrder(DeliverableScriptOrder.Pre);
 			preSupplierScript.setTasks(Collections.singletonList(task1.getNodeRef()));
-
-			DeliverableListDataItem preSignatureScript = new DeliverableListDataItem();
-			preSignatureScript.setDescription(I18NUtil.getMessage(SIGNATURE_PRE_SCRIPT));
-			preSignatureScript.setScriptOrder(DeliverableScriptOrder.Pre);
-			preSignatureScript.setTasks(Collections.singletonList(signatureTask.getNodeRef()));
-
-			DeliverableListDataItem signatureUrl = new DeliverableListDataItem();
-			signatureUrl.setDescription(I18NUtil.getMessage(SIGNATURE_URL));
-			signatureUrl.setScriptOrder(DeliverableScriptOrder.None);
-			signatureUrl.setTasks(Collections.singletonList(signatureTask.getNodeRef()));
-
-			DeliverableListDataItem postSignatureScript = new DeliverableListDataItem();
-			postSignatureScript.setDescription(I18NUtil.getMessage(SIGNATURE_POST_SCRIPT));
-			postSignatureScript.setScriptOrder(DeliverableScriptOrder.Post);
-			postSignatureScript.setTasks(Collections.singletonList(signatureTask.getNodeRef()));
-
-			DeliverableListDataItem preValidationScript = new DeliverableListDataItem();
-			preValidationScript.setDescription(I18NUtil.getMessage(VALIDATE_PRE_SCRIPT));
-			preValidationScript.setScriptOrder(DeliverableScriptOrder.Pre);
-			preValidationScript.setTasks(Collections.singletonList(notificationTask.getNodeRef()));
 			
-			DeliverableListDataItem notificationSignedDocument = new DeliverableListDataItem();
-			notificationSignedDocument.setName(NOTIFICATION_SIGNED_DOCUMENT);
-			notificationSignedDocument.setTasks(Collections.singletonList(notificationTask.getNodeRef()));
+			DeliverableListDataItem signaturesPreparationScript = new DeliverableListDataItem();
+			signaturesPreparationScript.setDescription(I18NUtil.getMessage(SIGNATURES_PREPARATION_SCRIPT));
+			signaturesPreparationScript.setScriptOrder(DeliverableScriptOrder.Pre);
+			signaturesPreparationScript.setTasks(Collections.singletonList(task2.getNodeRef()));
 
 			for (NodeRef scriptNodeRef : scriptResources) {
 				String name = (String) nodeService.getProperty(scriptNodeRef, ContentModel.PROP_NAME);
 				if (name.equals("supplierPortalScript.js")) {
 					preSupplierScript.setContent(scriptNodeRef);
-				} else if (name.equals("validateProjectEntity.js")) {
-					preValidationScript.setContent(scriptNodeRef);
-				} else if (name.equals("supplierPortalPrepareForSignature.js")) {
-					preSignatureScript.setContent(scriptNodeRef);
-				} else if (name.equals("supplierPortalSignAndCheckin.js")) {
-					postSignatureScript.setContent(scriptNodeRef);
+				} else if (name.equals("supplierPortalPrepareSignatures.js")) {
+					signaturesPreparationScript.setContent(scriptNodeRef);
 				}
 			}
 
 			pjtTpl.getDeliverableList().add(preSupplierScript);
 			pjtTpl.getDeliverableList().add(supplierMPWizard);
-			pjtTpl.getDeliverableList().add(preSignatureScript);
-			pjtTpl.getDeliverableList().add(signatureUrl);
-			pjtTpl.getDeliverableList().add(postSignatureScript);
-			pjtTpl.getDeliverableList().add(preValidationScript);
-			pjtTpl.getDeliverableList().add(notificationSignedDocument);
+			pjtTpl.getDeliverableList().add(signaturesPreparationScript);
 
 			pjtTpl.getAspects().add(PLMModel.ASPECT_SUPPLIERS);
 

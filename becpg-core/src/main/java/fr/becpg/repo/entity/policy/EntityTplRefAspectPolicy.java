@@ -3,20 +3,25 @@
  */
 package fr.becpg.repo.entity.policy;
 
+import java.util.List;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -26,13 +31,19 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * @version $Id: $Id
  */
 public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
-		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnAddAspectPolicy {
+		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.BeforeDeleteNodePolicy {
 
 	private static final Log logger = LogFactory.getLog(EntityTplRefAspectPolicy.class);
 
 	private AssociationService associationService;
 
 	private EntityTplService entityTplService;
+	
+	private AttributeExtractorService attributeExtractorService;
+	
+	public void setAttributeExtractorService(AttributeExtractorService attributeExtractorService) {
+		this.attributeExtractorService = attributeExtractorService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
@@ -62,6 +73,9 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL_REF,
 				new JavaBehaviour(this, "onAddAspect"));
+		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL_REF,
+				new JavaBehaviour(this, "beforeDeleteNode"));
 
 		super.disableOnCopyBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
 
@@ -119,6 +133,48 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public void beforeDeleteNode(NodeRef nodeRef) {
+		
+		List<NodeRef> sourcesAssocs = associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+		
+		sourcesAssocs.removeIf(this::isVersion);
+		
+		if (!sourcesAssocs.isEmpty()) {
+			
+			StringBuilder sb = new StringBuilder();
+
+			for (NodeRef sourceNodeRef : sourcesAssocs) {
+				sb.append("\n").append(decorate(sourceNodeRef));
+			}
+			
+			throw new IllegalStateException(I18NUtil.getMessage("integrity-checker.association-multiplicity-error", sb.toString()));
+		}
+		
+	}
+	
+	private String decorate(NodeRef sourceNodeRef) {
+
+		if (nodeService.exists(sourceNodeRef)) {
+			String ret = attributeExtractorService.extractPropName(sourceNodeRef);
+			String code = (String) nodeService.getProperty(sourceNodeRef, BeCPGModel.PROP_CODE);
+			if (code != null && !code.isEmpty()) {
+				ret = code + " - " + ret;
+			} else {
+				ret = ret + " (" + sourceNodeRef + ")";
+			}
+			return ret;
+		}
+
+		return "";
+	}
+	
+	private boolean isVersion(NodeRef nodeRef) {
+		return nodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
+				|| nodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID) 
+				|| nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
 	}
 
 }

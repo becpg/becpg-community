@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorkerAdaptor;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -47,6 +48,10 @@ import org.springframework.stereotype.Service;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.BatchStep;
+import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.importer.ImportContext;
@@ -140,6 +145,9 @@ public class ImportServiceImpl implements ImportService {
 	private ImportVisitor importCommentsVisitor;
 	@Autowired
 	private MappingLoaderFactory mappingLoaderFactory;
+	
+	@Autowired
+	private BatchQueueService batchQueueService;
 
 	/**
 	 * {@inheritDoc}
@@ -147,47 +155,12 @@ public class ImportServiceImpl implements ImportService {
 	 * Import a text file
 	 */
 	@Override
-	public List<String> importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction)  {
+	public BatchInfo importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction, List<String> errors)  {
 
 		logger.debug("start import");
 
 		// prepare context
-		ImportContext importContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			ImportContext importContext1 = new ImportContext();
-
-			ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-			try (InputStream is = reader.getContentInputStream()) {
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("Reading Import File");
-				}
-				Charset charset = ImportHelper.guestCharset(is, reader.getEncoding());
-				String fileName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-				String mimeType = mimetypeService.guessMimetype(fileName);
-
-				if (logger.isDebugEnabled()) {
-					logger.debug("reader.getEncoding() : " + reader.getEncoding());
-					logger.debug("finder.getEncoding() : " + charset);
-					logger.debug("MimeType :" + mimeType);
-				}
-
-				importContext1.setImportFileName(fileName);
-
-				ImportFileReader imporFileReader;
-				if (MimetypeMap.MIMETYPE_EXCEL.equals(mimeType) || MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET.equals(mimeType)
-						|| MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET_MACRO.equals(mimeType)
-						|| MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET_BINARY_MACRO.equals(mimeType)) {
-					imporFileReader = new ImportExcelFileReader(is, importContext1.getPropertyFormats());
-				} else {
-					imporFileReader = new ImportCSVFileReader(is, charset, SEPARATOR);
-				}
-
-				importContext1.setImportFileReader(imporFileReader);
-
-			}
-			return importContext1;
-		}, true, requiresNewTransaction);
+		final ImportContext importContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> createImportContext(nodeRef), true, requiresNewTransaction);
 
 		importContext.setDoUpdate(doUpdate);
 
@@ -196,44 +169,70 @@ public class ImportServiceImpl implements ImportService {
 		int lastIndex = importContext.getImportFileReader().getTotalLineCount();
 		int nbBatches = (lastIndex / BATCH_SIZE) + 1;
 
-		for (int z_idx = 0; z_idx < nbBatches; z_idx++) {
+		BatchInfo batchInfo = new BatchInfo("import", "becpg.batch.import", importContext.getImportFileName());
+		
+		batchInfo.setRunAsSystem(true);
+		
+		batchInfo.setWorkerThreads(1);
+		
+		batchInfo.setBatchSize(1);
+		
+		BatchStep<Integer> batchStep = new BatchStep<>();
+		
+		batchStep.setProcessWorker(new BatchProcessWorkerAdaptor<Integer>() {
 
-			importContext.setImportIndex(z_idx * BATCH_SIZE);
-			int tempIndex = (z_idx + 1) * BATCH_SIZE;
-			final int finalLastIndex = tempIndex > lastIndex ? lastIndex : tempIndex;
-			final ImportContext finalImportContext = importContext;
+			@Override
+			public void process(Integer index) throws Throwable {
 
-			// add info message in log and file import
-			if (logger.isInfoEnabled()) {
+				importContext.setImportIndex(index * BATCH_SIZE);
+				int tempIndex = (index + 1) * BATCH_SIZE;
+				final int finalLastIndex = tempIndex > lastIndex ? lastIndex : tempIndex;
+				final ImportContext finalImportContext = importContext;
 
-				logger.info(I18NUtil.getMessage(MSG_INFO_IMPORT_BATCH, (z_idx + 1), nbBatches, importContext.getImportFileName(),
-						(importContext.getImportIndex() + 1), (finalLastIndex + 1)));
+				// add info message in log and file import
+				if (logger.isInfoEnabled()) {
+
+					logger.info(I18NUtil.getMessage(MSG_INFO_IMPORT_BATCH, (index + 1), nbBatches, importContext.getImportFileName(),
+							(importContext.getImportIndex() + 1), (finalLastIndex + 1)));
+
+				}
+
+				importInBatch(finalImportContext, finalLastIndex);
 
 			}
-
-			// use transaction
-			importContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> importInBatch(finalImportContext, finalLastIndex),
-					false, requiresNewTransaction);
-
+		});
+		
+		List<Integer> indexEntries = new ArrayList<>();
+		
+		for (int index = 0; index < nbBatches; index++) {
+			indexEntries.add(index);
 		}
+		
+		batchStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(indexEntries));
+		
+		batchQueueService.queueBatch(batchInfo, List.of(batchStep));
+		
+		ImportContext errorImportContext = importContext;
 
 		if ((!importContext.getLog().isEmpty()) && (importContext.getImportFileReader() instanceof ImportExcelFileReader)) {
 
-			final ImportContext finalImportContext = importContext;
-
-			importContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			errorImportContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				ruleService.disableRules();
 				try {
 
-					finalImportContext.getImportFileReader().writeErrorInFile(contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
-					return finalImportContext;
+					importContext.getImportFileReader().writeErrorInFile(contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true));
+					return importContext;
 				} finally {
 					ruleService.enableRules();
 				}
 			}, false, requiresNewTransaction);
 		}
+		
+		if (errors != null) {
+			errors.addAll(errorImportContext.getLog());
+		}
 
-		return importContext.getLog();
+		return batchInfo;
 	}
 
 	/** {@inheritDoc} */
@@ -291,6 +290,63 @@ public class ImportServiceImpl implements ImportService {
 			return null;
 		};
 		transactionService.getRetryingTransactionHelper().doInTransaction(actionCallback, false, true);
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void writeLogInFileTitle(final NodeRef nodeRef, final String log, final boolean hasFailed) {
+	
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			if (nodeService.exists(nodeRef)) {
+				ruleService.disableRules();
+				try {
+					if (hasFailed) {
+						nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, log);
+					} else {
+						nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, "");
+					}
+				} finally {
+					ruleService.enableRules();
+				}
+			}
+			return null;
+		}, false, true);
+	}
+
+	private ImportContext createImportContext(final NodeRef nodeRef) throws IOException {
+		ImportContext importContext1 = new ImportContext();
+	
+		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
+		try (InputStream is = reader.getContentInputStream()) {
+	
+			if (logger.isDebugEnabled()) {
+				logger.debug("Reading Import File");
+			}
+			Charset charset = ImportHelper.guestCharset(is, reader.getEncoding());
+			String fileName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+			String mimeType = mimetypeService.guessMimetype(fileName);
+	
+			if (logger.isDebugEnabled()) {
+				logger.debug("reader.getEncoding() : " + reader.getEncoding());
+				logger.debug("finder.getEncoding() : " + charset);
+				logger.debug("MimeType :" + mimeType);
+			}
+	
+			importContext1.setImportFileName(fileName);
+	
+			ImportFileReader imporFileReader;
+			if (MimetypeMap.MIMETYPE_EXCEL.equals(mimeType) || MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET.equals(mimeType)
+					|| MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET_MACRO.equals(mimeType)
+					|| MimetypeMap.MIMETYPE_OPENXML_SPREADSHEET_BINARY_MACRO.equals(mimeType)) {
+				imporFileReader = new ImportExcelFileReader(is, importContext1.getPropertyFormats());
+			} else {
+				imporFileReader = new ImportCSVFileReader(is, charset, SEPARATOR);
+			}
+	
+			importContext1.setImportFileReader(imporFileReader);
+	
+		}
+		return importContext1;
 	}
 
 	private String cleanPath(String pathValue) {
@@ -445,7 +501,7 @@ public class ImportServiceImpl implements ImportService {
 					}
 
 					importContext = importNodeVisitor.loadMappingColumns(mappingElt, columns, importContext);
-
+					
 				} else if (prefix.equals(ImportHelper.PFX_COLUMNS_PARAMS)) {
 					@SuppressWarnings("unchecked")
 					List<List<String>> columnsParams = (List<List<String>>) annotationMapping.get(ImportHelper.PFX_COLUMNS_PARAMS);
@@ -610,26 +666,5 @@ public class ImportServiceImpl implements ImportService {
 		try (InputStream is = new ByteArrayInputStream(content.getBytes())) {
 			contentWriter.putContent(is);
 		}
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void writeLogInFileTitle(final NodeRef nodeRef, final String log, final boolean hasFailed) {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			if (nodeService.exists(nodeRef)) {
-				ruleService.disableRules();
-				try {
-					if (hasFailed) {
-						nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, log);
-					} else {
-						nodeService.setProperty(nodeRef, ContentModel.PROP_TITLE, "");
-					}
-				} finally {
-					ruleService.enableRules();
-				}
-			}
-			return null;
-		}, false, true);
 	}
 }

@@ -159,7 +159,7 @@ public class FormulationHelper {
 		return ((1 + (lossPerc / 100)) * qty) / (yieldPerc / 100);
 	}
 
-	static Double getQtyWithLoss(double qty, double lossPerc) {
+	public static Double getQtyWithLoss(double qty, double lossPerc) {
 		return (1 + (lossPerc / 100)) * qty;
 	}
 
@@ -171,10 +171,10 @@ public class FormulationHelper {
 	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public static Double getQtyForCost(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem, ProductData subProductData) {
+	public static Double getQtyForCost(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem) {
 		Double lossPerc = packagingListDataItem.getLossPerc() != null ? packagingListDataItem.getLossPerc() : 0d;
 		lossPerc = calculateLossPerc(formulatedProduct.getProductLossPerc(), lossPerc);
-		return FormulationHelper.getQtyWithLoss(FormulationHelper.getQty(packagingListDataItem, subProductData), lossPerc);
+		return FormulationHelper.getQtyWithLoss(FormulationHelper.getQty(packagingListDataItem), lossPerc);
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class FormulationHelper {
 	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public static Double getQty(PackagingListDataItem packagingListDataItem, ProductData subProductData) {
+	public static Double getQty(PackagingListDataItem packagingListDataItem) {
 
 		if (packagingListDataItem.getQty() == null) {
 			logger.warn("Packaging element doesn't have any quantity");
@@ -206,6 +206,13 @@ public class FormulationHelper {
 		return qty;
 	}
 
+	
+	public static Double getQtyForCost(ProductData formulatedProduct, ProcessListDataItem processListDataItem) {
+		Double lossPerc = processListDataItem.getLossPerc() != null ? processListDataItem.getLossPerc() : 0d;
+		lossPerc = calculateLossPerc(formulatedProduct.getProductLossPerc(), lossPerc);
+		return FormulationHelper.getQtyWithLoss(FormulationHelper.getQty(formulatedProduct,processListDataItem), lossPerc);
+	}
+	
 	/**
 	 * Gets the qty of a process item
 	 *
@@ -581,7 +588,7 @@ public class FormulationHelper {
 	public static BigDecimal getTareInKg(PackagingListDataItem packList, ProductData subProductData) {
 
 		BigDecimal tare = BigDecimal.valueOf(0d);
-		Double qty = FormulationHelper.getQty(packList, subProductData);
+		Double qty = FormulationHelper.getQty(packList);
 
 		if ((qty != null) && !qty.isNaN() && !qty.isInfinite()) {
 			if ((packList.getPackagingListUnit() != null) && packList.getPackagingListUnit().isWeight()) {
@@ -666,7 +673,7 @@ public class FormulationHelper {
 	public static Double getQtyForCostByPackagingLevel(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem,
 			ProductData subProductData) {
 
-		Double qty = FormulationHelper.getQtyForCost(formulatedProduct, packagingListDataItem, subProductData);
+		Double qty = FormulationHelper.getQtyForCost(formulatedProduct, packagingListDataItem);
 
 		// secondary on packagingKit with pallet aspect -> nothing
 		// tertiary on packagingKit with pallet aspect -> divide by

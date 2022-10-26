@@ -26,7 +26,6 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.version.EntityVersionService;
-import io.opencensus.common.Scope;
 
 /**
  * Create entity branch
@@ -48,29 +47,26 @@ public class BranchEntityWebScript extends AbstractEntityWebScript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
-		try (Scope scope = tracer.spanBuilder("/remote/branch").startScopedSpan()) {
+		NodeRef entityNodeRef = findEntity(req);
 
-			NodeRef entityNodeRef = findEntity(req);
-
-			if (logger.isDebugEnabled()) {
-				logger.debug("Branch entity: " + entityNodeRef);
-			}
-
-			NodeRef destNodeRef = null;
-			if (req.getParameter(PARAM_DEST_NODEREF) != null) {
-				destNodeRef = new NodeRef(req.getParameter(PARAM_DEST_NODEREF));
-			} else {
-				destNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
-			}
-
-			try {
-				sendOKStatus(entityVersionService.createBranch(entityNodeRef, destNodeRef), resp, getFormat(req));
-
-			} catch (BeCPGException e) {
-				logger.error("Cannot branch entity", e);
-				throw new WebScriptException(e.getMessage());
-			}
+		if (logger.isDebugEnabled()) {
+			logger.debug("Branch entity: " + entityNodeRef);
 		}
 
+		NodeRef destNodeRef = null;
+		if (req.getParameter(PARAM_DEST_NODEREF) != null) {
+			destNodeRef = new NodeRef(req.getParameter(PARAM_DEST_NODEREF));
+		} else {
+			destNodeRef = nodeService.getPrimaryParent(entityNodeRef).getParentRef();
+		}
+
+		try {
+			sendOKStatus(entityVersionService.createBranch(entityNodeRef, destNodeRef), resp, getFormat(req));
+
+		} catch (BeCPGException e) {
+			logger.error("Cannot branch entity", e);
+			throw new WebScriptException(e.getMessage());
+		}
 	}
+
 }

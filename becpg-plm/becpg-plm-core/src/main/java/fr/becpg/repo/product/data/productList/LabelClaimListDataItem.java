@@ -31,6 +31,7 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.CopiableDataItem;
 
 /**
  * <p>LabelClaimListDataItem class.</p>
@@ -40,7 +41,7 @@ import fr.becpg.repo.repository.model.AbstractManualDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:labelClaimList")
-public class LabelClaimListDataItem extends AbstractManualDataItem implements  Cloneable {
+public class LabelClaimListDataItem extends AbstractManualDataItem implements  CopiableDataItem {
 
 	/**
 	 * 
@@ -265,7 +266,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 	
 	/** {@inheritDoc} */
 	@Override
-	public LabelClaimListDataItem clone() {
+	public LabelClaimListDataItem copy() {
 		return new LabelClaimListDataItem(this);
 	}
 	

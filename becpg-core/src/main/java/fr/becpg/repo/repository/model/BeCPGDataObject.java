@@ -79,7 +79,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	/**
 	 * <p>Constructor for BeCPGDataObject.</p>
 	 */
-	public BeCPGDataObject() {
+	protected BeCPGDataObject() {
 		super();
 	}
 
@@ -89,7 +89,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param name a {@link java.lang.String} object.
 	 */
-	public BeCPGDataObject(NodeRef nodeRef, String name) {
+	protected BeCPGDataObject(NodeRef nodeRef, String name) {
 		super();
 		this.nodeRef = nodeRef;
 		this.name = name;
@@ -101,7 +101,7 @@ public  abstract class  BeCPGDataObject  extends BaseObject implements Repositor
 	 *
 	 * @param beCPGDataObject a {@link fr.becpg.repo.repository.model.BeCPGDataObject} object.
 	 */
-	public BeCPGDataObject(BeCPGDataObject beCPGDataObject) 
+	protected BeCPGDataObject(BeCPGDataObject beCPGDataObject) 
 	{
 	    this.nodeRef = beCPGDataObject.nodeRef;
 	    this.parentNodeRef = beCPGDataObject.parentNodeRef;

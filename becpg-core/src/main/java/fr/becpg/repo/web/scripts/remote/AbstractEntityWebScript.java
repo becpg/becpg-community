@@ -53,8 +53,6 @@ import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.impl.HttpEntityProviderCallback;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * Abstract remote entity webscript
@@ -67,7 +65,6 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 	/** Constant <code>logger</code> */
 	protected static final Log logger = LogFactory.getLog(AbstractEntityWebScript.class);
 	
-	protected static final Tracer tracer = Tracing.getTracer();
 
 	/** Constant <code>PARAM_QUERY="query"</code> */
 	protected static final String PARAM_QUERY = "query";

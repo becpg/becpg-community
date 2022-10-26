@@ -94,27 +94,27 @@ public class Nutrient5CTest {
 		Nutrient5C2021Helper.buildNutrientClass(nutriScoreContext);
 		Assert.assertEquals(0, nutriScoreContext.getNutriScore());
 		
-		nutriScoreContext = new NutriScoreContext(368.09999999999997d, 1.6826328584934984d, 4.320793803940095d, 1.4564453550672227d, 262.851279672858d, null, null, 1.9020344065737682d, 5.996492947498318d, "Others");
+		nutriScoreContext = new NutriScoreContext(368.09999999999997d, 1.6826328584934984d, 4.320793803940095d, 1.4564453550672227d, 262.851279672858d, 0d, 0d, 1.9020344065737682d, 5.996492947498318d, "Others");
 		Nutrient5C2021Helper.build5CScore(nutriScoreContext);
 		Nutrient5C2021Helper.buildNutrientClass(nutriScoreContext);
 		Assert.assertEquals(-1, nutriScoreContext.getNutriScore());
 
 		
 		//#5863
-		nutriScoreContext = new NutriScoreContext(1166d, 9.3d, 25.3d, 1.4d, (1.91d/2.54d)*1000d,null, null,null, 12d, "Others");
+		nutriScoreContext = new NutriScoreContext(1166d, 9.3d, 25.3d, 1.4d, (1.91d/2.54d)*1000d,0d, 0d,0d, 12d, "Others");
 		Nutrient5C2021Helper.build5CScore(nutriScoreContext);
 		Nutrient5C2021Helper.buildNutrientClass(nutriScoreContext);
 		Assert.assertEquals(20, nutriScoreContext.getNutriScore());
 		Assert.assertEquals("E", nutriScoreContext.getNutrientClass());
 		
 		//#5828
-		nutriScoreContext = new NutriScoreContext(365d, 1.21d, 2.22d, 0.413d, (0.624d/2.54d)*1000d,  5.26, 0.899, null, null, "Others");
+		nutriScoreContext = new NutriScoreContext(365d, 1.21d, 2.22d, 0.413d, (0.624d/2.54d)*1000d,  5.26, 0.899, 0d, 0d, "Others");
 		Nutrient5C2021Helper.build5CScore(nutriScoreContext);
 		Nutrient5C2021Helper.buildNutrientClass(nutriScoreContext);
 		Assert.assertEquals("C", nutriScoreContext.getNutrientClass());
 		
 		//#5868
-		nutriScoreContext = new NutriScoreContext(1761d, 3.44d, null, 17.3d, 224d,  0d, 7.71d, null, 6.5d, "Others");
+		nutriScoreContext = new NutriScoreContext(1761d, 3.44d, 0d, 17.3d, 224d,  0d, 7.71d, 0d, 6.5d, "Others");
 		Nutrient5C2021Helper.build5CScore(nutriScoreContext);
 		Nutrient5C2021Helper.buildNutrientClass(nutriScoreContext);
 		Assert.assertEquals(8, nutriScoreContext.getNutriScore());

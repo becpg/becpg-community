@@ -1,7 +1,7 @@
 
 <html>
    <head>
-      <style type="text/css"><!--
+      <style type="text/css">
      body
       {
          font-family: Arial, sans-serif;
@@ -70,9 +70,7 @@
             width:100%;
          }
       }
-      
-       
-      --></style>
+      </style>
    </head>
    
    <body bgcolor="#dddddd">
@@ -158,11 +156,17 @@
                                                                <#assign personModifier = item.properties["cm:modifier"]>
                                                                <#if item.assocs["pjt:tlResources"]??>
                                                                <#list item.assocs["pjt:tlResources"] as person>
+                                                               <#if person.properties["cm:firstName"]??>
                                                                <#assign firstName = person.properties["cm:firstName"]>
+                                                               <#if person.properties["cm:lastName"]??>
                                                                <#assign lastName = person.properties["cm:lastName"]>
+                                                               <#if person.properties["cm:userName"]??>
                                                                <#assign userNameRessouces = person.properties["cm:userName"]>
                                                                <#if personModifier == userNameRessouces>
                                                                <p style="margin:0px;font-size:12px;color:grey"><b>${firstName} ${lastName}</b></p>
+                                                               </#if>
+                                                               </#if>
+                                                               </#if>
                                                                </#if>
                                                                </#list>
                                                                <p style="margin:0px; font-style:italic">"${item.properties["pjt:tlTaskComment"]}"</p>

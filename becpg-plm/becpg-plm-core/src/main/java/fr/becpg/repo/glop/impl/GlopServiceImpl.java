@@ -2,12 +2,14 @@ package fr.becpg.repo.glop.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -353,11 +355,8 @@ public class GlopServiceImpl implements GlopService {
 		
 		JSONObject ret = new JSONObject();
 		
-		JSONArray jsonVariables = new JSONArray();
-		for (CompoListDataItem variable : variables) {
-			jsonVariables.put(variable.getProduct().toString());
-		}
-		ret.put(VARIABLES, jsonVariables);
+		ret.put(VARIABLES, buildJsonVariables(variables, constraints, applyTolerance));
+		
 		for (GlopConstraint constraint : constraints) {
 			ret.append(CONSTRAINTS, serializeConstraint(constraint, constraintContributions));
 		}
@@ -375,6 +374,24 @@ public class GlopServiceImpl implements GlopService {
 		ret.put(OBJECTIVE, jsonTarget);
 		
 		return ret;
+	}
+
+	private JSONObject buildJsonVariables(Set<CompoListDataItem> variables, List<GlopConstraint> constraints, boolean applyTolerance)
+			throws JSONException {
+		JSONObject jsonVariables = new JSONObject();
+		for (CompoListDataItem variable : variables) {
+			
+			Double lowerComponentBound = 0d;
+			
+			Optional<GlopConstraint> representativeConstraint = constraints.stream().filter(c -> variable.equals(c.getData())).min((o1, o2) -> applyTolerance ? o1.getMinTolerance().compareTo(o2.getMinTolerance()) : o1.getMinValue().compareTo(o2.getMinValue()));
+			
+			if (representativeConstraint.isPresent()) {
+				lowerComponentBound = applyTolerance ? representativeConstraint.get().getMinTolerance() : representativeConstraint.get().getMinValue();
+			}
+			
+			jsonVariables.put(variable.getProduct().toString(), lowerComponentBound);
+		}
+		return jsonVariables;
 	}
 
 	private boolean applyTolerance(List<GlopConstraint> constraints) {

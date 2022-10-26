@@ -170,6 +170,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		return false;
 	}
 	
+	@Override
+	public Set<String> getCancelledBatches() {
+		return cancelledBatches;
+	}
+
 	public class BatchCommand<T> implements Runnable {
 
 		private String batchId;
@@ -207,6 +212,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				auditScope.putAttribute("batchId", batchInfo.getBatchId());
 				auditScope.putAttribute("isCompleted", batchInfo.getIsCompleted());
 				
+				Integer stepCount = batchSteps.size() > 1 ? 1 : null;
+				
 				for (BatchStep<T> batchStep : batchSteps) {
 					
 					totalItems += batchStep.getWorkProvider().getTotalEstimatedWorkSizeLong();
@@ -243,8 +250,10 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						jsonBatch.put("batchDescId", batchInfo.getBatchDescId());
 						jsonBatch.put("batchUser", batchInfo.getBatchUser());
 						jsonBatch.put("entityDescription", batchInfo.getEntityDescription());
-					} catch (JSONException e) {
-						logger.error("Failed to fill JSON information", e);
+					if (stepCount != null) {
+						jsonBatch.put("stepCount", stepCount);
+						jsonBatch.put("stepsMax", batchSteps.size());
+						stepCount++;
 					}
 					
 					BatchProcessor<T> batchProcessor = new BatchProcessor<>(jsonBatch.toString(),
@@ -311,8 +320,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-					beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(), batchInfo.getMailAction(),
-							batchInfo.getMailActionUrl(), !finalHasError, secondsBetween, batchInfo.getEntityDescription());
+					beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(), batchInfo.getMailAction(), batchInfo.getMailActionUrl(),
+							!finalHasError, secondsBetween, batchInfo.getEntityDescription());
 
 					return null;
 				}, true, false), batchInfo.getBatchUser());
@@ -333,7 +342,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				@Override
 				public int getTotalEstimatedWorkSize() {
-					return (int) workProvider.getTotalEstimatedWorkSizeLong();
+					return workProvider.getTotalEstimatedWorkSize();
 				}
 				
 				@Override
@@ -343,12 +352,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				
 				@Override
 				public Collection<T> getNextWork() {
-					if (cancelledBatches.contains(batchId)) {
-						if (logger.isDebugEnabled()) {
-							logger.debug("Stop prividing next work for batch '" + batchId + "' as it was cancelled");
-						}
-						return Collections.emptyList();
-					}
 					return workProvider.getNextWork();
 				}
 				
@@ -440,7 +443,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 	@Override
 	public void onApplicationEvent(BatchMonitorEvent event) {
+		if (event.getBatchMonitor().getProcessName() != null && event.getBatchMonitor().getProcessName().contains("batchId")) {
 		lastRunningBatch = event.getBatchMonitor();
+		}
 	}
 	
 }

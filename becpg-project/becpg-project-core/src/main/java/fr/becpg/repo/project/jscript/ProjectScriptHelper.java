@@ -25,10 +25,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -40,6 +42,7 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.BudgetListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
@@ -62,7 +65,19 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	private NodeService nodeService;
 
 	private NamespaceService namespaceService;
+	
+	private ProjectService projectService;
+	
+	private ServiceRegistry serviceRegistry;
 
+	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+		this.serviceRegistry = serviceRegistry;
+	}
+
+	public void setProjectService(ProjectService projectService) {
+		this.projectService = projectService;
+	}
+	
 	/**
 	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
 	 *
@@ -249,6 +264,17 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	
 	public void updateTaskState(TaskListDataItem task, String taskState) {
 		task.setTaskState(TaskState.valueOf(taskState));
+	}
+	
+	public ScriptNode[] extractResources(ScriptNode project, ScriptNode[] resources) {
+		
+		List<NodeRef> resourceList = new ArrayList<>();
+		
+		for (ScriptNode resource : resources) {
+			resourceList.add(resource.getNodeRef());
+		}
+		
+		return projectService.extractResources(project.getNodeRef(), resourceList).stream().map(e -> new ScriptNode(e, serviceRegistry, getScope())).collect(Collectors.toList()).toArray(new ScriptNode[0]);
 	}
 
 

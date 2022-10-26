@@ -33,12 +33,14 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
@@ -79,7 +81,13 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	private ServiceRegistry serviceRegistry;
 
 	private SupplierPortalService supplierPortalService;
+	
+	protected EntityDictionaryService entityDictionaryService;
 
+	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
+		this.entityDictionaryService = entityDictionaryService;
+	}
+	
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
 	}
@@ -242,9 +250,15 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 					&& nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE) == null) {
 				entityNodeRef = entityVersionService.mergeBranch(entityNodeRef, null);
 			}
-
-			nodeService.setProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
-
+			
+			QName type = nodeService.getType(entityNodeRef);
+			
+			if (entityDictionaryService.isSubClass(type, PLMModel.TYPE_PRODUCT)) {
+				nodeService.setProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Valid);
+			} else if (entityDictionaryService.isSubClass(type, PLMModel.TYPE_SUPPLIER)) {
+				nodeService.setProperty(entityNodeRef, PLMModel.PROP_SUPPLIER_STATE, SystemState.Valid);
+			}
+			
 			return new ScriptNode(entityNodeRef, serviceRegistry, getScope());
 
 		}
