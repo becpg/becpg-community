@@ -54,11 +54,11 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 						}
 						specLabelClaimsVisitedMap.put(specDataItem, true);
 
-						boolean add = false;
+						boolean isForbidden = false;
 
 						if ((specDataItem.getLabelClaimValue() != null) && !specDataItem.getLabelClaimValue().isEmpty()) {
 							if ((listDataItem.getLabelClaimValue() == null) || listDataItem.getLabelClaimValue().isEmpty()) {
-								add = true;
+								isForbidden = true;
 							} else if (!LabelClaimListDataItem.VALUE_NA.equals(listDataItem.getLabelClaimValue())) {
 								if ((LabelClaimListDataItem.VALUE_TRUE.equals(specDataItem.getLabelClaimValue())
 										&& !LabelClaimListDataItem.VALUE_TRUE.equals(listDataItem.getLabelClaimValue()))
@@ -68,14 +68,24 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 												&& !LabelClaimListDataItem.VALUE_SUITABLE.equals(listDataItem.getLabelClaimValue()))
 										|| (LabelClaimListDataItem.VALUE_CERTIFIED.equals(specDataItem.getLabelClaimValue())
 												&& !LabelClaimListDataItem.VALUE_CERTIFIED.equals(listDataItem.getLabelClaimValue()))) {
-									add = true;
+									isForbidden = true;
 								}
+							}
+							if (isForbidden || Boolean.TRUE.equals(addInfoReqCtrl)) {
+								MLText message = MLTextHelper.getI18NMessage(MESSAGE_NOT_CLAIM, extractName(listDataItem.getLabelClaim()), extractClaimValue(specDataItem.getLabelClaimValue()));
+								ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, isForbidden ? RequirementType.Forbidden : RequirementType.Info, message, listDataItem.getLabelClaim(), new ArrayList<>(),
+										RequirementDataType.Specification);
+								
+								if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
+									reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
+								} else {
+									reqCtrl.setRegulatoryCode(specification.getName());
+								}
+								
+								ret.add(reqCtrl);
 							}
 						}
 
-						if (add) {
-							addSpecificationUnclaimedLabelClaim(ret, specification, listDataItem, specDataItem.getLabelClaimValue());
-						}
 
 					}
 				}));
@@ -93,22 +103,6 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 			}
 		}
 		return ret;
-	}
-
-	private void addSpecificationUnclaimedLabelClaim(List<ReqCtrlListDataItem> ret, ProductSpecificationData specification,
-			LabelClaimListDataItem labelClaim, String labelClaimValue) {
-		MLText message = MLTextHelper.getI18NMessage(MESSAGE_NOT_CLAIM, extractName(labelClaim.getLabelClaim()), extractClaimValue(labelClaimValue));
-		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(), new ArrayList<>(),
-				RequirementDataType.Specification);
-
-		if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
-			reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
-		} else {
-			reqCtrl.setRegulatoryCode(specification.getName());
-		}
-
-		ret.add(reqCtrl);
-
 	}
 
 	private MLText extractClaimValue(String labelClaimValue) {

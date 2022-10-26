@@ -1,7 +1,6 @@
 package fr.becpg.repo.search;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -40,9 +39,6 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.impl.DataListSearchFilter;
 import fr.becpg.repo.search.impl.DataListSearchFilterField;
 import fr.becpg.repo.search.impl.SearchConfig;
-import io.opencensus.trace.AttributeValue;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * <p>ProductAdvSearchPlugin class.</p>
@@ -55,7 +51,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	private static final Log logger = LogFactory.getLog(ProductAdvSearchPlugin.class);
 
-	private static final Tracer tracer = Tracing.getTracer();
 
 	@Autowired
 	private NodeService nodeService;
@@ -104,7 +99,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (isAssocSearch) {
 
-			tracer.getCurrentSpan().addAnnotation("filterByAssociations");
 			nodes = filterByAssociations(nodes, datatype, criteria);
 
 			if ((datatype != null)) {
@@ -141,8 +135,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			watch = new StopWatch();
 			watch.start();
 		}
-
-		tracer.getCurrentSpan().addAnnotation(filter.getName());
 
 		List<EntitySourceAssoc> entitySourceAssocs = null;
 		List<EntitySourceAssoc> notEntitySourceAssocs = null;
@@ -514,13 +506,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private List<NodeRef> getSearchNodesByWUsedCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
 			QName criteriaAssoc) {
 
-		Map<String, AttributeValue> attributes = new HashMap<>();
-
-		if (criteriaAssoc != null) {
-			attributes.put("wUsedAssoc", AttributeValue.stringAttributeValue(criteriaAssoc.getLocalName()));
-		}
-
-		tracer.getCurrentSpan().addAnnotation("filterByWUsed", attributes);
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {

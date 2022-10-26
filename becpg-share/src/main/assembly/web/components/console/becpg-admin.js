@@ -404,7 +404,7 @@
 
 						if (last) {
 							var batchId = last.batchId;
-							var batchDescId = last.batchDescId;
+							var batchDescId = last.batchDescId + (last.stepCount ? (" (" + last.stepCount + "/" + last.stepsMax + ")") : "");
 							var percentCompleted = last.percentCompleted.replace(/\s+/g, '');
 
 							var percent = percentCompleted.substring(0, percentCompleted.length - 1);
@@ -415,7 +415,7 @@
 								ulCur.children[1].children[0].firstChild.title = percentCompleted;
 								ulCur.children[1].children[1].firstChild.id = batchId;
 								ulCur.children[1].children[1].firstChild.style = "cursor:pointer";
-								if (percent == 100) {
+								if (percent == 100 || last.cancelled) {
 									ulCur.children[1].children[1].firstChild.style = "display:none";
 								}
 							} else {
@@ -442,7 +442,7 @@
 								spanButton.appendChild(button);
 								button.classList.add("removeIcon");
 								button.style = "cursor:pointer";
-								if (percent == 100) {
+								if (percent == 100 || last.cancelled) {
 									button.style = "display:none";
 								}
 								button.id = batchId;

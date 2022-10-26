@@ -30,7 +30,6 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteParams;
-import io.opencensus.common.Scope;
 
 /**
  * <p>ListEntitiesWebScript class.</p>
@@ -44,37 +43,36 @@ public class ListEntitiesWebScript extends AbstractEntityWebScript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 
-		try (Scope scope = tracer.spanBuilder("/remote/list").startScopedSpan()) {
-			List<NodeRef> entities = findEntities(req);
+		List<NodeRef> entities = findEntities(req);
 
-			logger.debug("List entities");
+		logger.debug("List entities");
 
-			try (OutputStream out = resp.getOutputStream()) {
+		try (OutputStream out = resp.getOutputStream()) {
 
-				RemoteParams params = new RemoteParams(getFormat(req));
-				params.setFilteredFields(extractFields(req), namespaceService);
-				params.setFilteredLists(extractLists(req));
-				
-				resp.setContentType(getContentType(req));
-				resp.setContentEncoding("UTF-8");
+			RemoteParams params = new RemoteParams(getFormat(req));
+			params.setFilteredFields(extractFields(req), namespaceService);
+			params.setFilteredLists(extractLists(req));
 
-				remoteEntityService.listEntities(entities, out, params);
+			resp.setContentType(getContentType(req));
+			resp.setContentEncoding("UTF-8");
 
-				resp.setStatus(Status.STATUS_OK);
+			remoteEntityService.listEntities(entities, out, params);
 
-			} catch (BeCPGException e) {
-				logger.error("Cannot export entity", e);
-				throw new WebScriptException(e.getMessage());
-			} catch (SocketException e1) {
+			resp.setStatus(Status.STATUS_OK);
 
-				// the client cut the connection - our mission was accomplished
-				// apart from a little error message
-				if (logger.isInfoEnabled()) {
-					logger.info("Client aborted stream read:\n\tcontent", e1);
-				}
+		} catch (BeCPGException e) {
+			logger.error("Cannot export entity", e);
+			throw new WebScriptException(e.getMessage());
+		} catch (SocketException e1) {
 
+			// the client cut the connection - our mission was accomplished
+			// apart from a little error message
+			if (logger.isInfoEnabled()) {
+				logger.info("Client aborted stream read:\n\tcontent", e1);
 			}
+
 		}
+
 	}
 
 }

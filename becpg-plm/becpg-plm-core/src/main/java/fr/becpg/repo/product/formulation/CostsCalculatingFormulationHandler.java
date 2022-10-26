@@ -27,7 +27,6 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.helper.SimulationCostHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -116,37 +115,7 @@ public class CostsCalculatingFormulationHandler extends AbstractSimpleListFormul
 					|| formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE));
 
 		  
-			formulateSimpleList(formulatedProduct, formulatedProduct.getCostList(), new SimpleListQtyProvider() {
-
-				Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
-				
-				@Override
-				public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-					return FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio, componentProduct, keepProductUnit);
-				}
-				
-				@Override
-				public Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-					return getQty(compoListDataItem, parentLossRatio, componentProduct);
-				}
-
-				@Override
-				public Double getNetWeight() {
-					return netQty;
-				}
-
-				@Override
-				public Double getNetQty() {
-					return  netQty;
-				}
-
-				@Override
-				public Boolean omitElement(CompoListDataItem compoListDataItem) {
-					return false;
-				}
-
-				
-			},  hasCompoEl);
+			formulateSimpleList(formulatedProduct, formulatedProduct.getCostList(), new CostListQtyProvider(formulatedProduct) ,  hasCompoEl);
 			
 			
 			// simulation: take in account cost of components defined on

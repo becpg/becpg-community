@@ -502,11 +502,13 @@ public class ImportEntityJsonVisitor {
 		while (iterator.hasNext()) {
 			String key = iterator.next();
 			QName dataListQName = createQName(key);
+			
+			String dataListName = getListName(key);
 
-			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataListQName);
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, dataListName);
 			if (listNodeRef == null) {
 				logger.debug("Creating list: " + dataListQName + " in " + listContainerNodeRef);
-				listNodeRef = entityListDAO.createList(listContainerNodeRef, dataListQName);
+				listNodeRef = entityListDAO.createList(listContainerNodeRef, dataListName, dataListQName);
 			}
 
 			Set<NodeRef> listItemToKeep = new HashSet<>();
@@ -539,6 +541,21 @@ public class ImportEntityJsonVisitor {
 			}
 		}
 
+	}
+	
+	private String getListName(String qnameStr) {
+		if ((qnameStr != null) && qnameStr.contains("|")) {
+			return qnameStr.split("\\|")[1];
+		}
+		
+		QName qname;
+		
+		if ((qnameStr != null) && (qnameStr.indexOf(QName.NAMESPACE_BEGIN) != -1)) {
+			qname = QName.createQName(qnameStr);
+		} else {
+			qname = QName.createQName(qnameStr, namespaceService);
+		}
+		return qname.getLocalName();
 	}
 
 	private Map<QName, List<NodeRef>> jsonToAssocs(JSONObject entity, RemoteJSONContext context) throws JSONException {
@@ -783,7 +800,7 @@ public class ImportEntityJsonVisitor {
 	public QName createQName(String qnameStr) {
 		try {
 			if ((qnameStr != null) && qnameStr.contains("|")) {
-				qnameStr = qnameStr.split("|")[0];
+				qnameStr = qnameStr.split("\\|")[0];
 			}
 
 			QName qname;

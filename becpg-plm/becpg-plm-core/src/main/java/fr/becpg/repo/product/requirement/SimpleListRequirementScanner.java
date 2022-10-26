@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.MLText;
-import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -68,9 +67,12 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 									}
 								}
 
-								if (!isCharactAllowed) {
+								if (!isCharactAllowed || Boolean.TRUE.equals(addInfoReqCtrl)) {
+									
+									String keyMessage = isCharactAllowed ? getSpecInfoMessageKey() : getSpecErrorMessageKey();
+									
 									MLText message = MLTextHelper
-											.getI18NMessage(getSpecErrorMessageKey(),
+											.getI18NMessage(keyMessage,
 													mlNodeService.getProperty(listDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME),
 													(listDataItem.getValue() != null ? listDataItem.getValue()
 															: MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_VALUE)),
@@ -84,8 +86,8 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 																: "");
 													}));
 
-									ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message,
-											listDataItem.getCharactNodeRef(), new ArrayList<NodeRef>(), RequirementDataType.Specification);
+									ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, isCharactAllowed ? RequirementType.Info : RequirementType.Forbidden, message,
+											listDataItem.getCharactNodeRef(), new ArrayList<>(), RequirementDataType.Specification);
 
 									if (specification.getRegulatoryCode() != null && !specification.getRegulatoryCode().isBlank()) {
 										reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
@@ -113,6 +115,8 @@ public abstract class SimpleListRequirementScanner<T extends SimpleListDataItem>
 	 * @return a {@link java.lang.String} object.
 	 */
 	protected abstract String getSpecErrorMessageKey();
+	
+	protected abstract String getSpecInfoMessageKey();
 
 	/** {@inheritDoc} */
 	@Override

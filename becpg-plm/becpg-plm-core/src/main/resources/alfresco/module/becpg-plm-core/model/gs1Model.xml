@@ -823,7 +823,8 @@
 				<property name="gs1:productHierarchy5">
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
-					<index enabled="true">
+					<multiple>true</multiple>
+                                        <index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					</index>

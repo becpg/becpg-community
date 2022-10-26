@@ -246,19 +246,42 @@
 							 {
 								 step.form = args[1].runtime;
 								 step.form.setAJAXSubmit(true,
-										 {
-									 successCallback :
 									 {
-										 fn : me.onFormSubmit,
-										 scope : this
-									 }
-										 });
+										 successCallback:
+										 {
+											 fn: me.onFormSubmit,
+											 scope: this
+										 },
+										 failureCallback:
+										 {
+											 fn: me.onFormSubmitFailure,
+											 scope: this
+										 }
+									 });
 							 }
 						 }
 
 					 }
 
 				 },
+			
+				onFormSubmitFailure: function(response) {
+					if (response.json && response.json.message) {
+						var errorMsg;
+						var pattern = "Failed to execute script 'workspace:\/\/SpacesStore\/[a-zA-Z-0-9]{8}-[a-zA-Z-0-9]{4}-[a-zA-Z-0-9]{4}-[a-zA-Z-0-9]{4}-[a-zA-Z-0-9]{12}': [0-9]{8}";
+						var match = response.json.message.match(pattern);
+						if (match) {
+							errorMsg = response.json.message.split(match)[1];
+						} else {
+							errorMsg = response.json.message;
+						}
+						Alfresco.util.PopupManager.displayPrompt(
+							{
+								title: this.msg("message.failure"),
+								text: errorMsg
+							});
+					}
+				},
 
 				 onFormSubmit : function (response){
 					 var me = this; 

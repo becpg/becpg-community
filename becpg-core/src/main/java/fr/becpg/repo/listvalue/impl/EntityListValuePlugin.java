@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -63,7 +64,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  */
 @Service
-public class EntityListValuePlugin  implements ListValuePlugin {
+public class EntityListValuePlugin implements ListValuePlugin {
 
 	private static final Log logger = LogFactory.getLog(EntityListValuePlugin.class);
 
@@ -104,14 +105,12 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 	@Autowired
 	private HierarchyService hierarchyService;
 	@Autowired
-	private HierarchyValueExtractor hierarchyValueExtractor;
-	@Autowired
 	private EntityListDAO entityListDAO;
 	@Autowired
 	protected TargetAssocValueExtractor targetAssocValueExtractor;
 	@Autowired
 	protected AssociationService associationService;
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -221,18 +220,18 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 		}
 
 		if ((path != null) && !path.isEmpty()) {
-			if(!path.contains("/") && props != null) {
+			if (!path.contains("/") && (props != null)) {
 				try {
 					QName assocQname = QName.createQName(path, namespaceService);
 					String strNodeRef = (String) props.get(ListValueService.PROP_NODEREF);
-					if(strNodeRef == null ) {
+					if (strNodeRef == null) {
 						strNodeRef = (String) props.get(ListValueService.PROP_ENTITYNODEREF);
 					}
-					
+
 					if (strNodeRef != null) {
-						NodeRef	targetAssocNodeRef = associationService.getTargetAssoc(new NodeRef(strNodeRef), assocQname);
-						if(targetAssocNodeRef!=null) {
-							
+						NodeRef targetAssocNodeRef = associationService.getTargetAssoc(new NodeRef(strNodeRef), assocQname);
+						if (targetAssocNodeRef != null) {
+
 							String targetAssocPath = nodeService.getPath(targetAssocNodeRef).toPrefixString(namespaceService);
 							if (logger.isDebugEnabled()) {
 								logger.debug("Filtering by node  path:" + targetAssocPath);
@@ -240,20 +239,16 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 
 							queryBuilder.inPath(targetAssocPath + "/");
 						}
-						
-						
+
 					}
-				
-				} catch (NamespaceException e ) {
+
+				} catch (NamespaceException e) {
 					queryBuilder.inPath(path);
 				}
 			} else {
 				queryBuilder.inPath(path);
 			}
-			
-			
-			
-			
+
 		}
 
 		// filter by classNames
@@ -271,7 +266,7 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 			String excluseProps = (String) props.get(ListValueService.PROP_EXCLUDE_PROPS);
 			String[] arrExcluseProps = excluseProps != null ? excluseProps.split(PARAM_VALUES_SEPARATOR) : null;
 			excludeByProp(queryBuilder, arrExcluseProps);
-			
+
 			String andProps = (String) props.get(ListValueService.PROP_AND_PROPS);
 			String[] arrAndProps = andProps != null ? andProps.split(PARAM_VALUES_SEPARATOR) : null;
 			if (arrAndProps != null) {
@@ -283,7 +278,6 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 					}
 				}
 			}
-			
 
 			Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 			if (extras != null) {
@@ -335,7 +329,7 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 	protected ListValueExtractor<NodeRef> getTargetAssocValueExtractor() {
 		return targetAssocValueExtractor;
 	}
-	
+
 	/**
 	 * Suggest linked value according to query
 	 *
@@ -359,7 +353,7 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 
 		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
-		
+
 		if (path == null) {
 			NodeRef entityNodeRef = null;
 
@@ -385,19 +379,28 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 		}
 
 		query = prepareQuery(query);
-		List<NodeRef> ret;
+		List<NodeRef> ret = null;
 
 		if (!all) {
+
 			String parent = (String) props.get(ListValueService.PROP_PARENT);
 			if ((parent != null) && !NodeRef.isNodeRef(parent)) {
 				ret = new ArrayList<>();
 			} else {
 				NodeRef parentNodeRef = (parent != null) && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
+
 				ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
 			}
-		} else if (extras != null && extras.containsKey("depthLevel")) {
+		} else if ((extras != null) && extras.containsKey("depthLevel")) {
 			String depthLevel = extras.get("depthLevel");
-			ret = hierarchyService.getAllHierarchiesByDepthLevel(path, query, depthLevel);
+			if (extras.containsKey("paths")) {
+				ret = new LinkedList<>();
+				for (String subPath : extras.get("paths").split(",")) {
+					ret.addAll(hierarchyService.getAllHierarchiesByDepthLevel(path + "/" + subPath, query, depthLevel));
+				}
+			} else {
+				ret = hierarchyService.getAllHierarchiesByDepthLevel(path, query, depthLevel);
+			}
 		} else {
 			ret = hierarchyService.getAllHierarchiesByPath(path, query);
 		}
@@ -408,9 +411,9 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 		}
 
 		return new ListValuePage(ret, pageNum, pageSize,
-				all ? hierarchyValueExtractor : new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE, nodeService));
+				all ? new HierarchyValueExtractor(nodeService) : new NodeRefListValueExtractor(BeCPGModel.PROP_LKV_VALUE, nodeService));
 	}
-	
+
 	/**
 	 * Suggest list value according to query
 	 *
@@ -586,6 +589,5 @@ public class EntityListValuePlugin  implements ListValuePlugin {
 
 		return new ListValuePage(queryBuilder.list(), pageNum, pageSize, new NodeRefListValueExtractor(propertyQName, nodeService));
 	}
-	
-	
+
 }

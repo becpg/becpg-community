@@ -18,7 +18,9 @@ import org.apache.poi.ss.formula.ptg.RefPtgBase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -200,7 +202,15 @@ public class ExcelHelper {
 							&& DataTypeDefinition.MLTEXT.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())) {
 
 						int groupFirstColumn = cellnum;
-
+						
+						// put default locale in first position
+						Locale defaultLocale = getDefaultLocale(supportedLocales);
+						
+						if (defaultLocale != null) {
+							supportedLocales.remove(defaultLocale);
+							supportedLocales.add(0, defaultLocale);
+						}
+						
 						for (Locale locale : supportedLocales) {
 
 							Cell cell = headerRow.createCell(cellnum);
@@ -253,5 +263,40 @@ public class ExcelHelper {
 		return cellnum;
 
 	}
+	
+	private static Locale getDefaultLocale(List<Locale> locales) {
+		for (Locale locale : locales) {
+			if (MLTextHelper.isDefaultLocale(locale)) {
+				return locale;
+			}
+		}
+		
+		return null;
+	}
+	
+	public static XSSFColor createGreenColor() {
+		byte[] rgb = { (byte) 0, (byte) 255, (byte) 0 };
+		return new XSSFColor(rgb, new DefaultIndexedColorMap());
+	}
+	
+
+	public static XSSFColor createRedColor() {
+		byte[] rgb = { (byte) 255, (byte) 0, (byte) 0 };
+		return new XSSFColor(rgb, new DefaultIndexedColorMap());
+	}
+
+	public static XSSFColor beCPGHeaderColor() {
+		byte[] rgb = { (byte) 242, (byte) 247, (byte) 250 };
+		return new XSSFColor(rgb, new DefaultIndexedColorMap());
+	}
+
+	
+	public static XSSFColor beCPGHeaderTextColor() {
+		byte[] rgb = { (byte) 0, (byte) 66, (byte) 84 };
+		return new XSSFColor(rgb, new DefaultIndexedColorMap());
+	}
+
+
+
 
 }

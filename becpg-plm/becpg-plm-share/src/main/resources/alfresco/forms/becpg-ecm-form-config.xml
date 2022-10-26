@@ -201,6 +201,7 @@
 					<show id="ecm:wulSourceItems" />
 					<show id="ecm:isWUsedImpacted" />
 					<show id="ecm:impactedDataList" />		
+					<show id="ecm:wulTargetItem" />
 					<show id="ecm:wulLink" />		
 					<show id="entity_ecm:wulLink_bcpg:entityListItem@ecmDatagrid" />
 					<show id="ecm:wulEffectiveDate" />
@@ -210,6 +211,7 @@
 				<appearance>
 					<field id="bcpg:depthLevel" read-only="true"/>
 					<field id="ecm:wulSourceItems" read-only="true"/>
+					<field id="ecm:wulTargetItem" read-only="true"/>
 					<field id="ecm:impactedDataList" read-only="true"/>	
 					<field id="entity_ecm:wulLink_bcpg:entityListItem@ecmDatagrid" label="hidden"/>	
 				</appearance>
@@ -219,6 +221,7 @@
 					<show id="bcpg:depthLevel" />
 					<show id="entity_ecm:wulSourceItems_bcpg:product@ecmFilter" />
 					<show id="ecm:isWUsedImpacted" />
+					<show id="ecm:wulTargetItem" />
 					<show id="entity_ecm:wulLink_bcpg:entityListItem@ecmFilter" />
 				</field-visibility>
 				<appearance>
@@ -247,6 +250,7 @@
 				<field-visibility>
 				    <show id="ecm:isWUsedImpacted" />
 					<show id="ecm:wulSourceItems" />
+					<show id="ecm:wulTargetItem" />
 					<show id="ecm:impactedDataList" />			
 				</field-visibility>
 				<appearance>
@@ -254,6 +258,7 @@
 					<field id="ecm:impactedDataList" read-only="true">
 						<control template="/org/alfresco/components/form/controls/info.ftl" />
 					</field>	
+					<field id="ecm:wulTargetItem" read-only="true"/>
 				</appearance>
 			</form>
 		</forms>
@@ -439,13 +444,13 @@
 					<field id="cm:name" label-id="becpg.forms.field.product" />
 					<field id="bcpg:productHierarchy1" label-id="becpg.forms.field.productHierarchy1">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=1
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=1&amp;extra.paths=finishedProduct_Hierarchy,semiFinishedProduct_Hierarchy,rawMaterialProduct_Hierarchy
 							</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productHierarchy2" label-id="becpg.forms.field.productHierarchy2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=2
+							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=2&amp;extra.paths=finishedProduct_Hierarchy,semiFinishedProduct_Hierarchy,rawMaterialProduct_Hierarchy
 							</control-param>
 						</control>
 					</field>

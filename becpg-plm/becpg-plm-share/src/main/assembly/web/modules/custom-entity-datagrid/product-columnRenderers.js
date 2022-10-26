@@ -209,6 +209,17 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "ecm:wulTargetItem" ],
+		renderer : function(oRecord, data, label, scope) {
+			
+			var url = beCPG.util.entityURL(data.siteId, data.value);
+			
+			return '<span class="' + data.metadata + '" '+'>' +(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+'</span>';
+		}
+
+	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName: "cm:name",
@@ -384,6 +395,33 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
   });
+  
+  
+  	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : ["bcpg:nutListValuePrepared"],
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+          var ret = "";
+          
+          var unit = oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value;
+          if(unit == null){
+			  unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
+		  }
+          if(oColumn.label!=null && oColumn.label.indexOf && oColumn.label.indexOf("100g")>0){
+        	  unit = unit.replace("/100g","");
+          }
+          
+      
+          if (data.value != null) {
+        	  ret+=data.value+" "+unit;
+          }
+     
+          
+         return ret;
+      }
+
+  });
+  
+  
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : ["bcpg:nutListValuePerServing"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
@@ -866,7 +904,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			}
 			
 			if (data.value != null) {
-				return Alfresco.util.formatDate(data.value,"yyyy-mm-dd");
+				return Alfresco.util.formatDate(data.value,"shortDate");
 			} 
 			return "";
 		}
@@ -1384,6 +1422,13 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 				   if (idx == 0) {
 					   
+					   Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+		
+					   YAHOO.Bubbling.fire("columnRenamed", {
+						   columnId: "dt_bcpg_reqCtrlList",
+						   label: scope.msg("becpg.forms.field.compliance.label")
+					   });
+		
 					   var reqCtrlList = oRecord.getData("itemData")["dt_bcpg_reqCtrlList"];
 
 					   var reqHtlm = "<ul>";

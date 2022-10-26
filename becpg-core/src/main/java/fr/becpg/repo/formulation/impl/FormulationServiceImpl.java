@@ -158,10 +158,28 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 			
 			T entity = alfrescoRepository.findOne(entityNodeRef);
 
+			StopWatch watch = null;
+			if (logger.isDebugEnabled()) {
+				watch = new StopWatch();
+				watch.start();
+			}
+			
 			entity = formulate(entity, chainId);
+
+			if (logger.isDebugEnabled() && (watch != null)) {
+				watch.stop();
+				logger.debug("Formulate : " + this.getClass().getName() + " takes " + watch.getTotalTimeSeconds() + " seconds");
+				watch = new StopWatch();
+				watch.start();
+			}
 
 			alfrescoRepository.save(entity);
 			
+			if (logger.isDebugEnabled() && (watch != null)) {
+				watch.stop();
+				logger.debug("Save : " + this.getClass().getName() + " takes " + watch.getTotalTimeSeconds() + " seconds");
+			}
+
 			return entity;
 			
 			
