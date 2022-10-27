@@ -15,9 +15,12 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.security.authentication.BasicPasswordGenerator;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
@@ -34,7 +37,10 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.authentication.BeCPGUserAccount;
+import fr.becpg.repo.authentication.BeCPGUserAccountService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
@@ -84,6 +90,13 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 	@Autowired
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
+	
+	@Autowired
+	private BeCPGUserAccountService beCPGUserAccountService;
+	
+	@Autowired
+	private AuthorityService authorityService;
+	
 
 	@Value("${beCPG.sendToSupplier.projectName.format}")
 	private String projectNameTpl = "{entity_cm:name} - {supplier_cm:name} - REFERENCING - {date_YYYY}";
@@ -372,6 +385,52 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				PermissionService.COORDINATOR, true);
 
 		return destFolder;
+	}
+	
+	@Override
+	public NodeRef createExternalUser(String email, String firstName, String lastName, boolean notify, Map<QName, Serializable> extraProps) {
+
+		final boolean isAdmin = authorityService.hasAdminAuthority();
+
+		boolean hasAccess = AuthenticationUtil.runAsSystem(
+				() -> isAdmin || authorityService.getAuthoritiesForUser(AuthenticationUtil.getFullyAuthenticatedUser())
+						.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUserMgr.toString()));
+
+		if (hasAccess) {
+
+			BasicPasswordGenerator pwdGen = new BasicPasswordGenerator();
+			pwdGen.setPasswordLength(10);
+
+			if (email == null || email.isBlank()) {
+				throw new IllegalStateException(I18NUtil.getMessage("message.supplier.missing-email"));
+			}
+
+			if (firstName == null || firstName.isBlank()) {
+				firstName = email;
+			}
+
+			if (lastName == null || lastName.isBlank()) {
+				firstName = email;
+			}
+
+			BeCPGUserAccount userAccount = new BeCPGUserAccount();
+			userAccount.setEmail(email);
+			userAccount.setUserName(email);
+			userAccount.setFirstName(firstName);
+			userAccount.setLastName(lastName);
+			userAccount.setPassword(pwdGen.generatePassword());
+			userAccount.setNotify(notify);
+			userAccount.getAuthorities().add(SystemGroup.ExternalUser.toString());
+
+			if (extraProps != null) {
+				userAccount.getExtraProps().putAll(extraProps);
+			}
+
+			return beCPGUserAccountService.getOrCreateUser(userAccount);
+
+		}
+
+		throw new IllegalAccessError("You should be member of ExternalUserMgr");
 	}
 
 }
