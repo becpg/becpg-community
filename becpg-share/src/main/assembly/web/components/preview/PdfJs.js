@@ -1704,7 +1704,7 @@
        */
       onDownloadClick : function PdfJs_onDownloadClick(p_obj)
       {
-         window.open(this.wp.getContentUrl(true).replace("api/node","slingshot/node"), "_blank");
+           this.downloadIfLoggedIn(this.wp.getContentUrl(true).replace("api/node","slingshot/node"));
       },
 
       /**
@@ -1714,7 +1714,24 @@
        */
       onDownloadPDFClick : function PdfJs_onDownloadPDFClick(p_obj)
       {
-         window.open(this.wp.getThumbnailUrl(this.attributes.src) + "&a=true", "_blank");
+            this.downloadIfLoggedIn(this.wp.getThumbnailUrl(this.attributes.src) + "&a=true");
+      },
+
+      downloadIfLoggedIn : function PdfJs_downloadIfLoggedIn(url)
+      {
+            var request = new XMLHttpRequest();
+
+            request.onreadystatechange = function() {
+                if (this.status === 401)
+                {
+                    window.location.reload();
+                }
+                else if (this.readyState == 4 && this.status == 200) {
+                    window.open(url, "_blank");
+                }
+            };
+            request.open("GET", url, true);
+            request.send();
       },
       /**
        * beCPG Download XLS click handler (for thumbnailed content only)
@@ -1723,7 +1740,7 @@
        */
       onDownloadXLSXClick : function PdfJs_onDownloadXLSXClick(p_obj)
       {
-    	 window.open(this.getDownloadAtFormat(p_obj,"xlsx").replace("docx","xlsx").replace("pdf","xlsx"), "_blank");
+    	  this.downloadIfLoggedIn(this.getDownloadAtFormat(p_obj,"xlsx").replace("docx","xlsx").replace("pdf","xlsx"));
       },
       
       /**
@@ -1733,12 +1750,12 @@
        */
       onDownloadDOCXClick : function PdfJs_onDownloadDOCXClick(p_obj)
       {
-    	  window.open(this.getDownloadAtFormat(p_obj,"docx").replace("pdf","docx").replace("xlsx","docx"), "_blank");
+    	   this.downloadIfLoggedIn(this.getDownloadAtFormat(p_obj,"docx").replace("pdf","docx").replace("xlsx","docx"));
       },
       
       onDownloadbPDFClick : function PdfJs_onDownloadDOCXClick(p_obj)
       {
-    	  window.open(this.getDownloadAtFormat(p_obj,"pdf").replace("docx","pdf").replace("xlsx","pdf"), "_blank");
+    	  this.downloadIfLoggedIn(this.getDownloadAtFormat(p_obj,"pdf").replace("docx","pdf").replace("xlsx","pdf"));
       },
       
       getDownloadAtFormat : function PdfJs_onDownloadDOCXClick(p_obj, format)
