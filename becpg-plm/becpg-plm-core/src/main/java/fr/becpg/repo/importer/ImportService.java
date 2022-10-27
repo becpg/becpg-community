@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.batch.BatchInfo;
+
 
 /**
  * The Interface ImportService.
@@ -25,7 +27,7 @@ public interface ImportService {
 	 * @return a {@link java.util.List} object.
 	 * @throws java.lang.Exception if any.
 	 */
-	List<String> importText(NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws Exception;
+	BatchInfo importText(NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction, List<String> errors) throws Exception;
 	
 	/**
 	 * Move the imported file in the Succeeded or Failed folder
