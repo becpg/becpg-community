@@ -1,9 +1,12 @@
 package fr.becpg.repo.supplier;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 
 public interface SupplierPortalService {
 
@@ -15,4 +18,6 @@ public interface SupplierPortalService {
 	
 	String getProjectNameTpl();
 	String getEntityNameTpl();
+	
+	NodeRef createExternalUser(String email, String firstName, String lastName, boolean notify, Map<QName, Serializable> extraProps);
 }
