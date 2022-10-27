@@ -32,6 +32,23 @@ public class AuditScope implements AutoCloseable {
 		}
 	}
 
+	public AuditScope start() {
+		
+		if (databaseService != null) {
+			databaseService.start();
+		}
+		
+		if (stopWatchService != null) {
+			stopWatchService.start();
+		}
+		
+		if (tracerService != null) {
+			tracerService.start();
+		}
+		
+		return this;
+	}
+
 	@Override
 	public void close() {
 		
@@ -65,23 +82,6 @@ public class AuditScope implements AutoCloseable {
 		if (tracerService != null) {
 			tracerService.addAnnotation(string);
 		}
-	}
-
-	public AuditScope start() {
-		
-		if (databaseService != null) {
-			databaseService.start();
-		}
-		
-		if (stopWatchService != null) {
-			stopWatchService.start();
-		}
-		
-		if (tracerService != null) {
-			tracerService.start();
-		}
-		
-		return this;
 	}
 
 }

@@ -3,6 +3,7 @@ package fr.becpg.repo.audit.plugin;
 import java.io.Serializable;
 import java.util.Map;
 
+import fr.becpg.repo.audit.model.AuditDataType;
 import fr.becpg.repo.audit.model.AuditType;
 
 public interface AuditPlugin {
@@ -13,7 +14,7 @@ public interface AuditPlugin {
 	
 	String getAuditApplicationPath();
 	
-	Map<String, String> getStatisticsKeyMap();
+	Map<String, AuditDataType> getStatisticsKeyMap();
 
 	boolean isDatabaseEnable();
 	
