@@ -209,7 +209,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				
 				auditScope.putAttribute("batchUser", batchInfo.getBatchUser());
 				auditScope.putAttribute("batchId", batchInfo.getBatchId());
-				auditScope.putAttribute("isCompleted", batchInfo.getIsCompleted());
+				auditScope.putAttribute("isCompleted", false);
 				
 				Integer stepCount = batchSteps.size() > 1 ? 1 : null;
 				
@@ -312,7 +312,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				
 				batchInfo.setIsCompleted(true);
 				
-				auditScope.putAttribute("isCompleted", batchInfo.getIsCompleted());
+				auditScope.putAttribute("isCompleted", true);
 				
 			}
 			

@@ -31,6 +31,12 @@
         <PathMap source="/becpg/audit/formulation/entityNodeRef" target="/beCPGFormulationAudit/formulation/entityNodeRef"/>
         <PathMap source="/becpg/audit/formulation/entityName" target="/beCPGFormulationAudit/formulation/entityName"/>
         <PathMap source="/becpg/audit/formulation/duration" target="/beCPGFormulationAudit/formulation/duration"/>
+        <PathMap source="/becpg/audit/activity/id" target="/beCPGActivityAudit/activity/id"/>
+        <PathMap source="/becpg/audit/activity/userId" target="/beCPGActivityAudit/activity/userId"/>
+        <PathMap source="/becpg/audit/activity/activityType" target="/beCPGActivityAudit/activity/activityType"/>
+        <PathMap source="/becpg/audit/activity/activityData" target="/beCPGActivityAudit/activity/activityData"/>
+        <PathMap source="/becpg/audit/activity/startedAt" target="/beCPGActivityAudit/activity/startedAt"/>
+       <PathMap source="/becpg/audit/activity/completedAt" target="/beCPGActivityAudit/activity/completedAt"/>
     </PathMappings>
 
     <Application name="beCPGBatchAudit" key="beCPGBatchAudit">
@@ -84,6 +90,29 @@
 	        </AuditPath>
         	<AuditPath key="entityName">
 	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/entityName"/>
+	        </AuditPath>
+        </AuditPath>
+    </Application>
+    
+    <Application name="beCPGActivityAudit" key="beCPGActivityAudit">
+        <AuditPath key="activity">
+        	<AuditPath key="id">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/id"/>
+	        </AuditPath>
+        	<AuditPath key="userId">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/userId"/>
+	        </AuditPath>
+        	<AuditPath key="activityType">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/activityType"/>
+	        </AuditPath>
+        	<AuditPath key="activityData">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/activityData"/>
+	        </AuditPath>
+	        <AuditPath key="startedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGActivityAudit/activity/startedAt"/>
+	        </AuditPath>
+        	<AuditPath key="completedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGActivityAudit/activity/completedAt"/>
 	        </AuditPath>
         </AuditPath>
     </Application>

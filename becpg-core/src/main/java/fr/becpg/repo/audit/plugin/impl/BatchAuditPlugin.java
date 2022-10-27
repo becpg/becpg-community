@@ -7,6 +7,7 @@ import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.audit.model.AuditDataType;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AbstractAuditPlugin;
 import fr.becpg.repo.batch.BatchQueueService;
@@ -19,10 +20,10 @@ public class BatchAuditPlugin extends AbstractAuditPlugin {
 	private static final String BATCH_AUDIT_ID = "beCPGBatchAudit";
 	
 	static {
-		KEY_MAP.put("batchId", "string");
-		KEY_MAP.put("batchUser", "string");
-		KEY_MAP.put("isCompleted", "boolean");
-		KEY_MAP.put("totalItems", "int");
+		KEY_MAP.put("batchId", AuditDataType.STRING);
+		KEY_MAP.put("batchUser", AuditDataType.STRING);
+		KEY_MAP.put("isCompleted", AuditDataType.BOOLEAN);
+		KEY_MAP.put("totalItems", AuditDataType.INTEGER);
 	}
 	
 	@Override

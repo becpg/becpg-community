@@ -10,18 +10,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 
+import fr.becpg.repo.audit.model.AuditDataType;
+
 public abstract class AbstractAuditPlugin implements AuditPlugin, InitializingBean {
 	
 	private static final String STARTED_AT = "startedAt";
 	private static final String COMPLETED_AT = "completedAt";
 	private static final String DURATION = "duration";
 	
-	protected static final Map<String, String> KEY_MAP = new HashMap<>();
+	protected static final Map<String, AuditDataType> KEY_MAP = new HashMap<>();
 
 	static {
-		KEY_MAP.put(STARTED_AT, "date");
-		KEY_MAP.put(COMPLETED_AT, "date");
-		KEY_MAP.put(DURATION, "int");
+		KEY_MAP.put(STARTED_AT, AuditDataType.DATE);
+		KEY_MAP.put(COMPLETED_AT, AuditDataType.DATE);
+		KEY_MAP.put(DURATION, AuditDataType.INTEGER);
 	}
 
 	@Autowired
@@ -73,7 +75,7 @@ public abstract class AbstractAuditPlugin implements AuditPlugin, InitializingBe
 		}
 	}
 
-	public Map<String, String> getStatisticsKeyMap() {
+	public Map<String, AuditDataType> getStatisticsKeyMap() {
 		return KEY_MAP;
 	}
 	
