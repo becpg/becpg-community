@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
+import fr.becpg.repo.audit.model.AuditDataType;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
 
@@ -178,9 +179,9 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	private class StatisticsComparator implements Comparator<JSONObject> {
 		
 		private String comparisonFieldName;
-		private Map<String, String> statisticsMap;
+		private Map<String, AuditDataType> statisticsMap;
 		
-		public StatisticsComparator(Map<String, String> statisticsMap, String comparisonFieldName) {
+		public StatisticsComparator(Map<String, AuditDataType> statisticsMap, String comparisonFieldName) {
 			this.statisticsMap = statisticsMap;
 			this.comparisonFieldName = comparisonFieldName;
 		}
@@ -204,7 +205,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 						return 1;
 					}
 					
-					if ("int".equals(statisticsMap.get(comparisonFieldName))) {
+					if (AuditDataType.INTEGER.equals(statisticsMap.get(comparisonFieldName))) {
 						Integer int1 = Integer.parseInt(field1.toString());
 						Integer int2 = Integer.parseInt(field2.toString());
 						return int1.compareTo(int2);

@@ -3,6 +3,7 @@ package fr.becpg.repo.audit.plugin.impl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.audit.model.AuditDataType;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AbstractAuditPlugin;
 import fr.becpg.repo.formulation.FormulationService;
@@ -15,9 +16,9 @@ public class FormulationAuditPlugin extends AbstractAuditPlugin {
 	private static final String FORMULATION_AUDIT_ID = "beCPGFormulationAudit";
 	
 	static {
-		KEY_MAP.put("chainId", "string");
-		KEY_MAP.put("entityNodeRef", "string");
-		KEY_MAP.put("entityName", "string");
+		KEY_MAP.put("chainId", AuditDataType.STRING);
+		KEY_MAP.put("entityNodeRef", AuditDataType.STRING);
+		KEY_MAP.put("entityName", AuditDataType.STRING);
 	}
 	
 	@Override
