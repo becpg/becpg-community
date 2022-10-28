@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorkerAdaptor;
@@ -51,6 +52,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
+import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
@@ -155,7 +157,7 @@ public class ImportServiceImpl implements ImportService {
 	 * Import a text file
 	 */
 	@Override
-	public BatchInfo importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction, List<String> errors)  {
+	public BatchInfo importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction, BiFunction<ImportContext, String, Void> afterImportCallBack)  {
 
 		logger.debug("start import");
 
@@ -179,11 +181,28 @@ public class ImportServiceImpl implements ImportService {
 		
 		BatchStep<Integer> batchStep = new BatchStep<>();
 		
+		BatchStepAdapter batchStepAdapter = new BatchStepAdapter() {
+			@Override
+			public void afterStep() {
+				if (afterImportCallBack != null) {
+					afterImportCallBack.apply(importContext, null);
+				}
+			}
+		};
+		
+		batchStep.setBatchStepListener(batchStepAdapter);
+		
 		batchStep.setProcessWorker(new BatchProcessWorkerAdaptor<Integer>() {
 
+			private boolean hasToStop = false;
+			
 			@Override
 			public void process(Integer index) throws Throwable {
 
+				if (hasToStop) {
+					return;
+				}
+				
 				importContext.setImportIndex(index * BATCH_SIZE);
 				int tempIndex = (index + 1) * BATCH_SIZE;
 				final int finalLastIndex = tempIndex > lastIndex ? lastIndex : tempIndex;
@@ -196,8 +215,17 @@ public class ImportServiceImpl implements ImportService {
 							(importContext.getImportIndex() + 1), (finalLastIndex + 1)));
 
 				}
-
-				importInBatch(finalImportContext, finalLastIndex);
+				try {
+					importInBatch(finalImportContext, finalLastIndex);
+				} catch (Exception e) {
+					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+					    throw e;
+	                }
+					if (importContext.isStopOnFirstError()) {
+						hasToStop = true;
+						importContext.markCurrLineError(e);
+					}
+				}
 
 			}
 		});
@@ -212,11 +240,9 @@ public class ImportServiceImpl implements ImportService {
 		
 		batchQueueService.queueBatch(batchInfo, List.of(batchStep));
 		
-		ImportContext errorImportContext = importContext;
-
 		if ((!importContext.getLog().isEmpty()) && (importContext.getImportFileReader() instanceof ImportExcelFileReader)) {
 
-			errorImportContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				ruleService.disableRules();
 				try {
 
@@ -228,10 +254,6 @@ public class ImportServiceImpl implements ImportService {
 			}, false, requiresNewTransaction);
 		}
 		
-		if (errors != null) {
-			errors.addAll(errorImportContext.getLog());
-		}
-
 		return batchInfo;
 	}
 
