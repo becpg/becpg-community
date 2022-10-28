@@ -2,7 +2,9 @@ package fr.becpg.repo.authentication;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -41,10 +43,10 @@ public class BeCPGUserAccountService {
 
 	@Autowired
 	private AuthorityService authorityService;
-	
+
 	@Autowired
 	private MutableAuthenticationService authenticationService;
-	
+
 	@Autowired
 	private IdentityServiceAccountProvider identityServiceAccountProvider;
 
@@ -53,24 +55,22 @@ public class BeCPGUserAccountService {
 			String userName = createTenantAware(userAccount.getUserName());
 			userAccount.setUserName(userAccount.getUserName());
 			NodeRef personNodeRef = null;
-			
-			if (personService.personExists(userName)) {
 
+			if (personService.personExists(userName)) {
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Reassign to an existing user");
 				}
 
-				personNodeRef =  personService.getPerson(userName);
+				personNodeRef = personService.getPerson(userName);
 
-
-//				Set<String> userGroups = authorityService.getContainingAuthorities(AuthorityType.GROUP, userName, false);
-//				userGroups.forEach(group -> {
-//					logger.info("Group: " + group + ", user: " + userName);
-//					if (!group.startsWith("GROUP_site_")) {
-//						authorityService.removeAuthority(group, userName);
-//					}
-//				});
+				//				Set<String> userGroups = authorityService.getContainingAuthorities(AuthorityType.GROUP, userName, false);
+				//				userGroups.forEach(group -> {
+				//					logger.info("Group: " + group + ", user: " + userName);
+				//					if (!group.startsWith("GROUP_site_")) {
+				//						authorityService.removeAuthority(group, userName);
+				//					}
+				//				});
 
 			} else {
 
@@ -85,10 +85,11 @@ public class BeCPGUserAccountService {
 				propMap.put(ContentModel.PROP_EMAIL, userAccount.getEmail());
 				propMap.putAll(userAccount.getExtraProps());
 
-				personNodeRef =  personService.createPerson(propMap);
+				personNodeRef = personService.createPerson(propMap);
 
 				createAuthentication(userAccount);
 
+				
 				for (String authority : userAccount.getAuthorities()) {
 
 					String[] grp = authority.split(PATH_SEPARATOR);
@@ -119,29 +120,34 @@ public class BeCPGUserAccountService {
 
 				}
 
-
 				// notify supplier
 				if (Boolean.TRUE.equals(userAccount.getNotify())) {
 					beCPGMailService.sendMailNewUser(personNodeRef, userName, userAccount.getPassword(), false);
 				}
 
-
-
 			}
-
 
 			return personNodeRef;
 
 		});
 
 	}
-	
-	
 
 	private void createAuthentication(BeCPGUserAccount userAccount) {
-		if(Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled())) {
+		if (Boolean.TRUE.equals(identityServiceAccountProvider.isEnabled())) {
 			logger.debug("Create user in Identity Service");
 			identityServiceAccountProvider.registerAccount(userAccount);
+			Set<String> zones = authorityService.getAuthorityZones(userAccount.getUserName());
+
+			if (zones == null) {
+				zones = new HashSet<>();
+			}
+
+			if (!zones.contains(identityServiceAccountProvider.getZoneId())) {
+				zones.add(identityServiceAccountProvider.getZoneId());
+				authorityService.addAuthorityToZones(PATH_SEPARATOR, zones);
+			}
+
 		} else {
 			authenticationService.createAuthentication(userAccount.getUserName(), userAccount.getPassword().toCharArray());
 		}
