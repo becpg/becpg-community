@@ -488,7 +488,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 				formQuery.append("(cm:content." + propName + ":\"" + multiValue[i] + "\")");
 			} else {
 				formQuery.append(  QName.createQName(propName, namespaceService) + ":("
-						+ cleanValue(multiValue[i]) + "))");
+						+ cleanValue(multiValue[i]) + ")");
 			}
 		}
 
