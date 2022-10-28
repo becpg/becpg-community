@@ -474,6 +474,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		String[] multiValue = propValue.split(",");
 		StringBuilder formQuery = new StringBuilder();
+		if(operand == null || operand.isBlank()) {
+			operand = "OR";
+		}
+		
 		for (var i = 0; i < multiValue.length; i++) {
 
 			if (i > 0) {
@@ -483,8 +487,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			if (pseudo) {
 				formQuery.append("(cm:content." + propName + ":\"" + multiValue[i] + "\")");
 			} else {
-				formQuery.append('(' + AbstractBeCPGQueryBuilder.escapeQName(QName.createQName(propName, namespaceService)) + ":\""
-						+ cleanValue(multiValue[i]) + "\")");
+				formQuery.append(  QName.createQName(propName, namespaceService) + ":("
+						+ cleanValue(multiValue[i]) + "))");
 			}
 		}
 
