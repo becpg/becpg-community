@@ -526,7 +526,7 @@
         		 && (Alfresco.constants.PAGEID === "entity-data-lists" || window.location.pathname.match("/entity-data-lists$") || beCPG.constants.IS_REPORT) )
          {
         	if(this.attributes.src && !(this.wp.getContentUrl().indexOf(".pdf")>0)){
-        		downloadMenu.push({ text: this.wp.msg("link.downloadPdf"), value: "", onclick: { fn: this.onDownloadbPDFClick, scope: this } });
+        		downloadMenu.push({ text: this.wp.msg("link.downloadPdf"), value: "", onclick: { fn: this.onDownloadReportPDFClick, scope: this } });
         		if(this.wp.getContentUrl().indexOf(".docx")>0){
         			downloadMenu.push({ text: this.wp.msg("link.downloadXlsx"), value: "", onclick: { fn: this.onDownloadXLSXClick, scope: this } });
         		} else {
@@ -874,7 +874,7 @@
          // Set the worker source
          PDFJS.workerSrc = this.workerSrc;
          // Set the char map source dir
-         PDFJS.cMapUrl = './cmaps/';
+         PDFJS.cMapUrl = Alfresco.constants.URL_CONTEXT + 'res/components/preview/pdfjs/cmaps/';
          PDFJS.cMapPacked = true;
 
          // PDFJS range request for progessive loading
@@ -1753,7 +1753,7 @@
     	   this.downloadIfLoggedIn(this.getDownloadAtFormat(p_obj,"docx").replace("pdf","docx").replace("xlsx","docx"));
       },
       
-      onDownloadbPDFClick : function PdfJs_onDownloadDOCXClick(p_obj)
+      onDownloadReportPDFClick : function PdfJs_onDownloadReportPDFClick(p_obj)
       {
     	  this.downloadIfLoggedIn(this.getDownloadAtFormat(p_obj,"pdf").replace("docx","pdf").replace("xlsx","pdf"));
       },

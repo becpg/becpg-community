@@ -244,7 +244,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 										// work out if "from" and/or "to" are
 										// specified - use MIN and MAX
-										// otherwise;
+										// or
 										// we only want the "YYYY-MM-DD" part of
 										// the ISO date value - so crop the
 										// strings
@@ -334,7 +334,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									}
 								}
 							} else if (isMultiValueProperty(propValue, modePropValue) || isListProperty(criteriaMap, key)) {
-								if (!propName.startsWith("isListProperty")) {
+								if (propName.indexOf("isListProperty") == -1) {
 									queryBuilder.andFTSQuery(processMultiValue(propName, propValue, modePropValue, false));
 								}
 							} else if (!propName.endsWith("-entry")) {
