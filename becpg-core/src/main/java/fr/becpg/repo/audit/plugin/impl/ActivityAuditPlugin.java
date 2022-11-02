@@ -15,6 +15,7 @@ public class ActivityAuditPlugin extends AbstractAuditPlugin {
 		KEY_MAP.put("userId", AuditDataType.STRING);
 		KEY_MAP.put("activityType", AuditDataType.STRING);
 		KEY_MAP.put("activityData", AuditDataType.STRING);
+		KEY_MAP.put("entityNodeRef", AuditDataType.STRING);
 	}
 	
 	@Override

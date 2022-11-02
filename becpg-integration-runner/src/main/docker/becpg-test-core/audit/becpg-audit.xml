@@ -37,6 +37,7 @@
         <PathMap source="/becpg/audit/activity/activityData" target="/beCPGActivityAudit/activity/activityData"/>
         <PathMap source="/becpg/audit/activity/startedAt" target="/beCPGActivityAudit/activity/startedAt"/>
        <PathMap source="/becpg/audit/activity/completedAt" target="/beCPGActivityAudit/activity/completedAt"/>
+       <PathMap source="/becpg/audit/activity/entityNodeRef" target="/beCPGActivityAudit/activity/entityNodeRef"/>
     </PathMappings>
 
     <Application name="beCPGBatchAudit" key="beCPGBatchAudit">
@@ -99,6 +100,12 @@
         	<AuditPath key="id">
 	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/id"/>
 	        </AuditPath>
+	        <AuditPath key="startedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGActivityAudit/activity/startedAt"/>
+	        </AuditPath>
+        	<AuditPath key="completedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGActivityAudit/activity/completedAt"/>
+	        </AuditPath>
         	<AuditPath key="userId">
 	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/userId"/>
 	        </AuditPath>
@@ -108,11 +115,8 @@
         	<AuditPath key="activityData">
 	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/activityData"/>
 	        </AuditPath>
-	        <AuditPath key="startedAt">
-	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGActivityAudit/activity/startedAt"/>
-	        </AuditPath>
-        	<AuditPath key="completedAt">
-	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGActivityAudit/activity/completedAt"/>
+        	<AuditPath key="entityNodeRef">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/entityNodeRef"/>
 	        </AuditPath>
         </AuditPath>
     </Application>

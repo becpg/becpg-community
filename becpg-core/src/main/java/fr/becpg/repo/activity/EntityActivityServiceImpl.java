@@ -53,6 +53,9 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.audit.model.AuditScope;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
@@ -141,6 +144,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	@Autowired
 	private ActivityService activityService;
 
+	@Autowired
+	private BeCPGAuditService beCPGAuditService;
+	
 	/** {@inheritDoc} */
 	@Override
 	public boolean isMatchingStateProperty(QName propName) {
@@ -1001,7 +1007,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 						mergeWithLastActivity(activityListDataItem);
 
-						alfrescoRepository.save(activityListDataItem);
+						try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.ACTIVITY)) {
+							auditScope.putAttribute("userId", activityListDataItem.getUserId());
+							auditScope.putAttribute("activityType", activityListDataItem.getActivityType().toString());
+							auditScope.putAttribute("activityData", activityListDataItem.getActivityData());
+							auditScope.putAttribute("entityNodeRef", entityNodeRef);
+						}
 
 						notifyListeners(entityNodeRef, activityListDataItem);
 					}
