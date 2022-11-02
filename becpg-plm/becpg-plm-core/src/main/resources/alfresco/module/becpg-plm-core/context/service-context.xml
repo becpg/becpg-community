@@ -179,6 +179,7 @@
 		<property name="supplierPortalService" ref="supplierPortalService"/>
 		<property name="entityVersionService" ref="entityVersionService"/>
 		<property name="entityDictionaryService" ref="entityDictionaryService"/>
+		<property name="namespaceService" ref="namespaceService"/>
 	</bean>
 
 	
@@ -189,9 +190,8 @@
 	
 	<bean id="webscript.fr.becpg.supplier.createSupplier.post" class="fr.becpg.repo.web.scripts.supplier.SupplierAccountWebScript" parent="webscript">
 		<property name="nodeService" ref="NodeService" />
-		<property name="authorityService" ref="AuthorityService" />
 		<property name="associationService" ref="associationService"/>
-		<property name="beCPGUserAccountService" ref="beCPGUserAccountService"/>
+		<property name="supplierPortalService" ref="supplierPortalService"/>
 	</bean>
 	
 	

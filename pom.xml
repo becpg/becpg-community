@@ -165,6 +165,9 @@
 	    <sonar.dependencyCheck.xmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.xml</sonar.dependencyCheck.xmlReportPath>
 		<sonar.dependencyCheck.jsonReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
 		<sonar.dependencyCheck.htmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
+	    <sonar.dependencyCheck.severity.blocker>9.0</sonar.dependencyCheck.severity.blocker>
+        <sonar.dependencyCheck.severity.critical>7.0</sonar.dependencyCheck.severity.critical>
+        <sonar.dependencyCheck.severity.major>4.0</sonar.dependencyCheck.severity.major>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.ws.timeout>3600</sonar.ws.timeout>
 		<sonar.language>java</sonar.language>
@@ -193,8 +196,7 @@
 				<version>${alfresco-remote-api.version}</version>
 				<scope>provided</scope>
 			</dependency>
-            
-            
+           
             
             <!-- Redefine the following Share dependencies as they have different version numbers than platform.
                  They are defined in alfresco-platform-distribution... -->

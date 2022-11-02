@@ -19,6 +19,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -71,18 +72,17 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 									}
 
 									NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityListDAO.getEntity(nodeRef));
-									NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
+									NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PLMModel.TYPE_REQCTRLLIST);
 
 									if (listNodeRef != null) {
-										List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
+										List<NodeRef> reqCtrlList = entityListDAO.getListItems(listNodeRef, PLMModel.TYPE_REQCTRLLIST);
 
-										for (NodeRef itemNodeRef : results) {
+										for (NodeRef reqCtrl : reqCtrlList) {
 
-											if ((charact != null)
-													&& charact.equals(associationService.getTargetAssoc(itemNodeRef, PLMModel.ASSOC_RCL_CHARACT))
-													|| associationService.getTargetAssocs(itemNodeRef, PLMModel.ASSOC_RCL_SOURCES)
-															.contains(charact)) {
-												addExtracted(itemNodeRef, field, cache, mode, ret);
+											if (((charact != null) && charact.equals(associationService.getTargetAssoc(reqCtrl, PLMModel.ASSOC_RCL_CHARACT))
+													|| associationService.getTargetAssocs(reqCtrl, PLMModel.ASSOC_RCL_SOURCES).contains(charact))
+													&& RequirementDataType.Specification.toString().equals(nodeService.getProperty(reqCtrl, PLMModel.PROP_RCL_REQ_DATA_TYPE))) {
+												addExtracted(reqCtrl, field, cache, mode, ret);
 											}
 										}
 									}

@@ -956,12 +956,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
 		dataLists.add(PLMModel.TYPE_CERTIFICATION);
 		dataLists.add(PLMModel.TYPE_PLANT);
+		subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, true, dataLists,
 				subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
 		entityTplService.createActivityList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 
+		subFolders.remove(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		// visit client
 		dataLists = new LinkedHashSet<>();
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
@@ -1159,7 +1161,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 
 		for (QName productType : productTypes) {
-
+			
+			subFolders.remove(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
+			
 			// datalists
 			Set<QName> dataLists = new LinkedHashSet<>();
 			QName wusedQName = null;
@@ -1175,6 +1179,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
+				
+				subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 
 			} else if (productType.equals(PLMModel.TYPE_PACKAGINGMATERIAL)) {
 
@@ -1186,6 +1192,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
+				
+				subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 
 			} else if (productType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
 
