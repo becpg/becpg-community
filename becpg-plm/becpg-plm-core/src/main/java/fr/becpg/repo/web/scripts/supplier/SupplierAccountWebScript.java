@@ -5,15 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.security.authentication.BasicPasswordGenerator;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
@@ -21,10 +16,8 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.model.SystemGroup;
-import fr.becpg.repo.authentication.BeCPGUserAccount;
-import fr.becpg.repo.authentication.BeCPGUserAccountService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.supplier.SupplierPortalService;
 
 /**
  * <p>SupplierAccountWebScript class.</p>
@@ -43,14 +36,12 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 
 	NodeService nodeService;
 
-	AuthorityService authorityService;
-
 	AssociationService associationService;
 
-	BeCPGUserAccountService beCPGUserAccountService;
-
-	public void setBeCPGUserAccountService(BeCPGUserAccountService beCPGUserAccountService) {
-		this.beCPGUserAccountService = beCPGUserAccountService;
+	SupplierPortalService supplierPortalService;
+	
+	public void setSupplierPortalService(SupplierPortalService supplierPortalService) {
+		this.supplierPortalService = supplierPortalService;
 	}
 
 	/**
@@ -60,15 +51,6 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 	 */
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>authorityService</code>.</p>
-	 *
-	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
-	 */
-	public void setAuthorityService(AuthorityService authorityService) {
-		this.authorityService = authorityService;
 	}
 
 	/**
@@ -87,11 +69,6 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 		NodeRef nodeRef = new NodeRef(req.getParameter(PARAM_ENTITY_NODEREF));
 		Boolean notifySupplier = Boolean.parseBoolean(req.getParameter(PARAM_NOTIFY_SUPPLIER));
 		String supplierEmail = req.getParameter(PARAM_EMAIL_ADDRESS);
-                final boolean isAdmin  = authorityService.hasAdminAuthority();
-
-		if (supplierEmail == null || supplierEmail.isBlank()) {
-			throw new IllegalStateException(I18NUtil.getMessage("message.supplier.missing-email"));
-		}
 
 		String supplierFirstName = req.getParameter(PARAM_FIRST_NAME);
 		String supplierLastName = req.getParameter(PARAM_LAST_NAME);
@@ -105,43 +82,21 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 		}
 
 		try {
+			
+			NodeRef personNodeRef = supplierPortalService.createExternalUser(supplierEmail, supplierFirstName, supplierLastName, notifySupplier, null);
 
-			boolean hasAccess = AuthenticationUtil.runAsSystem(() -> {
-				return isAdmin || authorityService.getAuthoritiesForUser(AuthenticationUtil.getFullyAuthenticatedUser())
-						.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUserMgr.toString());
-			});
+			final List<NodeRef> associations = new ArrayList<>();
+			associations.addAll(associationService.getTargetAssocs(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS));
 
-			if (hasAccess) {
+			associations.add(personNodeRef);
+			associationService.update(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, associations);
 
-				BasicPasswordGenerator pwdGen = new BasicPasswordGenerator();
-				pwdGen.setPasswordLength(10);
+			JSONObject ret = new JSONObject();
+			ret.put("login", supplierEmail);
+			res.setContentType("application/json");
+			res.setContentEncoding("UTF-8");
+			ret.write(res.getWriter());
 
-				BeCPGUserAccount userAccount = new BeCPGUserAccount();
-				userAccount.setEmail(supplierEmail);
-				userAccount.setUserName(supplierEmail);
-				userAccount.setFirstName(supplierFirstName);
-				userAccount.setLastName(supplierLastName);
-				userAccount.setPassword(pwdGen.generatePassword());
-				userAccount.setNotify(notifySupplier);
-				userAccount.getAuthorities().add(SystemGroup.ExternalUser.toString());
-
-				NodeRef personNodeRef = beCPGUserAccountService.getOrCreateUser(userAccount);
-
-				final List<NodeRef> associations = new ArrayList<>();
-				associations.addAll(associationService.getTargetAssocs(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS));
-
-				associations.add(personNodeRef);
-				associationService.update(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, associations);
-
-				JSONObject ret = new JSONObject();
-				ret.put("login", supplierEmail);
-				res.setContentType("application/json");
-				res.setContentEncoding("UTF-8");
-				ret.write(res.getWriter());
-
-			} else {
-				throw new IllegalAccessError("You should be member of ExternalUserMgr");
-			}
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		}
