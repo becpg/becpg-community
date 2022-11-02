@@ -3,6 +3,7 @@ package fr.becpg.repo.authentication.provider;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.alfresco.service.cmr.security.AuthorityService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -50,6 +51,12 @@ public class IdentityServiceAccountProvider {
 	public Boolean isEnabled() {
 		return enabled;
 	}
+	
+
+	public String getZoneId() {
+		return AuthorityService.ZONE_AUTH_EXT_PREFIX+realm.toUpperCase();
+	}
+
 
 	public boolean registerAccount(BeCPGUserAccount userAccount) {
 		try {
