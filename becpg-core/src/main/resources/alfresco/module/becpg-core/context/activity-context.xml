@@ -37,6 +37,11 @@
 		<property name="defaultExtractor" value="false" />
 	</bean>
 	
+	<bean id="auditActivityExtractor" class="fr.becpg.repo.activity.extractor.AuditActivityExtractor" init-method="init">
+		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
+		<property name="beCPGAuditService" ref="beCPGAuditService" />
+	</bean>
+	
 	<!-- Job  -->
 
 	<bean id="entityActivityJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
