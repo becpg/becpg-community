@@ -526,7 +526,7 @@
         		 && (Alfresco.constants.PAGEID === "entity-data-lists" || window.location.pathname.match("/entity-data-lists$") || beCPG.constants.IS_REPORT) )
          {
         	if(this.attributes.src && !(this.wp.getContentUrl().indexOf(".pdf")>0)){
-        		downloadMenu.push({ text: this.wp.msg("link.downloadPdf"), value: "", onclick: { fn: this.onDownloadbPDFClick, scope: this } });
+        		downloadMenu.push({ text: this.wp.msg("link.downloadPdf"), value: "", onclick: { fn: this.onDownloadReportPDFClick, scope: this } });
         		if(this.wp.getContentUrl().indexOf(".docx")>0){
         			downloadMenu.push({ text: this.wp.msg("link.downloadXlsx"), value: "", onclick: { fn: this.onDownloadXLSXClick, scope: this } });
         		} else {
@@ -874,7 +874,7 @@
          // Set the worker source
          PDFJS.workerSrc = this.workerSrc;
          // Set the char map source dir
-         PDFJS.cMapUrl = './cmaps/';
+         PDFJS.cMapUrl = Alfresco.constants.URL_CONTEXT + 'res/components/preview/pdfjs/cmaps/';
          PDFJS.cMapPacked = true;
 
          // PDFJS range request for progessive loading
@@ -1704,7 +1704,7 @@
        */
       onDownloadClick : function PdfJs_onDownloadClick(p_obj)
       {
-         window.open(this.wp.getContentUrl(true).replace("api/node","slingshot/node"), "_blank");
+           this.downloadIfLoggedIn(this.wp.getContentUrl(true).replace("api/node","slingshot/node"));
       },
 
       /**
@@ -1714,7 +1714,24 @@
        */
       onDownloadPDFClick : function PdfJs_onDownloadPDFClick(p_obj)
       {
-         window.open(this.wp.getThumbnailUrl(this.attributes.src) + "&a=true", "_blank");
+            this.downloadIfLoggedIn(this.wp.getThumbnailUrl(this.attributes.src) + "&a=true");
+      },
+
+      downloadIfLoggedIn : function PdfJs_downloadIfLoggedIn(url)
+      {
+            var request = new XMLHttpRequest();
+
+            request.onreadystatechange = function() {
+                if (this.status === 401)
+                {
+                    window.location.reload();
+                }
+                else if (this.readyState == 4 && this.status == 200) {
+                    window.open(url, "_blank");
+                }
+            };
+            request.open("GET", url, true);
+            request.send();
       },
       /**
        * beCPG Download XLS click handler (for thumbnailed content only)
@@ -1723,7 +1740,7 @@
        */
       onDownloadXLSXClick : function PdfJs_onDownloadXLSXClick(p_obj)
       {
-    	 window.open(this.getDownloadAtFormat(p_obj,"xlsx").replace("docx","xlsx").replace("pdf","xlsx"), "_blank");
+    	  this.downloadIfLoggedIn(this.getDownloadAtFormat(p_obj,"xlsx").replace("docx","xlsx").replace("pdf","xlsx"));
       },
       
       /**
@@ -1733,12 +1750,12 @@
        */
       onDownloadDOCXClick : function PdfJs_onDownloadDOCXClick(p_obj)
       {
-    	  window.open(this.getDownloadAtFormat(p_obj,"docx").replace("pdf","docx").replace("xlsx","docx"), "_blank");
+    	   this.downloadIfLoggedIn(this.getDownloadAtFormat(p_obj,"docx").replace("pdf","docx").replace("xlsx","docx"));
       },
       
-      onDownloadbPDFClick : function PdfJs_onDownloadDOCXClick(p_obj)
+      onDownloadReportPDFClick : function PdfJs_onDownloadReportPDFClick(p_obj)
       {
-    	  window.open(this.getDownloadAtFormat(p_obj,"pdf").replace("docx","pdf").replace("xlsx","pdf"), "_blank");
+    	  this.downloadIfLoggedIn(this.getDownloadAtFormat(p_obj,"pdf").replace("docx","pdf").replace("xlsx","pdf"));
       },
       
       getDownloadAtFormat : function PdfJs_onDownloadDOCXClick(p_obj, format)

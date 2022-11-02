@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.json.JSONObject;
+
 import fr.becpg.model.NutrientProfileCategory;
+import fr.becpg.repo.product.formulation.score.NutriScore;
 import fr.becpg.repo.product.formulation.score.NutriScoreContext;
-import fr.becpg.repo.product.formulation.score.NutriScoreFrame;
 
 /**
  * Helper to compute 5C Nutrient Profile Score
@@ -82,11 +84,11 @@ public class Nutrient5C2021Helper {
 		}
 	}
 
-	private static void buildNutriScoreFrame(NutriScoreFrame frame, int score, double[] categories) {
+	private static void buildNutriScoreFrame(JSONObject frame, int score, double[] categories) {
 		
-		Double value = frame.getValue();
-		
-		if (value != null) {
+		if (frame.has("value")) {
+			
+			Double value = frame.getDouble("value");
 			double lower = 0;
 			double upper = Double.MAX_VALUE;
 			
@@ -109,9 +111,9 @@ public class Nutrient5C2021Helper {
 				lower = 0;
 			}
 			
-			frame.setLowerValue(lower);
-			frame.setUpperValue(upper);
-			frame.setScore(score);
+			frame.put("lowerValue", lower);
+			frame.put("upperValue", upper == Double.MAX_VALUE ? "+Inf" : upper);
+			frame.put("score", score);
 		}
 	}
 	
@@ -127,37 +129,37 @@ public class Nutrient5C2021Helper {
 		double[][] aCategories = getACategory(NutrientProfileCategory.valueOf(category));
 		double[][] cCategories = getCCategory(NutrientProfileCategory.valueOf(category));
 
-		buildNutriScoreFrame(nutriScoreContext.getEnergy(), 10, aCategories[0]);
-		aScore += nutriScoreContext.getEnergy().getScore();
+		buildNutriScoreFrame(nutriScoreContext.getParts().getJSONObject(NutriScore.ENERGY_CODE), 10, aCategories[0]);
+		aScore += nutriScoreContext.getParts().getJSONObject(NutriScore.ENERGY_CODE).getDouble("score");
 
 		if (NutrientProfileCategory.Fats.equals(NutrientProfileCategory.valueOf(category))) {
 
-			double satFat = nutriScoreContext.getSatFat().getValue();
-			double totalFat = nutriScoreContext.getTotalFat().getValue();
+			double satFat = nutriScoreContext.getParts().getJSONObject(NutriScore.SATFAT_CODE).getDouble("value");
+			double totalFat = nutriScoreContext.getParts().getJSONObject(NutriScore.FAT_CODE).getDouble("value");
 
 			if (totalFat != 0) {
-				nutriScoreContext.getTotalFat().setValue((satFat / totalFat) * 100);
+				nutriScoreContext.getParts().getJSONObject(NutriScore.FAT_CODE).put("value", (satFat / totalFat) * 100);
 			}
 
-			buildNutriScoreFrame(nutriScoreContext.getTotalFat(), 10, aCategories[1]);
+			buildNutriScoreFrame(nutriScoreContext.getParts().getJSONObject(NutriScore.FAT_CODE), 10, aCategories[1]);
 
-			aScore += nutriScoreContext.getTotalFat().getScore();
+			aScore += nutriScoreContext.getParts().getJSONObject(NutriScore.FAT_CODE).getDouble("score");
 		} else {
-			buildNutriScoreFrame(nutriScoreContext.getSatFat(), 10, aCategories[1]);
-			aScore += nutriScoreContext.getSatFat().getScore();
+			buildNutriScoreFrame(nutriScoreContext.getParts().getJSONObject(NutriScore.SATFAT_CODE), 10, aCategories[1]);
+			aScore += nutriScoreContext.getParts().getJSONObject(NutriScore.SATFAT_CODE).getDouble("score");
 		}
 
-		buildNutriScoreFrame(nutriScoreContext.getTotalSugar(), 10, aCategories[2]);
+		buildNutriScoreFrame(nutriScoreContext.getParts().getJSONObject(NutriScore.SUGAR_CODE), 10, aCategories[2]);
 
-		aScore += nutriScoreContext.getTotalSugar().getScore();
+		aScore += nutriScoreContext.getParts().getJSONObject(NutriScore.SUGAR_CODE).getDouble("score");
+		
+		buildNutriScoreFrame(nutriScoreContext.getParts().getJSONObject(NutriScore.SODIUM_CODE), 10, aCategories[3]);
 
-		buildNutriScoreFrame(nutriScoreContext.getSodium(), 10, aCategories[3]);
+		aScore += nutriScoreContext.getParts().getJSONObject(NutriScore.SODIUM_CODE).getDouble("score");
 
-		aScore += nutriScoreContext.getSodium().getScore();
+		buildNutriScoreFrame(nutriScoreContext.getParts().getJSONObject(NutriScore.FRUIT_VEGETABLE_CODE), 10, cCategories[0]);
 
-		buildNutriScoreFrame(nutriScoreContext.getPercFruitsAndVetgs(), 10, cCategories[0]);
-
-		cScore += nutriScoreContext.getPercFruitsAndVetgs().getScore();
+		cScore += nutriScoreContext.getParts().getJSONObject(NutriScore.FRUIT_VEGETABLE_CODE).getDouble("score");
 
 		if ((aScore < 11) || NutrientProfileCategory.Cheeses.equals(NutrientProfileCategory.valueOf(category))
 				|| ((aScore >= 11) && (cScore >= 5)
@@ -165,18 +167,18 @@ public class Nutrient5C2021Helper {
 				|| ((aScore >= 11) && (cScore >= 10)
 						&& NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))) {
 
-			buildNutriScoreFrame(nutriScoreContext.getProtein(), 5, cCategories[3]);
+			buildNutriScoreFrame(nutriScoreContext.getParts().getJSONObject(NutriScore.PROTEIN_CODE), 5, cCategories[3]);
 
-			cScore += nutriScoreContext.getProtein().getScore();
+			cScore += nutriScoreContext.getParts().getJSONObject(NutriScore.PROTEIN_CODE).getDouble("score");
 		}
 
-		buildNutriScoreFrame(nutriScoreContext.getNspFibre(), 5, cCategories[1]);
+		buildNutriScoreFrame(nutriScoreContext.getParts().getJSONObject(NutriScore.NSP_CODE), 5, cCategories[1]);
 
-		cScore += nutriScoreContext.getNspFibre().getScore();
+		cScore += nutriScoreContext.getParts().getJSONObject(NutriScore.NSP_CODE).getDouble("score");
 
-		buildNutriScoreFrame(nutriScoreContext.getAoacFibre(), 5, cCategories[2]);
+		buildNutriScoreFrame(nutriScoreContext.getParts().getJSONObject(NutriScore.AOAC_CODE), 5, cCategories[2]);
 
-		cScore += nutriScoreContext.getAoacFibre().getScore();
+		cScore += nutriScoreContext.getParts().getJSONObject(NutriScore.AOAC_CODE).getDouble("score");
 
 		int result = aScore - cScore;
 

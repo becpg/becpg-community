@@ -3,9 +3,11 @@
  */
 package fr.becpg.repo.importer;
 
-import java.util.List;
+import java.util.function.BiFunction;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+
+import fr.becpg.repo.batch.BatchInfo;
 
 
 /**
@@ -22,10 +24,11 @@ public interface ImportService {
 	 * @param nodeRef the node ref
 	 * @param doUpdate the do update
 	 * @param requiresNewTransaction a boolean.
+	 * @param afterImportCallBack 
 	 * @return a {@link java.util.List} object.
 	 * @throws java.lang.Exception if any.
 	 */
-	List<String> importText(NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction) throws Exception;
+	BatchInfo importText(NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction, BiFunction<ImportContext, String, Void> afterImportCallBack) throws Exception;
 	
 	/**
 	 * Move the imported file in the Succeeded or Failed folder
