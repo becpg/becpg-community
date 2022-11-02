@@ -18,10 +18,14 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
@@ -33,6 +37,7 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -83,7 +88,13 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	private SupplierPortalService supplierPortalService;
 	
 	protected EntityDictionaryService entityDictionaryService;
-
+	
+	private NamespaceService namespaceService;
+	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+	
 	public void setEntityDictionaryService(EntityDictionaryService entityDictionaryService) {
 		this.entityDictionaryService = entityDictionaryService;
 	}
@@ -338,6 +349,16 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 		}
 		return false;
+	}
+	
+	public ScriptNode createExternalUser(String email, String firstName, String lastName, boolean notify, Map<String, Serializable> extraProps) {
+		Map<QName, Serializable> convertedExtraProps = new HashMap<>();
+		if (extraProps != null) {
+			for (Entry<String, Serializable> entry : extraProps.entrySet()) {
+				convertedExtraProps.put(QName.createQName(entry.getKey(), namespaceService), entry.getValue());
+			}
+		}
+		return new ScriptNode(supplierPortalService.createExternalUser(email, firstName, lastName, notify, convertedExtraProps), serviceRegistry, getScope());
 	}
 
 }
