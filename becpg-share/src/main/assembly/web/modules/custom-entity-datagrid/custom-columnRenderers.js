@@ -134,8 +134,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 						var after = prop.after;
 						var locale = "";
 	
-						var hasBefore = before != null && before.length > 0 && before[0] != null && typeof before[0] == 'object';
-						var hasAfter = after != null && after.length > 0 && after[0] != null && typeof after[0] == 'object';
+						var hasBefore = before != null && before.length > 0 && before[0] != null && Object.prototype.toString.call(before[0]).slice(8, -1) == 'Object';
+						var hasAfter = after != null && after.length > 0 && after[0] != null && Object.prototype.toString.call(after[0]).slice(8, -1) == 'Object';
 						
 						if (hasBefore){
 							var beforePerLocale = before[0];
