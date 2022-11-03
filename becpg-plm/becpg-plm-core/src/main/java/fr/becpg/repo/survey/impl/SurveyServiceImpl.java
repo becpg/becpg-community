@@ -2,8 +2,10 @@ package fr.becpg.repo.survey.impl;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -112,7 +115,7 @@ public class SurveyServiceImpl implements SurveyService {
 
 			JSONArray values = new JSONArray(strData);
 			for (Survey survey : getSurveys(entityNodeRef, dataListName)) {
-				List<NodeRef> choices = new ArrayList<>();
+				List<NodeRef> choices = new LinkedList<>();
 				survey.setComment(null);
 
 				for (int i = 0; i < values.length(); i++) {
@@ -295,8 +298,10 @@ public class SurveyServiceImpl implements SurveyService {
 	private List<NodeRef> getDefinitionChoices(SurveyQuestion surveyQuestion) {
 		BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION).andPropEquals(BeCPGModel.PROP_PARENT_LEVEL,
 				surveyQuestion.getNodeRef().toString());
-
-		return query.inDB().list();
+	 	
+	    Map<String, Boolean> sortBy = new LinkedHashMap<>();
+		sortBy.put("@bcpg:sort", true);
+		return query.addSort(sortBy).inDB().list();
 	}
 
 	private String getOptions(List<NodeRef> definitionChoices) {

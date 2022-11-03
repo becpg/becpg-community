@@ -1171,7 +1171,7 @@
 					</index>
 				</property>
 				<property name="gs1:sortingInstructions">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
 						<tokenised>both</tokenised>
