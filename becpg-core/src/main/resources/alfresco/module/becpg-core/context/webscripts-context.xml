@@ -329,7 +329,10 @@
     </bean>
     
 	<!-- Statistics webscript -->
-	<bean id="webscript.fr.becpg.statistics.statistics.get" class="fr.becpg.repo.web.scripts.statistics.StatisticsWebScript" parent="webscript">
+	<bean id="webscript.fr.becpg.statistics.statistics.get" class="fr.becpg.repo.web.scripts.statistics.GetStatisticsWebScript" parent="webscript">
+		<property name="beCPGAuditService" ref="beCPGAuditService" />
+	</bean>
+	<bean id="webscript.fr.becpg.statistics.statistics.delete" class="fr.becpg.repo.web.scripts.statistics.DeleteStatisticsWebScript" parent="webscript">
 		<property name="beCPGAuditService" ref="beCPGAuditService" />
 	</bean>
 

@@ -12,9 +12,10 @@ import fr.becpg.repo.audit.plugin.AbstractAuditPlugin;
 public class ActivityAuditPlugin extends AbstractAuditPlugin {
 
 	static {
-		KEY_MAP.put("userId", AuditDataType.STRING);
-		KEY_MAP.put("activityType", AuditDataType.STRING);
-		KEY_MAP.put("activityData", AuditDataType.STRING);
+		KEY_MAP.put("prop_bcpg_alUserId", AuditDataType.STRING);
+		KEY_MAP.put("prop_bcpg_alType", AuditDataType.STRING);
+		KEY_MAP.put("prop_bcpg_alData", AuditDataType.STRING);
+		KEY_MAP.put("prop_cm_created", AuditDataType.DATE);
 		KEY_MAP.put("entityNodeRef", AuditDataType.STRING);
 	}
 	

@@ -12,15 +12,17 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.audit.model.AuditFilter;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 
-public class StatisticsWebScript extends AbstractWebScript {
+public class GetStatisticsWebScript extends AbstractWebScript {
 
 	private static final String PARAM_TYPE = "type";
 	private static final String PARAM_SORT_BY = "sortBy";
 	private static final String PARAM_FILTER = "filter";
 	private static final String PARAM_MAX_RESULTS = "maxResults";
+	private static final String PARAM_ASCENDING_ORDER = "ascendingOrder";
 	
 	private BeCPGAuditService beCPGAuditService;
 	
@@ -37,6 +39,7 @@ public class StatisticsWebScript extends AbstractWebScript {
 		String reqMaxResults = req.getParameter(PARAM_MAX_RESULTS);
 		String sortBy = req.getParameter(PARAM_SORT_BY);
 		String filter = req.getParameter(PARAM_FILTER);
+		String ascendingOrder = req.getParameter(PARAM_ASCENDING_ORDER);
 		
 		Integer maxResults = RepoConsts.MAX_RESULTS_256;
 		
@@ -60,7 +63,17 @@ public class StatisticsWebScript extends AbstractWebScript {
 			throw new WebScriptException("Unknown audit type : '" + reqType + "'");
 		}
 		
-		List<JSONObject> statistics = beCPGAuditService.getAuditStatistics(type, maxResults, sortBy, filter);
+		AuditFilter auditFilter = new AuditFilter();
+		
+		auditFilter.setSortBy(sortBy);
+		
+		auditFilter.setFilter(filter);
+		
+		if (ascendingOrder != null) {
+			auditFilter.setAscendingOrder(Boolean.parseBoolean(ascendingOrder));
+		}
+		
+		List<JSONObject> statistics = beCPGAuditService.getAuditStatistics(type, maxResults, auditFilter);
 		
 		try {
 			JSONObject ret = new JSONObject();
