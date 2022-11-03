@@ -24,7 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +52,9 @@ public class EntityVersionsListValuePlugin implements ListValuePlugin {
 	@Autowired
 	@Qualifier("NodeService")
 	private NodeService nodeService;
+	
+	@Autowired
+	private TargetAssocValueExtractor targetAssocValueExtractor;
 
 	/** {@inheritDoc} */
 	@Override
@@ -87,7 +89,7 @@ public class EntityVersionsListValuePlugin implements ListValuePlugin {
 			}
 		}
 
-		return new ListValuePage(branches, pageNum, pageSize, new NodeRefListValueExtractor(ContentModel.PROP_NAME, nodeService));
+		return new ListValuePage(branches, pageNum, pageSize, targetAssocValueExtractor);
 
 	}
 
