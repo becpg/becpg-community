@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
+import fr.becpg.repo.audit.model.AuditFilter;
 import fr.becpg.repo.audit.model.AuditScope;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
@@ -48,8 +49,8 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 	}
 
 	@Override
-	public List<JSONObject> getAuditStatistics(AuditType type, Integer maxResults, String sortBy, String filter) {
-		return databaseAuditService.getAuditStatistics(getPlugin(type), maxResults, sortBy, filter);
+	public List<JSONObject> getAuditStatistics(AuditType type, Integer maxResults, AuditFilter auditFilter) {
+		return databaseAuditService.getAuditStatistics(getPlugin(type), maxResults, auditFilter);
 		
 	}
 
@@ -61,6 +62,11 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 		}
 		
 		throw new BeCPGAuditException("Audit plugin for type '" + type + "' is not implemented yet");
+	}
+
+	@Override
+	public void deleteAuditStatitics(AuditType type, Long fromId, Long toId) {
+		databaseAuditService.deleteAuditStatistics(getPlugin(type), fromId, toId);
 	}
 	
 }

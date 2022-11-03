@@ -6,11 +6,14 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import fr.becpg.repo.audit.model.AuditFilter;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 
 public interface DatabaseAuditService {
 	
-	List<JSONObject> getAuditStatistics(AuditPlugin plugin, Integer maxResults, String sortBy, String filter);
+	List<JSONObject> getAuditStatistics(AuditPlugin plugin, Integer maxResults, AuditFilter auditFilter);
 
 	int recordAuditEntry(AuditPlugin auditPlugin, Map<String, Serializable> auditValues, boolean b);
+
+	void deleteAuditStatistics(AuditPlugin plugin, Long fromId, Long toId);
 }

@@ -124,8 +124,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 		this.personService = personService;
 	}
 
-	/** {@inheritDoc} */
-	@Override
 	public void setSecurityService(SecurityService securityService) {
 		this.securityService = securityService;
 	}

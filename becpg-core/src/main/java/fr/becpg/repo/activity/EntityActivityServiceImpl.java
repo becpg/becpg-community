@@ -237,7 +237,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityType(ActivityType.Comment);
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
-					alfrescoRepository.save(activityListDataItem);
+					
+					recordAuditActivity(entityNodeRef, activityListDataItem);
 
 					if (notifyObservers) {
 						notifyListeners(entityNodeRef, activityListDataItem);
@@ -285,7 +286,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-					alfrescoRepository.save(activityListDataItem);
+					recordAuditActivity(entityNodeRef, activityListDataItem);
 
 					notifyListeners(entityNodeRef, activityListDataItem);
 
@@ -330,7 +331,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-					alfrescoRepository.save(activityListDataItem);
+					recordAuditActivity(branchToNodeRef, activityListDataItem);
 
 					notifyListeners(branchToNodeRef, activityListDataItem);
 					return true;
@@ -555,8 +556,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 						mergeWithLastActivity(activityListDataItem);
 
-						alfrescoRepository.save(activityListDataItem);
-
+						recordAuditActivity(entityNodeRef, activityListDataItem);
+						
 						notifyListeners(entityNodeRef, activityListDataItem);
 					}
 
@@ -570,6 +571,16 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 		return false;
 
+	}
+
+	private void recordAuditActivity(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
+		try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.ACTIVITY)) {
+			auditScope.putAttribute("prop_bcpg_alUserId", activityListDataItem.getUserId());
+			auditScope.putAttribute("prop_bcpg_alType", activityListDataItem.getActivityType().toString());
+			auditScope.putAttribute("prop_bcpg_alData", activityListDataItem.getActivityData());
+			auditScope.putAttribute("prop_cm_created", ISO8601DateFormat.format(new Date()));
+			auditScope.putAttribute("entityNodeRef", entityNodeRef);
+		}
 	}
 
 	// TODO Slow better to have it async
@@ -726,7 +737,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityType(ActivityType.State);
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
-					alfrescoRepository.save(activityListDataItem);
+					
+					recordAuditActivity(entityNodeRef, activityListDataItem);
 
 					notifyListeners(entityNodeRef, activityListDataItem);
 
@@ -774,7 +786,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-					alfrescoRepository.save(activityListDataItem);
+					recordAuditActivity(entityNodeRef, activityListDataItem);
 
 					notifyListeners(entityNodeRef, activityListDataItem);
 					return true;
@@ -1007,12 +1019,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 						mergeWithLastActivity(activityListDataItem);
 
-						try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.ACTIVITY)) {
-							auditScope.putAttribute("userId", activityListDataItem.getUserId());
-							auditScope.putAttribute("activityType", activityListDataItem.getActivityType().toString());
-							auditScope.putAttribute("activityData", activityListDataItem.getActivityData());
-							auditScope.putAttribute("entityNodeRef", entityNodeRef);
-						}
+						recordAuditActivity(entityNodeRef, activityListDataItem);
 
 						notifyListeners(entityNodeRef, activityListDataItem);
 					}
@@ -1396,7 +1403,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-					alfrescoRepository.save(activityListDataItem);
+					recordAuditActivity(entityNodeRef, activityListDataItem);
 
 					notifyListeners(entityNodeRef, activityListDataItem);
 
