@@ -31,6 +31,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
 import fr.becpg.repo.audit.model.AuditDataType;
+import fr.becpg.repo.audit.model.AuditFilter;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
 
@@ -82,9 +83,9 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	}
 
 	@Override
-	public List<JSONObject> getAuditStatistics(AuditPlugin plugin, Integer maxResults, String sortBy, String filter) {
+	public List<JSONObject> getAuditStatistics(AuditPlugin plugin, Integer maxResults, AuditFilter auditFilter) {
 		
-		Collection<AuditEntry> auditEntries = listAuditEntries(plugin, maxResults, filter);
+		Collection<AuditEntry> auditEntries = listAuditEntries(plugin, maxResults, auditFilter.getFilter());
 		
 		List<JSONObject> statistics = new ArrayList<>();
 		
@@ -103,12 +104,17 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 			
 		}
 		
-		if (sortBy != null && !sortBy.isBlank()) {
-			Collections.sort(statistics, new StatisticsComparator(plugin.getStatisticsKeyMap(), sortBy));
+		if (auditFilter.getSortBy() != null && !auditFilter.getSortBy().isBlank()) {
+			Collections.sort(statistics, new StatisticsComparator(plugin.getStatisticsKeyMap(), auditFilter.getSortBy(), auditFilter.isAscendingOrder()));
 		}
 		
 		return statistics;
 		
+	}
+
+	@Override
+	public void deleteAuditStatistics(AuditPlugin plugin, Long fromId, Long toId) {
+		auditComponent.deleteAuditEntriesByIdRange(plugin.getAuditApplicationId(), fromId, toId);
 	}
 
 	private Collection<AuditEntry> listAuditEntries(AuditPlugin plugin, int maxResults, String filter) {
@@ -180,10 +186,12 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		
 		private String comparisonFieldName;
 		private Map<String, AuditDataType> statisticsMap;
+		private int factor;
 		
-		public StatisticsComparator(Map<String, AuditDataType> statisticsMap, String comparisonFieldName) {
+		public StatisticsComparator(Map<String, AuditDataType> statisticsMap, String comparisonFieldName, boolean ascendingOrder) {
 			this.statisticsMap = statisticsMap;
 			this.comparisonFieldName = comparisonFieldName;
+			this.factor = ascendingOrder ? 1 : -1;
 		}
 		
 		@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -202,19 +210,19 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 				if (field1 != null) {
 					
 					if (field2 == null) {
-						return 1;
+						return factor;
 					}
 					
 					if (AuditDataType.INTEGER.equals(statisticsMap.get(comparisonFieldName))) {
 						Integer int1 = Integer.parseInt(field1.toString());
 						Integer int2 = Integer.parseInt(field2.toString());
-						return int1.compareTo(int2);
+						return factor * int1.compareTo(int2);
 					}
 					
-					return field1.compareTo(field2);
+					return factor * field1.compareTo(field2);
 				}
 				
-				return -1;
+				return -factor;
 				
 			} catch (Exception e) {
 				throw new BeCPGAuditException("Error while comparing fields : " + e.getMessage());
