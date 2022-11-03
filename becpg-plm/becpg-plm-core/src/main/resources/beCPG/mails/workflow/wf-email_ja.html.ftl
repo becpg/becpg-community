@@ -120,6 +120,12 @@
                                                    </b>
                                                 </#if>
                                                 <br>
+                                                <#if (args.fromPersonFullName)??>                                             
+		                                               担当者 :&nbsp;&nbsp;
+	                                                   <b>
+	                                                   	${args.fromPersonFullName}
+	                                                   </b>
+	                                             </#if>
                                              </p>  
 
                                              <a href="${shareUrl}/page/task-edit?taskId=${args.workflowId}"><button ><b>表示</b></button></a>  
