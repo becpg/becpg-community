@@ -151,6 +151,7 @@
           <show force="false" id="gs1:packUnitNumber"/>
           <show force="false" id="gs1:sortingInstructions"/>
           <show force="false" id="gs1:sortingBonusCriteria"/>
+          <show force="false" id="gs1:packagingRecyclingSchemeCode" />
           <show force="false" id="gs1:productHierarchy1"/>
           <show force="false" id="gs1:productHierarchy2"/>
           <show force="false" id="gs1:productHierarchy3"/>
@@ -667,6 +668,7 @@
             </control>
           </field>
           <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
+          <field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting"/>
           <set id="publicationTab" label-id="becpg.forms.set.publication.label"/>
           <set appearance="bordered-panel" id="hierarchyPanel" label-id="becpg.forms.set.hierarchyPanel.label" parent="publicationTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="gs1:productHierarchy1" mandatory="false" read-only="false" set="hierarchyPanel">
@@ -1686,6 +1688,7 @@
           <show force="true" id="gs1:packUnitNumber"/>
           <show force="true" id="gs1:sortingInstructions"/>
           <show force="true" id="gs1:sortingBonusCriteria"/>
+          <show force="true" id="gs1:packagingRecyclingSchemeCode" />
           <show force="true" id="gs1:productHierarchy1"/>
           <show force="true" id="gs1:productHierarchy2"/>
           <show force="true" id="gs1:productHierarchy3"/>
@@ -2183,6 +2186,7 @@
             </control>
           </field>
           <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
+          <field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting"/>
           <set id="publicationTab" label-id="becpg.forms.set.publication.label"/>
           <set appearance="bordered-panel" id="hierarchyPanel" label-id="becpg.forms.set.hierarchyPanel.label" parent="publicationTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="gs1:productHierarchy1" mandatory="false" read-only="false" set="hierarchyPanel">
