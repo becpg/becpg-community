@@ -188,7 +188,7 @@ public class DecernisServiceImpl implements DecernisService {
 		return countries.contains(country);
 	}
 
-	private JSONObject getIngredients(ProductData product, List<ReqCtrlListDataItem> errors, Map<String, IngListDataItem> ings) throws JSONException {
+	private JSONObject getIngredients(ProductData product, List<ReqCtrlListDataItem> errors, Map<String, List<IngListDataItem>> ings) throws JSONException {
 
 		Map<QName, String> ingNumbers = new HashMap<>();
 		ingNumbers.put(PLMModel.PROP_CAS_NUMBER, "CAS");
@@ -333,7 +333,13 @@ public class DecernisServiceImpl implements DecernisService {
 
 					if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
 							&& ((ingName != null) && !ingName.isEmpty()) && (ingQtyPerc != null)) {
-						ings.put(rid, ingListDataItem);
+						
+						if (ings.get(rid) == null) {
+							ings.put(rid, new ArrayList<>());
+						}
+						
+						ings.get(rid).add(ingListDataItem);
+						
 						JSONObject ingredient = new JSONObject();
 						ingredient.put("name", ingName);
 						ingredient.put("percentage", ingQtyPerc);
@@ -457,7 +463,7 @@ public class DecernisServiceImpl implements DecernisService {
 		return null;
 	}
 
-	private List<ReqCtrlListDataItem> createReqCtrl(Set<String> countries, JSONObject analysisResults, Map<String, IngListDataItem> ings)
+	private List<ReqCtrlListDataItem> createReqCtrl(Set<String> countries, JSONObject analysisResults, Map<String, List<IngListDataItem>> ings)
 			throws JSONException {
 		List<ReqCtrlListDataItem> reqCtrlList = new ArrayList<>();
 
@@ -475,14 +481,25 @@ public class DecernisServiceImpl implements DecernisService {
 												? analysisResults.getJSONObject("search_parameters").getString("usage")
 												: "");
 
-								IngListDataItem ingList = ings.get(result.getString("did"));
+								List<IngListDataItem> ingList = ings.get(result.getString("did"));
+								
+								IngListDataItem ingItem = null;
+								
+								for (IngListDataItem ing : ingList) {
+									String ingName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
+									if (result.getString("ingredient").contains(ingName)) {
+										ingItem = ing;
+										break;
+									}
+								}
+								
 								if (result.getString("resultIndicator").toLowerCase().startsWith("prohibited")) {
 									String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
 											? "(" + result.getString("threshold") + ")"
 											: "");
 
 									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingList.getIng(), reqMessage, RequirementType.Forbidden);
+									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Forbidden);
 									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 
 									reqCtrlList.add(reqCtrlItem);
@@ -492,7 +509,7 @@ public class DecernisServiceImpl implements DecernisService {
 
 								} else if (result.getString("resultIndicator").toLowerCase().startsWith("not listed")) {
 									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingList.getIng(), reqMessage, RequirementType.Tolerated);
+									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Tolerated);
 									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 									reqCtrlList.add(reqCtrlItem);
 									if (logger.isDebugEnabled()) {
@@ -506,7 +523,7 @@ public class DecernisServiceImpl implements DecernisService {
 
 									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, result.getString("resultIndicator"),
 											threshold);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingList.getIng(), reqMessage, RequirementType.Info);
+									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Info);
 
 									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 									reqCtrlList.add(reqCtrlItem);
@@ -544,7 +561,7 @@ public class DecernisServiceImpl implements DecernisService {
 		try {
 
 			if (!usages.isEmpty() && !countries.isEmpty()) {
-				Map<String, IngListDataItem> ings = new HashMap<>();
+				Map<String, List<IngListDataItem>> ings = new HashMap<>();
 
 				JSONObject data = getIngredients(product, ret, ings);
 				if ((data != null) && data.has("ingredients")) {
