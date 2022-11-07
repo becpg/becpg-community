@@ -3516,6 +3516,9 @@
 			</associations>
 		</aspect>	
 		
+		<!-- Deprecated -->
+		<aspect name="bcpg:diluentAspect"></aspect>
+		
 		<aspect name="bcpg:waterAspect"></aspect>
 		
 		<!-- Aspect used to store the entity type of the template (entityFolderTpl, entityTpl, etc...) -->
