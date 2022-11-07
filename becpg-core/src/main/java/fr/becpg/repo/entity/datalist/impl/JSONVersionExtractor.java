@@ -32,7 +32,6 @@ import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.BeCPGModel.EntityFormat;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.activity.extractor.ActivityListExtractor;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -40,7 +39,7 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
-public class JSONVersionExtractor extends ActivityListExtractor {
+public class JSONVersionExtractor extends SimpleExtractor {
 
 	private static final Log logger = LogFactory.getLog(JSONVersionExtractor.class);
 	
@@ -481,7 +480,6 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 		return ret;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Map<String, Object> extractJSON(DataListFilter dataListFilter, JSONObject object, List<AttributeExtractorStructure> metadataFields, AttributeExtractorStructure field) throws JSONException {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -553,8 +551,6 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 			ret.put(PROP_NODEDATA, doExtract(field == null ? null : field.getFieldQname(), metadataFields, FormatMode.JSON, properties));
 			
 			if (dataListFilter != null) {
-				QName dataListFilterQName = QName.createQName(BeCPGModel.BECPG_URI, dataListFilter.getDataListName());
-				
 				Map<QName, Serializable> propertiesMap = new HashMap<>();
 				
 				Iterator<?> it = properties.keys();
@@ -568,10 +564,6 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 						QName qname = QName.createQName(BeCPGModel.BECPG_URI, name.split(BCPG_PREFIX)[1]);
 						propertiesMap.put(qname, properties.get(name).toString());
 					}
-				}
-				
-				if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListFilterQName)) {
-					postLookupActivity(dataListFilter.getEntityNodeRef(), (Map<String, Object>) ret.get(PROP_NODEDATA), propertiesMap, FormatMode.JSON);
 				}
 			}
 			
@@ -625,6 +617,12 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 				return ret;
 			}
 			
+			QName dataListFilterQName = QName.createQName(BeCPGModel.BECPG_URI, dataListFilter.getDataListName());
+			
+			if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListFilterQName)) {
+				return ret;
+			}
+				
 			String filterName = dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString();
 			
 			if (dataListFilter.getDataListName().contains("@")) {
