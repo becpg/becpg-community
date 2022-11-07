@@ -45,7 +45,6 @@
 		<property name="paginatedSearchCache" ref="paginatedSearchCache" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="nodeService" ref="nodeService" />
-		<property name="entityActivityService" ref="entityActivityService" />
 		<property name="defaultExtractor" value="false" />
 		<property name="advSearchService" ref="AdvSearchService" />
 		<property name="services" ref="ServiceRegistry" />
