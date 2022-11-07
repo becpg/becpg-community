@@ -1509,8 +1509,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
 
-				Double qtyPerc = computeQtyPerc(lblCompositeContext, kv.getKey(), 1d);
-				Double volumePerc = computeVolumePerc(lblCompositeContext, kv.getKey(), 1d);
+				Double qtyPerc = computeQtyPerc(lblCompositeContext, kv.getKey(), 1d, false);
+				Double volumePerc = computeVolumePerc(lblCompositeContext, kv.getKey(), 1d, false);
 				Double qtyPercWithYield = computeQtyPerc(lblCompositeContext, kv.getKey(), 1d, true);
 				Double volumePercWithYield = computeVolumePerc(lblCompositeContext, kv.getKey(), 1d, true);
 
@@ -1570,8 +1570,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				for (LabelingComponent component : kv.getValue()) {
 
-					Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d);
-					Double volumePerc = computeVolumePerc(lblCompositeContext, component, 1d);
+					Double qtyPerc = computeQtyPerc(lblCompositeContext, component, 1d, false);
+					Double volumePerc = computeVolumePerc(lblCompositeContext, component, 1d,false);
 
 					Double qtyPercWithYield = computeQtyPerc(lblCompositeContext, component, 1d, true);
 					Double volumePercWithYield = computeVolumePerc(lblCompositeContext, component, 1d, true);
