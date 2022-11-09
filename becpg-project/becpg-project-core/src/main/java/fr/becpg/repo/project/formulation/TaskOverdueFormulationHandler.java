@@ -98,7 +98,7 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 			for (TaskListDataItem task : projectData.getTaskList()) {
 				if (TaskState.InProgress.equals(task.getTaskState())) {
 					Boolean notificationsAreEnabled = ((task.getInitialNotification() != null) && (task.getNotificationAuthorities() != null)
-							&& !task.getNotificationAuthorities().isEmpty() && (task.getEnd() != null));
+							&& !task.getNotificationAuthorities().isEmpty() && (task.getDue() != null));
 
 					if (Boolean.TRUE.equals(notificationsAreEnabled)) {
 
@@ -172,7 +172,7 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 	 */
 	public Date calculateFirstNotificationDate(TaskListDataItem task) {
 		Calendar firstNotificationCal = Calendar.getInstance();
-		firstNotificationCal.setTime(task.getEnd());
+		firstNotificationCal.setTime(task.getDue());
 		firstNotificationCal.add(Calendar.DAY_OF_MONTH, task.getInitialNotification());
 		return ProjectHelper.removeTime(firstNotificationCal.getTime());
 	}
@@ -190,7 +190,7 @@ public class TaskOverdueFormulationHandler extends FormulationBaseHandler<Projec
 		templateArgs.put("date", new Date());
 		templateArgs.put("task", task.getTaskName());
 		templateArgs.put("project", project.getName());
-		templateArgs.put("dueDate", task.getEnd());
+		templateArgs.put("dueDate", task.getDue());
 		templateArgs.put("taskId", workflowTaskId);
 
 		authorities = projectService.extractResources(project.getNodeRef(), authorities);

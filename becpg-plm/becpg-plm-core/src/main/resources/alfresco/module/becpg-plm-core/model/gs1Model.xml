@@ -179,7 +179,7 @@
 				</list>
 			</parameter>
 		</constraint>
-		<constraint name="gs1:dataCarrierTypeCodeConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+		<constraint name="gs1:dataCarrierTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/DataCarrierTypeCode</value>
@@ -212,7 +212,24 @@
 			</parameter>
 		</constraint>
 
-		<constraint name="gs1:packagingTermsAndConditionsCodeConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+		<constraint name="gs1:packagingRecyclingSchemeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/PackagingRecyclingSchemeCode</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:packagingTermsAndConditionsCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/PackagingTermsAndConditionsCode</value>
@@ -1067,6 +1084,9 @@
 						<constraint ref="gs1:packagingTypeCodeConstraint" />
 					</constraints>
 				</property>
+				
+			
+				
 				<property name="gs1:secondaryPackagingTypeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1140,6 +1160,22 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+				
+				
+				<property name="gs1:packagingRecyclingSchemeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:packagingRecyclingSchemeCodes" />
+					</constraints>
+				</property>
+				
 				<property name="gs1:isTradeItemMarkedAsRecyclable">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
@@ -1190,6 +1226,7 @@
 						<constraint ref="gs1:sortingBonusCriteriaConstraint" />
 					</constraints>
 				</property>
+
 				<property name="gs1:packagingTermsAndConditionsCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1198,7 +1235,7 @@
 						<facetable>true</facetable>
 					</index>
 					<constraints>
-						<constraint ref="gs1:packagingTermsAndConditionsCodeConstraint" />
+						<constraint ref="gs1:packagingTermsAndConditionsCodes" />
 					</constraints>
 				</property>
 			</properties>
@@ -1330,7 +1367,7 @@
 						<facetable>true</facetable>
 					</index>
 					<constraints>
-						<constraint ref="gs1:dataCarrierTypeCodeConstraint" />
+						<constraint ref="gs1:dataCarrierTypeCodes" />
 					</constraints>
 				</property>
 
