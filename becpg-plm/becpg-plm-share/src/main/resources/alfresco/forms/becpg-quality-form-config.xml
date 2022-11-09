@@ -143,7 +143,22 @@
 					<field id="cm:modified" set="audit" />
 				</appearance>
 			</form>
+			<form id="search">
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="bcpg:code" />
+					<show id="bcpg:entityTplRef" force="true" />
+					<show id="qa:batchId"  />
+					
+					<show id="cm:description" force="true" />
+					<show id="qa:product" />
+					<show id="qa:batchQty"/>
+					<show id="qa:batchQtyUnit"/>
+					<show id="qa:batchState"/>
+					
 
+				</field-visibility>
+			</form>
 	
 		</forms>
 	</config>
