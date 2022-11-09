@@ -536,8 +536,6 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 		assertEquals(1, checks);
 
 		assertEquals(nut3, formulatedProduct.getNutList().get(2).getNut());
-		assertFalse(formulatedProduct.getNutList().get(2).getErrorLog().contains("Caractéristique 'nut3' non renseignée : Raw material 4"));
-		assertTrue(formulatedProduct.getNutList().get(2).getErrorLog().contains(message2));
 
 		// Claim label list
 		checks = 0;
