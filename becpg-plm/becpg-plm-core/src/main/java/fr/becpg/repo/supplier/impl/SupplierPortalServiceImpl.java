@@ -390,10 +390,10 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	@Override
 	public NodeRef createExternalUser(String email, String firstName, String lastName, boolean notify, Map<QName, Serializable> extraProps) {
 
-		final boolean isAdmin = authorityService.hasAdminAuthority();
+		final boolean isAdminOrSystem = AuthenticationUtil.isRunAsUserTheSystemUser() || authorityService.hasAdminAuthority();
 
 		boolean hasAccess = AuthenticationUtil.runAsSystem(
-				() -> isAdmin || authorityService.getAuthoritiesForUser(AuthenticationUtil.getFullyAuthenticatedUser())
+				() -> isAdminOrSystem || authorityService.getAuthoritiesForUser(AuthenticationUtil.getFullyAuthenticatedUser())
 						.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUserMgr.toString()));
 
 		if (hasAccess) {
