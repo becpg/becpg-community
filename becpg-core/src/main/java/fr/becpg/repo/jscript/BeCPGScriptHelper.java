@@ -36,6 +36,7 @@ import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -1389,6 +1390,15 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		 assocList.remove(0);
 		
 		return classifyPropAndHierarchyExtractAssoc(nextNode, nextAssocName, assocList);
+	}
+	
+	public String getQNameTitle(String qname) {
+		
+		QName type = QName.createQName(qname, namespaceService);
+		
+		ClassDefinition classDef = dictionaryService.getClass(type);
+
+		return classDef.getTitle(dictionaryService);
 	}
 	
 	public boolean classifyByDate(ScriptNode productNode, String path, Date date, String dateFormat) {
