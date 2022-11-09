@@ -316,7 +316,11 @@ function setValue(node, propName, value){
 	    return true;
 	} else if(!isEmpty(value)) {
 		if(node.properties[propName] !== value){
-			node.properties[propName] = value;
+			if(propName == "cm:name"){
+				node.name = value;
+			} else {
+				node.properties[propName] = value;
+			}
 			return true;
 		}
 	}
