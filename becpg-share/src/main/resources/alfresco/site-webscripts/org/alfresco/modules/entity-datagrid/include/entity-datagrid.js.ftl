@@ -9,8 +9,8 @@
 <@script src="${url.context}/res/components/comments/comments-list.js" group="comments"/>
 
 
-<#if config.scoped["EntityDataLists"]?exists && config.scoped["EntityDataLists"].dependencies?exists && config.scoped["EntityDataLists"].dependencies.js?exists>
-   <#list config.scoped["EntityDataLists"].dependencies.js as jsFile>
-      <@script type="text/javascript" src="${url.context}/res${jsFile}" group="form"/>
+<#if config.scoped["EntityDataLists"]?exists && config.scoped["EntityDataLists"].dependencies?exists && config.scoped["EntityDataLists"].dependencies.getChildren("js")?exists>
+   <#list config.scoped["EntityDataLists"].dependencies.getChildren("js") as jsFile>
+      <@script type="text/javascript" src="${url.context}/res${jsFile.getAttribute('src')}" group="entity-datalists"/>
    </#list>
 </#if>
