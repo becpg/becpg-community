@@ -93,16 +93,20 @@ public class IdentityServiceAccountProvider {
 							userRepresentation.put("firstName", userAccount.getFirstName());
 							userRepresentation.put("lastName", userAccount.getLastName());
 							userRepresentation.put("email", userAccount.getEmail());
+							
+							if( userAccount.getPassword() !=null && !  userAccount.getPassword().isEmpty()) {
 
-							JSONObject credentialrepresentation = new JSONObject();
+								JSONObject credentialrepresentation = new JSONObject();
+	
+								credentialrepresentation.put("type", OAuth2Constants.PASSWORD);
+								credentialrepresentation.put("value", userAccount.getPassword());
+								credentialrepresentation.put("temporary", true);
+								
+								JSONArray credentials = new JSONArray();
+								credentials.put(credentialrepresentation);
 
-							credentialrepresentation.put("type", OAuth2Constants.PASSWORD);
-							credentialrepresentation.put("value", userAccount.getPassword());
-							credentialrepresentation.put("temporary", true);
-
-							JSONArray credentials = new JSONArray();
-							credentials.put(credentialrepresentation);
-
+							}
+							
 							userRepresentation.put("credentials", credentials);
 
 							StringEntity params = new StringEntity(userRepresentation.toString());
