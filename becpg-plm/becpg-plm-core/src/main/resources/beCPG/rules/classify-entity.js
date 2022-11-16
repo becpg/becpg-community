@@ -15,13 +15,13 @@ function classifyQualityControl(qualityControl) {
         var batchStart = qualityControl.properties["qa:batchStart"];
 
         if (!isEmpty(batchStart)) {
-            return classifyByDate(qualityControl, "/app:company_home/st:sites/cm:" + ARCHIVED_SITE_ID + "/cm:documentLibrary/cm:qualityControl/" + qcStateDisplayValue, batchStart, "YYYY/MM - MMMM");
+            return classifyByDate(qualityControl, "/app:company_home/st:sites/cm:" + ARCHIVED_SITE_ID + "/cm:documentLibrary/" + getQNameTitle("qa:qualityControl") + "/" + qcStateDisplayValue, batchStart, "YYYY/MM - MMMM");
         } else {
             return classifyByHierarchy(qualityControl, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
         }
 		
 	} else {
-		return classifyByHierarchy(qualityControl, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
+		return classifyByHierarchy(qualityControl, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));S
 	}
 }
 
@@ -57,6 +57,17 @@ function main() {
 			}
 		} else if (document.isSubType("qa:qualityControl") ) {
 			wasMoved = classifyQualityControl(document);
+		} else if (document.isSubType("qa:batch")) {
+			state = document.properties["qa:batchState"];
+			var siteId;
+			if (state == "Valid") {
+				siteId = VALID_SITE_ID;
+			} else if ((state == "Simulation" || state == "ToValidate")) {
+				siteId = SIMULATION_SITE_ID;
+			} else if (state == "Archived") {
+				siteId = ARCHIVED_SITE_ID;
+			}
+			wasMoved = classifyByDate(document, "/app:company_home/st:sites/cm:" + siteId + "/cm:documentLibrary/" + getQNameTitle("qa:batch"), document.properties["cm:created"], "YYYY/MM - MMMM");
 		}
 		
 		// formulate if the document was moved

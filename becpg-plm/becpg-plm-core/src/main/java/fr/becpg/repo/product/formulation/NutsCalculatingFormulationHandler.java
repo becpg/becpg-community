@@ -105,58 +105,56 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	}
 
 	private void nutsCalculatingProcess(ProductData formulatedProduct, VariantData variant) {
-		boolean hasCompo = formulatedProduct.hasCompoListEl((variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>()));
-		if (hasCompo) {
 
-			if (!propagateModeEnable) {
+		SimpleListQtyProvider qtyProvider = new SimpleListQtyProvider() {
 
-				visitComposition(formulatedProduct, formulatedProduct.getNutList(), new SimpleListQtyProvider() {
+			Double netQty = FormulationHelper.getNetQtyForNuts(formulatedProduct);
+			Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 
-					Double netQty = FormulationHelper.getNetQtyForNuts(formulatedProduct);
-					Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+			@Override
+			public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
+				return FormulationHelper.getQtyInKg(compoListDataItem);
+			}
 
-					@Override
-					public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-						return FormulationHelper.getQtyInKg(compoListDataItem);
-					}
+			@Override
+			public Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
+				return FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
+			}
 
-					@Override
-					public Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-						return FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
-					}
-					
-					@Override
-					public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
-						return  0d;
-					}
+			@Override
+			public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
+				return 0d;
+			}
 
+			@Override
+			public Double getQty(ProcessListDataItem processListDataItem) {
+				return 0d;
+			}
 
-					@Override
-					public Double getQty(ProcessListDataItem processListDataItem) {
-						return  0d;
-					}
+			@Override
+			public Double getNetWeight() {
+				return netWeight;
+			}
 
-					
-					@Override
-					public Double getNetWeight() {
-						return netWeight;
-					}
+			@Override
+			public Double getNetQty() {
+				return netQty;
+			}
 
-					@Override
-					public Double getNetQty() {
-						return netQty;
-					}
+			@Override
+			public Boolean omitElement(CompoListDataItem compoListDataItem) {
+				return DeclarationType.Omit.equals(compoListDataItem.getDeclType());
+			}
 
-					@Override
-					public Boolean omitElement(CompoListDataItem compoListDataItem) {
-						return DeclarationType.Omit.equals(compoListDataItem.getDeclType());
-					}
+		};
 
-				}
+		if (!propagateModeEnable) {
 
-						, variant);
+			visitComposition(formulatedProduct, formulatedProduct.getNutList(), qtyProvider, variant);
 
-			} else {
+		} else {
+
+			if (formulatedProduct.hasCompoListEl((variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>()))) {
 
 				List<NutListDataItem> retainNodes = new ArrayList<>();
 				Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
@@ -234,7 +232,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							}
 						}
 					}
-					
 
 					if ((formulatedProduct.getSecondaryYield() != null) && (formulatedProduct.getSecondaryYield() != 0d)) {
 						Double preparedValue = n.getValue();
@@ -243,7 +240,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 								preparedValue = preparedValue * (formulatedProduct.getYield() / 100d);
 							}
 							preparedValue = preparedValue / (formulatedProduct.getSecondaryYield() / 100d);
-						   n.setPreparedValue(preparedValue);
+							n.setPreparedValue(preparedValue);
 						}
 					}
 
@@ -264,13 +261,12 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 										new ArrayList<>(), RequirementDataType.Specification));
 							}
 						}
+
 					} else {
 						n.setValuePerServing(null);
 						n.setGdaPerc(null);
 					}
-					
-					
-					
+
 					if (isCharactFormulated(n) && hasCompo) {
 						if (n.getManualValue() == null) {
 							n.setMethod(NUT_FORMULATED);
