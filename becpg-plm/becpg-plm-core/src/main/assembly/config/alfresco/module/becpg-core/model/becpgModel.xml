@@ -1198,6 +1198,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:isNutPropagateUp">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 			</properties>
 
 		</type>
@@ -2709,6 +2714,11 @@
 				</property>
 				<property name="bcpg:labelClaimRegulatoryThreshold">
 					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:isLabelClaimPropagateUp">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
 			</properties>
