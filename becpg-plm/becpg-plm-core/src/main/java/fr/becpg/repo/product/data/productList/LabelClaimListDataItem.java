@@ -257,6 +257,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 	 * @param labelClaimItem a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
 	 */
 	public LabelClaimListDataItem(LabelClaimListDataItem labelClaimItem) {
+		super(labelClaimItem);
 		this.labelClaim = labelClaimItem.labelClaim;
 		this.type = labelClaimItem.type;
 		this.labelClaimValue = labelClaimItem.labelClaimValue;
@@ -274,8 +275,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result
-				+ Objects.hash(errorLog, isFormulated, labelClaim, labelClaimValue, missingLabelClaims, percentApplicable, percentClaim, type);
+		result = prime * result + Objects.hash(isFormulated, labelClaim, type);
 		return result;
 	}
 	@Override
@@ -287,17 +287,15 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 		if (getClass() != obj.getClass())
 			return false;
 		LabelClaimListDataItem other = (LabelClaimListDataItem) obj;
-		return Objects.equals(errorLog, other.errorLog) && Objects.equals(isFormulated, other.isFormulated)
-				&& Objects.equals(labelClaim, other.labelClaim) && Objects.equals(labelClaimValue, other.labelClaimValue)
-				&& Objects.equals(missingLabelClaims, other.missingLabelClaims) && Objects.equals(percentApplicable, other.percentApplicable)
-				&& Objects.equals(percentClaim, other.percentClaim) && Objects.equals(type, other.type);
+		return Objects.equals(isFormulated, other.isFormulated) && Objects.equals(labelClaim, other.labelClaim) && Objects.equals(type, other.type);
 	}
 	
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "LabelClaimListDataItem [labelClaim=" + labelClaim + ", type=" + type + ", labelClaimValue=" + labelClaimValue + ", isFormulated="
-				+ isFormulated + ", errorLog=" + errorLog + "]";
+		return "LabelClaimListDataItem [labelClaim=" + labelClaim + ", type=" + type + ", labelClaimValue=" + labelClaimValue + ", percentClaim="
+				+ percentClaim + ", percentApplicable=" + percentApplicable + ", isFormulated=" + isFormulated + ", errorLog=" + errorLog
+				+ ", missingLabelClaims=" + missingLabelClaims + ", isManual=" + isManual + ", sort=" + sort + ", nodeRef=" + nodeRef
+				+ ", parentNodeRef=" + parentNodeRef + ", name=" + name + "]";
 	}
 		
 

@@ -1442,6 +1442,7 @@
 			<form>
 				<field-visibility>
 					<show id="gs1:nutrientTypeCode" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
@@ -1452,7 +1453,8 @@
 					
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
-					<show id="bcpg:erpCode" force="true" />
+					
+					<!-- <show id="bcpg:isNutPropagateUp" /> -->
 					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 				<appearance>
@@ -1501,6 +1503,7 @@
 			<form>
 				<field-visibility>
 					<show id="gs1:nutrientTypeCode" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
@@ -1510,7 +1513,8 @@
 					<show id="bcpg:nutGDA" />
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
-					<show id="bcpg:erpCode" force="true" />
+				
+					<!-- <show id="bcpg:isNutPropagateUp" /> -->
 					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 				<appearance>
@@ -2501,6 +2505,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:labelClaimCode" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
@@ -2508,7 +2513,8 @@
 					<show id="bcpg:labelClaimFormula" />
 					<show id="bcpg:labelClaimRegulatoryThreshold" />
 					<show id="bcpg:isManualListItem" force="true" />
-					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isLabelClaimPropagateUp" />
+					
 					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 				<appearance>
@@ -2544,6 +2550,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:labelClaimCode" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
@@ -2551,7 +2558,7 @@
 					<show id="bcpg:labelClaimFormula" />
 					<show id="bcpg:labelClaimRegulatoryThreshold" />
 					<show id="bcpg:isManualListItem" force="true" />
-					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isLabelClaimPropagateUp" />
 					<show id="rep:reportLocales" force="true" />
 				</field-visibility>
 				<appearance>
@@ -5174,62 +5181,80 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
-					<!--  <show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" /> -->
-					<show id="bcpg:ingListIsProcessingAid" />
+			
+				<!--  <show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" /> -->	
+				   <show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
-					<show id="bcpg:ingListDeclType" />
 					<show id="bcpg:ingListClaims" />
+					
+							<show id="bcpg:ingListDeclType" />
 					<show id="bcpg:parentLevel" />
+					
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:ingListIng">
+				
+			    	<set id="1-col-1"  />
+					<set id="2-col-1"  template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="1-col-2"  />
+					
+					<field id="bcpg:ingListIng" set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:ingListQtyPerc">
+					<field id="bcpg:ingListQtyPerc"  set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">perc</control-param>
 						</control>
 					</field>
+					<field id="bcpg:ingListQtyMini" set="2-col-1"/>
+					<field id="bcpg:ingListQtyMaxi" set="2-col-1"/>
+				
+				
 					
-					<field id="bcpg:ingListGeoOrigin">
+					<field id="bcpg:ingListGeoOrigin" set="2-col-1" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:ingListGeoTransfo">
+					<field id="bcpg:ingListGeoTransfo" set="2-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:ingListBioOrigin">
+					<field id="bcpg:ingListBioOrigin" set="2-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 					
-						<field id="bcpg:ingListDeclType" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="isStoreable">true</control-param>
-							<control-param name="options">Declare|data.declarationtype.declare,DoNotDetails|data.declarationtype.donotdetails,Detail|data.declarationtype.detail,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare</control-param>
-						</control>
-					</field>
-
-					<field id="bcpg:ingListClaims" >
+					<field id="bcpg:ingListClaims" set="2-col-1">
 					     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7Certification</control-param>
 			            </control>
-			         </field>
+			         </field>			
+			         <field id="bcpg:ingListIsProcessingAid" set="2-col-1"/>
+					<field id="bcpg:ingListIsSupport" set="2-col-1"/>		
 					
-					<field id="bcpg:parentLevel">
+						
+					<field id="bcpg:parentLevel" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng
 							</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:ingListDeclType" set="1-col-2">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+							<control-param name="options">Declare|data.declarationtype.declare,DoNotDetails|data.declarationtype.donotdetails,Detail|data.declarationtype.detail,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare</control-param>	
+						</control>
+					</field>
+				
+					
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
@@ -5390,60 +5415,79 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
+				    <show id="bcpg:ingListIsProcessingAid" />
+					<show id="bcpg:ingListIsSupport" />
 				<!--  <show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" /> -->	
-					<show id="bcpg:ingListIsProcessingAid" />
-					<show id="bcpg:ingListIsSupport" />
+				
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
-					<show id="bcpg:ingListDeclType" />
 					<show id="bcpg:ingListClaims" />
+				    <show id="bcpg:ingListDeclType" />
 					<show id="bcpg:parentLevel" />
+					
 				</field-visibility>
 
 				<appearance>
 				
-					<field id="bcpg:ingListIng">
+			    	<set id="1-col-1"  />
+					<set id="2-col-1"  template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="1-col-2"  />
+					
+					<field id="bcpg:ingListIng" set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:ingListQtyPerc">
+					<field id="bcpg:ingListQtyPerc"  set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">perc</control-param>
 						</control>
 					</field>
-					<field id="bcpg:ingListGeoOrigin">
+					<field id="bcpg:ingListQtyMini" set="2-col-1"/>
+					<field id="bcpg:ingListQtyMaxi" set="2-col-1"/>
+				
+				
+					
+					<field id="bcpg:ingListGeoOrigin" set="2-col-1" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:ingListGeoTransfo">
+					<field id="bcpg:ingListGeoTransfo" set="2-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:ingListBioOrigin">
+					<field id="bcpg:ingListBioOrigin" set="2-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:ingListDeclType" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="isStoreable">true</control-param>
-							<control-param name="options">Declare|data.declarationtype.declare,DoNotDetails|data.declarationtype.donotdetails,Detail|data.declarationtype.detail,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare</control-param>	
-						</control>
-					</field>
-					<field id="bcpg:ingListClaims" >
+					
+					<field id="bcpg:ingListClaims" set="2-col-1">
 					     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7Certification</control-param>
 			            </control>
-			         </field>					
-					<field id="bcpg:parentLevel">
+			         </field>			
+			         <field id="bcpg:ingListIsProcessingAid" set="2-col-1"/>
+					<field id="bcpg:ingListIsSupport" set="2-col-1"/>		
+					
+						
+					<field id="bcpg:parentLevel" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng
 							</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:ingListDeclType" set="1-col-2">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isStoreable">true</control-param>
+							<control-param name="options">Declare|data.declarationtype.declare,DoNotDetails|data.declarationtype.donotdetails,Detail|data.declarationtype.detail,Omit|data.declarationtype.omit,DoNotDeclare|data.declarationtype.donotdeclare</control-param>	
+						</control>
+					</field>
+				
+					
 				</appearance>
 			</form>
 		</forms>
@@ -6384,11 +6428,11 @@
 				<field-visibility>
 					<show id="bcpg:lclLabelClaim" />
 					<show id="bcpg:lclClaimValue" />
-					<show id="bcpg:lclPercentClaim" />
+				    <show id="bcpg:lclPercentClaim" />
 					<show id="bcpg:lclPercentApplicable" />
-					<show id="bcpg:lclComments"  />
 					<show id="bcpg:lclCertification" />
-					<show id="bcpg:certificateDate" />
+				<!-- <show id="bcpg:certificateDate" force="true" />  -->	
+					<show id="bcpg:lclComments"  />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
@@ -6490,10 +6534,10 @@
 					<show id="bcpg:lclClaimValue" />
 					<show id="bcpg:lclPercentClaim" />
 					<show id="bcpg:lclPercentApplicable" />
+					<show id="bcpg:lclCertification" />
+				<!-- <show id="bcpg:certificateDate" force="true" />  -->	
 					<show id="bcpg:lclComments" />
 					<show id="bcpg:lclMissingLabelClaims" force="true"/>
-					<show id="bcpg:lclCertification" />
-					<show id="bcpg:certificateDate" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
