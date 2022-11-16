@@ -105,9 +105,9 @@ public class IdentityServiceAccountProvider {
 								JSONArray credentials = new JSONArray();
 								credentials.put(credentialrepresentation);
 
+								userRepresentation.put("credentials", credentials);
 							}
 							
-							userRepresentation.put("credentials", credentials);
 
 							StringEntity params = new StringEntity(userRepresentation.toString());
 							request.setEntity(params);
