@@ -1,8 +1,9 @@
 package fr.becpg.repo.product.formulation.score;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -13,11 +14,9 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.GS1Model;
 import fr.becpg.model.NutrientProfileCategory;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.importer.impl.ImportHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -107,7 +106,7 @@ public class NutriScore implements ScoreCalculatingPlugin {
 			
 			nutriScoreContext.setCategory(nutrientProfileCategory);
 
-			List<NodeRef> missingCharacts = new ArrayList<>();
+			Map<String, NodeRef> missingCharacts = new HashMap<>();
 			
 			for (String nutrientCode : NUTRIENT_CODE_LIST) {
 				checkAndFillNutrient(productData, nutriScoreContext, nutrientCode, missingCharacts);
@@ -117,9 +116,18 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				checkAndFillPhysico(productData, nutriScoreContext, physicoCode, missingCharacts);
 			}
 			
+			// check if both fiber missing, otherwise remove them
+			if (!missingCharacts.containsKey(NSP_CODE) || !missingCharacts.containsKey(AOAC_CODE)) {
+				if (missingCharacts.containsKey(NSP_CODE)) {
+					missingCharacts.remove(NSP_CODE);
+				}
+				if (missingCharacts.containsKey(AOAC_CODE)) {
+					missingCharacts.remove(AOAC_CODE);
+				}
+			}
+			
 			if (!missingCharacts.isEmpty()) {
-				productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("nutriscore.message.missingCharacts"), null, missingCharacts, RequirementDataType.Formulation));
-				return null;
+				productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("nutriscore.message.missingCharacts"), null, new ArrayList<>(missingCharacts.values()), RequirementDataType.Formulation));
 			}
 			
 			return nutriScoreContext;
@@ -128,65 +136,57 @@ public class NutriScore implements ScoreCalculatingPlugin {
 		return null;
 	}
 
-	private void checkAndFillPhysico(ProductData productData, NutriScoreContext nutriScoreContext, String physicoCode, List<NodeRef> missingCharacts) {
+	private void checkAndFillPhysico(ProductData productData, NutriScoreContext nutriScoreContext, String physicoCode, Map<String, NodeRef> missingCharacts) {
 		PhysicoChemListDataItem physicoListItem = findPhysico(productData, physicoCode, missingCharacts);
 		
-		if (physicoListItem == null) {
-			missingCharacts.add(ImportHelper.findCharact(PLMModel.TYPE_PHYSICO_CHEM, PLMModel.PROP_PHYSICO_CHEM_CODE, physicoCode, nodeService));
-			return;
+		if (physicoListItem != null) {
+			Double value = physicoListItem.getValue();
+			
+			if (value == null) {
+				missingCharacts.put(physicoCode, physicoListItem.getPhysicoChem());
+				return;
+			}
+			
+			JSONObject nutrientPart = new JSONObject();
+			
+			nutrientPart.put(NutriScoreContext.VALUE, value);
+			
+			nutriScoreContext.getParts().put(physicoCode, nutrientPart);
 		}
-		
-		Double value = physicoListItem.getValue();
-		
-		if (value == null) {
-			missingCharacts.add(physicoListItem.getPhysicoChem());
-			return;
-		}
-		
-		JSONObject nutrientPart = new JSONObject();
-		
-		nutrientPart.put(NutriScoreContext.VALUE, value);
-		
-		nutriScoreContext.getParts().put(physicoCode, nutrientPart);
-				
 	}
 	
-	private void checkAndFillNutrient(ProductData productData, NutriScoreContext nutriScoreContext, String nutrientCode, List<NodeRef> missingCharacts) {
+	private void checkAndFillNutrient(ProductData productData, NutriScoreContext nutriScoreContext, String nutrientCode, Map<String, NodeRef> missingCharacts) {
 		NutListDataItem nutListItem = findNutrient(productData, nutrientCode, missingCharacts);
 		
-		if (nutListItem == null) {
-			missingCharacts.add(ImportHelper.findCharact(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, nutrientCode, nodeService));
-			return;
+		if (nutListItem != null) {
+			Double value = nutListItem.value("EU");
+			
+			if (value == null) {
+				missingCharacts.put(nutrientCode, nutListItem.getNut());
+				return;
+			}
+			
+			JSONObject nutrientPart = new JSONObject();
+			
+			nutrientPart.put(NutriScoreContext.VALUE, value);
+			
+			// specific case of Sodium
+			if (SODIUM_CODE.equals(nutrientCode)) {
+				nutrientPart.put(NutriScoreContext.VALUE, value * 1000);
+			}
+			
+			nutriScoreContext.getParts().put(nutrientCode, nutrientPart);
 		}
-		
-		Double value = nutListItem.value("EU");
-		
-		if (value == null) {
-			missingCharacts.add(nutListItem.getNut());
-			return;
-		}
-		
-		JSONObject nutrientPart = new JSONObject();
-		
-		nutrientPart.put(NutriScoreContext.VALUE, value);
-		
-		// specific case of Sodium
-		if ("NA".equals(nutrientCode)) {
-			nutrientPart.put(NutriScoreContext.VALUE, value * 1000);
-		}
-		
-		nutriScoreContext.getParts().put(nutrientCode, nutrientPart);
-		
 	}
 	
-	private PhysicoChemListDataItem findPhysico(ProductData productData, String physicoCode, List<NodeRef> missingCharacts) {
+	private PhysicoChemListDataItem findPhysico(ProductData productData, String physicoCode, Map<String, NodeRef> missingCharacts) {
 		for (PhysicoChemListDataItem physico : productData.getPhysicoChemList()) {
 			
 			if (physicoCode.equals(nodeService.getProperty(physico.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_CODE))) {
 				
 				for (ReqCtrlListDataItem reqCtrl : productData.getReqCtrlList()) {
 					if (RequirementType.Forbidden.equals(reqCtrl.getReqType()) && RequirementDataType.Physicochem.equals(reqCtrl.getReqDataType()) && physico.getPhysicoChem().equals(reqCtrl.getCharact())) {
-						missingCharacts.add(reqCtrl.getCharact());
+						missingCharacts.put(physicoCode, reqCtrl.getCharact());
 						break;
 					}
 				}
@@ -198,7 +198,7 @@ public class NutriScore implements ScoreCalculatingPlugin {
 		return null;
 	}
 	
-	private NutListDataItem findNutrient(ProductData productData, String nutrientCode, List<NodeRef> missingCharacts) {
+	private NutListDataItem findNutrient(ProductData productData, String nutrientCode, Map<String, NodeRef> missingCharacts) {
 		for (NutListDataItem nutList : productData.getNutList()) {
 			
 			NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(nutList.getNut());
@@ -207,7 +207,7 @@ public class NutriScore implements ScoreCalculatingPlugin {
 				
 				for (ReqCtrlListDataItem reqCtrl : productData.getReqCtrlList()) {
 					if (RequirementType.Forbidden.equals(reqCtrl.getReqType()) && RequirementDataType.Nutrient.equals(reqCtrl.getReqDataType()) && nutList.getNut().equals(reqCtrl.getCharact())) {
-						missingCharacts.add(reqCtrl.getCharact());
+						missingCharacts.put(nutrientCode, reqCtrl.getCharact());
 						break;
 					}
 				}
