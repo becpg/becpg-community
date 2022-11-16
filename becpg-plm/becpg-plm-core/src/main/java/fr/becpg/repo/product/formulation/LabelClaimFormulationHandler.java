@@ -35,7 +35,6 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.model.CompositionDataItem;
 
 /**
  * <p>LabelClaimFormulationHandler class.</p>
@@ -104,11 +103,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
 
-		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || productData instanceof ProductSpecificationData) {
-			return true;
-		}
-
-		if (productData instanceof ProductSpecificationData) {
+		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (productData instanceof ProductSpecificationData)) {
 			return true;
 		}
 
@@ -119,9 +114,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 		List<ProductSpecificationData> specDatas = new LinkedList<>(extractSpecifications(productData.getProductSpecifications()));
 		if ((specDatas != null) && !specDatas.isEmpty()) {
-			specDatas.sort((o1, o2) -> {
-				return o1.getName().compareTo(o2.getName());
-			});
+			specDatas.sort((o1, o2) -> o1.getName().compareTo(o2.getName()));
 
 			for (ProductSpecificationData specData : specDatas) {
 				synchronizeTemplate(specData.getLabelClaimList(), productData.getLabelClaimList(), ++sort);
@@ -132,7 +125,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
-
 			List<CompositionDataItem> compoItems = new ArrayList<>();
 
 			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -144,6 +136,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			}
 
 			if (!compoItems.isEmpty()) {
+				Set<LabelClaimListDataItem> toRemove = new HashSet<>();
 
 				Double netQty = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 
@@ -155,11 +148,15 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 					Boolean isManual = (Boolean) nodeService.getProperty(labelClaimItem.getLabelClaim(), BeCPGModel.PROP_IS_MANUAL_LISTITEM);
 
-					if ((isManual != null) && isManual) {
+					if (Boolean.TRUE.equals(isManual)) {
 						labelClaimItem.setIsManual(true);
-					}
+					} else {
+						Boolean isPropagateUp = (Boolean) nodeService.getProperty(labelClaimItem.getLabelClaim(),
+								PLMModel.PROP_LABELCLAIM_PROPAGATE_UP);
 
-					if ((labelClaimItem.getIsManual() == null) || !Boolean.TRUE.equals(labelClaimItem.getIsManual())) {
+						if (Boolean.TRUE.equals(isPropagateUp)) {
+							toRemove.add(labelClaimItem);
+						}
 
 						if (!LabelClaimListDataItem.VALUE_CERTIFIED.equals(labelClaimItem.getLabelClaimValue())) {
 							labelClaimItem.setLabelClaimValue(null);
@@ -184,12 +181,14 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						if (!partProduct.isLocalSemiFinished() && partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
 
-								visitPart(productData, partProduct, qtyUsed, netQty, labelClaim);
+								visitPart(productData, partProduct, qtyUsed, netQty, labelClaim, toRemove);
 
 							}
 						}
 					}
 				}
+
+				productData.getLabelClaimList().removeAll(toRemove);
 			}
 
 			computeClaimList(productData, parser, context);
@@ -231,6 +230,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 						toAdd.setNodeRef(null);
 						toAdd.setParentNodeRef(null);
 						toAdd.setLabelClaimValue(null);
+						toAdd.setSort(null);
 						simpleListDataList.add(toAdd);
 					}
 
@@ -261,12 +261,27 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		}
 	}
 
-	private void visitPart(ProductData productData, ProductData partProduct, Double qtyUsed, Double netQty,
-			LabelClaimListDataItem subLabelClaimItem) {
-		for (LabelClaimListDataItem labelClaimItem : productData.getLabelClaimList()) {
+	private void visitPart(ProductData productData, ProductData partProduct, Double qtyUsed, Double netQty, LabelClaimListDataItem subLabelClaimItem,
+			Set<LabelClaimListDataItem> toRemove) {
 
-			if (((labelClaimItem.getIsManual() == null) || !Boolean.TRUE.equals(labelClaimItem.getIsManual()))
-					&& ((labelClaimItem.getLabelClaim() != null) && labelClaimItem.getLabelClaim().equals(subLabelClaimItem.getLabelClaim()))) {
+		LabelClaimListDataItem labelClaimItem = productData.getLabelClaimList().stream()
+				.filter(n -> ((n.getLabelClaim() != null) && n.getLabelClaim().equals(subLabelClaimItem.getLabelClaim()))).findFirst().orElse(null);
+
+		if ((labelClaimItem == null)
+				&& Boolean.TRUE.equals(nodeService.getProperty(subLabelClaimItem.getLabelClaim(), PLMModel.PROP_LABELCLAIM_PROPAGATE_UP))) {
+
+			labelClaimItem = subLabelClaimItem.copy();
+			labelClaimItem.setName(null);
+			labelClaimItem.setNodeRef(null);
+			labelClaimItem.setParentNodeRef(null);
+			labelClaimItem.setLabelClaimValue(null);
+			labelClaimItem.setSort(null);
+			productData.getLabelClaimList().add(labelClaimItem);
+		}
+
+		if (labelClaimItem != null) {
+
+			if (((labelClaimItem.getIsManual() == null) || !Boolean.TRUE.equals(labelClaimItem.getIsManual()))) {
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Visiting labelClaim " + extractName(labelClaimItem.getLabelClaim()) + " isManual: " + labelClaimItem.getIsManual()
@@ -305,7 +320,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 						break;
 					case LabelClaimListDataItem.VALUE_SUITABLE:
-						if (Boolean.TRUE.equals(labelClaimItem.getIsClaimed() || (labelClaimItem.getLabelClaimValue() == null))
+						if ((labelClaimItem.getIsClaimed() || (labelClaimItem.getLabelClaimValue() == null))
 								|| LabelClaimListDataItem.VALUE_NA.equals(labelClaimItem.getLabelClaimValue())) {
 							labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_SUITABLE);
 						}
@@ -350,7 +365,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					if (!Boolean.TRUE.equals(labelClaimItem.getIsFormulated())) {
 						addMissingLabelClaimReq(productData, partProduct, labelClaimItem);
 						addMissingLabelClaims(partProduct, labelClaimItem);
-
 					}
 
 					labelClaimItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
@@ -374,7 +388,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 				} else {
 
-					if (percApplicable != null && qtyUsed != null) {
+					if ((percApplicable != null) && (qtyUsed != null)) {
 
 						Double value = percApplicable * qtyUsed;
 						if ((netQty != null) && (netQty != 0d)) {
@@ -388,7 +402,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 					}
 
-					if (percClaim != null && qtyUsed != null) {
+					if ((percClaim != null) && (qtyUsed != null)) {
 
 						Double value = percClaim * qtyUsed;
 						if ((netQty != null) && (netQty != 0d)) {
@@ -410,7 +424,10 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				}
 
 			}
+			toRemove.remove(labelClaimItem);
+
 		}
+
 	}
 
 	private void addMissingLabelClaims(ProductData partProduct, LabelClaimListDataItem labelClaimItem) {

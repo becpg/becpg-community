@@ -696,6 +696,8 @@ public interface PLMModel {
 	QName PROP_GLOP_TARGET =  QName.createQName(BeCPGModel.BECPG_URI, "glopTarget");
 	
 	QName PROP_GLOP_VALUE =  QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
+	
+	QName PROP_LABELCLAIM_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "isLabelClaimPropagateUp");
 
 	
 }
