@@ -82,7 +82,7 @@
                      <option value="<#if field.control.params.isSearch?? >&#34;</#if>${nameValue?html}<#if field.control.params.isSearch?? >&#34;</#if>"<#if isSelected(nameValue) && !field.control.params.isSearch??> selected="selected"</#if>>${nameValue?html}</option>
                   <#else>
                      <#assign choice=nameValue?split(labelSeparator)>
-                     <option value="<#if field.control.params.isSearch?? >&#34;</#if>${choice[0]?html}<#if field.control.params.isSearch?? >&#34;</#if>"<#if isSelected(choice[0]) && !field.control.params.isSearch??> selected="selected"</#if>>${msgValue(choice[1])?html}</option>
+                     <option value="<#if field.control.params.isSearch?? >&#34;</#if>${choice[0]?html}<#if field.control.params.isSearch?? >&#34;</#if>"<#if isSelected(choice[0]) && !field.control.params.isSearch??> selected="selected"</#if>>${msg(choice[1])?html}</option>
                   </#if>
                </#list>
          </select>
