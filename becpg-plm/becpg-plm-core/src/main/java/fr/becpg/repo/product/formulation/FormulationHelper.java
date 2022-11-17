@@ -646,7 +646,7 @@ public class FormulationHelper {
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public static Double getNetQtyForCost(ProductData formulatedProduct) {
-		if (formulatedProduct instanceof PackagingKitData) {
+		if (formulatedProduct.isPackagingKit()) {
 			return FormulationHelper.QTY_FOR_PIECE;
 		} else if (formulatedProduct instanceof ResourceProductData) {
 			return FormulationHelper.QTY_FOR_PIECE;
@@ -660,6 +660,16 @@ public class FormulationHelper {
 				return FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 			}
 		}
+	}
+	
+	public static Double getQtyForProductByPackagingLevel(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem,
+			ProductData subProductData) {
+
+		Double qty = FormulationHelper.getQty( packagingListDataItem);
+		
+		return getQtyByPackagingLevel(qty, formulatedProduct, packagingListDataItem, subProductData);
+		
+	
 	}
 
 	/**
@@ -675,6 +685,14 @@ public class FormulationHelper {
 
 		Double qty = FormulationHelper.getQtyForCost(formulatedProduct, packagingListDataItem);
 
+		return getQtyByPackagingLevel(qty, formulatedProduct, packagingListDataItem, subProductData);
+		
+	}
+	
+	
+	private static Double getQtyByPackagingLevel(Double qty, ProductData formulatedProduct, PackagingListDataItem packagingListDataItem,
+			ProductData subProductData) {
+		
 		// secondary on packagingKit with pallet aspect -> nothing
 		// tertiary on packagingKit with pallet aspect -> divide by
 		// boxesPerPallet
@@ -684,7 +702,7 @@ public class FormulationHelper {
 		// pallet aspect) -> divide by productPerBoxes * boxesPerPallet
 		PackagingLevel packagingLevel = packagingListDataItem.getPkgLevel();
 		if (packagingLevel != null) {
-			if ((formulatedProduct instanceof PackagingKitData) && formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
+			if ((formulatedProduct.isPackagingKit()) && formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
 				if (packagingLevel.equals(PackagingLevel.Tertiary)) {
 					Integer nbByPalet = ((PackagingKitData) formulatedProduct).getPalletBoxesPerPallet();
 					if ((nbByPalet != null) && (nbByPalet > 0)) {
@@ -693,7 +711,7 @@ public class FormulationHelper {
 				}
 			} else if ((!(subProductData.getAspects().contains(PackModel.ASPECT_PALLET)
 					&& PackagingLevel.Secondary.equals(packagingListDataItem.getPkgLevel())
-					&& ProductUnit.PP.equals(packagingListDataItem.getPackagingListUnit()) && (subProductData instanceof PackagingKitData)))
+					&& ProductUnit.PP.equals(packagingListDataItem.getPackagingListUnit()) && (subProductData.isPackagingKit())))
 					&& (formulatedProduct.getDefaultVariantPackagingData() != null)) {
 				if (packagingLevel.equals(PackagingLevel.Secondary)) {
 					if ((formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)

@@ -147,10 +147,13 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					labelClaimItem.setType((String) nodeService.getProperty(labelClaimItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_TYPE));
 
 					Boolean isManual = (Boolean) nodeService.getProperty(labelClaimItem.getLabelClaim(), BeCPGModel.PROP_IS_MANUAL_LISTITEM);
-
-					if (Boolean.TRUE.equals(isManual)) {
+					
+					if ((isManual != null) && isManual) {
 						labelClaimItem.setIsManual(true);
-					} else {
+					}
+					
+					if((labelClaimItem.getIsManual() == null) || !Boolean.TRUE.equals(labelClaimItem.getIsManual())){
+					
 						Boolean isPropagateUp = (Boolean) nodeService.getProperty(labelClaimItem.getLabelClaim(),
 								PLMModel.PROP_LABELCLAIM_PROPAGATE_UP);
 
