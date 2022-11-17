@@ -1795,7 +1795,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							
 							Double qtyTotalWithYield = FormulationHelper.getNetWeight(productData,  FormulationHelper.DEFAULT_NET_WEIGHT);
 							if ((qtyTotalWithYield != null) && (qtyTotalWithYield != 0d)) {
-								computedRatioWithYield = qty / (qtyTotalWithYield * LabelingFormulaContext.PRECISION_FACTOR) ;
+								computedRatioWithYield = qty / (qtyTotalWithYield * LabelingFormulaContext.PRECISION_FACTOR) * ratioWithYield ;
 							}
 							
 							if (logger.isTraceEnabled()) {
