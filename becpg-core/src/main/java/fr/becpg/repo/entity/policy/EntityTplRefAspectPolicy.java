@@ -74,7 +74,7 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL_REF,
 				new JavaBehaviour(this, "onAddAspect"));
 		
-		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL_REF,
+		policyComponent.bindClassBehaviour(NodeServicePolicies.BeforeDeleteNodePolicy.QNAME, BeCPGModel.ASPECT_ENTITY_TPL,
 				new JavaBehaviour(this, "beforeDeleteNode"));
 
 		super.disableOnCopyBehaviour(BeCPGModel.ASPECT_ENTITY_TPL_REF);
