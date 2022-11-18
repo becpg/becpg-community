@@ -643,6 +643,9 @@ function allowWrite(node, authority) {
 	bcpg.allowWrite(node, authority);
 }
 
+function getQNameTitle(qname) {
+	return bcpg.getQNameTitle(qname);
+}
 
 /**
  * 
