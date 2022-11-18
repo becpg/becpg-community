@@ -353,7 +353,11 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 							List<NodeRef> assignees = getAssignees(taskListDataItem.getResources(), false);
 
-							properties = getWorkflowTaskNewProperties(WorkflowModel.ASSOC_POOLED_ACTORS, (Serializable) taskListDataItem.getResources(), workflowTask.getProperties(), properties);
+							List<NodeRef> oldPooledActors = (List<NodeRef>) workflowTask.getProperties().get(WorkflowModel.ASSOC_POOLED_ACTORS);
+							
+							if (oldPooledActors == null || oldPooledActors.size() != taskListDataItem.getResources().size() || !oldPooledActors.containsAll(taskListDataItem.getResources())) {
+								properties.put(WorkflowModel.ASSOC_POOLED_ACTORS, (Serializable) taskListDataItem.getResources());
+							}
 							
 							// Send notifications for new actors
 							if (properties.containsKey(WorkflowModel.ASSOC_POOLED_ACTORS)) {
@@ -362,7 +366,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 								
 								List<String> newAuthorityNames = new ArrayList<>();
 								
-								boolean ownerRemoved = true;
+								boolean ownerRemoved = !newActors.isEmpty();
+								
+								String oldPropOwner = (String) workflowTask.getProperties().get(ContentModel.PROP_OWNER);
 								
 								for (NodeRef newActor : newActors) {
 									
@@ -380,7 +386,8 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 										newAuthorityNames.add(authorityName);
 									}
 									
-									if (authorityName.equals(workflowTask.getProperties().get(ContentModel.PROP_OWNER))) {
+									
+									if (oldPropOwner == null || oldPropOwner.isBlank() || oldPropOwner.equals(authorityName)) {
 										ownerRemoved = false;
 									}
 								}
