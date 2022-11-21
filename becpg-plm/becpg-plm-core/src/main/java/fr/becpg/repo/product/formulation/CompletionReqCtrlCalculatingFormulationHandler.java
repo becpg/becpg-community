@@ -2,6 +2,7 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -16,12 +17,14 @@ import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.AbstractProductDataView;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.CompositionDataItem;
+import fr.becpg.repo.repository.model.EffectiveDataItem;
 
 /**
  * <p>CompletionReqCtrlCalculatingFormulationHandler class.</p>
@@ -84,11 +87,13 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 			boolean shouldAdd = false;
 
+			Predicate<EffectiveDataItem> predicate = new EffectiveFilters<>(EffectiveFilters.EFFECTIVE).createPredicate(product);
+			
 			// visits all refs and adds rclDataItem to them if required
 			for (AbstractProductDataView view : product.getViews()) {
 				if (view.getMainDataList() != null) {
 					for (CompositionDataItem dataItem : view.getMainDataList()) {
-						if ((dataItem.getComponent() != null) && !checkProductValidity(dataItem.getComponent())) {
+						if ((dataItem.getComponent() != null) && !checkProductValidity(dataItem.getComponent()) && predicate.test(dataItem)) {
 							rclDataItem.getSources().add(dataItem.getComponent());
 							shouldAdd = true;
 

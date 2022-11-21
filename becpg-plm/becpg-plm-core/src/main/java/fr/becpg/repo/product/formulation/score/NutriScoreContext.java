@@ -10,9 +10,9 @@ import fr.becpg.model.NutrientProfileCategory;
 public class NutriScoreContext {
 
 	public static final String VALUE = "value"; 
-	
 	private static final String IS_WATER = "isWater";
-	private static final String PARTS2 = "parts";
+	private static final String HAS_PROTEIN_SCORE = "hasProteinScore";
+	private static final String PARTS_STRING = "parts";
 	private static final String SCORE = "score";
 	private static final String UPPER_VALUE = "upperValue";
 	private static final String LOWER_VALUE = "lowerValue";
@@ -29,36 +29,47 @@ public class NutriScoreContext {
 	private String category;
 
 	private String nutrientClass;
-	private Double classLowerValue;
-	private Double classUpperValue;
+	private String classLowerValue;
+	private String classUpperValue;
 
 	private Integer nutriScore;
 	private Integer aScore;
 	private Integer cScore;
 	
 	private boolean isWater;
+	
+	private boolean hasProteinScore = false;
 
 	public NutriScoreContext() {
-
+		
+		createPartValue(NutriScore.ENERGY_CODE, 0d);
+		createPartValue(NutriScore.SATFAT_CODE, 0d);
+		createPartValue(NutriScore.FAT_CODE, 0d);
+		createPartValue(NutriScore.SUGAR_CODE, 0d);
+		createPartValue(NutriScore.SODIUM_CODE, 0d);
+		createPartValue(NutriScore.FRUIT_VEGETABLE_CODE, 0d);
+		createPartValue(NutriScore.NSP_CODE, 0d);
+		createPartValue(NutriScore.AOAC_CODE, 0d);
+		createPartValue(NutriScore.PROTEIN_CODE, 0d);
 	}
 
 	public NutriScoreContext(Double energyValue, Double satFatValue, Double totalFatValue, Double totalSugarValue, Double sodiumValue,
 			Double percFruitsAndVetgsValue, Double nspFibreValue, Double aoacFibreValue, Double proteinValue, String category) {
 
-		addPartValue(NutriScore.ENERGY_CODE, energyValue);
-		addPartValue(NutriScore.SATFAT_CODE, satFatValue);
-		addPartValue(NutriScore.FAT_CODE, totalFatValue);
-		addPartValue(NutriScore.SUGAR_CODE, totalSugarValue);
-		addPartValue(NutriScore.SODIUM_CODE, sodiumValue);
-		addPartValue(NutriScore.FRUIT_VEGETABLE_CODE, percFruitsAndVetgsValue);
-		addPartValue(NutriScore.NSP_CODE, nspFibreValue);
-		addPartValue(NutriScore.AOAC_CODE, aoacFibreValue);
-		addPartValue(NutriScore.PROTEIN_CODE, proteinValue);
+		createPartValue(NutriScore.ENERGY_CODE, energyValue);
+		createPartValue(NutriScore.SATFAT_CODE, satFatValue);
+		createPartValue(NutriScore.FAT_CODE, totalFatValue);
+		createPartValue(NutriScore.SUGAR_CODE, totalSugarValue);
+		createPartValue(NutriScore.SODIUM_CODE, sodiumValue);
+		createPartValue(NutriScore.FRUIT_VEGETABLE_CODE, percFruitsAndVetgsValue);
+		createPartValue(NutriScore.NSP_CODE, nspFibreValue);
+		createPartValue(NutriScore.AOAC_CODE, aoacFibreValue);
+		createPartValue(NutriScore.PROTEIN_CODE, proteinValue);
 		
 		this.category = category;
 	}
 	
-	private void addPartValue(String code, Double value) {
+	private void createPartValue(String code, Double value) {
 		JSONObject part = new JSONObject();
 		part.put(VALUE, value);
 		parts.put(code, part);
@@ -66,6 +77,14 @@ public class NutriScoreContext {
 	
 	public JSONObject getParts() {
 		return parts;
+	}
+	
+	public boolean getHasProteinScore() {
+		return hasProteinScore;
+	}
+	
+	public void setHasProteinScore(boolean hasProtein) {
+		this.hasProteinScore = hasProtein;
 	}
 
 	public boolean isWater() {
@@ -100,19 +119,19 @@ public class NutriScoreContext {
 		return nutrientClass;
 	}
 
-	public Double getClassLowerValue() {
+	public String getClassLowerValue() {
 		return classLowerValue;
 	}
 
-	public void setClassLowerValue(Double classLowerValue) {
+	public void setClassLowerValue(String classLowerValue) {
 		this.classLowerValue = classLowerValue;
 	}
 
-	public Double getClassUpperValue() {
+	public String getClassUpperValue() {
 		return classUpperValue;
 	}
 
-	public void setClassUpperValue(Double classUpperValue) {
+	public void setClassUpperValue(String classUpperValue) {
 		this.classUpperValue = classUpperValue;
 	}
 
@@ -143,11 +162,13 @@ public class NutriScoreContext {
 		json.put(CATEGORY_STRING, category);
 
 		json.put(NUTRIENT_CLASS, nutrientClass);
-		json.put(CLASS_LOWER_VALUE, classLowerValue == Double.MIN_VALUE ? "-Inf" : classLowerValue.intValue());
-		json.put(CLASS_UPPER_VALUE, classUpperValue == Double.MAX_VALUE ? "+Inf" : classUpperValue.intValue());
-		json.put(PARTS2, parts);
+		json.put(CLASS_LOWER_VALUE, classLowerValue);
+		json.put(CLASS_UPPER_VALUE, classUpperValue);
+		json.put(PARTS_STRING, parts);
 		
 		json.put(IS_WATER, isWater);
+		
+		json.put(HAS_PROTEIN_SCORE, hasProteinScore);
 		
 		return json;
 	}
@@ -163,13 +184,11 @@ public class NutriScoreContext {
 		nutriScoreContext.setCScore((int) jsonValue.get(C_SCORE));
 		nutriScoreContext.setCategory(jsonValue.getString(CATEGORY_STRING));
 		nutriScoreContext.setNutrientClass(jsonValue.getString(NUTRIENT_CLASS));
-		nutriScoreContext.setClassLowerValue(
-				"-Inf".equals(jsonValue.get(CLASS_LOWER_VALUE)) ? Double.MIN_VALUE : ((Integer) jsonValue.get(CLASS_LOWER_VALUE)).doubleValue());
-		nutriScoreContext.setClassUpperValue(
-				"+Inf".equals(jsonValue.get(CLASS_UPPER_VALUE)) ? Double.MAX_VALUE : ((Integer) jsonValue.get(CLASS_UPPER_VALUE)).doubleValue());
+		nutriScoreContext.setClassLowerValue(jsonValue.getString(CLASS_LOWER_VALUE));
+		nutriScoreContext.setClassUpperValue(jsonValue.getString(CLASS_UPPER_VALUE));
 		
 		
-		nutriScoreContext.parts = jsonValue.getJSONObject(PARTS2);
+		nutriScoreContext.parts = jsonValue.getJSONObject(PARTS_STRING);
 		
 		nutriScoreContext.setWater(jsonValue.getBoolean(IS_WATER));
 
@@ -188,10 +207,13 @@ public class NutriScoreContext {
 		
 		sb.append("<ul>");
 		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.energy", parts.getJSONObject(NutriScore.ENERGY_CODE).get(LOWER_VALUE), parts.getJSONObject(NutriScore.ENERGY_CODE).get(VALUE), parts.getJSONObject(NutriScore.ENERGY_CODE).get(UPPER_VALUE), parts.getJSONObject(NutriScore.ENERGY_CODE).get(SCORE)));
-		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.satfat", parts.getJSONObject(NutriScore.SATFAT_CODE).get(LOWER_VALUE), parts.getJSONObject(NutriScore.SATFAT_CODE).get(VALUE), parts.getJSONObject(NutriScore.SATFAT_CODE).get(UPPER_VALUE), parts.getJSONObject(NutriScore.SATFAT_CODE).get(SCORE)));
+		
 		if (NutrientProfileCategory.Fats.equals(NutrientProfileCategory.valueOf(category))) {
 			sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.totalfat", parts.getJSONObject(NutriScore.FAT_CODE).get(LOWER_VALUE), parts.getJSONObject(NutriScore.FAT_CODE).get(VALUE), parts.getJSONObject(NutriScore.FAT_CODE).get(UPPER_VALUE), parts.getJSONObject(NutriScore.FAT_CODE).get(SCORE)));
+		} else {
+			sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.satfat", parts.getJSONObject(NutriScore.SATFAT_CODE).get(LOWER_VALUE), parts.getJSONObject(NutriScore.SATFAT_CODE).get(VALUE), parts.getJSONObject(NutriScore.SATFAT_CODE).get(UPPER_VALUE), parts.getJSONObject(NutriScore.SATFAT_CODE).get(SCORE)));
 		}
+		
 		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.totalsugar", parts.getJSONObject(NutriScore.SUGAR_CODE).get(LOWER_VALUE), parts.getJSONObject(NutriScore.SUGAR_CODE).get(VALUE), parts.getJSONObject(NutriScore.SUGAR_CODE).get(UPPER_VALUE), parts.getJSONObject(NutriScore.SUGAR_CODE).get(SCORE)));
 		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.sodium", parts.getJSONObject(NutriScore.SODIUM_CODE).get(LOWER_VALUE), parts.getJSONObject(NutriScore.SODIUM_CODE).get(VALUE), parts.getJSONObject(NutriScore.SODIUM_CODE).get(UPPER_VALUE), parts.getJSONObject(NutriScore.SODIUM_CODE).get(SCORE)));
 		sb.append("</ul>");
@@ -203,7 +225,9 @@ public class NutriScoreContext {
 		sb.append("</b>");
 		
 		sb.append("<ul>");
-		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.protein", parts.getJSONObject(NutriScore.PROTEIN_CODE).get(LOWER_VALUE), parts.getJSONObject(NutriScore.PROTEIN_CODE).get(VALUE), parts.getJSONObject(NutriScore.PROTEIN_CODE).get(UPPER_VALUE), parts.getJSONObject(NutriScore.PROTEIN_CODE).get(SCORE)));
+		if (hasProteinScore) {
+			sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.protein", parts.getJSONObject(NutriScore.PROTEIN_CODE).get(LOWER_VALUE), parts.getJSONObject(NutriScore.PROTEIN_CODE).get(VALUE), parts.getJSONObject(NutriScore.PROTEIN_CODE).get(UPPER_VALUE), parts.getJSONObject(NutriScore.PROTEIN_CODE).get(SCORE)));
+		}
 		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.percfruitsandveg", parts.getJSONObject(NutriScore.FRUIT_VEGETABLE_CODE).get(LOWER_VALUE), parts.getJSONObject(NutriScore.FRUIT_VEGETABLE_CODE).get(VALUE), parts.getJSONObject(NutriScore.FRUIT_VEGETABLE_CODE).get(UPPER_VALUE), parts.getJSONObject(NutriScore.FRUIT_VEGETABLE_CODE).get(SCORE)));
 		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.nspfibre", parts.getJSONObject(NutriScore.NSP_CODE).get(LOWER_VALUE), parts.getJSONObject(NutriScore.NSP_CODE).get(VALUE), parts.getJSONObject(NutriScore.NSP_CODE).get(UPPER_VALUE), parts.getJSONObject(NutriScore.NSP_CODE).get(SCORE)));
 		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.aoacfibre", parts.getJSONObject(NutriScore.AOAC_CODE).get(LOWER_VALUE), parts.getJSONObject(NutriScore.AOAC_CODE).get(VALUE), parts.getJSONObject(NutriScore.AOAC_CODE).get(UPPER_VALUE), parts.getJSONObject(NutriScore.AOAC_CODE).get(SCORE)));

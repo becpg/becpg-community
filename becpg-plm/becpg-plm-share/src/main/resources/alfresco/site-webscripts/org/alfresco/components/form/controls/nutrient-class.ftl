@@ -17,6 +17,13 @@
 	      						+ "\n">
 	      </#if>
 	      
+	      <#assign protein = "">
+	      
+	      <#if nutrientDetails.hasProteinScore == true>
+		      <#assign protein = msg("nutriscore.display.protein", nutrientDetails.parts['PRO-'].lowerValue, nutrientDetails.parts['PRO-'].value, nutrientDetails.parts['PRO-'].upperValue, nutrientDetails.parts['PRO-'].score)
+		      						+ "\n">
+	      </#if>
+	      
 	      <#assign displayValue = msg("nutriscore.display.negative") 
 	      						+ "\n"
 	      						+ msg("nutriscore.display.energy", nutrientDetails.parts['ENER-KJO'].lowerValue, nutrientDetails.parts['ENER-KJO'].value, nutrientDetails.parts['ENER-KJO'].upperValue, nutrientDetails.parts['ENER-KJO'].score)
@@ -30,8 +37,7 @@
 	      						+ "\n"
 	      						+ msg("nutriscore.display.positive")
 	      						+ "\n"
-	      						+ msg("nutriscore.display.protein", nutrientDetails.parts['PRO-'].lowerValue, nutrientDetails.parts['PRO-'].value, nutrientDetails.parts['PRO-'].upperValue, nutrientDetails.parts['PRO-'].score)
-	      						+ "\n"
+	      						+ protein
 	      						+ msg("nutriscore.display.percfruitsandveg", nutrientDetails.parts['FRUIT_VEGETABLE'].lowerValue, nutrientDetails.parts['FRUIT_VEGETABLE'].value, nutrientDetails.parts['FRUIT_VEGETABLE'].upperValue, nutrientDetails.parts['FRUIT_VEGETABLE'].score)
 	      						+ "\n"
 	      						+ msg("nutriscore.display.nspfibre", nutrientDetails.parts['PSACNS'].lowerValue, nutrientDetails.parts['PSACNS'].value, nutrientDetails.parts['PSACNS'].upperValue, nutrientDetails.parts['PSACNS'].score)

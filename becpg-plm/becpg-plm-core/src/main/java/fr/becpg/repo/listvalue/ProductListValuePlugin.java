@@ -127,7 +127,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 						String name = attributeExtractorService.extractPropName(type, targetNode);
 						if (isQueryMatch(query, name) && accept(type, arrClassNames)) {
 							String cssClass = attributeExtractorService.extractMetadata(type, targetNode);
-							result.add(new ListValueEntry(dataListItemNodeRef.toString(), name, cssClass));
+							result.add(new ListValueEntry(targetNode.toString(), name, cssClass));
 						}
 					}
 				}
