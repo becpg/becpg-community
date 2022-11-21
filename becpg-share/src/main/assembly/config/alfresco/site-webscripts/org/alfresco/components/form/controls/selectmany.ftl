@@ -83,7 +83,7 @@
                      <option value="<#if field.control.params.isSearch?? >=</#if><#if field.control.params.isSearch??>${nameValue?string?replace(" ","\\ ")?html}<#else>${nameValue?html}</#if>"<#if isSelected(nameValue) && !field.control.params.isSearch??> selected="selected"</#if>>${nameValue?html}</option>
                   <#else>
                      <#assign choice=nameValue?split(labelSeparator)>
-                     <option value="<#if field.control.params.isSearch?? >=</#if><#if field.control.params.isSearch??>${choice[0]?string?replace(" ","\\ ")?html}<#else>${choice[0]?html}</#if>"<#if isSelected(choice[0]) && !field.control.params.isSearch??> selected="selected"</#if>>${msgValue(choice[1])?html}</option>
+                     <option value="<#if field.control.params.isSearch?? >=</#if><#if field.control.params.isSearch??>${choice[0]?string?replace(" ","\\ ")?html}<#else>${choice[0]?html}</#if>"<#if isSelected(choice[0]) && !field.control.params.isSearch??> selected="selected"</#if>>${msg(choice[1])?html}</option>
                   </#if>
                </#list>
          </select>

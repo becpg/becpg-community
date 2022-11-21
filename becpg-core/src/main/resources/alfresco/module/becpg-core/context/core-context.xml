@@ -345,7 +345,7 @@
   
    
    	<bean id="batchThreadPoolExecutor" class="org.alfresco.util.ThreadPoolExecutorFactoryBean">
-      <property name="poolName" value="beCPGImportThreadPoolExecutor" />
+      <property name="poolName" value="beCPGBatchThreadPoolExecutor" />
       <property name="corePoolSize" value="1" />
       <property name="maximumPoolSize" value="1" />
       <property name="threadPriority" value="4" />
