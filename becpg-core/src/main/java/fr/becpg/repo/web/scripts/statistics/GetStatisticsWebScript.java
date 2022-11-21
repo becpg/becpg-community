@@ -11,7 +11,6 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.audit.model.AuditFilter;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
@@ -41,11 +40,6 @@ public class GetStatisticsWebScript extends AbstractWebScript {
 		String filter = req.getParameter(PARAM_FILTER);
 		String ascendingOrder = req.getParameter(PARAM_ASCENDING_ORDER);
 		
-		Integer maxResults = RepoConsts.MAX_RESULTS_256;
-		
-		if (reqMaxResults != null) {
-			maxResults = Integer.parseInt(reqMaxResults);
-		}
 		
 		AuditType type = null;
 		
@@ -69,11 +63,15 @@ public class GetStatisticsWebScript extends AbstractWebScript {
 		
 		auditFilter.setFilter(filter);
 		
+		if (reqMaxResults != null) {
+			auditFilter.setMaxResults(Integer.parseInt(reqMaxResults));
+		}
+		
 		if (ascendingOrder != null) {
 			auditFilter.setAscendingOrder(Boolean.parseBoolean(ascendingOrder));
 		}
 		
-		List<JSONObject> statistics = beCPGAuditService.getAuditStatistics(type, maxResults, auditFilter);
+		List<JSONObject> statistics = beCPGAuditService.getAuditStatistics(type, auditFilter);
 		
 		try {
 			JSONObject ret = new JSONObject();
