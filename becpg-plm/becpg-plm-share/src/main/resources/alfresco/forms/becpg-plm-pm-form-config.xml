@@ -751,33 +751,64 @@
               <control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
               <control-param name="multiple">true</control-param>
+              <control-param name="forceEditable">true</control-param>
             </control>
           </field>
           <field id="bcpg:productState" mandatory="false" read-only="false" set="product-criteria">
             <control template="/org/alfresco/components/form/controls/selectone.ftl">
               <control-param name="isSearch">true</control-param>
               <control-param name="insertBlank">true</control-param>
+              <control-param name="forceEditable">true</control-param>
             </control>
           </field>
-          <field id="bcpg:code" mandatory="false" read-only="false" set="product-criteria"/>
-          <field id="bcpg:erpCode" mandatory="false" read-only="false" set="product-criteria"/>
-          <field id="bcpg:eanCode" mandatory="false" read-only="false" set="product-criteria"/>
-          <field id="bcpg:certificateDate" mandatory="false" read-only="false" set="product-criteria"/>
-          <field id="bcpg:suppliers" mandatory="false" read-only="false" set="product-criteria"/>
-          <field id="bcpg:plants" mandatory="false" read-only="false" set="product-criteria"/>
+          <field id="bcpg:code" mandatory="false" read-only="false" set="product-criteria">
+          	<control>
+          		<control-param name="forceEditable">true</control-param>
+          	</control>
+          </field>
+          <field id="bcpg:erpCode" mandatory="false" read-only="false" set="product-criteria">
+          	<control>
+          		<control-param name="forceEditable">true</control-param>
+          	</control>
+          </field>
+          <field id="bcpg:eanCode" mandatory="false" read-only="false" set="product-criteria">
+          	<control>
+          		<control-param name="forceEditable">true</control-param>
+          	</control>
+          </field>
+          <field id="bcpg:certificateDate" mandatory="false" read-only="false" set="product-criteria">
+          	<control>
+          		<control-param name="forceEditable">true</control-param>
+          	</control>
+          </field>
+          <field id="bcpg:suppliers" mandatory="false" read-only="false" set="product-criteria">
+          	<control>
+          		<control-param name="forceEditable">true</control-param>
+          	</control>
+          </field>
+          <field id="bcpg:plants" mandatory="false" read-only="false" set="product-criteria">
+          	<control>
+          		<control-param name="forceEditable">true</control-param>
+          	</control>
+          </field>
           <set appearance="bordered-panel" id="labeling-criteria" label-id="becpg.forms.set.mentions.label"/>
           <field id="pack:llLabel" mandatory="false" read-only="false" set="labeling-criteria">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+          		<control-param name="forceEditable">true</control-param>
+          	</control>
           </field>
           <field id="pack:llPosition" mandatory="false" read-only="false" set="labeling-criteria">
             <control template="/org/alfresco/components/form/controls/selectone.ftl">
               <control-param name="isSearch">true</control-param>
               <control-param name="insertBlank">true</control-param>
+              <control-param name="forceEditable">true</control-param>
             </control>
           </field>
           <set appearance="bordered-panel" id="labelClaim-criteria" label-id="becpg.forms.set.claim.label"/>
           <field id="bcpg:lclLabelClaim" mandatory="false" read-only="false" set="labelClaim-criteria">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+          		<control-param name="forceEditable">true</control-param>
+          	</control>
           </field>
         </appearance>
       </form>
