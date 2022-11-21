@@ -754,25 +754,36 @@
 				</field-visibility>
 				<appearance>
 					<set id="main" />
-					<field id="cm:name" set="main" />
-					<field id="pjt:projectManager" set="main" />
+					<field id="cm:name" set="main" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="pjt:projectManager" set="main" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
 					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="pjt:projectPriority" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">1|priority.high,2|priority.medium,3|priority.low</control-param>
 							<control-param name="insertBlank">true</control-param>
 							<control-param name="isSearch">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="pjt:projectState" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="pjt:projectHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProjectLists/bcpg:entityLists/project_Hierarchy
 							</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="pjt:projectHierarchy2" set="mainInfo">
@@ -781,17 +792,20 @@
 							</control-param>
 							<control-param name="parent">pjt_projectHierarchy1
 							</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 
 					<field id="pjt:projectOrigin" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="pjt:projectSponsor" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 
@@ -799,13 +813,19 @@
 
 					<set id="main2" />
 					<field id="pjt:projectStartDate" set="main2">
-						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" >
+							<control-param name="forceEditable">true</control-param>
+						</control>
 					</field>
 					<field id="pjt:projectCompletionDate" set="main2">
-						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" >
+							<control-param name="forceEditable">true</control-param>
+						</control>
 					</field>
 					<field id="pjt:projectDueDate" set="main2">
-						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" >
+							<control-param name="forceEditable">true</control-param>
+						</control>
 					</field>
 				</appearance>
 			</form>
