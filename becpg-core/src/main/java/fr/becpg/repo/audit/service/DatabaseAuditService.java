@@ -11,7 +11,7 @@ import fr.becpg.repo.audit.plugin.AuditPlugin;
 
 public interface DatabaseAuditService {
 	
-	List<JSONObject> getAuditStatistics(AuditPlugin plugin, Integer maxResults, AuditFilter auditFilter);
+	List<JSONObject> getAuditStatistics(AuditPlugin plugin, AuditFilter auditFilter);
 
 	int recordAuditEntry(AuditPlugin auditPlugin, Map<String, Serializable> auditValues, boolean b);
 

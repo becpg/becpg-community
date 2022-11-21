@@ -83,9 +83,9 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	}
 
 	@Override
-	public List<JSONObject> getAuditStatistics(AuditPlugin plugin, Integer maxResults, AuditFilter auditFilter) {
+	public List<JSONObject> getAuditStatistics(AuditPlugin plugin, AuditFilter auditFilter) {
 		
-		Collection<AuditEntry> auditEntries = listAuditEntries(plugin, maxResults, auditFilter.getFilter());
+		Collection<AuditEntry> auditEntries = listAuditEntries(plugin, auditFilter.getMaxResults(), auditFilter.getFilter());
 		
 		List<JSONObject> statistics = new ArrayList<>();
 		
