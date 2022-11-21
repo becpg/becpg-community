@@ -54,6 +54,7 @@
 				<form labelId="search.form.label.bcpg_supplier" descriptionId="search.form.desc.bcpg_supplier">bcpg:supplier</form>
 				<form labelId="search.form.label.qa_nc" descriptionId="search.form.desc.qa_nc">qa:nc</form>
 				<form labelId="search.form.label.qa_qualityControl" descriptionId="search.form.desc.qa_qualityControl">qa:qualityControl</form>
+				<form labelId="search.form.label.qa_batch" descriptionId="search.form.desc.qa_batch">qa:batch</form>
 				<form labelId="search.form.label.bcpg_productCollection" descriptionId="search.form.desc.bcpg_productCollection">bcpg:productCollection</form>
 			</forms>
 		</advanced-search>

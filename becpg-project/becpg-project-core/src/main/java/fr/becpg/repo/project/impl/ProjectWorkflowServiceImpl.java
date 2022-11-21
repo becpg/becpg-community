@@ -27,6 +27,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.workflow.WorkflowConstants;
 import org.alfresco.repo.workflow.WorkflowModel;
+import org.alfresco.repo.workflow.WorkflowNotificationUtils;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.workflow.WorkflowDefinition;
@@ -78,6 +79,9 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 
 	@Autowired
 	private AutoNumService autoNumService;
+	
+	@Autowired
+    private WorkflowNotificationUtils workflowNotificationUtils;
 
 	/** {@inheritDoc} */
 	@Override
@@ -297,6 +301,7 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 	 *
 	 * Check workflow instance and properties
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void checkWorkflowInstance(ProjectData projectData, TaskListDataItem taskListDataItem, List<DeliverableListDataItem> nextDeliverables) {
 
@@ -347,28 +352,60 @@ public class ProjectWorkflowServiceImpl implements ProjectWorkflowService {
 									workflowTask.getProperties(), properties);
 
 							List<NodeRef> assignees = getAssignees(taskListDataItem.getResources(), false);
-							List<NodeRef> groupAssignees = getAssignees(taskListDataItem.getResources(), true);
 
-							if (taskListDataItem.getResources().size() == 1) {
-
-								if (assignees.size() == 1) {
-									String userName = (String) nodeService.getProperty(assignees.get(0), ContentModel.PROP_USERNAME);
-									properties = getWorkflowTaskNewProperties(ContentModel.PROP_OWNER, userName, workflowTask.getProperties(),
-											properties);
-								} else {
-									properties = getWorkflowTaskNewProperties(WorkflowModel.ASSOC_POOLED_ACTORS, (Serializable) groupAssignees,
-											workflowTask.getProperties(), properties);
-
-								}
-							} else {
-
-								properties = getWorkflowTaskNewProperties(WorkflowModel.ASSOC_POOLED_ACTORS,
-										(Serializable) taskListDataItem.getResources(), workflowTask.getProperties(), properties);
-
+							List<NodeRef> oldPooledActors = (List<NodeRef>) workflowTask.getProperties().get(WorkflowModel.ASSOC_POOLED_ACTORS);
+							
+							if (oldPooledActors == null || oldPooledActors.size() != taskListDataItem.getResources().size() || !oldPooledActors.containsAll(taskListDataItem.getResources())) {
+								properties.put(WorkflowModel.ASSOC_POOLED_ACTORS, (Serializable) taskListDataItem.getResources());
 							}
-
+							
+							// Send notifications for new actors
 							if (properties.containsKey(WorkflowModel.ASSOC_POOLED_ACTORS)) {
-								properties.put(ContentModel.PROP_OWNER, null);
+								
+								List<NodeRef> newActors = (List<NodeRef>) properties.get(WorkflowModel.ASSOC_POOLED_ACTORS);
+								
+								List<String> newAuthorityNames = new ArrayList<>();
+								
+								boolean ownerRemoved = !newActors.isEmpty();
+								
+								String oldPropOwner = (String) workflowTask.getProperties().get(ContentModel.PROP_OWNER);
+								
+								for (NodeRef newActor : newActors) {
+									
+									String authorityName = "";
+									
+									QName type = nodeService.getType(newActor);
+									
+									if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
+										authorityName = (String) nodeService.getProperty(newActor, ContentModel.PROP_NAME);
+									} else {
+										authorityName = (String) nodeService.getProperty(newActor, ContentModel.PROP_USERNAME);
+									}
+									
+									if (!((List<NodeRef>) workflowTask.getProperties().get(WorkflowModel.ASSOC_POOLED_ACTORS)).contains(newActor)) {
+										newAuthorityNames.add(authorityName);
+									}
+									
+									
+									if (oldPropOwner == null || oldPropOwner.isBlank() || oldPropOwner.equals(authorityName)) {
+										ownerRemoved = false;
+									}
+								}
+								
+								if (ownerRemoved) {
+									if (!assignees.isEmpty()) {
+										String userName = (String) nodeService.getProperty(assignees.get(0), ContentModel.PROP_USERNAME);
+										properties = getWorkflowTaskNewProperties(ContentModel.PROP_OWNER, userName, workflowTask.getProperties(), properties);
+										newAuthorityNames.remove(userName);
+									} else {
+										properties.put(ContentModel.PROP_OWNER, null);
+									}
+								}
+								
+								if (!newAuthorityNames.isEmpty()) {
+									workflowNotificationUtils.sendWorkflowAssignedNotificationEMail(workflowTask.getId(), null, newAuthorityNames.toArray(new String[0]), false);
+								}
+								
 							}
 
 							if (!properties.isEmpty()) {

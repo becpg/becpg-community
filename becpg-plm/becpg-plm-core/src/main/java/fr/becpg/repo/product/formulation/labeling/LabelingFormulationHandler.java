@@ -1789,18 +1789,18 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							Double qtyTotal = FormulationHelper.getQtyFromComposition(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 							if ((qtyTotal != null) && (qtyTotal != 0d)) {
-								computedRatio = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR) * ratio;
+								computedRatio = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR) ;
 							}
 							
 							
-							qtyTotal = FormulationHelper.getNetWeight(productData,  FormulationHelper.DEFAULT_NET_WEIGHT);
-							if ((qtyTotal != null) && (qtyTotal != 0d)) {
-								computedRatioWithYield = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR) * ratioWithYield;
+							Double qtyTotalWithYield = FormulationHelper.getNetWeight(productData,  FormulationHelper.DEFAULT_NET_WEIGHT);
+							if ((qtyTotalWithYield != null) && (qtyTotalWithYield != 0d)) {
+								computedRatioWithYield = qty / (qtyTotalWithYield * LabelingFormulaContext.PRECISION_FACTOR) * ratioWithYield ;
 							}
 							
 							if (logger.isTraceEnabled()) {
 								logger.trace(
-										"Declare ratio for :" + productData.getName() + " " + computedRatio +" "+ computedRatioWithYield  + " total:" + qtyTotal + " qty:" + qty);
+										"Declare ratio for :" + productData.getName() + " " + computedRatio +"  / "+ computedRatioWithYield  + " total:" + qtyTotal+" / "+ qtyTotalWithYield + " qty:" + qty);
 							}
 
 						} else if (DeclarationType.Declare.equals(declarationType) && isLocalSemiFinished) {
