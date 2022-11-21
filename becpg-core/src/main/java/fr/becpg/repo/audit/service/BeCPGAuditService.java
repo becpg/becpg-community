@@ -10,7 +10,7 @@ import fr.becpg.repo.audit.model.AuditType;
 
 public interface BeCPGAuditService {
 	
-	List<JSONObject> getAuditStatistics(AuditType type, Integer maxResults, AuditFilter auditFilter);
+	List<JSONObject> getAuditStatistics(AuditType type, AuditFilter auditFilter);
 	
 	AuditScope startAudit(AuditType auditType);
 	

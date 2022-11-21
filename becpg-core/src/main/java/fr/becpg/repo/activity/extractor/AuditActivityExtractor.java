@@ -20,7 +20,6 @@ import org.json.JSONObject;
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormatService;
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityExtractorService;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityType;
@@ -115,8 +114,8 @@ public class AuditActivityExtractor implements DataListExtractor {
 		auditFilter.setSortBy("startedAt");
 		
 		auditFilter.setFilter("entityNodeRef=" + dataListFilter.getEntityNodeRef());
-
-		List<JSONObject> results = beCPGAuditService.getAuditStatistics(AuditType.ACTIVITY, RepoConsts.MAX_RESULTS_256, auditFilter);
+		
+		List<JSONObject> results = beCPGAuditService.getAuditStatistics(AuditType.ACTIVITY, auditFilter);
 
 		for (JSONObject result : results) {
 

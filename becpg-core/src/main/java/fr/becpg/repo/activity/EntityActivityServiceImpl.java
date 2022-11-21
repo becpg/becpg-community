@@ -53,6 +53,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.audit.model.AuditFilter;
 import fr.becpg.repo.audit.model.AuditScope;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
@@ -596,6 +597,18 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				.addSort(ContentModel.PROP_CREATED, false).inDB();
 
 		List<NodeRef> sortedActivityList = query.list();
+		
+		AuditFilter auditFilter = new AuditFilter();
+		
+		auditFilter.setAscendingOrder(false);
+		
+		auditFilter.setSortBy("startedAt");
+		
+		NodeRef entityNodeRef = nodeService.getPrimaryParent(nodeService.getPrimaryParent(activityListNodeRef).getParentRef()).getParentRef();
+		
+		auditFilter.setFilter("entityNodeRef=" + entityNodeRef);
+		
+		List<JSONObject> results = beCPGAuditService.getAuditStatistics(AuditType.ACTIVITY, auditFilter);
 
 		// The last created activity
 		if (sortedActivityList.isEmpty()) {

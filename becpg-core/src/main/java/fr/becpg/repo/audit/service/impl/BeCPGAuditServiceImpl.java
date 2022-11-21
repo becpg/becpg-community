@@ -49,8 +49,8 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 	}
 
 	@Override
-	public List<JSONObject> getAuditStatistics(AuditType type, Integer maxResults, AuditFilter auditFilter) {
-		return databaseAuditService.getAuditStatistics(getPlugin(type), maxResults, auditFilter);
+	public List<JSONObject> getAuditStatistics(AuditType type, AuditFilter auditFilter) {
+		return databaseAuditService.getAuditStatistics(getPlugin(type), auditFilter);
 		
 	}
 
