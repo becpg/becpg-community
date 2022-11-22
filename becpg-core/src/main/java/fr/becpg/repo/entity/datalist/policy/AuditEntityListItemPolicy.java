@@ -105,6 +105,28 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onUpdateProperties"));
 		
+		super.disableOnCopyBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+	}
+	
+	@Override
+	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
+		
+		NodeRef listNodeRef = nodeService.getPrimaryParent(destinationRef).getParentRef();
+		
+		if (listNodeRef != null && nodeService.exists(listNodeRef)) {
+			
+			NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
+			
+			if (listContainerNodeRef != null && nodeService.exists(listContainerNodeRef)) {
+				
+				NodeRef entityNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
+				
+				updateEntityAuditedFields(entityNodeRef, Set.of(listNodeRef));
+			}
+		}
+		
+		super.onCopyComplete(classRef, sourceNodeRef, destinationRef, copyToNewNode, copyMap);
 	}
 
 	/** {@inheritDoc} */
@@ -186,23 +208,27 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 		for (NodeRef listContainerNodeRef : listContainerNodeRefs) {
 			NodeRef entityNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-			if ((entityNodeRef != null) && !isVersionNode(entityNodeRef) && isNotLocked(entityNodeRef)
-					&& policyBehaviourFilter.isEnabled(entityNodeRef, ContentModel.ASPECT_AUDITABLE)) {
-				if (logger.isDebugEnabled()) {
-					logger.debug("Update modified date of entity:" + entityNodeRef);
-				}
-
-				try {
-					policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
-					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
-					entityCatalogService.updateAuditedField(entityNodeRef, null, listNodeRefByContainer.get(listContainerNodeRef));
-				} finally {
-					policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-				}
-			}
+			updateEntityAuditedFields(entityNodeRef, listNodeRefByContainer.get(listContainerNodeRef));
 		}
 		return true;
+	}
+
+	private void updateEntityAuditedFields(NodeRef entityNodeRef, Set<NodeRef> listNodeRefs) {
+		if ((entityNodeRef != null) && !isVersionNode(entityNodeRef) && isNotLocked(entityNodeRef)
+				&& policyBehaviourFilter.isEnabled(entityNodeRef, ContentModel.ASPECT_AUDITABLE)) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Update modified date of entity:" + entityNodeRef);
+			}
+
+			try {
+				policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+				nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
+				nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
+				entityCatalogService.updateAuditedField(entityNodeRef, null, listNodeRefs);
+			} finally {
+				policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+			}
+		}
 	}
 
 	/** {@inheritDoc} */
