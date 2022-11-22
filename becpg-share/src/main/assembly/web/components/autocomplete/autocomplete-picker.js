@@ -140,11 +140,8 @@
                             var me = this, previewTooltip = null, q = "";
 
                             // Start by loading new Item
-                            if (me.options.multipleSelectMode || me.isAssoc)
-                            {
-                                me.loadItems();
-                            }
-
+           					me.loadItems();
+                            
                             if (me.options.mode != "view" && !this.options.readOnly)
                             {
                             	
@@ -711,12 +708,14 @@
                                         }
                                     });
                                 }
-                                else
+                                else if(me.options.multipleSelectMode)
                                 {
+									var basket = Dom.get(me.controlId + "-basket");
+									basket.innerHTML = "";
                                     var items = me.options.currentValue.split(",");
                                     for (var i = 0, il = items.length; i < il; i++)
                                     {
-                                        var basket = Dom.get(me.controlId + "-basket");
+                                      
                                         me.addToBasket(basket, items[i], items[i]);
                                     }
 
@@ -729,15 +728,17 @@
                          */
                         renderItems : function AutoCompletePicker_renderItems(items)
                         {
-                            var displayValue = "", link;
+                          
 
                             if (items === null)
                             {
-                                displayValue = "<span class=\"error\">" + this
+                                Dom.get(this.fieldHtmlId + "-values").innerHTML = "<span class=\"error\">" + this
                                         .msg("form.control.object-picker.current.failure") + "</span>";
+                                Dom.removeClass(this.fieldHtmlId + "-values", "hidden");        
                             }
                             else
                             {
+							    var displayValue = "", link;
                                 // multiple selection
                                 if (this.options.mode == "view" || this.options.readOnly)
                                 {
@@ -773,6 +774,7 @@
                                     if (this.options.multipleSelectMode)
                                     {
                                         var basket = Dom.get(this.controlId + "-basket");
+                                        basket.innerHTML = "";
                                         for ( var key in items)
                                         {
                                             var item = items[key];
@@ -844,15 +846,8 @@
                         
                         refreshContent : function(layer, args)
                         {
-                        	var basket = Dom.get(this.controlId + "-basket");
-                        	if(basket!=null){
-                        	 basket.innerHTML = "";
-                        	}
                         	this.options.currentValue = args[1];
-                        	 if (this.options.multipleSelectMode || this.isAssoc)
-                             {
-                        		 this.loadItems();
-                             }
+ 							this.loadItems();
                         },
 
                         beforeFormRuntimeInit : function(layer, args)
