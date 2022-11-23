@@ -172,7 +172,7 @@
 			
 
 				return '<span class="thumbnail"><img src="' + Alfresco.constants.PROXY_URI + 'api/node/' + nodeRef.uri
-				+ '/content/thumbnails/doclib?c=queue&ph=true&timestamp='+(new Date())+'"  /></span>';
+				+ '/content/thumbnails/doclib?c=queue&ph=true&timestamp='+(new Date()).getTime()+'"  /></span>';
 				
 		   });
 		   
