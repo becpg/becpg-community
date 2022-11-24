@@ -92,8 +92,25 @@
                <show id="cm:to" force="true" />
             </field-visibility>
             <appearance>
+               <field id="cm:name">
+					<control>
+						<control-param name="forceEditable">true</control-param>
+					</control>               
+               </field>
+               <field id="cm:title">
+					<control>
+						<control-param name="forceEditable">true</control-param>
+					</control>               
+               </field>
+               <field id="cm:description">
+					<control>
+						<control-param name="forceEditable">true</control-param>
+					</control>               
+               </field>
                <field id="mimetype">
-                  <control template="/org/alfresco/components/form/controls/mimetype.ftl" />
+                  <control template="/org/alfresco/components/form/controls/mimetype.ftl" >
+					<control-param name="forceEditable">true</control-param>
+				</control>               
                </field>
                <field id="cm:modifier">
                   <control>
@@ -101,10 +118,14 @@
                   </control>
                </field>
                <field id="cm:modified">
-                  <control template="/org/alfresco/components/form/controls/daterange.ftl" />
+                  <control template="/org/alfresco/components/form/controls/daterange.ftl" >
+					<control-param name="forceEditable">true</control-param>
+                  </control>
                </field>
                <field id="cm:to">
-                  <control template="/org/alfresco/components/form/controls/daterange.ftl" />
+                  <control template="/org/alfresco/components/form/controls/daterange.ftl" >
+					<control-param name="forceEditable">true</control-param>
+                  </control>
                </field>
             </appearance>
          </form>
