@@ -50,9 +50,9 @@ import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.codec.binary.Base64OutputStream;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -444,7 +444,7 @@ public class ImportEntityXmlVisitor {
 							locale = MLTextHelper.parseLocale(strLocale);
 							if (!attributes.getValue(i).equals(RemoteEntityService.MLTEXT_TYPE) && (attributes.getQName(i) != null)
 									&& MLTextHelper.isSupportedLocale(locale)) { 
-								mltextAttributes.put(locale, StringEscapeUtils.unescapeHtml(readCDATA(attributes.getValue(i))));
+								mltextAttributes.put(locale, StringEscapeUtils.unescapeHtml4(readCDATA(attributes.getValue(i))));
 							}
 						}
 					}

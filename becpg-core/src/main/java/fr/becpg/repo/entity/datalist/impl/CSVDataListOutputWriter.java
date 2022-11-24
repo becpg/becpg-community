@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.dictionary.DictionaryService;
-import org.apache.commons.csv.writer.CSVConfig;
-import org.apache.commons.csv.writer.CSVField;
-import org.apache.commons.csv.writer.CSVWriter;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -38,45 +38,43 @@ public class CSVDataListOutputWriter implements DataListOutputWriter {
 			throws IOException {
 		res.setContentType("application/vnd.ms-excel");
 		res.setContentEncoding("ISO-8859-1");
+		
+		CSVFormat format = CSVFormat.EXCEL.withQuoteMode(QuoteMode.ALL).withDelimiter(';');
 
-		CSVConfig csvConfig = new CSVConfig();
 
-		csvConfig.setDelimiter(';');
-		csvConfig.setValueDelimiter('"');
-		csvConfig.setIgnoreValueDelimiter(false);
+		appendCSVField(format, extractedItems.getComputedFields(), null);
 
-		appendCSVField(csvConfig, extractedItems.getComputedFields(), null);
-
-		CSVWriter csvWriter = new CSVWriter(csvConfig);
-
-		csvWriter.setWriter(res.getWriter());
-
-		Map<String, String> headers = new HashMap<>();
-		appendCSVHeader(headers, extractedItems.getComputedFields(), null, null);
-		csvWriter.writeRecord(headers);
-
-		writeToCSV(extractedItems, csvWriter);
+		try (CSVPrinter printer = new CSVPrinter(res.getWriter(), format)) {
+			
+		
+			Map<String, String> headers = new HashMap<>();
+			appendCSVHeader(headers, extractedItems.getComputedFields(), null, null);
+			printer.printRecord(headers);
+	
+			writeToCSV(extractedItems, printer);
+			
+		}
 
 		AttachmentHelper.setAttachment(req, res, "export.csv");
 
 	}
 
-	private void writeToCSV(PaginatedExtractedItems extractedItems, CSVWriter csvWriter) {
+	private void writeToCSV(PaginatedExtractedItems extractedItems, CSVPrinter printer) throws IOException {
 		for (Map<String, Object> item : extractedItems.getPageItems()) {
-			csvWriter.writeRecord(item);
+			printer.printRecord(item);
 		}
 	}
 
-	private void appendCSVField(CSVConfig csvConfig, List<AttributeExtractorStructure> fields, String prefix) {
+	private void appendCSVField(CSVFormat csvConfig, List<AttributeExtractorStructure> fields, String prefix) {
 		if (fields != null) {
 			for (AttributeExtractorStructure field : fields) {
 				if (field.isNested()) {
 					appendCSVField(csvConfig, field.getChildrens(), field.getFieldName());
 				} else {
 					if (prefix != null) {
-						csvConfig.addField(new CSVField(prefix + "_" + field.getFieldName()));
+						csvConfig.withHeader(prefix + "_" + field.getFieldName());
 					} else {
-						csvConfig.addField(new CSVField(field.getFieldName()));
+						csvConfig.withHeader(field.getFieldName());
 					}
 				}
 			}

@@ -4,7 +4,6 @@
 package fr.becpg.test.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -398,7 +397,6 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(new RetryingTransactionCallback<NodeRef>() {
 			@Override
-			@SuppressWarnings("unchecked")
 			public NodeRef execute() throws Throwable {
 
 				// formulate Details
@@ -430,7 +428,7 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 				/*
 				 * SF 1
 				 */
-				ArrayList<Object> tmpResultsArray = (ArrayList<Object>) resultsArray.get(0);
+				JSONArray tmpResultsArray = (JSONArray) resultsArray.getJSONArray(0);
 				Assert.assertEquals("Semi fini 1", tmpResultsArray.get(0));
 				Assert.assertEquals(df.format(0.667d), df.format(tmpResultsArray.get(1)));
 				// Assert.assertEquals(df.format(0.556d),
@@ -448,7 +446,7 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 				/*
 				 * RM 1
 				 */
-				tmpResultsArray = (ArrayList<Object>) resultsArray.get(1);
+				tmpResultsArray = (JSONArray) resultsArray.getJSONArray(1);
 				Assert.assertEquals("Raw material 1", tmpResultsArray.get(0));
 				Assert.assertEquals(df.format(1.333d), df.format(tmpResultsArray.get(1)));
 				// Assert.assertEquals(df.format(1.067d),
@@ -467,7 +465,7 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 				/*
 				 * RM 2
 				 */
-				tmpResultsArray = (ArrayList<Object>) resultsArray.get(2);
+				tmpResultsArray = (JSONArray) resultsArray.getJSONArray(2);
 				Assert.assertEquals("Raw material 2", tmpResultsArray.get(0));
 				Assert.assertEquals(df.format(1d), df.format(tmpResultsArray.get(1)));
 				// Assert.assertEquals(df.format(0.8d),
@@ -486,7 +484,7 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 				/*
 				 * Totals
 				 */
-				LinkedList<Object> totalArray = (LinkedList<Object>) resultsArray.get(3);
+				JSONArray totalArray = (JSONArray) resultsArray.get(3);
 				// TODO put entity.datalist.item.details.totals language key
 				// instead ?
 				Assert.assertEquals("Totaux ", totalArray.get(0));

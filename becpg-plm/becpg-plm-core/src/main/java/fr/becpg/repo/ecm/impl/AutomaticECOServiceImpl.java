@@ -60,9 +60,6 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * <p>AutomaticECOServiceImpl class.</p>
@@ -76,8 +73,6 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	private static final String CURRENT_ECO_PREF = "fr.becpg.ecm.currentEcmNodeRef";
 
 	private static final Log logger = LogFactory.getLog(AutomaticECOServiceImpl.class);
-	
-	private static final Tracer tracer = Tracing.getTracer();
 
 	@Autowired
 	private RepoService repoService;
@@ -126,13 +121,13 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	@Autowired
 	private EntityVersionService entityVersionService;
-	
+
 	@Autowired
 	private BatchQueueService batchQueueService;
-	
+
 	@Value("${becpg.batch.automaticECO.reformulateChangedEntities.workerThreads}")
 	private Integer reformulateWorkerThreads;
-	
+
 	@Value("${becpg.batch.automaticECO.reformulateChangedEntities.batchSize}")
 	private Integer reformulateBatchSize;
 
@@ -140,11 +135,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Override
 	public boolean addAutomaticChangeEntry(final NodeRef entityNodeRef, final ChangeOrderData currentUserChangeOrderData) {
 
-		if (Boolean.TRUE.equals(withoutRecord) && currentUserChangeOrderData == null) {
-			return false;
-		}
-
-		if (!accept(entityNodeRef)) {
+		if ((Boolean.TRUE.equals(withoutRecord) && (currentUserChangeOrderData == null)) || !accept(entityNodeRef)) {
 			return false;
 		}
 
@@ -202,26 +193,26 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	}
 
 	private boolean accept(NodeRef entityNodeRef) {
-		if(nodeService.exists(entityNodeRef)) {
-	
+		if (nodeService.exists(entityNodeRef)) {
+
 			String productState = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
-	
+
 			if ((productState == null) || productState.isEmpty() || !statesToRegister.contains(productState)) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Skipping product state : " + productState);
 				}
 				return false;
 			}
-	
+
 			QName nodeType = nodeService.getType(entityNodeRef);
-	
+
 			if (PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT.equals(nodeType)) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Skipping local semi finished product");
 				}
 				return false;
 			}
-	
+
 			return true;
 		}
 		return false;
@@ -305,33 +296,35 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		BatchInfo batchInfo = new BatchInfo("autoMergeBranch", "becpg.batch.automaticECO.autoMergeBranch");
 		batchInfo.setRunAsSystem(true);
 
-		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
-				.ofType(PLMModel.TYPE_PRODUCT).withAspect(BeCPGModel.ASPECT_AUTO_MERGE_ASPECT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
+		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
+						.withAspect(BeCPGModel.ASPECT_AUTO_MERGE_ASPECT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(),
+						false, true);
 
-		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
-			
+		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
 
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Found product to merge: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " (" + entityNodeRef
-								+ ") ");
+						logger.debug("Found product to merge: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " ("
+								+ entityNodeRef + ") ");
 					}
 					try {
 						AuthenticationUtil.runAsSystem(() -> {
-							
+
 							Date newEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE);
-							
+
 							entityVersionService.mergeBranch(entityNodeRef, newEffectivity);
-							
+
 							return true;
 						});
 
 					} catch (Exception e) {
-						 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-							 throw e;
-		                  }
+						if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+							throw e;
+						}
 						logger.error("Cannot merge node:" + entityNodeRef, e);
 					}
 
@@ -340,23 +333,21 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				}, false, true);
 			}
 		};
-		
+
 		batchQueueService.queueBatch(batchInfo, new EntityListBatchProcessWorkProvider<>(nodeRefs), processWorker, null);
-		
+
 		return true;
 	}
 
 	private boolean reformulateChangedEntities() {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DATE, -1);
-		
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
 		String dateRange = dateFormat.format(cal.getTime());
 
 		String ftsQuery = String.format("@cm\\:created:[%s TO MAX] OR @cm\\:modified:[%s TO MAX]", dateRange, dateRange);
-
 
 		BatchInfo batchInfo = new BatchInfo("reformulateChangedEntities", "becpg.batch.automaticECO.reformulateChangedEntities");
 		batchInfo.setRunAsSystem(true);
@@ -365,61 +356,60 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
 				.ofType(PLMModel.TYPE_PRODUCT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
-		
+
 		List<NodeRef> toReformulateEntities = new ArrayList<>();
-		
+
 		List<BatchStep<NodeRef>> steps = new ArrayList<>();
-		
+
 		BatchStep<NodeRef> wusedStep = new BatchStep<>();
-		
+
 		BatchStep<NodeRef> formulateStep = new BatchStep<>();
-		
+
 		wusedStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(nodeRefs));
-		
+
 		wusedStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
-			
+
 			@Override
 			public void process(NodeRef entry) throws Throwable {
 				List<NodeRef> wused = extractWUsedToFormulate(entry);
 				if (wused.isEmpty()) {
 					wused.add(entry);
 				}
-				
+
 				for (NodeRef wusedLeaf : wused) {
 					if (!toReformulateEntities.contains(wusedLeaf) && nodeService.exists(wusedLeaf)) {
 						toReformulateEntities.add(wusedLeaf);
 					}
 				}
-				
+
 			}
 		});
-		
+
 		wusedStep.setBatchStepListener(new BatchStepAdapter() {
 			@Override
 			public void afterStep() {
 				formulateStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(toReformulateEntities));
-			};
+			}
 		});
-		
-		steps.add(wusedStep);
-		
-		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker();
-		
-		formulateStep.setProcessWorker(processWorker);
-		
-		steps.add(formulateStep);
-		
-		logger.info("Start of reformulate changed entities of size :" + nodeRefs.size() + ", for a total of : " + toReformulateEntities.size() + " entites to reformulate");
 
-		
+		steps.add(wusedStep);
+
+		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker();
+
+		formulateStep.setProcessWorker(processWorker);
+
+		steps.add(formulateStep);
+
+		logger.info("Start of reformulate changed entities of size :" + nodeRefs.size() + ", for a total of : " + toReformulateEntities.size()
+				+ " entites to reformulate");
+
 		batchQueueService.queueBatch(batchInfo, steps);
-		
+
 		return true;
 	}
-	
+
 	private class ReformulateChangedEntitiesProcessWorker extends BatchProcessor.BatchProcessWorkerAdaptor<NodeRef> {
 
-		
 		@Override
 		public void process(NodeRef toReformulate) throws Throwable {
 
@@ -427,27 +417,26 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Reformulating product: " + nodeService.getProperty(toReformulate, ContentModel.PROP_NAME) + " ("
-								+ toReformulate + ") ");
+						logger.debug("Reformulating product: " + nodeService.getProperty(toReformulate, ContentModel.PROP_NAME) + " (" + toReformulate
+								+ ") ");
 					}
-					try (Scope scope = tracer.spanBuilder("automaticEcoService.Reformulate").startScopedSpan()){
+					try {
 						policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
 						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 						policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
-						L2CacheSupport.doInCacheContext(() -> 
-							AuthenticationUtil.runAsSystem(() -> {
-								formulationService.formulate(toReformulate);
+						L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
+							formulationService.formulate(toReformulate);
 
-								return true;
-							})
+							return true;
+						})
 
-						, false, true, true);
+								, false, true, true);
 
 					} catch (Exception e) {
-						 if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-							 throw e;
-		                  }
+						if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+							throw e;
+						}
 						logger.error("Cannot reformulate node:" + toReformulate, e);
 						return false;
 					} finally {
@@ -465,9 +454,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	}
 
 	private QName evaluateWUsedAssociation(NodeRef targetAssocNodeRef) {
-		
+
 		QName nodeType = nodeService.getType(targetAssocNodeRef);
-		
+
 		if (nodeType.isMatch(PLMModel.TYPE_RAWMATERIAL) || nodeType.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)
 				|| nodeType.isMatch(PLMModel.TYPE_SEMIFINISHEDPRODUCT) || nodeType.isMatch(PLMModel.TYPE_FINISHEDPRODUCT)) {
 			return PLMModel.ASSOC_COMPOLIST_PRODUCT;
@@ -476,32 +465,32 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		} else if (nodeType.isMatch(PLMModel.TYPE_RESOURCEPRODUCT)) {
 			return MPMModel.ASSOC_PL_RESOURCE;
 		}
-		
+
 		return null;
 	}
-	
+
 	private List<NodeRef> extractWUsedToFormulate(NodeRef entityNodeRef) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			if (accept(entityNodeRef)) {
-				
+
 				if (logger.isDebugEnabled()) {
-					logger.debug("Found modified product: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " ("
-							+ entityNodeRef + ") ");
+					logger.debug("Found modified product: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " (" + entityNodeRef
+							+ ") ");
 				}
 				try {
-					
+
 					QName associationQName = evaluateWUsedAssociation(entityNodeRef);
-					
+
 					if (associationQName != null) {
 						MultiLevelListData wUsedData = wUsedListService.getWUsedEntity(Arrays.asList(entityNodeRef), WUsedOperator.AND,
 								associationQName, RepoConsts.MAX_DEPTH_LEVEL);
-						
+
 						if (logger.isTraceEnabled()) {
 							logger.trace("WUsed to apply:" + wUsedData.toString());
 							logger.trace("Leaf size :" + wUsedData.getAllLeafs().size());
-							
+
 						}
-						
+
 						return wUsedData.getAllLeafs();
 					}
 				} catch (Exception e) {
@@ -513,10 +502,10 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				}
 			}
 			return new ArrayList<>();
-			
+
 		}, false, true);
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public ChangeOrderData createAutomaticEcoForUser(String name) {

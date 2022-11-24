@@ -35,6 +35,12 @@
    padding-left:20px;
 }
 
+.versions-graph a.revert
+{
+   background: url(../../components/documentlibrary/actions/revert-16.png) no-repeat;
+   padding-left:20px;
+}
+
 .versions-graph a.download
 {
    background: url(../../components/documentlibrary/actions/document-download-16.png) no-repeat;

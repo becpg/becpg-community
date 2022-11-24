@@ -42,7 +42,6 @@ import fr.becpg.repo.report.entity.EntityReportService;
  * @author matthieu
  * @version $Id: $Id
  */
-@Deprecated //Use webscript instead for retrieve reports in ADF
 public class ReportAssociationDecorator extends fr.becpg.repo.jscript.app.BaseAssociationDecorator {
 	private static final Log logger = LogFactory.getLog(ReportAssociationDecorator.class);
 

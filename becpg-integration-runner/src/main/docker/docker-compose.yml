@@ -1,15 +1,15 @@
-version: '3'
+version: '3.4'
 volumes:
   becpg_data_db:
   solr_data:
   becpg_data:
+  becpg_share_data:
 services:
   becpg:
-    image: ${docker.becpg.url}/becpg-${becpg.dockerbuild.name}:${docker.becpg.tag}
+    image: ${docker.becpg.url}/becpg-${becpg.dockerbuild.name}-core:${docker.becpg.tag}
     environment:
-      CATALINA_OPTS: "-Xmx4G -XX:HotswapAgent=external -Duser.language=fr -Duser.country=FR 
+      CATALINA_OPTS: "-Xmx4G -Duser.language=fr -Duser.country=FR 
                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
-                     -XX:HotswapAgent=fatjar
                      -XX:+UseG1GC
                      -Dcom.sun.management.jmxremote.rmi.port=9091
                      -Dcom.sun.management.jmxremote=true
@@ -18,10 +18,23 @@ services:
                      -Dcom.sun.management.jmxremote.authenticate=false
                      -Dcom.sun.management.jmxremote.local.only=false
                      -Djava.rmi.server.hostname=127.0.0.1"
-      JAVA_HOME: /usr/java/dcevm-11.0.10+5
+#      JAVA_HOME: /usr/java/latest
+#      CATALINA_OPTS: "-Xmx4G -XX:HotswapAgent=external -Duser.language=fr -Duser.country=FR 
+#                     -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888 
+#                     -XX:HotswapAgent=fatjar
+#                     -XX:+UseG1GC
+#                     -Dcom.sun.management.jmxremote.rmi.port=9091
+#                     -Dcom.sun.management.jmxremote=true
+#                     -Dcom.sun.management.jmxremote.port=9091
+#                     -Dcom.sun.management.jmxremote.ssl=false
+#                     -Dcom.sun.management.jmxremote.authenticate=false
+#                     -Dcom.sun.management.jmxremote.local.only=false
+#                     -Djava.rmi.server.hostname=127.0.0.1"
+#      JAVA_HOME: /usr/java/dcevm-11.0.11+1
+      JAVA_TOOL_OPTIONS: "${keystore.settings}"
     ports:
-      - "8080:8080"
-      - "8888:8888"  
+      - "${acs.port}:8080"
+      - "${acs.debug.port}:8888"
       - "9091:9091"
     volumes:
       - becpg_data:/usr/local/tomcat/data
@@ -29,47 +42,19 @@ services:
       - ../../becpg-plm/becpg-plm-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-plm-core/target/classes
       - ../../becpg-project/becpg-project-core/target/classes:/usr/local/tomcat/hotswap-agent/becpg-project-core/target/classes
       - ../../becpg-integration-runner/target/test-classes:/usr/local/tomcat/hotswap-agent/becpg-integration-runner/target/test-classes
-      
-#  alfresco-pdf-renderer:
-#      image: alfresco/alfresco-pdf-renderer:latest
-#      environment:
-#          JAVA_OPTS: " -Xms256m -Xmx256m"
-#      ports:
-#          - 8090:8090
+  
+  becpg-share:
+    image: ${docker.becpg.url}/becpg-${becpg.dockerbuild.name}-share:${docker.becpg.tag}
+    environment:
+      JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888  -Duser.language=fr -Duser.country=FR"
+      REPO_HOST: becpg
+      REPO_PORT: 8080
+    ports:
+      - "${share.port}:8080"
+      - "${share.debug.port}:8888"
+    volumes:
+      - becpg_share_data:/usr/local/tomcat/data
 
-#  imagemagick:
-#      image: alfresco/alfresco-imagemagick:latest
-#      environment:
-#          JAVA_OPTS: " -Xms256m -Xmx256m"
-#      ports:
-#          - 8091:8090
-
-  alfresco-libreoffice:
-      image: alfresco/alfresco-libreoffice:latest
-      environment:
-          JAVA_OPTS: " -Xms256m -Xmx256m"
-      ports:
-          - 8090:8090
-      healthcheck:
-        test: ["CMD", "curl", "-f", "http://localhost:8090/live"]
-        interval: 1m30s
-        timeout: 10s
-        retries: 3
-      
-#  tika:
-#      image: alfresco/alfresco-tika:latest
-#      environment:
-#          JAVA_OPTS: " -Xms256m -Xmx256m"
-#      ports:
-#          - 8093:8090
-
-#  transform-misc:
-#      image: alfresco/alfresco-transform-misc:latest
-#      environment:
-#          JAVA_OPTS: " -Xms256m -Xmx256m"
-#      ports:
-#          - 8094:8090  
-            
   becpg-db:
     image: ${docker.becpg.url}/becpg-db:${docker.becpg.tag}
     environment:
@@ -79,14 +64,48 @@ services:
       MYSQL_USER: becpg
     volumes:
       - becpg_data_db:/var/lib/mysql
+      
   solr:
-      image: ${docker.becpg.url}/becpg-solr:${docker.becpg.tag}
+    image: alfresco/alfresco-search-services:2.0.3
+    environment:
+      SOLR_ALFRESCO_HOST: becpg
+      SOLR_ALFRESCO_PORT: 8080
+      SOLR_SOLR_HOST: solr
+      SOLR_SOLR_PORT: 8983
+      SOLR_CREATE_ALFRESCO_DEFAULTS: alfresco,archive
+      ALFRESCO_SECURE_COMMS: "secret"
+      JAVA_TOOL_OPTIONS: "-Dalfresco.secureComms.secret=changethatsecret"
+    ports:
+      - "8983:8983"
+    volumes:
+      - solr_data:/opt/alfresco-search-services/contentstore
+      - solr_data:/opt/alfresco-search-services/data      
+ 
+ 
+  alfresco-transform-core-aio:
+      image: alfresco/alfresco-transform-core-aio:latest
       environment:
-      - SOLR_JAVA_MEM=-Xmx2g
-      volumes:
-      - solr_data:/opt/alfresco-search-services/data
+          JAVA_OPTS: " -Xms256m -Xmx256m"
       ports:
-          - "8983:8983"  
+          - 8090:8090
+      healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:8090/live"]
+        interval: 1m30s
+        timeout: 10s
+        retries: 3
+        
+  becpg-bus:
+     image: alfresco/alfresco-activemq:5.16.1
+     mem_limit: 1g
+     environment:
+      ACTIVEMQ_ADMIN_LOGIN: "admin"
+      ACTIVEMQ_ADMIN_PASSWORD: "becpg"
+     ports:
+        - 8161:8161 # Web Console
+#        - 5672:5672 # AMQP
+#        - 61616:61616 # OpenWire
+#        - 61613:61613 # STOMP
+          
 
   becpg-report:
     image:  ${docker.becpg.url}/becpg-report:3.2.3

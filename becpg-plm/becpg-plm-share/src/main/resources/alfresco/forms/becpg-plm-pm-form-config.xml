@@ -53,8 +53,19 @@
           <show force="false" id="bcpg:autoMergeVersionType"/>
           <show force="false" id="bcpg:autoMergeComments"/>
           <show force="false" id="bcpg:autoMergeImpactWUsed"/>
+          <show id="bcpg:entityTplEnabled" force="false" />
+          <show id="bcpg:entityTplIsDefault" force="false" />
+          <show id="bcpg:entityTplScript" force="false" />
         </field-visibility>
         <appearance>
+          <set id="template" appearance="bordered-panel" label-id="becpg.forms.set.template.label" />
+          <field id="bcpg:entityTplEnabled" set="template" />
+          <field id="bcpg:entityTplIsDefault" set="template" />
+          <field id="bcpg:entityTplScript" set="template" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/association.ftl">
+              <control-param name="startLocation">{doclib}</control-param>
+            </control>
+          </field>
           <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="cm:title" label-id="becpg.forms.field.tradeName" mandatory="false" read-only="false" set="mainInfo">
@@ -290,7 +301,7 @@
           </field>
         </appearance>
       </form>
-      <form id="supplier-pack">
+      <form id="supplier">
         <field-visibility>
           <show force="false" id="cm:name"/>
           <show force="true" id="cm:title"/>
@@ -476,15 +487,15 @@
           <field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
-							</control-param>
+              </control-param>
             </control>
           </field>
           <field help-id="becpg.forms.help.productHierarchy2" id="bcpg:productHierarchy2" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
-							</control-param>
+              </control-param>
               <control-param name="parent">bcpg_productHierarchy1
-							</control-param>
+              </control-param>
             </control>
           </field>
           <field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo"/>
@@ -502,7 +513,7 @@
           <field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/product-unit.ftl">
               <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,kg,mL,cp,fl_oz
-							</control-param>
+              </control-param>
             </control>
           </field>
           <field id="bcpg:componentLossPerc" mandatory="false" read-only="false" set="mainInfo"/>
@@ -527,9 +538,9 @@
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
-							</control-param>
+              </control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
-							</control-param>
+              </control-param>
             </control>
           </field>
           <set appearance="bordered-panel" id="tare" label-id="becpg.forms.set.tare.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
@@ -578,7 +589,7 @@
           <field id="pack:pmMaterialRefs" mandatory="false" read-only="false" set="material">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="ds">becpg/autocomplete/targetassoc/associations/pack:packMaterial
-							</control-param>
+              </control-param>
               <control-param name="showLink">false</control-param>
             </control>
           </field>
@@ -639,15 +650,15 @@
           <field help-id="becpg.forms.help.productHierarchy1" id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
-							</control-param>
+              </control-param>
             </control>
           </field>
           <field help-id="becpg.forms.help.productHierarchy2" id="bcpg:productHierarchy2" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
-							</control-param>
+              </control-param>
               <control-param name="parent">bcpg_productHierarchy1
-							</control-param>
+              </control-param>
             </control>
           </field>
           <field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo"/>
@@ -664,9 +675,9 @@
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
-							</control-param>
+              </control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
-							</control-param>
+              </control-param>
             </control>
           </field>
           <field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo"/>
@@ -732,6 +743,8 @@
       </form>
       <form id="search">
         <field-visibility>
+          <show id="cm:name" force="true" />
+          <show id="cm:title" force="true" />
           <show force="false" id="bcpg:productHierarchy1"/>
           <show force="false" id="bcpg:productState"/>
           <show force="false" id="bcpg:code"/>
@@ -743,10 +756,18 @@
           <show force="true" id="pack:llLabel"/>
           <show force="true" id="pack:llPosition"/>
           <show force="true" id="bcpg:lclLabelClaim"/>
+          <show force="false" id="cm:modified"/>
+          <show force="false" id="cm:modifier"/>
+          <show force="false" id="cm:created"/>
+          <show force="false" id="cm:creator"/>
         </field-visibility>
         <appearance>
-          <set appearance="bordered-panel" id="product-criteria" label-id="becpg.forms.set.product-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
-          <field id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="product-criteria">
+          <set appearance="bordered-panel" id="2-col-product-criteria" label-id="becpg.forms.set.product-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="cm:name" mandatory="false" read-only="false" set="2-col-product-criteria" />
+          <field id="cm:title" mandatory="false" read-only="false" set="2-col-product-criteria" >
+            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+          </field>
+          <field id="bcpg:productHierarchy1" mandatory="false" read-only="false" set="2-col-product-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
               <control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
@@ -754,43 +775,20 @@
               <control-param name="forceEditable">true</control-param>
             </control>
           </field>
-          <field id="bcpg:productState" mandatory="false" read-only="false" set="product-criteria">
+          <field id="bcpg:productState" mandatory="false" read-only="false" set="2-col-product-criteria">
             <control template="/org/alfresco/components/form/controls/selectone.ftl">
               <control-param name="isSearch">true</control-param>
               <control-param name="insertBlank">true</control-param>
               <control-param name="forceEditable">true</control-param>
             </control>
           </field>
-          <field id="bcpg:code" mandatory="false" read-only="false" set="product-criteria">
-          	<control>
-          		<control-param name="forceEditable">true</control-param>
-          	</control>
-          </field>
-          <field id="bcpg:erpCode" mandatory="false" read-only="false" set="product-criteria">
-          	<control>
-          		<control-param name="forceEditable">true</control-param>
-          	</control>
-          </field>
-          <field id="bcpg:eanCode" mandatory="false" read-only="false" set="product-criteria">
-          	<control>
-          		<control-param name="forceEditable">true</control-param>
-          	</control>
-          </field>
-          <field id="bcpg:certificateDate" mandatory="false" read-only="false" set="product-criteria">
-          	<control>
-          		<control-param name="forceEditable">true</control-param>
-          	</control>
-          </field>
-          <field id="bcpg:suppliers" mandatory="false" read-only="false" set="product-criteria">
-          	<control>
-          		<control-param name="forceEditable">true</control-param>
-          	</control>
-          </field>
-          <field id="bcpg:plants" mandatory="false" read-only="false" set="product-criteria">
-          	<control>
-          		<control-param name="forceEditable">true</control-param>
-          	</control>
-          </field>
+          <field id="bcpg:code" mandatory="false" read-only="false" set="2-col-product-criteria"/>
+          <field id="bcpg:erpCode" mandatory="false" read-only="false" set="2-col-product-criteria"/>
+          <field id="bcpg:eanCode" mandatory="false" read-only="false" set="2-col-product-criteria"/>
+          <field id="bcpg:certificateDate" mandatory="false" read-only="false" set="2-col-product-criteria"/>
+          <field id="bcpg:suppliers" mandatory="false" read-only="false" set="2-col-product-criteria"/>
+          <field id="bcpg:plants" mandatory="false" read-only="false" set="2-col-product-criteria"/>
+		  
           <set appearance="bordered-panel" id="labeling-criteria" label-id="becpg.forms.set.mentions.label"/>
           <field id="pack:llLabel" mandatory="false" read-only="false" set="labeling-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -809,6 +807,24 @@
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
           		<control-param name="forceEditable">true</control-param>
           	</control>
+          </field>
+          
+          <set id="1-col-product-criteria" />
+          <field id="cm:modified" mandatory="false" read-only="false" set="1-col-product-criteria">
+            <control template="/org/alfresco/components/form/controls/daterange.ftl"/>
+          </field>
+          <field id="cm:modifier" mandatory="false" read-only="false" set="1-col-product-criteria">
+            <control>
+              <control-param name="forceEditable">true</control-param>
+            </control>
+          </field>
+          <field id="cm:created" mandatory="false" read-only="false" set="1-col-product-criteria">
+            <control template="/org/alfresco/components/form/controls/daterange.ftl"/>
+          </field>
+          <field id="cm:creator" mandatory="false" read-only="false" set="1-col-product-criteria">
+            <control>
+              <control-param name="forceEditable">true</control-param>
+            </control>
           </field>
         </appearance>
       </form>

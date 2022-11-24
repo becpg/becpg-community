@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.alfresco.repo.version.Version2Model;
+import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.StoreRef;
 
 /**
@@ -17,6 +18,7 @@ import org.alfresco.service.cmr.repository.StoreRef;
  */
 public class RepoConsts
 {
+
 
 	private RepoConsts() {
 		//Private constructor
@@ -75,6 +77,10 @@ public class RepoConsts
 	public static final String PATH_IMAGES = "Images";
 	/** Constant <code>PATH_DOCUMENTS="Documents"</code> */
 	public static final String PATH_DOCUMENTS = "Documents";
+	
+
+	public static final String PATH_SUPPLIER_DOCUMENTS= "SupplierDocuments";
+	
 	/** Constant <code>PATH_BRIEF="Brief"</code> */
 	public static final String PATH_BRIEF = "Brief";
 	/** Constant <code>PATH_LOGO_IMAGE="logoimage"</code> */
@@ -110,7 +116,7 @@ public class RepoConsts
 	/** Constant <code>SPACES_STORE</code> */
 	public static final StoreRef SPACES_STORE =  new StoreRef(StoreRef.PROTOCOL_WORKSPACE, "SpacesStore");
 	/** Constant <code>VERSION_STORE</code> */
-	public static final StoreRef VERSION_STORE =  new StoreRef(Version2Model.STORE_PROTOCOL, Version2Model.STORE_ID);
+	public static final StoreRef VERSION_STORE =  new StoreRef(VersionBaseModel.STORE_PROTOCOL, Version2Model.STORE_ID);
 	
 	/*-- Regex --*/	
 	/** Constant <code>REGEX_NON_NEGATIVE_INTEGER_FIELD="^\\d*$"</code> */

@@ -11,6 +11,7 @@
    var Dom = YAHOO.util.Dom, KeyListener = YAHOO.util.KeyListener;
 
    var DOWNLOAD_EVENTCLASS = Alfresco.util.generateDomId(null, "download");
+   var REVERT_EVENTCLASS = Alfresco.util.generateDomId(null, "revert");
    
    /**
     * Alfresco Slingshot aliases
@@ -166,6 +167,41 @@
                
                return true;
            });
+
+		  YAHOO.Bubbling.addDefaultAction(REVERT_EVENTCLASS, function() {
+			  var revertUrl = Alfresco.constants.PROXY_URI + 'becpg/entity/revert/' + this.rel.replace(":/", "");
+
+				document.body.style.cursor="wait";
+				
+			  Alfresco.util.Ajax
+				  .request({
+					  method: Alfresco.util.Ajax.GET,
+					  url: revertUrl,
+					  responseContentType: Alfresco.util.Ajax.JSON,
+					  successCallback: {
+						  fn: function(resp) {
+							  if (resp.json) {
+								  window.location.href = beCPG.util.entityURL(resp.json.siteId,
+									  resp.json.persistedObject, resp.json.type);
+							  }
+							document.body.style.cursor="default";
+						  },
+						  scope: this
+					  },
+					  failureCallback: {
+						  fn: function(response) {
+							  if (response.json && response.json.message) {
+								  Alfresco.util.PopupManager.displayPrompt({
+									  text: response.json.message
+								  });
+							  }
+							document.body.style.cursor="default";
+						  },
+						  scope: this
+					  }
+
+				  });
+		  });
          
          // Show panel
          this._showPanel();
@@ -269,6 +305,7 @@
 	        	 compareURL = Alfresco.constants.PROXY_URI + 'becpg/entity/compare/' + beCPG.module.getVersionsGraphInstance().options.nodeRef
 	        	 .replace(":/", "") + "/compare?entities="+doc.nodeRef;
 	         }
+			
          }
          
 
@@ -281,6 +318,10 @@
 		} else {
 			html += '<a href="' + beCPG.util.entityURL(null,doc.clickableNode) + '&bcPath=true">'+$html(doc.name)+'</a>';
 		}
+		
+		if(!doc.clickableNode){
+      	       html += '   <a href="#" class="'+ REVERT_EVENTCLASS+' revert" title="' + Alfresco.util.message("label.revert") + '" rel="' + doc.nodeRef + '">&nbsp;</a>';
+         }
 
          if(compareURL!=null){
              html += '   <a href="' + compareURL + '" class="compare" title="' + Alfresco.util.message("label.compare") + '">&nbsp;</a>';
@@ -289,7 +330,7 @@
 	         html += '   <a href="#" name="'+$html(doc.name)+'" rel="' + doc.nodeRef + '" class="'+DOWNLOAD_EVENTCLASS+' download" title="'
 	           + Alfresco.util.message("label.download") + '">&nbsp;</a>';
          }
-        
+
          html += '</span><div class="version-details">';
          html += ((doc.description || "").length > 0) ? $html(doc.description, true)
                : '<span class="faded">(' + Alfresco.util.message("label.noComment", beCPG.module

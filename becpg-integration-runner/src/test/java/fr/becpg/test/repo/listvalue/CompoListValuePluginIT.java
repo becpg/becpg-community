@@ -100,6 +100,7 @@ public class CompoListValuePluginIT extends AbstractListValuePluginTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			assertTrue(compoListValuePlugin.isQueryMatch("*", "Pâte de riz"));
 			assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pâte de riz"));
+			assertTrue(compoListValuePlugin.isQueryMatch("Pâtes*", "Pâte de riz"));
 			assertTrue(compoListValuePlugin.isQueryMatch("Pâte", "Pâte de riz"));
 			assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pate de riz"));
 			assertTrue(compoListValuePlugin.isQueryMatch("Pâte*", "Pates de riz"));

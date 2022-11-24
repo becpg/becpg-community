@@ -16,8 +16,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,6 @@ import org.springframework.stereotype.Service;
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
-import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
 import fr.becpg.repo.listvalue.ListValueEntry;
 import fr.becpg.repo.listvalue.ListValuePage;
@@ -44,9 +41,6 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 	@Autowired
 	private NodeService nodeService;
-
-	@Autowired
-	private EntityDictionaryService entityDictionaryService;
 
 	private String agribaliseDBPath;
 	private String countryScoreDBPath;
@@ -138,10 +132,10 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 			loadEFs();
 		}
 
-		String preparedQuery = BeCPGQueryHelper.prepareQuery(entityDictionaryService, query).replace("*", "");
+		String preparedQuery = BeCPGQueryHelper.prepareQuery( query).replace("*", "");
 
 		matches.addAll(environmentalFootprints.values().stream()
-				.filter(res -> BeCPGQueryHelper.isQueryMatch(query, res.value, entityDictionaryService)).limit(100).collect(Collectors.toList()));
+				.filter(res -> BeCPGQueryHelper.isQueryMatch(query, res.value)).limit(100).collect(Collectors.toList()));
 
 		matches.sort((o1, o2) -> {
 
@@ -149,8 +143,8 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 				return o1.getValue().compareTo(o2.getValue());
 			}
 
-			String value = BeCPGQueryHelper.prepareQuery(entityDictionaryService, o1.getValue()).replace("*", "").replace(preparedQuery, "A");
-			String value2 = BeCPGQueryHelper.prepareQuery(entityDictionaryService, o2.getValue()).replace("*", "").replace(preparedQuery, "A");
+			String value = BeCPGQueryHelper.prepareQueryForSorting( o1.getValue()).replace("*", "").replace(preparedQuery, "A");
+			String value2 = BeCPGQueryHelper.prepareQueryForSorting(o2.getValue()).replace("*", "").replace(preparedQuery, "A");
 
 			return value.compareTo(value2);
 
@@ -284,26 +278,28 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 			}
 
-			JSONObject ecoScoreClass = new JSONObject();
-			
-			try {
-				ecoScoreClass.put("ecoScore", ecoScore);
-				ecoScoreClass.put("scoreClass", computeScoreClass(ecoScore));
-				ecoScoreClass.put("acvScore", acvScore);
-				ecoScoreClass.put("claimBonus", claimBonus);
-				ecoScoreClass.put("transportScore", transportScore);
-				ecoScoreClass.put("politicalScore", politicalScore);
-				ecoScoreClass.put("packagingMalus", packagingMalus);
-			} catch (JSONException e) {
-				logger.error(e.getMessage(), e);
-			}
-			
 			productData.setEcoScore(ecoScore * 1d);
-			productData.setEcoScoreClass(ecoScoreClass.toString());
+			
+			String scoreClass = computeScoreClass(ecoScore);
+			
+			productData.setEcoScoreClass(scoreClass);
+			
+			EcoScoreContext ecoScoreContext = new EcoScoreContext();
+			
+			ecoScoreContext.setEcoScore(ecoScore);
+			ecoScoreContext.setScoreClass(scoreClass);
+			ecoScoreContext.setAcvScore(acvScore);
+			ecoScoreContext.setClaimBonus(claimBonus);
+			ecoScoreContext.setTransportScore(transportScore);
+			ecoScoreContext.setPoliticalScore(politicalScore);
+			ecoScoreContext.setPackagingMalus(packagingMalus);
+			
+			productData.setEcoScoreDetails(ecoScoreContext.toJSON().toString());
 			
 		} else {
 			productData.setEcoScore(null);
 			productData.setEcoScoreClass(null);
+			productData.setEcoScoreDetails(null);
 		}
 
 		return true;

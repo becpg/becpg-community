@@ -12,7 +12,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>3.2.5</version>
+		<version>4.2.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -50,16 +50,10 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
-			<version>3.2.17.RELEASE</version>
 			<scope>test</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>${mysql.connector.version}</version><!--$NO-MVN-MAN-VER$-->
-			<scope>test</scope>
-		</dependency>
+		
+	
 		
 		<!-- beCPG AMPs -->
 		<dependency>
@@ -152,19 +146,6 @@
 			</testResource>
 		</testResources>
 		<plugins>
-			<!-- <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>test-jar</id>
-						<phase>test-compile</phase>
-						<goals>
-							<goal>test-jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin> -->
 			
             <!-- Filter the Dockerfile and the other files added to the container to be able to replace maven properties -->
 			<plugin>
@@ -220,7 +201,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/becpg-test/forms</outputDirectory>
+							<outputDirectory>${project.build.directory}/becpg-test-core/forms</outputDirectory>
 							<resources>
 								<resource>
 									<directory>../becpg-share/src/main/resources/alfresco/forms</directory>
@@ -253,7 +234,7 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/becpg-test/becpg-plm/messages</outputDirectory>
+							<outputDirectory>${project.build.directory}/becpg-test-core/becpg-plm/messages</outputDirectory>
 							<resources>
 								<resource>
 									<directory>../becpg-plm/becpg-plm-share/src/main/resources/alfresco/messages</directory>
@@ -282,7 +263,7 @@
 							<goal>test-jar</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/becpg-test/extensions</outputDirectory>
+							<outputDirectory>${project.build.directory}/becpg-test-core/extensions</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
@@ -322,20 +303,32 @@
 									<goal>copy-dependencies</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${project.build.directory}/becpg-test/extensions</outputDirectory>
+									<outputDirectory>${project.build.directory}/becpg-test-core/extensions</outputDirectory>
 									<excludeScope>compile</excludeScope>
 									<excludeTypes>amp</excludeTypes>
 								</configuration>
 							</execution>
                     <!-- Collect extensions (JARs or AMPs) declared in this module do be deployed to docker -->
 							<execution>
-								<id>collect-extensions</id>
+								<id>collect-extensions-core</id>
 								<phase>package</phase>
 								<goals>
 									<goal>copy-dependencies</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${project.build.directory}/becpg-test</outputDirectory>
+									<outputDirectory>${project.build.directory}/becpg-test-core</outputDirectory>
+									<includeScope>runtime</includeScope>
+									<includeTypes>amp</includeTypes>
+								</configuration>
+							</execution>
+							<execution>
+								<id>collect-extensions-share</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy-dependencies</goal>
+								</goals>
+								<configuration>
+									<outputDirectory>${project.build.directory}/becpg-test-share</outputDirectory>
 									<includeScope>runtime</includeScope>
 									<includeTypes>amp</includeTypes>
 								</configuration>
@@ -348,13 +341,28 @@
 						<version>1.4.10</version>
 						<executions>
 							<execution>
-								<id>becpg-test</id>
+								<id>becpg-test-core</id>
 								<goals>
 									<goal>build</goal>
 								</goals>
 								<configuration>
-									<repository>${docker.becpg.url}/becpg-test</repository>
-									<contextDirectory>${project.build.directory}/becpg-test</contextDirectory>
+									<repository>${docker.becpg.url}/becpg-test-core</repository>
+									<contextDirectory>${project.build.directory}/becpg-test-core</contextDirectory>
+									<tag>${docker.becpg.tag}</tag>
+									<pullNewerImage>false</pullNewerImage>
+									<buildArgs>
+										<VERSION>${project.version}</VERSION>
+									</buildArgs>
+								</configuration>
+							</execution>
+							<execution>
+								<id>becpg-test-share</id>
+								<goals>
+									<goal>build</goal>
+								</goals>
+								<configuration>
+									<repository>${docker.becpg.url}/becpg-test-share</repository>
+									<contextDirectory>${project.build.directory}/becpg-test-share</contextDirectory>
 									<tag>${docker.becpg.tag}</tag>
 									<pullNewerImage>false</pullNewerImage>
 									<buildArgs>
@@ -378,14 +386,27 @@
 						<version>1.4.10</version>
 						<executions>
 							<execution>
-								<id>becpg-base</id>
+								<id>becpg-base-core</id>
 								<phase>prepare-package</phase>
 								<goals>
 									<goal>build</goal>
 								</goals>
 								<configuration>
-									<repository>${docker.becpg.url}/becpg-base</repository>
-									<contextDirectory>${project.build.directory}/becpg-base</contextDirectory>
+									<repository>${docker.becpg.url}/becpg-base-core</repository>
+									<contextDirectory>${project.build.directory}/becpg-base-core</contextDirectory>
+									<pullNewerImage>true</pullNewerImage>
+									<tag>${docker.becpg.tag}</tag>
+								</configuration>
+							</execution>
+							<execution>
+								<id>becpg-base-share</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+								<configuration>
+									<repository>${docker.becpg.url}/becpg-base-share</repository>
+									<contextDirectory>${project.build.directory}/becpg-base-share</contextDirectory>
 									<pullNewerImage>true</pullNewerImage>
 									<tag>${docker.becpg.tag}</tag>
 								</configuration>
@@ -399,19 +420,6 @@
 								<configuration>
 									<repository>${docker.becpg.url}/becpg-db</repository>
 									<contextDirectory>${project.build.directory}/becpg-db</contextDirectory>
-									<pullNewerImage>true</pullNewerImage>
-									<tag>${docker.becpg.tag}</tag>
-								</configuration>
-							</execution>
-							<execution>
-								<id>becpg-solr</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>build</goal>
-								</goals>
-								<configuration>
-									<repository>${docker.becpg.url}/becpg-solr</repository>
-									<contextDirectory>${project.build.directory}/becpg-solr</contextDirectory>
 									<pullNewerImage>true</pullNewerImage>
 									<tag>${docker.becpg.tag}</tag>
 								</configuration>

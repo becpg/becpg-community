@@ -183,8 +183,8 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 			List<NodeRef> observerNodeRefs = new ArrayList<>();
 			observerNodeRefs.add(observerOne);
 
-			assertEquals(projectData.getTaskList().get(2).getState(), TaskState.Refused.toString()); 
-			assertEquals(projectData.getTaskList().get(1).getState(), TaskState.InProgress.toString());
+			assertEquals(TaskState.Refused.toString(), projectData.getTaskList().get(2).getState()); 
+			assertEquals(TaskState.InProgress.toString(), projectData.getTaskList().get(1).getState());
 			alfrescoRepository.save(projectData);
 
 			return null;
@@ -233,8 +233,8 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 			List<NodeRef> observerNodeRefs = new ArrayList<>();
 			observerNodeRefs.add(observerOne);
 
-			assertEquals(projectData.getTaskList().get(2).getState(), TaskState.InProgress.toString());
-			assertEquals(projectData.getTaskList().get(1).getState(), TaskState.Completed.toString());
+			assertEquals(TaskState.InProgress.toString(), projectData.getTaskList().get(2).getState());
+			assertEquals(TaskState.Completed.toString(), projectData.getTaskList().get(1).getState());
 			alfrescoRepository.save(projectData);
 
 			return null;
@@ -256,13 +256,13 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 			logger.info(message.getMimeMessage().getSubject());
 		}
 
-		assertEquals(wiser.getMessages().size(), nbMail);
+		assertEquals(nbMail, wiser.getMessages().size());
 
 	}
 
 	protected void checkActivity(NodeRef entityNodeRef, int size) {
 
-		assertEquals(transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		assertEquals(size, transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			List<NodeRef> ret = new ArrayList<>();
 			NodeRef activityListNodeRef = null;
@@ -284,7 +284,7 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 			}
 
 			return ret;
-		}, false, true).size(), size);
+		}, false, true).size());
 	}
 
 }

@@ -71,5 +71,8 @@ public interface RepoService {
 	 * @return a {@link java.lang.String} object.
 	 */
 	String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename);
+
+	/** {@inheritDoc} */
+	String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename, boolean keepExtension);
 	
 }

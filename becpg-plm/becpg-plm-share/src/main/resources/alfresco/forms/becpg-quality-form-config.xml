@@ -1512,6 +1512,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1526,6 +1527,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="datagrid">
@@ -1533,6 +1535,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1547,6 +1550,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1561,6 +1565,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="datagrid">
@@ -1568,6 +1573,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1583,6 +1589,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1598,6 +1605,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 			<form id="datagrid">
@@ -1606,6 +1614,7 @@
 					<show id="bcpg:charactName" force="true" />
 					<show id="cm:title" force="true" />
 					<show id="bcpg:code" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1710,55 +1719,6 @@
 					<show id="qa:slSamplingGroup" />
 					<show id="qa:slControlingGroup" />
 					<show id="qa:slFixingGroup" />
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
-
-	<!-- Deprecated To remove after 2.2.4 -->
-	<!-- qa:workLog type (existing nodes) -->
-	<config evaluator="node-type" condition="qa:workLog">
-		<forms>
-			<!-- Data List pop-up edit form -->
-			<form>
-				<field-visibility>
-					<show id="qa:wlState" />
-					<show id="qa:wlComment" />
-				</field-visibility>
-				<appearance>
-					<field id="qa:wlComment">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>
-				</appearance>
-			</form>
-		</forms>
-	</config>
-	<!-- qa:samplingList type type (creating nodes nodes) -->
-	<config evaluator="model-type" condition="qa:workLog">
-		<forms>
-			<!-- Create item form -->
-			<form>
-				<field-visibility>
-					<show id="qa:wlState" />
-					<show id="qa:wlComment" />
-				</field-visibility>
-				<appearance>
-					<field id="qa:wlComment">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
-						</control>
-					</field>
-				</appearance>
-			</form>
-			<!-- Data Grid view -->
-			<form id="datagrid">
-				<field-visibility>
-					<show id="qa:wlState" />
-					<show id="qa:wlComment" />
-					<show id="cm:created" />
-					<show id="cm:creator" />
 				</field-visibility>
 			</form>
 		</forms>

@@ -123,8 +123,8 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 	 */
 	public OrganoListDataItem(OrganoListDataItem o) {
 		super(o);
-		setTextCriteria(textCriteria);
-		setOrgano(organo);
+		this.textCriteria = o.textCriteria;
+		this.organo = o.organo;
 	}
 	
 	@Override

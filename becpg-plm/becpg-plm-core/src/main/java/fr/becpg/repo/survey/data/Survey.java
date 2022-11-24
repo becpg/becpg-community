@@ -26,6 +26,18 @@ public class Survey extends BeCPGDataObject  {
 	private NodeRef question;
 	
 	private List<NodeRef> choices;
+	
+    private Integer sort;
+    
+    @AlfProp
+	@AlfQname(qname = "bcpg:sort")
+	public Integer getSort() {
+		return sort;
+	}
+    
+    public void setSort(Integer sort) {
+		this.sort = sort;
+	}
 
 	@AlfProp
 	@AlfQname(qname = "survey:slComment")

@@ -142,7 +142,7 @@ public interface ProjectModel {
 	/** Constant <code>PROP_DL_STATE</code> */
 	QName PROP_DL_STATE = QName.createQName(PROJECT_URI, "dlState");
 	/** Constant <code>PROP_DL_URL</code> */
-	QName PROP_DL_URL = QName.createQName(PROJECT_URI, "dlURL");
+	QName PROP_DL_URL = QName.createQName(PROJECT_URI, "dlUrl");
 	/** Constant <code>PROP_DL_DESCRIPTION</code> */
 	QName PROP_DL_DESCRIPTION = QName.createQName(PROJECT_URI, "dlDescription");
 	/** Constant <code>ASSOC_DL_TASK</code> */

@@ -46,9 +46,6 @@ import fr.becpg.report.client.AbstractBeCPGReportClient;
 import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * beCPGReportServerClient used to interact with reporting server
@@ -58,20 +55,17 @@ import io.opencensus.trace.Tracing;
  */
 public class ReportServerEngine extends AbstractBeCPGReportClient implements BeCPGReportEngine {
 
-
 	private NodeService nodeService;
 
 	private ContentService contentService;
 
 	private EntityService entityService;
-	
+
 	private String instanceName;
 
 	private long reportImageMaxSizeInBytes;
-	
-	private long reportDatasourceMaxSizeInBytes;
 
-	private static final Tracer tracer = Tracing.getTracer();
+	private long reportDatasourceMaxSizeInBytes;
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -94,12 +88,12 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
-	
+
 	@Value("${beCPG.report.image.maxSizeInBytes}")
 	public void setReportImageMaxSizeInBytes(long reportImageMaxSizeInBytes) {
 		this.reportImageMaxSizeInBytes = reportImageMaxSizeInBytes;
 	}
-	
+
 	@Value("${beCPG.report.datasource.maxSizeInBytes}")
 	public void setReportDatasourceMaxSizeInBytes(long reportDatasourceMaxSizeInBytes) {
 		this.reportDatasourceMaxSizeInBytes = reportDatasourceMaxSizeInBytes;
@@ -118,88 +112,84 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	/** {@inheritDoc} */
 	@Override
 	public void createReport(NodeRef tplNodeRef, EntityReportData reportData, OutputStream out, Map<String, Object> params) throws ReportException {
-		
-		try (Scope scope = tracer.spanBuilder("reportEngine.Create").startScopedSpan()) {
-			
-			StopWatch watch = null;
-			if (logger.isDebugEnabled()) {
-				watch = new StopWatch();
-				watch.start();
-			}
-			
-			final ReportFormat format = (ReportFormat) params.get(ReportParams.PARAM_FORMAT);
-			
-			if (format == null) {
-				throw new IllegalArgumentException("Format is a mandatory param");
-			}
-			
-			executeInSession(reportSession -> {
-				
-				String templateId = (instanceName!=null? instanceName:"") + tplNodeRef.toString();
-				
-				tracer.getCurrentSpan().addAnnotation("sendReportTpl");
-				
-				sendTplFile(reportSession, templateId, tplNodeRef);
-				
-				@SuppressWarnings("unchecked")
-				List<NodeRef> associatedTplFiles = (List<NodeRef>) params.get(ReportParams.PARAM_ASSOCIATED_TPL_FILES);
-				
-				if (associatedTplFiles != null) {
-					for (NodeRef nodeRef : associatedTplFiles) {
-						String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-						if(name.startsWith("logo")) {
-							reportData.getImages().add(new EntityImageInfo(name,nodeRef));
-						} else {
-							String assocFileId = getAssociatedTplFileId(templateId, name);
-							sendTplFile(reportSession, assocFileId, nodeRef);
-						}
-					}
-				}
-				
-				reportSession.setTemplateId(templateId);
-				
-				tracer.getCurrentSpan().addAnnotation("sendReportImages");
 
-				for (EntityImageInfo entry : reportData.getImages()) {
-					byte[] imageBytes = entityService.getImage(entry.getImageNodeRef());
-					if (imageBytes != null) {
-						
-						if (imageBytes.length > reportImageMaxSizeInBytes) {
-							reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Image size exceeds: " + entry, MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(), reportImageMaxSizeInBytes), tplNodeRef));
-						}
-						
-						try (InputStream in = new ByteArrayInputStream(imageBytes)) {
-							sendImage(reportSession, entry.getId(), in);
-						}
-					}
-				}
-				
-				tracer.getCurrentSpan().addAnnotation("sendReportData");
-				reportSession.setFormat(format.toString());
-				reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
-				
-				byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
-				
-				try (InputStream in = new ByteArrayInputStream(datasourceBytes)) {
-					
-					if (datasourceBytes.length > reportDatasourceMaxSizeInBytes) {
-						reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Datasource size exceeds: " + params, MLTextHelper.getI18NMessage("message.report.datasource.size", reportDatasourceMaxSizeInBytes ), tplNodeRef));
-					}
-					
-					List<String> errors = generateReport(reportSession, in, out);
-					
-					for (String error : errors) {
-						reportData.getLogs().add(new ReportEngineLog(ReportLogType.ERROR, error, MLTextHelper.getI18NMessage("message.report.error", error), tplNodeRef));
-					}
-				}	
-			});
-			
-			if (logger.isDebugEnabled() && (watch != null)) {
-				watch.stop();
-				logger.debug(" Report generated by server in  " + watch.getTotalTimeSeconds() + " seconds ");
-			}
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
 		}
 
+		final ReportFormat format = (ReportFormat) params.get(ReportParams.PARAM_FORMAT);
+
+		if (format == null) {
+			throw new IllegalArgumentException("Format is a mandatory param");
+		}
+
+		executeInSession(reportSession -> {
+
+			String templateId = (instanceName != null ? instanceName : "") + tplNodeRef.toString();
+
+			sendTplFile(reportSession, templateId, tplNodeRef);
+
+			@SuppressWarnings("unchecked")
+			List<NodeRef> associatedTplFiles = (List<NodeRef>) params.get(ReportParams.PARAM_ASSOCIATED_TPL_FILES);
+
+			if (associatedTplFiles != null) {
+				for (NodeRef nodeRef : associatedTplFiles) {
+					String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+					if (name.startsWith("logo")) {
+						reportData.getImages().add(new EntityImageInfo(name, nodeRef));
+					} else {
+						String assocFileId = getAssociatedTplFileId(templateId, name);
+						sendTplFile(reportSession, assocFileId, nodeRef);
+					}
+				}
+			}
+
+			reportSession.setTemplateId(templateId);
+
+			for (EntityImageInfo entry : reportData.getImages()) {
+				byte[] imageBytes = entityService.getImage(entry.getImageNodeRef());
+				if (imageBytes != null) {
+
+					if (imageBytes.length > reportImageMaxSizeInBytes) {
+						reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Image size exceeds: " + entry,
+								MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(), reportImageMaxSizeInBytes), tplNodeRef));
+					}
+
+					try (InputStream in = new ByteArrayInputStream(imageBytes)) {
+						sendImage(reportSession, entry.getId(), in);
+					} catch (ReportException e) {
+						logger.error(e, e);
+					}
+				}
+			}
+
+			reportSession.setFormat(format.toString());
+			reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
+
+			byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
+
+			try (InputStream in = new ByteArrayInputStream(datasourceBytes)) {
+
+				if (datasourceBytes.length > reportDatasourceMaxSizeInBytes) {
+					reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Datasource size exceeds: " + params,
+							MLTextHelper.getI18NMessage("message.report.datasource.size", reportDatasourceMaxSizeInBytes), tplNodeRef));
+				}
+
+				List<String> errors = generateReport(reportSession, in, out);
+
+				for (String error : errors) {
+					reportData.getLogs().add(
+							new ReportEngineLog(ReportLogType.ERROR, error, MLTextHelper.getI18NMessage("message.report.error", error), tplNodeRef));
+				}
+			}
+		});
+
+		if (logger.isDebugEnabled() && (watch != null)) {
+			watch.stop();
+			logger.debug(" Report generated by server in  " + watch.getTotalTimeSeconds() + " seconds ");
+		}
 
 	}
 

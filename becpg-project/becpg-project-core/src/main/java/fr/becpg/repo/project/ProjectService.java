@@ -95,14 +95,6 @@ public interface ProjectService {
 	
 
 	/**
-	 * 
-	 * @param projectNodeRef
-	 * @param url
-	 */
-	String getDeliverableUrl(NodeRef projectNodeRef, String url);
-
-	
-	/**
 	 * Refused a project Task
 	 * @param taskNodeRef
 	 * @param taskComment 

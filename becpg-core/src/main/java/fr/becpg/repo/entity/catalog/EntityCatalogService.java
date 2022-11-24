@@ -135,7 +135,7 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 	private AssociationService associationService;
 
 	@Autowired
-	private ExpressionService<T> expressionService;
+	private ExpressionService expressionService;
 
 	@Autowired
 	private AlfrescoRepository<T> alfrescoRepository;

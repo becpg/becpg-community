@@ -4,7 +4,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>3.2.5</version>
+		<version>4.2.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
@@ -40,13 +40,12 @@
         <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>alfresco-remote-api</artifactId>
-             <version>${alfresco-remote-api.version}</version>
+            <version>${alfresco-remote-api.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>share</artifactId>
-            <version>${alfresco.share.version}</version>
             <classifier>classes</classifier>
             <scope>provided</scope>
             <exclusions>
@@ -59,7 +58,6 @@
       <dependency>
             <groupId>org.alfresco</groupId>
             <artifactId>alfresco-web-framework-commons</artifactId>
-            <version>${alfresco.share.version}</version>
             <classifier>classes</classifier>
             <scope>provided</scope>
        </dependency> 

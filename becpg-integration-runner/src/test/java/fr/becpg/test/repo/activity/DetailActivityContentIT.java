@@ -27,7 +27,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class DetailActivityContentIT extends AbstractFinishedProductTest {
 
-	private static Log logger = LogFactory.getLog(PlmActivityServiceIT.class);
+	private static Log logger = LogFactory.getLog(DetailActivityContentIT.class);
 
 	@Autowired
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -121,8 +121,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			if (data.getJSONArray("properties") != null && data.getJSONArray("properties").length() > 0) {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
-					assertEquals("Check erpCode before modification", "[\"11111\"]", dataProp.getString("before"));
-					assertEquals("Check erpCode after modification", "[\"22222\"]", dataProp.getString("after"));
+					assertEquals("Check erpCode before modification", "[\"11111\"]", dataProp.getJSONArray("before").toString());
+					assertEquals("Check erpCode after modification", "[\"22222\"]", dataProp.getJSONArray("after").toString());
 				}
 			}
 
@@ -187,8 +187,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
 					assertEquals("Check client title modification", PLMModel.ASSOC_CLIENTS.toString(), dataProp.getString("title"));
-					assertEquals("Check client before modification", "[]" ,dataProp.getString("before"));
-					assertEquals("Check client after modification", "[\"("+client2NodeRef+", Client2)\"]",dataProp.getString("after"));
+					assertEquals("Check client before modification", "[]" ,dataProp.getJSONArray("before").toString());
+					assertEquals("Check client after modification", "[\"("+client2NodeRef+", Client2)\"]",dataProp.getJSONArray("after").toString());
 				}
 			}
 
@@ -245,8 +245,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 			if (data.getJSONArray("properties") != null && data.getJSONArray("properties").length() > 0) {
 				JSONObject dataProp = data.getJSONArray("properties").getJSONObject(0);
 				if (dataProp != null) {
-					assertEquals("Check compo qty modification", "[1]",dataProp.getString("before"));
-					assertEquals("Check compo qty modification", "[2]", dataProp.getString("after"));
+					assertEquals("Check compo qty modification", "[1]",dataProp.getJSONArray("before").toString());
+					assertEquals("Check compo qty modification", "[2]", dataProp.getJSONArray("after").toString());
 				}
 			}
 

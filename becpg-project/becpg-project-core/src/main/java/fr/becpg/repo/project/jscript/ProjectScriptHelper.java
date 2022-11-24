@@ -18,24 +18,37 @@
  ******************************************************************************/
 package fr.becpg.repo.project.jscript;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
+import fr.becpg.model.DeliverableUrl;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.BudgetListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Utility script methods for budget
@@ -52,7 +65,19 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	private NodeService nodeService;
 
 	private NamespaceService namespaceService;
+	
+	private ProjectService projectService;
+	
+	private ServiceRegistry serviceRegistry;
 
+	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
+		this.serviceRegistry = serviceRegistry;
+	}
+
+	public void setProjectService(ProjectService projectService) {
+		this.projectService = projectService;
+	}
+	
 	/**
 	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
 	 *
@@ -147,5 +172,110 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 			}
 		}
 	}
+	
+	// {nodeRef} --> replace with project nodeRef
+	// {nodeRef|propName} --> replace with project property
+	// {nodeRef|xpath:./path} --> replace with nodeRef found in relative project path
+	// {assocName} --> replace with association nodeRef
+	// {assocName|propName} --> replace with association property
+	// {assocName|@type} --> replace with association property
+	// {assocName|xpath:./path} --> replace with nodeRef found in relative assoc path
+
+	public String getDeliverableUrl(ScriptNode deliverable) {
+
+		return AuthenticationUtil.runAsSystem(() -> {
+			NodeRef deliverableNodeRef = deliverable.getNodeRef();
+
+			String url = (String) nodeService.getProperty(deliverableNodeRef, ProjectModel.PROP_DL_URL);
+
+			List<AssociationRef> taskAssocs = nodeService.getTargetAssocs(deliverableNodeRef,
+					ProjectModel.ASSOC_DL_TASK);
+
+			if (taskAssocs != null && !taskAssocs.isEmpty()) {
+				NodeRef taskNodeRef = taskAssocs.get(0).getTargetRef();
+
+				List<AssociationRef> projectAssocs = nodeService.getSourceAssocs(taskNodeRef,
+						ProjectModel.ASSOC_PROJECT_CUR_TASKS);
+
+				if (projectAssocs != null && !projectAssocs.isEmpty()) {
+					NodeRef projectNodeRef = projectAssocs.get(0).getSourceRef();
+					if ((url != null) && url.contains("{")) {
+						Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(url);
+						StringBuffer sb = new StringBuffer();
+						while (patternMatcher.find()) {
+
+							String assocQname = patternMatcher.group(1);
+							StringBuilder replacement = new StringBuilder();
+							if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)) {
+								String[] splitted = assocQname.split("\\|");
+								replacement.append(extractDeliverableProp(projectNodeRef, splitted));
+
+							} else if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM)) {
+								String[] splitted = assocQname.split("\\|");
+								replacement.append(extractDeliverableProp(taskNodeRef, splitted));
+
+							} else if (assocQname != null) {
+								String[] splitted = assocQname.split("\\|");
+								List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef,
+										QName.createQName(splitted[0], namespaceService));
+								if (assocs != null) {
+									for (AssociationRef assoc : assocs) {
+										if (replacement.length() > 0) {
+											replacement.append(",");
+										}
+										replacement.append(extractDeliverableProp(assoc.getTargetRef(), splitted));
+									}
+								}
+							}
+
+							patternMatcher.appendReplacement(sb, replacement != null ? replacement.toString() : "");
+
+						}
+						patternMatcher.appendTail(sb);
+
+						return sb.toString();
+					}
+				}
+			}
+
+			return url;
+		});
+
+	}
+
+	private String extractDeliverableProp(NodeRef nodeRef, String[] splitted) {
+		NodeRef ret = null;
+		if (splitted.length > 1) {
+			if (splitted[1].startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
+				ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeRef,
+						splitted[1].substring(DeliverableUrl.XPATH_URL_PREFIX.length()));
+			} else if(splitted[1].startsWith("@type")) {
+				QName type = nodeService.getType(nodeRef);
+				return type != null ? type.getLocalName() : "";
+			} else {
+				Serializable tmp = nodeService.getProperty(nodeRef, QName.createQName(splitted[1], namespaceService));
+				return tmp != null ? tmp.toString().replace("$", "\\$") : "";
+			}
+		} else {
+			ret = nodeRef;
+		}
+		return ret != null ? ret.toString() : "";
+	}
+	
+	public void updateTaskState(TaskListDataItem task, String taskState) {
+		task.setTaskState(TaskState.valueOf(taskState));
+	}
+	
+	public ScriptNode[] extractResources(ScriptNode project, ScriptNode[] resources) {
+		
+		List<NodeRef> resourceList = new ArrayList<>();
+		
+		for (ScriptNode resource : resources) {
+			resourceList.add(resource.getNodeRef());
+		}
+		
+		return projectService.extractResources(project.getNodeRef(), resourceList).stream().map(e -> new ScriptNode(e, serviceRegistry, getScope())).collect(Collectors.toList()).toArray(new ScriptNode[0]);
+	}
+
 
 }
