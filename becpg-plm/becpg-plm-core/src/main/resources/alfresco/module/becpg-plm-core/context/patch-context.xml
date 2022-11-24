@@ -972,6 +972,7 @@
         <property name="qnameDAO">
             <ref bean="qnameDAO"/>
         </property>
+        <property name="integrityChecker" ref="integrityChecker"/>
 	</bean>
     
    	<bean id="patch.bcpg.plm.initRepoNotificationPatch" class="fr.becpg.repo.admin.patch.InitRepoNotificationPatch" parent="beCPGBasePatch" >
@@ -1005,6 +1006,7 @@
          <property name="policyBehaviourFilter">
             <ref bean="policyBehaviourFilter"/>
         </property>
+        <property name="integrityChecker" ref="integrityChecker"/>
 	</bean>
     
 	
