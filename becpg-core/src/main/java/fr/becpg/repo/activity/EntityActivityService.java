@@ -12,6 +12,7 @@ import org.json.JSONObject;
 
 
 import fr.becpg.repo.activity.data.ActivityEvent;
+import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.batch.BatchInfo;
 
@@ -85,7 +86,7 @@ public interface EntityActivityService {
 	 * @param notifyObservers a boolean.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	NodeRef postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent, boolean notifyObservers);
+	ActivityListDataItem postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent, boolean notifyObservers);
 
 	/**
 	 * <p>postContentActivity.</p>

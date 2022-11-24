@@ -1,9 +1,11 @@
 package fr.becpg.test.repo.activity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,15 +13,18 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -72,8 +77,8 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, -13);
 
-		List<NodeRef> customActivities = new ArrayList<>();
-		List<NodeRef> activities = new ArrayList<>();
+		List<ActivityListDataItem> customActivities = new ArrayList<>();
+		List<ActivityListDataItem> activities = new ArrayList<>();
 
 		for (int i = 0; i < 3; i++) {
 			// Formulate finished product
@@ -95,14 +100,13 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 		List<ActivityType> activityTypes = new ArrayList<>();
 		getActivities(finishedProductNodeRef, SORT_MAP)
-				.forEach((activity) -> activityTypes.add(((ActivityListDataItem) alfrescoRepository.findOne(activity)).getActivityType()));
+				.forEach((activity) -> activityTypes.add(activity.getActivityType()));
 
 		// Make sure that we kept one formulation activity
 		assertEquals("Formulation Activities number = 1", 1, Collections.frequency(activityTypes, ActivityType.Formulation));
 
 		// Confirm if the last activity is of type formulation
-		assertEquals("Last activity type is formulation: ", ActivityType.Formulation,
-				((ActivityListDataItem) alfrescoRepository.findOne(getActivities(finishedProductNodeRef, SORT_MAP).get(1))).getActivityType());
+		assertEquals("Last activity type is formulation: ", ActivityType.Formulation, getActivities(finishedProductNodeRef, SORT_MAP).get(0).getActivityType());
 
 	}
 
@@ -141,14 +145,14 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 			return null;
 		}, false, true);
 
-		Map<NodeRef, ActivityListDataItem> actListDataItems = getActivityListDataItems(finishedProductNodeRef);
-		actListDataItems.forEach((key, val) -> {
-			val.getActivityData();
+		List<ActivityListDataItem> actListDataItems = getActivityListDataItems(finishedProductNodeRef);
+		actListDataItems.forEach((key) -> {
+			key.getActivityData();
 		});
 
 		List<ActivityType> activityTypes = new ArrayList<>();
-		actListDataItems.keySet().forEach((activity) -> {
-			activityTypes.add(((ActivityListDataItem) alfrescoRepository.findOne(activity)).getActivityType());
+		actListDataItems.forEach((activity) -> {
+			activityTypes.add(activity.getActivityType());
 		});
 
 		// Make sure that we just generate 3 activities
@@ -201,10 +205,10 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 			});
 		}
 
-		List<NodeRef> activities = getActivities(finishedProductNodeRef, SORT_MAP);
+		List<ActivityListDataItem> activities = getActivities(finishedProductNodeRef, SORT_MAP);
 		Collections.reverse(activities);
 
-		List<NodeRef> firstPageBeforeClean = activities.subList(0, MAX_PAGE);
+		List<ActivityListDataItem> firstPageBeforeClean = activities.subList(0, MAX_PAGE);
 
 		// clean activities
 		BatchInfo batch = entityActivityService.cleanActivities();
@@ -212,7 +216,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 		activities = getActivities(finishedProductNodeRef, SORT_MAP);
 		Collections.reverse(activities);
-		List<NodeRef> firstPageAfterClean = activities.subList(0, MAX_PAGE);
+		List<ActivityListDataItem> firstPageAfterClean = activities.subList(0, MAX_PAGE);
 
 		// Make sure that we have more than one page
 		assertTrue(activities.size() > MAX_PAGE);
@@ -262,16 +266,16 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		BatchInfo batch = entityActivityService.cleanActivities();
 		waitForBatchEnd(batch);
 
-		List<NodeRef> activities = getActivities(finishedProductNodeRef, SORT_MAP);
+		List<ActivityListDataItem> activities = getActivities(finishedProductNodeRef, SORT_MAP);
 
 		// activities number after clean
-		assertEquals("number formulation activities in second page = 52", activities.size() , 52);
+		assertEquals("number formulation activities in second page = 53", 53, activities.size());
 
 		Collections.reverse(activities);
 		activities = activities.subList(50, 52);
 
 		List<ActivityType> activityTypes = new ArrayList<>();
-		activities.forEach((activity) -> activityTypes.add(((ActivityListDataItem) alfrescoRepository.findOne(activity)).getActivityType()));
+		activities.forEach((activity) -> activityTypes.add(activity.getActivityType()));
 
 		// Make sure that we keep one formulation activity in the second page
 		assertEquals("formulation number in the second page ", 1, Collections.frequency(activityTypes, ActivityType.Formulation));
@@ -337,7 +341,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 		List<ActivityType> activityTypesBeforeClean = new ArrayList<>();
 		getActivities(finishedProductNodeRef, null)
-				.forEach((activity) -> activityTypesBeforeClean.add(((ActivityListDataItem) alfrescoRepository.findOne(activity)).getActivityType()));
+				.forEach((activity) -> activityTypesBeforeClean.add(activity.getActivityType()));
 
 		// Make sure that we have all comments activities
 		assertEquals("Comment activities number = 2", 2, Collections.frequency(activityTypesBeforeClean, ActivityType.Comment));
@@ -353,7 +357,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 		List<ActivityType> activityTypesAfterClean = new ArrayList<>();
 		getActivities(finishedProductNodeRef, null)
-				.forEach((activity) -> activityTypesAfterClean.add(((ActivityListDataItem) alfrescoRepository.findOne(activity)).getActivityType()));
+				.forEach((activity) -> activityTypesAfterClean.add(activity.getActivityType()));
 
 		// Make sure that we keep comments activities even if they are in the
 		// second page
@@ -387,7 +391,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		// Create FP
 		NodeRef finishedProductNodeRef = createFinishedProduct();
 
-		List<NodeRef> activityWithCustomDate = new ArrayList<>();
+		List<ActivityListDataItem> activityWithCustomDate = new ArrayList<>();
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.DAY_OF_MONTH, -1);
 		cal.set(Calendar.MINUTE, 0);
@@ -423,10 +427,10 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 
 				cal.set(Calendar.HOUR_OF_DAY, j);
 
-				getActivities(finishedProductNodeRef, null).forEach((nodeRef) -> {
-					if (!activityWithCustomDate.contains(nodeRef)) {
-						activityWithCustomDate.add(nodeRef);
-						changeCreatedNodeDate(nodeRef, cal.getTime());
+				getActivities(finishedProductNodeRef, null).forEach((activity) -> {
+					if (!activityWithCustomDate.contains(activity)) {
+						activityWithCustomDate.add(activity);
+						changeCreatedNodeDate(activity, cal.getTime());
 					}
 				});
 			}
@@ -449,16 +453,16 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		BatchInfo batch = entityActivityService.cleanActivities();
 		waitForBatchEnd(batch);
 
-		List<NodeRef> activityNodeRefs = getActivities(finishedProductNodeRef, SORT_MAP);
+		List<ActivityListDataItem> activityNodeRefs = getActivities(finishedProductNodeRef, SORT_MAP);
 		Collections.reverse(activityNodeRefs);
 
 		logger.info("Activities number after clean : " + activityNodeRefs.size());
 
-		activityNodeRefs.subList(MAX_PAGE, activityNodeRefs.size()).forEach((nodeRef) -> {
-			Date customCreationDate = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_CREATED);
+		activityNodeRefs.subList(MAX_PAGE, activityNodeRefs.size()).forEach((activity) -> {
+			Date customCreationDate = activity.getCreatedDate();
 			Calendar time = Calendar.getInstance();
 			time.setTime(customCreationDate);
-			ActivityType activityType = ((ActivityListDataItem) alfrescoRepository.findOne(nodeRef)).getActivityType();
+			ActivityType activityType = activity.getActivityType();
 			// make sure that we keep only activities of the last day
 
 			if (activityType.equals(ActivityType.Datalist)) {
@@ -593,21 +597,22 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	/**
 	 * Change node time creation to a custom date
 	 *
-	 * @param nodeRef 
+	 * @param activity 
 	 * nodeRef of entity
 	 *
 	 * @param customDate 
 	 * new date creation of entity
 	 *
 	 */
-	private void changeCreatedNodeDate(NodeRef nodeRef, Date customDate) {
+	private void changeCreatedNodeDate(ActivityListDataItem activity, Date customDate) {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			try {
-				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-				nodeService.setProperty(nodeRef, ContentModel.PROP_CREATED, customDate);
-			} finally {
-				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			}
+			
+			Map<String, Serializable> values = new HashMap<>();
+			
+			values.put("prop_cm_created", ISO8601DateFormat.format(customDate));
+			
+			beCPGAuditService.updateAuditEntry(AuditType.ACTIVITY, activity.getId(), customDate.getTime(), values);
+			
 			return null;
 		}, false, true);
 	}
@@ -640,21 +645,6 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 			return null;
 		}, false, true);
 
-	}
-
-	@Override
-	protected List<NodeRef> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			List<NodeRef> ret = new ArrayList<>();
-			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
-			if (activityListNodeRef != null) {
-				ret = sortMap != null ? entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST, sortMap)
-						: entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-			}
-
-			return ret;
-		}, false, true);
 	}
 
 }
