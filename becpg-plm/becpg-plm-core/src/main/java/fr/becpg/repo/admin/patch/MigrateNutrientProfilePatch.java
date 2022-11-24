@@ -11,9 +11,9 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.service.cmr.admin.PatchException;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.rule.RuleService;
@@ -43,6 +43,11 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private RuleService ruleService;
 	private BehaviourFilter policyBehaviourFilter;
+	private IntegrityChecker integrityChecker;
+	
+	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
+		this.integrityChecker = integrityChecker;
+	}
 
 	/**
 	 * <p>
@@ -205,6 +210,8 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
 				policyBehaviourFilter.disableBehaviour();
 				
+				integrityChecker.setEnabled(false);
+				
 				List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
 				
 				if (sourceAssocs != null) {
@@ -233,15 +240,13 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				}
 				
 				policyBehaviourFilter.enableBehaviour();
+				
+				integrityChecker.setEnabled(true);
 			}
 
 		};
 
 		batchProcessor.processLong(worker, true);
-		
-		if (batchProcessor.getTotalErrorsLong() > 0) {
-			throw new PatchException("Error while applying " + this.getClass().getSimpleName() + " patch, abort");
-		}
 		
 		NodeRef companyHomeNodeRef = repository.getCompanyHome();
 		
