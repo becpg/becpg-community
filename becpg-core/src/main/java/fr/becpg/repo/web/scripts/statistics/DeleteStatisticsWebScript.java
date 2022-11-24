@@ -50,13 +50,14 @@ public class DeleteStatisticsWebScript extends AbstractWebScript {
 			throw new WebScriptException("Unknown audit type : '" + reqType + "'");
 		}
 		
-		beCPGAuditService.deleteAuditStatitics(type, Long.parseLong(fromId), Long.parseLong(toId));
+		beCPGAuditService.deleteAuditEntries(type, Long.parseLong(fromId), Long.parseLong(toId));
 		
 		try {
 			JSONObject ret = new JSONObject();
 			
 			res.setContentType("application/json");
 			res.setContentEncoding("UTF-8");
+			ret.put("status", "SUCCESS");
 			ret.write(res.getWriter());
 		} catch (JSONException e) {
 			throw new WebScriptException("Unable to serialize JSON", e);

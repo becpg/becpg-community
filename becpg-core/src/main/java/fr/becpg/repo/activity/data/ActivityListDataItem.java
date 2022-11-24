@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.activity.data;
 
+import java.util.Date;
+
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +48,25 @@ public class ActivityListDataItem extends BeCPGDataObject {
 	private ActivityType activityType = ActivityType.State;
 	private String activityData;
 	private String userId;
+	private Date createdDate;
+	private Long id;
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public Long getId() {
+		return id;
+	}
 
+	public void setCreated(Date created) {
+		this.createdDate = created;
+	}
+	
+	public Date getCreatedDate() {
+		return createdDate;
+	}
+	
 	/**
 	 * <p>Getter for the field <code>activityType</code>.</p>
 	 *

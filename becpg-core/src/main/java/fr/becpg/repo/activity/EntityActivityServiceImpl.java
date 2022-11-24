@@ -3,7 +3,6 @@ package fr.becpg.repo.activity;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -53,7 +52,8 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
-import fr.becpg.repo.audit.model.AuditFilter;
+import fr.becpg.repo.activity.helper.AuditActivityHelper;
+import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.model.AuditScope;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
@@ -66,7 +66,6 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.LargeTextHelper;
-import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -108,9 +107,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
-
-	@Autowired
-	private AlfrescoRepository<ActivityListDataItem> alfrescoRepository;
 
 	@Autowired
 	private CommentService commentService;
@@ -182,7 +178,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent, boolean notifyObservers) {
+	public ActivityListDataItem postCommentActivity(NodeRef entityNodeRef, NodeRef commentNodeRef, ActivityEvent activityEvent, boolean notifyObservers) {
 		if (commentNodeRef != null) {
 			try {
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
@@ -245,7 +241,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						notifyListeners(entityNodeRef, activityListDataItem);
 					}
 
-					return activityListDataItem.getNodeRef();
+					return activityListDataItem;
 				}
 			} catch (JSONException e) {
 				logger.error(e, e);
@@ -575,13 +571,20 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 	private void recordAuditActivity(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
+		
+		Date createdDate = activityListDataItem.getCreatedDate() != null ? activityListDataItem.getCreatedDate() : new Date();
+		
 		try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.ACTIVITY)) {
+			auditScope.putAttribute("entityNodeRef", entityNodeRef.toString());
 			auditScope.putAttribute("prop_bcpg_alUserId", activityListDataItem.getUserId());
 			auditScope.putAttribute("prop_bcpg_alType", activityListDataItem.getActivityType().toString());
 			auditScope.putAttribute("prop_bcpg_alData", activityListDataItem.getActivityData());
-			auditScope.putAttribute("prop_cm_created", ISO8601DateFormat.format(new Date()));
-			auditScope.putAttribute("entityNodeRef", entityNodeRef);
+			auditScope.putAttribute("prop_cm_created", ISO8601DateFormat.format(createdDate));
 		}
+	}
+
+	private void deleteAuditActivity(ActivityListDataItem lastActivity) {
+		beCPGAuditService.deleteAuditEntries(AuditType.ACTIVITY, lastActivity.getId(), lastActivity.getId() + 1);
 	}
 
 	// TODO Slow better to have it async
@@ -590,35 +593,32 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		cal.add(Calendar.HOUR, -1);
 
 		NodeRef activityListNodeRef = newActivity.getParentNodeRef();
-		// Activities in the last hour
-		BeCPGQueryBuilder query = BeCPGQueryBuilder
-				.createQuery().parent(activityListNodeRef).ofType(BeCPGModel.TYPE_ACTIVITY_LIST).andBetween(ContentModel.PROP_CREATED,
-						"'" + ISO8601DateFormat.format(cal.getTime()) + "'", "'" + ISO8601DateFormat.format(new Date(Long.MAX_VALUE)) + "'")
-				.addSort(ContentModel.PROP_CREATED, false).inDB();
-
-		List<NodeRef> sortedActivityList = query.list();
-		
-		AuditFilter auditFilter = new AuditFilter();
-		
-		auditFilter.setAscendingOrder(false);
-		
-		auditFilter.setSortBy("startedAt");
 		
 		NodeRef entityNodeRef = nodeService.getPrimaryParent(nodeService.getPrimaryParent(activityListNodeRef).getParentRef()).getParentRef();
 		
-		auditFilter.setFilter("entityNodeRef=" + entityNodeRef);
+		// Activities in the last hour
+		AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt")
+				.timeRange(ISO8601DateFormat.format(cal.getTime()), ISO8601DateFormat.format(new Date()))
+				.filter("entityNodeRef=" + entityNodeRef);
 		
-		List<JSONObject> results = beCPGAuditService.getAuditStatistics(AuditType.ACTIVITY, auditFilter);
+		List<ActivityListDataItem> sortedActivityList = new ArrayList<>();
+		
+		List<JSONObject> results = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery);
 
-		// The last created activity
-		if (sortedActivityList.isEmpty()) {
-			sortedActivityList = BeCPGQueryBuilder.createQuery().parent(activityListNodeRef).ofType(BeCPGModel.TYPE_ACTIVITY_LIST)
-					.addSort(ContentModel.PROP_CREATED, false).maxResults(1).inDB().list();
+		for (JSONObject result : results) {
+			sortedActivityList.add(AuditActivityHelper.parseActivity(result));
 		}
 		
-		for (NodeRef activityListItemNodeRef : sortedActivityList) {
-
-			ActivityListDataItem lastActivity = alfrescoRepository.findOne(activityListItemNodeRef);
+		// The last created activity
+		if (sortedActivityList.isEmpty()) {
+			auditQuery.timeRange(null, null).maxResults(1);
+			results = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery);
+			for (JSONObject result : results) {
+				sortedActivityList.add(AuditActivityHelper.parseActivity(result));
+			}
+		}
+		
+		for (ActivityListDataItem lastActivity : sortedActivityList) {
 
 			JSONObject lastActivityData = null;
 			
@@ -631,9 +631,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								&& lastActivityData.get(PROP_CLASSNAME).equals(newActivityData.get(PROP_CLASSNAME))
 								&& lastActivityData.get(PROP_ACTIVITY_EVENT).equals(newActivityData.get(PROP_ACTIVITY_EVENT))))
 						&& lastActivity.getUserId().equals(newActivity.getUserId()) && lastActivity.getActivityType().equals(newActivity.getActivityType())) {
-					nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-					nodeService.deleteNode(activityListItemNodeRef);
 
+					deleteAuditActivity(lastActivity);
+					
 					if (logger.isDebugEnabled()) {
 						logger.debug("Merge with the last activity " + lastActivity.getActivityType());
 					}
@@ -651,7 +651,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					// Check if the last activity is less than 4 hours old, otherwise do not merge it
 					if (sortedActivityList.size() == 1) {
 						cal.add(Calendar.HOUR, -3);
-						Date createdDate = (Date) nodeService.getProperty(activityListItemNodeRef, ContentModel.PROP_CREATED);
+						Date createdDate = lastActivity.getCreatedDate();
 						
 						if (createdDate != null && createdDate.compareTo(cal.getTime()) < 0) {
 							continue;
@@ -688,12 +688,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					}
 					newActivityData.put(PROP_PROPERTIES, itemProperties);
 					newActivity.setActivityData(newActivityData.toString());
-					alfrescoRepository.save(newActivity);
 					
-					nodeService.addAspect(activityListItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-					nodeService.deleteNode(activityListItemNodeRef);
+					deleteAuditActivity(lastActivity);
 					
-
 				}
 
 			} catch (JSONException e) {
@@ -817,25 +814,14 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	/** {@inheritDoc} */
 	@Override
 	public void mergeActivities(NodeRef fromNodeRef, NodeRef toNodeRef) {
-		try {
-			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 
-			NodeRef toActivityListNodeRef = getActivityList(toNodeRef);
-			if (toActivityListNodeRef != null) {
-				NodeRef activityListNodeRef = getActivityList(fromNodeRef);
-				if (activityListNodeRef != null) {
-
-					for (NodeRef listItem : entityListDAO.getListItems(activityListNodeRef,BeCPGModel.TYPE_ACTIVITY_LIST)) {
-						
-						String activityName = (String) nodeService.getProperty(listItem, ContentModel.PROP_NAME);
-						if (nodeService.getChildByName(toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, activityName) == null) {
-							nodeService.moveNode(listItem, toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
-						}
-					}
-				}
-			}
-		} finally {
-			policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+		AuditQuery auditQuery = AuditQuery.createQuery().filter("entityNodeRef=" + toNodeRef);
+		
+		List<JSONObject> fromActivities = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery);
+		
+		for (JSONObject fromActivity : fromActivities) {
+			ActivityListDataItem activityItem = AuditActivityHelper.parseActivity(fromActivity);
+			recordAuditActivity(fromNodeRef, activityItem);
 		}
 
 	}
@@ -1160,16 +1146,25 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 
 						// Get Activity list ordered by the date of creation
-						List<NodeRef> activityListDataItemNodeRefs = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST,
-								SORT_MAP);
-						Collections.reverse(activityListDataItemNodeRefs);
+//						List<NodeRef> activityListDataItemNodeRefs = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST,
+//								SORT_MAP);
+//						Collections.reverse(activityListDataItemNodeRefs);
+						
+						AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef=" + entityNodeRef);
+						
+						List<ActivityListDataItem> sortedActivityList = new ArrayList<>();
+						
+						List<JSONObject> results = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery);
 
-						int nbrActivity = activityListDataItemNodeRefs.size();
+						for (JSONObject result : results) {
+							sortedActivityList.add(AuditActivityHelper.parseActivity(result));
+						}
+
+						int nbrActivity = sortedActivityList.size();
 						// Keep the first 50 activities
-						activityListDataItemNodeRefs = activityListDataItemNodeRefs.subList(nbrActivity > MAX_PAGE ? MAX_PAGE : 0,
-								nbrActivity > MAX_PAGE ? nbrActivity : 0);
+						sortedActivityList = sortedActivityList.subList(nbrActivity > MAX_PAGE ? MAX_PAGE : 0, nbrActivity > MAX_PAGE ? nbrActivity : 0);
 
-						nbrActivity = activityListDataItemNodeRefs.size();
+						nbrActivity = sortedActivityList.size();
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("nbrActivity: " + nbrActivity);
@@ -1177,31 +1172,28 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 						// Clean activities which are not in the first page.
 						if (nbrActivity > 0) {
-							Map<ActivityType, List<NodeRef>> activitiesByType = new EnumMap<>(ActivityType.class);
-							ActivityListDataItem activity;
+							Map<ActivityType, List<ActivityListDataItem>> activitiesByType = new EnumMap<>(ActivityType.class);
 							int activityInPage = 0;
 							boolean hasFormulation = false;
 							boolean hasReport = false;
 
-							for (NodeRef activityItemNodeRef : activityListDataItemNodeRefs) {
+							for (ActivityListDataItem activity : sortedActivityList) {
 								if (activityInPage == MAX_PAGE) {
 									hasFormulation = false;
 									hasReport = false;
 									activityInPage = 0;
 								}
 
-								Date created = (Date) nodeService.getProperty(activityItemNodeRef, ContentModel.PROP_CREATED);
+								Date created = activity.getCreatedDate();
 								if (cronDate.after(created)) {
 									cronDate = created;
 								}
 
-								activity = alfrescoRepository.findOne(activityItemNodeRef);
 								ActivityType activityType = activity.getActivityType();
 
 								if ((activityType.equals(ActivityType.Formulation) && hasFormulation)
 										|| (activityType.equals(ActivityType.Report) && hasReport)) {
-									nodeService.addAspect(activityItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-									nodeService.deleteNode(activityItemNodeRef);
+									deleteAuditActivity(activity);
 									nbrActivity--;
 								}
 								// Arrange activities by type
@@ -1211,12 +1203,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									}
 									hasFormulation = activityType.equals(ActivityType.Formulation) ? true : hasFormulation;
 									hasReport = activityType.equals(ActivityType.Report) ? true : hasReport;
-									activitiesByType.get(activityType).add(activityItemNodeRef);
+									activitiesByType.get(activityType).add(activity);
 									users.add(activity.getUserId());
 								}
 							}
 
-							List<NodeRef> dlActivities = activitiesByType.get(ActivityType.Datalist);
+							List<ActivityListDataItem> dlActivities = activitiesByType.get(ActivityType.Datalist);
 							if (dlActivities != null) {
 								// Group list by day/week/month/year
 								int[] groupTime = { Calendar.DAY_OF_YEAR, Calendar.WEEK_OF_YEAR, Calendar.MONTH, Calendar.YEAR };
@@ -1247,11 +1239,20 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			NodeRef activityListNodeRef = getActivityList(entityTplNodeRef);
 			if (activityListNodeRef != null) {
-				List<NodeRef> activityListDataItemNodeRefs = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-				for (NodeRef activityItemNodeRef : activityListDataItemNodeRefs) {
-					nodeService.addAspect(activityItemNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-					nodeService.deleteNode(activityItemNodeRef);
+				AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef=" + entityTplNodeRef);
+				
+				List<ActivityListDataItem> sortedActivityList = new ArrayList<>();
+				
+				List<JSONObject> results = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery);
+
+				for (JSONObject result : results) {
+					sortedActivityList.add(AuditActivityHelper.parseActivity(result));
 				}
+				
+				for (ActivityListDataItem activity : sortedActivityList) {
+					deleteAuditActivity(activity);
+				}
+
 			}
 		} finally {
 			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
@@ -1260,7 +1261,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 	// Group activities
-	private List<NodeRef> group(List<NodeRef> activitiesNodeRefs, Set<String> users, int timePeriod, Date cronDate) {
+	private List<ActivityListDataItem> group(List<ActivityListDataItem> activities, Set<String> users, int timePeriod, Date cronDate) {
 		// Ignore the last day/week/month/year
 		Calendar maxLimit = Calendar.getInstance();
 		maxLimit.setTime(new Date());
@@ -1295,15 +1296,14 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 			for (String userId : users) {
 
-				if (activitiesNodeRefs != null) {
+				if (activities != null) {
 					Map<NodeRef, List<String>> activitiesByEntity = new HashMap<>();
-					List<NodeRef> removedNodes = new ArrayList<>();
+					List<ActivityListDataItem> removedNodes = new ArrayList<>();
 
-					for (NodeRef activityNodeRef : activitiesNodeRefs) {
+					for (ActivityListDataItem activity : activities) {
 
-						Date createdDate = (Date) nodeService.getProperty(activityNodeRef, ContentModel.PROP_CREATED);
+						Date createdDate = activity.getCreatedDate();
 
-						ActivityListDataItem activity = alfrescoRepository.findOne(activityNodeRef);
 						NodeRef activityParentNodeRef = activity.getParentNodeRef();
 						String strData = activity.getActivityData();
 						JSONTokener tokener = new JSONTokener(strData);
@@ -1319,10 +1319,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							// group same data-list activity
 							if (activitiesByEntity.containsKey(activityParentNodeRef)
 									&& activitiesByEntity.get(activityParentNodeRef).contains(datalistClassName)) {
-								removedNodes.add(activityNodeRef);
-
-								nodeService.addAspect(activityNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-								nodeService.deleteNode(activityNodeRef);
+								removedNodes.add(activity);
+								
+								deleteAuditActivity(activity);
 							} else {
 
 								if (!activitiesByEntity.containsKey(activityParentNodeRef)) {
@@ -1332,7 +1331,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 						}
 					}
-					activitiesNodeRefs.removeAll(removedNodes);
+					activities.removeAll(removedNodes);
 				}
 			}
 
@@ -1341,7 +1340,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			minLimit.add(timePeriod, -1);
 		}
 
-		return activitiesNodeRefs;
+		return activities;
 	}
 
 	/** {@inheritDoc} */

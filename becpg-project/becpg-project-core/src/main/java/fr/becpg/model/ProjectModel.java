@@ -70,6 +70,8 @@ public interface ProjectModel {
 	QName ASSOC_PROJECT_CUR_TASKS = QName.createQName(PROJECT_URI, "projectCurrentTasks");
 	/** Constant <code>ASSOC_PROJECT_CUR_COMMENTS</code> */
 	QName ASSOC_PROJECT_CUR_COMMENTS = QName.createQName(PROJECT_URI, "projectCurrentComments");
+	
+	QName PROP_PROJECT_CUR_COMMENT = QName.createQName(PROJECT_URI, "projectCurrentComment");
 
 	/** Constant <code>TYPE_TASK_LIST</code> */
 	QName TYPE_TASK_LIST = QName.createQName(PROJECT_URI, "taskList");

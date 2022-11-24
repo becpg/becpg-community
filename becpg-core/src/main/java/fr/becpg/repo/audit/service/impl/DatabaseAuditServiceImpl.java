@@ -12,6 +12,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.alfresco.repo.audit.AuditComponent;
+import org.alfresco.repo.audit.model.AuditApplication;
+import org.alfresco.repo.audit.model.AuditModelRegistry;
+import org.alfresco.repo.domain.audit.AuditDAO;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.rest.api.Audit;
 import org.alfresco.rest.api.model.AuditEntry;
 import org.alfresco.rest.framework.resource.parameters.Paging;
@@ -31,7 +35,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
 import fr.becpg.repo.audit.model.AuditDataType;
-import fr.becpg.repo.audit.model.AuditFilter;
+import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
 
@@ -47,7 +51,13 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	
 	@Autowired
 	private AuditComponent auditComponent;
-
+	
+	@Autowired
+	private AuditDAO auditDAO;
+	
+	@Autowired
+	private AuditModelRegistry auditModelRegistry;
+	
 	@Override
 	public int recordAuditEntry(AuditPlugin auditPlugin, Map<String, Serializable> auditValues, boolean deleteOldEntry) {
 		
@@ -61,14 +71,16 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 
 			if (deleteOldEntry) {
 				
-				Collection<AuditEntry> entries = listAuditEntries(auditPlugin, 10, "id=" + id);
+				AuditQuery auditFilter = AuditQuery.createQuery().filter("id=" + id).maxResults(1);
+				
+				Collection<AuditEntry> entries = internalListAuditEntries(auditPlugin, auditFilter);
 				
 				if (!entries.isEmpty()) {
 					entryToDelete = entries.iterator().next();
 				}
 			}
 			
-			auditComponent.recordAuditValues(BECPG_AUDIT_PATH, recreateAuditMap(auditPlugin, auditValues));
+			auditComponent.recordAuditValues(BECPG_AUDIT_PATH, recreateAuditMap(auditPlugin, auditValues, false));
 			
 			if (entryToDelete != null) {
 				auditComponent.deleteAuditEntries(Arrays.asList(entryToDelete.getId()));
@@ -83,15 +95,17 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	}
 
 	@Override
-	public List<JSONObject> getAuditStatistics(AuditPlugin plugin, AuditFilter auditFilter) {
+	public List<JSONObject> listAuditEntries(AuditPlugin plugin, AuditQuery auditFilter) {
 		
-		Collection<AuditEntry> auditEntries = listAuditEntries(plugin, auditFilter.getMaxResults(), auditFilter.getFilter());
+		Collection<AuditEntry> auditEntries = internalListAuditEntries(plugin, auditFilter);
 		
 		List<JSONObject> statistics = new ArrayList<>();
 		
 		for (AuditEntry auditEntry : auditEntries) {
 			
 			JSONObject statItem = new JSONObject();
+			
+			statItem.put("id", auditEntry.getId());
 			
 			for (String auditKey : plugin.getStatisticsKeyMap().keySet()) {
 				String key = "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + auditKey + "/value";
@@ -113,17 +127,36 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	}
 
 	@Override
-	public void deleteAuditStatistics(AuditPlugin plugin, Long fromId, Long toId) {
+	public void deleteAuditEntries(AuditPlugin plugin, Long fromId, Long toId) {
 		auditComponent.deleteAuditEntriesByIdRange(plugin.getAuditApplicationId(), fromId, toId);
 	}
 
-	private Collection<AuditEntry> listAuditEntries(AuditPlugin plugin, int maxResults, String filter) {
+	@Override
+	public void updateAuditEntry(AuditPlugin plugin, Long id, Long time, Map<String, Serializable> values) {
 		
-		String whereClause = buildWhereClause(plugin, filter);
+		AuditEntry auditEntry = audit.getAuditEntry(plugin.getAuditApplicationId(), id, null);
+		
+        AuditApplication application = auditModelRegistry.getAuditApplicationByKey(plugin.getAuditApplicationId());
+		
+		Long applicationId = application.getApplicationId();
+		
+		deleteAuditEntries(plugin, auditEntry.getId(), auditEntry.getId() + 1);
+		
+		for (Entry<String, Serializable> entry : values.entrySet()) {
+			auditEntry.getValues().put("/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + entry.getKey() + "/value", entry.getValue());
+		}
+		
+		auditDAO.createAuditEntry(applicationId, time, AuthenticationUtil.getFullyAuthenticatedUser(), auditEntry.getValues());
+		
+	}
+
+	private Collection<AuditEntry> internalListAuditEntries(AuditPlugin plugin, AuditQuery auditFilter) {
+		
+		String whereClause = buildWhereClause(plugin, auditFilter);
 		
 		Query query = buildQuery(whereClause);
 		
-		Paging paging = Paging.valueOf(Paging.DEFAULT_SKIP_COUNT, maxResults);
+		Paging paging = Paging.valueOf(Paging.DEFAULT_SKIP_COUNT, auditFilter.getMaxResults());
 		
 		RecognizedParams recognizedParams = new RecognizedParams(null, paging, null, null, Arrays.asList("values"),
 				null, query, null, false);
@@ -133,29 +166,61 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		return audit.listAuditEntries(plugin.getAuditApplicationId(), params).getCollection();
 	}
 
-	private String buildWhereClause(AuditPlugin plugin, String filter) {
+	private String buildWhereClause(AuditPlugin plugin, AuditQuery auditFilter) {
 	
-		if (filter != null) {
+		StringBuilder whereClauseBuilder = new StringBuilder();
+		
+		List<String> statements = new ArrayList<>();
+		
+		if (auditFilter.getFilter() != null) {
 			
-			String[] splitted = filter.split("=");
+			String[] splitted = auditFilter.getFilter().split("=");
 			
 			if (splitted.length < 2) {
-				throw new BeCPGAuditException("statistics filter '" + filter + "' has wrong syntax");
+				throw new BeCPGAuditException("statistics filter '" + auditFilter.getFilter() + "' has wrong syntax");
 			}
 			
 			String valuesKey = splitted[0];
 			String valuesValue = splitted[1];
 			
-			return String.format(getWhereClauseFormat(plugin), valuesKey, valuesValue);
+			statements.add(String.format(getWhereValueStament(plugin), valuesKey, valuesValue));
 			
 		}
 		
-		return null;
+		if (auditFilter.getFromTime() != null && auditFilter.getToTime() != null) {
+			
+			statements.add("createdAt BETWEEN ('" + auditFilter.getFromTime() + "' , '" + auditFilter.getToTime() + "')");
+			
+			if (!whereClauseBuilder.toString().isBlank()) {
+				whereClauseBuilder.append(" and ");
+			}
+			
+		}
+		
+		if (!statements.isEmpty()) {
+			whereClauseBuilder.append("(");
+			
+			boolean isFirst = true;
+			
+			for (String statement : statements) {
+				if (!isFirst) {
+					whereClauseBuilder.append(" and ");
+				}
+				
+				whereClauseBuilder.append(statement);
+				
+				isFirst = false;
+			}
+			
+			whereClauseBuilder.append(")");
+		}
+		
+		return whereClauseBuilder.toString();
 	}
 
 	private Query buildQuery(String whereClause) {
 		
-		if (whereClause != null) {
+		if (whereClause != null && !whereClause.isBlank()) {
 			try {
 				CommonTree whereTree = WhereCompiler.compileWhereClause(whereClause);
 				return new QueryImpl(whereTree);
@@ -167,16 +232,22 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		return null;
 	}
 
-	private String getWhereClauseFormat(AuditPlugin plugin) {
-		return "(valuesKey='" + "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/%s/value' and valuesValue='%s')";
+	private String getWhereValueStament(AuditPlugin plugin) {
+		return "valuesKey='" + "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/%s/value' and valuesValue='%s'";
 	}
 	
-	private Map<String, Serializable> recreateAuditMap(AuditPlugin plugin, Map<String, Serializable> auditValues) {
+	private Map<String, Serializable> recreateAuditMap(AuditPlugin plugin, Map<String, Serializable> auditValues, boolean forDatabase) {
 		
 		Map<String, Serializable> auditMap = new HashMap<>();
 		
 		for (Entry<String, Serializable> entry : auditValues.entrySet()) {
-			auditMap.put(plugin.getAuditApplicationPath() + "/" + entry.getKey(), entry.getValue());
+
+			if (forDatabase) {
+				auditMap.put("/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + entry.getKey() + "/value", entry.getValue());
+			} else {
+				auditMap.put(plugin.getAuditApplicationPath() + "/" + entry.getKey(), entry.getValue());
+			}
+		
 		}
 		
 		return auditMap;

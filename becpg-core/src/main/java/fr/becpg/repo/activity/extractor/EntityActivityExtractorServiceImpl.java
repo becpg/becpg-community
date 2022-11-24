@@ -1,6 +1,10 @@
 package fr.becpg.repo.activity.extractor;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -14,6 +18,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
@@ -26,11 +31,16 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
+import fr.becpg.config.format.PropertyFormatService;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.activity.EntityActivityExtractorService;
 import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.JsonHelper;
+import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.security.SecurityService;
 
 @Service("entityActivityExtractorService")
@@ -46,13 +56,22 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	private NodeService nodeService;
 	
 	@Autowired
-	private EntityDictionaryService entityDictionaryService;
-	
-	@Autowired
 	private AttributeExtractorService attributeExtractorService;
 
 	@Autowired
 	private PermissionService permissionService;
+	
+	@Autowired
+	private PropertyFormatService propertyFormatService;
+
+	@Autowired
+	private NamespaceService namespaceService;
+
+	@Autowired
+	private EntityActivityService entityActivityService;
+
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
 	
 	private static final String ACTIVITYEVENT_UPDATE = "Update";
 	
@@ -62,6 +81,62 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 	
 	public static void registerIgnoredType(QName type) {
 		isIgnoredTypes.add(type);
+	}
+	
+	@Override
+	public Object extractAuditActivityData(JSONObject auditActivityData, List<AttributeExtractorStructure> metadataFields) {
+
+		Map<String, Object> ret = new HashMap<>(metadataFields.size());
+
+		for (AttributeExtractorStructure metadataField : metadataFields) {
+			ClassAttributeDefinition attributeDef = getFieldDef(BeCPGModel.TYPE_ACTIVITY_LIST, metadataField);
+
+			if (auditActivityData.has(metadataField.getFieldName())) {
+				Object value = auditActivityData.get(metadataField.getFieldName());
+				
+				HashMap<String, Object> tmp = new HashMap<>();
+				
+				if (attributeDef instanceof PropertyDefinition) {
+					
+					if (DataTypeDefinition.DATETIME.equals(((PropertyDefinition) attributeDef).getDataType().getName())) {
+						
+						Date date = ISO8601DateFormat.parse(value.toString());
+						String displayName = attributeExtractorService.getStringValue((PropertyDefinition) attributeDef, date, propertyFormatService.getPropertyFormats(FormatMode.JSON, false));
+						tmp.put("displayValue", displayName);
+						value = date;
+						
+					} else {
+						String displayName = attributeExtractorService.getStringValue((PropertyDefinition) attributeDef, value.toString(), propertyFormatService.getPropertyFormats(FormatMode.JSON, false));
+						tmp.put("displayValue", displayName);
+					}
+					
+					QName type = ((PropertyDefinition) attributeDef).getDataType().getName().getPrefixedQName(namespaceService);
+					
+					String metadata = entityDictionaryService.toPrefixString(type).split(":")[1];
+					
+					tmp.put("metadata", metadata);
+					tmp.put("value", JsonHelper.formatValue(value));
+					
+					ret.put(metadataField.getFieldName(), tmp);
+					
+				}
+			}
+		}
+		
+		ret.put("prop_bcpg_alUserId", extractPerson((String) auditActivityData.get("prop_bcpg_alUserId")));
+
+		JSONObject postLookup = entityActivityService.postActivityLookUp(ActivityType.valueOf((String) auditActivityData.get("prop_bcpg_alType")), (String) auditActivityData.get("prop_bcpg_alData"));
+		
+		if (postLookup != null) {
+			try {
+				formatPostLookup(postLookup);
+			} catch (JSONException e) {
+				logger.error(e, e);
+			}
+			ret.put("prop_bcpg_alData", postLookup);
+		}
+
+		return ret;
 	}
 	
 	@Override
@@ -183,6 +258,21 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 			postLookup.put(EntityActivityService.PROP_PROPERTIES, postActivityProperties);
 
 		}
+	}
+
+	private Map<String, String> extractPerson(String person) {
+		Map<String, String> ret = new HashMap<>(2);
+		ret.put("value", person);
+		ret.put("displayValue", attributeExtractorService.getPersonDisplayName(person));
+		return ret;
+	}
+
+	private ClassAttributeDefinition getFieldDef(QName itemType, AttributeExtractorStructure field) {
+
+		if (!field.getItemType().equals(itemType)) {
+			return entityDictionaryService.findMatchingPropDef(field.getItemType(), itemType, field.getFieldQname());
+		}
+		return field.getFieldDef();
 	}
 	
 	private boolean areStringsDifferent(Object object, Object object2) {
