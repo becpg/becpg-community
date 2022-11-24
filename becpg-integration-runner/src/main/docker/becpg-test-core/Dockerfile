@@ -22,7 +22,7 @@ ENV JAVA_HOME=/usr/java/default
 ENV PATH $JAVA_HOME/bin:$PATH
 
 #Jacoco Agent
-RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.6/org.jacoco.agent-0.8.6-runtime.jar -o /root/jacoco-runtime.jar
+RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.8/org.jacoco.agent-0.8.8-runtime.jar -o /root/jacoco-runtime.jar
 
 
 #Debuging 
