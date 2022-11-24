@@ -80,7 +80,7 @@ public class SurveyServiceImpl implements SurveyService {
 
 			SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository.findOne(survey.getQuestion());
 
-			appendQuestionDefinition(definitions, surveyQuestion, questions);
+			appendQuestionDefinition(definitions, surveyQuestion, questions, survey.getSort());
 			if ((survey.getComment() != null) || !survey.getChoices().isEmpty()) {
 				value.put("qid", survey.getQuestion().getId());
 				if (survey.getComment() != null) {
@@ -176,14 +176,14 @@ public class SurveyServiceImpl implements SurveyService {
 		return new ArrayList<>();
 	}
 
-	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions) throws JSONException {
+	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions, Integer sort) throws JSONException {
 
 		if (!questions.contains(surveyQuestion)) {
 
 			JSONObject definition = new JSONObject();
 
 			definition.put("id", surveyQuestion.getNodeRef().getId());
-			definition.put("sort", surveyQuestion.getSort());
+			definition.put("sort", sort);
 			definition.put("label", surveyQuestion.getLabel());
 			definition.put("start", questions.isEmpty() || Boolean.TRUE.equals(surveyQuestion.getIsVisible()));
 
@@ -239,7 +239,7 @@ public class SurveyServiceImpl implements SurveyService {
 					
 					if (surveyQuestion.getNextQuestion() != null) {
 						choice.put("cid", surveyQuestion.getNextQuestion().getNodeRef().getId());
-						appendQuestionDefinition(definitions, surveyQuestion.getNextQuestion(), questions);
+						appendQuestionDefinition(definitions, surveyQuestion.getNextQuestion(), questions, sort + 1);
 					}
 
 					choices.put(choice);
@@ -254,7 +254,7 @@ public class SurveyServiceImpl implements SurveyService {
 						choice.put("label", defChoice.getLabel());
 						if (defChoice.getNextQuestion() != null) {
 							choice.put("cid", defChoice.getNextQuestion().getNodeRef().getId());
-							appendQuestionDefinition(definitions, defChoice.getNextQuestion(), questions);
+							appendQuestionDefinition(definitions, defChoice.getNextQuestion(), questions, sort + 1);
 						}
 						if (CommentType.text.toString().equals(defChoice.getResponseCommentType())
 								|| CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
@@ -283,7 +283,7 @@ public class SurveyServiceImpl implements SurveyService {
 
 				if (surveyQuestion.getNextQuestion() != null) {
 					choice.put("cid", surveyQuestion.getNextQuestion().getNodeRef().getId());
-					appendQuestionDefinition(definitions, surveyQuestion.getNextQuestion(), questions);
+					appendQuestionDefinition(definitions, surveyQuestion.getNextQuestion(), questions, sort + 1);
 				}
 
 				choices.put(choice);

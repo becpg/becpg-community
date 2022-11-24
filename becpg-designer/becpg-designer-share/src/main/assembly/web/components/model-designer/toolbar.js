@@ -114,10 +114,10 @@
 		               Dom.setStyle(this.id + "-body", "visibility", "visible");
 	               },
 	               onPublish : function DesignerToolbar_onPublish(e, p_obj) {
-		               var templateUrl = Alfresco.constants.PROXY_URI + "becpg/designer/model/publish?nodeRef="
-		                     + this.tree.modelNodeRef;
-		               
 		               var publishName = this.tree.root.children[0].label;
+
+		               var templateUrl = Alfresco.constants.URL_SERVICECONTEXT + "modules/designer/publish?nodeRef="
+		                     + this.tree.modelNodeRef + "&writeXml=true" + "&fileName=" + publishName;
 		               
 		               var popup = Alfresco.util.PopupManager.displayMessage({
 	                        text : this.msg("message.publishing", publishName),
@@ -126,7 +126,7 @@
 	                     });
 		               
 		               Alfresco.util.Ajax.request({
-		                  method : Alfresco.util.Ajax.POST,
+		                  method : Alfresco.util.Ajax.GET,
 		                  url : templateUrl,
 		                  successCallback : {
 		                     fn : function() {
@@ -167,10 +167,11 @@
 			                  buttons : [ {
 			                     text : me.msg("button.unpublish"),
 			                     handler : function DesignerToolbar_onUnPublish_Confirmed() {
-			                    	 var templateUrl = Alfresco.constants.PROXY_URI + "becpg/designer/model/unpublish?nodeRef="
-				                     + me.tree.modelNodeRef;
-			                    	 
 			  		               var publishName = me.tree.root.children[0].label;
+
+					               var templateUrl = Alfresco.constants.URL_SERVICECONTEXT + "modules/designer/unpublish?nodeRef="
+					                     + me.tree.modelNodeRef + "&fileName=" + publishName;
+			                    	 
 					               
 					               var popup = Alfresco.util.PopupManager.displayMessage({
 				                        text : me.msg("message.unpublishing", publishName),
@@ -179,7 +180,7 @@
 				                     });
 			                    	 
 						               Alfresco.util.Ajax.request({
-						                  method : Alfresco.util.Ajax.POST,
+						                  method : Alfresco.util.Ajax.GET,
 						                  url : templateUrl,
 						                  successCallback : {
 							                     fn : function() {

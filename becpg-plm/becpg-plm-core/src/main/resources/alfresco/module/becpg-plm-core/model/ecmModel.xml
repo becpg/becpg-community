@@ -65,17 +65,29 @@
 					<type>d:text</type>
 					<multiple>false</multiple>
 					<default>ToCalculateWUsed</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 					<constraints>
 						<constraint ref="ecm:ecoStates" />
 					</constraints>
 				</property>
 				<property name="ecm:effectiveDate">
-					<type>d:date</type>					
+					<type>d:date</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>			
 				</property>
 				<property name="ecm:ecoType">
 					<type>d:text</type>
 					<multiple>false</multiple>
 					<default>Replacement</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 					<constraints>
 						<constraint ref="ecm:ecoTypes" />
 					</constraints>
@@ -161,6 +173,10 @@
 				<property name="ecm:isWUsedImpacted">
 					<type>d:boolean</type>
 					<default>false</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>	
 				<property name="ecm:wulEffectiveDate">
 					<type>d:date</type>
@@ -232,6 +248,10 @@
 				<property name="ecm:culRevision">
 					<type>d:text</type>
 					<multiple>false</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 					<constraints>
 						<constraint ref="ecm:revisionTypes" />
 					</constraints>
@@ -239,9 +259,13 @@
 				<property name="ecm:culReqType">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>		
 					<constraints>
 						<constraint ref="bcpg:reqTypes" />
-					</constraints>					
+					</constraints>			
 				</property>				
 				<property name="ecm:culReqDetails">
 					<type>d:text</type>				
@@ -254,6 +278,10 @@
 				<property name="ecm:culTreated">
 					<type>d:boolean</type>
 					<default>false</default>		
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					 </index>
 				</property>	
 			</properties>		
 			<associations>
@@ -279,29 +307,7 @@
 						<many>false</many>
 					</target>
 				</association>
-				<!-- Deprecated -->
-				<association name="ecm:culSourceItems">
-					<source>
-						<mandatory>true</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:entityV2</class>
-						<mandatory>false</mandatory>
-						<many>true</many>
-					</target>
-				</association>
-				<association name="ecm:culSimulationItem">
-					<source>
-						<mandatory>true</mandatory>
-						<many>true</many>
-					</source>
-					<target>
-						<class>bcpg:entityV2</class>
-						<mandatory>false</mandatory>
-						<many>false</many>
-					</target>
-				</association>
+			
 				
 			</associations>	
 		</type>

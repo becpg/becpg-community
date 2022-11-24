@@ -173,9 +173,7 @@
        <showAdditionalDownloadLinks>true</showAdditionalDownloadLinks>	
    </config>
 
-  <config evaluator="string-compare" condition="SAML">
-	  <enable>false</enable>
-   </config>
+	
 
 	<config>
 		<forms>
@@ -233,7 +231,12 @@
 		   <list id="activityList" index="900" />
 		   <list id="WUsed" index="1000" view="true"/>
 		</lists>
+		<dependencies>
+		<!-- <css src="/modules/my-module/my-custom-css.css" />
+			 <js src="/modules/my-module/my-custom-js.js" /> -->
+		</dependencies>
 	</config>
+
 	
 	
 	<config evaluator="string-compare" condition="DocumentLibrary">
@@ -427,8 +430,6 @@
 		<actionGroupResolver>becpg.resolver.doclib.actionGroup</actionGroupResolver>
 		<actionGroups>
 			<actionGroup id="entity-browse">
-				<!-- <action index="10" id="entity-view-datalists" />
-				<action index="100" id="entity-view-documents" /> -->
 				<action index="101" id="document-edit-properties" icon="folder-edit-properties" label="actions.folder.edit-metadata" />
 				<action index="110" id="folder-download" />
 				<action index="114" id="entity-view-original" />
@@ -444,27 +445,17 @@
 				<action index="200" id="entity-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
 				<action index="210" id="document-manage-aspects" label="actions.folder.manage-aspects" />
 				<action index="220" id="document-view-in-source-repository" label="actions.folder.view-source-repository" />
-				<action index="360" id="document-cloud-sync" />
-				<action index="370" id="document-cloud-unsync" />
-				<action index="380" id="document-view-in-cloud" />
-				<action index="390" id="document-request-sync" />
+			
 			</actionGroup>
 			<actionGroup id="entity-details">
-				<!-- <action index="100" id="entity-view-documents" /> -->
 				<action index="101" id="document-edit-metadata" icon="folder-edit-metadata" label="actions.folder.edit-metadata" >
 		            <param name="page">edit-metadata?nodeRef={node.nodeRef}&amp;siteId={site}</param>
 		        </action>
-				<!-- <action index="102" id="entity-checkin" />
-				<action index="103" id="entity-checkout" />
-				<action index="104" id="entity-cancel-editing" /> -->
-				
 				<action index="103" id="entity-branch" />
 				<action index="104" id="entity-merge" />
 				<action index="105" id="entity-view-original" />
 				<action index="106" id="entity-view-working-copy" />
-				<!-- <action index="108" id="entity-refresh-reports" /> -->
-				
-				<action index="114" id="document-approve" icon="document-approve" />
+				<action index="115" id="document-approve" icon="document-approve" />
 				<action index="120" id="document-reject" icon="document-reject" />
 				<action index="130" id="document-copy-to" icon="folder-copy-to" label="actions.folder.copy-to" />
 				<action index="131" id="datalist-copy-to" icon="folder-copy-to" label="actions.datalist.copy-to" />
@@ -475,13 +466,8 @@
 				<action index="160" id="document-delete" icon="folder-delete" label="actions.entity.delete" />
 				<action index="170" id="entity-manage-site-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
 				<action index="180" id="entity-manage-repo-permissions" icon="folder-manage-permissions" label="actions.folder.manage-permissions" />
-				<!-- <action index="190" id="document-manage-aspects" label="actions.folder.manage-aspects" /> -->
 				<action index="220" id="document-view-in-source-repository" label="actions.folder.view-source-repository" />
 				<action index="270" id="document-assign-workflow" />
-				<action index="360" id="document-cloud-sync" />
-				<action index="370" id="document-cloud-unsync" />
-				<action index="380" id="document-view-in-cloud" />
-				<action index="390" id="document-request-sync" />
 				<action index="510" id="entity-show-associated-process" />
 				
 			</actionGroup>

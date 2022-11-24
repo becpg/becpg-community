@@ -26,10 +26,18 @@
 				<property name="smp:slUnitWeight">
 					<title>Unit weight (kg)</title>
 					<type>d:double</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 				<property name="smp:slTotalWeight">
 					<title>Total weight (kg)</title>
 					<type>d:double</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>false</facetable>
+				    </index>
 				</property>
 			</properties>
 			<associations>

@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>3.2.5</version>
+	<version>4.2.0</version>
 	<name>beCPG</name>
-
+	
 	<description>BeCPG Parent Project</description>
 	<organization>
 		<name>BeCPG</name>
@@ -99,60 +100,74 @@
 	</developers>
 
 	<properties>
-
-		<!-- Alfresco Maven Plugin version to use -->
-		<alfresco.sdk.version>4.1.0</alfresco.sdk.version>
+	
+	 <!-- Alfresco Maven Plugin version to use -->
+		<alfresco.sdk.version>4.4.0</alfresco.sdk.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-		<!-- Properties used in dependency declarations, you don't need to change these -->
-		<alfresco.groupId>org.alfresco</alfresco.groupId>
-		<alfresco.bomDependencyArtifactId>alfresco-platform</alfresco.bomDependencyArtifactId>
+        <!-- Properties used in dependency declarations, you don't need to change these -->
+        <alfresco.groupId>org.alfresco</alfresco.groupId>
+        <alfresco.bomDependencyArtifactId>acs-community-packaging</alfresco.bomDependencyArtifactId>
+        
+        
+         <!-- Alfresco 7.2 -->
+		<alfresco.platform.version>7.2.0</alfresco.platform.version>
+		<alfresco.share.docker.version>7.2.0</alfresco.share.docker.version>
+		
+		<!--  Old 7.0.0 -->
+        <alfresco.share.version>14.96</alfresco.share.version>
+        
+        <!-- Old 8.423 -->
+        <alfresco-repository.version>14.145</alfresco-repository.version>
+		<alfresco-remote-api.version>14.145</alfresco-remote-api.version>
+		<alfresco-data-model.version>14.145</alfresco-data-model.version>
+		<alfresco-core.version>14.145</alfresco-core.version>
+	    <spring-webscripts.version>8.28</spring-webscripts.version>
+	
 
-		<!-- Alfresco 6 -->
-		<alfresco.platform.version>6.2.0-ga</alfresco.platform.version>
-		<alfresco.share.version>6.2.0</alfresco.share.version>
-		<alfresco-repository.version>7.134.1</alfresco-repository.version>
-		<alfresco-remote-api.version>7.107.1</alfresco-remote-api.version>
-		<alfresco-data-model.version>8.50.2</alfresco-data-model.version>
-		<alfresco-core.version>7.22</alfresco-core.version>
 
-
-		<spring-webscripts.version>7.9</spring-webscripts.version>
-
-		<alfresco.aos.version>1.3.1</alfresco.aos.version>
-		<!--  <mysql.connector.version>8.0.23</mysql.connector.version> Not yet supported for java11-->
-		<mysql.connector.version>5.1.48</mysql.connector.version>
-		<alfresco.bomDependencyArtifactId>acs-community-packaging</alfresco.bomDependencyArtifactId>
-
-
-		<!-- Docker images
+		<alfresco.aos.version>1.4.1</alfresco.aos.version>
+		<mysql.connector.version>8.0.28</mysql.connector.version>
+        
+    
+        <!-- Docker images -->
         <docker.acs.image>alfresco/alfresco-content-repository-community</docker.acs.image>
         <docker.share.image>alfresco/alfresco-share</docker.share.image>
- 		-->
+        
+          <keystore.settings>-Dencryption.keystore.type=JCEKS
+            -Dencryption.cipherAlgorithm=AES/CBC/PKCS5Padding
+            -Dencryption.keyAlgorithm=AES
+            -Dencryption.keystore.location=/usr/local/tomcat/shared/classes/alfresco/extension/keystore/keystore
+            -Dmetadata-keystore.password=mp6yc0UD9e
+            -Dmetadata-keystore.aliases=metadata
+            -Dmetadata-keystore.metadata.password=oKIWzVdEdA
+            -Dmetadata-keystore.metadata.algorithm=AES</keystore.settings>
+ 		
 
-		<!-- Environment configuration properties -->
+        <!-- Environment configuration properties -->
 		<share.port>8180</share.port>
 		<share.debug.port>9898</share.debug.port>
 		<acs.host>becpg</acs.host>
 		<acs.port>8080</acs.port>
 		<acs.debug.port>8888</acs.debug.port>
-		<!-- This parameter is only required for those cases in which ACS is not exposed in http://localhost:8080/alfresco (i.e. Windows Docker) -->
+        <!-- This parameter is only required for those cases in which ACS is not exposed in http://localhost:8080/alfresco (i.e. Windows Docker) -->
 		<test.acs.endpoint.path />
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
 		<docker.becpg.url>becpg</docker.becpg.url>
-		<docker.becpg.tag>3.2.5</docker.becpg.tag>
+		<docker.becpg.tag>4.2.0</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
 		<sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths>
 		<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-
 	    <sonar.dependencyCheck.xmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.xml</sonar.dependencyCheck.xmlReportPath>
 		<sonar.dependencyCheck.jsonReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
 		<sonar.dependencyCheck.htmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.html</sonar.dependencyCheck.htmlReportPath>
-
+	    <sonar.dependencyCheck.severity.blocker>9.0</sonar.dependencyCheck.severity.blocker>
+        <sonar.dependencyCheck.severity.critical>7.0</sonar.dependencyCheck.severity.critical>
+        <sonar.dependencyCheck.severity.major>4.0</sonar.dependencyCheck.severity.major>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.ws.timeout>3600</sonar.ws.timeout>
 		<sonar.language>java</sonar.language>
@@ -160,8 +175,8 @@
 	</properties>
 	<dependencyManagement>
 		<dependencies>
-
-			<!-- This will import the dependencyManagement for all artifacts in the selected Alfresco platform.
+			
+            <!-- This will import the dependencyManagement for all artifacts in the selected Alfresco platform.
                  NOTE: You still need to define dependencies in your POM, but you can omit version as
                        it's enforced by this dependencyManagement.
                  NOTE: It defaults to the latest version this SDK pom has been tested with,
@@ -181,9 +196,9 @@
 				<version>${alfresco-remote-api.version}</version>
 				<scope>provided</scope>
 			</dependency>
-
-
-			<!-- Redefine the following Share dependencies as they have different version numbers than platform.
+           
+            
+            <!-- Redefine the following Share dependencies as they have different version numbers than platform.
                  They are defined in alfresco-platform-distribution... -->
 			<dependency>
 				<groupId>${alfresco.groupId}</groupId>
@@ -246,15 +261,14 @@
 						</dependency>
 					</dependencies>
 				</plugin>
-				<!-- Filter resources in any sub-project with this config -->
+                <!-- Filter resources in any sub-project with this config -->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>3.1.0</version>
 					<configuration>
 						<encoding>UTF-8</encoding>
-						<nonFilteredFileExtensions>
-							<!-- jpg, jpeg, gif, bmp and png are added automatically -->
+						<nonFilteredFileExtensions> <!-- jpg, jpeg, gif, bmp and png are added automatically -->
 							<nonFilteredFileExtension>ftl</nonFilteredFileExtension>
 							<nonFilteredFileExtension>acp</nonFilteredFileExtension>
 							<nonFilteredFileExtension>svg</nonFilteredFileExtension>
@@ -331,13 +345,13 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
-			<!-- Filter the test resource files in the AIO parent project, and do property substitutions.
+            <!-- Filter the test resource files in the AIO parent project, and do property substitutions.
                  We need this config so this is done before the Alfresco Maven Plugin 'run' is executed. -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
 				<inherited>false</inherited>
-				<!-- Run only for the AIO parent Project -->
+                <!-- Run only for the AIO parent Project -->
 				<executions>
 					<execution>
 						<id>copy-and-filter-docker-resources</id>
@@ -358,13 +372,13 @@
 				</executions>
 			</plugin>
 
-			<!-- Compress JavaScript files and store as *-min.js -->
+            <!-- Compress JavaScript files and store as *-min.js -->
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>yuicompressor-maven-plugin</artifactId>
 				<version>1.5.1</version>
 				<executions>
-					<!-- Compress the JS files under the assembly folder -->
+                    <!-- Compress the JS files under the assembly folder -->
 					<execution>
 						<id>compress-assembly</id>
 						<goals>
@@ -376,6 +390,9 @@
 							<excludes>
 								<exclude>**/templates/**</exclude>
 								<exclude>**/webscripts/**</exclude>
+								<exclude>**/supplier/**</exclude>
+								<exclude>**/artworks-viewer/**</exclude>
+								<exclude>**/signature/**</exclude>
 								<exclude>**/rules/**</exclude>
 								<exclude>**/script/**</exclude>
 								<exclude>**/site-webscripts/**</exclude>
@@ -389,7 +406,7 @@
 							<jswarn>false</jswarn>
 						</configuration>
 					</execution>
-					<!-- Compress the JS files under the resources folder -->
+                    <!-- Compress the JS files under the resources folder -->
 					<execution>
 						<id>compress-resources</id>
 						<goals>
@@ -400,6 +417,9 @@
 								<exclude>**/templates/**</exclude>
 								<exclude>**/webscripts/**</exclude>
 								<exclude>**/rules/**</exclude>
+								<exclude>**/supplier/**</exclude>
+								<exclude>**/artworks-viewer/**</exclude>
+								<exclude>**/signature/**</exclude>
 								<exclude>**/script/**</exclude>
 								<exclude>**/site-webscripts/**</exclude>
 								<exclude>**/*.lib.js</exclude>
@@ -446,7 +466,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.2.0</version>
-				<configuration></configuration>
+				<configuration>
+				</configuration>
 			</plugin>
 
 			<plugin>
@@ -469,6 +490,7 @@
 					<skipTestScope>true</skipTestScope>
 					<archiveAnalyzerEnabled>false</archiveAnalyzerEnabled>
 					<failOnError>false</failOnError>
+					<formats>HTML,JSON,XML</formats>
 				</configuration>
 			</plugin>
 
@@ -478,8 +500,6 @@
 				<artifactId>sonar-maven-plugin</artifactId>
 				<version>3.9.1.2184</version>
 			</plugin>
-
-
 		</plugins>
 	</build>
 
@@ -534,7 +554,6 @@
 
 	<dependencies>
 
-
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -543,7 +562,7 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
-			<version>1.9.5</version> <!--$NO-MVN-MAN-VER$-->
+			<version>1.9.5</version><!--$NO-MVN-MAN-VER$-->
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -552,7 +571,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- The main Alfresco Repo dependency for compiling Java code in src/main/java -->
+        <!-- The main Alfresco Repo dependency for compiling Java code in src/main/java -->
 		<dependency>
 			<groupId>${alfresco.groupId}</groupId>
 			<artifactId>alfresco-remote-api</artifactId>
@@ -565,13 +584,14 @@
 			</exclusions>
 		</dependency>
 
-		<!-- Bring in Alfresco RAD so we get access to AlfrescoTestRunner classes -->
+        <!-- Bring in Alfresco RAD so we get access to AlfrescoTestRunner classes -->
 		<dependency>
 			<groupId>org.alfresco.maven</groupId>
 			<artifactId>alfresco-rad</artifactId>
 			<version>${alfresco.sdk.version}</version>
 			<scope>test</scope>
 		</dependency>
+		
 
 
 		<dependency>
@@ -587,10 +607,6 @@
 					<groupId>javax.xml.bind</groupId>
 					<artifactId>jaxb-api</artifactId>
 				</exclusion>
-				<!-- <exclusion>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-				</exclusion> -->
 				<exclusion>
 					<groupId>javax.xml.ws</groupId>
 					<artifactId>jaxws-api</artifactId>
@@ -607,6 +623,7 @@
 		</dependency>
 
 	</dependencies>
+
 
 
 </project>

@@ -25,7 +25,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
@@ -41,7 +43,12 @@ import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.quickshare.QuickShareDTO;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
+import org.alfresco.service.cmr.repository.ContentIOException;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -78,6 +85,8 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
+import fr.becpg.repo.license.BeCPGLicenseManager;
+import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -135,10 +144,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private TenantAdminService tenantAdminService;
 
+	private ContentService contentService;
+
 	private VersionService versionService;
-	
+
 	private EntityReportService entityReportService;
-	
+
+	private BeCPGLicenseManager beCPGLicenseManager;
+
+	private BeCPGMailService beCPGMailService;
+
 	private Repository repositoryHelper;
 	
 	private FormulationService<FormulatedEntity> formulationService;
@@ -169,16 +184,20 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		this.repositoryHelper = repositoryHelper;
 	}
 
-	public void setVersionService(VersionService versionService) {
-		this.versionService = versionService;
-	}
-	
-	public void setEntityReportService(EntityReportService entityReportService) {
-		this.entityReportService = entityReportService;
+	public void setBeCPGLicenseManager(BeCPGLicenseManager beCPGLicenseManager) {
+		this.beCPGLicenseManager = beCPGLicenseManager;
 	}
 	
 	public void setEntityFormatService(EntityFormatService entityFormatService) {
 		this.entityFormatService = entityFormatService;
+	}
+	
+	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
+		this.beCPGMailService = beCPGMailService;
+	}
+
+	public void setVersionService(VersionService versionService) {
+		this.versionService = versionService;
 	}
 
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
@@ -267,8 +286,15 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 *
 	 * @param sourceNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 */
-	public void shareContent(ScriptNode sourceNode) {
-		quickShareService.shareContent(sourceNode.getNodeRef());
+	public String shareContent(ScriptNode sourceNode) {
+
+		QuickShareDTO quickShareDTO = quickShareService.shareContent(sourceNode.getNodeRef());
+
+		if (quickShareDTO != null) {
+			return quickShareDTO.getId();
+		}
+
+		return null;
 	}
 
 	/**
@@ -426,6 +452,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public void setSiteService(SiteService siteService) {
 		this.siteService = siteService;
+	}
+
+	public void setContentService(ContentService contentService) {
+		this.contentService = contentService;
+	}
+
+	public void setEntityReportService(EntityReportService entityReportService) {
+		this.entityReportService = entityReportService;
 	}
 
 	/**
@@ -883,8 +917,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param param a {@link java.lang.Object} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String getMessage(String messageKey, Object param) {
-		return I18NUtil.getMessage(messageKey, param, I18NUtil.getLocale());
+	public String getMessage(String messageKey, Object... param) {
+		return I18NUtil.getMessage(messageKey, param);
 	}
 
 	/**
@@ -965,6 +999,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public String getAvailableName(ScriptNode folder, String name) {
 		return repoService.getAvailableName(folder.getNodeRef(), name, false);
+	}
+
+	public String getAvailableName(ScriptNode folder, String name, boolean keepExtension) {
+		return repoService.getAvailableName(folder.getNodeRef(), name, false, keepExtension);
 	}
 
 	/**
@@ -1275,9 +1313,34 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	}
 
-	
-	
-	
+	public void copyContent(ScriptNode from, ScriptNode to) throws ContentIOException {
+
+		ContentReader reader = contentService.getReader(from.getNodeRef(), ContentModel.PROP_CONTENT);
+		ContentWriter writer = contentService.getWriter(to.getNodeRef(), ContentModel.PROP_CONTENT, true);
+
+		writer.putContent(reader);
+	}
+
+	public ScriptNode getReportNode(ScriptNode sourceNode) {
+
+		NodeRef sourceNodeRef = sourceNode.getNodeRef();
+
+		return new ScriptNode(entityReportService.getOrRefreshReport(sourceNodeRef, null), serviceRegistry, getScope());
+	}
+
+	public ScriptNode getReportNodeOfKind(ScriptNode sourceNode, String reportKind) {
+
+		NodeRef sourceNodeRef = sourceNode.getNodeRef();
+
+		NodeRef reportNodeRef = entityReportService.getOrRefreshReportOfKind(sourceNodeRef, reportKind);
+
+		if (reportNodeRef != null) {
+			return new ScriptNode(reportNodeRef, serviceRegistry, getScope());
+		}
+
+		return null;
+	}
+
 	/**
 	 * <p>count.</p>
 	 * @param type
@@ -1294,13 +1357,35 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			return count(type);
 		}
 	}
-	
+
+	public boolean isLicenseValid() {
+		return beCPGLicenseManager.isLicenseValid();
+	}
+
+	public String getTranslatedPath(String name) {
+
+		String ret = TranslateHelper.getTranslatedPath(name);
+		if (ret == null || ret.isBlank()) {
+			return name;
+		}
+		return ret;
+
+	}
+
+	@SuppressWarnings("unchecked")
+	public void sendMail(List<ScriptNode> recipientNodeRefs, String subject, String mailTemplate, Map<String, Object> templateArgs,
+			boolean sendToSelf) {
+		beCPGMailService.sendMail(recipientNodeRefs.stream().map(r -> r.getNodeRef()).collect(Collectors.toList()), subject, mailTemplate,
+				(Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs), sendToSelf);
+	}
+
 	public void generateVersionReport(ScriptNode node, String versionLabel) {
-		
+
 		NodeRef entityNodeRef = node.getNodeRef();
-		
-		NodeRef versionNode = VersionUtil.convertNodeRef(versionService.getVersionHistory(entityNodeRef).getVersion(versionLabel).getFrozenStateNodeRef());
-		
+
+		NodeRef versionNode = VersionUtil
+				.convertNodeRef(versionService.getVersionHistory(entityNodeRef).getVersion(versionLabel).getFrozenStateNodeRef());
+
 		if (entityVersionService.isVersion(versionNode) && (nodeService.getProperty(versionNode, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
 			NodeRef extractedNode = entityVersionService.extractVersion(versionNode);
 			entityReportService.generateReports(extractedNode, versionNode);

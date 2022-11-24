@@ -83,6 +83,8 @@ public interface EntityReportService {
 	 */
 	NodeRef getOrRefreshReport(NodeRef entityNodeRef, NodeRef documentNodeRef);
 	
+	NodeRef getOrRefreshReportOfKind(NodeRef entityNodeRef, String reportType);
+	
 	/**
 	 * <p>getXmlReportDataSource.</p>
 	 *
@@ -117,6 +119,8 @@ public interface EntityReportService {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	NodeRef getSelectedReport(NodeRef entityNodeRef);
+	
+	NodeRef getReportOfKind(NodeRef entityNodeRef, String reportType);
 
 	/**
 	 * <p>getSelectedReportName.</p>

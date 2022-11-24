@@ -6,7 +6,7 @@
 				"sort": ${(deliverable.properties["bcpg:sort"]!0)?c},
 				"nodeRef": "${deliverable.nodeRef}",
 				"state": "${deliverable.properties["pjt:dlState"]!""}",
-				"url": "${deliverable.properties["pjt:dlUrl"]!""}",
+				"url": "${urlMap[deliverable.nodeRef.toString()]!""}",
 		   		"completionPercent": "${deliverable.properties["pjt:completionPercent"]!""}",
 		   		"commentCount":"${deliverable.properties["fm:commentCount"]!""}",
 		   		"contents": [

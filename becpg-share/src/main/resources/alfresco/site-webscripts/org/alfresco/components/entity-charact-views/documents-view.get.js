@@ -19,7 +19,6 @@ function widgets()
 		 entityMode: true, 
          repositoryBrowsing: false,
          useTitle: false,
-         syncMode: model.syncMode != null ? model.syncMode : "",
          createContentByTemplateEnabled: model.createContentByTemplateEnabled,
          createContentActions: model.createContent
       }
@@ -28,8 +27,7 @@ function widgets()
    var documentList = {
       id : "DocumentList", 
       name : "beCPG.custom.DocumentList",
-      options : {
-         syncMode : model.syncMode != null ? model.syncMode : "",        
+      options : {      
          disableSiteMode : true,		
  		 entityMode: true, 
          siteId : (page.url.templateArgs.site != null) ? page.url.templateArgs.site : "",

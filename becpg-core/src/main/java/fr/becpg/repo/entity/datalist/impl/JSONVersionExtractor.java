@@ -336,7 +336,7 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 			return tmp;
 		}
 		
-		value = properties.getString(attribute.getName().toPrefixString(namespaceService));
+		value = properties.get(attribute.getName().toPrefixString(namespaceService)).toString();
 		
 		Serializable seri = (Serializable) value;
 
@@ -566,7 +566,7 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 						propertiesMap.put(qname, properties.get(name).toString());
 					} else if (name.startsWith(BCPG_PREFIX)) {
 						QName qname = QName.createQName(BeCPGModel.BECPG_URI, name.split(BCPG_PREFIX)[1]);
-						propertiesMap.put(qname,  properties.get(name).toString());
+						propertiesMap.put(qname, properties.get(name).toString());
 					}
 				}
 				
@@ -715,17 +715,17 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 		
 		@Override
 		public int compare(JSONObject a, JSONObject b) {
-			String sortA = "";
-			String sortB = "";
+			Integer sortA = 0;
+			Integer sortB = 0;
 
 			try {
 				if (a.getJSONObject(ATTRIBUTES).has(sortString)) {
-					sortA = a.getJSONObject(ATTRIBUTES).getString(sortString);
+					sortA = (Integer) a.getJSONObject(ATTRIBUTES).get(sortString);
 				} else {
 					return -order;
 				}
 				if (b.getJSONObject(ATTRIBUTES).has(sortString)) {
-					sortB = b.getJSONObject(ATTRIBUTES).getString(sortString);
+					sortB = (Integer) b.getJSONObject(ATTRIBUTES).get(sortString);
 				} else {
 					return order;
 				}
@@ -734,10 +734,7 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 			}
 			
 			try {
-				Double doubleA = Double.parseDouble(sortA);
-				Double doubleB = Double.parseDouble(sortB);
-				
-				return order * doubleA.compareTo(doubleB);
+				return order * sortA.compareTo(sortB);
 			} catch (NumberFormatException e) {
 				// do nothing : let the String comparator do the work
 			}

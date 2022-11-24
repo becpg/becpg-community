@@ -241,7 +241,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 			Map<String, Object> ret = new HashMap<>(20);
 
-			ret.put(PROP_NODE, nodeRef);
+			ret.put(PROP_NODE, nodeRef.toString());
 
 			if (properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL) != null && !((String)properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL)).isBlank()) {
 				ret.put(PROP_VERSION, properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL));

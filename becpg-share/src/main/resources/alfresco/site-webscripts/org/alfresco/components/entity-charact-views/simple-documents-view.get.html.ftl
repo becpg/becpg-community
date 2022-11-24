@@ -12,14 +12,12 @@
          hideNavBar: false,
          repositoryBrowsing: false,
          useTitle: false,
-         syncMode: "OFF",
          createContentByTemplateEnabled: false,
          createContentActions: [{"icon": "folder", "index": 5.0, "permission": "", "id": "folder", "label": "create-content.folder", "type": "javascript", "params": {"function": "onNewFolder"}}]
        }).setMessages(${messages});
    
    var simpleDocLib =  new beCPG.custom.DocumentList("${el}",true).setOptions(
-			   {
-         syncMode :  "",        
+			   {   
          disableSiteMode : true,		 
          siteId :  "",
          containerId :  "documentLibrary",

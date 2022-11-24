@@ -54,9 +54,6 @@
 
                      this.widgets.reloadModelButton = Alfresco.util.createYUIButton(this, "reload-model-button",
                            this.onReloadModelClick);
-                     this.widgets.reloadConfigButton = Alfresco.util.createYUIButton(this, "reload-config-button",
-                           this.onReloadConfigClick);
-                 
                   },
 
                   /**
@@ -126,48 +123,6 @@
                      this.widgets.reloadModelButton.set("disabled", false);
                   },
 
-                  /**
-                     * Reload config click event handler
-                     * 
-                     * @method onReloadConfigClick
-                     * @param e
-                     *            {object} DomEvent
-                     * @param args
-                     *            {array} Event parameters (depends on event
-                     *            type)
-                     */
-                  onReloadConfigClick : function DesignerAdminConsole_onReloadConfigClick(e, args) {
-                     // Disable the button temporarily
-                     this.widgets.reloadConfigButton.set("disabled", true);
-
-                     Alfresco.util.Ajax.request({
-                        url : Alfresco.constants.URL_SERVICECONTEXT + "components/console/config/reload",
-                        method : Alfresco.util.Ajax.GET,
-                        responseContentType : Alfresco.util.Ajax.JSON,
-                        successCallback : {
-                           fn : this.onReloadConfigSuccess,
-                           scope : this
-                        },
-                        failureCallback : {
-                           fn : this.onReloadConfigFailure,
-                           scope : this
-                        }
-                     });
-                  },
-
-                  /**
-                     * Reload config success handler
-                     * 
-                     * @method onReloadConfigSuccess
-                     * @param response
-                     *            {object} Server response
-                     */
-                  onReloadConfigSuccess : function DesignerAdminConsole_onReloadConfigSuccess(response) {
-                     Alfresco.util.PopupManager.displayMessage({
-                        text : this.msg("message.reload-config.success")
-                     });
-                     this.widgets.reloadConfigButton.set("disabled", false);
-                  }
                });
 
 })();

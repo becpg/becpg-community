@@ -1,28 +1,12 @@
 package fr.becpg.repo.web.scripts.supplier;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
-import org.alfresco.repo.tenant.TenantAdminService;
-import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.AuthorityType;
-import org.alfresco.service.cmr.security.MutableAuthenticationService;
-import org.alfresco.service.cmr.security.PermissionService;
-import org.alfresco.service.cmr.security.PersonService;
-import org.alfresco.service.namespace.QName;
-import org.alfresco.service.transaction.TransactionService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -32,40 +16,33 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.mail.BeCPGMailService;
+import fr.becpg.repo.supplier.SupplierPortalService;
 
 /**
  * <p>SupplierAccountWebScript class.</p>
  *
- * @author rabah
+ * @author rabah, matthieu
  * @version $Id: $Id
  */
 public class SupplierAccountWebScript extends AbstractWebScript {
-
-	private static final Log logger = LogFactory.getLog(SupplierAccountWebScript.class);
 
 	private static final String PARAM_ENTITY_NODEREF = "nodeRef";
 	private static final String PARAM_EMAIL_ADDRESS = "emailAddress";
 	private static final String PARAM_NOTIFY_SUPPLIER = "notifySupplier";
 	private static final String SUPPLIER_PREFIX = "supplier";
+	private static final String PARAM_FIRST_NAME = "firstName";
+	private static final String PARAM_LAST_NAME = "lastName";
 
 	NodeService nodeService;
 
-	PersonService personService;
-
-	AuthorityService authorityService;
-
-	TransactionService transactionService;
-
-	BeCPGMailService mailService;
-
-	MutableAuthenticationService authenticationService;
-
 	AssociationService associationService;
 
-	TenantAdminService tenantAdminService;
+	SupplierPortalService supplierPortalService;
+	
+	public void setSupplierPortalService(SupplierPortalService supplierPortalService) {
+		this.supplierPortalService = supplierPortalService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -77,61 +54,12 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 	}
 
 	/**
-	 * <p>Setter for the field <code>personService</code>.</p>
-	 *
-	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object.
-	 */
-	public void setPersonService(PersonService personService) {
-		this.personService = personService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>authorityService</code>.</p>
-	 *
-	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
-	 */
-	public void setAuthorityService(AuthorityService authorityService) {
-		this.authorityService = authorityService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>transactionService</code>.</p>
-	 *
-	 * @param transactionService a {@link org.alfresco.service.transaction.TransactionService} object.
-	 */
-	public void setTransactionService(TransactionService transactionService) {
-		this.transactionService = transactionService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>mailService</code>.</p>
-	 *
-	 * @param mailService a {@link fr.becpg.repo.mail.BeCPGMailService} object.
-	 */
-	public void setMailService(BeCPGMailService mailService) {
-		this.mailService = mailService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>authenticationService</code>.</p>
-	 *
-	 * @param authenticationService a {@link org.alfresco.service.cmr.security.MutableAuthenticationService} object.
-	 */
-	public void setAuthenticationService(MutableAuthenticationService authenticationService) {
-		this.authenticationService = authenticationService;
-	}
-
-	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
 	 *
 	 * @param associationService a {@link fr.becpg.repo.helper.AssociationService} object.
 	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
-	}
-
-	public void setTenantAdminService(TenantAdminService tenantAdminService) {
-		this.tenantAdminService = tenantAdminService;
 	}
 
 	/** {@inheritDoc} */
@@ -142,81 +70,36 @@ public class SupplierAccountWebScript extends AbstractWebScript {
 		Boolean notifySupplier = Boolean.parseBoolean(req.getParameter(PARAM_NOTIFY_SUPPLIER));
 		String supplierEmail = req.getParameter(PARAM_EMAIL_ADDRESS);
 
-		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
-		final boolean isAdmin  = authorityService.hasAdminAuthority();
+		String supplierFirstName = req.getParameter(PARAM_FIRST_NAME);
+		String supplierLastName = req.getParameter(PARAM_LAST_NAME);
 
-		AuthenticationUtil.runAsSystem(() -> {
+		if (supplierFirstName == null || supplierFirstName.isEmpty()) {
+			supplierFirstName = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+		}
 
-			if ( isAdmin || authorityService.getAuthoritiesForUser(currentUser)
-					.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUserMgr.toString())) {
+		if (supplierLastName == null || supplierLastName.isEmpty()) {
+			supplierLastName = SUPPLIER_PREFIX + "-" + (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
+		}
 
-				return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		try {
+			
+			NodeRef personNodeRef = supplierPortalService.createExternalUser(supplierEmail, supplierFirstName, supplierLastName, notifySupplier, null);
 
-					String userName = SUPPLIER_PREFIX + "-" + (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CODE);
-					if (!TenantService.DEFAULT_DOMAIN.equals(tenantAdminService.getCurrentUserDomain())) {
-						userName += "@" + tenantAdminService.getCurrentUserDomain();
-					}
+			final List<NodeRef> associations = new ArrayList<>();
+			associations.addAll(associationService.getTargetAssocs(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS));
 
-					String password = UUID.randomUUID().toString();
+			associations.add(personNodeRef);
+			associationService.update(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, associations);
 
-					final List<NodeRef> associations = new ArrayList<>();
-					associations.addAll(associationService.getTargetAssocs(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS));
+			JSONObject ret = new JSONObject();
+			ret.put("login", supplierEmail);
+			res.setContentType("application/json");
+			res.setContentEncoding("UTF-8");
+			ret.write(res.getWriter());
 
-					if (!personService.personExists(userName)) {
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Create external user: " + userName + " pwd: " + password);
-						}
-
-						authenticationService.createAuthentication(userName, password.toCharArray());
-
-						Map<QName, Serializable> propMap = new HashMap<>();
-						propMap.put(ContentModel.PROP_USERNAME, userName);
-						propMap.put(ContentModel.PROP_LASTNAME,  userName + "_" + supplierEmail);
-						propMap.put(ContentModel.PROP_FIRSTNAME, nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-						propMap.put(ContentModel.PROP_EMAIL, supplierEmail);
-						NodeRef userRef = personService.createPerson(propMap);
-						authorityService.addAuthority(authorityService.getName(AuthorityType.GROUP, SystemGroup.ExternalUser.toString()), userName);
-
-						associations.add(userRef);
-
-						mailService.sendMailNewUser(personService.getPersonOrNull(currentUser), userName, password, true);
-
-						// notify supplier
-						if (Boolean.TRUE.equals(notifySupplier)) {
-							mailService.sendMailNewUser(userRef, userName, password, false);
-						}
-
-					} else {
-
-						if (logger.isDebugEnabled()) {
-							logger.debug("Reassign to an existing user");
-						}
-
-						associations.add(personService.getPerson(userName));
-
-					}
-					AuthenticationUtil.runAs(() -> {
-						associationService.update(nodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, associations);
-						return true;
-					}, currentUser);
-
-					try {
-						JSONObject ret = new JSONObject();
-						ret.put("login", userName);
-						res.setContentType("application/json");
-						res.setContentEncoding("UTF-8");
-						ret.write(res.getWriter());
-					} catch (JSONException e) {
-						throw new WebScriptException("Unable to serialize JSON", e);
-					}
-
-					return null;
-				}, true, false);
-			} else {
-				throw new IllegalAccessError("You should be member of ExternalUserMgr");
-			}
-		});
+		} catch (JSONException e) {
+			throw new WebScriptException("Unable to serialize JSON", e);
+		}
 
 	}
 

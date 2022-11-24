@@ -24,7 +24,10 @@ import java.util.Collection;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +45,11 @@ import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 @Service
 public class ListValueHeritedNameExtractorPlugin extends AbstractExprNameExtractor {
 
+	@Autowired
+	@Qualifier("mlAwareNodeService")
+	private NodeService mlNodeService;
+
+	
 
 	/** {@inheritDoc} */
 	@Override

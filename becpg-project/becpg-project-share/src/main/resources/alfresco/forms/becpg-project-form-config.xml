@@ -415,6 +415,7 @@
 					</field>
 				</appearance>
 			</form>
+			
 			<form id="associate-process">
 				<field-visibility>
 					<show id="bcpg:entityTplRef" force="true" />

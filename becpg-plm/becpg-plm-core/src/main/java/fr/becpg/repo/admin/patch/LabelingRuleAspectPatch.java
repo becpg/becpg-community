@@ -86,6 +86,11 @@ public class LabelingRuleAspectPatch extends AbstractBeCPGPatch {
 				return result.size();
 			}
 
+			@Override
+			public long getTotalEstimatedWorkSizeLong() {
+				return getTotalEstimatedWorkSize();
+			}
+			
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
 					Long typeQNameId = val.getFirst();

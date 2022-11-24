@@ -141,7 +141,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RD_PATH = "beCPG/birt/document/product/default/ProductReport_RD.rptdesign";
 	private static final String PRODUCT_REPORT_RD_NAME = "path.productreportrdtemplate";
 	private static final String PRODUCT_REPORT_TECHNICAL_SHEET_NAME = "path.productreporttechnicalsheettemplate";
-
+	
+	private static final String PRODUCT_REPORT_SUPPLIER_PATH = "beCPG/birt/document/product/default/SupplierReport.rptdesign";
+	private static final String PRODUCT_REPORT_SUPPLIER_NAME = "path.productreportsuppliertemplate";
+	
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String QUALITY_CONTROL_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlReport.rptdesign";
 	private static final String QUALITY_CONTROL_AGING_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlAgingReport.rptdesign";
@@ -168,9 +171,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	static {
 		reportKindCodes.put(PRODUCT_REPORT_CLIENT_PATH, "CustomerSheet");
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
+		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_PATH, "SupplierSheet");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
-
+	
 	private static final String EXPORT_LABELLING_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLabelling.xlsx";
 	private static final String EXPORT_CITEO_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCiteo.xlsx";
 	private static final String EXPORT_ALLERGENS_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportAllergens.xlsx";
@@ -353,6 +357,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_WORKFLOW_SCRIPTS);
 
 		addClassifyRule(companyHome);
+		
+		// signature scripts
+		NodeRef scriptsFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, "./app:dictionary/app:scripts");
+		contentHelper.addFilesResources(scriptsFolderNodeRef, "classpath*:beCPG/signature/*.js");
 
 		// Create default sites
 		return visitSites();
@@ -948,12 +956,14 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
 		dataLists.add(PLMModel.TYPE_CERTIFICATION);
 		dataLists.add(PLMModel.TYPE_PLANT);
+		subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		NodeRef entityTplNodeRef = entityTplService.createEntityTpl(entityTplsNodeRef, PLMModel.TYPE_SUPPLIER, null, true, true, dataLists,
 				subFolders);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_PROPERTIES);
 		entityTplService.createView(entityTplNodeRef, BeCPGModel.TYPE_ENTITYLIST_ITEM, RepoConsts.VIEW_DOCUMENTS);
 		entityTplService.createActivityList(entityTplNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
 
+		subFolders.remove(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 		// visit client
 		dataLists = new LinkedHashSet<>();
 		dataLists.add(PLMModel.TYPE_CONTACTLIST);
@@ -1001,7 +1011,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_CUSTOMSCODES, PLMModel.TYPE_CUSTOMSCODE);
 		entityLists.put(PlmRepoConsts.PATH_CERTIFICATIONS, PLMModel.TYPE_CERTIFICATION);
 		entityLists.put(PlmRepoConsts.PATH_LABELCLAIMS, PLMModel.TYPE_LABEL_CLAIM);
-		entityLists.put(PlmRepoConsts.PATH_NUTRIENTPROFILES, PLMModel.TYPE_NUTRIENT_PROFILE);
 		entityLists.put(PlmRepoConsts.PATH_PROCESSSTEPS, MPMModel.TYPE_PROCESSSTEP);
 		entityLists.put(PlmRepoConsts.PATH_RESOURCEPARAMS, MPMModel.TYPE_RESOURCEPARAM);
 		entityLists.put(PlmRepoConsts.PATH_STORAGE_CONDITIONS, PLMModel.TYPE_STORAGE_CONDITIONS);
@@ -1155,7 +1164,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 
 		for (QName productType : productTypes) {
-
+			
+			subFolders.remove(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
+			
 			// datalists
 			Set<QName> dataLists = new LinkedHashSet<>();
 			QName wusedQName = null;
@@ -1171,6 +1182,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
+				
+				subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 
 			} else if (productType.equals(PLMModel.TYPE_PACKAGINGMATERIAL)) {
 
@@ -1179,8 +1192,11 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 				dataLists.add(PackModel.TYPE_LABELING_LIST);
+				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
+				
+				subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 
 			} else if (productType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
 
@@ -1202,6 +1218,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
 
@@ -1222,6 +1239,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
 
@@ -1230,6 +1248,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
 
@@ -1364,26 +1383,27 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			// product report templates
 			NodeRef productReportTplsNodeRef = visitFolder(reportsNodeRef, PlmRepoConsts.PATH_PRODUCT_REPORTTEMPLATES);
 			String productReportClientName = I18NUtil.getMessage(PRODUCT_REPORT_CLIENT_NAME, Locale.getDefault());
-			String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
+			String productReportTechnicalName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
 			String productReportProductionName = I18NUtil.getMessage(PRODUCT_REPORT_PRODUCTION_NAME, Locale.getDefault());
 			String productReportPackagingName = I18NUtil.getMessage(PRODUCT_REPORT_TECHNICAL_SHEET_NAME, Locale.getDefault());
 			String productReportCostName = I18NUtil.getMessage(PRODUCT_REPORT_COST_NAME, Locale.getDefault());
 			String productReportRDName = I18NUtil.getMessage(PRODUCT_REPORT_RD_NAME, Locale.getDefault());
 			String qualityControlAgingName = I18NUtil.getMessage(QUALITY_CONTROL_AGING_NAME, Locale.getDefault());
+			String productReportSupplierName = I18NUtil.getMessage(PRODUCT_REPORT_SUPPLIER_NAME, Locale.getDefault());
 
 			List<NodeRef> commonResources = new ArrayList<>();
 
 			List<String> supportedLocale = Arrays.asList("fr", "en", "es", "en_US", "it", "nl", "sv_SE", "fi", "ru", "pt");
 
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
-					PLMModel.TYPE_PACKAGINGMATERIAL };
+					PLMModel.TYPE_PACKAGINGMATERIAL, PLMModel.TYPE_SUPPLIER };
 			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH,
-					PRODUCT_REPORT_PACKAGING_PATH };
-			String[] defaultReportName = { productReportClientName, productReportSupplierName, productReportProductionName,
-					productReportPackagingName };
+					PRODUCT_REPORT_PACKAGING_PATH, PRODUCT_REPORT_SUPPLIER_PATH };
+			String[] defaultReportName = { productReportClientName, productReportTechnicalName, productReportProductionName,
+					productReportPackagingName, productReportSupplierName };
 
-			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH }, null, null, null };
-			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName }, null, null, null };
+			String[][] otherReport = { { PRODUCT_REPORT_PRODUCTION_PATH, PRODUCT_REPORT_COST_PATH, PRODUCT_REPORT_RD_PATH }, null, null, null, null };
+			String[][] otherReportName = { { productReportProductionName, productReportCostName, productReportRDName }, null, null, null, null };
 
 			String[] productReportResource = { PRODUCT_REPORT_DE_RESOURCE, PRODUCT_REPORT_EN_US_RESOURCE, PRODUCT_REPORT_EN_RESOURCE,
 					PRODUCT_REPORT_ES_RESOURCE, PRODUCT_REPORT_FI_RESOURCE, PRODUCT_REPORT_FR_RESOURCE, PRODUCT_REPORT_IT_RESOURCE,
@@ -1409,7 +1429,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				MLText mltValue = new MLText();
 				mltValue.put(Locale.FRENCH, I18NUtil.getMessage("becpg.reportkind." + reportKindCode.toLowerCase() + ".value", Locale.FRENCH));
 				mltValue.put(Locale.ENGLISH, I18NUtil.getMessage("becpg.reportkind." + reportKindCode.toLowerCase() + ".value", Locale.ENGLISH));
-
+				
 				// for aspect on report template
 				Map<QName, Serializable> reportKindTplProps = new HashMap<>();
 				reportKindTplProps.put(ReportModel.PROP_REPORT_KINDS, reportKindCode);
@@ -1422,7 +1442,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				reportKindListProps.put(BeCPGModel.PROP_LV_VALUE, mltValue);
 				reportKindDefaultValues.put(reportKind, reportKindListProps);
 			}
-
+			
 			visitReportKindList(reportKindDefaultValues);
 
 			List<NodeRef> resources = new ArrayList<>();

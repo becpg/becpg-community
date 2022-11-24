@@ -17,8 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.designer.impl;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -52,13 +50,13 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.xml.sax.SAXException;
 
 import fr.becpg.repo.designer.DesignerInitService;
@@ -105,11 +103,6 @@ public class DesignerServiceImpl implements DesignerService {
 	private BehaviourFilter policyBehaviourFilter;
 
 	private DictionaryDAO dictionaryDAO;
-
-	/**
-	 * Path where config files are stored when published
-	 */
-	private String configPath;
 
 	// Controls cache
 	private List<FormControl> controls = new ArrayList<>();
@@ -177,18 +170,6 @@ public class DesignerServiceImpl implements DesignerService {
 	 */
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
-	}
-
-	/**
-	 * <p>
-	 * Setter for the field <code>configPath</code>.
-	 * </p>
-	 *
-	 * @param configPath
-	 *            a {@link java.lang.String} object.
-	 */
-	public void setConfigPath(String configPath) {
-		this.configPath = configPath;
 	}
 
 	/**
@@ -354,29 +335,9 @@ public class DesignerServiceImpl implements DesignerService {
 			logger.debug("Publish model");
 			nodeService.setProperty(nodeRef, ContentModel.PROP_MODEL_ACTIVE, true);
 		} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
-			logger.debug("Publish forms");
 			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-			File configDir = new File(configPath);
-			if (!configDir.exists()) {
-				configDir.mkdirs();
-			}
-			String path = configPath + System.getProperty("file.separator") + name;
-			logger.debug("Publish config under " + path);
-			ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-			try {
-				if (reader != null) {
-					File file = new File(path);
-	
-					if (file.exists() || file.createNewFile()) {
-						try (OutputStream out = new FileOutputStream(file)) {
-							IOUtils.copy(reader.getContentInputStream(), out);
-						}
-					}
-				}
-
-			} catch (IOException e) {
-				logger.error(e, e);
-			}
+			nodeService.setProperty(nodeRef, DesignerModel.PROP_PUBLISHED_CONFIG_NAME, name);
+			nodeService.setProperty(nodeRef, ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("designer.published"));
 		}
 	}
 
@@ -782,11 +743,8 @@ public class DesignerServiceImpl implements DesignerService {
 			}
 			dictionaryDAO.reset();
 		} else if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG)) {
-			logger.debug("Publish forms");
-			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-			unpublish(name);
+			nodeService.setProperty(nodeRef, ContentModel.PROP_DESCRIPTION, I18NUtil.getMessage("designer.not-published"));
 		}
-
 	}
 
 	/** {@inheritDoc} */
@@ -809,31 +767,8 @@ public class DesignerServiceImpl implements DesignerService {
 			nodeService.addAspect(configNodeRef, ContentModel.ASPECT_TEMPORARY, new HashMap<>());
 		}
 
-		if (nodeService.hasAspect(nodeRef, DesignerModel.ASPECT_CONFIG) && (nodeRef != null)) {
-			publish(nodeRef);
-		}
-
 		policyBehaviourFilter.enableBehaviour(DesignerModel.ASPECT_CONFIG);
 		policyBehaviourFilter.enableBehaviour(DesignerModel.ASPECT_MODEL);
-
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void unpublish(String fileName) {
-		File configDir = new File(configPath);
-		if (!configDir.exists()) {
-			configDir.mkdirs();
-		}
-		String path = configPath + System.getProperty("file.separator") + fileName;
-
-		File file = new File(path);
-		logger.debug("Deleting file at path " + path + ", exists ? " + file.exists());
-		if (file.exists()) {
-			if(!file.delete()) {
-				logger.error("Cannot delete file: "+file.getName());
-			}
-		}
 
 	}
 

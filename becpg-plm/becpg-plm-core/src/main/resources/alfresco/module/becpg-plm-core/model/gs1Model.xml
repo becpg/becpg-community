@@ -437,6 +437,10 @@
 				<property name="gs1:targetMarketCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 			</properties>
 			<associations>
@@ -463,6 +467,10 @@
 				<property name="gs1:dutyFeeTaxCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
 				</property>
 				<property name="gs1:dutyFeeTaxRate">
 					<type>d:double</type>
@@ -752,22 +760,42 @@
 				<property name="gs1:maximumTemperature">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:minimumTemperature">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:maximumToleranceTemperature">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:minimumToleranceTemperature">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:temperatureMeasurementUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 					<constraints>
 						<constraint ref="gs1:temperatureMeasurementUnits" />
 					</constraints>
@@ -780,23 +808,43 @@
 				<property name="gs1:productHierarchy1">
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:productHierarchy2">
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:productHierarchy3">
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:productHierarchy4">
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 				<property name="gs1:productHierarchy5">
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
 					<multiple>true</multiple>
+                                        <index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 				</property>
 
 			</properties>
@@ -916,27 +964,24 @@
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:width">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:depth">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:diameter">
@@ -951,90 +996,80 @@
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:secondaryHeight">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:secondaryWidth">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:secondaryDepth">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:secondaryWeight">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:tertiaryWidth">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:tertiaryDepth">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:tertiaryWeight">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:secondaryNetWeight">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:tertiaryNetWeight">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 
@@ -1042,9 +1077,8 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="gs1:packagingTypeCodeConstraint" />
@@ -1057,9 +1091,8 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="gs1:packagingTypeCodeConstraint" />
@@ -1070,9 +1103,8 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="gs1:palletTypeCodeConstraint" />
@@ -1083,9 +1115,8 @@
 				<property name="gs1:isTradeItemPackedIrregularly">
 					<type>d:boolean</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 
@@ -1093,7 +1124,10 @@
 				<property name="gs1:platformTermsAndConditionsCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
-					<index enabled="false" />
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 					<constraints>
 						<constraint ref="gs1:platformTermsAndConditionsCodes" />
 					</constraints>
@@ -1122,9 +1156,8 @@
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				
@@ -1147,43 +1180,38 @@
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:isPriceOnPack">
 					<type>d:boolean</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:hasBatchNumber">
 					<type>d:boolean</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:packUnitNumber">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:sortingInstructions">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="gs1:sortingBonusCriteria">
@@ -1191,9 +1219,8 @@
 					<mandatory>false</mandatory>
 					<multiple>true</multiple>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="gs1:sortingBonusCriteriaConstraint" />
@@ -1204,9 +1231,8 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="gs1:packagingTermsAndConditionsCodes" />
@@ -1221,22 +1247,24 @@
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="gs1:descriptionShort">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="gs1:tradeItemUnitDescriptorCode">
 					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
 					<constraints>
 						<constraint ref="gs1:tradeItemUnitDescriptorCodes" />
 					</constraints>
@@ -1246,9 +1274,8 @@
 					<mandatory>false</mandatory>
 					<multiple>true</multiple>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="gs1:tradeItemTradeChannelConstraint" />
@@ -1293,9 +1320,8 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="gs1:sellingUnitOfMeasureConstraint" />
@@ -1305,45 +1331,40 @@
 					<type>d:int</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:tradeItemMarketingMessage">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="gs1:tradeItemFeatureBenefit">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="gs1:tradeItemKeyWords">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 				<property name="gs1:dataCarrierTypeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="gs1:dataCarrierTypeCodes" />
@@ -1354,18 +1375,16 @@
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:freeQuantityOfProductUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="bcpg:productUnit" />
@@ -1375,9 +1394,8 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 					<constraints>
 						<constraint ref="gs1:promotionTypeCodes" />
@@ -1387,9 +1405,8 @@
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>both</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 
@@ -1397,54 +1414,48 @@
 					<type>d:int</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:tradeItemCompositionWidth">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:orderQuantityMinimum">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:orderQuantityMultiple">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:numberOfServingsPerPackage">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:freeQuantityOfProductPercent">
 					<type>d:float</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 
@@ -1452,27 +1463,24 @@
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:startAvailabilityDateTime">
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:endAvailabilityDateTime">
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 
@@ -1481,36 +1489,32 @@
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:firstShipDateTime">
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:lastShipDateTime">
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:cancelledDateTime">
 					<type>d:date</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 
@@ -1518,36 +1522,32 @@
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:isTradeItemABaseUnit">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:isTradeItemAConsumerUnit">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:isTradeItemADespatchUnit">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:isTradeItemAnInvoiceUnit">
@@ -1555,18 +1555,16 @@
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:isTradeItemAnOrderableUnit">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 
@@ -1574,53 +1572,47 @@
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:isTradeItemAService">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:isTradeItemAModel">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:isTradeItemADivisibleItem">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:isTradeItemAPromotionalItem">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:isTradeItemAVariableUnit">
 					<type>d:boolean</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:eanCodePrice">
@@ -1662,17 +1654,15 @@
 				<property name="gs1:isTradeItemReorderable">
 					<type>d:boolean</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 				<property name="gs1:hasDisplayReadyPackaging">
 					<type>d:boolean</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
 					</index>
 				</property>
 
@@ -1729,63 +1719,14 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
 					</index>
 				</property>
 			</properties>
 		</aspect>
 
 
-
-		
-		
-		  
-        <!-- Deprecated to remove in 4.0-->
-		<aspect name="gs1:datesAspect">
-			<properties>
-				<!-- Deprecated to remove in 4.0-->
-				<property name="gs1:lastChangeDateTime">
-					<type>d:date</type>
-					<mandatory>false</mandatory>
-					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
-				</property>
-			</properties>
-		</aspect>
-
-		 <!-- Deprecated to Remove in 4.0-->
-		<aspect name="gs1:indicatorsAspect">
-			<properties>
-				<!-- Deprecated to remove in 4.0 -->
-				<property name="gs1:isTradeItemAPromotionalUnit">
-					<type>d:text</type>
-					<mandatory>false</mandatory>
-				</property>
-				<property name="gs1:minimumTradeItemLifespanFromTimeOfArrival">
-					<type>d:float</type>
-					<mandatory>false</mandatory>
-				</property>
-
-				<property name="gs1:isTradeItemABulkItem">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-				</property>
-				<property name="gs1:isTradeItemAReturnableItem">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-
-				</property>
-				<property name="gs1:isTradeItemACutToOrderItem">
-					<type>d:boolean</type>
-					<mandatory>false</mandatory>
-				</property>
-			</properties>
-		</aspect>
 
 	</aspects>
 </model>

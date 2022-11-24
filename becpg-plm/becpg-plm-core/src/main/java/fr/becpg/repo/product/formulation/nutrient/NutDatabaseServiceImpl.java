@@ -32,8 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
-import com.sun.star.uno.RuntimeException;
-
+import fr.becpg.common.BeCPGException;
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -114,7 +113,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 			int nameColumn = extractNameColumnIndex(headerRow);
 
-			String preparedQuery = BeCPGQueryHelper.prepareQuery(dictionaryService, query).replace("*", "");
+			String preparedQuery = BeCPGQueryHelper.prepareQuery(query).replace("*", "");
 
 			matches.addAll(getColumn(dataBaseFile, nameColumn).stream().filter(res -> nameMatches(query, res.toString())).limit(100)
 					.collect(Collectors.toList()));
@@ -125,8 +124,8 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 					return o1.getValue().compareTo(o2.getValue());
 				}
 
-				String value = BeCPGQueryHelper.prepareQuery(dictionaryService, o1.getValue()).replace("*", "").replace(preparedQuery, "A");
-				String value2 = BeCPGQueryHelper.prepareQuery(dictionaryService, o2.getValue()).replace("*", "").replace(preparedQuery, "A");
+				String value = BeCPGQueryHelper.prepareQueryForSorting(o1.getValue()).replace("*", "").replace(preparedQuery, "A");
+				String value2 = BeCPGQueryHelper.prepareQueryForSorting(o2.getValue()).replace("*", "").replace(preparedQuery, "A");
 
 				return value.compareTo(value2);
 
@@ -211,7 +210,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 							nut.setDepthLevel(1);
 							ret.add(nut);
 						} catch (ParseException e) {
-							throw new RuntimeException("unable to parse value " + values[i], e);
+							throw new BeCPGException("unable to parse value " + values[i], e);
 						}
 					}
 				}
@@ -409,7 +408,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			}
 			return new String[0];
 		} catch (IOException e) {
-			throw new RuntimeException("Error reading line", e);
+			throw new BeCPGException("Error reading line", e);
 		}
 	}
 
@@ -431,7 +430,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			}
 			return res;
 		} catch (IOException e) {
-			throw new RuntimeException("Error reading product name", e);
+			throw new BeCPGException("Error reading product name", e);
 		}
 	}
 
@@ -469,7 +468,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			return res;
 
 		} catch (IOException e) {
-			throw new RuntimeException("Error reading spreadsheet headers", e);
+			throw new BeCPGException("Error reading spreadsheet headers", e);
 		}
 	}
 
@@ -511,7 +510,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 	}
 
 	private boolean nameMatches(String query, String name) {
-		return BeCPGQueryHelper.isQueryMatch(query, name, dictionaryService);
+		return BeCPGQueryHelper.isQueryMatch(query, name);
 	}
 
 	private boolean isInDictionary(String str) {

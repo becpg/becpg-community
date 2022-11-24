@@ -79,8 +79,18 @@
 						this.modules.entityCompare.hide();
 						var reportSelect = YAHOO.util.Dom.get(this.id + "-entityCompare-reportTemplate");
 						var fileName = reportSelect.options[reportSelect.selectedIndex].getAttribute("fileName");
-						window.location.href = actionUrl + fileName + "?entities=" + YAHOO.util.Dom.get(this.id + "-entityCompare-entities-added").value
-							+ "&tplNodeRef=" + reportSelect.value;
+						
+						var entityList = YAHOO.util.Dom.get(this.id + "-entityCompare-entities-added").value;
+						var versionList = YAHOO.util.Dom.get(this.id + "-entityCompare-versions-added").value;
+						var commonList = "";
+						
+						if (entityList != "" && versionList != "") {
+							commonList = entityList + "," + versionList;
+						} else {
+							commonList = entityList + versionList;
+						}
+						
+						window.location.href = actionUrl + fileName + "?entities=" + commonList + "&tplNodeRef=" + reportSelect.value;
 					},
 					scope: this
 				}
@@ -120,7 +130,7 @@
 						if (response.json) {
 							this.modules.sendToSupplier.hide();
 							window.location.href = beCPG.util.entityURL(recordSiteName,
-								response.json.persistedObject, p_record.node.type);
+								response.json.persistedObject, "pjt:project");
 						}
 					},
 					scope: this

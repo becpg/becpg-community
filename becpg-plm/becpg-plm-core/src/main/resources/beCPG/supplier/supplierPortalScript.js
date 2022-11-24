@@ -1,16 +1,12 @@
-function main()
-{
-    var  projectEntity = null;
+function main() {
+    var projectEntity = null;
 
-    var projectNode = search.findNode(project.nodeRef);
+    if (project.entities != null && project.entities.size() > 0) {
+        projectEntity = search.findNode(project.entities.get(0));
 
-    if (projectNode.assocs["pjt:projectEntity"] != null && projectNode.assocs["pjt:projectEntity"].length > 0)
-    {
-        projectEntity = projectNode.assocs["pjt:projectEntity"][0];
+	    bSupplier.assignToSupplier(project, task, projectEntity);
     } 
 
-    bSupplier.assignToSupplier(project, task ,projectEntity, true);
-    
 }
 
 main();

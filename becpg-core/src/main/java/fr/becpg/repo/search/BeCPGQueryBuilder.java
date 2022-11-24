@@ -73,9 +73,6 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
-import io.opencensus.trace.AttributeValue;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * <p>
@@ -90,8 +87,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	private static final Log logger = LogFactory.getLog(BeCPGQueryBuilder.class);
 	
-	private static final Tracer tracer = Tracing.getTracer();
-
 	private static final String DEFAULT_FIELD_NAME = "keywords";
 
 	private static final String CANNED_QUERY_FILEFOLDER_LIST = "fileFolderGetChildrenCannedQueryFactory";
@@ -973,12 +968,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			if (watch.getTotalTimeSeconds() > 1) {
 				logger.warn(
 						"Slow query [" + runnedQuery + "] executed in  " + watch.getTotalTimeSeconds() + " seconds - size results " + refs.size());
-				Map<String, AttributeValue> attributes = new HashMap<>();
-				
-				attributes.put("becpg/query", AttributeValue.stringAttributeValue(runnedQuery));
-				attributes.put("becpg/language", AttributeValue.stringAttributeValue(language));
-				
-				tracer.getCurrentSpan().addAnnotation("search.List",attributes);
 				
 				
 			}

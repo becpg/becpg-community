@@ -62,7 +62,7 @@ import fr.becpg.repo.report.entity.EntityReportService;
  * @version $Id: $Id
  */
 public class EntityVersionPolicy extends AbstractBeCPGPolicy
-		implements CheckOutCheckInServicePolicies.OnCheckOut, CheckOutCheckInServicePolicies.BeforeCheckIn, CheckOutCheckInServicePolicies.OnCheckIn,
+		implements CheckOutCheckInServicePolicies.OnCheckIn,
 		CheckOutCheckInServicePolicies.BeforeCancelCheckOut, NodeServicePolicies.OnRemoveAspectPolicy,
 		NodeArchiveServicePolicies.BeforePurgeNodePolicy, CheckOutCheckInServicePolicies.OnCancelCheckOut, NodeServicePolicies.OnDeleteNodePolicy, VersionServicePolicies.AfterCreateVersionPolicy {
 
@@ -140,30 +140,12 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 	}
 
 	/** {@inheritDoc} */
-	@Override
-	//TODO delete in 3.2.3
 	@Deprecated
 	public void onCheckOut(final NodeRef workingCopyNodeRef) {
-		ruleService.disableRules();
-		try {
-			NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
-			entityVersionService.doCheckOut(origNodeRef, workingCopyNodeRef);
-		} finally {
-			ruleService.enableRules();
-		}
 	}
 
-	//TODO delete in 3.2.3
 	@Deprecated
-	@Override
 	public void beforeCheckIn(NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties, String contentUrl, boolean keepCheckedOut) {
-		ruleService.disableRules();
-		try {
-			NodeRef origNodeRef = getCheckedOut(workingCopyNodeRef);
-			queueNode(entityVersionService.createVersionAndCheckin(origNodeRef, workingCopyNodeRef, versionProperties));
-		} finally {
-			ruleService.enableRules();
-		}
 	}
 
 	/** {@inheritDoc} */
@@ -304,9 +286,7 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 
 	@Override
 	public void afterCreateVersion(NodeRef versionableNode, Version version) {
-		if (entityVersionService.isV2Service()) {
-			queueNode(VersionUtil.convertNodeRef(version.getFrozenStateNodeRef()));
-		}
+		queueNode(VersionUtil.convertNodeRef(version.getFrozenStateNodeRef()));
 	}
 
 

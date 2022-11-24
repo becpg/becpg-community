@@ -46,10 +46,6 @@ import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.AttributeValue;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * <p>
@@ -75,7 +71,6 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 	private static final Log logger = LogFactory.getLog(FormulationServiceImpl.class);
 
-	private static final Tracer tracer = Tracing.getTracer();
 
 	/**
 	 * <p>
@@ -149,19 +144,12 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	public T formulate(NodeRef entityNodeRef, String chainId)  {
 		Locale currentLocal = I18NUtil.getLocale();
 		Locale currentContentLocal = I18NUtil.getContentLocale();
-		try(Scope scope = tracer.spanBuilder("formulationService.Formulate").startScopedSpan()) {
+		try {
 			
 			I18NUtil.setLocale(Locale.getDefault());
 			I18NUtil.setContentLocale(null);
 			
-			if(entityNodeRef!=null) {
-				tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(entityNodeRef.toString()));
-			}
-			if(chainId!=null) {
-				tracer.getCurrentSpan().putAttribute("becpg/chainId", AttributeValue.stringAttributeValue(chainId));
-			}
-			tracer.getCurrentSpan().addAnnotation("findOne");
-			
+		
 			T entity = alfrescoRepository.findOne(entityNodeRef);
 
 			StopWatch watch = null;
@@ -179,7 +167,6 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 				watch.start();
 			}
 
-			tracer.getCurrentSpan().addAnnotation("save");
 			alfrescoRepository.save(entity);
 
 			if (logger.isDebugEnabled() && (watch != null)) {
@@ -209,14 +196,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 
 		}
 
-		try(Scope scope = tracer.spanBuilder("formulationService.FormulateEntity").startScopedSpan()) {
-			
-			if( repositoryEntity.getName()!=null) {
-				tracer.getCurrentSpan().putAttribute("becpg/entityName", AttributeValue.stringAttributeValue(repositoryEntity.getName()));
-			}
-			if( repositoryEntity.getNodeRef()!=null) {
-				tracer.getCurrentSpan().putAttribute("becpg/entityNodeRef", AttributeValue.stringAttributeValue(repositoryEntity.getNodeRef().toString()));
-			}
+		try {
 
 			if (chain != null) {
 				int i = 0;
