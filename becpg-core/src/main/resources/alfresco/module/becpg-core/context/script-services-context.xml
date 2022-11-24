@@ -76,7 +76,10 @@
 		<property name="tenantAdminService" ref="tenantAdminService" />
 		<property name="versionService" ref="versionService" />
 		<property name="entityReportService" ref="entityReportService" />
-		<property name="repositoryHelper" ref="repositoryHelper" />
+		<property name="contentService" ref="contentService"/>
+		<property name="beCPGLicenseManager" ref="becpgLicenseManager"/>
+		<property name="beCPGMailService" ref="beCPGMailService"/>
+                <property name="repositoryHelper" ref="repositoryHelper" />
 		<property name="formulationService" ref="formulationService" />
 		<property name="hierarchyService" ref="hierarchyService" />
 		<property name="fileFolderService" ref="fileFolderService" />

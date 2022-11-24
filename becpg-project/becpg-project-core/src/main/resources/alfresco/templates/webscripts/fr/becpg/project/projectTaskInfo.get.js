@@ -23,6 +23,7 @@ function main()
    
    model.task = task;
    model.deliverables = [];
+   model.urlMap = {};
    
    
    if(task != null &&  task.sourceAssocs["pjt:dlTask"]!=null){
@@ -30,6 +31,8 @@ function main()
           var deliverable = task.sourceAssocs["pjt:dlTask"][i];
           if(deliverable.properties["pjt:dlScriptExecOrder"] == null || 
                   deliverable.properties["pjt:dlScriptExecOrder"] == "None"){
+              var url = bProject.getDeliverableUrl(deliverable);
+              model.urlMap[deliverable.nodeRef.toString()] = url;
               model.deliverables.push(deliverable);
           }
       }

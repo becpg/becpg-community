@@ -32,7 +32,7 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
@@ -308,7 +308,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 				if (jsonObject.has("data") && jsonObject.getJSONObject("data").has("translations")) {
 					JSONArray translations = jsonObject.getJSONObject("data").getJSONArray("translations");
 					if (translations.length() > 0) {
-						return StringEscapeUtils.unescapeHtml(translations.getJSONObject(0).getString("translatedText"));
+						return StringEscapeUtils.unescapeHtml4(translations.getJSONObject(0).getString("translatedText"));
 					}
 				}
 

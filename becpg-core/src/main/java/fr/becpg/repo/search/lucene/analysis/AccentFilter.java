@@ -1,51 +1,41 @@
-/*******************************************************************************
- * Copyright (C) 2010-2021 beCPG. 
- *  
- * This file is part of beCPG 
- *  
- * beCPG is free software: you can redistribute it and/or modify 
- * it under the terms of the GNU Lesser General Public License as published by 
- * the Free Software Foundation, either version 3 of the License, or 
- * (at your option) any later version. 
- *  
- * beCPG is distributed in the hope that it will be useful, 
- * but WITHOUT ANY WARRANTY; without even the implied warranty of 
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
- * GNU Lesser General Public License for more details. 
- *  
- * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
- ******************************************************************************/
 package fr.becpg.repo.search.lucene.analysis;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Objects;
 
-import org.apache.lucene.analysis.Token;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 
-/**
- * Supprime les accents des mots
- *
- * @author tom
- * @version $Id: $Id
- */
 public class AccentFilter extends TokenFilter {
+	
 	private static final HashMap<String,String> substitutions = initSubstitutions();
 
-	/**
-	 * <p>Constructor for AccentFilter.</p>
-	 *
-	 * @param input a {@link org.apache.lucene.analysis.TokenStream} object.
-	 */
+	private final CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
+
 	public AccentFilter(TokenStream input) {
 		super(input);
-
 	}
 
-	/**
-	 * @return
-	 */
+	@Override
+	public boolean incrementToken() throws IOException {
+		if (input.incrementToken()) {
+			killAccents(termAtt.buffer());
+			return true;
+		}
+		
+		return false;
+	}
+
+	public void killAccents(char[] chars) {
+		for (int i = 0; i < chars.length; i++) {
+			if (substitutions.containsKey("" + chars[i])) {
+				chars[i] = substitutions.get(("" + chars[i])).charAt(0);
+			}
+		}
+	}
+	
 	private static HashMap<String,String> initSubstitutions() {
 		HashMap<String,String> retVal = new HashMap<>(12);
 
@@ -230,51 +220,24 @@ public class AccentFilter extends TokenFilter {
 
 		return retVal;
 	}
-
 	
-	
-	/**
-	 * <p>next.</p>
-	 *
-	 * @see org.apache.lucene.analysis.TokenStream#next()
-	 * @return a {@link org.apache.lucene.analysis.Token} object.
-	 * @throws java.io.IOException if any.
-	 */
-	@SuppressWarnings("deprecation")
-	public Token next() throws IOException {
-		Token token = input.next();
-		if (token == null)
-			return null;
-
-		String termText = token.termText();
-		termText = killAccent(termText);
-
-		Token ret =
-			new Token(
-				termText,
-				token.startOffset(),
-				token.endOffset(),
-				token.type());
-
-		return ret;
-	}
-
-	/**
-	 * <p>killAccent.</p>
-	 *
-	 * @param termText a {@link java.lang.String} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-	public String killAccent(String termText) {
-		char chars[] = termText.toCharArray();
-		for (int i = 0; i < chars.length; i++) {
-			if (substitutions.containsKey("" + chars[i])) {
-				chars[i] =
-					substitutions.get(("" + chars[i])).charAt(0);
-			}
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
 		}
-
-		return new String(chars);
+		
+		if ((obj == null) || (getClass() != obj.getClass())) {
+			return false;
+		}
+		
+		AccentFilter fobj = (AccentFilter) obj;
+		
+		return termAtt.equals(fobj.termAtt);
 	}
-
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(termAtt);
+	}
 }

@@ -35,6 +35,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.model.CompositionDataItem;
 
 /**
  * <p>LabelClaimFormulationHandler class.</p>
@@ -125,8 +126,17 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
-			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			List<CompositionDataItem> compoItems = new ArrayList<>();
 
+			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				compoItems.addAll(productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			}
+
+			if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				compoItems.addAll(productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			}
+
+			if (!compoItems.isEmpty()) {
 				Set<LabelClaimListDataItem> toRemove = new HashSet<>();
 
 				Double netQty = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
@@ -161,15 +171,18 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 				});
 
-				for (CompoListDataItem compoItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				for (CompositionDataItem compoItem : compoItems) {
 
-					NodeRef part = compoItem.getProduct();
-					if ((compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
+					NodeRef part = compoItem.getComponent();
+
+					Double qty = compoItem instanceof CompoListDataItem ? ((CompoListDataItem) compoItem).getQtySubFormula() : compoItem.getQty();
+
+					if ((qty != null) && (qty > 0)) {
 						ProductData partProduct = alfrescoRepository.findOne(part);
 
-						Double qtyUsed = FormulationHelper.getQtyInKg(compoItem);
+						Double qtyUsed = compoItem instanceof CompoListDataItem ? FormulationHelper.getQtyInKg((CompoListDataItem) compoItem) : 0d;
 
-						if (!partProduct.isLocalSemiFinished() && (partProduct.getLabelClaimList() != null)) {
+						if (!partProduct.isLocalSemiFinished() && partProduct.getLabelClaimList() != null) {
 							for (LabelClaimListDataItem labelClaim : partProduct.getLabelClaimList()) {
 
 								visitPart(productData, partProduct, qtyUsed, netQty, labelClaim, toRemove);

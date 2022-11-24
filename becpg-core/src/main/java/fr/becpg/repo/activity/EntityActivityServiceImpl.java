@@ -505,6 +505,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								for (Object ent : (List<?>) entry.getValue().getFirst()) {
 									if (ent instanceof Date) {
 										beforeList.add(ISO8601DateFormat.format((Date) ent));
+									} else if (ent instanceof Pair || ent instanceof NodeRef) {
+										beforeList.add(ent.toString());
 									} else {
 										beforeList.add(ent);
 									}
@@ -524,6 +526,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									for (Object ent : (List<?>) entry.getValue().getSecond()) {
 										if (ent instanceof Date) {
 											afterList.add(ISO8601DateFormat.format((Date) ent));
+										} else if (ent instanceof Pair || ent instanceof NodeRef) {
+											afterList.add(ent.toString());
 										} else {
 											afterList.add(ent);
 										}
@@ -774,7 +778,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			} finally {
 				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			}
-		}
+		} 
 
 		return false;
 	}
@@ -790,14 +794,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				NodeRef activityListNodeRef = getActivityList(fromNodeRef);
 				if (activityListNodeRef != null) {
 
-					for (NodeRef listItem : entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST)) {
+					for (NodeRef listItem : entityListDAO.getListItems(activityListNodeRef,BeCPGModel.TYPE_ACTIVITY_LIST)) {
 						
-						String name = (String) nodeService.getProperty(listItem, ContentModel.PROP_NAME);
-						
-						if (nodeService.getChildByName(toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, name) == null) {
+						String activityName = (String) nodeService.getProperty(listItem, ContentModel.PROP_NAME);
+						if (nodeService.getChildByName(toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, activityName) == null) {
 							nodeService.moveNode(listItem, toActivityListNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
 						}
-						
 					}
 				}
 			}
@@ -954,6 +956,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 								for (Serializable ent : entry.getValue().getFirst()) {
 									if (ent instanceof Date) {
 										beforeList.add(ISO8601DateFormat.format((Date) ent));
+									} else if (ent instanceof Pair || ent instanceof NodeRef) {
+										beforeList.add(ent.toString());
 									} else {
 										beforeList.add(ent);
 									}
@@ -973,6 +977,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 									for (Serializable ent : entry.getValue().getSecond()) {
 										if (ent instanceof Date) {
 											afterList.add(ISO8601DateFormat.format((Date) ent));
+										} else if (ent instanceof Pair || ent instanceof NodeRef) {
+											afterList.add(ent.toString());
 										} else {
 											afterList.add(ent);
 										}

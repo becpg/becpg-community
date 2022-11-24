@@ -48,9 +48,8 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String SUPPLIER_TASK_NAME = "plm.supplier.portal.task.supplier.name";
 	private static final String VALIDATION_TASK_NAME = "plm.supplier.portal.task.validation.name";
 	private static final String SUPPLIER_WIZARD_NAME = "plm.supplier.portal.deliverable.wizard.name";
-	private static final String SUPPLIER_WIZARD_RAW_MATERIAL_NAME = "plm.supplier.portal.deliverable.wizard.rawmaterial.name";
 	private static final String SUPPLIER_PRE_SCRIPT = "plm.supplier.portal.deliverable.scripts.pre.name";
-	private static final String VALIDATE_POST_SCRIPT = "plm.supplier.portal.deliverable.scripts.post.name";
+	private static final String SIGNATURES_PREPARATION_SCRIPT = "plm.supplier.portal.deliverable.scripts.signature.name";
 
 	private static final String SUPPLIER_SITE_PRESET = "supplier-site-dashboard";
 
@@ -109,6 +108,15 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			List<NodeRef> scriptResources = contentHelper.addFilesResources(scriptFolderNodeRef, "classpath*:beCPG/supplier/*.js");
 
+
+			/*
+			    Référencement -> Pre On créer la branche dans l'espace fournisseur et on assign le wizard
+			    Validation -> On laisse chez le fournisseur (gère juste la relecture et le refus)
+			    Signature -> Pre On copy le rapport de type supplier (On ferme la tâche si rien), Post on sign le document 
+			    Notification -> Pre on merge la branch et envoi un mail au fournisseur avec le doc sign en shareId (créer un template de mail multilingue)
+			*/
+			
+			
 			// visit supplier
 			Set<QName> dataLists = new LinkedHashSet<>();
 			dataLists.add(ProjectModel.TYPE_TASK_LIST);
@@ -130,6 +138,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			pjtTpl.getTaskList().add(task1);
 
+
 			TaskListDataItem task2 = new TaskListDataItem();
 			task2.setTaskName(I18NUtil.getMessage(VALIDATION_TASK_NAME));
 			task2.setDuration(5);
@@ -142,39 +151,33 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			task2.setPrevTasks(Collections.singletonList(task1.getNodeRef()));
 
-			DeliverableListDataItem supplierWizard = new DeliverableListDataItem();
-			supplierWizard.setDescription(I18NUtil.getMessage(SUPPLIER_WIZARD_NAME));
-			supplierWizard.setUrl("/share/page/wizard?id=supplier&nodeRef={bcpg:suppliers}");
-			supplierWizard.setTasks(Collections.singletonList(task1.getNodeRef()));
-
 			DeliverableListDataItem supplierMPWizard = new DeliverableListDataItem();
-			supplierMPWizard.setDescription(I18NUtil.getMessage(SUPPLIER_WIZARD_RAW_MATERIAL_NAME));
-			supplierMPWizard.setUrl("/share/page/wizard?id=supplier-mp&nodeRef={pjt:projectEntity}");
+			supplierMPWizard.setDescription(I18NUtil.getMessage(SUPPLIER_WIZARD_NAME));
+			supplierMPWizard.setUrl("/share/page/wizard?id=supplier-{pjt:projectEntity|@type}&nodeRef={pjt:projectEntity}");
 			supplierMPWizard.setTasks(Collections.singletonList(task1.getNodeRef()));
 
 			DeliverableListDataItem preSupplierScript = new DeliverableListDataItem();
 			preSupplierScript.setDescription(I18NUtil.getMessage(SUPPLIER_PRE_SCRIPT));
 			preSupplierScript.setScriptOrder(DeliverableScriptOrder.Pre);
 			preSupplierScript.setTasks(Collections.singletonList(task1.getNodeRef()));
-
-			DeliverableListDataItem postValidationScript = new DeliverableListDataItem();
-			postValidationScript.setDescription(I18NUtil.getMessage(VALIDATE_POST_SCRIPT));
-			postValidationScript.setScriptOrder(DeliverableScriptOrder.Post);
-			postValidationScript.setTasks(Collections.singletonList(task2.getNodeRef()));
+			
+			DeliverableListDataItem signaturesPreparationScript = new DeliverableListDataItem();
+			signaturesPreparationScript.setDescription(I18NUtil.getMessage(SIGNATURES_PREPARATION_SCRIPT));
+			signaturesPreparationScript.setScriptOrder(DeliverableScriptOrder.Pre);
+			signaturesPreparationScript.setTasks(Collections.singletonList(task2.getNodeRef()));
 
 			for (NodeRef scriptNodeRef : scriptResources) {
 				String name = (String) nodeService.getProperty(scriptNodeRef, ContentModel.PROP_NAME);
 				if (name.equals("supplierPortalScript.js")) {
 					preSupplierScript.setContent(scriptNodeRef);
-				} else if (name.equals("validateProjectEntity.js")) {
-					postValidationScript.setContent(scriptNodeRef);
+				} else if (name.equals("supplierPortalPrepareSignatures.js")) {
+					signaturesPreparationScript.setContent(scriptNodeRef);
 				}
 			}
 
 			pjtTpl.getDeliverableList().add(preSupplierScript);
-			pjtTpl.getDeliverableList().add(supplierWizard);
 			pjtTpl.getDeliverableList().add(supplierMPWizard);
-			pjtTpl.getDeliverableList().add(postValidationScript);
+			pjtTpl.getDeliverableList().add(signaturesPreparationScript);
 
 			pjtTpl.getAspects().add(PLMModel.ASPECT_SUPPLIERS);
 

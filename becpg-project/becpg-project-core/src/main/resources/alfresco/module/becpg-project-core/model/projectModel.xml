@@ -36,16 +36,7 @@
 			</parameter>
 		</constraint>
 		
-		<!-- Deprecated to remove in 2.3 -->
-		<constraint name="pjt:activityTypes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value>State</value>
-					<value>Comment</value>
-					<value>Content</value>
-				</list>
-			</parameter>
-		</constraint>
+	
 
 		<constraint name="pjt:deliverableStates" type="LIST">
 			<parameter name="allowedValues">
@@ -231,36 +222,68 @@
 				<property name="pjt:projectHierarchy1">
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="pjt:projectHierarchy2">
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="pjt:projectOrigin">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:requestOrigins" />
 					</constraints>
 				</property>
 				<property name="pjt:projectSponsor">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:sponsors" />
 					</constraints>
 				</property>
 				<property name="pjt:projectStartDate">
 					<type>d:date</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="pjt:projectCompletionDate">
 					<type>d:date</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="pjt:projectDueDate">
 					<type>d:date</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="pjt:projectPlanningMode">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<default>Planning</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:planningModes" />
 					</constraints>
@@ -269,13 +292,23 @@
 					<type>d:int</type>
 					<mandatory>true</mandatory>
 					<default>2</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:allowedPriority" />
 					</constraints>
+					
+					
 				</property>
 				<property name="pjt:projectState">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:projectStates" />
 					</constraints>
@@ -283,12 +316,24 @@
 				<property name="pjt:projectLegends">
 					<type>d:noderef</type>
 					<multiple>true</multiple>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:projectOverdue">
 					<type>d:int</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="pjt:projectScore">
 					<type>d:int</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:percentage" />
 					</constraints>
@@ -379,6 +424,10 @@
 			<properties>
 				<property name="pjt:taskLegendSites">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			
 			</properties>
@@ -393,13 +442,25 @@
 				<property name="pjt:tlTaskName">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlTaskDescription">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlTaskComment">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlIsRefused">
 					<type>d:boolean</type>
@@ -407,65 +468,80 @@
 				</property>
 				<property name="pjt:tlIsMilestone">
 					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlIsCritical">
 					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlIsGroup">
 					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlIsExcludeFromSearch">
 					<type>d:boolean</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlDuration">
 					<type>d:int</type>
 					<mandatory>true</mandatory>
 					<default>1</default>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlRealDuration">
 					<type>d:int</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlCapacity">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlWork">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlLoggedTime">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlWorkflowName">
 					<type>d:text</type>
 					<default>activiti$projectAdhoc</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:allowedWorkflows" />
 					</constraints>
@@ -481,57 +557,55 @@
 				<property name="pjt:tlStart">
 					<type>d:date</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlEnd">
 					<type>d:date</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlDue">
 					<type>d:date</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlTargetStart">
 					<type>d:date</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlTargetEnd">
 					<type>d:date</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:tlState">
 					<type>d:text</type>
 					<default>Planned</default>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:taskStates" />
 					</constraints>
 				</property>
-                                <property name="pjt:tlPreviousState">
+                <property name="pjt:tlPreviousState">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:taskStates" />
 					</constraints>
@@ -539,10 +613,9 @@
 				<property name="pjt:tlManualDate">
 					<type>d:text</type>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:manualDate" />
 					</constraints>
@@ -551,16 +624,9 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>false</tokenised>
-					</index>
-				</property>
-				<!-- @Deprecated -->
-				<property name="pjt:tlBudgetedCost">
-					<type>d:double</type>
-					<mandatory>false</mandatory>
-					<index enabled="false" />
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -668,9 +734,17 @@
 				<property name="pjt:dlDescription">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:dlState">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:deliverableStates" />
 					</constraints>
@@ -678,12 +752,20 @@
 				<property name="pjt:dlScriptExecOrder">
 					<type>d:text</type>
 					<default>None</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:dlScriptExecOrders" />
 					</constraints>
 				</property>
 				<property name="pjt:dlUrl">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -721,18 +803,30 @@
 			<properties>
 				<property name="pjt:slCriterion">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:scoreCriteria" />
 					</constraints>
 				</property>
 				<property name="pjt:slWeight">
 					<type>d:int</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:percentage" />
 					</constraints>
 				</property>
 				<property name="pjt:slScore">
 					<type>d:int</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:percentage" />
 					</constraints>
@@ -740,6 +834,10 @@
 				<property name="pjt:slScreening">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<mandatory-aspects>
@@ -770,34 +868,7 @@
 			</mandatory-aspects>
 		</type>
 
-		<!-- Deprecated to remove in 2.3 -->
-		<type name="pjt:activityList">
-			<parent>bcpg:entityListItem</parent>
-			<properties>
-				<property name="pjt:alType">
-					<type>d:text</type>
-					<mandatory enforced="true">true</mandatory>
-					<constraints>
-						<constraint ref="pjt:activityTypes" />
-					</constraints>
-				</property>
-				<property name="pjt:alData">
-					<type>d:text</type>
-					<mandatory enforced="true">true</mandatory>
-					<index enabled="false" />
-				</property>
-				<property name="pjt:alUserId">
-					<type>d:text</type>
-					<mandatory enforced="true">true</mandatory>
-				</property>
-				<property name="pjt:alTaskId">
-					<type>d:noderef</type>
-				</property>
-				<property name="pjt:alDeliverableId">
-					<type>d:noderef</type>
-				</property>
-			</properties>
-		</type>
+	
 
 		<type name="pjt:logTimeList">
 			<title>Log time</title>
@@ -808,20 +879,18 @@
 					<type>d:date</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>				
 				<property name="pjt:ltlTime">
 					<title>Time (h)</title>
 					<type>d:double</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>TRUE</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:ltlComment">
 					<title>Comment</title>
@@ -834,10 +903,9 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 					<index enabled="true">
-						<atomic>false</atomic>
-						<stored>false</stored>
-						<tokenised>FALSE</tokenised>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:timeTypes" />
 					</constraints>
@@ -892,6 +960,10 @@
 				<property name="pjt:blItem">
 					<type>d:text</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 				<property name="pjt:blBudgetedExpense">
 					<type>d:double</type>
@@ -930,7 +1002,11 @@
 					</index>
 				</property>
 				<property name="pjt:elDate">
-					<type>d:date</type>					
+					<type>d:date</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>		
 				</property>
 			</properties>
 			<associations>
@@ -987,6 +1063,10 @@
 				</property>
 				<property name="pjt:ilDate">
 					<type>d:date</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -1086,6 +1166,10 @@
 					<type>d:int</type>
 					<mandatory>false</mandatory>
 					<default>0</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:percentage" />
 					</constraints>
@@ -1097,6 +1181,10 @@
 				<property name="pjt:worflowTransition">
 					<type>d:text</type>
 					<default>validate</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint name="pjt:worflowTransitions" type="LIST">
 							<parameter name="allowedValues">
@@ -1167,10 +1255,18 @@
 				<property name="pjt:notificationFrequencyValue">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="pjt:notificationInitialValue">
 					<type>d:int</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>
@@ -1193,6 +1289,10 @@
 				<property name="pjt:lastNotificationDate">
 					<type>d:datetime</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 			</properties>
 		</aspect>
@@ -1202,6 +1302,10 @@
 				<property name="pjt:notificationRefNode">
 					<type>d:noderef</type>
 					<mandatory>true</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>				
 			</properties>
 		</aspect>
@@ -1212,6 +1316,10 @@
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<multiple>true</multiple>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:observersEventTypes" />
 					</constraints>
@@ -1224,12 +1332,20 @@
 			<properties>
 				<property name="pjt:rlState">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:requestStates" />
 					</constraints>
 				</property>
 				<property name="pjt:rlOrigin">
 					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="pjt:requestOrigins" />
 					</constraints>
@@ -1237,6 +1353,10 @@
 				<property name="pjt:rlPriority">
 					<type>d:text</type>
 					<default>Normal</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 					<constraints>
 						<constraint ref="dl:priority_value" />
 					</constraints>
@@ -1244,10 +1364,18 @@
 				<property name="pjt:rlDueDate">
 					<type>d:date</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
 				</property>
 				<property name="pjt:rlComments">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>both</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
 				</property>
 			</properties>
 			<associations>

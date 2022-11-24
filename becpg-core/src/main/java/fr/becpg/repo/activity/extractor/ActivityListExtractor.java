@@ -333,7 +333,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
 			try {
-				String stringVal = propertyArray.getString(i);
+				String stringVal = propertyArray.get(i).toString();
 				if (((propertyDef == null) && stringVal.contains("workspace"))
 						|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && (stringVal != null)
 								&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
@@ -345,7 +345,17 @@ public class ActivityListExtractor extends SimpleExtractor {
 						name = stringVal.substring(stringVal.indexOf(",") + 1, stringVal.indexOf(")"));
 
 					} else {
-						nodeRef = new NodeRef(stringVal);
+						
+						int lastForwardSlash = stringVal.lastIndexOf('/');
+
+						// case of malformed activities
+						if (lastForwardSlash == -1) {
+							JSONObject jsonNodeRef = new JSONObject(stringVal);
+							nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://"
+									+ jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
+						} else {
+							nodeRef = new NodeRef(stringVal);
+						}
 					}
 					if (nodeService.exists(nodeRef)) {
 						if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {

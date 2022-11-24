@@ -4,7 +4,23 @@
       <span class="viewmode-label">${field.label?html}:</span>
       <#if fieldValue != "" && fieldValue?eval??>
 		<#assign ecoScore = fieldValue?eval>
-        <span title="${fieldValue?html}" class="viewmode-value ecoscore-class">
+	    <#assign displayValue = msg("ecoscore.score", ecoScore.ecoScore)
+								+ "\n"
+								+ msg("ecoscore.class", ecoScore.scoreClass)
+								+ "\n"
+								+ msg("ecoscore.acvScore", ecoScore.acvScore)
+								+ "\n"
+								+ msg("ecoscore.claimBonus", ecoScore.claimBonus)
+								+ "\n"
+								+ msg("ecoscore.transportScore", ecoScore.transportScore)
+								+ "\n"
+								+ msg("ecoscore.politicalScore", ecoScore.politicalScore)
+								+ "\n"
+								+ msg("ecoscore.packagingMalus", ecoScore.packagingMalus)
+								+ "\n"
+	    >
+
+        <span <#if ecoScore??>title="${displayValue?html}"</#if> class="viewmode-value ecoscore-class">
 	      	<#if ecoScore.scoreClass != "" 
 	      	   && (
 	      	       ecoScore.scoreClass == "A"

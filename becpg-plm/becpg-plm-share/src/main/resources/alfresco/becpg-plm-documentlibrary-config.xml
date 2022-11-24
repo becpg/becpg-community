@@ -250,9 +250,7 @@
          <!-- beCPG -->
          <action type="action-link" id="onActionAssignWorkflow" icon="document-assign-workflow" label="menu.selected-items.assign-process"/>
          <action type="action-link" id="onActionDelete" icon="document-delete" permission="Delete" label="menu.selected-items.delete" notAspect="hwf:hybridWorkflow,sys:undeletable,smf:smartFolder" />
-         <action type="action-link" id="onActionCloudSync" asset="document" icon="document-cloud-sync"  permission="CreateChildren" label="menu.selected-items.cloudSync" notAspect="sync:syncSetMemberNode,smf:smartFolder,smf:smartFolderChild" syncMode="ON_PREMISE" />
-         <action type="action-link" id="onActionCloudSyncRequest" icon="document-request-sync" label="menu.selected-items.cloudRequestSync" hasAspect="sync:syncSetMemberNode" notAspect="smf:smartFolder,smf:smartFolderChild" syncMode="ON_PREMISE" />
-     	 <!-- beCPG -->
+         <!-- beCPG -->
      	 <action type="action-link" asset="document" id="onActionAddToBasket" icon="basket-action-16.png" label="menu.selected-items.basket" />
       </multi-select>
 	
@@ -293,7 +291,7 @@
 				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
 			</action>
 			
-			<!-- Supplier portal -->
+			<!-- Supplier portal
 			
 			<action id="send-to-supplier" type="javascript" label="actions.entity.send-to-supplier" icon="user">
 				<param name="function">onActionSendToSupplier</param>
@@ -301,6 +299,7 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
 			</action>
+			 -->
 			
 			<!-- Create supplier -->
 			
@@ -321,11 +320,10 @@
 
 			<actionGroup id="entity-details">
 				<action index="110" id="entity-compare" icon="compare" />
-				<action index="110" id="send-to-supplier"  />
-				<action index="110" id="create-supplier" />
-				<action index="111" id="entityTpl-synchronize-entities" />
-				<action index="112" id="entityTpl-formulate-entities" />
-				<action index="113" id="entityTpl-wused" />
+				<action index="111" id="create-supplier" />
+				<action index="112" id="entityTpl-synchronize-entities" />
+				<action index="113" id="entityTpl-formulate-entities" />
+				<action index="114" id="entityTpl-wused" />
 			</actionGroup>
 
 			<actionGroup id="entity-browse">

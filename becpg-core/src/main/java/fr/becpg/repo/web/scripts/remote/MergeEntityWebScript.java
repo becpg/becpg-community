@@ -28,7 +28,6 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.repo.entity.version.EntityVersionService;
-import io.opencensus.common.Scope;
 
 /**
  * Create entity branch
@@ -55,7 +54,6 @@ public class MergeEntityWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-		try (Scope scope = tracer.spanBuilder("/remote/merge").startScopedSpan()) {
 			NodeRef entityNodeRef = findEntity(req);
 
 			if (logger.isDebugEnabled()) {
@@ -132,6 +130,5 @@ public class MergeEntityWebScript extends AbstractEntityWebScript {
 				logger.error("Cannot merge entity", e);
 				throw new WebScriptException(e.getMessage());
 			}
-		}
 	}
 }

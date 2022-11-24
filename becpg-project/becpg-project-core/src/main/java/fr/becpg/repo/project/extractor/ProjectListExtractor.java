@@ -471,7 +471,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 										QName itemType = nodeService.getType(itemNodeRef);
 										Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 										tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
-										tmp.put(PROP_NODE, itemNodeRef);
+										tmp.put(PROP_NODE, itemNodeRef.toString());
 										
 										tmp.put(PROP_SORT, nodeService.getProperty(itemNodeRef, BeCPGModel.PROP_SORT));
 										
@@ -522,7 +522,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 											QName itemType = nodeService.getType(itemNodeRef);
 											Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 											tmp.put(PROP_TYPE, itemType.toPrefixString(services.getNamespaceService()));
-											tmp.put(PROP_NODE, itemNodeRef);
+											tmp.put(PROP_NODE, itemNodeRef.toString());
 											tmp.put(PROP_PERMISSIONS, permissions);
 											tmp.put(PROP_NODEDATA,
 													doExtract(itemNodeRef, itemType, field.getChildrens(), mode, properties, props, cache));

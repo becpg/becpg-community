@@ -151,7 +151,7 @@ public class RepoServiceImpl implements RepoService {
 
 	/** {@inheritDoc} */
 	@Override
-	public String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename) {
+	public String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename, boolean keepExtension) {
 
 		int count = 0;
 		String nameWithCounter = name;
@@ -159,10 +159,26 @@ public class RepoServiceImpl implements RepoService {
         {
         	count++;
 			forceRename = false;
-			nameWithCounter =  String.format("%s (%d)", name, count);
+			
+			int dotIndex = name.lastIndexOf(".");
+				
+			if (keepExtension && dotIndex > 0) {
+				String extension = name.substring(dotIndex);
+				String nameWithoutExtension = name.substring(0, dotIndex);
+				nameWithCounter =  String.format("%s (%d)", nameWithoutExtension, count) + extension;
+			} else {
+				nameWithCounter =  String.format("%s (%d)", name, count);
+			}
+			
         }
        
 		return nameWithCounter;
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename) {
+		return getAvailableName(folderNodeRef, name, forceRename, false);
 	}
 
 }

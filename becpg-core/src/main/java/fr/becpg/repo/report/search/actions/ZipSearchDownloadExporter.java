@@ -14,9 +14,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.download.DownloadCancelledException;
@@ -36,7 +33,6 @@ import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.view.Exporter;
 import org.alfresco.service.cmr.view.ExporterContext;
 import org.alfresco.service.cmr.view.ExporterException;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -102,11 +98,10 @@ public class ZipSearchDownloadExporter implements Exporter {
 	private RetryingTransactionHelper transactionHelper;
 	private DownloadStorage downloadStorage;
 	private DownloadStatusUpdateService updateService;
-	private NamespaceService namespaceService;
 	private CheckOutCheckInService checkOutCheckInService;
 	private NodeService nodeService;
 	private ContentService contentService;
-	private ExpressionService<RepositoryEntity> expressionService;
+	private ExpressionService expressionService;
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	/**
@@ -163,9 +158,9 @@ public class ZipSearchDownloadExporter implements Exporter {
 	 * @param templateNodeRef
 	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	public ZipSearchDownloadExporter(NamespaceService namespaceService, CheckOutCheckInService checkOutCheckInService, NodeService nodeService,
+	public ZipSearchDownloadExporter( CheckOutCheckInService checkOutCheckInService, NodeService nodeService,
 			RetryingTransactionHelper transactionHelper, DownloadStatusUpdateService updateService, DownloadStorage downloadStorage,
-			ContentService contentService, ExpressionService<RepositoryEntity> expressionService, AlfrescoRepository<RepositoryEntity> alfrescoRepository, NodeRef downloadNodeRef, NodeRef templateNodeRef) {
+			ContentService contentService, ExpressionService expressionService, AlfrescoRepository<RepositoryEntity> alfrescoRepository, NodeRef downloadNodeRef, NodeRef templateNodeRef) {
 
 		this.updateService = updateService;
 		this.transactionHelper = transactionHelper;
@@ -175,7 +170,6 @@ public class ZipSearchDownloadExporter implements Exporter {
 		this.checkOutCheckInService = checkOutCheckInService;
 		this.nodeService = nodeService;
 		this.contentService = contentService;
-		this.namespaceService = namespaceService;
 		this.expressionService = expressionService;
 		this.alfrescoRepository = alfrescoRepository;
 
@@ -261,7 +255,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 				toExtractNodes = new HashSet<>();
 
 				if (testEntityCondition(fileMapping.entityFilter, alfrescoRepository.findOne(entityNodeRef))) {
-					List<NodeRef> files = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, extractExpr(entityNodeRef, null, fileMapping.path));
+					List<NodeRef> files = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, expressionService.extractExpr(entityNodeRef, fileMapping.path));
 					toExtractNodes.addAll(files);
 				}
 
@@ -295,7 +289,7 @@ public class ZipSearchDownloadExporter implements Exporter {
 							String folderName = null;
 
 							if ((fileMapping.destFolder != null) && !fileMapping.destFolder.isEmpty()) {
-								folderName = extractExpr(entityNodeRef, null, fileMapping.destFolder);
+								folderName =  expressionService.extractExpr(entityNodeRef, fileMapping.destFolder);
 								if (!folderName.endsWith("/")) {
 									folderName += "/";
 								}
@@ -377,52 +371,12 @@ public class ZipSearchDownloadExporter implements Exporter {
 
 	private String createName(FileToExtract fileMapping, NodeRef docNodeRef, NodeRef entityNodeRef) {
 		if ((fileMapping.name != null) && !fileMapping.name.isEmpty()) {
-			return extractExpr(entityNodeRef, docNodeRef, fileMapping.name);
+			return expressionService.extractExpr(entityNodeRef, docNodeRef, fileMapping.name);
 		}
 		return (String) nodeService.getProperty(docNodeRef, ContentModel.PROP_NAME);
 	}
 
-	private String extractExpr(NodeRef nodeRef, NodeRef docNodeRef, String exprFormat) {
-		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
-		StringBuffer sb = new StringBuffer();
-		while (patternMatcher.find()) {
-
-			String propQname = patternMatcher.group(1);
-			String replacement = "";
-			if (propQname.contains("|")) {
-				for (String propQnameAlt : propQname.split("\\|")) {
-					replacement = extractPropText(nodeRef, docNodeRef, propQnameAlt);
-					if ((replacement != null) && !replacement.isEmpty()) {
-						break;
-					}
-				}
-
-			} else {
-				replacement = extractPropText(nodeRef, docNodeRef, propQname);
-			}
-
-			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
-
-		}
-		patternMatcher.appendTail(sb);
-		return sb.toString();
-	}
-
-	@SuppressWarnings("unchecked")
-	private String extractPropText(NodeRef nodeRef, NodeRef docNodeRef, String propQname) {
-		NodeRef nodeToExtract = nodeRef;
-
-		if (propQname.startsWith("doc_")) {
-			nodeToExtract = docNodeRef;
-		}
-		propQname = propQname.replace("doc_", "");
-
-		if (nodeService.getProperty(nodeRef, QName.createQName(propQname, namespaceService)) instanceof List) {
-			return ((List<String>) nodeService.getProperty(nodeToExtract, QName.createQName(propQname, namespaceService))).stream()
-					.collect(Collectors.joining(","));
-		}
-		return (String) nodeService.getProperty(nodeToExtract, QName.createQName(propQname, namespaceService));
-	}
+	
 
 	/**
 	 * Copy input stream to output stream

@@ -611,9 +611,6 @@ public interface PLMModel {
 	/** Constant <code>PROP_INSTRUCTION</code> */
 	QName PROP_INSTRUCTION = QName.createQName(BeCPGModel.BECPG_URI, "instruction");
 	
-	@Deprecated
-	/** Constant <code>ASPECT_DILUENT</code> */
-	QName ASPECT_DILUENT = QName.createQName(BeCPGModel.BECPG_URI, "diluentAspect");
 	/** Constant <code>ASPECT_RECONSTITUTABLE</code> */
 	QName ASPECT_RECONSTITUTABLE = QName.createQName(BeCPGModel.BECPG_URI, "reconstitutableAspect");
 	/** Constant <code>PROP_RECONSTITUTION_RATE</code> */
@@ -642,8 +639,10 @@ public interface PLMModel {
 	QName PROP_NUTRIENT_PROFILE_SCORE_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileScoreFormula");
 	/** Constant <code>PROP_NUTRIENT_PROFILE_CLASS_FORMULA</code> */
 	QName PROP_NUTRIENT_PROFILE_CLASS_FORMULA =  QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileClassFormula");
-	/** Constant <code>TYPE_NUTRIENT_PROFILE</code> */
-	QName TYPE_NUTRIENT_PROFILE = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfile");
+	
+	QName PROP_NUTRIENT_PROFILE_CATEGORY = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory");
+	
+	
 	
 	//Eco score
 	QName ASPECT_ECO_SCORE = QName.createQName(BeCPGModel.BECPG_URI, "ecoScoreAspect");

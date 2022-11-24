@@ -19,6 +19,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.TempFileProvider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -100,7 +101,7 @@ public class PDFScriptHelper extends BaseScopableProcessorExtension {
 			PDFMergerUtility merger = new PDFMergerUtility();
 			merger.appendDocument(pdfTarget, pdf);
 			merger.setDestinationFileName(targetPDFNode.getName());
-			merger.mergeDocuments();
+			merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
 
 			// build a temp dir name based on the ID of the noderef we are
 			// importing

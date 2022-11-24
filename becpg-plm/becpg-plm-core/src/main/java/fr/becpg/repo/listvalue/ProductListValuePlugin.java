@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.search.impl.lucene.LuceneQueryParserException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -249,6 +248,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 
 		List<NodeRef> ret = null;
 
+		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(ListValueService.EXTRA_PARAM);
 		if (extras != null) {
 			String filterByAssoc = extras.get(PROP_FILTER_BY_ASSOC);
@@ -285,11 +285,7 @@ public class ProductListValuePlugin extends EntityListValuePlugin {
 		}
 
 		if (ret == null) {
-			try {
 				ret = queryBuilder.list();
-			} catch (LuceneQueryParserException e) {
-				logger.error("Bad list value query:" + queryBuilder.toString());
-			}
 		}
 
 		return new ListValuePage(ret, pageNum, pageSize, targetAssocValueExtractor);

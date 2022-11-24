@@ -173,6 +173,13 @@
 		<property name="nodeService" ref="NodeService" />
 	</bean>
 
+	<bean id="webscript.fr.becpg.entity.revertEntityVersion.get" class="fr.becpg.repo.web.scripts.entity.RevertEntityVersionWebScript" parent="webscript">
+		<property name="entityVersionService" ref="entityVersionService" />
+		<property name="siteService" ref="siteService" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="namespaceService" ref="namespaceService" />
+	</bean>
+
 	<bean id="webscript.fr.becpg.entity.entityVersion.get" class="fr.becpg.repo.web.scripts.entity.EntityVersionWebScript" parent="webscript">
 		<property name="entityVersionService" ref="entityVersionService" />
 		<property name="nodeService" ref="nodeService" />
@@ -254,17 +261,6 @@
 		<property name="entityVersionService" ref="entityVersionService" />
 	</bean>
 
-	<bean id="webscript.fr.becpg.remote.import.post" class="fr.becpg.repo.web.scripts.remote.ImportEntityWebScript" parent="abstractEntityWebScript">
-		<property name="remoteUser" value="${beCPG.remoteUser}" />
-		<property name="remotePwd" value="${beCPG.remotePwd}" />
-		<property name="remoteServer" value="${beCPG.remoteServer}" />
-	</bean>
-
-	<bean id="webscript.fr.becpg.remote.proxy.get" class="fr.becpg.repo.web.scripts.remote.RemoteProxyWebscript" parent="webscript">
-		<property name="remoteUser" value="${beCPG.remoteUser}" />
-		<property name="remotePwd" value="${beCPG.remotePwd}" />
-		<property name="remoteServer" value="${beCPG.remoteServer}" />
-	</bean>
 
 	<bean id="webscript.fr.becpg.remote.entityData.post" class="fr.becpg.repo.web.scripts.remote.UpdateEntityDataWebScript" parent="abstractEntityWebScript">
 		

@@ -18,23 +18,15 @@
 package fr.becpg.repo.project.web.scripts;
 
 import java.io.IOException;
-import java.util.List;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
-import org.springframework.util.StopWatch;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.project.ProjectService;
 
 /**
@@ -75,7 +67,7 @@ public class CompleteProjectTaskWebScript extends AbstractWebScript {
 			
 			JSONObject obj = new JSONObject();
 		
-			obj.put("nodeRef", taskNodeRef);
+			obj.put(PARAM_NODEREF, taskNodeRef);
 			obj.put("succees", true);
 
 			res.setContentType("application/json");

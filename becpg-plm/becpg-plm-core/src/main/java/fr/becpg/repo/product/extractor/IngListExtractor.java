@@ -64,7 +64,9 @@ public class IngListExtractor extends SimpleCharactListExtractor {
 			Double totalQtyPercWithYield= 0d;
 
 			for (Map<String, Object> row : ret.getPageItems()) {
-				NodeRef nodeRef = (NodeRef) row.get(PROP_NODE);
+				
+				NodeRef nodeRef = new NodeRef(row.get(PROP_NODE).toString());
+
 				if (nodeRef != null) {
 					Integer depthLevel = (Integer) nodeService.getProperty(nodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
 					if ((depthLevel == null) || (depthLevel == 1)) {

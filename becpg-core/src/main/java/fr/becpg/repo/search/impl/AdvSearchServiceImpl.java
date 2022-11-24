@@ -50,10 +50,6 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.search.AdvSearchPlugin;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.AttributeValue;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 /**
  * This class do a search on the repository (association, properties and
@@ -67,8 +63,6 @@ import io.opencensus.trace.Tracing;
 public class AdvSearchServiceImpl implements AdvSearchService {
 
 	private static final Log logger = LogFactory.getLog(AdvSearchServiceImpl.class);
-
-	private static final Tracer tracer = Tracing.getTracer();
 
 	@Autowired
 	private NamespaceService namespaceService;
@@ -127,57 +121,47 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 	@Override
 	public List<NodeRef> queryAdvSearch(QName datatype, BeCPGQueryBuilder beCPGQueryBuilder, Map<String, String> criteria, int maxResults) {
 
-		try (Scope scope = tracer.spanBuilder("search.AdvSearch").startScopedSpan()) {
+		SearchConfig searchConfig = getSearchConfig();
 
-			if (datatype != null) {
-				tracer.getCurrentSpan().putAttribute("becpg/datatype", AttributeValue.stringAttributeValue(datatype.getLocalName()));
-			}
-
-			SearchConfig searchConfig = getSearchConfig();
-
-			logger.debug("advSearch, dataType=" + datatype + ", \ncriteria=" + criteria + "\nplugins: " + Arrays.asList(advSearchPlugins));
-			if (isAssocSearch(criteria) || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
-				maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
-			} else if (maxResults <= 0) {
-				maxResults = RepoConsts.MAX_RESULTS_1000;
-			}
-
-			Set<String> ignoredFields = new HashSet<>();
-
-			if (advSearchPlugins != null) {
-				for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
-					ignoredFields.addAll(advSearchPlugin.getIgnoredFields(datatype, searchConfig));
-				}
-			}
-
-			addCriteriaMap(beCPGQueryBuilder, criteria, ignoredFields);
-
-			tracer.getCurrentSpan().addAnnotation("runQuery");
-
-			List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).inDBIfPossible().list();
-
-			if (advSearchPlugins != null) {
-				StopWatch watch = null;
-				for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
-					if (logger.isDebugEnabled()) {
-						watch = new StopWatch();
-						watch.start();
-					}
-					tracer.getCurrentSpan().addAnnotation("filter." + advSearchPlugin.getClass().getSimpleName());
-
-					nodes = advSearchPlugin.filter(nodes, datatype, criteria, searchConfig);
-
-					if (logger.isDebugEnabled() && (watch != null)) {
-						watch.stop();
-						logger.debug("query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds()
-								+ " seconds, new size: " + nodes.size());
-					}
-				}
-			}
-
-			return nodes;
-
+		logger.debug("advSearch, dataType=" + datatype + ", \ncriteria=" + criteria + "\nplugins: " + Arrays.asList(advSearchPlugins));
+		if (isAssocSearch(criteria) || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
+			maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
+		} else if (maxResults <= 0) {
+			maxResults = RepoConsts.MAX_RESULTS_1000;
 		}
+
+		Set<String> ignoredFields = new HashSet<>();
+
+		if (advSearchPlugins != null) {
+			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
+				ignoredFields.addAll(advSearchPlugin.getIgnoredFields(datatype, searchConfig));
+			}
+		}
+
+		addCriteriaMap(beCPGQueryBuilder, criteria, ignoredFields);
+
+		List<NodeRef> nodes = beCPGQueryBuilder.maxResults(maxResults).ofType(datatype).inDBIfPossible().list();
+
+		if (advSearchPlugins != null) {
+			StopWatch watch = null;
+			for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
+				if (logger.isDebugEnabled()) {
+					watch = new StopWatch();
+					watch.start();
+				}
+
+				nodes = advSearchPlugin.filter(nodes, datatype, criteria, searchConfig);
+
+				if (logger.isDebugEnabled() && (watch != null)) {
+					watch.stop();
+					logger.debug("query filter " + advSearchPlugin.getClass().getName() + " executed in  " + watch.getTotalTimeSeconds()
+							+ " seconds, new size: " + nodes.size());
+				}
+			}
+		}
+
+		return nodes;
+
 	}
 
 	/** {@inheritDoc} */
@@ -260,7 +244,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 										// work out if "from" and/or "to" are
 										// specified - use MIN and MAX
-										// otherwise;
+										// or
 										// we only want the "YYYY-MM-DD" part of
 										// the ISO date value - so crop the
 										// strings
@@ -350,9 +334,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									}
 								}
 							} else if (isMultiValueProperty(propValue, modePropValue) || isListProperty(criteriaMap, key)) {
-								if (propName.startsWith("isListProperty")) {
+								if (propName.indexOf("isListProperty") == -1) {
 									queryBuilder.andFTSQuery(processMultiValue(propName, propValue, modePropValue, false));
-
 								}
 							} else if (!propName.endsWith("-entry")) {
 								// beCPG - bug fix : pb with operator -,
@@ -491,6 +474,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 
 		String[] multiValue = propValue.split(",");
 		StringBuilder formQuery = new StringBuilder();
+		if(operand == null || operand.isBlank()) {
+			operand = "OR";
+		}
+		
 		for (var i = 0; i < multiValue.length; i++) {
 
 			if (i > 0) {
@@ -500,8 +487,8 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			if (pseudo) {
 				formQuery.append("(cm:content." + propName + ":\"" + multiValue[i] + "\")");
 			} else {
-				formQuery.append('(' + AbstractBeCPGQueryBuilder.escapeQName(QName.createQName(propName, namespaceService)) + ":\""
-						+ cleanValue(multiValue[i]) + "\")");
+				formQuery.append(  QName.createQName(propName, namespaceService) + ":("
+						+ cleanValue(multiValue[i]) + ")");
 			}
 		}
 

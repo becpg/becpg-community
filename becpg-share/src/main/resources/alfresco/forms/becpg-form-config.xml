@@ -27,7 +27,7 @@
 			</form>
 		</forms>
 	</config>
-
+	
 	<config evaluator="node-type" condition="bcpg:entityV2">
 		<forms>
 			<!-- Document Library Common form -->
@@ -151,7 +151,7 @@
 	 <!-- cm:content type (existing nodes) -->
    <config evaluator="node-type" condition="cm:content">
       <forms>
- 
+      
          <!-- Document Library pop-up Edit Metadata form -->
          <form id="doclib-simple-metadata">
             <field-visibility>
@@ -306,6 +306,9 @@
                             </control-param>
                         </control>
                     </field>
+                    <field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
                 </appearance>
             </form>
 
@@ -366,6 +369,11 @@
 					<show id="bcpg:lvValue" />
 					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 
 			<form id="datagrid">

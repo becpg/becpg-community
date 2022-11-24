@@ -30,7 +30,6 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteParams;
-import io.opencensus.common.Scope;
 
 /**
  * Get entity as XML
@@ -43,36 +42,33 @@ public class GetEntityDataWebScript extends AbstractEntityWebScript {
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-		try (Scope scope = tracer.spanBuilder("/remote/get/data").startScopedSpan()) {
-			NodeRef entityNodeRef = findEntity(req);
+		NodeRef entityNodeRef = findEntity(req);
 
-			logger.debug("Get entity data: " + entityNodeRef);
+		logger.debug("Get entity data: " + entityNodeRef);
 
-			try (OutputStream out = resp.getOutputStream()) {
+		try (OutputStream out = resp.getOutputStream()) {
 
-				RemoteParams params = new RemoteParams(getFormat(req));
-				params.setFilteredFields(extractFields(req), namespaceService);
-				resp.setContentType(getContentType(req));
-				resp.setContentEncoding("UTF-8");
+			RemoteParams params = new RemoteParams(getFormat(req));
+			params.setFilteredFields(extractFields(req), namespaceService);
+			resp.setContentType(getContentType(req));
+			resp.setContentEncoding("UTF-8");
 
-				remoteEntityService.getEntityData(entityNodeRef, out, params);
+			remoteEntityService.getEntityData(entityNodeRef, out, params);
 
-			
-				resp.setStatus(Status.STATUS_OK);
-			} catch (BeCPGException e) {
-				logger.error("Cannot export entity data", e);
-				throw new WebScriptException(e.getMessage());
-			} catch (AccessDeniedException e) {
-				throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
-			} catch (SocketException e1) {
+			resp.setStatus(Status.STATUS_OK);
+		} catch (BeCPGException e) {
+			logger.error("Cannot export entity data", e);
+			throw new WebScriptException(e.getMessage());
+		} catch (AccessDeniedException e) {
+			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
+		} catch (SocketException e1) {
 
-				// the client cut the connection - our mission was accomplished
-				// apart from a little error message
-				if (logger.isInfoEnabled()) {
-					logger.info("Client aborted stream read:\n\tcontent", e1);
-				}
-
+			// the client cut the connection - our mission was accomplished
+			// apart from a little error message
+			if (logger.isInfoEnabled()) {
+				logger.info("Client aborted stream read:\n\tcontent", e1);
 			}
+
 		}
 	}
 

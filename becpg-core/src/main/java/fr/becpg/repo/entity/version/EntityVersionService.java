@@ -22,25 +22,6 @@ import org.alfresco.service.namespace.QName;
 public interface EntityVersionService {
 
 	/**
-	 * <p>createVersionAndCheckin.</p>
-	 *
-	 * @param origNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param workingCopyNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param versionProperties a {@link java.util.Map} object.
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 */
-	NodeRef createVersionAndCheckin(NodeRef origNodeRef, NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties);
-
-	/**
-	 * <p>doCheckOut.</p>
-	 *
-	 * @param origNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param workingCopyNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 */
-	NodeRef doCheckOut(NodeRef origNodeRef, NodeRef workingCopyNodeRef);
-
-	/**
 	 * <p>cancelCheckOut.</p>
 	 *
 	 * @param origNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
@@ -205,8 +186,8 @@ public interface EntityVersionService {
 
 	NodeRef extractVersion(NodeRef entity1);
 	
-	boolean isV2Service();
-
 	void createInitialVersionWithProps(NodeRef entityNodeRef, Map<QName, Serializable> before);
+
+	NodeRef revertVersion(NodeRef versionNodeRef) throws IllegalAccessException;
 
 }

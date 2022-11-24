@@ -74,6 +74,11 @@ public class FormulatedAspectPatch extends AbstractBeCPGPatch {
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
+			
+			@Override
+			public long getTotalEstimatedWorkSizeLong() {
+				return getTotalEstimatedWorkSize();
+			}
 
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {

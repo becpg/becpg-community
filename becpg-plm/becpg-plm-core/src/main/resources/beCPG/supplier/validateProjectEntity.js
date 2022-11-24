@@ -1,16 +1,16 @@
-function main()
-{
-    var projectEntity = null;
+function main() {
+	var projectEntity = null;
 
-    var projectNode = search.findNode(project.nodeRef);
+	if (project.entities != null && project.entities.size() > 0) {
+		projectEntity = search.findNode(project.entities.get(0));
+		/*
+		  if no autoMerge date is specified  merge and validate entity 
+		 */
+		projectEntity = bSupplier.validateProjectEntity(projectEntity);
 
-    if (projectNode.assocs["pjt:projectEntity"] != null && projectNode.assocs["pjt:projectEntity"].length > 0)
-    {
-        projectEntity = projectNode.assocs["pjt:projectEntity"][0];
-    } 
-
-    bSupplier.validateProjectEntity(projectEntity);
-    
+		project.entities.add(projectEntity.nodeRef);
+		
+	}
 }
 
 main();

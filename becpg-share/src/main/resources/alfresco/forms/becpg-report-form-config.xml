@@ -39,7 +39,7 @@
 					
 					<show id="rep:reportLocales" force="true"/>
 					
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true"/>
 					
 					<show id="rep:reportTextParameters" force="true" />
 					
@@ -94,7 +94,8 @@
 					<show id="cm:creator" for-mode="view" />
 					<show id="cm:created" for-mode="view" />
 					<show id="cm:modifier" for-mode="view" />
-					<show id="cm:modified" for-mode="view" />								
+					<show id="cm:modified" for-mode="view" />				
+					<show id="rep:reportKinds" force="true"/>					
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">

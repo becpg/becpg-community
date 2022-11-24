@@ -13741,7 +13741,7 @@ dataSetRow["illValue"]
 dataSetRow["mblTextCriteria"]
 }
 else if(dataSetRow["mblMaxi"] == -1){
-reportContext.getMessage("absenceMicrobio", reportContext.getLocale())
+reportContext.getMessage("absence", reportContext.getLocale())
 
 }
 else{
@@ -13830,7 +13830,7 @@ row["displayValue"]
 dataSetRow["mblTextCriteria"]
 }
 else if(dataSetRow["mblMaxi"] == -1){
-reportContext.getMessage("absenceMicrobio", reportContext.getLocale())
+reportContext.getMessage("absence", reportContext.getLocale())
 
 }
 else{

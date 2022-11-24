@@ -61,10 +61,21 @@ if(isExternalUser(user)){
        var warningBar =  widgetUtils.findObject(model.jsonModel, "id", "HEADER_LICENSE_WARNING");
        
        if(warningBar){
-         warningBar.name = "becpg/header/WarningBar";
-         warningBar.config = {
-        		 label : hasValidLicense(user) ? "EcmWarning" : "UnauthorizedWarning"
-         };
+	         warningBar.name = "becpg/header/WarningBar";
+		
+			 var label = null;
+	
+			if (!isLicenseValid(user)) {
+				label = "NoLicenseWarning"
+			} else if (!isMemberOfLicenseGroup(user)) {
+				label = "UnauthorizedWarning"
+			} else {
+				label = "EcmWarning"
+			}
+			
+	         warningBar.config = {
+				label : label
+		     };
        }
       
        

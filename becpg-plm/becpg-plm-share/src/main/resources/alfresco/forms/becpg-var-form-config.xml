@@ -26,6 +26,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="var:charactKey" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -51,6 +52,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="var:charactKey" />
+					<show id="bcpg:isDeleted"/>
 
 				</field-visibility>
 
@@ -71,10 +73,14 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="var:charactKey" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -85,6 +91,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" />		
 					<show id="var:charactKey" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>

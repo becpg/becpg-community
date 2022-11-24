@@ -17,7 +17,6 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -26,8 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.admin.SysAdminParams;
@@ -51,7 +48,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.ProjectRepoConsts;
@@ -74,9 +70,6 @@ import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
-import io.opencensus.common.Scope;
-import io.opencensus.trace.Tracer;
-import io.opencensus.trace.Tracing;
 
 
 /**
@@ -90,8 +83,6 @@ import io.opencensus.trace.Tracing;
 public class ProjectServiceImpl implements ProjectService, FormulationPlugin, SecurityServicePlugin {
 
 	private static final Log logger = LogFactory.getLog(ProjectServiceImpl.class);
-
-	private static final Tracer tracer = Tracing.getTracer();
 	
 	@Autowired
 	private AlfrescoRepository<ProjectData> alfrescoRepository;
@@ -250,7 +241,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	@Override
 	public void formulate(NodeRef projectNodeRef)  {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
-			try (Scope scope = tracer.spanBuilder("projectService.Formulate").startScopedSpan()){
+			try {
 
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_LOG_TIME_LIST);
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
@@ -531,64 +522,6 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 			}
 		}
 		return null;
-	}
-
-	/** {@inheritDoc} */
-	// {nodeRef} --> replace with project nodeRef
-	// {nodeRef|propName} --> replace with project property
-	// {nodeRef|xpath:./path} --> replace with nodeRef found in relative project path
-	// {assocName} --> replace with association nodeRef
-	// {assocName|propName} --> replace with association property
-	// {assocName|xpath:./path} --> replace with nodeRef found in relative assoc path
-	@Override
-	public String getDeliverableUrl(NodeRef projectNodeRef, String url) {
-		if ((url != null) && url.contains("{")) {
-			Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(url);
-			StringBuffer sb = new StringBuffer();
-			while (patternMatcher.find()) {
-
-				String assocQname = patternMatcher.group(1);
-				StringBuilder replacement = new StringBuilder();
-				if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)) {
-					String[] splitted = assocQname.split("\\|");
-					replacement.append(extractDeliverableProp(projectNodeRef, splitted));
-
-				} else if(assocQname!=null){
-					String[] splitted = assocQname.split("\\|");
-					List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef, QName.createQName(splitted[0], namespaceService));
-					if (assocs != null) {
-						for (AssociationRef assoc : assocs) {
-							if (replacement.length() > 0) {
-								replacement.append( ",");
-							}
-							replacement.append(extractDeliverableProp(assoc.getTargetRef(), splitted));
-						}
-					}
-				}
-
-				patternMatcher.appendReplacement(sb, replacement != null ? replacement.toString() : "");
-
-			}
-			patternMatcher.appendTail(sb);
-			return sb.toString();
-
-		}
-		return url;
-	}
-
-	private String extractDeliverableProp(NodeRef nodeRef, String[] splitted) {
-		NodeRef ret = null;
-		if (splitted.length > 1) {
-			if (splitted[1].startsWith(DeliverableUrl.XPATH_URL_PREFIX)) {
-				ret = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeRef, splitted[1].substring(DeliverableUrl.XPATH_URL_PREFIX.length()));
-			} else {
-				Serializable tmp = nodeService.getProperty(nodeRef, QName.createQName(splitted[1], namespaceService));
-				return tmp != null ? tmp.toString() : "";
-			}
-		} else {
-			ret = nodeRef;
-		}
-		return ret != null ? ret.toString() : "";
 	}
 
 	private QName extractRolePropName(String authorityName) {

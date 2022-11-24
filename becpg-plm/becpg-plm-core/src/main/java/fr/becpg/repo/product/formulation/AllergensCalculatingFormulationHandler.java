@@ -33,6 +33,7 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.requirement.AllergenRequirementScanner;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -203,6 +204,27 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			formulatedProduct.getReqCtrlList().addAll(rclCtrlMap.values());
 
 		}
+		
+		for (IngListDataItem ing : formulatedProduct.getIngList()) {
+			
+			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
+			
+			for (NodeRef allergenNodeRef : ingItem.getAllergenList()) {
+				AllergenListDataItem allergen = findAllergen(formulatedProduct, allergenNodeRef);
+				
+				if (allergen == null) {
+					allergen = new AllergenListDataItem();
+					allergen.setAllergen(allergenNodeRef);
+					formulatedProduct.getAllergenList().add(allergen);
+				}
+				
+				allergen.setVoluntary(true);
+				
+				if (!allergen.getVoluntarySources().contains(ing.getIng())) {
+					allergen.getVoluntarySources().add(ing.getIng());
+				}
+			}
+		}
 
 		// sort
 		if (formulatedProduct.getAllergenList() != null) {
@@ -211,6 +233,17 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 		return true;
 
+	}
+	
+	private AllergenListDataItem findAllergen(ProductData formulatedProduct, NodeRef allergenNodeRef) {
+		
+		for (AllergenListDataItem allergen : formulatedProduct.getAllergenList()) {
+			if (allergenNodeRef.equals(allergen.getAllergen())) {
+				return allergen;
+			}
+		}
+		
+		return null;
 	}
 
 	private Double getRegulatoryThreshold(ProductData formulatedProduct, NodeRef allergen) {

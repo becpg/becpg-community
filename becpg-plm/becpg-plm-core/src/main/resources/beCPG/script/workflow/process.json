@@ -70,6 +70,40 @@
 			],
 			"submissionUrl": "/becpg/workflow/start-process?script=create-project.js&nodeRefs={selectedItems}",
 			"redirectUrl": "/entity-data-lists?nodeRef={nodeRef}&list=View-properties"
+        },
+		{
+            "title": "becpg.process.send-to-supplier.title",
+            "description": "becpg.process.send-to-supplier.description",
+            "itemId": "pjt:project",
+            "itemKind": "type",
+            "formId": "supplier-process",
+            "condition": "js(items.length > 0 && items.every( (n) =>  n.isSubType(\"cm:content\") || ((items.length == 1) && n.isSubType(\"bcpg:product\")) || (items.length==1 && n.isSubType(\"bcpg:supplier\")) ) )",
+			"formFields": {
+				"prop_pjt_projectState": "InProgress",
+				"prop_cm_name": "js(bSupplier.extractSupplierProjectName(items))",
+				"assoc_bcpg_supplierAccountRef": "js(bSupplier.extractSupplierAccountRefs(items).map((n) =>  n.nodeRef ).join(\",\"))"
+			},
+			"hiddenFields": [
+				"prop_pjt_projectState"
+			],
+			"submissionUrl": "/becpg/workflow/start-process?script=create-supplier-project.js&nodeRefs={selectedItems}",
+			"redirectUrl": "/entity-data-lists?nodeRef={nodeRef}&list=View-properties"
+        },{
+            "title": "becpg.process.send-for-signature.title",
+            "description": "becpg.process.send-for-signature.description",
+            "itemId": "pjt:project",
+            "itemKind": "type",
+            "formId": "sign-process",
+            "condition": "js(items.length > 0 && items.every( (n) =>  n.isSubType(\"cm:content\") && (!n.hasAspect(\"sign:signatureAspect\") || n.properties[\"sign:status\"] == \"Initialized\")))",
+			"destination": "js(siteService.getSite(\"simulation\").getContainer(\"documentLibrary\").nodeRef)",
+			"formFields": {
+				"prop_pjt_projectState": "InProgress"
+			},
+			"hiddenFields": [
+				"prop_pjt_projectState"
+			],
+			"submissionUrl": "/becpg/workflow/start-process?script=create-signature-project.js&nodeRefs={selectedItems}",
+			"redirectUrl": "/entity-data-lists?nodeRef={nodeRef}&list=View-properties"
         }
 	]
 }

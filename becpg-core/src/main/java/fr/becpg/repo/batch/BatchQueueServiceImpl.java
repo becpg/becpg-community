@@ -238,9 +238,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						stepCount++;
 					}
 
-					BatchProcessor<T> batchProcessor = new BatchProcessor<>(jsonBatch.toString(), transactionService.getRetryingTransactionHelper(),
-							getNextWorkwrapper(batchStep.getWorkProvider()), batchInfo.getWorkerThreads(), batchInfo.getBatchSize(),
-							applicationEventPublisher, logger, 100);
+				BatchProcessor<T> batchProcessor = new BatchProcessor<>(jsonBatch.toString(),
+						transactionService.getRetryingTransactionHelper(), getNextWorkWrapper(batchStep.getWorkProvider()),
+						batchInfo.getWorkerThreads(), batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
 
 					batchProcessor.process(runAsWrapper(batchStep.getProcessWorker()), true);
 
@@ -315,12 +315,17 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 		}
 
-		private BatchProcessWorkProvider<T> getNextWorkwrapper(BatchProcessWorkProvider<T> workProvider) {
+		private BatchProcessWorkProvider<T> getNextWorkWrapper(BatchProcessWorkProvider<T> workProvider) {
 			return new BatchProcessWorkProvider<T>() {
 
 				@Override
 				public int getTotalEstimatedWorkSize() {
 					return workProvider.getTotalEstimatedWorkSize();
+				}
+				
+				@Override
+				public long getTotalEstimatedWorkSizeLong() {
+					return getTotalEstimatedWorkSize();
 				}
 
 				@Override

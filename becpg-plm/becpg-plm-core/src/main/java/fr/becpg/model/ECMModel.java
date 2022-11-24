@@ -118,15 +118,9 @@ public class ECMModel {
 	/** Constant <code>PROP_CUL_TREATED</code> */
 	public static final QName PROP_CUL_TREATED = QName.createQName(ECM_URI,
 			"culTreated");	
-	/** Constant <code>ASSOC_CUL_SOURCE_ITEMS</code> */
-	public static final QName ASSOC_CUL_SOURCE_ITEMS = QName.createQName(ECM_URI,
-			"culSourceItems");
 	/** Constant <code>ASSOC_CUL_TARGET_ITEM</code> */
 	public static final QName ASSOC_CUL_TARGET_ITEM = QName.createQName(ECM_URI,
 			"culTargetItem");	
-	/** Constant <code>ASSOC_CUL_SIMULATION_ITEM</code> */
-	public static final QName ASSOC_CUL_SIMULATION_ITEM = QName.createQName(ECM_URI,
-			"culSimulationItem");	
 	
 	
 	
