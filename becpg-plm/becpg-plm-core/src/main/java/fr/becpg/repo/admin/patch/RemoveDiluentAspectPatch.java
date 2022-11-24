@@ -10,6 +10,7 @@ import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
+import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -39,6 +40,7 @@ public class RemoveDiluentAspectPatch extends AbstractBeCPGPatch {
 	private QNameDAO qnameDAO;
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
+	private IntegrityChecker integrityChecker;
 
 	private final int batchThreads = 3;
 	private final int batchSize = 40;
@@ -121,12 +123,16 @@ public class RemoveDiluentAspectPatch extends AbstractBeCPGPatch {
 
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 				policyBehaviourFilter.disableBehaviour();
+				
+				integrityChecker.setEnabled(false);
 
 				if (nodeService.exists(nodeRef)) {
 					nodeService.removeAspect(nodeRef, ASPECT_DILUENT);
 				} else {
 					logger.warn("nodeRef doesn't exist : " + nodeRef);
 				}
+				
+				integrityChecker.setEnabled(true);
 
 			}
 
@@ -137,6 +143,11 @@ public class RemoveDiluentAspectPatch extends AbstractBeCPGPatch {
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
+	
+	public void setIntegrityChecker(IntegrityChecker integrityChecker) {
+		this.integrityChecker = integrityChecker;
+	}
+	
 	/**
 	 * <p>Getter for the field <code>nodeDAO</code>.</p>
 	 *
