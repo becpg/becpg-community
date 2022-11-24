@@ -1,6 +1,8 @@
 package fr.becpg.repo.audit.service.impl;
 
+import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.rest.api.Audit;
 import org.json.JSONObject;
@@ -10,7 +12,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
-import fr.becpg.repo.audit.model.AuditFilter;
+import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.model.AuditScope;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
@@ -49,8 +51,8 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 	}
 
 	@Override
-	public List<JSONObject> getAuditStatistics(AuditType type, AuditFilter auditFilter) {
-		return databaseAuditService.getAuditStatistics(getPlugin(type), auditFilter);
+	public List<JSONObject> listAuditEntries(AuditType type, AuditQuery auditFilter) {
+		return databaseAuditService.listAuditEntries(getPlugin(type), auditFilter);
 		
 	}
 
@@ -65,8 +67,13 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 	}
 
 	@Override
-	public void deleteAuditStatitics(AuditType type, Long fromId, Long toId) {
-		databaseAuditService.deleteAuditStatistics(getPlugin(type), fromId, toId);
+	public void deleteAuditEntries(AuditType type, Long fromId, Long toId) {
+		databaseAuditService.deleteAuditEntries(getPlugin(type), fromId, toId);
+	}
+	
+	@Override
+	public void updateAuditEntry(AuditType type, Long id, Long time, Map<String, Serializable> values) {
+		databaseAuditService.updateAuditEntry(getPlugin(type), id, time, values);
 	}
 	
 }
