@@ -923,23 +923,49 @@
 							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/packagingMaterial_Hierarchy
 							</control-param>
 							<control-param name="multiple">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					
-					<field id="bcpg:code" set="mainInfo" />
-					<field id="bcpg:erpCode" set="mainInfo" />
+					<field id="bcpg:code" set="mainInfo" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:erpCode" set="mainInfo" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
 
 					<!-- pallet -->
-					<field id="pack:palletLayers" set="pallet" />
-					<field id="pack:palletBoxesPerLayer" set="pallet" />
-					<field id="pack:palletBoxesPerPallet" set="pallet" />
-					<field id="pack:palletBoxesPerLastLayer" set="pallet" />
+					<field id="pack:palletLayers" set="pallet" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="pack:palletBoxesPerLayer" set="pallet" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="pack:palletBoxesPerPallet" set="pallet" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="pack:palletBoxesPerLastLayer" set="pallet" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
 				
 
 				</appearance>
@@ -3326,12 +3352,14 @@
 							<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists/supplier_Hierarchy
 							</control-param>
 							<control-param name="multiple">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:supplierState" mandatory="false" read-only="false" set="2-col-product-criteria" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:code" mandatory="false" read-only="false" set="2-col-product-criteria" />
@@ -3551,11 +3579,27 @@
 
 				</field-visibility>
 				<appearance>
+					<field id="cm:name">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:erpCode">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
 					<field id="bcpg:clientHierarchy1">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/client_Hierarchy
 							</control-param>
 							<control-param name="multiple">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:clientHierarchy2">
@@ -3564,12 +3608,14 @@
 							</control-param>
 							<control-param name="parent">bcpg_clientHierarchy1
 							</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:clientState">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -3903,37 +3949,57 @@
 				<appearance>
 				
 				    <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label"  template="/org/alfresco/components/form/2-column-set.ftl"/>
-			          <field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
+			          <field id="cm:name" mandatory="false" read-only="false" set="mainInfo">
+			          	<control>
+			          		<control-param name="forceEditable">true</control-param>
+			          	</control>
+			          </field>
+			          
 			        
 			          <field id="cm:title"  mandatory="false" read-only="false" set="mainInfo">
-			            <control template="/org/alfresco/components/form/controls/textfield.ftl"/>
+			            <control template="/org/alfresco/components/form/controls/textfield.ftl">
+			            	<control-param name="forceEditable">true</control-param>
+			            </control>
+			            
 			          </field>
 			       
 			       
 			          <field id="bcpg:productCollectionHierarchy1" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productCollectionState"  set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 			              <control-param name="isSearch">true</control-param>
 			              <control-param name="insertBlank">true</control-param>
+			              <control-param name="forceEditable">true</control-param>
 			            </control>
 					</field>
 					<field id="bcpg:productCollectionHierarchy2" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
 							<control-param name="parent">bcpg_productCollectionHierarchy1</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="cm:description" set="mainInfo">
 						<control>
 							<control-param name="activateLinks">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:code" set="mainInfo"/>
-					<field id="bcpg:erpCode"  set="mainInfo"/>
+					<field id="bcpg:code" set="mainInfo">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:erpCode" set="mainInfo">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
 				
 				  <field id="bcpg:subsidiaryRef" mandatory="false" read-only="false" set="mainInfo"/>
 		          <field id="bcpg:trademarkRef" mandatory="false" read-only="false" set="mainInfo"/>
@@ -3955,11 +4021,13 @@
 							</control-param>
 							<control-param name="createNewItemIcon">tag</control-param>
 							<control-param name="mode">AND</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 					<field id="cm:categories" set="categories">
 						<control>
 							<control-param name="compactMode">true</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
 				</appearance>

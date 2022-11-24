@@ -1192,9 +1192,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			Set<AccessPermission> acls = permissionService.getAllSetPermissions(nodeRef);
 			for (AccessPermission permission : acls) {
 				if (permission.isSetDirectly()) {
-
-					permissionService.deletePermission(nodeRef, PermissionService.ALL_AUTHORITIES, permission.getPermission());
-
+				   permissionService.deletePermission(nodeRef, permission.getAuthority(), permission.getPermission());
 				}
 			}
 			permissionService.setInheritParentPermissions(nodeRef, inherit);

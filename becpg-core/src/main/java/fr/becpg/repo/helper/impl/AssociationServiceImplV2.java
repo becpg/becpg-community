@@ -42,7 +42,6 @@ import org.alfresco.repo.cache.SimpleCache;
 import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.node.NodeServicePolicies;
-import org.alfresco.repo.node.NodeServicePolicies.OnRestoreNodePolicy;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantService;
@@ -722,8 +721,8 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, ContentModel.TYPE_AUTHORITY,
 				new JavaBehaviour(this, "onDeleteNode"));
 
-		policyComponent.bindClassBehaviour(OnRestoreNodePolicy.QNAME, ContentModel.TYPE_CMOBJECT, new JavaBehaviour(this, "onRestoreNode"));
-		policyComponent.bindClassBehaviour(OnRestoreNodePolicy.QNAME, ContentModel.TYPE_AUTHORITY, new JavaBehaviour(this, "onRestoreNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRestoreNodePolicy.QNAME, ContentModel.TYPE_CMOBJECT, new JavaBehaviour(this, "onRestoreNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRestoreNodePolicy.QNAME, ContentModel.TYPE_AUTHORITY, new JavaBehaviour(this, "onRestoreNode"));
 
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, ContentModel.TYPE_CMOBJECT,
 				new JavaBehaviour(this, "onCheckIn"));
@@ -732,9 +731,25 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_SORTABLE_LIST,
 				new JavaBehaviour(this, "onUpdateProperties"));
+		
+		super.disableOnCopyBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
 	}
 
+	@Override
+	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
+		
+		NodeRef listNodeRef = nodeService.getPrimaryParent(destinationRef).getParentRef();
+		
+		removeChildCachedAssoc(listNodeRef, ContentModel.ASSOC_CONTAINS);
+		
+		NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
+		
+		removeChildCachedAssoc(listContainerNodeRef, ContentModel.ASSOC_CONTAINS);
+
+		super.onCopyComplete(classRef, sourceNodeRef, destinationRef, copyToNewNode, copyMap);
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public void onDeleteAssociation(AssociationRef associationRef) {

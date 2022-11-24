@@ -158,6 +158,53 @@
 					
 
 				</field-visibility>
+				<appearance>
+					<field id="cm:name">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:entityTplRef">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:batchId">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="cm:description">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:product">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:batchQty">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:batchQtyUnit">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:batchState">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 	
 		</forms>
@@ -507,30 +554,87 @@
 				</field-visibility>
 				<appearance>
 					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.nc-info.label" />
-					<field id="cm:name" set="mainInfo" />
-					<field id="bcpg:code" read-only="true" set="mainInfo" />
-					<field id="qa:ncType" set="mainInfo" />
+					<field id="cm:name" set="mainInfo" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:code" read-only="true" set="mainInfo" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:ncType" set="mainInfo" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
 					<field id="qa:ncPriority" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,1|priority.high,2|priority.medium,3|priority.low</control-param>
+							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
-					<field id="qa:ncState" set="mainInfo" />
-					<field id="qa:ncCreationStep" set="mainInfo" />
-					<field id="qa:ncDetectionStep" set="mainInfo" />
-					<field id="qa:ncQuantityNc" set="mainInfo" />
-					<field id="qa:ncQuantityNcUnit" set="mainInfo" />
+					<field id="qa:ncState" set="mainInfo" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:ncCreationStep" set="mainInfo" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:ncDetectionStep" set="mainInfo" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:ncQuantityNc" set="mainInfo" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:ncQuantityNcUnit" set="mainInfo" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
 
 					<set id="product-info" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
-					<field id="qa:product" set="product-info" />
-					<field id="bcpg:plants" set="product-info" label-id="becpg.forms.field.claim.plants"/>
+					<field id="qa:product" set="product-info" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:plants" set="product-info" label-id="becpg.forms.field.claim.plants">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
 					
 
 					<set id="batch-info" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
-					<field id="qa:batchId" set="batch-info" />
-					<field id="qa:orderId" set="batch-info" />
-					<field id="bcpg:clients" force="true" set="batch-info" />
-					<field id="bcpg:suppliers" force="true" set="batch-info" />
+					<field id="qa:batchId" set="batch-info" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:orderId" set="batch-info" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:clients" force="true" set="batch-info" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:suppliers" force="true" set="batch-info" >
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
 
 
 				<!-- audit -->
@@ -1181,6 +1285,48 @@
 					<show id="qa:product" />
 
 				</field-visibility>
+				<appearance>
+					<field id="cm:name">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="cm:title">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="cm:description">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:qcState">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:qcControlPlans">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:batchId">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:orderId">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="qa:product">
+						<control>
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+				</appearance>
 			</form>
 			<form id="datagridWUsed">
 				<field-visibility>

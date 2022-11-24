@@ -763,7 +763,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				for (PackagingListDataItem packagingListDataItem : currentLevelQuantities.getComponentProductData()
 						.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-					loadPackagingItem(entityNodeRef, currentLevelQuantities, packagingListDataItem, packagingListElt,
+					loadPackagingItem(entityNodeRef,  new CurrentLevelQuantities(packagingListDataItem, currentLevelQuantities), packagingListDataItem, packagingListElt,
 							context, level + 1, dropPackagingOfComponents, true);
 
 				}
