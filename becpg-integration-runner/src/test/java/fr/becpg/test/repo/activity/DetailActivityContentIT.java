@@ -55,7 +55,7 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 	}
 
 	protected List<ActivityListDataItem> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
-		AuditQuery auditFilter = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef=" + entityNodeRef.toString());
+		AuditQuery auditFilter = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef", entityNodeRef.toString());
 
 		return transactionService.getRetryingTransactionHelper().doInTransaction(
 				() -> beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
