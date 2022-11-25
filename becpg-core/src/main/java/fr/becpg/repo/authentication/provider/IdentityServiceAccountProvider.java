@@ -109,7 +109,7 @@ public class IdentityServiceAccountProvider {
 							}
 							
 
-							StringEntity params = new StringEntity(userRepresentation, "UTF-8");
+							StringEntity params = new StringEntity(userRepresentation.toString(), "UTF-8");
 							request.setEntity(params);
 							if(logger.isDebugEnabled()) {
 								logger.debug("Create user:"+userRepresentation.toString());
