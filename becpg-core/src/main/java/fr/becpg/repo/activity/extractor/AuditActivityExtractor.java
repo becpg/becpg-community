@@ -65,7 +65,7 @@ public class AuditActivityExtractor implements DataListExtractor {
 			ret.setComputedFields(attributeExtractorService.readExtractStructure(BeCPGModel.TYPE_ACTIVITY_LIST, metadataFields));
 		}
 		
-		AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef=" + dataListFilter.getEntityNodeRef());
+		AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef", dataListFilter.getEntityNodeRef().toString());
 		
 		List<JSONObject> results = dataListFilter.getPagination().paginate(beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery));
 

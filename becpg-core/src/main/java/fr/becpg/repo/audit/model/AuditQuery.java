@@ -1,5 +1,7 @@
 package fr.becpg.repo.audit.model;
 
+import java.util.Date;
+
 import fr.becpg.repo.RepoConsts;
 
 public class AuditQuery {
@@ -16,9 +18,9 @@ public class AuditQuery {
     
     private Long toId;
     
-    private String fromTime;
+    private Date fromTime;
     
-    private String toTime;
+    private Date toTime;
     
     private AuditQuery() {
     	
@@ -34,7 +36,7 @@ public class AuditQuery {
     	return this;
     }
     
-    public AuditQuery timeRange(String fromTime, String toTime) {
+    public AuditQuery timeRange(Date fromTime, Date toTime) {
     	this.fromTime = fromTime;
     	this.toTime = toTime;
     	return this;
@@ -42,6 +44,11 @@ public class AuditQuery {
     
     public AuditQuery sortBy(String sortBy) {
     	this.sortBy = sortBy;
+    	return this;
+    }
+    
+    public AuditQuery filter(String key, String value) {
+    	this.filter = key + "=" + value;
     	return this;
     }
     
@@ -68,11 +75,11 @@ public class AuditQuery {
 		return toId;
 	}
 
-	public String getFromTime() {
+	public Date getFromTime() {
 		return fromTime;
 	}
 
-	public String getToTime() {
+	public Date getToTime() {
 		return toTime;
 	}
 

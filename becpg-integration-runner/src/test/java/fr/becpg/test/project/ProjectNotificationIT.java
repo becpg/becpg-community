@@ -271,7 +271,7 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 
 		assertEquals(size, transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
-		AuditQuery auditFilter = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef=" + entityNodeRef.toString());
+		AuditQuery auditFilter = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef", entityNodeRef.toString());
 
 		return beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
 						.map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList());

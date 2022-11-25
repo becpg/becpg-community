@@ -71,7 +71,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 	}
 
 	protected List<ActivityListDataItem> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
-		AuditQuery auditFilter = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef=" + entityNodeRef.toString());
+		AuditQuery auditFilter = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef", entityNodeRef.toString());
 
 		return transactionService.getRetryingTransactionHelper().doInTransaction(
 				() -> beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
@@ -84,7 +84,7 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 			
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			
-			AuditQuery auditFilter = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef=" + entityNodeRef.toString());
+			AuditQuery auditFilter = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef", entityNodeRef.toString());
 
 			return beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream().map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList());
 			
