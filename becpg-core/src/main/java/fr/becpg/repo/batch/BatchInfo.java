@@ -1,7 +1,6 @@
 package fr.becpg.repo.batch;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.Objects;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -45,14 +44,8 @@ public class BatchInfo implements Serializable {
 
 	private int batchSize = BATCH_SIZE;
 	
-	private Date startTime;
-	
-	private Date endTime;
-	
 	private Boolean isCompleted = Boolean.FALSE;
 	
-	private int totalItems = 0;
-
 	public BatchInfo(String batchId, String batchDescId) {
 		super();
 		this.batchId = batchId;
@@ -68,22 +61,6 @@ public class BatchInfo implements Serializable {
 		this.batchUser = AuthenticationUtil.getRunAsUser();
 	}
 	
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
-	
-	public Date getEndTime() {
-		return endTime;
-	}
-	
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
-	
-	public Date getStartTime() {
-		return startTime;
-	}
-
 	public String getBatchId() {
 		return batchId;
 	}
@@ -104,14 +81,6 @@ public class BatchInfo implements Serializable {
 		return entityDescription;
 	}
 	
-	public int getTotalItems() {
-		return totalItems;
-	}
-	
-	public void setTotalItems(int totalItems) {
-		this.totalItems = totalItems;
-	}
-
 	public void enableNotifyByMail(String mailAction, String mailActionUrl) {
 		this.notifyByMail = Boolean.TRUE;
 		this.mailAction = mailAction;

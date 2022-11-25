@@ -25,6 +25,7 @@ import org.alfresco.rest.framework.resource.parameters.Params.RecognizedParams;
 import org.alfresco.rest.framework.resource.parameters.where.Query;
 import org.alfresco.rest.framework.resource.parameters.where.QueryImpl;
 import org.alfresco.rest.framework.resource.parameters.where.WhereCompiler;
+import org.alfresco.util.ISO8601DateFormat;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
 import org.json.JSONObject;
@@ -71,7 +72,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 
 			if (deleteOldEntry) {
 				
-				AuditQuery auditFilter = AuditQuery.createQuery().filter("id=" + id).maxResults(1);
+				AuditQuery auditFilter = AuditQuery.createQuery().filter("id", String.valueOf(id)).maxResults(1);
 				
 				Collection<AuditEntry> entries = internalListAuditEntries(auditPlugin, auditFilter);
 				
@@ -183,13 +184,13 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 			String valuesKey = splitted[0];
 			String valuesValue = splitted[1];
 			
-			statements.add(String.format(getWhereValueStament(plugin), valuesKey, valuesValue));
+			statements.add("valuesKey='" + "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + valuesKey + "/value' and valuesValue='" + valuesValue + "'");
 			
 		}
 		
 		if (auditFilter.getFromTime() != null && auditFilter.getToTime() != null) {
 			
-			statements.add("createdAt BETWEEN ('" + auditFilter.getFromTime() + "' , '" + auditFilter.getToTime() + "')");
+			statements.add("createdAt BETWEEN ('" + ISO8601DateFormat.format(auditFilter.getFromTime()) + "' , '" + ISO8601DateFormat.format(auditFilter.getToTime()) + "')");
 			
 			if (!whereClauseBuilder.toString().isBlank()) {
 				whereClauseBuilder.append(" and ");
@@ -232,10 +233,6 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		return null;
 	}
 
-	private String getWhereValueStament(AuditPlugin plugin) {
-		return "valuesKey='" + "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/%s/value' and valuesValue='%s'";
-	}
-	
 	private Map<String, Serializable> recreateAuditMap(AuditPlugin plugin, Map<String, Serializable> auditValues, boolean forDatabase) {
 		
 		Map<String, Serializable> auditMap = new HashMap<>();

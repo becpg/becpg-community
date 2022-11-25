@@ -598,8 +598,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		
 		// Activities in the last hour
 		AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt")
-				.timeRange(ISO8601DateFormat.format(cal.getTime()), ISO8601DateFormat.format(new Date()))
-				.filter("entityNodeRef=" + entityNodeRef);
+				.timeRange(cal.getTime(), new Date()).filter("entityNodeRef", entityNodeRef.toString());
 		
 		List<ActivityListDataItem> sortedActivityList = new ArrayList<>();
 		
@@ -815,7 +814,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	@Override
 	public void mergeActivities(NodeRef fromNodeRef, NodeRef toNodeRef) {
 
-		AuditQuery auditQuery = AuditQuery.createQuery().filter("entityNodeRef=" + toNodeRef);
+		AuditQuery auditQuery = AuditQuery.createQuery().filter("entityNodeRef", toNodeRef.toString());
 		
 		List<JSONObject> fromActivities = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery);
 		
@@ -1146,11 +1145,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 
 						// Get Activity list ordered by the date of creation
-//						List<NodeRef> activityListDataItemNodeRefs = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST,
-//								SORT_MAP);
-//						Collections.reverse(activityListDataItemNodeRefs);
-						
-						AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef=" + entityNodeRef);
+						AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef", entityNodeRef.toString());
 						
 						List<ActivityListDataItem> sortedActivityList = new ArrayList<>();
 						
@@ -1239,7 +1234,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			NodeRef activityListNodeRef = getActivityList(entityTplNodeRef);
 			if (activityListNodeRef != null) {
-				AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef=" + entityTplNodeRef);
+				AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef", entityTplNodeRef.toString());
 				
 				List<ActivityListDataItem> sortedActivityList = new ArrayList<>();
 				

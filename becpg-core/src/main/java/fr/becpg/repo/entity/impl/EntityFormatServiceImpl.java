@@ -288,7 +288,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 				RemoteParams remoteParams = new RemoteParams(RemoteEntityFormat.json_all);
 				
-				remoteParams.setFilteredLists(List.of(BeCPGModel.TYPE_ACTIVITY_LIST.getLocalName()));
+				remoteParams.setFilteredLists(List.of("!" + BeCPGModel.TYPE_ACTIVITY_LIST.getLocalName()));
 				
 				JSONObject jsonParams = new JSONObject();
 				jsonParams.put(RemoteParams.PARAM_APPEND_MLTEXT_CONSTRAINT, false);

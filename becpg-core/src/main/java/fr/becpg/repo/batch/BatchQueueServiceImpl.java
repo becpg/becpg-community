@@ -215,8 +215,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				
 				for (BatchStep<T> batchStep : batchSteps) {
 					
-					totalItems += batchStep.getWorkProvider().getTotalEstimatedWorkSizeLong();
-					
 					if (batchStep.getBatchStepListener() != null) {
 						
 						AuthenticationUtil.pushAuthentication();
@@ -273,6 +271,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					
 					endTime = batchProcessor.getEndTime();
 					
+					totalItems += batchStep.getWorkProvider().getTotalEstimatedWorkSizeLong();
+					
 					if (batchProcessor.getTotalErrorsLong() > 0 && batchStep.getBatchStepListener() != null) {
 						
 						hasError = true;
@@ -310,7 +310,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					}
 				}
 				
-				batchInfo.setIsCompleted(true);
+				batchInfo.setIsCompleted(true); 
+				
+				auditScope.putAttribute("totalItems", totalItems);
 				
 				auditScope.putAttribute("isCompleted", true);
 				
@@ -331,12 +333,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				}, true, false), batchInfo.getBatchUser());
 			}
 
-			batchInfo.setTotalItems(totalItems);
-			
-			batchInfo.setIsCompleted(true);
-			
-			batchInfo.setEndTime(endTime);
-			
 			cancelledBatches.remove(batchId);
 			
 		}
