@@ -369,16 +369,27 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 			String name = (String) nodeService.getProperty(temporaryNode, ContentModel.PROP_NAME);
 
-			if (lockService.isLocked(temporaryNode)) {
-				lockService.unlock(temporaryNode);
-			}
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+				if (lockService.isLocked(temporaryNode)) {
+					lockService.unlock(temporaryNode);
+				}
+				return null;
+			}, false, true);
+			
 			deleteNode(temporaryNode);
+			
 			logger.debug("deleted temporary version node : '" + name + "', tenant : " + tenantDomain);
 
-			if (parentNode != null && nodeService.exists(parentNode) && nodeService.getChildAssocs(parentNode).isEmpty()) {
-				if (lockService.isLocked(parentNode)) {
-					lockService.unlock(parentNode);
-				}
+			if (parentNode != null && nodeService.exists(parentNode)
+					&& nodeService.getChildAssocs(parentNode).isEmpty()) {
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+					if (lockService.isLocked(temporaryNode)) {
+						lockService.unlock(temporaryNode);
+					}
+					return null;
+				}, false, true);
 				deleteNode(parentNode);
 				logger.debug("also deleted parent folder of '" + name + "' because it was empty, tenant : " + tenantDomain);
 			}
@@ -407,9 +418,13 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
 		} else {
 			logger.debug("deleting version history node : '" + name + "' because the original node doesn't exist anymore, tenant : " + tenantDomain);
-			if (lockService.isLocked(notConvertedNode)) {
-				lockService.unlock(notConvertedNode);
-			}
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+				if (lockService.isLocked(notConvertedNode)) {
+					lockService.unlock(notConvertedNode);
+				}
+				return null;
+			}, false, true);
 
 			deleteNode(notConvertedNode);
 		}
