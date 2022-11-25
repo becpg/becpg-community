@@ -182,6 +182,9 @@ grant {
     
     //beCPG DCVEM
     permission java.util.PropertyPermission "org.graalvm.nativeimage.imagecode", "read";
+    //beCPG Jacoco 
+    permission java.net.SocketPermission "localhost:10001", "listen,resolve";
+    
 };
 
 
