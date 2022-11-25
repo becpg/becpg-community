@@ -1355,6 +1355,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:ingCEECode"  force="true"/>
 					<show id="bcpg:casNumber"  force="true"/>
 					<show id="bcpg:ceNumber"  force="true"/>
@@ -1364,11 +1365,11 @@
 					<show id="bcpg:flNumber"  force="true"/>
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
-					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:ingAllergens" />
 					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
                     <show id="bcpg:isDeleted"/>
-                    <show id="bcpg:ingAllergens" />
+               
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -1418,6 +1419,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:pluralLegalName"/>
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:ingCEECode" force="true"/>
 					<show id="bcpg:casNumber" force="true"/>
 					<show id="bcpg:ceNumber"  force="true"/>
@@ -1427,11 +1429,10 @@
 					<show id="bcpg:flNumber"  force="true"/>
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
-					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:ingAllergens" />
 					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />		
                     <show id="bcpg:isDeleted"/>
-                    <show id="bcpg:ingAllergens" />
                </field-visibility>
 
 				<appearance>
