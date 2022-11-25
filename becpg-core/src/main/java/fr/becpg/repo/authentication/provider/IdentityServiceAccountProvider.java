@@ -84,7 +84,7 @@ public class IdentityServiceAccountProvider {
 
 							request = new HttpPost(authServerUrl + "/admin/realms/" + realm + "/users");
 
-							request.setHeader("Content-Type", "application/json");
+							request.setHeader("Content-Type", "application/json;charset=UTF-8");
 							request.setHeader("Authorization", "Bearer " + auth.getString("access_token"));
 
 							JSONObject userRepresentation = new JSONObject();
@@ -109,7 +109,7 @@ public class IdentityServiceAccountProvider {
 							}
 							
 
-							StringEntity params = new StringEntity(userRepresentation.toString());
+							StringEntity params = new StringEntity(userRepresentation, "UTF-8");
 							request.setEntity(params);
 							if(logger.isDebugEnabled()) {
 								logger.debug("Create user:"+userRepresentation.toString());
@@ -117,6 +117,8 @@ public class IdentityServiceAccountProvider {
 							try (CloseableHttpResponse createResp = httpClient.execute(request)) {
 								if (response.getStatusLine().getStatusCode() != 200) {
 									throw new IllegalStateException(EntityUtils.toString(createResp.getEntity()));
+								} else  if(logger.isDebugEnabled()){
+									logger.debug(EntityUtils.toString(createResp.getEntity()));
 								}
 							}
 						} else {
