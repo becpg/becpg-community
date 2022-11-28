@@ -111,21 +111,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	
 	@Override
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
-		
-		NodeRef listNodeRef = nodeService.getPrimaryParent(destinationRef).getParentRef();
-		
-		if (listNodeRef != null && nodeService.exists(listNodeRef)) {
-			
-			NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
-			
-			if (listContainerNodeRef != null && nodeService.exists(listContainerNodeRef)) {
-				
-				NodeRef entityNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-				
-				updateEntityAuditedFields(entityNodeRef, Set.of(listNodeRef));
-			}
-		}
-		
+		queueListNodeRef(KEY_LIST_ITEM, destinationRef);
 		super.onCopyComplete(classRef, sourceNodeRef, destinationRef, copyToNewNode, copyMap);
 	}
 
