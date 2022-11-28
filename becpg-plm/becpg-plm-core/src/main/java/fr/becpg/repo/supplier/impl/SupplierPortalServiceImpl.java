@@ -291,46 +291,6 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	}
 
 	@Override
-	public NodeRef getSupplierDestFolder(NodeRef supplierNodeRef) {
-		NodeRef destFolder = null;
-
-		if (supplierNodeRef != null) {
-			SiteInfo siteInfo = siteService.getSite(SupplierPortalHelper.SUPPLIER_SITE_ID);
-
-			if (siteInfo != null) {
-
-				Locale currentLocal = I18NUtil.getLocale();
-				Locale currentContentLocal = I18NUtil.getContentLocale();
-
-				try {
-					I18NUtil.setLocale(Locale.getDefault());
-					I18NUtil.setContentLocale(null);
-
-					NodeRef documentLibraryNodeRef = siteService.getContainer(SupplierPortalHelper.SUPPLIER_SITE_ID, SiteService.DOCUMENT_LIBRARY);
-					if (documentLibraryNodeRef != null) {
-
-						destFolder = nodeService.getChildByName(documentLibraryNodeRef, ContentModel.ASSOC_CONTAINS,
-								I18NUtil.getMessage("path.referencing"));
-
-						if (destFolder != null) {
-
-							String supplierName = (String) nodeService.getProperty(supplierNodeRef, ContentModel.PROP_NAME);
-
-							destFolder = nodeService.getChildByName(destFolder, ContentModel.ASSOC_CONTAINS, supplierName);
-						}
-					}
-				} finally {
-					I18NUtil.setLocale(currentLocal);
-					I18NUtil.setContentLocale(currentContentLocal);
-				}
-
-			}
-		}
-
-		return destFolder;
-	}
-
-	@Override
 	public NodeRef getOrCreateSupplierDestFolder(NodeRef supplierNodeRef, List<NodeRef> resources) {
 		NodeRef destFolder = null;
 
@@ -355,14 +315,13 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 							destFolder = hierarchyService.getOrCreateHierachyFolder(supplierNodeRef, null, destFolder);
 
-						}
-
-						destFolder = repoService.getOrCreateFolderByPath(destFolder, supplierNodeRef.getId(),
-								(String) nodeService.getProperty(supplierNodeRef, ContentModel.PROP_NAME));
-
-						for (NodeRef resourceRef : resources) {
-							permissionService.setPermission(destFolder, (String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
-									PermissionService.COORDINATOR, true);
+							destFolder = repoService.getOrCreateFolderByPath(destFolder, supplierNodeRef.getId(),
+									(String) nodeService.getProperty(supplierNodeRef, ContentModel.PROP_NAME));
+							
+							for (NodeRef resourceRef : resources) {
+								permissionService.setPermission(destFolder, (String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
+										PermissionService.COORDINATOR, true);
+							}
 						}
 
 					} finally {
