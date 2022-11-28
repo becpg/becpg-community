@@ -252,7 +252,7 @@ public class FormulationLabelClaimIT extends AbstractFinishedProductTest {
 
 	}
 
-	protected void checkRequirement(NodeRef testProduct) {
+	private void checkRequirement(NodeRef testProduct) {
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			/* -- Check formulation -- */
