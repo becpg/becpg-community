@@ -89,9 +89,20 @@
  * listItems( node,  listQname) returns list items
  * 
  * toISO8601(dateObject, options) convert date toISO8601
+ *
+ * isOnMergeEntity(node) Test we are merging entity
+ *
+ * isOnCreateMinorVersion(node) Test we are merging entity to minor version
+ *
+ * isOnCreateMajorVersion(node) Test we are merging entity to major version
+ *
+ * isOnCopyEntity(node) Test we are copying entity
+ *
+ * isOnFormulateEntity(node) Test we are formulating entity
+ *
+ * isOnBranchEntity(node) Test we are branching entity
  */
-
-
+ 
 const SIMULATION_SITE_ID = "simulation";
 const VALID_SITE_ID = "valid";
 const ARCHIVED_SITE_ID = "archived";
@@ -834,4 +845,26 @@ function getEntityListFromNode(product, listName) {
     return entityList;
 }
 
+function isOnMergeEntity( node) {
+	return bState.isOnMergeEntity(node);
+}
 
+function isOnCreateMinorVersion(node) {
+	return bState.isOnCreateMinorVersion(node);
+}
+
+function isOnCreateMajorVersion(node) {
+	return bState.isOnCreateMajorVersion(node);
+}
+
+function isOnCopyEntity(node) {
+	return bState.isOnCopyEntity(node);
+}
+
+function isOnFormulateEntity(node) {
+	return bState.isOnFormulateEntity(node);
+}
+
+function isOnBranchEntity(node) {
+	return bState.isOnBranchEntity(node);
+}
