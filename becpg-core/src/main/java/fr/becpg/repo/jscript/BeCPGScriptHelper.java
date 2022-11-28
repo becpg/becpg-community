@@ -1373,10 +1373,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void sendMail(List<ScriptNode> recipientNodeRefs, String subject, String mailTemplate, Map<String, Object> templateArgs,
-			boolean sendToSelf) {
-		beCPGMailService.sendMail(recipientNodeRefs.stream().map(r -> r.getNodeRef()).collect(Collectors.toList()), subject, mailTemplate,
+	public void sendMail(List<ScriptNode> recipientNodeRefs, String subject, String mailTemplate, Map<String, Object> templateArgs, boolean sendToSelf) {
+		beCPGMailService.sendMail(recipientNodeRefs.stream().map(ScriptNode::getNodeRef).collect(Collectors.toList()), subject, mailTemplate,
 				(Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs), sendToSelf);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void sendMailToAuthorities(List<String> authorities, String subject, String mailTemplate, Map<String, Object> templateArgs) {
+		beCPGMailService.sendMailToAuthorities(new HashSet<>(authorities), subject, mailTemplate, (Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs));
 	}
 
 	public void generateVersionReport(ScriptNode node, String versionLabel) {
