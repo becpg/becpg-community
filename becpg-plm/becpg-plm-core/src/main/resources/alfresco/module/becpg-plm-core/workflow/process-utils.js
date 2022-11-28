@@ -1,44 +1,31 @@
 function sendMail(userOrGroup, from, subject, message, templatePath, workflowDocuments) {
 	try {
 		if (userOrGroup != null) {
-			var mail = actions.create("mail");
-			mail.parameters.template_model = templateModel;
-
+			
 			if (userOrGroup.typeShort && userOrGroup.typeShort == "cm:authorityContainer") {
-				mail.parameters.to_many = new Array(userOrGroup.properties["cm:authorityName"]);
+				userOrGroup = new Array(userOrGroup.properties["cm:authorityName"]);
 			} else if (userOrGroup.typeShort && userOrGroup.typeShort == "cm:person") {
-				mail.parameters.to_many = new Array(userOrGroup.properties["cm:userName"]);
+				userOrGroup = new Array(userOrGroup.properties["cm:userName"]);
 			} else {
-				mail.parameters.to_many = new Array(userOrGroup);
+				userOrGroup = new Array(userOrGroup);
 			}
+			
+			var templateArgs = {};
+			var templateModel = {};
+			
+			templateArgs['workflowTitle'] = message;
+			templateArgs['workflowPooled'] = false;
+			templateArgs['workflowDescription'] = bpm_workflowDescription;
+			templateArgs['workflowDueDate'] = task.dueDate;
+			templateArgs['workflowPriority'] = task.priority;
+			templateArgs['workflowDocuments'] = workflowDocuments;
+			templateArgs['workflowId'] = "activiti$" + task.id;
 
-			mail.parameters.subject = subject.replace("\n", " ").replace("\r", " ");
-			if (from != null) {
-				mail.parameters.from = from.properties.email;
-			}
-			mail.parameters.ignore_send_failure = true;
+			templateModel['args'] = templateArgs;
+			
+			
+			bcpg.sendMailToAuthorities(userOrGroup, message, templatePath, templateModel);
 
-			var template = search.xpathSearch(templatePath)[0];
-			if (template) {
-				mail.parameters.template = template;
-				var templateArgs = new Array();
-				templateArgs['workflowTitle'] = message;
-				templateArgs['workflowPooled'] = false;
-				templateArgs['workflowDescription'] = bpm_workflowDescription;
-				templateArgs['workflowDueDate'] = task.dueDate;
-				templateArgs['workflowPriority'] = task.priority;
-				templateArgs['workflowDocuments'] = workflowDocuments;
-				templateArgs['workflowId'] = "activiti$" + task.id;
-
-				var templateModel = new Array();
-				templateModel['args'] = templateArgs;
-				mail.parameters.template_model = templateModel;
-
-				mail.execute(bpm_package);
-
-			} else {
-				logger.error("No template found for email : " + templatePath);
-			}
 		}
 	} catch (e) {
 		logger.error("Cannot send mail to :");
