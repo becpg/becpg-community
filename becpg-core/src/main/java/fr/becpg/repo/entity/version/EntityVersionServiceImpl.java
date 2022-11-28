@@ -76,6 +76,8 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.jscript.BeCPGStateHelper;
+import fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -732,6 +734,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	
 	public NodeRef internalMergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused,
 			boolean rename, Date newEffectivity) {
+		
 	
 		if (branchToNodeRef == null) {
 			branchToNodeRef = associationService.getTargetAssoc(branchNodeRef, BeCPGModel.ASSOC_AUTO_MERGE_TO);
@@ -742,7 +745,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			StopWatch watch = null;
 
 			boolean mlAware = 	MLPropertyInterceptor.setMLAware(true);
-			try {
+			try(ActionStateContext state = BeCPGStateHelper.onMergeEntity(branchToNodeRef, versionType) ){
 
 				if (logger.isDebugEnabled()) {
 					watch = new StopWatch();
@@ -750,6 +753,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				}
 
 				final NodeRef internalBranchToNodeRef = branchToNodeRef;
+				
+				state.addToState(branchNodeRef);
 
 				return AuthenticationUtil.runAsSystem(() -> {
 					return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -930,6 +935,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							/**
 							 * After working copy deletion
 							 */
+							//Fire rules once for entity
+							((RuleService) ruleService).enableRules();
+							
 							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_NAME, finalBranchName);
 							
 							associationService.removeAllCacheAssocs(internalBranchToNodeRef);
@@ -1300,7 +1308,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		StopWatch watch = null;
 
 		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
-		try {
+		try (ActionStateContext state = BeCPGStateHelper.onBranchEntity(entityNodeRef)) {
 
 			if (logger.isDebugEnabled()) {
 				watch = new StopWatch();
@@ -1322,6 +1330,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				
 				try {
 					branchNodeRef = entityService.createOrCopyFrom(entityNodeRef, parentRef, nodeService.getType(entityNodeRef), newEntityName);
+					state.addToState(branchNodeRef);
         		} catch (AssociationExistsException e) {
                     // This will be rare, but it's not impossible.
                     // We have to retry the operation.

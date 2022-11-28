@@ -44,6 +44,8 @@ import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.formulation.ReportableEntity;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.jscript.BeCPGStateHelper;
+import fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 
@@ -127,16 +129,23 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	/** {@inheritDoc} */
 	@Override
 	public T formulate(T repositoryEntity)  {
+		return formulate(repositoryEntity, DEFAULT_CHAIN_ID);
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public T formulate(T repositoryEntity, String chainId) {
 		Locale currentLocal = I18NUtil.getLocale();
 		Locale currentContentLocal = I18NUtil.getContentLocale();
-		try {
+		try (ActionStateContext state = BeCPGStateHelper.onFormulateEntity(repositoryEntity.getNodeRef())){
 			I18NUtil.setLocale(Locale.getDefault());
 			I18NUtil.setContentLocale(null);
-			return formulate(repositoryEntity, DEFAULT_CHAIN_ID);
+			return formulateInternal(repositoryEntity, chainId);
 		} finally {
 			I18NUtil.setLocale(currentLocal);
 			I18NUtil.setContentLocale(currentContentLocal);
 		}
+		
 	}
 
 	/** {@inheritDoc} */
@@ -144,7 +153,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 	public T formulate(NodeRef entityNodeRef, String chainId)  {
 		Locale currentLocal = I18NUtil.getLocale();
 		Locale currentContentLocal = I18NUtil.getContentLocale();
-		try {
+		try (ActionStateContext state = BeCPGStateHelper.onFormulateEntity(entityNodeRef)){
 			
 			I18NUtil.setLocale(Locale.getDefault());
 			I18NUtil.setContentLocale(null);
@@ -158,7 +167,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 				watch.start();
 			}
 			
-			entity = formulate(entity, chainId);
+			entity = formulateInternal(entity, chainId);
 
 			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();
@@ -181,9 +190,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		}
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public T formulate(T repositoryEntity, String chainId) {
+	private T formulateInternal(T repositoryEntity, String chainId) {
 		
 		FormulationChain<T> chain = getChain(repositoryEntity.getClass(), chainId);
 
