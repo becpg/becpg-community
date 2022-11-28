@@ -26,6 +26,7 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -40,11 +41,18 @@ import fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulation
 import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.repo.product.requirement.NutsRequirementScanner;
 import fr.becpg.repo.product.requirement.PhysicoRequirementScanner;
+import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
-public class FormulationSpecMergeIT extends FormulationLabelClaimIT {
+public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 
 	protected static final Log logger = LogFactory.getLog(FormulationSpecMergeIT.class);
 
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		// create RM and lSF
+		initParts();
+	}
 	
 	private NodeRef createTestProduct(final String name) {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -229,6 +237,53 @@ public class FormulationSpecMergeIT extends FormulationLabelClaimIT {
 		checkRequirement(testProduct);
 	}
 
+	private void checkRequirement(NodeRef testProduct) {
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			/* -- Check formulation -- */
+			ProductData formulatedProduct = alfrescoRepository.findOne(testProduct);
+
+			logger.info("/*-- Formulation raised " + formulatedProduct.getReqCtrlList().size() + " rclDataItem --*/");
+			int checks = 0;
+			for (ReqCtrlListDataItem rclDataItem : formulatedProduct.getReqCtrlList()) {
+				logger.info(rclDataItem.getReqMessage());
+				if ("L'allégation 'labelClaim1' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
+					fail();
+				} else if ("L'allégation 'labelClaim2' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
+					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
+					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
+					checks++;
+				} else if ("L'allégation 'labelClaim3' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
+					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
+					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
+					checks++;
+				} else if ("L'allégation 'labelClaim4' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
+					fail();
+				} else if ("L'allégation 'labelClaim5' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
+					fail();
+				} else if ("L'allégation 'labelClaim6' doit être revendiquée".equals(rclDataItem.getReqMessage())) {
+					assertEquals(RequirementDataType.Specification, rclDataItem.getReqDataType());
+					assertEquals(RequirementType.Forbidden, rclDataItem.getReqType());
+					checks++;
+				} else if ("Allégation 'labelClaim6' non renseignée".equals(rclDataItem.getReqMessage())) {
+					assertEquals(RequirementDataType.Labelclaim, rclDataItem.getReqDataType());
+					assertEquals(RequirementType.Info, rclDataItem.getReqType());
+					checks++;
+				} else if ("Allégation 'labelClaim7' non renseignée".equals(rclDataItem.getReqMessage())) {
+					assertEquals(RequirementDataType.Labelclaim, rclDataItem.getReqDataType());
+					assertEquals(RequirementType.Info, rclDataItem.getReqType());
+					checks++;
+				}
+
+			}
+			logger.info("Checks: " + checks + " (should be 5)");
+			assertEquals(5, checks);
+
+			return null;
+		}, false, true);
+		
+	}
+	
 	@Test
 	public void testNutrientsMerge() {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
