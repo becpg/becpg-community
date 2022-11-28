@@ -209,8 +209,6 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 	@Override
 	public void sendMail(List<NodeRef> recipientNodeRefs, String subject, String mailTemplate, Map<String, Object> templateArgs, boolean sendToSelf) {
 
-		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), mailTemplate);
-	
 		Set<String> authorities = new HashSet<>();
 		for (NodeRef recipientNodeRef : recipientNodeRefs) {
 			String authorityName;
@@ -233,29 +231,35 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			}
 
 		}
-
 		if(!authorities.isEmpty()) {
-			if(_logger.isTraceEnabled()) {
-				_logger.trace("TemplateNodeRef: " + templateNodeRef);
-				_logger.trace("TemplateArgs: " + templateArgs);
-			}
-	
-			Action mailAction = actionService.createAction(MailActionExecuter.NAME);
-			mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
-			mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, new ArrayList<>(authorities));
-			mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, findLocalizedTemplateNodeRef(templateNodeRef));
-			mailAction.setParameterValue(MailActionExecuter.PARAM_FROM, mailFrom);
-			mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, (Serializable) templateArgs);
-	
-			AuthenticationUtil.runAsSystem(() -> {
-				actionService.executeAction(mailAction, null, true, true);
-				return null;
-			});
+			sendMailToAuthorities(authorities, subject, mailTemplate, templateArgs);
 		} else if(_logger.isDebugEnabled()){
 			_logger.debug("No recipients to send mail to (sendToSelf:"+sendToSelf+")");
 		}
-		
 
+	}
+	
+	@Override
+	public void sendMailToAuthorities(Set<String> authorities, String subject, String mailTemplate, Map<String, Object> templateArgs) {
+		
+		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), mailTemplate);
+		
+		if(_logger.isTraceEnabled()) {
+			_logger.trace("TemplateNodeRef: " + templateNodeRef);
+			_logger.trace("TemplateArgs: " + templateArgs);
+		}
+		
+		Action mailAction = actionService.createAction(MailActionExecuter.NAME);
+		mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
+		mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, new ArrayList<>(authorities));
+		mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, findLocalizedTemplateNodeRef(templateNodeRef));
+		mailAction.setParameterValue(MailActionExecuter.PARAM_FROM, mailFrom);
+		mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, (Serializable) templateArgs);
+		
+		AuthenticationUtil.runAsSystem(() -> {
+			actionService.executeAction(mailAction, null, true, true);
+			return null;
+		});
 	}
 
 	/** {@inheritDoc} */
