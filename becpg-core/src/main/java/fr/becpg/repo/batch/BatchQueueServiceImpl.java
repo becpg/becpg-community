@@ -104,7 +104,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			}
 			threadExecutor.execute(command);
 		} else {
-			String label = I18NUtil.getMessage(batchInfo.getBatchDescId());
+			String label = I18NUtil.getMessage(batchInfo.getBatchDescId(), batchInfo.getEntityDescription());
 			logger.warn("Same batch already in queue " + (label != null ? label : batchInfo.getBatchDescId()) + " (" + batchInfo.getBatchId() + ")");
 		}
 
@@ -405,7 +405,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			if (!getEnclosingInstance().equals(other.getEnclosingInstance())) {
 				return false;
 			}
-			return Objects.equals(batchId, other.batchId);
+			
+			return Objects.equals(batchId, other.batchId) && Objects.equals(batchInfo.getEntityDescription(), other.batchInfo.getEntityDescription());
 		}
 
 		private BatchQueueServiceImpl getEnclosingInstance() {
