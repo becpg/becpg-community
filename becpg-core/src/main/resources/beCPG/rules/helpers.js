@@ -90,11 +90,13 @@
  * 
  * toISO8601(dateObject, options) convert date toISO8601
  *
+ * isOnCreateEntity(node) Test we are creating entity
+ *
  * isOnMergeEntity(node) Test we are merging entity
  *
- * isOnCreateMinorVersion(node) Test we are merging entity to minor version
+ * isOnMergeMinorVersion(node) Test we are merging entity to minor version
  *
- * isOnCreateMajorVersion(node) Test we are merging entity to major version
+ * isOnMergeMajorVersion(node) Test we are merging entity to major version
  *
  * isOnCopyEntity(node) Test we are copying entity
  *
@@ -845,16 +847,20 @@ function getEntityListFromNode(product, listName) {
     return entityList;
 }
 
+function isOnCreateEntity( node) {
+	return bState.isOnCreateEntity(node);
+}
+
 function isOnMergeEntity( node) {
 	return bState.isOnMergeEntity(node);
 }
 
-function isOnCreateMinorVersion(node) {
-	return bState.isOnCreateMinorVersion(node);
+function isOnMergeMinorVersion(node) {
+	return bState.isOnMergeMinorVersion(node);
 }
 
-function isOnCreateMajorVersion(node) {
-	return bState.isOnCreateMajorVersion(node);
+function isOnMergeMajorVersion(node) {
+	return bState.isOnMergeMajorVersion(node);
 }
 
 function isOnCopyEntity(node) {
