@@ -30,7 +30,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.site.SiteModel;
-import org.alfresco.service.cmr.repository.ContentIOException;
+import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -175,9 +175,15 @@ public class UserImporterServiceImpl implements UserImporterService {
 
 			proccessUpload(is, (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME), charset);
 
-		} catch (ContentIOException | IOException e) {
+		} catch (IOException e) {
 			logger.error(e, e);
-			throw new ImporterException("Cannot import user", e);
+			throw new ImporterException("Cannot import user : " + e.getMessage(), e);
+		} catch (Exception e) {
+			if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+			    throw e;
+            }
+			logger.error(e, e);
+			throw new ImporterException("Cannot import user : " + e.getMessage(), e);
 		}
 
 	}
