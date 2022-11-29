@@ -39,6 +39,7 @@ import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.repository.L2CacheSupport;
 
@@ -485,7 +486,12 @@ public class EntityActivityPolicy extends AbstractBeCPGPolicy implements NodeSer
 			QName type = nodeService.getType(childAssocRef.getChildRef());
 			if (accept(type)) {
 				queueNode(KEY_QUEUE_CREATED, childAssocRef.getChildRef());
+				if(entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITY_V2)) {
+					BeCPGStateHelper.onCreateEntity(childAssocRef.getChildRef());
+				}
 			}
+			
+			
 		}
 	}
 
