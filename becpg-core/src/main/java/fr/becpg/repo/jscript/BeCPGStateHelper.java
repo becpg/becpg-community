@@ -17,6 +17,7 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 	public static final String ACTION_FORMULATE_ENTITY = "ACTION_FORMULATE_ENTITY";
 	public static final String ACTION_CREATE_MINOR_VERSION = "ACTION_CREATE_MINOR_VERSION";
 	public static final String ACTION_CREATE_MAJOR_VERSION = "ACTION_CREATE_MAJOR_VERSION";
+	public static final String ACTION_CREATE_ENTITY = "ACTION_CREATE_ENTITY";
 	
 	private static Log logger = LogFactory.getLog(BeCPGStateHelper.class);
 	
@@ -67,11 +68,28 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 				if(logger.isDebugEnabled()) {
 					logger.debug("Start action state: " + ACTION_COPY_ENTITY);
 				}
+				TransactionalResourceHelper.incrementCount(getCounterState(ACTION_COPY_ENTITY));
 				Set<NodeRef> nodeRefs = TransactionalResourceHelper.getSet(ACTION_COPY_ENTITY);
 				nodeRefs.add(entityNodeRef);
 			}
 		}
 
+	}
+	
+
+	public static void onCreateEntity(NodeRef entityNodeRef) {
+		if (TransactionalResourceHelper.getCount(getCounterState(ACTION_BRANCH_ENTITY)) == 0 && TransactionalResourceHelper.getCount(getCounterState(ACTION_CREATE_MAJOR_VERSION)) == 0
+				&& TransactionalResourceHelper.getCount(getCounterState(ACTION_CREATE_MINOR_VERSION)) == 0
+				&& TransactionalResourceHelper.getCount(getCounterState(ACTION_COPY_ENTITY)) == 0) {
+			if (entityNodeRef != null) {
+				if(logger.isDebugEnabled()) {
+					logger.debug("Start action state: " + ACTION_CREATE_ENTITY);
+				}
+				Set<NodeRef> nodeRefs = TransactionalResourceHelper.getSet(ACTION_CREATE_ENTITY);
+				nodeRefs.add(entityNodeRef);
+			}
+		}
+		
 	}
 
 	private static String getCounterState(String state) {
@@ -93,13 +111,17 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 	public boolean isOnMergeEntity(ScriptNode entityNode) {
 		return isOnMergeEntity(entityNode.getNodeRef());
 	}
-
-	public boolean isOnCreateMajorVersion(ScriptNode entityNode) {
-		return isOnCreateMajorVersion(entityNode.getNodeRef());
+	
+	public boolean isOnCreateEntity(ScriptNode entityNode) {
+		return isOnCreateEntity(entityNode.getNodeRef());
 	}
 
-	public boolean isOnCreateMinorVersion(ScriptNode entityNode) {
-		return isOnCreateMinorVersion(entityNode.getNodeRef());
+	public boolean isOnMergeMajorVersion(ScriptNode entityNode) {
+		return isOnMergeMajorVersion(entityNode.getNodeRef());
+	}
+
+	public boolean isOnMergeMinorVersion(ScriptNode entityNode) {
+		return isOnMergeMinorVersion(entityNode.getNodeRef());
 	}
 
 	public boolean isOnFormulateEntity(ScriptNode entityNode) {
@@ -115,14 +137,18 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 	}
 
 	public boolean isOnMergeEntity(NodeRef entityNodeRef) {
-		return isOnCreateMajorVersion(entityNodeRef) || isOnCreateMinorVersion(entityNodeRef);
+		return isOnMergeMajorVersion(entityNodeRef) || isOnMergeMinorVersion(entityNodeRef);
 	}
 
-	public boolean isOnCreateMinorVersion(NodeRef entityNodeRef) {
+	public boolean isOnCreateEntity(NodeRef entityNodeRef) {
+		return hasEntity(entityNodeRef, ACTION_CREATE_ENTITY);
+	}
+	
+	public boolean isOnMergeMinorVersion(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_CREATE_MINOR_VERSION);
 	}
 
-	public boolean isOnCreateMajorVersion(NodeRef entityNodeRef) {
+	public boolean isOnMergeMajorVersion(NodeRef entityNodeRef) {
 		return hasEntity(entityNodeRef, ACTION_CREATE_MAJOR_VERSION);
 	}
 
@@ -142,5 +168,6 @@ public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 		Set<NodeRef> nodeRefs = TransactionalResourceHelper.getSet(state);
 		return nodeRefs.contains(entityNodeRef);
 	}
+
 
 }
