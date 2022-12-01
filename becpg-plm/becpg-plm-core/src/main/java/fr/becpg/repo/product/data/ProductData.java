@@ -20,6 +20,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 
+import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.glop.model.GlopData;
@@ -68,6 +69,7 @@ import fr.becpg.repo.variant.model.VariantEntity;
  * @author matthieu
  * @version $Id: $Id
  */
+@BeCPGPublicApi
 public class ProductData extends AbstractScorableEntity implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity {
 
 	

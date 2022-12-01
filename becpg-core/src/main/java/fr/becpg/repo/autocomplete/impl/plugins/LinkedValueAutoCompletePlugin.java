@@ -12,6 +12,7 @@ import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.autocomplete.AutoCompleteService;
@@ -21,14 +22,15 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.hierarchy.HierarchyService;
 
 /**
- * <p>LinkedValueListValuePlugin class.</p>
+ * <p>LinkedValueAutoCompletePlugin class.</p>
  *
  * @author matthieu
  * @version $Id: $Id
  *
- *  Autocomplete plugin to retrieve linked value ( hierachy)
+ * Autocomplete plugin to retrieve linked values ( hierachy)
  * 
  * Example:
+ * <pre>
  *	<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
  *		<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/QualityLists/bcpg:entityLists/claimOrigin_Hierarchy</control-param>
  *		<control-param name="parent">qa_claimOriginHierarchy1</control-param>
@@ -38,15 +40,24 @@ import fr.becpg.repo.hierarchy.HierarchyService;
  *		<control-param name="ds">becpg/autocomplete/allLinkedvalue/values/System/ProductHierarchy/bcpg:entityLists?extra.depthLevel=1&amp;extra.paths=finishedProduct_Hierarchy,semiFinishedProduct_Hierarchy,rawMaterialProduct_Hierarchy
  *		</control-param>
  *	</control>
+ * </pre> 
  *   
  *  Datasources available:
- *  
- *  becpg/autocomplete/linkedvalue/{path} return linkedValue in path 
- *  becpg/autocomplete/allLinkedvalue/{path}?extra.depthLevel=,extra.paths=,extra.list= return hierachical linkedValue in path 
+ * 
+ *  ds: becpg/autocomplete/linkedvalue/values/{path} 
+ *  param : {path} return hierarchy at depth level 0
+ *  control-param: {parent} return hierarchy with parent 
+ *   
+ *  ds: becpg/autocomplete/allLinkedvalue/values/{path}?extra.depthLevel={depthLevel?}&extra.paths={paths?}&extra.list={lists?}
+ *  param : {path} return all hierarchy starting at depth level path
+ *  url-param: {paths} look hierachy in coma separated paths 
+ *  url-param: {depthLevel} specify start depth-level
+ *  url-param: {list}  look hierachy in spefic list in the current entity
  *  
  * 
  */
 @Service
+@BeCPGPublicApi
 public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	/** Constant <code>SOURCE_TYPE_LINKED_VALUE="linkedvalue"</code> */

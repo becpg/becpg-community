@@ -10,6 +10,9 @@ import org.alfresco.service.cmr.version.VersionType;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.api.BeCPGPublicApi;
+
+@BeCPGPublicApi
 public class BeCPGStateHelper extends BaseScopableProcessorExtension {
 
 	public static final String ACTION_BRANCH_ENTITY = "ACTION_BRANCH_ENTITY";

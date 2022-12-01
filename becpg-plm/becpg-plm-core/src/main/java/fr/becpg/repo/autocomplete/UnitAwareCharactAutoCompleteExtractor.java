@@ -34,13 +34,13 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
 /**
- * <p>CharactValueExtractor class.</p>
+ * <p>UnitAwareCharactAutoCompleteExtractor class.</p>
  *
  * @author "Matthieu Laborie"
  * @version $Id: $Id
  */
-@Service("charactValueExtractor")
-public class CharactAutoCompleteExtractor implements AutoCompleteExtractor<NodeRef> {
+@Service("unitAwareCharactAutoCompleteExtractor")
+public class UnitAwareCharactAutoCompleteExtractor implements AutoCompleteExtractor<NodeRef> {
 
 	@Autowired
 	private NodeService nodeService;

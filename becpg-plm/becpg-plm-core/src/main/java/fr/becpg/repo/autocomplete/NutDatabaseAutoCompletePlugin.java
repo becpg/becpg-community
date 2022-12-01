@@ -27,7 +27,7 @@ public class NutDatabaseAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 	@Autowired
 	private NutDatabaseService nutDatabaseService;
 
-	private final static Log logger = LogFactory.getLog(NutDatabaseAutoCompletePlugin.class);
+	private static final Log logger = LogFactory.getLog(NutDatabaseAutoCompletePlugin.class);
 
 	/** {@inheritDoc} */
 	@Override
