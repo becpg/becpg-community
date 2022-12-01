@@ -47,7 +47,7 @@ import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
- * <p>ProductListValuePlugin class.</p>
+ * <p>ProductAutoCompletePlugin class.</p>
  * 
  * 	
 							<control
@@ -62,7 +62,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  */
 @Service
 @BeCPGPublicApi
-public class ProductListAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
+public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_PRODUCT = "product";
 
@@ -70,7 +70,7 @@ public class ProductListAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 
 	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
 
-	private static final Log logger = LogFactory.getLog(ProductListAutoCompletePlugin.class);
+	private static final Log logger = LogFactory.getLog(ProductAutoCompletePlugin.class);
 
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
