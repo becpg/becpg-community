@@ -42,6 +42,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.autocomplete.AutoCompleteExtractor;
@@ -78,6 +79,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * 
  */
 @Service
+@BeCPGPublicApi
 public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 	private static final Log logger = LogFactory.getLog(TargetAssocAutoCompletePlugin.class);

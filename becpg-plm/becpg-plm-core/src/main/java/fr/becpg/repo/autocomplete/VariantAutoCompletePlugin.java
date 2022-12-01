@@ -27,13 +27,11 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
-import fr.becpg.repo.helper.AssociationService;
 
 /**
  * <p>VariantListValuePlugin class.</p>
@@ -60,9 +58,6 @@ public class VariantAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_VARIANT_LIST = "variantList";
 	
-	@Autowired
-	private AssociationService associationService;
-
 	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
