@@ -30,7 +30,7 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 	private static final String SOURCE_TYPE_ECO = "eco";
 	
 	@Autowired
-	private CalculatedCharactsValueExtractor calculatedCharactsValueExtractor;
+	private CalculatedCharactsAutoCompleteExtractor calculatedCharactsValueExtractor;
 
 	/** {@inheritDoc} */
 	@Override

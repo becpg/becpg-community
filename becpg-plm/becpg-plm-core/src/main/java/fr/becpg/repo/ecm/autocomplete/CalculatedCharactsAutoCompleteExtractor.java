@@ -1,4 +1,4 @@
-package fr.becpg.repo.ecm.listvalue;
+package fr.becpg.repo.ecm.autocomplete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ import fr.becpg.repo.entity.EntityListDAO;
  * @version $Id: $Id
  */
 @Service("calculatedCharactsValueExtractor")
-public class CalculatedCharactsValueExtractor extends TargetAssocAutoCompleteExtractor {
+public class CalculatedCharactsAutoCompleteExtractor extends TargetAssocAutoCompleteExtractor {
 
 	@Autowired
 	private NodeService nodeService;
