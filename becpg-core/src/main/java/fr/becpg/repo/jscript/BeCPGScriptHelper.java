@@ -66,6 +66,7 @@ import org.mozilla.javascript.Context;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.extensions.webscripts.ScriptValueConverter;
 
+import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.EntityListState;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
@@ -100,6 +101,7 @@ import fr.becpg.repo.search.PaginatedSearchCache;
  * @author matthieu
  * @version $Id: $Id
  */
+@BeCPGPublicApi
 public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private static Log logger = LogFactory.getLog(BeCPGScriptHelper.class);

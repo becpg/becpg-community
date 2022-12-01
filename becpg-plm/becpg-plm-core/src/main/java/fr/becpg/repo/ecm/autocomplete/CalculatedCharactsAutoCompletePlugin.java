@@ -1,4 +1,4 @@
-package fr.becpg.repo.ecm.listvalue;
+package fr.becpg.repo.ecm.autocomplete;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -25,7 +25,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @version $Id: $Id
  */
 @Service("calculatedCharactsValuePlugin")
-public class CalculatedCharactsValuePlugin extends TargetAssocAutoCompletePlugin {
+public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_ECO = "eco";
 	
