@@ -36,12 +36,12 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.autocomplete.AutoCompleteEntry;
+import fr.becpg.repo.autocomplete.AutoCompleteExtractor;
+import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
 import fr.becpg.repo.helper.PropertiesHelper;
-import fr.becpg.repo.listvalue.ListValueEntry;
-import fr.becpg.repo.listvalue.ListValueExtractor;
-import fr.becpg.repo.listvalue.ListValuePage;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
@@ -104,7 +104,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 
 	/** {@inheritDoc} */
 	@Override
-	public ListValuePage suggest(String databaseNR, String query, int pageNum, int pageSize) {
+	public AutoCompletePage suggest(String databaseNR, String query, int pageNum, int pageSize) {
 		List<IdentifiedValue> matches = new ArrayList<>();
 		
 		if ((databaseNR != null) && !databaseNR.isEmpty()) {
@@ -136,7 +136,7 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 			logger.debug("database noderef is null");
 		}
 
-		return new ListValuePage(matches, pageNum, pageSize, new IdentifiedValueListExtractor());
+		return new AutoCompletePage(matches, pageNum, pageSize, new IdentifiedValueListExtractor());
 	}
 
 	
@@ -495,14 +495,14 @@ public class NutDatabaseServiceImpl implements NutDatabaseService {
 		}
 	}
 
-	private class IdentifiedValueListExtractor implements ListValueExtractor<IdentifiedValue> {
+	private class IdentifiedValueListExtractor implements AutoCompleteExtractor<IdentifiedValue> {
 
 		@Override
-		public List<ListValueEntry> extract(List<IdentifiedValue> values) {
-			List<ListValueEntry> suggestions = new ArrayList<>();
+		public List<AutoCompleteEntry> extract(List<IdentifiedValue> values) {
+			List<AutoCompleteEntry> suggestions = new ArrayList<>();
 			if (values != null) {
 				for (IdentifiedValue value : values) {
-					suggestions.add(new ListValueEntry(value.getId(), value.toString(), "rawMaterial"));
+					suggestions.add(new AutoCompleteEntry(value.getId(), value.toString(), "rawMaterial"));
 				}
 			}
 			return suggestions;
