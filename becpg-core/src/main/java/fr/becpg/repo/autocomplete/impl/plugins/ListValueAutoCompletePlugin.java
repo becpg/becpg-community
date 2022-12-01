@@ -7,6 +7,7 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.autocomplete.AutoCompleteService;
@@ -16,10 +17,14 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 /**
  * <p>ListValueAutoCompletePlugin class.</p>
  * 
- * becpg/autocomplete/listvalue
+ * Datasource 
+ * 
+ * ds: becpg/autocomplete/listvalue/{path}
+ * param: {path} return list values in path
  *
  */
 @Service
+@BeCPGPublicApi
 public class ListValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 

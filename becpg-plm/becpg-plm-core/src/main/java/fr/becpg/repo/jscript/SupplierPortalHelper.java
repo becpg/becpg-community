@@ -42,6 +42,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
@@ -64,6 +65,7 @@ import fr.becpg.repo.supplier.SupplierPortalService;
  * @author matthieu
  * @version $Id: $Id
  */
+@BeCPGPublicApi
 public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 	/** Constant <code>SUPPLIER_SITE_ID="supplier-portal"</code> */
