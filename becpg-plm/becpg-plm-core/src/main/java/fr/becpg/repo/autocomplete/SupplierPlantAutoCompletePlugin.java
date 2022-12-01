@@ -28,13 +28,14 @@ import org.alfresco.service.cmr.security.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
 
 /**
- * <p>SupplierPlantValuePlugin class.</p>
+ * <p>SupplierPlantAutoCompletePlugin class.</p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -42,28 +43,26 @@ import fr.becpg.repo.helper.AssociationService;
  * Autocomplete plugin that allows to get plants for supplier
  * 
  * Example:
+ * <pre>
  * 	 <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
  *           <control-param name="ds">becpg/autocomplete/supplierPlants</control-param>
  *    </control>
+ * </pre>
  *   
- *  Datasources available:
- * 
- * If current connected user is associated to supplier return all plants in the plant list of this supplier,   else return all plants
- * 
- *  becpg/autocomplete/supplierPlants
- * 
+ * Datasources available:
+ *  
+ * ds: becpg/autocomplete/supplierPlants
+ * param: {none} If current connected user is associated to supplier return all plants in the plant list of this supplier else return all plants
  * 
  */
 @Service
+@BeCPGPublicApi
 public class SupplierPlantAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_SUPPLIER_PLANTS = "supplierPlants";
 	
 	@Autowired
 	private EntityListDAO entityListDAO;
-	
-	@Autowired
-	private AssociationService associationService;
 	
 	@Autowired 
 	private PersonService personService;

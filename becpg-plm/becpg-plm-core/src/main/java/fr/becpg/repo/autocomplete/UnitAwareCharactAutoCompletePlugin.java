@@ -11,7 +11,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
 
 /**
- * <p>CharactListValuePlugin class.</p>
+ * <p>UnitAwareCharactAutoCompletePlugin class.</p>
  *
  * @author matthieu
  * @version $Id: $Id
@@ -31,14 +31,14 @@ import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
  * 
  * 
  */
-@Service("charactListValuePlugin")
-public class CharactAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
+@Service("unitAwareCharactAutoCompletePlugin")
+public class UnitAwareCharactAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_NUT = "nut";
 	private static final String SOURCE_TYPE_PHYSICO_CHEM = "physicoChem";
 
 	@Autowired
-	private CharactAutoCompleteExtractor charactValueExtractor;
+	private UnitAwareCharactAutoCompleteExtractor charactValueExtractor;
 
 	/** {@inheritDoc} */
 	@Override

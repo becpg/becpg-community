@@ -29,6 +29,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
@@ -39,27 +40,28 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
- * <p>CertificationValuePlugin class.</p>
+ * <p>CertificationAutoCompletePlugin class.</p>
  *
  * @author matthieu
  * @version $Id: $Id
  * 
- * 
  *  Autocomplete plugin that provide certification 
  * 
  * Example:
+ * <pre>
  * <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
- *		<control-param name="ds">becpg/autocomplete/certification
+ *	  <control-param name="ds">becpg/autocomplete/certification
  * </control-param>
- *   
+ * </pre>  
+ * 
  *  Datasources available:
  *  
- *  Return certification list of all suppliers associated to product or if entity is not a product all the certifications in certification list.
- * 
- *  becpg/autocomplete/certification
+ *  ds: becpg/autocomplete/certification
+ *  param: {none} return certification list of all suppliers associated to product or if entity is not a product all the certifications in certification list.
  * 
  */
 @Service
+@BeCPGPublicApi
 public class CertificationAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_CERTIFICATION = "certification";
