@@ -5,7 +5,7 @@ import java.util.List;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.listvalue.ListValuePage;
+import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 
 /**
@@ -32,7 +32,7 @@ public interface NutDatabaseService {
 	 * @param pageSize a int.
 	 * @return a {@link fr.becpg.repo.listvalue.ListValuePage} object.
 	 */
-	ListValuePage suggest(String databaseName, String query, int pageNum, int pageSize);
+	AutoCompletePage suggest(String databaseName, String query, int pageNum, int pageSize);
 	
 	/**
 	 * Returns the list of nutrients bound to this product in the db

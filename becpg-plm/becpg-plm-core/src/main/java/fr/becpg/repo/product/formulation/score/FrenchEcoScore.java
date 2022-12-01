@@ -23,10 +23,10 @@ import org.springframework.stereotype.Service;
 import fr.becpg.common.csv.CSVReader;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
+import fr.becpg.repo.autocomplete.AutoCompleteEntry;
+import fr.becpg.repo.autocomplete.AutoCompletePage;
+import fr.becpg.repo.autocomplete.AutoCompletePlugin;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
-import fr.becpg.repo.listvalue.ListValueEntry;
-import fr.becpg.repo.listvalue.ListValuePage;
-import fr.becpg.repo.listvalue.ListValuePlugin;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -35,7 +35,7 @@ import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @Service("ecoScore")
-public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
+public class FrenchEcoScore implements AutoCompletePlugin, ScoreCalculatingPlugin {
 
 	private static Log logger = LogFactory.getLog(FrenchEcoScore.class);
 
@@ -124,7 +124,7 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public ListValuePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
 		List<EnvironmentalFootprintValue> matches = new ArrayList<>();
 
@@ -152,11 +152,11 @@ public class FrenchEcoScore implements ListValuePlugin, ScoreCalculatingPlugin {
 
 		logger.debug("suggestion for " + query + ", found " + matches.size() + " results");
 
-		return new ListValuePage(matches, pageNum, pageSize, values -> {
-			List<ListValueEntry> suggestions = new ArrayList<>();
+		return new AutoCompletePage(matches, pageNum, pageSize, values -> {
+			List<AutoCompleteEntry> suggestions = new ArrayList<>();
 			if (values != null) {
 				for (EnvironmentalFootprintValue value : values) {
-					suggestions.add(new ListValueEntry(value.getId(), value.toString(), "category"));
+					suggestions.add(new AutoCompleteEntry(value.getId(), value.toString(), "category"));
 				}
 			}
 			return suggestions;
