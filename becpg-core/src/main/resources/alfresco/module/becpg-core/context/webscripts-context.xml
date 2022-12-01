@@ -34,7 +34,7 @@
 	</bean>
 	
 		<!-- Webscripts -->
-	<bean id="webscript.fr.becpg.autoComplete.get" class="fr.becpg.repo.listvalue.web.scripts.AutoCompleteWebScript" parent="webscript">
+	<bean id="webscript.fr.becpg.autoComplete.get" class="fr.becpg.repo.autocomplete.web.scripts.AutoCompleteWebScript" parent="webscript">
 		<property name="listValueService" ref="listValueService" />
 	</bean>
 
