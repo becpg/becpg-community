@@ -19,15 +19,18 @@ import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
  * Autocomplete plugin that provide a custom extractor for nut and physico appending unit to charact name
  * 
  * Example:
+ * <pre>
+ * {@code
  * 		<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
  *			<control-param name="ds">becpg/autocomplete/physicoChem</control-param>
  *		</control>
+ * }
+ * </pre>
  *   
  *  Datasources available:
  * 
  *  becpg/autocomplete/nut
  *  becpg/autocomplete/physicoChem
- * 
  * 
  * 
  */

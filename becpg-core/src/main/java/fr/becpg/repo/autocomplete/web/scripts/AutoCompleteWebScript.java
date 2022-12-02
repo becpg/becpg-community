@@ -63,16 +63,16 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 
 	private static final Log logger = LogFactory.getLog(AutoCompleteWebScript.class);
 
-	private AutoCompleteService listValueService;
+	private AutoCompleteService autoCompleteService;
 
 
 	/**
-	 * <p>Setter for the field <code>listValueService</code>.</p>
+	 * <p>Setter for the field <code>AutoCompleteService</code>.</p>
 	 *
-	 * @param listValueService a {@link fr.becpg.repo.listvalue.ListValueService} object.
+	 * @param AutoCompleteService a {@link fr.becpg.repo.autocomplete.AutoCompleteService} object.
 	 */
-	public void setListValueService(AutoCompleteService listValueService) {
-		this.listValueService = listValueService;
+	public void setAutoCompleteService(AutoCompleteService autoCompleteService) {
+		this.autoCompleteService = autoCompleteService;
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		props.put(AutoCompleteService.EXTRA_PARAM, extras);
 		
 
-		suggestions = listValueService.suggestBySourceType(sourceType, query, pageNum, pageSize, props);
+		suggestions = autoCompleteService.suggestBySourceType(sourceType, query, pageNum, pageSize, props);
 
 		if (suggestions == null) {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "Unsupported argument 'sourcetype'. sourcetype = " + sourceType);

@@ -42,16 +42,20 @@ import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
  *  Autocomplete plugin that provide available variants for current entity
  * 
  * Example:
+ * <pre>
+ * {@code
  * <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
  *		<control-param name="ds">becpg/autocomplete/variantList
  * </control-param>
+ * }
+ * </pre>
  *   
  *  Datasources available:
  * 
  *  becpg/autocomplete/variantList
  * 
  */
-@Service
+@Service("variantAutoCompletePlugin")
 public class VariantAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final Log logger = LogFactory.getLog(VariantAutoCompletePlugin.class);
