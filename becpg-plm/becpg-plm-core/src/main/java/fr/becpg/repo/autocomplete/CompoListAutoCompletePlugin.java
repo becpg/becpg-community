@@ -54,9 +54,13 @@ import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
  * Autocomplete plugin that provide parent compoListItem using the multilevel extractor  
  * 
  * Example:
+ * <pre>
+ * {@code
  * <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
  *		<control-param name="ds">becpg/autocomplete/compoListParentLevel
  * </control-param>
+ *  }
+ * </pre>  
  *   
  *  Datasources available:
  *  
@@ -64,7 +68,7 @@ import fr.becpg.repo.entity.datalist.impl.MultiLevelExtractor;
  * 
  *  becpg/autocomplete/compoListParentLevel
  */
-@Service
+@Service("compoListAutoCompletePlugin")
 public class CompoListAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final Log logger = LogFactory.getLog(CompoListAutoCompletePlugin.class);

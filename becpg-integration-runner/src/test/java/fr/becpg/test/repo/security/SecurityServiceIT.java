@@ -39,17 +39,17 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SecurityModel;
-import fr.becpg.repo.listvalue.ListValueEntry;
-import fr.becpg.repo.listvalue.ListValuePage;
+import fr.becpg.repo.autocomplete.AutoCompleteEntry;
+import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.security.SecurityService;
+import fr.becpg.repo.security.autocomplete.SecurityAutoCompletePlugin;
 import fr.becpg.repo.security.data.ACLGroupData;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
-import fr.becpg.repo.security.listvalue.SecurityListValuePlugin;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -79,7 +79,7 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 	protected ProductService productService;
 
 	@Autowired
-	SecurityListValuePlugin securityListValuePlugin;
+	SecurityAutoCompletePlugin securityAutoCompletePlugin;
 
 	@Autowired
 	NamespaceService namespaceService;
@@ -476,12 +476,12 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 
 	@Test
 	public void testConstainst() {
-		ListValuePage types = securityListValuePlugin.suggest("aclType", "*", 1, 25, null);
+		AutoCompletePage types = securityAutoCompletePlugin.suggest("aclType", "*", 1, 25, null);
 		assertNotNull(types);
 		assertTrue(types.getFullListSize() > 0);
 
 		if (logger.isDebugEnabled()) {
-			for (ListValueEntry type : types.getResults()) {
+			for (AutoCompleteEntry type : types.getResults()) {
 				logger.debug("Type : " + type);
 			}
 		}

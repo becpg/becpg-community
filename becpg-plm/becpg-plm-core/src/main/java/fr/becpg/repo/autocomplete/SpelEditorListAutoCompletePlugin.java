@@ -41,7 +41,7 @@ import fr.becpg.repo.repository.annotation.InternalField;
  * @author matthieu
  * @version $Id: $Id
  */
-@Service
+@Service("spelEditorListAutoCompletePlugin")
 public class SpelEditorListAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final Log logger = LogFactory.getLog(SpelEditorListAutoCompletePlugin.class);

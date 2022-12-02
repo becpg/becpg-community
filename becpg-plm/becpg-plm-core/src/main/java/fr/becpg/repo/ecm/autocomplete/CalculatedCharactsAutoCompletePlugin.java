@@ -24,7 +24,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * @author matthieu
  * @version $Id: $Id
  */
-@Service("calculatedCharactsValuePlugin")
+@Service("calculatedCharactsAutoCompletePlugin")
 public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_ECO = "eco";

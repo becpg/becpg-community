@@ -1,4 +1,4 @@
-package fr.becpg.test.repo.listvalue;
+package fr.becpg.test.repo.autocomplete;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,26 +13,26 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.autocomplete.AutoCompleteEntry;
+import fr.becpg.repo.autocomplete.AutoCompleteService;
+import fr.becpg.repo.autocomplete.impl.plugins.DataListItemAutoCompletePlugin;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.listvalue.ListValueEntry;
-import fr.becpg.repo.listvalue.ListValueService;
-import fr.becpg.repo.listvalue.impl.ParentValuePlugin;
 import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.productList.ContactListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
- * The Class ParentListValueServiceIT.
+ * The Class ParentAutoCompleteServiceIT.
  *
  * @author matthieu
  */
-public class ParentListValueServiceIT extends AbstractListValuePluginTest {
+public class DataListItemAutoCompletePluginIT extends AbstractAutoCompletePluginTest {
 
-	private static final Log logger = LogFactory.getLog(ParentListValueServiceIT.class);
+	private static final Log logger = LogFactory.getLog(DataListItemAutoCompletePluginIT.class);
 
 	@Autowired
-	private ParentValuePlugin parentValuePlugin;
+	private DataListItemAutoCompletePlugin parentValuePlugin;
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -89,15 +89,15 @@ public class ParentListValueServiceIT extends AbstractListValuePluginTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			Map<String, Serializable> props = new HashMap<>();
-			props.put(ListValueService.PROP_PATH, "bcpg:suppliers");
-			props.put(ListValueService.PROP_ENTITYNODEREF, finishProductNodeRef.toString());
-			props.put(ListValueService.PROP_CLASS_NAME, "bcpg:contactList");
-			props.put(ListValueService.PROP_ATTRIBUTE_NAME, "cm:name");
+			props.put(AutoCompleteService.PROP_PATH, "bcpg:suppliers");
+			props.put(AutoCompleteService.PROP_ENTITYNODEREF, finishProductNodeRef.toString());
+			props.put(AutoCompleteService.PROP_CLASS_NAME, "bcpg:contactList");
+			props.put(AutoCompleteService.PROP_ATTRIBUTE_NAME, "cm:name");
 
-			List<ListValueEntry> suggestions = parentValuePlugin.suggest(null, "*", 0, 10, props).getResults();
+			List<AutoCompleteEntry> suggestions = parentValuePlugin.suggest(null, "*", 0, 10, props).getResults();
 
 			boolean containsContact = false;
-			for (ListValueEntry s1 : suggestions) {
+			for (AutoCompleteEntry s1 : suggestions) {
 				logger.debug("contact test 1: " + s1.getName() + " " + s1.getValue());
 				if (s1.getName().equals("contact 1")) {
 					containsContact = true;
