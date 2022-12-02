@@ -20,11 +20,9 @@ package fr.becpg.repo.autocomplete;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -37,30 +35,44 @@ import org.springframework.stereotype.Service;
 import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
-import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.autocomplete.impl.extractors.NodeRefAutoCompleteExtractor;
 import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.helper.AttributeExtractorService;
-import fr.becpg.repo.report.template.ReportTplService;
-import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * <p>ProductAutoCompletePlugin class.</p>
  * 
- * 	
-							<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2</control-param>
-						</control>
-						
-						
- *
  * @author matthieu
  * @version $Id: $Id
+ * 
+ * Autocomplete plugin class that allows to find product 
+ * Product are automatically boost by product state and query, Archived product are excluded : query^10 AND (Valid^4 OR ToValidate^2 OR Simulation)
+ * 
+ * Example:
+ * <pre>
+ * {@code
+ * <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+ *		<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2</control-param>
+ *	</control>
+ * }
+ * </pre>
+ *						
+ *	Datasource:
+ *
+ * 
+ * ds: /becpg/autocomplete/targetassoc/product/?classNames={classNames?}
+ * param: {className} type of item to retrieve
+ * param: {classNames} (optional)  comma separated lists of classNames, can be uses to filter by aspect or boost certain types (inc_ or ^)
+ * param: {andProps} (optional/deprecated) comma separated of property|value pair that item should have  (filter=prop_to_filter|value)
+ * param: {filter} (optional) same as andProps
+ * param: {excludeProps} (optional) comma separated of property|value pair that item should not have
+ * param: {excludeClassNames} (optional) comma separated lists of classNames that will be excluded
+ * param: {extra.filterByAssoc} return item that has same assoc that in current entity
+ *
+ *
+ * See TargetAssocAutoCompletePlugin for params example
  */
-@Service
+@Service("productAutoCompletePlugin")
 @BeCPGPublicApi
 public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
@@ -68,18 +80,10 @@ public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_COLLECTION_PRODUCT = "collectionproduct";
 
-	private static final String SOURCE_TYPE_PRODUCT_REPORT = "productreport";
-
 	private static final Log logger = LogFactory.getLog(ProductAutoCompletePlugin.class);
-
-	@Autowired
-	private AttributeExtractorService attributeExtractorService;
 
 	@Value("${beCPG.product.searchTemplate}")
 	private String productSearchTemplate = "%(cm:name bcpg:erpCode bcpg:code bcpg:legalName)";
-
-	@Autowired
-	private ReportTplService reportTplService;
 
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -87,7 +91,7 @@ public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
-		return new String[] { SOURCE_TYPE_PRODUCT, SOURCE_TYPE_PRODUCT_REPORT, SOURCE_TYPE_COLLECTION_PRODUCT };
+		return new String[] { SOURCE_TYPE_PRODUCT, SOURCE_TYPE_COLLECTION_PRODUCT };
 	}
 
 	/** {@inheritDoc} */
@@ -99,12 +103,6 @@ public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 		if (sourceType.equals(SOURCE_TYPE_PRODUCT)) {
 			return suggestProducts(query, pageNum, pageSize, arrClassNames, props);
-		} else if (sourceType.equals(SOURCE_TYPE_PRODUCT_REPORT)) {
-			String productType = (String) props.get(AutoCompleteService.PROP_PRODUCT_TYPE);
-
-			QName productTypeQName = QName.createQName(productType, namespaceService);
-			return suggestProductReportTemplates(productTypeQName, query, pageNum, pageSize);
-
 		} else if (sourceType.equals(SOURCE_TYPE_COLLECTION_PRODUCT)) {
 			String parent = (String) props.get(AutoCompleteService.PROP_PARENT);
 			if ((parent == null) || parent.isEmpty() || !NodeRef.isNodeRef(parent)) {
@@ -175,8 +173,8 @@ public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
-	private AutoCompletePage suggestProducts(String query, Integer pageNum, Integer pageSize, String[] arrClassNames, Map<String, Serializable> props) {
+	private AutoCompletePage suggestProducts(String query, Integer pageNum, Integer pageSize, String[] arrClassNames,
+			Map<String, Serializable> props) {
 		if (logger.isDebugEnabled()) {
 			if (arrClassNames != null) {
 				logger.debug("suggestTargetAssoc with arrClassNames : " + Arrays.toString(arrClassNames));
@@ -212,109 +210,9 @@ public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 		queryBuilder.andFTSQuery(ftsQuery.toString());
 
-		NodeRef entityNodeRef = null;
-		if ((props.get(AutoCompleteService.PROP_ENTITYNODEREF) != null) && !((String) props.get(AutoCompleteService.PROP_ENTITYNODEREF)).isEmpty()) {
-			entityNodeRef = new NodeRef((String) props.get(AutoCompleteService.PROP_ENTITYNODEREF));
-			queryBuilder.andNotID(entityNodeRef);
-		}
 
-		String queryFilter = (String) props.get(AutoCompleteService.PROP_FILTER);
-
-		if ((queryFilter != null) && (!queryFilter.isEmpty())) {
-			String[] splitted = queryFilter.split("\\|");
-
-			String filterValue = splitted[1];
-			String propQName = splitted[0];
-			if ((filterValue != null) && !filterValue.isEmpty()) {
-				if (filterValue.contains("{")) {
-					if (entityNodeRef != null) {
-						filterValue = attributeExtractorService.extractExpr(filterValue, entityNodeRef);
-					}
-				}
-				if ((filterValue != null) && !filterValue.isEmpty() && !filterValue.contains("{")) {
-					boolean isOrOperand = false;
-					if (propQName.endsWith("_or")) {
-						isOrOperand = true;
-						propQName = propQName.replace("_or", "");
-					}
-
-					if (filterValue.contains(",")) {
-						if (isOrOperand) {
-							queryBuilder.andPropQuery(QName.createQName(propQName, namespaceService), filterValue.replace(",", " or "));
-						} else {
-							queryBuilder.andPropQuery(QName.createQName(propQName, namespaceService), filterValue.replace(",", " and "));
-						}
-					} else {
-						queryBuilder.andPropEquals(QName.createQName(propQName, namespaceService), filterValue);
-					}
-				}
-			}
-		}
-
-		// filter by classNames
-		filterByClass(queryBuilder, arrClassNames);
-
-		queryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS);
-
-		List<NodeRef> ret = null;
-
-		Map<String, String> extras = (HashMap<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
-		if (extras != null) {
-			String filterByAssoc = extras.get(PROP_FILTER_BY_ASSOC);
-			if ((filterByAssoc != null) && (filterByAssoc.length() > 0) && (entityNodeRef != null)) {
-
-				boolean isOrOperand = false;
-				if (filterByAssoc.endsWith("_or")) {
-					isOrOperand = true;
-					filterByAssoc = filterByAssoc.replace("_or", "");
-				}
-
-				QName assocQName = QName.createQName(filterByAssoc, namespaceService);
-
-				List<NodeRef> targetNodeRefs = associationService.getTargetAssocs(entityNodeRef, assocQName);
-
-				if ((targetNodeRefs != null) && !targetNodeRefs.isEmpty()) {
-					List<NodeRef> tmp = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
-					List<NodeRef> nodesToKeep = new ArrayList<>();
-
-					for (NodeRef assocNodeRef : targetNodeRefs) {
-						if (isOrOperand) {
-							nodesToKeep.addAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
-						} else {
-							nodesToKeep.retainAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
-						}
-					}
-
-					tmp.retainAll(nodesToKeep);
-					if (!RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
-						ret = tmp.subList(0, Math.min(RepoConsts.MAX_SUGGESTIONS, tmp.size()));
-					}
-				}
-			}
-		}
-
-		if (ret == null) {
-				ret = queryBuilder.list();
-		}
-
-		return new AutoCompletePage(ret, pageNum, pageSize, targetAssocValueExtractor);
+		return new AutoCompletePage(filter(queryBuilder, null, arrClassNames, pageSize, props), pageNum, pageSize, targetAssocValueExtractor);
 	}
 
-	/**
-	 * Get the report templates of the product type that user can choose from
-	 * UI.
-	 *
-	 * @param query
-	 *            the query
-	 * @return the map
-	 */
-
-	private AutoCompletePage suggestProductReportTemplates(QName nodeType, String query, Integer pageNum, Integer pageSize) {
-
-		query = prepareQuery(query);
-		List<NodeRef> tplsNodeRef = reportTplService.getUserReportTemplates(ReportType.Document, nodeType, query);
-
-		return new AutoCompletePage(tplsNodeRef, pageNum, pageSize, new NodeRefAutoCompleteExtractor(ContentModel.PROP_NAME, nodeService));
-	}
 
 }
