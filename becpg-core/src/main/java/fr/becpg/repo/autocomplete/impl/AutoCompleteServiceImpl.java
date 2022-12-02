@@ -17,12 +17,12 @@ import fr.becpg.repo.autocomplete.AutoCompletePlugin;
 import fr.becpg.repo.autocomplete.AutoCompleteService;
 
 /**
- * The Class ListValueServiceImpl.
+ * The Class AutoCompleteServiceImpl.
  *
  * @author Matthieu
  * @version $Id: $Id
  */
-@Service("listValueService")
+@Service("autoCompleteService")
 public class AutoCompleteServiceImpl implements AutoCompleteService {
 	
 
@@ -31,7 +31,7 @@ public class AutoCompleteServiceImpl implements AutoCompleteService {
 	private Map<String,AutoCompletePlugin> plugins;
 	
 	@Autowired
-	private AutoCompletePlugin[] listValuePlugins;
+	private AutoCompletePlugin[] autoCompletePlugins;
 	
 
 	/** {@inheritDoc} */
@@ -53,7 +53,7 @@ public class AutoCompleteServiceImpl implements AutoCompleteService {
 	private AutoCompletePlugin getListValuePluginBySourceType(String sourceType) {
 		if(plugins == null || plugins.isEmpty()){
 			plugins = new HashMap<>();
-			for(AutoCompletePlugin plugin : listValuePlugins){
+			for(AutoCompletePlugin plugin : autoCompletePlugins){
 				for(String tmp : plugin.getHandleSourceTypes()){
 					plugins.put(tmp, plugin);
 				}

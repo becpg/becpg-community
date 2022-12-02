@@ -23,7 +23,7 @@ import java.util.List;
 import fr.becpg.repo.RepoConsts;
 
  /**
-  * <p>ListValuePage class.</p>
+  * <p>AutoCompletePage class.</p>
   *
   * @author "Matthieu Laborie"
   * @version $Id: $Id
@@ -38,7 +38,7 @@ import fr.becpg.repo.RepoConsts;
         
         @SuppressWarnings("unchecked")
 		/**
-		 * <p>Constructor for ListValuePage.</p>
+		 * <p>Constructor for AutoCompletePage.</p>
 		 *
 		 * @param fullList a {@link java.util.List} object.
 		 * @param pageNum a {@link java.lang.Integer} object.

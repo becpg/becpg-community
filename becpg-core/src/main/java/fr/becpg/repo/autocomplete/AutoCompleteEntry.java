@@ -36,7 +36,7 @@ public class AutoCompleteEntry {
 
 	
 	/**
-	 * <p>Constructor for ListValueEntry.</p>
+	 * <p>Constructor for AutoCompleteEntry.</p>
 	 *
 	 * @param value a {@link java.lang.String} object.
 	 * @param name a {@link java.lang.String} object.
@@ -51,7 +51,7 @@ public class AutoCompleteEntry {
 	}
 	
 	/**
-	 * <p>Constructor for ListValueEntry.</p>
+	 * <p>Constructor for AutoCompleteEntry.</p>
 	 *
 	 * @param value a {@link java.lang.String} object.
 	 * @param name a {@link java.lang.String} object.
