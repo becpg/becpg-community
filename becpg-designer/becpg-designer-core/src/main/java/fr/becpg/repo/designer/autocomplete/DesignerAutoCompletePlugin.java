@@ -53,11 +53,16 @@ import fr.becpg.repo.designer.DesignerService;
  * Autocomplete plugin that allows to get current model informations
  * 
  * Example:
+ * 
+ * <pre>
+ * {@code
  * 	<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
  *  	<control-param name="ds">becpg/autocomplete/mandatoryAspects</control-param>
  *		<control-param name="showTooltip">false</control-param>
  *		<control-param name="saveTitle">false</control-param>
  *   </control>
+ * }
+ * <pre>
  *   
  *  Datasources available:
  *  

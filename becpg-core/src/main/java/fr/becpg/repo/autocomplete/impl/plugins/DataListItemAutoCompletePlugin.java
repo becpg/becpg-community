@@ -47,23 +47,78 @@ import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
- * <p>ParentValuePlugin class.</p>
+ * <p>DataListItemAutoCompletePlugin class.</p>
  *
  * @author matthieu
  * @version $Id: $Id
  * 
+ * Autocomplete plugin that suggest dataListItem from specific sources
  * 
- *	<control
- *			template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
- *			<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
- *	 </control>
+ * Possible source type ParentValue/DataListCharact
+ * 
+ * Example:
+ * 
+ * <pre>
+ * {@code
+ * 
+ *  Suggest current entity list (bcpg:ingList) and use attributeName (bcpg:ingListIng) as display name
+ * 
+ *     <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control>
+ *
+ * Suggest entity list (bcpg:plant) where entity in assoc path (bcpg:clients) of the current entity
+ *   
+ *     <control-param name="ds">becpg/autocomplete/DataListCharact?path=bcpg:clients&amp;className=bcpg:plant&amp;attributeName=cm:name
+ *
+ *  Suggest entity list (qa:stockList) where entity in assoc path (qa:product) of the current dataListitem
+ *  
+ *     <control-param name="ds">becpg/autocomplete/DataListCharact?path=qa:product&amp;className=qa:stockList&amp;attributeName=qa:batchId&amp;filter=itemAsEntity</control-param>
+ *     <control-param name="urlParamsToPass">itemId</control-param>
+ *
+ *  Suggest entity list (bcpg:contactList) where entity in html field bcpg_clients
+ *
+ *      <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:contactList&amp;attributeName=bcpg:contactListFirstName,bcpg:contactListLastName&amp;filter=parentAsEntity</control-param>
+ *	    <control-param name="parentAssoc">bcpg_clients</control-param>
+
+ *	    <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity</control-param>
+ *	    <control-param name="parentAssoc">bcpg_clients</control-param>
+ *
+ *
+ *  Suggest current entity list exclude current item
+ *
+ * 	    <control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost</control-param>
+ *      <control-param name="urlParamsToPass">itemId</control-param>
+ *
+ *	    <control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut</control-param>
+ *	    <control-param name="urlParamsToPass">itemId</control-param>
+ *
+ * }
+ * </pre>
+ * 
+ * Datasources:
+ * 
+ *  DataListCharact 
+ * 
+ * ds:  becpg/autocomplete/DataListCharact?path={path}&amp;className={className}&amp;attributeName={attributeName}&amp;filter={filter}
+ * param: {className} type of dataListItem to retrieve
+ * param: {path} specify a field name on the currentEntity to retrieve entity
+ * param: {attributeName} attribute names coma separated list that is used to filter on and display title
+ * param: {filter} (none,itemAsEntity, parentAsEntity) 
+ * control-param: {parent} (filter=parentAsEntity) htmlField that can be used as path
+ * control-param: {urlParamsToPass} (filter=itemAsEntity)  itemId 
+ * 
+ * ParentValue
+ *
+ * ds:  becpg/autocomplete/ParentValue?className={className}&amp;attributeName={attributeName}
+ * param: {className} type of dataListItem to retrieve exclude current item
+ * param: {attributeName} attribute names coma separated list that is used to filter on and display title
+ * control-param: {urlParamsToPass} itemId 
  * 
  */
-@Service
+@Service("dataListItemAutoCompletePlugin")
 @BeCPGPublicApi
-public class ParentValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
+public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
-	private static final Log logger = LogFactory.getLog(ParentValueAutoCompletePlugin.class);
+	private static final Log logger = LogFactory.getLog(DataListItemAutoCompletePlugin.class);
 
 	private static final String SOURCE_TYPE_PARENT_VALUE = "ParentValue";
 	private static final String SOURCE_TYPE_DATA_LIST_CHARACT = "DataListCharact";
@@ -82,37 +137,7 @@ public class ParentValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 		return new String[] { SOURCE_TYPE_PARENT_VALUE, SOURCE_TYPE_DATA_LIST_CHARACT };
 	}
 
-	/**
-	 * Suggest current entity list
-	 *
-	 *   <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control>
-	 *
-	 * Suggest entity list where entity in assoc bcpg:clients
-	 *   <control-param name="ds">becpg/autocomplete/DataListCharact?path=bcpg:clients&amp;className=bcpg:plant&amp;attributeName=cm:name
-	 *
-	 *  Suggest entity list where entity in assoc qa:product and entity is the dataListitem
-	 *  
-	 * <control-param name="ds">becpg/autocomplete/DataListCharact?path=qa:product&amp;className=qa:stockList&amp;attributeName=qa:batchId&amp;filter=itemAsEntity</control-param>
-		<control-param name="urlParamsToPass">itemId</control-param>
-	 *
-	 *  Suggest entity list where entity in html field bcpg_clients
-	 *
-	 *  <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:contactList&amp;attributeName=bcpg:contactListFirstName,bcpg:contactListLastName&amp;filter=parentAsEntity</control-param>
-	    <control-param name="parentAssoc">bcpg_clients</control-param>
-
-	    <control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:plant&amp;attributeName=cm:name&amp;filter=parentAsEntity</control-param>
-	    <control-param name="parentAssoc">bcpg_clients</control-param>
-	 *
-	 *
-	 *  Suggest current entity list exclude current item
-	 *
-	 * 	<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost</control-param>
-		<control-param name="urlParamsToPass">itemId</control-param>
-
-		<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut</control-param>
-		<control-param name="urlParamsToPass">itemId</control-param>
-	 *
-	 */
+	/** {@inheritDoc} */
 	@Override
 	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
@@ -127,8 +152,6 @@ public class ParentValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 				itemId = new NodeRef(extras.get("itemId"));
 			}
 		}
-
-
 		String parent = (String) props.get(AutoCompleteService.PROP_PARENT);
 
 		String queryFilter = (String) props.get(AutoCompleteService.PROP_FILTER);
@@ -198,7 +221,7 @@ public class ParentValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 				}
 				if (dataListNodeRef != null) {
 					if (dictionaryService.getProperty(attributeQNames.iterator().next()) != null) {
-						return suggestFromProp(dataListNodeRef, itemId, type, attributeQNames, query, queryFilter, parent, pageNum, pageSize, props);
+						return suggestFromProp(dataListNodeRef, itemId, type, attributeQNames, query, queryFilter, parent, pageNum, pageSize);
 					} else {
 						return suggestFromAssoc(sourceType, dataListNodeRef, itemId, type, attributeQNames.iterator().next(), query, pageNum,
 								pageSize);
@@ -212,7 +235,7 @@ public class ParentValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 	}
 
 	private AutoCompletePage suggestFromProp(NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, Set<QName> propertyQNames, String query,
-			String queryFilter, String parent, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+			String queryFilter, String parent, Integer pageNum, Integer pageSize) {
 
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).parent(dataListNodeRef);
 

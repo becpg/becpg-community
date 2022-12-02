@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
-package fr.becpg.test.repo.listvalue;
+package fr.becpg.test.repo.autocomplete;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
-public abstract class AbstractListValuePluginTest extends PLMBaseTestCase {
+public abstract class AbstractAutoCompletePluginTest extends PLMBaseTestCase {
 
 	protected NodeRef createFinishProductNodeRef() {
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {

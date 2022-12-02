@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * The Interface ListValueService.
+ * The Interface AutoCompleteService.
  *
  * @author querephi
  * @version $Id: $Id
@@ -96,7 +96,7 @@ public interface AutoCompleteService {
 	 * @param pageNum a {@link java.lang.Integer} object.
 	 * @param pageSize a {@link java.lang.Integer} object.
 	 * @param props a {@link java.util.Map} object.
-	 * @return a {@link fr.becpg.repo.listvalue.ListValuePage} object.
+	 * @return a {@link fr.becpg.repo.listvalue.AutoCompletePage} object.
 	 */
 	AutoCompletePage suggestBySourceType(String sourceType, String query, Integer pageNum,
 									  Integer pageSize, Map<String, Serializable> props);

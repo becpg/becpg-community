@@ -4,10 +4,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import fr.becpg.test.repo.autocomplete.TargetAssocAutoCompletePluginIT;
+import fr.becpg.test.repo.autocomplete.CompoListAutoCompletePluginIT;
 import fr.becpg.test.repo.entity.EntityReportServiceIT;
 import fr.becpg.test.repo.entity.datalist.MultiLevelDataServiceIT;
-import fr.becpg.test.repo.listvalue.CompoListValuePluginIT;
-import fr.becpg.test.repo.listvalue.ListValueServiceIT;
 import fr.becpg.test.repo.product.CompareDocumentServiceIT;
 import fr.becpg.test.repo.product.CompareProductServiceIT;
 import fr.becpg.test.repo.product.ProductServiceIT;
@@ -26,7 +26,7 @@ import fr.becpg.test.repo.web.scripts.report.ExportSearchWebScriptIT;
 import fr.becpg.test.repo.web.scripts.search.SearchWebScriptIT;
 
 @RunWith(Suite.class)
-@SuiteClasses(value = { AdminModuleWebScriptIT.class, CompoListValuePluginIT.class, ListValueServiceIT.class, CompositionLexerIT.class,
+@SuiteClasses(value = { AdminModuleWebScriptIT.class, CompoListAutoCompletePluginIT.class, TargetAssocAutoCompletePluginIT.class, CompositionLexerIT.class,
 
 		ProductServiceIT.class, EntityDictionnaryWebScriptIT.class, EntityListsWebScriptIT.class, AutoCompleteWebScriptIT.class,
 		ProductWUsedWebScriptIT.class,

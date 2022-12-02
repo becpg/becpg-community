@@ -18,7 +18,7 @@ import fr.becpg.repo.product.formulation.nutrient.NutDatabaseService;
  * @author matthieu
  * @version $Id: $Id
  */
-@Service
+@Service("nutDatabaseAutoCompletePlugin")
 public class NutDatabaseAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_NUT_DB = "nutDataBase";

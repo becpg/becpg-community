@@ -17,13 +17,13 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 /**
  * <p>ListValueAutoCompletePlugin class.</p>
  * 
- * Datasource 
+ * Datasource: 
  * 
  * ds: becpg/autocomplete/listvalue/{path}
  * param: {path} return list values in path
  *
  */
-@Service
+@Service("listValueAutoCompletePlugin")
 @BeCPGPublicApi
 public class ListValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
