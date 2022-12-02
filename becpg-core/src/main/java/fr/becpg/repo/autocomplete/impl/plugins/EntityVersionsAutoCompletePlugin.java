@@ -49,10 +49,15 @@ import fr.becpg.repo.entity.version.EntityVersionService;
  * Autocomplete plugin that allows to get current entity branch or versions
  * 
  * Example:
+ *
+ * <pre>
+ * {@code
  * 	 <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
  *       <control-param name="ds">becpg/autocomplete/branches</control-param>
  *       <control-param name="urlParamsToPass">itemId</control-param>
  *    </control>		
+ * }
+ * </pre>
  *   
  *  Datasources available:
  * 

@@ -18,8 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.PackModel;
-import fr.becpg.repo.listvalue.ListValueEntry;
-import fr.becpg.repo.listvalue.ListValuePage;
+import fr.becpg.repo.autocomplete.AutoCompleteEntry;
+import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -182,13 +182,13 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 
 	private NodeRef createFinishedProduct(String query, String categoryCode, String name, NodeRef geoOrigin, double ingQty, NodeRef ing, List<PackMaterialListDataItem> packMaterial, List<LabelClaimListDataItem> labelClaimList) {
 		
-		ListValuePage ret = frenchEcoScore.suggest(FrenchEcoScore.ECO_SCORE_SOURCE_TYPE, query, 1, 500, null);
+		AutoCompletePage ret = frenchEcoScore.suggest(FrenchEcoScore.ECO_SCORE_SOURCE_TYPE, query, 1, 500, null);
 		
 		Assert.assertTrue(ret.getFullListSize() > 0);
 		
 		boolean found = false;
 		
-		for (ListValueEntry entry : ret.getResults()) {
+		for (AutoCompleteEntry entry : ret.getResults()) {
 			if (entry.getValue().equals(categoryCode)) {
 				found = true;
 				break;

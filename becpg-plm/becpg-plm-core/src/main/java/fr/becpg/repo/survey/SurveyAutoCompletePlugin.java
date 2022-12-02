@@ -37,7 +37,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *  becpg/autocomplete/survey
  * 
  */
-@Service
+@Service("surveyAutoCompletePlugin")
 public class SurveyAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	@Override

@@ -49,18 +49,20 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * 
  * Example:
  * <pre>
+ * {@code
  * <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
  *	  <control-param name="ds">becpg/autocomplete/certification
  * </control-param>
+ * }
  * </pre>  
  * 
- *  Datasources available:
+ *  Datasources:
  *  
  *  ds: becpg/autocomplete/certification
  *  param: {none} return certification list of all suppliers associated to product or if entity is not a product all the certifications in certification list.
  * 
  */
-@Service
+@Service("certificationAutoCompletePlugin")
 @BeCPGPublicApi
 public class CertificationAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 

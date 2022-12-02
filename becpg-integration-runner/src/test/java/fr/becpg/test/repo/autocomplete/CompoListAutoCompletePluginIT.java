@@ -1,7 +1,7 @@
 /*
  *
  */
-package fr.becpg.test.repo.listvalue;
+package fr.becpg.test.repo.autocomplete;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -14,24 +14,24 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fr.becpg.repo.listvalue.CompoListValuePlugin;
-import fr.becpg.repo.listvalue.ListValueEntry;
-import fr.becpg.repo.listvalue.ListValuePage;
-import fr.becpg.repo.listvalue.ListValueService;
+import fr.becpg.repo.autocomplete.AutoCompleteEntry;
+import fr.becpg.repo.autocomplete.AutoCompletePage;
+import fr.becpg.repo.autocomplete.AutoCompleteService;
+import fr.becpg.repo.autocomplete.CompoListAutoCompletePlugin;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.test.BeCPGPLMTestHelper;
 
 /**
- * The Class ListValueServiceTest.
+ * The Class AutoCompleteServiceTest.
  *
  * @author querephi
  */
-public class CompoListValuePluginIT extends AbstractListValuePluginTest {
+public class CompoListAutoCompletePluginIT extends AbstractAutoCompletePluginTest {
 
 	@Autowired
-	private CompoListValuePlugin compoListValuePlugin;
+	private CompoListAutoCompletePlugin compoListValuePlugin;
 
-	private static final Log logger = LogFactory.getLog(CompoListValuePluginIT.class);
+	private static final Log logger = LogFactory.getLog(CompoListAutoCompletePluginIT.class);
 
 	/**
 	 * Test suggest supplier.
@@ -46,49 +46,49 @@ public class CompoListValuePluginIT extends AbstractListValuePluginTest {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			Map<String, Serializable> props = new HashMap<>();
-			props.put(ListValueService.PROP_LOCALE, Locale.FRENCH);
-			props.put(ListValueService.PROP_ENTITYNODEREF, finishedProductNodeRef.toString());
-			props.put(ListValueService.PROP_CLASS_NAME, "bcpg:compoList");
+			props.put(AutoCompleteService.PROP_LOCALE, Locale.FRENCH);
+			props.put(AutoCompleteService.PROP_ENTITYNODEREF, finishedProductNodeRef.toString());
+			props.put(AutoCompleteService.PROP_CLASS_NAME, "bcpg:compoList");
 
 			authenticationComponent.setCurrentUser(BeCPGPLMTestHelper.USER_ONE);
 
-			ListValuePage listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, ListValueService.SUGGEST_PAGE_SIZE, props);
+			AutoCompletePage AutoCompletePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, AutoCompleteService.SUGGEST_PAGE_SIZE, props);
 
-			for (ListValueEntry listValueEntry1 : listValuePage.getResults()) {
-				logger.info("listValueEntry: " + listValueEntry1.getName() + " - " + listValueEntry1.getValue());
+			for (AutoCompleteEntry AutoCompleteEntry1 : AutoCompletePage.getResults()) {
+				logger.info("AutoCompleteEntry: " + AutoCompleteEntry1.getName() + " - " + AutoCompleteEntry1.getValue());
 			}
 
-			assertEquals(1, listValuePage.getResults().size());
+			assertEquals(1, AutoCompletePage.getResults().size());
 
 			authenticationComponent.setSystemUserAsCurrentUser();
 
-			listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, ListValueService.SUGGEST_PAGE_SIZE, props);
+			AutoCompletePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, AutoCompleteService.SUGGEST_PAGE_SIZE, props);
 
-			for (ListValueEntry listValueEntry2 : listValuePage.getResults()) {
-				logger.info("listValueEntry: " + listValueEntry2.getName() + " - " + listValueEntry2.getValue());
+			for (AutoCompleteEntry AutoCompleteEntry2 : AutoCompletePage.getResults()) {
+				logger.info("AutoCompleteEntry: " + AutoCompleteEntry2.getName() + " - " + AutoCompleteEntry2.getValue());
 			}
 
-			assertEquals(3, listValuePage.getResults().size());
+			assertEquals(3, AutoCompletePage.getResults().size());
 
-			listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "Local semi finished 2", null, ListValueService.SUGGEST_PAGE_SIZE,
+			AutoCompletePage = compoListValuePlugin.suggest("compoListParentLevel", "Local semi finished 2", null, AutoCompleteService.SUGGEST_PAGE_SIZE,
 					props);
 
-			assertEquals(2, listValuePage.getResults().size());
+			assertEquals(2, AutoCompletePage.getResults().size());
 
 			// Check cycle detection (exclude localSF1NodeRef)
 			ProductData finishedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
 
 			HashMap<String, String> extras = new HashMap<>();
 			extras.put("itemId", finishedProduct.getCompoListView().getCompoList().get(0).getNodeRef().toString());
-			props.put(ListValueService.EXTRA_PARAM, extras);
+			props.put(AutoCompleteService.EXTRA_PARAM, extras);
 
-			listValuePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, ListValueService.SUGGEST_PAGE_SIZE, props);
+			AutoCompletePage = compoListValuePlugin.suggest("compoListParentLevel", "", null, AutoCompleteService.SUGGEST_PAGE_SIZE, props);
 
-			for (ListValueEntry listValueEntry2 : listValuePage.getResults()) {
-				logger.debug("listValueEntry: " + listValueEntry2.getName() + " - " + listValueEntry2.getValue());
+			for (AutoCompleteEntry AutoCompleteEntry2 : AutoCompletePage.getResults()) {
+				logger.debug("AutoCompleteEntry: " + AutoCompleteEntry2.getName() + " - " + AutoCompleteEntry2.getValue());
 			}
 
-			assertEquals(2, listValuePage.getResults().size());
+			assertEquals(2, AutoCompletePage.getResults().size());
 
 			return null;
 

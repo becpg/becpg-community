@@ -32,7 +32,6 @@ import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.helper.AssociationService;
 
 /**
  * <p>SupplierPlantAutoCompletePlugin class.</p>
@@ -44,19 +43,21 @@ import fr.becpg.repo.helper.AssociationService;
  * 
  * Example:
  * <pre>
+ * {@code
  * 	 <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
  *           <control-param name="ds">becpg/autocomplete/supplierPlants</control-param>
  *    </control>
+ *  }
  * </pre>
  *   
- * Datasources available:
+ * Datasources:
  *  
  * ds: becpg/autocomplete/supplierPlants
  * param: {none} If current connected user is associated to supplier return all plants in the plant list of this supplier else return all plants
  * 
  */
-@Service
 @BeCPGPublicApi
+@Service("supplierPlantAutoCompletePlugin")
 public class SupplierPlantAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final String SOURCE_TYPE_SUPPLIER_PLANTS = "supplierPlants";
