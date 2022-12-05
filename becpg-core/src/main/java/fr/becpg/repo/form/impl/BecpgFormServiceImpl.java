@@ -186,7 +186,7 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 	/** {@inheritDoc} */
 	@Override
-	public JSONObject getForm(String itemKind, String itemId, String formId, String siteId, List<String> fields, List<String> forcedFields,
+	public BecpgFormDefinition getForm(String itemKind, String itemId, String formId, String siteId, List<String> fields, List<String> forcedFields,
 			NodeRef entityNodeRef) throws BeCPGException, JSONException {
 
 		Item item = new Item(itemKind, itemId);
@@ -222,10 +222,13 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 		Form form = formService.getForm(new Item(itemKind, itemId), definition.getFields(), definition.getForcedFields());
 
-		JSONObject ret = definition.merge(form, resolver);
-
-		ret.put("override", override);
-		return ret;
+		BecpgFormDefinition def = definition.merge(form, resolver);
+		
+		JSONObject mergeDef = def.getMergeDef();
+		mergeDef.put("override", override);
+		def.setMergeDef(mergeDef);
+		
+		return def;
 	}
 
 	private Map<String, Map<String, BecpgFormDefinition>> parseDefinitions(String customFormDefinition) throws JSONException {
@@ -246,6 +249,16 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 		Map<String, BecpgFormDefinition> forms = defs.get(id);
 		if (forms != null) {
+			if ((formId != null) && formId.contains("export")) {
+				if (forms.containsKey(formId)) {
+					return forms.get(formId);
+				} else if (formId.contains("WUsed") && forms.containsKey("datagridWUsed")) {
+					return forms.get("datagridWUsed");
+				} else if (forms.containsKey("datagrid")) {
+					return forms.get("datagrid");
+				}
+			}
+			
 			if ((siteId != null) && forms.containsKey(formId + "-" + siteId)) {
 				return forms.get(formId + "-" + siteId);
 			}

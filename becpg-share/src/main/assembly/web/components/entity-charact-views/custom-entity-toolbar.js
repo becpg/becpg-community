@@ -47,6 +47,7 @@
 	
 	                              var requestParams = {
 	                                 fields : [],
+	                                 labels : {},
 	                                 filter : dt.currentFilter,
 	                                 page : 1,
 	                                 extraParams : dt.options.extraParams
@@ -56,14 +57,18 @@
 	
 	                              for ( var i = 0, ii = response.json.columns.length; i < ii; i++) {
 	                                 var column = response.json.columns[i], columnName = column.name.replace(":", "_");
-	                                 if (column.dataType == "nested" && column.columns) {
-	                                    for ( var j = 0; j < column.columns.length; j++) {                                             
-	                                      var col = column.columns[j];                                      
-	                                       columnName += "|" + col.name.replace(":", "_");                                             
-	                                    }
+	                                 
+	                                 if (Object.keys(column).includes("label") && !(["hidden", "datasource"].indexOf(column.label) > -1)) {
+		                                 if (column.dataType == "nested" && column.columns) {
+		                                    for ( var j = 0; j < column.columns.length; j++) {                                             
+		                                      var col = column.columns[j];                                      
+		                                       columnName += "|" + col.name.replace(":", "_");                                             
+		                                    }
+		                                 }
+		
+		                                 requestParams.fields.push(columnName);
+		                                 requestParams.labels[columnName] = column.label;
 	                                 }
-	
-	                                 requestParams.fields.push(columnName);
 	                              }
 	
 	                              var MAX_RESULTS_UNLIMITED = -1;

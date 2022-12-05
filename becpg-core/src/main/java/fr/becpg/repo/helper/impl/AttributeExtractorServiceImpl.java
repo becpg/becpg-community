@@ -214,6 +214,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		QName fieldQname;
 		QName itemType;
 		String formula = null;
+		String fieldLabel = null;
 
 		public AttributeExtractorStructure(String fieldName, ClassAttributeDefinition fieldDef, QName itemType) {
 			this.fieldDef = fieldDef;
@@ -274,6 +275,14 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		public String getFieldName() {
 			return fieldName;
+		}
+		
+		public String getFieldLabel() {
+			return fieldLabel;
+		}
+		
+		public void setFieldLabel(String fieldLabel) {
+			this.fieldLabel = fieldLabel;
 		}
 
 		public boolean isEntityField() {
