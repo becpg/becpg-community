@@ -43,11 +43,10 @@
 	                        url : dt._getColumnUrl("export"),
 	                        successCallback : {
 	                           fn : function(response) {
-	                              
 	
 	                              var requestParams = {
 	                                 fields : [],
-	                                 labels : {},
+	                                 labels : [],
 	                                 filter : dt.currentFilter,
 	                                 page : 1,
 	                                 extraParams : dt.options.extraParams
@@ -56,18 +55,19 @@
 	                              requestParams.filter.filterParams = dt._createFilterURLParameters(dt.currentFilter, dt.options.filterParameters);
 	
 	                              for ( var i = 0, ii = response.json.columns.length; i < ii; i++) {
-	                                 var column = response.json.columns[i], columnName = column.name.replace(":", "_");
-	                                 
-	                                 if (Object.keys(column).includes("label") && !(["hidden", "datasource"].indexOf(column.label) > -1)) {
+		  							 var column = response.json.columns[i], columnName = column.name.replace(":", "_"), columnLabel = (column.label!="hidden"? column.label :"");
+	                                 if (Object.keys(column).includes("label") && ["datasource"].indexOf(column.label) < 0) {
+		
 		                                 if (column.dataType == "nested" && column.columns) {
-		                                    for ( var j = 0; j < column.columns.length; j++) {                                             
-		                                      var col = column.columns[j];                                      
-		                                       columnName += "|" + col.name.replace(":", "_");                                             
+		                                    for ( var j = 0; j < column.columns.length; j++) { 
+										    var col = column.columns[j];                             
+			 								if (Object.keys(col).includes("label") && ["datasource"].indexOf(col.label) < 0) {                                            
+			                                       columnName += "|" + col.name.replace(":", "_");
+			                               		   columnLabel += "|" + (col.label!="hidden"?col.label:"");    
+		                                       }                                        
 		                                    }
 		                                 }
-		
-		                                 requestParams.fields.push(columnName);
-		                                 requestParams.labels[columnName] = column.label;
+		                                 requestParams.fields.push({"id":columnName, "label": columnLabel});
 	                                 }
 	                              }
 	
