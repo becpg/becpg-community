@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 
 /**
  * 
@@ -15,13 +16,13 @@ public class AsyncPaginatedExtractorWrapper extends PaginatedExtractedItems  {
 
 	private DataListExtractor extractor;
 	private DataListFilter dataListFilter;
-	private List<String> metadataFields;
+	private List<AttributeExtractorField> metadataFields;
 
 	private int curPage = 1;
 
 	protected static final int PAGE_SIZE = 100;
 
-	public AsyncPaginatedExtractorWrapper(DataListExtractor extractor, DataListFilter dataListFilter, List<String> metadataFields) {
+	public AsyncPaginatedExtractorWrapper(DataListExtractor extractor, DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
 
 		this.extractor = extractor;
 		this.dataListFilter = dataListFilter;

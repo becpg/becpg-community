@@ -6,7 +6,6 @@ package fr.becpg.repo.web.scripts.entity.datalist;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -48,7 +47,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.DataListOutputWriterFactory;
 import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
@@ -114,9 +113,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	/** Constant <code>PARAM_FIELDS="fields"</code> */
 	protected static final String PARAM_FIELDS = "fields";
 	
-	/** Constant <code>PARAM_LABELS="labels"</code> */
-	protected static final String PARAM_LABELS = "labels";
-
 	/** The Constant PARAM_NODEREF. */
 	protected static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
@@ -381,26 +377,29 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				dataListFilter.setCriteriaMap(JsonHelper.extractCriteria(jsonObject));
 			}
 
-			List<String> metadataFields = new LinkedList<>();
+			List<AttributeExtractorField> metadataFields = new LinkedList<>();
 
 			if ((json != null) && json.has(PARAM_FIELDS)) {
 				JSONArray jsonFields = (JSONArray) json.get(PARAM_FIELDS);
 
 				for (int i = 0; i < jsonFields.length(); i++) {
-					metadataFields.add(((String) jsonFields.get(i)).replace("_", ":"));
+					String fieldId = null;
+					String fieldLabel = null;
+					
+					Object field = jsonFields.get(i);
+					if(field instanceof JSONObject) {
+						fieldId = ((JSONObject) field).getString("id").replace("_", ":");
+						fieldLabel = ((JSONObject) field).getString("label");
+					} else {
+						
+						fieldId = ((String) field).replace("_", ":");
+					}
+					
+					metadataFields.add(new AttributeExtractorField(fieldId,fieldLabel));
+				
 				}
 			}
 			
-			Map<String, String> metadataLabels = new HashMap<>();
-
-			if ((json != null) && json.has(PARAM_LABELS)) {
-				JSONObject jsonLabels = (JSONObject) json.get(PARAM_LABELS);
-
-				for (String key : jsonLabels.keySet()) {
-					metadataLabels.put(key.replace("_", ":"), jsonLabels.getString(key));
-				}
-			}
-
 			dataListFilter.setFilterId(filterId);
 			dataListFilter.setFilterData(filterData);
 			dataListFilter.setFilterParams(filterParams);
@@ -411,7 +410,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				logger.debug("Filter:" + dataListFilter.toString());
 				logger.debug("Pagination:" + dataListFilter.getPagination().toString());
 				logger.debug("MetadataFields:" + metadataFields.toString());
-				logger.debug("MetadataLabels:" + metadataLabels.toString());
 				logger.debug("SearchQuery:" + dataListFilter.getSearchQuery());
 			}
 
@@ -478,17 +476,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			} else {
 				extractedItems = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
 			}
-			
-			List<AttributeExtractorStructure> computedFields = extractedItems.getComputedFields();
-			
-			for (var field : computedFields) {
-				String key = field.getFieldQname().toPrefixString();
-				if (metadataLabels.containsKey(key)) {
-					field.setFieldLabel(metadataLabels.get(key));
-				}
-			}
-			
-			extractedItems.setComputedFields(computedFields);
 			
 			datalistOutputWriterFactory.write(req, res, dataListFilter, extractedItems);
 
