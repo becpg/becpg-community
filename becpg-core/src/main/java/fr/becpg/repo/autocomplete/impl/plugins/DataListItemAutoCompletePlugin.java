@@ -96,7 +96,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  * 
  * Datasources:
  * 
- *  DataListCharact 
+ * DataListCharact 
  * 
  * ds:  becpg/autocomplete/DataListCharact?path={path}&amp;className={className}&amp;attributeName={attributeName}&amp;filter={filter}
  * param: {className} type of dataListItem to retrieve
