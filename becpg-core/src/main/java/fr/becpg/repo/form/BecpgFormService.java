@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.repo.form.impl.BecpgFormDefinition;
 
 /**
  * <p>BecpgFormService interface.</p>
@@ -19,7 +19,7 @@ public interface BecpgFormService {
 	
 	
 
-	JSONObject getForm(String itemKind, String itemId, String formId, String siteId, List<String> fields, List<String> forcedFields,
+	BecpgFormDefinition getForm(String itemKind, String itemId, String formId, String siteId, List<String> fields, List<String> forcedFields,
 			NodeRef entityNodeRef) throws BeCPGException, JSONException;
 
 	/**

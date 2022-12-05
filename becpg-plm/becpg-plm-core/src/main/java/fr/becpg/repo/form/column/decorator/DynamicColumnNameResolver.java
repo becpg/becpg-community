@@ -64,8 +64,9 @@ public class DynamicColumnNameResolver implements ExcelFieldTitleProvider, DataG
 	/** {@inheritDoc} */
 	@Override
 	public String getTitle(AttributeExtractorStructure field) {
-		String title = getTitle(field.getFieldDef().getName());
-		return title != null ? title : field.getFieldDef().getTitle(dictionaryService);
+		String title = field.getFieldLabel();
+		title = (title != null) ? title : getTitle(field.getFieldDef().getName());
+		return (title != null) ? title : field.getFieldDef().getTitle(dictionaryService);
 	}
 
 	/** {@inheritDoc} */
