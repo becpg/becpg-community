@@ -502,8 +502,7 @@ public class BecpgFormDefinition {
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String getTitle(QName qName) {
-		String attName = qName.toPrefixString();
+	public String getTitle(String attName) {
 		
 		if (mergeDef.has(PROP_FIELDS)) {
 			for (var field : (JSONArray) mergeDef.get(PROP_FIELDS)) {
