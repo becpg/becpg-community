@@ -47,7 +47,7 @@ public class StandardExcelDataListOutputPlugin implements ExcelDataListOutputPlu
 			@Override
 			public String getTitle(AttributeExtractorStructure field) {
 				String label = field.getFieldLabel();
-				return (label != null && label.isBlank()) ? label : field.getFieldDef().getTitle(dictionaryService);
+				return (label != null && !label.isBlank()) ? label : field.getFieldDef().getTitle(dictionaryService);
 			}
 
 			@Override
