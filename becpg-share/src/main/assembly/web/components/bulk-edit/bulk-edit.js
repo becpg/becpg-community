@@ -640,7 +640,28 @@
 
                             Event.preventDefault(domEvent);
                         },
-						
+                        
+						onCheckAllMenuEvent: function EntityDataGrid_onCheckAllMenuEvent(sType, aArgs, p_obj) {
+							var domEvent = aArgs[0], eventTarget = aArgs[1];
+
+							var fn = Alfresco.util.findEventClass(eventTarget);
+
+							var items = Selector.query('input[name="propChecked"]');
+							for (var i = 0; i < items.length; i++) {
+								if (items[i].type == 'checkbox') {
+									if (fn == "selectAll") {
+										items[i].checked = true;
+									} else if (fn == "selectNone") {
+										items[i].checked = false;
+									} else {
+										items[i].checked = !items[i].checked;
+									}
+								}
+							}
+
+							Event.preventDefault(domEvent);
+						},
+
 						/**
 						 * @method onSelectedTypeChanged React on
 						 *         onSelectedTypeChanged event
@@ -721,15 +742,15 @@
 							Bubbling.addDefaultAction("action-link", fnActionHandler);
 							
 							// CheckAll Items menu button
-							this.widgets.checkAllbutton = Alfresco.util.createYUIButton(this, "checkAll-button", function() {
-								var items = Selector.query('input[name="propChecked"]');
-								for(var i=0; i<items.length; i++) {
-									if(items[i].type =='checkbox') {
-										items[i].checked =!items[i].checked;
-									}
-								}       
-							
-							});
+							this.widgets.checkAllButton = Alfresco.util.createYUIButton(this, "checkAll-button", this.onCheckAllMenuEvent
+								,{
+									type: "menu",
+									menu: "checkAll-menu",
+									lazyloadmenu: false,
+									disabled: false
+								});
+
+
 							
 
 							this.widgets.showButton = Alfresco.util.createYUIButton(this, "show-button", this.onBulkEditShow, {
@@ -868,11 +889,11 @@
 						_setupDataSource : function BulkEdit__setupDataSource() {
 
 							for (var i = 0, ii = this.datalistColumns.length; i < ii; i++) {
-								var column = this.datalistColumns[i], columnName = column.name.replace(":", "_"), fieldLookup = this
+								var column = this.datalistColumns[i], columnName = column.name.replace(":", "_"), columnLabel = column.label, fieldLookup = this
 										._buildFormsName(column);
 
 								if (this._isSelectedProp(fieldLookup)) {
-									this.dataRequestFields.push(columnName);
+									this.dataRequestFields.push({"id":columnName, "label":columnLabel});
 									this.dataResponseFields.push(fieldLookup);
 									this.dataTableColumn.push(column);
 								}
@@ -1557,13 +1578,6 @@
 
 						},
 						onExportCSV : function BulkEdit_onExportCSV() {
-							var fields = "";
-							for ( var i in this.dataRequestFields) {
-								if (fields.length > 0) {
-									fields += "$";
-								}
-								fields += this.dataRequestFields[i];
-							}
 							
 							var PAGE_SIZE = 50;
 							var CURRENT_PAGE = 1;
