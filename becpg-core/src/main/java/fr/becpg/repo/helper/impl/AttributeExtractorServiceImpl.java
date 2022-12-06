@@ -214,7 +214,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		QName fieldQname;
 		QName itemType;
 		String formula = null;
-		String fieldLabel = null;
 
 		public AttributeExtractorStructure(AttributeExtractorField field, ClassAttributeDefinition fieldDef, QName itemType) {
 			this.fieldDef = fieldDef;
@@ -1096,7 +1095,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 			fields.add(field);
 		}
 		
-		Map<String, Object> comp = extractNodeData(nodeRef, nodeService.getType(nodeRef), new ArrayList<>(), FormatMode.JSON);
+		Map<String, Object> comp = extractNodeData(nodeRef, nodeService.getType(nodeRef), fields, FormatMode.JSON);
 
 		/** Criteria:{bcpg:allergenListAllergen|bcpg:allergenCode=FX1}
 		 * Extracted:{dt_bcpg_allergenListAllergen=[{prop_bcpg_allergenCode={displayValue=F257,
