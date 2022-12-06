@@ -2,6 +2,7 @@ package fr.becpg.repo.entity.comparison;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,8 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.form.BecpgFormService;
+import fr.becpg.repo.form.impl.BecpgFormDefinition;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.engine.impl.ReportServerEngine;
@@ -104,6 +107,8 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	@Autowired
 	private AssociationService associationService;
 
+	@Autowired
+	private BecpgFormService becpgFormService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -184,18 +189,27 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			cmpRowsElt.addAttribute(ATTR_ENTITY + i, name); 
 			i++;
 		}
+		
+		Map<String, BecpgFormDefinition> defs = new HashMap<>();
+		
 		// compareResult
 		for (CompareResultDataItem c : compareResult) {
 			Element cmpRowElt = cmpRowsElt.addElement(TAG_COMPARISON_ROW);
+			BecpgFormDefinition def = null;
+			
 			if (c.getEntityList() != null) {
+				String entityListName = c.getEntityList().toPrefixString();
+				
 				TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
-				cmpRowElt.addAttribute(ATTR_ENTITYLIST, typeDef.getTitle(dictionaryService));
+				String entityListTitle = typeDef.getTitle(dictionaryService);
+				def = getFormDef(defs, c.getProperty(), entityListName, entityListTitle, entity1NodeRef);
+				
+				cmpRowElt.addAttribute(ATTR_ENTITYLIST, entityListTitle);
 				cmpRowElt.addAttribute(ATTR_ENTITYLIST_QNAME, c.getEntityList().toPrefixString(namespaceService));
 			}
 			
-			
 			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC,c.getCharactName());
-			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(c.getProperty()));
+			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(def, c.getProperty()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
 			cmpRowElt.addAttribute(ATTR_IS_DIFFERENT, Boolean.toString(c.isDifferent()));
 
@@ -227,6 +241,8 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		// each comparison
 		for (String comparison : structCompareResults.keySet()) {
 			List<StructCompareResultDataItem> structCompareResult = structCompareResults.get(comparison);
+			
+			Map<String, BecpgFormDefinition> defs = new HashMap<>();
 			
 			// each structCompareResultDataItem
 			for (StructCompareResultDataItem c : structCompareResult) {
@@ -261,9 +277,11 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 						if (!properties1.isEmpty()) {
 							properties1 += PROPERTY_SEPARATOR;
 						}
+						String entityListName = c.getEntityList().toPrefixString();
+						BecpgFormDefinition def = getFormDef(defs, property, entityListName, entityListTitle, entityNodeRef);
 
 						String value = c.getProperties1().get(property);
-						properties1 += getClassAttributeTitle(property) + PROPERTY_VALUE_SEPARATOR + value;
+						properties1 += getClassAttributeTitle(def, property) + PROPERTY_VALUE_SEPARATOR + value;
 					}
 				}
 
@@ -289,9 +307,11 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 						if (!properties2.isEmpty()) {
 							properties2 += PROPERTY_SEPARATOR;
 						}
+						String entityListName = c.getEntityList().toPrefixString();
+						BecpgFormDefinition def = getFormDef(defs, property, entityListName, entityListTitle, entityNodeRef);
 
 						String value = c.getProperties2().get(property);
-						properties2 += getClassAttributeTitle(property) + PROPERTY_VALUE_SEPARATOR + value;
+						properties2 += getClassAttributeTitle(def, property) + PROPERTY_VALUE_SEPARATOR + value;
 					}
 				}
 
@@ -316,22 +336,42 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 	}
 
 	
-	private String getClassAttributeTitle(QName qName) {
+	private String getClassAttributeTitle(BecpgFormDefinition definition, QName qName) {
 
-		String title = "";
-
-		PropertyDefinition propertyDef = dictionaryService.getProperty(qName);
-		if (propertyDef != null) {
-			title = propertyDef.getTitle(dictionaryService);
-		} else {
-			AssociationDefinition assocDef = dictionaryService.getAssociation(qName);
-			if (assocDef != null) {
-				title = assocDef.getTitle(dictionaryService);
+		String title = (definition != null) ? definition.getTitle(qName.toPrefixString(namespaceService)) : null;
+		
+		if (title == null) {
+			PropertyDefinition propertyDef = dictionaryService.getProperty(qName);
+			if (propertyDef != null) {
+				title = propertyDef.getTitle(dictionaryService);
+			} else {
+				AssociationDefinition assocDef = dictionaryService.getAssociation(qName);
+				if (assocDef != null) {
+					title = assocDef.getTitle(dictionaryService);
+				}
 			}
 		}
 
-		return title;
+		return (title != null) ? title : "";
 	}
 
+	private BecpgFormDefinition getFormDef(Map<String, BecpgFormDefinition> defs, QName property, 
+		String entityListName, String entityListTitle, NodeRef entityNodeRef) {
+		
+		List<String> fields = Arrays.asList(property.toPrefixString());
+		
+		String itemId = (entityListName != null) ? entityListName : entityListTitle;
+		BecpgFormDefinition def = null;
+		
+		if (defs.containsKey(itemId)) {
+			def = defs.get(itemId);
+		} else {
+			def = becpgFormService.getForm("type", itemId,
+				(entityListName != null) ? "datagrid" : "default", null, fields, fields, entityNodeRef);
+			defs.put(itemId, def);
+		}
+		
+		return def;
+	}
 	
 }
