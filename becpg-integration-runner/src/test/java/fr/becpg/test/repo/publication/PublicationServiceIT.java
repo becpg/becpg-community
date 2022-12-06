@@ -18,6 +18,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,11 +103,14 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 	public void testChannelQuery() throws FileNotFoundException {
 
 		final NodeRef channelNodeRef = inWriteTx(() -> {
+			
+			JSONObject channelConfig = new JSONObject();
+			channelConfig.put("query", "=@bcpg\\:erpCode:\"" + CHANNEL_ID + "01\"");
 
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(ContentModel.PROP_NAME, CHANNEL_ID);
 			properties.put(PublicationModel.PROP_PUBCHANNEL_ID, CHANNEL_ID);
-			properties.put(PublicationModel.PROP_PUBCHANNEL_CONFIG, "{\"query\":\"=@bcpg\\:erpCode:\\\"" + CHANNEL_ID + "01\\\"\"}");
+			properties.put(PublicationModel.PROP_PUBCHANNEL_CONFIG, channelConfig.toString());
 			properties.put(PublicationModel.PROP_PUBCHANNEL_CATALOG_ID, "channel-catalod");
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(PublicationModel.PROP_PUBCHANNEL_ID)),
