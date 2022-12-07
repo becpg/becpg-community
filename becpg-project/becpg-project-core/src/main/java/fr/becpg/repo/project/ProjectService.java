@@ -24,6 +24,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 
 /**
@@ -108,7 +109,7 @@ public interface ProjectService {
 	 * @param taskNodeRef
 	 * @param stringScript
 	 */
-	void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode);
+	void runScript(ProjectData project, TaskListDataItem task, DeliverableListDataItem deliverable);
 
 	/**
 	 * 
@@ -138,5 +139,7 @@ public interface ProjectService {
      NodeRef refusedTask(NodeRef nodeRef);
 
      Set<NodeRef> updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState);
+
+	TaskListDataItem createNewTask(ProjectData project);
 
 }

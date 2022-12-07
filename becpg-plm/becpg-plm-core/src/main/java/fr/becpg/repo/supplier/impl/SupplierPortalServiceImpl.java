@@ -2,6 +2,7 @@ package fr.becpg.repo.supplier.impl;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -15,13 +16,18 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.BasicPasswordGenerator;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ContentReader;
+import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.version.VersionType;
@@ -34,6 +40,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.artworks.signature.SignatureService;
+import fr.becpg.artworks.signature.model.SignatureModel;
+import fr.becpg.artworks.signature.model.SignatureStatus;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
@@ -42,15 +51,24 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.authentication.BeCPGUserAccount;
 import fr.becpg.repo.authentication.BeCPGUserAccountService;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.jscript.SupplierPortalHelper;
+import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
+import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.impl.ProjectHelper;
+import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.supplier.SupplierPortalService;
 
 @Service("supplierPortalService")
@@ -84,7 +102,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 	@Autowired
 	private NamespaceService namespaceService;
-
+	
 	@Autowired
 	private EntityVersionService entityVersionService;
 
@@ -97,7 +115,27 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	@Autowired
 	private AuthorityService authorityService;
 	
-
+	@Autowired
+	private EntityService entityService;
+	
+	@Autowired
+	private ContentService contentService;
+	
+	@Autowired
+	private ProjectService projectService;
+	
+	@Autowired
+	private PersonService personService;
+	
+	@Autowired
+	private SignatureService signatureService;
+	
+	@Autowired
+	private EntityReportService entityReportService;
+	
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
+	
 	@Value("${beCPG.sendToSupplier.projectName.format}")
 	private String projectNameTpl = "{entity_cm:name} - {supplier_cm:name} - REFERENCING - {date_YYYY}";
 
@@ -197,6 +235,391 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		
 		return projectNodeRef;
 
+	}
+
+	@Override
+	public NodeRef prepareSignatureProject(NodeRef projectNodeRef, List<NodeRef> documents) {
+		
+		List<NodeRef> viewRecipients = associationService.getTargetAssocs(projectNodeRef, SignatureModel.ASSOC_RECIPIENTS);
+		
+		viewRecipients = projectService.extractResources(projectNodeRef, viewRecipients);
+		
+		associationService.update(projectNodeRef, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
+		
+		List<NodeRef> recipients = extractPeople(viewRecipients);
+		
+		NodeRef supplierNodeRef = findSupplierAccount(documents, recipients);
+		
+		NodeRef supplierDestinationFolder = null;
+
+		if (supplierNodeRef != null) {
+			supplierDestinationFolder = getOrCreateSupplierDestFolder(supplierNodeRef, recipients);
+			
+			nodeService.moveNode(projectNodeRef, supplierDestinationFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+		}
+		
+		List<NodeRef> finalDocuments = new ArrayList<>();
+		
+		for (NodeRef document : documents) {
+			
+			try {
+				policyBehaviourFilter.disableBehaviour(SignatureModel.ASPECT_SIGNATURE);
+
+				NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
+				
+				associationService.update(document, SignatureModel.ASSOC_VALIDATOR, currentUser);
+
+				associationService.update(document, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
+				
+				if (supplierDestinationFolder != null) {
+					Map<QName, Serializable> properties = new HashMap<>();
+					
+					String documentName = repoService.getAvailableName(supplierDestinationFolder, (String) nodeService.getProperty(document, ContentModel.PROP_NAME), false, true);
+					
+					properties.put(ContentModel.PROP_NAME, documentName);
+					
+					NodeRef documentCopy = nodeService.createNode(supplierDestinationFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT, properties).getChildRef();
+					
+					ContentReader reader = contentService.getReader(document, ContentModel.PROP_CONTENT);
+					ContentWriter writer = contentService.getWriter(documentCopy, ContentModel.PROP_CONTENT, true);
+					writer.setEncoding(reader.getEncoding());
+					writer.setMimetype(reader.getMimetype());
+					
+					nodeService.createAssociation(documentCopy, document, ContentModel.ASSOC_ORIGINAL);
+					
+					associationService.update(documentCopy, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
+					
+					writer.putContent(reader);
+					
+					finalDocuments.add(documentCopy);
+				} else {
+					finalDocuments.add(document);
+				}
+			} finally {
+				policyBehaviourFilter.enableBehaviour(SignatureModel.ASPECT_SIGNATURE);
+			}
+		}
+		
+		ProjectData project = alfrescoRepository.findOne(projectNodeRef);
+		
+		TaskListDataItem rejectTask = createRejectTask(project, finalDocuments);
+		
+		NodeRef lastTask = createSignatureTasks(project, finalDocuments, recipients, rejectTask.getNodeRef(), rejectTask);
+		
+		createValidatingTask(project, documents, lastTask, rejectTask);
+		
+		alfrescoRepository.save(project);
+		
+		return projectNodeRef;
+	}
+
+	private List<NodeRef> extractPeople(List<NodeRef> viewRecipients) {
+		List<NodeRef> recipients = new ArrayList<>();
+		
+		for (NodeRef viewRecipient : viewRecipients) {
+			QName type = nodeService.getType(viewRecipient);
+			
+			if (ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)) {
+				List<NodeRef> members = associationService.getChildAssocs(viewRecipient, ContentModel.ASSOC_MEMBER);
+				recipients.addAll(members);
+			} else {
+				recipients.add(viewRecipient);
+			}
+		}
+		return recipients;
+	}
+
+	@Override
+	public NodeRef prepareSupplierSignatures(NodeRef projectNodeRef, NodeRef taskNodeRef) {
+		
+		ProjectData project = alfrescoRepository.findOne(projectNodeRef); 
+		
+		if (!project.getEntities().isEmpty()) {
+			
+			NodeRef entity = project.getEntities().get(0);
+			
+			String supplierFolderName = TranslateHelper.getTranslatedPath("SupplierDocuments");
+			
+			NodeRef supplierFolder = nodeService.getChildByName(entity, ContentModel.ASSOC_CONTAINS, supplierFolderName);
+
+			if (supplierFolder == null) {
+				
+				Map<QName, Serializable> props = new HashMap<>();
+				
+				props.put(ContentModel.PROP_NAME, supplierFolderName);
+				
+				supplierFolder = nodeService.createNode(supplierFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER, props).getChildRef();
+			}
+			
+			copySupplierSheet(projectNodeRef, entity, supplierFolder);
+			
+			List<NodeRef> documentsToSign = findDocumentsToSign(supplierFolder);
+			
+			List<NodeRef> lastsTasks = new ArrayList<>();
+			
+			for (NodeRef documentToSign : documentsToSign) {
+				
+				associationService.update(documentToSign, ContentModel.ASSOC_ORIGINAL, List.of());
+				
+				List<NodeRef> viewRecipients = associationService.getTargetAssocs(documentToSign, SignatureModel.ASSOC_RECIPIENTS);
+				
+				viewRecipients = projectService.extractResources(projectNodeRef, viewRecipients);
+				
+				associationService.update(documentToSign, SignatureModel.ASSOC_RECIPIENTS, viewRecipients);
+				
+				List<NodeRef> recipients = extractPeople(viewRecipients);
+				
+				NodeRef lastTask = createSignatureTasks(project, List.of(documentToSign), recipients, taskNodeRef, null);
+				
+				lastsTasks.add(lastTask);
+			}
+			
+			createClosingTask(project, lastsTasks);
+			
+		}
+		
+		alfrescoRepository.save(project);
+		
+		return project.getNodeRef();
+	}
+
+	private void createClosingTask(ProjectData project, List<NodeRef> lastTasks) {
+		TaskListDataItem closingTask = projectService.createNewTask(project);
+
+		closingTask.setTaskName(I18NUtil.getMessage("plm.supplier.portal.task.closing.name"));
+
+		NodeRef creator = personService.getPerson(project.getCreator());
+
+		closingTask.getResources().add(creator);
+		
+		closingTask.getPrevTasks().addAll(lastTasks);
+
+		project.getDeliverableList()
+				.add(ProjectHelper.createDeliverable(projectNameTpl, I18NUtil.getMessage("plm.supplier.portal.task.closing.name"),
+						DeliverableScriptOrder.Post, closingTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
+								"/app:company_home/app:dictionary/app:scripts/cm:validateProjectEntity.js")));
+
+	}
+
+	private List<NodeRef> findDocumentsToSign(NodeRef folder) {
+		
+		List<NodeRef> docs = new ArrayList<>();
+		
+		List<NodeRef> children = associationService.getChildAssocs(folder, ContentModel.ASSOC_CONTAINS);
+		
+		for (NodeRef child : children) {
+			
+			QName type = nodeService.getType(child);
+			
+			if (ContentModel.TYPE_CONTENT.equals(type)) {
+				
+				List<NodeRef> recipients = associationService.getTargetAssocs(child, SignatureModel.ASSOC_RECIPIENTS);
+				
+				if (recipients != null && !recipients.isEmpty()) {
+					
+					String status = (String) nodeService.getProperty(child, SignatureModel.PROP_STATUS);
+					
+					if (!SignatureStatus.Signed.toString().equals(status)) {
+						docs.add(child);
+					}
+				}
+			} else  if (ContentModel.TYPE_FOLDER.equals(type)) {
+				docs.addAll(findDocumentsToSign(child));
+			}
+		}
+		
+		return docs;
+	}
+
+	private void copySupplierSheet(NodeRef projectNodeRef, NodeRef entity, NodeRef supplierFolder) {
+		
+		NodeRef reportNodeRef = entityReportService.getOrRefreshReportOfKind(entity, "SupplierSheet");
+		
+		if (reportNodeRef != null) {
+			
+			String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
+			
+			int lastDotIndex = reportName.lastIndexOf(".");
+			
+			if (lastDotIndex != -1) {
+				
+				String nameWithoutExtension = reportName.substring(0, lastDotIndex);
+				
+				String extension = reportName.substring(lastDotIndex);
+				
+				String date =  new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(0, 10);
+				
+				reportName = nameWithoutExtension + " - " + date + extension;
+			}
+			
+			reportName = repoService.getAvailableName(supplierFolder, reportName, false, true);
+			
+			Map<QName, Serializable> props = new HashMap<>();
+			
+			props.put(ContentModel.PROP_NAME, reportName);
+			
+			NodeRef signedReport = nodeService.createNode(supplierFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT, props).getChildRef();
+
+			List<NodeRef> suppliers = associationService.getTargetAssocs(projectNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+			
+			associationService.update(signedReport, SignatureModel.ASSOC_RECIPIENTS, suppliers);
+			
+			ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
+			ContentWriter writer = contentService.getWriter(signedReport, ContentModel.PROP_CONTENT, true);
+			writer.setEncoding(reader.getEncoding());
+			writer.setMimetype(reader.getMimetype());
+
+			writer.putContent(reader);
+
+		}
+	}
+
+	private NodeRef findSupplierAccount(List<NodeRef> documents, List<NodeRef> recipients) {
+		for (NodeRef document : documents) {
+			
+			NodeRef entity = entityService.getEntityNodeRef(document, nodeService.getType(document));
+			
+			if (entity != null) {
+				NodeRef supplierNodeRef = getSupplierNodeRef(entity);
+				
+				if (supplierNodeRef != null) {
+					return supplierNodeRef;
+				}
+			}
+		}
+		
+		for (NodeRef recipient : recipients) {
+			
+			List<NodeRef> sourceSupplierAccountAssocs = associationService.getSourcesAssocs(recipient, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+			
+			if (sourceSupplierAccountAssocs != null && !sourceSupplierAccountAssocs.isEmpty()) {
+				for (NodeRef sourceSupplierAccountAssoc : sourceSupplierAccountAssocs) {
+					if (PLMModel.TYPE_SUPPLIER.equals(nodeService.getType(sourceSupplierAccountAssoc))) {
+						return sourceSupplierAccountAssoc;
+					}
+				}
+			}
+		}
+		
+		return null;
+	}
+
+	private void createValidatingTask(ProjectData project, List<NodeRef> documents, NodeRef lastTask, TaskListDataItem rejectTask) {
+		
+		TaskListDataItem validatingTask = projectService.createNewTask(project);
+		
+		validatingTask.setRefusedTask(rejectTask);
+		
+		validatingTask.getPrevTasks().add(lastTask);
+		
+		validatingTask.setTaskName(I18NUtil.getMessage("signatureWorkflow.task-checkin.name"));
+		
+		validatingTask.setResources(new ArrayList<>());
+		
+		NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
+		
+		validatingTask.getResources().add(currentUser);
+		
+		String resourceFirstName = (String) nodeService.getProperty(currentUser, ContentModel.PROP_FIRSTNAME);
+		String resourceLastName = (String) nodeService.getProperty(currentUser, ContentModel.PROP_LASTNAME);
+
+		for (NodeRef document : documents) {
+
+			String docName = (String) nodeService.getProperty(document, ContentModel.PROP_NAME);
+
+			project.getDeliverableList().add(
+					ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - validate", docName, DeliverableScriptOrder.Post, validatingTask,
+							BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), "/app:company_home/app:dictionary/app:scripts/cm:validate-signature.js")));
+			
+			DeliverableListDataItem signViewDeliverable = ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - validate - doc", docName, null, validatingTask, document);
+			
+			signViewDeliverable.setUrl(signatureService.getDocumentView(document, null, validatingTask.getNodeRef()));
+			
+			project.getDeliverableList().add(signViewDeliverable);
+		}
+		
+	}
+
+	private TaskListDataItem createRejectTask(ProjectData project, List<NodeRef> documents) {
+		
+		TaskListDataItem rejectTask = projectService.createNewTask(project);
+		
+		rejectTask.setTaskName(I18NUtil.getMessage("signatureWorkflow.task-reject.name"));
+		
+		rejectTask.setDescription(I18NUtil.getMessage("signatureWorkflow.task-reject.description"));
+		
+		rejectTask.setState(TaskState.Cancelled.toString());
+		
+		rejectTask.setResources(new ArrayList<>());
+		
+		NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
+
+		rejectTask.getResources().add(currentUser);
+		
+		String resourceFirstName = (String) nodeService.getProperty(currentUser, ContentModel.PROP_FIRSTNAME);
+		String resourceLastName = (String) nodeService.getProperty(currentUser, ContentModel.PROP_LASTNAME);
+		
+		for (NodeRef document : documents) {
+
+			String docName = (String) nodeService.getProperty(document, ContentModel.PROP_NAME);
+
+			project.getDeliverableList().add(
+					ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - reject", docName, DeliverableScriptOrder.Pre, rejectTask,
+							BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), "/app:company_home/app:dictionary/app:scripts/cm:reject-signature.js")));
+			project.getDeliverableList().add(
+					ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - reject - doc", docName, null, rejectTask, document));
+		}
+		
+		project.getTaskList().add(rejectTask);
+		
+		return rejectTask;
+		
+	}
+
+	private NodeRef createSignatureTasks(ProjectData project, List<NodeRef> documents, List<NodeRef> recipients, NodeRef firstTask, TaskListDataItem rejectTask) {
+		
+		NodeRef previousTask = firstTask;
+		
+		for (NodeRef recipient : recipients) {
+			
+			String resourceFirstName = (String) nodeService.getProperty(recipient, ContentModel.PROP_FIRSTNAME);
+			String resourceLastName = (String) nodeService.getProperty(recipient, ContentModel.PROP_LASTNAME);
+			
+			TaskListDataItem newTask = projectService.createNewTask(project);
+			
+			newTask.setRefusedTask(rejectTask);
+			
+			newTask.getPrevTasks().add(previousTask);
+			
+			newTask.setTaskName(nodeService.getProperty(recipient, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(recipient, ContentModel.PROP_LASTNAME) + " - SIGNATURE");
+			
+			newTask.getResources().add(recipient);
+			
+			newTask.setTaskName(I18NUtil.getMessage("signatureWorkflow.task-signature.name"));
+			newTask.setNotificationFrequency(7);
+			newTask.setInitialNotification(-1);
+			newTask.setNotificationAuthorities(List.of(recipient));
+			
+			for (NodeRef doc : documents) {
+
+				String docName = (String) nodeService.getProperty(doc, ContentModel.PROP_NAME);
+
+				project.getDeliverableList()
+						.add(ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - prepare", docName,
+								DeliverableScriptOrder.Pre, newTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
+										"/app:company_home/app:dictionary/app:scripts/cm:prepare-signature.js")));
+				project.getDeliverableList()
+						.add(ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - url", docName, null, newTask, doc));
+				project.getDeliverableList()
+						.add(ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - sign", docName,
+								DeliverableScriptOrder.Post, newTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
+										"/app:company_home/app:dictionary/app:scripts/cm:sign-document.js")));
+			}
+			
+			previousTask = newTask.getNodeRef();
+		}
+		
+		return previousTask;
 	}
 
 	@Override
@@ -308,15 +731,13 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 						I18NUtil.setLocale(Locale.getDefault());
 						I18NUtil.setContentLocale(null);
 
-						destFolder = repoService.getOrCreateFolderByPath(documentLibraryNodeRef, "Referencing",
-								I18NUtil.getMessage("path.referencing"));
+						destFolder = repoService.getOrCreateFolderByPath(documentLibraryNodeRef, "Referencing", I18NUtil.getMessage("path.referencing"));
 
 						if (destFolder != null) {
 
 							destFolder = hierarchyService.getOrCreateHierachyFolder(supplierNodeRef, null, destFolder);
 
-							destFolder = repoService.getOrCreateFolderByPath(destFolder, supplierNodeRef.getId(),
-									(String) nodeService.getProperty(supplierNodeRef, ContentModel.PROP_NAME));
+							destFolder = repoService.getOrCreateFolderByPath(destFolder, supplierNodeRef.getId(), (String) nodeService.getProperty(supplierNodeRef, ContentModel.PROP_NAME));
 							
 							for (NodeRef resourceRef : resources) {
 								permissionService.setPermission(destFolder, (String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
@@ -340,8 +761,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 		}
 
-		permissionService.setPermission(destFolder, PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(),
-				PermissionService.COORDINATOR, true);
+		permissionService.setPermission(destFolder, PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(), PermissionService.COORDINATOR, true);
 
 		return destFolder;
 	}
