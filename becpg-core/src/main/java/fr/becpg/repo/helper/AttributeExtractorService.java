@@ -28,6 +28,7 @@ import org.alfresco.service.namespace.QName;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormats;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 /**
@@ -73,7 +74,7 @@ public interface AttributeExtractorService {
 	 * @param metadataFields a {@link java.util.List} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<String> metadataFields);
+	List<AttributeExtractorStructure> readExtractStructure(QName itemType, List<AttributeExtractorField> metadataFields);
 	
 	/**
 	 * <p>extractNodeData.</p>
@@ -84,7 +85,7 @@ public interface AttributeExtractorService {
 	 * @param mode a {@link fr.becpg.config.format.FormatMode} object.
 	 * @return a {@link java.util.Map} object.
 	 */
-	Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<String> metadataFields, FormatMode mode);
+	Map<String, Object> extractNodeData(NodeRef nodeRef, QName itemType, List<AttributeExtractorField> metadataFields, FormatMode mode);
 	
 	/**
 	 * <p>extractNodeData.</p>

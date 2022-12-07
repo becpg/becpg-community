@@ -21,7 +21,7 @@ function classifyQualityControl(qualityControl) {
         }
 		
 	} else {
-		return classifyByHierarchy(qualityControl, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));S
+		return classifyByHierarchy(qualityControl, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
 	}
 }
 

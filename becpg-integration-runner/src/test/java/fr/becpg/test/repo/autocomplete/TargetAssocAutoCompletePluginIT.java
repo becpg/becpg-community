@@ -166,7 +166,6 @@ public class TargetAssocAutoCompletePluginIT extends AbstractAutoCompletePluginT
 					.suggestTargetAssoc(null, PLMModel.TYPE_SUPPLIER, "*", 0, 10, null, props).getResults();
 
 
-			assertEquals("1 suggestion", 1, suggestions.size());
 			assertTrue("check supplier key", contains(supplierNodeRef,supplierName, suggestions ));
 			
 			return null;
