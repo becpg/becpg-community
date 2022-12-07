@@ -22,24 +22,45 @@ function extractRecipients(entity) {
 
 function main() {
 	
-	var docDeliverable;
-
+	var urlDeliverable = null;
+	
+	var keyName = deliverable.name.replace(" - sign", "");
+	
 	for (var i = 0; i < project.deliverableList.size(); i++) {
-		var deliverable = project.deliverableList.get(i);
-		if (deliverable.name.endsWith("url") && deliverable.tasks.contains(task.nodeRef)) {
-			docDeliverable = deliverable;
+		var del = project.deliverableList.get(i);
+		if (del.name.endsWith(" - url") && del.name.startsWith(keyName)) {
+			urlDeliverable = del;
 			break;
 		}
 	}
 
-	var document = search.findNode(docDeliverable.content);
+	var document = search.findNode(urlDeliverable.content);
 
 	document = bSign.signDocument(document);
 	
-	var suppliers = extractRecipients(document);
-	
 	if (document.properties["sign:status"] == "Signed") {
 		
+		if (document.assocs["cm:original"] && document.assocs["cm:original"].length > 0) {
+			
+			var originalDoc = document.assocs["cm:original"][0];
+			
+			var checkout = originalDoc.checkout();
+			
+			bcpg.copyContent(document, checkout);
+			
+			checkout.properties["sign:status"] = document.properties["sign:status"];
+			checkout.properties["sign:validator"] = document.properties["sign:validator"];
+			checkout.properties["sign:validationDate"] = document.properties["sign:validationDate"];
+			checkout.properties["sign:recipientsData"] = document.properties["sign:recipientsData"];
+			
+			checkout.save();
+			
+			document.remove();
+			
+			document = checkout.checkin();
+		}
+		
+		var suppliers = extractRecipients(document);
 		var documentName = document.properties["cm:name"];
 		var shareId = bcpg.shareContent(document);
 		

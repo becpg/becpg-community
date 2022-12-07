@@ -1319,6 +1319,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		ContentReader reader = contentService.getReader(from.getNodeRef(), ContentModel.PROP_CONTENT);
 		ContentWriter writer = contentService.getWriter(to.getNodeRef(), ContentModel.PROP_CONTENT, true);
+		writer.setEncoding(reader.getEncoding());
+		writer.setMimetype(reader.getMimetype());
 
 		writer.putContent(reader);
 	}
