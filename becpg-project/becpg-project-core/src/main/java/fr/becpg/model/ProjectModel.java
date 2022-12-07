@@ -235,5 +235,11 @@ public interface ProjectModel {
 	QName PROP_QNAME_REASSIGN_TASK = QName.createQName(PROJECT_URI, "reassignCurrentTasks");
 	/** Constant <code>PROP_QNAME_REASSIGN_RESOURCE</code> */
 	QName PROP_QNAME_REASSIGN_RESOURCE = QName.createQName(PROJECT_URI, "reassignTo");
+	
+	//notification
+	
+	QName PROP_NOTIFICATION_FREQUENCY_VALUE = QName.createQName(PROJECT_URI, "notificationFrequencyValue");
+	QName PROP_NOTIFICATION_INITIAL_VALUE = QName.createQName(PROJECT_URI, "notificationInitialValue");
+	QName ASSOC_NOTIFICATION_AUTHORITIES = QName.createQName(PROJECT_URI, "notificationAuthorities");
 
 }

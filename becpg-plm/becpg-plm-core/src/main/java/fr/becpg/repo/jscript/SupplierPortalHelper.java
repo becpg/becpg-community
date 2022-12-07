@@ -47,6 +47,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
@@ -92,6 +93,12 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	protected EntityDictionaryService entityDictionaryService;
 	
 	private NamespaceService namespaceService;
+	
+	private EntityService entityService;
+	
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
+	}
 	
 	public void setNamespaceService(NamespaceService namespaceService) {
 		this.namespaceService = namespaceService;
@@ -278,13 +285,16 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 
 		return entityNode;
 	}
-
+	
 	public String extractSupplierProjectName(ScriptNode[] items) {
 		if (items != null) {
 			for (ScriptNode item : items) {
 				Date currentDate = Calendar.getInstance().getTime();
 
-				NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(item.getNodeRef());
+				NodeRef entityNodeRef = entityService.getEntityNodeRef(item.getNodeRef(), nodeService.getType(item.getNodeRef()));
+				
+				NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
+				
 				if (supplierNodeRef != null) {
 					return supplierPortalService.createName(item.getNodeRef(), supplierNodeRef,
 							supplierPortalService.getProjectNameTpl(), currentDate);
@@ -297,14 +307,19 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	public ScriptNode[] extractSupplierAccountRefs(ScriptNode[] items) {
 		if (items != null) {
 			for (ScriptNode item : items) {
-
-				NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(item.getNodeRef());
-				if (supplierNodeRef != null) {
-					List<NodeRef> accountNodeRefs = associationService.getTargetAssocs(supplierNodeRef,
-							PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
-					if (accountNodeRefs != null && !accountNodeRefs.isEmpty()) {
-						return accountNodeRefs.stream().map(n -> new ActivitiScriptNode(n, serviceRegistry))
-								.toArray(ScriptNode[]::new);
+				
+				NodeRef entityNodeRef = entityService.getEntityNodeRef(item.getNodeRef(), nodeService.getType(item.getNodeRef()));
+				
+				if (entityNodeRef != null) {
+					NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
+					
+					if (supplierNodeRef != null) {
+						List<NodeRef> accountNodeRefs = associationService.getTargetAssocs(supplierNodeRef,
+								PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+						if (accountNodeRefs != null && !accountNodeRefs.isEmpty()) {
+							return accountNodeRefs.stream().map(n -> new ActivitiScriptNode(n, serviceRegistry))
+									.toArray(ScriptNode[]::new);
+						}
 					}
 				}
 			}
@@ -362,5 +377,24 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		}
 		return new ScriptNode(supplierPortalService.createExternalUser(email, firstName, lastName, notify, convertedExtraProps), serviceRegistry, getScope());
 	}
-
+	
+	public ScriptNode prepareSignatureProject(ScriptNode project, ScriptNode[] documents) {
+			
+		if (documents != null && documents.length > 0) {
+			
+			List<NodeRef> documentNodeRefs = new ArrayList<>();
+			
+			for (ScriptNode document : documents) {
+				documentNodeRefs.add(document.getNodeRef());
+			}
+		
+			return new ActivitiScriptNode(supplierPortalService.prepareSignatureProject(project.getNodeRef(), documentNodeRefs), serviceRegistry);
+		}
+		return null;
+	}
+	
+	public ScriptNode prepareSupplierSignatures(ScriptNode project, ScriptNode task) {
+		return new ActivitiScriptNode(supplierPortalService.prepareSupplierSignatures(project.getNodeRef(), task.getNodeRef()), serviceRegistry);
+	}
+	
 }
