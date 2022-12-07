@@ -66,7 +66,7 @@ services:
       - becpg_data_db:/var/lib/mysql
       
   solr:
-    image: alfresco/alfresco-search-services:2.0.3
+    image: ${docker.becpg.url}/becpg-solr:${docker.becpg.tag}
     environment:
       SOLR_ALFRESCO_HOST: becpg
       SOLR_ALFRESCO_PORT: 8080

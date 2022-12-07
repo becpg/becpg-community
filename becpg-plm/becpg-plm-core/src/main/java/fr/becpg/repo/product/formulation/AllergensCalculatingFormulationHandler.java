@@ -205,23 +205,25 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 		}
 		
-		for (IngListDataItem ing : formulatedProduct.getIngList()) {
-			
-			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
-			
-			for (NodeRef allergenNodeRef : ingItem.getAllergenList()) {
-				AllergenListDataItem allergen = findAllergen(formulatedProduct, allergenNodeRef);
+		if(formulatedProduct.getIngList()!=null) {
+			for (IngListDataItem ing : formulatedProduct.getIngList()) {
 				
-				if (allergen == null) {
-					allergen = new AllergenListDataItem();
-					allergen.setAllergen(allergenNodeRef);
-					formulatedProduct.getAllergenList().add(allergen);
-				}
+				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
 				
-				allergen.setVoluntary(true);
-				
-				if (!allergen.getVoluntarySources().contains(ing.getIng())) {
-					allergen.getVoluntarySources().add(ing.getIng());
+				for (NodeRef allergenNodeRef : ingItem.getAllergenList()) {
+					AllergenListDataItem allergen = findAllergen(formulatedProduct, allergenNodeRef);
+					
+					if (allergen == null) {
+						allergen = new AllergenListDataItem();
+						allergen.setAllergen(allergenNodeRef);
+						formulatedProduct.getAllergenList().add(allergen);
+					}
+					
+					allergen.setVoluntary(true);
+					
+					if (!allergen.getVoluntarySources().contains(ing.getIng())) {
+						allergen.getVoluntarySources().add(ing.getIng());
+					}
 				}
 			}
 		}

@@ -43,6 +43,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.PaginatedSearchCache;
@@ -103,7 +104,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
 
