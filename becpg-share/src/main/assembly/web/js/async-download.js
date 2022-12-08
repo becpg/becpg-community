@@ -22,7 +22,7 @@
  */
 (function() {
 
-	beCPG.util.launchAsyncDownload = function(fileName, tplName, url) {
+	beCPG.util.launchAsyncDownload = function(fileName, tplName, url, postParams) {
 
 
 		if (fileName.indexOf(".zip") > 0 || tplName.indexOf(".xlsx") > 0 ||  tplName.indexOf(".xlsm") > 0 || tplName.indexOf(".rptdesign") > 0) {
@@ -123,7 +123,22 @@
 
 				// Post the details of the nodeRefs to
 				// archive...
-				Alfresco.util.Ajax.request({
+				
+				if(postParams){
+					Alfresco.util.Ajax.jsonPost({
+						url: url,
+						dataObj : postParams,
+						successCallback: {
+							fn: this.archiveInitReqSuccess,
+							scope: this
+						},
+						failureCallback: {
+							fn: this.archiveInitReqFailure,
+							scope: this
+						}
+					});
+				} else {
+					Alfresco.util.Ajax.request({
 					method: Alfresco.util.Ajax.GET,
 					url: url,
 					responseContentType: "application/json",
@@ -136,6 +151,9 @@
 						scope: this
 					}
 				});
+				}
+				
+				
 
 			}
 

@@ -92,7 +92,7 @@ install() {
 }
 
 tail() {
-    docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg 
+    docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-share
 }
 
 test() {
