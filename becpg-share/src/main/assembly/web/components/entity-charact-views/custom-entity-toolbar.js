@@ -88,8 +88,7 @@
 								  }
 								  name +=".xlsx"
 								
-	 							 beCPG.util.launchAsyncDownload(name, name, dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx&metadata=" + encodeURIComponent(YAHOO.lang.JSON
-	                                    .stringify(requestParams)));  
+	 							 beCPG.util.launchAsyncDownload(name, name, dt._getDataUrl(MAX_RESULTS_UNLIMITED) + "&format=xlsx" , requestParams);  
 	                 
 	
 	                           },

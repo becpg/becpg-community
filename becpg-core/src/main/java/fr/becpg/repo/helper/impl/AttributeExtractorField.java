@@ -17,8 +17,11 @@ public class AttributeExtractorField {
 		super();
 		this.fieldName = fieldName;
 		this.fieldLabel = fieldLabel;
-		this.len = fieldName != null ? fieldName.length() : 0;
-		this.len2 = fieldLabel != null ? fieldLabel.length() : 0;
+		if(fieldLabel!=null && fieldLabel.startsWith(delim)) {
+			this.fieldLabel = "nested"+fieldLabel;
+		}
+		this.len = this.fieldName != null ? this.fieldName.length() : 0;
+		this.len2 = this.fieldLabel != null ? this.fieldLabel.length() : 0;
 		this.pos = 0;
 		this.pos2 = 0;
 	}
@@ -41,15 +44,11 @@ public class AttributeExtractorField {
 		String label = null;
 
 		if ((pos < len) && (delim.indexOf(fieldName.charAt(pos)) >= 0)) {
-			while ((++pos < len) && (delim.indexOf(fieldName.charAt(pos)) >= 0)) {
-
-			}
+			while ((++pos < len) && (delim.indexOf(fieldName.charAt(pos)) >= 0)) ;
 		}
 		if (pos < len) {
 			int start = pos;
-			while ((++pos < len) && (delim.indexOf(fieldName.charAt(pos)) < 0)) {
-
-			}
+			while ((++pos < len) && (delim.indexOf(fieldName.charAt(pos)) < 0)) ;
 
 			id = fieldName.substring(start, pos);
 		}
@@ -59,20 +58,16 @@ public class AttributeExtractorField {
 		}
 
 		if ((pos2 < len2) && (delim.indexOf(fieldLabel.charAt(pos2)) >= 0)) {
-			while ((++pos2 < len2) && (delim.indexOf(fieldLabel.charAt(pos2)) >= 0)) {
-
-			}
+			while ((++pos2 < len2) && (delim.indexOf(fieldLabel.charAt(pos2)) >= 0)) ;
 		}
 		if (pos2 < len2) {
 			int start = pos2;
-			while ((++pos2 < len2) && (delim.indexOf(fieldLabel.charAt(pos2)) < 0)) {
-
-			}
+			while ((++pos2 < len2) && (delim.indexOf(fieldLabel.charAt(pos2)) < 0));
 
 			label = fieldLabel.substring(start, pos2);
 		}
 
-		return new AttributeExtractorField(id, label);
+		return new AttributeExtractorField(id, "nested".equals(label) ? null : label);
 	}
 
 	public boolean hasMoreTokens() {
@@ -106,5 +101,12 @@ public class AttributeExtractorField {
 		return new AttributeExtractorField(prefix + fieldName.replaceFirst(":", "_"), fieldLabel);
 
 	}
+
+	@Override
+	public String toString() {
+		return "AttributeExtractorField [fieldName=" + fieldName + ", fieldLabel=" + fieldLabel + "]";
+	}
+	
+	
 
 }
