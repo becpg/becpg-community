@@ -1805,64 +1805,6 @@
 							alert("Not yet implemented")
 						},
 
-						onSendToSupplier : function(){
-
-							var selectedNodeRef = this.getSelectedItems(), submissionParams = "";
-							for ( var i in selectedNodeRef) {
-								if (submissionParams.length > 0) {
-									submissionParams += ",";
-								}
-								submissionParams += selectedNodeRef[i].nodeRef;
-							}
-
-							var actionUrl = Alfresco.constants.PROXY_URI + "becpg/supplier/send-to-supplier?nodeRefs="+ 
-							submissionParams+"&allPages="+this.allPages+"&queryExecutionId="+this.queryExecutionId;
-
-							this.modules.sendToSupplier = new Alfresco.module.SimpleDialog(this.id + "-sendToSupplier").setOptions({
-								width : "33em",
-								templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/supplier/send-to-supplier",
-								actionUrl : actionUrl,
-								validateOnSubmit : false,
-								destroyOnHide: true,
-								firstFocus : this.id + "-sendToSupplier-projectTpl-field",
-								doBeforeFormSubmit : {
-									fn : function onActionSendToSupplier_doBeforeFormSubmit(form) {
-										Alfresco.util.PopupManager.displayMessage({
-											text : this.msg("message.send-to-supplier.inprogress")
-										});
-									},
-									scope : this
-								},
-								onSuccess : {
-									fn : function onActionSendToSupplier_success(response) {
-										if (response.json) {
-											window.location.href = beCPG.util.entityURL(recordSiteName,
-													response.json.persistedObject, p_record.node.type);
-										}
-									},
-									scope : this
-								},
-								onFailure : {
-									fn : function onActionSendToSupplier_failure(response) {
-										if(response.json && response.json.message){
-											Alfresco.util.PopupManager.displayMessage({
-												text : response.json.message
-											});  
-										} else {
-											Alfresco.util.PopupManager.displayMessage({
-												text : this.msg("message.import.failure")
-											});
-										}
-									},
-									scope : this
-								}
-							});
-
-							this.modules.sendToSupplier.show();				 
-						},
-
-						
-						
 						onSimulateSelected : function BulkEdit_onSimulateSelected() {
 							
 							if (!this.modules.simulateFolderPicker)

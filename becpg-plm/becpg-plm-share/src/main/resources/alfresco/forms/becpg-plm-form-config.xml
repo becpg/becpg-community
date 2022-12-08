@@ -2965,6 +2965,7 @@
 			</form>
 			<form id="sign-process">
 				<field-visibility>
+					<show id="cm:name" />
 					<show id="sign:recipients" force="true" />
 					<show id="pjt:projectState" />
 				</field-visibility>

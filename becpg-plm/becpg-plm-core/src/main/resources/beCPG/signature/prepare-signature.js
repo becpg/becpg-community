@@ -1,11 +1,13 @@
 function main() {
 
-	var urlDeliverable;
-
+	var urlDeliverable = null;
+	
+	var keyName = deliverable.name.replace(" - prepare", "");
+	
 	for (var i = 0; i < project.deliverableList.size(); i++) {
-		var deliverable = project.deliverableList.get(i);
-		if (deliverable.name.endsWith("url") && deliverable.tasks.contains(task.nodeRef)) {
-			urlDeliverable = deliverable;
+		var del = project.deliverableList.get(i);
+		if (del.name.endsWith(" - url") && del.name.startsWith(keyName)) {
+			urlDeliverable = del;
 			break;
 		}
 	}

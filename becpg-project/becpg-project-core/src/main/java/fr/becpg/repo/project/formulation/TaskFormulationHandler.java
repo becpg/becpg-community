@@ -820,14 +820,14 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 					if (DeliverableState.InProgress.equals(deliverable.getState())
 							&& DeliverableScriptOrder.Pre.equals(deliverable.getScriptOrder())) {
-						projectService.runScript(projectData, taskListDataItem, deliverable.getContent());
+						projectService.runScript(projectData, taskListDataItem, deliverable);
 						deliverable.setState(DeliverableState.Completed);
 					}
 				}
 
 				if (TaskState.Completed.equals(taskListDataItem.getTaskState()) && DeliverableState.InProgress.equals(deliverable.getState())) {
 					if (DeliverableScriptOrder.Post.equals(deliverable.getScriptOrder())) {
-						projectService.runScript(projectData, taskListDataItem, deliverable.getContent());
+						projectService.runScript(projectData, taskListDataItem, deliverable);
 					}
 					deliverable.setState(DeliverableState.Completed);
 

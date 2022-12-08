@@ -91,8 +91,19 @@ public class TaskListDataItem extends BeCPGDataObject implements CompositeDataIt
 	private Integer initialNotification;
 	private Date lastNotification;
 	private List<NodeRef> notificationAuthorities;
+	private String description;
 	
 	private NodeRef subProject;
+	
+	@AlfProp
+	@AlfQname(qname = "pjt:tlTaskDescription")
+	public String getDescription() {
+		return description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
 	
 	/**
 	 * <p>Getter for the field <code>subProject</code>.</p>
