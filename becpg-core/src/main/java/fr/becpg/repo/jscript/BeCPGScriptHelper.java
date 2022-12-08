@@ -155,7 +155,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private BeCPGLicenseManager beCPGLicenseManager;
 
 	private BeCPGMailService beCPGMailService;
-
+	
 	private Repository repositoryHelper;
 	
 	private FormulationService<FormulatedEntity> formulationService;
@@ -1319,6 +1319,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		ContentReader reader = contentService.getReader(from.getNodeRef(), ContentModel.PROP_CONTENT);
 		ContentWriter writer = contentService.getWriter(to.getNodeRef(), ContentModel.PROP_CONTENT, true);
+		writer.setEncoding(reader.getEncoding());
+		writer.setMimetype(reader.getMimetype());
 
 		writer.putContent(reader);
 	}
@@ -1521,6 +1523,56 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 				logger.warn("Incorrect destination node type:" + nodeService.getType(parentFolder));
 			} else {
 				return repoService.moveNode(productNode.getNodeRef(), parentFolder);
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean classifyByDate(ScriptNode productNode, ScriptNode parentFolder, String path, Date date, String dateFormat) {
+		
+		StringBuilder pathBuilder = new StringBuilder();
+		
+		if (path != null && !path.isBlank()) {
+			for (String split : path.split("/")) {
+				pathBuilder.append("/");
+				pathBuilder.append(getTranslatedPath(split));
+			}
+		}
+		
+		if (date != null && dateFormat != null) {
+			
+			QName type = nodeService.getType(productNode.getNodeRef());
+			
+			ClassDefinition classDef = dictionaryService.getClass(type);
+
+			NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(parentFolder.getNodeRef(), type.getLocalName(), classDef.getTitle(dictionaryService));
+			
+			for (String formatPart : dateFormat.split("/")) {
+				
+				pathBuilder.append("/");
+				
+				boolean isFirstSubPart = true;
+				
+				for (String subFormatPart : formatPart.split(" - ")) {
+					
+					if (!isFirstSubPart) {
+						pathBuilder.append(" - ");
+					}
+					
+					SimpleDateFormat subFormat = new SimpleDateFormat(subFormatPart);
+					pathBuilder.append(subFormat.format(date));
+					
+					isFirstSubPart = false;
+				}
+			}
+
+			NodeRef newFolder = repoService.getOrCreateFolderByPaths(destinationNodeRef, Arrays.asList(pathBuilder.toString().split("/")));
+
+			if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(newFolder))) {
+				logger.warn("Incorrect destination node type:" + nodeService.getType(newFolder));
+			} else {
+				return repoService.moveNode(productNode.getNodeRef(), newFolder);
 			}
 		}
 		

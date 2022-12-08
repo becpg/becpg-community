@@ -80,7 +80,6 @@
 					               <#-- <li><a  href=""><span class="onExportAsZip">${msg("actions.folder.download")}</span></a></li>  -->	
 					                <li><a  rel="edit,allPages" href=""><span class="onEditSelected">${msg("button.edit-selected")}</span></a></li>
 					                <li><a  href=""><span class="onSimulateSelected">${msg("button.simulate-selected")}</span></a></li>
-					                <li><a  rel="supplier" href=""><span class="onSendToSupplier">${msg("actions.entity.send-to-supplier")}</span></a></li>
 					            </ul>
      				         </div>
 					      </div>			
