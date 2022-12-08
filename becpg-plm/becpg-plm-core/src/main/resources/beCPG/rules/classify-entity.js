@@ -1,73 +1,74 @@
 <import resource="classpath:/beCPG/rules/helpers.js">
 
-function classifyQualityControl(qualityControl) {
-	var qcState = propValue(qualityControl, "qa:qcState");
-	if (!isEmpty(qcState)) {
-		
-		var qcStateDisplayValue = null;
-		
-		if (qcState == "Compliant") {
-			qcStateDisplayValue = bcpg.getMessage("becpg.quality.control.compliant");
-		} else if (qcState == "NonCompliant") {
-			qcStateDisplayValue = bcpg.getMessage("becpg.quality.control.non-compliant");
-		}
-		
-        var batchStart = qualityControl.properties["qa:batchStart"];
-
-        if (!isEmpty(batchStart)) {
-            return classifyByDate(qualityControl, "/app:company_home/st:sites/cm:" + ARCHIVED_SITE_ID + "/cm:documentLibrary/" + getQNameTitle("qa:qualityControl") + "/" + qcStateDisplayValue, batchStart, "YYYY/MM - MMMM");
-        } else {
-            return classifyByHierarchy(qualityControl, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
-        }
-		
-	} else {
-		return classifyByHierarchy(qualityControl, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
-	}
-}
-
 function main() {
 
 	if (document.hasPermission("Read") && !document.hasAspect("bcpg:entityTplAspect") && !document.hasAspect("cm:workingcopy") && !isInUserFolder(document)) {
 		var state = "";
+		
+		var date = null;
+		
+		var site = null;
+		
+		var path = "";
+		
 		if (document.isSubType("bcpg:product")) {
 			state = document.properties["bcpg:productState"];
 		} else if (document.isSubType("bcpg:client")) {
 			state = document.properties["bcpg:clientState"];
 		} else if (document.isSubType("bcpg:supplier")) {
 			state = document.properties["bcpg:supplierState"];
-		}
-		
-		var wasMoved = false;
-		
-		if (state == "Valid") {
-			wasMoved = classifyByHierarchy(document, getDocumentLibraryNodeRef(VALID_SITE_ID));
-		} else if ((state == "Simulation" || state == "ToValidate") && !isInSite(document, SUPPLIER_PORTAL_SITE_ID)) {
-			wasMoved = classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
-		} else if (state == "Archived") {
-			wasMoved = classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
+		} else if (document.isSubType("bcpg:productCollection")) {
+			state = document.properties["bcpg:productCollectionState"];
 		} else if (document.isSubType("pjt:project")) {
 			if (!isInSite(document, SUPPLIER_PORTAL_SITE_ID)) {
 				if(document.properties["pjt:projectState"] == "Completed" || document.properties["pjt:projectState"] == "Cancelled"){
-					wasMoved = classifyByHierarchy(document, getDocumentLibraryNodeRef(ARCHIVED_SITE_ID));
+					site = getDocumentLibraryNodeRef(ARCHIVED_SITE_ID);
 				} else {
-					wasMoved = classifyByHierarchy(document, getDocumentLibraryNodeRef(SIMULATION_SITE_ID));
+					site = getDocumentLibraryNodeRef(SIMULATION_SITE_ID);
 				}
 			} else {
-				wasMoved = classifyByHierarchy(document, getDocumentLibraryNodeRef(SUPPLIER_PORTAL_SITE_ID));
+				site = getDocumentLibraryNodeRef(SUPPLIER_PORTAL_SITE_ID);
 			}
-		} else if (document.isSubType("qa:qualityControl") ) {
-			wasMoved = classifyQualityControl(document);
+		} else if (document.isSubType("qa:qualityControl")) {
+			state = document.properties["qa:qcState"];
+			if (!isEmpty(state)) {
+				site = getDocumentLibraryNodeRef(ARCHIVED_SITE_ID);	
+				path = state;
+				date = document.properties["qa:batchStart"];
+			} else {
+				site = getDocumentLibraryNodeRef(SIMULATION_SITE_ID);					
+			}
 		} else if (document.isSubType("qa:batch")) {
 			state = document.properties["qa:batchState"];
-			var siteId;
-			if (state == "Valid") {
-				siteId = VALID_SITE_ID;
-			} else if ((state == "Simulation" || state == "ToValidate")) {
-				siteId = SIMULATION_SITE_ID;
-			} else if (state == "Archived") {
-				siteId = ARCHIVED_SITE_ID;
+			date = document.properties["cm:created"];
+		} else if (document.isSubType("ecm:changeOrder")) {
+			state = document.properties["ecm:ecoState"];
+			
+	        if (state == "Applied") {
+				site = getDocumentLibraryNodeRef(ARCHIVED_SITE_ID);
+	        } else {
+				site = getDocumentLibraryNodeRef(SIMULATION_SITE_ID);
 			}
-			wasMoved = classifyByDate(document, "/app:company_home/st:sites/cm:" + siteId + "/cm:documentLibrary/" + getQNameTitle("qa:batch"), document.properties["cm:created"], "YYYY/MM - MMMM");
+				
+			date = document.properties["cm:created"];
+		}
+		
+		if (isEmpty(site)) {
+			if (state == "Valid") {
+				site = getDocumentLibraryNodeRef(VALID_SITE_ID);
+			} else if ((state == "Simulation" || state == "ToValidate") && !isInSite(document, SUPPLIER_PORTAL_SITE_ID)) {
+				site = getDocumentLibraryNodeRef(SIMULATION_SITE_ID);
+			} else if (state == "Archived") {
+				site = getDocumentLibraryNodeRef(ARCHIVED_SITE_ID);
+			}
+		}
+		
+		var wasMoved = false;
+			
+		if (!isEmpty(date)) {
+			wasMoved = classifyByDate(document, site, path, date, "YYYY/MM - MMMM");
+		} else if (!isEmpty(site)) {
+			wasMoved = classifyByHierarchy(document, site);
 		}
 		
 		// formulate if the document was moved
