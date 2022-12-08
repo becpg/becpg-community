@@ -455,6 +455,7 @@ function classifyByHierarchy(productNode, folderNode, propHierarchy) {
 
 function classifyByDate(productNode, path, dateFormat, propDate) {
 	return bcpg.classifyByDate(productNode, path, dateFormat, propDate);
+}
 
 function classifyByDate(productNode, folderNode, path, date, dateFormat) {
 	return bcpg.classifyByDate(productNode, folderNode, path, date, dateFormat);
