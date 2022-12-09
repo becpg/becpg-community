@@ -353,6 +353,22 @@
       <property name="maximumPoolSize" value="1" />
       <property name="threadPriority" value="4" />
     </bean>
+    
+    <bean id="repositoryNodeService" class="org.springframework.aop.framework.ProxyFactoryBean" >
+      <property name="targetName">
+         <value>mlAwareNodeService</value>
+      </property>
+      <property name="proxyInterfaces">
+         <list>
+            <value>org.alfresco.service.cmr.repository.NodeService</value>
+         </list>
+      </property>
+      <property name="interceptorNames">
+         <list>
+            <value>nodeRefPropertyInterceptor</value>
+         </list>
+      </property>
+   </bean>
    
    
    <!-- 
