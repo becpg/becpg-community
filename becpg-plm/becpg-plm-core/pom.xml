@@ -55,6 +55,7 @@
 			<artifactId>becpg-artworks-platform</artifactId>
 			<type>jar</type>
 			<version>4.2.0.0</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
