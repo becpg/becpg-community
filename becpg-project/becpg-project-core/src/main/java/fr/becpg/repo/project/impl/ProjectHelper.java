@@ -602,17 +602,11 @@ public class ProjectHelper {
 		DeliverableListDataItem del = new DeliverableListDataItem();
 		
 		del.setName(name);
-		
 		del.setDescription(description);
-		
 		del.setState(DeliverableState.Planned);
-		
 		del.setScriptOrder(order);
-		
 		del.setContent(content);
-		
 		del.setTasks(new ArrayList<>());
-		
 		del.getTasks().add(task.getNodeRef());
 
 		return del;

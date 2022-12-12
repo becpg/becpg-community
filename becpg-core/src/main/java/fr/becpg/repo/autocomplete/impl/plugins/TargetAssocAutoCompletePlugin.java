@@ -78,7 +78,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  *  Datasources:
  *
- * ds: /becpg/autocomplete/targetassoc/associations/{className}?classNames={classNames?}&amp;excludeProps={excludeProps?)&amp;path={path?}&amp;filter=
+ * ds: /becpg/autocomplete/targetassoc/associations/{className}?classNames={classNames?}&amp;excludeProps={excludeProps?)&amp;path={path?}&amp;filter={}&
  * param: {className} type of item to retrieve
  * param: {classNames} (optional)  comma separated lists of classNames, can be uses to filter by aspect or boost certain types (inc_ or ^)
 
@@ -99,7 +99,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *  filter=prop_to_filter|value
  *	filter=cm:name|samplename
  *	filter=cm:name|{cm:title}
- *  filter=bcpg:code|{bcpg:code},cm:name|MP*
+ *  filter=bcpg:code|{bcpg:code},cm:name|MP* 
  *  filter=au:market|{au:market}
  *  filter=gs1:sortingBonusCriteria_or|{gs1:sortingBonusCriteria}  (when field is multiple default operator is and _or allow to change that)
  *  filter=bcpg:ingTypeV2|{htmlPropValue} use the value of parent or parentAssoc control-param (@Since 4.2)
