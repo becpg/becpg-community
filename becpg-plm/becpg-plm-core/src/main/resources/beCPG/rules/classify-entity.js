@@ -66,7 +66,7 @@ function main() {
 		var wasMoved = false;
 			
 		if (!isEmpty(date)) {
-			wasMoved = classifyByDate(document, site, path, date, "YYYY/MM - MMMM");
+			wasMoved = classifyByDate(document, path, date, "YYYY/MM - MMMM", site);
 		} else if (!isEmpty(site)) {
 			wasMoved = classifyByHierarchy(document, site);
 		}
