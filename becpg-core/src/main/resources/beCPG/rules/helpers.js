@@ -450,15 +450,15 @@ function classifyByHierarchy(productNode, folderNode, propHierarchy) {
 		return bcpg.classifyByHierarchy(productNode, folderNode, propHierarchy);
 	}
 	return bcpg.classifyByHierarchy(productNode, folderNode, null);
-	
+	 
 }
 
-function classifyByDate(productNode, path, dateFormat, propDate) {
-	return bcpg.classifyByDate(productNode, path, dateFormat, propDate);
+function classifyByDate(productNode, path, date, dateFormat) {
+	return bcpg.classifyByDate(productNode, path, date, dateFormat);
 }
 
-function classifyByDate(productNode, folderNode, path, date, dateFormat) {
-	return bcpg.classifyByDate(productNode, folderNode, path, date, dateFormat);
+function classifyByDate(productNode, path, date, dateFormat, documentLibrary) {
+	return bcpg.classifyByDate(productNode, documentLibrary, path, date, dateFormat);
 }
 
 function formulate(product) {
