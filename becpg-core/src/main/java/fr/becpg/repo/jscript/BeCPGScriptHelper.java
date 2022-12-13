@@ -1492,7 +1492,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return classDef.getTitle(dictionaryService);
 	}
 	
-	public boolean classifyByDate(ScriptNode productNode, String path, Date date, String dateFormat) {
+	public boolean classifyByDate(ScriptNode product, String path, Date date, String dateFormat) {
 		
 		if (date != null && dateFormat != null) {
 			
@@ -1522,19 +1522,19 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(parentFolder))) {
 				logger.warn("Incorrect destination node type:" + nodeService.getType(parentFolder));
 			} else {
-				return repoService.moveNode(productNode.getNodeRef(), parentFolder);
+				return repoService.moveNode(product.getNodeRef(), parentFolder);
 			}
 		}
 		
 		return false;
 	}
 	
-	public boolean classifyByDate(ScriptNode productNode, ScriptNode parentFolder, String path, Date date, String dateFormat) {
+	public boolean classifyByDate(ScriptNode product, ScriptNode documentLibrary, String subPath, Date date, String dateFormat) {
 		
 		StringBuilder pathBuilder = new StringBuilder();
 		
-		if (path != null && !path.isBlank()) {
-			for (String split : path.split("/")) {
+		if (subPath != null && !subPath.isBlank()) {
+			for (String split : subPath.split("/")) {
 				pathBuilder.append("/");
 				pathBuilder.append(getTranslatedPath(split));
 			}
@@ -1542,11 +1542,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		
 		if (date != null && dateFormat != null) {
 			
-			QName type = nodeService.getType(productNode.getNodeRef());
+			QName type = nodeService.getType(product.getNodeRef());
 			
 			ClassDefinition classDef = dictionaryService.getClass(type);
 
-			NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(parentFolder.getNodeRef(), type.getLocalName(), classDef.getTitle(dictionaryService));
+			NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(documentLibrary.getNodeRef(), type.getLocalName(), classDef.getTitle(dictionaryService));
 			
 			for (String formatPart : dateFormat.split("/")) {
 				
@@ -1572,7 +1572,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(newFolder))) {
 				logger.warn("Incorrect destination node type:" + nodeService.getType(newFolder));
 			} else {
-				return repoService.moveNode(productNode.getNodeRef(), newFolder);
+				return repoService.moveNode(product.getNodeRef(), newFolder);
 			}
 		}
 		
