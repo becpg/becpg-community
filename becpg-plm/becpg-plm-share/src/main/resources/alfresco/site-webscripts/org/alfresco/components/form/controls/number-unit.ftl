@@ -31,7 +31,7 @@
  	<#if unit=="perc">
   	 <#assign currUnits="perc,pp,ppm">
    <#elseif unit=="kg" >
-	<#assign currUnits="mg,g,kg,lb,oz">
+	<#assign currUnits="µg,mg,g,kg,lb,oz">
    <#elseif unit=="g" >
      <#assign currUnits="g,oz">
    <#elseif unit=="L" >
@@ -58,6 +58,9 @@
    <#elseif currUnit=="kg">
 	  <#if field.value == 0  >
         <#assign currUnit="kg">
+      <#elseif field.value?abs &lt; 0.000001  >
+		<#assign currUnit="µg">
+		<#assign currValue=field.value*1000000000>  
      <#elseif field.value?abs &lt; 0.001  >
 		<#assign currUnit="mg">
 		<#assign currValue=field.value*1000000>
