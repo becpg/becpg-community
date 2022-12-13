@@ -128,9 +128,7 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 	@Autowired
 	private EntityListDAO entityListDAO;
 
-	@Autowired
-	private AttributeExtractorService attributeExtractorService;
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -297,6 +295,7 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 				if (targetNode != null) {
 					QName type = nodeService.getType(targetNode);
 					String name = attributeExtractorService.extractPropName(type, targetNode);
+					
 					if (isQueryMatch(query, name)) {
 						String cssClass = attributeExtractorService.extractMetadata(type, targetNode);
 						if (SOURCE_TYPE_DATA_LIST_CHARACT.equals(sourceType)) {
