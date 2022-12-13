@@ -3,12 +3,15 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -19,6 +22,7 @@ import fr.becpg.repo.repository.model.ControlableListDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.repository.model.SourceableDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
 
@@ -30,7 +34,7 @@ import fr.becpg.repo.repository.model.VariantAwareDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:nutList")
-public class NutListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem,
+public class NutListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem, SourceableDataItem,
 		UnitAwareDataItem, ControlableListDataItem, CompositeDataItem<NutListDataItem> {
 
 	/** Constant <code>UNIT_PER100G="/100g"</code> */
@@ -81,6 +85,8 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	private NutListDataItem parent;
 
 	private String roundedValue;
+	
+	private List<NodeRef> sources = new ArrayList<>();
 
 	/** {@inheritDoc} */
 	@Override
@@ -166,6 +172,20 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	 */
 	public void setManualValue(Double manualValue) {
 		this.manualValue = manualValue;
+	}
+	
+	
+	
+	@AlfMultiAssoc
+	@InternalField
+	@AlfQname(qname="bcpg:nutListSources")
+	@Override
+	public List<NodeRef> getSources() {
+		return sources;
+	}
+
+	public void setSources(List<NodeRef> sources) {
+		this.sources = sources;
 	}
 
 	/**
@@ -582,6 +602,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.errorLog = n.errorLog;
 		this.roundedValue = n.roundedValue;
 		this.preparedValue = n.preparedValue;
+		this.sources = n.sources;
 	}
 
 	/** {@inheritDoc} */
@@ -595,7 +616,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(depthLevel, errorLog, formulatedMaxi, formulatedMini, formulatedValue, preparedValue, gdaPerc, group,
-				isFormulated, lossPerc, manualMaxi, manualMini, manualValue, method, nut, parent, roundedValue, unit, valuePerServing);
+				isFormulated, lossPerc, manualMaxi, manualMini, manualValue, method, nut, parent, roundedValue, unit, valuePerServing, sources);
 		return result;
 	}
 
@@ -616,7 +637,8 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 				&& Objects.equals(manualMini, other.manualMini) && Objects.equals(manualValue, other.manualValue)
 				&& Objects.equals(method, other.method) && Objects.equals(nut, other.nut) && Objects.equals(parent, other.parent)
 				&& Objects.equals(roundedValue, other.roundedValue) && Objects.equals(unit, other.unit)
-				&& Objects.equals(valuePerServing, other.valuePerServing);
+				&& Objects.equals(valuePerServing, other.valuePerServing)
+				&& Objects.equals(sources, other.sources);
 	}
 
 	@Override

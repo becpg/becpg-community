@@ -4385,6 +4385,7 @@
 					<show id="bcpg:variantIds" force="true" />					
 			        <show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
+				 	<!-- <show id="bcpg:propagatedCharacts" force="true" />  -->
 					<show id="bcpg:instruction" force="true" />
 				</field-visibility>
 
@@ -4442,8 +4443,15 @@
 							<control-param name="showTime">false</control-param>
 						</control>
 				    </field>
+			<!-- 	    
+				   <field id="bcpg:propagatedCharacts"   set="1-col-3">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					    	 <control-param name="ds">becpg/autocomplete/DataListCharact?path=bcpg:compoListProduct&amp;className=bcpg:nutList&amp;attributeName=bcpg:nutListNut&amp;filter=itemAsEntity</control-param>
+ 					  	   <control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
 					
-					
+					 -->
 					<field id="bcpg:instruction"   set="1-col-3">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
@@ -6230,6 +6238,7 @@
 					<show id="bcpg:nutListFormulaErrorLog" />					
 					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
 					<show id="rep:reportKinds" />
+					<show id="bcpg:nutListSources"/>
 					<show id="dataList_bcpg:reqCtrlList"/>
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
@@ -6250,7 +6259,8 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden"/>
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
-					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
+					<field id="dataList_bcpg:reqCtrlList" label="hidden" />
+					<field id="bcpg:nutListSources" label="hidden" />
 				</appearance>
 			</form>
 			<form id="customListDatagrid">
