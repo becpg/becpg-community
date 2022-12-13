@@ -158,6 +158,7 @@
 					<value>kg</value>
 					<value>g</value>
 					<value>mg</value>
+					<value>µg</value>
 					<value>lb</value>
 					<value>oz</value>
 					<value>L</value>
@@ -2394,6 +2395,17 @@
 						<class>bcpg:nut</class>
 						<mandatory>true</mandatory>
 						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:nutListSources">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
 					</target>
 				</association>
 			</associations>
@@ -5134,6 +5146,22 @@
 					<index enabled="false"></index>
 				</property>
 		</properties>
+		</aspect>
+
+		<aspect name="bcpg:propagateUpAspect">
+			<associations>
+				<association name="bcpg:propagatedCharacts">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 	</aspects>
 </model>

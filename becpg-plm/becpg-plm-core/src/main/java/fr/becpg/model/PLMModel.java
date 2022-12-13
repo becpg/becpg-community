@@ -698,6 +698,10 @@ public interface PLMModel {
 	QName PROP_GLOP_VALUE =  QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
 	
 	QName PROP_LABELCLAIM_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "isLabelClaimPropagateUp");
+	
+	QName ASPECT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "propagateUpAspect");
 
+	QName ASSOC_PROPAGATED_CHARACTS = QName.createQName(BeCPGModel.BECPG_URI, "propagatedCharacts");
+	
 	
 }
