@@ -205,6 +205,9 @@
     		case "micro":		
     			val=   val / 1000000; 
     			break;
+    		case "µg":		
+    			val=   val / 1000000000; 
+    			break;	
     		case "mega":		
     			val=   val * 1000000; 
     			break;
