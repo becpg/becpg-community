@@ -427,15 +427,15 @@
                              }
                            }
                            
-                           if(showComment){
-                              Dom.removeClass(this.id+"-comment_"+question.id,"hidden");
-                              ret[ret.length-1].comment = Dom.get(this.id+"-comment_"+question.id+"-input").value;
-                              YAHOO.util.Event.addListener(this.id+"-comment_"+question.id+"-input", "blur", function(e) {me.toogleVisible();} );
-                              
-                           } else if(Dom.get(this.id+"-comment_"+question.id)){
-                              YAHOO.util.Event.purgeElement(this.id+"-comment_"+question.id+"-input");
-                              Dom.addClass(this.id+"-comment_"+question.id,"hidden");
-                             
+                            if(Dom.get(this.id+"-comment_"+question.id)) {
+							    YAHOO.util.Event.purgeElement(this.id+"-comment_"+question.id+"-input");
+	                           if(showComment){
+	                              Dom.removeClass(this.id+"-comment_"+question.id,"hidden");
+	                              ret[ret.length-1].comment = Dom.get(this.id+"-comment_"+question.id+"-input").value;
+	                              YAHOO.util.Event.addListener(this.id+"-comment_"+question.id+"-input", "blur", function() {me.toogleVisible();} );                           
+	                           } else {
+	                              Dom.addClass(this.id+"-comment_"+question.id,"hidden");
+	                           }
                            }
                            
                         }  else if(question.choices && this.formRuntime!=null && question.mandatory){
