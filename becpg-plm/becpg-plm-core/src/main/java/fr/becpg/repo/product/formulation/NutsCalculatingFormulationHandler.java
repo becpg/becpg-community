@@ -24,7 +24,6 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -217,10 +216,19 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 											if ((nutListDataItem != null) && (qtyUsed != null)) {
 
 												if (!newNutListDataItem.getSources().contains(componentProduct.getNodeRef())
-														&& !(componentProduct instanceof SemiFinishedProductData)) {
+														&& !(componentProduct.isSemiFinished())) {
 													
 													newNutListDataItem.getSources().add(componentProduct.getNodeRef());
 												}
+												
+												for (NodeRef p : nutListDataItem.getSources()) {
+													if (!newNutListDataItem.getSources().contains(p)) {
+														if (!(componentProduct.isRawMaterial())) {
+															newNutListDataItem.getSources().add(p);
+														}
+													}
+												}
+												
 
 												calculate(formulatedProduct, componentProduct, newNutListDataItem, nutListDataItem, qtyUsed, netQty,
 														variant);
