@@ -49,7 +49,9 @@
 	<bean id="docLinkedEntitiesPolicy" class="fr.becpg.repo.entity.policy.DocLinkedEntitiesPolicy" parent="abstractBeCPGPolicy">
 		<property name="entityService" ref="entityService" />
 		<property name="associationService" ref="associationService" />
-	</bean>
+		<property name="mimetypeService" ref="mimetypeService" />
+		<property name="contentService" ref="contentService" />
+	</bean> 
 
 
 	<bean id="entityTplRefAspectPolicy" class="fr.becpg.repo.entity.policy.EntityTplRefAspectPolicy" init-method="init" parent="abstractBeCPGPolicy">
