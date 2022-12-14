@@ -123,6 +123,7 @@ public interface AlfrescoRepository<T extends RepositoryEntity>  extends CrudRep
 	 */
 	<R extends RepositoryEntity> List<R> getList(RepositoryEntity entity, QName datalistContainerQname, QName datalistQname);
 	
+	void clearCaches(String id);
 
 	
 }
