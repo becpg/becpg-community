@@ -45,18 +45,23 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.cache.AsynchronouslyRefreshedCacheRegistry;
+import org.alfresco.util.cache.RefreshableCacheEvent;
+import org.alfresco.util.cache.RefreshableCacheListener;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Repository;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.helper.AssociationService;
@@ -87,14 +92,14 @@ import fr.becpg.repo.repository.model.DefaultListDataItem;
  */
 @Repository("alfrescoRepository")
 public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
-		implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
+		implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy, RefreshableCacheListener, InitializingBean {
 
 	@Autowired
 	private NodeService nodeService;
 
 	@Autowired
-	@Qualifier("mlAwareNodeService")
-	private NodeService mlNodeService;
+	@Qualifier("repositoryNodeService")
+	private NodeService repositoryNodeService;
 
 	private static final Log logger = LogFactory.getLog(AlfrescoRepositoryImpl.class);
 
@@ -121,6 +126,9 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 	@Autowired
 	@Qualifier("policyComponent")
 	private PolicyComponent policyComponent;
+	
+	@Autowired
+	private AsynchronouslyRefreshedCacheRegistry asynchronouslyRefreshedCacheRegistry;
 
 	enum CacheType {
 		STANDARD, FORCE_SHARED_CACHE, NO_SHARED_CACHE
@@ -529,7 +537,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 				logger.trace("findOne instanceOf :" + entity.getClass().getName());
 			}
 
-			Map<QName, Serializable> properties = mlNodeService.getProperties(id);
+			Map<QName, Serializable> properties = repositoryNodeService.getProperties(id);
 			
 			entity.setNodeRef(id);
 			entity.setName((String) properties.get(ContentModel.PROP_NAME));
@@ -990,6 +998,30 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 		for(QName qname: qnames) {
 			nodeService.removeProperty(nodeRef, qname);
 		}
+	}
+
+	@Override
+	public void onRefreshableCacheEvent(RefreshableCacheEvent refreshableCacheEvent) {
+		if (BeCPGCacheServiceImpl.class.getName().equals(refreshableCacheEvent.getCacheId()) && "all".equals(refreshableCacheEvent.getKey())) {
+			clearCaches(BeCPGCacheServiceImpl.class.getName());
+		}
+	}
+
+	@Override
+	public String getCacheId() {
+		return AlfrescoRepository.class.getName();
+	}
+
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		asynchronouslyRefreshedCacheRegistry.register(this);
+	}
+
+	@Override
+	public void clearCaches(String id) {
+		logger.info("Clear repository caches: " + id);
+		cache.clear();
+		charactCache.clear();
 	}
 
 }
