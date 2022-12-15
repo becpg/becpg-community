@@ -54,7 +54,7 @@
 			<groupId>fr.becpg.artworks</groupId>
 			<artifactId>becpg-artworks-platform</artifactId>
 			<type>jar</type>
-			<version>4.2.0.0</version>
+			<version>${becpg.artworks.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
