@@ -130,6 +130,12 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	@Value("${becpg.batch.automaticECO.reformulateChangedEntities.batchSize}")
 	private Integer reformulateBatchSize;
+	
+	@Value("${becpg.batch.automaticECO.autoMergeBranch.workerThreads}")
+	private Integer autoMergeWorkerThreads;
+	
+	@Value("${becpg.batch.automaticECO.autoMergeBranch.batchSize}")
+	private Integer autoMergeBatchSize;
 
 	/** {@inheritDoc} */
 	@Override
@@ -295,6 +301,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		BatchInfo batchInfo = new BatchInfo("autoMergeBranch", "becpg.batch.automaticECO.autoMergeBranch");
 		batchInfo.setRunAsSystem(true);
+		batchInfo.setWorkerThreads(autoMergeWorkerThreads != null ? autoMergeWorkerThreads : 3);
+		batchInfo.setBatchSize(autoMergeBatchSize != null ? autoMergeBatchSize : 1);
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper()
 				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
@@ -306,31 +314,27 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			@Override
 			public void process(NodeRef entityNodeRef) throws Throwable {
 
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Found product to merge: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " ("
-								+ entityNodeRef + ") ");
+				if (logger.isDebugEnabled()) {
+					logger.debug("Found product to merge: " + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME) + " ("
+							+ entityNodeRef + ") ");
+				}
+				try {
+					AuthenticationUtil.runAsSystem(() -> {
+
+						Date newEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE);
+
+						entityVersionService.mergeBranch(entityNodeRef, newEffectivity);
+
+						return true;
+					});
+
+				} catch (Exception e) {
+					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+						throw e;
 					}
-					try {
-						AuthenticationUtil.runAsSystem(() -> {
+					logger.error("Cannot merge node:" + entityNodeRef, e);
+				}
 
-							Date newEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE);
-
-							entityVersionService.mergeBranch(entityNodeRef, newEffectivity);
-
-							return true;
-						});
-
-					} catch (Exception e) {
-						if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-							throw e;
-						}
-						logger.error("Cannot merge node:" + entityNodeRef, e);
-					}
-
-					return true;
-
-				}, false, true);
 			}
 		};
 
@@ -415,39 +419,34 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 			if (nodeService.exists(toReformulate)) {
 
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Reformulating product: " + nodeService.getProperty(toReformulate, ContentModel.PROP_NAME) + " (" + toReformulate
-								+ ") ");
+				if (logger.isDebugEnabled()) {
+					logger.debug("Reformulating product: " + nodeService.getProperty(toReformulate, ContentModel.PROP_NAME) + " (" + toReformulate
+							+ ") ");
+				}
+				try {
+					policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+					L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
+						formulationService.formulate(toReformulate);
+
+						return true;
+					})
+
+							, false, true, true);
+
+				} catch (Exception e) {
+					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+						throw e;
 					}
-					try {
-						policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-						policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-						policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+					logger.error("Cannot reformulate node:" + toReformulate, e);
+				} finally {
+					policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+				}
 
-						L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
-							formulationService.formulate(toReformulate);
-
-							return true;
-						})
-
-								, false, true, true);
-
-					} catch (Exception e) {
-						if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-							throw e;
-						}
-						logger.error("Cannot reformulate node:" + toReformulate, e);
-						return false;
-					} finally {
-						policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
-						policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
-						policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-					}
-
-					return true;
-
-				}, false, true);
 			}
 
 		}
