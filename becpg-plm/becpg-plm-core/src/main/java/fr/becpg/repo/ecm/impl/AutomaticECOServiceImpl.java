@@ -360,7 +360,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
 				.ofType(PLMModel.TYPE_PRODUCT).andFTSQuery(ftsQuery).maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
-
+		
+		logger.info("modified products size: " + nodeRefs.size());
+		
 		List<NodeRef> toReformulateEntities = new ArrayList<>();
 
 		List<BatchStep<NodeRef>> steps = new ArrayList<>();
@@ -393,6 +395,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 			@Override
 			public void afterStep() {
 				formulateStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(toReformulateEntities));
+				logger.info("reformulated entities size: " + toReformulateEntities.size());
 			}
 		});
 
@@ -404,8 +407,6 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 		steps.add(formulateStep);
 
-		logger.info("Start of reformulate changed entities of size :" + nodeRefs.size() + ", for a total of : " + toReformulateEntities.size()
-				+ " entites to reformulate");
 
 		batchQueueService.queueBatch(batchInfo, steps);
 
