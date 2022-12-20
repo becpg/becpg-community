@@ -457,6 +457,9 @@
 				</association>
 
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:isDeletedAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 
@@ -507,6 +510,9 @@
 				</association>
 
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:isDeletedAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 
