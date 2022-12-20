@@ -135,7 +135,7 @@ public class CertificationAutoCompletePlugin extends TargetAssocAutoCompletePlug
 	
 						BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_CERTIFICATION).parent(dataListNodeRef);
 						beCPGQueryBuilder.andPropQuery(org.alfresco.model.ContentModel.PROP_NAME, prepareQuery(query));
-	
+						beCPGQueryBuilder.excludeProp(BeCPGModel.PROP_IS_DELETED, "true");
 						List<NodeRef> ret = beCPGQueryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS).list();
 						return new AutoCompletePage(ret, pageNum, pageSize,
 								new NodeRefAutoCompleteExtractor(org.alfresco.model.ContentModel.PROP_NAME, nodeService));
