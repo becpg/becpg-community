@@ -38,6 +38,7 @@
 					<show id="bp:pubChannelError" />
 					<show id="bp:pubChannelConfig" />
 					<show id="bp:pubChannelConfigFile" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 
 				</field-visibility>
@@ -72,6 +73,7 @@
 					<show id="bp:pubChannelCatalogId" />
 					<show id="bp:pubChannelConfig" />
 					<show id="bp:pubChannelConfigFile" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 
 				</field-visibility>
@@ -105,6 +107,7 @@
 					<show id="bp:pubChannelReadCount" />
 					<show id="bp:pubChannelFailCount" />
 					<show id="bp:pubChannelError" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 
 				</field-visibility>

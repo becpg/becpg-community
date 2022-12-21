@@ -1530,11 +1530,11 @@
 					<show id="bcpg:flNumber"  force="true"/>
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
-					<show id="bcpg:erpCode" force="true" />
 					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
-                    <show id="bcpg:isDeleted"/>
                     <show id="bcpg:ingAllergens" />
+					<show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1877,6 +1877,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1901,6 +1902,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
@@ -1936,6 +1938,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -2298,6 +2301,7 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2340,6 +2344,7 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2392,6 +2397,7 @@
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
 					<show id="fm:commentCount" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2414,6 +2420,7 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2436,6 +2443,7 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
@@ -2460,6 +2468,7 @@
 					<show id="cm:name" />
 					<show id="cm:title" />
 					<show id="cm:description" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2570,7 +2579,6 @@
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="bcpg:erpCode" force="true" />
 					<show force="true" id="bcpg:eanCode"/>
 					<show id="cm:name" />
 					<show id="bcpg:trademarkType"  />
@@ -2578,6 +2586,7 @@
 					<show id="cm:description" force="true" />
 				    <show id="bcpg:contacts" force="true" />
 					<show id="cm:content"  />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2603,6 +2612,7 @@
                     <show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2641,6 +2651,7 @@
                     <show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2681,6 +2692,7 @@
                     <show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2882,8 +2894,8 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
-					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 					<show id="cm:content"  />
 				</field-visibility>
@@ -2906,6 +2918,7 @@
 					<show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2928,6 +2941,7 @@
 				    <show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2961,6 +2975,7 @@
 					 <show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -6974,6 +6989,7 @@
 					<show id="bcpg:locationZip" force="true"/>
 					<show id="bcpg:locationState" force="true"/>
 					<show id="bcpg:locationCountry" force="true"/>
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -7034,6 +7050,7 @@
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListNotes" />
 					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -7068,6 +7085,7 @@
 					<show id="bcpg:locationZip" force="true"/>
 					<show id="bcpg:locationState" force="true"/>
 					<show id="bcpg:locationCountry" force="true"/>
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
@@ -7336,6 +7354,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="bcpg:erpCode" force="true" />					
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 			</form>
@@ -7354,6 +7373,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true"  />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 			</form>
@@ -7377,6 +7397,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
@@ -7548,6 +7569,7 @@
 					<show id="gs1:maximumToleranceTemperature" force="true" />
 					<show id="gs1:minimumToleranceTemperature" force="true" />
 					<show id="gs1:temperatureMeasurementUnit" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -7584,6 +7606,7 @@
 					<show id="gs1:maximumToleranceTemperature" force="true" />
 					<show id="gs1:minimumToleranceTemperature" force="true" />
 					<show id="gs1:temperatureMeasurementUnit" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
@@ -7635,6 +7658,7 @@
 					<show id="gs1:maximumToleranceTemperature" force="true" />
 					<show id="gs1:minimumToleranceTemperature" force="true" />
 					<show id="gs1:temperatureMeasurementUnit" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -7647,6 +7671,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -7668,6 +7693,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
@@ -7700,6 +7726,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -7790,6 +7817,7 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />		
 					<show id="gs1:dutyFeeTaxRate"/>			
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>								
 				</field-visibility>
 				<appearance>
@@ -7832,6 +7860,7 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />	
 					<show id="gs1:dutyFeeTaxRate"/>		
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>			
 				<appearance>
@@ -7852,7 +7881,8 @@
 					<show id="gs1:dutyFeeTaxCategoryCode" />
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />	
-					<show id="gs1:dutyFeeTaxRate"/>				
+					<show id="gs1:dutyFeeTaxRate"/>			
+					<show id="bcpg:erpCode" force="true" />	
 					<show id="bcpg:isDeleted"/>							
 				</field-visibility>
 				<appearance>
@@ -7879,7 +7909,8 @@
 				<field-visibility>
 				    <show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
-					<show id="gs1:targetMarketCountries" />		
+					<show id="gs1:targetMarketCountries" />	
+					<show id="bcpg:erpCode" force="true" />	
 					<show id="bcpg:isDeleted"/>										
 				</field-visibility>
 				<appearance>
@@ -7910,6 +7941,7 @@
 					<show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />		
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>		
 				<appearance>
@@ -7926,7 +7958,8 @@
 				<field-visibility>
 				    <show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
-					<show id="gs1:targetMarketCountries" />			
+					<show id="gs1:targetMarketCountries" />	
+					<show id="bcpg:erpCode" force="true" />		
 					<show id="bcpg:isDeleted"/>									
 				</field-visibility>
 				<appearance>
