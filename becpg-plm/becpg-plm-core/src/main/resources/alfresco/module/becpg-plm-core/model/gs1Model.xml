@@ -518,9 +518,9 @@
 
 		<type name="gs1:dutyFeeTaxList">
 			<parent>bcpg:entityListItem</parent>
-			
 			<mandatory-aspects>
 				<aspect>bcpg:effectivityAspect</aspect>
+				<aspect>gs1:dutyFeeTaxAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
