@@ -7980,11 +7980,11 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="gs1:dutyFeeTaxRef" />
-					<show id="gs1:dutyFeeTaxAmount" />		
-					<show id="gs1:dutyFeeTaxAmountUnit" />	
-					<show id="bcpg:startEffectivity" />	
-				    <show id="bcpg:endEffectivity" />					
+					<show id="gs1:dutyFeeTaxRef" force="true" />
+					<show id="gs1:dutyFeeTaxAmount" force="true" />		
+					<show id="gs1:dutyFeeTaxAmountUnit" force="true" />	
+					<show id="bcpg:startEffectivity" force="true"/>	
+				    <show id="bcpg:endEffectivity" force="true"/>					
 				</field-visibility>
 				<appearance>
 					<field id="gs1:dutyFeeTaxRef">
@@ -8020,11 +8020,11 @@
 			</form>
 			<form id="datagrid">
 				<field-visibility>
-					<show id="gs1:dutyFeeTaxRef" />
-					<show id="gs1:dutyFeeTaxAmount" />		
-					<show id="gs1:dutyFeeTaxAmountUnit" />	
-					<show id="bcpg:startEffectivity" />	
-				    <show id="bcpg:endEffectivity" />
+					<show id="gs1:dutyFeeTaxRef" force="true"/>
+					<show id="gs1:dutyFeeTaxAmount" force="true"/>		
+					<show id="gs1:dutyFeeTaxAmountUnit" force="true"/>	
+					<show id="bcpg:startEffectivity" force="true"/>	
+				    <show id="bcpg:endEffectivity" force="true"/>
 				</field-visibility>			
 			</form>
 		</forms>
@@ -8033,11 +8033,11 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="gs1:dutyFeeTaxRef" />
-					<show id="gs1:dutyFeeTaxAmount" />		
-					<show id="gs1:dutyFeeTaxAmountUnit" />	
-					<show id="bcpg:startEffectivity" />	
-				    <show id="bcpg:endEffectivity" />					
+					<show id="gs1:dutyFeeTaxRef" force="true"/>
+					<show id="gs1:dutyFeeTaxAmount" force="true"/>		
+					<show id="gs1:dutyFeeTaxAmountUnit" force="true"/>	
+					<show id="bcpg:startEffectivity" force="true"/>	
+				    <show id="bcpg:endEffectivity" force="true"/>					
 				</field-visibility>
 				<appearance>
 					<field id="gs1:dutyFeeTaxRef">
