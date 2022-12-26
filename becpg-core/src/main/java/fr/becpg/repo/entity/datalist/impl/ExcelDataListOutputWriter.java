@@ -358,6 +358,14 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 						cell = headerRow.createCell(1);
 						cell.setCellValue("EntityListItem");
 					}
+					
+					String entityType = nodeService.getType(dataListFilter.getEntityNodeRef()).toPrefixString(namespaceService);
+					headerRow = sheet.createRow(rownum++);
+					headerRow.setRowStyle(style);
+					cell = headerRow.createCell(0);
+					cell.setCellValue("ENTITY_TYPE");
+					cell = headerRow.createCell(1);
+					cell.setCellValue(entityType);
 
 					headerRow = sheet.createRow(rownum++);
 					headerRow.setRowStyle(style);
