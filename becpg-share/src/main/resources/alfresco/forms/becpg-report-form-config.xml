@@ -67,7 +67,7 @@
 						</control>
 					</field>	
 					<field id="rep:reportTextParameters">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
 							<control-param name="rows">5</control-param>
 						</control>
 					</field>	

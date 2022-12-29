@@ -329,6 +329,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 				}
 
 				if ((filterByAssoc != null) && (filterByAssoc.length() > 0)) {
+					
 
 					boolean isOrOperand = false;
 					if (filterByAssoc.endsWith("_or")) {
@@ -338,6 +339,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 					QName assocQName = QName.createQName(filterByAssoc, namespaceService);
 
+				
 					List<NodeRef> targetNodeRefs = null;
 
 					if (targetNodeRef != null) {
@@ -347,6 +349,11 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 					}
 
 					if ((targetNodeRefs != null) && !targetNodeRefs.isEmpty()) {
+						
+						if(logger.isDebugEnabled()) {
+							logger.debug("Filter by assoc: " +filterByAssoc+ " " +targetNodeRefs.toString() );
+						}
+						
 						List<NodeRef> tmp = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 						List<NodeRef> nodesToKeep = new ArrayList<>();
 
