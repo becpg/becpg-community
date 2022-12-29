@@ -19,6 +19,8 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 */
 package fr.becpg.test.repo.search;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
@@ -59,6 +61,7 @@ public class BeCPGQueryBuilderTest {
 		// .andPropEquals(ContentModel.PROP_NAME, "Test").singleValue();
 
 		logger.info(queryBuilder.toString());
+		assertNotNull(queryBuilder.toString());
 
 		// BeCPGQueryBuilder.createQuery()
 		// .parent(listContainer)

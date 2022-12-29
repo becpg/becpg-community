@@ -27,20 +27,20 @@ import org.alfresco.service.namespace.QName;
  */
 public class PublicationModel {
 
-	/** Constant <code>PUBLICATION_URI="http://www.bcpg.fr/model/publication/1."{trunked}</code> */
-	public static String PUBLICATION_URI = "http://www.bcpg.fr/model/publication/1.0";
-
-	/** Constant <code>PUBLICATION_PREFIX="bp"</code> */
-	public static String PUBLICATION_PREFIX = "bp";
-	
 	private PublicationModel() {
 		//Constants only
 	}
 
+	/** Constant <code>PUBLICATION_URI="http://www.bcpg.fr/model/publication/1."{trunked}</code> */
+	public static final String PUBLICATION_URI = "http://www.bcpg.fr/model/publication/1.0";
+
+	/** Constant <code>PUBLICATION_PREFIX="bp"</code> */
+	public static  final String PUBLICATION_PREFIX = "bp";
+	
 	/** 
 	 * The Constant MODEL. 
 	 */
-	public static QName MODEL = QName.createQName(PUBLICATION_URI, "publicationModel");
+	public static final QName MODEL = QName.createQName(PUBLICATION_URI, "publicationModel");
 
 	public static final QName TYPE_PUBLICATION_CHANNEL = QName.createQName(PUBLICATION_URI, "pubChannel");
 	public static final QName TYPE_PUBLICATION_CHANNEL_LIST = QName.createQName(PUBLICATION_URI, "pubChannelList");
@@ -49,16 +49,18 @@ public class PublicationModel {
 	public static final QName PROP_PUBCHANNEL_CATALOG_ID = QName.createQName(PUBLICATION_URI, "pubChannelCatalogId");
 	public static final QName PROP_PUBCHANNELLIST_MODIFIED_DATE = QName.createQName(PUBLICATION_URI, "pubChannelListModifiedDate");
 	public static final QName PROP_PUBCHANNEL_ID = QName.createQName(PUBLICATION_URI, "pubChannelId");
+	public static final QName PROP_PUBCHANNEL_ACTION = QName.createQName(PUBLICATION_URI, "pubChannelAction");
+	public static final QName PROP_PUBCHANNEL_LASTDATE = QName.createQName(PUBLICATION_URI, "pubChannelLastDate");
 
 	public static final QName PROP_PUBCHANNELLIST_BATCHID = QName.createQName(PUBLICATION_URI, "pubChannelListBatchId");
 	public static final QName PROP_PUBCHANNELLIST_PUBLISHEDDATE = QName.createQName(PUBLICATION_URI, "pubChannellListPublishedDate");
 	public static final QName PROP_PUBCHANNELLIST_STATUS = QName.createQName(PUBLICATION_URI, "pubChannellListStatus");
 	public static final QName PROP_PUBCHANNELLIST_ERROR = QName.createQName(PUBLICATION_URI, "pubChannellListError");
-	public static final QName PROP_PUBCHANNELLIST_FORCEPUBLIVCATION = QName.createQName(PUBLICATION_URI, "pubChannelListForcePublication");
+	public static final QName PROP_PUBCHANNELLIST_FORCEPUBLICATION = QName.createQName(PUBLICATION_URI, "pubChannelListForcePublication");
 	public static final QName PROP_PUBCHANNEL_CONFIG = QName.createQName(PUBLICATION_URI, "pubChannelConfig");
 	public static final QName ASSOC_PUBCHANNEL_CONFIGFILE = QName.createQName(PUBLICATION_URI, "pubChannelConfigFile");
 
-	public static final QName PROP_PUBCHANNEL_BTASHSTARTTIME = QName.createQName(PUBLICATION_URI, "pubChannelBatchStartTime");
+	public static final QName PROP_PUBCHANNEL_BATCHSTARTTIME = QName.createQName(PUBLICATION_URI, "pubChannelBatchStartTime");
 	public static final QName PROP_PUBCHANNEL_BATCHENDTIME = QName.createQName(PUBLICATION_URI, "pubChannelBatchEndTime");
 	public static final QName PROP_PUBCHANNEL_BATCHDURATION = QName.createQName(PUBLICATION_URI, "pubChannelBatchDuration");
 	public static final QName PROP_PUBCHANNEL_BATCHID = QName.createQName(PUBLICATION_URI, "pubChannelBatchId");
