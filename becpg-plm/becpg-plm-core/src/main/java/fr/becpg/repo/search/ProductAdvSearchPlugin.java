@@ -241,7 +241,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				PropertyDefinition propertyDef = entityDictionaryService.getProperty(attributeQName);
 				if (propertyDef != null) {
 
-					AssociationCriteriaFilter criteriaFilter = new AssociationCriteriaFilter(attributeQName, propertyDef.getDataType(), criteriaValue,
+					AssociationCriteriaFilter criteriaFilter = new AssociationCriteriaFilter(attributeQName, criteriaValue,
 							(propFilter.getHtmlId() != null) && propFilter.getHtmlId().contains("-range"));
 
 					criteriaFilters.add(criteriaFilter);
