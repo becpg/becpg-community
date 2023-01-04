@@ -25,10 +25,9 @@ public class ProjectTaskAssignationIT extends AbstractProjectTestCase {
 	@Test
 	public void testTaskAssignation() {
 		
-		NodeRef authorityGroup = transactionService.getRetryingTransactionHelper()
-				.doInTransaction(() -> BeCPGTestHelper.createGroup(AUTHORITY_GROUP, BeCPGTestHelper.USER_ONE, BeCPGTestHelper.USER_TWO), false, true);
+		NodeRef authorityGroup = inWriteTx(() -> BeCPGTestHelper.createGroup(AUTHORITY_GROUP, BeCPGTestHelper.USER_ONE, BeCPGTestHelper.USER_TWO));
 		
-		NodeRef projectNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef projectNodeRef = inWriteTx(() -> {
 
 			ProjectData projectData = new ProjectData(null, "Assignation Project Test", null, null, null, null, null, null, null, null, null, 0, null);
 
@@ -40,9 +39,9 @@ public class ProjectTaskAssignationIT extends AbstractProjectTestCase {
 			
 			return projectData.getNodeRef();
 			
-		}, false, true);
+		});
 		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			
@@ -68,9 +67,9 @@ public class ProjectTaskAssignationIT extends AbstractProjectTestCase {
 			projectService.formulate(projectNodeRef);
 			
 			return null;
-		}, false, true);
+		});
 		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			
@@ -106,9 +105,9 @@ public class ProjectTaskAssignationIT extends AbstractProjectTestCase {
 			assertEquals(3, checks);
 
 			return null;
-		}, false, true);
+		});
 		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			
@@ -125,9 +124,9 @@ public class ProjectTaskAssignationIT extends AbstractProjectTestCase {
 			projectService.formulate(projectNodeRef);
 			
 			return null;
-		}, false, true);
+		});
 		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			
 			ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 			
@@ -163,7 +162,7 @@ public class ProjectTaskAssignationIT extends AbstractProjectTestCase {
 			assertEquals(3, checks);
 
 			return null;
-		}, false, true);
+		});
 		
 	}
 
