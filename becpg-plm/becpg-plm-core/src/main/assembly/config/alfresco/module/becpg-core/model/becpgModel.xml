@@ -2783,7 +2783,7 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:lclComments">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:lclIsFormulated">
