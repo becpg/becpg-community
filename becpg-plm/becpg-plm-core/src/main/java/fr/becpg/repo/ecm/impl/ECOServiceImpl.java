@@ -34,9 +34,12 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.lock.mem.Lifetime;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.version.VersionBaseModel;
+import org.alfresco.service.cmr.lock.LockService;
+import org.alfresco.service.cmr.lock.LockType;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.Version;
@@ -45,6 +48,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
@@ -53,9 +57,11 @@ import com.google.common.collect.Sets;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMGroup;
+import fr.becpg.model.ECMModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.BatchClosingHook;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
@@ -137,6 +143,9 @@ public class ECOServiceImpl implements ECOService {
 	
 	@Autowired
 	private BatchQueueService batchQueueService;
+	
+	@Autowired
+	private LockService lockService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -178,6 +187,8 @@ public class ECOServiceImpl implements ECOService {
 
 			List<BatchStep<Object>> batchStepList = new LinkedList<>();
 			
+			BatchClosingHook closingHook = null;
+			
 			if (calculateWUsed) {
 				batchStepList.add(createCalculateWUsedListBatchStep(ecoData, true));
 			}
@@ -185,10 +196,21 @@ public class ECOServiceImpl implements ECOService {
 			if (isSimulated) {
 				batchStepList.add(createSimulateECOBatchStep(ecoData));
 			} else {
-				batchStepList.add(createApplyECOBatchStep(ecoData, deleteOnApply));
+				
+				List<NodeRef> impactedProducts = new ArrayList<>();
+				
+				if (ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
+					batchStepList.add(createAddChangeOrderAspectStep(batchInfo, ecoData, impactedProducts));
+				}
+				
+				batchStepList.add(createApplyECOStep(ecoData, deleteOnApply));
+				
+				if (ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
+					closingHook = () -> closeECO(ecoNodeRef, impactedProducts);
+				}
 			}
 			
-			batchQueueService.queueBatch(batchInfo, batchStepList);
+			batchQueueService.queueBatch(batchInfo, batchStepList, closingHook);
 			
 			return batchInfo;
 		}
@@ -197,40 +219,71 @@ public class ECOServiceImpl implements ECOService {
 		
 	}
 
-	private BatchStep<Object> createSimulateECOBatchStep(final ChangeOrderData ecoData) {
+	private BatchStep<Object> createAddChangeOrderAspectStep(BatchInfo batchInfo, ChangeOrderData ecoData, List<NodeRef> entries) {
 		BatchStep<Object> batchStep = new BatchStep<>();
 		
-		SimulateECOProcessWorker processWorker = new SimulateECOProcessWorker(ecoData);
-		
-		batchStep.setProcessWorker(processWorker);
-		
-		batchStep.setBatchStepListener(createSimulationECOBatchAdapter(ecoData, batchStep, processWorker));
-		return batchStep;
-	}
-
-	private BatchStep<Object> createApplyECOBatchStep(final ChangeOrderData ecoData, boolean deleteOnApply) {
-		BatchStep<Object> batchStep = new BatchStep<>();
-		
-		ApplyECOProcessWorker processWorker = new ApplyECOProcessWorker(ecoData);
-		
-		batchStep.setProcessWorker(processWorker);
-		
-		batchStep.setBatchStepListener(createApplyECOBatchAdapter(ecoData, batchStep, processWorker, deleteOnApply));
-		return batchStep;
-	}
-
-	private BatchStepAdapter createApplyECOBatchAdapter(final ChangeOrderData ecoData, BatchStep<Object> batchStep,
-			ApplyECOProcessWorker processWorker, boolean deleteOnApply) {
-		return new BatchStepAdapter() {
-			
+		batchStep.setBatchStepListener(new BatchStepAdapter() {
 			@Override
 			public void beforeStep() {
 				
-				List<Composite<WUsedListDataItem>> entries = provideApplyECOEntries(ecoData);
+				entries.addAll(provideImpactedProducts(CompositeHelper.getHierarchicalCompoList(ecoData.getWUsedList())));
 				
 				BatchProcessWorkProvider<Object> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(entries));
 				
 				batchStep.setWorkProvider(workProvider);
+				
+				ecoData.setEcoState(ECOState.InProgress);
+				
+				alfrescoRepository.save(ecoData);
+			}
+		});
+		
+		batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Object>() {
+			
+			@Override
+			public void process(Object entry) throws Throwable {
+				if (entry instanceof NodeRef && !nodeService.hasAspect((NodeRef) entry, ECMModel.ASPECT_CHANGE_ORDER)) {
+					
+					NodeRef nodeRef = (NodeRef) entry;
+					
+					JSONObject lockInfo = new JSONObject();
+					
+					lockInfo.put("lockType", "versioning");
+					lockInfo.put("sourceNodeRef", ecoData.getNodeRef());
+					lockInfo.put("sourceInfo", batchInfo.toJson());
+					
+					lockService.lock(nodeRef, LockType.WRITE_LOCK, 172800, Lifetime.PERSISTENT, lockInfo.toString());
+					
+					nodeService.createAssociation(nodeRef, ecoData.getNodeRef(), ECMModel.ASSOC_CHANGE_ORDER_REF);
+					
+					if (logger.isDebugEnabled()) {
+						String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+						logger.debug("adding change order aspect to: " + name + " (" + nodeRef + ")");
+					}
+				}
+			}
+			
+		});
+		
+		return batchStep;
+	}
+	
+	private BatchStep<Object> createApplyECOStep(ChangeOrderData ecoData, boolean deleteOnApply) {
+		
+		BatchStep<Object> applyStep = new BatchStep<>();
+	
+		ApplyECOProcessWorker processWorker = new ApplyECOProcessWorker(ecoData);
+		
+		applyStep.setProcessWorker(processWorker);
+		
+		applyStep.setBatchStepListener(new BatchStepAdapter() {
+			
+			@Override
+			public void beforeStep() {
+				
+				BatchProcessWorkProvider<Object> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(provideApplyECOEntries(ecoData)));
+				
+				applyStep.setWorkProvider(workProvider);
 				
 				ecoData.setEcoState(ECOState.InProgress);
 				
@@ -264,9 +317,58 @@ public class ECOServiceImpl implements ECOService {
 				}
 				
 			}
-		};
-	}
+		});
 	
+		return applyStep;
+	}
+
+	private BatchStep<Object> createRemoveChangeOrderAspectStep(List<NodeRef> entries) {
+		BatchStep<Object> batchStep = new BatchStep<>();
+		
+		batchStep.setBatchStepListener(new BatchStepAdapter() {
+			@Override
+			public void beforeStep() {
+				
+				BatchProcessWorkProvider<Object> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(entries));
+				
+				batchStep.setWorkProvider(workProvider);
+				
+			}
+		});
+		
+		batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Object>() {
+
+			@Override
+			public void process(Object entry) throws Throwable {
+				
+				if (entry instanceof NodeRef && nodeService.hasAspect((NodeRef) entry, ECMModel.ASPECT_CHANGE_ORDER)) {
+					
+					nodeService.removeAspect((NodeRef) entry, ECMModel.ASPECT_CHANGE_ORDER);
+					
+					lockService.unlock((NodeRef) entry);
+					
+					if (logger.isDebugEnabled()) {
+						String name = (String) nodeService.getProperty((NodeRef) entry, ContentModel.PROP_NAME);
+						logger.debug("removing change order aspect from: " + name + " (" + entry + ")");
+					}
+				}
+			}
+		});
+		
+		return batchStep;
+	}
+
+	private BatchStep<Object> createSimulateECOBatchStep(final ChangeOrderData ecoData) {
+		BatchStep<Object> batchStep = new BatchStep<>();
+		
+		SimulateECOProcessWorker processWorker = new SimulateECOProcessWorker(ecoData);
+		
+		batchStep.setProcessWorker(processWorker);
+		
+		batchStep.setBatchStepListener(createSimulationECOBatchAdapter(ecoData, batchStep, processWorker));
+		return batchStep;
+	}
+
 	private BatchStepAdapter createSimulationECOBatchAdapter(final ChangeOrderData ecoData, BatchStep<Object> batchStep, SimulateECOProcessWorker processWorker) {
 		return new BatchStepAdapter() {
 			
@@ -306,6 +408,20 @@ public class ECOServiceImpl implements ECOService {
 		};
 	}
 
+	private Set<NodeRef> provideImpactedProducts(Composite<WUsedListDataItem> composite) {
+		Set<NodeRef> impactedProducts = new HashSet<>();
+		
+		if (composite.getData() != null && composite.getData().getIsWUsedImpacted()) {
+			impactedProducts.addAll(composite.getData().getSourceItems());
+		}
+		
+		for (Composite<WUsedListDataItem> children : composite.getChildren()) {
+			impactedProducts.addAll(provideImpactedProducts(children));
+		}
+		
+		return impactedProducts;
+	}
+	
 	private List<Composite<WUsedListDataItem>> provideApplyECOEntries(final ChangeOrderData ecoData) {
 		// Clear changeUnitList
 		List<ChangeUnitDataItem> toRemove = new ArrayList<>();
@@ -720,6 +836,30 @@ public class ECOServiceImpl implements ECOService {
 		return null;
 	}
 	
+	@Override
+	public BatchInfo closeECO(NodeRef ecoNodeRef, List<NodeRef> impactedProducts) {
+		
+		ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+		
+		String entityDescription = nodeService.getProperty(ecoNodeRef, BeCPGModel.PROP_CODE) + " - " + nodeService.getProperty(ecoNodeRef, ContentModel.PROP_NAME);
+
+		BatchInfo closingBatchInfo = new BatchInfo(String.format("closeECO-%s", ecoNodeRef.getId()), "becpg.batch.eco.close", entityDescription);
+		
+		closingBatchInfo.setRunAsSystem(true);
+		
+		List<BatchStep<Object>> closingBatchStepList = new LinkedList<>();
+		
+		if (impactedProducts.isEmpty()) {
+			impactedProducts.addAll(provideImpactedProducts(CompositeHelper.getHierarchicalCompoList(ecoData.getWUsedList())));
+		}
+		
+		closingBatchStepList.add(createRemoveChangeOrderAspectStep(impactedProducts));
+		
+		batchQueueService.queueBatch(closingBatchInfo, closingBatchStepList);
+			
+		return null;
+	}
+
 	private void internalCalculateWUsedList(ChangeOrderData ecoData, boolean isWUsedImpacted) {
 		logger.debug("calculateWUsedList");
 
@@ -1152,7 +1292,11 @@ public class ECOServiceImpl implements ECOService {
 		if (((parent.getDepthLevel() > 1) && parent.getIsWUsedImpacted()) || ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType())) {
 			properties.put(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF, parent.getSourceItems().get(0));
 		}
-
+		
+		if (logger.isDebugEnabled()) {
+			String name = (String) nodeService.getProperty(productToImpact, ContentModel.PROP_NAME);
+			logger.debug("creating new version for: " + name + " (" + productToImpact + ")");
+		}
 		return entityVersionService.createVersion(productToImpact, properties);
 
 	}
