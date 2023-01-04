@@ -2484,7 +2484,7 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:pclTextCriteria">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
