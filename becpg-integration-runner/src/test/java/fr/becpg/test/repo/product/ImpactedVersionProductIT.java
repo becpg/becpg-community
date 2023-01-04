@@ -47,7 +47,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 	@Test
 	public void testInitialVersionLabels() throws InterruptedException {
 		
-		final NodeRef RM = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef RM = inWriteTx(() -> {
 			
 			RawMaterialData rawMaterial = new RawMaterialData();
 			rawMaterial.setName("MP version test");
@@ -56,11 +56,11 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			
 			return alfrescoRepository.save(rawMaterial).getNodeRef();
 			
-		}, false, true);
+		});
 		
 		assertNotNull(RM);
 		
-		final NodeRef SF1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef SF1 = inWriteTx(() -> {
 			
 			SemiFinishedProductData semiFinished = new SemiFinishedProductData();
 			semiFinished.setName("SF1 version test");
@@ -76,11 +76,11 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			
 			return alfrescoRepository.save(semiFinished).getNodeRef();
 			
-		}, false, true);
+		});
 		
 		assertNotNull(SF1);
 		
-		final NodeRef SF2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef SF2 = inWriteTx(() -> {
 			
 			SemiFinishedProductData semiFinished = new SemiFinishedProductData();
 			semiFinished.setName("SF2 version test");
@@ -96,11 +96,11 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			
 			return alfrescoRepository.save(semiFinished).getNodeRef();
 			
-		}, false, true);
+		});
 		
 		assertNotNull(SF2);
 		
-		final NodeRef SF3 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef SF3 = inWriteTx(() -> {
 			
 			SemiFinishedProductData semiFinished = new SemiFinishedProductData();
 			semiFinished.setName("SF3 version test");
@@ -109,11 +109,11 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			
 			return alfrescoRepository.save(semiFinished).getNodeRef();
 			
-		}, false, true);
+		});
 		
 		assertNotNull(SF3);
 		
-		final NodeRef FP = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef FP = inWriteTx(() -> {
 			
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("FP version test");
@@ -133,11 +133,11 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			
 			return alfrescoRepository.save(finishedProduct).getNodeRef();
 			
-		}, false, true);
+		});
 		
 		assertNotNull(FP);
 		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			
 			NodeRef destNodeRef = nodeService.getPrimaryParent(RM).getParentRef();
 			
@@ -148,7 +148,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			entityVersionService.impactWUsed(RM, VersionType.MAJOR, "test merge");
 			
 			return null;
-		}, false, true);
+		});
 		
 		
 		checkVersion(FP, "1.0", SF1, "1.0");
@@ -156,7 +156,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 		checkVersion(SF1, "1.0", RM, "1.0");
 		checkVersion(SF2, "1.0", RM, "1.0");
 		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			
 			NodeRef destNodeRef = nodeService.getPrimaryParent(RM).getParentRef();
 			
@@ -167,7 +167,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			entityVersionService.impactWUsed(RM, VersionType.MINOR, "test merge");
 			
 			return null;
-		}, false, true);
+		});
 		
 		checkVersion(FP, "2.0", SF1, "2.0");
 		checkVersion(FP, "2.0", SF2, "2.0");
@@ -189,7 +189,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			logger.debug("waiting for version created...");
 			i++;
 				
-			versionNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			versionNodeRef = inWriteTx(() -> {
 				
 				VersionHistory versionHistory = versionService.getVersionHistory(parentProduct);
 				
@@ -204,7 +204,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 				
 				return null;
 				
-			}, false, true);
+			});
 			
 		}
 		
@@ -247,11 +247,11 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			Thread.sleep(1000);
 			logger.debug("waiting for unclocking...");
 			
-			aspectsRemoved = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			aspectsRemoved = inWriteTx(() -> {
 				
 				return !lockService.isLocked(parentProduct) &&!lockService.isLocked(componentProduct) && !nodeService.hasAspect(parentProduct, ECMModel.ASPECT_CHANGE_ORDER) && !nodeService.hasAspect(componentProduct, ECMModel.ASPECT_CHANGE_ORDER);
 				
-			}, false, true);
+			});
 		}
 		
 		assertTrue(aspectsRemoved);
