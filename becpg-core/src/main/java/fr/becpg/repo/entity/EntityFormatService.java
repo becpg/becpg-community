@@ -1,6 +1,7 @@
 package fr.becpg.repo.entity;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -45,6 +46,8 @@ public interface EntityFormatService {
 	public void convert(NodeRef from, NodeRef to, EntityFormat toFormat);
 	
 	public String extractEntityData(NodeRef entityNodeRef, EntityFormat toFormat);
+	
+	public String extractEntityData(NodeRef entityNodeRef, EntityFormat toFormat, Map<String, Object> extraParams);
 
 	public void createOrUpdateEntityFromJson(NodeRef entityNodeRef, String entityJson);
 

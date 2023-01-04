@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -279,6 +281,11 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	
 	@Override
 	public String extractEntityData(NodeRef entityNodeRef, EntityFormat toFormat) {
+		return extractEntityData(entityNodeRef, toFormat, null);
+	}
+	
+	@Override
+	public String extractEntityData(NodeRef entityNodeRef, EntityFormat toFormat, Map<String, Object> extraParams) {
 		
 		if (EntityFormat.JSON.equals(toFormat)) {
 			
@@ -292,6 +299,12 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				jsonParams.put(RemoteParams.PARAM_APPEND_MLTEXT_CONSTRAINT, false);
 				jsonParams.put(RemoteParams.PARAM_UPDATE_ENTITY_NODEREFS, true);
 				jsonParams.put(RemoteParams.PARAM_REPLACE_HISTORY_NODEREFS, true);
+				
+				if (extraParams != null) {
+					for (Entry<String, Object> entry : extraParams.entrySet()) {
+						jsonParams.put(entry.getKey(), entry.getValue());
+					}
+				}
 				
 				remoteParams.setJsonParams(jsonParams);
 				

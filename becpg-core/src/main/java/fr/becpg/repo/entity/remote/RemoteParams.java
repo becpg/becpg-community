@@ -26,8 +26,10 @@ public class RemoteParams {
 	public static final String PARAM_UPDATE_ENTITY_NODEREFS = "updateEntityNodeRefs";
 
 	public static final String PARAM_REPLACE_HISTORY_NODEREFS = "replaceHistoryNodeRefs";
-
+	
 	public static final String PARAM_APPEND_CONTENT = "appendContent";
+
+	public static final String PARAM_IS_INITIAL_VERSION = "isInitialVersion";
 
 	//Import
 
