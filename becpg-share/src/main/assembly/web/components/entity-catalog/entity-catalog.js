@@ -376,7 +376,7 @@
 											var currentLabel = labels[labelIndex];
 
 											//checks if we're on the right label, and the catalog is not already labelled
-											if(currentLabel.htmlFor.indexOf(fieldId) == 0 ){
+											if(currentLabel.htmlFor == fieldId ){
 												var hasLocaleIcon = false;
 												if ( currentLabel.parentNode.innerHTML.indexOf(colorTipElement.style.backgroundColor) == -1) {
 													if (currentLabel.childNodes) {
@@ -394,7 +394,9 @@
 													} else {
 														currentLabel.innerHTML += colorTipElement.outerHTML;
 													}
+													break;
 												}
+									
 											}
 										}
 									} else {
