@@ -695,6 +695,9 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 							dLFields.add(nextToken);
 						}
 					}
+					
+					// Reset positions for next level
+					field.resetPositions();
 
 					if (entityDictionaryService.isSubClass(fieldQname, BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
 

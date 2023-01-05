@@ -78,6 +78,11 @@ public class AttributeExtractorField {
 
 		return pos < len;
 	}
+	
+	public void resetPositions() {
+		pos = 0;
+		pos2 = 0;
+	}
 
 	@Override
 	public int hashCode() {
