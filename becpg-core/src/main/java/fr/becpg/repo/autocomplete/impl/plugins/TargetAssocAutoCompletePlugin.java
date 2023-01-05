@@ -349,12 +349,12 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 						List<NodeRef> tmp = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 						List<NodeRef> nodesToKeep = new ArrayList<>();
 
-						for (NodeRef assocNodeRef : targetNodeRefs) {
-							if (isOrOperand) {
+						if (isOrOperand) {
+							for (NodeRef assocNodeRef : targetNodeRefs) {
 								nodesToKeep.addAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
-							} else {
-								nodesToKeep.retainAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
 							}
+						} else if (!targetNodeRefs.isEmpty()) {
+							nodesToKeep.addAll(associationService.getSourcesAssocs(targetNodeRefs.get(0), assocQName));
 						}
 
 						tmp.retainAll(nodesToKeep);
