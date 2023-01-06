@@ -558,6 +558,9 @@ public interface PLMModel {
 	// subsidiary
 	/** Constant <code>TYPE_SUBSIDIARY</code> */
 	QName TYPE_SUBSIDIARY = QName.createQName(BeCPGModel.BECPG_URI, "subsidiary");
+	
+	QName ASSOC_SUBSIDIARY_CERTIFICATIONS = QName.createQName(BeCPGModel.BECPG_URI, "subsidiaryCertifications");
+
 
 	// plant
 	/** Constant <code>TYPE_PLANT</code> */
@@ -702,6 +705,7 @@ public interface PLMModel {
 	QName ASPECT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "propagateUpAspect");
 
 	QName ASSOC_PROPAGATED_CHARACTS = QName.createQName(BeCPGModel.BECPG_URI, "propagatedCharacts");
+	
 	
 	
 }
