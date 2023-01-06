@@ -1523,6 +1523,19 @@
 
 		<type name="bcpg:subsidiary">
 			<parent>bcpg:entityListItem</parent>
+			<associations>
+				<association name="bcpg:subsidiaryCertifications">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:certification</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>	
 			<mandatory-aspects>
 				<aspect>bcpg:isDeletedAspect</aspect>
 			</mandatory-aspects>
