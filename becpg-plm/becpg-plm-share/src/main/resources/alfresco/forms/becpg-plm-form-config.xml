@@ -5804,8 +5804,7 @@
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListClaims" />
-					
-							<show id="bcpg:ingListDeclType" />
+					<show id="bcpg:ingListDeclType" />
 					<show id="bcpg:parentLevel" />
 					
 				</field-visibility>
@@ -5846,7 +5845,7 @@
 					
 					<field id="bcpg:ingListClaims" set="2-col-1">
 					     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7Certification</control-param>
+			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7CCertification</control-param>
 			            </control>
 			         </field>			
 			         <field id="bcpg:ingListIsProcessingAid" set="2-col-1"/>
@@ -6078,7 +6077,7 @@
 					
 					<field id="bcpg:ingListClaims" set="2-col-1">
 					     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7Certification</control-param>
+			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7CCertification</control-param>
 			            </control>
 			         </field>			
 			         <field id="bcpg:ingListIsProcessingAid" set="2-col-1"/>
