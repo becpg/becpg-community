@@ -65,7 +65,9 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 			if (listNodeRef != null) {
 				for (NodeRef channelListItemNodeRef : entityListDAO.getListItems(listNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST)) {
 					NodeRef channelNodeRef = associationService.getTargetAssoc(channelListItemNodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
-					if (catalogId.equals(nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CATALOG_ID))) {
+					String channelCatalog = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CATALOG_ID);
+					if ((catalogId== null && (channelCatalog ==null || channelCatalog.isBlank())) 
+							|| (catalogId!=null &&  catalogId.equals(channelCatalog))) {
 						nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
 					}
 				}
