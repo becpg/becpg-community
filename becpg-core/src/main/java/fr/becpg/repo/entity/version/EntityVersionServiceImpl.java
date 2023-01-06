@@ -948,6 +948,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								nodeService.removeProperty(internalBranchToNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
 							}
 							
+							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_MODIFIED, new Date());
+							
 							return internalBranchToNodeRef;
 
 						} finally {
