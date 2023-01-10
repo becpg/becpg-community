@@ -127,6 +127,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.multiLevel}")
 	private Boolean extractInMultiLevel = false;
+	
+	@Value("${beCPG.product.report.nonEffectiveComponent}")
+	private Boolean extractNonEffectiveComponent = false;
 
 	@Value("${beCPG.product.report.componentDatalistsToExtract}")
 	private String componentDatalistsToExtract = "";
@@ -579,11 +582,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private void loadCompoList(ProductData productData, Element dataListsElt, DefaultExtractorContext context, int level) {
 		// compoList
-		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		String filter = "";
+		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent)) {
+			filter = EffectiveFilters.EFFECTIVE;
+		}
+		
+		if (productData.hasCompoListEl(new EffectiveFilters<>(filter))) {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 			addDataListStateAndName(compoListElt, productData.getCompoList().get(0).getParentNodeRef());
 
-			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(filter))) {
 				if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
 					loadCompoListItem(productData.getNodeRef(), null, compoListElt, level, new CurrentLevelQuantities(productData, dataItem),
 							context);
@@ -597,20 +605,25 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	private void loadProcessList(ProductData productData, Element dataListsElt, DefaultExtractorContext context, boolean isExtractedProduct) {
-		if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		String filter = "";
+		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent)) {
+			filter = EffectiveFilters.EFFECTIVE;
+		}
+		
+		if (productData.hasProcessListEl(new EffectiveFilters<>(filter))) {
 			Element processListElt = dataListsElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName() + "s");
 			addDataListStateAndName(processListElt, productData.getProcessList().get(0).getParentNodeRef());
 
-			for (ProcessListDataItem dataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (ProcessListDataItem dataItem : productData.getProcessList(new EffectiveFilters<>(filter))) {
 				loadProcessListItem(productData.getNodeRef(), new CurrentLevelQuantities(productData, dataItem), dataItem, processListElt, 1,
 						context);
 			}
 
 			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) && isExtractedProduct) {
 
-				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				if (productData.hasCompoListEl(new EffectiveFilters<>(filter))) {
 
-					for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(filter))) {
 						if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
 
 							if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
@@ -632,8 +645,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, DefaultExtractorContext context,
 			boolean isExtractedProduct) {
-
-		if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		String filter = "";
+		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent)) {
+			filter = EffectiveFilters.EFFECTIVE;
+		}
+		
+		if (productData.hasPackagingListEl(new EffectiveFilters<>(filter))) {
 
 			Element packagingListElt = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
 			addDataListStateAndName(packagingListElt, productData.getPackagingList().get(0).getParentNodeRef());
@@ -696,15 +713,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			
 			productData.setDefaultVariantPackagingData(defaultVariantPackagingData);
 
-			for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(filter))) {
 				loadPackagingItem(productData.getNodeRef(), new CurrentLevelQuantities(productData, dataItem), dataItem, packagingListElt, context, 1, false, false);
 			}
 
 			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) && isExtractedProduct) {
 
-				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				if (productData.hasCompoListEl(new EffectiveFilters<>(filter))) {
 
-					for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(filter))) {
 						if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
 
 							if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
