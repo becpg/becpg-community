@@ -30,7 +30,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 public class InitEntityListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	
-	private static final int MAX_SIBLING_LISTS = 10;
+	private static final int MAX_SIBLING_LISTS = 20;
 
 	private static final Log logger = LogFactory.getLog(InitEntityListPolicy.class);
 
