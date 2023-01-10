@@ -113,7 +113,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if (entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT) && !nodes.isEmpty()) {
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT);
-					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE);
+					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE);	
 				}
 				nodes = getSearchNodesBySpecificationCriteria(nodes, criteria);
 
@@ -526,6 +526,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					MultiLevelListData ret = wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
 					if (ret != null) {
 						nodes.retainAll(ret.getAllChilds());
+						logger.debug(ret.getAllChilds().size());
 					}
 				}
 			}

@@ -4612,7 +4612,7 @@
 			
 		</forms>
 	</config>
-	<!-- bcpg:compoList type (existing nodes) -->
+	<!-- bcpg:productList type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:productList">
 		<forms>
 			<!-- Data List pop-up edit form -->

@@ -3838,6 +3838,24 @@
 		</aspect>
 
 
+
+		<aspect name="bcpg:productCollectionsAspect">
+			<associations>
+				<association name="bcpg:productCollections">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:productCollection</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+
+
 		<aspect name="bcpg:productGeoOriginAspect">
 			<associations>
 				<association name="bcpg:productGeoOrigin">
