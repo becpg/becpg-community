@@ -518,7 +518,7 @@ public interface PLMModel {
 	QName PROP_PRODUCT_NET_VOLUME = QName.createQName(BeCPGModel.BECPG_URI, "netVolume");
 	/** Constant <code>PROP_PRODUCT_NET_WEIGHT</code> */
 	QName PROP_PRODUCT_NET_WEIGHT = QName.createQName(BeCPGModel.BECPG_URI, "netWeight");
-	/** Constant <code>PROP_PRODUCT_COMPO_QTY_USED</code> 
+	/** Constant <code>PROP_PRODUCT_COMPO_QTY_USED</code> **/
 	QName PROP_PRODUCT_COMPO_QTY_USED = QName.createQName(BeCPGModel.BECPG_URI, "productCompoQtyUsed");
 	/** Constant <code>PROP_PRODUCT_COMPO_VOLUME_USED</code> */
 	QName PROP_PRODUCT_COMPO_VOLUME_USED = QName.createQName(BeCPGModel.BECPG_URI, "productCompoVolumeUsed");

@@ -635,13 +635,17 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 			if (field.isNested()) {
 				AttributeExtractorField dlField = field.nextToken();
-				if ("entity".equals(dlField.getFieldName())) {
+				if ("entity".equals(dlField.getFieldName()) || "product".equals(dlField.getFieldName())) {
 					field = field.nextToken();
 					QName fieldQname = QName.createQName(field.getFieldName(), namespaceService);
 					if (hasReadAccess(itemType, field.getFieldName())) {
 						ClassAttributeDefinition prodDef = entityDictionaryService.getPropDef(fieldQname);
 						if (prodDef != null) {
-							ret.add(new AttributeExtractorStructure(field.prefixed("entity_"), prodDef, itemType));
+							if("product".equals(dlField.getFieldName())) {
+								ret.add(new AttributeExtractorStructure(field.prefixed("product_"), prodDef, itemType));
+							} else {
+								ret.add(new AttributeExtractorStructure(field.prefixed("entity_"), prodDef, itemType));
+							}
 						}
 					}
 

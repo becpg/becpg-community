@@ -84,6 +84,7 @@ public class ProductServiceImpl implements ProductService, InitializingBean, For
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		entityDictionaryService.registerPropDefMapping(PLMModel.PROP_PACKAGINGLIST_QTY, PLMModel.PROP_COMPOLIST_QTY_SUB_FORMULA);
+		entityDictionaryService.registerExtraAssocsDefMapping(PLMModel.TYPE_PRODUCT, PLMModel.ASSOC_PRODUCTLIST_PRODUCT);
 
 	}
 

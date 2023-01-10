@@ -155,6 +155,8 @@ public interface EntityDictionaryService extends DictionaryService {
 
 	String toPrefixString(QName propertyQName);
 
+	void registerExtraAssocsDefMapping(QName orig, QName dest);
+
 
 
 
