@@ -164,7 +164,6 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 		Locale currentContentLocal = I18NUtil.getContentLocale();
 		try (ActionStateContext state = BeCPGStateHelper.onFormulateEntity(entityNodeRef)){
 		
-		try {
 			I18NUtil.setLocale(Locale.getDefault());
 			I18NUtil.setContentLocale(null);
 			
