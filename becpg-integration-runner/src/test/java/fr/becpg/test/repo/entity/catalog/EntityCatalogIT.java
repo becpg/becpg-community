@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -26,7 +27,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
@@ -34,10 +37,16 @@ import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ClientData;
+import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
+import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.LabelingRuleListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -167,12 +176,31 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			allergenList.add(new AllergenListDataItem(null, null, true, false, null, null, allergens.get(2), false));
 			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergens.get(3), false));
 			sfData.setAllergenList(allergenList);
+			
+
+			RawMaterialData rawMaterial1 = new RawMaterialData();
+			rawMaterial1.setName("Raw material 1");
+			NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
+			List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
+			labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterialNodeRef));
+		
+			sfData.getCompoListView().setCompoList(compoList1);
+
+			sfData.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
 
 		});
 
 		final SemiFinishedProductData sampleProduct = (SemiFinishedProductData) inReadTx(() -> alfrescoRepository.findOne(sfNodeRef));
+		
+
+		inWriteTx(() -> {
+			return formulationService.formulate(sfNodeRef);
+		});
+
 
 		long timestamps = Calendar.getInstance().getTimeInMillis();
 
@@ -296,8 +324,54 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 
 		});
 
-		checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
+		timestamps =  checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
+		
+		
+		inWriteTx(() -> {
+			return formulationService.formulate(sfNodeRef);
+		});
+		
+		timestamps =  checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
+		
+		inWriteTx(() -> {
+			return formulationService.formulate(sfNodeRef);
+		});
+		
+		timestamps =  checkIsAudited(sampleProduct.getNodeRef(), timestamps, false);
+		
+		inWriteTx(() -> {
+			nodeService.setProperty(sampleProduct.getCompoList().get(0).getCharactNodeRef(), ContentModel.PROP_NAME, "Test update ingLabelling");
+			
+			return null;
+		});
+		
+		timestamps =  checkIsAudited(sampleProduct.getNodeRef(), timestamps, false);
+		
+		inWriteTx(() -> {
+			try {
+				policyBehaviourFilter.disableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
+					L2CacheSupport.doInCacheContext(() -> 
+						AuthenticationUtil.runAsSystem(() -> {
+							
+							return formulationService.formulate(sfNodeRef);
+						
+						}), false, true);
+					
+					return null;
+
+			} finally {
+				policyBehaviourFilter.enableBehaviour(ReportModel.ASPECT_REPORT_ENTITY);
+				policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+			}
+			
+		
+		});
+		
+		timestamps =  checkIsAudited(sampleProduct.getNodeRef(), timestamps, true);
 	}
 
 	@Test

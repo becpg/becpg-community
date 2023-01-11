@@ -139,7 +139,9 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 			
 			String name = (String) nodeService.getProperty(associationRef.getSourceRef(), ContentModel.PROP_NAME);
 			
-			boolean isImage = mimetypeService.guessMimetype(name, contentService.getReader(associationRef.getSourceRef(), ContentModel.PROP_CONTENT)).startsWith(MimetypeMap.PREFIX_IMAGE);
+			String mimeType = mimetypeService.guessMimetype(name, contentService.getReader(associationRef.getSourceRef(), ContentModel.PROP_CONTENT));
+			
+			boolean isImage = mimeType != null && mimeType.startsWith(MimetypeMap.PREFIX_IMAGE);
 			
 			NodeRef destRef = null;
 			
@@ -177,8 +179,10 @@ public class DocLinkedEntitiesPolicy extends AbstractBeCPGPolicy
 				
 				String name = (String) nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
 				
-				boolean isImage = mimetypeService.guessMimetype(name, contentService.getReader(entityNodeRef, ContentModel.PROP_CONTENT)).startsWith(MimetypeMap.PREFIX_IMAGE);
+				String mimeType = mimetypeService.guessMimetype(name, contentService.getReader(entityNodeRef, ContentModel.PROP_CONTENT));
 				
+				boolean isImage = mimeType != null && mimeType.startsWith(MimetypeMap.PREFIX_IMAGE);
+
 				List<NodeRef> linkedNodeRefs = associationService.getTargetAssocs(entityNodeRef, BeCPGModel.ASSOC_DOC_LINKED_ENTITIES);
 				for (NodeRef linkedNodeRef : linkedNodeRefs) {
 					NodeRef destRef = null;

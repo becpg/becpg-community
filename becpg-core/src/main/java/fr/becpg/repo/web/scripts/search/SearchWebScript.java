@@ -29,6 +29,7 @@ import fr.becpg.repo.helper.extractors.ForumDataExtractor;
 import fr.becpg.repo.helper.extractors.LinkDataExtractor;
 import fr.becpg.repo.helper.extractors.NodeDataExtractor;
 import fr.becpg.repo.helper.extractors.WikiDataExtractor;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
 /**
@@ -78,7 +79,7 @@ public class SearchWebScript extends AbstractSearchWebScript {
 		Integer maxResults = getNumParameter(req, PARAM_MAX_RESULTS);
 		Integer page = getNumParameter(req, PARAM_PAGE);
 		Integer pageSize = getNumParameter(req, PARAM_PAGE_SIZE);
-		List<String> metadataFields = WebscriptHelper.extractMetadataFields(req);
+		List<AttributeExtractorField> metadataFields = WebscriptHelper.extractMetadataFields(req);
 
 		try {
 			List<NodeRef> results = doSearch(req, maxResults);
@@ -132,7 +133,7 @@ public class SearchWebScript extends AbstractSearchWebScript {
 		return ret;
 	}
 
-	private JSONObject processResults(List<NodeRef> results, List<String> metadataFields) throws JSONException {
+	private JSONObject processResults(List<NodeRef> results, List<AttributeExtractorField> metadataFields) throws JSONException {
 
 		JSONArray items = new JSONArray();
 
@@ -149,7 +150,7 @@ public class SearchWebScript extends AbstractSearchWebScript {
 
 	}
 
-	private NodeDataExtractor getExtractor(NodeRef nodeRef, List<String> metadataFields) {
+	private NodeDataExtractor getExtractor(NodeRef nodeRef, List<AttributeExtractorField> metadataFields) {
 
 		String path = serviceRegistry.getNodeService().getPath(nodeRef).toPrefixString(namespaceService);
 

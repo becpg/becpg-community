@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessStatus;
@@ -121,9 +123,8 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 		
 		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 		Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
-		Map<String, Object> tmp = item.entrySet().stream().filter(map -> map.getKey().contains("entity_") && (map.getValue() != null))
+		return item.entrySet().stream().filter(map -> map.getKey().contains("entity_") && (map.getValue() != null))
 				.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
-		return tmp;
 	}
 
 	/**
@@ -204,13 +205,13 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 								for (NodeRef itemNodeRef : results) {
 									if(field.getFilter()==null || attributeExtractorService.matchCriteria(itemNodeRef, field.getFilter().getCriteriaMap())) {
-										addExtracted(itemNodeRef, field, cache, ret);
+										addExtracted(itemNodeRef, field, ret);
 									}
 								}
 							}
 						} else if (field.isEntityField()) {
 							NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
-							addExtracted(entityNodeRef, field, cache, ret);
+							addExtracted(entityNodeRef, field, ret);
 
 						} else {
 
@@ -222,8 +223,26 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 									assocRefs = associationService.getTargetAssocs(nodeRef, field.getFieldDef().getName());
 								}
 								for (NodeRef itemNodeRef : assocRefs) {
-									addExtracted(itemNodeRef, field, cache, ret);
+									addExtracted(itemNodeRef, field, ret);
 								}
+
+							}else if(field.getFieldDef() instanceof PropertyDefinition 
+									&& DataTypeDefinition.NODE_REF.equals(((PropertyDefinition)field.getFieldDef()).getDataType().getName())  ) {
+
+									Object value = properties.get(field.getFieldDef().getName());
+									if(value!=null) {
+										if (!((PropertyDefinition) field.getFieldDef()).isMultiValued()) {
+											
+											addExtracted((NodeRef) value, field, ret);
+										} else {
+											@SuppressWarnings("unchecked")
+											List<NodeRef> values = (List<NodeRef>) value;
+											for (NodeRef tempValue : values) {
+												addExtracted(tempValue, field, ret);
+											}
+	
+										}
+									}
 
 							}
 						}
@@ -231,7 +250,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 						return ret;
 					}
 
-					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache,
+					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field,
 							List<Map<String, Object>> ret) {
 						if (cache.containsKey(itemNodeRef)) {
 							ret.add(cache.get(itemNodeRef));
@@ -248,7 +267,9 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 		
 		
 	}
-
+	
+	
+	
 
 	public class FormulaContext {
 		private Map<String, Object> props;

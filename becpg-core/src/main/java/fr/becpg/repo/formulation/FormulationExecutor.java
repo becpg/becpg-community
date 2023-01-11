@@ -47,8 +47,7 @@ public class FormulationExecutor {
 	}
 	
 	
-	FormulationExecutorState getState(NodeRef  entityNodeRef) {
-		
+	public FormulationExecutorState getState(NodeRef entityNodeRef) {
 		return FormulationExecutorState.INPROGRESS;
 	}
 	

@@ -21,7 +21,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.GS1Model;
-import fr.becpg.model.PLMModel;
 
 /**
  * Update GS1ModelPatch
@@ -127,12 +126,12 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 
 		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-		doForType(PLMModel.TYPE_FINISHEDPRODUCT);
+		applyPatch();
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
-	private void doForType(final QName type) {
+	private void applyPatch() {
 		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
@@ -141,7 +140,7 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 			long minSearchNodeId = 0;
 			long maxSearchNodeId = INC;
 
-			final Pair<Long, QName> val = getQnameDAO().getQName(type);
+			final Pair<Long, QName> val = getQnameDAO().getQName(GS1Model.ASPECT_GS1_ASPECT);
 
 			@Override
 			public int getTotalEstimatedWorkSize() {
@@ -162,7 +161,7 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 
 					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
 
-						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+						List<Long> nodeids = getPatchDAO().getNodesByAspectQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
 						for (Long nodeid : nodeids) {
 							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -205,15 +204,12 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 				if (nodeService.exists(productNodeRef)) {
-					if (nodeService.hasAspect(productNodeRef, GS1Model.ASPECT_GS1_ASPECT)) {
-						
-						if (lockService.isLocked(productNodeRef)) {
-							lockService.unlock(productNodeRef);
-						}
-						
-						nodeService.removeAspect(productNodeRef, ASPECT_GS1_DATES_ASPECT);
-						nodeService.removeAspect(productNodeRef, ASPECT_GS1_INDICATORS_ASPECT);
+					if (lockService.isLocked(productNodeRef)) {
+						lockService.unlock(productNodeRef);
 					}
+					
+					nodeService.removeAspect(productNodeRef, ASPECT_GS1_DATES_ASPECT);
+					nodeService.removeAspect(productNodeRef, ASPECT_GS1_INDICATORS_ASPECT);
 				} else {
 					logger.warn("productNodeRef doesn't exist : " + productNodeRef + " or is not in workspace store");
 				}

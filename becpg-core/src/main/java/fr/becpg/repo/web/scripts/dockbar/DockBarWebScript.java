@@ -49,6 +49,7 @@ import org.springframework.util.StopWatch;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.extractors.ContentDataExtractor;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
@@ -231,7 +232,7 @@ public class DockBarWebScript extends AbstractWebScript {
 
 	}
 
-	private JSONObject processResults(List<NodeRef> results, List<String> metadataFields, Map<NodeRef, String> elements) throws InvalidNodeRefException, JSONException {
+	private JSONObject processResults(List<NodeRef> results, List< AttributeExtractorField> metadataFields, Map<NodeRef, String> elements) throws InvalidNodeRefException, JSONException {
 
 		JSONArray items = new JSONArray();
 

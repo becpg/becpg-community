@@ -29,6 +29,11 @@
       <property name="threadPriority" value="4" />
     </bean>
 
+	<bean id="append-header" class="fr.becpg.repo.action.executer.AppendHeaderActionExecuter" parent="action-executer">
+		<property name="repositoryHelper" ref="repositoryHelper" />
+		<property name="contentService" ref="contentService" />
+		<property name="fileFolderService" ref="fileFolderService" />
+	</bean> 
 
 	<bean id="import-content" class="fr.becpg.repo.action.executer.ImporterActionExecuter" parent="action-executer">
       <property name="importService" ref="importService" />           

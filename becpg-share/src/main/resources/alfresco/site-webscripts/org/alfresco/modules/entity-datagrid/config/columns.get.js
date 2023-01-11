@@ -239,7 +239,7 @@ function main() {
 }
 
 function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEntityType, entityNodeRef ) {
-
+	
 	var columns = [], defaultColumns = [], ret = [];
 
 	if (itemType != null && itemType.length > 0) {
@@ -265,7 +265,8 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 		var formConfig = getFormConfig(itemType, formId, mode, prefixedSiteId, prefixedEntityType);
 
 		if (formConfig != null) {
-
+			
+		
 			// get the configured visible fields
 			var visibleFields = getVisibleFields(mode == "bulk-edit" ? "edit" : "view", formConfig);
 
@@ -312,10 +313,23 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 
 			
 			if(override){
+				var nestedFields= [];
+				for (var i in visibleFields) {
+					var fieldId = visibleFields[i];
+					if (fieldId.indexOf("dataList_") == 0
+					|| fieldId.indexOf("entity_") == 0
+					) {
+					  nestedFields.push(fieldId);
+					}	
+				}
+				
 				visibleFields = [];
 				for (var j in columns) {
 					visibleFields.push(columns[j].name);
 				}
+				
+				 visibleFields.push.apply(visibleFields, nestedFields);
+				
 			}
 
 			for (var i in visibleFields) {
@@ -332,7 +346,7 @@ function getColumns(itemType, list, formIdArgs, mode, prefixedSiteId, prefixedEn
 						"dataType": "nested"
 					};
 					
-					if(!override){
+				 if(!override){
 
 						if (formConfig.fields[fieldId].label != null || formConfig.fields[fieldId].labelId != null) {
 							column.label = formConfig.fields[fieldId].label != null ? formConfig.fields[fieldId].label

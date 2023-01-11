@@ -89,9 +89,22 @@
  * listItems( node,  listQname) returns list items
  * 
  * toISO8601(dateObject, options) convert date toISO8601
+ *
+ * isOnCreateEntity(node) Test we are creating entity
+ *
+ * isOnMergeEntity(node) Test we are merging entity
+ *
+ * isOnMergeMinorVersion(node) Test we are merging entity to minor version
+ *
+ * isOnMergeMajorVersion(node) Test we are merging entity to major version
+ *
+ * isOnCopyEntity(node) Test we are copying entity
+ *
+ * isOnFormulateEntity(node) Test we are formulating entity
+ *
+ * isOnBranchEntity(node) Test we are branching entity
  */
-
-
+ 
 const SIMULATION_SITE_ID = "simulation";
 const VALID_SITE_ID = "valid";
 const ARCHIVED_SITE_ID = "archived";
@@ -437,11 +450,15 @@ function classifyByHierarchy(productNode, folderNode, propHierarchy) {
 		return bcpg.classifyByHierarchy(productNode, folderNode, propHierarchy);
 	}
 	return bcpg.classifyByHierarchy(productNode, folderNode, null);
-	
+	 
 }
 
-function classifyByDate(productNode, path, dateFormat, propDate) {
-	return bcpg.classifyByDate(productNode, path, dateFormat, propDate);
+function classifyByDate(productNode, path, date, dateFormat) {
+	return bcpg.classifyByDate(productNode, path, date, dateFormat);
+}
+
+function classifyByDate(productNode, path, date, dateFormat, documentLibrary) {
+	return bcpg.classifyByDate(productNode, documentLibrary, path, date, dateFormat);
 }
 
 function formulate(product) {
@@ -487,13 +504,30 @@ function getOrCreateFolder(folderNode, targetFolder) {
 }
 
 function getOrCreateFolderByPath(entity, path) {
-	var folder = entity.childByNamePath(bcpg.getTranslatedPath(path));
-		
-	if (folder == null) {
-		folder = entity.createFolderPath(bcpg.getTranslatedPath(path));
-	}
 	
-	return folder;
+	var index = path.indexOf("/");
+	
+	if (index == -1) {
+		var folder = entity.childByNamePath(bcpg.getTranslatedPath(path));
+		
+		if (folder == null) {
+			folder = entity.createFolderPath(bcpg.getTranslatedPath(path));
+		}
+		
+		return folder;
+	} else {
+		var firstPath = path.substring(0, index);
+		
+		var lastPath = path.substring(index + 1);
+		
+		var folder = entity.childByNamePath(bcpg.getTranslatedPath(firstPath));
+		
+		if (folder == null) {
+			folder = entity.createFolderPath(bcpg.getTranslatedPath(firstPath));
+		}
+		
+		return getOrCreateFolderByPath(folder, lastPath);
+	}
 }
 
 /**
@@ -834,4 +868,30 @@ function getEntityListFromNode(product, listName) {
     return entityList;
 }
 
+function isOnCreateEntity( node) {
+	return bState.isOnCreateEntity(node);
+}
 
+function isOnMergeEntity( node) {
+	return bState.isOnMergeEntity(node);
+}
+
+function isOnMergeMinorVersion(node) {
+	return bState.isOnMergeMinorVersion(node);
+}
+
+function isOnMergeMajorVersion(node) {
+	return bState.isOnMergeMajorVersion(node);
+}
+
+function isOnCopyEntity(node) {
+	return bState.isOnCopyEntity(node);
+}
+
+function isOnFormulateEntity(node) {
+	return bState.isOnFormulateEntity(node);
+}
+
+function isOnBranchEntity(node) {
+	return bState.isOnBranchEntity(node);
+}

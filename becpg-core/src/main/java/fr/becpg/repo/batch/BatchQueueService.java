@@ -14,6 +14,8 @@ public interface BatchQueueService {
 	
 	<T> Boolean queueBatch(BatchInfo batchInfo, List<BatchStep<T>> batchSteps);
 	
+	<T> Boolean queueBatch(BatchInfo batchInfo, List<BatchStep<T>> batchSteps, BatchClosingHook closingHook);
+	
     List<BatchInfo> getBatchesInQueue();
 
 	boolean removeBatchFromQueue(String batchId);
@@ -23,5 +25,6 @@ public interface BatchQueueService {
 	boolean cancelBatch(String batchId);
 	
 	Set<String> getCancelledBatches();
+
 	
 }

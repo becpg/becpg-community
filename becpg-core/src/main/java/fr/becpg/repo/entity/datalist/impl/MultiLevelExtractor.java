@@ -39,6 +39,7 @@ import fr.becpg.repo.entity.datalist.MultiLevelDataListService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
 /**
@@ -102,7 +103,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter,List<AttributeExtractorField> metadataFields) {
 
 		boolean resetTree = false;
 
@@ -148,7 +149,7 @@ public class MultiLevelExtractor extends SimpleExtractor {
 	 * @param dataListFilter a {@link fr.becpg.repo.entity.datalist.data.DataListFilter} object.
 	 * @return a int.
 	 */
-	protected int appendNextLevel(PaginatedExtractedItems ret, List<String> metadataFields, MultiLevelListData listData, int currIndex,
+	protected int appendNextLevel(PaginatedExtractedItems ret, List<AttributeExtractorField> metadataFields, MultiLevelListData listData, int currIndex,
 			int startIndex, int pageSize, Map<String, Object> props, DataListFilter dataListFilter) {
 
 		Map<NodeRef, Map<String, Object>> cache = new HashMap<>();

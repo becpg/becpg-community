@@ -41,6 +41,11 @@
 		<property name="automaticRecordVersionType" value="${beCPG.eco.automatic.record.version.type}"/>
 	</bean>
 	
+   	<bean id="changeOrderPolicy" class="fr.becpg.repo.ecm.policy.ChangeOrderPolicy"
+		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
+		<property name="ecoService" ref="ecoService"/>
+	</bean>
+	
 	 <bean id="automaticECOJob" class="org.springframework.scheduling.quartz.JobDetailFactoryBean">
         <property name="jobClass">
             <value>fr.becpg.repo.ecm.AutomaticECOJob</value>

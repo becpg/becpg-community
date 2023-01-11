@@ -12,7 +12,7 @@ package fr.becpg.repo.product.data.constraints;
  */
 public enum ProductUnit {
 
-	kg, g, mg, lb, oz , L, cL, mL, fl_oz,cp,gal, in, ft, mm, cm , m, m2, m3, h, P, PP, Box, Perc;
+	kg, g, mg, µg, lb, oz , L, cL, mL, fl_oz,cp,gal, in, ft, mm, cm , m, m2, m3, h, P, PP, Box, Perc;
 	
 	
 
@@ -42,7 +42,7 @@ public enum ProductUnit {
 	 * @return a boolean.
 	 */
 	public  boolean isWeight() {
-		return kg.equals(this) || g.equals(this) || mg.equals(this) || isLb();
+		return kg.equals(this) || g.equals(this) || mg.equals(this)  || µg.equals(this) || isLb();
 	}
 
 	/**
@@ -106,6 +106,8 @@ public enum ProductUnit {
 			return 100d;
 		} else if (this.equals(ProductUnit.mg)) {
 			return 1000000d;
+		} else if (this.equals(ProductUnit.µg)) {
+			return 1000000000d;
 		} else if (this.equals(ProductUnit.lb)) {
 			return 2.204622622d;
 		} else if (this.equals(ProductUnit.oz)) {
@@ -205,7 +207,7 @@ public enum ProductUnit {
 	public ProductUnit getMainUnit() {
 		if (this.equals(ProductUnit.lb) || this.equals(ProductUnit.oz)) {
 			return ProductUnit.lb;
-		} else if (this.equals(ProductUnit.kg) || this.equals(ProductUnit.g) || this.equals(ProductUnit.mg)) {
+		} else if (this.equals(ProductUnit.kg) || this.equals(ProductUnit.g) || this.equals(ProductUnit.mg) || this.equals(ProductUnit.µg) ) {
 			return ProductUnit.kg;
 		} else if (this.equals(ProductUnit.L) || this.equals(ProductUnit.cL) || this.equals(ProductUnit.mL)) {
 			return ProductUnit.L;
@@ -239,7 +241,11 @@ public enum ProductUnit {
 			case "ml":
 				return mL;
 			case "cl":
-				return mL;	
+				return cL;
+			case "mg":
+				return mg;
+			case "µg":	
+				return µg;
 			case "p":
 				return P;
 			case "m":
@@ -255,10 +261,4 @@ public enum ProductUnit {
 	}
 
 
-
-
-
-	
-
-	
 }

@@ -43,7 +43,17 @@
 			               </div>
 			         </div>
 			         <button id="${el}-show-button">${msg("menu.show")}</button>
-			         <button id="${el}-checkAll-button">${msg("menu.check.all")}</button>
+			         <button id="${el}-checkAll-button">${msg("menu.check")}&nbsp;&#9662;</button>
+			            <div id="${el}-checkAll-menu" class="yuimenu" style="visibility:hidden;">
+			               <div class="bd">
+			                  <ul>
+			                     <li><a href="#"><span class="selectAll">${msg("menu.select.all")}</span></a></li>
+			                     <li><a href="#"><span class="selectInvert">${msg("menu.select.invert")}</span></a></li>
+			                     <li><a href="#"><span class="selectNone">${msg("menu.select.none")}</span></a></li>
+			                  </ul>
+			               </div>
+			            </div>
+			         
 			      </div>
 			      <div id="${el}-itemProps-container" class="bulk-edit-props-container"></div>
 			   </div>
@@ -70,7 +80,6 @@
 					               <#-- <li><a  href=""><span class="onExportAsZip">${msg("actions.folder.download")}</span></a></li>  -->	
 					                <li><a  rel="edit,allPages" href=""><span class="onEditSelected">${msg("button.edit-selected")}</span></a></li>
 					                <li><a  href=""><span class="onSimulateSelected">${msg("button.simulate-selected")}</span></a></li>
-					                <li><a  rel="supplier" href=""><span class="onSendToSupplier">${msg("actions.entity.send-to-supplier")}</span></a></li>
 					            </ul>
      				         </div>
 					      </div>			

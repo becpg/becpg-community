@@ -640,7 +640,28 @@
 
                             Event.preventDefault(domEvent);
                         },
-						
+                        
+						onCheckAllMenuEvent: function EntityDataGrid_onCheckAllMenuEvent(sType, aArgs, p_obj) {
+							var domEvent = aArgs[0], eventTarget = aArgs[1];
+
+							var fn = Alfresco.util.findEventClass(eventTarget);
+
+							var items = Selector.query('input[name="propChecked"]');
+							for (var i = 0; i < items.length; i++) {
+								if (items[i].type == 'checkbox') {
+									if (fn == "selectAll") {
+										items[i].checked = true;
+									} else if (fn == "selectNone") {
+										items[i].checked = false;
+									} else {
+										items[i].checked = !items[i].checked;
+									}
+								}
+							}
+
+							Event.preventDefault(domEvent);
+						},
+
 						/**
 						 * @method onSelectedTypeChanged React on
 						 *         onSelectedTypeChanged event
@@ -721,15 +742,15 @@
 							Bubbling.addDefaultAction("action-link", fnActionHandler);
 							
 							// CheckAll Items menu button
-							this.widgets.checkAllbutton = Alfresco.util.createYUIButton(this, "checkAll-button", function() {
-								var items = Selector.query('input[name="propChecked"]');
-								for(var i=0; i<items.length; i++) {
-									if(items[i].type =='checkbox') {
-										items[i].checked =!items[i].checked;
-									}
-								}       
-							
-							});
+							this.widgets.checkAllButton = Alfresco.util.createYUIButton(this, "checkAll-button", this.onCheckAllMenuEvent
+								,{
+									type: "menu",
+									menu: "checkAll-menu",
+									lazyloadmenu: false,
+									disabled: false
+								});
+
+
 							
 
 							this.widgets.showButton = Alfresco.util.createYUIButton(this, "show-button", this.onBulkEditShow, {
@@ -868,11 +889,11 @@
 						_setupDataSource : function BulkEdit__setupDataSource() {
 
 							for (var i = 0, ii = this.datalistColumns.length; i < ii; i++) {
-								var column = this.datalistColumns[i], columnName = column.name.replace(":", "_"), fieldLookup = this
+								var column = this.datalistColumns[i], columnName = column.name.replace(":", "_"), columnLabel = column.label, fieldLookup = this
 										._buildFormsName(column);
 
 								if (this._isSelectedProp(fieldLookup)) {
-									this.dataRequestFields.push(columnName);
+									this.dataRequestFields.push({"id":columnName, "label":columnLabel});
 									this.dataResponseFields.push(fieldLookup);
 									this.dataTableColumn.push(column);
 								}
@@ -1557,13 +1578,6 @@
 
 						},
 						onExportCSV : function BulkEdit_onExportCSV() {
-							var fields = "";
-							for ( var i in this.dataRequestFields) {
-								if (fields.length > 0) {
-									fields += "$";
-								}
-								fields += this.dataRequestFields[i];
-							}
 							
 							var PAGE_SIZE = 50;
 							var CURRENT_PAGE = 1;
@@ -1791,64 +1805,6 @@
 							alert("Not yet implemented")
 						},
 
-						onSendToSupplier : function(){
-
-							var selectedNodeRef = this.getSelectedItems(), submissionParams = "";
-							for ( var i in selectedNodeRef) {
-								if (submissionParams.length > 0) {
-									submissionParams += ",";
-								}
-								submissionParams += selectedNodeRef[i].nodeRef;
-							}
-
-							var actionUrl = Alfresco.constants.PROXY_URI + "becpg/supplier/send-to-supplier?nodeRefs="+ 
-							submissionParams+"&allPages="+this.allPages+"&queryExecutionId="+this.queryExecutionId;
-
-							this.modules.sendToSupplier = new Alfresco.module.SimpleDialog(this.id + "-sendToSupplier").setOptions({
-								width : "33em",
-								templateUrl : Alfresco.constants.URL_SERVICECONTEXT + "modules/supplier/send-to-supplier",
-								actionUrl : actionUrl,
-								validateOnSubmit : false,
-								destroyOnHide: true,
-								firstFocus : this.id + "-sendToSupplier-projectTpl-field",
-								doBeforeFormSubmit : {
-									fn : function onActionSendToSupplier_doBeforeFormSubmit(form) {
-										Alfresco.util.PopupManager.displayMessage({
-											text : this.msg("message.send-to-supplier.inprogress")
-										});
-									},
-									scope : this
-								},
-								onSuccess : {
-									fn : function onActionSendToSupplier_success(response) {
-										if (response.json) {
-											window.location.href = beCPG.util.entityURL(recordSiteName,
-													response.json.persistedObject, p_record.node.type);
-										}
-									},
-									scope : this
-								},
-								onFailure : {
-									fn : function onActionSendToSupplier_failure(response) {
-										if(response.json && response.json.message){
-											Alfresco.util.PopupManager.displayMessage({
-												text : response.json.message
-											});  
-										} else {
-											Alfresco.util.PopupManager.displayMessage({
-												text : this.msg("message.import.failure")
-											});
-										}
-									},
-									scope : this
-								}
-							});
-
-							this.modules.sendToSupplier.show();				 
-						},
-
-						
-						
 						onSimulateSelected : function BulkEdit_onSimulateSelected() {
 							
 							if (!this.modules.simulateFolderPicker)
