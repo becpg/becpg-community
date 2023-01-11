@@ -196,12 +196,12 @@
                      
                      html += '<div class="entity-branches'+(current ? " current":"")+'">';
                      html += '   <span class="document-version">' + $html(doc.label) + '</span>';
-                     html += '   <span class="'+doc.metadata+'" ><a title="'+doc.description+'" href="'+url+'">' + $html(doc.name) + '</a></span>';
+                     html += '   <span class="'+doc.metadata+'" ><a title="'+ $html(doc.description) +'" href="'+url+'">' + $html(doc.name) + '</a></span>';
                    if(!current) {
                      html += '   <span class="actions"><a href="' + compareURL + '" class="compare" title="' + this
                      .msg("label.compare") + '">&nbsp;</a></span>';
                    } else {
-                      html += '  <span class="actions"><a href="#" name=".onVersionsGraphClick" rel="' + this.options.nodeRef+"@"+doc.label + '" class="' + this.id + ' versions-graph" title="' + this
+                      html += '  <span class="actions"><a href="#" name=".onVersionsGraphClick" rel="' + this.options.nodeRef+"@"+ $html(doc.label) + '" class="' + this.id + ' versions-graph" title="' + this
                       .msg("label.versionsGraph") + '">&nbsp;</a></span>';
                    }
                      html += '</div>';
