@@ -39,6 +39,7 @@ import fr.becpg.repo.project.ProjectActivityService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
 import fr.becpg.repo.project.data.projectList.DeliverableState;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskManualDate;
@@ -596,4 +597,18 @@ public class ProjectHelper {
 		return (authorityName != null) && authorityName.startsWith(PermissionService.GROUP_PREFIX + ProjectRepoConsts.PROJECT_GROUP_PREFIX);
 	}
 
+	public static DeliverableListDataItem createDeliverable(String name, String description, DeliverableScriptOrder order, TaskListDataItem task, NodeRef content) {
+		
+		DeliverableListDataItem del = new DeliverableListDataItem();
+		
+		del.setName(name);
+		del.setDescription(description);
+		del.setState(DeliverableState.Planned);
+		del.setScriptOrder(order);
+		del.setContent(content);
+		del.setTasks(new ArrayList<>());
+		del.getTasks().add(task.getNodeRef());
+
+		return del;
+	}
 }

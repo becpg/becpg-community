@@ -49,7 +49,14 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>fr.becpg.artworks</groupId>
+			<artifactId>becpg-artworks-platform</artifactId>
+			<type>jar</type>
+			<version>${becpg.artworks.version}</version>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>fr.becpg</groupId>

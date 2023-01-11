@@ -31,6 +31,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.report.search.SearchReportRenderer;
 import fr.becpg.repo.report.search.actions.AbstractExportSearchAction;
@@ -267,7 +268,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 	}
 
 	private List<AttributeExtractorStructure> extractListStruct(QName itemType, Row headerRow) {
-		List<String> metadataFields = new LinkedList<>();
+		List<AttributeExtractorField> metadataFields = new LinkedList<>();
 		String currentNested = "";
 		for (int i = 1; i < headerRow.getLastCellNum(); i++) {
 			if (headerRow.getCell(i) != null) {
@@ -283,7 +284,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 							} else {
 								if (!currentNested.isEmpty()) {
 									logger.debug("Add nested field : " + currentNested);
-									metadataFields.add(currentNested);
+									metadataFields.add(new AttributeExtractorField(currentNested, null));
 									currentNested = "";
 								}
 								if (MLTextHelper.getSupportedLocalesList() != null ) { 
@@ -296,7 +297,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 									if (currentNested.contains(BACKSLASH + "|")) {
 										currentNested = currentNested.replace(BACKSLASH + "|", "_");
 									}
-									metadataFields.add(currentNested);
+									metadataFields.add(new AttributeExtractorField(currentNested,null));
 									currentNested = "";
 									
 								} else {
@@ -307,16 +308,16 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 						} else {
 							if (!currentNested.isEmpty() && !cellValue.contains("formula")) {
 								logger.debug("Add nested field : " + currentNested);
-								metadataFields.add(currentNested);
+								metadataFields.add(new AttributeExtractorField(currentNested,null));
 								currentNested = "";
 							}
 							logger.debug("Add field : " + cellValue);
-							metadataFields.add(cellValue);
+							metadataFields.add(new AttributeExtractorField(cellValue,null));
 						}
 					}
 				} else if (headerRow.getCell(i).getCellType() == CellType.FORMULA) {
 					String cellFormula = headerRow.getCell(i).getCellFormula();
-					metadataFields.add("excel|" + cellFormula);
+					metadataFields.add(new AttributeExtractorField("excel|" + cellFormula,null));
 				}
 			}
 
@@ -324,7 +325,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 
 		if (!currentNested.isEmpty()) {
 			logger.debug("Add nested field : " + currentNested);
-			metadataFields.add(currentNested);
+			metadataFields.add(new AttributeExtractorField(currentNested,null));
 		}
 
 		return attributeExtractorService.readExtractStructure(itemType, metadataFields);

@@ -3,8 +3,10 @@ package fr.becpg.repo.entity.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.repo.dictionary.DictionaryComponent;
 import org.alfresco.repo.dictionary.DictionaryDAO;
@@ -48,6 +50,8 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	protected NamespaceService namespaceService;
 
 	private Map<QName, QName> propDefMapping = new HashMap<>();
+	
+	private Map<QName, Set<QName>> extraAssocsDefMapping = new HashMap<>();
 
 	public void setRepositoryEntityDefReader(RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader) {
 		this.repositoryEntityDefReader = repositoryEntityDefReader;
@@ -113,6 +117,14 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 	public void registerPropDefMapping(QName orig, QName dest) {
 		propDefMapping.put(orig, dest);
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public void registerExtraAssocsDefMapping(QName orig, QName dest) {
+		Set<QName> extra = extraAssocsDefMapping.computeIfAbsent(orig, (a) ->  new HashSet<>());
+		extra.add(dest);
+		extraAssocsDefMapping.put(orig, extra);
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -130,6 +142,14 @@ public class EntityDictionaryServiceImpl extends DictionaryComponent implements 
 					|| (!exactMatch && isSubClass(assocDef.getTargetClass().getName(), sourceType))) {
 				ret.add(assocDef);
 			}
+		}
+		
+		if(extraAssocsDefMapping.containsKey(sourceType)) {
+			for (QName assocQName : extraAssocsDefMapping.get(sourceType)) {
+				AssociationDefinition assocDef = getAssociation(assocQName);
+				ret.add(assocDef);
+			}
+			
 		}
 		return ret;
 	}

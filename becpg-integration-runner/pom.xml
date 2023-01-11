@@ -425,6 +425,19 @@
 								</configuration>
 							</execution>
 							<execution>
+								<id>becpg-solr</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+								<configuration>
+									<repository>${docker.becpg.url}/becpg-solr</repository>
+									<contextDirectory>${project.build.directory}/becpg-solr</contextDirectory>
+									<pullNewerImage>true</pullNewerImage>
+									<tag>${docker.becpg.tag}</tag>
+								</configuration>
+							</execution>
+							<execution>
 								<id>becpg-glop</id>
 								<phase>prepare-package</phase>
 								<goals>

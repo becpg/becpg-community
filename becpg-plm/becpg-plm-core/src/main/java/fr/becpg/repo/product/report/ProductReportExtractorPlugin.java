@@ -68,6 +68,7 @@ import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.product.helper.AllocationHelper;
 import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -127,6 +128,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	@Value("${beCPG.product.report.multiLevel}")
 	private Boolean extractInMultiLevel = false;
+	
+	@Value("${beCPG.product.report.nonEffectiveComponent}")
+	private Boolean extractNonEffectiveComponent = false;
 
 	@Value("${beCPG.product.report.componentDatalistsToExtract}")
 	private String componentDatalistsToExtract = "";
@@ -579,11 +583,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private void loadCompoList(ProductData productData, Element dataListsElt, DefaultExtractorContext context, int level) {
 		// compoList
-		if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		String filter = "";
+		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent)) {
+			filter = EffectiveFilters.EFFECTIVE;
+		}
+		
+		if (productData.hasCompoListEl(new EffectiveFilters<>(filter))) {
 			Element compoListElt = dataListsElt.addElement(PLMModel.TYPE_COMPOLIST.getLocalName() + "s");
 			addDataListStateAndName(compoListElt, productData.getCompoList().get(0).getParentNodeRef());
 
-			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(filter))) {
 				if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
 					loadCompoListItem(productData.getNodeRef(), null, compoListElt, level, new CurrentLevelQuantities(productData, dataItem),
 							context);
@@ -597,20 +606,25 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	}
 
 	private void loadProcessList(ProductData productData, Element dataListsElt, DefaultExtractorContext context, boolean isExtractedProduct) {
-		if (productData.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		String filter = "";
+		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent)) {
+			filter = EffectiveFilters.EFFECTIVE;
+		}
+		
+		if (productData.hasProcessListEl(new EffectiveFilters<>(filter))) {
 			Element processListElt = dataListsElt.addElement(MPMModel.TYPE_PROCESSLIST.getLocalName() + "s");
 			addDataListStateAndName(processListElt, productData.getProcessList().get(0).getParentNodeRef());
 
-			for (ProcessListDataItem dataItem : productData.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (ProcessListDataItem dataItem : productData.getProcessList(new EffectiveFilters<>(filter))) {
 				loadProcessListItem(productData.getNodeRef(), new CurrentLevelQuantities(productData, dataItem), dataItem, processListElt, 1,
 						context);
 			}
 
 			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) && isExtractedProduct) {
 
-				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				if (productData.hasCompoListEl(new EffectiveFilters<>(filter))) {
 
-					for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(filter))) {
 						if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
 
 							if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
@@ -632,8 +646,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, DefaultExtractorContext context,
 			boolean isExtractedProduct) {
-
-		if (productData.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+		String filter = "";
+		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent)) {
+			filter = EffectiveFilters.EFFECTIVE;
+		}
+		
+		if (productData.hasPackagingListEl(new EffectiveFilters<>(filter))) {
 
 			Element packagingListElt = dataListsElt.addElement(PLMModel.TYPE_PACKAGINGLIST.getLocalName() + "s");
 			addDataListStateAndName(packagingListElt, productData.getPackagingList().get(0).getParentNodeRef());
@@ -696,15 +714,15 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			
 			productData.setDefaultVariantPackagingData(defaultVariantPackagingData);
 
-			for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+			for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(filter))) {
 				loadPackagingItem(productData.getNodeRef(), new CurrentLevelQuantities(productData, dataItem), dataItem, packagingListElt, context, 1, false, false);
 			}
 
 			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) && isExtractedProduct) {
 
-				if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				if (productData.hasCompoListEl(new EffectiveFilters<>(filter))) {
 
-					for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+					for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(filter))) {
 						if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
 
 							if ((nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
@@ -1212,7 +1230,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		Double productNetWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 		Map<NodeRef, Double> rawMaterials = new HashMap<>();
-		rawMaterials = getRawMaterials(productData, rawMaterials, productNetWeight);
+		rawMaterials = AllocationHelper.extractAllocations(productData, rawMaterials, productNetWeight, alfrescoRepository);
 		Double totalQty = 0d;
 		for (Double qty : rawMaterials.values()) {
 			totalQty += qty;
@@ -1486,38 +1504,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 		}
-	}
-
-	private Map<NodeRef, Double> getRawMaterials(ProductData productData, Map<NodeRef, Double> rawMaterials, Double parentQty) {
-
-		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-			NodeRef productNodeRef = compoList.getProduct();
-			if ((productNodeRef != null) && !DeclarationType.Omit.equals(compoList.getDeclType())) {
-				QName type = nodeService.getType(productNodeRef);
-				Double qty = FormulationHelper.getQtyInKg(compoList);
-				Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Get rawMaterial " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " netWeight "
-							+ netWeight + " parentQty " + parentQty);
-				}
-				if ((qty != null) && (netWeight != 0d)) {
-					qty = (parentQty * qty * FormulationHelper.getYield(compoList)) / (100 * netWeight);
-
-					if (type.isMatch(PLMModel.TYPE_RAWMATERIAL)) {
-						Double rmQty = rawMaterials.get(productNodeRef);
-						if (rmQty == null) {
-							rmQty = 0d;
-						}
-						rmQty += qty;
-						rawMaterials.put(productNodeRef, rmQty);
-					} else if (!type.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
-						getRawMaterials((ProductData) alfrescoRepository.findOne(productNodeRef), rawMaterials, qty);
-					}
-				}
-			}
-		}
-
-		return rawMaterials;
 	}
 
 	/** {@inheritDoc} */

@@ -15,8 +15,8 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
-import fr.becpg.repo.listvalue.ListValueEntry;
-import fr.becpg.repo.listvalue.ListValuePage;
+import fr.becpg.repo.autocomplete.AutoCompleteEntry;
+import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.NutDatabaseService;
@@ -189,11 +189,11 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 	@Test
 	public void suggestTest() {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			ListValuePage suggestions = nutDatabaseService.suggest(getTestCSVFile().toString(), "orange", 0, 10);
+			AutoCompletePage suggestions = nutDatabaseService.suggest(getTestCSVFile().toString(), "orange", 0, 10);
 			assertEquals(2, suggestions.getResults().size());
 			// check orange, must be 2 results
 			int checks = 0;
-			for (ListValueEntry suggestion : suggestions.getResults()) {
+			for (AutoCompleteEntry suggestion : suggestions.getResults()) {
 				logger.debug("Checking suggestion, named " + suggestion.getName());
 				if ("544F - Chocolat, 85% de cacao, aux écorces d'orange".equals(suggestion.getName())) {
 					++checks;
@@ -206,7 +206,7 @@ public class NutDatabaseServiceIT extends PLMBaseTestCase {
 			suggestions = nutDatabaseService.suggest(getTestCSVFile().toString(), "cacao", 0, 10);
 			assertEquals(2, suggestions.getResults().size());
 			checks = 0;
-			for (ListValueEntry suggestion : suggestions.getResults()) {
+			for (AutoCompleteEntry suggestion : suggestions.getResults()) {
 				if ("544F - Chocolat, 85% de cacao, aux écorces d'orange".equals(suggestion.getName())) {
 					++checks;
 				} else if ("5451 - Chocolat au lait, 45% de cacao, enrichi en vitamine D".equals(suggestion.getName())) {

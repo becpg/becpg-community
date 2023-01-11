@@ -92,6 +92,7 @@ public class EntityReportParameters {
 	public static final String PARAM_COMPONENT_DATALISTS_TO_EXTRACT = "componentDatalistsToExtract";
 	public static final String PARAM_ENTITY_DATALISTS_TO_EXTRACT = "entityDatalistsToExtract";
 	public static final String PARAM_EXTRACT_IN_MULTILEVEL = "extractInMultiLevel";
+	public static final String PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT = "extractNonEffectiveComponent";
 	public static final String PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT = "maxCompoListLevelToExtract";
 
 	private static Log logger = LogFactory.getLog(EntityReportParameters.class);

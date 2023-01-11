@@ -36,6 +36,7 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 
 /**
  * <p>BeCPGTaskInstancesGet class.</p>
@@ -94,12 +95,12 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		// get list of properties to include in the response
 		List<String> tmp = getProperties(req);
 		List<String> properties = new LinkedList<>();
-		List<String> extraProperties = new LinkedList<>();
+		List<AttributeExtractorField> extraProperties = new LinkedList<>();
 
 		for (String string : tmp) {
 			String prop = string;
 			if (prop.startsWith("extra_")) {
-				extraProperties.add(prop.replaceAll("extra_", "").replace("_", ":"));
+				extraProperties.add(new AttributeExtractorField(prop.replace("extra_", "").replace("_", ":"),null));
 			} else {
 				properties.add(prop);
 			}
@@ -230,7 +231,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 	}
 
 	private Map<String, Object> buildbeCPGModel(WorkflowModelBuilder modelBuilder, WorkflowTask task, List<String> properties,
-			List<String> extraProperties) {
+			List<AttributeExtractorField> extraProperties) {
 		Map<String, Object> ret = modelBuilder.buildSimple(task, properties);
 
 		if (!extraProperties.isEmpty()) {

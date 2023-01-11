@@ -3,7 +3,10 @@
   "description": "Advanced search configuration file",
   "version": "1.0",
   "dataListSearchFilters":  {
-          "claim1" : [ 
+  		 "collection" : [
+  		    {"attribute": "bcpg:productList", "operator": "AND", "htmlId":"assoc_bcpg_productCollections_added", "listType": "bcpg:productListProduct" }
+  		  ],
+  		  "claim1" : [ 
            {"attribute": "bcpg:lclLabelClaim" , "htmlId":"assoc_bcpg_lclLabelClaim_added", "listType": "bcpg:labelClaimList" },
            {"attribute": "bcpg:lclClaimValue" , "value":"true" }
          ],

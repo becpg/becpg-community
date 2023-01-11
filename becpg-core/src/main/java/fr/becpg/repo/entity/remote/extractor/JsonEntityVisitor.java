@@ -24,10 +24,13 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.rule.RuleModel;
@@ -36,6 +39,7 @@ import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
+import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentIOException;
@@ -48,6 +52,8 @@ import org.alfresco.service.cmr.repository.Path;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.GUID;
@@ -84,13 +90,17 @@ import fr.becpg.repo.helper.SiteHelper;
 public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	private AttributeExtractorService attributeExtractor;
+	private VersionService versionService;
+	private LockService lockService;
 
 	public JsonEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
 			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService,
-			AttributeExtractorService attributeExtractor) {
+			AttributeExtractorService attributeExtractor, VersionService versionService, LockService lockService) {
 		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
 
 		this.attributeExtractor = attributeExtractor;
+		this.versionService = versionService;
+		this.lockService = lockService;
 	}
 
 	private static final Log logger = LogFactory.getLog(JsonEntityVisitor.class);
@@ -207,6 +217,27 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				entity.put(RemoteEntityService.ATTR_VERSION, properties.get( BeCPGModel.PROP_VERSION_LABEL));
 			} else 	if (properties.get( ContentModel.PROP_VERSION_LABEL)!=null && !((String)properties.get( ContentModel.PROP_VERSION_LABEL)).isBlank()) {
 				entity.put(RemoteEntityService.ATTR_VERSION, properties.get( ContentModel.PROP_VERSION_LABEL));
+			}
+			
+			if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_IS_INITIAL_VERSION, Boolean.FALSE)) && lockService.isLocked(nodeRef)) {
+				
+				String lockInfo = lockService.getAdditionalInfo(nodeRef);
+				
+				try {
+					JSONObject jsonInfo = new JSONObject(lockInfo);
+					
+					if (jsonInfo.has("lockType") && jsonInfo.get("lockType").equals("versioning")) {
+						String currentVersion = (String) entity.get(RemoteEntityService.ATTR_VERSION);
+						
+						if (currentVersion != null) {
+							Collection<Version> nodeRefVersions = versionService.getVersionHistory(nodeRef).getAllVersions();
+							Optional<Double> previousVersion = nodeRefVersions.stream().map(Version::getVersionLabel).filter(label -> !label.equals(currentVersion)).map(Double::parseDouble).max(Comparator.comparing(Double::valueOf));
+							previousVersion.ifPresent(version -> entity.put(RemoteEntityService.ATTR_VERSION, version.toString()));
+						}
+					}
+				} catch (JSONException e) {
+					logger.info("lock additional information cannot be parsed");
+				}
 			}
 
 			if ((nodeRef != null) && Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_NODEREF, Boolean.TRUE))) {

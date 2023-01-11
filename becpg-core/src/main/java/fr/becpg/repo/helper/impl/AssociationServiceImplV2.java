@@ -43,6 +43,7 @@ import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.repo.search.impl.querymodel.impl.db.DBQuery;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.transaction.TransactionalResourceHelper;
@@ -540,21 +541,24 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 							query.append(" join alf_node_properties p" + index + " on (" + propertyName + ".node_id = dataListItem.id " + "and "
 									+ propertyName + ".qname_id= " + qNameId + " and ");
+							
+							String fieldName = DBQuery.getFieldName(entityDictionaryService, criteriaAttribute, true);
+						
 
-							if (criteriaFilter.getStringValue() != null) {
-								query.append(propertyName + ".string_value = '" + criteriaFilter.getStringValue() + "'");
+							if (criteriaFilter.getValue() != null) {
+								query.append(propertyName + "."+fieldName+" = "+wrap(fieldName, criteriaFilter.getValue())+"");
 
-							} else if (criteriaFilter.getBooleanValue() != null) {
-								query.append(propertyName + ".boolean_value = " + criteriaFilter.getBooleanValue());
 							} else {
-								if (criteriaFilter.getMinRange() != null) {
-									query.append(propertyName + ".double_value >= " + criteriaFilter.getMinRange());
+								boolean isFirst = true;
+								if (criteriaFilter.getFromRange() != null && !criteriaFilter.isMinMax(criteriaFilter.getFromRange())) {
+									query.append(propertyName + "."+fieldName+" >= " + wrap(fieldName, criteriaFilter.getFromRange()));
+									isFirst = false;
 								}
-								if (criteriaFilter.getMaxRange() != null) {
-									if (criteriaFilter.getMinRange() != null) {
+								if (criteriaFilter.getToRange() != null && !criteriaFilter.isMinMax(criteriaFilter.getToRange())) {
+									if (!isFirst) {
 										query.append(" and ");
 									}
-									query.append(propertyName + ".double_value <= " + criteriaFilter.getMaxRange());
+									query.append(propertyName + "."+fieldName+" <= " + wrap(fieldName, criteriaFilter.getToRange()));
 								}
 							}
 							query.append(")");
@@ -690,6 +694,14 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 		}
 		return ret;
+	}
+
+	private String wrap(String fieldName, String value) {
+		if("string_value".equals(fieldName)) {
+			return "'"+value+"'";
+		}
+		
+		return value;
 	}
 
 	/** {@inheritDoc} */

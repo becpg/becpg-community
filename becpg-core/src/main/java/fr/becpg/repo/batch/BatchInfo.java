@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.json.JSONObject;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 public class BatchInfo implements Serializable {
 	
@@ -46,6 +48,12 @@ public class BatchInfo implements Serializable {
 	
 	private Boolean isCompleted = Boolean.FALSE;
 	
+	public static final String BATCH_DESC_ID = "batchDescId";
+
+	public static final String BATCH_USER = "batchUser";
+	
+	public static final String BATCH_ID = "batchId";
+
 	public BatchInfo(String batchId, String batchDescId) {
 		super();
 		this.batchId = batchId;
@@ -127,12 +135,25 @@ public class BatchInfo implements Serializable {
 		this.batchSize = batchSize;
 	}
 
+	
+
 	public Boolean getIsCompleted() {
 		return isCompleted;
 	}
 
 	public void setIsCompleted(Boolean isCompleted) {
 		this.isCompleted = isCompleted;
+	}
+
+	public JSONObject toJson() {
+		JSONObject jsonBatch = new JSONObject();
+		jsonBatch.put(BATCH_ID, getBatchId());
+		jsonBatch.put(BATCH_USER, getBatchUser());
+		String label = I18NUtil.getMessage(getBatchDescId(), entityDescription);
+
+		jsonBatch.put(BATCH_DESC_ID,label!=null ? label :  getBatchDescId());
+		
+		return jsonBatch;
 	}
 
 	@Override

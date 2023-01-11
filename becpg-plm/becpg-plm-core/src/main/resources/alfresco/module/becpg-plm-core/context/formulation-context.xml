@@ -133,6 +133,7 @@
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
 					<property name="formulaService" ref="formulaService" />
+					<property name="associationService" ref="associationService" />
 					<property name="propagateModeEnable" value="${beCPG.formulation.nutList.propagateUpEnable}" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">

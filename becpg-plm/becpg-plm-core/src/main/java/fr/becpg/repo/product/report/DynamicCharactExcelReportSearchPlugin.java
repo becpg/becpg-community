@@ -121,7 +121,7 @@ public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSea
 	public boolean isApplicable(QName itemType, String[] parameters) {
 		String parameter = (parameters != null) && (parameters.length > 0) ? parameters[0] : null;
 		return (entityDictionaryService.isSubClass(itemType, PLMModel.TYPE_PRODUCT) || PLMModel.TYPE_COMPOLIST.equals(itemType)
-				|| MPMModel.TYPE_PROCESSLIST.equals(itemType)) && ((parameter == null) || !parameter.contains("Level"));
+				|| MPMModel.TYPE_PROCESSLIST.equals(itemType)) && ((parameter == null) || (!parameter.contains("Level") && !parameter.contains("Allocation"))) ;
 	}
 
 	/** {@inheritDoc} */

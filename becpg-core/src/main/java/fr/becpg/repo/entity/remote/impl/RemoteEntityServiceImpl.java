@@ -32,12 +32,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.site.SiteService;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -65,6 +67,7 @@ import fr.becpg.repo.entity.remote.extractor.RemoteEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.repository.L2CacheSupport;
 
 /**
  * <p>RemoteEntityServiceImpl class.</p>
@@ -121,6 +124,12 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
+	
+	@Autowired
+	private VersionService versionService;
+	
+	@Autowired
+	private LockService lockService;
 
 	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
@@ -169,7 +178,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		case json_all:
 
 			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor);
+					siteService, attributeExtractor, versionService, lockService);
 			break;
 		case xsd:
 		case xsd_excel:
@@ -201,10 +210,14 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 			final Set<NodeRef> rets = new HashSet<>();
 
-			Map<NodeRef, NodeRef> cache = new HashMap<>();
+			L2CacheSupport.doInCacheContext(() -> {
 
-			rets.add(internalCreateOrUpdateEntity(entityNodeRef, null, in, params, entityProviderCallBack, cache));
+				Map<NodeRef, NodeRef> cache = new HashMap<>();
 
+				rets.add(internalCreateOrUpdateEntity(entityNodeRef, null, in, params, entityProviderCallBack, cache));
+
+			}, false, false);
+			
 			if (rets.isEmpty()) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format + " -  results is empty");
 			}
@@ -280,7 +293,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		case json:
 
 			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor);
+					siteService, attributeExtractor, versionService, lockService);
 			break;
 		default:
 			throw new BeCPGException("Unknown format " + format.toString());
@@ -315,7 +328,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		case json:
 
 			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor);
+					siteService, attributeExtractor, versionService, lockService);
 			break;
 		default:
 			throw new BeCPGException("Unknown format " + format.toString());

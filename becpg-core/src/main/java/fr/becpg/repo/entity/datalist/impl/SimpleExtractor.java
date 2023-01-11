@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
+import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
+import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.namespace.QName;
@@ -43,6 +45,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.data.DataListPagination;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.PaginatedSearchCache;
@@ -103,7 +106,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 
 	/** {@inheritDoc} */
 	@Override
-	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<String> metadataFields) {
+	public PaginatedExtractedItems extract(DataListFilter dataListFilter, List<AttributeExtractorField> metadataFields) {
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
 
@@ -243,12 +246,12 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 								List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
 
 								for (NodeRef itemNodeRef : results) {
-									addExtracted(itemNodeRef, field, cache, mode, ret);
+									addExtracted(itemNodeRef, field, mode, ret);
 								}
 							}
 						} else if (field.isEntityField()) {
 							NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
-							addExtracted(entityNodeRef, field, cache, mode, ret);
+							addExtracted(entityNodeRef, field, mode, ret);
 
 						} else {
 
@@ -260,8 +263,26 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 									assocRefs = associationService.getTargetAssocs(nodeRef, field.getFieldDef().getName());
 								}
 								for (NodeRef itemNodeRef : assocRefs) {
-									addExtracted(itemNodeRef, field, cache, mode, ret);
+									addExtracted(itemNodeRef, field, mode, ret);
 								}
+
+							}else if(field.getFieldDef() instanceof PropertyDefinition 
+									&& DataTypeDefinition.NODE_REF.equals(((PropertyDefinition)field.getFieldDef()).getDataType().getName())  ) {
+
+									Object value = properties.get(field.getFieldDef().getName());
+									if(value!=null) {
+										if (!((PropertyDefinition) field.getFieldDef()).isMultiValued()) {
+											
+											addExtracted((NodeRef) value, field, mode, ret);
+										} else {
+											@SuppressWarnings("unchecked")
+											List<NodeRef> values = (List<NodeRef>) value;
+											for (NodeRef tempValue : values) {
+												addExtracted(tempValue, field, mode, ret);
+											}
+	
+										}
+									}
 
 							}
 						}
@@ -269,7 +290,7 @@ public class SimpleExtractor extends AbstractDataListExtractor {
 						return ret;
 					}
 
-					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache,
+					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, 
 							FormatMode mode, List<Map<String, Object>> ret) {
 						if (cache.containsKey(itemNodeRef)) {
 							ret.add(cache.get(itemNodeRef));
