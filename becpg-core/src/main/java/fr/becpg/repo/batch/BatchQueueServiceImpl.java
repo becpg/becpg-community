@@ -316,32 +316,30 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						
 					}
 				}
-				
+
 				if (closingHook != null) {
-				
-				AuthenticationUtil.pushAuthentication();
 
-				String username = batchInfo.getBatchUser();
-				if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
+					AuthenticationUtil.pushAuthentication();
 
-					username = AuthenticationUtil.getSystemUserName();
-					if (tenantAdminService.isEnabled()) {
-						username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-
+					String username = batchInfo.getBatchUser();
+					if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
+						username = AuthenticationUtil.getSystemUserName();
+						if (tenantAdminService.isEnabled()) {
+							username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
+						}
 					}
+
+					AuthenticationUtil.setFullyAuthenticatedUser(username);
+
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						closingHook.run();
+						return true;
+					}, false, true);
+
+					AuthenticationUtil.popAuthentication();
+
 				}
-
-			
-				AuthenticationUtil.setFullyAuthenticatedUser(username);
-
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					closingHook.run();
-					return true;
-				}, false, true);
-
-				AuthenticationUtil.popAuthentication();
-
-			}
+				
 				batchInfo.setIsCompleted(true); 
 				
 				auditScope.putAttribute("totalItems", totalItems);
@@ -370,8 +368,10 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			batchInfo.setIsCompleted(true);
 
 			if (cancelledBatches.contains(batchId)) {
-			cancelledBatches.remove(batchId);
+				cancelledBatches.remove(batchId);
 			}
+			
+		}
 			
 		}
 
