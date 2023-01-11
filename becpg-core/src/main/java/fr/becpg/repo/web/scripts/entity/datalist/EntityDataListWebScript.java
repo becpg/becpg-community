@@ -47,6 +47,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.DataListOutputWriterFactory;
 import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
@@ -111,7 +112,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	/** Constant <code>PARAM_FIELDS="fields"</code> */
 	protected static final String PARAM_FIELDS = "fields";
-
+	
 	/** The Constant PARAM_NODEREF. */
 	protected static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
 
@@ -376,16 +377,29 @@ public class EntityDataListWebScript extends AbstractWebScript {
 				dataListFilter.setCriteriaMap(JsonHelper.extractCriteria(jsonObject));
 			}
 
-			List<String> metadataFields = new LinkedList<>();
+			List<AttributeExtractorField> metadataFields = new LinkedList<>();
 
 			if ((json != null) && json.has(PARAM_FIELDS)) {
 				JSONArray jsonFields = (JSONArray) json.get(PARAM_FIELDS);
 
 				for (int i = 0; i < jsonFields.length(); i++) {
-					metadataFields.add(((String) jsonFields.get(i)).replace("_", ":"));
+					String fieldId = null;
+					String fieldLabel = null;
+					
+					Object field = jsonFields.get(i);
+					if(field instanceof JSONObject) {
+						fieldId = ((JSONObject) field).getString("id").replace("_", ":");
+						fieldLabel = ((JSONObject) field).getString("label");
+					} else {
+						
+						fieldId = ((String) field).replace("_", ":");
+					}
+					
+					metadataFields.add(new AttributeExtractorField(fieldId,fieldLabel));
+				
 				}
 			}
-
+			
 			dataListFilter.setFilterId(filterId);
 			dataListFilter.setFilterData(filterData);
 			dataListFilter.setFilterParams(filterParams);

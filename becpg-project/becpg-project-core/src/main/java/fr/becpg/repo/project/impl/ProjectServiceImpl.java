@@ -53,6 +53,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.ProjectRepoConsts;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulationPlugin;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
@@ -67,6 +68,7 @@ import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.policy.ProjectListPolicy;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
@@ -85,7 +87,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	private static final Log logger = LogFactory.getLog(ProjectServiceImpl.class);
 	
 	@Autowired
-	private AlfrescoRepository<ProjectData> alfrescoRepository;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	@Autowired
 	private AssociationService associationService;
 	@Autowired
@@ -114,7 +116,9 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	private EntityDictionaryService entityDictionaryService;
 	@Autowired
 	private PersonService personService;
-
+	@Autowired
+	private EntityListDAO entityListDAO;
+	
 	@Autowired
 	SysAdminParams sysAdminParams;
 
@@ -163,14 +167,14 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 		
 						Date startDate = ProjectHelper.removeTime(new Date());
 						nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
-						ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+						ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 						for (TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null)) {
 							if(taskListDataItem.getSubProject() == null) {
 								nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
 							}
 						}
 					} else {
-						ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+						ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 						for(TaskListDataItem taskListDataItem : projectData.getTaskList()) {
 							String previousState = (String) nodeService.getProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE);
 							if(previousState!=null && !previousState.isEmpty()) {
@@ -191,7 +195,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 					toReformulates.add(projectNodeRef);
 				} else if (ProjectState.Cancelled.toString().equals(afterState) || ProjectState.OnHold.toString().equals(afterState)  || ProjectState.Completed.toString().equals(beforeState)) {
 					
-					ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+					ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 					for(TaskListDataItem taskListDataItem : projectData.getTaskList()) {
 						if(TaskState.InProgress.equals(taskListDataItem.getTaskState())) {
 							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE, taskListDataItem.getState());
@@ -546,7 +550,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 
 				if ((authorityName != null) && !ProjectHelper.isRoleAuhtority(authorityName)) {
 					logger.debug("Set permission for authority: " + authorityName + " allow :" + allow);
-					ProjectData projectData = alfrescoRepository.findOne(projectNodeRef);
+					ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
 					List<DeliverableListDataItem> deliverableList = ProjectHelper.getDeliverables(projectData, taskListNodeRef);
 					for (DeliverableListDataItem dl : deliverableList) {
 						nodeRefs.add(dl.getNodeRef());
@@ -577,8 +581,10 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 
 	/** {@inheritDoc} */
 	@Override
-	public void runScript(ProjectData project, TaskListDataItem task, NodeRef scriptNode) {
+	public void runScript(ProjectData project, TaskListDataItem task, DeliverableListDataItem deliverable) {
 
+		NodeRef scriptNode = deliverable.getContent();
+		
 		if ((scriptNode != null) && nodeService.exists(scriptNode)
 				&& nodeService.getPath(scriptNode).toPrefixString(namespaceService).startsWith(RepoConsts.SCRIPTS_FULL_PATH)) {
 
@@ -592,6 +598,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 			model.put("currentUser", userName);
 			model.put("task", task);
 			model.put("project", project);
+			model.put("deliverable", deliverable);
 			model.put("shareUrl", sysAdminParams.getShareProtocol() + "://" + sysAdminParams.getShareHost() + ":" + sysAdminParams.getSharePort()
 					+ "/" + sysAdminParams.getShareContext());
 			try {
@@ -657,5 +664,21 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	public boolean accept(QName nodeType) {
 		return ProjectModel.TYPE_PROJECT.equals(nodeType);
 	}
+	
+	@Override
+	public TaskListDataItem createNewTask(ProjectData project) {
+		NodeRef listContainer = entityListDAO.getListContainer(project.getNodeRef());
+		
+		NodeRef taskList = entityListDAO.getList(listContainer, ProjectModel.TYPE_TASK_LIST);
+		
+		NodeRef newTaskNodeRef = entityListDAO.createListItem(taskList, ProjectModel.TYPE_TASK_LIST, null, new HashMap<>());
 
+		TaskListDataItem newTask = (TaskListDataItem) alfrescoRepository.findOne(newTaskNodeRef);
+		
+		project.getTaskList().add(newTask);
+		
+		return newTask;
+		
+	}
+	
 }

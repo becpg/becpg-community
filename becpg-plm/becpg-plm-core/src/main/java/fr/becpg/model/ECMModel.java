@@ -122,6 +122,10 @@ public class ECMModel {
 	public static final QName ASSOC_CUL_TARGET_ITEM = QName.createQName(ECM_URI,
 			"culTargetItem");	
 	
+	public static final QName ASPECT_CHANGE_ORDER = QName.createQName(ECM_URI, "changeOrderAspect");
+	
+	public static final QName ASSOC_CHANGE_ORDER_REF = QName.createQName(ECM_URI, "changeOrderRef");
+	
 	
 	
 }

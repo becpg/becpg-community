@@ -29,7 +29,9 @@ import fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider;
  * @version $Id: $Id
  */
 public class BecpgFormDefinition {
-
+	
+	private JSONObject mergeDef = new JSONObject();
+	
 	private List<String> forcedFields = new LinkedList<>();
 	private List<String> fields = new LinkedList<>();
 
@@ -165,16 +167,14 @@ public class BecpgFormDefinition {
 	 *            a
 	 *            {@link fr.becpg.repo.form.column.decorator.DataGridFormFieldTitleProvider}
 	 *            object.
-	 * @return a {@link org.json.JSONObject} object.
+	 * @return a {@link fr.becpg.repo.form.impl.BecpgFormDefinition} object.
 	 * @throws org.json.JSONException
 	 *             if any.
 	 */
-	public JSONObject merge(Form form, DataGridFormFieldTitleProvider resolver) throws JSONException {
-		JSONObject ret = new JSONObject();
-
+	public BecpgFormDefinition merge(Form form, DataGridFormFieldTitleProvider resolver) throws JSONException {
 		for (JSONObject tab : tabs.values()) {
 
-			ret.append(PROP_TABS, tab);
+			this.mergeDef.append(PROP_TABS, tab);
 		}
 		Map<String, JSONObject> cloned = new LinkedHashMap<>();
 
@@ -211,7 +211,7 @@ public class BecpgFormDefinition {
 				if (found) {
 					if (PROP_ROOT.equals(entry)) {
 
-						ret.append(PROP_FIELDS, field);
+						this.mergeDef.append(PROP_FIELDS, field);
 
 					} else {
 
@@ -252,7 +252,9 @@ public class BecpgFormDefinition {
 			}
 		}
 
-		return filter(ret, new HashSet<>());
+		this.mergeDef = filter(this.mergeDef, new HashSet<>());
+		
+		return this;
 	}
 
 	private void loadData(JSONObject field, Form form) throws JSONException {
@@ -278,182 +280,185 @@ public class BecpgFormDefinition {
 
 		boolean found = false;
 
-		if (!loaded) {
-			for (FieldDefinition fieldDefinition : form.getFieldDefinitions()) {
-				if (fieldDefinition.getName().equals(id)) {
-
-					found = true;
-
-					if (fieldDefinition.getDefaultValue() != null) {
-						field.put("value", fieldDefinition.getDefaultValue());
-					}
-
-					field.put(PROP_NAME, fieldDefinition.getName());
-
-					QName fieldQName = QName.createQName(id);
-					if (!field.has(PROP_LABEL) || ((resolver != null) && resolver.isAllowed(fieldQName))) {
-						if ((resolver != null) && resolver.isAllowed(fieldQName)) {
-							field.put(PROP_LABEL, resolver.getTitle(fieldQName));
-						} else {
-							field.put(PROP_LABEL, fieldDefinition.getLabel());
+		if (form.getFieldDefinitions() != null) {
+			if (!loaded) {
+				for (FieldDefinition fieldDefinition : form.getFieldDefinitions()) {
+					if (fieldDefinition.getName().equals(id)) {
+	
+						found = true;
+	
+						if (fieldDefinition.getDefaultValue() != null) {
+							field.put("value", fieldDefinition.getDefaultValue());
 						}
-					}
-
-					field.put(PROP_DATAKEY, fieldDefinition.getDataKeyName());
-
-					//					String formWidget = "text";
-
-					if (fieldDefinition instanceof PropertyFieldDefinition) {
-
-						field.put(PROP_TYPE, "property");
-						if (((PropertyFieldDefinition) fieldDefinition).getDataType() != null) {
-							field.put("dataType", ((PropertyFieldDefinition) fieldDefinition).getDataType());
-						}
-						if (((PropertyFieldDefinition) fieldDefinition).getDataTypeParameters() != null) {
-							field.put("dataTypeParameters", ((PropertyFieldDefinition) fieldDefinition).getDataTypeParameters().getAsJSON());
-						}
-
-						//						boolean isList = false;
-						if (((PropertyFieldDefinition) fieldDefinition).getConstraints() != null) {
-
-							JSONArray constraints = new JSONArray();
-							field.put("constraints", constraints);
-
-							for (FieldConstraint constraint : ((PropertyFieldDefinition) fieldDefinition).getConstraints()) {
-
-								JSONObject constraintJson = new JSONObject();
-								constraints.put(constraintJson);
-								constraintJson.put(PROP_TYPE, constraint.getType());
-								if (constraint.getParametersAsJSON() != null) {
-									constraintJson.put("parameters", constraint.getParametersAsJSON());
-								}
-								//
-								//								if ("LIST".equals(constraint.getType())) {
-								//									isList = true;
-								//									if (constraint.getParameters().containsKey("allowedValues")) {
-								//
-								//										for (String option : ((List<String>) constraint.getParameters().get("allowedValues"))) {
-								//											JSONObject optionJson = new JSONObject();
-								//											if (option.indexOf('|') > 0) {
-								//												optionJson.put(PROP_ID, option.split("\\|")[0]);
-								//												optionJson.put(PROP_NAME, option.split("\\|")[1]);
-								//											} else {
-								//												optionJson.put(PROP_ID, option);
-								//												optionJson.put(PROP_NAME, option);
-								//											}
-								//											field.append("options", optionJson);
-								//										}
-								//
-								//									}
-								//								} else if ("REGEXP".equals(constraint.getType())) {
-								//									if (constraint.getParameters().containsKey("expression")) {
-								//										field.put("regexPattern", constraint.getParameters().get("expression"));
-								//									}
-								//									if (constraint.getParameters().containsKey("requiresMatch")) {
-
-								//									}
-								//								} else if ("MIN-MAX".equals(constraint.getType())) {
-								//									if (constraint.getParameters().containsKey("minValue")) {
-								//										field.put("minValue", constraint.getParameters().get("minValue"));
-								//									}
-								//									if (constraint.getParameters().containsKey("maxValue")) {
-								//										field.put("maxValue", constraint.getParameters().get("maxValue"));
-								//									}
-								//								} else if ("LENGTH".equals(constraint.getType())) {
-								//									if (constraint.getParameters().containsKey("minLength")) {
-								//										field.put("minLength", constraint.getParameters().get("minLength"));
-								//
-								//									}
-								//									if (constraint.getParameters().containsKey("maxLength")) {
-								//										field.put("maxLength", constraint.getParameters().get("maxLength"));
-								//
-								//									}
-								//								}
-
+	
+						field.put(PROP_NAME, fieldDefinition.getName());
+	
+						QName fieldQName = QName.createQName(id);
+						if (!field.has(PROP_LABEL) || ((resolver != null) && resolver.isAllowed(fieldQName))) {
+							if ((resolver != null) && resolver.isAllowed(fieldQName)) {
+								field.put(PROP_LABEL, resolver.getTitle(fieldQName));
+							} else {
+								field.put(PROP_LABEL, fieldDefinition.getLabel());
 							}
 						}
-						//
-						//						switch (((PropertyFieldDefinition) fieldDefinition).getDataType()) {
-						//						case "text":
-						//							if (isList) {
-						//								if (((PropertyFieldDefinition) fieldDefinition).isRepeating()) {
-						//									formWidget = "dropdown";
-						//								} else {
-						//									formWidget = "dropdown";
-						//								}
-						//							} else {
-						//								formWidget = "text";
-						//							}
-						//							break;
-						//						case "boolean":
-						//							formWidget = "boolean";
-						//							break;
-						//						case "mltext":
-						//							formWidget = "mtlangue";
-						//							break;
-						//						case "integer":
-						//							formWidget = "integer";
-						//							break;
-						//						case "double":
-						//							formWidget = "integer";
-						//							break;
-						//						case "long":
-						//							formWidget = "integer";
-						//							break;
-						//						case "float":
-						//							formWidget = "integer";
-						//							break;
-						//						case "noderef":
-						//							formWidget = "text";
-						//							break;
-						//						case "date":
-						//							formWidget = "date";
-						//							break;
-						//						case "datetime":
-						//							formWidget = "datetime";
-						//							break;
-						//
-						//						}
-
-						if (((PropertyFieldDefinition) fieldDefinition).isMandatory()) {
-							field.put(PROP_MANDATORY, true);
+	
+						field.put(PROP_DATAKEY, fieldDefinition.getDataKeyName());
+	
+						//					String formWidget = "text";
+	
+						if (fieldDefinition instanceof PropertyFieldDefinition) {
+	
+							field.put(PROP_TYPE, "property");
+							if (((PropertyFieldDefinition) fieldDefinition).getDataType() != null) {
+								field.put("dataType", ((PropertyFieldDefinition) fieldDefinition).getDataType());
+							}
+							if (((PropertyFieldDefinition) fieldDefinition).getDataTypeParameters() != null) {
+								field.put("dataTypeParameters", ((PropertyFieldDefinition) fieldDefinition).getDataTypeParameters().getAsJSON());
+							}
+	
+							//						boolean isList = false;
+							if (((PropertyFieldDefinition) fieldDefinition).getConstraints() != null) {
+	
+								JSONArray constraints = new JSONArray();
+								field.put("constraints", constraints);
+	
+								for (FieldConstraint constraint : ((PropertyFieldDefinition) fieldDefinition).getConstraints()) {
+	
+									JSONObject constraintJson = new JSONObject();
+									constraints.put(constraintJson);
+									constraintJson.put(PROP_TYPE, constraint.getType());
+									if (constraint.getParametersAsJSON() != null) {
+										constraintJson.put("parameters", constraint.getParametersAsJSON());
+									}
+									//
+									//								if ("LIST".equals(constraint.getType())) {
+									//									isList = true;
+									//									if (constraint.getParameters().containsKey("allowedValues")) {
+									//
+									//										for (String option : ((List<String>) constraint.getParameters().get("allowedValues"))) {
+									//											JSONObject optionJson = new JSONObject();
+									//											if (option.indexOf('|') > 0) {
+									//												optionJson.put(PROP_ID, option.split("\\|")[0]);
+									//												optionJson.put(PROP_NAME, option.split("\\|")[1]);
+									//											} else {
+									//												optionJson.put(PROP_ID, option);
+									//												optionJson.put(PROP_NAME, option);
+									//											}
+									//											field.append("options", optionJson);
+									//										}
+									//
+									//									}
+									//								} else if ("REGEXP".equals(constraint.getType())) {
+									//									if (constraint.getParameters().containsKey("expression")) {
+									//										field.put("regexPattern", constraint.getParameters().get("expression"));
+									//									}
+									//									if (constraint.getParameters().containsKey("requiresMatch")) {
+	
+									//									}
+									//								} else if ("MIN-MAX".equals(constraint.getType())) {
+									//									if (constraint.getParameters().containsKey("minValue")) {
+									//										field.put("minValue", constraint.getParameters().get("minValue"));
+									//									}
+									//									if (constraint.getParameters().containsKey("maxValue")) {
+									//										field.put("maxValue", constraint.getParameters().get("maxValue"));
+									//									}
+									//								} else if ("LENGTH".equals(constraint.getType())) {
+									//									if (constraint.getParameters().containsKey("minLength")) {
+									//										field.put("minLength", constraint.getParameters().get("minLength"));
+									//
+									//									}
+									//									if (constraint.getParameters().containsKey("maxLength")) {
+									//										field.put("maxLength", constraint.getParameters().get("maxLength"));
+									//
+									//									}
+									//								}
+	
+								}
+							}
+							//
+							//						switch (((PropertyFieldDefinition) fieldDefinition).getDataType()) {
+							//						case "text":
+							//							if (isList) {
+							//								if (((PropertyFieldDefinition) fieldDefinition).isRepeating()) {
+							//									formWidget = "dropdown";
+							//								} else {
+							//									formWidget = "dropdown";
+							//								}
+							//							} else {
+							//								formWidget = "text";
+							//							}
+							//							break;
+							//						case "boolean":
+							//							formWidget = "boolean";
+							//							break;
+							//						case "mltext":
+							//							formWidget = "mtlangue";
+							//							break;
+							//						case "integer":
+							//							formWidget = "integer";
+							//							break;
+							//						case "double":
+							//							formWidget = "integer";
+							//							break;
+							//						case "long":
+							//							formWidget = "integer";
+							//							break;
+							//						case "float":
+							//							formWidget = "integer";
+							//							break;
+							//						case "noderef":
+							//							formWidget = "text";
+							//							break;
+							//						case "date":
+							//							formWidget = "date";
+							//							break;
+							//						case "datetime":
+							//							formWidget = "datetime";
+							//							break;
+							//
+							//						}
+	
+							if (((PropertyFieldDefinition) fieldDefinition).isMandatory()) {
+								field.put(PROP_MANDATORY, true);
+							}
+	
+							if (((PropertyFieldDefinition) fieldDefinition).isRepeating()) {
+								field.put("repeating", true);
+							}
+						} else if (fieldDefinition instanceof AssociationFieldDefinition) {
+	
+							field.put(PROP_TYPE, "association");
+							field.put("endpointType", ((AssociationFieldDefinition) fieldDefinition).getEndpointType());
+							field.put("endpointDirection", ((AssociationFieldDefinition) fieldDefinition).getEndpointDirection());
+							field.put("endpointMany", ((AssociationFieldDefinition) fieldDefinition).isEndpointMany());
+	
+							if (((AssociationFieldDefinition) fieldDefinition).isEndpointMandatory()) {
+								field.put("endpointMandatory", true);
+								field.put(PROP_MANDATORY, true);
+							}
+	
+							//						formWidget = "autocomplete";
 						}
-
-						if (((PropertyFieldDefinition) fieldDefinition).isRepeating()) {
-							field.put("repeating", true);
-						}
-					} else if (fieldDefinition instanceof AssociationFieldDefinition) {
-
-						field.put(PROP_TYPE, "association");
-						field.put("endpointType", ((AssociationFieldDefinition) fieldDefinition).getEndpointType());
-						field.put("endpointDirection", ((AssociationFieldDefinition) fieldDefinition).getEndpointDirection());
-						field.put("endpointMany", ((AssociationFieldDefinition) fieldDefinition).isEndpointMany());
-
-						if (((AssociationFieldDefinition) fieldDefinition).isEndpointMandatory()) {
-							field.put("endpointMandatory", true);
-							field.put(PROP_MANDATORY, true);
-						}
-
-						//						formWidget = "autocomplete";
+	
+						//					if (!field.has("widget")) {
+						//						field.put("widget", formWidget);
+						//					}
+	
+						field.put(LOADED, true);
+	
+						break;
 					}
-
-					//					if (!field.has("widget")) {
-					//						field.put("widget", formWidget);
-					//					}
-
-					field.put(LOADED, true);
-
-					break;
 				}
-			}
-		} else {
-			for (FieldDefinition fieldDefinition : form.getFieldDefinitions()) {
-				if (fieldDefinition.getName().equals(id)) {
-					found = true;
-					break;
+			} else {
+				for (FieldDefinition fieldDefinition : form.getFieldDefinitions()) {
+					if (fieldDefinition.getName().equals(id)) {
+						found = true;
+						break;
+					}
 				}
 			}
 		}
+		
 		return found;
 	}
 
@@ -477,6 +482,44 @@ public class BecpgFormDefinition {
 	 */
 	public List<String> getFields() {
 		return fields;
+	}
+	
+	/**
+	 * <p>
+	 * Getter for the field <code>mergeDef</code>.
+	 * </p>
+	 *
+	 * @return a {@link org.json.JSONObject} object.
+	 */
+	public JSONObject getMergeDef() {
+		return mergeDef;
+	}
+	
+	/**
+	 * <p>
+	 * Get the title defined in mergeDef.
+	 * </p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	public String getTitle(String attName) {
+		
+		if (mergeDef.has(PROP_FIELDS)) {
+			for (var field : (JSONArray) mergeDef.get(PROP_FIELDS)) {
+				JSONObject json = (JSONObject) field;
+				
+				if (json.has(PROP_LABEL)) {
+					String name = (String) json.get(PROP_NAME);
+					String label = (String) json.get(PROP_LABEL);
+					
+					if (!label.equals("") && attName.equals(name)) {
+						return label;
+					}
+				}
+			}
+		}
+		
+		return null;
 	}
 
 	/**
@@ -572,6 +615,18 @@ public class BecpgFormDefinition {
 
 		fields.add(fieldId);
 
+	}
+	
+	/**
+	 * <p>
+	 * setMergeDef.
+	 * </p>
+	 *
+	 * @param mergeDef
+	 *            a {@link org.json.JSONObject} object.
+	 */
+	public void setMergeDef(JSONObject mergeDef) {
+		this.mergeDef = mergeDef;
 	}
 
 }

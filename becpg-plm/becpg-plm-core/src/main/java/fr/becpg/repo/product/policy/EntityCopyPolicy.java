@@ -17,6 +17,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PLMWorkflowModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -25,7 +26,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * @author matthieu
  * @version $Id: $Id
  */
-public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy {
+public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyCompletePolicy, CopyServicePolicies.BeforeCopyPolicy {
 
 	private static final Log logger = LogFactory.getLog(EntityCopyPolicy.class);
 
@@ -72,6 +73,9 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 		logger.debug("Init ProductPolicy...");
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onCopyComplete"));
+		
+		policyComponent.bindClassBehaviour(CopyServicePolicies.BeforeCopyPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+				new JavaBehaviour(this, "beforeCopy"));
 
 	}
 
@@ -114,7 +118,13 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 				nodeService.removeAspect(destinationRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
 			}
 		}
+		
 
+	}
+
+	@Override
+	public void beforeCopy(QName classRef, NodeRef sourceNodeRef, NodeRef targetNodeRef) {
+		BeCPGStateHelper.onCopyEntity(targetNodeRef);
 	}
 
 }

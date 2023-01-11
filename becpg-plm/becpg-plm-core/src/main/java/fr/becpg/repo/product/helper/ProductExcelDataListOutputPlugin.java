@@ -33,6 +33,7 @@ import fr.becpg.repo.form.column.decorator.DynamicColumnNameResolver;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ExcelHelper.ExcelFieldTitleProvider;
 import fr.becpg.repo.helper.JsonFormulaHelper;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 
 /**
  * <p>ProductExcelDataListOutputPlugin class.</p>
@@ -164,7 +165,7 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 		}
 
 		PaginatedExtractedItems ret = new PaginatedExtractedItems(dataListFilter.getPagination().getPageSize());
-		Set<String> metadataFields = new HashSet<>();
+		Set<AttributeExtractorField> metadataFields = new HashSet<>();
 
 		if (dataListFilter.getEntityNodeRef() != null) {
 
@@ -186,7 +187,7 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 									String mtField = "prop_" + key.toPrefixString(namespaceService).replace(":", "_");
 									temp.put(mtField, value);
 									if (ret.getComputedFields() == null) {
-										metadataFields.add(key.toPrefixString(namespaceService));
+										metadataFields.add(new AttributeExtractorField(key.toPrefixString(namespaceService),null));
 									}
 								}
 

@@ -92,6 +92,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	
 	@Override
 	public <T> Boolean queueBatch(@NonNull BatchInfo batchInfo, @NonNull List<BatchStep<T>> batchSteps) {
+		return queueBatch(batchInfo, batchSteps, null);
+	}
+	
+	@Override
+	public <T> Boolean queueBatch(@NonNull BatchInfo batchInfo, @NonNull List<BatchStep<T>> batchSteps, BatchClosingHook closingHook) {
 		
 		if (tenantAdminService.isEnabled()) {
 			String currentDomain = tenantAdminService.getCurrentUserDomain();
@@ -103,7 +108,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		
 		cancelledBatches.remove(batchInfo.getBatchId());
 		
-		Runnable command = new BatchCommand<>(batchInfo, batchSteps);
+		Runnable command = new BatchCommand<>(batchInfo, batchSteps, closingHook);
 		if (!threadExecutor.getQueue().contains(command)) {
 			if(logger.isDebugEnabled()) {
 				logger.debug("Batch " + batchInfo.getBatchId() + " added to execution queue");
@@ -179,12 +184,14 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		private String batchId;
 		private BatchInfo batchInfo;
 		private List<BatchStep<T>> batchSteps;
+		private BatchClosingHook closingHook;
 		
-		public BatchCommand(BatchInfo batchInfo, List<BatchStep<T>> batchSteps) {
+		public BatchCommand(BatchInfo batchInfo, List<BatchStep<T>> batchSteps, BatchClosingHook closingHook) {
 			super();
 			this.batchInfo = batchInfo;
 			this.batchId = batchInfo.getBatchId();
 			this.batchSteps = batchSteps;
+			this.closingHook = closingHook;
 		}
 
 		public BatchInfo getBatchInfo() {
@@ -310,19 +317,46 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					}
 				}
 				
+				if (closingHook != null) {
+				
+				AuthenticationUtil.pushAuthentication();
+
+				String username = batchInfo.getBatchUser();
+				if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
+
+					username = AuthenticationUtil.getSystemUserName();
+					if (tenantAdminService.isEnabled()) {
+						username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
+
+					}
+				}
+
+			
+				AuthenticationUtil.setFullyAuthenticatedUser(username);
+
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					closingHook.run();
+					return true;
+				}, false, true);
+
+				AuthenticationUtil.popAuthentication();
+
+			}
 				batchInfo.setIsCompleted(true); 
 				
 				auditScope.putAttribute("totalItems", totalItems);
 				
 				auditScope.putAttribute("isCompleted", true);
 				
-			}
+
 			
 			if (Boolean.TRUE.equals(batchInfo.getNotifyByMail())) {
 
 				final boolean finalHasError = hasError;
+				final Date finalEndTime = endTime;
+				final Date finalStartTime = startTime;
 				
-				int secondsBetween = (int) ((endTime.getTime() - startTime.getTime()) / 1000);
+				int secondsBetween = (int) ((finalEndTime.getTime() - finalStartTime.getTime()) / 1000);
 
 				AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -333,7 +367,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				}, true, false), batchInfo.getBatchUser());
 			}
 
+			batchInfo.setIsCompleted(true);
+
+			if (cancelledBatches.contains(batchId)) {
 			cancelledBatches.remove(batchId);
+			}
 			
 		}
 

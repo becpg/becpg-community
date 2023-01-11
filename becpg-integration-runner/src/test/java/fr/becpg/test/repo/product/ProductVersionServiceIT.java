@@ -3,6 +3,8 @@
  */
 package fr.becpg.test.repo.product;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -877,6 +879,48 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			}, false, true);
 		}
 
+	}
+	
+	@Test
+	public void testModifiedDateAfterMerge() throws InterruptedException {
+		
+		final long waitTime = 10000;
+		
+		NodeRef originalBranch = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "Test modified date afer merge");
+		}, false, true);
+
+		Date originalModifiedDate = (Date) nodeService.getProperty(originalBranch, ContentModel.PROP_MODIFIED);
+		
+		assertNotNull(originalModifiedDate);
+		
+		final NodeRef newBbranch = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			return entityVersionService.createBranch(originalBranch, getTestFolderNodeRef());
+		}, false, true);
+		
+		Date branchModifiedDate = (Date) nodeService.getProperty(newBbranch, ContentModel.PROP_MODIFIED);
+		
+		assertNotNull(branchModifiedDate);
+
+		assertNotEquals(originalModifiedDate, branchModifiedDate);
+
+		Thread.sleep(waitTime);
+		
+		Date mergedModifiedDate = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef mergedBranch = entityVersionService.mergeBranch(newBbranch, originalBranch, VersionType.MAJOR, "test merge");
+			return (Date) nodeService.getProperty(mergedBranch, ContentModel.PROP_MODIFIED);
+		}, false, true);
+		
+		assertNotNull(mergedModifiedDate);
+		
+		assertNotEquals(originalModifiedDate, mergedModifiedDate);
+		
+		assertNotEquals(branchModifiedDate, mergedModifiedDate);
+		
+		assertTrue(mergedModifiedDate.getTime() - originalModifiedDate.getTime() >= waitTime);
+		
+		assertTrue(mergedModifiedDate.getTime() - branchModifiedDate.getTime() >= waitTime);
+		
 	}
 
 }

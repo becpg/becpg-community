@@ -42,6 +42,10 @@
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>
+	
+	<bean id="linkedListPolicy" class="fr.becpg.repo.dictionary.constraint.LinkedListPolicy" parent="abstractBeCPGPolicy">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+	</bean>
 
 
 	<bean id="emailAliasablePolicy" class="fr.becpg.repo.entity.policy.EmailAliasablePolicy" parent="abstractBeCPGPolicy" />

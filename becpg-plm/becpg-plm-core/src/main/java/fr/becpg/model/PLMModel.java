@@ -518,7 +518,7 @@ public interface PLMModel {
 	QName PROP_PRODUCT_NET_VOLUME = QName.createQName(BeCPGModel.BECPG_URI, "netVolume");
 	/** Constant <code>PROP_PRODUCT_NET_WEIGHT</code> */
 	QName PROP_PRODUCT_NET_WEIGHT = QName.createQName(BeCPGModel.BECPG_URI, "netWeight");
-	/** Constant <code>PROP_PRODUCT_COMPO_QTY_USED</code> */
+	/** Constant <code>PROP_PRODUCT_COMPO_QTY_USED</code> **/
 	QName PROP_PRODUCT_COMPO_QTY_USED = QName.createQName(BeCPGModel.BECPG_URI, "productCompoQtyUsed");
 	/** Constant <code>PROP_PRODUCT_COMPO_VOLUME_USED</code> */
 	QName PROP_PRODUCT_COMPO_VOLUME_USED = QName.createQName(BeCPGModel.BECPG_URI, "productCompoVolumeUsed");
@@ -558,6 +558,9 @@ public interface PLMModel {
 	// subsidiary
 	/** Constant <code>TYPE_SUBSIDIARY</code> */
 	QName TYPE_SUBSIDIARY = QName.createQName(BeCPGModel.BECPG_URI, "subsidiary");
+	
+	QName ASSOC_SUBSIDIARY_CERTIFICATIONS = QName.createQName(BeCPGModel.BECPG_URI, "subsidiaryCertifications");
+
 
 	// plant
 	/** Constant <code>TYPE_PLANT</code> */
@@ -698,6 +701,11 @@ public interface PLMModel {
 	QName PROP_GLOP_VALUE =  QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
 	
 	QName PROP_LABELCLAIM_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "isLabelClaimPropagateUp");
+	
+	QName ASPECT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "propagateUpAspect");
 
+	QName ASSOC_PROPAGATED_CHARACTS = QName.createQName(BeCPGModel.BECPG_URI, "propagatedCharacts");
+	
+	
 	
 }

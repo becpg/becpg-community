@@ -34,6 +34,7 @@ import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -100,12 +101,12 @@ public class ProjectListSortIT extends AbstractProjectTestCase {
 				dataListFilter.getPagination().setPageSize(25);
 				dataListFilter.setHasWriteAccess(true);
 
-				List<String> metadataFields = new LinkedList<>();
-				metadataFields.add("cm:name");
-				metadataFields.add("bcpg:code");
-				metadataFields.add("pjt:projectOverdue");
-				metadataFields.add("pjt:projectHierarchy1");
-				metadataFields.add("pjt:projectHierarchy2");
+				List<AttributeExtractorField> metadataFields = new LinkedList<>();
+				metadataFields.add(new AttributeExtractorField("cm:name",null));
+				metadataFields.add(new AttributeExtractorField("bcpg:code",null));
+				metadataFields.add(new AttributeExtractorField("pjt:projectOverdue",null));
+				metadataFields.add(new AttributeExtractorField("pjt:projectHierarchy1",null));
+				metadataFields.add(new AttributeExtractorField("pjt:projectHierarchy2",null));
 
 				DataListExtractor extractor = dataListExtractorFactory.getExtractor(dataListFilter);
 				PaginatedExtractedItems extractedItems = extractor.extract(dataListFilter, metadataFields);

@@ -82,7 +82,7 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 											if (((charact != null) && charact.equals(associationService.getTargetAssoc(reqCtrl, PLMModel.ASSOC_RCL_CHARACT))
 													|| associationService.getTargetAssocs(reqCtrl, PLMModel.ASSOC_RCL_SOURCES).contains(charact))
 													&& RequirementDataType.Specification.toString().equals(nodeService.getProperty(reqCtrl, PLMModel.PROP_RCL_REQ_DATA_TYPE))) {
-												addExtracted(reqCtrl, field, cache, mode, ret);
+												addExtracted(reqCtrl, field, mode, ret);
 											}
 										}
 									}
@@ -97,14 +97,14 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 									List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
 
 									for (NodeRef itemNodeRef : results) {
-										addExtracted(itemNodeRef, field, cache, mode, ret);
+										addExtracted(itemNodeRef, field, mode, ret);
 									}
 								}
 							}
 
 						} else if (field.isEntityField()) {
 							NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
-							addExtracted(entityNodeRef, field, cache, mode, ret);
+							addExtracted(entityNodeRef, field, mode, ret);
 
 						} else {
 
@@ -116,7 +116,7 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 									assocRefs = associationService.getTargetAssocs(nodeRef, field.getFieldDef().getName());
 								}
 								for (NodeRef itemNodeRef : assocRefs) {
-									addExtracted(itemNodeRef, field, cache, mode, ret);
+									addExtracted(itemNodeRef, field, mode, ret);
 								}
 
 							}
@@ -125,7 +125,7 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 						return ret;
 					}
 
-					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, Map<NodeRef, Map<String, Object>> cache,
+					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field,
 							FormatMode mode, List<Map<String, Object>> ret) {
 						if (cache.containsKey(itemNodeRef)) {
 							ret.add(cache.get(itemNodeRef));

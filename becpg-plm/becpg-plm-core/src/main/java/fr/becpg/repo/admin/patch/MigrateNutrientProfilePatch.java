@@ -214,6 +214,8 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				
 				List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
 				
+				logger.info("identified nutrient profile to migrate : " + nutrientProfile);
+				
 				if (sourceAssocs != null) {
 					
 					String nutrientProfileClass = (String) nodeService.getProperty(nutrientProfile, BeCPGModel.PROP_CHARACT_NAME);
@@ -236,6 +238,8 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 							nodeService.removeAssociation(sourceAssoc.getSourceRef(), nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
 						}
 						nodeService.deleteNode(nutrientProfile);
+					} else {
+						logger.info("unknown nutrient profile class : " + nutrientProfileClass);
 					}
 				}
 				

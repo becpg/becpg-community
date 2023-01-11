@@ -215,53 +215,69 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 						if (isMatchEntityType(catalog, type, namespaceService) && catalog.has(PROP_AUDITED_FIELDS)
 								&& isMatchFilter(catalog, entityNodeRef)) {
 							Set<QName> auditedFields = getAuditedFields(catalog, namespaceService);
-							if ((auditedFields != null) && !auditedFields.isEmpty()) {
-								QName changedField = null;
-								if ((listNodeRefs != null) && !listNodeRefs.isEmpty()) {
-									for (NodeRef listNodeRef : listNodeRefs) {
-										QName listType = QName.createQName(
-												(String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE), namespaceService);
-										if (auditedFields.contains(listType)) {
-											changedField = listType;
-											break;
-										}
-									}
-								} else if ((diffQnames != null) && !diffQnames.isEmpty()) {
-									for (QName diffQName : diffQnames) {
-										if (auditedFields.contains(diffQName)) {
-											changedField = diffQName;
-											break;
-										}
+							QName changedField = checkHasChange(auditedFields, diffQnames, listNodeRefs);
+
+							if (changedField != null) {
+								if (catalog.has(PROP_CATALOG_MODIFIED_FIELD)) {
+									QName catalogModifiedDate = QName.createQName(catalog.getString(PROP_CATALOG_MODIFIED_FIELD), namespaceService);
+									if (logger.isDebugEnabled()) {
+										logger.debug("Audited field " + changedField + " has changed, update date: " + catalogModifiedDate);
 									}
 
+									nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
 								}
-
-								if (changedField != null) {
-									if(catalog.has(PROP_CATALOG_MODIFIED_FIELD)) {
-										QName catalogModifiedDate = QName.createQName(catalog.getString(PROP_CATALOG_MODIFIED_FIELD), namespaceService);
-										if (logger.isDebugEnabled()) {
-											logger.debug("Audited field " + changedField + " has changed, update date: " + catalogModifiedDate);
-										}
-	
-										nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
-									}
-									for (EntityCatalogObserver observer : observers) {
-										if (observer.acceptCatalogEvents(type, entityNodeRef)) {
-											observer.notifyAuditedFieldChange(catalog.getString(PROP_ID), entityNodeRef);
-										}
+								for (EntityCatalogObserver observer : observers) {
+									if (observer.acceptCatalogEvents(type, entityNodeRef)) {
+										observer.notifyAuditedFieldChange(catalog.getString(PROP_ID), entityNodeRef);
 									}
 								}
 							}
-
 						}
 					}
 				}
+
+				if (checkHasChange(
+						new HashSet<>(Arrays.asList(ContentModel.PROP_MODIFIED, ContentModel.PROP_CREATED, BeCPGModel.PROP_FORMULATED_DATE)),
+						diffQnames, null) != null) {
+					for (EntityCatalogObserver observer : observers) {
+						if (observer.acceptCatalogEvents(ContentModel.PROP_MODIFIED, entityNodeRef)) {
+							observer.notifyAuditedFieldChange(null, entityNodeRef);
+						}
+					}
+				}
+
 			}
 
 		} catch (JSONException e) {
 			logger.error("Unable to update catalog's properties!!", e);
 		}
 
+	}
+
+	private QName checkHasChange(Set<QName> auditedFields, Set<QName> diffQnames, Set<NodeRef> listNodeRefs) {
+		QName changedField = null;
+		if ((auditedFields != null) && !auditedFields.isEmpty()) {
+
+			if ((listNodeRefs != null) && !listNodeRefs.isEmpty()) {
+				for (NodeRef listNodeRef : listNodeRefs) {
+					QName listType = QName.createQName((String) nodeService.getProperty(listNodeRef, DataListModel.PROP_DATALISTITEMTYPE),
+							namespaceService);
+					if (auditedFields.contains(listType)) {
+						changedField = listType;
+						break;
+					}
+				}
+			} else if ((diffQnames != null) && !diffQnames.isEmpty()) {
+				for (QName diffQName : diffQnames) {
+					if (auditedFields.contains(diffQName)) {
+						changedField = diffQName;
+						break;
+					}
+				}
+
+			}
+		}
+		return changedField;
 	}
 
 	private boolean isMatchFilter(JSONObject catalog, NodeRef entityNodeRef) throws JSONException {
@@ -651,15 +667,15 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 				present = testCondition(splitFields.get(1), formulatedEntity);
 				id.append(splitFields.get(0));
 				String i18nkey = i18nMessages.has(splitFields.get(0)) ? i18nMessages.getString(splitFields.get(0)) : splitFields.get(0);
-				
+
 				for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
 					if (MLTextHelper.getSupportedLocalesList().contains(key)) {
 						Locale loc = MLTextHelper.parseLocale(key);
-						String label =  I18NUtil.getMessage(i18nkey, loc);
-						if(label!=null && !label.isBlank()) {
-							displayName.addValue(loc,label);
+						String label = I18NUtil.getMessage(i18nkey, loc);
+						if (label != null && !label.isBlank()) {
+							displayName.addValue(loc, label);
 						} else {
-							displayName.addValue(loc,i18nkey);
+							displayName.addValue(loc, i18nkey);
 						}
 					}
 				}
@@ -777,7 +793,6 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 					missingField.put(EntityCatalogService.PROP_LOCALE, currLang);
 				}
 
-				
 				for (Map.Entry<Locale, String> mlEntry : displayName.entrySet()) {
 					String code = MLTextHelper.localeKey(mlEntry.getKey());
 					if ((code != null) && !code.isEmpty() && (mlEntry.getValue() != null)) {

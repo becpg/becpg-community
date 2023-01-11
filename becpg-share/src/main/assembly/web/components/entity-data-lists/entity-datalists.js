@@ -217,10 +217,10 @@
                                     lists.sort(function (listId1, listId2){
                                         var val1 = 500, val2 = 500;
                                         for(var z in me.options.sortOptions){
-                                            if(listId1.name.indexOf(me.options.sortOptions[z].id)>-1){
+                                            if(listId1.name.indexOf(me.options.sortOptions[z].id) == 0){
                                                 val1 = me.options.sortOptions[z].sortIndex;
                                             }
-                                            if(listId2.name.indexOf(me.options.sortOptions[z].id)>-1){
+                                            if(listId2.name.indexOf(me.options.sortOptions[z].id) == 0){
                                                 val2 = me.options.sortOptions[z].sortIndex;
                                             }
                                             if(val1!=500 && val2!=500){
