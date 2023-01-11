@@ -65,6 +65,7 @@ import fr.becpg.repo.entity.remote.extractor.RemoteEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.repository.L2CacheSupport;
 
 /**
  * <p>RemoteEntityServiceImpl class.</p>
@@ -201,10 +202,14 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 			final Set<NodeRef> rets = new HashSet<>();
 
-			Map<NodeRef, NodeRef> cache = new HashMap<>();
+			L2CacheSupport.doInCacheContext(() -> {
 
-			rets.add(internalCreateOrUpdateEntity(entityNodeRef, null, in, params, entityProviderCallBack, cache));
+				Map<NodeRef, NodeRef> cache = new HashMap<>();
 
+				rets.add(internalCreateOrUpdateEntity(entityNodeRef, null, in, params, entityProviderCallBack, cache));
+
+			}, false, false);
+			
 			if (rets.isEmpty()) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format + " -  results is empty");
 			}

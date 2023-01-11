@@ -33,6 +33,7 @@ import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
+import org.alfresco.repo.copy.AbstractBaseCopyService.AssociationCopyInfo;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.virtual.VirtualContentModel;
 import org.alfresco.service.cmr.model.FileFolderService;
@@ -405,8 +406,10 @@ public class EntityServiceImpl implements EntityService {
 			logger.debug("copy or move file in Documents: " + file.getName() + " parentNodeRef: " + parentNodeRef);
 
 			if (isCopy) {
+		        ChildAssociationRef primaryAssocRef = nodeService.getPrimaryParent(file.getNodeRef());
+		
 				NodeRef subFolderNodeRef = copyService.copy(file.getNodeRef(), parentNodeRef, ContentModel.ASSOC_CONTAINS,
-						ContentModel.ASSOC_CHILDREN, true);
+						primaryAssocRef.getQName(), true);
 				nodeService.setProperty(subFolderNodeRef, ContentModel.PROP_NAME, file.getName());
 			} else {
 
