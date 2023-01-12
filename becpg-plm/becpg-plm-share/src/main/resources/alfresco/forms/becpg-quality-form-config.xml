@@ -1759,8 +1759,17 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)"/>
-					<field id="qa:slReaction">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="qa:slControlPoint" set="2-col"/>
+					<field id="qa:sdlQty" set="2-col"/>
+					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)" set="2-col"/>
+					<field id="qa:sdlFreq" set="2-col"/>
+					<field id="qa:sdlFreqUnit" set="2-col"/>
+					<field id="qa:slControlStep" set="2-col"/>
+					<field id="qa:slSamplingGroup" set="2-col"/>
+					<field id="qa:slControlingGroup" set="2-col"/>
+					<field id="qa:slFixingGroup" set="2-col"/>
+					<field id="qa:slReaction" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
@@ -1788,8 +1797,17 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)"/>
-					<field id="qa:slReaction">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="qa:slControlPoint" set="2-col"/>
+					<field id="qa:sdlQty" set="2-col"/>
+					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)" set="2-col"/>
+					<field id="qa:sdlFreq" set="2-col"/>
+					<field id="qa:sdlFreqUnit" set="2-col"/>
+					<field id="qa:slControlStep" set="2-col"/>
+					<field id="qa:slSamplingGroup" set="2-col"/>
+					<field id="qa:slControlingGroup" set="2-col"/>
+					<field id="qa:slFixingGroup" set="2-col"/>
+					<field id="qa:slReaction" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
@@ -1811,13 +1829,28 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)"/>
-					<field id="qa:slReaction">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="qa:slControlPoint" set="2-col"/>
+					<field id="qa:sdlQty" set="2-col"/>
+					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)" set="2-col"/>
+					<field id="qa:sdlFreq" set="2-col"/>
+					<field id="qa:sdlFreqUnit" set="2-col"/>
+					<field id="qa:slControlStep" set="2-col"/>
+					<field id="qa:slSamplingGroup" set="2-col"/>
+					<field id="qa:slControlingGroup" set="2-col"/>
+					<field id="qa:slFixingGroup" set="2-col"/>
+					<field id="qa:slReaction" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
-					<field id="qa:sdlFreqUnit">
+					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)"  set="2-col"/>
+					<field id="qa:slReaction"  set="2-col">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl">
+							<control-param name="rows">3</control-param>
+						</control>
+					</field>
+					<field id="qa:sdlFreqUnit"  set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="insertBlank">true</control-param>
@@ -1932,19 +1965,33 @@
 					<show id="qa:clMaxi" />					
 					<show id="qa:clTextCriteria" />
 					<show id="qa:clTextCriteriaLimit" />
-					<show id="qa:clRequired" />
 					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
 					<show id="rep:reportKinds" />
+					<show id="qa:clRequired" />
 				</field-visibility>
 
 				<appearance>
-					<field id="qa:clTextCriteria">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="1-col" />
+					<field id="qa:clCharacts" set="2-col"/>
+					<field id="qa:cdlQty" set="2-col"/>
+					<field id="qa:cdlFreq" set="2-col"/>
+					<field id="qa:cdlFreqUnit" set="2-col"/>
+					<field id="qa:clTarget" set="2-col"/>
+					<field id="qa:clUnit" set="2-col"/>
+					<field id="qa:clMini" set="2-col"/>
+					<field id="qa:clMaxi" set="2-col"/>
+					<field id="qa:clRequired" set="1-col"/>
+					<field id="qa:clTemperature" set="2-col"/>
+					<field id="qa:clMethod" set="2-col"/>
+					<field id="rep:reportKinds" set="2-col"/>
+					<field id="qa:clTextCriteria" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
-					<field id="qa:clTextCriteriaLimit">
+					<field id="qa:clTextCriteriaLimit" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
@@ -1994,18 +2041,32 @@
 					<show id="qa:clMaxi" />	
 					<show id="qa:clTextCriteria" />
 					<show id="qa:clTextCriteriaLimit" />
-					<show id="qa:clRequired" />
 					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
 					<show id="rep:reportKinds" />
+					<show id="qa:clRequired" />
 				</field-visibility>
 				<appearance>
-					<field id="qa:clTextCriteria">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="1-col" />
+					<field id="qa:clCharacts" set="2-col"/>
+					<field id="qa:cdlQty" set="2-col"/>
+					<field id="qa:cdlFreq" set="2-col"/>
+					<field id="qa:cdlFreqUnit" set="2-col"/>
+					<field id="qa:clTarget" set="2-col"/>
+					<field id="qa:clUnit" set="2-col"/>
+					<field id="qa:clMini" set="2-col"/>
+					<field id="qa:clMaxi" set="2-col"/>
+					<field id="qa:clRequired" set="1-col"/>
+					<field id="qa:clTemperature" set="2-col"/>
+					<field id="qa:clMethod" set="2-col"/>
+					<field id="rep:reportKinds" set="2-col"/>
+					<field id="qa:clTextCriteria" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
-					<field id="qa:clTextCriteriaLimit">
+					<field id="qa:clTextCriteriaLimit" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
 						</control>
@@ -2040,7 +2101,7 @@
 				</field-visibility>
 
 				<appearance>
-					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" />
+					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" template="/org/alfresco/components/form/2-column-set.ftl"  />
 					<field id="qa:clControlPoint" set="reqInfo" />
 					<field id="qa:clSampleId" set="reqInfo" />
 					<field id="qa:clTimePeriod" set="reqInfo" />
@@ -2054,7 +2115,7 @@
 					<field id="qa:clCharacts" set="reqInfo" />
 					<field id="qa:clRequired" set="reqInfo" />
 					
-					<set id="fillInfo" appearance="bordered-panel" label-id="becpg.forms.set.fill-info.label" />
+					<set id="fillInfo" appearance="bordered-panel" label-id="becpg.forms.set.fill-info.label"  template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="qa:clValue" set="fillInfo" />
 					<field id="qa:clState" set="fillInfo" />
 				</appearance>
@@ -2169,7 +2230,7 @@
 				</field-visibility>
 
 				<appearance>
-					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" />
+					<set id="reqInfo" appearance="bordered-panel" label-id="becpg.forms.set.exigences.label" template="/org/alfresco/components/form/2-column-set.ftl"  />
 					<field id="qa:clControlPoint" read-only="true" set="reqInfo" />
 					<field id="qa:clSampleId" read-only="true" set="reqInfo" />
 					<field id="qa:clTimePeriod" read-only="true" set="reqInfo" />
@@ -2187,7 +2248,7 @@
 					</field>
 					<field id="qa:clRequired" read-only="true" set="reqInfo" />
 
-					<set id="fillInfo" appearance="bordered-panel" label-id="becpg.forms.set.fill-info.label" />
+					<set id="fillInfo" appearance="bordered-panel" label-id="becpg.forms.set.fill-info.label" template="/org/alfresco/components/form/2-column-set.ftl"  />
 					<field id="qa:clValue" set="fillInfo" />
 					<field id="qa:clState" set="fillInfo" />
 
