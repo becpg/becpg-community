@@ -2757,11 +2757,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					return -1;
 				}
 
+				int ret = b.getKey().getQty(ingsLabelingWithYield).compareTo(a.getKey().getQty(ingsLabelingWithYield));
 				if (useVolume) {
-					return b.getKey().getVolume(ingsLabelingWithYield).compareTo(a.getKey().getVolume(ingsLabelingWithYield));
+					ret =  b.getKey().getVolume(ingsLabelingWithYield).compareTo(a.getKey().getVolume(ingsLabelingWithYield));
+				}
+				
+				if(ret == 0) {
+					ret = getLegalIngName(b.getKey()).compareTo(getLegalIngName(a.getKey()));
 				}
 
-				return b.getKey().getQty(ingsLabelingWithYield).compareTo(a.getKey().getQty(ingsLabelingWithYield));
+				return ret;
 			});
 		}
 		Map<IngTypeItem, List<LabelingComponent>> sortedIngListByType = new LinkedHashMap<>();
