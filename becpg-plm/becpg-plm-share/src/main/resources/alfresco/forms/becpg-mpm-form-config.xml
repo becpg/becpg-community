@@ -373,16 +373,18 @@
 					<show id="entity_mpm:plResource_bcpg:product" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:depthLevel">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl"/>
+					<field id="bcpg:depthLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">0|,1|1,2|2,3|3,4|4,All|data.level.all
 							</control-param>
 						</control>
 					</field>
-					<field id="mpm:plStep">
+					<field id="mpm:plStep" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
+					<field id="entity_mpm:plResource_bcpg:product" set="2-col"/>
 				</appearance>
 			</form>
 		</forms>
@@ -514,25 +516,28 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
-			
+
 			<form id="filter">
 				<field-visibility>
-					<show id="mpm:rplParamType" />								
+					<show id="mpm:rplParamType" />
 					<show id="mpm:rplStepRef" />
 					<show id="entity_mpm:rplResourceRef_bcpg:product" />
 				</field-visibility>
 				<appearance>
-				<field id="mpm:rplParamType" >	
-					<control template="/org/alfresco/components/form/controls/selectone.ftl">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="mpm:rplParamType" set ="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
 						</control>
 					</field>
-					<field id="mpm:rplStepRef">
+					<field id="mpm:rplStepRef" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
+					<field id="entity_mpm:rplResourceRef_bcpg:product" set="2-col"/>
 				</appearance>
 			</form>
 		</forms>
