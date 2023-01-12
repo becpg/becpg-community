@@ -2305,19 +2305,46 @@
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
-					<field id="cm:description">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:name" set="2-col"/>
+					<field id="cm:title" set="2-col"/>
+					<field id="cm:description" set="2-col">
 						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
 	                       <control-param name="maxLength">10000</control-param>
 	                   </control>
 					</field>
-					 <field id="bcpg:plantCertifications" mandatory="false" read-only="false" >
+					<field id="bcpg:plantTel" set="2-col"/>
+					<field id="bcpg:plantPackerCode" set="2-col"/>
+					<field id="bcpg:plantApprovalNumbers" set="2-col"/>
+					<field id="bcpg:erpCode" set="2-col"/>
+					<field id="bcpg:isDeleted" set="2-col"/>
+					 <field id="bcpg:plantCertifications" mandatory="false" read-only="false"  set="2-col">
 			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 			              <control-param name="ds">becpg/autocomplete/certification</control-param>
 			            </control>
 			          </field>
 					
-					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
-					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
+					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1"  set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2"  set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress3" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCity" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationZip" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationState" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCountry" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -2348,19 +2375,46 @@
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
-					<field id="cm:description">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="cm:name" set="2-col"/>
+					<field id="cm:title" set="2-col"/>
+					<field id="cm:description" set="2-col">
 						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
 	                       <control-param name="maxLength">10000</control-param>
 	                   </control>
 					</field>
-					 <field id="bcpg:plantCertifications" mandatory="false" read-only="false" >
+					<field id="bcpg:plantTel" set="2-col"/>
+					<field id="bcpg:plantPackerCode" set="2-col"/>
+					<field id="bcpg:plantApprovalNumbers" set="2-col"/>
+					<field id="bcpg:erpCode" set="2-col"/>
+					<field id="bcpg:isDeleted" set="2-col"/>
+					 <field id="bcpg:plantCertifications" mandatory="false" read-only="false"  set="2-col">
 			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 			              <control-param name="ds">becpg/autocomplete/certification</control-param>
 			            </control>
 			          </field>
-					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
-					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
 					
+					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1"  set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2"  set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress3" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCity" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationZip" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationState" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCountry" set="2-col" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
 				</appearance>
 			</form>
 
@@ -2618,21 +2672,31 @@
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
-					<field id="cm:description">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:certificationNumber" set="2-col"/>
+					<field id="cm:name" set="2-col"/>
+					<field id="cm:title" set="2-col"/>
+					<field id="cm:description" set="2-col"/>
+					<field id="bcpg:certificationAgency" set="2-col"/>
+					<field id="bcpg:certificationStandard" set="2-col"/>
+					<field id="bcpg:certificationNote" set="2-col"/>
+					<field id="cm:description" set="2-col">
 						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
 	                       <control-param name="maxLength">10000</control-param>
 	                   </control>
 					</field>
-					<field id="cm:from">
+					<field id="cm:from" set="2-col">
 						<control template="/org/alfresco/components/form/controls/date.ftl">
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
-					<field id="cm:to">
+					<field id="cm:to" set="2-col">
 						<control template="/org/alfresco/components/form/controls/date.ftl">
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
+					<field id="bcpg:erpCode" set="2-col"/>
+					<field id="bcpg:isDeleted" set="2-col"/>
 				</appearance>
 			</form>
 		</forms>
@@ -2657,21 +2721,31 @@
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
-					<field id="cm:description">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:certificationNumber" set="2-col"/>
+					<field id="cm:name" set="2-col"/>
+					<field id="cm:title" set="2-col"/>
+					<field id="cm:description" set="2-col"/>
+					<field id="bcpg:certificationAgency" set="2-col"/>
+					<field id="bcpg:certificationStandard" set="2-col"/>
+					<field id="bcpg:certificationNote" set="2-col"/>
+					<field id="cm:description" set="2-col">
 						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
 	                       <control-param name="maxLength">10000</control-param>
 	                   </control>
 					</field>
-					<field id="cm:from">
+					<field id="cm:from" set="2-col">
 						<control template="/org/alfresco/components/form/controls/date.ftl">
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
-					<field id="cm:to">
+					<field id="cm:to" set="2-col">
 						<control template="/org/alfresco/components/form/controls/date.ftl">
 							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
+					<field id="bcpg:erpCode" set="2-col"/>
+					<field id="bcpg:isDeleted" set="2-col"/>
 				</appearance>
 			</form>
 
@@ -4801,19 +4875,21 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:depthLevel" force="true" />
-					<show id="entity_bcpg:packagingListProduct_bcpg:product" force="true" />
 					<show id="bcpg:packagingListPkgLevel" />
 					<show id="bcpg:packagingListIsMaster" />
 					<show id="bcpg:packagingListIsRecycle" />
+					<show id="entity_bcpg:packagingListProduct_bcpg:product" force="true" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:depthLevel">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl"/>
+					<field id="bcpg:depthLevel" set="2-col" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">0|,1|1,2|2,3|3,4|4,All|data.level.all
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:packagingListIsMaster">
+					<field id="bcpg:packagingListPkgLevel" set="2-col" />
+					<field id="bcpg:packagingListIsMaster" set="2-col" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
@@ -4821,7 +4897,7 @@
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:packagingListIsRecycle">
+					<field id="bcpg:packagingListIsRecycle" set="2-col" >
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
@@ -4829,6 +4905,7 @@
 							</control-param>
 						</control>
 					</field>
+					<field id="entity_bcpg:packagingListProduct_bcpg:product" set="2-col" />
 				</appearance>
 			</form>
 
@@ -5217,21 +5294,29 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:costListCost">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:costListCost" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:parentLevel">
+					<field id="bcpg:costListValue" set="2-col" />
+					<field id="bcpg:costListUnit" set="2-col" />
+					<field id="bcpg:costListPreviousValue" set="2-col" />
+					<field id="bcpg:costListFutureValue" set="2-col" />
+					<field id="bcpg:parentLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost</control-param>
 						</control>
 					</field>
-					<field id="bcpg:costListComponent">
+					<field id="bcpg:plants" set="2-col" />
+					<field id="bcpg:costListComponent" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:packagingMaterial</control-param>
 						</control>
 					</field>
+					<field id="bcpg:costListSimulatedValue" set="2-col" />
+					<field id="bcpg:isManualListItem" set="2-col" />
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
@@ -5359,23 +5444,29 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:costListCost">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:costListCost" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:parentLevel">
+					<field id="bcpg:costListValue" set="2-col" />
+					<field id="bcpg:costListUnit" set="2-col" />
+					<field id="bcpg:costListPreviousValue" set="2-col" />
+					<field id="bcpg:costListFutureValue" set="2-col" />
+					<field id="bcpg:parentLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost
-							</control-param>
-							<control-param name="urlParamsToPass">itemId</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:costList&#38;attributeName=bcpg:costListCost</control-param>
 						</control>
 					</field>
-					<field id="bcpg:costListComponent">
+					<field id="bcpg:plants" set="2-col" />
+					<field id="bcpg:costListComponent" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:packagingMaterial</control-param>
 						</control>
 					</field>
+					<field id="bcpg:costListSimulatedValue" set="2-col" />
+					<field id="bcpg:isManualListItem" set="2-col" />
 				</appearance>
 			</form>
 		</forms>
@@ -5658,7 +5749,9 @@
 					<show id="bcpg:lrSyncState" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:lrType">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="1-col-2"/>
+					<field id="bcpg:lrType" >
 						<constraint-handlers>
 							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
 		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
@@ -5668,30 +5761,30 @@
 		                  		]'/>
 		                  	</constraint-handlers>
 					</field>
-				
-					<field id="bcpg:lrFormula">
+					<field id="cm:name" />
+					<field id="bcpg:lrLabel" />
+					<field id="bcpg:lrGroup" set="2-col"/>
+					<field id="bcpg:lrIsActive"  set="1-col-2"/>
+					<field id="bcpg:lrSyncState" set="1-col-2" />
+					<field id="bcpg:lrFormula" >
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="bcpg:lrComponents">
+					<field id="bcpg:lrComponents" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing%5E2,bcpg:ingTypeItem%5E3&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
-						
-						
 					</field>
-					<field id="bcpg:lrReplacements">
+					<field id="bcpg:lrReplacements" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing%5E2,bcpg:ingTypeItem%5E3&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
-						
 					</field>
-					<field id="bcpg:lrLocales" >
+					<field id="bcpg:lrLocales"  set="2-col">
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
-						
 					</field>
 				</appearance>
 			</form>
@@ -5745,7 +5838,9 @@
 					<show id="bcpg:lrSyncState" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:lrType">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="1-col-2"/>
+					<field id="bcpg:lrType" >
 						<constraint-handlers>
 							 <constraint type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf" event='keyup,change@[
 		                  		{"prop":"prop_bcpg_lrLabel", "condition" : "Format|DetailComponents|DoNotDetailsComponents|Locale|Prefs|Omit|DoNotDeclare|ShowPerc|ShowGeo|ShowBio"},
@@ -5755,30 +5850,30 @@
 		                  		]'/>
 		                  	</constraint-handlers>
 					</field>
-				
-					<field id="bcpg:lrFormula">
+					<field id="cm:name" />
+					<field id="bcpg:lrLabel" />
+					<field id="bcpg:lrGroup" set="2-col"/>
+					<field id="bcpg:lrIsActive"  set="1-col-2"/>
+					<field id="bcpg:lrSyncState" set="1-col-2" />
+					<field id="bcpg:lrFormula" >
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="bcpg:lrComponents">
+					<field id="bcpg:lrComponents" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing%5E2,bcpg:ingTypeItem%5E3&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
-						
-						
 					</field>
-					<field id="bcpg:lrReplacements">
+					<field id="bcpg:lrReplacements" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct,bcpg:localSemiFinishedProduct,bcpg:rawMaterial,bcpg:ing%5E2,bcpg:ingTypeItem%5E3&#38;excludeClassNames=bcpg:entityTplAspect
 							</control-param>
 						</control>
-						
 					</field>
-					<field id="bcpg:lrLocales" >
+					<field id="bcpg:lrLocales"  set="2-col">
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
-						
 					</field>
 				</appearance>
 			</form>
@@ -5963,16 +6058,19 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:ingListIng">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:ingListIng" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:ingListQtyPerc">
+					<field id="bcpg:ingListQtyPerc" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">perc</control-param>
 						</control>
 					</field>
+					<field id="bcpg:ingListQtyMini" set="2-col"/>
+					<field id="bcpg:ingListQtyMaxi" set="2-col"/>
 					
 			<!--		<field id="bcpg:ingListIsGMO">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
@@ -5986,28 +6084,28 @@
 							</control-param>
 						</control>
 					</field>  -->
-					<field id="bcpg:ingListIsProcessingAid">
+					<field id="bcpg:ingListIsProcessingAid" set="2-col">
 					<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:ingListIsSupport">
+					<field id="bcpg:ingListIsSupport" set="2-col">
 					<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
 						</control>
 					</field>
 					
-					<field id="bcpg:ingListGeoOrigin">
+					<field id="bcpg:ingListGeoOrigin" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:ingListGeoTransfo">
+					<field id="bcpg:ingListGeoTransfo" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:ingListBioOrigin">
+					<field id="bcpg:ingListBioOrigin" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
@@ -6199,6 +6297,7 @@
 				</field-visibility>
 
 				<appearance>
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="bcpg:nutListNut">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
@@ -6211,12 +6310,18 @@
 							<control-param name="unit">-</control-param>
 						</control>
 					</field>
-					<field id="bcpg:parentLevel">
+					<field id="bcpg:nutListValuePrepared"/>
+					<field id="bcpg:nutListMini" set="2-col"/>
+					<field id="bcpg:nutListMaxi" set="2-col"/>
+					<field id="bcpg:nutListLossPerc" set="2-col"/>
+					<field id="bcpg:nutListMethod" set="2-col"/>
+					<field id="bcpg:parentLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut
 							</control-param>
 						</control>
 					</field>
+					<field id="rep:reportKinds" set="2-col"/>
 				</appearance>
 			</form>
 			<form id="create">
@@ -6418,27 +6523,33 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:nutListNut">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:nutListNut" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							<control-param name="ds">becpg/autocomplete/nut</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nutListValue">
+					<field id="bcpg:nutListValue" >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">-</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nutListUnit" read-only="true"/>
-					<field id="bcpg:nutListUnitPrepared" read-only="true"/>
-					
-					<field id="bcpg:parentLevel">
+					<field id="bcpg:nutListUnit" read-only="true" set="2-col"/>
+					<field id="bcpg:nutListValuePrepared" read-only="true" />
+					<field id="bcpg:nutListUnitPrepared" />
+					<field id="bcpg:nutListMini" set="2-col"/>
+					<field id="bcpg:nutListMaxi" set="2-col"/>
+					<field id="bcpg:nutListLossPerc" set="2-col"/>
+					<field id="bcpg:nutListMethod" set="2-col"/>
+					<field id="bcpg:parentLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut</control-param>
 							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
+					<field id="rep:reportKinds" set="2-col"/>
 				</appearance>
 			</form>
 		</forms>
@@ -6974,7 +7085,7 @@
 			<form>
 				<field-visibility>
 				    <show id="bcpg:contactListType" />
-				   <show force="true" id="bcpg:eanCode"/>
+				   	<show force="true" id="bcpg:eanCode"/>
 					<show id="bcpg:contactListFirstName" />
 					<show id="bcpg:contactListLastName" />
 					<show id="bcpg:contactListEmail" />
@@ -6994,11 +7105,41 @@
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
-				
-					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
-					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
-					<field id="bcpg:contactListNotes">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:contactListType" set="2-col"/>
+					<field id="bcpg:eanCode" set="2-col"/>
+					<field id="bcpg:contactListFirstName" set="2-col"/>
+					<field id="bcpg:contactListLastName" set="2-col"/>
+					<field id="bcpg:contactListEmail" set="2-col"/>
+					<field id="bcpg:contactListJobTitle" set="2-col"/>
+					<field id="bcpg:contactListPhoneOffice" set="2-col"/>
+					<field id="bcpg:contactListPhoneMobile" set="2-col"/>
+					<field id="bcpg:contactListFax" set="2-col"/>
+					<field id="bcpg:locationCity" set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationZip" set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationState" set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCountry" set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:erpCode" set="2-col"/>
+					<field id="bcpg:isDeleted" set="2-col"/>
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1"  set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2"  set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress3" set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:contactListNotes"  set="2-col">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl"  set="2-col"/>
 					</field>
 				</appearance>
 			</form>
@@ -7024,13 +7165,26 @@
 					<show id="bcpg:locationCountry" force="true"/>
 				</field-visibility>
 				<appearance>
-					
-					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
-					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
-					<field id="bcpg:contactListNotes">
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:eanCode" set="2-col"/>
+					<field id="bcpg:contactListFirstName" set="2-col"/>
+					<field id="bcpg:contactListLastName" set="2-col"/>
+					<field id="bcpg:contactListEmail" set="2-col"/>
+					<field id="bcpg:contactListJobTitle" set="2-col"/>
+					<field id="bcpg:contactListPhoneOffice" set="2-col"/>
+					<field id="bcpg:contactListPhoneMobile" set="2-col"/>
+					<field id="bcpg:contactListFax" set="2-col"/>
+					<field id="bcpg:locationCity" set="2-col"/>
+					<field id="bcpg:locationZip" set="2-col"/>
+					<field id="bcpg:locationState" set="2-col"/>
+					<field id="bcpg:locationCountry" set="2-col"/>
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" set="2-col"/>
+					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" set="2-col"/>
+					<field id="bcpg:locationAddress3" set="2-col"/>
+					<field id="bcpg:contactListNotes" set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
-					<field id="bcpg:contactListType">
+					<field id="bcpg:contactListType" set="2-col">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
@@ -7091,10 +7245,41 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
-					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
-					<field id="bcpg:contactListNotes">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:contactListType" set="2-col"/>
+					<field id="bcpg:eanCode" set="2-col"/>
+					<field id="bcpg:contactListFirstName" set="2-col"/>
+					<field id="bcpg:contactListLastName" set="2-col"/>
+					<field id="bcpg:contactListEmail" set="2-col"/>
+					<field id="bcpg:contactListJobTitle" set="2-col"/>
+					<field id="bcpg:contactListPhoneOffice" set="2-col"/>
+					<field id="bcpg:contactListPhoneMobile" set="2-col"/>
+					<field id="bcpg:contactListFax" set="2-col"/>
+					<field id="bcpg:locationCity" set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationZip" set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationState" set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCountry" set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:erpCode" set="2-col"/>
+					<field id="bcpg:isDeleted" set="2-col"/>
+					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1"  set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2"  set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress3" set="2-col">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:contactListNotes"  set="2-col">
+						<control template="/org/alfresco/components/form/controls/textarea.ftl"  set="2-col"/>
 					</field>
 				</appearance>
 			</form>
