@@ -2390,13 +2390,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (!ingListItem.isLeaf() && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)
 							&& !DeclarationType.DoNotDetails.equals(ingDeclarationType)) {
 						if (logger.isTraceEnabled()) {
-							logger.trace(" -- Adding subings " + ingListItem.getChildren().size());
+							logger.trace(" -- Adding subings " + ingListItem.getChildren().size() + " to current "+ ingLabelItem.getIngList().size());
 						}
 
 						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield,
 								labelingFormulaContext, compoListDataItem, errors);
 
-					} else if (DeclarationType.Detail.equals(ingDeclarationType)) {
+					} else if (DeclarationType.Detail.equals(ingDeclarationType) && ingLabelItem.getIngList().isEmpty()) {
 						ingLabelItem.setDeclarationType(DeclarationType.DoNotDetails);
 					}
 
