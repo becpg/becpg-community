@@ -1081,14 +1081,31 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					}
 				}
 			}
-
-			if (showPercRules.get(nodeRef) != null) {
+			
+			if (renameRules.containsKey(lblComponent.getNodeRef())) {
+				RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
+				if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null)) {
+					if(showPercRules.containsKey(renameRule.getReplacement())){
+						for (ShowRule showRule : showPercRules.get(renameRule.getReplacement())) {
+							if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
+								if ((selectedRule == null) || ((selectedRule.getThreshold() == null) && (showRule.getThreshold() != null))
+										|| ((selectedRule.getThreshold() != null) && (showRule.getThreshold() != null)
+												&& (selectedRule.getThreshold() > showRule.getThreshold()))) {
+									selectedRule = showRule;
+									break;
+								}
+							}
+						}
+					}
+				}
+			} else 	if (showPercRules.get(nodeRef) != null) {
 				for (ShowRule showRule : showPercRules.get(nodeRef)) {
 					if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
 						if ((selectedRule == null) || ((selectedRule.getThreshold() == null) && (showRule.getThreshold() != null))
 								|| ((selectedRule.getThreshold() != null) && (showRule.getThreshold() != null)
 										&& (selectedRule.getThreshold() > showRule.getThreshold()))) {
 							selectedRule = showRule;
+							break;
 						}
 					}
 				}
