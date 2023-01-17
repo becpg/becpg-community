@@ -24,6 +24,7 @@ import java.util.Objects;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -131,6 +132,18 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	public String getReqMessage() {
 		return reqMlMessage!=null ? MLTextHelper.getClosestValue(reqMlMessage, Locale.getDefault()) : null;
 	}
+	
+	
+
+	/**
+	 * <p>getReqMessage.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	public String getContentLocaleReqMessage() {
+		return reqMlMessage!=null ? MLTextHelper.getClosestValue(reqMlMessage, I18NUtil.getContentLocale()) : null;
+	}
+	
 	
 	/**
 	 * <p>getKey.</p>
