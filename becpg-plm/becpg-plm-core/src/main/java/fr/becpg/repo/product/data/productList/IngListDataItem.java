@@ -394,13 +394,13 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	@Override
 	@InternalField
 	public NodeRef getCharactNodeRef() {
-		return ing;
+		return getIng();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Double getValue() {
-		return qtyPerc;
+		return getQtyPerc();
 	}
 
 	/** {@inheritDoc} */
