@@ -2763,7 +2763,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 				
 				if(ret == 0) {
-					ret = getLegalIngName(b.getKey()).compareTo(getLegalIngName(a.getKey()));
+					
+					String name = getLegalIngName(b.getKey());
+					if(name==null) {
+						name = "";
+					}
+					
+					String name2 = getLegalIngName(a.getKey());
+					if(name2==null) {
+						name2 = "";
+					}
+					
+					ret = name.compareTo(name2);
 				}
 
 				return ret;
