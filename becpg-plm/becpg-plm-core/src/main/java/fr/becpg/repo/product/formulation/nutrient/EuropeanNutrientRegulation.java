@@ -5,6 +5,8 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Locale;
 
+import org.alfresco.util.Pair;
+
 /**
  * <p>EuropeanNutrientRegulation class.</p>
  *
@@ -84,6 +86,63 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 		BigDecimal bd = BigDecimal.valueOf(value);
 		bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
 		return bd.doubleValue();
+	}
+
+	
+	@Override
+	public Pair<Double, Double> toleranceByCode(Double value, String nutrientTypeCode) {
+		if(value != null && nutrientTypeCode != null){
+			 if (nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
+					|| nutrientTypeCode.equals(NutrientCode.Sugar) || nutrientTypeCode.equals(NutrientCode.FiberDietary)
+					|| nutrientTypeCode.startsWith(NutrientCode.Protein)) {
+				if (value > 40) {
+					return new Pair<>(value+8, value-8);
+				} else if ((value >= 10) && (value <= 40)) {
+					return new Pair<>(value+applyPerc(value,20d), value-applyPerc(value,20d));
+				} else {
+					return new Pair<>(value+2, value-2);
+				}
+			 }	else if(nutrientTypeCode.equals(NutrientCode.Fat) ) {
+				 if (value > 40) {
+						return new Pair<>(value+8, value-8);
+					} else if ((value >= 10) && (value <= 40)) {
+						return new Pair<>(value+applyPerc(value,20d), value-applyPerc(value,20d));
+					} else {
+						return new Pair<>(value+1.5d, value-1.5d);
+					}
+				
+			} else if (nutrientTypeCode.equals(NutrientCode.FatSaturated)
+					|| nutrientTypeCode.equals(NutrientCode.FatMonounsaturated)
+					|| nutrientTypeCode.equals(NutrientCode.FatPolyunsaturated)) {
+				if (value >= 4) {
+					return new Pair<>(value+applyPerc(value,20d), value-applyPerc(value,20d));
+				} else {
+					return new Pair<>(value+0.8d, value-0.8d);
+				}
+			} else if (nutrientTypeCode.equals(NutrientCode.Sodium)) {
+				if (value >= 0.5d) {
+					return new Pair<>(value+0.15d, value-0.15d);
+				} else  {
+					return new Pair<>(value+applyPerc(value,20d), value-applyPerc(value,20d));
+				}
+			} else if (nutrientTypeCode.equals(NutrientCode.Salt)) {
+				if (value >= 1.25d) {
+					return new Pair<>(value+0.375d, value-0.375d);
+				} else {
+					return new Pair<>(value+applyPerc(value,20d), value-applyPerc(value,20d));
+				}
+			} else if(isVitamin(nutrientTypeCode)) {
+				return new Pair<>(value+applyPerc(value,50d), value-applyPerc(value,35d));
+			} else if( isMineral(nutrientTypeCode)){
+				return new Pair<>(value+applyPerc(value,45d), value-applyPerc(value,35d));
+			}
+		}
+		return null;
+		
+	}
+	
+	private Double applyPerc(Double value, Double perc) {
+		return BigDecimal.valueOf(value).multiply(BigDecimal.valueOf(perc)).divide(BigDecimal.valueOf(100d)).doubleValue();
 	}
 
 	/** {@inheritDoc} */
