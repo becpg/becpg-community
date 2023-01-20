@@ -92,7 +92,7 @@ import fr.becpg.repo.repository.model.DefaultListDataItem;
  */
 @Repository("alfrescoRepository")
 public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
-		implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy, RefreshableCacheListener, InitializingBean {
+		implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnRemoveAspectPolicy, RefreshableCacheListener, InitializingBean {
 
 	@Autowired
 	private NodeService nodeService;
@@ -150,6 +150,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
 				new JavaBehaviour(this, "onUpdateProperties"));
+		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRemoveAspectPolicy.QNAME, this, new JavaBehaviour(this, "onRemoveAspect"));
 
 	}
 
@@ -164,7 +166,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		purgeCache(nodeRef);
 	}
-
+	
+	@Override
+	public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName) {
+		purgeCache(nodeRef);
+	}
+	
 	private void purgeCache(NodeRef nodeRef) {
 		if (logger.isDebugEnabled()) {
 			if (nodeService.exists(nodeRef)) {
