@@ -360,15 +360,18 @@ public class ImportHelper {
 	}
 
 	private static Number parseNumber(ImportContext importContext, String val) throws ParseException {
+		String toParse = null;
 		if(importContext.getImportFileReader() instanceof ImportCSVFileReader) {
 			if (importContext.getPropertyFormats().getDecimalFormat().getDecimalFormatSymbols().getDecimalSeparator() == ',') {
-				val = val.replaceAll("\\.", ",");
+				toParse = val.replace(".", ",");
 			} else {
-				val = val.replaceAll(",", ".");
+				toParse = val.replace(",", ".");
 			}
 		}
 		
-		return importContext.getPropertyFormats().parseDecimal(val);
+		toParse = val.replace(" ", "").trim();
+		
+		return importContext.getPropertyFormats().parseDecimal(toParse);
 
 	}
 
