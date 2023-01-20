@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -13,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.model.RenditionModel;
@@ -20,6 +22,7 @@ import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
@@ -125,6 +128,9 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 	@Autowired
 	protected RuleService ruleService;
+	
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
 	
 	private static final Log logger = LogFactory.getLog(EntityFormatServiceImpl.class);
 
@@ -415,6 +421,15 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				
 				dbNodeService.addAspect(from, ContentModel.ASPECT_TEMPORARY, null);
 				
+				List<NodeRef> links = getFileLinks(from);
+				
+				for (NodeRef link : links) {
+					if (nodeService.getProperties(link).containsKey(ContentModel.PROP_LINK_DESTINATION) && nodeService.getProperty(link, ContentModel.PROP_LINK_DESTINATION) == null) {
+						policyBehaviourFilter.disableBehaviour(link);
+						nodeService.deleteNode(link);
+					}
+				}
+				
 				dbNodeService.deleteNode(from);
 				return null;
 				
@@ -425,6 +440,20 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 	}
 
+	private List<NodeRef> getFileLinks(NodeRef parent) {
+		List<NodeRef> links = new ArrayList<>();
+		
+		if (ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(parent))) {
+			links.add(parent);
+		} else {
+			for (NodeRef child : associationService.getChildAssocs(parent, ContentModel.ASSOC_CONTAINS)) {
+				links.addAll(getFileLinks(child));
+			}
+		}
+		
+		return links;
+	}
+	
 	@Override
 	public void createOrUpdateEntityFromJson(NodeRef entityNodeRef, String entityJson) {
 		
