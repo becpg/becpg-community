@@ -292,4 +292,6 @@ public final class BeCPGModel {
 	
 	public static final QName PROP_CUSTOM_FORM_DEFINITIONS = QName.createQName(BECPG_URI, "customFormDefinitions");
 
+	public static final QName ASPECT_UNDELETABLE_ASPECT = QName.createQName(BECPG_URI, "undeletableAspect");
+	
 }
