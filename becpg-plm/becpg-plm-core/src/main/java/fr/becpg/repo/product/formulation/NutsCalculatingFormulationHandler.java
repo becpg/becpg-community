@@ -165,7 +165,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 				Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
 				
 				for (NutListDataItem nutListDataItem : formulatedProduct.getNutList()){
-					if (!Boolean.TRUE.equals(nutListDataItem.getIsManual())) {
+					if (Boolean.TRUE.equals(nutListDataItem.getIsManual())) {
 						retainNodes.add(nutListDataItem);
 					}
 					
