@@ -265,20 +265,22 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 	/** {@inheritDoc} */
 	@Override
 	public void sendMailOnAsyncAction(String userName, String action, String actionUrl, boolean runWithSuccess, double time, Object ... bodyParams) {
-		Map<String, Object> templateArgs = new HashMap<>();
-		templateArgs.put(RepoConsts.ARG_ACTION_STATE, runWithSuccess);
-		templateArgs.put(RepoConsts.ARG_ACTION_URL, actionUrl);
-		templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, time);
-
-		String subject = I18NUtil.getMessage("message.async-mail." + action + ".subject");
-		templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail." + action + ".body", bodyParams));
-
-		List<NodeRef> recipientsNodeRef = Arrays.asList(personService.getPerson(userName));
-
-		Map<String, Object> templateModel = new HashMap<>();
-		templateModel.put("args", templateArgs);
-
-		sendMail(recipientsNodeRef, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);
+		if(personService.personExists(userName)) {
+			Map<String, Object> templateArgs = new HashMap<>();
+			templateArgs.put(RepoConsts.ARG_ACTION_STATE, runWithSuccess);
+			templateArgs.put(RepoConsts.ARG_ACTION_URL, actionUrl);
+			templateArgs.put(RepoConsts.ARG_ACTION_RUN_TIME, time);
+	
+			String subject = I18NUtil.getMessage("message.async-mail." + action + ".subject");
+			templateArgs.put(RepoConsts.ARG_ACTION_BODY, I18NUtil.getMessage("message.async-mail." + action + ".body", bodyParams));
+	
+			List<NodeRef> recipientsNodeRef = Arrays.asList(personService.getPerson(userName));
+	
+			Map<String, Object> templateModel = new HashMap<>();
+			templateModel.put("args", templateArgs);
+	
+			sendMail(recipientsNodeRef, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);
+		}
 
 	}
 
