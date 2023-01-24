@@ -131,7 +131,7 @@ public class FormulationHelper {
 				if ((!compoListUnit.isP()) && (componentNetWeight != null) && (componentNetWeight != 0)) {
 					return ((FormulationHelper.getQtyWithLoss(qtyInKg, lossPerc) * unitFactor) / componentNetWeight) * nbP;
 				} else {
-					return (FormulationHelper.getQtyWithLossAndYield(qtySubFormula, lossPerc, yieldPerc) * unitFactor) * nbP;
+					return (FormulationHelper.getQtyWithLossAndYield(qtySubFormula, lossPerc, yieldPerc) * unitFactor);
 				}
 			}
 		}
