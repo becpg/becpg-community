@@ -133,10 +133,11 @@ public class PersonAttributeExtractorPlugin implements AttributeExtractorPlugin 
 		return beCPGCacheService.getFromCache(AttributeExtractorService.class.getName(), userId + ".person", () -> {
 				String displayName = "";
 				try {
-					
-					NodeRef personNodeRef = personService.getPerson(finalUserId);
+					NodeRef personNodeRef = personService.getPersonOrNull(finalUserId);
 					if (personNodeRef != null) {
 						displayName = nodeService.getProperty(personNodeRef, ContentModel.PROP_FIRSTNAME) + " " + nodeService.getProperty(personNodeRef, ContentModel.PROP_LASTNAME);
+					} else {
+						return finalUserId;
 					}
 				} catch (NoSuchPersonException | TenantDomainMismatchException e){
 					logger.debug("Cannot find user : "+finalUserId, e);

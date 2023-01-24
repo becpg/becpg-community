@@ -922,7 +922,7 @@ public class ImportEntityXmlVisitor {
 
 			if (ContentModel.TYPE_PERSON.equals(type)) {
 				logger.debug("try to get person : " + name);
-				return serviceRegistry.getPersonService().getPerson(name);
+				return serviceRegistry.getPersonService().getPersonOrNull(name);
 			}
 
 			if (ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)) {
