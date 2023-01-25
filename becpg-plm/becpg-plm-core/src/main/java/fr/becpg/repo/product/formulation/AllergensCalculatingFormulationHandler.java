@@ -220,8 +220,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		if (formulatedProduct.getAllergenList() != null) {
 
 			formulatedProduct.getAllergenList().forEach(allergenListDataItem -> {
-				if (!Boolean.TRUE.equals(allergenListDataItem.getIsManual()) && (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())
-						|| Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()))) {
+				if (!Boolean.TRUE.equals(allergenListDataItem.getIsManual()) ) {
 					Double regulatoryThreshold = getRegulatoryThreshold(formulatedProduct, allergenListDataItem.getAllergen());
 					if ((regulatoryThreshold != null) && (allergenListDataItem.getQtyPerc() != null)
 							&& (regulatoryThreshold > allergenListDataItem.getQtyPerc())) {
