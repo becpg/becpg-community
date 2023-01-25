@@ -2268,9 +2268,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						ingLabelItem.getBioOrigins().addAll(ingListItem.getData().getBioOrigin());
 					}
 
-					if (product.getGeoOrigins() != null) {
-						addGeo(ingLabelItem, product.getGeoOrigins(), PlaceOfActivityTypeCode.LAST_PROCESSING);
-					}
+// Fix #15932
+//					if (product.getGeoOrigins() != null) {
+//						addGeo(ingLabelItem, product.getGeoOrigins(), PlaceOfActivityTypeCode.LAST_PROCESSING);
+//					}
 
 					ingLabelItem.getFootNotes().addAll(extractFootNotes(compoListDataItem, ingListItem.getData(), labelingFormulaContext));
 
