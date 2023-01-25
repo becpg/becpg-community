@@ -128,45 +128,47 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 			
 			for (String username : usernames) {
 
-				if (commentNodeRef != null) {
+				if (commentNodeRef != null && personService.personExists(username)) {
+					
 					String workflowInstanceId = (String) nodeService.getProperty(commentNodeRef, ContentModel.PROP_DESCRIPTION);
 					if (workflowInstanceId == null || workflowInstanceId.isBlank()) {
 						NodeRef packageRef = packageMgr.create(null);
-
+						
 						Map<QName, Serializable> params = new HashMap<>();
-
+						
 						params.put(WorkflowModel.ASSOC_PACKAGE, packageRef);
 						params.put(WorkflowModel.PROP_WORKFLOW_DESCRIPTION, commentText);
 						params.put(WorkflowModel.ASSOC_ASSIGNEE, (Serializable) Arrays.asList(personService.getPerson(username)));
 						params.put(WorkflowModel.PROP_WORKFLOW_PRIORITY, 2);
 						params.put(WorkflowModel.PROP_SEND_EMAIL_NOTIFICATIONS, true);
-
+						
 						nodeService.addChild(packageRef, entityNodeRef, WorkflowModel.ASSOC_PACKAGE_CONTAINS, QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(itemName)));
-
+						
 						WorkflowPath workflowPath = workflowService.startWorkflow("activiti$activitiAdhoc:1:4", params);
 						
 						if (workflowPath != null) {
 							nodeService.setProperty(commentNodeRef, ContentModel.PROP_DESCRIPTION, workflowPath.getInstance().getId());
 						}
 					} else {
-			            WorkflowTaskQuery tasksQuery = new WorkflowTaskQuery();
-			            tasksQuery.setTaskState(null);
-			            tasksQuery.setActive(null);
-			            tasksQuery.setProcessId(workflowInstanceId);
-			            List<WorkflowTask> tasks = workflowService.queryTasks(tasksQuery, true);
+						WorkflowTaskQuery tasksQuery = new WorkflowTaskQuery();
+						tasksQuery.setTaskState(null);
+						tasksQuery.setActive(null);
+						tasksQuery.setProcessId(workflowInstanceId);
+						List<WorkflowTask> tasks = workflowService.queryTasks(tasksQuery, true);
 						
-			            if (tasks != null) {
-			            	for (WorkflowTask task : tasks) {
-			            		if ("wf:adhocTask".equals(task.getName())) {
-			            			Map<QName, Serializable> taskProperties = task.getProperties();
-			            			taskProperties.put(WorkflowModel.PROP_DESCRIPTION, commentText);
-			            			workflowService.updateTask(task.getId(), taskProperties, null, null);
-			            			break;
-			            		}
-			            	}
-			            }
+						if (tasks != null) {
+							for (WorkflowTask task : tasks) {
+								if ("wf:adhocTask".equals(task.getName())) {
+									Map<QName, Serializable> taskProperties = task.getProperties();
+									taskProperties.put(WorkflowModel.PROP_DESCRIPTION, commentText);
+									workflowService.updateTask(task.getId(), taskProperties, null, null);
+									break;
+								}
+							}
+						}
 					}
 				}
+				
 			}
 		}
 	}
