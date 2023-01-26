@@ -234,7 +234,7 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 		}
 		if(!authorities.isEmpty()) {
-			internalSendMail(authorities, null, subject, mailTemplate, templateArgs, null);
+			sendMLAwareMail(authorities, null, subject, null, mailTemplate, templateArgs);
 		} else if(_logger.isDebugEnabled()){
 			_logger.debug("No recipients to send mail to (sendToSelf:"+sendToSelf+")");
 		}
@@ -249,7 +249,14 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		Locale commonLocale = AuthorityHelper.getCommonLocale(people);
 		
 		if (commonLocale != null) {
-			internalSendMail(authorities, fromEmail, I18NUtil.getMessage(subjectKey, commonLocale, subjectParams), mailTemplate, templateArgs, commonLocale);
+			
+			String localizedSubject = I18NUtil.getMessage(subjectKey, commonLocale, subjectParams);
+			
+			if (localizedSubject == null) {
+				localizedSubject = subjectKey;
+			}
+			
+			internalSendMail(authorities, fromEmail, localizedSubject, mailTemplate, templateArgs, commonLocale);
 		} else {
 			for (String person : people) {
 				Locale locale = null;
@@ -257,7 +264,12 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 					String localeString = (String) nodeService.getProperty(personService.getPerson(person), BeCPGModel.PROP_USER_LOCALE);
 					locale = MLTextHelper.parseLocale(localeString);
 				}
-				internalSendMail(Set.of(person), fromEmail, I18NUtil.getMessage(subjectKey, locale, subjectParams), mailTemplate, templateArgs, locale);
+				String localizedSubject = I18NUtil.getMessage(subjectKey, locale, subjectParams);
+				
+				if (localizedSubject == null) {
+					localizedSubject = subjectKey;
+				}
+				internalSendMail(Set.of(person), fromEmail, localizedSubject, mailTemplate, templateArgs, locale);
 			}
 		}
 	}
