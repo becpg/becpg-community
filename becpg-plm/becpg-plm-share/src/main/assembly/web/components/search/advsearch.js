@@ -247,9 +247,10 @@
 				// load the form component for the appropriate
 				// type
 				var formUrl = YAHOO.lang.substitute(Alfresco.constants.URL_SERVICECONTEXT
-						+ "components/form?itemKind=type&itemId={itemId}&formId={formId}&mode=edit&showSubmitButton=false&showCancelButton=false", {
+						+ "components/form?itemKind=type&itemId={itemId}&formId={formId}&siteId={siteId}&mode=edit&showSubmitButton=false&showCancelButton=false", {
 					itemId : form.type,
-					formId : form.id
+					formId : form.id,
+					siteId: me.options.siteId!=null ? me.options.siteId : ""
 				});
 				var formData = {
 					htmlid : htmlid
