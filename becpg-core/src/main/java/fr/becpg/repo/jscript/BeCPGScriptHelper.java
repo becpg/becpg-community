@@ -79,6 +79,7 @@ import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.AutoNumHelper;
 import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.helper.GTINHelper;
@@ -922,6 +923,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getMessage(String messageKey, Object... param) {
 		return I18NUtil.getMessage(messageKey, param);
 	}
+	
+	public String getLocalizedMessage(String messageKey, String locale) {
+		return I18NUtil.getMessage(messageKey, MLTextHelper.parseLocale(locale));
+	}
+
+	public String getLocalizedMessage(String messageKey, String locale, Object... param) {
+		return I18NUtil.getMessage(messageKey, MLTextHelper.parseLocale(locale), param);
+	}
 
 	/**
 	 * <p>getOlapSSOUrl.</p>
@@ -1237,7 +1246,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getUserLocale(ScriptNode personNode) {
-		String loc = (String) mlNodeService.getProperty(personNode.getNodeRef(), BeCPGModel.PROP_USER_LOCAL);
+		String loc = (String) mlNodeService.getProperty(personNode.getNodeRef(), BeCPGModel.PROP_USER_LOCALE);
 		if ((loc == null) || loc.isEmpty()) {
 			if (useBrowserLocale) {
 				return null;
@@ -1383,8 +1392,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void sendMailToAuthorities(List<String> authorities, String subject, String mailTemplate, Map<String, Object> templateArgs) {
-		beCPGMailService.sendMailToAuthorities(new HashSet<>(authorities), subject, mailTemplate, (Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs));
+	public void sendMLAwareMail(String[] authorities, String fromEmail, String subjectKey, Object[] subjectParams, String mailTemplate, Map<String, Object> templateArgs) {
+		beCPGMailService.sendMLAwareMail(Set.of(authorities), fromEmail, subjectKey, subjectParams, mailTemplate, (Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs));
 	}
 
 	public void generateVersionReport(ScriptNode node, String versionLabel) {
@@ -1581,6 +1590,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public void formulate(ScriptNode productNode) {
 		formulationService.formulate(productNode.getNodeRef());
+	}
+	
+	public String[] extractPeople(String[] authorities) {
+		return AuthorityHelper.extractPeople(Set.of(authorities)).toArray(new String[0]);
 	}
 	
 }
