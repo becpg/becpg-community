@@ -138,7 +138,9 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				for (NodeRef nodeRef : associatedTplFiles) {
 					String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 					if (name.startsWith("logo")) {
-						reportData.getImages().add(new EntityImageInfo(name, nodeRef));
+						EntityImageInfo logoImageInfo = new EntityImageInfo(name, nodeRef);
+						logoImageInfo.setName(name);
+						reportData.getImages().add(logoImageInfo);
 					} else {
 						String assocFileId = getAssociatedTplFileId(templateId, name);
 						sendTplFile(reportSession, assocFileId, nodeRef);
@@ -154,7 +156,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 
 					if (imageBytes.length > reportImageMaxSizeInBytes) {
 						reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Image size exceeds: " + entry,
-								MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(), reportImageMaxSizeInBytes), tplNodeRef));
+								MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(), imageBytes.length, reportImageMaxSizeInBytes), tplNodeRef));
 					}
 
 					try (InputStream in = new ByteArrayInputStream(imageBytes)) {
@@ -174,7 +176,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 
 				if (datasourceBytes.length > reportDatasourceMaxSizeInBytes) {
 					reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Datasource size exceeds: " + params,
-							MLTextHelper.getI18NMessage("message.report.datasource.size", reportDatasourceMaxSizeInBytes), tplNodeRef));
+							MLTextHelper.getI18NMessage("message.report.datasource.size", datasourceBytes.length, reportDatasourceMaxSizeInBytes), tplNodeRef));
 				}
 
 				List<String> errors = generateReport(reportSession, in, out);
