@@ -2225,6 +2225,35 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if (logger.isTraceEnabled()) {
 							logger.trace("- Add new ing " + getName(ingLabelItem) + " to current Label " + getName(parent));
 						}
+						
+						
+						if ( nodeService.hasAspect(ingNodeRef, PLMModel.ASPECT_WATER)) {
+
+							if (logger.isTraceEnabled()) {
+								logger.trace("Detected water lost");
+							}
+
+							EvaporatedDataItem evaporatedDataItem = null;
+							for (EvaporatedDataItem tmp : labelingFormulaContext.getEvaporatedDataItems()) {
+								if (tmp.getProductNodeRef().equals(ingNodeRef)) {
+									evaporatedDataItem = tmp;
+									break;
+								}
+							}
+
+							if (evaporatedDataItem == null) {
+								labelingFormulaContext.getEvaporatedDataItems()
+										.add(new EvaporatedDataItem(ingNodeRef, 100d, qtyWithYield, volumeWithYield));
+							} else {
+								evaporatedDataItem.addQty(qtyWithYield);
+								evaporatedDataItem.addVolume(volumeWithYield);
+							}
+
+							labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
+
+						}
+
+						
 
 					} else {
 						if (logger.isTraceEnabled()) {
