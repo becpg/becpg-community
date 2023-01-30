@@ -130,7 +130,7 @@ margin-top:3px;
                         <tr>
                            <td style="padding: 10px 30px;">
                               <img style="padding :10px 0px"
-                                 src="${shareUrl}/res/components/images/becpg-footer-logo.png" />
+                                 src="${mailLogoUrl}" />
                            </td>
                         </tr>
                      </table>
