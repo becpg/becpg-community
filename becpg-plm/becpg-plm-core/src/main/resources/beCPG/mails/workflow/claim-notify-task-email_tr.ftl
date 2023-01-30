@@ -163,7 +163,7 @@ Example 2 show last project comments:
                            </tr>
                            <tr>
                               <td style="padding: 10px 30px;">
-                                 <img style="padding :10px 0px" src="${shareUrl}/res/components/images/becpg-footer-logo.png" />
+                                 <img style="padding :10px 0px" src="${mailLogoUrl}" />
                               </td>
                            </tr>
                         </table>
