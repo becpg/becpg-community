@@ -38,7 +38,6 @@ import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.version.common.VersionUtil;
 import org.alfresco.service.ServiceRegistry;
-import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -80,6 +79,7 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
+import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -140,7 +140,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private VersionService versionService;
 	
 	private EntityReportService entityReportService;
-	
+
+	private BeCPGMailService beCPGMailService;
+
 	private Repository repositoryHelper;
 	
 	private FormulationService<FormulatedEntity> formulationService;
@@ -181,6 +183,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	public void setEntityFormatService(EntityFormatService entityFormatService) {
 		this.entityFormatService = entityFormatService;
+	}
+	
+	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
+		this.beCPGMailService = beCPGMailService;
 	}
 
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {

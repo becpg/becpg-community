@@ -80,6 +80,7 @@
 		<property name="formulationService" ref="formulationService" />
 		<property name="hierarchyService" ref="hierarchyService" />
 		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="beCPGMailService" ref="beCPGMailService" />
 	</bean>
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">
