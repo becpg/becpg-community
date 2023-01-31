@@ -20,6 +20,7 @@ package fr.becpg.repo.mail;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -104,8 +105,7 @@ public interface BeCPGMailService {
 	 */
 	NodeRef getEmailProjectTemplatesFolder();
 
-
-
+	void sendMailToAuthorities(Set<String> authorities, String subject, String mailTemplate, Map<String, Object> templateArgs);
 
 
 }
