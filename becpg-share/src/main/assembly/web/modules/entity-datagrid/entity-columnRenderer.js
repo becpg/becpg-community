@@ -134,9 +134,14 @@
 			 * Boolean
 			 */
 		   this.registerRenderer("boolean", function(oRecord, data, label, scope) {
+			
+			   if(data.value == null || data.value==""){
+				    return "";
+			   }
+			     
 			   var booleanValueTrue = scope.msg("data.boolean.true");
 			   var booleanValueFalse = scope.msg("data.boolean.false");
-			   return $html(data.value || data.value == "true" ? booleanValueTrue :(data.value == "" ||data.value == null ? "" : booleanValueFalse ));
+			   return $html(data.value || data.value == "true" ? booleanValueTrue : booleanValueFalse);
 		   });
 
 		   /**
