@@ -158,6 +158,7 @@
 					<value>kg</value>
 					<value>g</value>
 					<value>mg</value>
+					<value>µg</value>
 					<value>lb</value>
 					<value>oz</value>
 					<value>L</value>
@@ -1516,11 +1517,28 @@
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:location</aspect>
+				<aspect>bcpg:isDeletedAspect</aspect>
 			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:subsidiary">
 			<parent>bcpg:entityListItem</parent>
+			<associations>
+				<association name="bcpg:subsidiaryCertifications">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:certification</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>	
+			<mandatory-aspects>
+				<aspect>bcpg:isDeletedAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 
@@ -1538,6 +1556,9 @@
 					</constraints>
 				</property>
 			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:isDeletedAspect</aspect>
+			</mandatory-aspects>
 
 		</type>
 
@@ -1600,6 +1621,9 @@
 						<index enabled="false" />
 				</property>
 			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:isDeletedAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:approvalNumber">
@@ -2396,6 +2420,17 @@
 						<many>false</many>
 					</target>
 				</association>
+				<association name="bcpg:nutListSources">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:depthLevelAspect</aspect>
@@ -2462,7 +2497,7 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:pclTextCriteria">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
@@ -2723,6 +2758,9 @@
 					<index enabled="false" />
 				</property>
 			</properties>
+			<mandatory-aspects>
+				<aspect>bcpg:isDeletedAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 		<type name="bcpg:labelClaimList">
@@ -2758,7 +2796,7 @@
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:lclComments">
-					<type>d:text</type>
+					<type>d:mltext</type>
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:lclIsFormulated">
@@ -3797,6 +3835,24 @@
 				
 			
 			</properties>
+		</aspect>
+
+
+
+		<aspect name="bcpg:productCollectionsAspect">
+			<associations>
+				<association name="bcpg:productCollections">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:productCollection</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 
 
@@ -5134,6 +5190,25 @@
 					<index enabled="false"></index>
 				</property>
 		</properties>
+		</aspect>
+
+		<aspect name="bcpg:propagateUpAspect">
+			<associations>
+				<association name="bcpg:propagatedCharacts">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+		
+		<aspect name="bcpg:undeletableAspect">
 		</aspect>
 	</aspects>
 </model>

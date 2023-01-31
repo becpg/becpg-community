@@ -161,7 +161,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 												mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 									}
 
-									ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<>(),
+									ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, ingListDataItem.getIng(), new ArrayList<>(),
 											RequirementDataType.Specification);
 									reqCtrlMap.add(reqCtrl);
 
@@ -264,7 +264,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 									logger.debug("Adding not respected for: " + curMessage);
 								}
 
-								ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, null, new ArrayList<>(),
+								ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, ingListDataItem.getIng(), new ArrayList<>(),
 										RequirementDataType.Specification);
 								reqCtrlMap.add(reqCtrl);
 

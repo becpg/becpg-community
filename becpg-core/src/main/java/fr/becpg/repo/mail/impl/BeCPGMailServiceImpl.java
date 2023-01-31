@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,8 +41,6 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.TemplateService;
 import org.alfresco.service.cmr.search.SearchService;
-import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -50,7 +49,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.helper.AuthorityHelper;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -71,7 +73,6 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 	private FileFolderService fileFolderService;
 	private NamespaceService namespaceService;
 	private ActionService actionService;
-	private AuthorityService authorityService;
 	private PersonService personService;
 	private String mailFrom;
 
@@ -139,15 +140,6 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 	}
 
 	/**
-	 * <p>Setter for the field <code>authorityService</code>.</p>
-	 *
-	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
-	 */
-	public void setAuthorityService(AuthorityService authorityService) {
-		this.authorityService = authorityService;
-	}
-
-	/**
 	 * <p>Setter for the field <code>personService</code>.</p>
 	 *
 	 * @param personService a {@link org.alfresco.service.cmr.security.PersonService} object.
@@ -200,9 +192,19 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		return templateNodeRef;
 	}
 
-	private NodeRef findLocalizedTemplateNodeRef(NodeRef templateNodeRef) {
+	private NodeRef findLocalizedTemplateNodeRef(NodeRef templateNodeRef, Locale locale) {
 		_logger.debug("Finding sibling of template " + templateNodeRef);
-		return fileFolderService.getLocalizedSibling(templateNodeRef);
+		
+		Locale currentLocale = I18NUtil.getLocale();
+		
+		try {
+			if (locale != null) {
+				I18NUtil.setLocale(locale);
+			}
+			return fileFolderService.getLocalizedSibling(templateNodeRef);
+		} finally {
+			I18NUtil.setLocale(currentLocale);
+		}
 	}
 
 	/** {@inheritDoc} */
@@ -215,11 +217,11 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			QName type = nodeService.getType(recipientNodeRef);
 			if (type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
 				_logger.debug(recipientNodeRef + " is a group, extracting...");
-				authorities.addAll(extractAuthoritiesFromGroup(recipientNodeRef, sendToSelf));
+				authorities.addAll(AuthorityHelper.extractAuthoritiesFromGroup(recipientNodeRef, sendToSelf));
 			} else {
 				authorityName = (String) nodeService.getProperty(recipientNodeRef, ContentModel.PROP_USERNAME);
 				
-				if (!authorityName.equals(AuthenticationUtil.getFullyAuthenticatedUser()) || (sendToSelf)) {
+				if (sendToSelf || !authorityName.equals(AuthenticationUtil.getFullyAuthenticatedUser())) {
 					if (_logger.isDebugEnabled()) {
 						_logger.debug("Adding mail authorityName : " + authorityName);
 					}
@@ -232,15 +234,47 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 
 		}
 		if(!authorities.isEmpty()) {
-			sendMailToAuthorities(authorities, subject, mailTemplate, templateArgs);
+			sendMLAwareMail(authorities, null, subject, null, mailTemplate, templateArgs);
 		} else if(_logger.isDebugEnabled()){
 			_logger.debug("No recipients to send mail to (sendToSelf:"+sendToSelf+")");
 		}
 
 	}
-	
+
 	@Override
-	public void sendMailToAuthorities(Set<String> authorities, String subject, String mailTemplate, Map<String, Object> templateArgs) {
+	public void sendMLAwareMail(Set<String> authorities, String fromEmail, String subjectKey, Object[] subjectParams, String mailTemplate, Map<String, Object> templateArgs) {
+		
+		Set<String> people = AuthorityHelper.extractPeople(authorities);
+		
+		Locale commonLocale = AuthorityHelper.getCommonLocale(people);
+		
+		if (commonLocale != null) {
+			
+			String localizedSubject = I18NUtil.getMessage(subjectKey, commonLocale, subjectParams);
+			
+			if (localizedSubject == null) {
+				localizedSubject = subjectKey;
+			}
+			
+			internalSendMail(authorities, fromEmail, localizedSubject, mailTemplate, templateArgs, commonLocale);
+		} else {
+			for (String person : people) {
+				Locale locale = null;
+				if (personService.personExists(person)) {
+					String localeString = (String) nodeService.getProperty(personService.getPerson(person), BeCPGModel.PROP_USER_LOCALE);
+					locale = MLTextHelper.parseLocale(localeString);
+				}
+				String localizedSubject = I18NUtil.getMessage(subjectKey, locale, subjectParams);
+				
+				if (localizedSubject == null) {
+					localizedSubject = subjectKey;
+				}
+				internalSendMail(Set.of(person), fromEmail, localizedSubject, mailTemplate, templateArgs, locale);
+			}
+		}
+	}
+
+	private void internalSendMail(Set<String> singleAuthorities, String fromEmail, String subject, String mailTemplate, Map<String, Object> templateArgs, Locale locale) {
 		
 		NodeRef templateNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(), mailTemplate);
 		
@@ -251,10 +285,12 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 		
 		Action mailAction = actionService.createAction(MailActionExecuter.NAME);
 		mailAction.setParameterValue(MailActionExecuter.PARAM_SUBJECT, subject);
-		mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, new ArrayList<>(authorities));
-		mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, findLocalizedTemplateNodeRef(templateNodeRef));
+		mailAction.setParameterValue(MailActionExecuter.PARAM_TO_MANY, new ArrayList<>(singleAuthorities));
+		mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE, findLocalizedTemplateNodeRef(templateNodeRef, locale));
 		mailAction.setParameterValue(MailActionExecuter.PARAM_FROM, mailFrom);
 		mailAction.setParameterValue(MailActionExecuter.PARAM_TEMPLATE_MODEL, (Serializable) templateArgs);
+		mailAction.setParameterValue(MailActionExecuter.PARAM_LOCALE, locale);
+		mailAction.setParameterValue(MailActionExecuter.PARAM_FROM, fromEmail);
 		
 		AuthenticationUtil.runAsSystem(() -> {
 			actionService.executeAction(mailAction, null, true, true);
@@ -282,19 +318,6 @@ public class BeCPGMailServiceImpl implements BeCPGMailService {
 			sendMail(recipientsNodeRef, subject, RepoConsts.EMAIL_ASYNC_ACTIONS_TEMPLATE, templateModel, true);
 		}
 
-	}
-
-	private List<String> extractAuthoritiesFromGroup(NodeRef group, boolean sendToSelf) {
-		List<String> ret = new ArrayList<>();
-		String authorityName = (String) nodeService.getProperty(group, ContentModel.PROP_AUTHORITY_NAME);
-		for (String userAuth : authorityService.getContainedAuthorities(AuthorityType.USER, authorityName, false)) {
-			if (sendToSelf || !userAuth.equals(AuthenticationUtil.getFullyAuthenticatedUser())) {
-				ret.add(userAuth);
-			}
-		}
-		_logger.debug("Found " + ret.size() + " users in the group: " + ret);
-
-		return ret;
 	}
 
 	/** {@inheritDoc} */

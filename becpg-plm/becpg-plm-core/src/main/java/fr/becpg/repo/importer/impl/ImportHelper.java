@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.alfresco.encoding.CharactersetFinder;
 import org.alfresco.encoding.GuessEncodingCharsetFinder;
@@ -210,6 +212,10 @@ public class ImportHelper {
 
 	/** Constant <code>NULL_VALUE="NULL"</code> */
 	public static final String NULL_VALUE = "NULL";
+	
+	private ImportHelper() {
+		//Do Nothing
+	}
 
 	/**
 	 * Load the property according to the property type.
@@ -358,16 +364,23 @@ public class ImportHelper {
 
 		return value;
 	}
+	
+	private static final  Pattern NUMBER_PATTERN = Pattern.compile("^[0-9\\s.,]+$");
 
-	private static Number parseNumber(ImportContext importContext, String val) throws ParseException {
+	public static Number parseNumber(ImportContext importContext, String val) throws ParseException {
+		
+	    Matcher m = NUMBER_PATTERN.matcher(val);
+	    if (!m.find()) {
+	    	throw new ParseException("Not a number",0);
+	    }
+		
 		if(importContext.getImportFileReader() instanceof ImportCSVFileReader) {
 			if (importContext.getPropertyFormats().getDecimalFormat().getDecimalFormatSymbols().getDecimalSeparator() == ',') {
-				val = val.replaceAll("\\.", ",");
+				val = val.replace("\\.", ",");
 			} else {
-				val = val.replaceAll(",", ".");
+				val = val.replace(",", ".");
 			}
 		}
-		
 		return importContext.getPropertyFormats().parseDecimal(val);
 
 	}
@@ -428,7 +441,7 @@ public class ImportHelper {
 			Map.Entry<QName, Serializable> entry = iterator.next();
 			if ((entry.getValue() != null) && ImportHelper.NULL_VALUE.equals(entry.getValue())) {
 				iterator.remove();
-			} else if ((entry.getValue() != null) && (entry.getValue() instanceof MLText)) {
+			} else if ( (entry.getValue() instanceof MLText)) {
 				for (Locale loc : ((MLText) entry.getValue()).getLocales()) {
 					if (ImportHelper.NULL_VALUE.equals(((MLText) entry.getValue()).get(loc))) {
 						((MLText) entry.getValue()).remove(loc);

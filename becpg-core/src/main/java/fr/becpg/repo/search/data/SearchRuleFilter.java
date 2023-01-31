@@ -1,5 +1,6 @@
 package fr.becpg.repo.search.data;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
@@ -21,9 +22,8 @@ import fr.becpg.repo.helper.JsonHelper;
  */
 public class SearchRuleFilter {
 
-	private NamespaceService namespaceService;
 
-	private static final String QUERY = "query";
+	private static final String PROP_QUERY = "query";
 	private static final String ENTITY_FILTER = "entityFilter";
 	private static final String ENTITY_TYPE = "entityType";
 
@@ -52,18 +52,23 @@ public class SearchRuleFilter {
 	private QName entityType;
 	private Map<String, String> entityCriteria;
 
+	private Date currentDate; 
 	private QName dateField;
-	private DateFilterType dateFilterType = DateFilterType.From;
+	
 	private Integer dateFilterDelay;
+	private DateFilterType dateFilterType = DateFilterType.From;
 	private DateFilterDelayUnit dateFilterDelayUnit = DateFilterDelayUnit.DATE;
 	private VersionFilterType versionFilterType = VersionFilterType.NONE;
+
+	private Boolean ensureDbQuery = false;
+	
+	private Boolean isEmptyJsonQuery = true;
 
 	/**
 	 * <p>Constructor for NotificationRuleFilter.</p>
 	 */
-	public SearchRuleFilter(NamespaceService namespaceService) {
+	public SearchRuleFilter() {
 		super();
-		this.namespaceService = namespaceService;
 	}
 
 	/**
@@ -204,14 +209,39 @@ public class SearchRuleFilter {
 		this.dateFilterDelayUnit = dateFilterDelayUnit;
 	}
 
-	public SearchRuleFilter fromJsonString(String jsonString) {
+	public Date getCurrentDate() {
+		return currentDate;
+	}
+
+	public void setCurrentDate(Date currentDate) {
+		this.currentDate = currentDate;
+	}
+
+	public Boolean getEnsureDbQuery() {
+		return ensureDbQuery;
+	}
+
+	public void setEnsureDbQuery(Boolean ensureDbQuery) {
+		this.ensureDbQuery = ensureDbQuery;
+	}
+
+	
+	
+	
+	public boolean isEmptyJsonQuery() {
+		return isEmptyJsonQuery;
+	}
+
+	public SearchRuleFilter fromJsonString(String jsonString, NamespaceService namespaceService) {
 		try {
 			if ((jsonString != null) && !jsonString.isEmpty()) {
 				JSONObject filterObject = new JSONObject(jsonString);
-				if (filterObject.has(QUERY)) {
-					setQuery(filterObject.getString(QUERY));
+				if (filterObject.has(PROP_QUERY)) {
+					setQuery(filterObject.getString(PROP_QUERY));
+					isEmptyJsonQuery = false;
 				}
 				if (filterObject.has(ENTITY_FILTER)) {
+					isEmptyJsonQuery = false;
 					JSONObject entityFilter = filterObject.getJSONObject(ENTITY_FILTER);
 					if (entityFilter.has(ENTITY_TYPE)) {
 						setEntityType(QName.createQName(entityFilter.getString(ENTITY_TYPE), namespaceService));
@@ -222,6 +252,7 @@ public class SearchRuleFilter {
 					}
 				}
 				if (filterObject.has(NODE_FILTER)) {
+					isEmptyJsonQuery = false;
 					JSONObject nodeFilter = filterObject.getJSONObject(NODE_FILTER);
 					if (nodeFilter.has(NODE_TYPE)) {
 						setNodeType(QName.createQName(nodeFilter.getString(NODE_TYPE), namespaceService));
@@ -239,6 +270,7 @@ public class SearchRuleFilter {
 				}
 
 				if (filterObject.has(DATE_FILTER)) {
+					isEmptyJsonQuery = false;
 					JSONObject dateFilter = filterObject.getJSONObject(DATE_FILTER);
 
 					if (dateFilter.has(DATE_FIELD)) {
@@ -259,6 +291,7 @@ public class SearchRuleFilter {
 				}
 
 				if (filterObject.has(VERSION_FILTER)) {
+					isEmptyJsonQuery = false;
 					JSONObject versionFilter = filterObject.getJSONObject(VERSION_FILTER);
 					if (versionFilter.has(VERSION_FILTER_TYPE)) {
 						setVersionFilterType(VersionFilterType.valueOf(versionFilter.getString(VERSION_FILTER_TYPE)));
@@ -281,8 +314,8 @@ public class SearchRuleFilter {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(dateField, dateFilterDelay, dateFilterDelayUnit, dateFilterType, entityCriteria, entityType, nodeCriteria, nodePath,
-				nodeType, query, versionFilterType);
+		return Objects.hash(currentDate, dateField, dateFilterDelay, dateFilterDelayUnit, dateFilterType, ensureDbQuery, entityCriteria, entityType,
+				nodeCriteria, nodePath, nodeType, query, versionFilterType);
 	}
 
 	@Override
@@ -294,8 +327,9 @@ public class SearchRuleFilter {
 		if (getClass() != obj.getClass())
 			return false;
 		SearchRuleFilter other = (SearchRuleFilter) obj;
-		return Objects.equals(dateField, other.dateField) && Objects.equals(dateFilterDelay, other.dateFilterDelay)
-				&& dateFilterDelayUnit == other.dateFilterDelayUnit && dateFilterType == other.dateFilterType
+		return Objects.equals(currentDate, other.currentDate) && Objects.equals(dateField, other.dateField)
+				&& Objects.equals(dateFilterDelay, other.dateFilterDelay) && dateFilterDelayUnit == other.dateFilterDelayUnit
+				&& dateFilterType == other.dateFilterType && Objects.equals(ensureDbQuery, other.ensureDbQuery)
 				&& Objects.equals(entityCriteria, other.entityCriteria) && Objects.equals(entityType, other.entityType)
 				&& Objects.equals(nodeCriteria, other.nodeCriteria) && Objects.equals(nodePath, other.nodePath)
 				&& Objects.equals(nodeType, other.nodeType) && Objects.equals(query, other.query) && versionFilterType == other.versionFilterType;
@@ -303,10 +337,11 @@ public class SearchRuleFilter {
 
 	@Override
 	public String toString() {
-		return "NotificationRuleFilter [query=" + query + ", nodeType=" + nodeType + ", nodePath=" + nodePath + ", nodeCriteria=" + nodeCriteria
-				+ ", entityType=" + entityType + ", entityCriteria=" + entityCriteria + ", dateField=" + dateField + ", dateFilterType="
-				+ dateFilterType + ", dateFilterDelay=" + dateFilterDelay + ", dateFilterDelayUnit=" + dateFilterDelayUnit + ", versionFilterType="
-				+ versionFilterType + "]";
+		return "SearchRuleFilter [query=" + query + ", nodeType=" + nodeType + ", nodePath=" + nodePath + ", nodeCriteria=" + nodeCriteria
+				+ ", entityType=" + entityType + ", entityCriteria=" + entityCriteria + ", currentDate=" + currentDate + ", dateField=" + dateField
+				+ ", dateFilterType=" + dateFilterType + ", dateFilterDelay=" + dateFilterDelay + ", dateFilterDelayUnit=" + dateFilterDelayUnit
+				+ ", versionFilterType=" + versionFilterType + ", ensureDbQuery=" + ensureDbQuery + "]";
 	}
+
 
 }

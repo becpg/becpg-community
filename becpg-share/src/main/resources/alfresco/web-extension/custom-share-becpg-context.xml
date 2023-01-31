@@ -77,6 +77,13 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 			</list>
 		</property>
 	</bean>
+	<bean id="evaluator.becpg.doclib.action.isUndeletable" parent="evaluator.doclib.action.hasAspect">
+		<property name="aspects">
+			<list>
+				<value>bcpg:undeletableAspect</value>
+			</list>
+		</property>
+	</bean>
 	<bean id="evaluator.becpg.doclib.action.generateReport" parent="evaluator.doclib.action.hasAspect">
 		<property name="aspects">
 			<list>

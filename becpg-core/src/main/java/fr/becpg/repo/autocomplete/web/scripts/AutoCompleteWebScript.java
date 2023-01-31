@@ -51,6 +51,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	private static final String PARAM_FILTER = "filter";
 	private static final String PARAM_EXCLUDE_CLASS_NAMES = "excludeClassNames";
 	private static final String PARAM_EXCLUDE_PROPS = "excludeProps";
+	private static final String PARAM_AND_PROPS = "andProps";
 	private static final String PARAM_PAGE_SIZE = "pageSize";
 	private static final String PARAM_PATH = "path";
 	private static final String PARAM_PARENT = "parent";
@@ -142,6 +143,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		props.put(AutoCompleteService.PROP_FILTER, req.getParameter(PARAM_FILTER));
 		props.put(AutoCompleteService.PROP_EXCLUDE_CLASS_NAMES,  req.getParameter(PARAM_EXCLUDE_CLASS_NAMES));
 		props.put(AutoCompleteService.PROP_EXCLUDE_PROPS, req.getParameter(PARAM_EXCLUDE_PROPS));
+		props.put(AutoCompleteService.PROP_AND_PROPS, req.getParameter(PARAM_AND_PROPS));
 		props.put(AutoCompleteService.PROP_PARENT, parent);
 		props.put(AutoCompleteService.PROP_PRODUCT_TYPE, productType);
 		props.put(AutoCompleteService.EXTRA_PARAM, getExtraParams(req));

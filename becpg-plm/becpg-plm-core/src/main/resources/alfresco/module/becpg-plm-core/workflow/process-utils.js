@@ -1,36 +1,78 @@
-function sendMail(userOrGroup, from, subject, message, templatePath, workflowDocuments) {
+function sendMail(recipient, from, subjectKey, subjectParam, messageKey, templatePath, workflowDocuments) {
+	
 	try {
-		if (userOrGroup != null) {
-			
-			if (userOrGroup.typeShort && userOrGroup.typeShort == "cm:authorityContainer") {
-				userOrGroup = new Array(userOrGroup.properties["cm:authorityName"]);
-			} else if (userOrGroup.typeShort && userOrGroup.typeShort == "cm:person") {
-				userOrGroup = new Array(userOrGroup.properties["cm:userName"]);
-			} else {
-				userOrGroup = new Array(userOrGroup);
+		var templateArgs = {};
+		var templateModel = {};
+		
+		templateArgs['workflowPooled'] = false;
+		templateArgs['workflowDescription'] = bpm_workflowDescription;
+		templateArgs['workflowDueDate'] = task.dueDate;
+		templateArgs['workflowPriority'] = task.priority;
+		templateArgs['workflowDocuments'] = workflowDocuments;
+		templateArgs['workflowId'] = "activiti$" + task.id;
+	
+		templateModel['args'] = templateArgs;
+		
+		var fromEmail = from != null ? from.properties.email : null;
+		
+		var authorityName = getAuthorityName(recipient);
+		
+		var persons = bcpg.extractPeople(new Array(authorityName));
+	
+		var commonLocale = getCommonLocale(persons);
+		
+		if (commonLocale != null) {
+			templateArgs['workflowTitle'] = bcpg.getLocalizedMessage(messageKey, commonLocale);
+			bcpg.sendMLAwareMail(new Array(authorityName), fromEmail, subjectKey, new Array(subjectParam), templatePath, templateModel);
+		} else {
+			for (var i in persons) {
+				var person = persons[i];
+				templateArgs['workflowTitle'] = bcpg.getLocalizedMessage(messageKey, person.properties['bcpg:userLocale']);
+				bcpg.sendMLAwareMail(new Array(person), fromEmail, subjectKey, new Array(subjectParam), templatePath, templateModel);
 			}
-			
-			var templateArgs = {};
-			var templateModel = {};
-			
-			templateArgs['workflowTitle'] = message;
-			templateArgs['workflowPooled'] = false;
-			templateArgs['workflowDescription'] = bpm_workflowDescription;
-			templateArgs['workflowDueDate'] = task.dueDate;
-			templateArgs['workflowPriority'] = task.priority;
-			templateArgs['workflowDocuments'] = workflowDocuments;
-			templateArgs['workflowId'] = "activiti$" + task.id;
-
-			templateModel['args'] = templateArgs;
-			
-			
-			bcpg.sendMailToAuthorities(userOrGroup, message, templatePath, templateModel);
-
 		}
+		
 	} catch (e) {
-		logger.error("Cannot send mail to :");
-		logger.error(" - subject: " + subject);
+		logger.error("Cannot send mail :");
 		logger.error(" - e: " + e);
+	}
+}
+
+function getCommonLocale(persons) {
+	
+	var commonLocale = null;
+		
+	var isFirst = true;
+	
+	for (var i in persons) {
+		
+		var personLocale = null;
+		
+		var personNode = people.getPerson(persons[i]);
+		
+		if (personNode != null) {
+			personLocale = personNode.properties["bcpg:userLocale"];
+		}
+		
+		if (isFirst) {
+			commonLocale = personLocale;
+			isFirst = false;
+		} else if (personLocale != commonLocale) {
+			return null;
+		}
+	}
+	
+	return commonLocale;
+}
+
+function getAuthorityName(userOrGroup) {
+	
+	if (userOrGroup.typeShort && userOrGroup.typeShort == "cm:authorityContainer") {
+		return userOrGroup.properties["cm:authorityName"];
+	} else if (userOrGroup.typeShort && userOrGroup.typeShort == "cm:person") {
+		return userOrGroup.properties["cm:userName"];
+	} else {
+		return userOrGroup;
 	}
 }
 
@@ -94,25 +136,41 @@ function onCreateProductValidationTask(authorities) {
 				task.addCandidateUser(assignees.get(i));
 
 				if (bcpgwf_notifyAssignee) {
-					sendMail(
-							assignees.get(i),
-							initiator,
-							bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription),
-							bcpg.getMessage('productValidationWF.mail.notify.message'),
-							"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
-							bpm_package.children);
+					
+					sendMail(assignees.get(i), initiator, 'productValidationWF.mail.notify.subject',
+						bpm_workflowDescription, 
+						'productValidationWF.mail.notify.message', 
+						"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl", 
+						bpm_package.children);
 				}
 			}
 		}
 	}
 }
 
+function onApproveProductValidationTask() {
+	sendMail(task.assignee, null, 'productValidationWF.mail.approved.subject',
+		bpm_workflowDescription,
+		'productValidationWF.mail.approved.message',
+		"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-approved-task-email.ftl",
+		bpm_package.children);
+}
+
+function onRejectProductValidationTask() {
+	sendMail(task.assignee, null, 'productValidationWF.mail.rejected.subject',
+		bpm_workflowDescription,
+		'productValidationWF.mail.rejected.message',
+		"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-rejected-task-email.ftl",
+		bpm_package.children);
+}
+
 function onAssignmentProductValidationTask() {
 	if (bcpgwf_notifyAssignee) {
-		sendMail(task.assignee, initiator, bcpg.getMessage('productValidationWF.mail.notify.subject', bpm_workflowDescription), bcpg
-				.getMessage('productValidationWF.mail.notify.message'),
-				"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
-				bpm_package.children);
+		sendMail(task.assignee, initiator, 'productValidationWF.mail.notify.subject',
+			bpm_workflowDescription,
+			'productValidationWF.mail.notify.message',
+			"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-notify-task-email.ftl",
+			bpm_package.children);
 	}
 }
 
@@ -207,10 +265,11 @@ function onCreateApproveProductTask() {
 
 	if (bcpgwf_notifyUsers != null) {
 		for (var i = 0; i < bcpgwf_notifyUsers.size(); i++) {
-			sendMail(bcpgwf_notifyUsers.get(i), null, bcpg.getMessage('productValidationWF.mail.approved.subject', bpm_workflowDescription), bcpg
-					.getMessage('productValidationWF.mail.approved.message'),
-					"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-approved-task-email.ftl",
-					bpm_package.children);
+			sendMail(bcpgwf_notifyUsers.get(i), null, 'productValidationWF.mail.approved.subject',
+				bpm_workflowDescription,
+				'productValidationWF.mail.approved.message',
+				"/app:company_home/app:dictionary/app:email_templates/cm:workflownotification/cm:product-validation-approved-task-email.ftl",
+				bpm_package.children);
 		}
 	}
 
@@ -269,12 +328,6 @@ function getMemberNames(assignees){
 		}
 	}
 	return memberNames;
-}
-
-function sendMailToAssignees(assignees, from, subject, message, templatePath, workflowDocuments){
-	for (var i = 0; i < assignees.size(); i++){
-		sendMail(assignees.get(i), from, subject, message, templatePath, workflowDocuments)
-	}
 }
 
 

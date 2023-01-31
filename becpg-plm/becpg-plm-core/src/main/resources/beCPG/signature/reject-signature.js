@@ -1,22 +1,29 @@
 function main() {
 	
-	var docDeliverable;
-
+	var docDeliverable = null;
+	
 	for (var i = 0; i < project.deliverableList.size(); i++) {
-		var deliverable = project.deliverableList.get(i);
-		if (deliverable.name.endsWith("doc") && deliverable.tasks.contains(task.nodeRef)) {
-			docDeliverable = deliverable;
+		var del = project.deliverableList.get(i);
+		if (del.name.endsWith(" - doc") && del.name.startsWith(deliverable.name)) {
+			docDeliverable = del;
 			break;
 		}
 	}
 
 	var document = search.findNode(docDeliverable.content);
-
-	if (document.assocs["cm:workingcopylink"] && document.assocs["cm:workingcopylink"].length > 0) {
-		var workingCopy = document.assocs["cm:workingcopylink"][0];
-		workingCopy.cancelCheckout();
-	}
 	
+	var recipients = document.assocs["sign:recipients"];
+		
+	document = bSign.cancelSignature(document);
+	
+	for (var j in recipients) {
+		var recipient = recipients[j];
+		document.createAssociation(recipient, "sign:recipients");
+	}
+
+	document.properties["sign:status"] = "Initialized";
+	
+	document.save();
 }
 
 main();

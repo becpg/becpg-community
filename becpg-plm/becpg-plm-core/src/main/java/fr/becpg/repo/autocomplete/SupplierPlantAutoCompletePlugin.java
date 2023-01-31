@@ -88,31 +88,28 @@ public class SupplierPlantAutoCompletePlugin extends TargetAssocAutoCompletePlug
 		List<NodeRef> suppliers = associationService.getSourcesAssocs(connectedUser, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 
 		if ((suppliers != null) && !suppliers.isEmpty()) {
-			return AuthenticationUtil.runAsSystem(() -> {
+			List<NodeRef> ret = new ArrayList<>();
+			for (NodeRef supplierNodeRef : suppliers) {
+				NodeRef entityNodeRef = supplierNodeRef;
 
-				List<NodeRef> ret = new ArrayList<>();
-				for (NodeRef supplierNodeRef : suppliers) {
-					NodeRef entityNodeRef = supplierNodeRef;
-
-					if (nodeService.getType(supplierNodeRef).equals(PLMModel.TYPE_CONTACTLIST)) {
-						entityNodeRef = entityListDAO.getEntity(supplierNodeRef);
-					}
-
-					if ((entityNodeRef != null) && nodeService.exists(entityNodeRef)
-							&& entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
-						NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-						if (listsContainerNodeRef != null) {
-							NodeRef datalistNodeRef = entityListDAO.getList(listsContainerNodeRef, PLMModel.TYPE_PLANT);
-							if (datalistNodeRef != null) {
-								ret.addAll(entityListDAO.getListItems(datalistNodeRef, PLMModel.TYPE_PLANT));
-							}
-
-						}
-					}
+				if (nodeService.getType(supplierNodeRef).equals(PLMModel.TYPE_CONTACTLIST)) {
+					entityNodeRef = entityListDAO.getEntity(supplierNodeRef);
 				}
 
-				return new AutoCompletePage(ret, pageNum, pageSize, targetAssocValueExtractor);
-			});
+				if ((entityNodeRef != null) && nodeService.exists(entityNodeRef)
+						&& entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+					NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+					if (listsContainerNodeRef != null) {
+						NodeRef datalistNodeRef = entityListDAO.getList(listsContainerNodeRef, PLMModel.TYPE_PLANT);
+						if (datalistNodeRef != null) {
+							ret.addAll(entityListDAO.getListItems(datalistNodeRef, PLMModel.TYPE_PLANT));
+						}
+
+					}
+				}
+			}
+
+			return new AutoCompletePage(ret, pageNum, pageSize, targetAssocValueExtractor);
 		}
 
 		props.put(AutoCompleteService.PROP_CLASS_NAME, PLMModel.TYPE_PLANT.toPrefixString(namespaceService));

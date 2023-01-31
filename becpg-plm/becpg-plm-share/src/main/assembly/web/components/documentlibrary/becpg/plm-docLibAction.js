@@ -102,63 +102,6 @@
 
 
 	YAHOO.Bubbling.fire("registerAction", {
-		actionName: "onActionSendToSupplier",
-		fn: function onActionSendToSupplier(p_record) {
-			var nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef), recordSiteName = $isValueSet(p_record.location.site) ? p_record.location.site.name : null,
-				displayName = p_record.displayName;
-
-			var actionUrl = Alfresco.constants.PROXY_URI + 'becpg/supplier/send-to-supplier?entityNodeRef=' + p_record.nodeRef;
-
-			this.modules.sendToSupplier = new Alfresco.module.SimpleDialog(this.id + "-sendToSupplier").setOptions({
-				width: "33em",
-				templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "modules/supplier/send-to-supplier",
-				actionUrl: actionUrl,
-				validateOnSubmit: false,
-				destroyOnHide: true,
-				firstFocus: this.id + "-sendToSupplier-projectTpl-field",
-				doBeforeFormSubmit: {
-					fn: function onActionSendToSupplier_doBeforeFormSubmit(form) {
-						Alfresco.util.PopupManager.displayMessage({
-							text: this.msg("message.send-to-supplier.inprogress"),
-							displayTime: 0
-						});
-					},
-					scope: this
-				},
-				onSuccess: {
-					fn: function onActionSendToSupplier_success(response) {
-						if (response.json) {
-							this.modules.sendToSupplier.hide();
-							window.location.href = beCPG.util.entityURL(recordSiteName,
-								response.json.persistedObject, "pjt:project");
-						}
-					},
-					scope: this
-				},
-				onFailure: {
-					fn: function onActionSendToSupplier_failure(response) {
-						this.modules.sendToSupplier.hide();
-						if (response.json && response.json.message) {
-							Alfresco.util.PopupManager.displayMessage({
-								text: response.json.message
-							});
-						} else {
-							Alfresco.util.PopupManager.displayMessage({
-								text: this.msg("message.send-to-supplier.failure")
-							});
-						}
-					},
-					scope: this
-				}
-			});
-
-			this.modules.sendToSupplier.show();
-
-		}
-	});
-
-
-	YAHOO.Bubbling.fire("registerAction", {
 		actionName: "onActionCreateSupplier",
 		fn: function onActionCreateSupplier(p_record) {
 			var nodeRef = new Alfresco.util.NodeRef(p_record.nodeRef);

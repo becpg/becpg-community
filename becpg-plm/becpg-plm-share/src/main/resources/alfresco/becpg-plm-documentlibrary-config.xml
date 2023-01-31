@@ -32,6 +32,7 @@
 				<aspect name="bcpg:chemicalCodeAspect" />
 				<aspect name="bcpg:meatAspect" />
 				<aspect name="ghs:sdsAspect" />
+				<aspect name="bcpg:undeletableAspect" />
 				
 			</visible>
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -290,16 +291,6 @@
 				<evaluator>evaluator.becpg.doclib.action.entityTpl</evaluator>
 				<evaluator>evaluator.becpg.doclib.action.product</evaluator>
 			</action>
-			
-			<!-- Supplier portal
-			
-			<action id="send-to-supplier" type="javascript" label="actions.entity.send-to-supplier" icon="user">
-				<param name="function">onActionSendToSupplier</param>
-				<evaluator>evaluator.becpg.doclib.action.sendToSupplier</evaluator>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
-				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
-			</action>
-			 -->
 			
 			<!-- Create supplier -->
 			

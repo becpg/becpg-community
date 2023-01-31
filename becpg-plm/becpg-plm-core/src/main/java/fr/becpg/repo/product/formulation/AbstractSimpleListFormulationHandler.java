@@ -64,6 +64,7 @@ import fr.becpg.repo.repository.model.ForecastValueDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.repository.model.SourceableDataItem;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantData;
@@ -245,6 +246,10 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
 							((VariantAwareDataItem) sl).setValue(null, VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
 						}
+					}
+					
+					if(sl instanceof SourceableDataItem) {
+						((SourceableDataItem) sl).getSources().clear();
 					}
 
 					// add detailable aspect
