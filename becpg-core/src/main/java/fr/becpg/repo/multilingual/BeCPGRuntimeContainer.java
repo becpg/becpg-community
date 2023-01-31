@@ -92,7 +92,7 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 	}
 
 	private Locale getUserLocale(NodeRef personNodeRef) {
-		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_LOCAL);
+		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_LOCALE);
 		if ((loc == null) || loc.isEmpty()) {
 			Locale currentLocale = Locale.getDefault();
 

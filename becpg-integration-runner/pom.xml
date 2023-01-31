@@ -12,7 +12,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>4.2.0</version>
+		<version>4.2.1</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -425,6 +425,19 @@
 								</configuration>
 							</execution>
 							<execution>
+								<id>becpg-solr</id>
+								<phase>prepare-package</phase>
+								<goals>
+									<goal>build</goal>
+								</goals>
+								<configuration>
+									<repository>${docker.becpg.url}/becpg-solr</repository>
+									<contextDirectory>${project.build.directory}/becpg-solr</contextDirectory>
+									<pullNewerImage>true</pullNewerImage>
+									<tag>${docker.becpg.tag}</tag>
+								</configuration>
+							</execution>
+							<execution>
 								<id>becpg-glop</id>
 								<phase>prepare-package</phase>
 								<goals>
@@ -451,7 +464,7 @@
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
-						<version>0.8.6</version>
+						<version>0.8.8</version>
 						<configuration>
 							<append>true</append>
 							

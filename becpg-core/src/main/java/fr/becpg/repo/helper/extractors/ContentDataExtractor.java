@@ -35,6 +35,7 @@ import org.alfresco.service.namespace.QName;
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
 
 /**
  * <p>ContentDataExtractor class.</p>
@@ -47,7 +48,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 	
 	
 
-	private List<String> metadataFields = new ArrayList<>();
+	private List< AttributeExtractorField> metadataFields = new ArrayList<>();
 	
 
 	
@@ -68,7 +69,7 @@ public class ContentDataExtractor extends AbstractNodeDataExtractor  {
 	 * @param serviceRegistry a {@link org.alfresco.service.ServiceRegistry} object.
 	 * @param attributeExtractorService a {@link fr.becpg.repo.helper.AttributeExtractorService} object.
 	 */
-	public ContentDataExtractor(List<String> metadataFields,ServiceRegistry serviceRegistry,AttributeExtractorService attributeExtractorService) {
+	public ContentDataExtractor(List< AttributeExtractorField> metadataFields,ServiceRegistry serviceRegistry,AttributeExtractorService attributeExtractorService) {
 		super(serviceRegistry,attributeExtractorService);
 		this.metadataFields = metadataFields;
 	}

@@ -191,7 +191,7 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 							cell.setCellValue(String.valueOf(key));
 						}
 
-						cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null);
+						ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null);
 
 					}
 					rownum = appendNextLevel(entry.getValue(), sheet, itemType, metadataFields, cache, rownum, key, qty, parameters, entityItems);

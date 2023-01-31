@@ -1119,6 +1119,7 @@
           <show force="true" id="bcpg:clients"/>
           <show force="true" id="bcpg:suppliers"/>
           <show force="true" id="bcpg:plants"/>
+          <show force="true" id="bcpg:productCollections"/>
           <show force="true" id="mpm:plResource"/>
           <show force="true" id="bcpg:compoListProduct"/>
           <show force="true" id="bcpg:packagingListProduct"/>
@@ -1226,6 +1227,9 @@
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
           </field>
           <field id="bcpg:plants" mandatory="false" read-only="false" set="2-col-product-criteria">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
+          </field>
+           <field id="bcpg:productCollections" mandatory="false" read-only="false" set="2-col-product-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
           </field>
           <field id="mpm:plResource" mandatory="false" read-only="false" set="2-col-product-criteria">

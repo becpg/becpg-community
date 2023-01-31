@@ -39,6 +39,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 		NodeRef totalFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT");
 		NodeRef totalSugarNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "SUGAR");
 		NodeRef sodiumNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NA");
+		NodeRef saltNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "NACL");
 		NodeRef percFruitsAndVetgsNode = findOrCreateNode(PLMModel.TYPE_PHYSICO_CHEM, PLMModel.PROP_PHYSICO_CHEM_CODE, "FRUIT_VEGETABLE");
 		NodeRef nspFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS");
 		NodeRef aoacFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG");
@@ -129,6 +130,45 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			
 			alfrescoRepository.save(finishedProduct);
 
+			return null;
+		}, false, true);
+		
+		NodeRef finishedProductNodeRef3 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
+			nutList.add(new NutListDataItem(null, 797.0, null, null, null, null, energyKjNode, true));
+			nutList.add(new NutListDataItem(null, 4.6, null, null, null, null, satFatNode, true));
+			nutList.add(new NutListDataItem(null, 7.1, null, null, null, null, totalFatNode, true));
+			nutList.add(new NutListDataItem(null, 19.0, null, null, null, null, totalSugarNode, true));
+			nutList.add(new NutListDataItem(null, 92.0, null, null, null, null, sodiumNode, true));
+			nutList.add(new NutListDataItem(null, 0.23, null, null, null, null, saltNode, true));
+			nutList.add(new NutListDataItem(null, 0.2, null, null, null, null, nspFibreNode, true));
+			nutList.add(new NutListDataItem(null, 0.0, null, null, null, null, aoacFibreNode, true));
+			nutList.add(new NutListDataItem(null, 3.3, null, null, null, null, proteinNode, true));
+			
+			ArrayList<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();
+			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
+			
+			FinishedProductData finishedProductData = new FinishedProductData();
+			finishedProductData.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
+			finishedProductData.setName("Test3");
+			finishedProductData.setNutList(nutList);
+			finishedProductData.setPhysicoChemList(physicoChemList);
+			finishedProductData.setNutrientProfileCategory(NutrientProfileCategory.Others.toString());
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData).getNodeRef();
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef3);
+			
+			productService.formulate(finishedProduct);
+			
+			Assert.assertEquals((Double) 11d, finishedProduct.getNutrientScore());
+			
+			Assert.assertEquals("D", finishedProduct.getNutrientClass());
+			
+			alfrescoRepository.save(finishedProduct);
+			
 			return null;
 		}, false, true);
 

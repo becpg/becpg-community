@@ -47,11 +47,18 @@
 				</list>
 			</parameter>
 		</constraint>
-	
+		<constraint name="bp:pubChannelActions" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				    <value></value>
+					<value>RETRY</value>
+					<value>RESET</value>
+					<value>STOP</value>
+				</list>
+			</parameter>
+		</constraint>
 	</constraints>
 	<types>
-
-
 		<type name="bp:pubChannel">
 			<parent>bcpg:entityListItem</parent>
 			<properties>
@@ -84,6 +91,13 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
+				<property name="bp:pubChannelLastDate">
+					<type>d:datetime</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
 				<property name="bp:pubChannelStatus">
 					<type>d:text</type>
 					<index enabled="true">
@@ -92,6 +106,16 @@
 					</index>
 					<constraints>
 						<constraint ref="bp:pubChannelStatus" />
+					</constraints>
+				</property>
+				<property name="bp:pubChannelAction">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bp:pubChannelActions" />
 					</constraints>
 				</property>
 				<property name="bp:pubChannelBatchStartTime">
@@ -137,7 +161,6 @@
 					<type>d:text</type>
 					<index enabled="false"/>
 				</property>
-
 			</properties>
 			<associations>
 				<association name="bp:pubChannelConfigFile">
@@ -152,6 +175,9 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:isDeletedAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 
@@ -216,7 +242,7 @@
 			</associations>
 		</type>
 
-<!-- Deprecated TO Remove -->
+	<!-- Deprecated TO Remove -->
 		<type name="bp:MailingListChannel">
 			<title>Mailing List Delivery Channel</title>
 			<description>Node type used to represent Mailing List delivery

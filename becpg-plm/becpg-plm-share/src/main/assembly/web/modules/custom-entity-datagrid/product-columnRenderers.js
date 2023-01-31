@@ -24,7 +24,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entityV2", "bcpg:resourceProduct",
 				"cm:content_bcpg:costDetailsListSource", "bcpg:product_bcpg:packagingListProduct", "bcpg:product_bcpg:compoListProduct", "bcpg:product_bcpg:productListProduct",
-				"ecm:wulSourceItems", "ecm:rlSourceItems","bcpg:psclSourceItem" , "ecm:rlTargetItem", "ecm:culSourceItem", "ecm:culTargetItem", "ecm:cclSourceItem"
+				"ecm:wulSourceItems", "ecm:rlSourceItems","bcpg:psclSourceItem" , "ecm:rlTargetItem", "ecm:culSourceItem", "ecm:culTargetItem", "ecm:cclSourceItem","bcpg:product_bcpg:nutListSources"
 				,"cm:cmobject_bcpg:lrComponents", "bcpg:product_gs1:cplProduct" ],
 		renderer : function(oRecord, data, label, scope, z, zz, elCell, oColumn) {
 
@@ -68,7 +68,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				}
 			}
 			
-			if(label == "mpm:rplResourceRef"){
+			if(label == "mpm:rplResourceRef" || label == "bcpg:nutListSources" ){
 			    if (oColumn.hidden) {
 			    	oColumn.showAfterRender = true;
                 }
@@ -800,9 +800,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 				       numberFormat = qtyColumn.numberFormat;
 				    }
 						
-					if(qtyColumn.className){
-						
-					}		
 				
 					for (var i = 0; i < json.comp.length; i++) {
 						if (json.comp[i].value != null && json.comp[i].value !== undefined) {
@@ -1162,7 +1159,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 					}
 				} else {
 					var absValue = Math.abs(data.value);
-					if (absValue < 0.0001) {
+					if (absValue < 0.0000001) {
+						qty = data.value * 1000000000;
+						unit = " µg";
+					}else if (absValue < 0.0001) {
 						qty = data.value * 1000000;
 						unit = " mg";
 					} else if (absValue < 1) {

@@ -170,18 +170,6 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 				}
 
-				formulatedProduct.getAllergenList().forEach(allergenListDataItem -> {
-					if (!Boolean.TRUE.equals(allergenListDataItem.getIsManual()) && (Boolean.TRUE.equals(allergenListDataItem.getVoluntary())
-							|| Boolean.TRUE.equals(allergenListDataItem.getInVoluntary()))) {
-						Double regulatoryThreshold = getRegulatoryThreshold(formulatedProduct, allergenListDataItem.getAllergen());
-						if ((regulatoryThreshold != null) && (allergenListDataItem.getQtyPerc() != null)
-								&& (regulatoryThreshold > allergenListDataItem.getQtyPerc())) {
-							allergenListDataItem.setVoluntary(false);
-							allergenListDataItem.setInVoluntary(false);
-						}
-					}
-				});
-
 			} else if (!(formulatedProduct instanceof ResourceProductData)) {
 				retainNodes.addAll(formulatedProduct.getAllergenList());
 				for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
@@ -204,45 +192,62 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			formulatedProduct.getReqCtrlList().addAll(rclCtrlMap.values());
 
 		}
-		
-		for (IngListDataItem ing : formulatedProduct.getIngList()) {
-			
-			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
-			
-			for (NodeRef allergenNodeRef : ingItem.getAllergenList()) {
-				AllergenListDataItem allergen = findAllergen(formulatedProduct, allergenNodeRef);
-				
-				if (allergen == null) {
-					allergen = new AllergenListDataItem();
-					allergen.setAllergen(allergenNodeRef);
-					formulatedProduct.getAllergenList().add(allergen);
-				}
-				
-				allergen.setVoluntary(true);
-				
-				if (!allergen.getVoluntarySources().contains(ing.getIng())) {
-					allergen.getVoluntarySources().add(ing.getIng());
+
+		if (formulatedProduct.getIngList() != null) {
+			for (IngListDataItem ing : formulatedProduct.getIngList()) {
+
+				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
+
+				for (NodeRef allergenNodeRef : ingItem.getAllergenList()) {
+					AllergenListDataItem allergen = findAllergen(formulatedProduct, allergenNodeRef);
+
+					if (allergen == null) {
+						allergen = new AllergenListDataItem();
+						allergen.setAllergen(allergenNodeRef);
+						formulatedProduct.getAllergenList().add(allergen);
+					}
+
+					if (!allergen.getVoluntarySources().contains(ing.getIng())) {
+						allergen.getVoluntarySources().add(ing.getIng());
+					}
+					allergen.setVoluntary(true);
 				}
 			}
 		}
 
 		// sort
 		if (formulatedProduct.getAllergenList() != null) {
+
+			formulatedProduct.getAllergenList().forEach(allergenListDataItem -> {
+				if (!Boolean.TRUE.equals(allergenListDataItem.getIsManual())) {
+					Double regulatoryThreshold = getRegulatoryThreshold(formulatedProduct, allergenListDataItem.getAllergen());
+					if (regulatoryThreshold != null && allergenListDataItem.getQtyPerc() != null) {
+						if (regulatoryThreshold > allergenListDataItem.getQtyPerc()) {
+							allergenListDataItem.setVoluntary(false);
+							allergenListDataItem.setInVoluntary(false);
+						} else if (regulatoryThreshold <= allergenListDataItem.getQtyPerc()) {
+							allergenListDataItem.setVoluntary(true);
+							allergenListDataItem.setInVoluntary(false);
+						}
+					}
+				}
+			});
+
 			sort(formulatedProduct.getAllergenList());
 		}
 
 		return true;
 
 	}
-	
+
 	private AllergenListDataItem findAllergen(ProductData formulatedProduct, NodeRef allergenNodeRef) {
-		
+
 		for (AllergenListDataItem allergen : formulatedProduct.getAllergenList()) {
 			if (allergenNodeRef.equals(allergen.getAllergen())) {
 				return allergen;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -546,7 +551,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 				return allergenName1.compareTo(allergenName2);
 			} else if (AllergenType.Major.toString().equals(type1) && AllergenType.Minor.toString().equals(type2)) {
 				return BEFORE;
-			} else if (AllergenType.Minor.toString().equals(type1) && type2 == null) { 
+			} else if (AllergenType.Minor.toString().equals(type1) && type2 == null) {
 				return BEFORE;
 			} else {
 				return AFTER;

@@ -27,8 +27,12 @@
 					<show id="cm:name" />
 					<show id="bp:pubChannelId" />
 					<show id="bp:pubChannelCatalogId" />
+					<show id="bp:pubChannelConfig" />
+					<show id="bp:pubChannelConfigFile" />
+					<show id="bp:pubChannelAction" />
 					<show id="bp:pubChannelBatchId" />
 					<show id="bp:pubChannelLastSuccessBatchId" />
+					<show id="bp:pubChannelLastDate" />
 					<show id="bp:pubChannelBatchStartTime" />
 					<show id="bp:pubChannelBatchEndTime" />
 					<show id="bp:pubChannelBatchDuration" />
@@ -36,8 +40,7 @@
 					<show id="bp:pubChannelReadCount" />
 					<show id="bp:pubChannelFailCount" />
 					<show id="bp:pubChannelError" />
-					<show id="bp:pubChannelConfig" />
-					<show id="bp:pubChannelConfigFile" />
+
 
 				</field-visibility>
 				<appearance>
@@ -53,8 +56,7 @@
 					<field id="bp:pubChannelFailCount" read-only="true" />
 					<field id="bp:pubChannelError" read-only="true" />
 					<field id="bp:pubChannelConfig">
-
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/config-editor.ftl" />
 					</field>
 					<field id="bp:pubChannelConfigFile" />
 				</appearance>
@@ -77,7 +79,7 @@
 					<field id="cm:name" />
 					<field id="bp:pubChannelId" />
 					<field id="bp:pubChannelConfig">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/config-editor.ftl" />
 					</field>
 					<field id="bp:pubChannelConfigFile" />
 				</appearance>
@@ -96,6 +98,7 @@
 					<show id="bp:pubChannelId" />
 					<show id="bp:pubChannelBatchId" />
 					<show id="bp:pubChannelLastSuccessBatchId" />
+					<show id="bp:pubChannelLastDate" />
 					<show id="bp:pubChannelBatchStartTime" />
 					<show id="bp:pubChannelBatchEndTime" />
 					<show id="bp:pubChannelBatchDuration" />
@@ -103,6 +106,7 @@
 					<show id="bp:pubChannelReadCount" />
 					<show id="bp:pubChannelFailCount" />
 					<show id="bp:pubChannelError" />
+					<show id="bp:pubChannelAction" />
 
 				</field-visibility>
 				<appearance>

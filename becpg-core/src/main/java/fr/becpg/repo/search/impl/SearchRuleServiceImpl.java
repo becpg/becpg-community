@@ -87,51 +87,68 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 			}
 			Date from = null;
 			Date to = null;
+			
+			Calendar date = Calendar.getInstance();
+			
+			if(filter.getCurrentDate()!=null) {
+				date.setTime(filter.getCurrentDate());
+			} 
+			
 
-			if (filter.getDateFilterType() != null && filter.getDateFilterDelay() != null && filter.getDateField() != null) {
-				Calendar date = Calendar.getInstance();
+			String fromQuery = null;
+			String toQuery = null;
 
-				String fromQuery = null;
-				String toQuery = null;
-
-				switch (filter.getDateFilterType()) {
-				case After: //[(NOW+DATE) , MAX]
+			switch (filter.getDateFilterType()) {
+			case After: //[(NOW+DATE) , MAX]
+				if( filter.getDateFilterDelay()!=null) {
 					date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), filter.getDateFilterDelay());
-					fromQuery = formatDate(filter.getDateFilterDelayUnit(), date);
-					toQuery = "MAX";
-					from = date.getTime();
-					to = new Date(Long.MAX_VALUE);
-					break;
-				case To: //[NOW , (NOW+DATE)]
-					date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), filter.getDateFilterDelay());
-					fromQuery = "NOW";
-					toQuery = formatDate(filter.getDateFilterDelayUnit(), date);
-					from = new Date();
-					to = date.getTime();
-					break;
-				case Before: //[MIN , (NOW-DATE)]
-					date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), -filter.getDateFilterDelay());
-					fromQuery = "MIN";
-					toQuery = formatDate(filter.getDateFilterDelayUnit(), date);
-					from = new Date(0L);
-					to = new Date();
-					break;
-				case From: //[(NOW-DATE) , NOW]
-					date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), -filter.getDateFilterDelay());
-					fromQuery = formatDate(filter.getDateFilterDelayUnit(), date);
-					toQuery = "NOW";
-					from = date.getTime();
-					to = new Date();
-					break;
-				case Equals: // date = NOW + X
-					date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), filter.getDateFilterDelay());
-					fromQuery = formatDate(filter.getDateFilterDelayUnit(), date);
-					toQuery = fromQuery;
-					from = date.getTime();
-					to = date.getTime();
-					break;
 				}
+				fromQuery = formatDate(filter.getDateFilterDelayUnit(), date);
+				toQuery = "MAX";
+				from = date.getTime();
+				to = new Date(Long.MAX_VALUE);
+				break;
+			case To: //[NOW , (NOW+DATE)]
+				if( filter.getDateFilterDelay()!=null) {
+				date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), filter.getDateFilterDelay());
+				}
+				fromQuery = "NOW";
+				toQuery = formatDate(filter.getDateFilterDelayUnit(), date);
+				from = new Date();
+				to = date.getTime();
+				break;
+			case Before: //[MIN , (NOW-DATE)]
+				if( filter.getDateFilterDelay()!=null) {
+				date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), -filter.getDateFilterDelay());
+				}
+				fromQuery = "MIN";
+				toQuery = formatDate(filter.getDateFilterDelayUnit(), date);
+				from = new Date(0L);
+				to = new Date();
+				break;
+			case From: //[(NOW-DATE) , NOW]
+				if( filter.getDateFilterDelay()!=null) {
+				date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), -filter.getDateFilterDelay());
+				}
+				fromQuery = formatDate(filter.getDateFilterDelayUnit(), date);
+				toQuery = "NOW";
+				from = date.getTime();
+				to = new Date();
+				break;
+			case Equals: // date = NOW + X
+				if( filter.getDateFilterDelay()!=null) {
+					date.add(getDateFilterDelayUnit(filter.getDateFilterDelayUnit()), filter.getDateFilterDelay());
+				}
+				fromQuery = formatDate(filter.getDateFilterDelayUnit(), date);
+				toQuery = fromQuery;
+				from = date.getTime();
+				to = date.getTime();
+				break;
+			}
 
+
+			if ( filter.getDateField() != null) {
+				
 				if (DateFilterType.Equals.equals(filter.getDateFilterType())) {
 					queryBuilder.andPropQuery(filter.getDateField(), fromQuery);
 				} else {
@@ -145,7 +162,11 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 			}
 
 			if ((filter != null) && !filter.getQuery().isEmpty()) {
-				queryBuilder.andFTSQuery(filter.getQuery());
+				queryBuilder.andFTSQuery( String.format(filter.getQuery(), fromQuery, fromQuery, fromQuery));
+			}
+			
+			if(Boolean.TRUE.equals(filter.getEnsureDbQuery())) {
+				queryBuilder.inDB();
 			}
 
 			List<NodeRef> ret = advSearchService.queryAdvSearch(filter.getNodeType(), queryBuilder, filter.getNodeCriteria(),

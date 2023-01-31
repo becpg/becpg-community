@@ -31,6 +31,7 @@ public enum ECOState {
 	Simulated,
 	Applied, 
 	InError,
-	InProgress			
+	InProgress,
+	Cancelled
 	
 }

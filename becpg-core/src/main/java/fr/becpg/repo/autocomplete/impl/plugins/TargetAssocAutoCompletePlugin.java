@@ -78,7 +78,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *
  *  Datasources:
  *
- * ds: /becpg/autocomplete/targetassoc/associations/{className}?classNames={classNames?}&amp;excludeProps={excludeProps?)&amp;path={path?}&amp;filter=
+ * ds: /becpg/autocomplete/targetassoc/associations/{className}?classNames={classNames?}&amp;excludeProps={excludeProps?)&amp;path={path?}&amp;filter={}&
  * param: {className} type of item to retrieve
  * param: {classNames} (optional)  comma separated lists of classNames, can be uses to filter by aspect or boost certain types (inc_ or ^)
 
@@ -99,7 +99,7 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
  *  filter=prop_to_filter|value
  *	filter=cm:name|samplename
  *	filter=cm:name|{cm:title}
- *  filter=bcpg:code|{bcpg:code},cm:name|MP*
+ *  filter=bcpg:code|{bcpg:code},cm:name|MP* 
  *  filter=au:market|{au:market}
  *  filter=gs1:sortingBonusCriteria_or|{gs1:sortingBonusCriteria}  (when field is multiple default operator is and _or allow to change that)
  *  filter=bcpg:ingTypeV2|{htmlPropValue} use the value of parent or parentAssoc control-param (@Since 4.2)
@@ -223,11 +223,12 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
+		
+		queryBuilder.excludeProp(BeCPGModel.PROP_IS_DELETED, "true");
 
 		String template = DEFAULT_SEARCH_TEMPLATE;
 		if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
 			template = CHARACT_SEARCH_TEMPLATE;
-			queryBuilder.excludeProp(BeCPGModel.PROP_IS_DELETED, "true");
 			if (isAllQuery(query)) {
 				queryBuilder.addSort(BeCPGModel.PROP_CHARACT_NAME, true);
 			}
@@ -328,6 +329,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 				}
 
 				if ((filterByAssoc != null) && (filterByAssoc.length() > 0)) {
+					
 
 					boolean isOrOperand = false;
 					if (filterByAssoc.endsWith("_or")) {
@@ -337,6 +339,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 					QName assocQName = QName.createQName(filterByAssoc, namespaceService);
 
+				
 					List<NodeRef> targetNodeRefs = null;
 
 					if (targetNodeRef != null) {
@@ -346,6 +349,11 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 					}
 
 					if ((targetNodeRefs != null) && !targetNodeRefs.isEmpty()) {
+						
+						if(logger.isDebugEnabled()) {
+							logger.debug("Filter by assoc: " +filterByAssoc+ " " +targetNodeRefs.toString() );
+						}
+						
 						List<NodeRef> tmp = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 						List<NodeRef> nodesToKeep = new ArrayList<>();
 

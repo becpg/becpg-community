@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.ecm;
 
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.batch.BatchInfo;
@@ -47,5 +49,7 @@ public interface ECOService {
 	 * @return a boolean.
 	 */
 	BatchInfo doSimulation(NodeRef ecoNodeRef, boolean calculateWUsed, boolean notifyByMail);
+	
+	BatchInfo closeECO(NodeRef ecoNodeRef, List<NodeRef> impactedProducts);
 
 }

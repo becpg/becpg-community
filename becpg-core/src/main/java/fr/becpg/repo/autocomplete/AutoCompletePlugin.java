@@ -21,7 +21,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 /**
- * <p>ListValuePlugin interface.</p>
+ * <p>AutoCompletePlugin interface.</p>
  *
  * @author "Matthieu Laborie"
  * @version $Id: $Id
