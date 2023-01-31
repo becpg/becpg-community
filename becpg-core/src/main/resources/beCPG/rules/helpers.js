@@ -450,11 +450,15 @@ function classifyByHierarchy(productNode, folderNode, propHierarchy) {
 		return bcpg.classifyByHierarchy(productNode, folderNode, propHierarchy);
 	}
 	return bcpg.classifyByHierarchy(productNode, folderNode, null);
-	
+	 
 }
 
-function classifyByDate(productNode, path, dateFormat, propDate) {
-	return bcpg.classifyByDate(productNode, path, dateFormat, propDate);
+function classifyByDate(productNode, path, date, dateFormat) {
+	return bcpg.classifyByDate(productNode, path, date, dateFormat);
+}
+
+function classifyByDate(productNode, path, date, dateFormat, documentLibrary) {
+	return bcpg.classifyByDate(productNode, documentLibrary, path, date, dateFormat);
 }
 
 function formulate(product) {
@@ -500,13 +504,30 @@ function getOrCreateFolder(folderNode, targetFolder) {
 }
 
 function getOrCreateFolderByPath(entity, path) {
-	var folder = entity.childByNamePath(bcpg.getTranslatedPath(path));
-		
-	if (folder == null) {
-		folder = entity.createFolderPath(bcpg.getTranslatedPath(path));
-	}
 	
-	return folder;
+	var index = path.indexOf("/");
+	
+	if (index == -1) {
+		var folder = entity.childByNamePath(bcpg.getTranslatedPath(path));
+		
+		if (folder == null) {
+			folder = entity.createFolderPath(bcpg.getTranslatedPath(path));
+		}
+		
+		return folder;
+	} else {
+		var firstPath = path.substring(0, index);
+		
+		var lastPath = path.substring(index + 1);
+		
+		var folder = entity.childByNamePath(bcpg.getTranslatedPath(firstPath));
+		
+		if (folder == null) {
+			folder = entity.createFolderPath(bcpg.getTranslatedPath(firstPath));
+		}
+		
+		return getOrCreateFolderByPath(folder, lastPath);
+	}
 }
 
 /**

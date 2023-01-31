@@ -26,6 +26,8 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
+import fr.becpg.repo.helper.impl.AttributeExtractorField;
+
 /**
  * <p>WebscriptHelper class.</p>
  *
@@ -38,21 +40,25 @@ public class WebscriptHelper {
 	/** Constant <code>PARAM_FIELDS="metadataFields"</code> */
 	public static final String PARAM_FIELDS = "metadataFields";
 	
+	private WebscriptHelper() {
+		super();
+	}
+	
 	/**
 	 * <p>extractMetadataFields.</p>
 	 *
 	 * @param req a {@link org.springframework.extensions.webscripts.WebScriptRequest} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	public static List<String> extractMetadataFields(WebScriptRequest req){
+	public static List<AttributeExtractorField> extractMetadataFields(WebScriptRequest req){
 	
 		String fields = req.getParameter(PARAM_FIELDS);
-		List<String> metadataFields = new LinkedList<>();
+		List<AttributeExtractorField> metadataFields = new LinkedList<>();
 	
 		if (fields != null && fields.length() > 0) {
 			String[] splitted = fields.split(",");
 			for (String field : splitted) {
-				metadataFields.add(field.replace("_", ":"));
+				metadataFields.add(new AttributeExtractorField(field.replace("_", ":"), null));
 			}
 		}
 		

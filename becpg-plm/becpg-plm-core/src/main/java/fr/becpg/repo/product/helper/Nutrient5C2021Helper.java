@@ -92,6 +92,15 @@ public class Nutrient5C2021Helper {
 		}
 	}
 
+	public static int compute5CScore(Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
+			Double nspFibre, Double aoacFibre, Double protein, String category) {
+		
+		NutriScoreContext nutriScoreContext = new NutriScoreContext(energyKj, satFat, totalFat, totalSugar, sodium,
+				percFruitsAndVetgs, nspFibre, aoacFibre, protein, category);
+		
+		return build5CScore(nutriScoreContext);
+	}
+	
 	private static void buildNutriScorePart(JSONObject part, int score, double[] categories) {
 		
 		Double value = 0d;

@@ -42,7 +42,7 @@ public class DBSearchIT extends RepoBaseTestCase {
 
 		for (int i = 0; i < searchSize; i++) {
 			final int count = i;
-			nodeRefs.add(transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			nodeRefs.add(inWriteTx(() -> {
 
 				FinishedProductData finishedProduct1 = new FinishedProductData();
 				finishedProduct1.setName("Search test-" + count);
@@ -50,10 +50,10 @@ public class DBSearchIT extends RepoBaseTestCase {
 				finishedProduct1.setEndEffectivity(date);
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 
-			}, false, true));
+			}));
 
 		}
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inReadTx(() -> {
 
 			BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_FINISHEDPRODUCT).inDB().ftsLanguage()
 					.andPropEquals(BeCPGModel.PROP_LEGAL_NAME, "Search test-" + date.getTime());
@@ -70,7 +70,7 @@ public class DBSearchIT extends RepoBaseTestCase {
 					.size(), 0);
 
 			return true;
-		}, false, true);
+		});
 	}
 
 }

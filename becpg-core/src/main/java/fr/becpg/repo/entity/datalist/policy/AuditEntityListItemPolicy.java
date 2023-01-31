@@ -42,8 +42,8 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
 		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
-	private static final String KEY_LIST_ITEM = "AuditEntityListItemPolicy.KeyListItem";
-	private static final String KEY_LIST = "AuditEntityListItemPolicy.KeyList";
+	private static final String CATALOG_ONLY = "AuditEntityListItemPolicy.CatalogOnly";
+	private static final String UPDATED_LIST = "AuditEntityListItemPolicy.UpdatedList";
 
 	private static final Log logger = LogFactory.getLog(AuditEntityListItemPolicy.class);
 
@@ -104,52 +104,54 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 				new JavaBehaviour(this, "onDeleteAssociation"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onUpdateProperties"));
-		
+
 		super.disableOnCopyBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
 	}
-	
+
 	@Override
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
-		queueListNodeRef(KEY_LIST_ITEM, destinationRef);
+		queueListNodeRef(nodeService.getPrimaryParent(destinationRef).getParentRef());
 		super.onCopyComplete(classRef, sourceNodeRef, destinationRef, copyToNewNode, copyMap);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void onCreateNode(ChildAssociationRef childAssocRef) {
-		queueListNodeRef(KEY_LIST, childAssocRef.getParentRef());
+		queueListNodeRef(childAssocRef.getParentRef());
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef childAssocRef, boolean isNodeArchived) {
-		queueListNodeRef(KEY_LIST, childAssocRef.getParentRef());
+		queueListNodeRef(childAssocRef.getParentRef());
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateNode(NodeRef listItemNodeRef) {
-		queueListNodeRef(KEY_LIST_ITEM, listItemNodeRef);
+		queueListNodeRef(nodeService.getPrimaryParent(listItemNodeRef).getParentRef());
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void onDeleteAssociation(AssociationRef assocRef) {
 		if (!ContentModel.ASSOC_ORIGINAL.equals(assocRef.getTypeQName())) {
-			queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());
+			queueListNodeRef(nodeService.getPrimaryParent(assocRef.getSourceRef()).getParentRef());
 		}
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-		queueListNodeRef(KEY_LIST_ITEM, assocRef.getSourceRef());
+		queueListNodeRef(assocRef.getSourceRef());
 	}
 
-	private void queueListNodeRef(String key, NodeRef listNodeRef) {
+	private void queueListNodeRef(NodeRef listNodeRef) {
 		if (policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM) && policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)) {
-			queueNode(key, listNodeRef);
+			queueNode(UPDATED_LIST, listNodeRef);
+		} else {
+			queueNode(CATALOG_ONLY, listNodeRef);
 		}
 	}
 
@@ -164,14 +166,8 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		Set<NodeRef> listNodeRefs = new HashSet<>();
 		Set<NodeRef> listContainerNodeRefs = new HashSet<>();
 		Map<NodeRef, Set<NodeRef>> listNodeRefByContainer = new HashMap<>();
-		for (NodeRef pendingNode : pendingNodes) {
-			if (nodeService.exists(pendingNode)) {
-				NodeRef listNodeRef;
-				if (key.equals(KEY_LIST_ITEM)) {
-					listNodeRef = nodeService.getPrimaryParent(pendingNode).getParentRef();
-				} else {
-					listNodeRef = pendingNode;
-				}
+		for (NodeRef listNodeRef : pendingNodes) {
+			if (nodeService.exists(listNodeRef)) {
 
 				if (!listNodeRefs.contains(listNodeRef)) {
 					listNodeRefs.add(listNodeRef);
@@ -194,36 +190,38 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 		for (NodeRef listContainerNodeRef : listContainerNodeRefs) {
 			NodeRef entityNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-			updateEntityAuditedFields(entityNodeRef, listNodeRefByContainer.get(listContainerNodeRef));
+			updateEntityAuditedFields(entityNodeRef, listNodeRefByContainer.get(listContainerNodeRef), CATALOG_ONLY.equals(key));
 		}
 		return true;
 	}
 
-	private void updateEntityAuditedFields(NodeRef entityNodeRef, Set<NodeRef> listNodeRefs) {
-		if ((entityNodeRef != null) && !isVersionNode(entityNodeRef) && isNotLocked(entityNodeRef)
-				&& policyBehaviourFilter.isEnabled(entityNodeRef, ContentModel.ASPECT_AUDITABLE)) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("Update modified date of entity:" + entityNodeRef);
-			}
+	private void updateEntityAuditedFields(NodeRef entityNodeRef, Set<NodeRef> listNodeRefs, boolean catalogOnly) {
+		if ((entityNodeRef != null) && !isVersionNode(entityNodeRef) && isNotLocked(entityNodeRef)) {
 
 			try {
-				policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
-				nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
-				nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
+				if (policyBehaviourFilter.isEnabled(entityNodeRef, ContentModel.ASPECT_AUDITABLE) && !catalogOnly) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("Update modified date of entity:" + entityNodeRef);
+					}
+					policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
+					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
+					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
+				}
 				entityCatalogService.updateAuditedField(entityNodeRef, null, listNodeRefs);
 			} finally {
 				policyBehaviourFilter.enableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 			}
+
 		}
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		if (!isVersionNode(nodeRef) && isNotLocked(nodeRef) && before!=null && after!=null) {
+		if (!isVersionNode(nodeRef) && isNotLocked(nodeRef) && before != null && after != null) {
 
 			MapDifference<QName, Serializable> diff = Maps.difference(before, after);
-			if(!diff.areEqual()) {
+			if (!diff.areEqual()) {
 				entityCatalogService.updateAuditedField(nodeRef, diff.entriesDiffering().keySet(), null);
 				entityCatalogService.updateAuditedField(nodeRef, diff.entriesOnlyOnLeft().keySet(), null);
 				entityCatalogService.updateAuditedField(nodeRef, diff.entriesOnlyOnRight().keySet(), null);
@@ -233,7 +231,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	public void onCreateEntityAssociation(AssociationRef assocRef) {
 		if (!isVersionNode(assocRef.getSourceRef()) && isNotLocked(assocRef.getSourceRef())) {
-			entityCatalogService.updateAuditedField(assocRef.getSourceRef(),  Set.of(assocRef.getTypeQName()), null);
+			entityCatalogService.updateAuditedField(assocRef.getSourceRef(), Set.of(assocRef.getTypeQName()), null);
 		}
 	}
 

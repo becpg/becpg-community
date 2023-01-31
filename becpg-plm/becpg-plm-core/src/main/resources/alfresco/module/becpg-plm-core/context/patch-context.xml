@@ -1009,5 +1009,21 @@
         <property name="integrityChecker" ref="integrityChecker"/>
 	</bean>
     
-	
+	 <bean id="patch.bcpg.project.redeployValidationWorkflows" class="fr.becpg.repo.admin.patch.PLMWorkflowPatch" parent="basePatch" >
+        <property name="id"><value>patch.bcpg.project.redeployValidationWorkflows</value></property>
+        <property name="description"><value>patch.bcpg.project.redeployValidationWorkflows.description</value></property>
+        <property name="fixesFromSchema" value="0"/>
+        <property name="fixesToSchema" value="16000" />
+        <property name="targetSchema" value="16001"/>
+        <property name="workflowDefinitions">
+            <list>		
+					<props>
+						<prop key="engineId">activiti</prop>
+						<prop key="location">alfresco/module/becpg-plm-core/workflow/product-validation.bpmn</prop>
+						<prop key="mimetype">text/xml</prop>
+					</props>
+            </list>
+        </property>
+    </bean>
+    
 </beans>

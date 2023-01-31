@@ -117,8 +117,8 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			notification.setFrequencyStartDate(new Date());
 			alfrescoRepository.save(notification);
 
-			SearchRuleFilter filter = new SearchRuleFilter(namespaceService);
-			filter.fromJsonString(notification.getCondtions());
+			SearchRuleFilter filter = new SearchRuleFilter();
+			filter.fromJsonString(notification.getCondtions(),namespaceService);
 			filter.setNodeType(QName.createQName(notification.getNodeType(), namespaceService));
 			filter.setDateField(QName.createQName(notification.getDateField(), namespaceService));
 			filter.setNodePath(nodeService.getPath(notification.getTarget()));

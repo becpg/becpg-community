@@ -68,6 +68,7 @@ import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
+import fr.becpg.repo.product.helper.AllocationHelper;
 import fr.becpg.repo.report.entity.EntityReportParameters;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -1229,7 +1230,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		Double productNetWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 		Map<NodeRef, Double> rawMaterials = new HashMap<>();
-		rawMaterials = getRawMaterials(productData, rawMaterials, productNetWeight);
+		rawMaterials = AllocationHelper.extractAllocations(productData, rawMaterials, productNetWeight, alfrescoRepository);
 		Double totalQty = 0d;
 		for (Double qty : rawMaterials.values()) {
 			totalQty += qty;
@@ -1503,38 +1504,6 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 
 		}
-	}
-
-	private Map<NodeRef, Double> getRawMaterials(ProductData productData, Map<NodeRef, Double> rawMaterials, Double parentQty) {
-
-		for (CompoListDataItem compoList : productData.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-			NodeRef productNodeRef = compoList.getProduct();
-			if ((productNodeRef != null) && !DeclarationType.Omit.equals(compoList.getDeclType())) {
-				QName type = nodeService.getType(productNodeRef);
-				Double qty = FormulationHelper.getQtyInKg(compoList);
-				Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
-				if (logger.isDebugEnabled()) {
-					logger.debug("Get rawMaterial " + nodeService.getProperty(productNodeRef, ContentModel.PROP_NAME) + "qty: " + qty + " netWeight "
-							+ netWeight + " parentQty " + parentQty);
-				}
-				if ((qty != null) && (netWeight != 0d)) {
-					qty = (parentQty * qty * FormulationHelper.getYield(compoList)) / (100 * netWeight);
-
-					if (type.isMatch(PLMModel.TYPE_RAWMATERIAL)) {
-						Double rmQty = rawMaterials.get(productNodeRef);
-						if (rmQty == null) {
-							rmQty = 0d;
-						}
-						rmQty += qty;
-						rawMaterials.put(productNodeRef, rmQty);
-					} else if (!type.isMatch(PLMModel.TYPE_LOCALSEMIFINISHEDPRODUCT)) {
-						getRawMaterials((ProductData) alfrescoRepository.findOne(productNodeRef), rawMaterials, qty);
-					}
-				}
-			}
-		}
-
-		return rawMaterials;
 	}
 
 	/** {@inheritDoc} */

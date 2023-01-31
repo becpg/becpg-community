@@ -41,6 +41,7 @@
 					<value>Simulated</value>
 					<value>Applied</value>	
 					<value>InError</value>				
+					<value>Cancelled</value>				
 				</list>
 			</parameter>
 		</constraint>
@@ -352,4 +353,22 @@
 		</type>
 		
 	</types>
+	
+	<aspects>
+		<aspect name="ecm:changeOrderAspect">
+			<associations>
+				<association name="ecm:changeOrderRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>ecm:changeOrder</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+		</aspect>
+	</aspects>
 </model>

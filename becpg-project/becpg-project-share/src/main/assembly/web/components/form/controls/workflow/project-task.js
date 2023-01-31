@@ -171,6 +171,8 @@
                             
                             var countCatalog = 0;
                             
+							var notSigned = false;
+
                             for (j in deliverables)
                             {
                             	var dUrl = deliverables[j].url
@@ -191,17 +193,18 @@
 		                    				responseContentType : Alfresco.util.Ajax.JSON,
 		                    				successCallback : {
 		                    					fn : function (response){
-		                    						var isValid = false;
 		                    						
-													if (response.json.item.node.properties["sign:status"] == "ReadyToSign" || response.json.item.node.properties["sign:status"] == "Signed") {
-		                    							isValid = true;
+													if (!notSigned && (response.json.item.node.properties["sign:status"] == "ReadyToSign" || response.json.item.node.properties["sign:status"] == "Signed")) {
+		                    							YAHOO.util.Event.onAvailable(validateButtonId,function(){
+						                            		  Dom.removeClass(validateButtonId, "hidden");
+						                            	}, this);
+													} else {
+														notSigned = true;
+		                    							YAHOO.util.Event.onAvailable(validateButtonId,function(){
+						                            		  Dom.addClass(validateButtonId, "hidden");
+						                            	}, this);
 													}
 													
-		                    						if(isValid){
-			                                        	YAHOO.util.Event.onAvailable(validateButtonId,function(){
-			                                        		  Dom.removeClass(validateButtonId, "hidden");
-			                                        	}, this);
-		                    						}
 		                    					},
 		                    					scope : this
 		                    				}
@@ -277,6 +280,7 @@
                                 	deliverableHtlm += "<li>" + this.getDeliverableTitle(deliverables[j], entityNodeRef) + "</li>";
 								}
                             }
+
                             deliverableHtlm += "</ul>";
 
                             return deliverableHtlm;

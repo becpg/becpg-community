@@ -74,6 +74,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.jscript.BeCPGStateHelper;
@@ -342,7 +343,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			
 			String manualVersionLabel = (String) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
 			
-			NodeRef versionNode = internalCreateVersion(entityNodeRef, versionProperties, newEffectivity, manualVersionLabel);
+			NodeRef versionNode = internalCreateVersion(entityNodeRef, versionProperties, newEffectivity, manualVersionLabel, true);
 			
 			// we need to retrieve the AUDITABLE properties because Version2ServiceImpl only freezes these properties
 			nodeService.setProperty(versionNode, ContentModel.PROP_CREATED, nodeService.getProperty(entityNodeRef, ContentModel.PROP_CREATED));
@@ -890,7 +891,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								versionProperties.put(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF, null);
 							}
 	
-							internalCreateVersion(internalBranchToNodeRef, versionProperties, newEffectivity, manualVersionLabelFrom);
+							internalCreateVersion(internalBranchToNodeRef, versionProperties, newEffectivity, manualVersionLabelFrom, false);
 							
 							if (rename) {
 								Version currentVersion = versionService.getCurrentVersion(internalBranchToNodeRef);
@@ -946,6 +947,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 								nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, newEffectivity == null ? new Date() : newEffectivity);
 								nodeService.removeProperty(internalBranchToNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
 							}
+							
+							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_MODIFIED, new Date());
 							
 							return internalBranchToNodeRef;
 
@@ -1085,10 +1088,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties) {
-		return internalCreateVersion(entityNodeRef, versionProperties, null, null);
+		return internalCreateVersion(entityNodeRef, versionProperties, null, null, false);
 	}
 	
-	private NodeRef internalCreateVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date newEffectivity, String manualVersionLabel) {
+	private NodeRef internalCreateVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date newEffectivity, String manualVersionLabel, boolean isInitialVersion) {
 		if (nodeService.hasAspect(entityNodeRef, ContentModel.ASPECT_VERSIONABLE)) {
 
 			StopWatch watch = null;
@@ -1124,8 +1127,15 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				// create the version node
 				Version newVersion = versionService.createVersion(entityNodeRef, versionProperties);
 				
+				Map<String, Object> extraParams = null;
+				
+				if (isInitialVersion) {
+					extraParams = new HashMap<>();
+					extraParams.put(RemoteParams.PARAM_IS_INITIAL_VERSION, true);
+				}
+				
 				// extract the JSON data of the current node
-				String jsonData = entityFormatService.extractEntityData(entityNodeRef, EntityFormat.JSON);
+				String jsonData = entityFormatService.extractEntityData(entityNodeRef, EntityFormat.JSON, extraParams);
 
 				NodeRef versionNode = getEntityVersion(newVersion);
 				

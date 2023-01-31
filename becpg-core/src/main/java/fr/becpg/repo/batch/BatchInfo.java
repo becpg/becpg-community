@@ -3,6 +3,8 @@ package fr.becpg.repo.batch;
 import java.util.Objects;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.json.JSONObject;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 public class BatchInfo {
 
@@ -39,6 +41,12 @@ public class BatchInfo {
 	private int batchSize = BATCH_SIZE;
 	
 	private Boolean isCompleted = Boolean.FALSE;
+	
+	public static final String BATCH_DESC_ID = "batchDescId";
+
+	public static final String BATCH_USER = "batchUser";
+	
+	public static final String BATCH_ID = "batchId";
 
 	public BatchInfo(String batchId, String batchDescId) {
 		super();
@@ -131,6 +139,17 @@ public class BatchInfo {
 		this.isCompleted = isCompleted;
 	}
 
+	public JSONObject toJson() {
+		JSONObject jsonBatch = new JSONObject();
+		jsonBatch.put(BATCH_ID, getBatchId());
+		jsonBatch.put(BATCH_USER, getBatchUser());
+		String label = I18NUtil.getMessage(getBatchDescId(), entityDescription);
+
+		jsonBatch.put(BATCH_DESC_ID,label!=null ? label :  getBatchDescId());
+		
+		return jsonBatch;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(batchDescId, batchId, batchSize, batchUser, mailAction, mailActionUrl, notifyByMail, runAsSystem, workerThreads);

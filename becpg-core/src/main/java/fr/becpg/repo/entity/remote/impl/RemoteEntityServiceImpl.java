@@ -32,12 +32,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.site.SiteService;
+import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -122,6 +124,12 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
+	
+	@Autowired
+	private VersionService versionService;
+	
+	@Autowired
+	private LockService lockService;
 
 	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
@@ -170,7 +178,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		case json_all:
 
 			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor);
+					siteService, attributeExtractor, versionService, lockService);
 			break;
 		case xsd:
 		case xsd_excel:
@@ -285,7 +293,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		case json:
 
 			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor);
+					siteService, attributeExtractor, versionService, lockService);
 			break;
 		default:
 			throw new BeCPGException("Unknown format " + format.toString());
@@ -320,7 +328,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		case json:
 
 			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor);
+					siteService, attributeExtractor, versionService, lockService);
 			break;
 		default:
 			throw new BeCPGException("Unknown format " + format.toString());

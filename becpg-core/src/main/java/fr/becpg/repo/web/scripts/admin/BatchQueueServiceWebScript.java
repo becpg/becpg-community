@@ -36,12 +36,6 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 
 	private static final Log logger = LogFactory.getLog(BatchQueueServiceWebScript.class);
 	
-	private static final String BATCH_DESC_ID = "batchDescId";
-
-	private static final String BATCH_USER = "batchUser";
-	
-	private static final String BATCH_ID = "batchId";
-
 	private static final String QUEUE_ACTION = "queue";
 
 	private static final String CANCEL_ACTION = "cancel";
@@ -72,11 +66,11 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 					String entityDescription = batch.getEntityDescription();
 					
 					JSONObject jsonBatch = new JSONObject();
-					jsonBatch.put(BATCH_ID, batch.getBatchId());
-					jsonBatch.put(BATCH_USER, batch.getBatchUser());
+					jsonBatch.put(BatchInfo.BATCH_ID, batch.getBatchId());
+					jsonBatch.put(BatchInfo.BATCH_USER, batch.getBatchUser());
 					String label = I18NUtil.getMessage(batch.getBatchDescId(), entityDescription);
 
-					jsonBatch.put(BATCH_DESC_ID,label!=null ? label :  batch.getBatchDescId());
+					jsonBatch.put(BatchInfo.BATCH_DESC_ID,label!=null ? label :  batch.getBatchDescId());
 					jsonBatches.put(jsonBatch);
 				}
 				ret.put("queue", jsonBatches);
@@ -88,12 +82,12 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 				}
 
 			} else if (CANCEL_ACTION.equals(action)) {
-				String batchId = req.getServiceMatch().getTemplateVars().get(BATCH_ID);
+				String batchId = req.getServiceMatch().getTemplateVars().get(BatchInfo.BATCH_ID);
 				if (batchId != null) {
 					batchQueueService.cancelBatch(batchId);
 				}
 			} else if (REMOVE_ACTION.equals(action)) {
-				String batchId = req.getServiceMatch().getTemplateVars().get(BATCH_ID);
+				String batchId = req.getServiceMatch().getTemplateVars().get(BatchInfo.BATCH_ID);
 				if (batchId != null) {
 					batchQueueService.removeBatchFromQueue(batchId);
 				}
@@ -124,17 +118,17 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 				last.put(STEPS_MAX, batchInfo.get(STEPS_MAX));
 			}
 			
-			last.put(BATCH_ID, batchInfo.getString(BATCH_ID));
-			last.put(BATCH_USER, batchInfo.getString(BATCH_USER));
-			String descriptionLabel = I18NUtil.getMessage(batchInfo.getString(BATCH_DESC_ID), entityDescription);
-			last.put(BATCH_DESC_ID, descriptionLabel != null ? descriptionLabel : batchInfo.getString(BATCH_DESC_ID));
-			if (batchQueueService.getCancelledBatches().contains(batchInfo.getString(BATCH_ID))) {
+			last.put(BatchInfo.BATCH_ID, batchInfo.getString(BatchInfo.BATCH_ID));
+			last.put(BatchInfo.BATCH_USER, batchInfo.getString(BatchInfo.BATCH_USER));
+			String descriptionLabel = I18NUtil.getMessage(batchInfo.getString(BatchInfo.BATCH_DESC_ID), entityDescription);
+			last.put(BatchInfo.BATCH_DESC_ID, descriptionLabel != null ? descriptionLabel : batchInfo.getString(BatchInfo.BATCH_DESC_ID));
+			if (batchQueueService.getCancelledBatches().contains(batchInfo.getString(BatchInfo.BATCH_ID))) {
 				last.put("cancelled", true);
 			}
 		} catch (JSONException e) {
-			last.put(BATCH_ID, lastRunningBatch.getProcessName());
-			last.put(BATCH_DESC_ID, lastRunningBatch.getProcessName());
-			last.put(BATCH_USER, UNKNOWN);
+			last.put(BatchInfo.BATCH_ID, lastRunningBatch.getProcessName());
+			last.put(BatchInfo.BATCH_DESC_ID, lastRunningBatch.getProcessName());
+			last.put(BatchInfo.BATCH_USER, UNKNOWN);
 			logger.warn("Could not parse JSON : " + lastRunningBatch.getProcessName());
 		}
 		

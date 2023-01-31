@@ -79,6 +79,7 @@ import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.AutoNumHelper;
 import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.helper.GTINHelper;
@@ -155,7 +156,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private BeCPGLicenseManager beCPGLicenseManager;
 
 	private BeCPGMailService beCPGMailService;
-
+	
 	private Repository repositoryHelper;
 	
 	private FormulationService<FormulatedEntity> formulationService;
@@ -922,6 +923,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getMessage(String messageKey, Object... param) {
 		return I18NUtil.getMessage(messageKey, param);
 	}
+	
+	public String getLocalizedMessage(String messageKey, String locale) {
+		return I18NUtil.getMessage(messageKey, MLTextHelper.parseLocale(locale));
+	}
+
+	public String getLocalizedMessage(String messageKey, String locale, Object... param) {
+		return I18NUtil.getMessage(messageKey, MLTextHelper.parseLocale(locale), param);
+	}
 
 	/**
 	 * <p>getOlapSSOUrl.</p>
@@ -1237,7 +1246,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getUserLocale(ScriptNode personNode) {
-		String loc = (String) mlNodeService.getProperty(personNode.getNodeRef(), BeCPGModel.PROP_USER_LOCAL);
+		String loc = (String) mlNodeService.getProperty(personNode.getNodeRef(), BeCPGModel.PROP_USER_LOCALE);
 		if ((loc == null) || loc.isEmpty()) {
 			if (useBrowserLocale) {
 				return null;
@@ -1319,6 +1328,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		ContentReader reader = contentService.getReader(from.getNodeRef(), ContentModel.PROP_CONTENT);
 		ContentWriter writer = contentService.getWriter(to.getNodeRef(), ContentModel.PROP_CONTENT, true);
+		writer.setEncoding(reader.getEncoding());
+		writer.setMimetype(reader.getMimetype());
 
 		writer.putContent(reader);
 	}
@@ -1381,8 +1392,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void sendMailToAuthorities(List<String> authorities, String subject, String mailTemplate, Map<String, Object> templateArgs) {
-		beCPGMailService.sendMailToAuthorities(new HashSet<>(authorities), subject, mailTemplate, (Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs));
+	public void sendMLAwareMail(String[] authorities, String fromEmail, String subjectKey, Object[] subjectParams, String mailTemplate, Map<String, Object> templateArgs) {
+		beCPGMailService.sendMLAwareMail(Set.of(authorities), fromEmail, subjectKey, subjectParams, mailTemplate, (Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs));
 	}
 
 	public void generateVersionReport(ScriptNode node, String versionLabel) {
@@ -1490,7 +1501,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return classDef.getTitle(dictionaryService);
 	}
 	
-	public boolean classifyByDate(ScriptNode productNode, String path, Date date, String dateFormat) {
+	public boolean classifyByDate(ScriptNode product, String path, Date date, String dateFormat) {
 		
 		if (date != null && dateFormat != null) {
 			
@@ -1520,7 +1531,57 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(parentFolder))) {
 				logger.warn("Incorrect destination node type:" + nodeService.getType(parentFolder));
 			} else {
-				return repoService.moveNode(productNode.getNodeRef(), parentFolder);
+				return repoService.moveNode(product.getNodeRef(), parentFolder);
+			}
+		}
+		
+		return false;
+	}
+	
+	public boolean classifyByDate(ScriptNode product, ScriptNode documentLibrary, String subPath, Date date, String dateFormat) {
+		
+		StringBuilder pathBuilder = new StringBuilder();
+		
+		if (subPath != null && !subPath.isBlank()) {
+			for (String split : subPath.split("/")) {
+				pathBuilder.append("/");
+				pathBuilder.append(getTranslatedPath(split));
+			}
+		}
+		
+		if (date != null && dateFormat != null) {
+			
+			QName type = nodeService.getType(product.getNodeRef());
+			
+			ClassDefinition classDef = dictionaryService.getClass(type);
+
+			NodeRef destinationNodeRef = repoService.getOrCreateFolderByPath(documentLibrary.getNodeRef(), type.getLocalName(), classDef.getTitle(dictionaryService));
+			
+			for (String formatPart : dateFormat.split("/")) {
+				
+				pathBuilder.append("/");
+				
+				boolean isFirstSubPart = true;
+				
+				for (String subFormatPart : formatPart.split(" - ")) {
+					
+					if (!isFirstSubPart) {
+						pathBuilder.append(" - ");
+					}
+					
+					SimpleDateFormat subFormat = new SimpleDateFormat(subFormatPart);
+					pathBuilder.append(subFormat.format(date));
+					
+					isFirstSubPart = false;
+				}
+			}
+
+			NodeRef newFolder = repoService.getOrCreateFolderByPaths(destinationNodeRef, Arrays.asList(pathBuilder.toString().split("/")));
+
+			if (!ContentModel.TYPE_FOLDER.equals(nodeService.getType(newFolder))) {
+				logger.warn("Incorrect destination node type:" + nodeService.getType(newFolder));
+			} else {
+				return repoService.moveNode(product.getNodeRef(), newFolder);
 			}
 		}
 		
@@ -1529,6 +1590,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public void formulate(ScriptNode productNode) {
 		formulationService.formulate(productNode.getNodeRef());
+	}
+	
+	public String[] extractPeople(String[] authorities) {
+		return AuthorityHelper.extractPeople(Set.of(authorities)).toArray(new String[0]);
 	}
 	
 }

@@ -34,6 +34,7 @@ import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.form.BecpgFormService;
+import fr.becpg.repo.form.impl.BecpgFormDefinition;
 
 /**
  * Return or save MLText field
@@ -152,8 +153,8 @@ public class FormGetWebScript extends AbstractWebScript {
 				ret.put("SUCCESS", true);
 			} else {
 				NodeRef nodeRef = ((entityNodeRef != null) && !entityNodeRef.isEmpty() ) ? new NodeRef(entityNodeRef) : null;
-				ret = becpgFormService.getForm(itemKind, itemId, formId, siteId, fields, forcedFields, nodeRef);
-
+				BecpgFormDefinition def = becpgFormService.getForm(itemKind, itemId, formId, siteId, fields, forcedFields, nodeRef);
+				ret = def.getMergeDef();
 				
 				if(logger.isDebugEnabled()) {
 					logger.debug(itemKind+"/"+itemId+"/"+siteId+"/"+formId+"/"+entityNodeRef);

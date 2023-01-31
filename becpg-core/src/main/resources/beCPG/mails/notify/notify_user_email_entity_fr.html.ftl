@@ -94,7 +94,7 @@ margin-top:3px;
                                        <table width="100%" cellpadding="0" cellspacing="0" border="0">
                                           <tr>
                                              <td class="flex" flex="wrap">
-                                                <img class="img" src="${shareUrl}/res/components/images/project-email-logo.png"alt=""  height="64" border="0" />
+                                                <img class="img" src="${shareUrl}/res/components/images/project-email-logo.png" alt=""  height="64" border="0" />
                                                 <p class="title" style="font-size: 20px; color: #0f515f; font-weight: bold;">${args.project}</p>
                                              </td>
                                           </tr>
@@ -121,8 +121,8 @@ margin-top:3px;
                         </tr>
                         <tr>
                            <td style="padding: 10px 30px;">
-                              <img style="padding :10px 0px"
-                                 src="${shareUrl}/res/components/images/becpg-footer-logo.png" />
+                              <img style="padding: 10px 0px;"
+                                 src="${mailLogoUrl}" />
                            </td>
                         </tr>
                      </table>

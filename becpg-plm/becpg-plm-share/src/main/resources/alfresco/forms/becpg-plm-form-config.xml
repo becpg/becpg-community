@@ -1530,11 +1530,11 @@
 					<show id="bcpg:flNumber"  force="true"/>
 					<show id="bcpg:regulatoryCode" force="true"/>
 					<show id="bcpg:ingTypeV2"  force="true"/>
-					<show id="bcpg:erpCode" force="true" />
 					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
-                    <show id="bcpg:isDeleted"/>
                     <show id="bcpg:ingAllergens" />
+					<show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
@@ -1877,6 +1877,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1901,6 +1902,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
@@ -1936,6 +1938,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -2298,6 +2301,8 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -2339,6 +2344,8 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -2390,11 +2397,16 @@
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
 					<show id="fm:commentCount" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:locationAddress1"  help-id="becpg.forms.help.locationAddress1" />
 					<field id="bcpg:locationAddress2"  help-id="becpg.forms.help.locationAddress2" />
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -2408,6 +2420,9 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:subsidiaryCertifications"/>
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -2429,6 +2444,9 @@
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:subsidiaryCertifications"/>
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
 				<appearance>
@@ -2452,7 +2470,15 @@
 					<show id="cm:name" />
 					<show id="cm:title" />
 					<show id="cm:description" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted">
+						<control
+							template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -2485,6 +2511,7 @@
 					<hide id="exif:xResolution" />
 					<hide id="exif:yResolution" />
 					<hide id="exif:resolutionUnit" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -2517,6 +2544,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description"  />
 					<show id="bcpg:contacts" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
 				<appearance>
@@ -2553,7 +2581,6 @@
 
 			<form id="datagrid">
 				<field-visibility>
-					<show id="bcpg:erpCode" force="true" />
 					<show force="true" id="bcpg:eanCode"/>
 					<show id="cm:name" />
 					<show id="bcpg:trademarkType"  />
@@ -2561,7 +2588,14 @@
 					<show id="cm:description" force="true" />
 				    <show id="bcpg:contacts" force="true" />
 					<show id="cm:content"  />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -2580,6 +2614,8 @@
                     <show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -2617,6 +2653,8 @@
                     <show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -2656,7 +2694,14 @@
                     <show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -2851,8 +2896,8 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
-					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 					<show id="cm:content"  />
 				</field-visibility>
@@ -2875,6 +2920,7 @@
 					<show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2897,6 +2943,7 @@
 				    <show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2930,6 +2977,7 @@
 					 <show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -2965,6 +3013,7 @@
 			</form>
 			<form id="sign-process">
 				<field-visibility>
+					<show id="cm:name" />
 					<show id="sign:recipients" force="true" />
 					<show id="pjt:projectState" />
 				</field-visibility>
@@ -4384,6 +4433,7 @@
 					<show id="bcpg:variantIds" force="true" />					
 			        <show id="bcpg:startEffectivity" force="true" />
 					<show id="bcpg:endEffectivity" force="true" />
+				 	<!-- <show id="bcpg:propagatedCharacts" force="true" />  -->
 					<show id="bcpg:instruction" force="true" />
 				</field-visibility>
 
@@ -4441,8 +4491,15 @@
 							<control-param name="showTime">false</control-param>
 						</control>
 				    </field>
+			<!-- 	    
+				   <field id="bcpg:propagatedCharacts"   set="1-col-3">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					    	 <control-param name="ds">becpg/autocomplete/DataListCharact?path=bcpg:compoListProduct&amp;className=bcpg:nutList&amp;attributeName=bcpg:nutListNut&amp;filter=itemAsEntity</control-param>
+ 					  	   <control-param name="urlParamsToPass">itemId</control-param>
+						</control>
+					</field>
 					
-					
+					 -->
 					<field id="bcpg:instruction"   set="1-col-3">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
@@ -4555,7 +4612,7 @@
 			
 		</forms>
 	</config>
-	<!-- bcpg:compoList type (existing nodes) -->
+	<!-- bcpg:productList type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:productList">
 		<forms>
 			<!-- Data List pop-up edit form -->
@@ -5747,8 +5804,7 @@
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
 					<show id="bcpg:ingListClaims" />
-					
-							<show id="bcpg:ingListDeclType" />
+					<show id="bcpg:ingListDeclType" />
 					<show id="bcpg:parentLevel" />
 					
 				</field-visibility>
@@ -5789,7 +5845,7 @@
 					
 					<field id="bcpg:ingListClaims" set="2-col-1">
 					     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7Certification</control-param>
+			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7CCertification</control-param>
 			            </control>
 			         </field>			
 			         <field id="bcpg:ingListIsProcessingAid" set="2-col-1"/>
@@ -6021,7 +6077,7 @@
 					
 					<field id="bcpg:ingListClaims" set="2-col-1">
 					     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7Certification</control-param>
+			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7CCertification</control-param>
 			            </control>
 			         </field>			
 			         <field id="bcpg:ingListIsProcessingAid" set="2-col-1"/>
@@ -6228,6 +6284,7 @@
 					<show id="bcpg:nutListFormulaErrorLog" />					
 					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
 					<show id="rep:reportKinds" />
+					<show id="bcpg:nutListSources"/>
 					<show id="dataList_bcpg:reqCtrlList"/>
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
@@ -6248,7 +6305,8 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden"/>
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
-					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
+					<field id="dataList_bcpg:reqCtrlList" label="hidden" />
+					<field id="bcpg:nutListSources" label="hidden" />
 				</appearance>
 			</form>
 			<form id="customListDatagrid">
@@ -6932,6 +6990,8 @@
 					<show id="bcpg:locationZip" force="true"/>
 					<show id="bcpg:locationState" force="true"/>
 					<show id="bcpg:locationCountry" force="true"/>
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 				
@@ -6991,9 +7051,14 @@
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListNotes" />
 					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -7021,6 +7086,8 @@
 					<show id="bcpg:locationZip" force="true"/>
 					<show id="bcpg:locationState" force="true"/>
 					<show id="bcpg:locationCountry" force="true"/>
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
 				<appearance>
@@ -7288,6 +7355,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="bcpg:erpCode" force="true" />					
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 			</form>
@@ -7306,6 +7374,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true"  />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 			</form>
@@ -7329,6 +7398,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
 				<appearance>
@@ -7500,6 +7570,7 @@
 					<show id="gs1:maximumToleranceTemperature" force="true" />
 					<show id="gs1:minimumToleranceTemperature" force="true" />
 					<show id="gs1:temperatureMeasurementUnit" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -7536,6 +7607,7 @@
 					<show id="gs1:maximumToleranceTemperature" force="true" />
 					<show id="gs1:minimumToleranceTemperature" force="true" />
 					<show id="gs1:temperatureMeasurementUnit" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
@@ -7587,6 +7659,7 @@
 					<show id="gs1:maximumToleranceTemperature" force="true" />
 					<show id="gs1:minimumToleranceTemperature" force="true" />
 					<show id="gs1:temperatureMeasurementUnit" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -7599,6 +7672,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -7620,6 +7694,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
@@ -7652,6 +7727,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
+					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -7741,7 +7817,9 @@
 					<show id="gs1:dutyFeeTaxCategoryCode" />
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />		
-					<show id="gs1:dutyFeeTaxRate"/>											
+					<show id="gs1:dutyFeeTaxRate"/>			
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>								
 				</field-visibility>
 				<appearance>
 				<field id="cm:description">
@@ -7783,7 +7861,14 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />	
 					<show id="gs1:dutyFeeTaxRate"/>		
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>			
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
 				
 			</form>
 		</forms>
@@ -7797,7 +7882,9 @@
 					<show id="gs1:dutyFeeTaxCategoryCode" />
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />	
-					<show id="gs1:dutyFeeTaxRate"/>											
+					<show id="gs1:dutyFeeTaxRate"/>			
+					<show id="bcpg:erpCode" force="true" />	
+					<show id="bcpg:isDeleted"/>							
 				</field-visibility>
 				<appearance>
 				<field id="cm:description">
@@ -7823,7 +7910,9 @@
 				<field-visibility>
 				    <show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
-					<show id="gs1:targetMarketCountries" />												
+					<show id="gs1:targetMarketCountries" />	
+					<show id="bcpg:erpCode" force="true" />	
+					<show id="bcpg:isDeleted"/>										
 				</field-visibility>
 				<appearance>
 					<field id="gs1:targetMarketCountries">
@@ -7853,7 +7942,14 @@
 					<show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />		
-				</field-visibility>			
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
+				</field-visibility>		
+				<appearance>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>	
 			</form>
 		</forms>
 	</config>
@@ -7863,7 +7959,9 @@
 				<field-visibility>
 				    <show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
-					<show id="gs1:targetMarketCountries" />												
+					<show id="gs1:targetMarketCountries" />	
+					<show id="bcpg:erpCode" force="true" />		
+					<show id="bcpg:isDeleted"/>									
 				</field-visibility>
 				<appearance>
 					<field id="gs1:targetMarketCountries">
@@ -7883,11 +7981,11 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="gs1:dutyFeeTaxRef" />
-					<show id="gs1:dutyFeeTaxAmount" />		
-					<show id="gs1:dutyFeeTaxAmountUnit" />	
-					<show id="bcpg:startEffectivity" />	
-				    <show id="bcpg:endEffectivity" />					
+					<show id="gs1:dutyFeeTaxRef" force="true" />
+					<show id="gs1:dutyFeeTaxAmount" force="true" />		
+					<show id="gs1:dutyFeeTaxAmountUnit" force="true" />	
+					<show id="bcpg:startEffectivity" force="true"/>	
+				    <show id="bcpg:endEffectivity" force="true"/>					
 				</field-visibility>
 				<appearance>
 					<field id="gs1:dutyFeeTaxRef">
@@ -7923,11 +8021,11 @@
 			</form>
 			<form id="datagrid">
 				<field-visibility>
-					<show id="gs1:dutyFeeTaxRef" />
-					<show id="gs1:dutyFeeTaxAmount" />		
-					<show id="gs1:dutyFeeTaxAmountUnit" />	
-					<show id="bcpg:startEffectivity" />	
-				    <show id="bcpg:endEffectivity" />
+					<show id="gs1:dutyFeeTaxRef" force="true"/>
+					<show id="gs1:dutyFeeTaxAmount" force="true"/>		
+					<show id="gs1:dutyFeeTaxAmountUnit" force="true"/>	
+					<show id="bcpg:startEffectivity" force="true"/>	
+				    <show id="bcpg:endEffectivity" force="true"/>
 				</field-visibility>			
 			</form>
 		</forms>
@@ -7936,11 +8034,11 @@
 		<forms>
 			<form>
 				<field-visibility>
-					<show id="gs1:dutyFeeTaxRef" />
-					<show id="gs1:dutyFeeTaxAmount" />		
-					<show id="gs1:dutyFeeTaxAmountUnit" />	
-					<show id="bcpg:startEffectivity" />	
-				    <show id="bcpg:endEffectivity" />					
+					<show id="gs1:dutyFeeTaxRef" force="true"/>
+					<show id="gs1:dutyFeeTaxAmount" force="true"/>		
+					<show id="gs1:dutyFeeTaxAmountUnit" force="true"/>	
+					<show id="bcpg:startEffectivity" force="true"/>	
+				    <show id="bcpg:endEffectivity" force="true"/>					
 				</field-visibility>
 				<appearance>
 					<field id="gs1:dutyFeeTaxRef">

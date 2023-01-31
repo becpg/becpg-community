@@ -1,37 +1,23 @@
 function main() {
 
-	var canBeDeleted = true;
-
-	for (var i = 0; i < project.taskList.size(); i++) {
-		var otherTask = project.taskList.get(i);
-		if (otherTask != task && otherTask.name.includes("-validatingTask-")) {
-			if (otherTask.taskState != "Completed") {
-				canBeDeleted = false;
-				break;
-			}
-		}
-	}
-
-	if (canBeDeleted) {
-		var docDeliverable;
+	var docDeliverable = null;
 	
-		for (var i = 0; i < project.deliverableList.size(); i++) {
-			var deliverable = project.deliverableList.get(i);
-			if (deliverable.name.endsWith("doc") && deliverable.tasks.contains(task.nodeRef)) {
-				docDeliverable = deliverable;
-				break;
-			}
+	for (var i = 0; i < project.deliverableList.size(); i++) {
+		var del = project.deliverableList.get(i);
+		if (del.name.endsWith(" - doc") && del.name.startsWith(deliverable.name)) {
+			docDeliverable = del;
+			break;
 		}
-
-		var document = search.findNode(docDeliverable.content);
-
-		document.properties["sign:validationDate"] = new Date();
-		document.save();
-
-		var projectNode = search.findNode(project.nodeRef);
-		
-		projectNode.remove();
 	}
+
+	var document = search.findNode(docDeliverable.content);
+
+	document.properties["sign:validationDate"] = new Date();
+	document.save();
+
+	var projectNode = search.findNode(project.nodeRef);
+	
+	projectNode.remove();
 }
 
 main();
