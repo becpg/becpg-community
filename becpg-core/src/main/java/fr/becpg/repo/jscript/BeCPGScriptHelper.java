@@ -25,7 +25,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
@@ -78,6 +80,7 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
+import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -138,7 +141,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private VersionService versionService;
 	
 	private EntityReportService entityReportService;
-	
+
+	private BeCPGMailService beCPGMailService;
+
 	private Repository repositoryHelper;
 	
 	private FormulationService<FormulatedEntity> formulationService;
@@ -179,6 +184,10 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	public void setEntityFormatService(EntityFormatService entityFormatService) {
 		this.entityFormatService = entityFormatService;
+	}
+	
+	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
+		this.beCPGMailService = beCPGMailService;
 	}
 
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
@@ -1294,7 +1303,19 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			return count(type);
 		}
 	}
+
+
+	@SuppressWarnings("unchecked")
+	public void sendMail(List<ScriptNode> recipientNodeRefs, String subject, String mailTemplate, Map<String, Object> templateArgs, boolean sendToSelf) {
+		beCPGMailService.sendMail(recipientNodeRefs.stream().map(ScriptNode::getNodeRef).collect(Collectors.toList()), subject, mailTemplate,
+				(Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs), sendToSelf);
+	}
 	
+	@SuppressWarnings("unchecked")
+	public void sendMailToAuthorities(List<String> authorities, String subject, String mailTemplate, Map<String, Object> templateArgs) {
+		beCPGMailService.sendMailToAuthorities(new HashSet<>(authorities), subject, mailTemplate, (Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs));
+	}
+
 	public void generateVersionReport(ScriptNode node, String versionLabel) {
 		
 		NodeRef entityNodeRef = node.getNodeRef();
