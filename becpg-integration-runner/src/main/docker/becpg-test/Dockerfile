@@ -1,6 +1,6 @@
 FROM ${docker.becpg.url}/becpg-base:${docker.becpg.tag}
 
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && apt-get install -y nodejs  && curl -L https://www.npmjs.com/install.sh | sh  && npm install -g less      
+#RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && apt-get install -y nodejs  && curl -L https://www.npmjs.com/install.sh | sh  && npm install -g less      
 
 WORKDIR /usr/local/tomcat/
 ENV TOMCAT_DIR=/usr/local/tomcat/
