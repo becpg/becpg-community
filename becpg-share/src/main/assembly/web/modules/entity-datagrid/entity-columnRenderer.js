@@ -135,7 +135,7 @@
 			 */
 		   this.registerRenderer("boolean", function(oRecord, data, label, scope) {
 			
-			   if(data.value == null || data.value==""){
+			   if(data.value === null || data.value === ""){
 				    return "";
 			   }
 			     
@@ -172,8 +172,8 @@
 
 				oColumn.width = 100;
 
-				Dom.setStyle(elCell, "width", oColumn.width + "px");
-				Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+				YAHOO.util.Dom.setStyle(elCell, "width", oColumn.width + "px");
+				YAHOO.util.Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
 			
 
 				return '<span class="thumbnail"><img src="' + Alfresco.constants.PROXY_URI + 'api/node/' + nodeRef.uri
@@ -391,17 +391,21 @@
                    
                    break;
                case "boolean":
-                   editor = new YAHOO.widget.RadioCellEditor({
-                       radioOptions : [ {
+				   var booleanOptions =  [{
                            label : scope.msg("data.boolean.true"),
                            value : true
                        }, {
                            label : scope.msg("data.boolean.false"),
                            value : false
-                       },{
+                       }];
+                       if(!column.mandatory){
+						   booleanOptions.push({
                            label : scope.msg("data.boolean.empty"),
                            value : ""
-                       } ], 
+                       } );
+					  }
+                   editor = new YAHOO.widget.RadioCellEditor({
+                       radioOptions : booleanOptions, 
 					  validator : function(oData) {
                           if(!oData || oData.length<1){
                              if(column.mandatory){
