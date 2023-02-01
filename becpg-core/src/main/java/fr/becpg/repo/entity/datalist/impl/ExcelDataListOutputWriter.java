@@ -324,9 +324,11 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 				String nodePath = null;
 				String bcpgCode = null;
+				QName entityType = null;
 
 				if (dataListFilter.getEntityNodeRef() != null) {
-					if (entityDictionaryService.isSubClass(nodeService.getType(dataListFilter.getEntityNodeRef()), BeCPGModel.TYPE_SYSTEM_ENTITY)) {
+					entityType = nodeService.getType(dataListFilter.getEntityNodeRef());
+					if (entityDictionaryService.isSubClass(entityType, BeCPGModel.TYPE_SYSTEM_ENTITY)) {
 						nodePath = cleanPath(nodeService.getPath(dataListFilter.getParentNodeRef()).toPrefixString(namespaceService));
 					} else {
 
@@ -362,13 +364,14 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 						cell.setCellValue("EntityListItem");
 					}
 					
-					String entityType = nodeService.getType(dataListFilter.getEntityNodeRef()).toPrefixString(namespaceService);
-					headerRow = sheet.createRow(rownum++);
-					headerRow.setRowStyle(style);
-					cell = headerRow.createCell(0);
-					cell.setCellValue("ENTITY_TYPE");
-					cell = headerRow.createCell(1);
-					cell.setCellValue(entityType);
+					if(entityType!=null) {
+						headerRow = sheet.createRow(rownum++);
+						headerRow.setRowStyle(style);
+						cell = headerRow.createCell(0);
+						cell.setCellValue("ENTITY_TYPE");
+						cell = headerRow.createCell(1);
+						cell.setCellValue(entityType.toPrefixString(namespaceService));
+					}
 
 					headerRow = sheet.createRow(rownum++);
 					headerRow.setRowStyle(style);
