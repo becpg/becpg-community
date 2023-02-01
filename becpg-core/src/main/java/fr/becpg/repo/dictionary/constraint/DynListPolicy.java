@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
@@ -25,7 +26,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * @version $Id: $Id
  */
 public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnDeleteNodePolicy,
-		NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy {
+		NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateAssociationPolicy {
 
 	private static final Log logger = LogFactory.getLog(DynListPolicy.class);
 
@@ -51,12 +52,17 @@ public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	 * <p>doInit.</p>
 	 */
 	public void doInit() {
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE, new JavaBehaviour(this,
-				"onDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE, new JavaBehaviour(this,
-				"onUpdateNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE, new JavaBehaviour(this,
-				"onCreateNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
+				new JavaBehaviour(this, "onDeleteNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
+				new JavaBehaviour(this, "onUpdateNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
+				new JavaBehaviour(this, "onCreateNode"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
+				new JavaBehaviour(this, "onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
+				new JavaBehaviour(this, "onDeleteAssociation"));
+
 	}
 
 	/** {@inheritDoc} */
@@ -81,6 +87,16 @@ public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 	public void onUpdateNode(NodeRef itemNodeRef) {
 		queueNode(itemNodeRef);
 	}
+
+	@Override
+	public void onCreateAssociation(AssociationRef nodeAssocRef) {
+		queueNode(nodeAssocRef.getSourceRef());
+	}
+	
+	@Override
+	public void onDeleteAssociation(AssociationRef nodeAssocRef) {
+		queueNode(nodeAssocRef.getSourceRef());
+	}
 	
 	/** {@inheritDoc} */
 	@Override
@@ -91,5 +107,5 @@ public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 		}
 		return true;
 	}
-	
+
 }
