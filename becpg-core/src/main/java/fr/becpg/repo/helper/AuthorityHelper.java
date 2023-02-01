@@ -80,8 +80,13 @@ public class AuthorityHelper implements InitializingBean {
 			if (INSTANCE.personService.personExists(person)) {
 				
 				String localeString = (String) INSTANCE.nodeService.getProperty(INSTANCE.personService.getPerson(person), BeCPGModel.PROP_USER_LOCALE);
-				Locale personLocale = MLTextHelper.parseLocale(localeString);
 				
+				Locale personLocale = null;
+				
+				if (localeString != null) {
+					personLocale = MLTextHelper.parseLocale(localeString);
+				}
+					
 				if (isFirst) {
 					commonLocale = personLocale;
 					isFirst = false;
