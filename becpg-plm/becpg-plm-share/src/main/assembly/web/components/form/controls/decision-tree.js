@@ -186,7 +186,6 @@
                               
                               if(choice.comment){
                                   showComment = true;
-                                  commentLabel = choice.commentLabel;
                                   
                                   if(choice.textarea){
                                       textarea = choice.textarea;
@@ -197,7 +196,7 @@
                            if(showComment){
                               htmlForm +='<div id="'+this.id+'-comment_'+question.id+'" class="decision-tree-comments hidden" >';
                               if(choice.label!="hidden") {
-                            	  htmlForm +='<label for="'+this.id+'-comment_'+question.id+'-input">'+(commentLabel ? commentLabel: this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment"))+':</label>';
+                            	  htmlForm +='<label id="'+this.id+'-comment_'+question.id+'-label" for="'+this.id+'-comment_'+question.id+'-input">'+this.msg("form.control.decision-tree."+this.options.prefix+"."+question.id+".comment")+':</label>';
                               }
                               if(this.options.disabled){
                                   htmlForm +='<span id="'+this.id+'-comment_'+question.id+'-input" >'+this.getCurrentValueComment(question.id)+'</span>';
@@ -347,6 +346,8 @@
 	                                        	 choice.hasCommentValidation = true;
 	                                        	 this.formRuntime.addValidation(this.id+"-comment_"+question.id+"-input", Alfresco.forms.validation.mandatory, null, "keyup");
 	                                         }
+	                                    
+	                                         
 	                                      } else {
 	                                    	  if( choice.hasCommentValidation){
 	                                    		  choice.hasCommentValidation = false;
@@ -423,6 +424,9 @@
                                 
                                 if(choice.comment){
                                    showComment = true; 
+                                   if( choice.commentLabel && choice.commentLabel.length > 0) {
+									  Dom.get(this.id+'-comment_'+question.id+'-label').innerHTML = choice.commentLabel;
+								   }
                                 } 
                              }
                            }
