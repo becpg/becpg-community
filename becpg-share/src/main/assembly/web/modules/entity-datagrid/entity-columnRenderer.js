@@ -141,7 +141,7 @@
 			     
 			   var booleanValueTrue = scope.msg("data.boolean.true");
 			   var booleanValueFalse = scope.msg("data.boolean.false");
-			   return $html(data.value || data.value == "true" ? booleanValueTrue : booleanValueFalse);
+			   return $html(data.value === true || data.value === "true" ? booleanValueTrue : booleanValueFalse);
 		   });
 
 		   /**
