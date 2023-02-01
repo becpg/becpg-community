@@ -1731,8 +1731,15 @@
 				</property>
 			</properties>
 		</aspect>
+		
+        <!-- Deprecated -->
+		<aspect name="gs1:datesAspect">
+		
+		</aspect>
 
-
+		<aspect name="gs1:indicatorsAspect">
+		
+		</aspect>
 
 	</aspects>
 </model>
