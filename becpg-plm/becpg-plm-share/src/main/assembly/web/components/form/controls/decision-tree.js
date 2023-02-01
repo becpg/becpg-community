@@ -424,7 +424,7 @@
                                 
                                 if(choice.comment){
                                    showComment = true; 
-                                   if( choice.commentLabel && choice.commentLabel.length > 0) {
+                                   if( choice.commentLabel && choice.commentLabel.length > 0 &&  Dom.get(this.id+'-comment_'+question.id+'-label')!=null) {
 									  Dom.get(this.id+'-comment_'+question.id+'-label').innerHTML = choice.commentLabel;
 								   }
                                 } 
