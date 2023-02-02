@@ -135,7 +135,7 @@
 			 */
 		   this.registerRenderer("boolean", function(oRecord, data, label, scope) {
 			
-			   if(data.value === null || data.value === ""){
+			   if(typeof data.value === 'undefined' || data.value === null || data.value === ""){
 				    return "";
 			   }
 			     
