@@ -247,6 +247,7 @@
 					<show id="bcpg:parentLevel" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
@@ -273,6 +274,7 @@
 					<show id="bcpg:lkvValue" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:parentLevel" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
@@ -319,6 +321,7 @@
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:lkvValue" />
 					<show id="bcpg:parentLevel" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
@@ -342,6 +345,7 @@
 				<field-visibility>
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 				<appearance>
@@ -358,6 +362,7 @@
 				<field-visibility>
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 			</form>
@@ -380,6 +385,7 @@
 				<field-visibility>
 					<show id="bcpg:lvCode" />
 					<show id="bcpg:lvValue" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
 				<appearance>
