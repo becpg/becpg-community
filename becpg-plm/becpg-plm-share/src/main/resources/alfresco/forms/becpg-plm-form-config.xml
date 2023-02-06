@@ -5671,7 +5671,9 @@
 					</field>
 				
 					<field id="bcpg:lrFormula">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
 					</field>
 					<field id="bcpg:lrComponents">
 						<control
@@ -5758,7 +5760,9 @@
 					</field>
 				
 					<field id="bcpg:lrFormula">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
 					</field>
 					<field id="bcpg:lrComponents">
 						<control
