@@ -905,7 +905,7 @@ public class ECOServiceImpl implements ECOService {
 		alfrescoRepository.save(ecoData);
 
 	}
-
+	
 	private List<NodeRef> getSourceItems(ChangeOrderData ecoData, ReplacementListDataItem replacementListDataItem) {
 		List<NodeRef> ret = new ArrayList<>();
 		if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
@@ -936,21 +936,35 @@ public class ECOServiceImpl implements ECOService {
 	private int calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent,
 			boolean isWUsedImpacted, int sort, NodeRef targetItem) {
 
-		for (Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()) {
-
+		List<NodeRef> sortedKeys = new ArrayList<>(wUsedData.getTree().keySet());
+		
+		sortedKeys.sort((key1, key2) -> {
+			
+			NodeRef sourceItem1 = wUsedData.getTree().get(key1).getEntityNodeRef();
+			NodeRef sourceItem2 = wUsedData.getTree().get(key2).getEntityNodeRef();
+			
+			String entityRef1 = sourceItem1 == null ? "" : sourceItem1.toString();
+			String entityRef2 = sourceItem2 == null ? "" : sourceItem2.toString();
+			
+			return entityRef1.compareTo(entityRef2);
+			
+		});
+		
+		for (NodeRef key : sortedKeys) {
+			
 			WUsedListDataItem wUsedListDataItem = new WUsedListDataItem();
-			wUsedListDataItem.setLink(kv.getKey());
+			wUsedListDataItem.setLink(key);
 			wUsedListDataItem.setParent(parent);
 			wUsedListDataItem.setImpactedDataList(dataListQName);
 			wUsedListDataItem.setIsWUsedImpacted(isWUsedImpacted);
-			wUsedListDataItem.setSourceItems(kv.getValue().getEntityNodeRefs());
+			wUsedListDataItem.setSourceItems(wUsedData.getTree().get(key).getEntityNodeRefs());
 			wUsedListDataItem.setSort(sort++);
 			wUsedListDataItem.setTargetItem(targetItem);
 
 			ecoData.getWUsedList().add(wUsedListDataItem);
 
 			// recursive
-			sort = calculateWUsedList(ecoData, kv.getValue(), dataListQName, wUsedListDataItem, isWUsedImpacted, sort, targetItem);
+			sort = calculateWUsedList(ecoData, wUsedData.getTree().get(key), dataListQName, wUsedListDataItem, isWUsedImpacted, sort, targetItem);
 		}
 
 		return sort;
