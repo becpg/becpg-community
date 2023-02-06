@@ -56,7 +56,9 @@
 					<field id="bp:pubChannelFailCount" read-only="true" />
 					<field id="bp:pubChannelError" read-only="true" />
 					<field id="bp:pubChannelConfig">
-						<control template="/org/alfresco/components/form/controls/config-editor.ftl" />
+						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
+							<control-param name="syntax">channel</control-param>
+						</control>
 					</field>
 					<field id="bp:pubChannelConfigFile" />
 				</appearance>
@@ -79,7 +81,9 @@
 					<field id="cm:name" />
 					<field id="bp:pubChannelId" />
 					<field id="bp:pubChannelConfig">
-						<control template="/org/alfresco/components/form/controls/config-editor.ftl" />
+						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
+							<control-param name="syntax">channel</control-param>
+						</control>
 					</field>
 					<field id="bp:pubChannelConfigFile" />
 				</appearance>

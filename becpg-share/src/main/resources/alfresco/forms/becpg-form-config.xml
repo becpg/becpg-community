@@ -495,7 +495,9 @@
 						</control>
 					</field>
 					<field id="bcpg:nrConditions" set="notificationFilter" help-id="becpg.forms.help.nrConditions" >
-						<control template="/org/alfresco/components/form/controls/config-editor.ftl" />
+						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
+							<control-param name="syntax">channel</control-param>
+						</control>
 					</field>
 					<field id="bcpg:nrDateField" set="notificationRule">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -623,7 +625,9 @@
 						</control>
 					</field>
 					<field id="bcpg:nrConditions" set="notificationFilter" help-id="becpg.forms.help.nrConditions" >
-						<control template="/org/alfresco/components/form/controls/config-editor.ftl" />
+						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
+							<control-param name="syntax">channel</control-param>
+						</control>
 					</field>
 					<field id="bcpg:nrDateField" set="notificationRule">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
