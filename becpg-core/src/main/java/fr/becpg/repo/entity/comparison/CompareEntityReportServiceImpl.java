@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.forms.FormNotFoundException;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -202,7 +203,10 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				
 				TypeDefinition typeDef = dictionaryService.getType(c.getEntityList());
 				String entityListTitle = typeDef.getTitle(dictionaryService);
-				def = getFormDef(defs, c.getProperty(), entityListName, entityListTitle, entity1NodeRef);
+				
+				try {
+					def = getFormDef(defs, c.getProperty(), entityListName, entityListTitle, entity1NodeRef);
+				} catch (FormNotFoundException e) {}
 				
 				cmpRowElt.addAttribute(ATTR_ENTITYLIST, entityListTitle);
 				cmpRowElt.addAttribute(ATTR_ENTITYLIST_QNAME, c.getEntityList().toPrefixString(namespaceService));
@@ -277,11 +281,9 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 						if (!properties1.isEmpty()) {
 							properties1 += PROPERTY_SEPARATOR;
 						}
-						String entityListName = c.getEntityList().toPrefixString();
-						BecpgFormDefinition def = getFormDef(defs, property, entityListName, entityListTitle, entityNodeRef);
-
+						
 						String value = c.getProperties1().get(property);
-						properties1 += getClassAttributeTitle(def, property) + PROPERTY_VALUE_SEPARATOR + value;
+						properties1 += getClassAttributeTitle(null, property) + PROPERTY_VALUE_SEPARATOR + value;
 					}
 				}
 
@@ -307,11 +309,9 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 						if (!properties2.isEmpty()) {
 							properties2 += PROPERTY_SEPARATOR;
 						}
-						String entityListName = c.getEntityList().toPrefixString();
-						BecpgFormDefinition def = getFormDef(defs, property, entityListName, entityListTitle, entityNodeRef);
-
+						
 						String value = c.getProperties2().get(property);
-						properties2 += getClassAttributeTitle(def, property) + PROPERTY_VALUE_SEPARATOR + value;
+						properties2 += getClassAttributeTitle(null, property) + PROPERTY_VALUE_SEPARATOR + value;
 					}
 				}
 
