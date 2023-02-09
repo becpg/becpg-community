@@ -106,7 +106,7 @@
                                                 </#if>
                                                                                         
                                                 <p style="padding-top: 10px">
-                                                <#if (args.workflowDueDate)??>Geburtstermin :&nbsp;&nbsp;<b><red>${args.workflowDueDate?date?string.full}</red></b><br></#if>
+                                                <#if (args.workflowDueDate)??>Fälligkeitsdatum :&nbsp;&nbsp;<b><red>${args.workflowDueDate?date?string.full}</red></b><br></#if>
                                                 <#if (args.workflowPriority)??>
                                                    Priorität :&nbsp;&nbsp;
                                                    <b>
