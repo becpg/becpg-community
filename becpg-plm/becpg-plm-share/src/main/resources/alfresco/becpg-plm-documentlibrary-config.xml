@@ -32,6 +32,7 @@
 				<aspect name="bcpg:chemicalCodeAspect" />
 				<aspect name="bcpg:meatAspect" />
 				<aspect name="ghs:sdsAspect" />
+				<aspect name="bcpg:undeletableAspect" />
 				
 			</visible>
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->

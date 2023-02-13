@@ -39,6 +39,7 @@ public class NutriScore implements ScoreCalculatingPlugin {
 	public static final String SATFAT_CODE = "FASAT";
 	public static final String FAT_CODE = "FAT";
 	public static final String SUGAR_CODE = "SUGAR";
+	public static final String SALT_CODE = "NACL";
 	public static final String SODIUM_CODE = "NA";
 	public static final String NSP_CODE = "PSACNS";
 	public static final String AOAC_CODE = "FIBTG";
@@ -46,7 +47,7 @@ public class NutriScore implements ScoreCalculatingPlugin {
 	
 	public static final String FRUIT_VEGETABLE_CODE = "FRUIT_VEGETABLE";
 	
-	private static final String[] NUTRIENT_CODE_LIST = { ENERGY_CODE, SATFAT_CODE, FAT_CODE, SUGAR_CODE, SODIUM_CODE, NSP_CODE, AOAC_CODE, PROTEIN_CODE };
+	private static final String[] NUTRIENT_CODE_LIST = { ENERGY_CODE, SATFAT_CODE, FAT_CODE, SUGAR_CODE, SALT_CODE, SODIUM_CODE, NSP_CODE, AOAC_CODE, PROTEIN_CODE };
 	private static final String[] PHYSICO_CODE_LIST = { FRUIT_VEGETABLE_CODE };
 	
 	@Autowired
@@ -156,6 +157,12 @@ public class NutriScore implements ScoreCalculatingPlugin {
 	}
 	
 	private void checkAndFillNutrient(ProductData productData, NutriScoreContext nutriScoreContext, String nutrientCode, Map<String, NodeRef> missingCharacts) {
+		
+		// do not set sodium because salt is already set
+		if (SODIUM_CODE.equals(nutrientCode) && nutriScoreContext.hasSaltScore()) {
+			return;
+		}
+		
 		NutListDataItem nutListItem = findNutrient(productData, nutrientCode, missingCharacts);
 		
 		if (nutListItem != null) {
@@ -170,8 +177,12 @@ public class NutriScore implements ScoreCalculatingPlugin {
 			
 			nutrientPart.put(NutriScoreContext.VALUE, value);
 			
-			// specific case of Sodium
-			if (SODIUM_CODE.equals(nutrientCode)) {
+			// specific case of Salt/Sodium
+			if (SALT_CODE.equals(nutrientCode)) {
+				nutrientCode = SODIUM_CODE;
+				nutrientPart.put(NutriScoreContext.VALUE, value * 1000 / 2.5);
+				nutriScoreContext.setHasSaltScore(true);
+			} else if (SODIUM_CODE.equals(nutrientCode)) {
 				nutrientPart.put(NutriScoreContext.VALUE, value * 1000);
 			}
 			

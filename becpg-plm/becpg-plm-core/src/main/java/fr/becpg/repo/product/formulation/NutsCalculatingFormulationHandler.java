@@ -163,7 +163,14 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 				List<NutListDataItem> retainNodes = new ArrayList<>();
 				Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
-
+				
+				for (NutListDataItem nutListDataItem : formulatedProduct.getNutList()){
+					if (Boolean.TRUE.equals(nutListDataItem.getIsManual())) {
+						retainNodes.add(nutListDataItem);
+					}
+					
+				}
+				
 				for (CompoListDataItem compoListDataItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					if (compoListDataItem != null) {
 						ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());

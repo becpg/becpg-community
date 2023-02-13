@@ -5207,5 +5207,8 @@
 				</association>
 			</associations>
 		</aspect>
+		
+		<aspect name="bcpg:undeletableAspect">
+		</aspect>
 	</aspects>
 </model>
