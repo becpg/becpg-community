@@ -109,7 +109,7 @@ margin-top:3px;
                                              
                                                 <p style="padding-top:10px; margin:3px 0px 0px 0px">Erinnern</p><div class="line"></div>
                                                 <p style="margin:0px">Aufgabe neu gestartet : <b>${args.task}</b>
-                                                <br /><span>Geburtstermin : <b>${args.dueDate?date}</b></span>.
+                                                <br /><span>Fälligkeitsdatum : <b>${args.dueDate?date}</b></span>.
                                                 </p>
                                               
                                                 <br /><a href="${shareUrl}/page/task-edit?taskId=${args.taskId}"><button ><b>Siehe Aufgabe</b></button></a>
