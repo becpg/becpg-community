@@ -69,4 +69,6 @@ public final class SecurityModel {
 	
 	/** Constant <code>ASSOC_SECURITY_REF</code> */
 	public static final QName ASSOC_SECURITY_REF= QName.createQName(SECURITY_URI, "securityRef");
+	
+	public static final QName ASSOC_READ_GROUPS = QName.createQName(SECURITY_URI, "readGroups");
 }

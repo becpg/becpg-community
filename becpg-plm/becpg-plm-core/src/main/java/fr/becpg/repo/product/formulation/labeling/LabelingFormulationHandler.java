@@ -2225,6 +2225,35 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if (logger.isTraceEnabled()) {
 							logger.trace("- Add new ing " + getName(ingLabelItem) + " to current Label " + getName(parent));
 						}
+						
+						
+						if ( nodeService.hasAspect(ingNodeRef, PLMModel.ASPECT_WATER)) {
+
+							if (logger.isTraceEnabled()) {
+								logger.trace("Detected water lost");
+							}
+
+							EvaporatedDataItem evaporatedDataItem = null;
+							for (EvaporatedDataItem tmp : labelingFormulaContext.getEvaporatedDataItems()) {
+								if (tmp.getProductNodeRef().equals(ingNodeRef)) {
+									evaporatedDataItem = tmp;
+									break;
+								}
+							}
+
+							if (evaporatedDataItem == null) {
+								labelingFormulaContext.getEvaporatedDataItems()
+										.add(new EvaporatedDataItem(ingNodeRef, 100d, qtyWithYield, volumeWithYield));
+							} else {
+								evaporatedDataItem.addQty(qtyWithYield);
+								evaporatedDataItem.addVolume(volumeWithYield);
+							}
+
+							labelingFormulaContext.getToApplyThresholdItems().add(ingNodeRef);
+
+						}
+
+						
 
 					} else {
 						if (logger.isTraceEnabled()) {
@@ -2268,9 +2297,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						ingLabelItem.getBioOrigins().addAll(ingListItem.getData().getBioOrigin());
 					}
 
-					if (product.getGeoOrigins() != null) {
-						addGeo(ingLabelItem, product.getGeoOrigins(), PlaceOfActivityTypeCode.LAST_PROCESSING);
-					}
+// Fix #15932
+//					if (product.getGeoOrigins() != null) {
+//						addGeo(ingLabelItem, product.getGeoOrigins(), PlaceOfActivityTypeCode.LAST_PROCESSING);
+//					}
 
 					ingLabelItem.getFootNotes().addAll(extractFootNotes(compoListDataItem, ingListItem.getData(), labelingFormulaContext));
 
@@ -2390,13 +2420,13 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (!ingListItem.isLeaf() && !DeclarationType.DoNotDeclare.equals(ingDeclarationType)
 							&& !DeclarationType.DoNotDetails.equals(ingDeclarationType)) {
 						if (logger.isTraceEnabled()) {
-							logger.trace(" -- Adding subings " + ingListItem.getChildren().size());
+							logger.trace(" -- Adding subings " + ingListItem.getChildren().size() + " to current "+ ingLabelItem.getIngList().size());
 						}
 
 						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qtyWithYield, volumeWithYield,
 								labelingFormulaContext, compoListDataItem, errors);
 
-					} else if (DeclarationType.Detail.equals(ingDeclarationType)) {
+					} else if (DeclarationType.Detail.equals(ingDeclarationType) && ingLabelItem.getIngList().isEmpty()) {
 						ingLabelItem.setDeclarationType(DeclarationType.DoNotDetails);
 					}
 

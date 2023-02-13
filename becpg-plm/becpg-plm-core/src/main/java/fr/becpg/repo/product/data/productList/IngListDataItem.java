@@ -34,7 +34,6 @@ import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
-import fr.becpg.repo.repository.model.CopiableDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 /**
@@ -409,13 +408,13 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	@Override
 	@InternalField
 	public NodeRef getCharactNodeRef() {
-		return ing;
+		return getIng();
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public Double getValue() {
-		return qtyPerc;
+		return getQtyPerc();
 	}
 
 	/** {@inheritDoc} */

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -1687,7 +1688,143 @@ public class ECOIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 	}
+	
+	@Test
+	public void testWUsedListSorting() throws InterruptedException {
+		
+		NodeRef FP1 = inWriteTx(() -> {
+			
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP1");
+			finishedProduct.setQty(2d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
 
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+
+			finishedProduct.getCompoListView().setCompoList(compoList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+
+		});
+		
+		NodeRef FP2 = inWriteTx(() -> {
+			
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP2");
+			finishedProduct.setQty(2d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			
+		});
+		
+		NodeRef FP3 = inWriteTx(() -> {
+			
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP3");
+			finishedProduct.setQty(2d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			
+		});
+		
+		inWriteTx(() -> {
+			
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(FP1);
+			
+			List<CompoListDataItem> compoList = finishedProduct.getCompoList();
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			return alfrescoRepository.save(finishedProduct);
+		});
+		
+		inWriteTx(() -> {
+			
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(FP2);
+			
+			List<CompoListDataItem> compoList = finishedProduct.getCompoList();
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			return alfrescoRepository.save(finishedProduct);
+		});
+		
+		inWriteTx(() -> {
+			
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(FP3);
+			
+			List<CompoListDataItem> compoList = finishedProduct.getCompoList();
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			return alfrescoRepository.save(finishedProduct);
+		});
+		
+		inWriteTx(() -> {
+			
+			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(FP1);
+			
+			List<CompoListDataItem> compoList = finishedProduct.getCompoList();
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+			return alfrescoRepository.save(finishedProduct);
+		});
+		
+		NodeRef ecoNodeRef = inWriteTx(() -> {
+
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, new ArrayList<>());
+
+			List<ReplacementListDataItem> replacementList = new ArrayList<>();
+
+			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial1NodeRef), rawMaterial5NodeRef, 100);
+			replacementList.add(replacement);
+			changeOrderData.setReplacementList(replacementList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
+
+		});
+		
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false, false));
+		
+		assertTrue(inReadTx(() -> {
+			
+			ChangeOrderData changeOrderData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+			
+			List<WUsedListDataItem> wusedList = changeOrderData.getWUsedList();
+			
+			assertFalse(wusedList.isEmpty());
+			
+			wusedList.sort((wused1, wused2) -> {
+				return wused1.getSort().compareTo(wused2.getSort());
+			});
+			
+			HashSet<NodeRef> visitedSourceItems = new HashSet<>();
+			
+			NodeRef previousSourceItem = null;
+			
+			for (WUsedListDataItem wusedItem : wusedList) {
+				
+				NodeRef currentSourceItem = wusedItem.getSourceItems().get(0);
+				
+				if (previousSourceItem != null && !previousSourceItem.equals(currentSourceItem)) {
+					
+					if (visitedSourceItems.contains(currentSourceItem)) {
+						return false;
+					}
+				}
+				
+				previousSourceItem = currentSourceItem;
+				
+				visitedSourceItems.add(currentSourceItem);
+			}
+			
+			return true;
+		}));
+	}
+	
 	private String getVersionLabel(NodeRef productNodeRef) {
 		return (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_VERSION_LABEL);
 	}
