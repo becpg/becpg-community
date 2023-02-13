@@ -172,7 +172,6 @@
 }
 
 
-
 .datagrid .yui-dt td.sticky  {
   position: -webkit-sticky; /* for Safari */
   position: sticky;
@@ -181,8 +180,9 @@
   background-color : inherit;
 }
 
-
-
+.datagrid *:focus {
+    scroll-margin-top: 34px;
+}
 
 .datagrid .grid tbody {
 	outline: none;

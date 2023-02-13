@@ -74,20 +74,27 @@
 	<!-- ______________________________________________ batch _________________________________________ -->
 
 
-	<config evaluator="model-type" condition="qa:batch">
+<config evaluator="model-type" condition="qa:batch" >
 		<forms>
 			<form id="create">
 				<field-visibility>
+					<!-- mainInfo -->
 					<show id="cm:name" />
 					<show id="bcpg:code" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="qa:batchId"  />
 					<show id="cm:description" force="true" />
+					<show id="qa:batchState"/>
+					
+					<!-- product-info -->
 					<show id="qa:product" />
 					<show id="qa:batchQty"/>
 					<show id="qa:batchQtyUnit"/>
-					<show id="qa:batchState"/>
-
+					
+					<!-- tags and categories -->
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
+					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
 					<show id="cm:created" for-mode="view" />
@@ -96,7 +103,16 @@
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" 
+						label-id="becpg.forms.set.batch-info.label" />
+					<set id="product-info" template="/org/alfresco/components/form/3-column-set.ftl" appearance="bordered-panel" 
+						label-id="becpg.forms.set.product-info.label" />
+					<set id="categories" appearance="bordered-panel"
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" 
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					
+					<!-- mainInfo -->
 					<field id="cm:name" set="mainInfo" />
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
@@ -117,7 +133,8 @@
 							<control-param name="options">Simulation|status.entity-simulation,Valid|status.entity-valid</control-param>
 						</control>
 					</field>
-					<set id="product-info" template="/org/alfresco/components/form/3-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
+					
+					<!-- product-info -->
 					<field id="qa:product" set="product-info" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -135,8 +152,24 @@
 						</control>
 					</field>
 					
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+					
 					<!-- audit -->
-					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="cm:creator" set="audit" />
 					<field id="cm:created" set="audit" />
 					<field id="cm:modifier" set="audit" />
@@ -145,64 +178,101 @@
 			</form>
 			<form id="search">
 				<field-visibility>
+					<!-- mainInfo -->
 					<show id="cm:name" />
 					<show id="bcpg:code" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="qa:batchId"  />
-					
 					<show id="cm:description" force="true" />
+					<show id="qa:batchState"/>
+					
+					<!-- product-info -->
 					<show id="qa:product" />
 					<show id="qa:batchQty"/>
 					<show id="qa:batchQtyUnit"/>
-					<show id="qa:batchState"/>
 					
+					<!-- auditable -->
+					<show id="cm:creator" force="true" />
+					<show id="cm:created" force="true" />
+					<show id="cm:modifier" force="true" />
+					<show id="cm:modified" force="true" />
 
 				</field-visibility>
 				<appearance>
-					<field id="cm:name">
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" 
+						label-id="becpg.forms.set.batch-info.label" />
+					<set id="product-info" template="/org/alfresco/components/form/3-column-set.ftl" appearance="bordered-panel" 
+						label-id="becpg.forms.set.product-info.label" />
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" 
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+						
+					<field id="cm:name" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:code" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" >
+							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:batch?classNames=bcpg:entityTplAspect
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
+					<field id="qa:batchId" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="cm:description" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="qa:batchState" set="mainInfo" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="options">Simulation|status.entity-simulation,Valid|status.entity-valid</control-param>
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					
+					<!-- product-info -->
+					<field id="qa:product" set="product-info" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct
+							</control-param>
+							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
+							</control-param>
+						</control>
+					</field>
+					<field id="qa:batchQty" set="product-info" />
+					<field id="qa:batchQtyUnit" set="product-info"  >
+						<control template="/org/alfresco/components/form/controls/product-unit.ftl">
+							<control-param name="options">kg,g,lb,oz,L,cL,mL,gal,cp,fl_oz,P|becpg.forms.field.productUnit
+							</control-param>
+							<control-param name="insertBlank">true</control-param>
+							<control-param name="isSearch">true</control-param>
+						</control>
+					</field>
+					
+					<!-- audit -->
+					<field id="cm:creator" set="audit" >
 						<control>
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:code">
+					
+					<field id="cm:created" set="audit">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
+					</field>
+					<field id="cm:modifier" set="audit">
 						<control>
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:entityTplRef">
-						<control>
-							<control-param name="forceEditable">true</control-param>
-						</control>
-					</field>
-					<field id="qa:batchId">
-						<control>
-							<control-param name="forceEditable">true</control-param>
-						</control>
-					</field>
-					<field id="cm:description">
-						<control>
-							<control-param name="forceEditable">true</control-param>
-						</control>
-					</field>
-					<field id="qa:product">
-						<control>
-							<control-param name="forceEditable">true</control-param>
-						</control>
-					</field>
-					<field id="qa:batchQty">
-						<control>
-							<control-param name="forceEditable">true</control-param>
-						</control>
-					</field>
-					<field id="qa:batchQtyUnit">
-						<control>
-							<control-param name="forceEditable">true</control-param>
-						</control>
-					</field>
-					<field id="qa:batchState">
-						<control>
-							<control-param name="forceEditable">true</control-param>
-						</control>
+					
+					<field id="cm:modified" set="audit">
+						<control template="/org/alfresco/components/form/controls/daterange.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -210,25 +280,44 @@
 		</forms>
 	</config>
 	
-		<config evaluator="node-type" condition="qa:batch">
+	<config evaluator="node-type" condition="qa:batch" >
 		<forms>
 			<form >
 				<field-visibility>
+					<!-- mainInfo -->
 					<show id="cm:name" />
 					<show id="bcpg:code" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="qa:batchId"  />
-					
 					<show id="cm:description" force="true" />
+					<show id="qa:batchState"/>
+					
+					<!-- product-info -->
 					<show id="qa:product" />
 					<show id="qa:batchQty"/>
 					<show id="qa:batchQtyUnit"/>
-					<show id="qa:batchState"/>
 					
+					<!-- tags and categories -->
+					<show id="cm:taggable" />
+					<show id="cm:categories" />
+					
+					<!-- auditable -->
+					<show id="cm:creator" for-mode="view" />
+					<show id="cm:created" for-mode="view" />
+					<show id="cm:modifier" for-mode="view" />
+					<show id="cm:modified" for-mode="view" />
 
 				</field-visibility>
 				<appearance>
-					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.batch-info.label" />
+					<set id="mainInfo" template="/org/alfresco/components/form/2-column-set.ftl" appearance="bordered-panel" 
+						label-id="becpg.forms.set.batch-info.label" />
+					<set id="product-info" template="/org/alfresco/components/form/3-column-set.ftl" appearance="bordered-panel" 
+						label-id="becpg.forms.set.product-info.label" />
+					<set id="categories" appearance="bordered-panel"
+						label-id="becpg.forms.set.category.label" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="audit" appearance="bordered-panel" label-id="becpg.forms.set.audit.label" 
+						template="/org/alfresco/components/form/2-column-set.ftl" />
+					
 					<field id="cm:name" set="mainInfo" />
 					<field id="bcpg:code" read-only="true" set="mainInfo" />
 					
@@ -250,7 +339,8 @@
 							<control-param name="options">Simulation|status.entity-simulation,Valid|status.entity-valid</control-param>
 						</control>
 					</field>
-					<set id="product-info" template="/org/alfresco/components/form/3-column-set.ftl" appearance="bordered-panel" label-id="becpg.forms.set.product-info.label" />
+					
+					<!-- product-info -->
 					<field id="qa:product" set="product-info" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -267,7 +357,30 @@
 							</control-param>
 						</control>
 					</field>
-		
+					
+					<!-- categories -->
+					<field id="cm:taggable" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+							<control-param name="params">aspect=cm:taggable
+							</control-param>
+							<control-param name="createNewItemUri">/api/tag/workspace/SpacesStore
+							</control-param>
+							<control-param name="createNewItemIcon">tag</control-param>
+						</control>
+					</field>
+					<field id="cm:categories" set="categories">
+						<control>
+							<control-param name="compactMode">true</control-param>
+						</control>
+					</field>
+					
+					<!-- audit -->
+					<field id="cm:creator" set="audit" />
+					<field id="cm:created" set="audit" />
+					<field id="cm:modifier" set="audit" />
+					<field id="cm:modified" set="audit" />
+					
 				</appearance>
 			</form>
 			
@@ -293,7 +406,6 @@
 						</control>
 					</field>
 					
-			       
 					<field id="cm:taggable">
 						<control>
 							<control-param name="compactMode">true</control-param>
@@ -324,13 +436,13 @@
 				</appearance>
 			</form>
 			
-				<form id="reports-parameters">
-	         	<field-visibility>
-	         		<show id="rep:reportLocales" force="true" />
-	                <show id="rep:reportParameters" force="true" />
-	                <show id="rep:reportTpls" force="true" />
-	            </field-visibility>
-	            <appearance>
+			<form id="reports-parameters">
+				<field-visibility>
+					<show id="rep:reportLocales" force="true" />
+					<show id="rep:reportParameters" force="true" />
+					<show id="rep:reportTpls" force="true" />
+				</field-visibility>
+				<appearance>
 					<field id="rep:reportLocales" >
 						<control template="/org/alfresco/components/form/controls/mtlangue.ftl"/>
 					</field>
@@ -343,10 +455,8 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
 						</control>
 					</field>
-				</appearance>		
-	         </form>
-
-	
+				</appearance>
+			</form>
 		</forms>
 	</config>
 	

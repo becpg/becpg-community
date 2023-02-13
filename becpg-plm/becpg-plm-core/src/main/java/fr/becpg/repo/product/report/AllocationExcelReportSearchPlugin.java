@@ -79,7 +79,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 				entityItems.putAll(getDynamicProperties(entityNodeRef, itemType));
 
-				extractAllocations(entityNodeRef, sheet, metadataFields, cache, rownum, key, entityItems);
+				rownum  = extractAllocations(entityNodeRef, sheet, metadataFields, cache, rownum, key, entityItems);
 
 			}
 		}
@@ -87,7 +87,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 		return rownum;
 	}
 
-	private void extractAllocations(NodeRef productNodeRef, XSSFSheet sheet, List<AttributeExtractorStructure> metadataFields,
+	private int extractAllocations(NodeRef productNodeRef, XSSFSheet sheet, List<AttributeExtractorStructure> metadataFields,
 			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Map<String, Object> entityItems) {
 
 		if (permissionService.hasPermission(productNodeRef, "Read") == AccessStatus.ALLOWED) {
@@ -97,7 +97,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 			if (PLMModel.TYPE_PRODUCTCOLLECTION.equals(entityType)) {
 				ProductCollectionData productCollectionData = (ProductCollectionData) alfrescoRepository.findOne(productNodeRef);
 				for (ProductListDataItem product : productCollectionData.getProductList()) {
-					extractAllocations(product.getProduct(), sheet, metadataFields, cache, rownum, key, entityItems);
+					rownum = extractAllocations(product.getProduct(), sheet, metadataFields, cache, rownum, key, entityItems);
 				}
 
 			} else {
@@ -204,9 +204,11 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 				
 				}
 			}
+			
+	
 
 		}
-
+		return rownum;
 	}
 
 }

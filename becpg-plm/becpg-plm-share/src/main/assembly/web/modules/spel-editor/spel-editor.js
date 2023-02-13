@@ -286,6 +286,7 @@
                         			             '@beCPG.extractCustomList($nodeRef?, $listType)',
                         			             '@beCPG.saveCustomList($range)',
 												 '@glop.optimize($args...)',
+												 'isClaimed($claimNodeRef)',
                         			             'isLiquid()',
                         			             'isRawMaterial()',
                         			             'isPackaging()',

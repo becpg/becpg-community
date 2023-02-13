@@ -1081,14 +1081,31 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					}
 				}
 			}
-
-			if (showPercRules.get(nodeRef) != null) {
+			
+			if (renameRules.containsKey(lblComponent.getNodeRef())) {
+				RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
+				if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null)) {
+					if(showPercRules.containsKey(renameRule.getReplacement())){
+						for (ShowRule showRule : showPercRules.get(renameRule.getReplacement())) {
+							if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
+								if ((selectedRule == null) || ((selectedRule.getThreshold() == null) && (showRule.getThreshold() != null))
+										|| ((selectedRule.getThreshold() != null) && (showRule.getThreshold() != null)
+												&& (selectedRule.getThreshold() > showRule.getThreshold()))) {
+									selectedRule = showRule;
+									break;
+								}
+							}
+						}
+					}
+				}
+			} else 	if (showPercRules.get(nodeRef) != null) {
 				for (ShowRule showRule : showPercRules.get(nodeRef)) {
 					if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
 						if ((selectedRule == null) || ((selectedRule.getThreshold() == null) && (showRule.getThreshold() != null))
 								|| ((selectedRule.getThreshold() != null) && (showRule.getThreshold() != null)
 										&& (selectedRule.getThreshold() > showRule.getThreshold()))) {
 							selectedRule = showRule;
+							break;
 						}
 					}
 				}
@@ -2757,11 +2774,27 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					return -1;
 				}
 
+				int ret = b.getKey().getQty(ingsLabelingWithYield).compareTo(a.getKey().getQty(ingsLabelingWithYield));
 				if (useVolume) {
-					return b.getKey().getVolume(ingsLabelingWithYield).compareTo(a.getKey().getVolume(ingsLabelingWithYield));
+					ret =  b.getKey().getVolume(ingsLabelingWithYield).compareTo(a.getKey().getVolume(ingsLabelingWithYield));
+				}
+				
+				if(ret == 0) {
+					
+					String name = getLegalIngName(b.getKey());
+					if(name==null) {
+						name = "";
+					}
+					
+					String name2 = getLegalIngName(a.getKey());
+					if(name2==null) {
+						name2 = "";
+					}
+					
+					ret = name.compareTo(name2);
 				}
 
-				return b.getKey().getQty(ingsLabelingWithYield).compareTo(a.getKey().getQty(ingsLabelingWithYield));
+				return ret;
 			});
 		}
 		Map<IngTypeItem, List<LabelingComponent>> sortedIngListByType = new LinkedHashMap<>();
