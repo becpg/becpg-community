@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.io.ClassPathResource;
@@ -176,6 +177,14 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 		}
 		return roundValue(value, 1d);
 	}
+	
+	@Override
+	public Pair<Double,Double> toleranceByCode(Double value, String nutrientTypeCode) {
+		Pair<Double,Double> ret = null;
+		
+		return ret;
+	}
+
 
 	/** {@inheritDoc} */
 	@Override
@@ -324,7 +333,8 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	 * @return a {@link java.lang.Double} object.
 	 */
 	protected abstract Double roundByCode(Double value, String nutrientTypeCode);
-
+	
+	
 	/**
 	 * <p>displayValueByCode.</p>
 	 *

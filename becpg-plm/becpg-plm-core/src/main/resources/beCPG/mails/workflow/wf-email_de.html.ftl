@@ -106,7 +106,7 @@
                                                 </#if>
                                                                                         
                                                 <p style="padding-top: 10px">
-                                                <#if (args.workflowDueDate)??>Geburtstermin :&nbsp;&nbsp;<b><red>${args.workflowDueDate?date?string.full}</red></b><br></#if>
+                                                <#if (args.workflowDueDate)??>Fälligkeitsdatum :&nbsp;&nbsp;<b><red>${args.workflowDueDate?date?string.full}</red></b><br></#if>
                                                 <#if (args.workflowPriority)??>
                                                    Priorität :&nbsp;&nbsp;
                                                    <b>
@@ -192,7 +192,7 @@
                            </tr>
                            <tr>
                               <td style="padding: 10px 30px;">
-                                 <img style="padding :10px 0px" src="${shareUrl}/res/components/images/becpg-footer-logo.png" />
+                                 <img style="padding :10px 0px" src="${mailLogoUrl}" />
                               </td>
                            </tr>
                         </table>
