@@ -1,6 +1,5 @@
 package fr.becpg.repo.audit.plugin;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,14 +76,6 @@ public abstract class AbstractAuditPlugin implements AuditPlugin, InitializingBe
 
 	public Map<String, AuditDataType> getStatisticsKeyMap() {
 		return KEY_MAP;
-	}
-	
-	@Override
-	public void beforeRecordAuditEntry(Map<String, Serializable> auditValues) {
-	}
-	
-	@Override
-	public void afterRecordAuditEntry(Map<String, Serializable> auditValues) {
 	}
 	
 }

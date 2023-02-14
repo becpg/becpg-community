@@ -37,7 +37,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
 import fr.becpg.repo.audit.model.AuditDataType;
 import fr.becpg.repo.audit.model.AuditQuery;
-import fr.becpg.repo.audit.plugin.AuditPlugin;
+import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
 
 @Service
@@ -60,7 +60,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	private AuditModelRegistry auditModelRegistry;
 	
 	@Override
-	public int recordAuditEntry(AuditPlugin auditPlugin, Map<String, Serializable> auditValues, boolean deleteOldEntry) {
+	public int recordAuditEntry(DatabaseAuditPlugin auditPlugin, Map<String, Serializable> auditValues, boolean deleteOldEntry) {
 		
 		auditPlugin.beforeRecordAuditEntry(auditValues);
 		
@@ -96,7 +96,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	}
 
 	@Override
-	public List<JSONObject> listAuditEntries(AuditPlugin plugin, AuditQuery auditFilter) {
+	public List<JSONObject> listAuditEntries(DatabaseAuditPlugin plugin, AuditQuery auditFilter) {
 		
 		Collection<AuditEntry> auditEntries = internalListAuditEntries(plugin, auditFilter);
 		
@@ -128,12 +128,12 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	}
 
 	@Override
-	public void deleteAuditEntries(AuditPlugin plugin, Long fromId, Long toId) {
+	public void deleteAuditEntries(DatabaseAuditPlugin plugin, Long fromId, Long toId) {
 		auditComponent.deleteAuditEntriesByIdRange(plugin.getAuditApplicationId(), fromId, toId);
 	}
 
 	@Override
-	public void updateAuditEntry(AuditPlugin plugin, Long id, Long time, Map<String, Serializable> values) {
+	public void updateAuditEntry(DatabaseAuditPlugin plugin, Long id, Long time, Map<String, Serializable> values) {
 		
 		AuditEntry auditEntry = audit.getAuditEntry(plugin.getAuditApplicationId(), id, null);
 		
@@ -151,7 +151,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		
 	}
 
-	private Collection<AuditEntry> internalListAuditEntries(AuditPlugin plugin, AuditQuery auditFilter) {
+	private Collection<AuditEntry> internalListAuditEntries(DatabaseAuditPlugin plugin, AuditQuery auditFilter) {
 		
 		String whereClause = buildWhereClause(plugin, auditFilter);
 		
@@ -167,7 +167,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		return audit.listAuditEntries(plugin.getAuditApplicationId(), params).getCollection();
 	}
 
-	private String buildWhereClause(AuditPlugin plugin, AuditQuery auditFilter) {
+	private String buildWhereClause(DatabaseAuditPlugin plugin, AuditQuery auditFilter) {
 	
 		StringBuilder whereClauseBuilder = new StringBuilder();
 		
@@ -233,7 +233,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		return null;
 	}
 
-	private Map<String, Serializable> recreateAuditMap(AuditPlugin plugin, Map<String, Serializable> auditValues, boolean forDatabase) {
+	private Map<String, Serializable> recreateAuditMap(DatabaseAuditPlugin plugin, Map<String, Serializable> auditValues, boolean forDatabase) {
 		
 		Map<String, Serializable> auditMap = new HashMap<>();
 		

@@ -16,8 +16,16 @@ public interface BeCPGAuditService {
 	
 	AuditScope startAudit(AuditType auditType);
 	
+	AuditScope startAudit(AuditType auditType, Class<?> auditClass, String scopeName);
+	
 	void deleteAuditEntries(AuditType type, Long fromId, Long toId);
 	
 	void updateAuditEntry(AuditType type, Long id, Long time, Map<String, Serializable> values);
+	
+	void putAttribute(String string, Object attribute);
+
+	void addAnnotation(String annotation);
+
+	void addAnnotation(String description, Map<String, String> attributes);
 
 }

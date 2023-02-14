@@ -40,8 +40,8 @@ public class StopWatchServiceWrapper {
 		stopWatchAuditService.stop(logger, stopWatch, name);
 	}
 
-	public void addAnnotation(String string) {
-		stopWatchAuditService.addLogMessage(logger, stopWatch, string);
+	public void addAnnotation(Object annotation) {
+		stopWatchAuditService.addLogMessage(logger, stopWatch, annotation.toString());
 	}
 
 }

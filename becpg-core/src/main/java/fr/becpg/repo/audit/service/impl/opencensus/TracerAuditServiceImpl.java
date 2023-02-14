@@ -1,10 +1,15 @@
-package fr.becpg.repo.audit.service.impl;
+package fr.becpg.repo.audit.service.impl.opencensus;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.service.TracerAuditService;
+import io.opencensus.trace.Annotation;
 import io.opencensus.trace.AttributeValue;
 import io.opencensus.trace.Tracer;
 import io.opencensus.trace.Tracing;
@@ -38,8 +43,19 @@ public class TracerAuditServiceImpl implements TracerAuditService {
 	}
 
 	@Override
-	public void addAnnotation(String string) {
-		tracer.getCurrentSpan().addAnnotation(string);
+	public void addAnnotation(String annotation) {
+		tracer.getCurrentSpan().addAnnotation(annotation);
+	}
+
+	@Override
+	public void addAnnotation(String description, Map<String, String> attributes) {
+		HashMap<String, AttributeValue> attributeMap = new HashMap<>();
+		
+		for (Entry<String, String> entry : attributes.entrySet()) {
+			attributeMap.put(entry.getKey(), AttributeValue.stringAttributeValue(entry.getValue()));
+		}
+		
+		tracer.getCurrentSpan().addAnnotation(Annotation.fromDescriptionAndAttributes(description, attributeMap));
 	}
 
 }

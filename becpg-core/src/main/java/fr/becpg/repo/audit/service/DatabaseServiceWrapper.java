@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import fr.becpg.repo.audit.plugin.AuditPlugin;
+import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 
 public class DatabaseServiceWrapper {
 	
@@ -17,11 +17,11 @@ public class DatabaseServiceWrapper {
 	
 	private DatabaseAuditService databaseAuditService;
 	
-	private AuditPlugin auditPlugin;
+	private DatabaseAuditPlugin auditPlugin;
 	
 	private Map<String, Serializable> auditValues = new HashMap<>();
 	
-	public DatabaseServiceWrapper(AuditPlugin auditPlugin, DatabaseAuditService databaseAuditService) {
+	public DatabaseServiceWrapper(DatabaseAuditPlugin auditPlugin, DatabaseAuditService databaseAuditService) {
 		this.databaseAuditService = databaseAuditService;
 		this.auditPlugin = auditPlugin;
 	}

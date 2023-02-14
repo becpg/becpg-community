@@ -1,5 +1,7 @@
 package fr.becpg.repo.audit.service;
 
+import java.util.Map;
+
 public interface TracerAuditService {
 
 	AutoCloseable start(String tracerScopeName);
@@ -8,6 +10,8 @@ public interface TracerAuditService {
 
 	void putAttribute(String string, Object attribute);
 
-	void addAnnotation(String string);
+	void addAnnotation(String annotation);
+
+	void addAnnotation(String description, Map<String, String> attributes);
 
 }
