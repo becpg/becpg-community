@@ -1671,6 +1671,7 @@
 				<field-visibility>
 					<show id="bcpg:lvCode"/>
 					<show id="bcpg:lvValue"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>

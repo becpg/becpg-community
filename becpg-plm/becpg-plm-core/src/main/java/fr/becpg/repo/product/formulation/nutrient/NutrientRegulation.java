@@ -2,6 +2,8 @@ package fr.becpg.repo.product.formulation.nutrient;
 
 import java.util.Locale;
 
+import org.alfresco.util.Pair;
+
 import fr.becpg.repo.product.formulation.nutrient.AbstractNutrientRegulation.NutrientDefinition;
 
 /**
@@ -59,4 +61,6 @@ public interface NutrientRegulation {
 	 * @return a {@link java.lang.Double} object.
 	 */
 	Double convertValue(Double value, String nutUnit, String regulUnit);
+
+	Pair<Double, Double> toleranceByCode(Double value, String nutrientTypeCode);
 }

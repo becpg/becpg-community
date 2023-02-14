@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -564,7 +565,7 @@ public class ECOServiceImpl implements ECOService {
 		@Override
 		public void process(Object component) throws Throwable {
 			if (component instanceof Composite<?> && ((Composite<?>) component).getData() instanceof WUsedListDataItem) {
-				applyECO(ecoData, (Composite<WUsedListDataItem>) component, false, 1, errors);
+				L2CacheSupport.doInCacheContext(() -> applyECO(ecoData, (Composite<WUsedListDataItem>) component, false, 1, errors), false, true);
 			}
 		}
 		
@@ -904,7 +905,7 @@ public class ECOServiceImpl implements ECOService {
 		alfrescoRepository.save(ecoData);
 
 	}
-
+	
 	private List<NodeRef> getSourceItems(ChangeOrderData ecoData, ReplacementListDataItem replacementListDataItem) {
 		List<NodeRef> ret = new ArrayList<>();
 		if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
@@ -935,21 +936,35 @@ public class ECOServiceImpl implements ECOService {
 	private int calculateWUsedList(ChangeOrderData ecoData, MultiLevelListData wUsedData, QName dataListQName, WUsedListDataItem parent,
 			boolean isWUsedImpacted, int sort, NodeRef targetItem) {
 
-		for (Map.Entry<NodeRef, MultiLevelListData> kv : wUsedData.getTree().entrySet()) {
-
+		List<NodeRef> sortedKeys = new ArrayList<>(wUsedData.getTree().keySet());
+		
+		sortedKeys.sort((key1, key2) -> {
+			
+			NodeRef sourceItem1 = wUsedData.getTree().get(key1).getEntityNodeRef();
+			NodeRef sourceItem2 = wUsedData.getTree().get(key2).getEntityNodeRef();
+			
+			String entityRef1 = sourceItem1 == null ? "" : sourceItem1.toString();
+			String entityRef2 = sourceItem2 == null ? "" : sourceItem2.toString();
+			
+			return entityRef1.compareTo(entityRef2);
+			
+		});
+		
+		for (NodeRef key : sortedKeys) {
+			
 			WUsedListDataItem wUsedListDataItem = new WUsedListDataItem();
-			wUsedListDataItem.setLink(kv.getKey());
+			wUsedListDataItem.setLink(key);
 			wUsedListDataItem.setParent(parent);
 			wUsedListDataItem.setImpactedDataList(dataListQName);
 			wUsedListDataItem.setIsWUsedImpacted(isWUsedImpacted);
-			wUsedListDataItem.setSourceItems(kv.getValue().getEntityNodeRefs());
+			wUsedListDataItem.setSourceItems(wUsedData.getTree().get(key).getEntityNodeRefs());
 			wUsedListDataItem.setSort(sort++);
 			wUsedListDataItem.setTargetItem(targetItem);
 
 			ecoData.getWUsedList().add(wUsedListDataItem);
 
 			// recursive
-			sort = calculateWUsedList(ecoData, kv.getValue(), dataListQName, wUsedListDataItem, isWUsedImpacted, sort, targetItem);
+			sort = calculateWUsedList(ecoData, wUsedData.getTree().get(key), dataListQName, wUsedListDataItem, isWUsedImpacted, sort, targetItem);
 		}
 
 		return sort;
@@ -1112,40 +1127,43 @@ public class ECOServiceImpl implements ECOService {
 		for (T item : items) {
 			if (itemToWUsedData.containsKey(item)) {
 				WUsedListDataItem wUsedData = itemToWUsedData.get(item);
-				
+
 				Date effectiveDate = ecoEffectiveDate;
-				
+
 				if (wUsedData.getEffectiveDate() != null) {
 					effectiveDate = wUsedData.getEffectiveDate();
 				}
-				
+
 				EffectiveFilters<EffectiveDataItem> filter = null;
-				
+
 				boolean isFuture = isFuture(effectiveDate);
-				
+
 				if (isFuture) {
 					filter = new EffectiveFilters<>(effectiveDate);
 				} else {
 					filter = new EffectiveFilters<>(EffectiveFilters.EFFECTIVE);
 				}
-				
+
 				if (filter.createPredicate(productData).test(item)) {
 
-					for (ReplacementListDataItem replacement : ecoData.getReplacementList()) {
+					
+					List<ReplacementListDataItem> itemReplacements = ecoData.getReplacementList().stream().filter(remp -> getSourceItems(ecoData, remp).contains(item.getComponent())).collect(Collectors.toList());
+					
+					if (!itemReplacements.isEmpty()) {
 						
-						List<NodeRef> sourceItems = getSourceItems(ecoData, replacement);
+						boolean copyItem = isFuture || itemReplacements.size() > 1 || ecoData.getReplacementList().stream().anyMatch(r -> getSourceItems(ecoData, r).contains(itemReplacements.get(0).getTargetItem()));
 						
-						NodeRef target = null;
-						
-						if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
-							target = replacement.getSourceItems().get(0);
-						} else {
-							target = replacement.getTargetItem();
-						}
-						
-						if (sourceItems.contains(item.getComponent())) {
+						for (ReplacementListDataItem itemReplacement : itemReplacements) {
 							
-							T newItem = createNewItem(item, replacement, target, wUsedData);
+							NodeRef target = null;
+							
+							if (ChangeOrderType.Merge.equals(ecoData.getEcoType())) {
+								target = itemReplacement.getSourceItems().get(0);
+							} else {
+								target = itemReplacement.getTargetItem();
+							}
+							
+							T newItem = copyOrUpdateItem(item, itemReplacement, target, wUsedData, copyItem);
 							
 							newItems.add(newItem);
 							
@@ -1161,8 +1179,8 @@ public class ECOServiceImpl implements ECOService {
 			}
 		}
 		
-		items.addAll(newItems);
 		items.removeAll(toRemoveItems);
+		items.addAll(newItems);
 		
 	}
 
@@ -1213,7 +1231,7 @@ public class ECOServiceImpl implements ECOService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T extends CompositionDataItem> T createNewItem(T item, ReplacementListDataItem replacement, NodeRef target, WUsedListDataItem wUsedData) {
+	private <T extends CompositionDataItem> T copyOrUpdateItem(T item, ReplacementListDataItem replacement, NodeRef target, WUsedListDataItem wUsedData, boolean createNew) {
 		
 		Double newQuantity = wUsedData.getQty();
 		
@@ -1235,12 +1253,16 @@ public class ECOServiceImpl implements ECOService {
 			newLoss = replacement.getLoss();
 		}
 		
-		T origComponent = item;
-		T newCompoListDataItem = (T) origComponent.copy();
-		newCompoListDataItem.setNodeRef(null);
-		updateComponent(newCompoListDataItem, target, newQuantity, newLoss);
+		T newItem = item;
 		
-		return newCompoListDataItem;
+		if (createNew) {
+			newItem = (T) item.copy();
+			newItem.setNodeRef(null);
+		}
+		
+		updateComponent(newItem, target, newQuantity, newLoss);
+		
+		return newItem;
 	}
 
 	private boolean isFuture(Date effectiveDate) {

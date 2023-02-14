@@ -20,6 +20,7 @@ import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.ControlableListDataItem;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
+import fr.becpg.repo.repository.model.ManualDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.SourceableDataItem;
@@ -35,7 +36,7 @@ import fr.becpg.repo.repository.model.VariantAwareDataItem;
 @AlfType
 @AlfQname(qname = "bcpg:nutList")
 public class NutListDataItem extends VariantAwareDataItem implements SimpleListDataItem, MinMaxValueDataItem, FormulatedCharactDataItem, SourceableDataItem,
-		UnitAwareDataItem, ControlableListDataItem, CompositeDataItem<NutListDataItem> {
+		UnitAwareDataItem, ControlableListDataItem, CompositeDataItem<NutListDataItem>, ManualDataItem {
 
 	/** Constant <code>UNIT_PER100G="/100g"</code> */
 	public static final String UNIT_PER100G = "/100g";

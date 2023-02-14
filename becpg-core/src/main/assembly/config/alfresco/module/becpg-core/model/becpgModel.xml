@@ -1178,6 +1178,9 @@
 				</property>
 			</properties>
 		</aspect>
+
+		<aspect name="bcpg:undeletableAspect">
+		</aspect>
 		
 	</aspects>
 </model>

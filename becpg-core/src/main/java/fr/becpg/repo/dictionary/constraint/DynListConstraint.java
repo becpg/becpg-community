@@ -3,15 +3,20 @@
  */
 package fr.becpg.repo.dictionary.constraint;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -20,19 +25,23 @@ import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.ConstraintException;
 import org.alfresco.service.cmr.dictionary.DictionaryException;
 import org.alfresco.service.cmr.i18n.MessageLookup;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.InvalidStoreRefException;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.repository.datatype.TypeConversionException;
+import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.namespace.InvalidQNameException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -190,19 +199,38 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	/** {@inheritDoc} */
 	@Override
 	public List<String> getAllowedValues() {
-		return getAllowedValues(false);
+		return getAllowedValues(true);
 	}
 
-	public List<String> getAllowedValues(boolean includeDeletedValues) {
+	public List<String> getAllowedValues(boolean filterOnDeletedValuesAndGroups) {
 
-		Map<String, MLText> values = getMLAwareAllowedValuesInternal(includeDeletedValues);
+		Map<String, Pair<MLText, List<String>>> values = getMLAwareAllowedValuesInternal(filterOnDeletedValuesAndGroups);
 
 		if (values.isEmpty()) {
 			return Collections.singletonList(UNDIFINED_CONSTRAINT_VALUE);
 		} else {
-			return new LinkedList<>(values.keySet());
+			if (filterOnDeletedValuesAndGroups) {
+				
+				String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
+				
+				return AuthenticationUtil.runAsSystem(() -> {
+					List<String> valuesToReturn = new LinkedList<>();
+					for (Entry<String, Pair<MLText, List<String>>> entry : values.entrySet()) {
+						
+						boolean hasPermission = currentUser == null || entry.getValue().getSecond().isEmpty() || entry.getValue().getSecond().stream().anyMatch(key -> serviceRegistry.getAuthorityService().getContainedAuthorities(AuthorityType.USER, key, false).contains(currentUser));
+						
+						if (hasPermission) {
+							valuesToReturn.add(entry.getKey());
+						}
+					}
+					
+					return valuesToReturn;
+				});
+				
+			} else {
+				return new LinkedList<>(values.keySet());
+			}
 		}
-
 	}
 	
 
@@ -217,7 +245,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			throw new ConstraintException(ERR_NON_STRING, value);
 		}
 
-		if (!getAllowedValues(true).contains(valueStr)) {
+		if (!getAllowedValues(false).contains(valueStr)) {
 			throw new ConstraintException(ERR_INVALID_VALUE, value);
 		}
 
@@ -266,19 +294,28 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 * @return a {@link java.util.Map} object.
 	 */
 	public Map<String, MLText> getMLAwareAllowedValues() {
-		return getMLAwareAllowedValuesInternal(false);
+		
+		Map<String, MLText> values = new HashMap<>();
+		
+		Map<String, Pair<MLText, List<String>>> valuesMap = getMLAwareAllowedValuesInternal(true);
+		
+		for (Entry<String, Pair<MLText, List<String>>> entry : valuesMap.entrySet()) {
+			values.put(entry.getKey(), entry.getValue().getFirst());
+		}
+		
+		return values;
 	}
 
-	private Map<String, MLText> getMLAwareAllowedValuesInternal(boolean includeDeletedValues) {
-		return beCPGCacheService.getFromCache(DynListConstraint.class.getName(), getShortName() + includeDeletedValues,
+	private Map<String, Pair<MLText, List<String>>> getMLAwareAllowedValuesInternal(boolean filterOnDeletedValues) {
+		return beCPGCacheService.getFromCache(DynListConstraint.class.getName(), getShortName() + filterOnDeletedValues,
 				() -> serviceRegistry.getRetryingTransactionHelper().doInTransaction(() -> {
 
 					logger.debug("Fill allowedValues  for :" + TenantUtil.getCurrentDomain());
 
-					Map<String, MLText> allowedValues = new LinkedHashMap<>();
+					Map<String, Pair<MLText, List<String>>> allowedValues = new LinkedHashMap<>();
 
 					if (Boolean.TRUE.equals(addEmptyValue)) {
-						allowedValues.put("", null);
+						allowedValues.put("", new Pair<>(null, new ArrayList<>()));
 					}
 
 					AuthenticationUtil.runAsSystem(() -> {
@@ -325,7 +362,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 										MLText mlText = (MLText) serviceRegistry.getNodeService().getProperty(nodeRef, constraintPropQname);
 										if (mlText != null) {
 
-											if (includeDeletedValues || !Boolean.TRUE.equals(serviceRegistry.getNodeService().getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED))) {
+											if (!filterOnDeletedValues || !Boolean.TRUE.equals(serviceRegistry.getNodeService().getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED))) {
 												String key = null;
 												
 												if (constraintCodeQname != null) {
@@ -335,7 +372,11 @@ public class DynListConstraint extends ListOfValuesConstraint {
 												if ((key == null) || key.isEmpty()) {
 													key = mlText.getClosestValue(Locale.getDefault());
 												}
-												allowedValues.put(key, mlText);
+												
+												if (key != null) {
+													List<String> authorities = serviceRegistry.getNodeService().getTargetAssocs(nodeRef, SecurityModel.ASSOC_READ_GROUPS).stream().map(AssociationRef::getTargetRef).map(n -> (String) serviceRegistry.getNodeService().getProperty(n, ContentModel.PROP_AUTHORITY_NAME)).collect(Collectors.toList());
+													allowedValues.put(key, new Pair<>(mlText, authorities));
+												}
 											}
 										}
 									} else {
