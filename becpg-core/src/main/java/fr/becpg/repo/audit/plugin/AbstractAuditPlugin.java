@@ -3,11 +3,7 @@ package fr.becpg.repo.audit.plugin;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.alfresco.rest.api.Audit;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 
 import fr.becpg.repo.audit.model.AuditDataType;
 
@@ -24,11 +20,6 @@ public abstract class AbstractAuditPlugin implements AuditPlugin, InitializingBe
 		KEY_MAP.put(COMPLETED_AT, AuditDataType.DATE);
 		KEY_MAP.put(DURATION, AuditDataType.INTEGER);
 	}
-
-	@Autowired
-	@Qualifier("auditApi")
-	@Lazy
-	private Audit audit;
 	
 	private boolean databaseEnable = false;
 	
