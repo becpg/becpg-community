@@ -1,8 +1,11 @@
 package fr.becpg.repo.audit.model;
 
+import java.util.Map;
+
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.audit.plugin.AuditPlugin;
+import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
 import fr.becpg.repo.audit.service.DatabaseServiceWrapper;
 import fr.becpg.repo.audit.service.StopWatchAuditService;
@@ -18,21 +21,33 @@ public class AuditScope implements AutoCloseable {
 	
 	private TracerServiceWrapper tracerService;
 	
-	public AuditScope(AuditPlugin plugin, DatabaseAuditService databaseAuditService, StopWatchAuditService stopWatchAuditService, TracerAuditService tracerAuditService) {
+	private ThreadLocal<AuditScope> threadLocalScope;
+	
+	private AuditScope parentScope;
+	
+	public AuditScope(ThreadLocal<AuditScope> threadLocalScope, AuditPlugin plugin, DatabaseAuditService databaseAuditService,
+			StopWatchAuditService stopWatchAuditService, TracerAuditService tracerAuditService, Class<?> callerClass, String scopeName) {
+		
+		this.threadLocalScope = threadLocalScope;
+		
+		parentScope = threadLocalScope.get();
+		
 		if (plugin.isDatabaseEnable()) {
-			databaseService = new DatabaseServiceWrapper(plugin, databaseAuditService);
+			databaseService = new DatabaseServiceWrapper((DatabaseAuditPlugin) plugin, databaseAuditService);
 		}
 		
 		if (plugin.isStopWatchEnable()) {
-			stopWatchService = new StopWatchServiceWrapper(stopWatchAuditService, plugin.getAuditApplicationPath() + " : " + plugin.getAuditClass().getName(), LogFactory.getLog(plugin.getAuditClass()));
+			stopWatchService = new StopWatchServiceWrapper(stopWatchAuditService, plugin.getClass().getSimpleName() + " : " + callerClass.getName(), LogFactory.getLog(callerClass));
 		}
 		
 		if (plugin.isTracerEnable()) {
-			tracerService = new TracerServiceWrapper(tracerAuditService, plugin.getAuditApplicationPath());
+			tracerService = new TracerServiceWrapper(tracerAuditService, scopeName);
 		}
 	}
 
 	public AuditScope start() {
+		
+		threadLocalScope.set(this);
 		
 		if (databaseService != null) {
 			databaseService.start();
@@ -51,6 +66,10 @@ public class AuditScope implements AutoCloseable {
 
 	@Override
 	public void close() {
+		
+		threadLocalScope.remove();
+		
+		threadLocalScope.set(parentScope);
 		
 		if (databaseService != null) {
 			databaseService.stop();
@@ -75,12 +94,18 @@ public class AuditScope implements AutoCloseable {
 		}
 	}
 
-	public void addAnnotation(String string) {
+	public void addAnnotation(String annotation) {
 		if (stopWatchService != null) {
-			stopWatchService.addAnnotation(string);
+			stopWatchService.addAnnotation(annotation);
 		}
 		if (tracerService != null) {
-			tracerService.addAnnotation(string);
+			tracerService.addAnnotation(annotation);
+		}
+	}
+	
+	public void addAnnotation(String description, Map<String, String> attributes) {
+		if (tracerService != null) {
+			tracerService.addAnnotation(description, attributes);
 		}
 	}
 

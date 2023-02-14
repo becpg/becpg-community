@@ -16,6 +16,7 @@ import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.model.AuditScope;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
+import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
 import fr.becpg.repo.audit.service.StopWatchAuditService;
@@ -24,6 +25,8 @@ import fr.becpg.repo.audit.service.TracerAuditService;
 @Service("beCPGAuditService")
 public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 
+	private static final String NOT_DATABASE_PLUGIN = "Audit plugin for type '%s' is not a database plugin";
+	
 	@Autowired
 	private AuditPlugin[] auditPlugins;
 	
@@ -41,19 +44,60 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 	@Lazy
 	private Audit audit;
 	
+	private ThreadLocal<AuditScope> threadLocalScope = new ThreadLocal<>();
+	
 	@SuppressWarnings("resource")
 	@Override
 	public AuditScope startAudit(AuditType auditType) {
 		
 		AuditPlugin plugin = getPlugin(auditType);
 		
-		return new AuditScope(plugin, databaseAuditService, stopWatchAuditService, tracerAuditService).start();
+		return new AuditScope(threadLocalScope, plugin, databaseAuditService, stopWatchAuditService, tracerAuditService, plugin.getAuditClass(), plugin.getAuditClass().getSimpleName()).start();
+		
+	}
+	
+	@SuppressWarnings("resource")
+	@Override
+	public AuditScope startAudit(AuditType auditType, Class<?> auditClass, String scopeName) {
+		
+		AuditPlugin plugin = getPlugin(auditType);
+		
+		return new AuditScope(threadLocalScope, plugin, databaseAuditService, stopWatchAuditService, tracerAuditService, auditClass, scopeName).start();
 	}
 
 	@Override
 	public List<JSONObject> listAuditEntries(AuditType type, AuditQuery auditFilter) {
-		return databaseAuditService.listAuditEntries(getPlugin(type), auditFilter);
 		
+		AuditPlugin plugin = getPlugin(type);
+		
+		if (plugin.isDatabaseEnable()) {
+			return databaseAuditService.listAuditEntries((DatabaseAuditPlugin) plugin, auditFilter);
+		}
+		
+		throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
+		
+	}
+
+	@Override
+	public void deleteAuditEntries(AuditType type, Long fromId, Long toId) {
+		AuditPlugin plugin = getPlugin(type);
+		
+		if (plugin.isDatabaseEnable()) {
+			databaseAuditService.deleteAuditEntries((DatabaseAuditPlugin) plugin, fromId, toId);
+		} else {
+			throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
+		}
+	}
+	
+	@Override
+	public void updateAuditEntry(AuditType type, Long id, Long time, Map<String, Serializable> values) {
+		AuditPlugin plugin = getPlugin(type);
+		
+		if (plugin.isDatabaseEnable()) {
+			databaseAuditService.updateAuditEntry((DatabaseAuditPlugin) plugin, id, time, values);
+		} else {
+			throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
+		}
 	}
 
 	private AuditPlugin getPlugin(AuditType type) {
@@ -67,13 +111,24 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 	}
 
 	@Override
-	public void deleteAuditEntries(AuditType type, Long fromId, Long toId) {
-		databaseAuditService.deleteAuditEntries(getPlugin(type), fromId, toId);
+	public void putAttribute(String string, Object attribute) {
+		if (threadLocalScope.get() != null) {
+			threadLocalScope.get().putAttribute(string, attribute);
+		}
+	}
+
+	@Override
+	public void addAnnotation(String annotation) {
+		if (threadLocalScope.get() != null) {
+			threadLocalScope.get().addAnnotation(annotation);
+		}
 	}
 	
 	@Override
-	public void updateAuditEntry(AuditType type, Long id, Long time, Map<String, Serializable> values) {
-		databaseAuditService.updateAuditEntry(getPlugin(type), id, time, values);
+	public void addAnnotation(String description, Map<String, String> attributes) {
+		if (threadLocalScope.get() != null) {
+			threadLocalScope.get().addAnnotation(description, attributes);
+		}
 	}
-	
+
 }

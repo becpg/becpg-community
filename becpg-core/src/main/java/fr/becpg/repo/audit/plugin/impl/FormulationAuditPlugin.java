@@ -1,15 +1,19 @@
 package fr.becpg.repo.audit.plugin.impl;
 
+import java.io.Serializable;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.model.AuditDataType;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AbstractAuditPlugin;
+import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 import fr.becpg.repo.formulation.FormulationService;
 
 @Service
-public class FormulationAuditPlugin extends AbstractAuditPlugin {
+public class FormulationAuditPlugin extends AbstractAuditPlugin implements DatabaseAuditPlugin {
 
 	private static final String FORMULATION = "formulation";
 
@@ -45,6 +49,16 @@ public class FormulationAuditPlugin extends AbstractAuditPlugin {
 	@Override
 	public Class<?> getAuditClass() {
 		return FormulationService.class;
+	}
+
+	@Override
+	public void beforeRecordAuditEntry(Map<String, Serializable> auditValues) {
+		
+	}
+
+	@Override
+	public void afterRecordAuditEntry(Map<String, Serializable> auditValues) {
+		
 	}
 
 }

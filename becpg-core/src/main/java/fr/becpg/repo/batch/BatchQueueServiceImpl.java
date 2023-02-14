@@ -214,9 +214,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			
 			try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.BATCH)) {
 				
-				auditScope.putAttribute("batchUser", batchInfo.getBatchUser());
-				auditScope.putAttribute("batchId", batchInfo.getBatchId());
-				auditScope.putAttribute("isCompleted", false);
+				beCPGAuditService.putAttribute("batchUser", batchInfo.getBatchUser());
+				beCPGAuditService.putAttribute("batchId", batchInfo.getBatchId());
+				beCPGAuditService.putAttribute("isCompleted", false);
 				
 				Integer stepCount = batchSteps.size() > 1 ? 1 : null;
 				
@@ -342,9 +342,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				
 				batchInfo.setIsCompleted(true); 
 				
-				auditScope.putAttribute("totalItems", totalItems);
+				beCPGAuditService.putAttribute("totalItems", totalItems);
 				
-				auditScope.putAttribute("isCompleted", true);
+				beCPGAuditService.putAttribute("isCompleted", true);
 				
 
 			
