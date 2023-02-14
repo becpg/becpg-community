@@ -10,10 +10,11 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.audit.model.AuditDataType;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AbstractAuditPlugin;
+import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 import fr.becpg.repo.batch.BatchQueueService;
 
 @Service
-public class BatchAuditPlugin extends AbstractAuditPlugin {
+public class BatchAuditPlugin extends AbstractAuditPlugin implements DatabaseAuditPlugin {
 
 	private static final String BATCH = "batch";
 

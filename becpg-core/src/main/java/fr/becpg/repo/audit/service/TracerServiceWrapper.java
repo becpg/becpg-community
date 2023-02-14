@@ -1,5 +1,7 @@
 package fr.becpg.repo.audit.service;
 
+import java.util.Map;
+
 public class TracerServiceWrapper {
 
 	private TracerAuditService tracerAuditService;
@@ -25,8 +27,12 @@ public class TracerServiceWrapper {
 		tracerAuditService.putAttribute(string, attribute);
 	}
 
-	public void addAnnotation(String string) {
-		tracerAuditService.addAnnotation(string);
+	public void addAnnotation(String annotation) {
+		tracerAuditService.addAnnotation(annotation);
+	}
+
+	public void addAnnotation(String description, Map<String, String> attributes) {
+		tracerAuditService.addAnnotation(description, attributes);
 	}
 
 }

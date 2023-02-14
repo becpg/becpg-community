@@ -25,6 +25,7 @@
 	 <property name="reportServerUrl" value="${becpg.reportServerUrl}"/>
 	 <property name="contentService" ref="contentService"/>
 	  <property name="entityService" ref="entityService"/>
+	  <property name="beCPGAuditService" ref="beCPGAuditService"/>
 	  <property name="instanceName" value="${becpg.instance.name}"/>
 	</bean>
 	

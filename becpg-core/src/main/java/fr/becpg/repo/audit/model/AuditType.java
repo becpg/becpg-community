@@ -4,6 +4,7 @@ public enum AuditType {
 	
 	BATCH,
 	FORMULATION,
-	ACTIVITY
+	ACTIVITY,
+	TRACER
 
 }

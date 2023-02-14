@@ -575,11 +575,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		Date createdDate = activityListDataItem.getCreatedDate() != null ? activityListDataItem.getCreatedDate() : new Date();
 		
 		try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.ACTIVITY)) {
-			auditScope.putAttribute("entityNodeRef", entityNodeRef.toString());
-			auditScope.putAttribute("prop_bcpg_alUserId", activityListDataItem.getUserId());
-			auditScope.putAttribute("prop_bcpg_alType", activityListDataItem.getActivityType().toString());
-			auditScope.putAttribute("prop_bcpg_alData", activityListDataItem.getActivityData());
-			auditScope.putAttribute("prop_cm_created", ISO8601DateFormat.format(createdDate));
+			beCPGAuditService.putAttribute("entityNodeRef", entityNodeRef.toString());
+			beCPGAuditService.putAttribute("prop_bcpg_alUserId", activityListDataItem.getUserId());
+			beCPGAuditService.putAttribute("prop_bcpg_alType", activityListDataItem.getActivityType().toString());
+			beCPGAuditService.putAttribute("prop_bcpg_alData", activityListDataItem.getActivityData());
+			beCPGAuditService.putAttribute("prop_cm_created", ISO8601DateFormat.format(createdDate));
 		}
 	}
 
