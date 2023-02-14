@@ -335,7 +335,8 @@ span.CodeMirror-selectedtext { background: none; }
 
 .CodeMirror-hints {
   position: absolute;
-  z-index: 110;
+  /* Always on top */
+  z-index: 9999;
   overflow: hidden;
   list-style: none;
 
@@ -372,3 +373,6 @@ li.CodeMirror-hint-active {
   color: white;
 }
 
+li.CodeMirror-hint:hover:not(li.CodeMirror-hint-active) {
+	background: #e1e1e1;
+}

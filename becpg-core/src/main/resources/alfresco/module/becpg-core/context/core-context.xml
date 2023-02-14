@@ -111,7 +111,6 @@
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="namespaceService" ref="namespaceService" />			
 		<property name="actionService" ref="ActionService"/>
-		<property name="authorityService" ref="authorityService"/>
 		<property name="personService" ref="personService"/>
 		<property name="mailFrom" value="${mail.from.default}" />
 	</bean>

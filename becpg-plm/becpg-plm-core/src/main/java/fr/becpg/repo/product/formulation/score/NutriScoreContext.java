@@ -39,6 +39,7 @@ public class NutriScoreContext {
 	private boolean isWater;
 	
 	private boolean hasProteinScore = false;
+	private boolean hasSaltScore = false;
 
 	public NutriScoreContext() {
 		
@@ -77,6 +78,14 @@ public class NutriScoreContext {
 	
 	public JSONObject getParts() {
 		return parts;
+	}
+	
+	public boolean hasSaltScore() {
+		return hasSaltScore;
+	}
+
+	public void setHasSaltScore(boolean hasSaltScore) {
+		this.hasSaltScore = hasSaltScore;
 	}
 	
 	public boolean getHasProteinScore() {

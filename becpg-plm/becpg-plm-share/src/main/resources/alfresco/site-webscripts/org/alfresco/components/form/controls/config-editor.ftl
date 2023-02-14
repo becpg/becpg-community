@@ -6,9 +6,9 @@
 {
 		   new beCPG.ConfigEditor("${controlId}", "${fieldHtmlId}").setOptions(
 		   {
-		      <#if form.mode == "view" || (field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>disabled: true,</#if>
+		    <#if form.mode == "view" || (field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))>disabled: true,</#if>
 		      field: "${field.name}",
-		   <#if field.mandatory??>
+		    <#if field.mandatory??>
 		      mandatory: ${field.mandatory?string},
 		    </#if>
 		    <#if args.entityNodeRef??>
@@ -16,6 +16,9 @@
 		    </#if>
 		    <#if args.dataListsName??>
 		      currentList : "${args.dataListsName}",
+		    </#if>
+		    <#if field.control.params.syntax??>
+		      syntax: "${field.control.params.syntax}",
 		    </#if>
 		      currentValue: "${field.value?js_string}",
 		   }).setMessages( ${messages});
@@ -43,7 +46,7 @@
          
                <#assign editorId = controlId + "-editor">
 					<div id="${editorId}" class="editor yui-panel" style="visibility:hidden;">
-					   <div id="${editorId}-head" class="hd">${msg("form.control.spel-editor.header")}</div>
+					   <div id="${editorId}-head" class="hd">${msg("form.control.config-editor.header")}</div>
 					
 					   <div id="${editorId}-body" class="bd">
 					      <div class="editor-textarea yui-b">

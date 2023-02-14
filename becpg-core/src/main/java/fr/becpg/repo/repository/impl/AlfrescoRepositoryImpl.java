@@ -92,7 +92,7 @@ import fr.becpg.repo.repository.model.DefaultListDataItem;
  */
 @Repository("alfrescoRepository")
 public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
-		implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy, RefreshableCacheListener, InitializingBean {
+		implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnRemoveAspectPolicy, RefreshableCacheListener, InitializingBean {
 
 	@Autowired
 	private NodeService nodeService;
@@ -150,6 +150,8 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
 				new JavaBehaviour(this, "onUpdateProperties"));
+		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRemoveAspectPolicy.QNAME, this, new JavaBehaviour(this, "onRemoveAspect"));
 
 	}
 
@@ -164,7 +166,12 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		purgeCache(nodeRef);
 	}
-
+	
+	@Override
+	public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName) {
+		purgeCache(nodeRef);
+	}
+	
 	private void purgeCache(NodeRef nodeRef) {
 		if (logger.isDebugEnabled()) {
 			if (nodeService.exists(nodeRef)) {
@@ -561,11 +568,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 					} else if (readMethod.isAnnotationPresent(DataListView.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 						QName datalistViewQname = repositoryEntityDefReader.readQName(readMethod);
 						PropertyUtils.setProperty(entity, pd.getName(),
-								loadDataListView(entity, datalistViewQname.getLocalName(), readMethod.getReturnType(), localCache));
+								loadDataListView(entity, datalistViewQname.getLocalName(), readMethod.getReturnType()));
 					} else if (readMethod.isAnnotationPresent(DataList.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 						QName datalistQname = repositoryEntityDefReader.readQName(readMethod);
 
-						PropertyUtils.setProperty(entity, pd.getName(), createDataList(entity, pd, datalistQname.getLocalName(), null, localCache));
+						PropertyUtils.setProperty(entity, pd.getName(), createDataList(entity, pd, datalistQname.getLocalName(), null));
 					}
 				}
 			}
@@ -691,7 +698,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 
 	}
 
-	private <R> R loadDataListView(final T entity, String datalistName, Class<R> returnType, Map<NodeRef, RepositoryEntity> localCache)
+	private <R> R loadDataListView(final T entity, String datalistName, Class<R> returnType)
 			throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 		R ret = returnType.getDeclaredConstructor().newInstance();
@@ -704,15 +711,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 
 				final QName datalistQname = repositoryEntityDefReader.readQName(readMethod);
 
-				PropertyUtils.setProperty(ret, pd.getName(), createDataList(entity, pd, datalistName, datalistQname, localCache));
+				PropertyUtils.setProperty(ret, pd.getName(), createDataList(entity, pd, datalistName, datalistQname));
 			}
 		}
 
 		return ret;
 	}
 
-	private List<T> createDataList(final T entity, final PropertyDescriptor pd, final String datalistName, final QName datalistQname,
-			final Map<NodeRef, RepositoryEntity> localCache) {
+	private List<T> createDataList(final T entity, final PropertyDescriptor pd, final String datalistName, final QName datalistQname) {
 		if (logger.isTraceEnabled()) {
 			logger.debug("read dataList : " + pd.getName());
 		}
@@ -721,7 +727,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 		dataList.setDataProvider(new LazyLoadingDataList.DataProvider<T>() {
 			@Override
 			public List<T> getData() {
-				return loadDataList(entity.getNodeRef(), datalistName, datalistQname, localCache);
+				return loadDataList(entity.getNodeRef(), datalistName, datalistQname);
 			}
 
 			@Override
@@ -819,7 +825,20 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 	/** {@inheritDoc} */
 	@Override
 	public List<T> loadDataList(NodeRef entityNodeRef, String datalistName, QName datalistQname) {
-		return loadDataList(entityNodeRef, datalistName, datalistQname, L2CacheSupport.getCurrentThreadCache());
+
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+
+		if (listContainerNodeRef != null) {
+			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistName);
+
+			if (dataListNodeRef != null) {
+
+				return loadDataList(dataListNodeRef, datalistQname);
+
+			}
+		}
+
+		return new LinkedList<>();
 	}
 	
 	@Override
@@ -839,24 +858,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 			}).collect(Collectors.toCollection(LinkedList::new));
 
 		}
-		return new LinkedList<>();
-	}
-
-	private List<T> loadDataList(NodeRef entityNodeRef, String datalistName, QName datalistQname,
-			Map<NodeRef, RepositoryEntity> localCache) {
-
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-
-		if (listContainerNodeRef != null) {
-			NodeRef dataListNodeRef = entityListDAO.getList(listContainerNodeRef, datalistName);
-
-			if (dataListNodeRef != null) {
-
-				return loadDataList(dataListNodeRef, datalistQname);
-
-			}
-		}
-
 		return new LinkedList<>();
 	}
 

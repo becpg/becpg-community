@@ -45,6 +45,8 @@
 	
 	<bean id="linkedListPolicy" class="fr.becpg.repo.dictionary.constraint.LinkedListPolicy" parent="abstractBeCPGPolicy">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="permissionService" ref="permissionService" />
+		<property name="associationService" ref="associationService" />
 	</bean>
 
 

@@ -14,6 +14,7 @@ import org.alfresco.repo.node.NodeArchiveServicePolicies;
 import org.alfresco.repo.node.NodeArchiveServicePolicies.BeforePurgeNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.node.NodeServicePolicies.BeforeArchiveNodePolicy;
+import org.alfresco.repo.node.NodeServicePolicies.BeforeDeleteNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies.OnRestoreNodePolicy;
 import org.alfresco.repo.node.db.NodeHierarchyWalker;
 import org.alfresco.repo.node.db.NodeHierarchyWalker.VisitedNode;
@@ -37,6 +38,7 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
@@ -56,7 +58,7 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * @version $Id: $Id
  */
 public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnRestoreNodePolicy,
-		NodeServicePolicies.BeforeArchiveNodePolicy, NodeArchiveServicePolicies.BeforePurgeNodePolicy {
+		NodeServicePolicies.BeforeArchiveNodePolicy, NodeArchiveServicePolicies.BeforePurgeNodePolicy, NodeServicePolicies.BeforeDeleteNodePolicy {
 
 	private static Log logger = LogFactory.getLog(DeleteAndRestoreEntityPolicy.class);
 
@@ -151,7 +153,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	public void setEntityListDAO(EntityListDAO entityListDAO) {
 		this.entityListDAO = entityListDAO;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public void doInit() {
@@ -166,6 +168,7 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 		this.policyComponent.bindClassBehaviour(BeforeArchiveNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
 				new JavaBehaviour(this, "beforeArchiveNode"));
 		this.policyComponent.bindClassBehaviour(OnRestoreNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM, new JavaBehaviour(this, "onRestoreNode"));
+		this.policyComponent.bindClassBehaviour(BeforeDeleteNodePolicy.QNAME, BeCPGModel.ASPECT_UNDELETABLE_ASPECT, new JavaBehaviour(this, "beforeDeleteNode"));
 
 	}
 
@@ -340,6 +343,14 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 			logger.error("Cannot find " + REMOTE_FILE_NAME + "_" + entityNodeRef.getId() + " from archiveStore ");
 		}
 
+	}
+
+	@Override
+	public void beforeDeleteNode(NodeRef nodeRef) {
+		if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_UNDELETABLE_ASPECT)) {
+			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+			throw new IllegalStateException(I18NUtil.getMessage("message.element.undeletable", name));
+		}
 	}
 
 }

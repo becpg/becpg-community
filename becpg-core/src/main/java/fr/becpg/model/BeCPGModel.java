@@ -256,7 +256,7 @@ public final class BeCPGModel {
 	public static final QName PROP_STATE_ACTIVITY_PREVIOUSSTATE = QName.createQName(BECPG_URI, "stateActivityPreviousState");
 
 	/** Constant <code>PROP_USER_LOCAL</code> */
-	public static final QName PROP_USER_LOCAL = QName.createQName(BECPG_URI, "userLocale");
+	public static final QName PROP_USER_LOCALE = QName.createQName(BECPG_URI, "userLocale");
 	/** Constant <code>PROP_USER_CONTENT_LOCAL</code> */
 	public static final QName PROP_USER_CONTENT_LOCAL = QName.createQName(BECPG_URI, "userContentLocale");
 	// code aspect
@@ -292,4 +292,6 @@ public final class BeCPGModel {
 	
 	public static final QName PROP_CUSTOM_FORM_DEFINITIONS = QName.createQName(BECPG_URI, "customFormDefinitions");
 
+	public static final QName ASPECT_UNDELETABLE_ASPECT = QName.createQName(BECPG_URI, "undeletableAspect");
+	
 }

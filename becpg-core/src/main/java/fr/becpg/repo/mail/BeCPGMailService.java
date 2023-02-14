@@ -105,7 +105,7 @@ public interface BeCPGMailService {
 	 */
 	NodeRef getEmailProjectTemplatesFolder();
 
-	void sendMailToAuthorities(Set<String> authorities, String subject, String mailTemplate, Map<String, Object> templateArgs);
-
+	void sendMLAwareMail(Set<String> authorities, String fromEmail, String subjectKey, Object[] subjectParams, String mailTemplate,
+			Map<String, Object> templateArgs);
 
 }
