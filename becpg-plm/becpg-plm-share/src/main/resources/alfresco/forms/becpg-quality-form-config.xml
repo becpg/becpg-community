@@ -1621,6 +1621,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:code" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1636,6 +1637,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:code" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1645,6 +1647,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 					<show id="bcpg:code" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1660,6 +1663,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1675,6 +1679,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1683,6 +1688,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:title" />
 					<show id="bcpg:code" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1699,6 +1705,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1715,6 +1722,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1724,6 +1732,7 @@
 					<show id="bcpg:charactName" force="true" />
 					<show id="cm:title" force="true" />
 					<show id="bcpg:code" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>

@@ -1124,6 +1124,7 @@
 					<show id="bcpg:allergenSubset" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" force="true"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1175,6 +1176,7 @@
 					<show id="bcpg:allergenSubset" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1216,6 +1218,7 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenType" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1244,6 +1247,7 @@
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenSubset" />
 					<show id="bcpg:allergenRegulatoryThreshold"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" />
 					<show id="bcpg:isDeleted"/>
@@ -1264,6 +1268,7 @@
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 					<show id="bcpg:costFormula" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1296,6 +1301,7 @@
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 					<show id="bcpg:costFormula" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1339,6 +1345,7 @@
 					<show id="bcpg:costType" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1368,6 +1375,7 @@
 					<show id="bcpg:ingAllergens" />
 					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
+                    <show id="sec:readGroups" force="true"/>
                     <show id="bcpg:isDeleted"/>
                
 				</field-visibility>
@@ -1431,7 +1439,8 @@
 					<show id="bcpg:ingTypeV2"  force="true"/>
 					<show id="bcpg:ingAllergens" />
 					<show id="gs1:productActivityTypeCode" force="true"/>
-                    <show id="bcpg:linkedSearchAssociation" force="true" />		
+                    <show id="bcpg:linkedSearchAssociation" force="true" />	
+                    <show id="sec:readGroups" force="true"/>	
                     <show id="bcpg:isDeleted"/>
                </field-visibility>
 
@@ -1533,6 +1542,7 @@
 					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
                     <show id="bcpg:ingAllergens" />
+                    <show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1549,6 +1559,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1575,6 +1586,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1613,6 +1625,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1640,6 +1653,7 @@
 					
 					<!-- <show id="bcpg:isNutPropagateUp" /> -->
 					<show id="rep:reportLocales" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1702,6 +1716,7 @@
 				
 					<!-- <show id="bcpg:isNutPropagateUp" /> -->
 					<show id="rep:reportLocales" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1765,6 +1780,7 @@
 					<show id="bcpg:nutUnit" />
 					<show id="bcpg:nutGDA" />
 					<show id="bcpg:nutUL" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" />
 					<show id="bcpg:isDeleted"/>
@@ -1791,6 +1807,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:nutrientProfileScoreFormula" />
 					<show id="bcpg:nutrientProfileClassFormula" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1822,6 +1839,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:nutrientProfileScoreFormula" />
 					<show id="bcpg:nutrientProfileClassFormula" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1863,6 +1881,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1878,6 +1897,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1903,6 +1923,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1939,6 +1960,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1960,6 +1982,7 @@
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
 					<show id="bcpg:physicoChemFormula" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1998,6 +2021,7 @@
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
 					<show id="bcpg:physicoChemFormula" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2063,6 +2087,7 @@
 					<show id="bcpg:physicoChemType" />
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2084,6 +2109,7 @@
                     <show id="bcpg:regulatoryCode" force="true"/>
                     <show id="gs1:productActivityTypeCode" force="true"/>
 					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2124,6 +2150,7 @@
                     <show id="bcpg:regulatoryCode" force="true"/>
                     <show id="gs1:productActivityTypeCode" force="true"/>
 					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2156,6 +2183,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:geoOriginISOCode" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2179,6 +2207,7 @@
                     <show id="bcpg:regulatoryCode" force="true"/>
                     <show id="gs1:productActivityTypeCode" force="true"/>
 					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2196,6 +2225,7 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:bioOriginType" />
 					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2228,6 +2258,7 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:bioOriginType" />
 					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2275,6 +2306,7 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:bioOriginType" />
 					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2302,6 +2334,7 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2345,6 +2378,7 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2398,6 +2432,7 @@
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
 					<show id="fm:commentCount" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2422,6 +2457,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:subsidiaryCertifications"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2446,6 +2482,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:subsidiaryCertifications"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2471,6 +2508,7 @@
 					<show id="cm:name" />
 					<show id="cm:title" />
 					<show id="cm:description" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2512,6 +2550,7 @@
 					<hide id="exif:xResolution" />
 					<hide id="exif:yResolution" />
 					<hide id="exif:resolutionUnit" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2545,6 +2584,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description"  />
 					<show id="bcpg:contacts" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
@@ -2589,6 +2629,7 @@
 					<show id="cm:description" force="true" />
 				    <show id="bcpg:contacts" force="true" />
 					<show id="cm:content"  />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2615,6 +2656,7 @@
                     <show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2654,6 +2696,7 @@
                     <show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2695,6 +2738,7 @@
                     <show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2789,7 +2833,7 @@
 					<show id="bcpg:labelClaimRegulatoryThreshold" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="bcpg:isLabelClaimPropagateUp" />
-					
+					<show id="sec:readGroups" force="true"/>
 					<show id="rep:reportLocales" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2836,6 +2880,7 @@
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="bcpg:isLabelClaimPropagateUp" />
 					<show id="rep:reportLocales" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2898,6 +2943,7 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
 					<show id="rep:reportLocales" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 					<show id="cm:content"  />
@@ -2921,6 +2967,7 @@
 					<show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2944,6 +2991,7 @@
 				    <show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2978,6 +3026,7 @@
 					 <show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -6995,6 +7044,7 @@
 					<show id="bcpg:locationZip" force="true"/>
 					<show id="bcpg:locationState" force="true"/>
 					<show id="bcpg:locationCountry" force="true"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7056,6 +7106,7 @@
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListNotes" />
 					<show id="fm:commentCount" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7091,6 +7142,7 @@
 					<show id="bcpg:locationZip" force="true"/>
 					<show id="bcpg:locationState" force="true"/>
 					<show id="bcpg:locationCountry" force="true"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7360,6 +7412,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />					
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
@@ -7379,6 +7432,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true"  />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
@@ -7403,6 +7457,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
@@ -7575,6 +7630,7 @@
 					<show id="gs1:maximumToleranceTemperature" force="true" />
 					<show id="gs1:minimumToleranceTemperature" force="true" />
 					<show id="gs1:temperatureMeasurementUnit" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7612,6 +7668,7 @@
 					<show id="gs1:maximumToleranceTemperature" force="true" />
 					<show id="gs1:minimumToleranceTemperature" force="true" />
 					<show id="gs1:temperatureMeasurementUnit" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7664,6 +7721,7 @@
 					<show id="gs1:maximumToleranceTemperature" force="true" />
 					<show id="gs1:minimumToleranceTemperature" force="true" />
 					<show id="gs1:temperatureMeasurementUnit" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7677,6 +7735,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7699,6 +7758,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7732,6 +7792,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7823,6 +7884,7 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />		
 					<show id="gs1:dutyFeeTaxRate"/>			
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>								
 				</field-visibility>
@@ -7866,6 +7928,7 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />	
 					<show id="gs1:dutyFeeTaxRate"/>		
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>			
@@ -7888,6 +7951,7 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />	
 					<show id="gs1:dutyFeeTaxRate"/>			
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />	
 					<show id="bcpg:isDeleted"/>							
 				</field-visibility>
@@ -7916,6 +7980,7 @@
 				    <show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />	
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />	
 					<show id="bcpg:isDeleted"/>										
 				</field-visibility>
@@ -7947,6 +8012,7 @@
 					<show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />		
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>		
@@ -7965,6 +8031,7 @@
 				    <show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />	
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />		
 					<show id="bcpg:isDeleted"/>									
 				</field-visibility>
