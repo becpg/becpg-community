@@ -26,6 +26,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -53,6 +54,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -73,7 +75,8 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:charactName" />
-					<show id="cm:title" />					
+					<show id="cm:title" />			
+					<show id="sec:readGroups" force="true"/>		
 					<show id="bcpg:code" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -96,6 +99,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" />						
 					<show id="bcpg:code" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -129,6 +133,7 @@
 					<hide id="exif:xResolution" />
 					<hide id="exif:yResolution" />
 					<hide id="exif:resolutionUnit" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -157,6 +162,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="rep:reportKinds" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -198,6 +204,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" />
 					<show id="cm:content" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
