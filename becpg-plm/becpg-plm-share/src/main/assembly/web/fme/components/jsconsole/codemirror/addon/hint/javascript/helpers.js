@@ -9,7 +9,7 @@
             "!doc": "(alias isNullOrEmpty)\n\n<span class=\"param\">@param</span> {<span class=\"type\">any</span>} <span class=\"var\">value</span>\n<span class=\"returns\">@returns</span> {<span class=\"type\">boolean</span>} true if value is empty or null\n"
         },
         "orEmpty": {
-            "!type": "fn(value: any, value: any, defaultValue: any) -> any",
+            "!type": "fn(value: any, defaultValue: any) -> any",
             "!doc": "<span class=\"param\">@param</span> {<span class=\"type\">any</span>} <span class=\"var\">value</span>\n<span class=\"param\">@param</span> {<span class=\"type\">any</span>} [<span class=\"var\">defaultValue</span>] the default value to use if value param is null\n<span class=\"returns\">@returns</span> {<span class=\"type\">any</span>} value or empty if null;\n"
         },
         "getProp": {
@@ -81,7 +81,7 @@
             "!doc": "Remove Associations\n\n<span class=\"param\">@param</span> {(<span class=\"type\">ScriptNode</span>|<span class=\"type\">NodeRef</span>|<span class=\"type\">string</span>)} <span class=\"var\">node</span>\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">assocName</span>\n<span class=\"returns\">@returns</span> {<span class=\"type\">void</span>}\n"
         },
         "copyAssocPropValue": {
-            "!type": "fn(node: ?, node: string, assocName: string, propName: string, nodePropName: string) -> boolean",
+            "!type": "fn(node: ?, assocName: string, propName: string, nodePropName: string) -> boolean",
             "!doc": "Copy association property value to node property\n\n<span class=\"param\">@param</span> {(<span class=\"type\">ScriptNode</span>|<span class=\"type\">NodeRef</span>|<span class=\"type\">string</span>)} <span class=\"var\">node</span>\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">assocName</span>\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">propName</span>\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">nodePropName</span> target node property name\n<span class=\"returns\">@returns</span> {<span class=\"type\">boolean</span>} true if property has changed\n"
         },
         "setValue": {
@@ -93,11 +93,11 @@
             "!doc": "Set property value on repository entity\n\n<span class=\"param\">@param</span> {<span class=\"type\">RepositoryEntity</span>} <span class=\"var\">entity</span>\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">propName</span>\n<span class=\"param\">@param</span> {<span class=\"type\">any</span>} <span class=\"var\">value</span>\n<span class=\"returns\">@returns</span> {<span class=\"type\">boolean</span>} true\n"
         },
         "copyAssocAssocValue": {
-            "!type": "fn(node: ?, node: string, assocName: string, assocAssocName: string, nodeAssocName: string) -> void",
+            "!type": "fn(node: ?, assocName: string, assocAssocName: string, nodeAssocName: string) -> void",
             "!doc": "Copy association association value to node association\n\n<span class=\"param\">@param</span> {(<span class=\"type\">ScriptNode</span>|<span class=\"type\">NodeRef</span>|<span class=\"type\">string</span>)} <span class=\"var\">node</span>\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">assocName</span>\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">assocAssocName</span>\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">nodeAssocName</span> target node association name\n<span class=\"returns\">@returns</span> {<span class=\"type\">void</span>}\n"
         },
         "i18n": {
-            "!type": "fn(key: string, params: [any]) -> ",
+            "!type": "fn(key: string, params: [any]) -> string",
             "!doc": "<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">key</span>\n<span class=\"param\">@param</span> {<span class=\"type\">any[]</span>} [<span class=\"var\">params</span>] optional array of params\n<span class=\"returns\">@returns</span> i18n message for current locale\n"
         },
         "updateMLText": {
@@ -121,7 +121,7 @@
             "!doc": "Classify node by hierarchy\n\n<span class=\"param\">@param</span> {<span class=\"type\">ScriptNode</span>} <span class=\"var\">productNode</span>\n<span class=\"param\">@param</span> {<span class=\"type\">ScriptNode</span>} <span class=\"var\">folderNode</span>\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} [?<span class=\"var\">propHierarchy</span>] optional\n<span class=\"returns\">@returns</span> {<span class=\"type\">boolean</span>} true if success\n"
         },
         "classifyByDate": {
-            "!type": "fn(productNode: ScriptNode, path: string, date: Date, date: string, dateFormat: string, documentLibrary: ScriptNode) -> boolean",
+            "!type": "fn(productNode: ScriptNode, path: string, date: Date, dateFormat: string, documentLibrary: ScriptNode) -> boolean",
             "!doc": "Classify node by date\n\n<span class=\"param\">@param</span> {<span class=\"type\">ScriptNode</span>} <span class=\"var\">productNode</span>\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">path</span>\n<span class=\"param\">@param</span> {<span class=\"type\">Date</span>} <span class=\"var\">date</span>\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">dateFormat</span>\n<span class=\"param\">@param</span> {<span class=\"type\">ScriptNode</span>} [<span class=\"var\">documentLibrary</span>] optional\n<span class=\"returns\">@returns</span> {<span class=\"type\">boolean</span>} true if success\n"
         },
         "formulate": {
@@ -129,7 +129,7 @@
             "!doc": "Triggers formulation on product\n\n<span class=\"param\">@param</span> {<span class=\"type\">ScriptNode</span>} <span class=\"var\">product</span>\n<span class=\"returns\">@returns</span> {<span class=\"type\">void</span>}\n"
         },
         "classifyByPropAndHierarchy": {
-            "!type": "fn(productNode: ScriptNode, productNode: string, folderNode: ScriptNode, propHierarchy: string, propPathName: string, propPathName: string, locale: string) -> void",
+            "!type": "fn(productNode: ScriptNode, folderNode: ScriptNode, propHierarchy: string, propPathName: string, locale: string) -> void",
             "!doc": "Classify node by prop and hierarchy (beta)\n\n<span class=\"param\">@param</span> {<span class=\"type\">ScriptNode</span>} <span class=\"var\">productNode</span>\n<span class=\"param\">@param</span> {<span class=\"type\">ScriptNode</span>} <span class=\"var\">folderNode</span> classification start on this folderNode\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">propHierarchy</span>\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">propPathName</span> correspond to a property of 'productNode'\n    or a property of a assocs of productNode, exemple: \"bcpg:plant|bcpg:geoOrigine|bcpg:isoCode\".\n<span class=\"param\">@param</span> {<span class=\"type\">string</span>} <span class=\"var\">locale</span> if 'propPathName' is a ML Property,\n    locale specifies which language to use to naming subfolder.\n<span class=\"returns\">@returns</span> {<span class=\"type\">void</span>}\n"
         },
         "getOrCreateFolder": {

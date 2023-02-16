@@ -420,7 +420,7 @@ function copyAssocAssocValue(node, assocName, assocAssocName, nodeAssocName) {
 /**
  * @param {string} key
  * @param {any[]} [params] optional array of params
- * @returns i18n message for current locale
+ * @returns {string} i18n message for current locale
  */
 function i18n(key, params) {
 	if (isEmpty(params)) {
