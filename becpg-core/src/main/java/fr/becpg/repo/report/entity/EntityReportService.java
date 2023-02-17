@@ -18,6 +18,7 @@
 package fr.becpg.repo.report.entity;
 
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -83,7 +84,7 @@ public interface EntityReportService {
 	 */
 	NodeRef getOrRefreshReport(NodeRef entityNodeRef, NodeRef documentNodeRef);
 	
-	NodeRef getOrRefreshReportOfKind(NodeRef entityNodeRef, String reportType);
+	List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportType);
 	
 	/**
 	 * <p>getXmlReportDataSource.</p>
@@ -120,7 +121,7 @@ public interface EntityReportService {
 	 */
 	NodeRef getSelectedReport(NodeRef entityNodeRef);
 	
-	NodeRef getReportOfKind(NodeRef entityNodeRef, String reportType);
+	List<NodeRef> getReportsOfKind(NodeRef entityNodeRef, String reportType);
 
 	/**
 	 * <p>getSelectedReportName.</p>
