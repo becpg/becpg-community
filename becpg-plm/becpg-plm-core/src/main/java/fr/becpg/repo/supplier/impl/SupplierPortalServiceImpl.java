@@ -351,7 +351,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				supplierFolder = nodeService.createNode(supplierFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER, props).getChildRef();
 			}
 			
-			copySupplierSheet(projectNodeRef, entity, supplierFolder);
+			copySupplierSheets(projectNodeRef, entity, supplierFolder);
 			
 			List<NodeRef> documentsToSign = findDocumentsToSign(supplierFolder);
 			
@@ -431,47 +431,51 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 		return docs;
 	}
 
-	private void copySupplierSheet(NodeRef projectNodeRef, NodeRef entity, NodeRef supplierFolder) {
+	private void copySupplierSheets(NodeRef projectNodeRef, NodeRef entity, NodeRef supplierFolder) {
 		
-		NodeRef reportNodeRef = entityReportService.getOrRefreshReportOfKind(entity, "SupplierSheet");
+		List<NodeRef> reports = entityReportService.getOrRefreshReportsOfKind(entity, "SupplierSheet");
 		
-		if (reportNodeRef != null) {
+		for (NodeRef reportNodeRef : reports) {
 			
-			String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
-			
-			int lastDotIndex = reportName.lastIndexOf(".");
-			
-			if (lastDotIndex != -1) {
+			if (reportNodeRef != null) {
 				
-				String nameWithoutExtension = reportName.substring(0, lastDotIndex);
+				String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
 				
-				String extension = reportName.substring(lastDotIndex);
+				int lastDotIndex = reportName.lastIndexOf(".");
 				
-				String date =  new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(0, 10);
+				if (lastDotIndex != -1) {
+					
+					String nameWithoutExtension = reportName.substring(0, lastDotIndex);
+					
+					String extension = reportName.substring(lastDotIndex);
+					
+					String date =  new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(0, 10);
+					
+					reportName = nameWithoutExtension + " - " + date + extension;
+				}
 				
-				reportName = nameWithoutExtension + " - " + date + extension;
+				reportName = repoService.getAvailableName(supplierFolder, reportName, false, true);
+				
+				Map<QName, Serializable> props = new HashMap<>();
+				
+				props.put(ContentModel.PROP_NAME, reportName);
+				
+				NodeRef signedReport = nodeService.createNode(supplierFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT, props).getChildRef();
+				
+				List<NodeRef> suppliers = associationService.getTargetAssocs(projectNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
+				
+				associationService.update(signedReport, SignatureModel.ASSOC_RECIPIENTS, suppliers);
+				
+				ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
+				ContentWriter writer = contentService.getWriter(signedReport, ContentModel.PROP_CONTENT, true);
+				writer.setEncoding(reader.getEncoding());
+				writer.setMimetype(reader.getMimetype());
+				
+				writer.putContent(reader);
+				
 			}
-			
-			reportName = repoService.getAvailableName(supplierFolder, reportName, false, true);
-			
-			Map<QName, Serializable> props = new HashMap<>();
-			
-			props.put(ContentModel.PROP_NAME, reportName);
-			
-			NodeRef signedReport = nodeService.createNode(supplierFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT, props).getChildRef();
-
-			List<NodeRef> suppliers = associationService.getTargetAssocs(projectNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
-			
-			associationService.update(signedReport, SignatureModel.ASSOC_RECIPIENTS, suppliers);
-			
-			ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
-			ContentWriter writer = contentService.getWriter(signedReport, ContentModel.PROP_CONTENT, true);
-			writer.setEncoding(reader.getEncoding());
-			writer.setMimetype(reader.getMimetype());
-
-			writer.putContent(reader);
-
 		}
+		
 	}
 
 	private NodeRef findSupplierAccount(List<NodeRef> documents, List<NodeRef> recipients) {
