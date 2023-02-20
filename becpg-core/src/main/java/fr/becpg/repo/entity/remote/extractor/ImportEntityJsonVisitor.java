@@ -20,6 +20,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.rest.framework.core.exceptions.InvalidArgumentException;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
+import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -51,6 +52,7 @@ import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.entity.remote.extractor.RemoteJSONContext.JsonVisitNodeType;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -509,6 +511,16 @@ public class ImportEntityJsonVisitor {
 			if (listNodeRef == null) {
 				logger.debug("Creating list: " + dataListQName + " in " + listContainerNodeRef);
 				listNodeRef = entityListDAO.createList(listContainerNodeRef, dataListName, dataListQName);
+
+				ClassDefinition classDef = entityDictionaryService.getClass(dataListQName);
+				
+				if (classDef != null) {
+					MLText classTitleMLText = TranslateHelper.getTemplateTitleMLText(classDef.getName());
+					MLText classDescritptionMLText = TranslateHelper.getTemplateDescriptionMLText(classDef.getName());
+					
+					nodeService.setProperty(listNodeRef, ContentModel.PROP_TITLE, classTitleMLText);
+					nodeService.setProperty(listNodeRef, ContentModel.PROP_DESCRIPTION, classDescritptionMLText);
+				}
 			}
 
 			Set<NodeRef> listItemToKeep = new HashSet<>();
@@ -519,7 +531,7 @@ public class ImportEntityJsonVisitor {
 				JSONObject listItem = items.getJSONObject(i);
 				listItem.put(RemoteEntityService.ATTR_PARENT_ID, listNodeRef.getId());
 				if (!listItem.has(RemoteEntityService.ATTR_TYPE)) {
-					listItem.put(RemoteEntityService.ATTR_TYPE, dataListQName);
+					listItem.put(RemoteEntityService.ATTR_TYPE, dataListQName.toPrefixString());
 				}
 				try {
 					listItemToKeep.add(visit(listItem, JsonVisitNodeType.DATALIST, null, context));
@@ -611,7 +623,7 @@ public class ImportEntityJsonVisitor {
 	private void appendAssoc(List<NodeRef> nodes, JSONObject assocEntity, QName type, QName propQName, boolean isChild, RemoteJSONContext context)
 			throws JSONException {
 		if (!assocEntity.has(RemoteEntityService.ATTR_TYPE)) {
-			assocEntity.put(RemoteEntityService.ATTR_TYPE, type);
+			assocEntity.put(RemoteEntityService.ATTR_TYPE, type.toPrefixString());
 		}
 
 		try {
