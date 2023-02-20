@@ -408,16 +408,17 @@
 							var percentCompleted = last.percentCompleted.replace(/\s+/g, '');
 
 							var percent = percentCompleted.substring(0, percentCompleted.length - 1);
-
-							if (ulCur.firstChild) {
+							
+							var removeLast = percent == 100 || percent == "Unknow" || last.cancelled;
+							
+							if (removeLast) {
+								ulCur.innerHTML = "";
+							} else if (ulCur.firstChild) {
 								ulCur.children[0].children[0].innerText = batchDescId;
 								ulCur.children[1].children[0].firstChild.value = percent;
 								ulCur.children[1].children[0].firstChild.title = percentCompleted;
 								ulCur.children[1].children[1].firstChild.id = batchId;
 								ulCur.children[1].children[1].firstChild.style = "cursor:pointer";
-								if (percent == 100 || last.cancelled) {
-									ulCur.children[1].children[1].firstChild.style = "display:none";
-								}
 							} else {
 								var textLine = document.createElement("li");
 								textLine.id = batchId;
@@ -429,10 +430,9 @@
 								ulCur.appendChild(meterLine);
 								var spanMeter = document.createElement("span");
 								meterLine.appendChild(spanMeter);
-								var meter = document.createElement("meter");
+								var meter = document.createElement("progress");
 								spanMeter.appendChild(meter);
 								meter.style = "width:100px";
-								meter.min = "0";
 								meter.value = percent;
 								meter.max = "100";
 								meter.title = percentCompleted;
