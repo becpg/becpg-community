@@ -28,6 +28,12 @@ import fr.becpg.repo.web.scripts.remote.AbstractEntityWebScript;
  */
 public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 
+	private static final String CANCELLED = "cancelled";
+
+	private static final String PERCENT_COMPLETED = "percentCompleted";
+
+	private static final String ENTITY_DESCRIPTION = "entityDescription";
+
 	private static final String STEPS_MAX = "stepsMax";
 
 	private static final String STEP_COUNT = "stepCount";
@@ -109,8 +115,8 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 			JSONObject batchInfo = new JSONObject(lastRunningBatch.getProcessName());
 			String entityDescription = null;
 			
-			if (batchInfo.has("entityDescription")) {
-				entityDescription = batchInfo.getString("entityDescription");
+			if (batchInfo.has(ENTITY_DESCRIPTION)) {
+				entityDescription = batchInfo.getString(ENTITY_DESCRIPTION);
 			}
 			
 			if (batchInfo.has(STEP_COUNT) && batchInfo.has(STEPS_MAX)) {
@@ -120,19 +126,24 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 			
 			last.put(BatchInfo.BATCH_ID, batchInfo.getString(BatchInfo.BATCH_ID));
 			last.put(BatchInfo.BATCH_USER, batchInfo.getString(BatchInfo.BATCH_USER));
+			
 			String descriptionLabel = I18NUtil.getMessage(batchInfo.getString(BatchInfo.BATCH_DESC_ID), entityDescription);
 			last.put(BatchInfo.BATCH_DESC_ID, descriptionLabel != null ? descriptionLabel : batchInfo.getString(BatchInfo.BATCH_DESC_ID));
+			
+			
 			if (batchQueueService.getCancelledBatches().contains(batchInfo.getString(BatchInfo.BATCH_ID))) {
-				last.put("cancelled", true);
+				last.put(CANCELLED, true);
 			}
+			
+			String percentCompleted = lastRunningBatch.getPercentComplete();
+			last.put(PERCENT_COMPLETED, percentCompleted);
+			
 		} catch (JSONException e) {
 			last.put(BatchInfo.BATCH_ID, lastRunningBatch.getProcessName());
 			last.put(BatchInfo.BATCH_DESC_ID, lastRunningBatch.getProcessName());
 			last.put(BatchInfo.BATCH_USER, UNKNOWN);
 			logger.warn("Could not parse JSON : " + lastRunningBatch.getProcessName());
 		}
-		
-		last.put("percentCompleted", lastRunningBatch.getPercentComplete());
 		
 		return last;
 	}
