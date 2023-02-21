@@ -350,19 +350,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
           var ret = "";
           
-          function exp(val){
-        	  if(val == 0){
-        		  return "0";
-        	  }  else if(Math.abs(val) < 0.000001){
-        		  return beCPG.util.sigFigs(val*1000000,3).toLocaleString()+"×10<sup>-6</sup>";
-        	  } else if(Math.abs(val) < 0.01){
-        		  return beCPG.util.sigFigs(val*1000,3).toLocaleString()+"×10<sup>-3</sup>";
-              } else if(Math.abs(val) >= 1000000){
-        		  return beCPG.util.sigFigs(val/1000000,3).toLocaleString()+"×10<sup>6</sup>";
-        	  }
-        	  return beCPG.util.sigFigs(val,3).toLocaleString();
-          }
-          
+        
           var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
           
           if(oColumn.label!=null && oColumn.label.indexOf && oColumn.label.indexOf("100g")>0){
@@ -370,7 +358,7 @@ if (beCPG.module.EntityDataGridRenderers) {
           }
           
           if (data.value != null) {
-        	  ret+=data.value+" "+unit;
+        	  ret+=data.value.toLocaleString( beCPG.util.getJSLocale() )+" "+unit;
           }
           
           var key ="prop_bcpg_nutListFormulatedValue";
@@ -385,9 +373,9 @@ if (beCPG.module.EntityDataGridRenderers) {
           var formulatedValue = oRecord.getData("itemData")[key];
           if(formulatedValue!=null && formulatedValue.value!=null ){
               if(ret.length>0){
-                  ret+= '&nbsp;&nbsp;(' + exp(formulatedValue.value) + ')';
+                  ret+= '&nbsp;&nbsp;(' + beCPG.util.exp(formulatedValue.value) + ')';
               } else {
-                ret+= exp(formulatedValue.value)+" "+unit ;
+                ret+= beCPG.util.exp(formulatedValue.value)+" "+unit ;
               }
           }
           
@@ -401,7 +389,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : ["bcpg:nutListValuePrepared"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
           var ret = "";
-          
+        
           var unit = oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value;
           if(unit == null){
 			  unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
@@ -412,7 +400,7 @@ if (beCPG.module.EntityDataGridRenderers) {
           
       
           if (data.value != null) {
-        	  ret+=data.value+" "+unit;
+        	  ret+=beCPG.util.exp(data.value)+" "+unit;
           }
      
           
@@ -426,7 +414,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : ["bcpg:nutListValuePerServing"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString());
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString( beCPG.util.getJSLocale() ));
       	}      
       	return "";
       }
@@ -449,7 +437,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       			qty = data.value;
       			unit = " %";
       		}
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,4).toLocaleString() + unit);
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,4).toLocaleString( beCPG.util.getJSLocale() ) + unit);
       	}      
       	return "";
       }
@@ -736,7 +724,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
 				}
 				if (scope.datalistMeta.name == "nutList"){
-					return beCPG.util.sigFigs(data.value,3).toLocaleString();
+					return beCPG.util.sigFigs(data.value,3).toLocaleString( beCPG.util.getJSLocale() );
 				}
 				return data.displayValue;
 			}
@@ -1177,7 +1165,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					}
 				}
 
-				qty = beCPG.util.sigFigs(qty,4).toLocaleString() + unit;
+				qty = beCPG.util.sigFigs(qty,4).toLocaleString( beCPG.util.getJSLocale() ) + unit;
 			}
 
 			return Alfresco.util.encodeHTML(qty);
@@ -1186,10 +1174,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 	
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName : "bcpg:packagingListQty",
+        propertyName : ["bcpg:packagingListQty"],
         renderer : function(oRecord, data, label, scope) {
         	if (data.value != null) {
-        		return data.value;
+        		return data.value.toLocaleString( beCPG.util.getJSLocale() );
         	}
         	return "";
         }
@@ -1286,7 +1274,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					unit = " L";
 				}
 
-				qty =  beCPG.util.sigFigs(qty,4).toLocaleString() + unit;
+				qty =  beCPG.util.sigFigs(qty,4).toLocaleString( beCPG.util.getJSLocale() ) + unit;
 			}
 
 			return Alfresco.util.encodeHTML(qty);
@@ -1392,7 +1380,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"] ? oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData: null;
 				var unit =additionalProps!=null ? additionalProps.prop_bcpg_nutUnit.displayValue : "";
 				
-				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString()+" "+unit);
+				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString( beCPG.util.getJSLocale() )+" "+unit);
 				
 			}
 			return "";
