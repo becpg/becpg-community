@@ -157,11 +157,29 @@
         }       
     };
     
+	beCPG.util.getJSLocale = function getJSLocale() {
+		return Alfresco.constants.JS_LOCALE.replace("_", "-");
+	};
+	
+	beCPG.util.exp = function exp(val) {
+		if (val == 0) {
+			return "0";
+		} else if (Math.abs(val) < 0.000001) {
+			return beCPG.util.sigFigs(val * 1000000, 3).toLocaleString(beCPG.util.getJSLocale()) + "×10<sup>-6</sup>";
+		} else if (Math.abs(val) < 0.01) {
+			return beCPG.util.sigFigs(val * 1000, 3).toLocaleString(beCPG.util.getJSLocale()) + "×10<sup>-3</sup>";
+		} else if (Math.abs(val) >= 1000000) {
+			return beCPG.util.sigFigs(val / 1000000, 3).toLocaleString(beCPG.util.getJSLocale()) + "×10<sup>6</sup>";
+		}
+		return beCPG.util.sigFigs(val, 3).toLocaleString(beCPG.util.getJSLocale());
+	};
+          
+    
     beCPG.util.formatNumber = function formatNumber(format, value){
 		if(isNaN(value )){
 		    return value!=null ? value : "";
 		} else  {
-    	    return '<span title='+value+'>'+(new Intl.NumberFormat(Alfresco.constants.JS_LOCALE.replace("_","-"), format).format(value))+'</span>';	
+    	    return '<span title='+value+'>'+(new Intl.NumberFormat(beCPG.util.getJSLocale(), format).format(value))+'</span>';	
     	}
     };
     
