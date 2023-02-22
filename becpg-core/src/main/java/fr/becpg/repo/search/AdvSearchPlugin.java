@@ -37,4 +37,6 @@ public interface AdvSearchPlugin {
 	 */
 	Set<String> getIgnoredFields(QName datatype, SearchConfig searchConfig);
 
+	boolean isSearchFiltered(Map<String, String> criteria);
+
 }
