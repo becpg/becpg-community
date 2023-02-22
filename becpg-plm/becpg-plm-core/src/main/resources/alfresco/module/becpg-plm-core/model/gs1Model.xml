@@ -1149,6 +1149,20 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
+				
+			    <property name="gs1:netContentUnit ">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:productUnit" />
+					</constraints>
+				</property>
+				
+				
 			</properties>
 			<overrides />
 			<mandatory-aspects />
