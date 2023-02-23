@@ -409,7 +409,7 @@
 
 							var percent = percentCompleted.substring(0, percentCompleted.length - 1);
 							
-							var removeLast = percent == 100 || percent == "Unknow" || last.cancelled;
+							var removeLast = percent == 100;
 							
 							if (removeLast) {
 								ulCur.innerHTML = "";
