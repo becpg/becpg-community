@@ -93,6 +93,11 @@
 						<constraint ref="ecm:ecoTypes" />
 					</constraints>
 				</property>
+				<property name="ecm:propertiesToCopy">
+					<type>d:text</type>
+					<multiple>false</multiple>
+					<index enabled="false"/>
+				</property>
 			</properties>
 			<associations>				
 				<association name="ecm:calculatedCharacts">
