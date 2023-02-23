@@ -1150,7 +1150,7 @@
 					</index>
 				</property>
 				
-			    <property name="gs1:netContentUnit ">
+			    <property name="gs1:netContentUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
