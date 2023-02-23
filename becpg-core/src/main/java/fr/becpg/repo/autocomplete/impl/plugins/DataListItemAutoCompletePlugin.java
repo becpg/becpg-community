@@ -43,7 +43,6 @@ import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.autocomplete.AutoCompleteService;
 import fr.becpg.repo.autocomplete.impl.extractors.NodeRefAutoCompleteExtractor;
 import fr.becpg.repo.entity.EntityListDAO;
-import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
