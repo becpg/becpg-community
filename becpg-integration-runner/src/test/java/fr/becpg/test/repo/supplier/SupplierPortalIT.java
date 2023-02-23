@@ -56,17 +56,37 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 			
 
 			assertNotNull(supplierNodeRef);
-			
-			NodeRef supplierAccountNodeRef  = inWriteTx(() -> {
-	
-				NodeRef personNodeRef = supplierPortalService.createExternalUser("sample-supplier@becpg.fr", "Junit", "Supplier", false, null);
-	
-				associationService.update(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, Arrays.asList(personNodeRef));
-				return personNodeRef;
-			 });
+		
 
-			 assertNotNull(supplierAccountNodeRef);
+			 
+			 final NodeRef supplierNodeRef2 = inWriteTx(() -> {
+					
+					SupplierData supplier = new SupplierData();
+					supplier.setName("Junit Supplier Plant test");
+					supplier.setParentNodeRef(getTestFolderNodeRef());
+					
+					return alfrescoRepository.save(supplier).getNodeRef();
+					
+				});
+			 
+			 
 			
+				
+				NodeRef supplierAccountNodeRef  = inWriteTx(() -> {
+		
+					NodeRef personNodeRef = supplierPortalService.createExternalUser("sample-supplier@becpg.fr", "Junit", "Supplier", false, null);
+		
+					associationService.update(supplierNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS, Arrays.asList(personNodeRef));
+					
+					associationService.update(supplierNodeRef2, BeCPGModel.ASSOC_PARENT_ENTITY, Arrays.asList(supplierNodeRef));
+					
+					return personNodeRef;
+				 });
+
+				
+				 assertNotNull(supplierAccountNodeRef);
+				 
+			 
 			final NodeRef supplierRMNodeRef = inWriteTx(() -> {
 				
 				RawMaterialData rawMaterial = new RawMaterialData();
@@ -90,6 +110,27 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 			});
 			
 			assertNotNull(projectNodeRef);
+			
+			NodeRef projectNodeRef2 = inWriteTx(() -> {
+				return	supplierPortalService.createSupplierProject(supplierNodeRef,
+						BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT).withAspect(BeCPGModel.ASPECT_ENTITY_TPL)
+						.withAspect(PLMModel.ASPECT_SUPPLIERS)
+						.andPropEquals(ContentModel.PROP_NAME, 	I18NUtil.getMessage(SupplierPortalInitRepoVisitor.SUPPLIER_PJT_TPL_NAME)).inDB().singleValue(), Arrays.asList(supplierAccountNodeRef));
+	
+			});
+			
+			assertNotNull(projectNodeRef2);
+			
+			
+			NodeRef projectNodeRef3 = inWriteTx(() -> {
+				return	supplierPortalService.createSupplierProject(supplierNodeRef2,
+						BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT).withAspect(BeCPGModel.ASPECT_ENTITY_TPL)
+						.withAspect(PLMModel.ASPECT_SUPPLIERS)
+						.andPropEquals(ContentModel.PROP_NAME, 	I18NUtil.getMessage(SupplierPortalInitRepoVisitor.SUPPLIER_PJT_TPL_NAME)).inDB().singleValue(), Arrays.asList(supplierAccountNodeRef));
+	
+			});
+			
+			assertNotNull(projectNodeRef3);
 			
 			
 			
