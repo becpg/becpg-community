@@ -52,6 +52,8 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 	private static final String PARAM_NODEREFS = "nodeRefs";
 
 	private static final String PARAM_TPL_NODEREF = "tplNodeRef";
+	
+	private static final String PROP_PJT_TPL = "projectTpl";
 
 	private static final Log logger = LogFactory.getLog(SupplierPortalWebScript.class);
 
@@ -87,8 +89,8 @@ public class SupplierPortalWebScript extends AbstractWebScript {
 			JSONObject json = (JSONObject) req.parseContent();
 
 			try {
-				if ((json != null) && json.has("projectTpl") && (json.getString("projectTpl") != null) && !json.getString("projectTpl").isEmpty()) {
-					projectTemplateNodeRef = new NodeRef(json.getString("projectTpl"));
+				if ((json != null) && json.has(PROP_PJT_TPL) && (json.getString(PROP_PJT_TPL) != null) && !json.getString(PROP_PJT_TPL).isEmpty()) {
+					projectTemplateNodeRef = new NodeRef(json.getString(PROP_PJT_TPL));
 				}
 			} catch (JSONException e) {
 				throw new IllegalStateException(I18NUtil.getMessage("message.supplier.project-template"));
