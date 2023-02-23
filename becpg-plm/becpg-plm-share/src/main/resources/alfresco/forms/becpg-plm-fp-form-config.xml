@@ -330,7 +330,7 @@
             </control>
           </field>
            <field help-id="becpg.forms.help.gs1.netContent" id="gs1:netContent" mandatory="false" read-only="false" set="formulation"></field>
-          <field id="gs1:netContentUnit" mandatory="false" read-only="false" set="formulation"></field>
+          <field id="gs1:netContentUnit" mandatory="false" read-only="false" set="formulation"/>
           
           <field id="bcpg:drainedWeight" mandatory="false" read-only="false" set="formulation">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
