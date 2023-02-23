@@ -174,6 +174,14 @@ public final class BeCPGModel {
 	/** Constant <code>PROP_ENTITY_SCORE</code> */
 	public static final QName PROP_ENTITY_SCORE = QName.createQName(BECPG_URI, "entityScore");
 
+	// sub entity aspect
+	/** Constant <code>ASPECT_SUB_ENTITY</code> */
+	public static final QName ASPECT_SUB_ENTITY = QName.createQName(BECPG_URI, "subEntityAspect");
+	/** Constant <code>ASSOC_PARENT_ENTITY</code> */
+	public static final QName ASSOC_PARENT_ENTITY = QName.createQName(BECPG_URI, "parentEntityRef");
+
+	
+	
 	// systemFolder
 	/** Constant <code>ASPECT_SYSTEM_FOLDER</code> */
 	public static final QName ASPECT_SYSTEM_FOLDER = QName.createQName(BECPG_URI, "systemFolderAspect");
