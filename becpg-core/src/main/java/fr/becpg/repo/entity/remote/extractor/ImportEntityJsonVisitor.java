@@ -531,7 +531,7 @@ public class ImportEntityJsonVisitor {
 				JSONObject listItem = items.getJSONObject(i);
 				listItem.put(RemoteEntityService.ATTR_PARENT_ID, listNodeRef.getId());
 				if (!listItem.has(RemoteEntityService.ATTR_TYPE)) {
-					listItem.put(RemoteEntityService.ATTR_TYPE, dataListQName.toPrefixString());
+					listItem.put(RemoteEntityService.ATTR_TYPE, dataListQName.toPrefixString(namespaceService));
 				}
 				try {
 					listItemToKeep.add(visit(listItem, JsonVisitNodeType.DATALIST, null, context));
@@ -623,7 +623,7 @@ public class ImportEntityJsonVisitor {
 	private void appendAssoc(List<NodeRef> nodes, JSONObject assocEntity, QName type, QName propQName, boolean isChild, RemoteJSONContext context)
 			throws JSONException {
 		if (!assocEntity.has(RemoteEntityService.ATTR_TYPE)) {
-			assocEntity.put(RemoteEntityService.ATTR_TYPE, type.toPrefixString());
+			assocEntity.put(RemoteEntityService.ATTR_TYPE, type.toPrefixString(namespaceService));
 		}
 
 		try {
