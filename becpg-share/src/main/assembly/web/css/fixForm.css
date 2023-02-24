@@ -92,5 +92,20 @@
     width: auto !important;
 }
 
+.form-container .help-text {
+	width: unset !important;
+}
 
+.form-container .help-icon {
+	margin-left: 0.7em !important;
+}
 
+.form-container .help-icon img {
+	vertical-align: -10px !important;
+	cursor: pointer;
+}
+
+.form-field-boolean {
+	overflow: unset !important;
+	width: fit-content !important;
+}
