@@ -188,7 +188,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 
 	@Override
 	public boolean isSearchFiltered(Map<String, String> criteria) {
-		return !extractNested(criteria).isEmpty();
+		return criteria != null && !extractNested(criteria).isEmpty();
 	}
 
 }
