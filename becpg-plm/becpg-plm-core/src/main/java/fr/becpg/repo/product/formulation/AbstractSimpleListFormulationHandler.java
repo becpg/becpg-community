@@ -534,7 +534,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						}
 
 						if (slDataItem != null) {
-							boolean formulateInVol = (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
+
+							boolean formulateInVol = partProduct.isLiquid();
 							boolean forceWeight = false;
 
 							if (newSimpleListDataItem instanceof PhysicoChemListDataItem) {
@@ -545,17 +546,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 									forceWeight = true;
 								}
 							} else if (newSimpleListDataItem instanceof NutListDataItem) {
-								if (formulateInVol && (partProduct.getServingSizeUnit() != null) && partProduct.getServingSizeUnit().isWeight()) {
+								if ((partProduct.getUnit() != null) && partProduct.getUnit().isVolume() && (partProduct.getServingSizeUnit() != null) && partProduct.getServingSizeUnit().isWeight()) {
 									if ((formulatedProduct.getServingSizeUnit() != null) && formulatedProduct.getServingSizeUnit().isWeight()) {
-										formulateInVol = false;
 										forceWeight = true;
-									} else {
-										formulateInVol = false;
-									}
+									} 
 								}
-
 							}
-
+							
 							// calculate charact from qty or vol ?
 							Double qtyUsed = qties.getQtyUsed(formulateInVol);
 							Double netQty = qties.getNetQty(forceWeight);
