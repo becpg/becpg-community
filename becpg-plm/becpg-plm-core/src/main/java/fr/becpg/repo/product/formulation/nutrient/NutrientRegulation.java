@@ -61,6 +61,7 @@ public interface NutrientRegulation {
 	 * @return a {@link java.lang.Double} object.
 	 */
 	Double convertValue(Double value, String nutUnit, String regulUnit);
-
-	Pair<Double, Double> toleranceByCode(Double value, String nutrientTypeCode);
+	
+	
+	Pair<Double, Double> tolerances(Double value, String nutrientTypeCode, String nutUnit);
 }
