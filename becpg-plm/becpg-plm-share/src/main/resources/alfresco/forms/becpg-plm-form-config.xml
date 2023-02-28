@@ -6347,6 +6347,7 @@
 					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListValuePrepared" />
 					<show id="bcpg:nutListUnitPrepared"  force="true" />
+					<show id="bcpg:nutListRoundedValue" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListFormulatedMini" />
@@ -6378,6 +6379,7 @@
 					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
 					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
+					<field id="bcpg:nutListRoundedValue" read-only="true" ></field>
 					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
@@ -30,6 +31,10 @@ import fr.becpg.repo.repository.model.VariantAwareDataItem;
  * @version $Id: $Id
  */
 public class RegulationFormulationHelper {
+	
+	private RegulationFormulationHelper() {
+		//Do nothing
+	}
 
 	/** Constant <code>logger</code> */
 	protected static final Log logger = LogFactory.getLog(RegulationFormulationHelper.class);
@@ -37,6 +42,8 @@ public class RegulationFormulationHelper {
 	/** Constant <code>ATTR_NUT_CODE="nutCode"</code> */
 	public static final String ATTR_NUT_CODE = "nutCode";
 	private static final String KEY_VALUE = "v";
+	private static final String KEY_TOLERANCE_MAX = "tu";
+	private static final String KEY_TOLERANCE_MIN = "tl";
 	private static final String KEY_MINI = "min";
 	private static final String KEY_MAXI = "max";
 	private static final String KEY_SECONDARY_VALUE = "v2";
@@ -392,6 +399,10 @@ public class RegulationFormulationHelper {
 			return "Mini";
 		case KEY_MAXI:
 			return "Maxi";
+		case KEY_TOLERANCE_MAX:
+			return "Tmax";
+		case KEY_TOLERANCE_MIN:
+			return "Tmin";	
 		case KEY_VALUE_PER_SERVING:
 			return "ValuePerServing";
 		case KEY_GDA_PERC:
@@ -439,6 +450,8 @@ public class RegulationFormulationHelper {
 			JSONObject secondaryValue = new JSONObject();
 			JSONObject secondaryValuePerServing = new JSONObject();
 
+			JSONObject tmin = new JSONObject();
+			JSONObject tmax = new JSONObject();
 			JSONObject mini = new JSONObject();
 			JSONObject maxi = new JSONObject();
 			JSONObject valuePerServing = new JSONObject();
@@ -457,6 +470,13 @@ public class RegulationFormulationHelper {
 				secondaryValue.put(key, regulation.round(n.getPreparedValue(), nutCode, nutUnit));
 				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
 				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
+				
+				Pair<Double,Double> tolerances =  regulation.tolerances(n.getValue(), nutCode,nutUnit);
+				if(tolerances!=null) {
+					tmin.put(key, tolerances.getFirst());
+					tmax.put(key, tolerances.getSecond());				
+				}
+			
 
 				if (n instanceof VariantAwareDataItem) {
 					for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
@@ -495,6 +515,8 @@ public class RegulationFormulationHelper {
 				}
 
 				jsonRound.put(KEY_VALUE, value);
+				jsonRound.put(KEY_TOLERANCE_MIN, tmin);
+				jsonRound.put(KEY_TOLERANCE_MAX, tmax);
 				jsonRound.put(KEY_SECONDARY_VALUE, secondaryValue);
 				jsonRound.put(KEY_SECONDARY_VALUE_PER_SERVING, secondaryValuePerServing);
 				jsonRound.put(KEY_MINI, mini);
@@ -504,8 +526,9 @@ public class RegulationFormulationHelper {
 				jsonRound.put(KEY_VALUE_PER_CONTAINER, valuePerContainer);
 				jsonRound.put(KEY_GDA_PERC_PER_CONTAINER, gdaPerContainer);
 
-				for (String variantKey : variants.keySet())
+				for (String variantKey : variants.keySet()) {
 					jsonRound.put(variantKey, variants.get(variantKey));
+				}
 			}
 
 		} catch (JSONException e) {
@@ -683,6 +706,18 @@ public class RegulationFormulationHelper {
 		return getRegulation(key).round(value, nutCode, nutUnit);
 	}
 
+	public static Pair<Double,Double> tolerances(Double value, String nutCode, Locale locale, String nutUnit) {
+		return tolerances(value, nutCode, getLocalKey(locale), nutUnit);
+	}
+
+	private static 	Pair<Double,Double> tolerances(Double value, String nutCode, String key, String nutUnit) {
+		if (value == null) {
+			return null;
+		}
+		return getRegulation(key).tolerances(value, nutCode, nutUnit);
+	}
+
+	
 	/**
 	 * <p>displayValue.</p>
 	 *
