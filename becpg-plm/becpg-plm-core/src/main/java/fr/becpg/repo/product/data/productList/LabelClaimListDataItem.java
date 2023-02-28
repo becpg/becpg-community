@@ -57,6 +57,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 	public static final String VALUE_NA = "na";
 	/** Constant <code>VALUE_SUITABLE="suitable"</code> */
 	public static final String VALUE_SUITABLE = "suitable";
+	public static final String VALUE_CERTIFIED = "certified";
 	
 	
 	private NodeRef labelClaim;
