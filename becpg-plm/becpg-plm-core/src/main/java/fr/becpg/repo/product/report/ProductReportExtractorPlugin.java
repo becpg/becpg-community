@@ -1814,70 +1814,72 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void extractCost(NodeRef entityNodeRef, NodeRef partProductNodeRef, Element dataListItemElt, CostType type,
 			DefaultExtractorContext context) {
 
-		ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(entityNodeRef);
-		ProductData partProduct = (ProductData) alfrescoRepository.findOne(partProductNodeRef);
-
-		Double currentCost = 0d;
-		Double previousCost = 0d;
-		Double futureCost = 0d;
-		Double totalCurrentCost = 0d;
-		Double totalPreviousCost = 0d;
-		Double totalFutureCost = 0d;
-
-		for (CostListDataItem c : partProduct.getCostList()) {
-			if (c.getCost() != null) {
-
-				Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
-				if ((isFixed == null) || Boolean.FALSE.equals(isFixed)) {
-
-					String costType = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTTYPE);
-					String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
-					String productCurrency = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRICE_CURRENCY);
-
-					if ((productCurrency == null) || (costCurrency == null) || productCurrency.equals(costCurrency)) {
-
-						if (c.getValue() != null) {
-
-							if (type.toString().equals(costType)) {
-
-								currentCost += CostCalculatingHelper.extractValue(formulatedProduct, partProduct,  c);
-
-								if (c.getFutureValue() != null) {
-									futureCost += c.getFutureValue();
+		if(alfrescoRepository.findOne(entityNodeRef) instanceof ProductData) {
+			ProductData formulatedProduct = (ProductData) alfrescoRepository.findOne(entityNodeRef);
+			ProductData partProduct = (ProductData) alfrescoRepository.findOne(partProductNodeRef);
+	
+			Double currentCost = 0d;
+			Double previousCost = 0d;
+			Double futureCost = 0d;
+			Double totalCurrentCost = 0d;
+			Double totalPreviousCost = 0d;
+			Double totalFutureCost = 0d;
+	
+			for (CostListDataItem c : partProduct.getCostList()) {
+				if (c.getCost() != null) {
+	
+					Boolean isFixed = (Boolean) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTFIXED);
+					if ((isFixed == null) || Boolean.FALSE.equals(isFixed)) {
+	
+						String costType = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTTYPE);
+						String costCurrency = (String) nodeService.getProperty(c.getCost(), PLMModel.PROP_COSTCURRENCY);
+						String productCurrency = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRICE_CURRENCY);
+	
+						if ((productCurrency == null) || (costCurrency == null) || productCurrency.equals(costCurrency)) {
+	
+							if (c.getValue() != null) {
+	
+								if (type.toString().equals(costType)) {
+	
+									currentCost += CostCalculatingHelper.extractValue(formulatedProduct, partProduct,  c);
+	
+									if (c.getFutureValue() != null) {
+										futureCost += c.getFutureValue();
+									}
+	
+									if (c.getPreviousValue() != null) {
+										previousCost += c.getPreviousValue();
+									}
+	
+								} else if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
+	
+									totalCurrentCost +=  CostCalculatingHelper.extractValue(formulatedProduct, partProduct,  c);
+	
+									if (c.getFutureValue() != null) {
+										totalFutureCost += c.getFutureValue();
+									}
+	
+									if (c.getPreviousValue() != null) {
+										totalPreviousCost += c.getPreviousValue();
+									}
+	
 								}
-
-								if (c.getPreviousValue() != null) {
-									previousCost += c.getPreviousValue();
-								}
-
-							} else if ((c.getDepthLevel() == null) || (c.getDepthLevel() == 1)) {
-
-								totalCurrentCost +=  CostCalculatingHelper.extractValue(formulatedProduct, partProduct,  c);
-
-								if (c.getFutureValue() != null) {
-									totalFutureCost += c.getFutureValue();
-								}
-
-								if (c.getPreviousValue() != null) {
-									totalPreviousCost += c.getPreviousValue();
-								}
-
 							}
 						}
 					}
 				}
 			}
-		}
-
-		if (shouldExtractCost(context)) {
-
-			dataListItemElt.addAttribute("currentCost", Double.toString(currentCost));
-			dataListItemElt.addAttribute("previousCost", Double.toString(previousCost));
-			dataListItemElt.addAttribute("futureCost", Double.toString(futureCost));
-		} else {
-			dataListItemElt.addAttribute("currentCost", Double.toString(totalCurrentCost));
-			dataListItemElt.addAttribute("previousCost", Double.toString(totalPreviousCost));
-			dataListItemElt.addAttribute("futureCost", Double.toString(totalFutureCost));
+	
+			if (shouldExtractCost(context)) {
+	
+				dataListItemElt.addAttribute("currentCost", Double.toString(currentCost));
+				dataListItemElt.addAttribute("previousCost", Double.toString(previousCost));
+				dataListItemElt.addAttribute("futureCost", Double.toString(futureCost));
+			} else {
+				dataListItemElt.addAttribute("currentCost", Double.toString(totalCurrentCost));
+				dataListItemElt.addAttribute("previousCost", Double.toString(totalPreviousCost));
+				dataListItemElt.addAttribute("futureCost", Double.toString(totalFutureCost));
+			}
 		}
 
 	}
