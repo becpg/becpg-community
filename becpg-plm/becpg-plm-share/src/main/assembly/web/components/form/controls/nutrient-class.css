@@ -71,3 +71,15 @@ span.nutrient-class {
 	background: url("../../images/states/warning-16.png") no-repeat;
 	padding-left: 20px;
 }
+
+.nut-details  div.bd {
+  padding: 10px !important;
+}
+
+.nut-details h3 {
+   font-weight: bold !important;;
+}
+
+.nut-details p {
+   padding-left: 15px;
+}

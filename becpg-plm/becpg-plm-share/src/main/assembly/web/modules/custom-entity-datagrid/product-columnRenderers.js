@@ -390,7 +390,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName: ["bcpg:nutListRoundedValue"],
 		renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 			var ret = "";
-
 			var getLocalKey = function(loc) {
 				var language = loc.split("_")[0];
 				var country = loc.split("_").length > 1 ? loc.split("_")[1] : language.toUpperCase();
@@ -433,75 +432,75 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
 			if (data.value != null) {
+
 				var key = getLocalKey(Alfresco.constants.JS_LOCALE);
 				var jsonData = JSON.parse(data.value);
 				if (jsonData && jsonData.v) {
 					if (jsonData.v[key]) {
-						if (jsonData.tl) {
-							if (jsonData.tl[key]) {
-								ret += jsonData.tl[key] + " > ";
-							}
-
-							ret += jsonData.v[key];
+						if (jsonData.tu && jsonData.tu[key]) {
+							ret +=  '<span class="red">'+jsonData.tu[key].toLocaleString( beCPG.util.getJSLocale() ) +'</span>'+ "<";
 						}
 
-						if (jsonData.tu[key]) {
-							ret += " < " + jsonData.tu[key];
+						ret += '<span class="green">'+jsonData.v[key].toLocaleString( beCPG.util.getJSLocale() )+'</span>';
+
+
+						if (jsonData.tl && jsonData.tl[key]) {
+							ret +=  "<" +  '<span class="red">'+jsonData.tl[key].toLocaleString( beCPG.util.getJSLocale() )+'</span>' ;
 						}
+												  
+         			    var nutName = oRecord._oData.itemData.assoc_bcpg_nutListNut[0].displayValue || '';
 
+						var keys = Object.keys(jsonData.v);
+						ret += '<div id="nut-details-' + oRecord.getData("nodeRef") + '" class="nut-details hidden" ><div class="hd">'+nutName+'</div><div class="bd" >';
+						for (var i = 0; i < keys.length; i++) {
+							var k = keys[i];
+							var value = jsonData.v[k];
+							var toleranceMin = jsonData.tl[k] || '';
+							var toleranceMax = jsonData.tu[k] || '';
+							var min = jsonData.min[k] || '';
+							var max = jsonData.max[k] || '';
+							var gda = jsonData.gda[k] || '';
+							var vps = jsonData.vps[k] || '';
+	
+							ret += '<div>' +
+								'<h3>'+  scope.msg( "nutrient.details.header", k+ ' <img  title="'+k+'" src="'+Alfresco.constants.URL_CONTEXT+'res/components/images/flags/'+k.split("_")[0].toLowerCase()+'.png" />'  )+ '</h3>' +
+								'<p>'+scope.msg("nutrient.details.value" ,  value.toLocaleString( beCPG.util.getJSLocale() ) ) + '</p>' +
+								(toleranceMin ? '<p>'+ scope.msg( "nutrient.details.tl" ,toleranceMin.toLocaleString( beCPG.util.getJSLocale() ))+ '</p>' : '') +
+								(toleranceMax ? '<p>'+ scope.msg( "nutrient.details.tu" ,toleranceMax.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+								(min ? '<p>'+ scope.msg( "nutrient.details.min" , min.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+								(max ? '<p>'+ scope.msg( "nutrient.details.max" , max.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+								(gda ? '<p>'+ scope.msg( "nutrient.details.gda" , gda.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+								(vps ? '<p>'+ scope.msg( "nutrient.details.vps" , vps.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+								'</div>';
+						}
+						ret += '</div></div>';
+	
+						ret += '<span class="node-' + oRecord.getData("nodeRef") + '">';
+						ret += '<a class="show-details ' + NUTDETAILS_EVENTCLASS + '" title="' + scope.msg("link.title.nut-details") + '" href="" >';
+						ret += "&nbsp;";
+						ret += "</a></span>";
+					
 					}
-					var keys = Object.keys(jsonData.v);
-					ret += '<div id="nut-details-' + record.nodeRef + '" class="nut-details" style="display:none">';
-					for (var i = 0; i < keys.length; i++) {
-						var k = keys[i];
-						var value = jsonData.v[k];
-						var toleranceMin = jsonData.tl[k] || '';
-						var toleranceMax = jsonData.tu[k] || '';
-						var min = jsonData.min[k] || '';
-						var max = jsonData.max[k] || '';
-						var gda = jsonData.gda[k] || '';
-						var vps = jsonData.vps[k] || '';
-
-						ret += '<div>' +
-							'<h3><img  title="'+k+'" src="'+Alfresco.constants.URL_CONTEXT+'/res/components/images/flags/'+k.toLowerCase+'.png" />' + k + '</h3>' +
-							'<p>Value: ' + value + '</p>' +
-							(toleranceMin ? '<p>Tolerance Min: ' + toleranceMin + '</p>' : '') +
-							(toleranceMax ? '<p>Tolerance Max: ' + toleranceMax + '</p>' : '') +
-							(min ? '<p>Min: ' + min + '</p>' : '') +
-							(max ? '<p>Max: ' + max + '</p>' : '') +
-							(gda ? '<p>GDA: ' + gda + '</p>' : '') +
-							(vps ? '<p>VPS: ' + vps + '</p>' : '') +
-							'</div>';
-					}
-					ret += '</div>';
-
-
-					ret += '<span class="node-' + record.nodeRef + '">';
-					ret += '<a class="nut-details ' + NUTDETAILS_EVENTCLASS + '" title="' + this.msg("link.title.project-details") + '" href="" >';
-					ret += "&nbsp;";
-					ret += "</a></span>";
-
 				}
-
-
 			}
 
 			return ret;
+			
 		}
 	});
+
+	var nutPanels = [];
 
 	YAHOO.Bubbling.addDefaultAction(NUTDETAILS_EVENTCLASS, function(layer, args) {
 		var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
 		if (owner !== null) {
 			var nodeRef = owner.className.replace("node-", "");
-			this.widgets.panel = Alfresco.util.createYUIPanel(panelDiv,
-				{
-					draggable: true,
-					width: "50em"
-				});
-
-			this.widgets.panel.show();
-
+			if(!nutPanels["nut-details-"+nodeRef]){
+				var panelDiv = Dom.get("nut-details-"+nodeRef);
+				Dom.removeClass(panelDiv, "hidden");
+				nutPanels["nut-details-"+nodeRef] = Alfresco.util.createYUIPanel(panelDiv, { draggable: true, width: "auto" });
+			}
+			nutPanels["nut-details-"+nodeRef].show();
 		}
 		return true;
 	});
