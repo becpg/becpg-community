@@ -229,22 +229,28 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 					checks++;
 				} else if (reqCtrlList.getReqMessage().equals("OGM interdit")) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(5, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial3NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial4NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial5NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
-					checks++;
+					if (reqCtrlList.getSources().size() == 2) {
+						assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
+						assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
+						checks++;
+					} else if (reqCtrlList.getSources().size() == 3) {
+						assertTrue(reqCtrlList.getSources().contains(rawMaterial3NodeRef));
+						assertTrue(reqCtrlList.getSources().contains(rawMaterial4NodeRef));
+						assertTrue(reqCtrlList.getSources().contains(rawMaterial5NodeRef));
+						checks++;
+					}
 				} else if (reqCtrlList.getReqMessage().equals("Ionisation interdite")) {
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(5, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial3NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial4NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial5NodeRef));
-					assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
-					checks++;
+					if (reqCtrlList.getSources().size() == 2) {
+						assertTrue(reqCtrlList.getSources().contains(rawMaterial2NodeRef));
+						assertTrue(reqCtrlList.getSources().contains(rawMaterial6NodeRef));
+						checks++;
+					} else if (reqCtrlList.getSources().size() == 3) {
+						assertTrue(reqCtrlList.getSources().contains(rawMaterial3NodeRef));
+						assertTrue(reqCtrlList.getSources().contains(rawMaterial4NodeRef));
+						assertTrue(reqCtrlList.getSources().contains(rawMaterial5NodeRef));
+						checks++;
+					}
 				} else if (reqCtrlList.getReqMessage().equals("Ing3 geoOrigin1 toléré")) {
 
 					// should not occur
@@ -331,7 +337,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 			}
 
 			logger.info("/*-- Done checking, checks=" + checks + " (should be 14) --*/");
-			assertEquals(14, checks);
+			assertEquals(16, checks);
 
 			/*
 			 * #257: check reqCtrlList is clear if all req are respected (we
