@@ -27,7 +27,6 @@ import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.repository.L2CacheSupport;
-import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
  * Gathers product's missing fields info : which ones are missing, and what is
@@ -50,7 +49,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 
 	private RuleService ruleService;
 
-	private EntityCatalogService<RepositoryEntity> entityCatalogService;
+	private EntityCatalogService entityCatalogService;
 
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
@@ -93,7 +92,7 @@ public class EntityCatalogWebScript extends AbstractWebScript {
 	 *
 	 * @param entityCatalogService a {@link fr.becpg.repo.entity.catalog.EntityCatalogService} object.
 	 */
-	public void setEntityCatalogService(EntityCatalogService<RepositoryEntity> entityCatalogService) {
+	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
 		this.entityCatalogService = entityCatalogService;
 	}
 

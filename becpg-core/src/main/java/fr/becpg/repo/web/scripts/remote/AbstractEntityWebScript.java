@@ -319,6 +319,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			return RemoteEntityFormat.json;
 		} else if ((format != null) && RemoteEntityFormat.json_all.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.json_all;
+		} else if ((format != null) && RemoteEntityFormat.json_schema.toString().equalsIgnoreCase(format)) {
+			return RemoteEntityFormat.json_schema;	
 		} else if ((format != null) && RemoteEntityFormat.xsd.toString().equalsIgnoreCase(format)) {
 			return RemoteEntityFormat.xsd;
 		} else if ((format != null) && RemoteEntityFormat.xsd_excel.toString().equalsIgnoreCase(format)) {
@@ -339,7 +341,8 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 			return "text/csv;charset=UTF-8";
 		} else if (RemoteEntityFormat.json.equals(format)) {
 			return "application/json;charset=UTF-8";
-
+		 } else if (RemoteEntityFormat.json_schema.equals(format)) {
+			return "application/schema+json;charset=UTF-8"; 
 		} else {
 			return "application/xml";
 		}
