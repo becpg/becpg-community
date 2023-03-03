@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,6 +30,13 @@ import org.springframework.core.io.ClassPathResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.networknt.schema.JsonSchema;
+import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SpecVersion;
+import com.networknt.schema.ValidationMessage;
 
 import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
@@ -100,6 +108,46 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 		}, false, true);
 	}
 
+
+	@Test
+	public void testRemoteJSONEntity() throws FileNotFoundException {
+
+		// create product
+		final NodeRef sfNodeRef = transactionService.getRetryingTransactionHelper()
+				.doInTransaction(() -> BeCPGPLMTestHelper.createMultiLevelProduct(getTestFolderNodeRef()), false, true);
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			try {
+
+				File tempFile = File.createTempFile("remoteEntity", "json");
+				File tempFile2 = File.createTempFile("remoteEntitySchema", "json");
+
+			
+				remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile),new RemoteParams(RemoteEntityFormat.json));
+				remoteEntityService.getEntity(sfNodeRef, new FileOutputStream(tempFile2), new RemoteParams(RemoteEntityFormat.json_schema));
+				
+				  ObjectMapper mapper = new ObjectMapper();
+				
+				 JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012);
+				    JsonSchema jsonSchema = factory.getSchema(new FileInputStream(tempFile2));
+				    JsonNode jsonNode = mapper.readTree(tempFile);
+				    Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
+				 assertTrue(errors.isEmpty());
+
+				tempFile.delete();
+				tempFile2.delete();
+
+			} catch (BeCPGException e) {
+				logger.error(e, e);
+				Assert.fail(e.getMessage());
+			}
+
+			return null;
+		}, false, true);
+	}
+
+	
+	
 	@Test
 	public void testRemoteFullXmlEntity() throws FileNotFoundException {
 
