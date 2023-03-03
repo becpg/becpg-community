@@ -33,6 +33,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
+import fr.becpg.repo.entity.catalog.EntityCatalogServiceImpl;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
@@ -63,7 +64,7 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 	@Autowired
 	private NamespaceService namespaceService;
 	@Autowired
-	private EntityCatalogService<RepositoryEntity> entityCatalogService;
+	private EntityCatalogService entityCatalogService;
 	@Autowired
 	private BeCPGCacheService cacheService;
 	@Autowired
@@ -379,10 +380,10 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 		JSONObject catalog;
 		try {
 			catalog = new JSONObject(CATALOG_STRING);
-			assertTrue(entityCatalogService.isMatchEntityType(catalog, PLMModel.TYPE_FINISHEDPRODUCT, namespaceService));
-			assertFalse(entityCatalogService.isMatchEntityType(catalog, PLMModel.TYPE_RAWMATERIAL, namespaceService));
+			assertTrue(((EntityCatalogServiceImpl) entityCatalogService).isMatchEntityType(catalog, PLMModel.TYPE_FINISHEDPRODUCT, namespaceService));
+			assertFalse(((EntityCatalogServiceImpl)entityCatalogService).isMatchEntityType(catalog, PLMModel.TYPE_RAWMATERIAL, namespaceService));
 			assertEquals(new HashSet<>(Arrays.asList(new QName[] { ContentModel.PROP_NAME, QName.createQName("bcpg:compoList", namespaceService) })),
-					entityCatalogService.getAuditedFields(catalog, namespaceService));
+					((EntityCatalogServiceImpl)entityCatalogService).getAuditedFields(catalog, namespaceService));
 		} catch (JSONException e) {
 			logger.error("Unable to load catalog", e);
 		}
