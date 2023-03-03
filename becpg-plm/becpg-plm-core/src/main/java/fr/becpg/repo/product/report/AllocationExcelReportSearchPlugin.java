@@ -172,7 +172,8 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 							item.putAll(productItems);
 						}
 	
-						item.put("qty", (100 * entry.getValue()) / (totalQty != 0d ? totalQty : 1d));
+						item.put("qty", entry.getValue());
+						item.put("qtyPerc", (100 * entry.getValue()) / (totalQty != 0d ? totalQty : 1d));
 						item.put("qtyForProduct",
 								(100 * entry.getValue()) / FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT));
 	
