@@ -862,22 +862,22 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		if (textFormaters.containsKey(lblComponent.getNodeRef())) {
 			TextFormatRule textFormatRule = textFormaters.get(lblComponent.getNodeRef());
 			if (textFormatRule.matchLocale(I18NUtil.getLocale())) {
-				return applyRoundingMode(new MessageFormat(textFormatRule.getTextFormat(), I18NUtil.getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(textFormatRule.getTextFormat(), getContentLocale()), qty);
 			}
 		}
 
 		if (lblComponent instanceof CompositeLabeling) {
 			if (((CompositeLabeling) lblComponent).isGroup()) {
-				return applyRoundingMode(new MessageFormat(groupDefaultFormat, I18NUtil.getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(groupDefaultFormat, getContentLocale()), qty);
 			}
 			if (DeclarationType.Detail.equals(((CompositeLabeling) lblComponent).getDeclarationType())) {
 				if ((lblComponent instanceof IngItem) && !((CompositeLabeling) lblComponent).getIngList().isEmpty()) {
-					return applyRoundingMode(new MessageFormat(subIngsDefaultFormat, I18NUtil.getContentLocale()), qty);
+					return applyRoundingMode(new MessageFormat(subIngsDefaultFormat, getContentLocale()), qty);
 				}
-				return applyRoundingMode(new MessageFormat(detailsDefaultFormat, I18NUtil.getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(detailsDefaultFormat, getContentLocale()), qty);
 			}
 
-			return applyRoundingMode(new MessageFormat(ingDefaultFormat, I18NUtil.getContentLocale()), qty);
+			return applyRoundingMode(new MessageFormat(ingDefaultFormat, getContentLocale()), qty);
 		} else if (lblComponent instanceof IngTypeItem) {
 
 			boolean doNotDetailsDeclType = isDoNotDetails(
@@ -886,12 +886,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			if (doNotDetailsDeclType || (((((IngTypeItem) lblComponent)).getDecThreshold() != null)
 					&& ((((IngTypeItem) lblComponent)).getQty(ingsLabelingWithYield) <= ((((IngTypeItem) lblComponent)).getDecThreshold() / 100)))) {
-				return applyRoundingMode(new MessageFormat(ingTypeDecThresholdFormat, I18NUtil.getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(ingTypeDecThresholdFormat, getContentLocale()), qty);
 			}
-			return applyRoundingMode(new MessageFormat(ingTypeDefaultFormat, I18NUtil.getContentLocale()), qty);
+			return applyRoundingMode(new MessageFormat(ingTypeDefaultFormat, getContentLocale()), qty);
 		}
 
-		return applyRoundingMode(new MessageFormat(ingDefaultFormat, I18NUtil.getContentLocale()), qty);
+		return applyRoundingMode(new MessageFormat(ingDefaultFormat, getContentLocale()), qty);
 	}
 
 	private MessageFormat applyRoundingMode(MessageFormat messageFormat, Double qty) {
@@ -1052,7 +1052,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		DecimalFormat decimalFormat = null;
 		RoundingMode roundingMode = defaultRoundingMode;
 
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols(I18NUtil.getContentLocale());
+		DecimalFormatSymbols symbols = new DecimalFormatSymbols(getContentLocale());
 		if ((lblComponent != null)) {
 			ShowRule selectedRule = null;
 
@@ -1504,7 +1504,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				+ ((styleCss == null) || (styleCss).isBlank() ? "border: solid 1px; border-collapse:collapse" : styleCss) + "\" rules=\"none\">");
 
 		if ((htmlTableHeaderFormat != null) && !htmlTableHeaderFormat.isBlank()) {
-			ret.append(new MessageFormat(htmlTableHeaderFormat, I18NUtil.getContentLocale())
+			ret.append(new MessageFormat(htmlTableHeaderFormat, getContentLocale())
 					.format(new Object[] { I18NUtil.getMessage("bcpg_bcpgmodel.association.bcpg_ingListIng.title"),
 							I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_ingListQtyPerc.title"),
 							I18NUtil.getMessage("bcpg_bcpgmodel.association.bcpg_ingListGeoOrigin.title"),
@@ -1573,11 +1573,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								otherGeoOriginsLabel }));
 					}
 					if (qtyPerc != null) {
-						total = total.add(roundeedValue(kv.getKey(), qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
+						total = total.add(roundeedValue(kv.getKey(), qtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale())));
 					}
 					if (qtyPercWithYield != null) {
 						totalWithYield = totalWithYield.add(
-								roundeedValue(kv.getKey(), qtyPercWithYield, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
+								roundeedValue(kv.getKey(), qtyPercWithYield, new MessageFormat(htmlTableRowFormat, getContentLocale())));
 
 					}
 
@@ -1646,11 +1646,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 							if (qtyPerc != null) {
 								total = total
-										.add(roundeedValue(component, qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
+										.add(roundeedValue(component, qtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale())));
 							}
 							if (qtyPercWithYield != null) {
 								totalWithYield = totalWithYield.add(roundeedValue(component, qtyPercWithYield,
-										new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())));
+										new MessageFormat(htmlTableRowFormat, getContentLocale())));
 
 							}
 						}
@@ -1670,7 +1670,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			total = total.add(diffValue);
 
-			firstQtyPerc = roundeedValue(firstLabelingComponent, firstQtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()))
+			firstQtyPerc = roundeedValue(firstLabelingComponent, firstQtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale()))
 					.add(diffValue).doubleValue();
 
 		}
@@ -1682,7 +1682,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		ret.append(tableContent);
 
 		if (showTotal && (total.doubleValue() > 0)) {
-			ret.append(applyTotalRoundingMode(new MessageFormat(htmlTableFooterFormat, I18NUtil.getContentLocale())).format(new Object[] {
+			ret.append(applyTotalRoundingMode(new MessageFormat(htmlTableFooterFormat, getContentLocale())).format(new Object[] {
 					I18NUtil.getMessage("entity.datalist.item.details.total"), total.doubleValue(), "", "", totalWithYield.doubleValue() }));
 		}
 
@@ -1711,7 +1711,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private MessageFormat getHtmlTableRowFormat(LabelingComponent component, Double qtyPerc, Double qtyPercWithYield, boolean isForce100Perc) {
 
-		MessageFormat messageFormat = new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale());
+		MessageFormat messageFormat = new MessageFormat(htmlTableRowFormat, getContentLocale());
 
 		if (messageFormat.getFormats() != null) {
 			boolean isFirst = true;
@@ -1822,7 +1822,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 							total = total.add(BigDecimal.valueOf(tmp.qtyPerc));
 						}
 
-						ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()), tmp.qtyPerc)
+						ret.append(applyRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale()), tmp.qtyPerc)
 								.format(new Object[] { indent(tmp.label, tmp.level), tmp.qtyPerc, tmp.geoOriginsLabel, tmp.bioOriginsLabel }));
 					}
 				}
@@ -1832,10 +1832,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 					total = BigDecimal.valueOf(1d);
 
-					Double qtyPerc = roundeedValue(null, flatList.get(0).qtyPerc, new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale()))
+					Double qtyPerc = roundeedValue(null, flatList.get(0).qtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale()))
 							.add(diffValue).doubleValue();
 
-					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())).format(
+					tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale())).format(
 							new Object[] { flatList.get(0).label, qtyPerc, flatList.get(0).geoOriginsLabel, flatList.get(0).bioOriginsLabel }));
 
 				}
@@ -1843,7 +1843,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			}
 
 			if (showTotal && (total.doubleValue() > 0)) {
-				tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, I18NUtil.getContentLocale())).format(
+				tableContent.append(applyTotalRoundingMode(new MessageFormat(htmlTableRowFormat, getContentLocale())).format(
 						new Object[] { "<b>" + I18NUtil.getMessage("entity.datalist.item.details.total") + "</b>", total.doubleValue(), "" }));
 			}
 
@@ -1955,7 +1955,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 	private BigDecimal roundeedValue(Double qty, DecimalFormat decimalFormat, RoundingMode roundingMode) {
 		if (decimalFormat == null) {
-			DecimalFormatSymbols symbols = new DecimalFormatSymbols(I18NUtil.getContentLocale());
+			DecimalFormatSymbols symbols = new DecimalFormatSymbols(getContentLocale());
 			decimalFormat = new DecimalFormat(defaultPercFormat, symbols);
 		}
 
@@ -2121,11 +2121,20 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private String getLocaleSeparator(String separator) {
-		if ("ar".equalsIgnoreCase((I18NUtil.getLocale().getLanguage()))) {
+		if ("ar".equalsIgnoreCase((I18NUtil.getContentLocale().getLanguage()))) {
 			return separator.replace(",", "،");
 		}
 		return separator;
 	}
+	
+	private Locale getContentLocale() {
+		if ("ar".equalsIgnoreCase((I18NUtil.getContentLocale().getLanguage()))) {
+			return Locale.US;
+		}
+		return I18NUtil.getContentLocale();
+	}
+	
+	
 
 	Double totalPrecision = 1 / Math.pow(10, (double) maxPrecision + (double) 2);
 
