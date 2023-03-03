@@ -101,7 +101,7 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 				} else if ((ret.getRoundedValue() >= 10) && (ret.getRoundedValue() <= 40)) {
 					ret.setTolerances(20d, true);
 				} else {
-					ret.setTolerances(2d, true);
+					ret.setTolerances(2d, false);
 				}
 			} else if (nutrientTypeCode.equals(NutrientCode.Fat)) {
 				if (ret.getRoundedValue() > 40) {
