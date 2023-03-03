@@ -140,6 +140,9 @@ public class NutrientRoundingRulesTestIT {
 		
 		assertEquals(1.60d,RegulationFormulationHelper.tolerances(1.23d, NutrientCode.Salt, Locale.FRENCH, null).getFirst(),0d);
 		assertEquals(0.78d,RegulationFormulationHelper.tolerances(1.23d, NutrientCode.Salt, Locale.FRENCH, null).getSecond(),0d);
+		
+		assertEquals(2.9d,RegulationFormulationHelper.tolerances(0.9d, NutrientCode.Sugar, Locale.FRENCH, null).getFirst(),0d);
+		assertEquals(0d,RegulationFormulationHelper.tolerances(0.9d, NutrientCode.Sugar, Locale.FRENCH, null).getSecond(),0d);
 	}
 
 	@Test
