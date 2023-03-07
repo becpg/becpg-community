@@ -151,8 +151,6 @@ public class HttpEntityProviderCallback implements EntityProviderCallBack {
 		try {
 			String url = remoteServer + "/data?nodeRef=" + origNodeRef.toString();
 			logger.debug("Try getting data  from : " + url);
-			logger.debug("User : " + remoteUser);
-			logger.debug("Password : " + remotePwd);
 
 			HttpGet entityUrl = new HttpGet(url);
 
