@@ -319,7 +319,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			Double parentLossRatio, SimpleListQtyProvider qtyProvider, Map<NodeRef, List<NodeRef>> mandatoryCharacts, VariantData variant,
 			boolean isFormulatedProduct) {
 
-		Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
+		Map<NodeRef, Double> totalQtiesInKg = new HashMap<>();
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
 			CompoListDataItem compoListDataItem = component.getData();
 			if (compoListDataItem != null) {
@@ -345,7 +345,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 								qtyProvider.getNetWeight());
 
 						if (qties.isNotNull()) {
-							visitPart(formulatedProduct, componentProduct, simpleListDataList, qties, mandatoryCharacts, totalQtiesValue,
+							visitPart(formulatedProduct, componentProduct, simpleListDataList, qties, mandatoryCharacts, totalQtiesInKg,
 									FormulationHelper.getQtyInKg(compoListDataItem), variant);
 						}
 
@@ -355,7 +355,13 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 		// Case Generic MP
 		if (isFormulatedProduct && formulatedProduct.isGeneric()) {
-			formulateGenericRawMaterial(simpleListDataList, totalQtiesValue, qtyProvider.getNetQty());
+			
+			Double netQtyForGeneric = qtyProvider.getNetQty();
+			if (ProductUnit.P.equals(formulatedProduct.getUnit())) {
+				netQtyForGeneric = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+			}
+			
+			formulateGenericRawMaterial(simpleListDataList, totalQtiesInKg, netQtyForGeneric);
 		}
 	}
 
