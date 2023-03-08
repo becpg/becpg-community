@@ -668,7 +668,13 @@ public class ImportEntityJsonVisitor {
 						}
 
 						if (key.contains("_")) {
-							Locale locale = MLTextHelper.parseLocale(key.split("_")[1]);
+							String[] keyParts = key.split("_");
+							String localKey = keyParts.length > 0 ? keyParts[1] : "";
+							if (keyParts.length > 1) {
+							    localKey += "_" + keyParts[2];
+							}
+							Locale locale = MLTextHelper.parseLocale(localKey);
+							
 							if (MLTextHelper.isSupportedLocale(locale)) {
 								if (mlValue == null) {
 									mlValue = new MLText();
