@@ -18,6 +18,8 @@
 package fr.becpg.repo.product.formulation;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -247,8 +249,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 							((VariantAwareDataItem) sl).setValue(null, VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
 						}
 					}
-					
-					if(sl instanceof SourceableDataItem) {
+
+					if (sl instanceof SourceableDataItem) {
 						((SourceableDataItem) sl).getSources().clear();
 					}
 
@@ -260,7 +262,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			});
 		}
 	}
-
 
 	/**
 	 * <p>formulateSimpleList.</p>
@@ -355,12 +356,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 		// Case Generic MP
 		if (isFormulatedProduct && formulatedProduct.isGeneric()) {
-			
+
 			Double netQtyForGeneric = qtyProvider.getNetQty();
 			if (ProductUnit.P.equals(formulatedProduct.getUnit())) {
 				netQtyForGeneric = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 			}
-			
+
 			formulateGenericRawMaterial(simpleListDataList, totalQtiesInKg, netQtyForGeneric);
 		}
 	}
@@ -385,9 +386,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(packagingListDataItem.getProduct());
 
 					Double qty = qtyProvider.getQty(packagingListDataItem, partProduct);
-					
-					FormulatedQties qties = new FormulatedQties(qty, 
-							qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight());
+
+					FormulatedQties qties = new FormulatedQties(qty, qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight());
 
 					visitPart(formulatedProduct, partProduct, simpleListDataList, qties, mandatoryCharacts2, null, null, variant);
 				}
@@ -450,18 +450,21 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				if ((netQty != null) && (totalQty != null) && (totalQty != 0d)) {
 
 					if ((newSimpleListDataItem.getValue() != null)) {
-						newSimpleListDataItem.setValue((newSimpleListDataItem.getValue() * netQty) / totalQty);
+						newSimpleListDataItem.setValue(BigDecimal.valueOf(newSimpleListDataItem.getValue())
+								.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64)).doubleValue());
 					}
 
 					if (newSimpleListDataItem instanceof ForecastValueDataItem) {
 						if (((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue() != null) {
-							((ForecastValueDataItem) newSimpleListDataItem)
-									.setPreviousValue((((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue() * netQty) / totalQty);
+							((ForecastValueDataItem) newSimpleListDataItem).setPreviousValue(BigDecimal
+									.valueOf(((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue())
+									.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64)).doubleValue());
 						}
 
 						if (((ForecastValueDataItem) newSimpleListDataItem).getFutureValue() != null) {
-							((ForecastValueDataItem) newSimpleListDataItem)
-									.setFutureValue((((ForecastValueDataItem) newSimpleListDataItem).getFutureValue() * netQty) / totalQty);
+							((ForecastValueDataItem) newSimpleListDataItem).setFutureValue(BigDecimal
+									.valueOf(((ForecastValueDataItem) newSimpleListDataItem).getFutureValue())
+									.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64)).doubleValue());
 						}
 
 					}
@@ -552,13 +555,14 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 									forceWeight = true;
 								}
 							} else if (newSimpleListDataItem instanceof NutListDataItem) {
-								if ((partProduct.getUnit() != null) && partProduct.getUnit().isVolume() && (partProduct.getServingSizeUnit() != null) && partProduct.getServingSizeUnit().isWeight()) {
+								if ((partProduct.getUnit() != null) && partProduct.getUnit().isVolume() && (partProduct.getServingSizeUnit() != null)
+										&& partProduct.getServingSizeUnit().isWeight()) {
 									if ((formulatedProduct.getServingSizeUnit() != null) && formulatedProduct.getServingSizeUnit().isWeight()) {
 										forceWeight = true;
-									} 
+									}
 								}
 							}
-							
+
 							// calculate charact from qty or vol ?
 							Double qtyUsed = qties.getQtyUsed(formulateInVol);
 							Double netQty = qties.getNetQty(forceWeight);
