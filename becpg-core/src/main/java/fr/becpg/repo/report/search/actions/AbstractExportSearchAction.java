@@ -4,6 +4,7 @@ package fr.becpg.repo.report.search.actions;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.action.ParameterDefinitionImpl;
@@ -27,6 +28,7 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.cmr.view.ExporterCrawlerParameters;
 import org.alfresco.service.cmr.view.ExporterService;
 import org.alfresco.service.cmr.view.Location;
@@ -36,9 +38,11 @@ import org.alfresco.util.TempFileProvider;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.helpers.ReportUtils;
 import fr.becpg.report.client.ReportFormat;
 
@@ -71,6 +75,11 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 	protected ContentService contentService;
 	protected MimetypeService mimetypeService;
 	protected EntityActivityService entityActivityService;
+	private PersonService personService;
+	
+	public void setPersonService(PersonService personService) {
+		this.personService = personService;
+	}
 
 	/**
 	 * <p>
@@ -185,6 +194,7 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 
 		NodeRef templateNodeRef = (NodeRef) action.getParameterValue(PARAM_TPL_NODEREF);
 		String formatString = (String) action.getParameterValue(PARAM_FORMAT);
+		
 
 		ParameterCheck.mandatory(PARAM_TPL_NODEREF, templateNodeRef);
 		ParameterCheck.mandatory(PARAM_FORMAT, formatString);
@@ -194,7 +204,7 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 		final DownloadRequest downloadRequest = downloadStorage.getDownloadRequest(actionedUponNodeRef);
 
 		AuthenticationUtil.runAs(() -> {
-
+			
 			ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
 
 			Location exportFrom = new Location(downloadRequest.getRequetedNodeRefs());
@@ -214,8 +224,30 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 
 			final File tempFile = TempFileProvider.createTempFile(FilenameUtils.removeExtension(tplName), extension);
 			handler.setTempFile(tempFile);
+			
+			Locale currentLocal = I18NUtil.getLocale();
+			Locale currentContentLocal = I18NUtil.getContentLocale();
 			try {
+				
+				
+				String userId = downloadRequest.getOwner();
+				
+				if ((userId != null) && !userId.isEmpty() && !AuthenticationUtil.getGuestUserName().equals(userId)  && personService.personExists(userId)) {
+					NodeRef personNodeRef = personService.getPerson(userId);
+					if ((personNodeRef != null) && nodeService.exists(personNodeRef)) {
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Set content locale:" + MLTextHelper.getUserContentLocale(nodeService, personNodeRef));
+						}
+
+						I18NUtil.setLocale(MLTextHelper.getUserLocale(nodeService,personNodeRef));
+						I18NUtil.setContentLocale(MLTextHelper.getUserContentLocale(nodeService,personNodeRef));
+					}
+				}
+				
 				exporterService.exportView(handler, crawlerParameters, null);
+				
+				
 				fileCreationComplete(actionedUponNodeRef, extension, tempFile, handler);
 				entityActivityService.postExportActivity(null,
 						(QName) nodeService.getProperty(templateNodeRef, ReportModel.PROP_REPORT_TPL_CLASS_NAME), FilenameUtils.removeExtension(tplName) + "." + extension.toLowerCase());
@@ -223,6 +255,9 @@ public abstract class AbstractExportSearchAction extends ActionExecuterAbstractB
 			} catch (DownloadCancelledException ex) {
 				downloadCancelled(actionedUponNodeRef, handler);
 			} finally {
+				I18NUtil.setLocale(currentLocal);
+				I18NUtil.setContentLocale(currentContentLocal);
+				
 				if (!tempFile.delete()) {
 					logger.error("Cannot delete dir: " + tempFile.getName());
 				}
