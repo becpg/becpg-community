@@ -2440,10 +2440,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			if ((placeOfActivityProps != null) && !placeOfActivityProps.isEmpty()) {
 				for (String placeOfActivityProp : placeOfActivityProps) {
-					labelingComponent.getGeoOriginsByPlaceOfActivity()
-							.computeIfAbsent(PlaceOfActivityTypeCode.valueOf(placeOfActivityProp), (a) -> new HashSet<>()).add(geo);
-					added = true;
-
+					if(!placeOfActivityProp.isBlank()) {
+						labelingComponent.getGeoOriginsByPlaceOfActivity()
+								.computeIfAbsent(PlaceOfActivityTypeCode.valueOf(placeOfActivityProp), (a) -> new HashSet<>()).add(geo);
+						added = true;
+					}
 				}
 
 			} else {
