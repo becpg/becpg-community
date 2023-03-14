@@ -558,6 +558,11 @@ if (beCPG.module.EntityDataGridRenderers) {
       			qty = data.value;
       			unit = " %";
       		}
+      		
+      		if(oRecord.getData("itemType") == "total"){
+				  return '<span class="total">'+qty.toLocaleString( beCPG.util.getJSLocale() ) + unit+"</span>";
+			 }
+      		
       		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,4).toLocaleString( beCPG.util.getJSLocale() ) + unit);
       	}      
       	return "";
