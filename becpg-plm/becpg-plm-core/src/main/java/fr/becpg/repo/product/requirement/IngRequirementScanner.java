@@ -95,7 +95,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 						
 						Double qtyPerc = null;
 						
-						List<NodeRef> ingredientsConcerned = new ArrayList<>();
+						Set<NodeRef> ingredientsConcerned = new HashSet<>();
 						
 						for (IngListDataItem ingListDataItem : productData.getIngList()) {
 							
@@ -131,7 +131,7 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 										NodeRef rclCharact = null;
 										
 										if (ingredientsConcerned.size() == 1) {
-											rclCharact = ingredientsConcerned.get(0);
+											rclCharact = ingredientsConcerned.iterator().next();
 										}
 										
 										// req not respecte
