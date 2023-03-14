@@ -666,7 +666,13 @@ public class ImportEntityJsonVisitor {
 						}
 
 						if (key.contains("_")) {
-							Locale locale = MLTextHelper.parseLocale(key.split("_")[1]);
+							String[] keyParts = key.split("_");
+							String localKey = keyParts.length > 0 ? keyParts[1] : "";
+							if (keyParts.length > 2) {
+							    localKey += "_" + keyParts[2];
+							}
+							Locale locale = MLTextHelper.parseLocale(localKey);
+							
 							if (MLTextHelper.isSupportedLocale(locale)) {
 								if (mlValue == null) {
 									mlValue = new MLText();
@@ -693,7 +699,7 @@ public class ImportEntityJsonVisitor {
 
 								String content = value.substring(1, value.length() - 1);
 								
-								String[] contents = content.split("\",\"");
+								String[] contents = content.split(",");
 
 								for (String cont : contents) {
 									if (cont.contains(":")) {
@@ -716,7 +722,12 @@ public class ImportEntityJsonVisitor {
 
 								nodeProps.put(propQName, mlText);
 							} else {
-								nodeProps.put(propQName, value);
+								if (mlValue != null) {
+									mlValue.addValue(MLTextHelper.getNearestLocale(Locale.getDefault()), value);
+									nodeProps.put(propQName, mlValue);
+								} else {
+									nodeProps.put(propQName, value);
+								}
 							}
 						}
 
