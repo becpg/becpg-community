@@ -868,9 +868,12 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			userAccount.setNotify(notify);
 			userAccount.getAuthorities().add(SystemGroup.ExternalUser.toString());
 
-			if (extraProps != null) {
-				userAccount.getExtraProps().putAll(extraProps);
+			if(extraProps == null) {
+				extraProps = new HashMap<>();
 			}
+			extraProps.put(	ContentModel.PROP_EMAIL_FEED_DISABLED, true);
+			
+			userAccount.getExtraProps().putAll(extraProps);
 
 			return beCPGUserAccountService.getOrCreateUser(userAccount);
 
