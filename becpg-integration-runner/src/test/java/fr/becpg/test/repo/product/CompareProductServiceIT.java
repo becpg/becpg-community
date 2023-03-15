@@ -3,7 +3,9 @@
  */
 package fr.becpg.test.repo.product;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,15 +13,19 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.comparison.CompareResultDataItem;
 import fr.becpg.repo.entity.comparison.StructCompareOperator;
 import fr.becpg.repo.entity.comparison.StructCompareResultDataItem;
+import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.ProductAttributeExtractorPlugin;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
@@ -41,14 +47,131 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 
 	@Autowired
 	private ProductAttributeExtractorPlugin nameExtractor;
-
+	
+	@Autowired
+	private EntityVersionService entityVersionService;
+	
+	private final QName ASSOC_PRODUCT_GEO_ORIGIN = QName.createQName(BeCPGModel.BECPG_URI, "productGeoOrigin");
+	
+	/**
+	 * Test Raw Material comparison.
+	 */
+	@Test
+	public void testRawMaterialComparison() {
+		inWriteTx(() -> {
+			List<NodeRef> geoOrigins = new ArrayList<>();
+			List<NodeRef> nodeRefs = new ArrayList<>();
+			List<CompareResultDataItem> compareResult = new ArrayList<>();
+			Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
+			
+			/*-- Retrieve Raw Material 1 --*/
+			RawMaterialData rawMaterial1 = (RawMaterialData) alfrescoRepository.findOne(rawMaterial1NodeRef);
+			
+			/*-- Characteristics --*/
+			Map<QName, Serializable> properties = new HashMap<>();
+			
+			/*-- Geo origins --*/
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "geoOrigin1");
+			NodeRef geoOrigin1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
+			nodeService.setProperty(geoOrigin1, PLMModel.PROP_GEO_ORIGIN_ISOCODE, "FR");
+			geoOrigins.add(geoOrigin1);
+			
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "geoOrigin2");
+			NodeRef geoOrigin2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
+			nodeService.setProperty(geoOrigin2, PLMModel.PROP_GEO_ORIGIN_ISOCODE, "GB");
+			geoOrigins.add(geoOrigin2);
+			
+			rawMaterial1.setGeoOrigins(geoOrigins);
+			
+			alfrescoRepository.save(rawMaterial1);
+			
+			/*-- Create initial version --*/
+			entityVersionService.createInitialVersion(rawMaterial1NodeRef);
+			
+			/*-- Create second version (1.0) --*/
+			NodeRef secondVersionNodeRef = entityVersionService.createVersion(rawMaterial1NodeRef, null);
+			
+			/*-- Geo origins --*/
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "geoOrigin3");
+			NodeRef geoOrigin3 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
+			nodeService.setProperty(geoOrigin3, PLMModel.PROP_GEO_ORIGIN_ISOCODE, "SP");
+			geoOrigins.add(geoOrigin3);
+			rawMaterial1.setGeoOrigins(geoOrigins);
+			
+			alfrescoRepository.save(rawMaterial1);
+		
+			/*-- Test assoc comparison --*/
+			
+			/*-- Comparison direction : rawMaterial1 - secondVersion --*/
+			nodeRefs.add(secondVersionNodeRef);
+			compareEntityService.compare(rawMaterial1NodeRef, nodeRefs, compareResult, structCompareResults);
+			
+			assertTrue(checkCompareRow(compareResult, "", "", ASSOC_PRODUCT_GEO_ORIGIN.toString(), 
+					"[geoOrigin1, geoOrigin2, geoOrigin3, geoOrigin1, geoOrigin2]"));
+			CompareResultDataItem cmpResGeoOrigin = compareResult.stream()
+				.filter(c -> c.getProperty().toString().equals(ASSOC_PRODUCT_GEO_ORIGIN.toString()))
+				.findFirst().orElse(null);
+			assertTrue((cmpResGeoOrigin != null) && cmpResGeoOrigin.isDifferent());
+			
+			/*-- Comparison direction : secondVersion - rawMaterial1 --*/
+			nodeRefs.clear();
+			nodeRefs.add(rawMaterial1NodeRef);
+			
+			compareResult.clear();
+			structCompareResults.clear();
+			compareEntityService.compare(secondVersionNodeRef, nodeRefs, compareResult, structCompareResults);
+			
+			assertTrue(checkCompareRow(compareResult, "", "", ASSOC_PRODUCT_GEO_ORIGIN.toString(), 
+					"[geoOrigin1, geoOrigin2, geoOrigin1, geoOrigin2, geoOrigin3]"));
+			cmpResGeoOrigin = compareResult.stream()
+				.filter(c -> c.getProperty().toString().equals(ASSOC_PRODUCT_GEO_ORIGIN.toString()))
+				.findFirst().orElse(null);
+			assertTrue((cmpResGeoOrigin != null) && cmpResGeoOrigin.isDifferent());
+			
+			/*-- Remove geoOrigin3 in rawMaterial1 and check if reverse list gets sorted --*/
+			geoOrigins.remove(geoOrigins.size() - 1);
+			Collections.reverse(geoOrigins);
+			rawMaterial1.setGeoOrigins(geoOrigins);
+			
+			alfrescoRepository.save(rawMaterial1);
+			
+			compareResult.clear();
+			structCompareResults.clear();
+			compareEntityService.compare(secondVersionNodeRef, nodeRefs, compareResult, structCompareResults);
+			
+			assertTrue(checkCompareRow(compareResult, "", "", ASSOC_PRODUCT_GEO_ORIGIN.toString(), 
+					"[geoOrigin1, geoOrigin2, geoOrigin1, geoOrigin2]"));
+			
+			/*-- Put geoOrigin2 twice to check duplicates removal --*/
+			NodeRef geoOrigin2NodeRef = geoOrigins.get(geoOrigins.size() - 1);
+			geoOrigins.add(geoOrigin2NodeRef);
+			
+			alfrescoRepository.save(rawMaterial1);
+			
+			compareResult.clear();
+			structCompareResults.clear();
+			compareEntityService.compare(secondVersionNodeRef, nodeRefs, compareResult, structCompareResults);
+			
+			assertTrue(checkCompareRow(compareResult, "", "", ASSOC_PRODUCT_GEO_ORIGIN.toString(), 
+					"[geoOrigin1, geoOrigin2, geoOrigin1, geoOrigin2]"));
+			
+			return null;
+		});
+	}
+	
 	/**
 	 * Test comparison.
 	 */
 	@Test
 	public void testComparison() {
 
-		final RawMaterialData allergenRawMateria = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final RawMaterialData allergenRawMateria = inWriteTx(() -> {
 
 			logger.debug("createRawMaterial 1");
 
@@ -145,9 +268,9 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 
 			return allergenRawMaterial;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inReadTx(() -> {
 
 			List<NodeRef> productsNodeRef = new ArrayList<>();
 			productsNodeRef.add(fp2NodeRef);
@@ -192,7 +315,7 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	/**
@@ -206,7 +329,7 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 
 			nameExtractor.setProductNameFormat("{cm:name}");
 
-			fp1NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			fp1NodeRef = inWriteTx(() -> {
 
 				logger.debug("createRawMaterial 1");
 
@@ -228,9 +351,9 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 
 				return alfrescoRepository.create(getTestFolderNodeRef(), fp1).getNodeRef();
 
-			}, false, true);
+			});
 
-			fp2NodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			fp2NodeRef = inWriteTx(() -> {
 
 				logger.debug("createRawMaterial 1");
 
@@ -261,11 +384,11 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 
 				return alfrescoRepository.create(getTestFolderNodeRef(), fp2).getNodeRef();
 
-			}, false, true);
+			});
 
 			waitForSolr();
 
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inReadTx(() -> {
 
 				Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
 				compareEntityService.compareStructDatalist(fp1NodeRef, fp2NodeRef, PLMModel.TYPE_COMPOLIST, structCompareResults);
@@ -316,7 +439,7 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 						"{{http://www.alfresco.org/model/system/1.0}locale=fr, {http://www.bcpg.fr/model/becpg/1.0}compoListQty=3, {http://www.bcpg.fr/model/becpg/1.0}compoListUnit=kg, {http://www.bcpg.fr/model/becpg/1.0}compoListQtySubFormula=0, {http://www.bcpg.fr/model/becpg/1.0}compoListDeclType=Détailler, {http://www.bcpg.fr/model/becpg/1.0}compoListLossPerc=0, {http://www.bcpg.fr/model/becpg/1.0}compoListProduct=SF 2, {http://www.bcpg.fr/model/becpg/1.0}depthLevel=1}"));
 				return null;
 
-			}, false, true);
+			});
 
 		} finally {
 			nameExtractor.setProductNameFormat(previousNameFormat);

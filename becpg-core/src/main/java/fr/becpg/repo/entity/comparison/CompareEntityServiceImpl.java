@@ -857,12 +857,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				boolean isDifferent = false;
 				if (associations2Sorted.containsKey(propertyQName)) {
 					nodeRefs2 = associations2Sorted.get(propertyQName);
-
-					for (NodeRef nodeRef : nodeRefs1) {
-						if (!nodeRefs2.contains(nodeRef)) {
-							isDifferent = true;
-						}
-					}
+					isDifferent = !nodeRefs2.containsAll(nodeRefs1) || (nodeRefs1.size() != nodeRefs2.size());
 				} else {
 					isDifferent = true;
 				}
