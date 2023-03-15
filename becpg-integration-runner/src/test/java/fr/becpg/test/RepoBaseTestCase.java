@@ -222,20 +222,19 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		boolean shouldInit = shouldInit();
 
 		if (shouldInit) {
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			inWriteTx(() -> {
 
 				// Init repo for test
 				initRepoVisitorService.run(repositoryHelper.getCompanyHome());
 
 				return false;
 
-			}, false, true);
+			});
 
 		}
 
-		systemFolderNodeRef = transactionService.getRetryingTransactionHelper()
-				.doInTransaction(() -> repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
-						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)), false, true);
+		systemFolderNodeRef = inWriteTx(() -> repoService.getOrCreateFolderByPath(repositoryHelper.getCompanyHome(), RepoConsts.PATH_SYSTEM,
+						TranslateHelper.getTranslatedPath(RepoConsts.PATH_SYSTEM)));
 
 		doInitRepo(shouldInit);
 
@@ -246,7 +245,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	public void setUp() throws Exception {
 		super.setUp();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			List<org.alfresco.service.cmr.rule.Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
 			for (org.alfresco.service.cmr.rule.Rule rule : rules) {
 				if (!rule.getRuleDisabled()) {
@@ -256,9 +255,9 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 				}
 			}
 			return null;
-		}, false, true);
+		});
 
-		testFolders.put(getTestFolderName(), transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		testFolders.put(getTestFolderName(), inWriteTx(() -> {
 			// As system user
 			AuthenticationUtil.setFullyAuthenticatedUser(AuthenticationUtil.getAdminUserName());
 
@@ -289,7 +288,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 					.getNodeRef();
 			return folderNodeRef;
 
-		}, false, true));
+		}));
 	}
 
 	
@@ -303,7 +302,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 		Date startTime = new Date();
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			NodeRef nodeRef = nodeService
 					.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT)
@@ -313,9 +312,9 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 			nodeService.setProperty(nodeRef, BeCPGModel.PROP_IS_MANUAL_LISTITEM, true);
 			return null;
 
-		}, false, true);
+		});
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inReadTx(() -> {
 			int j = 0;
 			while ((BeCPGQueryBuilder.createQuery().andPropQuery(ContentModel.PROP_NAME, "" + startTime.getTime() + "*")
 					.andPropEquals(BeCPGModel.PROP_IS_MANUAL_LISTITEM, "true").inParent(getTestFolderNodeRef()).ftsLanguage().singleValue() == null)
@@ -328,7 +327,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 	
