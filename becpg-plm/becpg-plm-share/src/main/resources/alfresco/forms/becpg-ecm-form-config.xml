@@ -53,8 +53,12 @@
 						</control>		
 					</field>
 					<field id="ecm:propertiesToCopy">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">components/autocomplete/fields?itemType=ecm:changeOrder</control-param>
+							<control-param name="local">true</control-param>
+							<control-param name="saveTitle">false</control-param>
+							<control-param name="multiple">true</control-param>
+							<control-param name="forceDisplay">true</control-param>
 						</control>
 					</field>					
 				</appearance>
@@ -107,8 +111,12 @@
 						</control>		
 					</field>	
 					<field id="ecm:propertiesToCopy">
-						<control template="/org/alfresco/components/form/controls/textarea.ftl">
-							<control-param name="rows">3</control-param>
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">components/autocomplete/fields?itemType=ecm:changeOrder</control-param>
+							<control-param name="local">true</control-param>
+							<control-param name="saveTitle">false</control-param>
+							<control-param name="multiple">true</control-param>
+							<control-param name="forceDisplay">true</control-param>
 						</control>
 					</field>			
 				</appearance>
