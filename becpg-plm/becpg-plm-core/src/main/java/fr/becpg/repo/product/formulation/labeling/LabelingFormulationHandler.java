@@ -163,7 +163,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	/**
 	 * <p>
 	 * Setter for the field <code>formulaService</code>.
-	 * </p>
 	 *
 	 * @param formulaService
 	 *            a {@link fr.becpg.repo.formulation.spel.SpelFormulaService}
@@ -1774,7 +1773,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 								Double qtyTotalWithYield = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 								if ((qtyTotalWithYield != null) && (qtyTotalWithYield != 0d)) {
-									computedRatioWithYield = (qty / (qtyTotalWithYield * LabelingFormulaContext.PRECISION_FACTOR)) * ratioWithYield;
+									computedRatioWithYield = (qty / (qtyTotalWithYield * LabelingFormulaContext.PRECISION_FACTOR));
 								}
 
 								if (logger.isTraceEnabled()) {
