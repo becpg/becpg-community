@@ -156,6 +156,7 @@
 	 	<property name="namespaceService" ref="namespaceService" />
 	 	<property name="entityActivityExtractorService" ref="entityActivityExtractorService" />
 	 	<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
+	 	<property name="defaultExtractor" value="false"/>
 	</bean>
 
 
