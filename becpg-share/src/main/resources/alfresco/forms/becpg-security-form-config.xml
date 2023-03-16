@@ -55,7 +55,7 @@
 				<appearance>
 					<field id="sec:propName">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">components/security/autocomplete</control-param>
+							<control-param name="ds">components/autocomplete/fields?aclMode=true</control-param>
 							<control-param name="local">true</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
@@ -77,7 +77,7 @@
 				<appearance>
 					<field id="sec:propName">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">components/security/autocomplete</control-param>
+							<control-param name="ds">components/autocomplete/fields?aclMode=true</control-param>
 							<control-param name="local">true</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
