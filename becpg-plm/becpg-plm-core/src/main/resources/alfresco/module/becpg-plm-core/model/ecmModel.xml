@@ -95,7 +95,7 @@
 				</property>
 				<property name="ecm:propertiesToCopy">
 					<type>d:text</type>
-					<multiple>false</multiple>
+					<multiple>true</multiple>
 					<index enabled="false"/>
 				</property>
 			</properties>

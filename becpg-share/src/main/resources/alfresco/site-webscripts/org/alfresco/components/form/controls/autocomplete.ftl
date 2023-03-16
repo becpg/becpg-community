@@ -1,6 +1,5 @@
 <#if field.control.params.ds?exists><#assign ds=field.control.params.ds><#else><#assign ds=''></#if>
 <#if field.control.params.multiple?exists><#assign multiple=field.control.params.multiple?matches('true')><#else><#assign multiple=false></#if>
-<#if field.control.params.forceDisplay?exists><#assign forceDisplay=field.control.params.forceDisplay?matches('true')><#else><#assign forceDisplay=false></#if>
 <#if field.control.params.style?exists><#assign style=field.control.params.style></#if>
 <#if args.entityNodeRef?? >
 	<#if ds?contains("?")>
@@ -74,9 +73,6 @@ new beCPG.component.AutoCompletePicker('${fieldHtmlId}', '${fieldHtmlId}', <#if 
 					multipleSelectMode: true,
 			<#else>
 			      multipleSelectMode: ${field.repeating?string}, 
-			</#if>
-			<#if forceDisplay>
-			      forceDisplay: true, 
 			</#if>
 			      isMandatory : ${field.mandatory?string},
 			 		dsStr:"${ds}"
