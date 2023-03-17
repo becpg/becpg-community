@@ -171,7 +171,7 @@ public class ImportServiceImpl implements ImportService {
 		int lastIndex = importContext.getImportFileReader().getTotalLineCount();
 		int nbBatches = (lastIndex / BATCH_SIZE) + 1;
 
-		BatchInfo batchInfo = new BatchInfo("import", "becpg.batch.import", importContext.getImportFileName());
+		BatchInfo batchInfo = new BatchInfo("import_" + importContext.getImportFileName(), "becpg.batch.import", importContext.getImportFileName());
 		
 		batchInfo.setRunAsSystem(true);
 		

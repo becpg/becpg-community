@@ -222,17 +222,21 @@ function getACLGroupInfo(entityNodeRef){
  */
 function main()
 {
-   var entityNodeRef = getArgument("entityNodeRef");
-   
-   //ACL Group
-   var aclInfo = getACLGroupInfo(entityNodeRef),
-   	itemType = aclInfo.aclType,
-	itemNode = aclInfo.aclTypeNode,
-    columns = [];
-   
-   
-   if (itemType != null && itemType.length > 0)
-   {
+
+	var itemType = getArgument("itemType");
+	var itemNode = null;
+	var columns = [];
+
+	var aclMode = getArgument("aclMode");
+
+	if (aclMode) {
+		var entityNodeRef = getArgument("entityNodeRef");
+		var aclInfo = getACLGroupInfo(entityNodeRef);
+		itemType = aclInfo.aclType;
+		itemNode = aclInfo.aclTypeNode;
+	}
+
+	if (itemType != null && itemType.length > 0) {
 
       var formConfig = getFormConfig(itemNode!=null ? itemNode : itemType ,"security");
       
@@ -293,17 +297,18 @@ function main()
 		   results.push(columns[i]);
 	   }
    }
-   
-   
-   for(var i in aclInfo.datalists){
-	   if(q==null || q==undefined || q=="*" || aclInfo.datalists[i].title.toLowerCase().indexOf(q.toLowerCase())!=-1){
-		   if(aclInfo.datalists[i].name.indexOf("WUsed") != -1 || aclInfo.datalists[i].name.indexOf("View") != -1){
-			  results.push({name :  aclInfo.datalists[i].name ,label : aclInfo.datalists[i].title, type :"dataList" });
-		   } else {
-			  results.push({name :  aclInfo.datalists[i].itemType,label : aclInfo.datalists[i].title, type :"dataList" });
-	   	   }
-	   }
-   }
+
+	if (aclMode) {
+		for (var i in aclInfo.datalists) {
+			if (q == null || q == undefined || q == "*" || aclInfo.datalists[i].title.toLowerCase().indexOf(q.toLowerCase()) != -1) {
+				if (aclInfo.datalists[i].name.indexOf("WUsed") != -1 || aclInfo.datalists[i].name.indexOf("View") != -1) {
+					results.push({ name: aclInfo.datalists[i].name, label: aclInfo.datalists[i].title, type: "dataList" });
+				} else {
+					results.push({ name: aclInfo.datalists[i].itemType, label: aclInfo.datalists[i].title, type: "dataList" });
+				}
+			}
+		}
+	}
    
    model.pageSize = pageSize;
    model.pageNumber = page;

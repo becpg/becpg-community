@@ -1,7 +1,6 @@
 package fr.becpg.repo.multilingual;
 
 import java.io.IOException;
-import java.util.Locale;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantDeployer;
@@ -16,7 +15,6 @@ import org.springframework.extensions.webscripts.WebScript;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.helper.MLTextHelper;
 
 /**
@@ -27,22 +25,12 @@ import fr.becpg.repo.helper.MLTextHelper;
  */
 public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements TenantDeployer {
 
-	private final static Log logger = LogFactory.getLog(BeCPGRuntimeContainer.class);
+	private static final Log logger = LogFactory.getLog(BeCPGRuntimeContainer.class);
 
 	private NodeService nodeService;
 
 	private PersonService personService;
 
-	private boolean useBrowserLocale = false;
-
-	/**
-	 * <p>Setter for the field <code>useBrowserLocale</code>.</p>
-	 *
-	 * @param useBrowserLocale a boolean.
-	 */
-	public void setUseBrowserLocale(boolean useBrowserLocale) {
-		this.useBrowserLocale = useBrowserLocale;
-	}
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -75,11 +63,11 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 			if ((personNodeRef != null) && nodeService.exists(personNodeRef)) {
 
 				if (logger.isDebugEnabled()) {
-					logger.debug("Set content locale:" + getUserContentLocale(personNodeRef));
+					logger.debug("Set content locale:" + MLTextHelper.getUserContentLocale(nodeService, personNodeRef));
 				}
 
-				I18NUtil.setLocale(getUserLocale(personNodeRef));
-				I18NUtil.setContentLocale(getUserContentLocale(personNodeRef));
+				I18NUtil.setLocale(MLTextHelper.getUserLocale(nodeService,personNodeRef));
+				I18NUtil.setContentLocale(MLTextHelper.getUserContentLocale(nodeService,personNodeRef));
 			}
 		}
 
@@ -91,42 +79,6 @@ public class BeCPGRuntimeContainer extends TenantRepositoryContainer implements 
 		}
 	}
 
-	private Locale getUserLocale(NodeRef personNodeRef) {
-		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_LOCALE);
-		if ((loc == null) || loc.isEmpty()) {
-			Locale currentLocale = Locale.getDefault();
-
-			if (useBrowserLocale) {
-				currentLocale = I18NUtil.getLocale();
-			}
-			if (!Locale.FRENCH.getLanguage().equals(currentLocale.getLanguage())) {
-				if (Locale.US.getCountry().equals(currentLocale.getCountry())) {
-					return Locale.US;
-				}
-				return Locale.ENGLISH;
-			}
-			return Locale.FRENCH;
-
-		}
-		return MLTextHelper.parseLocale(loc);
-	}
-
-	/**
-	 * <p>getUserContentLocale.</p>
-	 *
-	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @return a {@link java.util.Locale} object.
-	 */
-	public Locale getUserContentLocale(NodeRef personNodeRef) {
-		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_CONTENT_LOCAL);
-		if ((loc == null) || loc.isEmpty()) {
-			if (useBrowserLocale) {
-				return MLTextHelper.getNearestLocale(I18NUtil.getContentLocale());
-			} else {
-				return MLTextHelper.getNearestLocale(Locale.getDefault());
-			}
-		}
-		return MLTextHelper.parseLocale(loc);
-	}
+	
 
 }

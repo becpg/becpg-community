@@ -33,7 +33,6 @@ import javax.imageio.ImageIO;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.coci.CheckOutCheckInServiceImpl;
-import org.alfresco.repo.copy.AbstractBaseCopyService.AssociationCopyInfo;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.virtual.VirtualContentModel;
 import org.alfresco.service.cmr.model.FileFolderService;

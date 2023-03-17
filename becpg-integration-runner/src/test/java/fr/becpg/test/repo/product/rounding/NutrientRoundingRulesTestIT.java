@@ -19,6 +19,7 @@ public class NutrientRoundingRulesTestIT {
 
 	@Autowired
 	protected MLTextHelper mlTextHelper;
+	
 
 	@Test
 	public void testUSRoundingRules() {
@@ -127,6 +128,22 @@ public class NutrientRoundingRulesTestIT {
 		assertEquals("0", RegulationFormulationHelper.displayValue(3.7d, RegulationFormulationHelper.round(3.7d, NutrientCode.VitA, Locale.US, "µg/100g"),
 				NutrientCode.VitA, Locale.US));
 	}
+	
+
+	@Test
+	public void testEuropeanTolerances() {
+		assertEquals(15d,RegulationFormulationHelper.tolerances(12d, NutrientCode.Protein, Locale.FRENCH, null).getFirst(),0d);
+		assertEquals(9.2d,RegulationFormulationHelper.tolerances(12d, NutrientCode.Protein, Locale.FRENCH, null).getSecond(),0d);
+		
+		assertEquals(23d,RegulationFormulationHelper.tolerances(18.9d, NutrientCode.Fat, Locale.FRENCH, null).getFirst(),0d);
+		assertEquals(15d,RegulationFormulationHelper.tolerances(18.9d, NutrientCode.Fat, Locale.FRENCH, null).getSecond(),0d);
+		
+		assertEquals(1.60d,RegulationFormulationHelper.tolerances(1.23d, NutrientCode.Salt, Locale.FRENCH, null).getFirst(),0d);
+		assertEquals(0.78d,RegulationFormulationHelper.tolerances(1.23d, NutrientCode.Salt, Locale.FRENCH, null).getSecond(),0d);
+		
+		assertEquals(2.9d,RegulationFormulationHelper.tolerances(0.9d, NutrientCode.Sugar, Locale.FRENCH, null).getFirst(),0d);
+		assertEquals(0d,RegulationFormulationHelper.tolerances(0.9d, NutrientCode.Sugar, Locale.FRENCH, null).getSecond(),0d);
+	}
 
 	@Test
 	public void testEuropeanRoundingRules() {
@@ -141,6 +158,8 @@ public class NutrientRoundingRulesTestIT {
 		assertEquals(null, RegulationFormulationHelper.round(null, NutrientCode.FatSaturated, Locale.FRENCH, null));
 		assertEquals(12d, RegulationFormulationHelper.round(11.6d, NutrientCode.FatSaturated, Locale.FRENCH, null), 0);
 		assertEquals(12d, RegulationFormulationHelper.round(11.6d, NutrientCode.FatSaturated, Locale.GERMAN, null), 0);
+		assertEquals(12d, RegulationFormulationHelper.round(12.4d, NutrientCode.FatSaturated, Locale.FRENCH, null), 0);
+		
 		assertEquals(8.6d, RegulationFormulationHelper.round(8.63d, NutrientCode.FatSaturated, Locale.FRENCH, null), 0);
 		assertEquals(0.2d, RegulationFormulationHelper.round(0.2d, NutrientCode.FatSaturated, Locale.FRENCH, null), 0);
 		assertEquals(0.0d, RegulationFormulationHelper.round(0.01d, NutrientCode.FatSaturated, Locale.FRENCH, null), 0);

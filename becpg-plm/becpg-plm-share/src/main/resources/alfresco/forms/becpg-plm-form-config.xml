@@ -1124,6 +1124,7 @@
 					<show id="bcpg:allergenSubset" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" force="true"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1175,6 +1176,7 @@
 					<show id="bcpg:allergenSubset" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1216,6 +1218,7 @@
 					<show id="bcpg:charactName" />
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenType" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1244,6 +1247,7 @@
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenSubset" />
 					<show id="bcpg:allergenRegulatoryThreshold"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" />
 					<show id="bcpg:isDeleted"/>
@@ -1264,6 +1268,7 @@
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 					<show id="bcpg:costFormula" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1296,6 +1301,7 @@
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
 					<show id="bcpg:costFormula" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1339,6 +1345,7 @@
 					<show id="bcpg:costType" />
 					<show id="bcpg:costCurrency" />
 					<show id="bcpg:costFixed" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1368,6 +1375,7 @@
 					<show id="bcpg:ingAllergens" />
 					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
+                    <show id="sec:readGroups" force="true"/>
                     <show id="bcpg:isDeleted"/>
                
 				</field-visibility>
@@ -1431,7 +1439,8 @@
 					<show id="bcpg:ingTypeV2"  force="true"/>
 					<show id="bcpg:ingAllergens" />
 					<show id="gs1:productActivityTypeCode" force="true"/>
-                    <show id="bcpg:linkedSearchAssociation" force="true" />		
+                    <show id="bcpg:linkedSearchAssociation" force="true" />	
+                    <show id="sec:readGroups" force="true"/>	
                     <show id="bcpg:isDeleted"/>
                </field-visibility>
 
@@ -1533,6 +1542,7 @@
 					<show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
                     <show id="bcpg:ingAllergens" />
+                    <show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1549,6 +1559,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1575,6 +1586,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1613,6 +1625,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1640,6 +1653,7 @@
 					
 					<!-- <show id="bcpg:isNutPropagateUp" /> -->
 					<show id="rep:reportLocales" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1702,6 +1716,7 @@
 				
 					<!-- <show id="bcpg:isNutPropagateUp" /> -->
 					<show id="rep:reportLocales" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1765,6 +1780,7 @@
 					<show id="bcpg:nutUnit" />
 					<show id="bcpg:nutGDA" />
 					<show id="bcpg:nutUL" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" />
 					<show id="bcpg:isDeleted"/>
@@ -1791,6 +1807,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:nutrientProfileScoreFormula" />
 					<show id="bcpg:nutrientProfileClassFormula" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1822,6 +1839,7 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:nutrientProfileScoreFormula" />
 					<show id="bcpg:nutrientProfileClassFormula" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -1863,6 +1881,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1878,6 +1897,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1903,6 +1923,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1939,6 +1960,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1960,6 +1982,7 @@
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
 					<show id="bcpg:physicoChemFormula" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1998,6 +2021,7 @@
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
 					<show id="bcpg:physicoChemFormula" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2063,6 +2087,7 @@
 					<show id="bcpg:physicoChemType" />
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2084,6 +2109,7 @@
                     <show id="bcpg:regulatoryCode" force="true"/>
                     <show id="gs1:productActivityTypeCode" force="true"/>
 					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2124,6 +2150,7 @@
                     <show id="bcpg:regulatoryCode" force="true"/>
                     <show id="gs1:productActivityTypeCode" force="true"/>
 					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2156,6 +2183,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:geoOriginISOCode" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2179,6 +2207,7 @@
                     <show id="bcpg:regulatoryCode" force="true"/>
                     <show id="gs1:productActivityTypeCode" force="true"/>
 					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2196,6 +2225,7 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:bioOriginType" />
 					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2228,6 +2258,7 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:bioOriginType" />
 					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2275,6 +2306,7 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:bioOriginType" />
 					<show id="bcpg:linkedSearchAssociation" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2302,6 +2334,7 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2372,6 +2405,7 @@
 					<show id="bcpg:plantPackerCode" />
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2452,6 +2486,7 @@
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
 					<show id="fm:commentCount" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2476,6 +2511,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:subsidiaryCertifications"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2500,6 +2536,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:subsidiaryCertifications"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2525,6 +2562,7 @@
 					<show id="cm:name" />
 					<show id="cm:title" />
 					<show id="cm:description" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2566,6 +2604,7 @@
 					<hide id="exif:xResolution" />
 					<hide id="exif:yResolution" />
 					<hide id="exif:resolutionUnit" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2599,6 +2638,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description"  />
 					<show id="bcpg:contacts" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
@@ -2643,6 +2683,7 @@
 					<show id="cm:description" force="true" />
 				    <show id="bcpg:contacts" force="true" />
 					<show id="cm:content"  />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2669,6 +2710,7 @@
                     <show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2718,6 +2760,7 @@
                     <show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2769,6 +2812,7 @@
                     <show id="bcpg:certificationNote" force="true" />
 					<show id="cm:from" force="true" />
 					<show id="cm:to" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2863,7 +2907,7 @@
 					<show id="bcpg:labelClaimRegulatoryThreshold" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="bcpg:isLabelClaimPropagateUp" />
-					
+					<show id="sec:readGroups" force="true"/>
 					<show id="rep:reportLocales" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2910,6 +2954,7 @@
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="bcpg:isLabelClaimPropagateUp" />
 					<show id="rep:reportLocales" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2972,6 +3017,7 @@
 					<show id="bcpg:legalName" />
 					<show id="bcpg:labelClaimType" />
 					<show id="rep:reportLocales" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 					<show id="cm:content"  />
@@ -2995,6 +3041,7 @@
 					<show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -3018,6 +3065,7 @@
 				    <show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -3052,6 +3100,7 @@
 					 <show id="bcpg:cstsCodeType"/>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:cstsCodeCountry" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -5048,22 +5097,28 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:allergenListAllergen">
+					<set id="1-col-1"  />
+					<set id="2-col"  template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="1-col-2"  />
+					<field id="bcpg:allergenListAllergen"
+						help-id="becpg.forms.help.allergenListAllergen" set="1-col-1">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:allergenListQtyPerc">
+					<field id="bcpg:allergenListQtyPerc"
+						help-id="becpg.forms.help.allergenListQtyPerc" set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">perc</control-param>
 						</control>
 					</field>
-					<field id="bcpg:allergenListVoluntary" >
+					<field id="bcpg:allergenListVoluntary"
+						help-id="becpg.forms.help.allergenListVoluntary" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/allergen-voluntary.ftl">
 						</control>
 					</field>
+
 					<!--   <field id="bcpg:allergenListDecisionTree">
 						<control
 							template="/org/alfresco/components/form/controls/decision-tree.ftl">
@@ -5085,35 +5140,41 @@
 							</control-param>
 						</control>
 					</field> -->
-					<field id="bcpg:allergenListInVoluntary" >
+
+					<field id="bcpg:allergenListInVoluntary"
+						help-id="becpg.forms.help.allergenListInVoluntary" set="2-col">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-					
-					<field id="bcpg:allergenListIsCleaned"  help-id="becpg.forms.help.allergenListIsCleaned">
+					<field id="bcpg:allergenListIsCleaned"
+						help-id="becpg.forms.help.allergenListIsCleaned" set="2-col">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-					<field id="bcpg:allergenListOnLine" >
+					<field id="bcpg:allergenListOnLine"
+						help-id="becpg.forms.help.allergenListOnLine" set="2-col">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-					<field id="bcpg:allergenListOnSite" >
+					<field id="bcpg:allergenListOnSite"
+						help-id="becpg.forms.help.allergenListOnSite" set="2-col">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-					
-					<field id="bcpg:allergenListVolSources">
+					<field id="bcpg:allergenListVolSources"
+						help-id="becpg.forms.help.allergenListVolSources" set="1-col-2">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
+							<control-param name="ds">
+								becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
 						</control>
 					</field>
-					<field id="bcpg:allergenListInVolSources">
+					<field id="bcpg:allergenListInVolSources"
+						help-id="becpg.forms.help.allergenListInVolSources" set="1-col-2">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
+							<control-param name="ds">
+								becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
 						</control>
 					</field>
 				</appearance>
 			</form>
-
 
 
 			<form id="customListDatagrid">
@@ -5141,7 +5202,7 @@
 					<show id="bcpg:allergenListVoluntary" />
 					<show id="bcpg:allergenListInVoluntary" />
 					<!--  <show id="bcpg:allergenListDecisionTree" /> -->
-					
+
 					<show id="bcpg:allergenListOnLine" />
 					<show id="bcpg:allergenListOnSite" />
 					<show id="bcpg:allergenListIsCleaned" />
@@ -5170,25 +5231,26 @@
 						for-mode="view" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:allergenListVoluntary" >
+					<field id="bcpg:allergenListVoluntary">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-					<field id="bcpg:allergenListInVoluntary" >
+					<field id="bcpg:allergenListInVoluntary">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-				   <field id="bcpg:allergenListIsCleaned" >
+					<field id="bcpg:allergenListIsCleaned">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-					<field id="bcpg:allergenListOnLine" >
+					<field id="bcpg:allergenListOnLine">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-					<field id="bcpg:allergenListOnSite" >
+					<field id="bcpg:allergenListOnSite">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
 				</appearance>
 			</form>
 		</forms>
 	</config>
+
 	<!-- bcpg:allergenList type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:allergenList">
 		<forms>
@@ -5200,7 +5262,7 @@
 					<show id="bcpg:allergenListVoluntary" />
 					<!--  <show id="bcpg:allergenListDecisionTree" /> -->
 					<show id="bcpg:allergenListInVoluntary" />
-					
+
 					<show id="bcpg:allergenListOnLine" />
 					<show id="bcpg:allergenListOnSite" />
 					<show id="bcpg:allergenListIsCleaned" />
@@ -5209,22 +5271,29 @@
 				</field-visibility>
 
 				<appearance>
-					<field id="bcpg:allergenListAllergen">
+					<set id="1-col-1"  />
+					<set id="2-col"  template="/org/alfresco/components/form/2-column-set.ftl" />
+					<set id="1-col-2"  />
+					<field id="bcpg:allergenListAllergen"
+						help-id="becpg.forms.help.allergenListAllergen" set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
-					<field id="bcpg:allergenListQtyPerc">
+					<field id="bcpg:allergenListQtyPerc"
+						help-id="becpg.forms.help.allergenListQtyPerc" set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">perc</control-param>
 						</control>
 					</field>
-					<field id="bcpg:allergenListVoluntary" >
+					<field id="bcpg:allergenListVoluntary"
+						help-id="becpg.forms.help.allergenListVoluntary" set="2-col">
 						<control
 							template="/org/alfresco/components/form/controls/allergen-voluntary.ftl">
 						</control>
 					</field>
-				<!-- <field id="bcpg:allergenListDecisionTree">
+
+					<!-- <field id="bcpg:allergenListDecisionTree">
 						<control
 							template="/org/alfresco/components/form/controls/decision-tree.ftl">
 							<control-param name="prefix">allergenList</control-param>
@@ -5244,31 +5313,38 @@
 								]
 							</control-param>
 						</control>
-					</field>   -->	
-					<field id="bcpg:allergenListInVoluntary"  >
+					</field>   -->
+
+					<field id="bcpg:allergenListInVoluntary"
+						help-id="becpg.forms.help.allergenListInVoluntary" set="2-col">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-					
-					<field id="bcpg:allergenListIsCleaned" help-id="becpg.forms.help.allergenListIsCleaned">
+					<field id="bcpg:allergenListIsCleaned"
+						help-id="becpg.forms.help.allergenListIsCleaned" set="2-col">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-					<field id="bcpg:allergenListOnLine" >
+					<field id="bcpg:allergenListOnLine"
+						help-id="becpg.forms.help.allergenListOnLine" set="2-col">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-					<field id="bcpg:allergenListOnSite" >
+					<field id="bcpg:allergenListOnSite"
+						help-id="becpg.forms.help.allergenListOnSite" set="2-col">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
-					
-					<field id="bcpg:allergenListVolSources">
+					<field id="bcpg:allergenListVolSources"
+						help-id="becpg.forms.help.allergenListVolSources" set="1-col-2">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
+							<control-param name="ds">
+								becpg/autocomplete/DataListCharact?className=bcpg:ingList&#38;attributeName=bcpg:ingListIng</control-param>
 						</control>
 					</field>
-					<field id="bcpg:allergenListInVolSources">
+					<field id="bcpg:allergenListInVolSources"
+						help-id="becpg.forms.help.allergenListInVolSources" set="1-col-2">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
+							<control-param name="ds">
+								becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:product,bcpg:ing&#38;excludeClassNames=bcpg:entityTplAspect</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -6372,6 +6448,7 @@
 					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListValuePrepared" />
 					<show id="bcpg:nutListUnitPrepared"  force="true" />
+					<show id="bcpg:nutListRoundedValue" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListFormulatedMini" />
@@ -6403,6 +6480,7 @@
 					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
 					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
+					<field id="bcpg:nutListRoundedValue" read-only="true" ></field>
 					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
 					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
@@ -7102,6 +7180,7 @@
 					<show id="bcpg:locationZip" force="true"/>
 					<show id="bcpg:locationState" force="true"/>
 					<show id="bcpg:locationCountry" force="true"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7206,6 +7285,7 @@
 					<show id="bcpg:contactListPhoneMobile" />
 					<show id="bcpg:contactListNotes" />
 					<show id="fm:commentCount" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7241,6 +7321,7 @@
 					<show id="bcpg:locationZip" force="true"/>
 					<show id="bcpg:locationState" force="true"/>
 					<show id="bcpg:locationCountry" force="true"/>
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7541,6 +7622,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />					
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
@@ -7560,6 +7642,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true"  />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" force="true"/>
 				</field-visibility>
@@ -7584,6 +7667,7 @@
 					<show id="bcpg:ingTypeDoNotDeclare" />
 					<show id="bcpg:ingTypeIsLastGroup" />
 					<show id="bcpg:regulatoryCode" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted" force="true" />
 				</field-visibility>
@@ -7756,6 +7840,7 @@
 					<show id="gs1:maximumToleranceTemperature" force="true" />
 					<show id="gs1:minimumToleranceTemperature" force="true" />
 					<show id="gs1:temperatureMeasurementUnit" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7793,6 +7878,7 @@
 					<show id="gs1:maximumToleranceTemperature" force="true" />
 					<show id="gs1:minimumToleranceTemperature" force="true" />
 					<show id="gs1:temperatureMeasurementUnit" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7845,6 +7931,7 @@
 					<show id="gs1:maximumToleranceTemperature" force="true" />
 					<show id="gs1:minimumToleranceTemperature" force="true" />
 					<show id="gs1:temperatureMeasurementUnit" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7858,6 +7945,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7880,6 +7968,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -7913,6 +8002,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -8004,6 +8094,7 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />		
 					<show id="gs1:dutyFeeTaxRate"/>			
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>								
 				</field-visibility>
@@ -8047,6 +8138,7 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />	
 					<show id="gs1:dutyFeeTaxRate"/>		
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>			
@@ -8069,6 +8161,7 @@
 					<show id="gs1:dutyFeeTaxCode" />
 					<show id="gs1:dutyFeeTaxCountry" />	
 					<show id="gs1:dutyFeeTaxRate"/>			
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />	
 					<show id="bcpg:isDeleted"/>							
 				</field-visibility>
@@ -8097,6 +8190,7 @@
 				    <show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />	
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />	
 					<show id="bcpg:isDeleted"/>										
 				</field-visibility>
@@ -8128,6 +8222,7 @@
 					<show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />		
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>		
@@ -8146,6 +8241,7 @@
 				    <show id="gs1:targetMarketCode" />
 					<show id="cm:name" />
 					<show id="gs1:targetMarketCountries" />	
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />		
 					<show id="bcpg:isDeleted"/>									
 				</field-visibility>

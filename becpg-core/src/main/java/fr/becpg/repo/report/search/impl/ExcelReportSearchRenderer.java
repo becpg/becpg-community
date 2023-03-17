@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionService;
 import org.alfresco.service.cmr.repository.ContentIOException;
@@ -24,6 +25,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -346,6 +348,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 		action.setExecuteAsynchronously(true);
 		action.setParameterValue(AbstractExportSearchAction.PARAM_TPL_NODEREF, templateNodeRef);
 		action.setParameterValue(AbstractExportSearchAction.PARAM_FORMAT, reportFormat.toString());
+
 		actionService.executeAction(action, downloadNode);
 
 	}

@@ -48,7 +48,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
-	private EntityCatalogService<ProductData> entityCatalogService;
+	private EntityCatalogService entityCatalogService;
 
 	/**
 	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
@@ -64,7 +64,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 	 *
 	 * @param entityCatalogService a {@link fr.becpg.repo.entity.catalog.EntityCatalogService} object.
 	 */
-	public void setEntityCatalogService(EntityCatalogService<ProductData> entityCatalogService) {
+	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
 		this.entityCatalogService = entityCatalogService;
 	}
 

@@ -97,7 +97,6 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	}
 
 	/** {@inheritDoc} */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) throws IOException {
 

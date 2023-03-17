@@ -81,6 +81,7 @@
       <property name="excelReportSearchRenderer" ref="excelReportSearchRenderer"/>
       <property name="mimetypeService" ref="MimetypeService" />
       <property name="entityActivityService" ref="entityActivityService" />
+      <property name="personService" ref="personService" />
    </bean>
     
     
@@ -96,6 +97,7 @@
       <property name="reportServerSearchRenderer" ref="reportServerSearchRenderer"/>
       <property name="mimetypeService" ref="MimetypeService" />
       <property name="entityActivityService" ref="entityActivityService" />
+       <property name="personService" ref="personService" />
    </bean>
     
     

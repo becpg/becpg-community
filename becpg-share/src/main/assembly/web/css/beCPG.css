@@ -1072,3 +1072,13 @@ span.show-translation {
 	
 }
 
+span a.show-details {
+	cursor: pointer;
+	padding-left: 16px;
+	margin-left: 5px;
+	background: url("../../components/images/info-16.png") no-repeat;
+	display: inline-table;
+	height: 16px;
+	vertical-align: bottom;
+}
+

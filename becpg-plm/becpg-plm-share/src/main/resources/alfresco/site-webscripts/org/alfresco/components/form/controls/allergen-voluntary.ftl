@@ -19,7 +19,6 @@
       </div>
    <#else>
         <label>${field.label?html}:</label>
-        <@formLib.renderFieldHelp field=field />
         <div class="form-field-boolean" id="${fieldHtmlId}" >
 		 
 		    <input type="radio" id="${fieldHtmlId}-true" name="${field.name}" tabindex="0" value="true" 
@@ -43,6 +42,7 @@
 		     <label for="${fieldHtmlId}-empty"> ${msg("data.boolean.empty")} </label>
 		
 		</div>
+        <@formLib.renderFieldHelp field=field />
 		
       <script type="text/javascript">
           (function(){

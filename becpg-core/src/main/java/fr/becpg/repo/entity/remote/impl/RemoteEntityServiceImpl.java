@@ -63,6 +63,7 @@ import fr.becpg.repo.entity.remote.extractor.ExcelXmlEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.ImportEntityJsonVisitor;
 import fr.becpg.repo.entity.remote.extractor.ImportEntityXmlVisitor;
 import fr.becpg.repo.entity.remote.extractor.JsonEntityVisitor;
+import fr.becpg.repo.entity.remote.extractor.JsonSchemaEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.RemoteEntityVisitor;
 import fr.becpg.repo.entity.remote.extractor.XmlEntityVisitor;
 import fr.becpg.repo.helper.AssociationService;
@@ -158,14 +159,10 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	public void getEntity(NodeRef entityNodeRef, OutputStream out, RemoteParams params) {
 		RemoteEntityFormat format = params.getFormat();
 		RemoteEntityVisitor remoteEntityVisitor = null;
-
-		//TODO use factory instead
-
 		switch (format) {
 		case xml:
 		case xml_all:
 		case xml_light:
-
 			remoteEntityVisitor = new XmlEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
 					siteService, associationService);
 
@@ -176,8 +173,11 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			break;
 		case json:
 		case json_all:
-
 			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
+					siteService, attributeExtractor, versionService, lockService);
+			break;
+		case json_schema:
+			remoteEntityVisitor = new JsonSchemaEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
 					siteService, attributeExtractor, versionService, lockService);
 			break;
 		case xsd:
@@ -281,8 +281,6 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		RemoteEntityFormat format = params.getFormat();
 		RemoteEntityVisitor remoteEntityVisitor = null;
 
-		//TODO use factory instead
-
 		switch (format) {
 		case xml:
 
@@ -315,8 +313,6 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 		RemoteEntityFormat format = params.getFormat();
 		RemoteEntityVisitor remoteEntityVisitor = null;
-
-		//TODO use factory instead
 
 		switch (format) {
 		case xml:

@@ -26,6 +26,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="var:charactKey" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -52,6 +53,7 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="var:charactKey" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 
 				</field-visibility>
@@ -91,6 +93,7 @@
 					<show id="cm:title" />
 					<show id="cm:description" />		
 					<show id="var:charactKey" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>

@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Component;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 
 /**
@@ -36,6 +37,19 @@ public class MLTextHelper {
 	private static boolean shouldExtractMLText;
 
 	private static Map<String, MLText> mlTextCache = new ConcurrentHashMap<>();
+	
+	private static boolean useBrowserLocale;
+
+	/**
+	 * <p>Setter for the field <code>useBrowserLocale</code>.</p>
+	 *
+	 * @param useBrowserLocale a boolean.
+	 */
+	@Value("${beCPG.multilinguale.useBrowserLocale}")
+	public void setUseBrowserLocale(boolean useBrowserLocale) {
+		MLTextHelper.useBrowserLocale = useBrowserLocale;
+	}
+
 
 	/**
 	 * <p>Setter for the field <code>supportedLocales</code>.</p>
@@ -420,6 +434,44 @@ public class MLTextHelper {
 			return new Locale(language);
 		}
 		return null;
+	}
+	
+	public static Locale getUserLocale(NodeService nodeService, NodeRef personNodeRef) {
+		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_LOCALE);
+		if ((loc == null) || loc.isEmpty()) {
+			Locale currentLocale = Locale.getDefault();
+
+			if (useBrowserLocale) {
+				currentLocale = I18NUtil.getLocale();
+			}
+			if (!Locale.FRENCH.getLanguage().equals(currentLocale.getLanguage())) {
+				if (Locale.US.getCountry().equals(currentLocale.getCountry())) {
+					return Locale.US;
+				}
+				return Locale.ENGLISH;
+			}
+			return Locale.FRENCH;
+
+		}
+		return MLTextHelper.parseLocale(loc);
+	}
+
+	/**
+	 * <p>getUserContentLocale.</p>
+	 *
+	 * @param personNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 * @return a {@link java.util.Locale} object.
+	 */
+	public static Locale getUserContentLocale(NodeService nodeService, NodeRef personNodeRef) {
+		String loc = (String) nodeService.getProperty(personNodeRef, BeCPGModel.PROP_USER_CONTENT_LOCAL);
+		if ((loc == null) || loc.isEmpty()) {
+			if (useBrowserLocale) {
+				return MLTextHelper.getNearestLocale(I18NUtil.getContentLocale());
+			} else {
+				return MLTextHelper.getNearestLocale(Locale.getDefault());
+			}
+		}
+		return MLTextHelper.parseLocale(loc);
 	}
 
 }
