@@ -27,8 +27,11 @@ function sendMail(recipient, from, subjectKey, subjectParam, messageKey, templat
 		} else {
 			for (var i in persons) {
 				var person = persons[i];
-				templateArgs['workflowTitle'] = bcpg.getLocalizedMessage(messageKey, person.properties['bcpg:userLocale']);
-				bcpg.sendMLAwareMail(new Array(person), fromEmail, subjectKey, new Array(subjectParam), templatePath, templateModel);
+				var personNode = people.getPerson(person);
+				if (personNode != null) {
+					templateArgs['workflowTitle'] = bcpg.getLocalizedMessage(messageKey, personNode.properties['bcpg:userLocale']);
+					bcpg.sendMLAwareMail(new Array(person), fromEmail, subjectKey, new Array(subjectParam), templatePath, templateModel);
+				}
 			}
 		}
 		
