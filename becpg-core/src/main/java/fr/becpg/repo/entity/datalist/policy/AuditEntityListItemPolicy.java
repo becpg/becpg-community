@@ -28,7 +28,6 @@ import com.google.common.collect.Maps;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
-import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
  * <p>
@@ -49,7 +48,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	private AuthenticationService authenticationService;
 
-	private EntityCatalogService<RepositoryEntity> entityCatalogService;
+	private EntityCatalogService entityCatalogService;
 
 	/**
 	 * <p>
@@ -60,7 +59,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	 *            a {@link fr.becpg.repo.entity.catalog.EntityCatalogService}
 	 *            object.
 	 */
-	public void setEntityCatalogService(EntityCatalogService<RepositoryEntity> entityCatalogService) {
+	public void setEntityCatalogService(EntityCatalogService entityCatalogService) {
 		this.entityCatalogService = entityCatalogService;
 	}
 

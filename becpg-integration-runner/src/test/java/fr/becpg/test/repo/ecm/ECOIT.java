@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.test.repo.ecm;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -59,6 +61,7 @@ import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -1823,6 +1826,118 @@ public class ECOIT extends AbstractFinishedProductTest {
 			
 			return true;
 		}));
+	}
+	
+	@Test
+	public void testPropertiesToCopy() throws InterruptedException {
+		
+		final String descriptionToCopy = "description to copy";
+
+		NodeRef semiFinishedProductNodeRef = inWriteTx(() -> {
+			
+			SemiFinishedProductData product = new SemiFinishedProductData();
+			product.setName("SF1");
+			product.setQty(2d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+
+			product.getCompoListView().setCompoList(compoList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+
+		});
+		
+		NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			
+			FinishedProductData product = new FinishedProductData();
+			product.setName("PF1");
+			product.setQty(2d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, semiFinishedProductNodeRef));
+			
+			product.getCompoListView().setCompoList(compoList);
+			
+			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+			
+		});
+		
+		NodeRef semiFinishedProduct2NodeRef = inWriteTx(() -> {
+			
+			SemiFinishedProductData product = new SemiFinishedProductData();
+			product.setName("SF2");
+			product.setQty(2d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+
+			product.getCompoListView().setCompoList(compoList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+
+		});
+		
+		NodeRef finishedProduct2NodeRef = inWriteTx(() -> {
+			
+			FinishedProductData product = new FinishedProductData();
+			product.setName("PF2");
+			product.setQty(2d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, semiFinishedProduct2NodeRef));
+			
+			product.getCompoListView().setCompoList(compoList);
+			
+			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+			
+		});
+		
+		NodeRef ecoNodeRef = inWriteTx(() -> {
+
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, new ArrayList<>());
+			
+			changeOrderData.setDescription(descriptionToCopy);
+			changeOrderData.setPropertiesToCopy("cm:description");
+			
+			List<ReplacementListDataItem> replacementList = new ArrayList<>();
+
+			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial1NodeRef), rawMaterial12NodeRef, 100);
+			replacementList.add(replacement);
+			changeOrderData.setReplacementList(replacementList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
+
+		});
+		
+		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false, false));
+		
+		inWriteTx(() -> {
+			
+			ChangeOrderData ecoData = (ChangeOrderData) alfrescoRepository.findOne(ecoNodeRef);
+			
+			for (WUsedListDataItem wul : ecoData.getWUsedList()) {
+				
+				if (!wul.getSourceItems().contains(semiFinishedProduct2NodeRef) && !wul.getSourceItems().contains(finishedProduct2NodeRef)) {
+					wul.setIsWUsedImpacted(true);
+				}
+			}
+				
+			return alfrescoRepository.save(ecoData);
+			
+		});
+		
+		waitForBatchEnd(ecoService.apply(ecoNodeRef, false, false, false));
+		
+		inReadTx(() -> {
+			assertNotEquals(descriptionToCopy, nodeService.getProperty(rawMaterial1NodeRef, ContentModel.PROP_DESCRIPTION));
+			assertEquals(descriptionToCopy, nodeService.getProperty(semiFinishedProductNodeRef, ContentModel.PROP_DESCRIPTION));
+			assertEquals(descriptionToCopy, nodeService.getProperty(finishedProductNodeRef, ContentModel.PROP_DESCRIPTION));
+			assertNotEquals(descriptionToCopy, nodeService.getProperty(semiFinishedProduct2NodeRef, ContentModel.PROP_DESCRIPTION));
+			assertNotEquals(descriptionToCopy, nodeService.getProperty(finishedProduct2NodeRef, ContentModel.PROP_DESCRIPTION));
+			return null;
+		});
+		
 	}
 	
 	private String getVersionLabel(NodeRef productNodeRef) {

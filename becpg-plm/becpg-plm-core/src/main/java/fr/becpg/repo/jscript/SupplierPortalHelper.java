@@ -195,9 +195,12 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 							NodeRef dest = supplierPortalService.getOrCreateSupplierDestFolder(supplierNodeRef,
 									resources);
 
+							
+							if(entityNodeRef != supplierNodeRef) {
 
-							nodeService.moveNode(entityNodeRef, dest, ContentModel.ASSOC_CONTAINS,
-									ContentModel.ASSOC_CONTAINS);
+								repoService.moveNode(entityNodeRef, dest);
+							
+							}
 							permissionService.setInheritParentPermissions(entityNodeRef, true);
 
 							for (NodeRef resourceRef : resources) {
@@ -221,7 +224,9 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 											nodeService.deleteNode(deliverable.getContent());
 											deliverable.setContent(existingNodeWithSameName);
 										} else {
-											repoService.moveNode(deliverable.getContent(), entityNodeRef);
+											if(deliverable.getContent() != supplierNodeRef) {
+												repoService.moveNode(deliverable.getContent(), entityNodeRef);
+											}
 										}
 									}
 

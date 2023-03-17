@@ -28,7 +28,7 @@
 					<show id="ecm:ecoType"/>
 					<show id="ecm:effectiveDate" />
 					<show id="ecm:calculatedCharacts" />							
-															
+					<show id="ecm:propertiesToCopy" />
 				</field-visibility>
 				<appearance>
 					<field id="cm:description">
@@ -51,7 +51,14 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							<control-param name="ds">becpg/autocomplete/eco</control-param>
 						</control>		
-					</field>						
+					</field>
+					<field id="ecm:propertiesToCopy">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">components/autocomplete/fields?itemType=ecm:changeOrder</control-param>
+							<control-param name="local">true</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>					
 				</appearance>
 			</form>
 
@@ -70,6 +77,7 @@
 					<show id="ecm:effectiveDate" />
 					<show id="ecm:ecoType" />
 					<show id="ecm:calculatedCharacts" />							
+					<show id="ecm:propertiesToCopy" />							
 					
 					<!-- auditable -->
 					<show id="cm:creator" for-mode="view" />
@@ -99,7 +107,14 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							<control-param name="ds">becpg/autocomplete/eco</control-param>
 						</control>		
-					</field>				
+					</field>	
+					<field id="ecm:propertiesToCopy">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">components/autocomplete/fields?itemType=ecm:changeOrder</control-param>
+							<control-param name="local">true</control-param>
+							<control-param name="saveTitle">false</control-param>
+						</control>
+					</field>			
 				</appearance>
 			</form>
 		</forms>

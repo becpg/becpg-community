@@ -225,7 +225,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		try {
 			if (lock.tryLock()) {
 				try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.TRACER, getClass(), "reportService.GenerateReports")){
-					internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo);
+					internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, false);
 				}
 			} else {
 				lock.lock();
@@ -238,7 +238,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 	}
 
-	private void internalGenerateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo) {
+	private void internalGenerateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
 
 		if (nodeRefFrom == null) {
 			throw new IllegalArgumentException("nodeRef is null");
@@ -265,7 +265,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 									+ nodeService.getProperty(nodeRefFrom, ContentModel.PROP_NAME));
 						}
 
-						List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale);
+						List<NodeRef> newReports = getReports(nodeRefFrom, nodeRefTo, defaultLocale, generateAllReports);
 						updateReportsAssoc(nodeRefTo, newReports);
 
 					} finally {
@@ -281,7 +281,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}, false, true);
 	}
 
-	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo, Locale defaultLocale) {
+	private List<NodeRef> getReports(final NodeRef entityNodeRef, final NodeRef entityNodeTo, Locale defaultLocale, boolean generateAllReports) {
 
 		HashMap<NodeRef, Set<ReportEngineLog>> engineLogs = new HashMap<>();
 
@@ -370,7 +370,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 									if (writer != null) {
 
-										if (((selectedReportNodeRef != null) && (documentNodeRef != null)
+										if (generateAllReports
+												|| ((selectedReportNodeRef != null) && (documentNodeRef != null)
 												&& selectedReportNodeRef.toString().equals(documentNodeRef.toString()))
 												|| ((selectedReportNodeRef == null) && Boolean.TRUE.equals(isDefault))
 												|| !entityNodeRef.equals(entityNodeTo)) {
@@ -1602,7 +1603,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@Override
-	public NodeRef getReportOfKind(NodeRef entityNodeRef, String reportKind) {
+	public List<NodeRef> getReportsOfKind(NodeRef entityNodeRef, String reportKind) {
+
+		List<NodeRef> reports = new ArrayList<>();
 
 		List<NodeRef> dbReports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
 
@@ -1617,14 +1620,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 					if (reportKindsProp instanceof List<?>) {
 						List<?> reportKinds = (List<?>) reportKindsProp;
 						if (reportKinds.contains(reportKind)) {
-							return reportNodeRef;
+							reports.add(reportNodeRef);
 						}
 					}
 				}
 			}
 		}
 
-		return null;
+		return reports;
 	}
 
 	/** {@inheritDoc} */
@@ -1669,12 +1672,12 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@Override
-	public NodeRef getOrRefreshReportOfKind(NodeRef entityNodeRef, String reportKind) {
+	public List<NodeRef> getOrRefreshReportsOfKind(NodeRef entityNodeRef, String reportKind) {
 		if (shouldGenerateReport(entityNodeRef, null)) {
 			logger.debug("Entity report is not up to date for entity " + entityNodeRef);
-			generateReports(entityNodeRef);
+			internalGenerateReports(entityNodeRef, entityNodeRef, true);
 		}
-		return getReportOfKind(entityNodeRef, reportKind);
+		return getReportsOfKind(entityNodeRef, reportKind);
 	}
 
 	/** {@inheritDoc} */

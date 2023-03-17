@@ -12,7 +12,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>4.2.1</version>
+		<version>4.2.2</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -135,6 +135,13 @@
 					<artifactId>ws-commons-util</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.networknt</groupId>
+		    <artifactId>json-schema-validator</artifactId>
+		    <version>1.0.77</version>
+		    <scope>test</scope>
 		</dependency>
 		
 	</dependencies>

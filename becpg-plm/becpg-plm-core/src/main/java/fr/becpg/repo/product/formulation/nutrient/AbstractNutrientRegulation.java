@@ -179,11 +179,32 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	}
 	
 	@Override
-	public Pair<Double,Double> toleranceByCode(Double value, String nutrientTypeCode) {
+	public Pair<Double,Double> tolerances(Double value, String nutrientTypeCode, String nutUnit) {
+	
 		Pair<Double,Double> ret = null;
 		
+
+		if (value == null) {
+			return null;
+		}
+		
+		if (Double.isInfinite(value) || Double.isNaN(value)) {
+			return null;
+		}
+		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
+			String regulUnit = nutUnit;
+			NutrientDefinition def = getNutrientDefinition(nutrientTypeCode);
+			if (def != null) {
+				regulUnit = def.getUnit();
+			}
+			if (logger.isDebugEnabled()) {
+				logger.debug("round : nutrientTypeCode " + nutrientTypeCode + " value " + value + " nutUnit " + nutUnit + " regulUnit " + regulUnit);
+			}
+			return tolerancesByCode(convertValue(value, nutUnit, regulUnit), nutrientTypeCode);
+		}
 		return ret;
 	}
+
 
 
 	/** {@inheritDoc} */
@@ -345,5 +366,10 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	 * @return a {@link java.lang.String} object.
 	 */
 	protected abstract String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale);
+	
+
+	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode) {
+		return null;
+	}
 
 }

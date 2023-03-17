@@ -501,19 +501,19 @@ public class FormulationHelper {
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public static Double calculateValue(Double totalValue, Double qtyUsed, Double value, Double netQty) {
-
 		if ((totalValue == null) && (value == null)) {
 			return null;
 		}
 
-		totalValue = totalValue != null ? totalValue : 0d;
-		value = value != null ? value : 0d;
-		value = value * qtyUsed;
+		BigDecimal totalValueDecimal = totalValue != null ? BigDecimal.valueOf(totalValue) : BigDecimal.ZERO;
+		BigDecimal valueDecimal = value != null ? BigDecimal.valueOf(value) : BigDecimal.ZERO;
+		valueDecimal = valueDecimal.multiply(BigDecimal.valueOf(qtyUsed));
 		if ((netQty != null) && (netQty != 0d)) {
-			value = value / netQty;
+		    valueDecimal = valueDecimal.divide(BigDecimal.valueOf(netQty), MathContext.DECIMAL64);
 		}
 
-		return totalValue + value;
+		return totalValueDecimal.add(valueDecimal).doubleValue();
+
 	}
 
 	/**
