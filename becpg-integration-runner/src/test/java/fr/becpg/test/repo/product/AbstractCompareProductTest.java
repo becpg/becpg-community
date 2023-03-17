@@ -50,7 +50,7 @@ public abstract class AbstractCompareProductTest extends PLMBaseTestCase {
 
 	private void initObjects() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Create raw materials --*/
 			logger.debug("/*-- Create raw materials --*/");
@@ -98,7 +98,7 @@ public abstract class AbstractCompareProductTest extends PLMBaseTestCase {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 

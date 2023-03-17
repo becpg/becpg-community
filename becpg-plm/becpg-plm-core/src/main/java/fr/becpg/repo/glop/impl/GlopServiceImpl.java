@@ -2,7 +2,6 @@ package fr.becpg.repo.glop.impl;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;

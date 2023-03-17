@@ -163,11 +163,11 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	private void visitNode(NodeRef entityNodeRef, JSONObject entity, JsonVisitNodeType type, RemoteJSONContext context) throws JSONException {
+	protected void visitNode(NodeRef entityNodeRef, JSONObject entity, JsonVisitNodeType type, RemoteJSONContext context) throws JSONException {
 		visitNode(entityNodeRef, entity, type, null, context);
 	}
 
-	private void visitNode(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context)
+	protected void visitNode(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context)
 			throws JSONException {
 		cacheList.add(nodeRef);
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
@@ -311,7 +311,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	private void visitLists(NodeRef nodeRef, JSONObject entity, RemoteJSONContext context) throws JSONException {
+	protected void visitLists(NodeRef nodeRef, JSONObject entity, RemoteJSONContext context) throws JSONException {
 
 		NodeRef listContainerNodeRef = nodeService.getChildByName(nodeRef, BeCPGModel.ASSOC_ENTITYLISTS, RepoConsts.CONTAINER_DATALISTS);
 
@@ -366,7 +366,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	private void visitContent(NodeRef nodeRef, JSONObject entity) throws JSONException {
+	protected void visitContent(NodeRef nodeRef, JSONObject entity) throws JSONException {
 
 		ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 		if (contentReader != null) {
@@ -391,7 +391,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	private void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException {
+	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException {
 
 		TypeDefinition typeDef = entityDictionaryService.getType(nodeService.getType(nodeRef));
 		if (typeDef != null) {
@@ -491,7 +491,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	private boolean matchProp(QName assocName, QName propName, boolean checkFilter) {
+	protected boolean matchProp(QName assocName, QName propName, boolean checkFilter) {
 
 		if(assocName == null) {
 			if(params.getFilteredProperties() != null && !params.getFilteredProperties().isEmpty()) {
@@ -511,7 +511,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	private void visitProps(NodeRef nodeRef, JSONObject entity, QName assocName, Map<QName, Serializable> props, RemoteJSONContext context)
+	protected void visitProps(NodeRef nodeRef, JSONObject entity, QName assocName, Map<QName, Serializable> props, RemoteJSONContext context)
 			throws JSONException {
 
 		if (props != null) {

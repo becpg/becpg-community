@@ -425,6 +425,9 @@ public class BecpgFormDefinition {
 							if (((PropertyFieldDefinition) fieldDefinition).isRepeating()) {
 								field.put("repeating", true);
 							}
+							if (((PropertyFieldDefinition) fieldDefinition).isProtectedField()) {
+								field.put("protectedField", true);
+							}
 						} else if (fieldDefinition instanceof AssociationFieldDefinition) {
 	
 							field.put(PROP_TYPE, "association");

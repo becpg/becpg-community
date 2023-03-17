@@ -39,12 +39,12 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
-	
+
 	private static final String NESTED_PROP = "nested_";
 	private static final String DATALIST_PROP = "dataList_";
 
-	private static final String PROP_KEY = "_"+AttributeExtractorService.PROP_SUFFIX;
-	private static final String ASSOC_KEY = "_"+AttributeExtractorService.ASSOC_SUFFIX;
+	private static final String PROP_KEY = "_" + AttributeExtractorService.PROP_SUFFIX;
+	private static final String ASSOC_KEY = "_" + AttributeExtractorService.ASSOC_SUFFIX;
 
 	private static final Log logger = LogFactory.getLog(NestedAdvSearchPlugin.class);
 
@@ -56,33 +56,33 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 	 */
 	public Map<String, Map<String, String>> extractNested(Map<String, String> criteriaMap) {
 		Map<String, Map<String, String>> nested = new HashMap<>();
+		if (criteriaMap != null) {
+			for (String key : criteriaMap.keySet()) {
+				if (key.startsWith(NESTED_PROP) && !key.contains(DATALIST_PROP)) {
+					String nestedPropName = null;
+					String nestedAssoc = null;
 
-		for (String key : criteriaMap.keySet()) {
-			if (key.startsWith(NESTED_PROP) && !key.contains(DATALIST_PROP)) {
-				String nestedPropName = null;
-				String nestedAssoc = null;
-
-				if (key.contains(PROP_KEY)) {
-					nestedPropName = AttributeExtractorService.PROP_SUFFIX + key.split(PROP_KEY)[1];
-					nestedAssoc = key.split(PROP_KEY)[0].replace(NESTED_PROP, "").replace("_", ":");
-				} else if (key.contains(ASSOC_KEY)) {
-					nestedPropName = AttributeExtractorService.ASSOC_SUFFIX + key.split(ASSOC_KEY)[1];
-					nestedAssoc = key.split(ASSOC_KEY)[0].replace(NESTED_PROP, "").replace("_", ":");
-				}
-
-				if (nestedPropName != null) {
-					Map<String, String> nestedCriterias = new HashMap<>();
-					if (nested.containsKey(nestedAssoc)) {
-						nestedCriterias = nested.get(nestedAssoc);
+					if (key.contains(PROP_KEY)) {
+						nestedPropName = AttributeExtractorService.PROP_SUFFIX + key.split(PROP_KEY)[1];
+						nestedAssoc = key.split(PROP_KEY)[0].replace(NESTED_PROP, "").replace("_", ":");
+					} else if (key.contains(ASSOC_KEY)) {
+						nestedPropName = AttributeExtractorService.ASSOC_SUFFIX + key.split(ASSOC_KEY)[1];
+						nestedAssoc = key.split(ASSOC_KEY)[0].replace(NESTED_PROP, "").replace("_", ":");
 					}
-					nestedCriterias.put(nestedPropName, criteriaMap.get(key));
 
-					nested.put(nestedAssoc, nestedCriterias);
+					if (nestedPropName != null) {
+						Map<String, String> nestedCriterias = new HashMap<>();
+						if (nested.containsKey(nestedAssoc)) {
+							nestedCriterias = nested.get(nestedAssoc);
+						}
+						nestedCriterias.put(nestedPropName, criteriaMap.get(key));
+
+						nested.put(nestedAssoc, nestedCriterias);
+					}
+
 				}
-
 			}
 		}
-
 		return nested;
 	}
 
@@ -99,10 +99,11 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 			if (criteriaMap.get(key) != null && !criteriaMap.get(key).isEmpty()) {
 				if (!key.equals(DataListFilter.PROP_DEPTH_LEVEL)) {
 					if (!key.startsWith(AttributeExtractorService.ASSOC_SUFFIX) && !key.startsWith(NESTED_PROP)) {
-						ret.put(key.replace(AttributeExtractorService.PROP_SUFFIX, "").replace("_", ":"), criteriaMap.get(key) != null ? criteriaMap.get(key).replace("=", "") : null);
+						ret.put(key.replace(AttributeExtractorService.PROP_SUFFIX, "").replace("_", ":"),
+								criteriaMap.get(key) != null ? criteriaMap.get(key).replace("=", "") : null);
 					} else if (key.endsWith("_added")) {
-						ret.put(key.replace(AttributeExtractorService.ASSOC_SUFFIX, "").replace(NESTED_PROP, "")
-								.replace("_added", "").replace("_", ":"), criteriaMap.get(key));
+						ret.put(key.replace(AttributeExtractorService.ASSOC_SUFFIX, "").replace(NESTED_PROP, "").replace("_added", "").replace("_",
+								":"), criteriaMap.get(key));
 					}
 				}
 			}
@@ -161,7 +162,7 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 			}
 		}
 
-		if (logger.isDebugEnabled() && watch!=null) {
+		if (logger.isDebugEnabled() && watch != null) {
 			watch.stop();
 			logger.debug("filterWithNested executed in  " + watch.getTotalTimeSeconds() + " seconds ");
 		}
@@ -183,6 +184,11 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 	@Override
 	public Set<String> getIgnoredFields(QName datatype, SearchConfig searchConfig) {
 		return new HashSet<>();
+	}
+
+	@Override
+	public boolean isSearchFiltered(Map<String, String> criteria) {
+		return criteria != null && !extractNested(criteria).isEmpty();
 	}
 
 }

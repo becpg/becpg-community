@@ -104,8 +104,8 @@ margin-top:3px;
 														<td class="becpg_rowBorderTop">
 															<a href="${shareUrl}/page/<#if entityNode.siteShortName??>site/${entityNode.siteShortName}/</#if>entity-data-lists?nodeRef=${entityNode.nodeRef}">${entityNode.name}</a>
 														</td>
-														<td class="becpg_rowBorderTopLeftRight">${node.properties["bcpg:rclReqMessage"]}</td>
-                                               			<td class="becpg_rowBorderTopLeftRight">${node.properties[dateField]?date}</td>
+														<td class="becpg_rowBorderTopLeftRight"><#if node.properties["bcpg:rclReqMessage"]??>${node.properties["bcpg:rclReqMessage"]}</#if></td>
+														<td class="becpg_rowBorderTopLeftRight"><#if node.properties[dateField]??>${node.properties[dateField]?date}</#if></td>
                                                		</tr>	
 												</#list>
                                              </table>

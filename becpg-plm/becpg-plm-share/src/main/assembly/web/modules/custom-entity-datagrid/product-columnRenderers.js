@@ -20,6 +20,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 
     var NUMBER_FORMAT= { "maximumFractionDigits": 4 };
+    var NUTDETAILS_EVENTCLASS = Alfresco.util.generateDomId(null, "nutDetails");
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:product", "bcpg:supplier", "bcpg:client", "bcpg:entityV2", "bcpg:resourceProduct",
@@ -350,19 +351,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
           var ret = "";
           
-          function exp(val){
-        	  if(val == 0){
-        		  return "0";
-        	  }  else if(Math.abs(val) < 0.000001){
-        		  return beCPG.util.sigFigs(val*1000000,3).toLocaleString()+"×10<sup>-6</sup>";
-        	  } else if(Math.abs(val) < 0.01){
-        		  return beCPG.util.sigFigs(val*1000,3).toLocaleString()+"×10<sup>-3</sup>";
-              } else if(Math.abs(val) >= 1000000){
-        		  return beCPG.util.sigFigs(val/1000000,3).toLocaleString()+"×10<sup>6</sup>";
-        	  }
-        	  return beCPG.util.sigFigs(val,3).toLocaleString();
-          }
-          
+        
           var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
           
           if(oColumn.label!=null && oColumn.label.indexOf && oColumn.label.indexOf("100g")>0){
@@ -370,7 +359,7 @@ if (beCPG.module.EntityDataGridRenderers) {
           }
           
           if (data.value != null) {
-        	  ret+=data.value+" "+unit;
+        	  ret+=data.value.toLocaleString( beCPG.util.getJSLocale() )+" "+unit;
           }
           
           var key ="prop_bcpg_nutListFormulatedValue";
@@ -385,9 +374,9 @@ if (beCPG.module.EntityDataGridRenderers) {
           var formulatedValue = oRecord.getData("itemData")[key];
           if(formulatedValue!=null && formulatedValue.value!=null ){
               if(ret.length>0){
-                  ret+= '&nbsp;&nbsp;(' + exp(formulatedValue.value) + ')';
+                  ret+= '&nbsp;&nbsp;(' + beCPG.util.exp(formulatedValue.value) + ')';
               } else {
-                ret+= exp(formulatedValue.value)+" "+unit ;
+                ret+= beCPG.util.exp(formulatedValue.value)+" "+unit ;
               }
           }
           
@@ -396,12 +385,132 @@ if (beCPG.module.EntityDataGridRenderers) {
 
   });
   
+
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName: ["bcpg:nutListRoundedValue"],
+		renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+			var ret = "";
+			var getLocalKey = function(loc) {
+				var language = loc.split("_")[0];
+				var country = loc.split("_").length > 1 ? loc.split("_")[1] : language.toUpperCase();
+				if (country === "US" || country === "CA" || country === "AU" || country === "ID" || country === "HK" || country === "MY"
+					|| country === "IL" || country === "IN" || country === "KR"
+					|| country === "MA" || country === "MX" || country === "DZ"
+					|| country === "TR" || country === "SG" || country === "TH"
+					|| country === "PK" || country === "ZA" || country === "TN"
+					|| country === "EG" || country === "CL" || country === "UY"
+					|| country === "BR" || country === "TT" || country === "DO"
+					|| country === "PE") {
+					return country;
+				} else if (language === "zh") {
+					return "CN";
+				} else if (language === "ru") {
+					return "RU";
+				} else if (country === "NZ") {
+					return "AU";
+				} else if (country === "PR") {
+					return "US";
+				} else if (country === "PY") {
+					return "BR";
+				} else if (country === "GT" || country === "PA" || country === "SV") {
+					return "CTA";
+				} else if (country === "AE" || country === "BH" || country === "SA"
+					|| country === "QA" || country === "OM" || country === "KW") {
+					return "GSO";
+				} else if (country === "KE" || country === "NG" || country === "GH"
+					|| country === "CI" || country === "UG" || country === "MZ"
+					|| country === "MW" || country === "TZ" || country === "ZM"
+					|| country === "ZW" || country === "KH" || country === "MM"
+					|| country === "JO" || country === "IQ" || country === "PS") {
+					return "CODEX";
+				} else if (country === "CO") {
+					return "CO";
+				}
+
+				return "EU";
+			};
+
+
+			if (data.value != null) {
+
+				var key = getLocalKey(Alfresco.constants.JS_LOCALE);
+				var jsonData = JSON.parse(data.value);
+				if (jsonData && jsonData.v) {
+					if (jsonData.v[key]) {
+						if (jsonData.tu && jsonData.tu[key]) {
+							ret +=  '<span class="red">'+jsonData.tu[key].toLocaleString( beCPG.util.getJSLocale() ) +'</span>'+ "<";
+						}
+
+						ret += '<span class="green">'+jsonData.v[key].toLocaleString( beCPG.util.getJSLocale() )+'</span>';
+
+
+						if (jsonData.tl && jsonData.tl[key]) {
+							ret +=  "<" +  '<span class="red">'+jsonData.tl[key].toLocaleString( beCPG.util.getJSLocale() )+'</span>' ;
+						}
+												  
+         			    var nutName = oRecord._oData.itemData.assoc_bcpg_nutListNut[0].displayValue || '';
+
+						var keys = Object.keys(jsonData.v);
+						ret += '<div id="nut-details-' + oRecord.getData("nodeRef") + '" class="nut-details hidden" ><div class="hd">'+nutName+'</div><div class="bd" >';
+						for (var i = 0; i < keys.length; i++) {
+							var k = keys[i];
+							var value = jsonData.v[k];
+							var toleranceMin = jsonData.tl[k] || '';
+							var toleranceMax = jsonData.tu[k] || '';
+							var min = jsonData.min[k] || '';
+							var max = jsonData.max[k] || '';
+							var gda = jsonData.gda[k] || '';
+							var vps = jsonData.vps[k] || '';
+	
+							ret += '<div>' +
+								'<h3>'+  scope.msg( "nutrient.details.header", k+ ' <img  title="'+k+'" src="'+Alfresco.constants.URL_CONTEXT+'res/components/images/flags/'+k.split("_")[0].toLowerCase()+'.png" />'  )+ '</h3>' +
+								'<p>'+scope.msg("nutrient.details.value" ,  value.toLocaleString( beCPG.util.getJSLocale() ) ) + '</p>' +
+								(toleranceMin ? '<p>'+ scope.msg( "nutrient.details.tl" ,toleranceMin.toLocaleString( beCPG.util.getJSLocale() ))+ '</p>' : '') +
+								(toleranceMax ? '<p>'+ scope.msg( "nutrient.details.tu" ,toleranceMax.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+								(min ? '<p>'+ scope.msg( "nutrient.details.min" , min.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+								(max ? '<p>'+ scope.msg( "nutrient.details.max" , max.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+								(gda ? '<p>'+ scope.msg( "nutrient.details.gda" , gda.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+								(vps ? '<p>'+ scope.msg( "nutrient.details.vps" , vps.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+								'</div>';
+						}
+						ret += '</div></div>';
+	
+						ret += '<span class="node-' + oRecord.getData("nodeRef") + '">';
+						ret += '<a class="show-details ' + NUTDETAILS_EVENTCLASS + '" title="' + scope.msg("link.title.nut-details") + '" href="" >';
+						ret += "&nbsp;";
+						ret += "</a></span>";
+					
+					}
+				}
+			}
+
+			return ret;
+			
+		}
+	});
+
+	var nutPanels = [];
+
+	YAHOO.Bubbling.addDefaultAction(NUTDETAILS_EVENTCLASS, function(layer, args) {
+		var owner = YAHOO.Bubbling.getOwnerByTagName(args[1].anchor, "span");
+		if (owner !== null) {
+			var nodeRef = owner.className.replace("node-", "");
+			if(!nutPanels["nut-details-"+nodeRef]){
+				var panelDiv = Dom.get("nut-details-"+nodeRef);
+				Dom.removeClass(panelDiv, "hidden");
+				nutPanels["nut-details-"+nodeRef] = Alfresco.util.createYUIPanel(panelDiv, { draggable: true, width: "auto" });
+			}
+			nutPanels["nut-details-"+nodeRef].show();
+		}
+		return true;
+	});
+
   
   	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : ["bcpg:nutListValuePrepared"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
           var ret = "";
-          
+        
           var unit = oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value;
           if(unit == null){
 			  unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
@@ -412,7 +521,7 @@ if (beCPG.module.EntityDataGridRenderers) {
           
       
           if (data.value != null) {
-        	  ret+=data.value+" "+unit;
+        	  ret+=beCPG.util.exp(data.value)+" "+unit;
           }
      
           
@@ -426,7 +535,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : ["bcpg:nutListValuePerServing"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString());
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString( beCPG.util.getJSLocale() ));
       	}      
       	return "";
       }
@@ -449,7 +558,12 @@ if (beCPG.module.EntityDataGridRenderers) {
       			qty = data.value;
       			unit = " %";
       		}
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,4).toLocaleString() + unit);
+      		
+      		if(oRecord.getData("itemType") == "total"){
+				  return '<span class="total">'+qty.toLocaleString( beCPG.util.getJSLocale() ) + unit+"</span>";
+			 }
+      		
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,4).toLocaleString( beCPG.util.getJSLocale() ) + unit);
       	}      
       	return "";
       }
@@ -736,7 +850,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
 				}
 				if (scope.datalistMeta.name == "nutList"){
-					return beCPG.util.sigFigs(data.value,3).toLocaleString();
+					return beCPG.util.sigFigs(data.value,3).toLocaleString( beCPG.util.getJSLocale() );
 				}
 				return data.displayValue;
 			}
@@ -1177,7 +1291,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					}
 				}
 
-				qty = beCPG.util.sigFigs(qty,4).toLocaleString() + unit;
+				qty = beCPG.util.sigFigs(qty,4).toLocaleString( beCPG.util.getJSLocale() ) + unit;
 			}
 
 			return Alfresco.util.encodeHTML(qty);
@@ -1186,10 +1300,10 @@ if (beCPG.module.EntityDataGridRenderers) {
 	
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName : "bcpg:packagingListQty",
+        propertyName : ["bcpg:packagingListQty"],
         renderer : function(oRecord, data, label, scope) {
         	if (data.value != null) {
-        		return data.value;
+        		return data.value.toLocaleString( beCPG.util.getJSLocale() );
         	}
         	return "";
         }
@@ -1286,7 +1400,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					unit = " L";
 				}
 
-				qty =  beCPG.util.sigFigs(qty,4).toLocaleString() + unit;
+				qty =  beCPG.util.sigFigs(qty,4).toLocaleString( beCPG.util.getJSLocale() ) + unit;
 			}
 
 			return Alfresco.util.encodeHTML(qty);
@@ -1378,7 +1492,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 				return html;
 			} else if(percentValue !== null && percentValue > 0){
-				return Alfresco.util.encodeHTML(percentValue.toFixed(1)+" %");
+				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(percentValue,1).toLocaleString( beCPG.util.getJSLocale() )+" %");
 			} else {
 				return "";
 			}
@@ -1392,7 +1506,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"] ? oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData: null;
 				var unit =additionalProps!=null ? additionalProps.prop_bcpg_nutUnit.displayValue : "";
 				
-				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString()+" "+unit);
+				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString( beCPG.util.getJSLocale() )+" "+unit);
 				
 			}
 			return "";

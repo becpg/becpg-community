@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/becpg-plm-core"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/becpg-core"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/becpg-designer-core"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/becpg-project-core"/>
 	<classpathentry kind="src" output="target/classes" path="src/main/java">
 		<attributes>
 			<attribute name="optional" value="true"/>
@@ -21,6 +25,7 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
 		<attributes>
+			<attribute name="module" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
@@ -29,7 +34,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/becpg-core"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/becpg-plm-core"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

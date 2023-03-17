@@ -1341,17 +1341,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		return new ScriptNode(entityReportService.getOrRefreshReport(sourceNodeRef, null), serviceRegistry, getScope());
 	}
 
-	public ScriptNode getReportNodeOfKind(ScriptNode sourceNode, String reportKind) {
+	public ScriptNode[] getReportsOfKind(ScriptNode sourceNode, String reportKind) {
 
 		NodeRef sourceNodeRef = sourceNode.getNodeRef();
 
-		NodeRef reportNodeRef = entityReportService.getOrRefreshReportOfKind(sourceNodeRef, reportKind);
+		List<NodeRef> reports = entityReportService.getOrRefreshReportsOfKind(sourceNodeRef, reportKind);
 
-		if (reportNodeRef != null) {
-			return new ScriptNode(reportNodeRef, serviceRegistry, getScope());
-		}
-
-		return null;
+		return reports.stream().map(r -> new ScriptNode(r, serviceRegistry, getScope())).toArray(ScriptNode[]::new);
+		
 	}
 
 	/**

@@ -5,7 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>4.2.1</version>
+	<version>4.2.2</version>
 	<name>beCPG</name>
 	
 	<description>BeCPG Parent Project</description>
@@ -62,7 +62,14 @@
 				<updatePolicy>daily</updatePolicy>
 			</snapshots>
 		</repository>
-
+		<repository>
+			<id>becpg-registry</id>
+			<url>artifactregistry://europe-west1-maven.pkg.dev/becpg-314807/becpg-mvn</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>daily</updatePolicy>
+			</snapshots>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -156,7 +163,7 @@
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
 		<docker.becpg.url>becpg</docker.becpg.url>
-		<docker.becpg.tag>4.2.1</docker.becpg.tag>
+		<docker.becpg.tag>4.2.2</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -172,7 +179,7 @@
 		<sonar.ws.timeout>3600</sonar.ws.timeout>
 		<sonar.language>java</sonar.language>
 		
-		<becpg.artworks.version>4.2.1.0</becpg.artworks.version>
+		<becpg.artworks.version>4.2.2-SNAPSHOT</becpg.artworks.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -502,6 +509,14 @@
 				<version>3.9.1.2184</version>
 			</plugin>
 		</plugins>
+		
+		<extensions>
+			<extension>
+				<groupId>com.google.cloud.artifactregistry</groupId>
+				<artifactId>artifactregistry-maven-wagon</artifactId>
+				<version>2.2.0</version>
+			</extension>
+		</extensions>
 	</build>
 
 	<modules>
