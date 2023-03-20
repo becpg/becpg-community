@@ -47,6 +47,7 @@ import fr.becpg.artworks.signature.model.SignatureStatus;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMGroup;
 import fr.becpg.model.PLMModel;
+import fr.becpg.model.ReportModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.authentication.BeCPGUserAccount;
@@ -133,7 +134,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
-
+	
 	@Value("${beCPG.sendToSupplier.projectName.format}")
 	private String projectNameTpl = "{entity_cm:name} - {supplier_cm:name} - REFERENCING - {date_YYYY}";
 
@@ -240,8 +241,10 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	}
 
 	@Override
-	public NodeRef prepareSignatureProject(NodeRef projectNodeRef, List<NodeRef> documents) {
+	public NodeRef prepareSignatureProject(NodeRef projectNodeRef, List<NodeRef> originalDocuments) {
 
+		originalDocuments = copyReports(originalDocuments);
+		
 		List<NodeRef> viewRecipients = associationService.getTargetAssocs(projectNodeRef, SignatureModel.ASSOC_RECIPIENTS);
 
 		viewRecipients = projectService.extractResources(projectNodeRef, viewRecipients);
@@ -250,24 +253,38 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 		List<NodeRef> recipients = extractPeople(viewRecipients);
 
-		NodeRef supplierNodeRef = findSupplierAccount(documents, recipients);
+		NodeRef supplierNodeRef = findSupplierAccount(originalDocuments, recipients);
 
 		NodeRef supplierDestinationFolder = null;
 
 		if (supplierNodeRef != null) {
 			supplierDestinationFolder = getOrCreateSupplierDestFolder(supplierNodeRef, recipients);
-
 			nodeService.moveNode(projectNodeRef, supplierDestinationFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
 		}
 
-		List<NodeRef> finalDocuments = new ArrayList<>();
+		List<NodeRef> signedDocuments = prepareSignedDocuments(originalDocuments, viewRecipients, supplierDestinationFolder);
 
+		ProjectData project = alfrescoRepository.findOne(projectNodeRef);
+
+		TaskListDataItem rejectTask = createRejectTask(project, signedDocuments);
+
+		NodeRef lastTask = createSignatureTasks(project, signedDocuments, recipients, rejectTask.getNodeRef(), rejectTask);
+
+		createValidatingTask(project, originalDocuments, lastTask, rejectTask);
+
+		alfrescoRepository.save(project);
+
+		return projectNodeRef;
+	}
+
+	private List<NodeRef> prepareSignedDocuments(List<NodeRef> documents, List<NodeRef> viewRecipients, NodeRef supplierDestinationFolder) {
+		List<NodeRef> signedDocuments = new ArrayList<>();
+
+		NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
+			
 		for (NodeRef document : documents) {
-
 			try {
 				policyBehaviourFilter.disableBehaviour(SignatureModel.ASPECT_SIGNATURE);
-
-				NodeRef currentUser = personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser());
 
 				associationService.update(document, SignatureModel.ASSOC_VALIDATOR, currentUser);
 
@@ -276,8 +293,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				if (supplierDestinationFolder != null) {
 					Map<QName, Serializable> properties = new HashMap<>();
 
-					String documentName = repoService.getAvailableName(supplierDestinationFolder,
-							(String) nodeService.getProperty(document, ContentModel.PROP_NAME), false, true);
+					String documentName = repoService.getAvailableName(supplierDestinationFolder, (String) nodeService.getProperty(document, ContentModel.PROP_NAME), false, true);
 
 					properties.put(ContentModel.PROP_NAME, documentName);
 
@@ -295,26 +311,46 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 					writer.putContent(reader);
 
-					finalDocuments.add(documentCopy);
+					signedDocuments.add(documentCopy);
 				} else {
-					finalDocuments.add(document);
+					signedDocuments.add(document);
 				}
 			} finally {
 				policyBehaviourFilter.enableBehaviour(SignatureModel.ASPECT_SIGNATURE);
 			}
 		}
+		return signedDocuments;
+	}
 
-		ProjectData project = alfrescoRepository.findOne(projectNodeRef);
-
-		TaskListDataItem rejectTask = createRejectTask(project, finalDocuments);
-
-		NodeRef lastTask = createSignatureTasks(project, finalDocuments, recipients, rejectTask.getNodeRef(), rejectTask);
-
-		createValidatingTask(project, documents, lastTask, rejectTask);
-
-		alfrescoRepository.save(project);
-
-		return projectNodeRef;
+	private List<NodeRef> copyReports(List<NodeRef> originalDocuments) {
+		List<NodeRef> documents = new ArrayList<>();
+		
+		for (NodeRef originalDocument : originalDocuments) {
+			
+			if (ReportModel.TYPE_REPORT.equals(nodeService.getType(originalDocument))) {
+				
+				NodeRef entity = entityService.getEntityNodeRef(originalDocument, ReportModel.TYPE_REPORT);
+				
+				String signedReportsName = TranslateHelper.getTranslatedPath("SignedReports");
+				
+				NodeRef signedReportsFolder = nodeService.getChildByName(entity, ContentModel.ASSOC_CONTAINS, signedReportsName);
+				
+				if (signedReportsFolder == null) {
+					Map<QName, Serializable> properties = new HashMap<>();
+					properties.put(ContentModel.PROP_NAME, signedReportsName);
+					
+					signedReportsFolder = nodeService.createNode(entity, ContentModel.ASSOC_CONTAINS,
+									QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(RepoConsts.PATH_SUPPLIER_DOCUMENTS)),
+									ContentModel.TYPE_FOLDER, properties)
+							.getChildRef();
+				}
+				
+				documents.add(copyReport(signedReportsFolder, originalDocument));
+			} else {
+				documents.add(originalDocument);
+			}
+		}
+		return documents;
 	}
 
 	private List<NodeRef> extractPeople(List<NodeRef> viewRecipients) {
@@ -440,50 +476,48 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	private void copySupplierSheets(NodeRef projectNodeRef, NodeRef entity, NodeRef supplierFolder) {
 
 		List<NodeRef> reports = entityReportService.getOrRefreshReportsOfKind(entity, "SupplierSheet");
+		
+		List<NodeRef> suppliers = associationService.getTargetAssocs(projectNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 
 		for (NodeRef reportNodeRef : reports) {
 
 			if (reportNodeRef != null) {
-
-				String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
-
-				int lastDotIndex = reportName.lastIndexOf(".");
-
-				if (lastDotIndex != -1) {
-
-					String nameWithoutExtension = reportName.substring(0, lastDotIndex);
-
-					String extension = reportName.substring(lastDotIndex);
-
-					String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(0, 10);
-
-					reportName = nameWithoutExtension + " - " + date + extension;
-				}
-
-				reportName = repoService.getAvailableName(supplierFolder, reportName, false, true);
-
-				Map<QName, Serializable> props = new HashMap<>();
-
-				props.put(ContentModel.PROP_NAME, reportName);
-
-				NodeRef signedReport = nodeService
-						.createNode(supplierFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT, props)
-						.getChildRef();
-
-				List<NodeRef> suppliers = associationService.getTargetAssocs(projectNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
-
-				associationService.update(signedReport, SignatureModel.ASSOC_RECIPIENTS, suppliers);
-
-				ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
-				ContentWriter writer = contentService.getWriter(signedReport, ContentModel.PROP_CONTENT, true);
-				writer.setEncoding(reader.getEncoding());
-				writer.setMimetype(reader.getMimetype());
-
-				writer.putContent(reader);
-
+				NodeRef reportCopy = copyReport(supplierFolder, reportNodeRef);
+				associationService.update(reportCopy, SignatureModel.ASSOC_RECIPIENTS, suppliers);
 			}
 		}
+	}
 
+	private NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
+		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
+
+		int lastDotIndex = reportName.lastIndexOf(".");
+
+		if (lastDotIndex != -1) {
+			String nameWithoutExtension = reportName.substring(0, lastDotIndex);
+			String extension = reportName.substring(lastDotIndex);
+			String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(0, 10);
+			reportName = nameWithoutExtension + " - " + date + extension;
+		}
+
+		reportName = repoService.getAvailableName(parentFolder, reportName, false, true);
+
+		Map<QName, Serializable> props = new HashMap<>();
+
+		props.put(ContentModel.PROP_NAME, reportName);
+
+		NodeRef reportCopy = nodeService
+				.createNode(parentFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT, props)
+				.getChildRef();
+
+		ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
+		ContentWriter writer = contentService.getWriter(reportCopy, ContentModel.PROP_CONTENT, true);
+		writer.setEncoding(reader.getEncoding());
+		writer.setMimetype(reader.getMimetype());
+
+		writer.putContent(reader);
+		
+		return reportCopy;
 	}
 
 	private NodeRef findSupplierAccount(List<NodeRef> documents, List<NodeRef> recipients) {
