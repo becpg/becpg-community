@@ -137,7 +137,7 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 				tempFile.delete();
 				tempFile2.delete();
 
-			} catch (BeCPGException e) {
+			} catch (Exception e) {
 				logger.error(e, e);
 				Assert.fail(e.getMessage());
 			}
