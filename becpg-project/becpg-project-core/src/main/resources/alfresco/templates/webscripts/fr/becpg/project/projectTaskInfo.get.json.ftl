@@ -10,9 +10,9 @@
 		   		"completionPercent": "${deliverable.properties["pjt:completionPercent"]!""}",
 		   		"commentCount":"${deliverable.properties["fm:commentCount"]!""}",
 		   		"contents": [
-	   			<#if deliverable.assocs["pjt:dlContent"]?exists>
-		   			<#list deliverable.assocs["pjt:dlContent"] as content>
-		                  <#if content.hasPermission("Read")>
+	   			<#if contentMap[deliverable.nodeRef.toString()]?exists>
+		   			<#list contentMap[deliverable.nodeRef.toString()] as content>
+		                  <#if content?? && content != "" && content.hasPermission("Read")>
 			   				{
 								"name": "${content.properties.name!""}",
 								"nodeRef": "${content.nodeRef}",
