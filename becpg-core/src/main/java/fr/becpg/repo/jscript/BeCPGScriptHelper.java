@@ -925,11 +925,19 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 	
 	public String getLocalizedMessage(String messageKey, String locale) {
-		return I18NUtil.getMessage(messageKey, MLTextHelper.parseLocale(locale));
+		Locale localeObject = I18NUtil.getLocale();
+		if (locale != null && !locale.isBlank()) {
+			localeObject = MLTextHelper.parseLocale(locale);
+		}
+		return I18NUtil.getMessage(messageKey, localeObject);
 	}
 
 	public String getLocalizedMessage(String messageKey, String locale, Object... param) {
-		return I18NUtil.getMessage(messageKey, MLTextHelper.parseLocale(locale), param);
+		Locale localeObject = I18NUtil.getLocale();
+		if (locale != null && !locale.isBlank()) {
+			localeObject = MLTextHelper.parseLocale(locale);
+		}
+		return I18NUtil.getMessage(messageKey, localeObject, param);
 	}
 
 	/**
