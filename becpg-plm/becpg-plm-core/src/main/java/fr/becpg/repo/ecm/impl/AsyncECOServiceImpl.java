@@ -4,6 +4,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -13,8 +14,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.ECMModel;
 import fr.becpg.repo.ecm.AsyncECOService;
 import fr.becpg.repo.ecm.ECOService;
+import fr.becpg.repo.ecm.ECOState;
 import fr.becpg.repo.mail.BeCPGMailService;
 
 /**
@@ -46,6 +49,9 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 
 	@Autowired
 	private TransactionService transactionService;
+	
+	@Autowired
+	private NodeService nodeService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -119,8 +125,10 @@ public class AsyncECOServiceImpl implements AsyncECOService {
 				}
 				// Send mail after ECO
 				return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					
+					boolean isSuccess = !ECOState.InError.toString().equals(nodeService.getProperty(ecoNodeRef, ECMModel.PROP_ECO_STATE));
 
-					beCPGMailService.sendMailOnAsyncAction(userName, apply ? "eco.apply" : "eco.simulate", ASYNC_ACTION_URL_PREFIX + ecoNodeRef, true,
+					beCPGMailService.sendMailOnAsyncAction(userName, apply ? "eco.apply" : "eco.simulate", ASYNC_ACTION_URL_PREFIX + ecoNodeRef, isSuccess,
 							watch.getTotalTimeSeconds());
 
 					return null;
