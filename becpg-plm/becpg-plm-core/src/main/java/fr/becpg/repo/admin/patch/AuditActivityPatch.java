@@ -13,6 +13,7 @@ import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -22,12 +23,15 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.alfresco.util.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.audit.model.AuditScope;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 
 public class AuditActivityPatch extends AbstractBeCPGPatch {
 
@@ -42,6 +46,16 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 	private IntegrityChecker integrityChecker;
 	private BeCPGAuditService beCPGAuditService;
 	private EntityService entityService;
+	private AssociationService associationService;
+	private BehaviourFilter policyBehaviourFilter;
+	
+	public void setPolicyBehaviourFilter(BehaviourFilter policyBehaviourFilter) {
+		this.policyBehaviourFilter = policyBehaviourFilter;
+	}
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
 	
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
@@ -195,49 +209,75 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
 			@Override
-			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
-				integrityChecker.setEnabled(true);
-			}
-
-			@Override
-			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
-				integrityChecker.setEnabled(false);
-			}
-
-			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
 			@Override
 			public void process(NodeRef activityNodeRef) throws Throwable {
-
-				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-
-				if (nodeService.exists(activityNodeRef)) {
-					if (lockService.isLocked(activityNodeRef)) {
-						lockService.unlock(activityNodeRef);
-					}
+				
+				try {
+					ruleService.disableRules();
+					integrityChecker.setEnabled(false);
+					policyBehaviourFilter.disableBehaviour();
 					
-					NodeRef entityNodeRef = entityService.getEntityNodeRef(activityNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 					
-					try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.ACTIVITY)) {
-						if (entityNodeRef != null) {
-							auditScope.putAttribute("entityNodeRef", entityNodeRef.toString());
+					if (nodeService.exists(activityNodeRef)) {
+						if (lockService.isLocked(activityNodeRef)) {
+							lockService.unlock(activityNodeRef);
 						}
-						auditScope.putAttribute("prop_cm_created", ISO8601DateFormat.format((Date) nodeService.getProperty(activityNodeRef, ContentModel.PROP_CREATED)));
-						auditScope.putAttribute("prop_bcpg_alUserId", nodeService.getProperty(activityNodeRef, BeCPGModel.PROP_ACTIVITYLIST_USERID));
-						auditScope.putAttribute("prop_bcpg_alType", nodeService.getProperty(activityNodeRef, BeCPGModel.PROP_ACTIVITYLIST_TYPE).toString());
-						auditScope.putAttribute("prop_bcpg_alData", nodeService.getProperty(activityNodeRef, BeCPGModel.PROP_ACTIVITYLIST_DATA));
+						
+						String created = ISO8601DateFormat.format((Date) nodeService.getProperty(activityNodeRef, ContentModel.PROP_CREATED));
+						String userId = (String) nodeService.getProperty(activityNodeRef, BeCPGModel.PROP_ACTIVITYLIST_USERID);
+						String activityListType = nodeService.getProperty(activityNodeRef, BeCPGModel.PROP_ACTIVITYLIST_TYPE).toString();
+						String activityListData = (String) nodeService.getProperty(activityNodeRef, BeCPGModel.PROP_ACTIVITYLIST_DATA);
+						
+						for (NodeRef entityNodeRef : associationService.getSourcesAssocs(activityNodeRef, ProjectModel.ASSOC_PROJECT_CUR_COMMENTS)) {
+							JSONObject activityJson = new JSONObject();
+							
+							activityJson.put("prop_cm_created", created);
+							activityJson.put("prop_bcpg_alUserId", userId);
+							activityJson.put("prop_bcpg_alType", activityListType);
+							activityJson.put("prop_bcpg_alData", activityListData);
+							
+							nodeService.setProperty(entityNodeRef, ProjectModel.PROP_PROJECT_CUR_COMMENT, activityJson.toString());
+						}
+						
+						NodeRef entityNodeRef = entityService.getEntityNodeRef(activityNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+						
+						try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.ACTIVITY)) {
+							if (entityNodeRef != null) {
+								auditScope.putAttribute("entityNodeRef", entityNodeRef.toString());
+							}
+							
+							auditScope.putAttribute("prop_cm_created", created);
+							auditScope.putAttribute("prop_bcpg_alUserId", userId);
+							auditScope.putAttribute("prop_bcpg_alType", activityListType);
+							auditScope.putAttribute("prop_bcpg_alData", activityListData);
+						}
+						
+						nodeService.deleteNode(activityNodeRef);
+						
+					} else {
+						logger.warn("activityNodeRef doesn't exist : " + activityNodeRef + " or is not in workspace store");
 					}
 					
-					nodeService.deleteNode(activityNodeRef);
-					
-				} else {
-					logger.warn("activityNodeRef doesn't exist : " + activityNodeRef + " or is not in workspace store");
+				} finally {
+					ruleService.enableRules();
+					integrityChecker.setEnabled(true);
+					policyBehaviourFilter.enableBehaviour();
 				}
+			}
+
+			@Override
+			public void beforeProcess() throws Throwable {
+				
+			}
+
+			@Override
+			public void afterProcess() throws Throwable {
+				
 			}
 		};
 		

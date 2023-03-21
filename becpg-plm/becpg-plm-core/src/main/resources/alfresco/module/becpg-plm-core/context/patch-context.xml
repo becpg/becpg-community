@@ -1046,6 +1046,8 @@
         <property name="integrityChecker" ref="integrityChecker"/>
         <property name="beCPGAuditService" ref="beCPGAuditService"/>
         <property name="entityService" ref="entityService"/>
+        <property name="associationService" ref="associationService"/>
+        <property name="policyBehaviourFilter" ref="policyBehaviourFilter"/>
     </bean>
     
 </beans>
