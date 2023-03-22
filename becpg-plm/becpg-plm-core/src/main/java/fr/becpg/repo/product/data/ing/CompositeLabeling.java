@@ -192,17 +192,6 @@ public class CompositeLabeling extends LabelingComponent {
 		this.qtyTotal = qtyTotal;
 	}
 
-	public Double getQtyTotalWithYield() {
-		return qtyTotalWithYield;
-	}
-
-	public void setQtyTotalWithYield(Double qtyTotalWithYield) {
-		this.qtyTotalWithYield = qtyTotalWithYield;
-	}
-
-	public Double getQtyTotal(boolean withYield) {
-		return withYield ? qtyTotalWithYield : qtyTotal;
-	}
 
 	public Double getEvaporatedQty() {
 		return evaporatedQty;
@@ -229,10 +218,6 @@ public class CompositeLabeling extends LabelingComponent {
 		return volumeTotal;
 	}
 
-	public Double getVolumeTotal(boolean withYield) {
-		return withYield ? volumeTotalWithYield : volumeTotal;
-	}
-
 	/**
 	 * <p>Setter for the field <code>volumeTotal</code>.</p>
 	 *
@@ -242,13 +227,6 @@ public class CompositeLabeling extends LabelingComponent {
 		this.volumeTotal = volumeTotal;
 	}
 
-	public Double getVolumeTotalWithYield() {
-		return volumeTotalWithYield;
-	}
-
-	public void setVolumeTotalWithYield(Double volumeTotalWithYield) {
-		this.volumeTotalWithYield = volumeTotalWithYield;
-	}
 
 	/**
 	 * <p>add.</p>
@@ -387,7 +365,7 @@ public class CompositeLabeling extends LabelingComponent {
 		sb.append(prefix).append(isTail ? "└──[" : "├──[")
 				.append(getLegalName(I18NUtil.getContentLocaleLang()) == null ? ROOT : getLegalName(I18NUtil.getContentLocaleLang()))
 				.append(" ( allergens:" + getAllergens() + ") ").append(" ( plural:" + isPlural() + ") ").append(" - ").append(getQty()).append("/").append(getQtyTotal()).append(" (")
-				.append(getQtyWithYield()).append("/").append(getQtyTotalWithYield()).append(") ")
+				.append(getQtyWithYield()).append("/").append(getQtyTotal()).append(") ")
 				.append(declarationType != null ? declarationType.toString() : "").append("]\n");
 		for (Iterator<CompositeLabeling> iterator = ingList.values().iterator(); iterator.hasNext();) {
 			CompositeLabeling labelingComponent = iterator.next();
