@@ -100,7 +100,7 @@
 			"formFields": {
 				"prop_pjt_projectState": "InProgress",
 				"prop_cm_name": "js(bcpg.getMessage(\"signatureWorkflow.project.name\"))",
-				"assoc_sign_recipients": "js(bSupplier.extractSupplierAccountRefs(items).map((n) =>  n.nodeRef ).join(\",\"))"
+				"assoc_sign_recipients": "js(bSignProject.extractRecipients(items).map((n) =>  n.nodeRef ).join(\",\"))"
 				
 			},
 			"hiddenFields": [

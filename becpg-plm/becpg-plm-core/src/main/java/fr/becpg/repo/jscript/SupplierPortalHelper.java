@@ -312,29 +312,17 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 	public ScriptNode[] extractSupplierAccountRefs(ScriptNode[] items) {
 		if (items != null) {
 			for (ScriptNode item : items) {
-				
-				NodeRef entityNodeRef = entityService.getEntityNodeRef(item.getNodeRef(), nodeService.getType(item.getNodeRef()));
-				
-				if (entityNodeRef != null) {
-					NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
-					
-					if (supplierNodeRef != null) {
-						List<NodeRef> accountNodeRefs = associationService.getTargetAssocs(supplierNodeRef,
-								PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
-						if (accountNodeRefs != null && !accountNodeRefs.isEmpty()) {
-							return accountNodeRefs.stream().map(n -> new ActivitiScriptNode(n, serviceRegistry))
-									.toArray(ScriptNode[]::new);
-						}
-					}
+
+				List<NodeRef> accountNodeRefs = supplierPortalService.extractSupplierAccountRefs(item.getNodeRef());
+
+				if (!accountNodeRefs.isEmpty()) {
+					return accountNodeRefs.stream().map(n -> new ActivitiScriptNode(n, serviceRegistry)).toArray(ScriptNode[]::new);
 				}
 			}
 		}
 
 		return new ScriptNode[0];
 	}
-
-
-
 
 	public ScriptNode createSupplierProject(ScriptNode[] items, ScriptNode projectTemplate, String[] supplierAccounts) {
 		if (items != null && items.length > 0) {
@@ -381,25 +369,6 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 			}
 		}
 		return new ScriptNode(supplierPortalService.createExternalUser(email, firstName, lastName, notify, convertedExtraProps), serviceRegistry, getScope());
-	}
-	
-	public ScriptNode prepareSignatureProject(ScriptNode project, ScriptNode[] documents) {
-			
-		if (documents != null && documents.length > 0) {
-			
-			List<NodeRef> documentNodeRefs = new ArrayList<>();
-			
-			for (ScriptNode document : documents) {
-				documentNodeRefs.add(document.getNodeRef());
-			}
-		
-			return new ActivitiScriptNode(supplierPortalService.prepareSignatureProject(project.getNodeRef(), documentNodeRefs), serviceRegistry);
-		}
-		return null;
-	}
-	
-	public ScriptNode prepareSupplierSignatures(ScriptNode project, ScriptNode task) {
-		return new ActivitiScriptNode(supplierPortalService.prepareSupplierSignatures(project.getNodeRef(), task.getNodeRef()), serviceRegistry);
 	}
 	
 }
