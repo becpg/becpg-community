@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.policy;
 
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
@@ -17,6 +18,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PLMWorkflowModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
@@ -34,7 +36,19 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 	
 	private String propertiesToReset;
 	
+	private String assocsToReset;
+	
 	private EntityService entityService;
+	
+	private AssociationService associationService;
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
+	
+	public void setAssocsToReset(String assocsToReset) {
+		this.assocsToReset = assocsToReset;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>namespaceService</code>.</p>
@@ -91,12 +105,19 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 			entityService.changeEntityListStates(destinationRef, EntityListState.ToValidate);
 			
 			
-			if(propertiesToReset!=null) {
-		        for(String propertyToKeep : propertiesToReset.split(",")) {	        	
-		        	QName propertyQname = QName.createQName(propertyToKeep,namespaceService );	
+			if (propertiesToReset != null) {
+		        for(String propertyToReset : propertiesToReset.split(",")) {	        	
+		        	QName propertyQname = QName.createQName(propertyToReset, namespaceService);	
 		        	nodeService.removeProperty(destinationRef, propertyQname);
 		        }
 	        }
+			
+			if (assocsToReset != null) {
+				for(String assocToReset : assocsToReset.split(",")) {
+					QName assocQname = QName.createQName(assocToReset, namespaceService);	
+					associationService.update(destinationRef, assocQname, List.of());
+				}
+			}
 			
 			if(nodeService.hasAspect(destinationRef, PLMModel.ASPECT_PRODUCT)) {
 				nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
