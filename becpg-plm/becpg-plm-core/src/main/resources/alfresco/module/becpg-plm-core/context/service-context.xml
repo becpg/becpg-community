@@ -216,5 +216,14 @@
    	</bean>
    	
    	<alias alias="webscript.fr.becpg.survey.survey.post" name="webscript.fr.becpg.survey.survey.get"/>
+	
+	<!-- Signature project -->
 
+	<bean id="bSignatureProjectScript" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.SignatureProjectScriptHelper">
+		<property name="extensionName">
+			<value>bSignProject</value>
+		</property>
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="signatureProjectService" ref="signatureProjectService" />
+	</bean>
 </beans>
