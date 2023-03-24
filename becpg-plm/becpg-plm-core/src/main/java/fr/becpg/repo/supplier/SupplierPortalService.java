@@ -23,8 +23,6 @@ public interface SupplierPortalService {
 	String getEntityNameTpl();
 	
 	NodeRef createExternalUser(String email, String firstName, String lastName, boolean notify, Map<QName, Serializable> extraProps);
-	
-	NodeRef prepareSignatureProject(NodeRef project, List<NodeRef> documentNodeRefs);
-	
-	NodeRef prepareSupplierSignatures(NodeRef projectNodeRef, NodeRef taskNodeRef);
+
+	List<NodeRef> extractSupplierAccountRefs(NodeRef document);
 }

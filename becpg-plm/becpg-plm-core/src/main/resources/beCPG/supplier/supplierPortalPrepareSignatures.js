@@ -6,8 +6,7 @@ function main() {
 	
 	var taskNode = search.findNode(task.nodeRef);
 
-	bSupplier.prepareSupplierSignatures(projectNode, taskNode);
-	
+	bSignProject.createEntitySignatureTasks(projectNode, taskNode, "supplierReferencing");	
 }
 
 main();
