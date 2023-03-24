@@ -13,6 +13,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PersonService;
+import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,9 @@ public class AuthorityHelper implements InitializingBean {
 	
 	@Autowired
 	private PersonService personService;
+	
+	@Autowired
+	private AssociationService associationService;
 	
 	private static AuthorityHelper INSTANCE = null;
 	
@@ -69,6 +73,21 @@ public class AuthorityHelper implements InitializingBean {
 		return people;
 	}
 	
+	public static List<NodeRef> extractPeople(List<NodeRef> viewRecipients) {
+		List<NodeRef> recipients = new ArrayList<>();
+
+		for (NodeRef viewRecipient : viewRecipients) {
+			QName type = INSTANCE.nodeService.getType(viewRecipient);
+
+			if (ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)) {
+				List<NodeRef> members = INSTANCE.associationService.getChildAssocs(viewRecipient, ContentModel.ASSOC_MEMBER);
+				recipients.addAll(members);
+			} else {
+				recipients.add(viewRecipient);
+			}
+		}
+		return recipients;
+	}
 
 	public static Locale getCommonLocale(Set<String> people) {
 		
