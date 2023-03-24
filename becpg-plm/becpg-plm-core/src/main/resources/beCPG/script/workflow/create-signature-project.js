@@ -30,7 +30,7 @@ function main() {
 			project.createAssociation(findDefaultTemplate(), "bcpg:entityTplRef");
 		}
 		
-		var project = bSupplier.prepareSignatureProject(project, items);
+		var project = bSignProject.prepareSignatureProject(project, items);
 		
 		if (project) {
 			return project.nodeRef;

@@ -1,6 +1,9 @@
 package fr.becpg.test.repo.supplier;
 
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -17,9 +20,16 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.admin.SupplierPortalInitRepoVisitor;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.jscript.SupplierPortalHelper;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SupplierData;
+import fr.becpg.repo.project.data.ProjectData;
+import fr.becpg.repo.project.data.projectList.DeliverableListDataItem;
+import fr.becpg.repo.project.data.projectList.DeliverableState;
+import fr.becpg.repo.project.data.projectList.TaskListDataItem;
+import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -38,6 +48,9 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 		
 		@Autowired
 		private SiteService siteService;
+		
+		@Autowired
+		private EntityReportService entityReportService;
 		
 		
 		@Test
@@ -151,8 +164,99 @@ public class SupplierPortalIT extends PLMBaseTestCase {
 				
 			});
 			
+			// complete referencing task
+			inWriteTx(() -> {
+			
+				ProjectData project = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				
+				for (TaskListDataItem task : project.getTaskList()) {
+					if (TaskState.InProgress.equals(task.getTaskState())) {
+						task.setTaskState(TaskState.Completed);
+						break;
+					}
+				}
+				
+				return alfrescoRepository.save(project);
+				
+			});
+			
+			// complete validation task
+			inWriteTx(() -> {
+				
+				ProjectData project = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				
+				for (TaskListDataItem task : project.getTaskList()) {
+					if (TaskState.InProgress.equals(task.getTaskState())) {
+						task.setTaskState(TaskState.Completed);
+						break;
+					}
+				}
+				
+				return alfrescoRepository.save(project);
+				
+			});
 			
 			
+			inWriteTx(() -> {
+				
+				NodeRef projectEntityNodeRef = associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PROJECT_ENTITY);
+				
+				assertNotNull(projectEntityNodeRef);
+				
+				assertNotSame(supplierRMNodeRef.toString(), projectEntityNodeRef.toString());
+				
+				String supplierDocumentsName = TranslateHelper.getTranslatedPath("SupplierDocuments");
+				
+				NodeRef supplierDocumentsNodeRef = nodeService.getChildByName(projectEntityNodeRef, ContentModel.ASSOC_CONTAINS, supplierDocumentsName);
+				
+				assertNotNull(supplierDocumentsNodeRef);
+				
+				List<NodeRef> reports = entityReportService.getOrRefreshReportsOfKind(projectEntityNodeRef, "SupplierSheet");
+				
+				assertNotNull(reports);
+				
+				assertFalse(reports.isEmpty());
+				
+				String reportName = (String) nodeService.getProperty(reports.get(0), ContentModel.PROP_NAME);
+
+				int lastDotIndex = reportName.lastIndexOf(".");
+
+				if (lastDotIndex != -1) {
+					String nameWithoutExtension = reportName.substring(0, lastDotIndex);
+					String extension = reportName.substring(lastDotIndex);
+					String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(0, 10);
+					reportName = nameWithoutExtension + " - " + date + extension;
+				}
+				
+				NodeRef signedReport = nodeService.getChildByName(supplierDocumentsNodeRef, ContentModel.ASSOC_CONTAINS, reportName);
+				
+				assertNotNull(signedReport);
+				
+				ProjectData project = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				
+				int numberOfDel = 0;
+				int inProgress = 0;
+				int planned = 0;
+				
+				for (DeliverableListDataItem del : project.getDeliverableList()) {
+					
+					if (signedReport.equals(del.getContent())) {
+						numberOfDel++;
+						if (DeliverableState.InProgress.equals(del.getState())) {
+							inProgress++;
+						} else if (DeliverableState.Planned.equals(del.getState())) {
+							planned++;
+						}
+					}
+				}
+				
+				assertEquals(1, numberOfDel);
+				assertEquals(1, inProgress);
+				assertEquals(0, planned);
+				
+				return true;
+				
+			});
 			
 		}
 			
