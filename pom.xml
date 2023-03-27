@@ -134,7 +134,7 @@
 	
 
 
-		<alfresco.aos.version>1.5.0</alfresco.aos.version>
+		<alfresco.aos.version>1.4.1</alfresco.aos.version>
 		<mysql.connector.version>8.0.28</mysql.connector.version>
         
     
