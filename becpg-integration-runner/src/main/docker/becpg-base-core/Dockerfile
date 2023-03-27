@@ -40,7 +40,7 @@ RUN curl --silent --location \
 RUN   curl --silent --location \
      ${NEXUS}/org/alfresco/aos-module/alfresco-aos-module/${AOS_VERSION}/alfresco-aos-module-${AOS_VERSION}.amp  \
       -o $TOMCAT_DIR/amps/alfresco-aos-core-${AOS_VERSION}.amp && \
-    java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps/ $TOMCAT_DIR/webapps/alfresco -nobackup -directory && \
+    java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps/ $TOMCAT_DIR/webapps/alfresco -force -nobackup -directory && \
     rm $TOMCAT_DIR/amps/alfresco-aos-core-${AOS_VERSION}.amp
 
 
