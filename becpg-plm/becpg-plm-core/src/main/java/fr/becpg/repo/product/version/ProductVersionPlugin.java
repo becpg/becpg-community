@@ -48,9 +48,6 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	@Value("${beCPG.copyOrBranch.propertiesToReset}")
 	private String propertiesToKeep;
 	
-	@Value("${beCPG.copyOrBranch.assocsToReset}")
-	private String assocsToKeep;
-	
 	
 	/** {@inheritDoc} */
 	@Override
@@ -72,25 +69,24 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	        nodeService.setProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE, nodeService.getProperty(origNodeRef, PLMModel.PROP_PRODUCT_STATE));
      
 			if (propertiesToKeep != null) {
-		        for(String propertyToKeep : propertiesToKeep.split(",")) {
-		        	QName propertyQname = QName.createQName(propertyToKeep, namespaceService);
-		        	Serializable value = nodeService.getProperty(origNodeRef, propertyQname);
-		        	if(value!=null) {
-		        		nodeService.setProperty(workingCopyNodeRef, propertyQname,value  );
-		        	} else {
-		        		nodeService.removeProperty(workingCopyNodeRef, propertyQname);
-		        	}
-		        }
+				for (String propertyToKeep : propertiesToKeep.split(",")) {
+					QName propertyQname = QName.createQName(propertyToKeep, namespaceService);
+
+					if (entityDictionaryService.getProperty(propertyQname) != null) {
+						Serializable value = nodeService.getProperty(origNodeRef, propertyQname);
+						if (value != null) {
+							nodeService.setProperty(workingCopyNodeRef, propertyQname, value);
+						} else {
+							nodeService.removeProperty(workingCopyNodeRef, propertyQname);
+						}
+					} else if (entityDictionaryService.getAssociation(propertyQname) != null) {
+						List<NodeRef> originalAssocs = associationService.getTargetAssocs(origNodeRef, propertyQname);
+						associationService.update(workingCopyNodeRef, propertyQname, originalAssocs);
+					}
+
+				}
 	        }
 	        
-			if (assocsToKeep != null) {
-	        	for(String assocToKeep : assocsToKeep.split(",")) {
-	        		QName assocQname = QName.createQName(assocToKeep, namespaceService);
-	        		List<NodeRef> originalAssocs = associationService.getTargetAssocs(origNodeRef, assocQname);
-	        		associationService.update(workingCopyNodeRef, assocQname, originalAssocs);
-	        	}
-	        }
-
 			if (!nodeService.hasAspect(workingCopyNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
 				if (nodeService.hasAspect(origNodeRef, ContentModel.ASPECT_LOCKABLE)) {
 					// Release the lock on the original node
