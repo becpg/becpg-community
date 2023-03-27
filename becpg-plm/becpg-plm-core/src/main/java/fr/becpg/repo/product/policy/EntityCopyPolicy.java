@@ -6,6 +6,7 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -36,18 +37,18 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 	
 	private String propertiesToReset;
 	
-	private String assocsToReset;
-	
 	private EntityService entityService;
 	
 	private AssociationService associationService;
 	
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
+	private DictionaryService dictionaryService;
+	
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
 	}
 	
-	public void setAssocsToReset(String assocsToReset) {
-		this.assocsToReset = assocsToReset;
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
 	}
 	
 	/**
@@ -104,20 +105,17 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 			
 			entityService.changeEntityListStates(destinationRef, EntityListState.ToValidate);
 			
-			
 			if (propertiesToReset != null) {
 		        for(String propertyToReset : propertiesToReset.split(",")) {	        	
 		        	QName propertyQname = QName.createQName(propertyToReset, namespaceService);	
-		        	nodeService.removeProperty(destinationRef, propertyQname);
+		        	
+		        	if (dictionaryService.getProperty(propertyQname) != null) {
+		        		nodeService.removeProperty(destinationRef, propertyQname);
+		        	} else if (dictionaryService.getAssociation(propertyQname) != null) {
+		        		associationService.update(destinationRef, propertyQname, List.of());
+		        	}
 		        }
 	        }
-			
-			if (assocsToReset != null) {
-				for(String assocToReset : assocsToReset.split(",")) {
-					QName assocQname = QName.createQName(assocToReset, namespaceService);	
-					associationService.update(destinationRef, assocQname, List.of());
-				}
-			}
 			
 			if(nodeService.hasAspect(destinationRef, PLMModel.ASPECT_PRODUCT)) {
 				nodeService.setProperty(destinationRef, PLMModel.PROP_PRODUCT_STATE, SystemState.Simulation);
