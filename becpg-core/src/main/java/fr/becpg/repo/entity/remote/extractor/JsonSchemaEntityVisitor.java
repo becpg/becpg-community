@@ -421,7 +421,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	@SuppressWarnings("unchecked")
 	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context,
 			PropertyDefinition propertyDefinition) throws JSONException {
-		if (propertyDefinition.isMultiValued()) {
+		if (propertyDefinition.isMultiValued() && value!=null) {
 			JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_ARRAY,
 					propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
 			for (Serializable subEl : (List<Serializable>) value) {
