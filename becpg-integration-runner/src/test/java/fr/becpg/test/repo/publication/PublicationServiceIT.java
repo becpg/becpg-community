@@ -31,6 +31,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.publication.PublicationChannelService;
+import fr.becpg.repo.publication.PublicationChannelService.PublicationChannelAction;
 import fr.becpg.test.PLMBaseTestCase;
 
 /**
@@ -104,12 +105,24 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 			FinishedProductData productData = new FinishedProductData();
 			productData.setParentNodeRef(getTestFolderNodeRef());
-			productData.setName("finished-product");
+			productData.setName("finished-product 1");
 			productData.setErpCode(CHANNEL_ID + "01");
 			alfrescoRepository.save(productData);
 			return productData.getNodeRef();
 
 		});
+		
+		final NodeRef pf2NodeRef = inWriteTx(() -> {
+
+			FinishedProductData productData = new FinishedProductData();
+			productData.setParentNodeRef(getTestFolderNodeRef());
+			productData.setName("finished-product 2");
+			productData.setErpCode(CHANNEL_ID + "02");
+			alfrescoRepository.save(productData);
+			return productData.getNodeRef();
+
+		});
+
 
 		//Test query search
 		inReadTx(() -> {
@@ -191,7 +204,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 
 		//Force
 		inWriteTx(() -> {
-			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_FORCEPUBLICATION, true);
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, PublicationChannelAction.RETRY);
 			return true;
 		});
 
@@ -205,7 +218,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		//Test catalog update
 		inWriteTx(() -> {
 			nodeService.setProperty(pfNodeRef, ContentModel.PROP_TITLE, "Update 2");
-			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_FORCEPUBLICATION, false);
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, null);
 			return pfNodeRef;
 
 		});
@@ -215,6 +228,72 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 			Assert.assertEquals(pfNodeRef, publicationChannelService.getEntitiesByChannel(channelNodeRef).get(0));
 			return true;
 		});
+
+		//Test Stop
+		inWriteTx(() -> {
+			nodeService.setProperty(pfNodeRef, ContentModel.PROP_TITLE, "Update 3");
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, PublicationChannelAction.STOP);
+			return pfNodeRef;
+
+		});
+
+		inReadTx(() -> {
+			Assert.assertTrue(publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
+			return true;
+		});
+
+		//Test is filter
+		inWriteTx(() -> {
+
+			JSONObject channelConfig = new JSONObject();
+			channelConfig.put("query", "=@bcpg\\:erpCode:\"" + CHANNEL_ID + "01\"");
+			channelConfig.put("isFilter", true);
+
+			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTDATE, null);
+			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CONFIG, channelConfig.toString());
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION,null);
+			return true;
+		});
+		
+		inReadTx(() -> {
+			Assert.assertTrue(!publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
+			Assert.assertEquals(pfNodeRef, publicationChannelService.getEntitiesByChannel(channelNodeRef).get(0));
+			return true;
+		});
+
+		inWriteTx(() -> {
+
+			JSONObject channelConfig = new JSONObject();
+			channelConfig.put("query", "=@bcpg\\:erpCode:\"" + CHANNEL_ID + "02\"");
+			channelConfig.put("isFilter", false);
+
+			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTDATE, null);
+			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CONFIG, channelConfig.toString());
+			return true;
+		});
+		
+		inReadTx(() -> {
+			Assert.assertTrue(!publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
+			Assert.assertEquals(pf2NodeRef, publicationChannelService.getEntitiesByChannel(channelNodeRef).get(0));
+			return true;
+		});
+		
+		inWriteTx(() -> {
+
+			JSONObject channelConfig = new JSONObject();
+			channelConfig.put("query", "=@bcpg\\:erpCode:\"" + CHANNEL_ID + "02\"");
+			channelConfig.put("isFilter", true);
+
+			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_LASTDATE, null);
+			nodeService.setProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CONFIG, channelConfig.toString());
+			return true;
+		});
+		
+		inReadTx(() -> {
+			Assert.assertTrue(publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
+			return true;
+		});
+		
 
 	}
 
