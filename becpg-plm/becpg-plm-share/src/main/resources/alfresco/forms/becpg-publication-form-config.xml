@@ -136,11 +136,11 @@
 		<forms>
 			<form>
 				<field-visibility>
+				    <show id="bp:pubChannelListAction" />
 					<show id="bp:pubChannelListChannel" />
-					<show id="bp:pubChannelListForcePublication" />
+					<show id="bp:pubChannelListBatchId" />
 					<show id="bp:pubChannelListModifiedDate" />
 					<show id="bp:pubChannelListPublishedDate" />
-					<show id="bp:pubChannelListBatchId" />
 					<show id="bp:pubChannelListStatus" />
 					<show id="bp:pubChannelListError" />
 
@@ -150,7 +150,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 						</control>
 					</field>
-					<field id="bp:pubChannelListForcePublication" />
+					<field id="bp:pubChannelListAction" />
 					<field id="bp:pubChannelListModifiedDate" read-only="true" />
 					<field id="bp:pubChannelListPublishedDate" read-only="true" />
 					<field id="bp:pubChannelListBatchId" read-only="true" />
@@ -168,8 +168,8 @@
 		<forms>
 			<form>
 				<field-visibility>
+				    <show id="bp:pubChannelListAction" />
 					<show id="bp:pubChannelListChannel" />
-					<show id="bp:pubChannelListForcePublication" />
 				</field-visibility>
 				<appearance>
 					<field id="bp:pubChannelListChannel">
@@ -187,18 +187,17 @@
 
 			<form id="datagrid">
 				<field-visibility>
+					 <show id="bp:pubChannelListAction" />
 					<show id="bp:pubChannelListChannel" />
-					<show id="bp:pubChannelListForcePublication" />
+					<show id="bp:pubChannelListBatchId" />
 					<show id="bp:pubChannelListModifiedDate" />
 					<show id="bp:pubChannelListPublishedDate" />
-					<show id="bp:pubChannelListBatchId" />
 					<show id="bp:pubChannelListStatus" />
 					<show id="bp:pubChannelListError" />
-
 				</field-visibility>
 				<appearance>
 					<field id="bp:pubChannelListChannel" />
-					<field id="bp:pubChannelListForcePublication" />
+					<field id="bp:pubChannelListAction" />
 					<field id="bp:pubChannelListModifiedDate" read-only="true" />
 					<field id="bp:pubChannelListPublishedDate" read-only="true" />
 					<field id="bp:pubChannelListBatchId" read-only="true" />
