@@ -612,6 +612,13 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		return new NutListDataItem(this);
 	}
 
+	/** {@inheritDoc} */
+	@Override
+	public Boolean shouldDetailIfZero() {
+		return true;
+	}
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
