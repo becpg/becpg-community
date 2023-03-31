@@ -20,6 +20,7 @@ import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.helper.AuditActivityHelper;
 import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -55,7 +56,8 @@ public class DetailActivityContentIT extends AbstractFinishedProductTest {
 	}
 
 	protected List<ActivityListDataItem> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
-		AuditQuery auditFilter = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef", entityNodeRef.toString());
+		AuditQuery auditFilter = AuditQuery.createQuery().asc(false).dbAsc(false)
+				.sortBy(ActivityAuditPlugin.PROP_CM_CREATED).filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
 
 		return transactionService.getRetryingTransactionHelper().doInTransaction(
 				() -> beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()

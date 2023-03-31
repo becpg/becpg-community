@@ -5,6 +5,8 @@ import org.json.JSONObject;
 
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.audit.plugin.AuditPlugin;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 
 public class AuditActivityHelper {
 	
@@ -16,11 +18,11 @@ public class AuditActivityHelper {
 		
 		ActivityListDataItem activityListDataItem = new ActivityListDataItem();
 		
-		activityListDataItem.setId(result.getLong("id"));
-		activityListDataItem.setUserId(result.getString("prop_bcpg_alUserId"));
-		activityListDataItem.setActivityType(ActivityType.valueOf(result.getString("prop_bcpg_alType")));
-		activityListDataItem.setActivityData(result.getString("prop_bcpg_alData"));
-		activityListDataItem.setCreated(ISO8601DateFormat.parse(result.getString("prop_cm_created")));
+		activityListDataItem.setId(result.getLong(AuditPlugin.ID));
+		activityListDataItem.setUserId(result.getString(ActivityAuditPlugin.PROP_BCPG_AL_USER_ID));
+		activityListDataItem.setActivityType(ActivityType.valueOf(result.getString(ActivityAuditPlugin.PROP_BCPG_AL_TYPE)));
+		activityListDataItem.setActivityData(result.getString(ActivityAuditPlugin.PROP_BCPG_AL_DATA));
+		activityListDataItem.setCreated(ISO8601DateFormat.parse(result.getString(ActivityAuditPlugin.PROP_CM_CREATED)));
 
 		return activityListDataItem;
 	}
@@ -29,10 +31,10 @@ public class AuditActivityHelper {
 
 		JSONObject result = new JSONObject();
 		
-		result.put("prop_bcpg_alUserId", activityListDataItem.getUserId());
-		result.put("prop_bcpg_alType", activityListDataItem.getActivityType());
-		result.put("prop_bcpg_alData", activityListDataItem.getActivityData());
-		result.put("prop_cm_created", activityListDataItem.getCreatedDate());
+		result.put(ActivityAuditPlugin.PROP_BCPG_AL_USER_ID, activityListDataItem.getUserId());
+		result.put(ActivityAuditPlugin.PROP_BCPG_AL_TYPE, activityListDataItem.getActivityType());
+		result.put(ActivityAuditPlugin.PROP_BCPG_AL_DATA, activityListDataItem.getActivityData());
+		result.put(ActivityAuditPlugin.PROP_CM_CREATED, activityListDataItem.getCreatedDate());
 
 		return result.toString();
 	}

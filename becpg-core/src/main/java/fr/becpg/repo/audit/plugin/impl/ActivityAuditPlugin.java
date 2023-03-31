@@ -15,12 +15,18 @@ import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 @Service
 public class ActivityAuditPlugin extends AbstractAuditPlugin implements DatabaseAuditPlugin {
 
+	public static final String ENTITY_NODEREF = "entityNodeRef";
+	public static final String PROP_CM_CREATED = "prop_cm_created";
+	public static final String PROP_BCPG_AL_DATA = "prop_bcpg_alData";
+	public static final String PROP_BCPG_AL_TYPE = "prop_bcpg_alType";
+	public static final String PROP_BCPG_AL_USER_ID = "prop_bcpg_alUserId";
+
 	static {
-		KEY_MAP.put("prop_bcpg_alUserId", AuditDataType.STRING);
-		KEY_MAP.put("prop_bcpg_alType", AuditDataType.STRING);
-		KEY_MAP.put("prop_bcpg_alData", AuditDataType.STRING);
-		KEY_MAP.put("prop_cm_created", AuditDataType.DATE);
-		KEY_MAP.put("entityNodeRef", AuditDataType.STRING);
+		KEY_MAP.put(PROP_BCPG_AL_USER_ID, AuditDataType.STRING);
+		KEY_MAP.put(PROP_BCPG_AL_TYPE, AuditDataType.STRING);
+		KEY_MAP.put(PROP_BCPG_AL_DATA, AuditDataType.STRING);
+		KEY_MAP.put(PROP_CM_CREATED, AuditDataType.DATE);
+		KEY_MAP.put(ENTITY_NODEREF, AuditDataType.STRING);
 	}
 	
 	@Override

@@ -15,6 +15,6 @@ public interface DatabaseAuditPlugin extends AuditPlugin {
 	
 	String getAuditApplicationPath();
 	
-	Map<String, AuditDataType> getStatisticsKeyMap();
+	Map<String, AuditDataType> getKeyMap();
 
 }

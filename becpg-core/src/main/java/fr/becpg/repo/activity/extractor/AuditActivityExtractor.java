@@ -12,6 +12,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.activity.EntityActivityExtractorService;
 import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
@@ -66,7 +67,9 @@ public class AuditActivityExtractor implements DataListExtractor {
 			ret.setComputedFields(attributeExtractorService.readExtractStructure(BeCPGModel.TYPE_ACTIVITY_LIST, metadataFields));
 		}
 		
-		AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef", dataListFilter.getEntityNodeRef().toString());
+		AuditQuery auditQuery = AuditQuery.createQuery().dbAsc(false).asc(false)
+				.sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
+				.filter(ActivityAuditPlugin.ENTITY_NODEREF, dataListFilter.getEntityNodeRef().toString());
 		
 		List<JSONObject> results = dataListFilter.getPagination().paginate(beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery));
 

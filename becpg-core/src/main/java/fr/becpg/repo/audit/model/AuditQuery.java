@@ -10,7 +10,9 @@ public class AuditQuery {
 
 	private String filter;
 
-	private boolean order = true;
+	private boolean asc = true;
+	
+	private boolean dbAsc = true;
 
 	private int maxResults = RepoConsts.MAX_RESULTS_256;
 	
@@ -57,8 +59,13 @@ public class AuditQuery {
     	return this;
     }
     
-    public AuditQuery order(boolean order) {
-    	this.order = order;
+    public AuditQuery dbAsc(boolean dbAsc) {
+    	this.dbAsc = dbAsc;
+    	return this;
+    }
+    
+    public AuditQuery asc(boolean asc) {
+    	this.asc = asc;
     	return this;
     }
     
@@ -66,6 +73,10 @@ public class AuditQuery {
     	this.maxResults = maxResults;
     	return this;
     }
+    
+	public boolean isDbAscending() {
+		return dbAsc;
+	}
 
 	public Long getFromId() {
 		return fromId;
@@ -95,8 +106,8 @@ public class AuditQuery {
 		return filter;
 	}
 
-	public boolean isAscendingOrder() {
-		return order;
+	public boolean isAscending() {
+		return asc;
 	}
 
 }

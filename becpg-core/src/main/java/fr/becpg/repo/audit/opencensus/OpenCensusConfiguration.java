@@ -1,4 +1,4 @@
-package fr.becpg.repo.audit.service.impl.opencensus;
+package fr.becpg.repo.audit.opencensus;
 
 import java.io.IOException;
 import java.util.HashMap;
