@@ -21,7 +21,8 @@ public class GetStatisticsWebScript extends AbstractWebScript {
 	private static final String PARAM_SORT_BY = "sortBy";
 	private static final String PARAM_FILTER = "filter";
 	private static final String PARAM_MAX_RESULTS = "maxResults";
-	private static final String PARAM_ASCENDING_ORDER = "order";
+	private static final String PARAM_ASCENDING_ORDER = "asc";
+	private static final String PARAM_DB_ASCENDING_ORDER = "dbAsc";
 	
 	private BeCPGAuditService beCPGAuditService;
 	
@@ -39,6 +40,7 @@ public class GetStatisticsWebScript extends AbstractWebScript {
 		String sortBy = req.getParameter(PARAM_SORT_BY);
 		String filter = req.getParameter(PARAM_FILTER);
 		String ascendingOrder = req.getParameter(PARAM_ASCENDING_ORDER);
+		String dbAscendingOrder = req.getParameter(PARAM_DB_ASCENDING_ORDER);
 		
 		
 		AuditType type = null;
@@ -64,7 +66,11 @@ public class GetStatisticsWebScript extends AbstractWebScript {
 		}
 		
 		if (ascendingOrder != null) {
-			auditQuery.order(Boolean.parseBoolean(ascendingOrder));
+			auditQuery.asc(Boolean.parseBoolean(ascendingOrder));
+		}
+		
+		if (dbAscendingOrder != null) {
+			auditQuery.dbAsc(Boolean.parseBoolean(dbAscendingOrder));
 		}
 		
 		List<JSONObject> statistics = beCPGAuditService.listAuditEntries(type, auditQuery);

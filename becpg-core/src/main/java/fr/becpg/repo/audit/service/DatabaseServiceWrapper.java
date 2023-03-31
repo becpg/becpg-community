@@ -6,14 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import org.alfresco.util.ISO8601DateFormat;
+
+import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 
 public class DatabaseServiceWrapper {
-	
-	private static final String ID = "id";
-	private static final String STARTED_AT = "startedAt";
-	private static final String COMPLETED_AT = "completedAt";
-	private static final String DURATION = "duration";
 	
 	private DatabaseAuditService databaseAuditService;
 	
@@ -29,11 +27,11 @@ public class DatabaseServiceWrapper {
 	public void stop() {
 		Date end = new Date();
 		
-		auditValues.put(COMPLETED_AT, end);
+		auditValues.put(AuditPlugin.COMPLETED_AT, ISO8601DateFormat.format(end));
 		
-		Date start = (Date) auditValues.get(STARTED_AT);
+		Date start = ISO8601DateFormat.parse(auditValues.get(AuditPlugin.STARTED_AT).toString());
 		
-		auditValues.put(DURATION, end.getTime() - start.getTime());
+		auditValues.put(AuditPlugin.DURATION, end.getTime() - start.getTime());
 
 		databaseAuditService.recordAuditEntry(auditPlugin, auditValues, false);
 	}
@@ -45,9 +43,9 @@ public class DatabaseServiceWrapper {
 	}
 
 	public void start() {
-		auditValues.put(STARTED_AT, new Date());
+		auditValues.put(AuditPlugin.STARTED_AT, ISO8601DateFormat.format(new Date()));
 		int id = Objects.hash(auditValues);
-		auditValues.put(ID, id);
+		auditValues.put(AuditPlugin.ID, id);
 	}
 
 }

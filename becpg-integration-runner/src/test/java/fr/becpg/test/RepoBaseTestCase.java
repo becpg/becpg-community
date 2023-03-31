@@ -238,7 +238,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 		doInitRepo(shouldInit);
 
-	}
+	} 
 
 	@Override
 	@Before
@@ -271,7 +271,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 				try {
 					ruleService.disableRules();
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL);
+					policyBehaviourFilter.disableBehaviour();
 					
 					IntegrityChecker.setWarnInTransaction();
 					nodeService.addAspect(folderNodeRef, ContentModel.ASPECT_TEMPORARY, null);
@@ -279,7 +279,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 					nodeService.deleteNode(folderNodeRef);
 				} finally {
 					ruleService.enableRules();
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_ENTITY_TPL);
+					policyBehaviourFilter.enableBehaviour();
 				}
 
 			}

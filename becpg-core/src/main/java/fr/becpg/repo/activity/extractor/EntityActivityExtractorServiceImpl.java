@@ -36,6 +36,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.activity.EntityActivityExtractorService;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.impl.AbstractDataListExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
@@ -123,7 +124,7 @@ public class EntityActivityExtractorServiceImpl implements EntityActivityExtract
 			}
 		}
 		
-		ret.put("prop_bcpg_alUserId", extractPerson((String) auditActivityData.get("prop_bcpg_alUserId")));
+		ret.put(ActivityAuditPlugin.PROP_BCPG_AL_USER_ID, extractPerson((String) auditActivityData.get(ActivityAuditPlugin.PROP_BCPG_AL_USER_ID)));
 
 		JSONObject postLookup = entityActivityService.postActivityLookUp(ActivityType.valueOf((String) auditActivityData.get("prop_bcpg_alType")), (String) auditActivityData.get("prop_bcpg_alData"));
 		

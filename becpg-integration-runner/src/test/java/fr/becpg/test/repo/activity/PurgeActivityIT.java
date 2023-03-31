@@ -25,6 +25,7 @@ import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -95,7 +96,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 					changeCreatedNodeDate(nodeRef, cal.getTime());
 					customActivities.add(nodeRef);
 				}
-			});
+			}); 
 		}
 
 		List<ActivityType> activityTypes = new ArrayList<>();
@@ -106,7 +107,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 		assertEquals("Formulation Activities number = 1", 1, Collections.frequency(activityTypes, ActivityType.Formulation));
 
 		// Confirm if the last activity is of type formulation
-		assertEquals("Last activity type is formulation: ", ActivityType.Formulation, getActivities(finishedProductNodeRef, SORT_MAP).get(0).getActivityType());
+		assertEquals("Last activity type is formulation: ", ActivityType.Formulation, getActivities(finishedProductNodeRef, SORT_MAP).get(1).getActivityType());
 
 	}
 
@@ -609,7 +610,7 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 			
 			Map<String, Serializable> values = new HashMap<>();
 			
-			values.put("prop_cm_created", ISO8601DateFormat.format(customDate));
+			values.put(ActivityAuditPlugin.PROP_CM_CREATED, ISO8601DateFormat.format(customDate));
 			
 			beCPGAuditService.updateAuditEntry(AuditType.ACTIVITY, activity.getId(), customDate.getTime(), values);
 			

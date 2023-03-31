@@ -9,10 +9,6 @@ import fr.becpg.repo.audit.model.AuditDataType;
 
 public abstract class AbstractAuditPlugin implements AuditPlugin, InitializingBean {
 	
-	private static final String STARTED_AT = "startedAt";
-	private static final String COMPLETED_AT = "completedAt";
-	private static final String DURATION = "duration";
-	
 	protected static final Map<String, AuditDataType> KEY_MAP = new HashMap<>();
 
 	static {
@@ -65,7 +61,7 @@ public abstract class AbstractAuditPlugin implements AuditPlugin, InitializingBe
 		}
 	}
 
-	public Map<String, AuditDataType> getStatisticsKeyMap() {
+	public Map<String, AuditDataType> getKeyMap() {
 		return KEY_MAP;
 	}
 	

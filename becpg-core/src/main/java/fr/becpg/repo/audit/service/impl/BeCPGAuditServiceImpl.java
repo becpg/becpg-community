@@ -66,12 +66,12 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 	}
 
 	@Override
-	public List<JSONObject> listAuditEntries(AuditType type, AuditQuery auditFilter) {
+	public List<JSONObject> listAuditEntries(AuditType type, AuditQuery auditQuery) {
 		
 		AuditPlugin plugin = getPlugin(type);
 		
 		if (plugin.isDatabaseEnable()) {
-			return databaseAuditService.listAuditEntries((DatabaseAuditPlugin) plugin, auditFilter);
+			return databaseAuditService.listAuditEntries((DatabaseAuditPlugin) plugin, auditQuery);
 		}
 		
 		throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));

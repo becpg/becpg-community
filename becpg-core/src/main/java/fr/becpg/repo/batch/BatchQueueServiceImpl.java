@@ -35,6 +35,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.model.AuditScope;
 import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.BatchAuditPlugin;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.mail.BeCPGMailService;
 
@@ -211,12 +212,22 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			Date endTime = null;
 			
 			int totalItems = 0;
+			int totalErrors = 0;
+			
+			String batchUserName = batchInfo.getBatchUser();
+			
+			if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
+				batchUserName = AuthenticationUtil.getSystemUserName();
+				if (tenantAdminService.isEnabled()) {
+					batchUserName = tenantAdminService.getDomainUser(batchUserName, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
+				}
+			}
 			
 			try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.BATCH)) {
 				
-				beCPGAuditService.putAttribute("batchUser", batchInfo.getBatchUser());
-				beCPGAuditService.putAttribute("batchId", batchInfo.getBatchId());
-				beCPGAuditService.putAttribute("isCompleted", false);
+				beCPGAuditService.putAttribute(BatchAuditPlugin.BATCH_USER, batchInfo.getBatchUser());
+				beCPGAuditService.putAttribute(BatchAuditPlugin.BATCH_ID, batchInfo.getBatchId());
+				beCPGAuditService.putAttribute(BatchAuditPlugin.IS_COMPLETED, false);
 				
 				Integer stepCount = batchSteps.size() > 1 ? 1 : null;
 				
@@ -226,17 +237,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						
 						AuthenticationUtil.pushAuthentication();
 						
-						String username = batchInfo.getBatchUser();
-						if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-							
-							username = AuthenticationUtil.getSystemUserName();
-							if (tenantAdminService.isEnabled()) {
-								username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-								
-							}
-							
-						}
-						AuthenticationUtil.setFullyAuthenticatedUser(username);
+						AuthenticationUtil.setFullyAuthenticatedUser(batchUserName);
 						
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 							batchStep.getBatchStepListener().beforeStep();
@@ -278,7 +279,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					
 					endTime = batchProcessor.getEndTime();
 					
-					totalItems += batchStep.getWorkProvider().getTotalEstimatedWorkSizeLong();
+					totalItems += batchProcessor.getTotalResultsLong();
+					totalErrors += batchProcessor.getTotalErrorsLong();
 					
 					if (batchProcessor.getTotalErrorsLong() > 0 && batchStep.getBatchStepListener() != null) {
 						
@@ -295,17 +297,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						
 						AuthenticationUtil.pushAuthentication();
 						
-						String username = batchInfo.getBatchUser();
-						if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-							
-							username = AuthenticationUtil.getSystemUserName();
-							if (tenantAdminService.isEnabled()) {
-								username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-								
-							}
-							
-						}
-						AuthenticationUtil.setFullyAuthenticatedUser(username);
+						AuthenticationUtil.setFullyAuthenticatedUser(batchUserName);
 						
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 							batchStep.getBatchStepListener().afterStep();
@@ -321,15 +313,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 					AuthenticationUtil.pushAuthentication();
 
-					String username = batchInfo.getBatchUser();
-					if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-						username = AuthenticationUtil.getSystemUserName();
-						if (tenantAdminService.isEnabled()) {
-							username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-						}
-					}
-
-					AuthenticationUtil.setFullyAuthenticatedUser(username);
+					AuthenticationUtil.setFullyAuthenticatedUser(batchUserName);
 
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 						closingHook.run();
@@ -342,37 +326,34 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				
 				batchInfo.setIsCompleted(true); 
 				
-				beCPGAuditService.putAttribute("totalItems", totalItems);
-				
-				beCPGAuditService.putAttribute("isCompleted", true);
-				
-
-			
-			if (Boolean.TRUE.equals(batchInfo.getNotifyByMail())) {
-
-				final boolean finalHasError = hasError;
-				final Date finalEndTime = endTime;
-				final Date finalStartTime = startTime;
-				
-				int secondsBetween = (int) ((finalEndTime.getTime() - finalStartTime.getTime()) / 1000);
-
-				AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-					beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(), batchInfo.getMailAction(), batchInfo.getMailActionUrl(),
-							!finalHasError, secondsBetween, batchInfo.getEntityDescription());
-
-					return null;
-				}, true, false), batchInfo.getBatchUser());
+				beCPGAuditService.putAttribute(BatchAuditPlugin.TOTAL_ITEMS, totalItems);
+				beCPGAuditService.putAttribute(BatchAuditPlugin.TOTAL_ERRORS, totalErrors);
+				beCPGAuditService.putAttribute(BatchAuditPlugin.IS_COMPLETED, true);
+					
+	
+				if (Boolean.TRUE.equals(batchInfo.getNotifyByMail())) {
+	
+					final boolean finalHasError = hasError;
+					final Date finalEndTime = endTime;
+					final Date finalStartTime = startTime;
+					
+					int secondsBetween = (int) ((finalEndTime.getTime() - finalStartTime.getTime()) / 1000);
+	
+					AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+	
+						beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(), batchInfo.getMailAction(), batchInfo.getMailActionUrl(),
+								!finalHasError, secondsBetween, batchInfo.getEntityDescription());
+	
+						return null;
+					}, true, false), batchInfo.getBatchUser());
+				}
+	
+				batchInfo.setIsCompleted(true);
+	
+				if (cancelledBatches.contains(batchId)) {
+					cancelledBatches.remove(batchId);
+				}
 			}
-
-			batchInfo.setIsCompleted(true);
-
-			if (cancelledBatches.contains(batchId)) {
-				cancelledBatches.remove(batchId);
-			}
-			
-		}
-			
 		}
 
 		private BatchProcessWorkProvider<T> getNextWorkWrapper(BatchProcessWorkProvider<T> workProvider) {
