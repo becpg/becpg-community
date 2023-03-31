@@ -56,6 +56,7 @@ import fr.becpg.repo.activity.helper.AuditActivityHelper;
 import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.model.AuditScope;
 import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
@@ -575,11 +576,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		Date createdDate = activityListDataItem.getCreatedDate() != null ? activityListDataItem.getCreatedDate() : new Date();
 		
 		try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.ACTIVITY)) {
-			beCPGAuditService.putAttribute("entityNodeRef", entityNodeRef.toString());
-			beCPGAuditService.putAttribute("prop_bcpg_alUserId", activityListDataItem.getUserId());
-			beCPGAuditService.putAttribute("prop_bcpg_alType", activityListDataItem.getActivityType().toString());
-			beCPGAuditService.putAttribute("prop_bcpg_alData", activityListDataItem.getActivityData());
-			beCPGAuditService.putAttribute("prop_cm_created", ISO8601DateFormat.format(createdDate));
+			beCPGAuditService.putAttribute(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
+			beCPGAuditService.putAttribute(ActivityAuditPlugin.PROP_BCPG_AL_USER_ID, activityListDataItem.getUserId());
+			beCPGAuditService.putAttribute(ActivityAuditPlugin.PROP_BCPG_AL_TYPE, activityListDataItem.getActivityType().toString());
+			beCPGAuditService.putAttribute(ActivityAuditPlugin.PROP_BCPG_AL_DATA, activityListDataItem.getActivityData());
+			beCPGAuditService.putAttribute(ActivityAuditPlugin.PROP_CM_CREATED, ISO8601DateFormat.format(createdDate));
 		}
 	}
 
@@ -597,8 +598,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		NodeRef entityNodeRef = nodeService.getPrimaryParent(nodeService.getPrimaryParent(activityListNodeRef).getParentRef()).getParentRef();
 		
 		// Activities in the last hour
-		AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt")
-				.timeRange(cal.getTime(), new Date()).filter("entityNodeRef", entityNodeRef.toString());
+		AuditQuery auditQuery = AuditQuery.createQuery().asc(false).dbAsc(false)
+				.sortBy(ActivityAuditPlugin.PROP_CM_CREATED).timeRange(cal.getTime(), new Date())
+				.filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
 		
 		List<ActivityListDataItem> sortedActivityList = new ArrayList<>();
 		
@@ -814,7 +816,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	@Override
 	public void mergeActivities(NodeRef fromNodeRef, NodeRef toNodeRef) {
 
-		AuditQuery auditQuery = AuditQuery.createQuery().filter("entityNodeRef", toNodeRef.toString());
+		AuditQuery auditQuery = AuditQuery.createQuery()
+				.filter(ActivityAuditPlugin.ENTITY_NODEREF, toNodeRef.toString()).maxResults(RepoConsts.MAX_RESULTS_1000000);
 		
 		List<JSONObject> fromActivities = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery);
 		
@@ -1145,7 +1148,12 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 						}
 
 						// Get Activity list ordered by the date of creation
-						AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef", entityNodeRef.toString());
+						AuditQuery auditQuery = AuditQuery.createQuery()
+								.asc(false)
+								.dbAsc(false)
+								.sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
+								.filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString())
+								.maxResults(RepoConsts.MAX_RESULTS_1000000);
 						
 						List<ActivityListDataItem> sortedActivityList = new ArrayList<>();
 						
@@ -1234,7 +1242,10 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 			NodeRef activityListNodeRef = getActivityList(entityTplNodeRef);
 			if (activityListNodeRef != null) {
-				AuditQuery auditQuery = AuditQuery.createQuery().order(false).sortBy("startedAt").filter("entityNodeRef", entityTplNodeRef.toString());
+				AuditQuery auditQuery = AuditQuery.createQuery().asc(false).dbAsc(false)
+						.sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
+						.filter(ActivityAuditPlugin.ENTITY_NODEREF, entityTplNodeRef.toString())
+						.maxResults(RepoConsts.MAX_RESULTS_1000000);
 				
 				List<ActivityListDataItem> sortedActivityList = new ArrayList<>();
 				

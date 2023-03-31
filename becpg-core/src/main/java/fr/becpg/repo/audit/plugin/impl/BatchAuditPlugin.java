@@ -16,15 +16,20 @@ import fr.becpg.repo.batch.BatchQueueService;
 @Service
 public class BatchAuditPlugin extends AbstractAuditPlugin implements DatabaseAuditPlugin {
 
+	public static final String TOTAL_ITEMS = "totalItems";
+	public static final String TOTAL_ERRORS = "totalErrors";
+	public static final String IS_COMPLETED = "isCompleted";
+	public static final String BATCH_USER = "batchUser";
+	public static final String BATCH_ID = "batchId";
 	private static final String BATCH = "batch";
-
 	private static final String BATCH_AUDIT_ID = "beCPGBatchAudit";
 	
 	static {
-		KEY_MAP.put("batchId", AuditDataType.STRING);
-		KEY_MAP.put("batchUser", AuditDataType.STRING);
-		KEY_MAP.put("isCompleted", AuditDataType.BOOLEAN);
-		KEY_MAP.put("totalItems", AuditDataType.INTEGER);
+		KEY_MAP.put(BATCH_ID, AuditDataType.STRING);
+		KEY_MAP.put(BATCH_USER, AuditDataType.STRING);
+		KEY_MAP.put(IS_COMPLETED, AuditDataType.BOOLEAN);
+		KEY_MAP.put(TOTAL_ITEMS, AuditDataType.INTEGER);
+		KEY_MAP.put(TOTAL_ERRORS, AuditDataType.INTEGER);
 	}
 	
 	@Override
@@ -56,7 +61,7 @@ public class BatchAuditPlugin extends AbstractAuditPlugin implements DatabaseAud
 	@Override
 	public void beforeRecordAuditEntry(Map<String, Serializable> auditValues) {
 		AuthenticationUtil.pushAuthentication();
-		AuthenticationUtil.setFullyAuthenticatedUser((String) auditValues.get("batchUser"));
+		AuthenticationUtil.setFullyAuthenticatedUser((String) auditValues.get(BATCH_USER));
 	}
 
 	@Override

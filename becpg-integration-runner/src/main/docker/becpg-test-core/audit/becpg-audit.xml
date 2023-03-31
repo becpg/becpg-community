@@ -21,6 +21,7 @@
         <PathMap source="/becpg/audit/batch/batchId" target="/beCPGBatchAudit/batch/batchId"/>
         <PathMap source="/becpg/audit/batch/isCompleted" target="/beCPGBatchAudit/batch/isCompleted"/>
         <PathMap source="/becpg/audit/batch/totalItems" target="/beCPGBatchAudit/batch/totalItems"/>
+        <PathMap source="/becpg/audit/batch/totalErrors" target="/beCPGBatchAudit/batch/totalErrors"/>
         <PathMap source="/becpg/audit/batch/duration" target="/beCPGBatchAudit/batch/duration"/>
         <PathMap source="/becpg/audit/batch/startedAt" target="/beCPGBatchAudit/batch/startedAt"/>
         <PathMap source="/becpg/audit/batch/completedAt" target="/beCPGBatchAudit/batch/completedAt"/>
@@ -57,6 +58,9 @@
 	        </AuditPath>
         	<AuditPath key="totalItems">
 	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGBatchAudit/batch/totalItems"/>
+	        </AuditPath>
+        	<AuditPath key="totalErrors">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGBatchAudit/batch/totalErrors"/>
 	        </AuditPath>
         	<AuditPath key="duration">
 	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGBatchAudit/batch/duration"/>

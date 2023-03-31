@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.alfresco.rest.framework.resource.parameters.Paging;
 import org.alfresco.rest.framework.resource.parameters.Parameters;
 import org.alfresco.rest.framework.resource.parameters.Params;
 import org.alfresco.rest.framework.resource.parameters.Params.RecognizedParams;
+import org.alfresco.rest.framework.resource.parameters.SortColumn;
 import org.alfresco.rest.framework.resource.parameters.where.Query;
 import org.alfresco.rest.framework.resource.parameters.where.QueryImpl;
 import org.alfresco.rest.framework.resource.parameters.where.WhereCompiler;
@@ -37,6 +39,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
 import fr.becpg.repo.audit.model.AuditDataType;
 import fr.becpg.repo.audit.model.AuditQuery;
+import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
 
@@ -68,11 +71,11 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 			
 			AuditEntry entryToDelete = null;
 			
-			int id = (int) auditValues.get("id");
+			int id = (int) auditValues.get(AuditPlugin.ID);
 
 			if (deleteOldEntry) {
 				
-				AuditQuery auditFilter = AuditQuery.createQuery().filter("id", String.valueOf(id)).maxResults(1);
+				AuditQuery auditFilter = AuditQuery.createQuery().filter(AuditPlugin.ID, String.valueOf(id)).maxResults(1);
 				
 				Collection<AuditEntry> entries = internalListAuditEntries(auditPlugin, auditFilter);
 				
@@ -106,9 +109,9 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 			
 			JSONObject statItem = new JSONObject();
 			
-			statItem.put("id", auditEntry.getId());
+			statItem.put(AuditPlugin.ID, auditEntry.getId());
 			
-			for (String auditKey : plugin.getStatisticsKeyMap().keySet()) {
+			for (String auditKey : plugin.getKeyMap().keySet()) {
 				String key = "/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + auditKey + "/value";
 				if (auditEntry.getValues().containsKey(key)) {
 					statItem.put(auditKey, auditEntry.getValues().get(key));
@@ -120,7 +123,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		}
 		
 		if (auditFilter.getSortBy() != null && !auditFilter.getSortBy().isBlank()) {
-			Collections.sort(statistics, new StatisticsComparator(plugin.getStatisticsKeyMap(), auditFilter.getSortBy(), auditFilter.isAscendingOrder()));
+			Collections.sort(statistics, new StatisticsComparator(plugin.getKeyMap(), auditFilter.getSortBy(), auditFilter.isAscending()));
 		}
 		
 		return statistics;
@@ -160,7 +163,7 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 		Paging paging = Paging.valueOf(Paging.DEFAULT_SKIP_COUNT, auditFilter.getMaxResults());
 		
 		RecognizedParams recognizedParams = new RecognizedParams(null, paging, null, null, Arrays.asList("values"),
-				null, query, null, false);
+				null, query, List.of(new SortColumn("createdAt", auditFilter.isDbAscending())), false);
 		
 		Parameters params = Params.valueOf(recognizedParams, plugin.getAuditApplicationId(), null, null);
 	
@@ -285,6 +288,10 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 						Integer int1 = Integer.parseInt(field1.toString());
 						Integer int2 = Integer.parseInt(field2.toString());
 						return factor * int1.compareTo(int2);
+					} else if (AuditDataType.DATE.equals(statisticsMap.get(comparisonFieldName))) {
+						Date date1 = field1 instanceof Date ? (Date) field1 : ISO8601DateFormat.parse(field1.toString());
+						Date date2 = field2 instanceof Date ? (Date) field2 : ISO8601DateFormat.parse(field2.toString());
+						return factor * date1.compareTo(date2);
 					}
 					
 					return factor * field1.compareTo(field2);
