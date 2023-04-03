@@ -61,6 +61,10 @@ public interface AttributeExtractorService {
 		Collection<QName> getMatchingTypes();
 		
 		Integer getPriority(); 
+
+		default boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
+			return false;
+		}
 		
 	}
 	

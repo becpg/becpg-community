@@ -95,9 +95,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	@Override
 	public List<NodeRef> filter(List<NodeRef> nodes, QName datatype, Map<String, String> criteria, SearchConfig searchConfig) {
 
-		boolean isAssocSearch = isAssocSearch(criteria);
+		boolean doFilter = isSearchFiltered(criteria);
 
-		if (isAssocSearch) {
+		if (doFilter) {
 
 			nodes = filterByAssociations(nodes, datatype, criteria);
 
@@ -540,12 +540,15 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
-	private boolean isAssocSearch(Map<String, String> criteria) {
+	@Override
+	public boolean isSearchFiltered(Map<String, String> criteria) {
+		
 		if (criteria != null) {
 			for (Map.Entry<String, String> criterion : criteria.entrySet()) {
 				String key = criterion.getKey();
+				String value = criterion.getValue();
 				// association
-				if (key.startsWith("assoc_")) {
+				if (key.startsWith("assoc_") && (value != null) && !value.isEmpty()) {
 					return true;
 				}
 			}
