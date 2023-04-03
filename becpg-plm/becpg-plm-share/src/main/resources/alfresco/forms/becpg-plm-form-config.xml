@@ -2467,6 +2467,12 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:subsidiaryCertifications">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:certification?path=cm:System/cm:Characts/bcpg:entityLists/cm:Certifications&amp;attributeName=cm:name
+							</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -2491,6 +2497,12 @@
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:subsidiaryCertifications">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:certification?path=cm:System/cm:Characts/bcpg:entityLists/cm:Certifications&amp;attributeName=cm:name
+							</control-param>
 						</control>
 					</field>
 				</appearance>

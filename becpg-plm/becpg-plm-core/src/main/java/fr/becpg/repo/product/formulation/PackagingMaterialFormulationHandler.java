@@ -228,11 +228,12 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 				for (PackMaterialListDataItem packMateriDataItem : packagingProduct.getPackMaterialList()) {
 					if (packMateriDataItem.getPmlWeight() != null) {
 
+						
 						BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight()).multiply(tare);
 
 						BigDecimal productTare = FormulationHelper.getTareInKg(packagingProduct);
 						if (productTare != null) {
-							plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)));
+							plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)), MathContext.DECIMAL64);
 						}
 
 						Pair<PackagingLevel, NodeRef> key = new Pair<>(dataItem.getPkgLevel(), packMateriDataItem.getPmlMaterial());
@@ -248,7 +249,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 
 			} else if ((packagingProduct.getPackagingMaterials() != null) && (!packagingProduct.getPackagingMaterials().isEmpty())) {
 
-				BigDecimal tareByMaterial = tare.divide(BigDecimal.valueOf(packagingProduct.getPackagingMaterials().size()));
+				BigDecimal tareByMaterial = tare.divide(BigDecimal.valueOf(packagingProduct.getPackagingMaterials().size()), MathContext.DECIMAL64);
 				for (NodeRef packagingMaterial : packagingProduct.getPackagingMaterials()) {
 
 					Pair<PackagingLevel, NodeRef> key = new Pair<>(dataItem.getPkgLevel(), packagingMaterial);

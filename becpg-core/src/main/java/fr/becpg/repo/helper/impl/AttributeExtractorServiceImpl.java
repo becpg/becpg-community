@@ -1124,125 +1124,136 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	@SuppressWarnings("unchecked")
 	private boolean internalMatchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
 
-		LinkedList<AttributeExtractorField> fields = new LinkedList<>();
-		for (String metadataField : criteriaMap.keySet()) {
-			AttributeExtractorField field = new AttributeExtractorField(metadataField, null);
-			fields.add(field);
-		}
+		Locale currentLocal = I18NUtil.getLocale();
+		Locale currentContentLocal = I18NUtil.getContentLocale();
+		try {
 
-		Map<String, Object> comp = extractNodeData(nodeRef, nodeService.getType(nodeRef), fields, FormatMode.JSON);
+			I18NUtil.setLocale((Locale.getDefault()));
+			I18NUtil.setContentLocale(null);
 
-		/** Criteria:{bcpg:allergenListAllergen|bcpg:allergenCode=FX1}
-		 * Extracted:{dt_bcpg_allergenListAllergen=[{prop_bcpg_allergenCode={displayValue=F257,
-		 * metadata=text, value=F257}}]}
-		
-		 * Criteria:{pack:pmlMaterial=Autres matériaux}
-		 * Extracted:{assoc_pack_pmlMaterial=[{displayValue=Autres matériaux -
-		 * Bois, siteId=null, metadata=lvValue,
-		 * value=workspace://SpacesStore/405f98a1-ebfa-41f0-a3e7-8ac7c7c150ca}]}
-		 *
-		 */
+			LinkedList<AttributeExtractorField> fields = new LinkedList<>();
+			for (String metadataField : criteriaMap.keySet()) {
+				AttributeExtractorField field = new AttributeExtractorField(metadataField, null);
+				fields.add(field);
+			}
 
-		for (Map.Entry<String, Object> entry : comp.entrySet()) {
-			String critKey = entry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
+			Map<String, Object> comp = extractNodeData(nodeRef, nodeService.getType(nodeRef), fields, FormatMode.JSON);
 
-			Object tmp = entry.getValue();
-			if (tmp != null) {
-				Map<String, Object> data = null;
+			/** Criteria:{bcpg:allergenListAllergen|bcpg:allergenCode=FX1}
+			 * Extracted:{dt_bcpg_allergenListAllergen=[{prop_bcpg_allergenCode={displayValue=F257,
+			 * metadata=text, value=F257}}]}
+			
+			 * Criteria:{pack:pmlMaterial=Autres matériaux}
+			 * Extracted:{assoc_pack_pmlMaterial=[{displayValue=Autres matériaux -
+			 * Bois, siteId=null, metadata=lvValue,
+			 * value=workspace://SpacesStore/405f98a1-ebfa-41f0-a3e7-8ac7c7c150ca}]}
+			 *
+			 */
 
-				if (tmp instanceof ArrayList<?>) {
-					if (!((ArrayList<?>) tmp).isEmpty()) {
-						data = (Map<String, Object>) ((ArrayList<?>) tmp).get(0);
+			for (Map.Entry<String, Object> entry : comp.entrySet()) {
+				String critKey = entry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
+
+				Object tmp = entry.getValue();
+				if (tmp != null) {
+					Map<String, Object> data = null;
+
+					if (tmp instanceof ArrayList<?>) {
+						if (!((ArrayList<?>) tmp).isEmpty()) {
+							data = (Map<String, Object>) ((ArrayList<?>) tmp).get(0);
+						}
+					} else {
+						data = (Map<String, Object>) tmp;
 					}
-				} else {
-					data = (Map<String, Object>) tmp;
-				}
 
-				if ((data == null) || data.isEmpty()) {
-					return false;
-				}
+					if ((data == null) || data.isEmpty()) {
+						return false;
+					}
 
-				String value = null;
+					String value = null;
 
-				if (data.containsKey("value") && (data.get("value") != null)) {
-					value = data.get("value").toString().toLowerCase();
-				} else {
+					if (data.containsKey("value") && (data.get("value") != null)) {
+						value = data.get("value").toString().toLowerCase();
+					} else {
 
-					for (Map.Entry<String, Object> subEntry : data.entrySet()) {
-						tmp = subEntry.getValue();
+						for (Map.Entry<String, Object> subEntry : data.entrySet()) {
+							tmp = subEntry.getValue();
 
-						critKey += "|"
-								+ subEntry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
+							critKey += "|"
+									+ subEntry.getKey().replace(PROP_SUFFIX, "").replace(ASSOC_SUFFIX, "").replace(DT_SUFFIX, "").replace("_", ":");
 
-						if (tmp instanceof ArrayList<?>) {
-							if (!((ArrayList<?>) tmp).isEmpty()) {
-								data = (Map<String, Object>) ((ArrayList<?>) tmp).get(0);
+							if (tmp instanceof ArrayList<?>) {
+								if (!((ArrayList<?>) tmp).isEmpty()) {
+									data = (Map<String, Object>) ((ArrayList<?>) tmp).get(0);
+								}
+							} else {
+								data = (Map<String, Object>) tmp;
 							}
-						} else {
-							data = (Map<String, Object>) tmp;
+
+							if ((data == null) || data.isEmpty()) {
+								return false;
+							}
+
+							if (data.containsKey("value") && (data.get("value") != null)) {
+								value = data.get("value").toString().toLowerCase();
+							}
+
+							break;
 						}
 
-						if ((data == null) || data.isEmpty()) {
-							return false;
-						}
-
-						if (data.containsKey("value") && (data.get("value") != null)) {
-							value = data.get("value").toString().toLowerCase();
-						}
-
-						break;
 					}
 
-				}
-
-				if (value == null) {
-					return false;
-				}
-
-				String compValue = criteriaMap.get(critKey).toLowerCase();
-				String displayValue = data.get("displayValue").toString().toLowerCase();
-				if (compValue.startsWith("\"") && compValue.endsWith("\"")) {
-					compValue = compValue.replace("\"", "");
-				}
-
-				if (logger.isTraceEnabled()) {
-					logger.trace("Test Match on: " + critKey);
-					logger.trace("Test Match : " + value + "/" + displayValue + " - " + compValue);
-				}
-				if ((compValue != null) && compValue.contains("*")) {
-
-					compValue = compValue.replace("*", "");
-
-					if (!value.contains(compValue) && !displayValue.contains(compValue)) {
+					if (value == null) {
 						return false;
 					}
-				} else if ((compValue != null) && compValue.startsWith("^")) {
 
-					compValue = compValue.replace("^", "");
-
-					if (!value.startsWith(compValue) && !displayValue.startsWith(compValue)) {
-						return false;
+					String compValue = criteriaMap.get(critKey).toLowerCase();
+					String displayValue = data.get("displayValue").toString().toLowerCase();
+					if (compValue.startsWith("\"") && compValue.endsWith("\"")) {
+						compValue = compValue.replace("\"", "");
 					}
-				} else if ((compValue != null) && compValue.contains("..")) {
-					String[] bounds = compValue.split("\\.\\.");
 
-					if (bounds.length > 1) {
-						String lowerBound = bounds[0];
-						String upperBound = bounds[1];
+					if (logger.isTraceEnabled()) {
+						logger.trace("Test Match on: " + critKey);
+						logger.trace("Test Match : " + value + "/" + displayValue + " - " + compValue);
+					}
+					if ((compValue != null) && compValue.contains("*")) {
 
-						if ((value.compareTo(lowerBound) < 0 || value.compareTo(upperBound) > 0)
-								&& (displayValue.compareTo(lowerBound) < 0 || displayValue.compareTo(lowerBound) > 0)) {
+						compValue = compValue.replace("*", "");
+
+						if (!value.contains(compValue) && !displayValue.contains(compValue)) {
 							return false;
 						}
+					} else if ((compValue != null) && compValue.startsWith("^")) {
+
+						compValue = compValue.replace("^", "");
+
+						if (!value.startsWith(compValue) && !displayValue.startsWith(compValue)) {
+							return false;
+						}
+					} else if ((compValue != null) && compValue.contains("..")) {
+						String[] bounds = compValue.split("\\.\\.");
+
+						if (bounds.length > 1) {
+							String lowerBound = bounds[0];
+							String upperBound = bounds[1];
+
+							if ((value.compareTo(lowerBound) < 0 || value.compareTo(upperBound) > 0)
+									&& (displayValue.compareTo(lowerBound) < 0 || displayValue.compareTo(lowerBound) > 0)) {
+								return false;
+							}
+
+						}
+					} else if ((compValue != null) && (!value.equals(compValue) && !displayValue.equals(compValue))) {
+						return false;
 
 					}
-				} else if ((compValue != null) && (!value.equals(compValue) && !displayValue.equals(compValue))) {
-					return false;
-
 				}
 			}
+			return true;
+		} finally {
+			I18NUtil.setLocale(currentLocal);
+			I18NUtil.setContentLocale(currentContentLocal);
 		}
-		return true;
 
 	}
 

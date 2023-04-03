@@ -28,6 +28,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
@@ -58,7 +59,6 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.entity.remote.extractor.RemoteJSONContext.JsonVisitNodeType;
@@ -77,7 +77,7 @@ import fr.becpg.repo.helper.MLTextHelper;
 public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	private static final Log logger = LogFactory.getLog(JsonSchemaEntityVisitor.class);
-	
+
 	private static final String TYPE_STRING = "string";
 	private static final String TYPE_OBJECT = "object";
 	private static final String TYPE_ARRAY = "array";
@@ -89,14 +89,17 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	private static final String PROP_DESCRIPTION = "description";
 	private static final String PROP_PROPERTIES = "properties";
 	private static final String PROP_ITEMS = "items";
-	
-	public JsonSchemaEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
+
+	SysAdminParams sysAdminParams;
+
+	public JsonSchemaEntityVisitor(SysAdminParams sysAdminParams, NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
 			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService,
 			AttributeExtractorService attributeExtractor, VersionService versionService, LockService lockService) {
 		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService, attributeExtractor, versionService,
 				lockService);
+		this.sysAdminParams = sysAdminParams;
 	}
-
+	
 
 	/** {@inheritDoc} */
 	@Override
@@ -104,7 +107,8 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 		JSONObject root = new JSONObject();
 		root.put("$schema", "https://json-schema.org/draft/2020-12/schema");
-		root.put("$id", "/becpg/remote/entity?nodeRef="+entityNodeRef+"&format=json_schema");
+		root.put("$id", sysAdminParams.getAlfrescoProtocol() + "://" + sysAdminParams.getAlfrescoHost() + ":" + sysAdminParams.getAlfrescoPort()
+					+ "/alfresco/service/becpg/remote/entity?nodeRef=" + entityNodeRef + "&format=json_schema");
 		root.put(PROP_TYPE, TYPE_OBJECT);
 		root.put(PROP_TITLE, "Entity");
 		root.put(PROP_DESCRIPTION, "Entity schema object");
@@ -121,8 +125,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 			visitNode(entityNodeRef, entity, JsonVisitNodeType.ENTITY, context);
 			visitLists(entityNodeRef, entity, context);
-			
-			
+
 			//TODO Manage catalog
 			entity.put("required", new JSONArray());
 			root.write(out);
@@ -226,14 +229,12 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 								JSONObject list = addProperty(entityLists, dataListType, TYPE_ARRAY,
 										classDefinition.getTitle(entityDictionaryService), classDefinition.getDescription(entityDictionaryService));
 
-								
-								
 								for (ChildAssociationRef listItemRef : listItemRefs) {
 
 									NodeRef listItem = listItemRef.getChildRef();
 									JSONObject jsonAssocNode = new JSONObject();
 									jsonAssocNode.put(PROP_TYPE, TYPE_OBJECT);
-									
+
 									list.put(PROP_ITEMS, jsonAssocNode);
 
 									visitNode(listItem, jsonAssocNode, JsonVisitNodeType.DATALIST, context);
@@ -373,7 +374,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 			for (Map.Entry<QName, Serializable> entry : props.entrySet()) {
 				QName propQName = entry.getKey();
 				QName propName = entry.getKey().getPrefixedQName(namespaceService);
-				if ((entry.getValue() != null) && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+				if (!propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || matchProp(assocName, propName, true))
 						&& !propQName.equals(ContentModel.PROP_CONTENT) && params.shouldExtractField(propQName)) {
@@ -420,7 +421,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	@SuppressWarnings("unchecked")
 	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context,
 			PropertyDefinition propertyDefinition) throws JSONException {
-		if (propertyDefinition.isMultiValued()) {
+		if (propertyDefinition.isMultiValued() && value!=null) {
 			JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_ARRAY,
 					propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
 			for (Serializable subEl : (List<Serializable>) value) {
@@ -447,14 +448,12 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 					propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
 			visitNode((NodeRef) value, node, JsonVisitNodeType.ASSOC, context);
 		} else {
-			if (value != null) {
-				if (RemoteHelper.isJSONValue(propType)) {
-					addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
-							propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
-				} else if ((JsonHelper.formatValue(value) != null) && !JsonHelper.formatValue(value).toString().isEmpty()) {
-					addProperty(entity, entityDictionaryService.toPrefixString(propType), getType(propertyDefinition.getDataType()),
-							propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
-				}
+			if (RemoteHelper.isJSONValue(propType)) {
+				addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
+						propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+			} else {
+				addProperty(entity, entityDictionaryService.toPrefixString(propType), getType(propertyDefinition.getDataType()),
+						propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
 			}
 		}
 	}

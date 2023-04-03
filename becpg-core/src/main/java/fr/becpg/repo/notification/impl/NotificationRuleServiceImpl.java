@@ -111,7 +111,7 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 
 			if (notification.getNodeType() == null || notification.getTarget() == null || !nodeService.exists(notification.getTarget())
 					|| notification.getAuthorities() == null || !isAllowed(notification)) {
-				logger.warn("Skip notification : " + notification);
+				logger.debug("Skip notification : " + notification.getSubject());
 				continue;
 			}
 			notification.setFrequencyStartDate(new Date());
@@ -132,9 +132,11 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			List<NodeRef> items = ret.getResults();
 			Map<NodeRef, Map<String, NodeRef>> itemVersions = ret.getItemVersions();
 
-			if ((items.isEmpty() || items == null || (itemVersions.isEmpty() && !VersionFilterType.NONE.equals(filter.getVersionFilterType())))
-					&& !notification.isEnforced()) {
-				logger.warn("No object found for notification: " + notification.getNodeRef());
+			if (!notification.isEnforced() && ( items == null  || items.isEmpty() || (!VersionFilterType.NONE.equals(filter.getVersionFilterType()) && itemVersions.isEmpty() )) ) {
+				logger.debug("No object found for notification: " + notification.getSubject());
+				if(!VersionFilterType.NONE.equals(filter.getVersionFilterType()) && itemVersions.isEmpty() ) {
+					logger.debug(" - version filter doesn't match" );
+				}
 				continue;
 			}
 
