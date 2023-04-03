@@ -450,6 +450,8 @@
 					<show id="bcpg:clients" force="true"/>
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:productState" />
+					<show id="bcpg:compoListProduct" force="true"/>
+					<show id="bcpg:packagingListProduct" force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="cm:name" label-id="becpg.forms.field.product" />
@@ -475,6 +477,20 @@
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="isSearch">true</control-param>
 							<control-param name="insertBlank">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:compoListProduct" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial%5E4,bcpg:finishedProduct,bcpg:localSemiFinishedProduct%5E2,bcpg:semiFinishedProduct%5E2</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="multipleSelectMode">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:packagingListProduct" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit</control-param>
+							<control-param name="forceEditable">true</control-param>
+							<control-param name="multipleSelectMode">true</control-param>
 						</control>
 					</field>
 				</appearance>
