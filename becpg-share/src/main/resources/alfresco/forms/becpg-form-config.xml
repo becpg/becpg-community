@@ -551,6 +551,7 @@
 			<!-- DataGrid view from -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrNotificationAuthorities" />
 					<show id="bcpg:nrTimeType" />
 					<show id="bcpg:nrTimeNumber" />
@@ -559,9 +560,6 @@
 					<show id="bcpg:nrNodeType" />
 					<show id="bcpg:nrTarget" />
 					<show id="bcpg:nrVersionFilter" />
-					<show id="bcpg:nrConditions" />
-					
-					<show id="bcpg:nrSubject" />
 					<show id="bcpg:nrEmail" />
 					
 					<show id="bcpg:nrFrequency" />
@@ -569,6 +567,7 @@
 					<show id="bcpg:nrRecurringDay" />
 					<show id="bcpg:nrFrequencyStartDate" />
 					<show id="bcpg:nrForceNotification" />
+					<show id="bcpg:nrConditions" />
 				</field-visibility>
 			</form>
 		</forms>
