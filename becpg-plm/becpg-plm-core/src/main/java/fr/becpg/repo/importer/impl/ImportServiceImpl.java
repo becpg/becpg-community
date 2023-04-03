@@ -535,7 +535,7 @@ public class ImportServiceImpl implements ImportService {
 
 					if (annotationMapping.isEmpty()) {
 						throw new ImporterException(
-								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_MAPPING, importContext.getImportIndex()));
+								I18NUtil.getMessage(MSG_ERROR_UNDEFINED_LINE, ImportHelper.PFX_COLUMNS_PARAMS, importContext.getImportIndex()));
 					}
 
 				} else if (prefix.equals(ImportHelper.PFX_MAPPING)) {

@@ -33,6 +33,7 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
 import fr.becpg.repo.helper.impl.EntitySourceAssoc;
+import fr.becpg.repo.helper.impl.AssociationCriteriaFilter.AssociationCriteriaFilterMode;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -242,7 +243,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if (propertyDef != null) {
 
 					AssociationCriteriaFilter criteriaFilter = new AssociationCriteriaFilter(attributeQName, criteriaValue,
-							(propFilter.getHtmlId() != null) && propFilter.getHtmlId().contains("-range"));
+							(propFilter.getHtmlId() != null) && propFilter.getHtmlId().contains("-range") ? AssociationCriteriaFilterMode.RANGE : AssociationCriteriaFilterMode.EQUALS);
 
 					criteriaFilters.add(criteriaFilter);
 

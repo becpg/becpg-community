@@ -168,28 +168,28 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 	public void testAuditedFields() {
 
 		final NodeRef sfNodeRef = inWriteTx(() -> {
+			
+			RawMaterialData rawMaterial1 = new RawMaterialData();
+			rawMaterial1.setName("Raw material 1");
+			NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 
 			SemiFinishedProductData sfData = new SemiFinishedProductData();
 			sfData.setName("EntityCatalogServiceIT");
 			List<AllergenListDataItem> allergenList = new ArrayList<>();
-			allergenList.add(new AllergenListDataItem(null, null, true, true, null, null, allergens.get(0), false));
-			allergenList.add(new AllergenListDataItem(null, null, false, true, null, null, allergens.get(1), false));
-			allergenList.add(new AllergenListDataItem(null, null, true, false, null, null, allergens.get(2), false));
-			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergens.get(3), false));
-			sfData.setAllergenList(allergenList);
-			
-
-			RawMaterialData rawMaterial1 = new RawMaterialData();
-			rawMaterial1.setName("Raw material 1");
-			NodeRef rawMaterialNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
+			allergenList.add(new AllergenListDataItem(null, null, true, true, null, null, allergens.get(0), true));
+			allergenList.add(new AllergenListDataItem(null, null, false, true, null, null, allergens.get(1), true));
+			allergenList.add(new AllergenListDataItem(null, null, true, false, null, null, allergens.get(2), true));
+			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergens.get(3), true));
+				
 			List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 			labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
 			List<CompoListDataItem> compoList1 = new ArrayList<>();
 			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterialNodeRef));
 		
 			sfData.getCompoListView().setCompoList(compoList1);
-
 			sfData.getLabelingListView().setLabelingRuleList(labelingRuleList);
+			sfData.setAllergenList(allergenList);
+			
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), sfData).getNodeRef();
 

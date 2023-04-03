@@ -32,9 +32,9 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.text.StringEscapeUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +43,12 @@ import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestTemplate;
 
@@ -76,6 +82,8 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 
 	private String googleApiKey;
 
+	private String deepLAPIKey;
+
 	private ServiceRegistry serviceRegistry;
 
 	/**
@@ -94,6 +102,10 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	 */
 	public void setGoogleApiKey(String googleApiKey) {
 		this.googleApiKey = googleApiKey;
+	}
+
+	public void setDeepLAPIKey(String deepLAPIKey) {
+		this.deepLAPIKey = deepLAPIKey;
 	}
 
 	/** {@inheritDoc} */
@@ -278,17 +290,44 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 	}
 
 	private String getTranslatedText(MLText mlText, String target) {
-		if ((googleApiKey != null) && !googleApiKey.isEmpty()) {
+		String language = I18NUtil.getContentLocale().getLanguage();
 
-			String language = I18NUtil.getContentLocale().getLanguage();
+		String defaultValue = MLTextHelper.getClosestValue(mlText, MLTextHelper.getSupportedLocale(I18NUtil.getContentLocale()));
 
-			String defaultValue = MLTextHelper.getClosestValue(mlText, MLTextHelper.getSupportedLocale(I18NUtil.getContentLocale()));
+		if (target.split("_")[0].equals(language)) {
+			return defaultValue;
+		}
 
-			logger.debug("Try to translate : " + defaultValue + " in " + target);
+		if ((deepLAPIKey != null) && !deepLAPIKey.isEmpty()) {
+			logger.debug("Try to translate : " + defaultValue + " in " + target + " using deepL");
 
-			if (target.split("_")[0].equals(language)) {
-				return defaultValue;
+			try {
+				String url = "https://api.deepl.com/v2/translate";
+				RestTemplate restTemplate = new RestTemplate();
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+				MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
+				map.add("auth_key", deepLAPIKey);
+				map.add("text", defaultValue);
+				map.add("source_lang", language);
+				map.add("target_lang", target.split("_")[0]);
+
+				HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+				ResponseEntity<String> response = restTemplate.postForEntity(url, request, String.class);
+
+				JSONObject jsonObject = new JSONObject(response.getBody());
+				JSONArray translations = jsonObject.getJSONArray("translations");
+
+				if (translations.length() > 0) {
+					return StringEscapeUtils.unescapeHtml4(translations.getJSONObject(0).getString("text"));
+				}
+			} catch (JSONException e) {
+				logger.error("Fail to parse JSON", e);
 			}
+
+		} else if ((googleApiKey != null) && !googleApiKey.isEmpty()) {
+
+			logger.debug("Try to translate : " + defaultValue + " in " + target + " using google");
 
 			Map<String, String> vars = new HashMap<>();
 			vars.put("key", googleApiKey);
@@ -296,7 +335,7 @@ public class MultilingualFieldWebScript extends AbstractWebScript {
 			vars.put("source", language);
 			vars.put("q", defaultValue);
 
-			String url = "https://www.googleapis.com/language/translate/" + "v2?key={key}&source={source}&target={target}&q={q}";
+			String url = "https://www.googleapis.com/language/translate/v2?key={key}&source={source}&target={target}&q={q}";
 
 			RestTemplate restTemplate = new RestTemplate();
 

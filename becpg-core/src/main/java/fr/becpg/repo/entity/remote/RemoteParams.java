@@ -41,6 +41,8 @@ public class RemoteParams {
 
 	public static final String PARAM_IGNORE_PATH_FOR_SEARCH = "ignorePathOnSearch";
 
+	public static final String PARAM_APPEND_MLTEXT = "appendMlText";
+
 	private RemoteEntityFormat format;
 
 	private JSONObject jsonParams;

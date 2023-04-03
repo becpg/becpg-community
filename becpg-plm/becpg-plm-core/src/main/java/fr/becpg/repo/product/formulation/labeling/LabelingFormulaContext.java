@@ -2165,7 +2165,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			if (logger.isDebugEnabled()) {
 
-				logger.debug(" --" + ingName + "(" + component.getNodeRef() + ") qtyRMUsed: " + parent.getQtyTotal(ingsLabelingWithYield)
+				logger.debug(" --" + ingName + "(" + component.getNodeRef() + ") qtyRMUsed: " + parent.getQtyTotal()
 						+ " qtyPerc " + qtyPerc + " apply precision ("
 						+ (toApplyThresholdItems.contains(component.getNodeRef()) && ((qtyPerc - qtyPrecisionThreshold) > 0)) + "), ratio: " + ratio);
 			}
@@ -2595,8 +2595,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		}
 
 		Double qty = component.getQty(withYield);
-		if ((parent.getQtyTotal(withYield) != null) && (parent.getQtyTotal(withYield) > 0) && (qty != null)) {
-			return BigDecimal.valueOf(qty).divide(BigDecimal.valueOf(parent.getQtyTotal(withYield)), 10, RoundingMode.HALF_UP)
+		if ((parent.getQtyTotal() != null) && (parent.getQtyTotal() > 0) && (qty != null)) {
+			return BigDecimal.valueOf(qty).divide(BigDecimal.valueOf(parent.getQtyTotal()), 10, RoundingMode.HALF_UP)
 					.multiply(BigDecimal.valueOf(ratio)).doubleValue();
 		}
 		return qty;
@@ -2627,8 +2627,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		}
 
 		Double volume = component.getVolume(withYield);
-		if ((parent.getVolumeTotal(withYield) != null) && (parent.getVolumeTotal(withYield) > 0) && (volume != null)) {
-			return (volume / parent.getVolumeTotal(withYield)) * ratio;
+		if ((parent.getVolumeTotal() != null) && (parent.getVolumeTotal() > 0) && (volume != null)) {
+			return (volume / parent.getVolumeTotal()) * ratio;
 		}
 		return volume;
 	}

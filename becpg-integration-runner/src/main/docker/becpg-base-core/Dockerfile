@@ -11,7 +11,7 @@ ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV AOS_VERSION=${alfresco.aos.version}
 ENV MYSQL_CONNECTOR=${mysql.connector.version}
 ENV SUPPORT_TOOLS_VERSION=1.3.0.0-beCPG-amp
-ENV I18_VERSION=1.0-98
+ENV I18_VERSION=1.0-99
    
 ## JDBC - MYSQL
 RUN curl --silent --location \
@@ -40,7 +40,7 @@ RUN curl --silent --location \
 RUN   curl --silent --location \
      ${NEXUS}/org/alfresco/aos-module/alfresco-aos-module/${AOS_VERSION}/alfresco-aos-module-${AOS_VERSION}.amp  \
       -o $TOMCAT_DIR/amps/alfresco-aos-core-${AOS_VERSION}.amp && \
-    java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps/ $TOMCAT_DIR/webapps/alfresco -nobackup -directory && \
+    java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps/ $TOMCAT_DIR/webapps/alfresco -force -nobackup -directory && \
     rm $TOMCAT_DIR/amps/alfresco-aos-core-${AOS_VERSION}.amp
 
 

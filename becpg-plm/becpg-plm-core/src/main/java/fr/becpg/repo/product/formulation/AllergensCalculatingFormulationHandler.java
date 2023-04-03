@@ -120,10 +120,11 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
 			Map<String, ReqCtrlListDataItem> rclCtrlMap = new HashMap<>();
 
+			
 			// compoList
 			Double netQty = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 			if (formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-
+				
 				for (CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 					NodeRef part = compoItem.getProduct();
@@ -170,13 +171,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 				}
 
-			} else if (!(formulatedProduct instanceof ResourceProductData)) {
-				retainNodes.addAll(formulatedProduct.getAllergenList());
-				for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
-					allergenListDataItem.setInVoluntary(false);
-					allergenListDataItem.getInVoluntarySources().clear();
-				}
-			}
+			} 
+			
+			
 			// process
 			if (formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				formulatedProduct.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).forEach(processItem -> {
@@ -187,7 +184,28 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 				});
 			}
-
+			
+			
+			if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
+					&& !formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+				retainNodes.addAll(formulatedProduct.getAllergenList());
+				
+				if (!(formulatedProduct instanceof ResourceProductData)) {
+					for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
+						allergenListDataItem.setInVoluntary(false);
+						allergenListDataItem.getInVoluntarySources().clear();
+					}
+				}
+				
+			} else {
+				for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
+					if(Boolean.TRUE.equals(allergenListDataItem.getIsManual())) {
+						retainNodes.add(allergenListDataItem);
+					}
+				}
+			}
+			
+		
 			formulatedProduct.getAllergenList().retainAll(retainNodes);
 			formulatedProduct.getReqCtrlList().addAll(rclCtrlMap.values());
 

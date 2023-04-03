@@ -1,7 +1,7 @@
 FROM ${docker.share.image}:${alfresco.share.docker.version}
 
 ENV TOMCAT_DIR=/usr/local/tomcat
-ENV I18_VERSION=1.0-98
+ENV I18_VERSION=1.0-99
 ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
 
 USER root
@@ -10,7 +10,6 @@ USER root
 #    rm -rf /var/cache/yum
 
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
-ENV AOS_VERSION=${alfresco.aos.version}
 ENV MYSQL_CONNECTOR=${mysql.connector.version}
 ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
 
