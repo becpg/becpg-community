@@ -18,6 +18,7 @@
 package fr.becpg.repo.product.formulation.details;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.Arrays;
 import java.util.List;
 
@@ -132,7 +133,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 
 								BigDecimal productTare = FormulationHelper.getTareInKg(packagingMaterial);
 								if(productTare!=null) {
-									 plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)));
+									 plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)), MathContext.DECIMAL64);
 								}
 								
 								Double value = plmWeight.doubleValue();
@@ -161,7 +162,7 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 					if ((simpleCharact != null) && charactDetails.hasElement(simpleCharact)) {
 
 						BigDecimal tareByMaterial = tare
-								.divide(BigDecimal.valueOf(packagingMaterial.getPackagingMaterials().size()));
+								.divide(BigDecimal.valueOf(packagingMaterial.getPackagingMaterials().size()), MathContext.DECIMAL64);
 
 						Double value = tareByMaterial.doubleValue();
 

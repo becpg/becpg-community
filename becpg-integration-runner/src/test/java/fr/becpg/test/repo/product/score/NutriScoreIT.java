@@ -27,13 +27,13 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.test.PLMBaseTestCase;
 
 public class NutriScoreIT extends PLMBaseTestCase {
-	
+
 	@Autowired
 	private ProductService productService;
 
 	@Test
 	public void testNutriScore() {
-		
+
 		NodeRef energyKjNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "ENER-KJO");
 		NodeRef satFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FASAT");
 		NodeRef totalFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FAT");
@@ -44,7 +44,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 		NodeRef nspFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PSACNS");
 		NodeRef aoacFibreNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FIBTG");
 		NodeRef proteinNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "PRO-");
-		
+
 		// 2084d, 2.8d, 22.9d, 4.73d, 672d, 0d, 0d, 4.13d, 5.81d, "Others"
 
 		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -57,10 +57,10 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, nspFibreNode, true));
 			nutList.add(new NutListDataItem(null, 4.13d, null, null, null, null, aoacFibreNode, true));
 			nutList.add(new NutListDataItem(null, 5.81d, null, null, null, null, proteinNode, true));
-			
+
 			List<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
-			
+
 			FinishedProductData finishedProductData = new FinishedProductData();
 			finishedProductData.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
 			finishedProductData.setName("Test1");
@@ -68,27 +68,27 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			finishedProductData.setPhysicoChemList(physicoChemList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData).getNodeRef();
 		}, false, true);
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			nodeService.setProperty(finishedProductNodeRef1, QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory"), NutrientProfileCategory.Others);
+			nodeService.setProperty(finishedProductNodeRef1, QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory"),
+					NutrientProfileCategory.Others);
 			return null;
 		}, false, true);
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef1);
-			
+
 			productService.formulate(finishedProduct);
-			
+
 			Assert.assertEquals((Double) 12d, finishedProduct.getNutrientScore());
-			
+
 			Assert.assertEquals("D", finishedProduct.getNutrientClass());
-			
+
 			alfrescoRepository.save(finishedProduct);
 
 			return null;
 		}, false, true);
-		
 
 		NodeRef finishedProductNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// 2596.0642d, 15.16d, 70.172d, 0.003d, 159d, 0d, 0d, 0d, 0.15d, "Fats"
@@ -101,10 +101,10 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, nspFibreNode, true));
 			nutList.add(new NutListDataItem(null, 0d, null, null, null, null, aoacFibreNode, true));
 			nutList.add(new NutListDataItem(null, 0.15d, null, null, null, null, proteinNode, true));
-			
+
 			ArrayList<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
-			
+
 			FinishedProductData finishedProductData = new FinishedProductData();
 			finishedProductData.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
 			finishedProductData.setName("Test2");
@@ -112,27 +112,28 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			finishedProductData.setPhysicoChemList(physicoChemList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData).getNodeRef();
 		}, false, true);
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			nodeService.setProperty(finishedProductNodeRef2, QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory"), NutrientProfileCategory.Fats);
+			nodeService.setProperty(finishedProductNodeRef2, QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory"),
+					NutrientProfileCategory.Fats);
 			return null;
 		}, false, true);
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef2);
-			
+
 			productService.formulate(finishedProduct);
-			
+
 			Assert.assertEquals((Double) 10d, finishedProduct.getNutrientScore());
-			
+
 			Assert.assertEquals("C", finishedProduct.getNutrientClass());
-			
+
 			alfrescoRepository.save(finishedProduct);
 
 			return null;
 		}, false, true);
-		
+
 		NodeRef finishedProductNodeRef3 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<NutListDataItem> nutList = new ArrayList<NutListDataItem>();
 			nutList.add(new NutListDataItem(null, 797.0, null, null, null, null, energyKjNode, true));
@@ -144,10 +145,10 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			nutList.add(new NutListDataItem(null, 0.2, null, null, null, null, nspFibreNode, true));
 			nutList.add(new NutListDataItem(null, 0.0, null, null, null, null, aoacFibreNode, true));
 			nutList.add(new NutListDataItem(null, 3.3, null, null, null, null, proteinNode, true));
-			
+
 			ArrayList<PhysicoChemListDataItem> physicoChemList = new ArrayList<PhysicoChemListDataItem>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 0d, null, null, null, percFruitsAndVetgsNode));
-			
+
 			FinishedProductData finishedProductData = new FinishedProductData();
 			finishedProductData.getAspects().add(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE);
 			finishedProductData.setName("Test3");
@@ -156,19 +157,19 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			finishedProductData.setNutrientProfileCategory(NutrientProfileCategory.Others.toString());
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData).getNodeRef();
 		}, false, true);
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
+
 			FinishedProductData finishedProduct = (FinishedProductData) alfrescoRepository.findOne(finishedProductNodeRef3);
-			
+
 			productService.formulate(finishedProduct);
-			
+
 			Assert.assertEquals((Double) 11d, finishedProduct.getNutrientScore());
-			
+
 			Assert.assertEquals("D", finishedProduct.getNutrientClass());
-			
+
 			alfrescoRepository.save(finishedProduct);
-			
+
 			return null;
 		}, false, true);
 
@@ -177,39 +178,44 @@ public class NutriScoreIT extends PLMBaseTestCase {
 	private NodeRef findOrCreateNode(QName type, QName property, String value) {
 		NodeRef node = ImportHelper.findCharact(type, property, value, nodeService);
 
-		
 		if (node == null) {
 			NodeRef companyHomeNodeRef = repositoryHelper.getCompanyHome();
-			
+
 			NodeRef systemNodeRef = repoService.getFolderByPath(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
-			
+
 			NodeRef charactsNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
-			
-			NodeRef entityListNodeRef = repoService.getFolderByPath(charactsNodeRef, "bcpg:entityLists");;
-			
+
+			NodeRef entityListNodeRef = repoService.getFolderByPath(charactsNodeRef, "bcpg:entityLists");
+			;
+
 			NodeRef parentRef = null;
-			
+
 			Map<QName, Serializable> properties = new HashMap<>();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, value);
 			properties.put(property, value);
 			if (type.equals(PLMModel.TYPE_NUT)) {
 				parentRef = repoService.getFolderByPath(entityListNodeRef, "cm:Nuts");
-				properties.put(PLMModel.PROP_NUTUNIT, "g");
+				if ("NA".equals(value)) {
+					properties.put(PLMModel.PROP_NUTUNIT, "mg");
+				} else {
+					properties.put(PLMModel.PROP_NUTUNIT, "g");
+				}
+
 			} else if (type.equals(PLMModel.TYPE_PHYSICO_CHEM)) {
 				parentRef = repoService.getFolderByPath(entityListNodeRef, "cm:PhysicoChems");
 				properties.put(PLMModel.PROP_PHYSICO_CHEM_UNIT, "%");
 			}
-			
+
 			NodeRef finalParentRef = parentRef;
-			
+
 			node = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				return nodeService.createNode(finalParentRef, ContentModel.ASSOC_CONTAINS,
-						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-						type, properties).getChildRef();
-			}, false, true);	
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)), type,
+						properties).getChildRef();
+			}, false, true);
 		}
-		
+
 		return node;
-		
+
 	}
 }

@@ -14,10 +14,20 @@ public class AssociationCriteriaFilter {
 	private String toRange;
 	private String value;
 	private QName attributeQname;
+	private AssociationCriteriaFilterMode mode = AssociationCriteriaFilterMode.EQUALS;
+	
+	public enum AssociationCriteriaFilterMode {
+		RANGE, EQUALS, NOT_EQUALS, 
+	}
+	
+	public AssociationCriteriaFilter(QName attributeQName, String criteriaValue) {
+		this(attributeQName,criteriaValue,AssociationCriteriaFilterMode.EQUALS);
+	}
 
-	public AssociationCriteriaFilter(QName attributeQName, String criteriaValue, boolean isRange) {
+	public AssociationCriteriaFilter(QName attributeQName, String criteriaValue, AssociationCriteriaFilterMode mode) {
 		this.attributeQname = attributeQName;
-		if (isRange) {
+		this.mode  = mode;
+		if (AssociationCriteriaFilterMode.RANGE.equals(mode)) {
 			String[] splitted = criteriaValue.split("\\|");
 			
 			if(!splitted[0].isBlank()) {
@@ -31,6 +41,10 @@ public class AssociationCriteriaFilter {
 		}
 	}
 
+	public AssociationCriteriaFilterMode getMode() {
+		return mode;
+	}
+	
 	public QName getAttributeQname() {
 		return attributeQname;
 	}
