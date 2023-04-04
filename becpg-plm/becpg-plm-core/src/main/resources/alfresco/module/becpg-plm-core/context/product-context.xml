@@ -27,6 +27,8 @@
 		<property name="namespaceService" ref="namespaceService"/>
 		<property name="propertiesToReset" value="${beCPG.copyOrBranch.propertiesToReset}" />
 		<property name="entityService" ref="entityService"/>
+		<property name="associationService" ref="associationService"/>
+		<property name="dictionaryService" ref="dictionaryService"/>
 	</bean>
 	
 	<bean id="productListUnits.ProductListPolicy"
