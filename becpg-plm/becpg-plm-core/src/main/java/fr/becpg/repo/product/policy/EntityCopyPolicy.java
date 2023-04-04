@@ -1,10 +1,12 @@
 package fr.becpg.repo.product.policy;
 
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
+import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -17,6 +19,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.model.PLMWorkflowModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
@@ -35,6 +38,18 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 	private String propertiesToReset;
 	
 	private EntityService entityService;
+	
+	private AssociationService associationService;
+	
+	private DictionaryService dictionaryService;
+	
+	public void setDictionaryService(DictionaryService dictionaryService) {
+		this.dictionaryService = dictionaryService;
+	}
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
 	
 	/**
 	 * <p>Setter for the field <code>namespaceService</code>.</p>
@@ -90,11 +105,15 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 			
 			entityService.changeEntityListStates(destinationRef, EntityListState.ToValidate);
 			
-			
-			if(propertiesToReset!=null) {
-		        for(String propertyToKeep : propertiesToReset.split(",")) {	        	
-		        	QName propertyQname = QName.createQName(propertyToKeep,namespaceService );	
-		        	nodeService.removeProperty(destinationRef, propertyQname);
+			if (propertiesToReset != null) {
+		        for(String propertyToReset : propertiesToReset.split(",")) {	        	
+		        	QName propertyQname = QName.createQName(propertyToReset, namespaceService);	
+		        	
+		        	if (dictionaryService.getProperty(propertyQname) != null) {
+		        		nodeService.removeProperty(destinationRef, propertyQname);
+		        	} else if (dictionaryService.getAssociation(propertyQname) != null) {
+		        		associationService.update(destinationRef, propertyQname, List.of());
+		        	}
 		        }
 	        }
 			
