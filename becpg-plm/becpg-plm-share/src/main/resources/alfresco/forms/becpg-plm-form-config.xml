@@ -3042,6 +3042,8 @@
 					<show id="pjt:projectObservers" />
 					<show id="bcpg:entityTplRef" force="true" />
 					<show id="pjt:projectState" />
+					<show id="pjt:projectPriority" />
+					<show id="pjt:tlDue" force="true"/>
 					<show id="bcpg:supplierAccountRef" force="true"  />
 				</field-visibility>
 				<appearance>
@@ -3051,6 +3053,10 @@
 					<field id="pjt:projectObservers" set="mainInfo" />		
 					
 					<field id="bcpg:supplierAccountRef" set="mainInfo"  mandatory="true"/>
+					<field id="pjt:tlDue" set="mainInfo" />
+					<field id="pjt:projectPriority" set="mainInfo">
+						<control template="/org/alfresco/components/form/controls/workflow/priority.ftl"/>
+					</field>
 					<field id="bcpg:entityTplRef" set="mainInfo" mandatory="true" >	
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
