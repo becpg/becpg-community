@@ -370,8 +370,42 @@
 			</parameter>
 		</constraint>
        
-
-
+        <constraint name="gs1:cheeseMaturationProcessContainerTypeCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				    <value></value>
+					<value>BRINE_SOLUTION</value>
+					<value>FOIL</value>
+					<value>MOULD</value>
+					<value>OTHER</value>
+					<value>TEXTILE</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:rennetTypeCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				    <value></value>
+					<value>ANIMAL_RENNET</value>
+					<value>MICROBIAL_RENNET</value>
+					<value>NO_RENNET</value>
+					<value>VEGETABLE_RENNET</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:surfaceOfCheeseAtEndOfRipeningCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				    <value></value>
+					<value>NO_RIND</value>
+					<value>RIND</value>
+					<value>SOFT_RIPENED_MOULD_RIND</value>
+				</list>
+			</parameter>
+		</constraint>
+     
 		<constraint name="gs1:speciesForFisheryStatisticsPurposesCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
@@ -667,6 +701,49 @@
 				<index enabled="false" />
 				<constraints>
 						<constraint ref="gs1:organicProductPlaceOfFarmingCodes" />
+				</constraints>
+			</property>
+		</properties>
+	</aspect>
+	
+	<aspect name="gs1:cheeseInformationAspect">
+		<properties>
+			<property name="gs1:cheeseMaturationPeriodDescription">
+				<type>d:mltext</type>
+				<index enabled="false" />
+			</property>
+			<property name="gs1:cheeseMaturationProcessContainerTypeCode">
+				<type>d:text</type>
+				<multiple>true</multiple>
+				<index enabled="false" />
+				<constraints>
+						<constraint ref="gs1:cheeseMaturationProcessContainerTypeCodes" />
+				</constraints>
+			</property>
+			<property name="gs1:fatPercentageInDryMatter">
+				<type>d:double</type>
+				<index enabled="false" />
+			</property>
+			<property name="gs1:isRindEdible">
+				<type>d:boolean</type>
+				<index enabled="false" />
+			</property>
+			<property name="gs1:rennetTypeCode">
+				<type>d:text</type>
+				<index enabled="false" />
+				<constraints>
+						<constraint ref="gs1:rennetTypeCodes" />
+				</constraints>
+			</property>
+			<property name="gs1:ripeningTimePeriod">
+				<type>d:int</type>
+				<index enabled="false" />
+			</property>
+			<property name="gs1:surfaceOfCheeseAtEndOfRipeningCode">
+				<type>d:text</type>
+				<index enabled="false" />
+				<constraints>
+						<constraint ref="gs1:surfaceOfCheeseAtEndOfRipeningCodes" />
 				</constraints>
 			</property>
 		</properties>

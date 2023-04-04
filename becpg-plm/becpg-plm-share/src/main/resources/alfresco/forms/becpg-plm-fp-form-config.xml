@@ -77,6 +77,14 @@
           <show force="true" id="gs1:preparationType"/>
           <show force="false" id="bcpg:productMicrobioCriteriaRef"/>
           <show force="false" id="bcpg:meatType"/>
+          
+          <show force="false" id="gs1:cheeseMaturationPeriodDescription"/>
+		  <show force="false" id="gs1:cheeseMaturationProcessContainerTypeCode"/>
+		  <show force="false" id="gs1:fatPercentageInDryMatter"/>
+		  <show force="false" id="gs1:isRindEdible"/>
+	      <show force="false" id="gs1:rennetTypeCode"/>
+		  <show force="false" id="gs1:ripeningTimePeriod"/>
+		  <show force="false" id="gs1:surfaceOfCheeseAtEndOfRipeningCode"/>			
        
           <show force="true" id="bcpg:unitPrice"/>
           <show force="true" id="bcpg:unitTotalCost"/>
@@ -416,7 +424,29 @@
             </control>
           </field>
           <field id="bcpg:meatType" mandatory="false" read-only="false" set="consumer"/>
-         
+          
+          
+          <set appearance="bordered-panel" id="cheese" label-id="becpg.forms.set.cheese.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          
+          <field id="gs1:cheeseMaturationPeriodDescription"  mandatory="false" read-only="false" set="cheese">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+              <control-param name="rows">2</control-param>
+              <control-param name="maxLength">70</control-param>
+            </control>
+          </field>
+		  <field  id="gs1:cheeseMaturationProcessContainerTypeCode"  mandatory="false" read-only="false" set="cheese"/>
+		  <field  id="gs1:fatPercentageInDryMatter"  mandatory="false" read-only="false" set="cheese"/>
+		  <field  id="gs1:isRindEdible" mandatory="false" read-only="false" set="cheese">
+            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+          </field>
+	      <field  id="gs1:rennetTypeCode" mandatory="false" read-only="false" set="cheese"/>
+		  <field  id="gs1:ripeningTimePeriod" mandatory="false" read-only="false" set="cheese">
+            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+              <control-param name="unit">d</control-param>
+            </control>
+          </field>
+		  <field  id="gs1:surfaceOfCheeseAtEndOfRipeningCode" mandatory="false" read-only="false" set="cheese"/>		
+	
           <set appearance="bordered-panel" id="profitability" label-id="becpg.forms.set.rentability.label" parent="mainTab" template="/org/alfresco/components/form/3-column-set.ftl"/>
           <field help-id="becpg.forms.help.unitPrice" id="bcpg:unitPrice" mandatory="false" read-only="false" set="profitability"/>
           <field id="bcpg:unitTotalCost" mandatory="false" read-only="true" set="profitability"/>
@@ -716,7 +746,7 @@
           <field help-id="becpg.forms.help.gs1.isTradeItemAVariableUnit" id="gs1:isTradeItemAVariableUnit" mandatory="false" read-only="false" set="hierarchyPanel">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
             <constraint-handlers>
-              <constraint event="change@[{'prop':'prop_gs1_variableWeightAllowableDeviationPercentage', 'condition' : '|false'},{'prop':'prop_gs1_variableWeightRangeMinimum', 'condition' : '|false'},                       {'prop':'prop_gs1_variableWeightRangeMaximum', 'condition' : '|false'},                       {'prop':'prop_gs1_variableTradeItemType', 'condition' : '|false'},                       {'prop':'prop_gs1_eanCodeWeight', 'condition' : '|false'}                       ]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
+              <constraint event="change@[{'prop':'prop_gs1_variableWeightAllowableDeviationPercentage', 'condition' : '|false'},{'prop':'prop_gs1_variableWeightRangeMinimum', 'condition' : '|false'},{'prop':'prop_gs1_variableWeightRangeMaximum', 'condition' : '|false'},{'prop':'prop_gs1_variableTradeItemType', 'condition' : '|false'},{'prop':'prop_gs1_eanCodeWeight', 'condition' : '|false'}                       ]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
             </constraint-handlers>
           </field>
           <field id="gs1:variableTradeItemType" mandatory="false" read-only="false" set="hierarchyPanel"/>
@@ -740,7 +770,7 @@
           <field help-id="becpg.forms.help.gs1.isTradeItemAPromotionalItem" id="gs1:isTradeItemAPromotionalItem" mandatory="false" read-only="false" set="promotionalPanel">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
             <constraint-handlers>
-              <constraint event="change@[{'prop':'assoc_gs1_promotionalArticleRef', 'condition' : '|false'}, {'prop':'prop_gs1_freeQuantityOfProduct', 'condition' : '|false'},{'prop':'prop_gs1_freeQuantityOfProductUnit', 'condition' : '|false'},                       {'prop':'prop_gs1_freeQuantityOfProductPercent', 'condition' : '|false'},                       {'prop':'prop_gs1_promotionTypeCode', 'condition' : '|false'},                       {'prop':'prop_gs1_offerOnPack', 'condition' : '|false'}                       ]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
+              <constraint event="change@[{'prop':'assoc_gs1_promotionalArticleRef', 'condition' : '|false'}, {'prop':'prop_gs1_freeQuantityOfProduct', 'condition' : '|false'},{'prop':'prop_gs1_freeQuantityOfProductUnit', 'condition' : '|false'},{'prop':'prop_gs1_freeQuantityOfProductPercent', 'condition' : '|false'},{'prop':'prop_gs1_promotionTypeCode', 'condition' : '|false'},{'prop':'prop_gs1_offerOnPack', 'condition' : '|false'}                       ]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
             </constraint-handlers>
           </field>
           <field help-id="becpg.forms.help.gs1.offerOnPack" id="gs1:offerOnPack" mandatory="false" read-only="false" set="promotionalPanel"/>
@@ -760,7 +790,7 @@
           <field help-id="becpg.forms.help.gs1.isTradeItemAnOrderableUnit" id="gs1:isTradeItemAnOrderableUnit" mandatory="false" read-only="false" set="commercialPanel">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
             <constraint-handlers>
-              <constraint event="change@[                       {'prop':'prop_gs1_isTradeItemReorderable', 'condition' : '|false'},                          {'prop':'prop_gs1_startAvailabilityDateTime', 'condition' : '|false'},                       {'prop':'prop_gs1_endAvailabilityDateTime', 'condition' : '|false'},                       {'prop':'prop_gs1_orderQuantityMinimum', 'condition' : '|false'},                       {'prop':'prop_gs1_orderQuantityMultiple', 'condition' : '|false'},                       {'prop':'prop_gs1_firstShipDateTime', 'condition' : '|false'},                       {'prop':'prop_gs1_lastShipDateTime', 'condition' : '|false'},                       {'prop':'prop_gs1_sellingUnitOfMeasure', 'condition' : '|false'},                       {'prop':'prop_gs1_orderingLeadTime', 'condition' : '|false'}                       ]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
+              <constraint event="change@[{'prop':'prop_gs1_isTradeItemReorderable', 'condition' : '|false'},{'prop':'prop_gs1_startAvailabilityDateTime', 'condition' : '|false'}, {'prop':'prop_gs1_endAvailabilityDateTime', 'condition' : '|false'},{'prop':'prop_gs1_orderQuantityMinimum', 'condition' : '|false'},{'prop':'prop_gs1_orderQuantityMultiple', 'condition' : '|false'},{'prop':'prop_gs1_firstShipDateTime', 'condition' : '|false'},{'prop':'prop_gs1_lastShipDateTime', 'condition' : '|false'},{'prop':'prop_gs1_sellingUnitOfMeasure', 'condition' : '|false'},{'prop':'prop_gs1_orderingLeadTime', 'condition' : '|false'}]" type="MANDATORY" validation-handler="beCPG.forms.validation.hideIf"/>
             </constraint-handlers>
           </field>
           <field help-id="becpg.forms.help.gs1.firstShipDateTime" id="gs1:firstShipDateTime" mandatory="false" read-only="false" set="commercialPanel"/>

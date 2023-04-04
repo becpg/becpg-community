@@ -31,6 +31,7 @@
 				<aspect name="sec:securityAspect" />
 				<aspect name="bcpg:chemicalCodeAspect" />
 				<aspect name="bcpg:meatAspect" />
+				<aspect name="gs1:cheeseInformationAspect" />
 				<aspect name="ghs:sdsAspect" />
 				<aspect name="bcpg:undeletableAspect" />
 				
