@@ -51,7 +51,7 @@ public class MalaysianNutrientRegulation extends AbstractNutrientRegulation {
 
 	/** {@inheritDoc} */
 	@Override
-	public String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
+	public String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
 		if (nutrientTypeCode.equals(NutrientCode.Energykcal)
 				|| nutrientTypeCode.equals(NutrientCode.Cholesterol) || nutrientTypeCode.equals(NutrientCode.Sodium)
 				|| nutrientTypeCode.equals(NutrientCode.Salt) && value != null){

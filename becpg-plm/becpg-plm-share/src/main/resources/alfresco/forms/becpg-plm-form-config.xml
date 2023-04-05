@@ -6287,6 +6287,7 @@
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
+					<show id="bcpg:nutListMeasurementPrecision" />
 					<show id="bcpg:parentLevel" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
@@ -6321,6 +6322,7 @@
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
+					<show id="bcpg:nutListMeasurementPrecision" />
 					<show id="bcpg:parentLevel" />
 					<show id="rep:reportKinds" />
 					<show id="bcpg:glopTarget" force ="true"/>
@@ -6358,6 +6360,7 @@
 					<show id="bcpg:nutListFormulatedValue" />
 					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListFormulatedValuePrepared" force="true"/>
 					<show id="bcpg:nutListUnitPrepared"  force="true" />
 					<show id="bcpg:nutListRoundedValue" />
 					<show id="bcpg:nutListMini" />
@@ -6365,6 +6368,7 @@
 					<show id="bcpg:nutListFormulatedMini" />
 					<show id="bcpg:nutListFormulatedMaxi" />
 					<show id="bcpg:nutListValuePerServing" force="true" />
+					<show id="bcpg:nutListFormulatedValuePerServing" force="true" />
 					<show id="bcpg:variantColumn1" force="true" />
 					<show id="bcpg:variantColumn2" force="true" />
 					<show id="bcpg:variantColumn3" force="true" />
@@ -6390,6 +6394,8 @@
 				    <field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
+					<field id="bcpg:nutListFormulatedValuePrepared" label="hidden" read-only="true" />
+					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
 					<field id="bcpg:nutListRoundedValue" read-only="true" ></field>
 					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
@@ -6443,12 +6449,14 @@
 					<show id="bcpg:nutListFormulatedValue" />
 					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListFormulatedValuePrepared" force="true"/>
 					<show id="bcpg:nutListUnitPrepared" force="true"/>
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListFormulatedMini" />
 					<show id="bcpg:nutListFormulatedMaxi" />
 					<show id="bcpg:nutListValuePerServing" force="true" />
+					<show id="bcpg:nutListFormulatedValuePerServing" force="true" />
 					<show id="bcpg:nutListGDAPerc" force="true" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
@@ -6461,7 +6469,8 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
-					
+					<field id="bcpg:nutListFormulatedValuePrepared" label="hidden" read-only="true" />
+					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
 				    <field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
@@ -6508,6 +6517,7 @@
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
+					<show id="bcpg:nutListMeasurementPrecision" />
 					<show id="bcpg:parentLevel" />
 					<show id="rep:reportKinds" />
 				</field-visibility>

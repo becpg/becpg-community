@@ -3,7 +3,6 @@ package fr.becpg.repo.product.formulation.nutrient;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Locale;
 
 /**
  * <p>RussianNutrientRegulation class.</p>
@@ -61,9 +60,4 @@ public class RussianNutrientRegulation extends AbstractNutrientRegulation {
 		return bd.doubleValue();
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
-		return formatDouble(roundedValue, locale);
-	}
 }

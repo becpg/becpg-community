@@ -81,7 +81,7 @@ public class KoreanNutrientRegulation extends AbstractNutrientRegulation {
 
 	/** {@inheritDoc} */
 	@Override
-	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
+	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
 
 		if(value != null && roundedValue != null && nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.FatTrans) && value > 0.2 && value < 0.5) {

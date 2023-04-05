@@ -3,7 +3,6 @@ package fr.becpg.repo.product.formulation.nutrient;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Locale;
 
 /**
  * <p>AustralianNutrientRegulation class.</p>
@@ -35,9 +34,5 @@ public class AustralianNutrientRegulation extends AbstractNutrientRegulation {
 		}
 	}
 	
-	/** {@inheritDoc} */
-	@Override
-	public String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
-		return formatDouble(roundedValue, locale);
-	}
+	
 }

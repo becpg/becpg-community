@@ -50,7 +50,7 @@ public interface NutrientRegulation {
 	 * @param locale a {@link java.util.Locale} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	String displayValue(Double value, Double roundedValue, String nutrientTypeCode, Locale locale);
+	String displayValue(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale);
 
 	/**
 	 * <p>convertValue.</p>

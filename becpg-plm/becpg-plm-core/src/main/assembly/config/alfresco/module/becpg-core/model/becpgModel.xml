@@ -50,6 +50,7 @@
 				</list>
 			</parameter>
 		</constraint>
+		
 
 
 		<constraint name="bcpg:systemState" type="LIST">
@@ -305,6 +306,17 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+		
+		
+		<constraint name="bcpg:nutListMeasurementPrecisions" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				    <value>Approximatly</value>
+					<value>LessThan</value>
+				</list>
+			</parameter>
+		</constraint>
+		
 
 		<constraint name="bcpg:allergenType" type="LIST">
 			<parameter name="allowedValues">
@@ -2397,6 +2409,18 @@
 						<constraint ref="bcpg:nutListMethods" />
 					</constraints>
 				</property>
+					<property name="bcpg:nutListMeasurementPrecision">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="bcpg:nutListMeasurementPrecisions" />
+					</constraints>
+				</property>
+				
 				<property name="bcpg:nutListIsFormulated">
 					<type>d:boolean</type>
 					<default>false</default>
@@ -4748,6 +4772,12 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:nutListFormulatedValuePerServing">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				
 				<property name="bcpg:nutListGDAPerc">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -4756,9 +4786,13 @@
 			</properties>
 		</aspect>
 		
-			<aspect name="bcpg:nutListPreparedAspect">
+		<aspect name="bcpg:nutListPreparedAspect">
 			<properties>
 				<property name="bcpg:nutListValuePrepared">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:nutListFormulatedValuePrepared">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>

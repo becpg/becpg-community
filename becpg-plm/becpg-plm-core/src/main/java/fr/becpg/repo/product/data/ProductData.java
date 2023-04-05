@@ -152,6 +152,11 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private String formulationChainId;
 	private Boolean isUpToDate = false;
 	private Boolean updateFormulatedDate = true;
+	
+	/*
+	 * Nutlist formulation
+	 */
+	private List<String> preparationStates;
 
 	/*
 	 * Labeling formulation
@@ -170,6 +175,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private String nutrientDetails;
 	private NodeRef nutrientProfile;
 	private String nutrientProfileCategory;
+
 	
 	
 	/*
@@ -1411,8 +1417,20 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		this.profitability = profitability;
 	}
 	
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutrientPreparationState")
+	public List<String> getPreparationStates() {
+		return preparationStates;
+	}
+
+	public void setPreparationStates(List<String> preparationStates) {
+		this.preparationStates = preparationStates;
+	}
 	
-	
+	public boolean isPrepared() {
+		return preparationStates!=null && preparationStates.contains("Prepared");
+	}
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:ecoScore")
 	public Double getEcoScore() {
