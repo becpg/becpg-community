@@ -3,7 +3,6 @@ package fr.becpg.repo.product.formulation.nutrient;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Locale;
 
 /**
  * <p>ChileanNutrientRegulation class.</p>
@@ -75,12 +74,6 @@ public class ChileanNutrientRegulation extends AbstractNutrientRegulation {
 		BigDecimal bd = BigDecimal.valueOf(value);
 		bd = bd.round(new MathContext(3,RoundingMode.HALF_EVEN));
 		return bd.doubleValue();
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
-		return formatDouble(roundedValue, locale);
 	}
 
 }

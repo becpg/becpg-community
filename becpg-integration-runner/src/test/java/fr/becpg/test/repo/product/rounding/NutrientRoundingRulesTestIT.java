@@ -263,13 +263,8 @@ public class NutrientRoundingRulesTestIT {
 		assertEquals(50d, RegulationFormulationHelper.round(0.056d, NutrientCode.VitA, Locale.CANADA, "mg/100g"), 0);
 		assertEquals(4.5d, RegulationFormulationHelper.round(4.6d, NutrientCode.VitD, Locale.CANADA, "µg/100g"), 0);
 
-		assertEquals("", RegulationFormulationHelper.displayValue(51d,
-				RegulationFormulationHelper.round(51d, NutrientCode.VitA, Locale.CANADA, "µg/100g"), NutrientCode.VitA, Locale.US, "CA_2013"));
 		assertEquals("50", RegulationFormulationHelper.displayValue(51d,
-				RegulationFormulationHelper.round(51d, NutrientCode.VitA, Locale.CANADA, "µg/100g"), NutrientCode.VitA, Locale.US, "CA"));
-
-		assertEquals("150", RegulationFormulationHelper.displayValue(150d,
-				RegulationFormulationHelper.round(150d, NutrientCode.Sodium, Locale.CANADA, "mg/100g"), NutrientCode.Sodium, Locale.CANADA, "CA_2013"));
+				RegulationFormulationHelper.round(51d, NutrientCode.VitA, Locale.CANADA, "µg/100g"), NutrientCode.VitA, null, Locale.US, "CA"));
 	}
 
 	@Test

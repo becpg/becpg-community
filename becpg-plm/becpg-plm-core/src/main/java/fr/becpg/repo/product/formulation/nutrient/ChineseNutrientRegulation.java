@@ -1,7 +1,5 @@
 package fr.becpg.repo.product.formulation.nutrient;
 
-import java.util.Locale;
-
 /**
  * <p>ChineseNutrientRegulation class.</p>
  *
@@ -95,10 +93,5 @@ public class ChineseNutrientRegulation extends AbstractNutrientRegulation {
 		
 		return roundValue(value,0.1d);
 	}
-	
-	/** {@inheritDoc} */
-	@Override
-	public String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
-		return formatDouble(roundedValue, locale);
-	}
+
 }

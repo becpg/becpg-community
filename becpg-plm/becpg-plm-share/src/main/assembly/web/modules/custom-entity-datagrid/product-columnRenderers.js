@@ -345,46 +345,53 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 	
 	
-	
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:nutListValue","bcpg:nutListMini","bcpg:nutListMaxi"],
-      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-          var ret = "";
-          
-        
-          var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
-          
-          if(oColumn.label!=null && oColumn.label.indexOf && oColumn.label.indexOf("100g")>0){
-        	  unit = unit.replace("/100g","");
-          }
-          
-          if (data.value != null) {
-        	  ret+=data.value.toLocaleString( beCPG.util.getJSLocale() )+" "+unit;
-          }
-          
-          var key ="prop_bcpg_nutListFormulatedValue";
 
-		if(oColumn.field == "prop_bcpg_nutListMini"){
-			key = "prop_bcpg_nutListFormulatedMini";
-		} else if(oColumn.field == "prop_bcpg_nutListMaxi"){
-			key = "prop_bcpg_nutListFormulatedMaxi";
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName: ["bcpg:nutListValue", "bcpg:nutListMini", "bcpg:nutListMaxi", "bcpg:nutListValuePrepared", "bcpg:nutListValuePerServing"],
+		renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+			var ret = "";
+
+
+			var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
+			if (oColumn.field == "prop_bcpg_nutListValuePrepared" && oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value != null) {
+				unit = oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value;
+			}
+
+			if (oColumn.label != null && oColumn.label.indexOf && oColumn.label.indexOf("100g") > 0) {
+				unit = unit.replace("/100g", "");
+			}
+
+			if (data.value != null) {
+				ret += data.value.toLocaleString(beCPG.util.getJSLocale()) + " " + unit;
+			}
+
+			var key = "prop_bcpg_nutListFormulatedValue";
+
+			if (oColumn.field == "prop_bcpg_nutListMini") {
+				key = "prop_bcpg_nutListFormulatedMini";
+			} else if (oColumn.field == "prop_bcpg_nutListMaxi") {
+				key = "prop_bcpg_nutListFormulatedMaxi";
+			} else if (oColumn.field == "prop_bcpg_nutListValuePrepared") {
+				key = "prop_bcpg_nutListFormulatedValuePrepared";
+			} else if (oColumn.field == "prop_bcpg_nutListValuePerServing") {
+				key = "prop_bcpg_nutListFormulatedValuePerServing";
+			}
+
+
+			var formulatedValue = oRecord.getData("itemData")[key];
+			if (formulatedValue != null && formulatedValue.value != null) {
+				if (ret.length > 0) {
+					ret += '&nbsp;&nbsp;(' + beCPG.util.exp(formulatedValue.value) + ')';
+				} else {
+					ret += beCPG.util.exp(formulatedValue.value) + " " + unit;
+				}
+			}
+
+			return ret;
 		}
 
-          
-          var formulatedValue = oRecord.getData("itemData")[key];
-          if(formulatedValue!=null && formulatedValue.value!=null ){
-              if(ret.length>0){
-                  ret+= '&nbsp;&nbsp;(' + beCPG.util.exp(formulatedValue.value) + ')';
-              } else {
-                ret+= beCPG.util.exp(formulatedValue.value)+" "+unit ;
-              }
-          }
-          
-         return ret;
-      }
+	});
 
-  });
-  
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName: ["bcpg:nutListRoundedValue"],
@@ -505,41 +512,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 		return true;
 	});
 
-  
-  	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:nutListValuePrepared"],
-      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-          var ret = "";
-        
-          var unit = oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value;
-          if(unit == null){
-			  unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
-		  }
-          if(oColumn.label!=null && oColumn.label.indexOf && oColumn.label.indexOf("100g")>0){
-        	  unit = unit.replace("/100g","");
-          }
-          
-      
-          if (data.value != null) {
-        	  ret+=beCPG.util.exp(data.value)+" "+unit;
-          }
-     
-          
-         return ret;
-      }
 
-  });
   
-  
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:nutListValuePerServing"],
-      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-      	if(data.value != null){
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString( beCPG.util.getJSLocale() ));
-      	}      
-      	return "";
-      }
-  });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
@@ -1499,19 +1473,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 	});
 	
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName : [ "bcpg:nutListValuePerServing" ],
-		renderer : function(oRecord, data, label, scope) {
-			if(data.value != null && data.value > 0){
-				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"] ? oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData: null;
-				var unit =additionalProps!=null ? additionalProps.prop_bcpg_nutUnit.displayValue : "";
-				
-				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString( beCPG.util.getJSLocale() )+" "+unit);
-				
-			}
-			return "";
-		}
-	});
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "mltext_survey:questionLabel",

@@ -166,7 +166,7 @@ public class NutriScore implements ScoreCalculatingPlugin {
 		NutListDataItem nutListItem = findNutrient(productData, nutrientCode, missingCharacts);
 		
 		if (nutListItem != null) {
-			Double value = nutListItem.value("EU");
+			Double value = productData.isPrepared() && nutListItem.preparedValue("EU")!=null ?   nutListItem.preparedValue("EU") : nutListItem.value("EU");
 			
 			if (value == null) {
 				missingCharacts.put(nutrientCode, nutListItem.getNut());
