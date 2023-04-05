@@ -171,6 +171,10 @@ public interface PLMModel {
 	QName PROP_NUTLIST_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListValue");
 	/** Constant <code>PROP_NUTLIST_VALUE_PER_SERVING</code> */
 	QName PROP_NUTLIST_VALUE_PER_SERVING = QName.createQName(BeCPGModel.BECPG_URI, "nutListValuePerServing");
+	
+	QName PROP_NUTLIST_MEASUREMENTPRECISION = QName.createQName(BeCPGModel.BECPG_URI, "nutListMeasurementPrecision");
+	
+	QName PROP_NUTLIST_FORMULATED_VALUE_PER_SERVING = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedValuePerServing");
 	/** Constant <code>PROP_NUTLIST_FORMULATED_VALUE</code> */
 	QName PROP_NUTLIST_FORMULATED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedValue");
 	/** Constant <code>PROP_NUTLIST_UNIT</code> */
@@ -182,6 +186,10 @@ public interface PLMModel {
 	
 	
 	QName ASPECT_NUTLIST_PREPARED = QName.createQName(BeCPGModel.BECPG_URI,"nutListPreparedAspect");
+	
+	QName PROP_NUTLIST_VALUE_PREPARED = QName.createQName(BeCPGModel.BECPG_URI,"nutListValuePrepared");
+	
+	QName PROP_NUTLIST_FORMULATED_PREPARED = QName.createQName(BeCPGModel.BECPG_URI,"nutListFormulatedValuePrepared");
 	
 
 	QName PROP_NUTLIST_FORMULATED_MINI = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedMini");

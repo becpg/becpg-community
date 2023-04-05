@@ -50,10 +50,12 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	private static final long serialVersionUID = -4580421935974923617L;
 
 	private Double manualValue;
-
-	private Double preparedValue;
-
+	
 	private Double formulatedValue;
+	
+	private Double manualPreparedValue;
+	
+	private Double formulatedPreparedValue;
 
 	private String unit;
 
@@ -64,9 +66,11 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	private Double manualMaxi;
 
 	private Double formulatedMaxi;
+	
+	private Double manualValuePerServing;
 
-	private Double valuePerServing;
-
+	private Double formulatedValuePerServing;
+	
 	private Double gdaPerc;
 
 	private Double lossPerc;
@@ -74,6 +78,8 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	private String group;
 
 	private String method;
+	
+	private String measurementPrecision;
 
 	private NodeRef nut;
 
@@ -189,28 +195,56 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.sources = sources;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutListFormulatedValuePrepared")
+	public Double getFormulatedPreparedValue() {
+		return formulatedPreparedValue;
+	}
+
+	public void setFormulatedPreparedValue(Double formulatedPreparedValue) {
+		this.formulatedPreparedValue = formulatedPreparedValue;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutListValuePrepared")
+	public Double getManualPreparedValue() {
+		return manualPreparedValue;
+	}
+
+	public void setManualPreparedValue(Double manualPreparedValue) {
+		this.manualPreparedValue = manualPreparedValue;
+	}
+
 	/**
-	 * <p>Getter for the field <code>manualValue</code>.</p>
+	 * <p>Getter for the field <code>preparedValue</code>.</p>
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
-	@AlfProp
-	@AlfQname(qname = "bcpg:nutListValuePrepared")
 	public Double getPreparedValue() {
-		return preparedValue;
+		return manualPreparedValue != null ? manualPreparedValue : formulatedPreparedValue;
 	}
 
 	/**
-	 * <p>Setter for the field <code>manualValue</code>.</p>
+	 * <p>Setter for the field <code>preparedValue</code>.</p>
 	 *
-	 * @param manualValue a {@link java.lang.Double} object.
+	 * @param preparedValue a {@link java.lang.Double} object.
 	 */
 	public void setPreparedValue(Double preparedValue) {
-		this.preparedValue = preparedValue;
+		this.formulatedPreparedValue = preparedValue;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutListMeasurementPrecision")
+	public String getMeasurementPrecision() {
+		return measurementPrecision;
+	}
+
+	public void setMeasurementPrecision(String measurementPrecision) {
+		this.measurementPrecision = measurementPrecision;
 	}
 
 	/**
-	 * <p>valuePerServing.</p>
+	 * <p>preparedValue.</p>
 	 *
 	 * @param key a {@link java.lang.String} object.
 	 * @return a {@link java.lang.Double} object.
@@ -271,6 +305,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	}
 
 	@AlfProp
+	@InternalField
 	@AlfQname(qname = "bcpg:nutListFormulatedMini")
 	public Double getFormulatedMini() {
 		return formulatedMini;
@@ -313,6 +348,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	}
 
 	@AlfProp
+	@InternalField
 	@AlfQname(qname = "bcpg:nutListFormulatedMaxi")
 	public Double getFormulatedMaxi() {
 		return formulatedMaxi;
@@ -331,16 +367,37 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public Double maxi(String key) {
 		return RegulationFormulationHelper.extractMaxi(getRoundedValue(), key);
 	}
+	
+	
+	
+	@AlfProp
+	@InternalField
+	@AlfQname(qname = "bcpg:nutListFormulatedValuePerServing")
+	public Double getFormulatedValuePerServing() {
+		return formulatedValuePerServing;
+	}
+
+	public void setFormulatedValuePerServing(Double formulatedValuePerServing) {
+		this.formulatedValuePerServing = formulatedValuePerServing;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutListValuePerServing")
+	public Double getManualValuePerServing() {
+		return manualValuePerServing;
+	}
+
+	public void setManualValuePerServing(Double manualValuePerServing) {
+		this.manualValuePerServing = manualValuePerServing;
+	}
 
 	/**
 	 * <p>Getter for the field <code>valuePerServing</code>.</p>
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
-	@AlfProp
-	@AlfQname(qname = "bcpg:nutListValuePerServing")
 	public Double getValuePerServing() {
-		return valuePerServing;
+		return manualValuePerServing!=null ? manualValuePerServing : formulatedValuePerServing;
 	}
 
 	/**
@@ -349,7 +406,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	 * @param valuePerServing a {@link java.lang.Double} object.
 	 */
 	public void setValuePerServing(Double valuePerServing) {
-		this.valuePerServing = valuePerServing;
+		this.formulatedValuePerServing = valuePerServing;
 	}
 
 	/**
@@ -593,7 +650,8 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.formulatedMini = n.formulatedMini;
 		this.manualMaxi = n.manualMaxi;
 		this.formulatedMaxi = n.formulatedMaxi;
-		this.valuePerServing = n.valuePerServing;
+		this.manualValuePerServing = n.manualValuePerServing;
+		this.formulatedValuePerServing = n.formulatedValuePerServing;
 		this.gdaPerc = n.gdaPerc;
 		this.lossPerc = n.lossPerc;
 		this.group = n.group;
@@ -602,7 +660,9 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.isFormulated = n.isFormulated;
 		this.errorLog = n.errorLog;
 		this.roundedValue = n.roundedValue;
-		this.preparedValue = n.preparedValue;
+		this.manualPreparedValue = n.manualPreparedValue;
+		this.formulatedPreparedValue = n.formulatedPreparedValue;
+		this.measurementPrecision = n.measurementPrecision;
 		this.sources = n.sources;
 	}
 
@@ -623,8 +683,9 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(depthLevel, errorLog, formulatedMaxi, formulatedMini, formulatedValue, preparedValue, gdaPerc, group,
-				isFormulated, lossPerc, manualMaxi, manualMini, manualValue, method, nut, parent, roundedValue, unit, valuePerServing, sources);
+		result = prime * result + Objects.hash(depthLevel, errorLog, formulatedMaxi, formulatedMini, formulatedPreparedValue, formulatedValue,
+				formulatedValuePerServing, gdaPerc, group, isFormulated, lossPerc, manualMaxi, manualMini, manualPreparedValue, manualValue,
+				manualValuePerServing, measurementPrecision, method, nut, parent, roundedValue, sources, unit);
 		return result;
 	}
 
@@ -639,23 +700,26 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		NutListDataItem other = (NutListDataItem) obj;
 		return Objects.equals(depthLevel, other.depthLevel) && Objects.equals(errorLog, other.errorLog)
 				&& Objects.equals(formulatedMaxi, other.formulatedMaxi) && Objects.equals(formulatedMini, other.formulatedMini)
-				&& Objects.equals(formulatedValue, other.formulatedValue) && Objects.equals(preparedValue, other.preparedValue)
-				&& Objects.equals(gdaPerc, other.gdaPerc) && Objects.equals(group, other.group) && Objects.equals(isFormulated, other.isFormulated)
-				&& Objects.equals(lossPerc, other.lossPerc) && Objects.equals(manualMaxi, other.manualMaxi)
-				&& Objects.equals(manualMini, other.manualMini) && Objects.equals(manualValue, other.manualValue)
-				&& Objects.equals(method, other.method) && Objects.equals(nut, other.nut) && Objects.equals(parent, other.parent)
-				&& Objects.equals(roundedValue, other.roundedValue) && Objects.equals(unit, other.unit)
-				&& Objects.equals(valuePerServing, other.valuePerServing)
-				&& Objects.equals(sources, other.sources);
+				&& Objects.equals(formulatedPreparedValue, other.formulatedPreparedValue) && Objects.equals(formulatedValue, other.formulatedValue)
+				&& Objects.equals(formulatedValuePerServing, other.formulatedValuePerServing) && Objects.equals(gdaPerc, other.gdaPerc)
+				&& Objects.equals(group, other.group) && Objects.equals(isFormulated, other.isFormulated) && Objects.equals(lossPerc, other.lossPerc)
+				&& Objects.equals(manualMaxi, other.manualMaxi) && Objects.equals(manualMini, other.manualMini)
+				&& Objects.equals(manualPreparedValue, other.manualPreparedValue) && Objects.equals(manualValue, other.manualValue)
+				&& Objects.equals(manualValuePerServing, other.manualValuePerServing)
+				&& Objects.equals(measurementPrecision, other.measurementPrecision) && Objects.equals(method, other.method)
+				&& Objects.equals(nut, other.nut) && Objects.equals(parent, other.parent) && Objects.equals(roundedValue, other.roundedValue)
+				&& Objects.equals(sources, other.sources) && Objects.equals(unit, other.unit);
 	}
 
 	@Override
 	public String toString() {
-		return "NutListDataItem [manualValue=" + manualValue + ", formulatedValue=" + formulatedValue + ", unit=" + unit + ", manualMini="
-				+ manualMini + ", formulatedMini=" + formulatedMini + ", manualMaxi=" + manualMaxi + ", formulatedMaxi=" + formulatedMaxi
-				+ ", valuePerServing=" + valuePerServing + ", gdaPerc=" + gdaPerc + ", lossPerc=" + lossPerc + ", group=" + group + ", method="
-				+ method + ", nut=" + nut + ", isFormulated=" + isFormulated + ", errorLog=" + errorLog + ", depthLevel=" + depthLevel + ", parent="
-				+ parent + ", roundedValue=" + roundedValue + "]";
+		return "NutListDataItem [manualValue=" + manualValue + ", formulatedValue=" + formulatedValue + ", manualPreparedValue=" + manualPreparedValue
+				+ ", formulatedPreparedValue=" + formulatedPreparedValue + ", unit=" + unit + ", manualMini=" + manualMini + ", formulatedMini="
+				+ formulatedMini + ", manualMaxi=" + manualMaxi + ", formulatedMaxi=" + formulatedMaxi + ", manualValuePerServing="
+				+ manualValuePerServing + ", formulatedValuePerServing=" + formulatedValuePerServing + ", gdaPerc=" + gdaPerc + ", lossPerc="
+				+ lossPerc + ", group=" + group + ", method=" + method + ", measurementPrecision=" + measurementPrecision + ", nut=" + nut
+				+ ", isFormulated=" + isFormulated + ", errorLog=" + errorLog + ", depthLevel=" + depthLevel + ", parent=" + parent
+				+ ", roundedValue=" + roundedValue + ", sources=" + sources + "]";
 	}
 
 }

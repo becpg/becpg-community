@@ -59,12 +59,10 @@ public class RegulationFormulationHelper {
 	static {
 		regulations.put("EU", new EuropeanNutrientRegulation("beCPG/databases/nuts/EuNutrientRegulation.csv"));
 		regulations.put("US", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2016.csv"));
-		regulations.put("US_2013", new UsNutrientRegulation("beCPG/databases/nuts/UsNutrientRegulation_2013_2020.csv"));
 		regulations.put("TT", new UsNutrientRegulation("beCPG/databases/nuts/TrinidadTobagoNutrientRegulation.csv"));
 		regulations.put("DO", new UsNutrientRegulation("beCPG/databases/nuts/DominicanRepublicanNutrientRegulation.csv"));
 		regulations.put("PE", new UsNutrientRegulation("beCPG/databases/nuts/PeruvianNutrientRegulation.csv"));
 		regulations.put("CA", new CanadianNutrientRegulation("beCPG/databases/nuts/CanadianNutrientRegulation_2017.csv"));
-		regulations.put("CA_2013", new CanadianNutrientRegulation2013("beCPG/databases/nuts/CanadianNutrientRegulation_2013_2022.csv"));
 		regulations.put("CN", new ChineseNutrientRegulation("beCPG/databases/nuts/ChineseNutrientRegulation.csv"));
 		regulations.put("AU", new AustralianNutrientRegulation("beCPG/databases/nuts/AUNutrientRegulation.csv"));
 		regulations.put("ID", new IndonesianNutrientRegulation("beCPG/databases/nuts/IndonesianNutrientRegulation.csv"));
@@ -289,6 +287,7 @@ public class RegulationFormulationHelper {
 		if (roundedValue != null) {
 			String localKey = getLocalKey(locale);
 			String nutCode = nutListElt.attributeValue(ATTR_NUT_CODE);
+			String measurementPrecision =  nutListElt.attributeValue(PLMModel.PROP_NUTLIST_MEASUREMENTPRECISION.getLocalName());
 			String nutListValue = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE.getLocalName());
 			String nutListValuePerServing = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName());
 			try {
@@ -351,17 +350,17 @@ public class RegulationFormulationHelper {
 
 						if ((nutListValue != null) && (!nutListValue.equals(""))) {
 							nutListElt.addAttribute("roundedDisplayValue" + suffix, RegulationFormulationHelper
-									.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutCode, locale, locKey));
-							if (locKey.equals("US") || locKey.equals("US_2013")) {
+									.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutCode,measurementPrecision, locale, locKey));
+							if (locKey.equals("US")) {
 								nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix,
 										RegulationFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
-												extractValuePerContainer(roundedValue, locKey), nutCode, locale, locKey));
+												extractValuePerContainer(roundedValue, locKey), nutCode,measurementPrecision, locale, locKey));
 							}
 						}
 						if ((nutListValuePerServing != null) && (!nutListValuePerServing.equals(""))) {
 							nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix,
 									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing),
-											extractValuePerServing(roundedValue, locKey), nutCode, locale, locKey));
+											extractValuePerServing(roundedValue, locKey),measurementPrecision, nutCode, locale, locKey));
 						}
 					}
 				}
@@ -506,7 +505,7 @@ public class RegulationFormulationHelper {
 				}
 
 				Double containerQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
-				if ((key.equals("US") || key.equals("US_2013")) && (n.getValue() != null)) {
+				if ((key.equals("US") ) && (n.getValue() != null)) {
 					Double vpc = regulation.round(n.getValue() * containerQty * 10, nutCode, nutUnit);
 					valuePerContainer.put(key, vpc);
 					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
@@ -567,11 +566,9 @@ public class RegulationFormulationHelper {
 		List<String> ret = new LinkedList<>();
 		if (MLTextHelper.isSupportedLocale(Locale.US) || MLTextHelper.isSupportedLocale(MLTextHelper.parseLocale("es_PR"))) {
 			ret.add("US");
-			ret.add("US_2013");
 		}
 		if (MLTextHelper.isSupportedLocale(Locale.CANADA) || MLTextHelper.isSupportedLocale(Locale.CANADA_FRENCH)) {
 			ret.add("CA");
-			ret.add("CA_2013");
 		}
 		if (MLTextHelper.isSupportedLocale(Locale.CHINESE) || MLTextHelper.isSupportedLocale(Locale.SIMPLIFIED_CHINESE)
 				|| MLTextHelper.isSupportedLocale(Locale.TRADITIONAL_CHINESE)) {
@@ -717,7 +714,6 @@ public class RegulationFormulationHelper {
 		return getRegulation(key).tolerances(value, nutCode, nutUnit);
 	}
 
-	
 	/**
 	 * <p>displayValue.</p>
 	 *
@@ -731,7 +727,24 @@ public class RegulationFormulationHelper {
 		if (value == null) {
 			return null;
 		}
-		return getRegulation(getLocalKey(locale)).displayValue(value, roundedValue, nutCode, locale);
+		return getRegulation(getLocalKey(locale)).displayValue(value, roundedValue, nutCode,null, locale);
+	}
+
+	
+	/**
+	 * <p>displayValue.</p>
+	 *
+	 * @param value a {@link java.lang.Double} object.
+	 * @param roundedValue a {@link java.lang.Double} object.
+	 * @param nutCode a {@link java.lang.String} object.
+	 * @param locale a {@link java.util.Locale} object.
+	 * @return a {@link java.lang.String} object.
+	 */
+	public static String displayValue(Double value, Double roundedValue, String nutCode, String measurementPrecision, Locale locale) {
+		if (value == null) {
+			return null;
+		}
+		return getRegulation(getLocalKey(locale)).displayValue(value, roundedValue, nutCode, measurementPrecision, locale);
 	}
 
 	/**
@@ -744,11 +757,11 @@ public class RegulationFormulationHelper {
 	 * @param regulation a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public static String displayValue(Double value, Double roundedValue, String nutCode, Locale locale, String regulation) {
+	public static String displayValue(Double value, Double roundedValue, String nutCode, String measurementPrecision, Locale locale, String regulation) {
 		if (value == null) {
 			return null;
 		}
-		return getRegulation(regulation).displayValue(value, roundedValue, nutCode, locale);
+		return getRegulation(regulation).displayValue(value, roundedValue,measurementPrecision, nutCode, locale);
 	}
 
 	/**
