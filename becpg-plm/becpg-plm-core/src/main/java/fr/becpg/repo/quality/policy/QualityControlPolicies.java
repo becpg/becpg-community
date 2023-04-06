@@ -61,8 +61,11 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 	
 	private EntityListDAO entityListDAO;
 
-	private static final  String KEY_PREFIX_CTRL_PLAN_ASSOC = QualityControlPolicies.class.getName() + "_CONTROL_PLANS_ASSOC_";
-	private static final  String KEY_PREFIX_PRODUCT_ASSOC = QualityControlPolicies.class.getName() + "_PRODUCT_ASSOC_";
+	private static final  String KEY_PREFIX_CTRL_PLAN_ASSOC = QualityControlPolicies.class.getName() + "_CONTROL_PLANS_ASSOC";
+	private static final  String KEY_PREFIX_PRODUCT_ASSOC = QualityControlPolicies.class.getName() + "_PRODUCT_ASSOC";
+	private static final  String KEY_UPDATE_CONTROL_LIST_STATE = QualityControlPolicies.class.getName() + "_UPDATE_CONTROL_LIST_STATE";
+	private static final  String KEY_UPDATE_QUALITY_CONTROL_STATE = QualityControlPolicies.class.getName() + "_UPDATE_QUALITY_CONTROL_STATE";
+	private static final  String KEY_CREATE_CONTROL_LIST = QualityControlPolicies.class.getName() + "_CREATE_CONTROL_LIST";
 
 
 	/**
@@ -132,30 +135,62 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 
 	/** {@inheritDoc} */
 	@Override
-	//TODO used queueAssoc instead
 	public void onCreateAssociation(AssociationRef assocRef) {
 		logger.debug("QualityControlPolicies onCreateAssociation");
 		if (assocRef.getTypeQName().equals(QualityModel.ASSOC_QC_CONTROL_PLANS)) {
 			// Needed as beCPG Code can be create beforeCommit
-			queueNode(KEY_PREFIX_CTRL_PLAN_ASSOC + assocRef.getSourceRef().toString(), assocRef.getTargetRef());
+			queueAssoc(KEY_PREFIX_CTRL_PLAN_ASSOC, assocRef);
 		} else if (assocRef.getTypeQName().equals(QualityModel.ASSOC_PRODUCT)) {
-			queueNode(KEY_PREFIX_PRODUCT_ASSOC + assocRef.getSourceRef().toString(), assocRef.getTargetRef());
+			queueAssoc(KEY_PREFIX_PRODUCT_ASSOC, assocRef);
 		} else if (assocRef.getTypeQName().equals(QualityModel.ASSOC_SL_CONTROL_POINT)) {
-			qualityControlService.createControlList(assocRef.getSourceRef());
+			queueNode(KEY_CREATE_CONTROL_LIST, assocRef.getSourceRef());
 		} 
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-
 		if (isPropChanged(before, after, QualityModel.PROP_CL_VALUE) || isPropChanged(before, after, QualityModel.PROP_CL_STATE)) {
 			logger.debug("QualityControlPolicies onUpdateProperties.");
-			qualityControlService.updateControlListState(nodeRef);
+			queueNode(KEY_UPDATE_CONTROL_LIST_STATE, nodeRef);
 		}
 		if (isPropChanged(before, after, QualityModel.PROP_SL_SAMPLE_STATE)) {
-			qualityControlService.updateQualityControlState(nodeRef);
+			queueNode(KEY_UPDATE_QUALITY_CONTROL_STATE, nodeRef);
 		}
+	}
+	
+	@Override
+	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
+		if (KEY_UPDATE_CONTROL_LIST_STATE.equals(key)) {
+			for (NodeRef pendingNode : pendingNodes) {
+				qualityControlService.updateControlListState(pendingNode);
+			}
+		} else if (KEY_UPDATE_QUALITY_CONTROL_STATE.equals(key)) {
+			for (NodeRef pendingNode : pendingNodes) {
+				qualityControlService.updateQualityControlState(pendingNode);
+			}
+		} else if (KEY_CREATE_CONTROL_LIST.equals(key)) {
+			for (NodeRef pendingNode : pendingNodes) {
+				qualityControlService.createControlList(pendingNode);
+			}
+		}
+		return true;
+	}
+
+	@Override
+	protected void doAfterAssocsCommit(String key, Set<AssociationRef> pendingAssocs) {
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			for (AssociationRef assoc : pendingAssocs) {
+				if (isNotLocked(assoc.getTargetRef()) && !isWorkingCopyOrVersion(assoc.getTargetRef())) {
+					if (key.startsWith(KEY_PREFIX_CTRL_PLAN_ASSOC)) {
+						qualityControlService.createSamplingList(assoc.getSourceRef(), assoc.getTargetRef());
+					} else if (key.startsWith(KEY_PREFIX_PRODUCT_ASSOC)) {
+						qualityControlService.copyProductDataList(assoc.getSourceRef(), assoc.getTargetRef());
+					}
+				}
+			}
+			return null;
+		}, false, true);
 	}
 
 	/** {@inheritDoc} */
@@ -164,30 +199,10 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 		qualityControlService.createSamplingListId(childAssocRef.getChildRef());
 	}
 
-
 	/** {@inheritDoc} */
 	@Override
 	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
 		return DoNothingCopyBehaviourCallback.getInstance();
-	}
-
-
-	/** {@inheritDoc} */
-	@Override
-	protected void doAfterCommit(String key, Set<NodeRef> pendingNodes) {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			for (NodeRef nodeRef : pendingNodes) {
-				if (isNotLocked(nodeRef) && !isWorkingCopyOrVersion(nodeRef)) {
-					if (key.startsWith(KEY_PREFIX_CTRL_PLAN_ASSOC)) {
-						qualityControlService.createSamplingList(new NodeRef(key.replaceFirst(KEY_PREFIX_CTRL_PLAN_ASSOC, "")), nodeRef);
-					} else if (key.startsWith(KEY_PREFIX_PRODUCT_ASSOC)) {
-						qualityControlService.copyProductDataList(new NodeRef(key.replaceFirst(KEY_PREFIX_PRODUCT_ASSOC, "")), nodeRef);
-					}
-				}
-			}
-			return null;
-		}, false, true);
-
 	}
 
 	/** {@inheritDoc} */
