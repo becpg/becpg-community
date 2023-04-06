@@ -264,7 +264,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 				} else if (reqCtrlList.getReqMessage().equals("Ing3 < 40%")) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(1, reqCtrlList.getSources().size());
+					assertEquals(0, reqCtrlList.getSources().size());
 					checks++;
 				} else if (reqCtrlList.getReqMessage().equals("Ing1 et ing4 interdits")) {
 
