@@ -1081,11 +1081,27 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return personAttributeExtractorPlugin.getPersonDisplayName(userId);
 	}
 
-	/** {@inheritDoc} */
-	@SuppressWarnings("unchecked")
 	@Override
 	public boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
-		Map<String, Object> comp = extractNodeData(nodeRef, nodeService.getType(nodeRef), new ArrayList<>(criteriaMap.keySet()), FormatMode.JSON);
+		
+		if (internalMatchCriteria(nodeRef, criteriaMap)) {
+			return true;
+		}
+		
+		if (attributeExtractorPlugins != null) {
+			for (AttributeExtractorPlugin attributeExtractorPlugin : attributeExtractorPlugins) {
+				if (attributeExtractorPlugin.matchCriteria(nodeRef, criteriaMap)) {
+					return true;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private boolean internalMatchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
+		Map<String, Object> comp = extractNodeData(nodeRef, nodeService.getType(nodeRef),  new ArrayList<>(criteriaMap.keySet()), FormatMode.JSON);
 
 		/** Criteria:{bcpg:allergenListAllergen|bcpg:allergenCode=FX1}
 		 * Extracted:{dt_bcpg_allergenListAllergen=[{prop_bcpg_allergenCode={displayValue=F257,

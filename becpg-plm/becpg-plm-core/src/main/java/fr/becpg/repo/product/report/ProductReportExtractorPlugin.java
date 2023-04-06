@@ -502,6 +502,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			this.compoListItem = compoListItem;
 			this.componentProductData = (ProductData) alfrescoRepository.findOne(compoListItem.getProduct());
 
+			if (this.componentProductData.getDefaultVariantPackagingData() == null) {
+				this.componentProductData.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(this.componentProductData));
+			}
+
 			this.lossRatio = FormulationHelper.getComponentLossPerc(componentProductData, compoListItem);
 			this.qtyForProduct = compoListItem.getQty() != null ? compoListItem.getQty() : 0d;
 			this.qtyForCost = FormulationHelper.getQtyForCost(compoListItem, 0d, componentProductData,
@@ -514,6 +518,10 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			this.compoListItem = compoListItem;
 			this.componentProductData = (ProductData) alfrescoRepository.findOne(compoListItem.getProduct());
+
+			if (this.componentProductData.getDefaultVariantPackagingData() == null) {
+				this.componentProductData.setDefaultVariantPackagingData(packagingHelper.getDefaultVariantPackagingData(this.componentProductData));
+			}
 
 			this.lossRatio = FormulationHelper.calculateLossPerc(productData.getProductLossPerc() != null ? productData.getProductLossPerc() : 0d,
 					FormulationHelper.getComponentLossPerc(componentProductData, compoListItem));
@@ -528,15 +536,16 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			this(currentLevelQuantities.getComponentProductData(), compoListItem);
 			this.lossRatio = FormulationHelper.calculateLossPerc(currentLevelQuantities.getLossRatio(), this.lossRatio);
-			this.qtyForProduct = (FormulationHelper.getNetWeight(currentLevelQuantities.getComponentProductData(),
-					FormulationHelper.DEFAULT_NET_WEIGHT) != 0) && (compoListItem.getQty() != null)
-							? (currentLevelQuantities.getQtyForProduct() * compoListItem.getQty()) / FormulationHelper
-									.getNetWeight(currentLevelQuantities.getComponentProductData(), FormulationHelper.DEFAULT_NET_WEIGHT)
-							: 0d;
+			this.qtyForProduct = currentLevelQuantities.getQtyForProduct() * this.qtyForProduct;
+			this.qtyForCost = (this.qtyForCost / this.netQtyForCost) * currentLevelQuantities.getQtyForCost();
 
-			this.qtyForCost = (FormulationHelper.getQtyForCost(compoListItem, currentLevelQuantities.getComponentProductData().getProductLossPerc(),
-					componentProductData, CostsCalculatingFormulationHandler.keepProductUnit) / this.netQtyForCost)
-					* currentLevelQuantities.getQtyForCost();
+			Double currentNetWeight = FormulationHelper.getNetWeight(currentLevelQuantities.getComponentProductData(),
+					FormulationHelper.DEFAULT_NET_WEIGHT);
+			if ((currentNetWeight != 0)) {
+				this.qtyForProduct = this.qtyForProduct / currentNetWeight;
+			} else {
+				this.qtyForProduct = 0d;
+			}
 
 		}
 		

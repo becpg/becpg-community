@@ -54,6 +54,7 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
@@ -91,7 +92,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	private NodeRef createTestProduct(final List<LabelingRuleListDataItem> labelingRuleList) {
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		return inWriteTx(() -> {
 
 			/**
 			 * Finished product 1
@@ -122,7 +123,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 	}
 
 	// private String detailsDefaultFormat = "{0} {1,number,0.#%} ({2})";
@@ -130,7 +131,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	@Test
 	public void testNullIng() throws Exception {
 
-		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Finished product " + Calendar.getInstance().getTimeInMillis());
 			finishedProduct1.setLegalName("legal Finished product 1");
@@ -143,7 +144,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
 		// └──[root - 0.0 (1.0)]
 		// ├──[ing1 french - null]
@@ -173,15 +174,15 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		final NodeRef finishProduct2 = createTestProduct(null);
 		
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			
 			FinishedProductData finishedProduct2 = (FinishedProductData) alfrescoRepository.findOne(finishProduct2);
 			finishedProduct2.setLegalName("legal Finished product 2");
 			alfrescoRepository.save(finishedProduct2);
 			return null;
-		}, false, true);
+		});
 
-		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		finishedProductNodeRef1 = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Finished product " + Calendar.getInstance().getTimeInMillis());
 			finishedProduct1.setLegalName("legal Finished product 1");
@@ -201,7 +202,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
@@ -241,7 +242,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		//
 		//
 
-		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Test Yield 1 " + Calendar.getInstance().getTimeInMillis());
 			finishedProduct1.setQty(2d);
@@ -255,7 +256,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
@@ -266,7 +267,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef1, labelingRuleList,
 				"legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%", Locale.FRENCH);
 
-		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		finishedProductNodeRef1 = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Test Yield 1b " + Calendar.getInstance().getTimeInMillis());
 			finishedProduct1.setQty(2d);
@@ -284,7 +285,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
 		labelingRuleList = new ArrayList<>();
 
@@ -311,7 +312,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		//
 
-		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		finishedProductNodeRef1 = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Test Yield 2 " + Calendar.getInstance().getTimeInMillis());
 			finishedProduct1.setQty(2d);
@@ -326,7 +327,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
 		labelingRuleList = new ArrayList<>();
 
@@ -356,7 +357,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// ---- EAU
 		// --- MP2
 
-		NodeRef finishedProductNodeRefC = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRefC = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Test yield Sub - C " + Calendar.getInstance().getTimeInMillis());
 			finishedProduct1.setLegalName("Test yield Sub - C");
@@ -370,9 +371,9 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
-		NodeRef finishedProductNodeRefB = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRefB = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Test yield Sub - B " + Calendar.getInstance().getTimeInMillis());
 			finishedProduct1.setLegalName("Test yield Sub - B");
@@ -386,9 +387,9 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
-		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		finishedProductNodeRef1 = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Test yield 3 " + Calendar.getInstance().getTimeInMillis());
 			finishedProduct1.setQty(2d);
@@ -400,7 +401,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
 		labelingRuleList = new ArrayList<>();
 
@@ -426,6 +427,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// └──[root - 0.0 (19.0, vol: 20.9) ]
 		// ├──[Test yield Sub - C - 16.0 (200.0, vol: 190.0) Group]
 		// │ ├──[eau - 89.99999999999999 ( vol : 100.0) ]
+		
 		// │ ├──[ing1 french - 33.333333333333336 ( vol : 33.333333333333336) ]
 		// │ └──[ing2 french - 66.66666666666667 ( vol : 66.66666666666667) ]
 		// └──[Test yield Sub - B - 4.0 (200.0, vol: 190.0) Group]
@@ -440,7 +442,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// - ing1 = 200÷190×40÷200×0.666666666÷2 --> 0,070
 		// - ing2 = 200÷190×40÷200×1.83÷2 --> 0.192
 
-		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		finishedProductNodeRef1 = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Test yield 4 " + Calendar.getInstance().getTimeInMillis());
 			finishedProduct1.setQty(190d);
@@ -453,7 +455,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
 		labelingRuleList = new ArrayList<>();
 
@@ -466,10 +468,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef1, labelingRuleList,
 				"<b>test yield Sub - C (80%) :</b> eau 37,9%, ing2 french 28,1%, ing1 french 14%<br/><b>test yield Sub - B (20%) :</b> ing2 french 19,3%, ing1 french 7%",
 				Locale.FRENCH);
+				//<b>test yield Sub - C (80%) :</b> eau 35,8%, ing2 french 28,1%, ing1 french 14%<br/><b>test yield Sub - B (20%) :</b> ing2 french 19,3%, ing1 french 7%
+				//<b>test yield Sub - C (84,2%) :</b> eau 35,8%, ing2 french 28,1%, ing1 french 14%<br/><b>test yield Sub - B (21,1%) :</b> ing2 french 19,3%, ing1 french 7%
 
 		// #2944
 
-		NodeRef finishedProductNodeRefD = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRefD = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Test yield Sub - D " + Calendar.getInstance().getTimeInMillis());
 			finishedProduct1.setLegalName("Test yield Sub - D");
@@ -483,9 +487,9 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
-		finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		finishedProductNodeRef1 = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Test yield 5 " + Calendar.getInstance().getTimeInMillis());
 			finishedProduct1.setQty(190d);
@@ -498,7 +502,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
 		labelingRuleList = new ArrayList<>();
 
@@ -512,6 +516,68 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				"<b>test yield Sub - D (80%) :</b> ing2 french 84,2%, ing1 french 42,1%<br/><b>test yield Sub - B (20%) :</b> ing2 french 19,3%, ing1 french 7%",
 				Locale.FRENCH);
 
+		
+		 //#16323
+		
+		
+		NodeRef sfProductNodeRef1 = inWriteTx(() -> {
+			SemiFinishedProductData finishedProduct1 = new SemiFinishedProductData();
+			finishedProduct1.setName("#16323 SF with yield " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(new CompoListDataItem(null, null, null, 3d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial1NodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 6d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial2NodeRef));
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterialWaterNodeRef));
+			
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+		
+		NodeRef sfProductNodeRef2 = inWriteTx(() -> {
+			SemiFinishedProductData finishedProduct1 = new SemiFinishedProductData();
+			finishedProduct1.setName("#16323 SF with no yield " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			compoList1.add(new CompoListDataItem(null, null, null, 10d, ProductUnit.kg, 0d, DeclarationType.DoNotDetails, rawMaterial3NodeRef));
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+		
+		
+		finishedProductNodeRef1 = inWriteTx(() -> {
+			FinishedProductData finishedProduct1 = new FinishedProductData();
+			finishedProduct1.setName("Test #16323 " + Calendar.getInstance().getTimeInMillis());
+			finishedProduct1.setUnit(ProductUnit.kg);
+
+			List<CompoListDataItem> compoList1 = new ArrayList<>();
+			
+			CompoListDataItem yieldCompoListDataItem = new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, sfProductNodeRef1);
+			yieldCompoListDataItem.setYieldPerc(90d);
+			compoList1.add(yieldCompoListDataItem);
+			compoList1.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, sfProductNodeRef2));
+
+			finishedProduct1.getCompoListView().setCompoList(compoList1);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+		});
+		
+		labelingRuleList = new ArrayList<>();
+
+		labelingRuleList.add(new LabelingRuleListDataItem("Rendu", "render()", LabelingRuleType.Render));
+		labelingRuleList.add(new LabelingRuleListDataItem("%", "", LabelingRuleType.ShowPerc, null, null));
+		labelingRuleList.add(new LabelingRuleListDataItem("Param1", "ingsLabelingWithYield=true", LabelingRuleType.Prefs, null, null));
+
+		checkILL(finishedProductNodeRef1, labelingRuleList,
+				"legal Raw material 3 (<b>allergen3</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 33,3%, legal Raw material 1 (<b>allergen1</b>) 16,7%",
+				Locale.FRENCH);
+		
+		
+
 	}
 
 	@Test
@@ -520,15 +586,15 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		final NodeRef finishProduct1 = createTestProduct(null);
 
 		final NodeRef finishProduct2 = createTestProduct(null);
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			
 			FinishedProductData finishedProduct2 = (FinishedProductData) alfrescoRepository.findOne(finishProduct2);
 			finishedProduct2.setLegalName("legal Finished product 2");
 			alfrescoRepository.save(finishedProduct2);
 			return null;
-		}, false, true);
+		});
 
-		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
 			FinishedProductData finishedProduct1 = new FinishedProductData();
 			finishedProduct1.setName("Finished product " + Calendar.getInstance().getTimeInMillis());
 			finishedProduct1.setLegalName("legal Finished product 1");
@@ -544,11 +610,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial13NodeRef));
 			compoList1
 					.add(new CompoListDataItem(null, compoList1.get(3), null, 3d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial14NodeRef));
-
 			finishedProduct1.getCompoListView().setCompoList(compoList1);
 
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-		}, false, true);
+		});
 
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
@@ -631,7 +696,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		/** Do not detail ingType */
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 4");
@@ -646,7 +711,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		}, false, true);
+		});
 
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
@@ -673,7 +738,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		/** Do not detail ingType */
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 4");
@@ -688,7 +753,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		}, false, true);
+		});
 
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
@@ -727,14 +792,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		
 	}
 	
-	
-
 	@Test
 	public void testIngDeclType() {
 
 		/** Do not detail ingType */
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 4");
@@ -749,7 +812,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		}, false, true);
+		});
 
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
 
@@ -818,7 +881,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		/** FULL Reconstitution **/
 
-		final NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 1");
@@ -839,7 +902,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		}, false, true);
+		});
 
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
@@ -869,7 +932,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		/** Partial Reconstitution **/
 
-		final NodeRef finishedProductNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef2 = inWriteTx(() -> {
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 2");
@@ -890,7 +953,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		}, false, true);
+		});
 
 		// └──[root - 0.0 (11.0, vol: 11.0) ]
 		// ├──[ing5 french - 5.0 (10.0, vol: 10.0) Detail]
@@ -905,7 +968,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		/** Test with priority **/
 
-		final NodeRef finishedProductNodeRef3 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef3 = inWriteTx(() -> {
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 3");
@@ -933,7 +996,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		}, false, true);
+		});
 
 		checkILL(finishedProductNodeRef3, labelingRuleList, "ing4 french 71,4%, epices french, legal Raw material 1 (<b>allergen1</b>) 10,7%",
 				Locale.FRENCH);
@@ -954,7 +1017,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	@Test
 	public void testRenderAllergens() throws Exception {
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 2");
@@ -970,7 +1033,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		}, false, true);
+		});
 
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
@@ -989,7 +1052,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	@Test
 	public void testSPELFormula() throws Exception {
 
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 2");
@@ -1005,7 +1068,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		}, false, true);
+		});
 
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
@@ -1021,7 +1084,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	@Test
 	public void testRawMaterialIngType() throws Exception {
 
-		final NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 1");
@@ -1040,7 +1103,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		}, false, true);
+		});
 
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
@@ -1058,16 +1121,16 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		checkILL(finishedProductNodeRef1, labelingRuleList, "epices french : legal Raw material 7 90,9% ;, ing2 french 6,1%, ing1 french 3%",
 				Locale.FRENCH);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			nodeService.removeAspect(rawMaterial7NodeRef, PLMModel.ASPECT_ING_TYPE);
 			return null;
-		}, false, true);
+		});
 	}
 
 	@Test
 	public void testThresholdRules() throws Exception {
 
-		final NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Produit fini 1");
@@ -1086,7 +1149,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		}, false, true);
+		});
 
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
@@ -1138,10 +1201,10 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		checkILL(finishedProductNodeRef1, labelingRuleList, "epices french : legal Raw material 7 90,9% ;", Locale.FRENCH);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			nodeService.removeAspect(rawMaterial7NodeRef, PLMModel.ASPECT_ING_TYPE);
 			return null;
-		}, false, true);
+		});
 	}
 
 	@Test
@@ -1159,7 +1222,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// ├──[ing3 french - 5.0]
 		// └──[ing4 french - 1.0]
 
-		final NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		final NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
 			logger.debug("/*-- Create finished product --*/");
 			FinishedProductData finishedProduct = new FinishedProductData();
 			finishedProduct.setName("Aggr Etiq Test 1");
@@ -1174,7 +1237,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			finishedProduct.getCompoListView().setCompoList(compoList);
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
-		}, false, true);
+		});
 
 		// Declare
 		List<LabelingRuleListDataItem> labelingRuleList = new ArrayList<>();
@@ -1672,12 +1735,12 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList.add(
 				new LabelingRuleListDataItem("Param1", "detailsDefaultFormat = \"{0} {1,number,0.#%} ({2})\"", LabelingRuleType.Prefs, null, null));
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
 			formulatedProduct.getCompoListView().getCompoList().get(2).setProduct(rawMaterial7NodeRef);
 			alfrescoRepository.save(formulatedProduct);
 			return null;
-		}, false, true);
+		});
 
 		// └──[root - 0.0 (2.0)]
 		// ├──[pâte french - 1.0 (3.0)]
@@ -1706,7 +1769,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("%", "{0} {1,number,0.#%} ({2})", LabelingRuleType.Format, null, null));
 		final NodeRef finishProduct2 = createTestProduct(null);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 			productService.formulate(finishProduct2);
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef1);
 			formulatedProduct.setQty(7d);
@@ -1715,7 +1778,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 					.add(new CompoListDataItem(null, null, 5d, null, ProductUnit.kg, 0d, DeclarationType.Group, finishProduct2));
 			alfrescoRepository.save(formulatedProduct);
 			return null;
-		}, false, true);
+		});
 
 		// └──[root - 0.0 (7.0, vol: null) ]
 		// ├──[pâte french - 1.0 (3.0, vol: null) Detail]
@@ -1791,7 +1854,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 	}
 
 	private void checkError(final NodeRef productNodeRef, final List<LabelingRuleListDataItem> labelingRuleList, final String errorMessage) {
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			ProductData formulatedProduct = alfrescoRepository.findOne(productNodeRef);
 
@@ -1827,7 +1890,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 
 	}
 
@@ -1848,7 +1911,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 		final NodeRef finishedProductNodeRef1 = createTestProduct(labelingRuleList);
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- Formulate product --*/
 			logger.debug("/*-- Formulate product --*/");
@@ -1878,7 +1941,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 			return null;
 
-		}, false, true);
+		});
 	}
 
 	@Test
@@ -1991,7 +2054,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 			final NodeRef finishProduct1 = createTestProduct(null);
 			final NodeRef finishProduct2 = createTestProduct(null);
 
-			NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef finishedProductNodeRef1 = inWriteTx(() -> {
 
 				MLText legalName = (MLText) mlNodeService.getProperty(finishProduct1, BeCPGModel.PROP_LEGAL_NAME);
 				legalName.addValue(Locale.FRENCH, "legal Finished product 1");
@@ -2037,7 +2100,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 				finishedProduct1.getLabelingListView().setLabelingRuleList(labelingRuleList);
 
 				return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
-			}, false, true);
+			});
 
 			final LongAdder adder = new LongAdder();
 
@@ -2059,7 +2122,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 				String ill = "Pâte french 50% (legal Finished product 1 50%), Garniture french 50% (Legal Raw material 13 25% (ing3 french 25%), ing3 french 16,7%, ing4 french 8,3%)";
 
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				inWriteTx(() -> {
 
 					productService.formulate(finishedProductNodeRef1);
 
@@ -2081,7 +2144,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 
 					return null;
 
-				}, false, true);
+				});
 
 				return null;
 			};
