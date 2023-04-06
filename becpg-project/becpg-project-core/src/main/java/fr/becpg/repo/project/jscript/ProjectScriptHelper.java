@@ -20,6 +20,7 @@ package fr.becpg.repo.project.jscript;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.ISO8601DateFormat;
 
 import fr.becpg.model.DeliverableUrl;
 import fr.becpg.model.ProjectModel;
@@ -47,6 +49,7 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.BudgetListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
@@ -277,5 +280,15 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 		return projectService.extractResources(project.getNodeRef(), resourceList).stream().map(e -> new ScriptNode(e, serviceRegistry, getScope())).collect(Collectors.toList()).toArray(new ScriptNode[0]);
 	}
 
+	public int calculateTaskDuration(String startDate, String endDate) {
+		return ProjectHelper.calculateTaskDuration(parseDate(startDate), parseDate(endDate));
+	}
+
+	private Date parseDate(String dateString) {
+		if ("NOW".equals(dateString)) {
+			return new Date();
+		}
+		return ISO8601DateFormat.parse(dateString);
+	}
 
 }

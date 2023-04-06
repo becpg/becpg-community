@@ -81,7 +81,8 @@
 			"formFields": {
 				"prop_pjt_projectState": "InProgress",
 				"prop_cm_name": "js(bSupplier.extractSupplierProjectName(items))",
-				"assoc_bcpg_supplierAccountRef": "js(bSupplier.extractSupplierAccountRefs(items).map((n) =>  n.nodeRef ).join(\",\"))"
+				"assoc_bcpg_supplierAccountRef": "js(bSupplier.extractSupplierAccountRefs(items).map((n) =>  n.nodeRef ).join(\",\"))",
+				"prop_pjt_projectPriority": "2"
 			},
 			"hiddenFields": [
 				"prop_pjt_projectState"
