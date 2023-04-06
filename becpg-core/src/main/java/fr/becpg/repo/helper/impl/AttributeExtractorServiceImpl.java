@@ -1101,14 +1101,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	
 	@SuppressWarnings("unchecked")
 	private boolean internalMatchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
-
-		LinkedList<AttributeExtractorField> fields = new LinkedList<>();
-		for (String metadataField : criteriaMap.keySet()) {
-			AttributeExtractorField field = new AttributeExtractorField(metadataField, null);
-			fields.add(field);
-		}
-
-		Map<String, Object> comp = extractNodeData(nodeRef, nodeService.getType(nodeRef), fields, FormatMode.JSON);
+		Map<String, Object> comp = extractNodeData(nodeRef, nodeService.getType(nodeRef),  new ArrayList<>(criteriaMap.keySet()), FormatMode.JSON);
 
 		/** Criteria:{bcpg:allergenListAllergen|bcpg:allergenCode=FX1}
 		 * Extracted:{dt_bcpg_allergenListAllergen=[{prop_bcpg_allergenCode={displayValue=F257,
