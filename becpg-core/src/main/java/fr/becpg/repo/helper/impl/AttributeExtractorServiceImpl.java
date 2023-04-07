@@ -694,7 +694,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						if ((MLTextHelper.getSupportedLocalesList() != null)
 								&& MLTextHelper.getSupportedLocalesList().contains(nextToken.getFieldName())) {
 							dLFields.set(dLFields.size() - 1, new AttributeExtractorField(
-									dLFields.get(dLFields.size() - 1) + "|" + nextToken.getFieldName(), nextToken.getFieldLabel()));
+									dLFields.get(dLFields.size() - 1).getFieldName() + "|" + nextToken.getFieldName(), nextToken.getFieldLabel()));
 						} else {
 							dLFields.add(nextToken);
 						}
