@@ -65,7 +65,7 @@ public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSea
 						for (NodeRef itemNodeRef : results) {
 							if (itemType.equals(nodeService.getType(itemNodeRef))) {
 								if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-									rownum = fillRow(sheet, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems);
+									rownum = fillRow(sheet, entityNodeRef, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems);
 								}
 							}
 						}
@@ -76,7 +76,7 @@ public class DynamicCharactExcelReportSearchPlugin extends DefaultExcelReportSea
 						entityItems.putAll(getDynamicProperties(entityNodeRef, null));
 					}
 
-					rownum = fillRow(sheet, entityNodeRef, itemType, metadataFields, cache, rownum, null, entityItems);
+					rownum = fillRow(sheet, entityNodeRef, entityNodeRef, itemType, metadataFields, cache, rownum, null, entityItems);
 				}
 			}
 		}
