@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authority.AuthorityDAO;
+import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -45,7 +46,7 @@ import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
 
 /**
  * <p>SecurityFormulationHandler class.</p>
- *
+ * @author Evelyne Ing
  */
 public class SecurityFormulationHandler extends FormulationBaseHandler<ProductData> {
 
@@ -148,20 +149,17 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		for (ACLEntryDataItem.PermissionModel permissionModel : perms) {
 
-			String permissionToSet = null;
+			String permissionToSet = PermissionService.CONSUMER;
 			boolean setOtherGroupPermissions = false;
 			List<String> authorityPermissionGroup = new ArrayList<>();
 
-			if (PermissionModel.READ_ONLY.equals(permissionModel.getPermission())) {
-				permissionToSet = PermissionService.CONSUMER;
-			} else if (PermissionModel.READ_READANDWRITE.equals(permissionModel.getPermission())) {
+			if (PermissionModel.READ_READANDWRITE.equals(permissionModel.getPermission())) {
 				permissionToSet = PermissionService.CONTRIBUTOR;
 			} else if (PermissionModel.READ_WRITE.equals(permissionModel.getPermission())) {
 				permissionToSet = PermissionService.CONTRIBUTOR;
 				setOtherGroupPermissions = true;
 			}
-
-
+			
 			for(NodeRef authorityNodeRef : permissionModel.getGroups()) {
 				String authorityName = authorityDAO.getAuthorityName(authorityNodeRef);
 				authorityPermissionGroup.add(authorityName);
@@ -170,8 +168,10 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 					if (sitePermission != null) {							
 						if (PermissionService.CONSUMER.equals(permissionToSet) || sitePermission.contains(permissionToSet)) {
 							permissionService.setPermission(nodeRef, authorityName, permissionToSet, true);
-						} else if ("SiteCollaborator".equals(sitePermission) || "SiteManager".equals(sitePermission)) {
+						} else if (SiteModel.SITE_COLLABORATOR.equals(sitePermission) || SiteModel.SITE_MANAGER.equals(sitePermission)) {
 							permissionService.setPermission(nodeRef, authorityName, PermissionService.COORDINATOR, true);
+						} else if(SiteModel.SITE_CONSUMER.equals(sitePermission)) {
+							permissionService.setPermission(nodeRef, authorityName, PermissionService.CONSUMER, true);
 						}
 					}
 				} else {
