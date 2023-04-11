@@ -1,12 +1,12 @@
-FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag}
+FROM ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag} as becpg-base-test-core
 
 ENV TOMCAT_DIR=/usr/local/tomcat
 
 # HOTSWAP AGENT
 # Install and configure Trava OpenJDK (OpenJDK pre-built with DCEVM and hotswap agent for Java 11)
 RUN curl -sL  https://github.com/TravaOpenJDK/trava-jdk-11-dcevm-newgen/releases/download/dcevm-11.0.10%2B6/java11-openjdk-dcevm-linux-amd64.tar.gz \
-      -o $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz
-RUN mkdir -p /usr/java && tar -xvf $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz -C /usr/java/ && \
+      -o $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz && \
+    mkdir -p /usr/java && tar -xvf $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz -C /usr/java/ && \
     rm $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz && \
     update-alternatives --install /usr/bin/java java /usr/java/dcevm-11.0.10+5/bin/java 40000 && \
     update-alternatives --install /usr/bin/javac javac /usr/java/dcevm-11.0.10+5/bin/javac 40000 && \
@@ -17,12 +17,15 @@ RUN mkdir -p /usr/java && tar -xvf $TOMCAT_DIR/trava-jdk-11-dcevm.tar.gz -C /usr
     ln -sfn /usr/java/dcevm-11.0.10+5 /usr/java/latest && \
     ln -sfn /usr/java/dcevm-11.0.10+5 /usr/java/default
 
+#Jacoco Agent
+RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.8/org.jacoco.agent-0.8.8-runtime.jar -o /root/jacoco-runtime.jar
+
+FROM becpg-base-test-core
+
 
 ENV JAVA_HOME=/usr/java/default
 ENV PATH $JAVA_HOME/bin:$PATH
 
-#Jacoco Agent
-RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.8/org.jacoco.agent-0.8.8-runtime.jar -o /root/jacoco-runtime.jar
 
 
 #Debuging 
