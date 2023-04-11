@@ -809,8 +809,12 @@
 							b.doc->>"$.cm_name" as projectName,
 							b.doc->>"$.pjt_projectHierarchy1[0]" as	projectHierarchy1,
 							b.doc->>"$.pjt_projectHierarchy2[0]" as	projectHierarchy2,
+							b.doc->>"$.pjt_projectOverdue" as projectOverdue,
+							b.doc->>"$.bcpg_code" as projectCode,
 							b.doc->>"$.metadata_siteId" as siteId,
-							b.doc->>"$.metadata_siteName" as siteName	
+							b.doc->>"$.metadata_siteName" as siteName,
+							b.doc->>"$.pjt_projectEntity_bcpg_nodeRef[0]" as projectEntityNodeRef,
+							b.doc->>"$.bcpg_entityTplRef[0]" as entityTplRef
 						from
 							taskList a inner join pjt_project b on a.entityNodeRef = b.nodeRef 
 						<#if !isAdmin>	
@@ -896,8 +900,13 @@
 				<Level name="projectHierarchy1" caption="${msg("jsolap.projectFamily.title")}" column="projectHierarchy1" type="String"   />
 				<Level name="projectHierarchy2" caption="${msg("jsolap.projectSubFamily.title")}" column="projectHierarchy2" type="String"   />
 				<Level name="entity_noderef" caption="${msg("jsolap.project.title")}" column="projectNodeRef" nameColumn="projectName" type="String" highCardinality="true"  />
+				<Level name="project_overdue" caption="${msg("jsolap.projectOverdue.title")}" column="projectNodeRef" nameColumn="projectOverdue" type="String" />
+				<Level name="project_code" caption="${msg("jsolap.projectCode.title")}" column="projectNodeRef" nameColumn="projectCode" type="String" />
+				<Level name="entityTplRef" caption="${msg("jsolap.projectModel.title")}" column="entityTplRef"  type="String" />
 			</Hierarchy>
 		</Dimension>
+		
+		<DimensionUsage name="entities" caption="${msg("jsolap.entities.title")}" source="productsDimension" foreignKey="projectEntityNodeRef" />
 		
 		<Dimension  name="state" caption="${msg("jsolap.projectState.title")}" >
 			<Hierarchy hasAll="true" allMemberCaption="${msg("jsolap.state.caption")}" >
@@ -1211,7 +1220,53 @@
 		</Dimension>
 		
 		<DimensionUsage name="tags" caption="${msg("jsolap.tags.title")}" source="tagsDimension" foreignKey="nodeRef" />
-	
+		
+		<Dimension name="currentTasksDimension" caption="${msg("jsolap.currentTasks.title")}" foreignKey="nodeRef">
+			<Hierarchy name="currentTasks" hasAll="true" allMemberCaption="${msg("jsolap.currentTasks.caption")}" primaryKey="entityNodeRef">
+				<View name="currentTasks" alias="currentTasks">
+								<SQL dialect="generic">
+									select  
+										a.entityNodeRef as entityNodeRef,
+										a.doc->>"$.name" as name,
+										a.nodeRef as nodeRef,
+										b.doc->>"$.pjt_tlTaskName" as taskName,
+										b.doc->>"$.pjt_tlState" as taskState,
+										b.doc->>"$.pjt_tlDuration" as tlDuration
+									from
+										assoc_pjt_projectCurrentTasks a left join taskList b on a.nodeRef = b.nodeRef	
+									<#if !isAdmin>	
+									  where b.instanceId = ${instanceId}
+									</#if>
+								</SQL>
+				</View>
+				<Level name="tlTaskName" caption="${msg("jsolap.taskName.title")}" column="taskName" type="String"   >
+				</Level>
+				<Level approxRowCount="6" name="tlState" caption="${msg("jsolap.taskState.title")}" column="taskState" type="String">
+					<MemberFormatter>
+						<Script language="JavaScript">
+							switch (member.getName()) {
+				   				case 'Planned' :
+				      				return  '${msg("listconstraint.pjt_taskStates.Planned")}';
+				   				case 'InProgress' :
+				    				return  '${msg("listconstraint.pjt_taskStates.InProgress")}';
+				   				case 'OnHold' :
+				    				return   '${msg("listconstraint.pjt_taskStates.OnHold")}';
+				   				case 'Cancelled' :
+				    				return   '${msg("listconstraint.pjt_taskStates.Cancelled")}';
+				    			case 'Refused' :
+				    				return   '${msg("listconstraint.pjt_taskStates.Refused")}';
+				   				case 'Completed' :
+				    				return   '${msg("listconstraint.pjt_taskStates.Completed")}';   
+							   default:
+								    return member.getName();
+								}
+						</Script>
+					</MemberFormatter>
+				</Level>
+				<Level name="state" caption="${msg("jsolap.tlDuration.title")}" column="tlDuration" type="String">
+				</Level>
+			</Hierarchy>
+		</Dimension>
 		
 		<#if isAdmin>
 			<DimensionUsage name="instance" caption="${msg("jsolap.instance.title")}" source="instancesDimension" foreignKey="instanceId" />
