@@ -11,21 +11,20 @@ echo -e "888 d88P Y8b.      \e[38;2;0;92;102mY88b  d88P 888        Y88b  d88P\e[
 echo -e "88888P\"   \"Y8888    \e[38;2;0;92;102m\"Y8888P\"  888         \"Y8888P88\e[0m" 
 echo -e " \e[91mCopyright (C) 2010-2022 beCPG.\e[0m"
 
-
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 
 export MVN_EXEC="${PWD}/mvnw"
 
 start() {
-   	 	docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
+   	 	docker compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
 }
 
 pull() {
-   	 	docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
+   	 	docker compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
 }
 
 pull() {
-   	 	docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
+   	 	docker compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
 }
 
 down() {
@@ -37,7 +36,7 @@ down() {
    	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
     fi 
     if [ -f $COMPOSE_FILE_PATH ]; then
-        docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH  -f docker-compose.override.yml down
+        docker compose -p becpg_4_0 -f $COMPOSE_FILE_PATH  -f docker-compose.override.yml down
     fi
 }
 
@@ -68,17 +67,21 @@ deploy_fast(){
 }
 
 purge() {
-    docker-compose -p becpg_4_0 -f  $COMPOSE_FILE_PATH down -v
+    docker compose -p becpg_4_0 -f  $COMPOSE_FILE_PATH down -v
 }
 
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
    	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
-    cd ..
+     docker compose -f ./distribution/target/docker-compose-build.yml build
+   	 cd ..
    else
    	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
+   	 docker compose -f ./becpg-integration-runner/target/docker-compose-build.yml build
    fi 
+   
+   
 }
 
 install() {
@@ -89,10 +92,11 @@ install() {
    else
     $MVN_EXEC  install $EXTRA_ENV -DskipTests=true -P full
   fi
+  
 }
 
 tail() {
-    docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-share
+    docker compose -p becpg_4_0 -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-share
 }
 
 test() {
@@ -100,10 +104,10 @@ test() {
 }
 
 reindex() {
-	docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
-    docker-compose  -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml rm -v solr
+	docker compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
+    docker compose  -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml rm -v solr
     docker volume rm becpg_4_0_solr_data
-	docker-compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr
+	docker compose -p becpg_4_0 -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr
 }
 
 
