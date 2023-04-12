@@ -1898,7 +1898,7 @@ public class ECOIT extends AbstractFinishedProductTest {
 			ChangeOrderData changeOrderData = new ChangeOrderData("ECO", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, new ArrayList<>());
 			
 			changeOrderData.setDescription(descriptionToCopy);
-			changeOrderData.setPropertiesToCopy("cm:description");
+			changeOrderData.setPropertiesToCopy(Arrays.asList("cm:description"));
 			
 			List<ReplacementListDataItem> replacementList = new ArrayList<>();
 
