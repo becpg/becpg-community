@@ -6,12 +6,12 @@
 
    <bean id="shareFormParser" class="fr.becpg.repo.form.impl.ShareFormParser" />
 
-	<bean id="productColumnDecorator" class="fr.becpg.repo.form.column.decorator.ProductColumnDecorator">
+	<!-- <bean id="productColumnDecorator" class="fr.becpg.repo.form.column.decorator.ProductColumnDecorator">
 		<property name="nodeService" ref="nodeService" />
 		<property name="dictionaryService" ref="cachedDictionaryService" />
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="entityListDAO" ref="entityListDAO" />
-	</bean>
+	</bean> -->
 
 
    <bean id="becpgFormService" class="fr.becpg.repo.form.impl.BecpgFormServiceImpl" >
@@ -19,11 +19,11 @@
 		<property name="namespaceService" ref="namespaceService" />
 		<property name="formService" ref="formService" />
 		<property name="shareFormParser" ref="shareFormParser" />
-		<property name="decorators">
-			<list value-type="fr.becpg.repo.form.column.decorator.ColumnDecorator">
+		<!-- <property name="decorators">
+	    	<list value-type="fr.becpg.repo.form.column.decorator.ColumnDecorator">
 					<ref bean="productColumnDecorator" />
-			</list>
-		</property>
+			</list> 
+		</property>-->
 		
 		<property name="configs">
 			<list>
