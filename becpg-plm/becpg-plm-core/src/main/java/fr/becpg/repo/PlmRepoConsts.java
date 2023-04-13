@@ -264,6 +264,8 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_GS1_SORTING_BONUS_CRITERIA="SortingBonusCriteria"</code> */
 	public static final String PATH_GS1_SORTING_BONUS_CRITERIA = "SortingBonusCriteria";
 	
+	/** Constant <code>PATH_GS1_SORTING_MALUS_CRITERIA="SortingMalusCriteria"</code> */
+	public static final String PATH_GS1_SORTING_MALUS_CRITERIA = "SortingMalusCriteria";
 	/** Constant <code>PATH_GS1_TARGET_MARKETS="SortingBonusCriteria"</code> */
 	public static final String PATH_GS1_TARGET_MARKETS = "TargetMarkets";
 	/** Constant <code>PATH_GS1_TARGET_MARKETS="PATH_GS1_DUTY_FEE_TAXES"</code> */
