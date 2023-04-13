@@ -61,15 +61,15 @@ public class ChangeOrderData extends BeCPGDataObject {
 	private List<WUsedListDataItem> wUsedList;
 	private List<SimulationListDataItem> simulationList;
 	private List<ChangeUnitDataItem> changeUnitList;
-	private String propertiesToCopy;
+	private List<String> propertiesToCopy;
 
 	@AlfProp
 	@AlfQname(qname = "ecm:propertiesToCopy")
-	public String getPropertiesToCopy() {
+	public List<String> getPropertiesToCopy() {
 		return propertiesToCopy;
 	}
 
-	public void setPropertiesToCopy(String propertiesToCopy) {
+	public void setPropertiesToCopy(List<String> propertiesToCopy) {
 		this.propertiesToCopy = propertiesToCopy;
 	}
 

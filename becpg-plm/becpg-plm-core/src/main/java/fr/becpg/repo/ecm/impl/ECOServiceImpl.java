@@ -251,10 +251,10 @@ public class ECOServiceImpl implements ECOService {
 					
 					NodeRef nodeRef = (NodeRef) entry;
 					
-					String propertiesToCopy = ecoData.getPropertiesToCopy();
+					List<String> propertiesToCopy = ecoData.getPropertiesToCopy();
 					
-					if (propertiesToCopy != null && !propertiesToCopy.isBlank()) {
-						for (String propertyToCopy : propertiesToCopy.split(",")) {
+					if (propertiesToCopy != null) {
+						for (String propertyToCopy : propertiesToCopy) {
 							QName propertyQName = QName.createQName(propertyToCopy.split(":")[0], propertyToCopy.split(":")[1], namespacePrefixResolver);
 							Serializable property = nodeService.getProperty(ecoData.getNodeRef(), propertyQName);
 							nodeService.setProperty(nodeRef, propertyQName, property);

@@ -449,7 +449,18 @@
 		</forms>
 	</config>
 	
-	
+	<!-- Overrides Alfresco -->
+	<config evaluator="aspect" condition="cm:indexControl">
+      <forms>
+         <form>
+            <field-visibility>
+               <hide id="cm:isIndexed" />
+               <hide id="cm:isContentIndexed" />
+            </field-visibility>
+         </form>
+      </forms>
+   </config>
+   
 	<!-- bcpg:notificationRuleList -->
 	<config evaluator="model-type" condition="bcpg:notificationRuleList">
 		<forms>
