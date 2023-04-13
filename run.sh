@@ -87,16 +87,16 @@ build() {
 install() {
   if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-    $MVN_EXEC  install $EXTRA_ENV -DskipTests=true -P full
+    $MVN_EXEC  install $EXTRA_ENV -DskipTests=true
      cd ..
    else
-    $MVN_EXEC  install $EXTRA_ENV -DskipTests=true -P full
+    $MVN_EXEC  install $EXTRA_ENV -DskipTests=true
   fi
   
 }
 
 tail() {
-    docker compose -p becpg_4_0 -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-share
+    docker compose -p becpg_4_0 -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-share solr
 }
 
 test() {
@@ -161,3 +161,4 @@ case "$1" in
   *)
     echo "Usage: $0 {install|build_start|build_test|start|stop|purge|tail|test|deploy_fast|visualvm|reindex}"
 esac
+

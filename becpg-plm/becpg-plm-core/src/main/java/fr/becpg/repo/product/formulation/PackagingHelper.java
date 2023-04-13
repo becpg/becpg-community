@@ -158,7 +158,10 @@ public class PackagingHelper implements InitializingBean {
 						variantPackagingData.setWidth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_WIDTH)));
 						variantPackagingData.setHeight(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT)));
 						variantPackagingData.setDepth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
-
+						variantPackagingData.setPackagingTypeCode((String) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_PACKAGING_TYPE_CODE));
+						variantPackagingData
+								.setPackagingTermsAndConditionsCode((String) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_PACKAGINGTERMSANSCONDITION_CODE));
+						
 					}
 
 				} else if (PackagingLevel.Secondary.equals(dataItem.getPkgLevel())) {
@@ -173,6 +176,7 @@ public class PackagingHelper implements InitializingBean {
 								.setSecondaryHeight(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_HEIGHT)));
 						variantPackagingData
 								.setSecondaryDepth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
+						variantPackagingData.setSecondaryPackagingTypeCode((String) nodeService.getProperty(dataItem.getProduct(), GS1Model.PROP_PACKAGING_TYPE_CODE));
 
 					}
 
@@ -184,7 +188,6 @@ public class PackagingHelper implements InitializingBean {
 						variantPackagingData.setTertiaryDepth(parseFloat((Double) nodeService.getProperty(dataItem.getProduct(), PackModel.PROP_LENGTH)));
 					}
 				
-					
 					variantPackagingData.addTareTertiary(tare);
 				}
 			}

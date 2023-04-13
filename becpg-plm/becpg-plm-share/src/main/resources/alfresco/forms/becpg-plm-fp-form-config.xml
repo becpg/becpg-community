@@ -155,6 +155,7 @@
           <show force="false" id="gs1:tertiaryWeight"/>
           <show force="false" id="gs1:isTradeItemMarkedAsRecyclable"/>
           <show force="false" id="gs1:isPackagingMarkedReturnable"/>
+          <show force="false" id="gs1:packagingRecyclingProcessTypeCode" />
           <show force="false" id="gs1:isPriceOnPack"/>
           <show force="false" id="gs1:hasBatchNumber"/>
           <show force="false" id="gs1:packagingTermsAndConditionsCode"/>
@@ -162,7 +163,7 @@
           <show force="false" id="gs1:packUnitNumber"/>
           <show force="false" id="gs1:sortingInstructions"/>
           <show force="false" id="gs1:sortingBonusCriteria"/>
-          <show force="false" id="gs1:packagingRecyclingSchemeCode" />
+          <show force="false" id="gs1:sortingMalusCriteria"/>
           <show force="false" id="gs1:productHierarchy1"/>
           <show force="false" id="gs1:productHierarchy2"/>
           <show force="false" id="gs1:productHierarchy3"/>
@@ -689,6 +690,7 @@
           <field id="gs1:isPackagingMarkedReturnable" mandatory="false" read-only="false" set="packSorting">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
           </field>
+          <field id="gs1:packagingRecyclingProcessTypeCode" mandatory="false" read-only="false" set="packSorting"/>
           <field help-id="becpg.forms.help.gs1.isPriceOnPack" id="gs1:isPriceOnPack" mandatory="false" read-only="false" set="packSorting">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
           </field>
@@ -704,7 +706,8 @@
             </control>
           </field>
           <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting"/>
+          <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
+          
           <set id="publicationTab" label-id="becpg.forms.set.publication.label"/>
           <set appearance="bordered-panel" id="hierarchyPanel" label-id="becpg.forms.set.hierarchyPanel.label" parent="publicationTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="gs1:productHierarchy1" mandatory="false" read-only="false" set="hierarchyPanel">
@@ -1783,6 +1786,7 @@
           <show for-mode="view" force="true" id="bcpg:startEffectivity"/>
           <show for-mode="view" force="true" id="bcpg:endEffectivity"/>
           <show force="true" id="gs1:packagingTypeCode"/>
+          <show force="true" id="gs1:packagingTypeDescription"/>
           <show force="true" id="gs1:height"/>
           <show force="true" id="gs1:width"/>
           <show force="true" id="gs1:depth"/>
@@ -1823,6 +1827,7 @@
           <show force="true" id="gs1:tertiaryWeight"/>
           <show force="true" id="gs1:isTradeItemMarkedAsRecyclable"/>
           <show force="true" id="gs1:isPackagingMarkedReturnable"/>
+          <show force="true" id="gs1:packagingRecyclingProcessTypeCode" />
           <show force="true" id="gs1:isPriceOnPack"/>
           <show force="true" id="gs1:hasBatchNumber"/>
           <show force="true" id="gs1:packagingTermsAndConditionsCode"/>
@@ -1830,7 +1835,7 @@
           <show force="true" id="gs1:packUnitNumber"/>
           <show force="true" id="gs1:sortingInstructions"/>
           <show force="true" id="gs1:sortingBonusCriteria"/>
-          <show force="true" id="gs1:packagingRecyclingSchemeCode" />
+          <show force="true" id="gs1:sortingMalusCriteria"/>
           <show force="true" id="gs1:productHierarchy1"/>
           <show force="true" id="gs1:productHierarchy2"/>
           <show force="true" id="gs1:productHierarchy3"/>
@@ -2311,7 +2316,8 @@
           </field>
           <field id="gs1:isPackagingMarkedReturnable" mandatory="false" read-only="false" set="packSorting">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
-          </field>
+          </field>      
+          <field id="gs1:packagingRecyclingProcessTypeCode" mandatory="false" read-only="false" set="packSorting"/>
           <field help-id="becpg.forms.help.gs1.isPriceOnPack" id="gs1:isPriceOnPack" mandatory="false" read-only="false" set="packSorting">
             <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
           </field>
@@ -2327,7 +2333,8 @@
             </control>
           </field>
           <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting"/>
+          <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
+         
           <set id="publicationTab" label-id="becpg.forms.set.publication.label"/>
           <set appearance="bordered-panel" id="hierarchyPanel" label-id="becpg.forms.set.hierarchyPanel.label" parent="publicationTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="gs1:productHierarchy1" mandatory="false" read-only="false" set="hierarchyPanel">
