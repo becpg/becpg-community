@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -29,18 +30,19 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.admin.SysAdminParams;
+import org.alfresco.repo.dictionary.constraint.NumericRangeConstraint;
+import org.alfresco.repo.dictionary.constraint.RegexConstraint;
+import org.alfresco.repo.dictionary.constraint.StringLengthConstraint;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
-import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.site.SiteService;
@@ -57,7 +59,6 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
@@ -90,16 +91,18 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	private static final String PROP_PROPERTIES = "properties";
 	private static final String PROP_ITEMS = "items";
 
+	private static final String PROP_FORMAT = "format";
+	private static final String PROP_REQUIRED = "required";
+
 	SysAdminParams sysAdminParams;
 
-	public JsonSchemaEntityVisitor(SysAdminParams sysAdminParams, NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
-			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService,
-			AttributeExtractorService attributeExtractor, VersionService versionService, LockService lockService) {
+	public JsonSchemaEntityVisitor(SysAdminParams sysAdminParams, NodeService mlNodeService, NodeService nodeService,
+			NamespaceService namespaceService, EntityDictionaryService entityDictionaryService, ContentService contentService,
+			SiteService siteService, AttributeExtractorService attributeExtractor, VersionService versionService, LockService lockService) {
 		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService, attributeExtractor, versionService,
 				lockService);
 		this.sysAdminParams = sysAdminParams;
 	}
-	
 
 	/** {@inheritDoc} */
 	@Override
@@ -108,7 +111,23 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		JSONObject root = new JSONObject();
 		root.put("$schema", "https://json-schema.org/draft/2020-12/schema");
 		root.put("$id", sysAdminParams.getAlfrescoProtocol() + "://" + sysAdminParams.getAlfrescoHost() + ":" + sysAdminParams.getAlfrescoPort()
-					+ "/alfresco/service/becpg/remote/entity?nodeRef=" + entityNodeRef + "&format=json_schema");
+				+ "/alfresco/service/becpg/remote/entity?nodeRef=" + entityNodeRef + "&format=json_schema");
+		root.put("$locale", MLTextHelper.localeKey(MLTextHelper.getNearestLocale(Locale.getDefault())));
+		List<String> supportedLocales = new ArrayList<>();
+		if (nodeService.hasAspect(entityNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
+			@SuppressWarnings("unchecked")
+			List<String> langs = (List<String>) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_LOCALES);
+			if (langs != null) {
+				supportedLocales.addAll(langs);
+			} else {
+				supportedLocales.add(MLTextHelper.localeKey(MLTextHelper.getNearestLocale(Locale.getDefault())));
+			}
+
+		} else {
+			supportedLocales = MLTextHelper.getSupportedLocalesList();
+		}
+		root.put("$supportedLocales", String.join(",", supportedLocales));
+
 		root.put(PROP_TYPE, TYPE_OBJECT);
 		root.put(PROP_TITLE, "Entity");
 		root.put(PROP_DESCRIPTION, "Entity schema object");
@@ -126,8 +145,6 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 			visitNode(entityNodeRef, entity, JsonVisitNodeType.ENTITY, context);
 			visitLists(entityNodeRef, entity, context);
 
-			//TODO Manage catalog
-			entity.put("required", new JSONArray());
 			root.write(out);
 		}
 
@@ -257,7 +274,9 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	@Override
 	protected void visitContent(NodeRef nodeRef, JSONObject entity) throws JSONException {
-		addProperty(entity, RemoteEntityService.ELEM_CONTENT, TYPE_STRING, "Base64 Content", null);
+		JSONObject object = addProperty(entity, RemoteEntityService.ELEM_CONTENT, TYPE_STRING, "Base64 Content", null);
+		object.put("contentEncoding", "base64");
+		//"contentMediaType": "image/png"
 	}
 
 	@Override
@@ -384,19 +403,19 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 						if (!matchProp(assocName, propName, false)) {
 							continue;
 						}
-						if (DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName())
-								&& (mlNodeService.getProperty(nodeRef, propertyDefinition.getName()) instanceof MLText)) {
-							visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, propertyDefinition);
-						} else if (DataTypeDefinition.TEXT.equals(propertyDefinition.getDataType().getName())
-								&& !propertyDefinition.getConstraints().isEmpty()
-								&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT_CONSTRAINT, Boolean.TRUE))) {
-							for (ConstraintDefinition constraint : propertyDefinition.getConstraints()) {
-								if (constraint.getConstraint() instanceof DynListConstraint) {
-									visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, propertyDefinition);
-									break;
-								}
-							}
-						}
+						//						if (DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName())
+						//								&& (mlNodeService.getProperty(nodeRef, propertyDefinition.getName()) instanceof MLText)) {
+						//							visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, propertyDefinition);
+						//						} else if (DataTypeDefinition.TEXT.equals(propertyDefinition.getDataType().getName())
+						//								&& !propertyDefinition.getConstraints().isEmpty()
+						//								&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT_CONSTRAINT, Boolean.TRUE))) {
+						//							for (ConstraintDefinition constraint : propertyDefinition.getConstraints()) {
+						//								if (constraint.getConstraint() instanceof DynListConstraint) {
+						//									visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, propertyDefinition);
+						//									break;
+						//								}
+						//							}
+						//						}
 						visitPropValue(propName, entity, entry.getValue(), context, propertyDefinition);
 					} else {
 						logger.debug("Properties not in dictionnary: " + entry.getKey());
@@ -407,21 +426,21 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
-	private void visitMltextAttributes(String propType, JSONObject entity, PropertyDefinition propertyDefinition) throws JSONException {
-		for (Locale locale : MLTextHelper.getSupportedLocales()) {
-			String code = MLTextHelper.localeKey(locale);
-			if ((code != null) && !code.isBlank()) {
-				addProperty(entity, propType + "_" + code, TYPE_STRING, propertyDefinition.getTitle(entityDictionaryService),
-						propertyDefinition.getDescription(entityDictionaryService));
-			}
-		}
-
-	}
+	//	private void visitMltextAttributes(String propType, JSONObject entity, PropertyDefinition propertyDefinition) throws JSONException {
+	//		for (Locale locale : MLTextHelper.getSupportedLocales()) {
+	//			String code = MLTextHelper.localeKey(locale);
+	//			if ((code != null) && !code.isBlank()) {
+	//				addProperty(entity, propType + "_" + code, TYPE_STRING, propertyDefinition.getTitle(entityDictionaryService),
+	//						propertyDefinition.getDescription(entityDictionaryService));
+	//			}
+	//		}
+	//
+	//	}
 
 	@SuppressWarnings("unchecked")
 	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context,
 			PropertyDefinition propertyDefinition) throws JSONException {
-		if (propertyDefinition.isMultiValued() && value!=null) {
+		if (propertyDefinition.isMultiValued() && (value != null)) {
 			JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_ARRAY,
 					propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
 			for (Serializable subEl : (List<Serializable>) value) {
@@ -452,29 +471,88 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 				addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
 						propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
 			} else {
-				addProperty(entity, entityDictionaryService.toPrefixString(propType), getType(propertyDefinition.getDataType()),
-						propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+				addProperty(entity, entityDictionaryService.toPrefixString(propType), propertyDefinition);
 			}
 		}
 	}
 
-	private String getType(DataTypeDefinition dataType) {
-		switch (dataType.getName().toPrefixString(namespaceService)) {
+	private JSONObject addProperty(JSONObject entity, String attr, PropertyDefinition propertyDefinition) {
+
+		JSONObject properties = new JSONObject();
+		if (entity.has(PROP_PROPERTIES)) {
+			properties = entity.getJSONObject(PROP_PROPERTIES);
+		} else {
+			entity.put(PROP_PROPERTIES, properties);
+		}
+		JSONObject object = new JSONObject();
+
+		if (propertyDefinition.getDefaultValue() != null) {
+			object.put("default", propertyDefinition.getDefaultValue());
+		}
+
+		switch (propertyDefinition.getDataType().getName().toPrefixString(namespaceService)) {
 		case "d:float":
 		case "d:double":
 		case "d:long":
 		case "d:int":
-			return TYPE_NUMBER;
+			object.put(PROP_TYPE, TYPE_NUMBER);
+			break;
 		case "d:date":
+			object.put(PROP_FORMAT, "date");
+			object.put(PROP_TYPE, TYPE_STRING);
+			break;
 		case "d:datetime":
+			object.put(PROP_FORMAT, "date-time");
+			object.put(PROP_TYPE, TYPE_STRING);
+			break;
 		case "d:text":
+			object.put(PROP_TYPE, TYPE_STRING);
+			break;
 		case "d:mltext":
-			return TYPE_STRING;
+			object.put(PROP_FORMAT, "ml-text");
+			object.put(PROP_TYPE, TYPE_STRING);
+			break;
 		case "d:boolean":
-			return TYPE_BOOLEAN;
+			object.put(PROP_TYPE, TYPE_BOOLEAN);
+			break;
 		default:
-			return TYPE_OBJECT;
+			object.put(PROP_TYPE, TYPE_OBJECT);
+			break;
 		}
+
+		if (propertyDefinition.isMandatory()) {
+			JSONArray required = new JSONArray();
+			if (entity.has(PROP_REQUIRED)) {
+				required = entity.getJSONArray(PROP_REQUIRED);
+			} else {
+				entity.put(PROP_REQUIRED, required);
+			}
+
+			required.put(attr);
+		}
+
+		for (ConstraintDefinition constraint : propertyDefinition.getConstraints()) {
+			if (constraint.getConstraint() instanceof StringLengthConstraint) {
+				object.put("maxLength", ((StringLengthConstraint) constraint.getConstraint()).getMaxLength());
+				object.put("minLength", ((StringLengthConstraint) constraint.getConstraint()).getMinLength());
+			}
+
+			if (constraint.getConstraint() instanceof RegexConstraint) {
+				object.put("pattern", ((RegexConstraint) constraint.getConstraint()).getExpression());
+			}
+
+			if (constraint.getConstraint() instanceof NumericRangeConstraint) {
+				object.put("maximum", ((NumericRangeConstraint) constraint.getConstraint()).getMaxValue());
+				object.put("minimum", ((NumericRangeConstraint) constraint.getConstraint()).getMinValue());
+			}
+		}
+
+		object.put(PROP_TITLE, propertyDefinition.getTitle(entityDictionaryService));
+		if (propertyDefinition.getDescription(entityDictionaryService) != null) {
+			object.put(PROP_DESCRIPTION, propertyDefinition.getDescription(entityDictionaryService));
+		}
+		properties.put(attr, object);
+		return object;
 
 	}
 
@@ -485,6 +563,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		} else {
 			entity.put(PROP_PROPERTIES, properties);
 		}
+
 		object.put(PROP_TYPE, type);
 		object.put(PROP_TITLE, title);
 		if (description != null) {
