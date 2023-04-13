@@ -175,7 +175,7 @@ public class FrenchEcoScoreIT extends AbstractFinishedProductTest {
 				QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 				PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
 		
-		packMaterial.add(new PackMaterialListDataItem(packMaterialNodeRef, qty, PackagingLevel.Primary));
+		packMaterial.add(new PackMaterialListDataItem(packMaterialNodeRef, qty, null,  PackagingLevel.Primary));
 
 		return packMaterial;
 	}

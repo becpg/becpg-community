@@ -38,17 +38,16 @@ public interface GS1Model {
 
 	/** Constant <code>ASPECT_MEASURES_ASPECT</code> */
 	QName ASPECT_MEASURES_ASPECT = QName.createQName(GS1_URI, "measuresAspect");
-	
+
 	QName ASPECT_GS1_ASPECT = QName.createQName(GS1_URI, "gs1Aspect");
-	
 
 	/** Constant <code>PROP_WEIGHT</code> */
 	QName PROP_WEIGHT = QName.createQName(GS1_URI, "weight");
 	/** Constant <code>PROP_SECONDARY_WEIGHT</code> */
 	QName PROP_SECONDARY_WEIGHT = QName.createQName(GS1_URI, "secondaryWeight");
-	
+
 	QName PROP_INNERPACK_WEIGHT = QName.createQName(GS1_URI, "innerPackWeight");
-	
+
 	QName PROP_INNERPACK_NET_WEIGHT = QName.createQName(GS1_URI, "innerPackNetWeight");
 	/** Constant <code>PROP_TERTIARY_WEIGHT</code> */
 	QName PROP_TERTIARY_WEIGHT = QName.createQName(GS1_URI, "tertiaryWeight");
@@ -68,7 +67,7 @@ public interface GS1Model {
 
 	/** Constant <code>PROP_HEIGHT</code> */
 	QName PROP_HEIGHT = QName.createQName(GS1_URI, "height");
-	
+
 	QName PROP_PACKAGING_TYPE_CODE = QName.createQName(GS1_URI, "gs1:packagingTypeCode");
 
 	/** Constant <code>PROP_SECONDARY_WIDTH</code> */
@@ -80,9 +79,8 @@ public interface GS1Model {
 	/** Constant <code>PROP_SECONDARY_HEIGHT</code> */
 	QName PROP_SECONDARY_HEIGHT = QName.createQName(GS1_URI, "secondaryHeight");
 
-	
 	QName PROP_PRODUCT_PER_INNER_PACK = QName.createQName(GS1_URI, "productPerInnerPack");
-	
+
 	/** Constant <code>PROP_TERTIARY_WIDTH</code> */
 	QName PROP_TERTIARY_WIDTH = QName.createQName(GS1_URI, "tertiaryWidth");
 
@@ -90,26 +88,26 @@ public interface GS1Model {
 	QName PROP_TERTIARY_DEPTH = QName.createQName(GS1_URI, "tertiaryDepth");
 
 	/** Constant <code>PROP_PALLET_TYPE_CODE</code> */
-	QName PROP_PALLET_TYPE_CODE  = QName.createQName(GS1_URI, "palletTypeCode");
+	QName PROP_PALLET_TYPE_CODE = QName.createQName(GS1_URI, "palletTypeCode");
 
-	
 	/** Constant <code>PROP_PLATFORMTERMSANSCONDITION_CODE</code> */
-	QName PROP_PLATFORMTERMSANSCONDITION_CODE  = QName.createQName(GS1_URI, "platformTermsAndConditionsCode");
+	QName PROP_PLATFORMTERMSANSCONDITION_CODE = QName.createQName(GS1_URI, "platformTermsAndConditionsCode");
 
 	/** Constant <code>TYPE_TARGET_MARKET</code> */
-	QName TYPE_TARGET_MARKET  = QName.createQName(GS1_URI, "targetMarket");
-	
+	QName TYPE_TARGET_MARKET = QName.createQName(GS1_URI, "targetMarket");
+
 	/** Constant <code>TYPE_DUTY_FEE_TAX</code> */
-	QName TYPE_DUTY_FEE_TAX  = QName.createQName(GS1_URI, "dutyFeeTax");
+	QName TYPE_DUTY_FEE_TAX = QName.createQName(GS1_URI, "dutyFeeTax");
 	/** Constant <code>PROP_PALLET_TYPE_CODE</code> */
 	QName PROP_DUTY_FEE_TAX_RATE = QName.createQName(GS1_URI, "dutyFeeTaxRate");
 
-	
-	
-	
 	QName PROP_PRODUCT_ACTIVITY_TYPE_CODE = QName.createQName(GS1_URI, "productActivityTypeCode");
-	
+
 	QName TYPE_TRADEITEM_PRICE_LIST = QName.createQName(GS1_URI, "tradeItemPriceList");
 
 	QName TYPE_COLLECTION_PRICE_LIST = QName.createQName(GS1_URI, "collectionPriceList");
+
+	QName PROP_PACKAGINGTERMSANSCONDITION_CODE = QName.createQName(GS1_URI, "packagingTermsAndConditionsCode");
+
+	QName PROP_SECONDARY_PACKAGING_TYPE_CODE = QName.createQName(GS1_URI, "secondaryPackagingTypeCode");
 }

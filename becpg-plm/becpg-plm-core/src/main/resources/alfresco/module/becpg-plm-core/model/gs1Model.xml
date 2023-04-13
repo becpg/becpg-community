@@ -101,7 +101,72 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="gs1:sortingMalusCriteriaConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/SortingMalusCriteria</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		
 
+		<constraint name="gs1:packagingRecyclingProcessTypeCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>COMPOSTABLE</value>
+					<value>RECYCLABLE</value>
+					<value>REUSABLE_SAME_FUNCTION</value>
+					<value>RECHARGEABLE</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:packagingShapeCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>BAR</value>
+					<value>COIL</value>
+					<value>CONE</value>
+					<value>CYLINDRICAL</value>
+					<value>POLYGON</value>
+					<value>RECTANGULAR</value>
+					<value>SPHERICAL</value>
+					<value>TABLET</value>
+					<value>UNSPECIFIED</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+	<!-- 	<constraint name="gs1:packagingFeatureCodes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				<value></value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="gs1:packagingFunctionCode" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+				</list>
+			</parameter>
+		</constraint> -->
+		
+		
+		
 
 		<constraint name="gs1:variableTradeItemTypeCodes" type="LIST">
 			<parameter name="allowedValues">
@@ -1039,8 +1104,7 @@
 				</property>
 			</properties>
 		</aspect>
-
-
+			
 		<aspect name="gs1:packagingAspect">
 			<properties>
 				<property name="gs1:height">
@@ -1156,6 +1220,7 @@
 					</index>
 				</property>
 
+		
 				<property name="gs1:packagingTypeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1167,8 +1232,50 @@
 						<constraint ref="gs1:packagingTypeCodeConstraint" />
 					</constraints>
 				</property>
-				
 			
+				
+				<property name="gs1:packagingTypeDescription">
+					<type>d:mltext</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+				<!-- 						
+				<property name="gs1:packagingFeatureCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:packagingFeatureCodes" />
+					</constraints>
+				</property>
+				
+				<property name="gs1:packagingFunctionCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:packagingFunctionCodes" />
+					</constraints>
+				</property> -->
+				
+				<property name="gs1:packagingShapeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:packagingShapeCodes" />
+					</constraints>
+				</property>
+				
 				
 				<property name="gs1:secondaryPackagingTypeCode">
 					<type>d:text</type>
@@ -1245,6 +1352,7 @@
 			<mandatory-aspects />
 		</aspect>
 
+
 		
 		 <!-- PackagingMarkingModule -->
 		<aspect name="gs1:packSortingAspect">
@@ -1258,6 +1366,20 @@
 					</index>
 				</property>
 				
+						
+				<property name="gs1:packagingRecyclingProcessTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>false</multiple>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:packagingRecyclingProcessTypeCodes" />
+					</constraints>
+				</property>
 				
 				<property name="gs1:packagingRecyclingSchemeCode">
 					<type>d:text</type>
@@ -1272,7 +1394,7 @@
 						<constraint ref="gs1:packagingRecyclingSchemeCodes" />
 					</constraints>
 				</property>
-				
+	
 				<property name="gs1:isTradeItemMarkedAsRecyclable">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
@@ -1321,6 +1443,18 @@
 					</index>
 					<constraints>
 						<constraint ref="gs1:sortingBonusCriteriaConstraint" />
+					</constraints>
+				</property>
+				<property name="gs1:sortingMalusCriteria">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:sortingMalusCriteriaConstraint" />
 					</constraints>
 				</property>
 
