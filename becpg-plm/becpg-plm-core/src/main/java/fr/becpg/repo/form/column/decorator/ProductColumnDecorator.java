@@ -6,10 +6,15 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
+import fr.becpg.repo.form.BecpgFormService;
 
 /**
  * <p>ProductColumnDecorator class.</p>
@@ -17,51 +22,27 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
  * @author matthieu
  * @version $Id: $Id
  */
-public class ProductColumnDecorator implements ColumnDecorator {
+@Service
+public class ProductColumnDecorator implements ColumnDecorator, InitializingBean {
 	
+	@Autowired
 	private NodeService nodeService;
+	@Autowired
+	@Qualifier("cachedDictionaryService")
 	private DictionaryService dictionaryService;
+	@Autowired
 	private NamespaceService namespaceService;
+	@Autowired
 	private EntityListDAO entityListDAO;
+	@Autowired
+	private BecpgFormService becpgFormService;
 
-
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		becpgFormService.registerDecorator(this);
 	}
 
-	/**
-	 * <p>Setter for the field <code>dictionaryService</code>.</p>
-	 *
-	 * @param dictionaryService a {@link org.alfresco.service.cmr.dictionary.DictionaryService} object.
-	 */
-	public void setDictionaryService(DictionaryService dictionaryService) {
-		this.dictionaryService = dictionaryService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>namespaceService</code>.</p>
-	 *
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>entityListDAO</code>.</p>
-	 *
-	 * @param entityListDAO a {@link fr.becpg.repo.entity.EntityListDAO} object.
-	 */
-	public void setEntityListDAO(EntityListDAO entityListDAO) {
-		this.entityListDAO = entityListDAO;
-	}
-
-
+	
 	/** {@inheritDoc} */
 	@Override
 	public boolean match(Item item) {
