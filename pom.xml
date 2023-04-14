@@ -55,14 +55,6 @@
 			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
 		</repository>
 		<repository>
-			<id>alfresco-public-snapshots</id>
-			<url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</repository>
-		<repository>
 			<id>becpg-registry</id>
 			<url>artifactregistry://europe-west1-maven.pkg.dev/becpg-314807/becpg-mvn</url>
 			<snapshots>
@@ -76,14 +68,6 @@
 		<pluginRepository>
 			<id>alfresco-plugin-public</id>
 			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>alfresco-plugin-public-snapshots</id>
-			<url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
 
@@ -430,8 +414,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<docheck>false</docheck>
-					<doupdate>false</doupdate>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
 					<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
 				</configuration>
 			</plugin>
