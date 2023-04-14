@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.repo.form.column.decorator.ColumnDecorator;
 
 /**
  * <p>BecpgFormService interface.</p>
@@ -17,17 +18,13 @@ import fr.becpg.common.BeCPGException;
  */
 public interface BecpgFormService {
 	
-	
 
 	JSONObject getForm(String itemKind, String itemId, String formId, String siteId, List<String> fields, List<String> forcedFields,
 			NodeRef entityNodeRef) throws BeCPGException, JSONException;
 
-	/**
-	 * <p>reloadConfig.</p>
-	 *
-	 * @throws java.io.IOException if any.
-	 */
 	void reloadConfig() throws IOException;
+
+	void registerDecorator(ColumnDecorator columnDecorator);
 
 
 	
