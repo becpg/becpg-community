@@ -185,4 +185,9 @@ public class NestedAdvSearchPlugin implements AdvSearchPlugin {
 		return new HashSet<>();
 	}
 
+	@Override
+	public boolean isSearchFiltered(Map<String, String> criteria) {
+		return criteria != null && !extractNested(criteria).isEmpty();
+	}
+
 }
