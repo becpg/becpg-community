@@ -1442,7 +1442,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean classifyByPropAndHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy, String propPathName, String locale) {
 		
 		if (propPathName == null || propPathName.isEmpty()) {
-			return classifyByHierarchy(productNode, folderNode, propHierarchy);
+			return classifyByHierarchy(productNode, folderNode, propHierarchy, locale);
 		} else if (propPathName.split("\\|").length == 1) {
 			
 			QName propPathNameQName = getQName(propPathName);
