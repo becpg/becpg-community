@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,7 +47,7 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 	List<String> configs;
 
-	List<ColumnDecorator> decorators;
+	List<ColumnDecorator> decorators = new LinkedList<>();
 
 	FormService formService;
 
@@ -166,6 +167,11 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 		reloadConfig();
 
 	}
+	
+	@Override
+	public void registerDecorator(ColumnDecorator columnDecorator) {
+		this.decorators.add(columnDecorator);
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -183,6 +189,8 @@ public class BecpgFormServiceImpl implements BecpgFormService, ApplicationContex
 
 		}
 	}
+	
+	
 
 	/** {@inheritDoc} */
 	@Override

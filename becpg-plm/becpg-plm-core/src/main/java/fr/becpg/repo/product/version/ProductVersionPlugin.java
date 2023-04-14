@@ -1,9 +1,9 @@
 package fr.becpg.repo.product.version;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -19,6 +19,7 @@ import fr.becpg.model.PLMWorkflowModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.version.EntityVersionPlugin;
+import fr.becpg.repo.helper.AssociationService;
 
 /**
  * <p>ProductVersionPlugin class.</p>
@@ -30,23 +31,22 @@ import fr.becpg.repo.entity.version.EntityVersionPlugin;
 public class ProductVersionPlugin implements EntityVersionPlugin {
 
 	@Autowired
-	NodeService nodeService;
+	private NodeService nodeService;
 	
 	@Autowired
-	EntityDictionaryService entityDictionaryService;
+	private EntityDictionaryService entityDictionaryService;
 	
 	@Autowired
-	NamespaceService namespaceService;
+	private NamespaceService namespaceService;
 	
 	@Autowired
-	BehaviourFilter policyBehaviourFilter;
+	private LockService lockService;
 
 	@Autowired
-	LockService lockService;
-
+	private AssociationService associationService;
 	
 	@Value("${beCPG.copyOrBranch.propertiesToReset}")
-	String propertiesNotToMerge;
+	private String propertiesToKeep;
 	
 	
 	/** {@inheritDoc} */
@@ -68,18 +68,25 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 		if(entityDictionaryService.isSubClass(nodeService.getType(origNodeRef), PLMModel.TYPE_PRODUCT)){
 	        nodeService.setProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE, nodeService.getProperty(origNodeRef, PLMModel.PROP_PRODUCT_STATE));
      
-	        if(propertiesNotToMerge!=null) {
-		        for(String propertyToKeep : propertiesNotToMerge.split(",")) {
-		        	QName propertyQname = QName.createQName(propertyToKeep,namespaceService );
-		        	Serializable value = nodeService.getProperty(origNodeRef, propertyQname);
-		        	if(value!=null) {
-		        		nodeService.setProperty(workingCopyNodeRef, propertyQname,value  );
-		        	} else {
-		        		nodeService.removeProperty(workingCopyNodeRef, propertyQname);
-		        	}
-		        }
-	        }
+			if (propertiesToKeep != null) {
+				for (String propertyToKeep : propertiesToKeep.split(",")) {
+					QName propertyQname = QName.createQName(propertyToKeep, namespaceService);
 
+					if (entityDictionaryService.getProperty(propertyQname) != null) {
+						Serializable value = nodeService.getProperty(origNodeRef, propertyQname);
+						if (value != null) {
+							nodeService.setProperty(workingCopyNodeRef, propertyQname, value);
+						} else {
+							nodeService.removeProperty(workingCopyNodeRef, propertyQname);
+						}
+					} else if (entityDictionaryService.getAssociation(propertyQname) != null) {
+						List<NodeRef> originalAssocs = associationService.getTargetAssocs(origNodeRef, propertyQname);
+						associationService.update(workingCopyNodeRef, propertyQname, originalAssocs);
+					}
+
+				}
+	        }
+	        
 			if (!nodeService.hasAspect(workingCopyNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT)) {
 				if (nodeService.hasAspect(origNodeRef, ContentModel.ASPECT_LOCKABLE)) {
 					// Release the lock on the original node
