@@ -19,7 +19,10 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.becpg.repo.helper;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -27,8 +30,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.datalist.WUsedListService;
+import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
+import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 
 /**
@@ -40,6 +48,9 @@ import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 @Service
 public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
+	@Autowired
+	private WUsedListService wUsedListService;
+	
 	@Value("${beCPG.product.name.format}")
 	private String productNameFormat;
 
@@ -88,6 +99,58 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 				ret += " nutrientClass-" + nutClass;
 			}
 		}
+		return ret;
+	}
+	
+	@Override
+	public boolean matchCriteria(NodeRef nodeRef, Map<String, String> criteriaMap) {
+		return matchWUsedCriteria(nodeRef, criteriaMap, PLMModel.ASSOC_COMPOLIST_PRODUCT)
+				|| matchWUsedCriteria(nodeRef, criteriaMap, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT)
+				|| matchWUsedCriteria(nodeRef, criteriaMap, MPMModel.ASSOC_PL_RESOURCE);
+	}
+	
+	private boolean matchWUsedCriteria(NodeRef node, Map<String, String> criteriaMap, QName criteriaAssoc) {
+
+		String assocString = criteriaAssoc.toPrefixString(namespaceService);
+		
+		if (criteriaMap != null && criteriaMap.containsKey(assocString)) {
+
+			String propValue = criteriaMap.get(assocString);
+
+			if ((propValue != null) && !propValue.isBlank()) {
+
+				List<NodeRef> toFilterByNodes = extractNodeRefs(propValue);
+
+				if (!toFilterByNodes.isEmpty()) {
+
+					MultiLevelListData ret = wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
+					if (ret != null) {
+						return ret.getAllChilds().contains(node);
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private List<NodeRef> extractNodeRefs(String propValue) {
+		String[] arrValues = propValue.split(RepoConsts.MULTI_VALUES_SEPARATOR);
+		List<NodeRef> ret = new ArrayList<>();
+
+		for (String strNodeRef : arrValues) {
+
+			if (!strNodeRef.isBlank()) {
+
+				NodeRef nodeRef = new NodeRef(strNodeRef);
+
+				if (nodeService.exists(nodeRef)) {
+					ret.add(nodeRef);
+				}
+			}
+
+		}
+
 		return ret;
 	}
 

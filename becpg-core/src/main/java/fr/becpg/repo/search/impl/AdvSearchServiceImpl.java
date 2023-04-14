@@ -136,11 +136,12 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 			SearchConfig searchConfig = getSearchConfig();
 
 			logger.debug("advSearch, dataType=" + datatype + ", \ncriteria=" + criteria + "\nplugins: " + Arrays.asList(advSearchPlugins));
-			if (isAssocSearch(criteria) || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
-				maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
-			} else if (maxResults <= 0) {
-				maxResults = RepoConsts.MAX_RESULTS_1000;
-			}
+		        if (isSearchFiltered(criteria) || (maxResults > RepoConsts.MAX_RESULTS_1000)) {
+			        maxResults = RepoConsts.MAX_RESULTS_UNLIMITED;
+		        } else if (maxResults <= 0) {
+			        maxResults = RepoConsts.MAX_RESULTS_1000;
+		        }
+
 
 			Set<String> ignoredFields = new HashSet<>();
 
@@ -350,7 +351,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 									}
 								}
 							} else if (isMultiValueProperty(propValue, modePropValue) || isListProperty(criteriaMap, key)) {
-								if (propName.startsWith("isListProperty")) {
+								if (propName.indexOf("isListProperty") == -1) {
 									queryBuilder.andFTSQuery(processMultiValue(propName, propValue, modePropValue, false));
 
 								}
@@ -460,15 +461,10 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		return (Integer) nodeService.getProperty(hierarchyNodeRef, BeCPGModel.PROP_DEPTH_LEVEL);
 	}
 
-	private boolean isAssocSearch(Map<String, String> criteria) {
-		if (criteria != null) {
-			for (Map.Entry<String, String> criterion : criteria.entrySet()) {
-				String key = criterion.getKey();
-				String value = criterion.getValue();
-				// association
-				if (key.startsWith("assoc_") && (value != null) && !value.isEmpty()) {
-					return true;
-				}
+	private boolean isSearchFiltered(Map<String, String> criteria) {
+		for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
+			if (advSearchPlugin.isSearchFiltered(criteria)) {
+				return true;
 			}
 		}
 		return false;

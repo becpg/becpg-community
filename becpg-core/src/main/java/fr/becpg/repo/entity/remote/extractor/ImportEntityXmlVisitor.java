@@ -724,9 +724,8 @@ public class ImportEntityXmlVisitor {
 			NodeRef ret = serviceRegistry.getNodeService().getChildByName(parentNodeRef, ContentModel.ASSOC_CONTAINS, name);
 
 			if (ret == null) {
-				if (ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)) {
+				if (ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type) || ContentModel.TYPE_PERSON.equals(type)) {
 					throw new IllegalStateException("Cannot create  "+name+ ", creating group is not yet implemented");
-					
 				} else {
 				
 				
