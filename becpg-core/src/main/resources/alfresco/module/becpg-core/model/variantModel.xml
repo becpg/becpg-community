@@ -41,7 +41,7 @@
 		
 		<!-- propertyVariantList -->
 		<type name="var:propertyVariantList">
-			<parent>bcpg:productListItem</parent>
+			<parent>bcpg:entityListItem</parent>
 			<properties>
 				<property name="var:pvlValue">
 					<type>d:text</type>
