@@ -1,4 +1,5 @@
 <import resource="classpath:/alfresco/site-webscripts/org/alfresco/becpg/menu/imports/share-header.lib.js">
+<import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 
 
 if(isExternalUser(user)){
@@ -126,7 +127,26 @@ if(isExternalUser(user)){
     }
   
 }
-	
+
+if (page.url.url.startsWith(page.url.servletContext + "/wizard") ||
+	page.url.url.startsWith(page.url.servletContext + "/site/" + page.url.templateArgs.site + "/wizard")) {
+
+	if (page.url.args.nodeRef != null) {
+		var nodeDetails = AlfrescoUtil.getNodeDetails(page.url.args.nodeRef, null, null, null);
+		if (nodeDetails) {
+			model.jsonModel.widgets.push({
+				id: "SET_PAGE_TITLE",
+				name: "alfresco/header/SetTitle",
+				config: {
+					title: (nodeDetails.itemdisplayName != null) ? nodeDetails.itemdisplayName : nodeDetails.item.fileName
+				}
+			});
+
+		}
+	}
+
+}
+
 
 if(page.url.url.startsWith(page.url.servletContext + "/site/" + page.url.templateArgs.site + "/entity-data-lists") ) {
 	
