@@ -141,12 +141,16 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 		NodeRef entityNodeRef = null;
 		
 		NodeRef itemId = null;
+		String listName = null;
 
 		@SuppressWarnings("unchecked")
 		Map<String, String> extras = (HashMap<String, String>) props.get(AutoCompleteService.EXTRA_PARAM);
 		if (extras != null) {
 			if (extras.get("itemId") != null) {
 				itemId = new NodeRef(extras.get("itemId"));
+			}
+			if (extras.get("dataListsName") != null) {
+				listName = extras.get("dataListsName");
 			}
 		}
 		String parent = (String) props.get(AutoCompleteService.PROP_PARENT);
@@ -169,7 +173,7 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 		}
 
 		if (entityNodeRef != null) {
-			String listName = null;
+			
 			String path = (String) props.get(AutoCompleteService.PROP_PATH);
 			if ((path != null) && !path.isEmpty()) {
 				if (path.contains(":") || path.contains("{")) {
