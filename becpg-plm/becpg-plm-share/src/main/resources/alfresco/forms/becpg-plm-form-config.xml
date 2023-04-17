@@ -5050,7 +5050,7 @@
 						help-id="becpg.forms.help.allergenListQtyPerc" set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">perc</control-param>
+							<control-param name="unit">ppm</control-param>
 						</control>
 					</field>
 					<field id="bcpg:allergenListVoluntary"
@@ -5224,7 +5224,7 @@
 						help-id="becpg.forms.help.allergenListQtyPerc" set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">perc</control-param>
+							<control-param name="unit">ppm</control-param>
 						</control>
 					</field>
 					<field id="bcpg:allergenListVoluntary"
