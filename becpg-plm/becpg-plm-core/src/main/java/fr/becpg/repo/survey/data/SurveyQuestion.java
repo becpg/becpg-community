@@ -1,10 +1,12 @@
 package fr.becpg.repo.survey.data;
 
+import java.util.List;
 import java.util.Objects;
 
+import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
-import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
+import fr.becpg.repo.repository.annotation.AlfReadOnly;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
@@ -32,7 +34,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 	private String responseType;
 	private String responseCommentType;
 	private String responseCommentLabel;
-	private SurveyQuestion nextQuestion;
+	private List<SurveyQuestion> nextQuestions;
 	
     private Integer sort;
     
@@ -123,10 +125,11 @@ public class SurveyQuestion extends BeCPGDataObject {
 		return responseCommentLabel;
 	}
 
-	@AlfSingleAssoc
+	@AlfMultiAssoc(isEntity = true)
+	@AlfReadOnly
 	@AlfQname(qname = "survey:nextQuestion")
-	public SurveyQuestion getNextQuestion() {
-		return nextQuestion;
+	public List<SurveyQuestion> getNextQuestions() {
+		return nextQuestions;
 	}
 	
 	
@@ -175,8 +178,8 @@ public class SurveyQuestion extends BeCPGDataObject {
 		this.responseCommentLabel = responseCommentLabel;
 	}
 
-	public void setNextQuestion(SurveyQuestion nextQuestion) {
-		this.nextQuestion = nextQuestion;
+	public void setNextQuestions(List<SurveyQuestion> nextQuestions) {
+		this.nextQuestions = nextQuestions;
 	}
 	
 
@@ -184,7 +187,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(isMandatory, isVisible, label, nextQuestion, parent, questionLowerNote, questionNote, questionScore,
+		result = prime * result + Objects.hash(isMandatory, isVisible, label, nextQuestions, parent, questionLowerNote, questionNote, questionScore,
 				questionUpperNote, questionUrl, responseCommentLabel, responseCommentType, responseType, sort);
 		return result;
 	}
@@ -199,7 +202,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 			return false;
 		SurveyQuestion other = (SurveyQuestion) obj;
 		return Objects.equals(isMandatory, other.isMandatory) && Objects.equals(isVisible, other.isVisible) && Objects.equals(label, other.label)
-				&& Objects.equals(nextQuestion, other.nextQuestion) && Objects.equals(parent, other.parent)
+				&& Objects.equals(nextQuestions, other.nextQuestions) && Objects.equals(parent, other.parent)
 				&& Objects.equals(questionLowerNote, other.questionLowerNote) && Objects.equals(questionNote, other.questionNote)
 				&& Objects.equals(questionScore, other.questionScore) && Objects.equals(questionUpperNote, other.questionUpperNote)
 				&& Objects.equals(questionUrl, other.questionUrl) && Objects.equals(responseCommentLabel, other.responseCommentLabel)
@@ -212,7 +215,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 		return "SurveyQuestion [parent=" + parent + ", label=" + label + ", questionNote=" + questionNote + ", questionUpperNote=" + questionUpperNote
 				+ ", questionLowerNote=" + questionLowerNote + ", questionUrl=" + questionUrl + ", questionScore=" + questionScore + ", isMandatory="
 				+ isMandatory + ", responseType=" + responseType + ", responseCommentType=" + responseCommentType + ", responseCommentLabel="
-				+ responseCommentLabel + ", nextQuestion=" + nextQuestion + ", sort=" + sort + "]";
+				+ responseCommentLabel + ", nextQuestion=" + nextQuestions + ", sort=" + sort + "]";
 	}
 	
 	
