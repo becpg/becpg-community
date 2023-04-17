@@ -35,6 +35,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.forum.CommentService;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.version.VersionBaseModel;
@@ -42,11 +43,13 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionType;
+import org.alfresco.service.namespace.NamespacePrefixResolver;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -138,6 +141,10 @@ public class ECOServiceImpl implements ECOService {
 	
 	@Autowired
 	private BatchQueueService batchQueueService;
+	
+	@Autowired
+	@Qualifier("namespaceService")
+    private NamespacePrefixResolver namespacePrefixResolver;
 
 	/** {@inheritDoc} */
 	@Override
@@ -187,6 +194,7 @@ public class ECOServiceImpl implements ECOService {
 				batchStepList.add(createSimulateECOBatchStep(ecoData));
 			} else {
 				batchStepList.add(createApplyECOBatchStep(ecoData, deleteOnApply));
+				batchStepList.add(createCopyPropertiesStep(ecoData));
 			}
 			
 			batchQueueService.queueBatch(batchInfo, batchStepList);
@@ -198,6 +206,66 @@ public class ECOServiceImpl implements ECOService {
 		
 	}
 
+	private BatchStep<Object> createCopyPropertiesStep(ChangeOrderData ecoData) {
+		BatchStep<Object> batchStep = new BatchStep<>();
+		
+		batchStep.setBatchStepListener(new BatchStepAdapter() {
+			@Override
+			public void beforeStep() {
+				
+				Set<NodeRef> impactedProducts = provideImpactedProducts(CompositeHelper.getHierarchicalCompoList(ecoData.getWUsedList()), false);
+				
+				BatchProcessWorkProvider<Object> workProvider = new EntityListBatchProcessWorkProvider<>(new ArrayList<>(impactedProducts));
+				
+				batchStep.setWorkProvider(workProvider);
+				
+			}
+		});
+		
+		batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<Object>() {
+			
+			@Override
+			public void process(Object entry) throws Throwable {
+				if (entry instanceof NodeRef) {
+					
+					boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
+					
+					try {
+						NodeRef nodeRef = (NodeRef) entry;
+						
+						List<String> propertiesToCopy = ecoData.getPropertiesToCopy();
+						
+						if (propertiesToCopy != null) {
+							for (String propertyToCopy : propertiesToCopy) {
+								QName propertyQName = QName.createQName(propertyToCopy.split(":")[0], propertyToCopy.split(":")[1], namespacePrefixResolver);
+								Serializable property = nodeService.getProperty(ecoData.getNodeRef(), propertyQName);
+								nodeService.setProperty(nodeRef, propertyQName, property);
+							}
+						}
+					} finally {
+						MLPropertyInterceptor.setMLAware(isMLAware);
+					}
+				}
+			}
+		});
+		
+		return batchStep;
+	}
+	
+	private Set<NodeRef> provideImpactedProducts(Composite<WUsedListDataItem> composite, boolean includeRoot) {
+		Set<NodeRef> impactedProducts = new HashSet<>();
+		
+		if (composite.getData() != null && Boolean.TRUE.equals(composite.getData().getIsWUsedImpacted()) && (includeRoot || composite.getData().getParent() != null)) {
+			impactedProducts.addAll(composite.getData().getSourceItems());
+		}
+		
+		for (Composite<WUsedListDataItem> children : composite.getChildren()) {
+			impactedProducts.addAll(provideImpactedProducts(children, includeRoot));
+		}
+		
+		return impactedProducts;
+	}
+	
 	private BatchStep<Object> createSimulateECOBatchStep(final ChangeOrderData ecoData) {
 		BatchStep<Object> batchStep = new BatchStep<>();
 		

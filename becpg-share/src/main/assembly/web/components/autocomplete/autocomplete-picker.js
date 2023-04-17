@@ -608,7 +608,7 @@
                                 Dom.removeClass(me.widgets.oAC.getInputEl(), "hidden");
 
                             }
-                            else if (!me.options.multipleSelectMode && !me.isAssoc)
+                            else if ((me.options.mode == "view" || me.options.readOnly) || !me.options.multipleSelectMode && !me.isAssoc)
                             {
                                 Dom.removeClass(me.fieldHtmlId + "-values", "hidden");
                             }
@@ -711,14 +711,15 @@
                                 else if(me.options.multipleSelectMode)
                                 {
 									var basket = Dom.get(me.controlId + "-basket");
-									basket.innerHTML = "";
-                                    var items = me.options.currentValue.split(",");
-                                    for (var i = 0, il = items.length; i < il; i++)
-                                    {
-                                      
-                                        me.addToBasket(basket, items[i], items[i]);
-                                    }
-
+									if (basket) {
+										basket.innerHTML = "";
+	                                    var items = me.options.currentValue.split(",");
+	                                    for (var i = 0, il = items.length; i < il; i++)
+	                                    {
+	                                      
+	                                        me.addToBasket(basket, items[i], items[i]);
+	                                    }
+									}
                                 }
                             }
                         },
@@ -774,12 +775,14 @@
                                     if (this.options.multipleSelectMode)
                                     {
                                         var basket = Dom.get(this.controlId + "-basket");
-                                        basket.innerHTML = "";
-                                        for ( var key in items)
-                                        {
-                                            var item = items[key];
-                                            this.addToBasket(basket, item.name, item.nodeRef);
-                                        }
+										if (basket) {
+	                                        basket.innerHTML = "";
+	                                        for ( var key in items)
+	                                        {
+	                                            var item = items[key];
+	                                            this.addToBasket(basket, item.name, item.nodeRef);
+	                                        }
+										}
                                     }
                                     else
                                     {
