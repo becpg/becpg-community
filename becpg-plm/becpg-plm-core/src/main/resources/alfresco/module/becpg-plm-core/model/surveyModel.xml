@@ -148,7 +148,7 @@
 					<target>
 						<class>survey:surveyQuestion</class>
 						<mandatory>false</mandatory>
-						<many>false</many>
+						<many>true</many>
 					</target>
 				</association>
 			</associations>
