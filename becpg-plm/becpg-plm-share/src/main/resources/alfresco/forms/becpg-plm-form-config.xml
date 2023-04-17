@@ -1353,202 +1353,234 @@
 		</forms>
 	</config>
 
-	<!-- bcpg:ing type (existing nodes) -->
+    <!-- bcpg:ing type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:ing">
-		<forms>
-			<form>
-				<field-visibility>
-					<show id="bcpg:charactName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:legalName" />
-					<show id="bcpg:pluralLegalName"/>
-					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:ingCEECode"  force="true"/>
-					<show id="bcpg:casNumber"  force="true"/>
-					<show id="bcpg:ceNumber"  force="true"/>
-					<show id="bcpg:ecNumber"  force="true"/>
-					<show id="bcpg:fdaNumber"  force="true"/>
-					<show id="bcpg:femaNumber"  force="true"/>
-					<show id="bcpg:flNumber"  force="true"/>
-					<show id="bcpg:regulatoryCode" force="true"/>
-					<show id="bcpg:ingTypeV2"  force="true"/>
-					<show id="bcpg:ingAllergens" />
-					<show id="gs1:productActivityTypeCode" force="true"/>
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="cm:description" force="true" />
+                    <show id="bcpg:legalName" />
+                    <show id="bcpg:pluralLegalName"/>
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:ingCEECode" force="true"/>
+                    <show id="bcpg:casNumber" force="true"/>
+                    <show id="bcpg:ceNumber" force="true"/>
+                    <show id="bcpg:ecNumber" force="true"/>
+                    <show id="bcpg:fdaNumber" force="true"/>
+                    <show id="bcpg:femaNumber" force="true"/>
+                    <show id="bcpg:flNumber" force="true"/>
+                    <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="bcpg:ingTypeV2" force="true"/>
+                    <show id="bcpg:ingAllergens" force="true" />
+                    <show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
                     <show id="sec:readGroups" force="true"/>
                     <show id="bcpg:isDeleted"/>
-               
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:charactName" />
-					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
-						</control>
-					</field>
-					<field id="bcpg:ingCEECode" />
-					<field id="bcpg:casNumber" />
-					<field id="bcpg:ceNumber" />
-					<field id="bcpg:ecNumber" />
-					<field id="bcpg:fdaNumber" />
-					<field id="bcpg:femaNumber" />
-					<field id="bcpg:flNumber" />
-					<field id="bcpg:regulatoryCode" />
-					<field id="bcpg:ingTypeV2">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
-							</control-param>
-						</control>
-					</field>
-                     <field id="bcpg:linkedSearchAssociation">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:ingAllergens">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
-					</field>
-				</appearance>
-			</form>
-		</forms>
-	</config>
 
-	<config evaluator="model-type" condition="bcpg:ing">
-		<forms>
-			<!-- Create item form -->
-			<form>
+                </field-visibility>
+                <appearance>
+                    <set id="1-col-1" />
+                    <set id="2-col-1" template="/org/alfresco/components/form/2-column-set.ftl" />
+                    <set id="1-col-2" />
+                    <set id="2-col-2" template="/org/alfresco/components/form/2-column-set.ftl" />
 
-				<field-visibility>
-					<show id="bcpg:charactName" />
-					<show id="cm:description" force="true" />
-					<show id="bcpg:legalName" />
-					<show id="bcpg:pluralLegalName"/>
-					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:ingCEECode" force="true"/>
-					<show id="bcpg:casNumber" force="true"/>
-					<show id="bcpg:ceNumber"  force="true"/>
-					<show id="bcpg:ecNumber"  force="true"/>
-					<show id="bcpg:fdaNumber"  force="true"/>
-					<show id="bcpg:femaNumber"  force="true"/>
-					<show id="bcpg:flNumber"  force="true"/>
-					<show id="bcpg:regulatoryCode" force="true"/>
-					<show id="bcpg:ingTypeV2"  force="true"/>
-					<show id="bcpg:ingAllergens" />
-					<show id="gs1:productActivityTypeCode" force="true"/>
-                    <show id="bcpg:linkedSearchAssociation" force="true" />	
+                    <field id="bcpg:charactName" set="1-col-1" />
+                    <field id="cm:description" set="1-col-1" >
+                        <control>
+                            <control-param name="activateLinks">true</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:pluralLegalName" set="2-col-1" />
+                    <field id="bcpg:legalName" set="2-col-1" />
+                    <field id="bcpg:ingCEECode" set="2-col-1" />
+                    <field id="bcpg:casNumber" set="2-col-1" />
+                    <field id="bcpg:ceNumber" set="2-col-1" />
+                    <field id="bcpg:ecNumber" set="2-col-1" />
+                    <field id="bcpg:fdaNumber" set="2-col-1" />
+                    <field id="bcpg:femaNumber" set="2-col-1" />
+                    <field id="bcpg:flNumber" set="2-col-1" />
+                    <field id="bcpg:regulatoryCode" set="2-col-1" />
+                    <field id="bcpg:erpCode" set="1-col-2" />
+                    <field id="bcpg:ingTypeV2" set="1-col-2" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+                            </control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:linkedSearchAssociation" set="1-col-2" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
+                            </control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:ingAllergens" set="1-col-2" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                        </control>
+                    </field>
+                    <field id="gs1:productActivityTypeCode" set="1-col-2" />
+                    <field id="bcpg:isDeleted" set="2-col-2" />
+                    <field id="sec:readGroups" set="2-col-2" />
+                </appearance>
+            </form>
+        </forms>
+    </config>
+
+    <config evaluator="model-type" condition="bcpg:ing" replace="false" >
+        <forms>
+            <!-- Create item form -->
+            <form>
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="cm:description" force="true" />
+                    <show id="bcpg:legalName" />
+                    <show id="bcpg:pluralLegalName"/>
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:ingCEECode" force="true"/>
+                    <show id="bcpg:casNumber" force="true"/>
+                    <show id="bcpg:ceNumber"  force="true"/>
+                    <show id="bcpg:ecNumber"  force="true"/>
+                    <show id="bcpg:fdaNumber"  force="true"/>
+                    <show id="bcpg:femaNumber"  force="true"/>
+                    <show id="bcpg:flNumber"  force="true"/>
+                    <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="bcpg:ingTypeV2"  force="true"/>
+                    <show id="bcpg:ingAllergens" />
+                    <show id="gs1:productActivityTypeCode" force="true"/>
+                    <show id="bcpg:linkedSearchAssociation" force="true" />        
                     <show id="sec:readGroups" force="true"/>	
                     <show id="bcpg:isDeleted"/>
-               </field-visibility>
+                </field-visibility>
 
-				<appearance>
+                <appearance>
+                    <set id="1-col-1" />
+                    <set id="2-col-1" template="/org/alfresco/components/form/2-column-set.ftl" />
+                    <set id="1-col-2" />
+                    <set id="2-col-2" template="/org/alfresco/components/form/2-column-set.ftl" />
 
-					<field id="bcpg:charactName" />
-					<field id="cm:description">
-						<control>
-							<control-param name="activateLinks">true</control-param>
-						</control>
-					</field>
-					<field id="bcpg:ingCEECode" />
-					<field id="bcpg:casNumber"/>
-					<field id="bcpg:ceNumber" />
-					<field id="bcpg:ecNumber" />
-					<field id="bcpg:fdaNumber" />
-					<field id="bcpg:femaNumber" />
-					<field id="bcpg:flNumber" />
-					<field id="bcpg:regulatoryCode"/>
-					<field id="bcpg:ingTypeV2">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:linkedSearchAssociation">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:ingAllergens">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-						</control>
-					</field>
-				</appearance>
-			</form>
+                    <field id="bcpg:charactName" set="1-col-1" />
+                    <field id="cm:description" set="1-col-1" >
+                        <control>
+                            <control-param name="activateLinks">true</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:pluralLegalName" set="2-col-1" />
+                    <field id="bcpg:legalName" set="2-col-1" />
+                    <field id="bcpg:ingCEECode" set="2-col-1" />
+                    <field id="bcpg:casNumber" set="2-col-1" />
+                    <field id="bcpg:ceNumber" set="2-col-1" />
+                    <field id="bcpg:ecNumber" set="2-col-1" />
+                    <field id="bcpg:fdaNumber" set="2-col-1" />
+                    <field id="bcpg:femaNumber" set="2-col-1" />
+                    <field id="bcpg:flNumber" set="2-col-1" />
+                    <field id="bcpg:regulatoryCode" set="2-col-1" />
+                    <field id="bcpg:erpCode" set="1-col-2" />
+                    <field id="bcpg:ingTypeV2" set="1-col-2" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+                            </control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:linkedSearchAssociation" set="1-col-2" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
+                            </control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:ingAllergens" set="1-col-2" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                        </control>
+                    </field>
+                    <field id="gs1:productActivityTypeCode" set="1-col-2" />
+                    <field id="bcpg:isDeleted" set="2-col-2" />
+                    <field id="sec:readGroups" set="2-col-2" />
+                </appearance>
+            </form>
 
-			<!-- Data Grid view -->
-			<form id="filter">
-				<field-visibility>
-					<show id="bcpg:charactName" force="true"/>
-					<show id="bcpg:legalName" force="true"/>
-					<show id="bcpg:ingCEECode" force="true"/>
-					<show id="bcpg:casNumber" force="true"/>
-					<show id="bcpg:ceNumber"  force="true"/>
-					<show id="bcpg:ecNumber"  force="true"/>
-					<show id="bcpg:fdaNumber"  force="true"/>
-					<show id="bcpg:femaNumber"  force="true"/>
-					<show id="bcpg:flNumber"  force="true"/>
-					<show id="bcpg:regulatoryCode" force="true"/>
-					<show id="bcpg:ingTypeV2"  force="true"/>
-					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:isDeleted"/>
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:charactName">
-						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
-					</field>
-					<field id="bcpg:ingTypeV2">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:isDeleted" >
-						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
-					</field>
-				</appearance>
-			</form>
-			<form id="sub-datagrid-filter">
-				<field-visibility>
-					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:charactName" label-id="becpg.forms.field.ing" >
-						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
-					</field>
-				</appearance>
-			</form>
+            <!-- Data Grid view -->
+            <form id="filter">
+                <field-visibility>
+                    <show id="bcpg:charactName" force="true"/>
+                    <show id="bcpg:legalName" force="true"/>
+                    <show id="bcpg:ingCEECode" force="true"/>
+                    <show id="bcpg:casNumber" force="true"/>
+                    <show id="bcpg:ceNumber"  force="true"/>
+                    <show id="bcpg:ecNumber"  force="true"/>
+                    <show id="bcpg:fdaNumber"  force="true"/>
+                    <show id="bcpg:femaNumber"  force="true"/>
+                    <show id="bcpg:flNumber"  force="true"/>
+                    <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="bcpg:ingTypeV2"  force="true"/>
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted"/>
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:charactName">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+                    </field>
+                    <field id="bcpg:legalName">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+                    </field>
+                    <field id="bcpg:ingTypeV2">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+                            </control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:isDeleted" >
+                        <control template="/org/alfresco/components/form/controls/selectone.ftl">
+                            <control-param name="isSearch">true</control-param>
+                            <control-param name="insertBlank">true</control-param>
+                            <control-param name="options">true|data.boolean.true,false|data.boolean.false
+                            </control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
+            <form id="sub-datagrid-filter">
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="bcpg:isDeleted"/>
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:charactName" label-id="becpg.forms.field.ing" >
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+                    </field>
+                    <field id="bcpg:isDeleted" >
+                        <control template="/org/alfresco/components/form/controls/selectone.ftl">
+                            <control-param name="isSearch">true</control-param>
+                            <control-param name="insertBlank">true</control-param>
+                            <control-param name="options">true|data.boolean.true,false|data.boolean.false
+                            </control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
 
-			<form id="datagrid">
-				<field-visibility>
-					<show id="bcpg:charactName" />
-					<show id="bcpg:legalName" />
-					<show id="bcpg:pluralLegalName"/>
-					<show id="bcpg:ingCEECode" force="true"/>
-					<show id="bcpg:casNumber" force="true"/>
-					<show id="bcpg:ceNumber"  force="true"/>
-					<show id="bcpg:ecNumber"  force="true"/>
-					<show id="bcpg:fdaNumber"  force="true"/>
-					<show id="bcpg:femaNumber"  force="true"/>
-					<show id="bcpg:flNumber"  force="true"/>
-					<show id="bcpg:regulatoryCode" force="true"/>
-					<show id="bcpg:ingTypeV2"  force="true"/>
-					<show id="gs1:productActivityTypeCode" force="true"/>
+            <form id="datagrid">
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="bcpg:legalName" />
+                    <show id="bcpg:pluralLegalName"/>
+                    <show id="bcpg:ingCEECode" force="true"/>
+                    <show id="bcpg:casNumber" force="true"/>
+                    <show id="bcpg:ceNumber" force="true"/>
+                    <show id="bcpg:ecNumber" force="true"/>
+                    <show id="bcpg:fdaNumber" force="true"/>
+                    <show id="bcpg:femaNumber" force="true"/>
+                    <show id="bcpg:flNumber" force="true"/>
+                    <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="bcpg:ingTypeV2" force="true"/>
+                    <show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
                     <show id="bcpg:ingAllergens" />
                     <show id="sec:readGroups" force="true"/>
-					<show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted"/>
-				</field-visibility>
-			</form>
-		</forms>
-	</config>
+                </field-visibility>
+            </form>
+        </forms>
+    </config>
 
 	<!-- bcpg:microBio type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:microbio">
