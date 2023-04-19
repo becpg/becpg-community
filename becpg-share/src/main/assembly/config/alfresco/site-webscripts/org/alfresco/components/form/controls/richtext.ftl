@@ -2,6 +2,7 @@
 
 <#if field.control.params.rows??><#assign rows=field.control.params.rows><#else><#assign rows=8></#if>
 <#if field.control.params.columns??><#assign columns=field.control.params.columns><#else><#assign columns=60></#if>
+<#if field.control.params.showHtml?? && field.control.params.showHtml == "true"><#assign showHtml=true><#else><#assign showHtml=false></#if>
 
 <div class="form-field">
    <#if form.mode == "view">
@@ -10,7 +11,7 @@
       <span class="incomplete-warning"><img src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
       </#if>
       <span class="viewmode-label">${field.label?html}:</span>
-      <span class="viewmode-value"><#if field.value == "">${msg("form.control.novalue")}<#else>${field.value?html}</#if></span>
+      <span class="viewmode-value"><#if field.value == "">${msg("form.control.novalue")}<#else><#if !showHtml>${field.value?html}<#else>${stringUtils.stripUnsafeHTML(field.value)}</#if></#if></span>
    </div>
    <#else>
    <script type="text/javascript">//<![CDATA[
