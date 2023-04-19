@@ -205,7 +205,7 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 	 */
 	public void updateAuditedField(NodeRef entityNodeRef, Set<QName> diffQnames, Set<NodeRef> listNodeRefs) {
 		try {
-			if ((diffQnames != null) || (listNodeRefs != null)) {
+			if ((diffQnames != null) || (listNodeRefs != null) && nodeService.exists(entityNodeRef)) {
 
 				for (JSONArray catalogDef : getCatalogsDef()) {
 

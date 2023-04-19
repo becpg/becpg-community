@@ -39,6 +39,7 @@ import org.alfresco.repo.cache.TransactionalCache;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -92,7 +93,7 @@ import fr.becpg.repo.repository.model.DefaultListDataItem;
  */
 @Repository("alfrescoRepository")
 public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
-		implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy, RefreshableCacheListener, InitializingBean {
+		implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy, RefreshableCacheListener, InitializingBean, NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.OnRemoveAspectPolicy, NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy {
 
 	@Autowired
 	private NodeService nodeService;
@@ -151,6 +152,18 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
 				new JavaBehaviour(this, "onUpdateProperties"));
 
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+				new JavaBehaviour(this, "onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
+				new JavaBehaviour(this, "onCreateAssociation"));
+				
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
+				new JavaBehaviour(this, "onDeleteAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
+				new JavaBehaviour(this, "onDeleteAssociation"));
+		
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, this, new JavaBehaviour(this, "onAddAspect"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRemoveAspectPolicy.QNAME, this, new JavaBehaviour(this, "onRemoveAspect"));
 	}
 
 	/** {@inheritDoc} */
@@ -164,6 +177,27 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		purgeCache(nodeRef);
 	}
+	
+	@Override
+	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
+		purgeCache(nodeRef);
+	}
+	
+	@Override
+	public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName) {
+		purgeCache(nodeRef);
+	}
+	
+	@Override
+	public void onCreateAssociation(AssociationRef nodeAssocRef) {
+		purgeCache(nodeAssocRef.getSourceRef());
+	}
+
+	@Override
+	public void onDeleteAssociation(AssociationRef nodeAssocRef) {
+		purgeCache(nodeAssocRef.getSourceRef());
+	}
+
 
 	private void purgeCache(NodeRef nodeRef) {
 		if (logger.isDebugEnabled()) {

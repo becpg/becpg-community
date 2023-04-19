@@ -252,6 +252,11 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		// Do Nothing
 
 	}
+	
+	protected void doAfterAssocsCommit(String key, Set<AssociationRef> pendingAssocs) {
+		// Do Nothing
+		
+	}
 
 	/**
 	 * <p>queueNode.</p>
@@ -504,6 +509,26 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 						watch.stop();
 						logger.debug(id + " - AfterCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingNodesSize : "+pendingNodes.size());
 
+					}
+				}
+			}
+			for (String key : getKeyRegistry(ASSOC_REGISTRY)) {
+				
+				Set<AssociationRef> pendingAssocs = TransactionSupportUtil.getResource(key);
+				
+				if (pendingAssocs != null) {
+					
+					if (logger.isDebugEnabled()) {
+						watch = new StopWatch();
+						watch.start();
+					}
+					
+					doAfterAssocsCommit(key, pendingAssocs);
+					
+					if (logger.isDebugEnabled()  && watch!=null) {
+						watch.stop();
+						logger.debug(id + " - AfterCommit run in  " + watch.getTotalTimeSeconds() + " seconds for key " + key+"  - pendingASSOCSSize : "+pendingAssocs.size());
+						
 					}
 				}
 			}
