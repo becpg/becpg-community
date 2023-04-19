@@ -97,7 +97,12 @@ div.wizard-content {
     padding: 1em;
     text-decoration: none;
     width: auto;
+    background: none repeat scroll 0 0 rgb(238, 238, 238);
+    color: rgb(170, 170, 170);
+    cursor: default;
 }
+
+
 .wizard > .steps .disabled a, .wizard > .steps .disabled a:hover, .wizard > .steps .disabled a:active {
     background: none repeat scroll 0 0 rgb(238, 238, 238);
     color: rgb(170, 170, 170);
