@@ -443,7 +443,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				var key = getLocalKey(Alfresco.constants.JS_LOCALE);
 				var jsonData = JSON.parse(data.value);
 				if (jsonData && jsonData.v) {
-					if (jsonData.v[key]) {
+					if (jsonData.v[key]!=null) {
 						if (jsonData.tu && jsonData.tu[key]) {
 							ret +=  '<span class="red">'+jsonData.tu[key].toLocaleString( beCPG.util.getJSLocale() ) +'</span>'+ "<";
 						}

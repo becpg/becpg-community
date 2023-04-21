@@ -19,6 +19,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.NutMeasurementPrecision;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.nutrient.AbstractNutrientRegulation.NutrientDefinition;
@@ -740,7 +741,7 @@ public class RegulationFormulationHelper {
 	 * @param locale a {@link java.util.Locale} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public static String displayValue(Double value, Double roundedValue, String nutCode, String measurementPrecision, Locale locale) {
+	public static String displayValue(Double value, Double roundedValue, String nutCode, String  measurementPrecision, Locale locale) {
 		if (value == null) {
 			return null;
 		}
@@ -761,7 +762,7 @@ public class RegulationFormulationHelper {
 		if (value == null) {
 			return null;
 		}
-		return getRegulation(regulation).displayValue(value, roundedValue,measurementPrecision, nutCode, locale);
+		return getRegulation(regulation).displayValue(value, roundedValue,nutCode, measurementPrecision, locale);
 	}
 
 	/**
