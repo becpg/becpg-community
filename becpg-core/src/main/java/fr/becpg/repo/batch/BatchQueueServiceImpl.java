@@ -57,6 +57,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	private TenantAdminService tenantAdminService;
 
 	private BatchMonitor lastRunningBatch;
+	
+	private Runnable runningCommand;
 
 	private Set<String> cancelledBatches = new HashSet<>();
 
@@ -103,7 +105,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		cancelledBatches.remove(batchInfo.getBatchId());
 		
 		Runnable command = new BatchCommand<>(batchInfo, batchSteps, closingHook);
-		if (!threadExecutor.getQueue().contains(command)) {
+		if (!threadExecutor.getQueue().contains(command) && !command.equals(runningCommand)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("Batch " + batchInfo.getBatchId() + " added to execution queue");
 			}
@@ -199,154 +201,159 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		@Override
 		public void run() {
 
-			boolean hasError = false;
-
-			Date startTime = null;
-			Date endTime = null;
-
-			Integer stepCount = batchSteps.size() > 1 ? 1 : null;
+			runningCommand = this;
 			
-			for (BatchStep<T> batchStep : batchSteps) {
-				try {
-					if (batchStep.getBatchStepListener() != null) {
-
-						AuthenticationUtil.pushAuthentication();
-
-						String username = batchInfo.getBatchUser();
-						if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-
-							username = AuthenticationUtil.getSystemUserName();
-							if (tenantAdminService.isEnabled()) {
-								username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-
-							}
-
-						}
-						AuthenticationUtil.setFullyAuthenticatedUser(username);
-
-						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							batchStep.getBatchStepListener().beforeStep();
-							return true;
-						}, false, true);
-
-						AuthenticationUtil.popAuthentication();
-
-					}
-
-					JSONObject jsonBatch = new JSONObject();
-
-					jsonBatch.put("batchId", batchInfo.getBatchId());
-					jsonBatch.put("batchDescId", batchInfo.getBatchDescId());
-					jsonBatch.put("batchUser", batchInfo.getBatchUser());
-					jsonBatch.put("entityDescription", batchInfo.getEntityDescription());
-					if (stepCount != null) {
-						jsonBatch.put("stepCount", stepCount);
-						jsonBatch.put("stepsMax", batchSteps.size());
-						stepCount++;
-					}
-
-				BatchProcessor<T> batchProcessor = new BatchProcessor<>(jsonBatch.toString(),
-						transactionService.getRetryingTransactionHelper(), getNextWorkWrapper(batchStep.getWorkProvider()),
-						batchInfo.getWorkerThreads(), batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
-
-					batchProcessor.process(runAsWrapper(batchStep.getProcessWorker()), true);
-
-					if (startTime == null) {
-						startTime = batchProcessor.getStartTime();
-					}
-
-					endTime = batchProcessor.getEndTime();
-
-					if (batchProcessor.getTotalErrors() > 0 && batchStep.getBatchStepListener() != null) {
-
-						hasError = true;
-
-						AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							batchStep.getBatchStepListener().onError(batchProcessor.getLastErrorEntryId(), batchProcessor.getLastError());
-							return null;
-
-						}, true, false), batchInfo.getBatchUser());
-
-					}
-					if (batchStep.getBatchStepListener() != null) {
-
-						AuthenticationUtil.pushAuthentication();
-
-						String username = batchInfo.getBatchUser();
-						if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-
-							username = AuthenticationUtil.getSystemUserName();
-							if (tenantAdminService.isEnabled()) {
-								username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-
-							}
-
-						}
-						AuthenticationUtil.setFullyAuthenticatedUser(username);
-
-						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							batchStep.getBatchStepListener().afterStep();
-							return true;
-						}, false, true);
-
-						AuthenticationUtil.popAuthentication();
-
-					}
-
-				} catch (JSONException e) {
-					logger.error("Failed to fill JSON information", e);
-				}
-
-			}
-
-			if (closingHook != null) {
+			try {
+				boolean hasError = false;
 				
-				AuthenticationUtil.pushAuthentication();
-
-				String username = batchInfo.getBatchUser();
-				if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-
-					username = AuthenticationUtil.getSystemUserName();
-					if (tenantAdminService.isEnabled()) {
-						username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-
+				Date startTime = null;
+				Date endTime = null;
+				
+				Integer stepCount = batchSteps.size() > 1 ? 1 : null;
+				
+				for (BatchStep<T> batchStep : batchSteps) {
+					try {
+						if (batchStep.getBatchStepListener() != null) {
+							
+							AuthenticationUtil.pushAuthentication();
+							
+							String username = batchInfo.getBatchUser();
+							if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
+								
+								username = AuthenticationUtil.getSystemUserName();
+								if (tenantAdminService.isEnabled()) {
+									username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
+									
+								}
+								
+							}
+							AuthenticationUtil.setFullyAuthenticatedUser(username);
+							
+							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								batchStep.getBatchStepListener().beforeStep();
+								return true;
+							}, false, true);
+							
+							AuthenticationUtil.popAuthentication();
+							
+						}
+						
+						JSONObject jsonBatch = new JSONObject();
+						
+						jsonBatch.put("batchId", batchInfo.getBatchId());
+						jsonBatch.put("batchDescId", batchInfo.getBatchDescId());
+						jsonBatch.put("batchUser", batchInfo.getBatchUser());
+						jsonBatch.put("entityDescription", batchInfo.getEntityDescription());
+						if (stepCount != null) {
+							jsonBatch.put("stepCount", stepCount);
+							jsonBatch.put("stepsMax", batchSteps.size());
+							stepCount++;
+						}
+						
+						BatchProcessor<T> batchProcessor = new BatchProcessor<>(jsonBatch.toString(),
+								transactionService.getRetryingTransactionHelper(), getNextWorkWrapper(batchStep.getWorkProvider()),
+								batchInfo.getWorkerThreads(), batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
+						
+						batchProcessor.process(runAsWrapper(batchStep.getProcessWorker()), true);
+						
+						if (startTime == null) {
+							startTime = batchProcessor.getStartTime();
+						}
+						
+						endTime = batchProcessor.getEndTime();
+						
+						if (batchProcessor.getTotalErrors() > 0 && batchStep.getBatchStepListener() != null) {
+							
+							hasError = true;
+							
+							AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								batchStep.getBatchStepListener().onError(batchProcessor.getLastErrorEntryId(), batchProcessor.getLastError());
+								return null;
+								
+							}, true, false), batchInfo.getBatchUser());
+							
+						}
+						if (batchStep.getBatchStepListener() != null) {
+							
+							AuthenticationUtil.pushAuthentication();
+							
+							String username = batchInfo.getBatchUser();
+							if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
+								
+								username = AuthenticationUtil.getSystemUserName();
+								if (tenantAdminService.isEnabled()) {
+									username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
+									
+								}
+								
+							}
+							AuthenticationUtil.setFullyAuthenticatedUser(username);
+							
+							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+								batchStep.getBatchStepListener().afterStep();
+								return true;
+							}, false, true);
+							
+							AuthenticationUtil.popAuthentication();
+							
+						}
+						
+					} catch (JSONException e) {
+						logger.error("Failed to fill JSON information", e);
 					}
+					
 				}
 				
-				AuthenticationUtil.setFullyAuthenticatedUser(username);
-
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					closingHook.run();
-					return true;
-				}, false, true);
-
-				AuthenticationUtil.popAuthentication();
-
-			}
-
-			if (Boolean.TRUE.equals(batchInfo.getNotifyByMail())) {
-				
-				final boolean finalHasError = hasError;
-				final Date finalEndTime = endTime;
-				final Date finalStartTime = startTime;
-				
-				int secondsBetween = (int) ((finalEndTime.getTime() - finalStartTime.getTime()) / 1000);
-				
-				AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				if (closingHook != null) {
 					
-					beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(), batchInfo.getMailAction(), batchInfo.getMailActionUrl(),
-							!finalHasError, secondsBetween, batchInfo.getEntityDescription());
+					AuthenticationUtil.pushAuthentication();
 					
-					return null;
-				}, true, false), batchInfo.getBatchUser());
+					String username = batchInfo.getBatchUser();
+					if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
+						
+						username = AuthenticationUtil.getSystemUserName();
+						if (tenantAdminService.isEnabled()) {
+							username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
+							
+						}
+					}
+					
+					AuthenticationUtil.setFullyAuthenticatedUser(username);
+					
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						closingHook.run();
+						return true;
+					}, false, true);
+					
+					AuthenticationUtil.popAuthentication();
+					
+				}
+				
+				if (Boolean.TRUE.equals(batchInfo.getNotifyByMail())) {
+					
+					final boolean finalHasError = hasError;
+					final Date finalEndTime = endTime;
+					final Date finalStartTime = startTime;
+					
+					int secondsBetween = (int) ((finalEndTime.getTime() - finalStartTime.getTime()) / 1000);
+					
+					AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						
+						beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(), batchInfo.getMailAction(), batchInfo.getMailActionUrl(),
+								!finalHasError, secondsBetween, batchInfo.getEntityDescription());
+						
+						return null;
+					}, true, false), batchInfo.getBatchUser());
+				}
+				
+				batchInfo.setIsCompleted(true);
+				
+				if (cancelledBatches.contains(batchId)) {
+					cancelledBatches.remove(batchId);
+				}
+			} finally {
+				runningCommand = null;
 			}
-			
-			batchInfo.setIsCompleted(true);
-
-			if (cancelledBatches.contains(batchId)) {
-				cancelledBatches.remove(batchId);
-			}
-
 		}
 
 		private BatchProcessWorkProvider<T> getNextWorkWrapper(BatchProcessWorkProvider<T> workProvider) {
