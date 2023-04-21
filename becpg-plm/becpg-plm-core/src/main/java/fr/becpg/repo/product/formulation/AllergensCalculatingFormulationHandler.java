@@ -242,10 +242,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					if (regulatoryThreshold != null && allergenListDataItem.getQtyPerc() != null) {
 						if (regulatoryThreshold > allergenListDataItem.getQtyPerc()) {
 							allergenListDataItem.setVoluntary(false);
-							allergenListDataItem.setInVoluntary(false);
 						} else if (regulatoryThreshold <= allergenListDataItem.getQtyPerc()) {
 							allergenListDataItem.setVoluntary(true);
-							allergenListDataItem.setInVoluntary(false);
 						}
 					}
 				}
