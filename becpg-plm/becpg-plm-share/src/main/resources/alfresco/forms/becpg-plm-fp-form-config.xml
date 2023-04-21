@@ -161,9 +161,10 @@
           <show force="false" id="gs1:packagingTermsAndConditionsCode"/>
           <show force="false" id="gs1:platformTermsAndConditionsCode"/>
           <show force="false" id="gs1:packUnitNumber"/>
-          <show force="false" id="gs1:sortingInstructions"/>
+         
           <show force="false" id="gs1:sortingBonusCriteria"/>
           <show force="false" id="gs1:sortingMalusCriteria"/>
+           <show force="false" id="gs1:sortingInstructions"/>
           <show force="false" id="gs1:productHierarchy1"/>
           <show force="false" id="gs1:productHierarchy2"/>
           <show force="false" id="gs1:productHierarchy3"/>
@@ -700,14 +701,14 @@
           <field help-id="becpg.forms.help.gs1.packagingTermsAndConditionsCode" id="gs1:packagingTermsAndConditionsCode" mandatory="false" read-only="false" set="packSorting"/>
           <field help-id="becpg.forms.help.gs1.platformTermsAndConditionsCode" id="gs1:platformTermsAndConditionsCode" mandatory="false" read-only="false" set="packSorting"/>
           <field help-id="becpg.forms.help.gs1.packUnitNumber" id="gs1:packUnitNumber" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+       
+          <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
+          <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
+           <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
             <control template="/org/alfresco/components/form/controls/textarea.ftl">
               <control-param name="rows">2</control-param>
             </control>
           </field>
-          <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-          <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
-          
           <set id="publicationTab" label-id="becpg.forms.set.publication.label"/>
           <set appearance="bordered-panel" id="hierarchyPanel" label-id="becpg.forms.set.hierarchyPanel.label" parent="publicationTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="gs1:productHierarchy1" mandatory="false" read-only="false" set="hierarchyPanel">
