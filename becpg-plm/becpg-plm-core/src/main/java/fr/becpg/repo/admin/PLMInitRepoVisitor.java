@@ -793,7 +793,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			// rule
 			Rule rule = new Rule();
-			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND, RuleType.UPDATE));
+			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND));
 			rule.setAction(compositeAction);
 			rule.applyToChildren(true);
 			rule.setTitle("import csv file");
@@ -832,7 +832,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			// rule
 			rule = new Rule();
-			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND, RuleType.UPDATE));
+			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND));
 			rule.setAction(compositeAction);
 			rule.applyToChildren(true);
 			rule.setTitle("import xlsx file");
@@ -865,7 +865,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			// rule
 			Rule rule = new Rule();
-			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND, RuleType.UPDATE));
+			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND));
 			rule.setAction(compositeAction);
 			rule.applyToChildren(true);
 			rule.setTitle("import user");
