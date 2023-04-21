@@ -56,6 +56,10 @@
         
           <show force="true" id="gs1:packagingRecyclingProcessTypeCode"/>
 		  <show force="true" id="gs1:packagingRecyclingSchemeCode"/>
+		  
+          <show force="true" id="gs1:sortingBonusCriteria"/>
+          <show force="true" id="gs1:sortingMalusCriteria"/>
+          <show force="true" id="gs1:sortingInstructions"/>
           
           <show force="false" id="sec:securityRef" />
           <show force="false" id="cm:taggable"/>
@@ -234,7 +238,13 @@
          
           <field id="gs1:packagingRecyclingProcessTypeCode" mandatory="false" read-only="false" set="packSorting"/>
           <field id="gs1:packagingRecyclingSchemeCode" mandatory="false" read-only="false" set="packSorting"/>
-          
+           <field id="gs1:sortingBonusCriteria" mandatory="false" read-only="false" set="packSorting"/>
+          <field id="gs1:sortingMalusCriteria" mandatory="false" read-only="false" set="packSorting"/>
+           <field id="gs1:sortingInstructions" mandatory="false" read-only="false" set="packSorting">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+              <control-param name="rows">2</control-param>
+            </control>
+          </field>
           
           <set id="securityRule" appearance="bordered-panel" label-id="becpg.forms.set.securityRule.label" />
           <field id="sec:securityRef" set="securityRule" mandatory="false" read-only="false">
