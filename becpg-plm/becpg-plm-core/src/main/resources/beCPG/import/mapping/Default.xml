@@ -206,6 +206,7 @@
 		</dataListColumnKeys>
 		<columns>
 			<column id="bcpg:lrComponents" type="Attribute" attribute="bcpg:lrComponents" targetClass="bcpg:ing" />
+			<column id="lrFormula" type="Formula" attribute="bcpg:lrFormula" />
 		</columns>
 	</mapping>
 	
