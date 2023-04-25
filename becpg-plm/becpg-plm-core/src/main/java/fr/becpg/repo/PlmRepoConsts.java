@@ -284,6 +284,7 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_CATCH_METHID_CODES = "CatchMethodCodes";
 	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
 	public static final String PATH_PUBCHANNELS = "PubChannels";
+	public static final String PATH_MICROBIO_TYPES = "MicrobioTypes";
 
 
 

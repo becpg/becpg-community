@@ -172,6 +172,7 @@
 			<list id="PhysicoUnits" index="60"/>
 			<list id="PhysicoTypes" index="70"/>
 			<list id="MicrobioUnits" index="80"/>
+			<list id="MicrobioTypes" index="81"/>
 			<list id="MicrobioControlSteps" index="90"/>
 			<list id="MeatTypes" index="100"/>
 			<list id="ResourceParamTypes" index="110"/>
@@ -184,6 +185,8 @@
 			<list id="TrademarkTypes" index="180"/>
 			<list id="pmPrintTypes" index="190"/>
 			<list id="pmPrintVarnishs" index="200"/> 
+			<list id="SortingBonusCriteria" index="210"/>
+			<list id="SortingMalusCriteria" index="220"/> 
 		</lists>
 	</config>
 	
