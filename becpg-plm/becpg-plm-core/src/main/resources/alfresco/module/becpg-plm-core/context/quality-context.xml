@@ -76,6 +76,14 @@
 				<bean  class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
+				<bean class="fr.becpg.repo.formulation.impl.ScriptsFormulationHandler">
+					<property name="nodeService" ref="nodeService" />
+					<property name="namespaceService" ref="namespaceService" />
+					<property name="scriptService" ref="scriptService" />
+					<property name="formulaService" ref="formulaService" />
+					<property name="contentService" ref="contentService" />
+					<property name="associationService" ref="associationService" />
+				</bean>
 			</list>
 		</property>
 		<property name="formulationService" ref="formulationService" />
