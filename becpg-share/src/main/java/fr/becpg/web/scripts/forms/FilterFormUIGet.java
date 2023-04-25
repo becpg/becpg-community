@@ -33,10 +33,12 @@ import org.springframework.extensions.webscripts.json.JSONWriter;
  * @version $Id: $Id
  */
 public class FilterFormUIGet extends FormUIGet {
-	
+
 	private static final String ENTITY_PREFIX = "entity_";
 
 	private static final String PARAM_SITEID = "siteId";
+
+	private static final String PARAM_ENTITY_TYPE = "entityType";
 
 	private static final String PARAM_LIST = "list";
 
@@ -52,30 +54,48 @@ public class FilterFormUIGet extends FormUIGet {
 		String formId = getParameter(request, PARAM_FORM_ID);
 		String siteIdParam = getParameter(request, PARAM_SITEID);
 		String list = getParameter(request, PARAM_LIST);
+		String entityType = getParameter(request, PARAM_ENTITY_TYPE);
+
+		if (entityType != null && entityType.contains(":")) {
+			entityType = entityType.split(":")[1];
+		}
 
 		Mode mode = Mode.CREATE;
 		if (list != null && list.indexOf("WUsed") > -1) {
 			mode = Mode.VIEW;
-			if(formId!=null && testFormConfig(itemId, formId +"-wused" ) != null ) {
-				formId = formId +"-wused" ;
+			if (formId != null && testFormConfig(itemId, formId + "-wused") != null) {
+				formId = formId + "-wused";
 			}
 		}
 
-	    
-        if(siteIdParam!=null && !siteIdParam.isEmpty()) {
-        	if(formId!=null && !formId.isEmpty() && testFormConfig(itemId, formId +"-"+ siteIdParam) != null ) {
-        		formId = formId +"-"+ siteIdParam;
-        	} else if(testFormConfig(itemId, siteIdParam) !=null ) {
-        		formId = siteIdParam;
-        	}
-        }
-        
-         // get the form configuration and list of fields that are visible (if any)
-        FormConfigElement formConfig  = getFormConfig(itemId, formId);
-        
-		
+		if (formId != null && !formId.isBlank()) {
+			if (entityType != null && !entityType.isBlank() && siteIdParam != null && !siteIdParam.isBlank()
+					&& testFormConfig(itemId, formId + "-" + entityType + "-" + siteIdParam) != null) {
+				formId = formId + "-" + entityType + "-" + siteIdParam;
+
+			} else if (siteIdParam != null && !siteIdParam.isBlank() && testFormConfig(itemId, formId + "-" + siteIdParam) != null) {
+				formId = formId + "-" + siteIdParam;
+			} else if (entityType != null && !entityType.isBlank() && testFormConfig(itemId, formId + "-" + entityType) != null) {
+				formId = formId + "-" + entityType;
+			}
+
+		} else {
+			if (entityType != null && !entityType.isBlank() && siteIdParam != null && !siteIdParam.isBlank()
+					&& testFormConfig(itemId, entityType + "-" + siteIdParam) != null) {
+				formId = entityType + "-" + siteIdParam;
+
+			} else if (siteIdParam != null && !siteIdParam.isBlank() && testFormConfig(itemId, siteIdParam) != null) {
+				formId = siteIdParam;
+			} else if (entityType != null && !entityType.isBlank() && testFormConfig(itemId, entityType) != null) {
+				formId = entityType;
+			}
+		}
+
+		// get the form configuration and list of fields that are visible (if any)
+		FormConfigElement formConfig = getFormConfig(itemId, formId);
+
 		List<String> visibleFields = getVisibleFields(mode, formConfig);
-		
+
 		// get the form definition from the form service
 		Response formSvcResponse = retrieveFormDefinition(itemKind, itemId, visibleFields, formConfig);
 		if (formSvcResponse.getStatus().getCode() == Status.STATUS_OK) {
@@ -90,7 +110,7 @@ public class FilterFormUIGet extends FormUIGet {
 		}
 
 		visibleFields = getVisibleFields(mode, formConfig);
-		
+
 		String prevFieldId = null;
 		for (String fieldId : visibleFields) {
 			if (fieldId.indexOf(ENTITY_PREFIX) == 0) {
@@ -99,26 +119,26 @@ public class FilterFormUIGet extends FormUIGet {
 
 				String[] splitted = fieldId.replace(ENTITY_PREFIX, "").split("_");
 				String name = splitted[0];
-				
+
 				String subItemId = splitted[1];
-				
+
 				String subFormId = "sub-datagrid-filter";
-				
+
 				if (subItemId.contains("@")) {
 					String[] newSplitted = subItemId.split("@");
 					subItemId = newSplitted[0];
 					subFormId = newSplitted[1];
 				}
-				
+
 				FormConfigElement subFormConfig = getFormConfig(subItemId, subFormId);
-				
-				List<String> subVisibleFields =  new ArrayList<>(getVisibleFields(Mode.CREATE, subFormConfig));
-				
+
+				List<String> subVisibleFields = new ArrayList<>(getVisibleFields(Mode.CREATE, subFormConfig));
+
 				subVisibleFields.removeAll(visibleFields);
 				subVisibleFields = Collections.unmodifiableList(subVisibleFields);
 
 				formSvcResponse = retrieveFormDefinition(itemKind, subItemId, subVisibleFields, subFormConfig);
-				if (formSvcResponse.getStatus().getCode() == Status.STATUS_OK && model!=null) {
+				if (formSvcResponse.getStatus().getCode() == Status.STATUS_OK && model != null) {
 					merge(model, name, generateFormModel(request, Mode.CREATE, formSvcResponse, subFormConfig), fieldSet, prevFieldId);
 				}
 
@@ -155,7 +175,7 @@ public class FilterFormUIGet extends FormUIGet {
 
 				Set toMergedSet = findSet((List<Element>) toMergeForm.get(MODEL_STRUCTURE), null);
 
-				if (fields != null && toMergeForm.containsKey(MODEL_FIELDS) && toMergedSet!=null) {
+				if (fields != null && toMergeForm.containsKey(MODEL_FIELDS) && toMergedSet != null) {
 					for (Element el : toMergedSet.getChildren()) {
 						if (FIELD.equals(el.getKind())) {
 
@@ -181,8 +201,7 @@ public class FilterFormUIGet extends FormUIGet {
 				logger.error("Cannot find set with id : " + fieldSet);
 			}
 		}
-		
-		
+
 	}
 
 	private Constraint createProxy(final Constraint constraint, final String name) {
@@ -293,51 +312,42 @@ public class FilterFormUIGet extends FormUIGet {
 		// return the JSON body as a stream
 		return new ByteArrayInputStream(buf.toString().getBytes());
 	}
-	
-	
-    /**
-     * <p>testFormConfig.</p>
-     *
-     * @param itemId a {@link java.lang.String} object.
-     * @param formId a {@link java.lang.String} object.
-     * @return a {@link org.alfresco.web.config.forms.FormConfigElement} object.
-     */
-    protected FormConfigElement testFormConfig(String itemId, String formId)
-    {
-        FormConfigElement formConfig = null;
-        FormsConfigElement formsConfig = null;
-        RequestContext requestContext = ThreadLocalRequestContext.getRequestContext();
-        ConfigModel extendedTemplateConfigModel = requestContext.getExtendedTemplateConfigModel(null);
-        
-        if(extendedTemplateConfigModel != null) {
-        	@SuppressWarnings("unchecked")
-	        Map<String, ConfigElement> configs = (Map<String, ConfigElement>) extendedTemplateConfigModel.getScoped().get(itemId);
-	        formsConfig = (FormsConfigElement) configs.get(CONFIG_FORMS);
-        }
-        
-        if(formsConfig == null)
-        {
-        	Config configResult = this.configService.getConfig(itemId);
-            formsConfig = (FormsConfigElement)configResult.getConfigElement(CONFIG_FORMS);
-        }
-        
-        if (formsConfig != null)
-        {
-           // Extract the form we are looking for
-            // try and retrieve the specified form 
-            if (formId != null && formId.length() > 0)
-            {
-                formConfig = formsConfig.getForm(formId);
-            }
-                
-        }
-        else if (logger.isWarnEnabled())
-        {
-            logger.warn("Could not lookup form configuration as configService has not been set");
-        }
-        return formConfig;
-    }
-	
-	
+
+	/**
+	 * <p>testFormConfig.</p>
+	 *
+	 * @param itemId a {@link java.lang.String} object.
+	 * @param formId a {@link java.lang.String} object.
+	 * @return a {@link org.alfresco.web.config.forms.FormConfigElement} object.
+	 */
+	protected FormConfigElement testFormConfig(String itemId, String formId) {
+		FormConfigElement formConfig = null;
+		FormsConfigElement formsConfig = null;
+		RequestContext requestContext = ThreadLocalRequestContext.getRequestContext();
+		ConfigModel extendedTemplateConfigModel = requestContext.getExtendedTemplateConfigModel(null);
+
+		if (extendedTemplateConfigModel != null) {
+			@SuppressWarnings("unchecked")
+			Map<String, ConfigElement> configs = (Map<String, ConfigElement>) extendedTemplateConfigModel.getScoped().get(itemId);
+			formsConfig = (FormsConfigElement) configs.get(CONFIG_FORMS);
+		}
+
+		if (formsConfig == null) {
+			Config configResult = this.configService.getConfig(itemId);
+			formsConfig = (FormsConfigElement) configResult.getConfigElement(CONFIG_FORMS);
+		}
+
+		if (formsConfig != null) {
+			// Extract the form we are looking for
+			// try and retrieve the specified form 
+			if (formId != null && formId.length() > 0) {
+				formConfig = formsConfig.getForm(formId);
+			}
+
+		} else if (logger.isWarnEnabled()) {
+			logger.warn("Could not lookup form configuration as configService has not been set");
+		}
+		return formConfig;
+	}
 
 }
