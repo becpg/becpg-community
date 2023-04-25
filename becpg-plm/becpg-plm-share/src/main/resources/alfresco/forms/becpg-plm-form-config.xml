@@ -1591,6 +1591,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:microbioType" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -1618,6 +1619,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:microbioType" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -1638,8 +1640,9 @@
 
 			<!-- Data Grid view -->
 			<form id="filter">
-				<field-visibility>
+				<field-visibility>	 
 					<show id="bcpg:charactName" />
+					 <show id="bcpg:microbioType" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1650,6 +1653,12 @@
 					<field id="bcpg:isDeleted" >
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
+						<field id="bcpg:physicoChemType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>	
+					</field>
 				</appearance>
 			</form>
 
@@ -1657,6 +1666,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:microbioType" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -6022,9 +6032,9 @@
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
 			
-				<!--  <show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" /> -->	
-				   <show id="bcpg:ingListIsProcessingAid" />
+				    <show id="bcpg:ingListIsGMO" />
+				    <show id="bcpg:ingListIsIonized" /> 
+				    <show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
@@ -6073,7 +6083,9 @@
 					     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7CCertification</control-param>
 			            </control>
-			         </field>			
+			         </field>
+			         <field id="bcpg:ingListIsIonized" set="2-col-1"/>
+					<field id="bcpg:ingListIsGMO" set="2-col-1"/>					
 			         <field id="bcpg:ingListIsProcessingAid" set="2-col-1"/>
 					<field id="bcpg:ingListIsSupport" set="2-col-1"/>		
 					
@@ -6104,8 +6116,8 @@
 					<show id="bcpg:ingListVolumeQtyPerc" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyPercWithYield" />
-						<!--  <show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" /> -->
+				    <show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
@@ -6157,8 +6169,8 @@
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
-					<!--  <show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" /> -->
+					<show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
@@ -6179,8 +6191,8 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
-					<!--  <show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" /> -->
+			    	<show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" /> 
 					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
@@ -6203,18 +6215,18 @@
 					<field id="bcpg:ingListQtyMini" set="2-col"/>
 					<field id="bcpg:ingListQtyMaxi" set="2-col"/>
 					
-			<!--		<field id="bcpg:ingListIsGMO">
+					<field id="bcpg:ingListIsGMO" set="2-col">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:ingListIsIonized">
+					<field id="bcpg:ingListIsIonized" set="2-col">
 					<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
 						</control>
-					</field>  -->
+					</field>  
 					<field id="bcpg:ingListIsProcessingAid" set="2-col">
 					<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
@@ -6256,10 +6268,10 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
+					<show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" /> 
 				    <show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
-				<!--  <show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" /> -->	
 				
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
@@ -6311,7 +6323,8 @@
 			         </field>			
 			         <field id="bcpg:ingListIsProcessingAid" set="2-col-1"/>
 					<field id="bcpg:ingListIsSupport" set="2-col-1"/>		
-					
+					  <field id="bcpg:ingListIsGMO" set="2-col-1"/>
+					<field id="bcpg:ingListIsIonized" set="2-col-1"/>		
 						
 					<field id="bcpg:parentLevel" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -6367,6 +6380,7 @@
 					<show id="bcpg:mblMicrobio" />
 					<show id="bcpg:mblValue" />
 					<show id="bcpg:mblUnit" />
+					<show id="bcpg:mblType" />
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
 					<show id="bcpg:mblControlStep" />
@@ -6377,6 +6391,7 @@
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:pclType" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
