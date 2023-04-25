@@ -244,6 +244,8 @@ public interface PLMModel {
 	QName PROP_MICROBIOLIST_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "mblValue");
 	/** Constant <code>PROP_MICROBIOLIST_UNIT</code> */
 	QName PROP_MICROBIOLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "mblUnit");
+	
+	QName PROP_MICROBIOLIST_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "mblType");
 	/** Constant <code>PROP_MICROBIOLIST_MAXI</code> */
 	QName PROP_MICROBIOLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "mblMaxi");
 	/** Constant <code>PROP_MICROBIOLIST_TEXT_CRITERIA</code> */
@@ -400,7 +402,8 @@ public interface PLMModel {
 	// microbio
 	/** Constant <code>TYPE_MICROBIO</code> */
 	QName TYPE_MICROBIO = QName.createQName(BeCPGModel.BECPG_URI, "microbio");
-
+	
+	QName PROP_MICROBIO_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "microbioType");
 	// geoOrigin
 	/** Constant <code>TYPE_GEO_ORIGIN</code> */
 	QName TYPE_GEO_ORIGIN = QName.createQName(BeCPGModel.BECPG_URI, "geoOrigin");

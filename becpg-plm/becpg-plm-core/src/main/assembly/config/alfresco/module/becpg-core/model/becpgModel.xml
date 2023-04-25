@@ -483,6 +483,23 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:microbioTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/MicrobioTypes</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
 
 		<constraint name="bcpg:packagingLevel" type="LIST">
 			<parameter name="allowedValues">
@@ -1199,6 +1216,19 @@
 
 		<type name="bcpg:microbio">
 			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:microbioType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="bcpg:microbioTypes" />
+					</constraints>
+				</property>
+			</properties>
 		</type>
 
 		<type name="bcpg:nut">
@@ -2299,6 +2329,17 @@
 					<index enabled="false" />
 					<constraints>
 						<constraint ref="bcpg:microbioUnit" />
+					</constraints>
+				</property>
+				<property name="bcpg:mblType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="bcpg:microbioTypes" />
 					</constraints>
 				</property>
 				<property name="bcpg:mblMaxi">

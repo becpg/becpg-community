@@ -90,6 +90,10 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_PHYSICOCHEMLIST,
 				PLMModel.ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM, new JavaBehaviour(this, "onCreateAssociation"));
+		
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_MICROBIOLIST,
+				PLMModel.ASSOC_MICROBIOLIST_MICROBIO, new JavaBehaviour(this, "onCreateAssociation"));
+
 
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_LABELCLAIMLIST,
 				PLMModel.ASSOC_LCL_LABELCLAIM, new JavaBehaviour(this, "onCreateAssociation"));
@@ -103,6 +107,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 		super.disableOnCopyBehaviour(PLMModel.TYPE_COSTLIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_NUTLIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_PHYSICOCHEMLIST);
+		super.disableOnCopyBehaviour(PLMModel.TYPE_MICROBIOLIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_LABELCLAIMLIST);
 		super.disableOnCopyBehaviour(PackModel.TYPE_LABELING_LIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_PRODUCT);
@@ -339,10 +344,6 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 
 						}
 						
-						
-						
-						
-
 						// nutListGroup
 						String nutGroup = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_NUTGROUP);
 						nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_NUTLIST_GROUP, nutGroup);
@@ -354,7 +355,14 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 						nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_PHYSICOCHEMLIST_TYPE, physicoChemType);
 						
 						
-					} else if (type.equals(PLMModel.TYPE_LABELCLAIMLIST)) {
+					} else if (type.equals(PLMModel.TYPE_MICROBIOLIST)) {
+					    
+						String microbioType = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_MICROBIO_TYPE);
+						nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_MICROBIOLIST_TYPE, microbioType);
+
+					}
+					
+					else if (type.equals(PLMModel.TYPE_LABELCLAIMLIST)) {
 						// labelClaimType
 						String labelClaimType = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_LABEL_CLAIM_TYPE);
 						nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_LCL_TYPE, labelClaimType);
