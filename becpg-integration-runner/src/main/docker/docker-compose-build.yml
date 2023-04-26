@@ -17,12 +17,16 @@ services:
     build:
       dockerfile: ./Dockerfile
       context: ${project.basedir}/becpg-integration-runner/target/becpg-test-core
+    depends_on:
+      - becpg-base-core
       
   becpg-test-share:
     image: ${docker.becpg.url}/becpg-test-share:${docker.becpg.tag}
     build:
       dockerfile: ./Dockerfile
       context: ${project.basedir}/becpg-integration-runner/target/becpg-test-share
+    depends_on:
+      - becpg-base-share      
       
   becpg-db:
     image: ${docker.becpg.url}/becpg-db:${docker.becpg.tag}
