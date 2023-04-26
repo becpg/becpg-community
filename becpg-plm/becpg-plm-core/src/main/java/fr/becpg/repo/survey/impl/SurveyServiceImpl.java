@@ -83,7 +83,7 @@ public class SurveyServiceImpl implements SurveyService {
 
 				SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository.findOne(survey.getQuestion());
 
-				appendQuestionDefinition(definitions, surveyQuestion, questions, survey.getSort());
+				appendQuestionDefinition(definitions, surveyQuestion, questions);
 				if ((survey.getComment() != null) || !survey.getChoices().isEmpty()) {
 					value.put("qid", survey.getQuestion().getId());
 					if (survey.getComment() != null) {
@@ -183,7 +183,7 @@ public class SurveyServiceImpl implements SurveyService {
 		return new ArrayList<>();
 	}
 
-	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions, Integer sort)
+	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions)
 			throws JSONException {
 
 		if (!questions.contains(surveyQuestion)) {
@@ -191,7 +191,7 @@ public class SurveyServiceImpl implements SurveyService {
 			JSONObject definition = new JSONObject();
 
 			definition.put("id", surveyQuestion.getNodeRef().getId());
-			definition.put("sort", sort);
+			definition.put("sort", surveyQuestion.getSort());
 			definition.put("label", surveyQuestion.getLabel());
 			definition.put("start", questions.isEmpty() || Boolean.TRUE.equals(surveyQuestion.getIsVisible()));
 
@@ -245,7 +245,7 @@ public class SurveyServiceImpl implements SurveyService {
 						}
 					}
 
-					appendCids(choice, surveyQuestion, definitions, questions, sort);
+					appendCids(choice, surveyQuestion, definitions, questions);
 
 					choices.put(choice);
 
@@ -257,7 +257,7 @@ public class SurveyServiceImpl implements SurveyService {
 						JSONObject choice = new JSONObject();
 						choice.put("id", defChoice.getNodeRef().getId());
 						choice.put("label", defChoice.getLabel());
-						appendCids(choice, defChoice, definitions, questions, sort);
+						appendCids(choice, defChoice, definitions, questions);
 						
 						if (CommentType.text.toString().equals(defChoice.getResponseCommentType())
 								|| CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
@@ -284,7 +284,7 @@ public class SurveyServiceImpl implements SurveyService {
 					choice.put("textarea", true);
 				}
 
-				appendCids(choice, surveyQuestion, definitions, questions, sort);
+				appendCids(choice, surveyQuestion, definitions, questions);
 
 				choices.put(choice);
 			}
@@ -295,12 +295,12 @@ public class SurveyServiceImpl implements SurveyService {
 		}
 	}
 
-	private void appendCids(JSONObject choice, SurveyQuestion surveyQuestion, JSONArray definitions, Set<SurveyQuestion> questions, int sort) {
+	private void appendCids(JSONObject choice, SurveyQuestion surveyQuestion, JSONArray definitions, Set<SurveyQuestion> questions) {
 		if (surveyQuestion.getNextQuestions() != null) {
 			JSONArray cids = new JSONArray();
 			for (SurveyQuestion question : surveyQuestion.getNextQuestions()) {
 				cids.put(question.getNodeRef().getId());
-				appendQuestionDefinition(definitions, question, questions, sort + 1);
+				appendQuestionDefinition(definitions, question, questions);
 			}
 			if (cids.length() > 0) {
 				choice.put("cid", cids);
