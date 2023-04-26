@@ -525,10 +525,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       		} else if(Math.abs(data.value) < 0.01){
       			qty = data.value * 10000;
       			unit = " ppm";
-      		} else if(Math.abs(data.value) < 0.1){
-      			qty = data.value * 10;
-      			unit = " ‰";
-      		} else{
+      		}  else{
       			qty = data.value;
       			unit = " %";
       		}
@@ -537,7 +534,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				  return '<span class="total">'+qty.toLocaleString( beCPG.util.getJSLocale() ) + unit+"</span>";
 			 }
       		
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,4).toLocaleString( beCPG.util.getJSLocale() ) + unit);
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,5).toLocaleString( beCPG.util.getJSLocale() ) + unit);
       	}      
       	return "";
       }
