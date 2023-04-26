@@ -73,11 +73,11 @@ purge() {
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
+   	 $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
      docker compose -f ./distribution/target/docker-compose-build.yml build
    	 cd ..
    else
-   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
+   	 $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
    	 docker compose -f ./becpg-integration-runner/target/docker-compose-build.yml build
    fi 
    
@@ -87,16 +87,16 @@ build() {
 install() {
   if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-    $MVN_EXEC  install $EXTRA_ENV -DskipTests=true
+    $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true
      cd ..
    else
-    $MVN_EXEC  install $EXTRA_ENV -DskipTests=true
+    $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true
   fi
   
 }
 
 tail() {
-    docker compose -p becpg_4_0 -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-share solr
+    docker compose -p becpg_4_0 -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-share
 }
 
 test() {

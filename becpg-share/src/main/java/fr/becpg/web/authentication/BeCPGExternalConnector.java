@@ -37,9 +37,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.config.RemoteConfigElement.ConnectorDescriptor;
 import org.springframework.extensions.surf.ServletUtil;
 import org.springframework.extensions.webscripts.RequestCachingConnector;
-import org.springframework.extensions.webscripts.connector.Connector;
 import org.springframework.extensions.webscripts.connector.ConnectorContext;
-import org.springframework.extensions.webscripts.connector.ConnectorService;
 import org.springframework.extensions.webscripts.connector.ConnectorSession;
 import org.springframework.extensions.webscripts.connector.RemoteClient;
 
