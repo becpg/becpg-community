@@ -74,23 +74,12 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private static final String CRITERIA_PACKAGING_LIST_PRODUCT = "assoc_bcpg_packagingListProduct_added";
 	private static final String CRITERIA_PROCESS_LIST_RESSOURCE = "assoc_mpm_plResource_added";
 	private static final String CRITERIA_COMPO_LIST_PRODUCT = "assoc_bcpg_compoListProduct_added";
+	private static final String CRITERIA_PRODUCT_LIST_PRODUCT = "assoc_bcpg_productCollections_added";
+	
 
 	private static final String CRITERIA_NOTRESPECTED_SPECIFICATIONS = "assoc_bcpg_advNotRespectedProductSpecs_added";
 	private static final String CRITERIA_RESPECTED_SPECIFICATIONS = "assoc_bcpg_advRespectedProductSpecs_added";
 
-	private Set<String> keysToExclude = new HashSet<>();
-
-	private void initKeys() {
-		keysToExclude.add(CRITERIA_PACKAGING_LIST_PRODUCT);
-		keysToExclude.add(CRITERIA_PROCESS_LIST_RESSOURCE);
-		keysToExclude.add(CRITERIA_COMPO_LIST_PRODUCT);
-
-		keysToExclude.add(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
-		keysToExclude.add(CRITERIA_RESPECTED_SPECIFICATIONS);
-
-		keysToExclude.addAll(SearchConfig.getKeysToExclude());
-
-	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -100,13 +89,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (doFilter) {
 
-			nodes = filterByAssociations(nodes, datatype, criteria);
+			nodes = filterByAssociations(searchConfig, nodes, datatype, criteria);
 
 			if ((datatype != null)) {
 				if (entityDictionaryService.isSubClass(datatype, BeCPGModel.TYPE_ENTITY_V2)) {
 					if (searchConfig.getDataListSearchFilters() != null && !nodes.isEmpty()) {
 						for (DataListSearchFilter filter : searchConfig.getDataListSearchFilters()) {
-							nodes = getSearchNodesByListCriteria(nodes, criteria, filter);
+							nodes = getSearchNodesByListCriteria( nodes, criteria, filter);
 						}
 					}
 				}
@@ -114,7 +103,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if (entityDictionaryService.isSubClass(datatype, PLMModel.TYPE_PRODUCT) && !nodes.isEmpty()) {
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT);
-					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE);	
+					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE);
+					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PRODUCT_LIST_PRODUCT, PLMModel.ASSOC_PRODUCTLIST_PRODUCT);
 				}
 				nodes = getSearchNodesBySpecificationCriteria(nodes, criteria);
 
@@ -124,7 +114,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
-	private List<NodeRef> getSearchNodesByListCriteria(List<NodeRef> nodes, Map<String, String> criteria, DataListSearchFilter filter) {
+	private List<NodeRef> getSearchNodesByListCriteria( List<NodeRef> nodes, Map<String, String> criteria, DataListSearchFilter filter) {
 
 		if(nodes.isEmpty()) {
 			return nodes;
@@ -283,12 +273,13 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	public Set<String> getIgnoredFields(QName datatype, SearchConfig searchConfig) {
 		Set<String> ret = new HashSet<>();
 		if ((datatype != null) && entityDictionaryService.isSubClass(datatype, BeCPGModel.TYPE_ENTITY_V2)) {
-
-			if (keysToExclude.isEmpty()) {
-				initKeys();
-			}
-
-			ret.addAll(keysToExclude);
+			ret.add(CRITERIA_PACKAGING_LIST_PRODUCT);
+			ret.add(CRITERIA_PROCESS_LIST_RESSOURCE);
+			ret.add(CRITERIA_COMPO_LIST_PRODUCT);
+			ret.add(CRITERIA_PRODUCT_LIST_PRODUCT);
+			ret.add(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
+			ret.add(CRITERIA_RESPECTED_SPECIFICATIONS);
+			ret.addAll(searchConfig.getKeysToExclude());
 		}
 		return ret;
 	}
@@ -301,7 +292,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	 *
 	 * @return filtered list of nodes by associations
 	 */
-	private List<NodeRef> filterByAssociations(List<NodeRef> nodes, QName datatype, Map<String, String> criteria) {
+	private List<NodeRef> filterByAssociations(SearchConfig searchConfig, List<NodeRef> nodes, QName datatype, Map<String, String> criteria) {
 
 
 		if(nodes.isEmpty()) {
@@ -326,7 +317,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				String assocName = key.substring(6);
 				if (assocName.endsWith("_added")) {
-					if (!entityDictionaryService.isSubClass(datatype, BeCPGModel.TYPE_ENTITY_V2) || !keysToExclude.contains(key)) {
+					if ( !getIgnoredFields(datatype, searchConfig).contains(key)) {
 
 						boolean isOROperand = false;
 
