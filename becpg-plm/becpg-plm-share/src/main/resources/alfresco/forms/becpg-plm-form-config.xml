@@ -2848,6 +2848,22 @@
 					<show id="sec:readGroups" force="true"/>
 					<show id="rep:reportLocales" force="true" />
 					<show id="bcpg:isDeleted"/>
+						<!-- hide exif:exif -->
+					<hide id="exif:dateTimeOriginal" />
+					<hide id="exif:pixelXDimension" />
+					<hide id="exif:pixelYDimension" />
+					<hide id="exif:exposureTime" />
+					<hide id="exif:fNumber" />
+					<hide id="exif:flash" />
+					<hide id="exif:focalLength" />
+					<hide id="exif:isoSpeedRatings" />
+					<hide id="exif:manufacturer" />
+					<hide id="exif:model" />
+					<hide id="exif:software" />
+					<hide id="exif:orientation" />
+					<hide id="exif:xResolution" />
+					<hide id="exif:yResolution" />
+					<hide id="exif:resolutionUnit" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />	
