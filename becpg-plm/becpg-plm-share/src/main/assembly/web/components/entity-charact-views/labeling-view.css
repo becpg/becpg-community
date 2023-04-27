@@ -95,6 +95,13 @@
 	color: black;
 }
 
+.labeling-view  .labelingTable tr {
+	border-color: black  !important; 
+}
+
+.labeling-view  .labelingTable td {
+	border-color: black !important;
+}
 
 
 .labeling-view  .datagrid .datagrid-bar .paginator {
