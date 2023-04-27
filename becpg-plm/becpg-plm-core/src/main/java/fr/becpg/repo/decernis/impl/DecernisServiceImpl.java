@@ -188,7 +188,8 @@ public class DecernisServiceImpl implements DecernisService {
 		return countries.contains(country);
 	}
 
-	private JSONObject getIngredients(ProductData product, List<ReqCtrlListDataItem> errors, Map<String, List<IngListDataItem>> ings) throws JSONException {
+	private JSONObject getIngredients(ProductData product, List<ReqCtrlListDataItem> errors, Map<String, List<IngListDataItem>> ings)
+			throws JSONException {
 
 		Map<QName, String> ingNumbers = new HashMap<>();
 		ingNumbers.put(PLMModel.PROP_CAS_NUMBER, "CAS");
@@ -333,13 +334,13 @@ public class DecernisServiceImpl implements DecernisService {
 
 					if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
 							&& ((ingName != null) && !ingName.isEmpty()) && (ingQtyPerc != null)) {
-						
+
 						if (ings.get(rid) == null) {
 							ings.put(rid, new ArrayList<>());
 						}
-						
+
 						ings.get(rid).add(ingListDataItem);
-						
+
 						JSONObject ingredient = new JSONObject();
 						ingredient.put("name", ingName);
 						ingredient.put("percentage", ingQtyPerc);
@@ -452,7 +453,7 @@ public class DecernisServiceImpl implements DecernisService {
 		params.put(PARAM_USAGE, usage);
 		params.put(PARAM_MODULE, module);
 
-		logger.debug("Get recipe analysis from decernis : " + recipeId + ", usage : " + usage);
+		logger.debug("Get recipe analysis from decernis : " + recipeId + ", usage : " + usage+", countries :"+ countryParam.toString());
 
 		HttpEntity<String> entity = createEntity(null);
 		JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
@@ -482,9 +483,9 @@ public class DecernisServiceImpl implements DecernisService {
 												: "");
 
 								List<IngListDataItem> ingList = ings.get(result.getString("did"));
-								
+
 								IngListDataItem ingItem = null;
-								
+
 								for (IngListDataItem ing : ingList) {
 									String ingName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
 									if (result.getString("ingredient").contains(ingName)) {
@@ -492,45 +493,46 @@ public class DecernisServiceImpl implements DecernisService {
 										break;
 									}
 								}
-								
-								if (result.getString("resultIndicator").toLowerCase().startsWith("prohibited")) {
-									String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
-											? "(" + result.getString("threshold") + ")"
-											: "");
+								if (ingItem != null) {
+									if (result.getString("resultIndicator").toLowerCase().startsWith("prohibited")) {
+										String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
+												? "(" + result.getString("threshold") + ")"
+												: "");
 
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Forbidden);
-									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
+										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Forbidden);
+										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 
-									reqCtrlList.add(reqCtrlItem);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding prohibited ing :" + result.getString("did"));
+										reqCtrlList.add(reqCtrlItem);
+										if (logger.isDebugEnabled()) {
+											logger.debug("Adding prohibited ing :" + result.getString("did"));
+										}
+
+									} else if (result.getString("resultIndicator").toLowerCase().startsWith("not listed")) {
+										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
+										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Tolerated);
+										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+										reqCtrlList.add(reqCtrlItem);
+										if (logger.isDebugEnabled()) {
+											logger.debug("Adding not listed ing :" + result.getString("did"));
+										}
+									} else if (Boolean.TRUE.equals(addInfoReqCtrl)) {
+
+										String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
+												? result.getString("threshold")
+												: "");
+
+										MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, result.getString("resultIndicator"),
+												threshold);
+										ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Info);
+
+										reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+										reqCtrlList.add(reqCtrlItem);
+										if (logger.isDebugEnabled()) {
+											logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.getString("did"));
+										}
+
 									}
-
-								} else if (result.getString("resultIndicator").toLowerCase().startsWith("not listed")) {
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Tolerated);
-									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-									reqCtrlList.add(reqCtrlItem);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding not listed ing :" + result.getString("did"));
-									}
-								} else if (Boolean.TRUE.equals(addInfoReqCtrl)) {
-
-									String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
-											? result.getString("threshold")
-											: "");
-
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, result.getString("resultIndicator"),
-											threshold);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Info);
-
-									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-									reqCtrlList.add(reqCtrlItem);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.getString("did"));
-									}
-
 								}
 							}
 						}
