@@ -115,6 +115,7 @@
 		<alfresco-data-model.version>14.145</alfresco-data-model.version>
 		<alfresco-core.version>14.145</alfresco-core.version>
 	    <spring-webscripts.version>8.28</spring-webscripts.version>
+	    <spring-webscripts-share.version>8.27</spring-webscripts-share.version>
 	
 
 
