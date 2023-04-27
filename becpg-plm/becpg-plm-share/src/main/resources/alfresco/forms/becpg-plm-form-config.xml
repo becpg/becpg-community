@@ -6695,7 +6695,7 @@
 						</control>
 					</field>
 					<field id="bcpg:nutListUnit" read-only="true" set="2-col"/>
-					<field id="bcpg:nutListValuePrepared" read-only="true" />
+					<field id="bcpg:nutListValuePrepared" />
 					<field id="bcpg:nutListUnitPrepared" />
 					<field id="bcpg:nutListMini" set="2-col"/>
 					<field id="bcpg:nutListMaxi" set="2-col"/>
