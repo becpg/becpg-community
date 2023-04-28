@@ -1352,6 +1352,106 @@
 			</form>
 		</forms>
 	</config>
+	
+	<!-- bcpg:lca type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:lca">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:lcaType" />
+					<show id="bcpg:lcaUnit" />
+					<show id="bcpg:lcaFixed" />
+					<show id="bcpg:lcaFormula" />
+					<show id="bcpg:lcaPonderation" />
+					<show id="sec:readGroups" force="true"/>
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:lcaFormula">
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+
+	<config evaluator="model-type" condition="bcpg:lca">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="cm:description" force="true" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:lcaType" />
+					<show id="bcpg:lcaUnit" />
+					<show id="bcpg:lcaFixed" />
+					<show id="bcpg:lcaFormula" />
+					<show id="bcpg:lcaPonderation" />
+					<show id="sec:readGroups" force="true"/>
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName" />
+					<field id="cm:description">
+						<control>
+							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:lcaFormula">
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+
+			<!-- Data Grid view -->
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:lcaFixed" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:charactName">
+						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
+					</field>
+					<field id="bcpg:isDeleted" >
+						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
+					</field>
+				</appearance>
+			</form>
+
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:legalName" />
+					<show id="bcpg:lcaType" />
+					<show id="bcpg:lcaUnit" />
+					<show id="bcpg:lcaFixed" />
+					<show id="bcpg:lcaPonderation" />
+					<show id="sec:readGroups" force="true"/>
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:isDeleted"/>
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
 
     <!-- bcpg:ing type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:ing">
@@ -5619,6 +5719,203 @@
 						</control>
 					</field>
 					<field id="bcpg:costListSimulatedValue" set="2-col" />
+					<field id="bcpg:isManualListItem" set="2-col" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<!-- bcpg:lcaList type -->
+	<config evaluator="model-type" condition="bcpg:lcaList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:lcaListLca" />					
+					<show id="bcpg:lcaListValue" />
+					<show id="bcpg:lcaListUnit" />
+					<show id="bcpg:lcaListPreviousValue" />
+					<show id="bcpg:lcaListFutureValue" />
+					<show id="bcpg:parentLevel" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:lcaListComponent" />
+					<show id="bcpg:lcaListSimulatedValue" />
+					<show id="bcpg:isManualListItem" force="true" />
+				</field-visibility>
+
+				<appearance>
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:lcaListLca" set="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:lcaListValue" set="2-col" />
+					<field id="bcpg:lcaListUnit" set="2-col" />
+					<field id="bcpg:lcaListPreviousValue" set="2-col" />
+					<field id="bcpg:lcaListFutureValue" set="2-col" />
+					<field id="bcpg:parentLevel" set="2-col">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:lcaList&#38;attributeName=bcpg:lcaListLca</control-param>
+						</control>
+					</field>
+					<field id="bcpg:plants" set="2-col" />
+					<field id="bcpg:lcaListComponent" set="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:packagingMaterial</control-param>
+						</control>
+					</field>
+					<field id="bcpg:lcaListSimulatedValue" set="2-col" />
+					<field id="bcpg:isManualListItem" set="2-col" />
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:lcaListLca" />
+					<show id="bcpg:lcaListValue" />
+					<show id="bcpg:lcaListUnit" />					
+					<show id="bcpg:lcaListPreviousValue" />
+					<show id="bcpg:lcaListFutureValue" />
+					<show id="bcpg:lcaListValuePerProduct" />
+					<show id="bcpg:variantColumn1" force="true" />
+					<show id="bcpg:variantColumn2" force="true" />
+					<show id="bcpg:variantColumn3" force="true" />
+					<show id="bcpg:variantColumn4" force="true" />
+					<show id="bcpg:variantColumn5" force="true" />
+					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:lcaListComponent" />
+					<show id="bcpg:lcaListSimulatedValue" />
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:lcaListIsFormulated" />
+					<show id="bcpg:lcaListFormulaErrorLog" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>	
+					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>				
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:lcaListIsFormulated"  label="hidden"/>
+					<field id="bcpg:lcaListFormulaErrorLog"  label="hidden"/>
+					<field id="bcpg:lcaListValuePerProduct" read-only="true" />
+				</appearance>				
+			</form>
+			<form id="customListDatagrid">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:lcaListLca" />
+					<show id="bcpg:lcaListValue" />
+					<show id="bcpg:lcaListUnit" />					
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:lcaListIsFormulated" />
+					<show id="bcpg:lcaListFormulaErrorLog" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>					
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:lcaListIsFormulated"  label="hidden"/>
+					<field id="bcpg:lcaListFormulaErrorLog"  label="hidden"/>
+					<field id="bcpg:lcaListValuePerProduct" read-only="true" />
+				</appearance>				
+			</form>
+			<form id="datagridWUsed">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:lcaListLca" />
+					<show id="bcpg:lcaListValue" />
+					<show id="bcpg:lcaListUnit" />					
+					<show id="bcpg:lcaListPreviousValue" />
+					<show id="bcpg:lcaListFutureValue" />
+					<show id="bcpg:lcaListValuePerProduct" />
+					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:lcaListComponent" />
+					<show id="bcpg:lcaListSimulatedValue" />
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:lcaListIsFormulated" />
+					<show id="bcpg:lcaListFormulaErrorLog" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>					
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:lcaListIsFormulated"  label="hidden"/>
+					<field id="bcpg:lcaListFormulaErrorLog"  label="hidden"/>
+					<field id="bcpg:lcaListValuePerProduct" read-only="true" />
+				</appearance>				
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:lcaListLca" for-mode="create"/>
+					<show id="entity_bcpg:lcaListLca_bcpg:product" for-mode="view"/>
+					<show id="bcpg:plants"   for-mode="create" force="true" />
+				</field-visibility>	
+				<appearance>
+					<field id="bcpg:lcaListLca">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+			   </appearance>		
+			</form>
+			
+		</forms>
+	</config>
+	<!-- bcpg:lcaList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:lcaList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:lcaListLca" />
+					<show id="bcpg:parentLevel" />
+					<show id="bcpg:lcaListValue" />
+					<show id="bcpg:lcaListPreviousValue" />
+					<show id="bcpg:lcaListFutureValue" />
+					<show id="bcpg:lcaListUnit" />
+					<show id="bcpg:parentLevel" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:lcaListComponent" />
+					<show id="bcpg:lcaListSimulatedValue" />
+					<show id="bcpg:isManualListItem" force="true" />
+				</field-visibility>
+
+				<appearance>
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:lcaListLca" set="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:lcaListValue" set="2-col" />
+					<field id="bcpg:lcaListUnit" set="2-col" />
+					<field id="bcpg:lcaListPreviousValue" set="2-col" />
+					<field id="bcpg:lcaListFutureValue" set="2-col" />
+					<field id="bcpg:parentLevel" set="2-col">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:lcaList&#38;attributeName=bcpg:lcaListLca</control-param>
+						</control>
+					</field>
+					<field id="bcpg:plants" set="2-col" />
+					<field id="bcpg:lcaListComponent" set="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:packagingMaterial</control-param>
+						</control>
+					</field>
+					<field id="bcpg:lcaListSimulatedValue" set="2-col" />
 					<field id="bcpg:isManualListItem" set="2-col" />
 				</appearance>
 			</form>

@@ -7,7 +7,7 @@ package fr.becpg.repo.product.data.constraints;
  * @version $Id: $Id
  */
 public enum RequirementDataType {
-	Packaging, Labelling, Ingredient, Allergen, Nutrient, Composition, Specification, Cost, Formulation, Completion, Validation, Physicochem, Labelclaim;
+	Packaging, Labelling, Ingredient, Allergen, Nutrient, Composition, Specification, Cost, LCA, Formulation, Completion, Validation, Physicochem, Labelclaim;
 
 	/**
 	 * <p>fromString.</p>
