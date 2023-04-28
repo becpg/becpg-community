@@ -164,6 +164,8 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 					simpleList = (List<FormulatedCharactDataItem>) (List<?>) productData.getNutList();
 				} else if (PLMModel.TYPE_COST.equals(type)) {
 					simpleList = (List<FormulatedCharactDataItem>) (List<?>) productData.getCostList();
+				} else if (PLMModel.TYPE_LCA.equals(type)) {
+					simpleList = (List<FormulatedCharactDataItem>) (List<?>) productData.getLcaList();
 				}
 				for (FormulatedCharactDataItem sl : simpleList) {
 					if (r.getCharact().equals(sl.getCharactNodeRef())) {

@@ -95,6 +95,7 @@
 			<itemType name="bcpg:cost" />
 			<itemType name="bcpg:geoOrigin" />
 			<itemType name="bcpg:bioOrigin" />
+			<itemType name="bcpg:lca" />
 		</itemTypes>
 		<filterTypes>
 		<!-- <itemType name="bcpg:finishedProduct selected="true"  />-->
@@ -121,6 +122,7 @@
 			<list id="ingList" index="100" />
 			<list id="allergenList" index="110" />
 			<list id="costList" index="120" />
+			<list id="lcaList" index="125" />
 			<list id="priceList" index="130" />
 			<list id="nutList" index="140" />
 			<list id="ingLabelingList" index="150" view="true" />
@@ -188,6 +190,7 @@
 			<list id="pmPrintVarnishs" index="200"/> 
 			<list id="SortingBonusCriteria" index="210"/>
 			<list id="SortingMalusCriteria" index="220"/> 
+			<list id="LCAUnits" index="230"/>
 		</lists>
 	</config>
 	

@@ -7,6 +7,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -31,6 +32,7 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	private SystemState state = SystemState.Simulation;
 	
 	private List<CostListDataItem> costList;
+	private List<LCAListDataItem> lcaList;
 	
 
 
@@ -112,6 +114,16 @@ public class ClientData extends BeCPGDataObject implements HierarchicalEntity, S
 	 */
 	public void setCostList(List<CostListDataItem> costList) {
 		this.costList = costList;
+	}
+	
+	@DataList
+	@AlfQname(qname = "bcpg:lcaList")
+	public List<LCAListDataItem> getLcaList() {
+		return lcaList;
+	}
+	
+	public void setLcaList(List<LCAListDataItem> lcaList) {
+		this.lcaList = lcaList;
 	}
 	
 	/** {@inheritDoc} */
