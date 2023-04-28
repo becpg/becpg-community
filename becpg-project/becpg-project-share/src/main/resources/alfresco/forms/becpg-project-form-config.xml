@@ -944,6 +944,8 @@
 					<show id="bcpg:color" />
 					<show id="pjt:taskLegendSites" />
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
@@ -965,6 +967,8 @@
 					<show id="bcpg:color" />
 					<show id="pjt:taskLegendSites" />
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 				<appearance>
@@ -2184,6 +2188,8 @@
 					<show id="pjt:resourceCostBillRate" />
 					<show id="pjt:resourceCostHoursPerDay" />
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
@@ -2198,6 +2204,8 @@
 					<show id="pjt:resourceCostBillRate" />
 					<show id="pjt:resourceCostHoursPerDay" />
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:isDeleted" />
 				</field-visibility>
 			</form>
