@@ -1622,6 +1622,8 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:code" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1638,6 +1640,8 @@
 					<show id="cm:title" />
 					<show id="cm:description" force="true"/>
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:code" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1648,6 +1652,8 @@
 					<show id="cm:title" />
 					<show id="bcpg:code" />
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1664,6 +1670,8 @@
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1680,6 +1688,8 @@
 					<show id="cm:description" force="true"/>
 					<show id="bcpg:code" />
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1689,6 +1699,8 @@
 					<show id="cm:title" />
 					<show id="bcpg:code" />
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1706,6 +1718,8 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1723,6 +1737,8 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
@@ -1733,6 +1749,8 @@
 					<show id="cm:title" force="true" />
 					<show id="bcpg:code" />
 					<show id="sec:readGroups" force="true"/>
+					<show id="sec:listItemReadGroups" force="true" />
+					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
