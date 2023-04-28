@@ -576,6 +576,41 @@ if (beCPG.module.EntityDataGridRenderers) {
 
   });
 	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "bcpg:lca",
+      renderer : function(oRecord, data, label, scope) {
+          
+    	  var url = null;
+			if(scope.datalistMeta  && scope.datalistMeta.name.indexOf("WUsed")>-1){
+				url = beCPG.util.entityURL(data.siteId, data.value);
+			}
+    	  
+          var title = Alfresco.util.encodeHTML(data.metadata);
+          var cssClass = data.metadata;
+          
+          if(oRecord.getData("itemData")["prop_bcpg_lcaListIsFormulated"]!=null){
+              var isFormulated = oRecord.getData("itemData")["prop_bcpg_lcaListIsFormulated"].value;
+              var error = oRecord.getData("itemData")["prop_bcpg_lcaListFormulaErrorLog"].value;
+              if(error != null){
+             	 cssClass= "lca-formulated-error";
+                 title = Alfresco.util.encodeHTML(error);
+              } else if(isFormulated){
+             	 cssClass= "lca-formulated";
+              }
+          }
+          
+          if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
+              var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
+              return '<span class="' + cssClass + '" style="margin-left:' + padding + 'px;" title="'+title+'">' 
+              +(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue)
+                      + (url!=null?'</a>':'')+ '</span>';
+          }
+
+          return '<span class="' + cssClass + '" title="'+title+'">' +(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+ '</span>';
+      }
+
+  });
+	
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:dynamicCharactValue",

@@ -81,6 +81,12 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	private String levelProp = null;
 
 	private Boolean addEmptyValue = null;
+	
+	private List<String> allowedValuesSuffix = null;
+	
+	public void setAllowedValuesSuffix(List<String> allowedValuesSuffix) {
+		this.allowedValuesSuffix = allowedValuesSuffix;
+	}
 
 	public List<String> getPaths() {
 		return paths;
@@ -208,29 +214,39 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 		if (values.isEmpty()) {
 			return Collections.singletonList(UNDIFINED_CONSTRAINT_VALUE);
-		} else {
-			if (filterOnDeletedValuesAndGroups) {
-				
-				String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
-				
-				return AuthenticationUtil.runAsSystem(() -> {
-					List<String> valuesToReturn = new LinkedList<>();
-					for (Entry<String, Pair<MLText, List<String>>> entry : values.entrySet()) {
-						
-						boolean hasPermission = currentUser == null || entry.getValue().getSecond().isEmpty() || entry.getValue().getSecond().stream().anyMatch(key -> serviceRegistry.getAuthorityService().getContainedAuthorities(AuthorityType.USER, key, false).contains(currentUser));
-						
-						if (hasPermission) {
-							valuesToReturn.add(entry.getKey());
-						}
-					}
-					
-					return valuesToReturn;
-				});
-				
-			} else {
-				return new LinkedList<>(values.keySet());
-			}
 		}
+		
+		List<String> allowedValues = null;
+		
+		if (filterOnDeletedValuesAndGroups) {
+			
+			String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
+			
+			allowedValues = AuthenticationUtil.runAsSystem(() -> {
+				List<String> valuesToReturn = new LinkedList<>();
+				for (Entry<String, Pair<MLText, List<String>>> entry : values.entrySet()) {
+					
+					boolean hasPermission = currentUser == null || entry.getValue().getSecond().isEmpty() || entry.getValue().getSecond().stream().anyMatch(key -> serviceRegistry.getAuthorityService().getContainedAuthorities(AuthorityType.USER, key, false).contains(currentUser));
+					
+					if (hasPermission) {
+						valuesToReturn.add(entry.getKey());
+					}
+				}
+				
+				return valuesToReturn;
+			});
+			
+		} else {
+			allowedValues = new LinkedList<>(values.keySet());
+		}
+		
+		if (allowedValuesSuffix != null) {
+			List<String> valuesToReturnWithSuffixes = new LinkedList<>();
+			allowedValues.forEach(value -> allowedValuesSuffix.forEach(suffix -> valuesToReturnWithSuffixes.add(value + suffix)));
+			return valuesToReturnWithSuffixes;
+		} 
+		
+		return allowedValues;
 	}
 	
 
