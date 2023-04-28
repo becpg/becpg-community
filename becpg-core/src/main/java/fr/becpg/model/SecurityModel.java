@@ -71,4 +71,6 @@ public final class SecurityModel {
 	public static final QName ASSOC_SECURITY_REF= QName.createQName(SECURITY_URI, "securityRef");
 	
 	public static final QName ASSOC_READ_GROUPS = QName.createQName(SECURITY_URI, "readGroups");
+	public static final QName ASSOC_LIST_ITEM_READ_GROUPS = QName.createQName(SECURITY_URI, "listItemReadGroups");
+	public static final QName ASSOC_LIST_ITEM_WRITE_GROUPS = QName.createQName(SECURITY_URI, "listItemWriteGroups");
 }
