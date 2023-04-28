@@ -1444,6 +1444,7 @@
 					<show id="bcpg:lcaType" />
 					<show id="bcpg:lcaUnit" />
 					<show id="bcpg:lcaFixed" />
+					<show id="bcpg:lcaPonderation" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
