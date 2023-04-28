@@ -26,17 +26,20 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.collection.data.ProductCollectionData;
+import fr.becpg.repo.collection.data.list.ProductListDataItem;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
-import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter.AssociationCriteriaFilterMode;
+import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.productList.SpecCompatibilityDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.impl.DataListSearchFilter;
 import fr.becpg.repo.search.impl.DataListSearchFilterField;
 import fr.becpg.repo.search.impl.SearchConfig;
@@ -51,7 +54,6 @@ import fr.becpg.repo.search.impl.SearchConfig;
 public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	private static final Log logger = LogFactory.getLog(ProductAdvSearchPlugin.class);
-
 
 	@Autowired
 	private NodeService nodeService;
@@ -69,17 +71,15 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	private WUsedListService wUsedListService;
 
 	@Autowired
-	private AlfrescoRepository<ProductSpecificationData> alfrescoRepository;
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
 	private static final String CRITERIA_PACKAGING_LIST_PRODUCT = "assoc_bcpg_packagingListProduct_added";
 	private static final String CRITERIA_PROCESS_LIST_RESSOURCE = "assoc_mpm_plResource_added";
 	private static final String CRITERIA_COMPO_LIST_PRODUCT = "assoc_bcpg_compoListProduct_added";
-	private static final String CRITERIA_PRODUCT_LIST_PRODUCT = "assoc_bcpg_productCollections_added";
-	
+	private static final String CRITERIA_PRODUCT_COLLECTIONS = "assoc_bcpg_productCollections_added";
 
 	private static final String CRITERIA_NOTRESPECTED_SPECIFICATIONS = "assoc_bcpg_advNotRespectedProductSpecs_added";
 	private static final String CRITERIA_RESPECTED_SPECIFICATIONS = "assoc_bcpg_advRespectedProductSpecs_added";
-
 
 	/** {@inheritDoc} */
 	@Override
@@ -93,9 +93,9 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 			if ((datatype != null)) {
 				if (entityDictionaryService.isSubClass(datatype, BeCPGModel.TYPE_ENTITY_V2)) {
-					if (searchConfig.getDataListSearchFilters() != null && !nodes.isEmpty()) {
+					if ((searchConfig.getDataListSearchFilters() != null) && !nodes.isEmpty()) {
 						for (DataListSearchFilter filter : searchConfig.getDataListSearchFilters()) {
-							nodes = getSearchNodesByListCriteria( nodes, criteria, filter);
+							nodes = getSearchNodesByListCriteria(nodes, criteria, filter);
 						}
 					}
 				}
@@ -104,7 +104,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PACKAGING_LIST_PRODUCT, PLMModel.ASSOC_PACKAGINGLIST_PRODUCT);
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_COMPO_LIST_PRODUCT, PLMModel.ASSOC_COMPOLIST_PRODUCT);
 					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PROCESS_LIST_RESSOURCE, MPMModel.ASSOC_PL_RESOURCE);
-					getSearchNodesByWUsedCriteria(nodes, criteria, CRITERIA_PRODUCT_LIST_PRODUCT, PLMModel.ASSOC_PRODUCTLIST_PRODUCT);
+					getSearchNodesByCollectionCriteria(nodes, criteria);
+
 				}
 				nodes = getSearchNodesBySpecificationCriteria(nodes, criteria);
 
@@ -114,12 +115,44 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 		return nodes;
 	}
 
-	private List<NodeRef> getSearchNodesByListCriteria( List<NodeRef> nodes, Map<String, String> criteria, DataListSearchFilter filter) {
+	private void getSearchNodesByCollectionCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
 
-		if(nodes.isEmpty()) {
+		StopWatch watch = null;
+		if (logger.isDebugEnabled()) {
+			watch = new StopWatch();
+			watch.start();
+		}
+
+		if (criteria.containsKey(CRITERIA_PRODUCT_COLLECTIONS)) {
+
+			String propValue = criteria.get(CRITERIA_PRODUCT_COLLECTIONS);
+			if ((propValue != null) && !propValue.isBlank()) {
+				List<NodeRef> retainNodes = new ArrayList<>();
+				for (NodeRef nodeRef : extractNodeRefs(propValue, false)) {
+					ProductCollectionData productCollection = (ProductCollectionData) alfrescoRepository.findOne(nodeRef);
+					for (ProductListDataItem dataItem : productCollection.getProductList()) {
+						if ((dataItem.getProduct() != null)) {
+							retainNodes.add(dataItem.getProduct());
+
+						}
+					}
+				}
+				nodes.retainAll(retainNodes);
+			}
+		}
+
+		if (logger.isDebugEnabled() && (watch != null)) {
+			watch.stop();
+			logger.debug("getSearchNodesByCollectionCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds - size after " + nodes.size());
+		}
+
+	}
+
+	private List<NodeRef> getSearchNodesByListCriteria(List<NodeRef> nodes, Map<String, String> criteria, DataListSearchFilter filter) {
+
+		if (nodes.isEmpty()) {
 			return nodes;
 		}
-	
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -148,8 +181,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				List<EntitySourceAssoc> tmp = associationService.getEntitySourceAssocs(extractNodeRefs(propValue, isOrOperator),
 						assocFilter.getAttributeQname(), assocFilter.getSourceTypeQname(), isOrOperator, criteriaFilters);
-				
-				if(tmp == null) {
+
+				if (tmp == null) {
 					tmp = new ArrayList<>();
 				}
 
@@ -233,7 +266,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 				if (propertyDef != null) {
 
 					AssociationCriteriaFilter criteriaFilter = new AssociationCriteriaFilter(attributeQName, criteriaValue,
-							(propFilter.getHtmlId() != null) && propFilter.getHtmlId().contains("-range") ? AssociationCriteriaFilterMode.RANGE : AssociationCriteriaFilterMode.EQUALS);
+							(propFilter.getHtmlId() != null) && propFilter.getHtmlId().contains("-range") ? AssociationCriteriaFilterMode.RANGE
+									: AssociationCriteriaFilterMode.EQUALS);
 
 					criteriaFilters.add(criteriaFilter);
 
@@ -276,7 +310,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			ret.add(CRITERIA_PACKAGING_LIST_PRODUCT);
 			ret.add(CRITERIA_PROCESS_LIST_RESSOURCE);
 			ret.add(CRITERIA_COMPO_LIST_PRODUCT);
-			ret.add(CRITERIA_PRODUCT_LIST_PRODUCT);
+			ret.add(CRITERIA_PRODUCT_COLLECTIONS);
 			ret.add(CRITERIA_NOTRESPECTED_SPECIFICATIONS);
 			ret.add(CRITERIA_RESPECTED_SPECIFICATIONS);
 			ret.addAll(searchConfig.getKeysToExclude());
@@ -294,11 +328,10 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 	 */
 	private List<NodeRef> filterByAssociations(SearchConfig searchConfig, List<NodeRef> nodes, QName datatype, Map<String, String> criteria) {
 
-
-		if(nodes.isEmpty()) {
+		if (nodes.isEmpty()) {
 			return nodes;
 		}
-		
+
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -317,7 +350,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 				String assocName = key.substring(6);
 				if (assocName.endsWith("_added")) {
-					if ( !getIgnoredFields(datatype, searchConfig).contains(key)) {
+					if (!getIgnoredFields(datatype, searchConfig).contains(key)) {
 
 						boolean isOROperand = false;
 
@@ -379,7 +412,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
-			logger.debug("filterByAssociations executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+			logger.debug("filterByAssociations executed in  " + watch.getTotalTimeSeconds() + " seconds - size after " + nodes.size());
 		}
 
 		return nodes;
@@ -418,11 +451,10 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	private List<NodeRef> getSearchNodesBySpecificationCriteria(List<NodeRef> nodes, Map<String, String> criteria) {
 
-		if(nodes.isEmpty()) {
+		if (nodes.isEmpty()) {
 			return nodes;
 		}
-	
-			
+
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
@@ -435,7 +467,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			if ((propValue != null) && !propValue.isBlank()) {
 				for (NodeRef nodeRef : extractNodeRefs(propValue, false)) {
 
-					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
+					ProductSpecificationData productSpecificationData = (ProductSpecificationData) alfrescoRepository.findOne(nodeRef);
 					List<NodeRef> retainNodes = new ArrayList<>();
 					for (NodeRef productNodeRef : nodes) {
 						boolean retain = false;
@@ -463,7 +495,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 			String propValue = criteria.get(CRITERIA_RESPECTED_SPECIFICATIONS);
 			if ((propValue != null) && !propValue.isEmpty()) {
 				for (NodeRef nodeRef : extractNodeRefs(propValue, false)) {
-					ProductSpecificationData productSpecificationData = alfrescoRepository.findOne(nodeRef);
+					ProductSpecificationData productSpecificationData = (ProductSpecificationData) alfrescoRepository.findOne(nodeRef);
 					List<NodeRef> removedNodes = new ArrayList<>();
 					for (NodeRef productNodeRef : nodes) {
 						boolean remove = false;
@@ -488,7 +520,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
-			logger.debug("getSearchNodesBySpecificationCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+			logger.debug(
+					"getSearchNodesBySpecificationCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds - size after " + nodes.size());
 		}
 
 		return nodes;
@@ -497,7 +530,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	private List<NodeRef> getSearchNodesByWUsedCriteria(List<NodeRef> nodes, Map<String, String> criteria, String criteriaAssocString,
 			QName criteriaAssoc) {
-
 
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -518,7 +550,6 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 					MultiLevelListData ret = wUsedListService.getWUsedEntity(toFilterByNodes, WUsedOperator.OR, criteriaAssoc, -1);
 					if (ret != null) {
 						nodes.retainAll(ret.getAllChilds());
-						logger.debug(ret.getAllChilds().size());
 					}
 				}
 			}
@@ -527,7 +558,8 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
-			logger.debug("getSearchNodesByWUsedCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds ");
+			logger.debug(criteriaAssocString + " getSearchNodesByWUsedCriteria executed in  " + watch.getTotalTimeSeconds() + " seconds - size after "
+					+ nodes.size());
 		}
 
 		return nodes;
@@ -535,7 +567,7 @@ public class ProductAdvSearchPlugin implements AdvSearchPlugin {
 
 	@Override
 	public boolean isSearchFiltered(Map<String, String> criteria) {
-		
+
 		if (criteria != null) {
 			for (Map.Entry<String, String> criterion : criteria.entrySet()) {
 				String key = criterion.getKey();
