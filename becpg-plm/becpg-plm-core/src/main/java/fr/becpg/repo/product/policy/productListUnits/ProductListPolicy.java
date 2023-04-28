@@ -59,7 +59,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 	private EntityListDAO entityListDAO;
 
 	private AssociationService associationService;
-
+	
 	/**
 	 * <p>Setter for the field <code>associationService</code>.</p>
 	 *
@@ -84,6 +84,8 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 		logger.debug("Init productListUnits.ProductListPolicy...");
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_COSTLIST,
 				PLMModel.ASSOC_COSTLIST_COST, new JavaBehaviour(this, "onCreateAssociation"));
+		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_LCALIST,
+				PLMModel.ASSOC_LCALIST_LCA, new JavaBehaviour(this, "onCreateAssociation"));
 
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, PLMModel.TYPE_NUTLIST,
 				PLMModel.ASSOC_NUTLIST_NUT, new JavaBehaviour(this, "onCreateAssociation"));
@@ -105,6 +107,7 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 				new JavaBehaviour(this, "onUpdateProperties"));
 
 		super.disableOnCopyBehaviour(PLMModel.TYPE_COSTLIST);
+		super.disableOnCopyBehaviour(PLMModel.TYPE_LCALIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_NUTLIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_PHYSICOCHEMLIST);
 		super.disableOnCopyBehaviour(PLMModel.TYPE_MICROBIOLIST);
@@ -370,6 +373,31 @@ public class ProductListPolicy extends AbstractBeCPGPolicy
 						// labelingList
 						String labelType = (String) nodeService.getProperty(targetNodeRef, PackModel.PROP_LABEL_TYPE);
 						nodeService.setProperty(productListItemNodeRef, PackModel.PROP_LL_TYPE, labelType);
+					} else if (type.equals(PLMModel.TYPE_LCALIST)) {
+
+						Boolean lcaFixed = (Boolean) nodeService.getProperty(targetNodeRef, PLMModel.PROP_LCAFIXED);
+						String lcaUnit = (String) nodeService.getProperty(targetNodeRef, PLMModel.PROP_LCAUNIT);
+						String lcaListUnit = (String) nodeService.getProperty(productListItemNodeRef, PLMModel.PROP_LCALIST_UNIT);
+
+						if ((lcaFixed != null) && lcaFixed) {
+
+							if (!((lcaListUnit != null) && lcaListUnit.equals(lcaUnit))) {
+								nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_LCALIST_UNIT, lcaUnit);
+							}
+						} else {
+
+							if (!((lcaListUnit != null) && !lcaListUnit.isEmpty()
+									&& lcaListUnit.startsWith(lcaUnit + AbstractSimpleListFormulationHandler.UNIT_SEPARATOR))) {
+
+								ProductUnit unit = getProductUnit(productListItemNodeRef);
+
+								if (unit != null) {
+									nodeService.setProperty(productListItemNodeRef, PLMModel.PROP_LCALIST_UNIT,
+											CostsCalculatingFormulationHandler.calculateUnit(unit, lcaUnit, lcaFixed));
+								}
+
+							}
+						}
 					}
 				}
 			}

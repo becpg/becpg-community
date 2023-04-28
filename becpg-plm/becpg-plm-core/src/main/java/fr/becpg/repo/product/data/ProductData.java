@@ -36,6 +36,7 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingListDataItem;
+import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
@@ -222,6 +223,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 */
 	private List<AllergenListDataItem> allergenList;
 	private List<CostListDataItem> costList;
+	private List<LCAListDataItem> lcaList;
 	private List<PriceListDataItem> priceList;
 	private List<IngListDataItem> ingList;
 	private List<NutListDataItem> nutList;
@@ -1719,6 +1721,16 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 */
 	public void setCostList(List<CostListDataItem> costList) {
 		this.costList = costList;
+	}
+	
+	@DataList
+	@AlfQname(qname = "bcpg:lcaList")
+	public List<LCAListDataItem> getLcaList() {
+		return lcaList;
+	}
+	
+	public void setLcaList(List<LCAListDataItem> lcaList) {
+		this.lcaList = lcaList;
 	}
 
 	/**

@@ -122,7 +122,7 @@ public interface PLMModel {
 	QName PROP_COSTLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "costListMaxi");
 	/** Constant <code>ASSOC_COSTLIST_COST</code> */
 	QName ASSOC_COSTLIST_COST = QName.createQName(BeCPGModel.BECPG_URI, "costListCost");
-
+	
 	// priceList
 	/** Constant <code>TYPE_PRICELIST</code> */
 	QName TYPE_PRICELIST = QName.createQName(BeCPGModel.BECPG_URI, "priceList");
@@ -378,6 +378,16 @@ public interface PLMModel {
 	QName PROP_COSTFIXED = QName.createQName(BeCPGModel.BECPG_URI, "costFixed");
 	/** Constant <code>PROP_COSTTYPE</code> */
 	QName PROP_COSTTYPE = QName.createQName(BeCPGModel.BECPG_URI, "costType");
+
+	// lca
+	QName TYPE_LCA = QName.createQName(BeCPGModel.BECPG_URI, "lca");
+	QName PROP_LCA_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "lcaFormula");
+	QName PROP_LCAUNIT = QName.createQName(BeCPGModel.BECPG_URI, "lcaUnit");
+	QName PROP_LCALIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "lcaListUnit");
+	QName PROP_LCAFIXED = QName.createQName(BeCPGModel.BECPG_URI, "lcaFixed");
+	QName PROP_LCATYPE = QName.createQName(BeCPGModel.BECPG_URI, "lcaType");
+	QName ASSOC_LCALIST_LCA = QName.createQName(BeCPGModel.BECPG_URI, "lcaListLca");
+	QName TYPE_LCALIST = QName.createQName(BeCPGModel.BECPG_URI, "lcaList");
 
 	// ing
 	/** Constant <code>TYPE_ING</code> */
