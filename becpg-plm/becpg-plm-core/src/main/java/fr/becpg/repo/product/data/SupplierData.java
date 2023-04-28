@@ -9,6 +9,7 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.productList.ContactListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.product.data.productList.PlantListDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -37,6 +38,8 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	private List<PlantListDataItem> plantList;
 	
 	private List<ContactListDataItem> contactList;
+
+	private List<LCAListDataItem> lcaList;
 
 	/**
 	 * <p>Getter for the field <code>state</code>.</p>
@@ -159,6 +162,16 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 		this.contactList = contactList;
 	}
 
+	@DataList
+	@AlfQname(qname = "bcpg:lcaList")
+	public List<LCAListDataItem> getLcaList() {
+		return lcaList;
+	}
+	
+	public void setLcaList(List<LCAListDataItem> lcaList) {
+		this.lcaList = lcaList;
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
@@ -178,7 +191,7 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 		if (getClass() != obj.getClass())
 			return false;
 		SupplierData other = (SupplierData) obj;
-		return Objects.equals(costList, other.costList) && Objects.equals(hierarchy1, other.hierarchy1)
+		return Objects.equals(costList, other.costList) && Objects.equals(lcaList, other.lcaList) && Objects.equals(hierarchy1, other.hierarchy1)
 				&& Objects.equals(hierarchy2, other.hierarchy2) && Objects.equals(plantList, other.plantList) && state == other.state;
 	}
 
