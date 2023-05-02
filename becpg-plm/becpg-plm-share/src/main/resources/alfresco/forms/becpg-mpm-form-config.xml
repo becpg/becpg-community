@@ -27,8 +27,6 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
 					<show id="sec:readGroups" force="true"/>
-					<show id="sec:listItemReadGroups" force="true" />
-					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -57,8 +55,6 @@
 					<show id="cm:description" force="true" />
 					<show id="bcpg:code" />
 					<show id="sec:readGroups" force="true"/>
-					<show id="sec:listItemReadGroups" force="true" />
-					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -104,8 +100,6 @@
 					<show id="cm:description" />						
 					<show id="bcpg:code" />
 					<show id="sec:readGroups" force="true"/>
-					<show id="sec:listItemReadGroups" force="true" />
-					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -140,8 +134,6 @@
 					<hide id="exif:yResolution" />
 					<hide id="exif:resolutionUnit" />
 					<show id="sec:readGroups" force="true"/>
-					<show id="sec:listItemReadGroups" force="true" />
-					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -171,8 +163,6 @@
 					<show id="cm:description" force="true" />
 					<show id="rep:reportKinds" />
 					<show id="sec:readGroups" force="true"/>
-					<show id="sec:listItemReadGroups" force="true" />
-					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -215,8 +205,6 @@
 					<show id="cm:description" />
 					<show id="cm:content" force="true" />
 					<show id="sec:readGroups" force="true"/>
-					<show id="sec:listItemReadGroups" force="true" />
-					<show id="sec:listItemWriteGroups" force="true" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
