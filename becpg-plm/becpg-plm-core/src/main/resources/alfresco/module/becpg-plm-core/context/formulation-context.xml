@@ -111,9 +111,6 @@
 					<property name="entityListDAO" ref="entityListDAO"/>
 					<property name="authorityDAO" ref="authorityDAO"/>
 					<property name="siteService" ref="siteService"/>
-					<property name="namespaceService" ref="namespaceService"/>
-					<property name="alfrescoRepository" ref="alfrescoRepository"/>
-					<property name="associationService" ref="associationService"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompositionQtyCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
