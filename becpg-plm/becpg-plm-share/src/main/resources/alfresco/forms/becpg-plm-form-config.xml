@@ -6447,41 +6447,49 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
+				   
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
-					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListValuePrepared" force="true" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					 <show id="bcpg:parentLevel" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:nutListMeasurementPrecision" />
-					<show id="bcpg:parentLevel" />
+					
 					<show id="rep:reportKinds" />
 				</field-visibility>
 
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="bcpg:nutListNut">
+					<field id="bcpg:nutListNut" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							<control-param name="ds">becpg/autocomplete/nut</control-param>
-						</control>	
+						</control>
 					</field>
-					<field id="bcpg:nutListValue">
+					<field id="bcpg:nutListValue"  >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">-</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nutListValuePrepared"/>
+					<field id="bcpg:nutListValuePrepared"  >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">-</control-param>
+						</control>
+					</field>
 					<field id="bcpg:nutListMini" set="2-col"/>
 					<field id="bcpg:nutListMaxi" set="2-col"/>
 					<field id="bcpg:nutListLossPerc" set="2-col"/>
 					<field id="bcpg:nutListMethod" set="2-col"/>
+					<field id="bcpg:nutListMeasurementPrecision" set="2-col"/>
 					<field id="bcpg:parentLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="rep:reportKinds" set="2-col"/>
@@ -6681,18 +6689,19 @@
 		<forms>
 			<!-- Data List pop-up edit form -->
 			<form>
-				<field-visibility>
+				<field-visibility>	   
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
-					<show id="bcpg:nutListUnit"  />
 					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListUnit"  />
 					<show id="bcpg:nutListUnitPrepared" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					 <show id="bcpg:parentLevel" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:nutListMeasurementPrecision" />
-					<show id="bcpg:parentLevel" />
+					
 					<show id="rep:reportKinds" />
 				</field-visibility>
 
@@ -6704,19 +6713,25 @@
 							<control-param name="ds">becpg/autocomplete/nut</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nutListValue" >
+					<field id="bcpg:nutListValue"  >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">-</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nutListValuePrepared"  >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">-</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nutListUnit" read-only="true" set="2-col"/>
-					<field id="bcpg:nutListValuePrepared" />
-					<field id="bcpg:nutListUnitPrepared" />
+					<field id="bcpg:nutListUnitPrepared"  read-only="true" set="2-col"/>
 					<field id="bcpg:nutListMini" set="2-col"/>
 					<field id="bcpg:nutListMaxi" set="2-col"/>
 					<field id="bcpg:nutListLossPerc" set="2-col"/>
 					<field id="bcpg:nutListMethod" set="2-col"/>
+					<field id="bcpg:nutListMeasurementPrecision" set="2-col"/>
 					<field id="bcpg:parentLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut</control-param>
