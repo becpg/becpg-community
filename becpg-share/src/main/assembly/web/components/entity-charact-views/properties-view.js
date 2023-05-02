@@ -100,6 +100,7 @@
                          */
                         onReady : function Properties_onReady()
                         {
+							var me = this;
                             // Upload logo event 
                             YAHOO.util.Event.addListener(this.id + "-uploadLogo-button", "click", this.doUploadLogo, this, true);
                             
@@ -118,6 +119,11 @@
                             
                             if(Dom.get(this.id+'-properties-tabview')!=null){
                             	this.widgets.tabView = new YAHOO.widget.TabView(this.id+'-properties-tabview');
+                            	this.widgets.tabView .addListener("activeTabChange", function(event) {
+								  if (event.newValue.get("href") == "#"+me.id+"-suggestions") {
+									   YAHOO.Bubbling.fire("showSuggestionsPanel");
+								  }
+								});
                             }
                             
                             // Load the form
