@@ -19,10 +19,8 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.repo.site.SiteModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -31,23 +29,16 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
-import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.DataListModel;
-import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
-import fr.becpg.repo.repository.RepositoryEntity;
-import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
@@ -75,24 +66,6 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	private AuthorityDAO authorityDAO;
 
 	private SiteService siteService;
-	
-	private NamespaceService namespaceService;
-	
-	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-	
-	private AssociationService associationService;
-	
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
-	}
-	
-	public void setAlfrescoRepository(AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
-		this.alfrescoRepository = alfrescoRepository;
-	}
-	
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
 
 	public EntityListDAO getEntityListDAO() {
 		return entityListDAO;
@@ -154,28 +127,6 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			for(NodeRef dataList : datalists) {
 				String dataListQName = (String)nodeService.getProperty(dataList, DataListModel.PROP_DATALISTITEMTYPE);
 
-				List<NodeRef> listItems = entityListDAO.getListItems(dataList, QName.createQName(dataListQName, namespaceService));
-				
-				for (NodeRef listItemNodeRef : listItems) {
-					
-					RepositoryEntity item = alfrescoRepository.findOne(listItemNodeRef);
-					
-					if (item instanceof SimpleCharactDataItem) {
-						NodeRef charactNodeRef = ((SimpleCharactDataItem) item).getCharactNodeRef();
-						
-						clearPermissions(listItemNodeRef, true);
-						
-						List<NodeRef> readGroups = associationService.getTargetAssocs(charactNodeRef, SecurityModel.ASSOC_LIST_ITEM_READ_GROUPS);
-						if (!readGroups.isEmpty()) {
-							setPermissions(listItemNodeRef, readGroups, PermissionService.READ);
-						}
-						List<NodeRef> writeGroups = associationService.getTargetAssocs(charactNodeRef, SecurityModel.ASSOC_LIST_ITEM_WRITE_GROUPS);
-						if (!writeGroups.isEmpty()) {
-							setPermissions(listItemNodeRef, writeGroups, PermissionService.WRITE);
-						}
-					}
-				}
-				
 				List<ACLEntryDataItem.PermissionModel> perms = securityService.getNodeACLPermissions(productDataNodeRef, nodeService.getType(productDataNodeRef), dataListQName);
 				if (perms != null) {
 					setAclPermissions(productDataNodeRef, dataList, perms);
@@ -192,32 +143,6 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 		}
 		return true;
-	}
-	
-	private void setPermissions(NodeRef nodeRef, List<NodeRef> groups, String permission) {
-		AuthenticationUtil.runAsSystem(() -> {
-			permissionService.setInheritParentPermissions(nodeRef, false);
-			
-			for (NodeRef group : groups) {
-				String authorityName = (String) nodeService.getProperty(group, ContentModel.PROP_AUTHORITY_NAME);
-				permissionService.setPermission(nodeRef, authorityName, permission, true);
-			}
-			
-			return null;
-		});
-	}
-	
-	private boolean clearPermissions(NodeRef nodeRef, boolean inherite) {
-		return AuthenticationUtil.runAsSystem(() -> {
-			Set<AccessPermission> acls = permissionService.getAllSetPermissions(nodeRef);
-			for (AccessPermission permission : acls) {
-				if (permission.isSetDirectly()) {
-				   permissionService.deletePermission(nodeRef, permission.getAuthority(), permission.getPermission());
-				}
-			}
-			permissionService.setInheritParentPermissions(nodeRef, inherite);
-			return true;
-		});
 	}
 
 	private void setAclPermissions(NodeRef productDataNodeRef, NodeRef nodeRef, List<ACLEntryDataItem.PermissionModel> perms) {
