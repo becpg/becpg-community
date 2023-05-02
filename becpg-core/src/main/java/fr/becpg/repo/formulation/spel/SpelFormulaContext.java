@@ -8,7 +8,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @author matthieu
  * @version $Id: $Id
  */
-public interface  SpelFormulaContext<T extends RepositoryEntity> {
+public interface SpelFormulaContext<T extends RepositoryEntity> {
 	
 
 	public enum Operator {

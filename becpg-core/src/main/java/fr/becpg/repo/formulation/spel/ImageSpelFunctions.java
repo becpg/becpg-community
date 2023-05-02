@@ -48,20 +48,32 @@ public class ImageSpelFunctions implements CustomSpelFunctions {
 		}
 
 		public String getEntityImagePublicUrl() {
-			
 			return getEntityImagePublicUrl(entity);
+		}
 
+		public byte[] getEntityImageBytes() {
+			return getEntityImageBytes(entity);
 		}
 
 		public String getEntityImagePublicUrl(RepositoryEntity entity) {
-			
 			return getEntityImagePublicUrl(entity.getNodeRef());
+		}
 
+		public byte[] getEntityImageBytes(RepositoryEntity entity) {
+			return getEntityImageBytes(entity.getNodeRef());
 		}
 
 		public String getEntityImagePublicUrl(NodeRef entityNodeRef) {
 			try {
 				return shareImage(entityService.getEntityDefaultImage(entityNodeRef));
+			} catch (BeCPGException e) {
+				return null;
+			}
+		}
+
+		public byte[] getEntityImageBytes(NodeRef entityNodeRef) {
+			try {
+				return entityService.getImage((entityService.getEntityDefaultImage(entityNodeRef)));
 			} catch (BeCPGException e) {
 				return null;
 			}
@@ -80,15 +92,32 @@ public class ImageSpelFunctions implements CustomSpelFunctions {
 		public String getImagePublicUrlByPath(NodeRef entityNodeRef, String path) {
 			List<NodeRef> imageNodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, path);
 			if ((imageNodeRefs != null) && !imageNodeRefs.isEmpty()) {
-
 				return shareImage(imageNodeRefs.get(0));
 			}
 			return null;
 		}
 
+		public byte[] getImageBytesByPath(String path) {
+			return getImageBytesByPath(entity, path);
+
+		}
+
+		public byte[] getImageBytesByPath(RepositoryEntity entity, String path) {
+			return getImageBytesByPath(entity.getNodeRef(), path);
+
+		}
+
+		public byte[] getImageBytesByPath(NodeRef entityNodeRef, String path) {
+			List<NodeRef> imageNodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef, path);
+			if ((imageNodeRefs != null) && !imageNodeRefs.isEmpty()) {
+
+				return getEntityImageBytes(imageNodeRefs.get(0));
+			}
+			return null;
+		}
+
 		private String shareImage(NodeRef imageNodeRef) {
-			
-			
+
 			if (imageNodeRef != null) {
 
 				QuickShareDTO quickShareDTO = quickShareService.shareContent(imageNodeRef);
