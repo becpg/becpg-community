@@ -275,7 +275,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 				if (headerRow.getCell(i).getCellType() == CellType.STRING) {
 					String cellValue = headerRow.getCell(i).getStringCellValue();
 					if ((cellValue != null) && !cellValue.isEmpty() && !cellValue.startsWith("#")) {
-						if (cellValue.contains("_") && !cellValue.contains("formula") && !cellValue.startsWith("dyn_")) {
+						if (cellValue.contains("_") && !cellValue.contains("formula") && !cellValue.contains("image") && !cellValue.startsWith("dyn_")) {
 							if (cellValue.contains(BACKSLASH + "_")) {
 								cellValue = cellValue.replace(BACKSLASH + "_", BACKSLASH + "|");
 							}
@@ -306,7 +306,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 							}
 
 						} else {
-							if (!currentNested.isEmpty() && !cellValue.contains("formula")) {
+							if (!currentNested.isEmpty() && !cellValue.contains("formula") && !cellValue.contains("image")) {
 								logger.debug("Add nested field : " + currentNested);
 								metadataFields.add(new AttributeExtractorField(currentNested,null));
 								currentNested = "";

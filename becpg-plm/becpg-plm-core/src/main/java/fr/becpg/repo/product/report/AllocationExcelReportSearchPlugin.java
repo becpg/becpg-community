@@ -115,7 +115,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 
 					for (AttributeExtractorStructure metadataField : metadataFields) {
 						if (metadataField.isFormulaField()) {
-							if (metadataField.getFieldName().startsWith("formula")) {
+							if (metadataField.getFieldName().startsWith("formula") || metadataField.getFieldName().startsWith("image")) {
 								item.put(metadataField.getFieldName(), eval(productNodeRef , productNodeRef, metadataField.getFormula(), item));
 							} else {
 								item.put(metadataField.getFieldName(), metadataField.getFormula());
@@ -179,7 +179,7 @@ public class AllocationExcelReportSearchPlugin extends DynamicCharactExcelReport
 	
 						for (AttributeExtractorStructure metadataField : metadataFields) {
 							if (metadataField.isFormulaField()) {
-								if (metadataField.getFieldName().startsWith("formula")) {
+								if (metadataField.getFieldName().startsWith("formula") || metadataField.getFieldName().startsWith("image")) {
 									item.put(metadataField.getFieldName(), eval(productNodeRef, entry.getKey(), metadataField.getFormula(), item));
 								} else {
 									item.put(metadataField.getFieldName(), metadataField.getFormula());
