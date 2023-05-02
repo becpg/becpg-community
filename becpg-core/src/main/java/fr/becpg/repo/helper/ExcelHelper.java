@@ -18,9 +18,12 @@ import org.apache.poi.ss.formula.ptg.RefPtgBase;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -100,7 +103,23 @@ public class ExcelHelper {
 
 						if (field.isFormulaField() && field.getFieldName().startsWith("excel")) {
 							cell.setCellFormula(shiftFormula((String) obj, rowNum-1, sheet));
+						} else if(field.isFormulaField() && field.getFieldName().startsWith("image") && obj instanceof byte[]) {
+							
+							byte[] imageBytes = (byte[]) obj;
+							int pictureID = sheet.getWorkbook().addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
+							XSSFDrawing drawing = sheet.createDrawingPatriarch();
+							XSSFClientAnchor imgAnchor = new XSSFClientAnchor();
+							imgAnchor.setCol1(cell.getColumnIndex()); // Sets the column (0 based) of the first cell.
+							imgAnchor.setCol2(cell.getColumnIndex()+1); // Sets the column (0 based) of the Second cell.
+							imgAnchor.setRow1(cell.getRowIndex()); // Sets the row (0 based) of the first cell.
+							imgAnchor.setRow2(cell.getRowIndex()+1); // Sets the row (0 based) of the Second cell.
+							
+							drawing.createPicture(imgAnchor, pictureID);
+							sheet.autoSizeColumn(cell.getColumnIndex());
+							cell.getRow().setHeight((short)1000);
+							
 						} else if (obj instanceof Date) {
+						
 							cell.setCellValue((Date) obj);
 							if (DataTypeDefinition.DATETIME.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())) {
 								cell.setCellStyle(createDateStyle(sheet.getWorkbook(), true));

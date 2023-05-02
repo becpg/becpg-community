@@ -609,7 +609,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 	}
 
 	/*
-	 * formula| excel| entity|
+	 * formula| excel| image| entity|
 	 *
 	 * EXCEL -> bcpg:compoListProduct_bcpg:erpCode, attribute -> bcpg_compoListProduct|bcpg_erpCode
 	 *
@@ -657,7 +657,11 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 					field = field.nextToken();
 					ret.add(new AttributeExtractorStructure(new AttributeExtractorField("excel_" + (formulaCount++), field.getFieldLabel()),
 							field.getFieldName()));
-				} else {
+				} else if ("image".equals(dlField.getFieldName())) {
+					field = field.nextToken();
+					ret.add(new AttributeExtractorStructure(new AttributeExtractorField("image_" + (formulaCount++), field.getFieldLabel()),
+									field.getFieldName()));
+				 } else {
 					List<AttributeExtractorField> dLFields = new ArrayList<>();
 					AttributeExtractorFilter dataListFilter = null;
 					QName fieldQname = null;
