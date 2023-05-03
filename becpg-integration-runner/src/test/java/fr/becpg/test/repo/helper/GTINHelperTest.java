@@ -18,8 +18,9 @@ public class GTINHelperTest {
 		EAN13CheckDigit validator = new EAN13CheckDigit();
 		Assert.assertEquals("3",validator.calculate("455632001258"));
 		Assert.assertTrue(validator.isValid(ean13));
-		
 
+		ean13 = GTINHelper.createEAN13Code("353152003", "1");
+		Assert.assertEquals(ean13, "3531520030019");
 	}
 	
 	@Test
@@ -32,8 +33,6 @@ public class GTINHelperTest {
 		Assert.assertEquals("8",validator.calculate("1503034000903"));
 		Assert.assertTrue(validator.isValid(ean14));
 		
-		
-
 	}
 
 	
