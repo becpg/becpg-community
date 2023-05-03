@@ -77,15 +77,19 @@ function main()
 	    			 nodeRef = "workspace://SpacesStore/"+nodeRef;
 	    		}
 	    		
-	    		for(var j in assocToRemoves){
-	    			var node = search.findNode(nodeRef);
-	    			var assocToRemove = assocToRemoves[j].replace("_",":");
-	    			var assocs = node.assocs[assocToRemove];
-	    			for(z in assocs){
-	    				node.removeAssociation(assocs[z],assocToRemove);
-	    			}
-	    		}
-	    		persistedObject = formService.saveForm("node",nodeRef.replace(":/",""), repoFormData);
+    			var node = search.findNode(nodeRef);
+				
+				if (node && node.hasPermission("Write")) {
+		    		for(var j in assocToRemoves){
+		    			var assocToRemove = assocToRemoves[j].replace("_",":");
+		    			var assocs = node.assocs[assocToRemove];
+		    			for(z in assocs){
+		    				node.removeAssociation(assocs[z],assocToRemove);
+		    			}
+		    		}
+		    		persistedObject = formService.saveForm("node", nodeRef.replace(":/",""), repoFormData);
+				}
+				
 	    	}
     	} //new node 
     	else {	
