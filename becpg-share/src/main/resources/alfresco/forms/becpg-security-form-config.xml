@@ -30,7 +30,7 @@
 				<appearance>
 					<field id="sec:nodeType" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">components/autocomplete/fields?aclMode=true</control-param>
+							<control-param name="ds">becpg/autocomplete/aclType</control-param>
 							<control-param name="showTooltip">false</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>
