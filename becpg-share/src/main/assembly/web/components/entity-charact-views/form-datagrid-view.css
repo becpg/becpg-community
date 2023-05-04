@@ -23,3 +23,9 @@
 {
 	border:none;	
 }
+
+.locked {
+	background: url("../images/lock-16.png") no-repeat scroll 0 0 transparent;
+	padding-left: 20px;
+	padding-bottom: 5px;
+}
