@@ -48,8 +48,8 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.autocomplete.SecurityAutoCompletePlugin;
 import fr.becpg.repo.security.data.ACLGroupData;
+import fr.becpg.repo.security.data.PermissionModel;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
-import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.RepoBaseTestCase;
 
@@ -165,6 +165,30 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 
 	}
 
+	private NodeRef createDefaultReadOnlyACLGroup() {
+
+		createUsers();
+		ACLGroupData aclGroupData = new ACLGroupData();
+		aclGroupData.setName("Test read only ACL");
+		aclGroupData.setNodeType(SecurityModel.TYPE_ACL_ENTRY.toPrefixString(namespaceService));
+		aclGroupData.setIsDefaultReadOnly(true);
+		
+		List<ACLEntryDataItem> acls = new ArrayList<>();
+
+		List<NodeRef> group1s = new ArrayList<>();
+		group1s = new ArrayList<>();
+		group1s.add(authorityService.getAuthorityNodeRef(grp1));
+
+		acls.add(new ACLEntryDataItem("sec:propName", PermissionModel.READ_WRITE, group1s));
+		acls.add(new ACLEntryDataItem("cm:description", PermissionModel.READ_WRITE, group1s));
+		acls.add(new ACLEntryDataItem("cm:titled", PermissionModel.READ_READANDWRITE, group1s));
+
+		aclGroupData.setAcls(acls);
+		alfrescoRepository.create(getTestFolderNodeRef(), aclGroupData);
+
+		return aclGroupData.getNodeRef();
+
+	}
 	private NodeRef createGlobalACLGroup() {
 		createUsers();
 		List<NodeRef> group1s = new ArrayList<>();
@@ -412,8 +436,8 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 				}
 			}
 			// Global rm folder
-			List<ACLEntryDataItem.PermissionModel> globalFolderPerms = securityService.getNodeACLPermissions(rmGlobalNodeRef,
-					nodeService.getType(rmGlobalNodeRef), "View-documents");
+			List<PermissionModel> globalFolderPerms = securityService.getPermissionContext(rmGlobalNodeRef,
+					nodeService.getType(rmGlobalNodeRef), "View-documents").getPermissions();
 			if (globalFolderPerms != null) {
 				List<ChildAssociationRef> folders = nodeService.getChildAssocs(rmGlobalNodeRef,
 						ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
@@ -449,8 +473,8 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 				}
 			}
 			//Local folder permission
-			List<ACLEntryDataItem.PermissionModel> localDocPerms = securityService.getNodeACLPermissions(rmLocalNodeRef,
-					nodeService.getType(rmLocalNodeRef), "View-documents");
+			List<PermissionModel> localDocPerms = securityService.getPermissionContext(rmLocalNodeRef,
+					nodeService.getType(rmLocalNodeRef), "View-documents").getPermissions();
 			if (localDocPerms != null) {
 				List<ChildAssociationRef> folders = nodeService.getChildAssocs(rmLocalNodeRef,
 						ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
@@ -485,6 +509,97 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 				logger.debug("Type : " + type);
 			}
 		}
+
+	}
+	
+	@Test
+	public void testDefaultReadOnly() {
+
+		final NodeRef aclGroupNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			NodeRef ret = createDefaultReadOnlyACLGroup();
+
+			securityService.refreshAcls();
+
+			return ret;
+
+		}, false, true);
+
+		authenticationComponent.setCurrentUser(USER_TWO);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
+				SecurityService.READ_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
+				SecurityService.READ_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
+				SecurityService.READ_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
+				SecurityService.READ_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
+				SecurityService.NONE_ACCESS);
+
+		authenticationComponent.setCurrentUser(USER_ONE);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
+				SecurityService.READ_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
+				SecurityService.WRITE_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
+				SecurityService.READ_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
+				SecurityService.WRITE_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
+				SecurityService.WRITE_ACCESS);
+
+		authenticationComponent.setCurrentUser(USER_THREE);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
+				SecurityService.READ_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
+				SecurityService.READ_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
+				SecurityService.READ_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
+				SecurityService.READ_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
+				SecurityService.NONE_ACCESS);
+
+		authenticationComponent.setCurrentUser("admin");
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
+				SecurityService.WRITE_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
+				SecurityService.WRITE_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
+				SecurityService.WRITE_ACCESS);
+		
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
+				SecurityService.WRITE_ACCESS);
+
+		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
+				SecurityService.WRITE_ACCESS);
+
+
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			nodeService.deleteNode(aclGroupNodeRef);
+
+			return null;
+		}, false, true);
 
 	}
 
