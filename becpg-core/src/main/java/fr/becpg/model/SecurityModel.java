@@ -71,4 +71,6 @@ public final class SecurityModel {
 	public static final QName ASSOC_SECURITY_REF= QName.createQName(SECURITY_URI, "securityRef");
 	
 	public static final QName ASSOC_READ_GROUPS = QName.createQName(SECURITY_URI, "readGroups");
+	
+	public static final QName PROP_IS_DEFAULT_READ_ONLY = QName.createQName(SECURITY_URI, "isDefaultReadOnly");
 }

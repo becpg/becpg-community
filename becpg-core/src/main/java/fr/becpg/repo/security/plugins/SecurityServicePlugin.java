@@ -3,7 +3,7 @@ package fr.becpg.repo.security.plugins;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
-import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
+import fr.becpg.repo.security.data.PermissionModel;
 
 public interface SecurityServicePlugin {
 
