@@ -46,6 +46,8 @@ public class ACLGroupData extends BeCPGDataObject {
 	
 	private Boolean isLocalPermission;
 	
+	private Boolean isDefaultReadOnly;
+	
 	List<ACLEntryDataItem> acls = new ArrayList<>();
 
 	/**
@@ -106,6 +108,16 @@ public class ACLGroupData extends BeCPGDataObject {
 	 */
 	public void setIsLocalPermission(Boolean isLocalPermission) {
 		this.isLocalPermission = isLocalPermission;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "sec:isDefaultReadOnly")
+	public Boolean getIsDefaultReadOnly() {
+		return isDefaultReadOnly;
+	}
+
+	public void setIsDefaultReadOnly(Boolean isDefaultReadOnly) {
+		this.isDefaultReadOnly = isDefaultReadOnly;
 	}
 
 	
