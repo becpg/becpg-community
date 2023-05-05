@@ -40,8 +40,8 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.security.SecurityService;
-import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
-import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
+import fr.becpg.repo.security.data.PermissionContext;
+import fr.becpg.repo.security.data.PermissionModel;
 
 
 /**
@@ -126,81 +126,85 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			//Set datalist permissions
 			for(NodeRef dataList : datalists) {
 				String dataListQName = (String)nodeService.getProperty(dataList, DataListModel.PROP_DATALISTITEMTYPE);
-
-				List<ACLEntryDataItem.PermissionModel> perms = securityService.getNodeACLPermissions(productDataNodeRef, nodeService.getType(productDataNodeRef), dataListQName);
-				if (perms != null) {
-					setAclPermissions(productDataNodeRef, dataList, perms);
-				}
+				
+				PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), dataListQName);
+				setAclPermissions(productDataNodeRef, dataList, permissionContext);
 			}
 
 			//Set document permissions
-			List<ACLEntryDataItem.PermissionModel> perms = securityService.getNodeACLPermissions(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
-			if (perms != null) {
-				List<ChildAssociationRef> folders = nodeService.getChildAssocs(productDataNodeRef, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
-				for (ChildAssociationRef folder : folders) {
-					setAclPermissions(productDataNodeRef, folder.getChildRef(), perms);
-				}
+			
+			PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
+			List<ChildAssociationRef> folders = nodeService.getChildAssocs(productDataNodeRef, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
+			for (ChildAssociationRef folder : folders) {
+				setAclPermissions(productDataNodeRef, folder.getChildRef(), permissionContext);
 			}
 		}
 		return true;
 	}
 
-	private void setAclPermissions(NodeRef productDataNodeRef, NodeRef nodeRef, List<ACLEntryDataItem.PermissionModel> perms) {
-
-		for (ACLEntryDataItem.PermissionModel permissionModel : perms) {
-
-			String permissionToSet = PermissionService.CONSUMER;
-			boolean setOtherGroupPermissions = false;
-			List<String> authorityPermissionGroup = new ArrayList<>();
-
-			if (PermissionModel.READ_READANDWRITE.equals(permissionModel.getPermission())) {
-				permissionToSet = PermissionService.CONTRIBUTOR;
-			} else if (PermissionModel.READ_WRITE.equals(permissionModel.getPermission())) {
-				permissionToSet = PermissionService.CONTRIBUTOR;
-				setOtherGroupPermissions = true;
-			}
-			
-			for(NodeRef authorityNodeRef : permissionModel.getGroups()) {
-				String authorityName = authorityDAO.getAuthorityName(authorityNodeRef);
-				authorityPermissionGroup.add(authorityName);
-				if (siteService.getSite(productDataNodeRef) != null) {
-					String sitePermission = siteService.getMembersRole(siteService.getSite(productDataNodeRef).getShortName(), authorityName);
-					if (sitePermission != null) {							
-						if (PermissionService.CONSUMER.equals(permissionToSet) || sitePermission.contains(permissionToSet)) {
-							permissionService.setPermission(nodeRef, authorityName, permissionToSet, true);
-						} else if (SiteModel.SITE_COLLABORATOR.equals(sitePermission) || SiteModel.SITE_MANAGER.equals(sitePermission)) {
-							permissionService.setPermission(nodeRef, authorityName, PermissionService.COORDINATOR, true);
-						} else if(SiteModel.SITE_CONSUMER.equals(sitePermission)) {
-							permissionService.setPermission(nodeRef, authorityName, PermissionService.CONSUMER, true);
+	private void setAclPermissions(NodeRef productDataNodeRef, NodeRef nodeRef, PermissionContext permissionContext) {
+		
+		List<PermissionModel> permissions = permissionContext.getPermissions();
+		
+		if (permissions != null) {
+			for (PermissionModel permissionModel : permissions) {
+				
+				String permissionToSet = PermissionService.CONSUMER;
+				boolean setOtherGroupPermissions = false;
+				List<String> authorityPermissionGroup = new ArrayList<>();
+				
+				if (PermissionModel.READ_READANDWRITE.equals(permissionModel.getPermission())) {
+					permissionToSet = PermissionService.CONTRIBUTOR;
+				} else if (PermissionModel.READ_WRITE.equals(permissionModel.getPermission())) {
+					permissionToSet = PermissionService.CONTRIBUTOR;
+					setOtherGroupPermissions = true;
+				}
+				
+				for(NodeRef authorityNodeRef : permissionModel.getGroups()) {
+					String authorityName = authorityDAO.getAuthorityName(authorityNodeRef);
+					authorityPermissionGroup.add(authorityName);
+					if (siteService.getSite(productDataNodeRef) != null) {
+						String sitePermission = siteService.getMembersRole(siteService.getSite(productDataNodeRef).getShortName(), authorityName);
+						if (sitePermission != null) {							
+							if (PermissionService.CONSUMER.equals(permissionToSet) || sitePermission.contains(permissionToSet)) {
+								permissionService.setPermission(nodeRef, authorityName, permissionToSet, true);
+							} else if (SiteModel.SITE_COLLABORATOR.equals(sitePermission) || SiteModel.SITE_MANAGER.equals(sitePermission)) {
+								permissionService.setPermission(nodeRef, authorityName, PermissionService.COORDINATOR, true);
+							} else if(SiteModel.SITE_CONSUMER.equals(sitePermission)) {
+								permissionService.setPermission(nodeRef, authorityName, PermissionService.CONSUMER, true);
+							}
 						}
+					} else {
+						permissionService.setPermission(nodeRef, authorityName, permissionToSet, true);
 					}
-				} else {
-					permissionService.setPermission(nodeRef, authorityName, permissionToSet, true);
 				}
+				
+				setReadPermissions(nodeRef, setOtherGroupPermissions, authorityPermissionGroup);
 			}
+		}
+	}
 
-			//Set read permissions
-			if (setOtherGroupPermissions) {
-				if (!permissionService.getInheritParentPermissions(nodeRef)) {
-					permissionService.setInheritParentPermissions(nodeRef, true);
-				}
-				for(AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
-					if (!authorityPermissionGroup.contains(permission.getAuthority()) && !PermissionService.READ.equals(permission.getPermission())) {
-						permissionService.setPermission(nodeRef, permission.getAuthority(), PermissionService.READ , true);
-					}
-				}
-			} else {
-				for(AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
-					if (!authorityPermissionGroup.contains(permission.getAuthority())){
-						permissionService.clearPermission(nodeRef, permission.getAuthority());
-					}
+	private void setReadPermissions(NodeRef nodeRef, boolean setOtherGroupPermissions, List<String> authorityPermissionGroup) {
+		if (setOtherGroupPermissions) {
+			if (!permissionService.getInheritParentPermissions(nodeRef)) {
+				permissionService.setInheritParentPermissions(nodeRef, true);
+			}
+			for(AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
+				if (!authorityPermissionGroup.contains(permission.getAuthority()) && !PermissionService.READ.equals(permission.getPermission())) {
+					permissionService.setPermission(nodeRef, permission.getAuthority(), PermissionService.READ , true);
 				}
 			}
-
-			//Set inherit permission
-			if (permissionService.getInheritParentPermissions(nodeRef)) {
-				permissionService.setInheritParentPermissions(nodeRef, false);
+		} else {
+			for(AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
+				if (!authorityPermissionGroup.contains(permission.getAuthority())){
+					permissionService.clearPermission(nodeRef, permission.getAuthority());
+				}
 			}
+		}
+		
+		//Set inherit permission
+		if (permissionService.getInheritParentPermissions(nodeRef)) {
+			permissionService.setInheritParentPermissions(nodeRef, false);
 		}
 	}
 }

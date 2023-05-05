@@ -55,8 +55,9 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
 import fr.becpg.repo.security.data.ACLGroupData;
+import fr.becpg.repo.security.data.PermissionContext;
+import fr.becpg.repo.security.data.PermissionModel;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
-import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 
 /**
@@ -114,41 +115,23 @@ public class SecurityServiceImpl implements SecurityService {
 			stopWatch.start();
 		}
 		try {
+			
+			int accesMode = SecurityService.WRITE_ACCESS;
 
-			List<ACLEntryDataItem.PermissionModel> perms = getNodeACLPermissions(nodeRef, nodeType, propName);
-			if (!perms.isEmpty()) {
-				if (isAdmin()) {
-					return SecurityService.WRITE_ACCESS;
+			if (!isAdmin()) {
+				PermissionContext permissionContext = getPermissionContext(nodeRef, nodeType, propName);
+				
+				if (Boolean.TRUE.equals(permissionContext.isDefaultReadOnly())) {
+					accesMode = SecurityService.READ_ACCESS;
 				}
-
-				int ret = SecurityService.NONE_ACCESS;
-
-				boolean isReadOnly = true;
-
-				for (PermissionModel permissionModel : perms) {
-
-					if (isInGroup(nodeRef, nodeType, permissionModel)) {
-						if (permissionModel.isWrite()) {
-							return SecurityService.WRITE_ACCESS;
-						} else if (permissionModel.isReadOnly()) {
-							ret = SecurityService.READ_ACCESS;
-						}
-					} else {
-						if (permissionModel.isReadOnly()) {
-							isReadOnly = false;
-						}
-					}
-
+				
+				List<PermissionModel> permissions = permissionContext.getPermissions();
+				if (!permissions.isEmpty()) {
+					accesMode = computeAccessMode(nodeRef, nodeType, permissions);
 				}
-
-				if ((ret == SecurityService.NONE_ACCESS) && isReadOnly) {
-					ret = SecurityService.READ_ACCESS;
-				}
-
-				return ret;
 			}
 
-			return SecurityService.WRITE_ACCESS;
+			return accesMode;
 		} finally {
 			if (logger.isDebugEnabled() && (stopWatch != null)) {
 				stopWatch.stop();
@@ -158,37 +141,74 @@ public class SecurityServiceImpl implements SecurityService {
 		}
 	}
 
+	private int computeAccessMode(NodeRef nodeRef, QName nodeType, List<PermissionModel> permissions) {
+		int accessMode = SecurityService.NONE_ACCESS;
+		
+		boolean hasReadAccess = true;
+		
+		for (PermissionModel permission : permissions) {
+			
+			if (isInGroup(nodeRef, nodeType, permission)) {
+				if (permission.isWrite()) {
+					return SecurityService.WRITE_ACCESS;
+				} else if (permission.isExclusiveRead()) {
+					accessMode = SecurityService.READ_ACCESS;
+				}
+			} else {
+				if (permission.isExclusiveRead()) {
+					hasReadAccess = false;
+				}
+			}
+			
+		}
+		
+		if ((accessMode == SecurityService.NONE_ACCESS) && hasReadAccess) {
+			accessMode = SecurityService.READ_ACCESS;
+		}
+		
+		return accessMode;
+	}
+
 	@Override
-	public List<ACLEntryDataItem.PermissionModel> getNodeACLPermissions(NodeRef nodeRef, QName nodeType, String propName) {
+	public PermissionContext getPermissionContext(NodeRef nodeRef, QName nodeType, String propName) {
+		
+		PermissionContext permissionContext = new PermissionContext();
+		
+		String cacheKey = computeCacheKey(nodeRef);
+		
+		Map<String, Boolean> readOnlyMap = getReadOnlyCachedMap(cacheKey);
+		
+		String nodeTypeKey = computeNodeTypeKey(nodeType);
+		if (readOnlyMap.containsKey(nodeTypeKey)) {
+			permissionContext.setIsDefaultReadOnly(readOnlyMap.get(nodeTypeKey));
+		}
+		
+		Map<String, List<PermissionModel>> permissionMap = getPermissionCachedMap(cacheKey);
+		
+		String nodeTypePropKey = computeNodeTypePropKey(nodeType, propName);
+		if (permissionMap.containsKey(nodeTypePropKey)) {
+			permissionContext.setPermissions(permissionMap.get(nodeTypePropKey));
+		}
+		
+		return permissionContext;
+
+	}
+
+	private String computeCacheKey(NodeRef nodeRef) {
 		String cacheKey = ACLS_CACHE_KEY;
 		if ((nodeRef != null) && nodeService.hasAspect(nodeRef, SecurityModel.ASPECT_SECURITY)) {
 			NodeRef aclGroupNodeRef = associationService.getTargetAssoc(nodeRef, SecurityModel.ASSOC_SECURITY_REF);
 
 			if (aclGroupNodeRef != null) {
 				cacheKey = LOCAL_ACLS_CACHE_KEY + "_" + aclGroupNodeRef.getId();
-
 			}
 		}
-		String key = computeAclKey(nodeType, propName);
-		Map<String, List<PermissionModel>> acls = getAcls(cacheKey);
-
-		if (acls.containsKey(key)) {
-			return acls.get(key);
-		}
-
-		return new ArrayList<>();
-
+		return cacheKey;
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public void refreshAcls() {
-		beCPGCacheService.clearCache(SecurityService.class.getName());
-	}
-
-	private Map<String, List<ACLEntryDataItem.PermissionModel>> getAcls(String cacheKey) {
-		return beCPGCacheService.getFromCache(SecurityService.class.getName(), cacheKey, () -> {
-			Map<String, List<ACLEntryDataItem.PermissionModel>> acls = new HashMap<>();
+	private Map<String, Boolean> getReadOnlyCachedMap(String cacheKey) {
+		return beCPGCacheService.getFromCache(SecurityService.class.getName(), cacheKey + ".readOnly", () -> {
+			Map<String, Boolean> readOnlyMap = new HashMap<>();
 			StopWatch stopWatch = null;
 			if (logger.isDebugEnabled()) {
 				stopWatch = new StopWatch();
@@ -209,16 +229,64 @@ public class SecurityServiceImpl implements SecurityService {
 				for (NodeRef aclGroupNodeRef : aclGroups) {
 					ACLGroupData aclGrp = alfrescoRepository.findOne(aclGroupNodeRef);
 					QName aclGrpType = QName.createQName(aclGrp.getNodeType(), namespaceService);
+					
+					if (aclGrpType != null) {
+						Boolean isDefaultReadOnly = aclGrp.getIsDefaultReadOnly();
+						if (isDefaultReadOnly != null) {
+							String isDefaultReadOnlyKey = computeNodeTypeKey(aclGrpType);
+							readOnlyMap.put(isDefaultReadOnlyKey, isDefaultReadOnly);
+						}
+					}
+				}
+			}
+
+			if (logger.isDebugEnabled() && (stopWatch != null)) {
+				stopWatch.stop();
+				logger.debug("Compute default permissions takes : " + stopWatch.getTotalTimeSeconds() + "s");
+			}
+
+			return readOnlyMap;
+		});
+	}
+
+	private String computeNodeTypeKey(QName nodeType) {
+		return nodeType.toString();
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void refreshAcls() {
+		beCPGCacheService.clearCache(SecurityService.class.getName());
+	}
+
+	private Map<String, List<PermissionModel>> getPermissionCachedMap(String cacheKey) {
+		return beCPGCacheService.getFromCache(SecurityService.class.getName(), cacheKey, () -> {
+			Map<String, List<PermissionModel>> permissionMap = new HashMap<>();
+			StopWatch stopWatch = null;
+			if (logger.isDebugEnabled()) {
+				stopWatch = new StopWatch();
+				stopWatch.start();
+			}
+
+			List<NodeRef> aclGroups = null;
+
+			if (cacheKey.startsWith(LOCAL_ACLS_CACHE_KEY)) {
+				aclGroups = Arrays.asList(new NodeRef(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE, cacheKey.split("_")[4]));
+
+			} else {
+				aclGroups = findAllAclGroups();
+			}
+
+			if (aclGroups != null) {
+
+				for (NodeRef aclGroupNodeRef : aclGroups) {
+					ACLGroupData aclGrp = alfrescoRepository.findOne(aclGroupNodeRef);
+					QName nodeType = QName.createQName(aclGrp.getNodeType(), namespaceService);
 					List<ACLEntryDataItem> aclEntries = aclGrp.getAcls();
 					if (aclEntries != null) {
 						for (ACLEntryDataItem aclEntry : aclEntries) {
-							String key = computeAclKey(aclGrpType, aclEntry.getPropName());
-							List<PermissionModel> perms = new ArrayList<>();
-							perms.add(aclEntry.getPermissionModel());
-							if (acls.containsKey(key)) {
-								perms.addAll(acls.get(key));
-							}
-							acls.put(key, perms);
+							String key = computeNodeTypePropKey(nodeType, aclEntry.getPropName());
+							permissionMap.computeIfAbsent(key, k -> new ArrayList<>()).add(new PermissionModel(aclEntry.getAclPermission(), aclEntry.getGroupsAssignee()));
 						}
 					}
 				}
@@ -229,7 +297,7 @@ public class SecurityServiceImpl implements SecurityService {
 				logger.debug("Compute ACLs takes : " + stopWatch.getTotalTimeSeconds() + "s");
 			}
 
-			return acls;
+			return permissionMap;
 		});
 	}
 
@@ -298,7 +366,7 @@ public class SecurityServiceImpl implements SecurityService {
 		return false;
 	}
 
-	private String computeAclKey(QName nodeType, String propName) {
+	private String computeNodeTypePropKey(QName nodeType, String propName) {
 		return nodeType.toString() + "_" + propName;
 	}
 
