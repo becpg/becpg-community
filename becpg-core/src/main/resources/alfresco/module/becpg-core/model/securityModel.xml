@@ -44,6 +44,11 @@
 					<type>d:text</type>
 					<mandatory>true</mandatory>
 				</property>
+				<property name="sec:isDefaultReadOnly">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<default>false</default>
+				</property>
 				<property name="sec:isLocalPermission">
 					<type>d:boolean</type>
 					<default>false</default>

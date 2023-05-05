@@ -26,6 +26,7 @@
 					<show id="cm:name" />
 					<show id="sec:nodeType" />
 					<show id="sec:isLocalPermission" />
+					<show id="sec:isDefaultReadOnly" />
 				</field-visibility>
 				<appearance>
 					<field id="sec:nodeType" >
