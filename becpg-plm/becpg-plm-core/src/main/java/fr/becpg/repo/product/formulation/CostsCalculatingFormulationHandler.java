@@ -28,6 +28,7 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
  */
 public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingFormulationHandler<CostListDataItem> {
 
+	private static final String MESSAGE_FORMULATE_COST_LIST_ERROR = "message.formulate.costList.error";
 	private static final Log logger = LogFactory.getLog(CostsCalculatingFormulationHandler.class);
 
 
@@ -70,6 +71,11 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 	@Override
 	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.Cost;
+	}
+	
+	@Override
+	protected String getFormulationErrorMessage() {
+		return MESSAGE_FORMULATE_COST_LIST_ERROR;
 	}
 
 	private void calculateProfitability(ProductData formulatedProduct) {
