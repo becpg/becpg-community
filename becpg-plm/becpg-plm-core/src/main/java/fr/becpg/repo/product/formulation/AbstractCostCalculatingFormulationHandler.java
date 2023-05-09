@@ -132,7 +132,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 			if (getDataListVisited(formulatedProduct) != null) {
 
 				computeFormulatedList(formulatedProduct, getDataListVisited(formulatedProduct), getCostFormulaPropName(),
-						"message.formulate.costList.error");
+						getFormulationErrorMessage());
 
 				ProductUnit unit = formulatedProduct.getUnit();
 
@@ -171,6 +171,8 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		}
 		return true;
 	}
+
+	protected abstract String getFormulationErrorMessage();
 
 	/**
 	 * Calculate the costListUnit
