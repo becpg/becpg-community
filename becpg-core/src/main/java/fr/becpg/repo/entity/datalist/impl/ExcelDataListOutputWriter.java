@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
@@ -27,6 +29,7 @@ import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.MimetypeService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
@@ -102,6 +105,8 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 	private DownloadStatusUpdateService updateService;
 	@Autowired
 	private MimetypeService mimetypeService;
+	@Autowired
+	private PersonService personService;
 
 	@Autowired
 	private EntityActivityService entityActivityService;
@@ -170,6 +175,25 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				ExcelDataListDownloadExporter handler = new ExcelDataListDownloadExporter(transactionService.getRetryingTransactionHelper(),
 						updateService, downloadStorage, downloadNodeRef, Long.valueOf(asynExtractor.getFullListSize()));
 
+				Locale currentLocal = I18NUtil.getLocale();
+				Locale currentContentLocal = I18NUtil.getContentLocale();
+
+				String userId = userName;
+
+				if ((userId != null) && !userId.isEmpty() && !AuthenticationUtil.getGuestUserName().equals(userId)
+						&& personService.personExists(userId)) {
+					NodeRef personNodeRef = personService.getPerson(userId);
+					if ((personNodeRef != null) && nodeService.exists(personNodeRef)) {
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Set content locale:" + MLTextHelper.getUserContentLocale(nodeService, personNodeRef));
+						}
+
+						I18NUtil.setLocale(MLTextHelper.getUserLocale(nodeService, personNodeRef));
+						I18NUtil.setContentLocale(MLTextHelper.getUserContentLocale(nodeService, personNodeRef));
+					}
+				}
+
 				try (OutputStream out = new FileOutputStream(tempFile)) {
 
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -181,9 +205,10 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 				} catch (DownloadCancelledException ex) {
 					downloadCancelled(downloadNodeRef, handler);
 				} finally {
-					if (!tempFile.delete()) {
-						logger.error("Cannot delete dir: " + tempFile.getName());
-					}
+
+					I18NUtil.setLocale(currentLocal);
+					I18NUtil.setContentLocale(currentContentLocal);
+					Files.delete(tempFile.toPath());
 				}
 
 				return true;
@@ -297,7 +322,6 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 
 				XSSFCellStyle style = workbook.createCellStyle();
 
-
 				style.setFillForegroundColor(ExcelHelper.beCPGHeaderColor());
 				style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
@@ -360,8 +384,8 @@ public class ExcelDataListOutputWriter implements DataListOutputWriter {
 						cell = headerRow.createCell(1);
 						cell.setCellValue("EntityListItem");
 					}
-					
-					if(entityType!=null) {
+
+					if (entityType != null) {
 						headerRow = sheet.createRow(rownum++);
 						headerRow.setRowStyle(style);
 						cell = headerRow.createCell(0);
