@@ -406,7 +406,9 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 		
 		List<NodeRef> ret = new ArrayList<>();
 		if(filter.getEntityCriteria()!=null && ! filter.getEntityCriteria().isEmpty()) {
-			List<NodeRef> entities = advSearchService.queryAdvSearch(filter.getEntityType(), "", filter.getEntityCriteria(),
+			
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(filter.getEntityType()).excludeDefaults();
+			List<NodeRef> entities = advSearchService.queryAdvSearch(filter.getEntityType(), queryBuilder, filter.getEntityCriteria(),
 					RepoConsts.MAX_RESULTS_UNLIMITED);
 			for(NodeRef nodeRef : nodes) {
 				if(entities.contains(nodeRef)) {
