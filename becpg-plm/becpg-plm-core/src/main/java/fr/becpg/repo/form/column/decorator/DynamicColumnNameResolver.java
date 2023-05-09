@@ -3,11 +3,13 @@ package fr.becpg.repo.form.column.decorator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -52,8 +54,12 @@ public class DynamicColumnNameResolver implements ExcelFieldTitleProvider, DataG
 			for (NodeRef nodeRef : BeCPGQueryBuilder.createQuery().parent(filter.getParentNodeRef()).ofType(PLMModel.TYPE_DYNAMICCHARACTLIST)
 					.isNotNull(PLMModel.PROP_DYNAMICCHARACT_COLUMN).inDB().list()) {
 
-				dynamicColumnNames.put(((String) nodeService.getProperty(nodeRef, PLMModel.PROP_DYNAMICCHARACT_COLUMN)).replace("bcpg_", ""),
-						(String) nodeService.getProperty(nodeRef, PLMModel.PROP_DYNAMICCHARACT_TITLE));
+				String title = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_TITLE);
+				if (title == null || title.isBlank()) {
+					title = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_DYNAMICCHARACT_TITLE);
+				}
+
+				dynamicColumnNames.put(((String) nodeService.getProperty(nodeRef, PLMModel.PROP_DYNAMICCHARACT_COLUMN)).replace("bcpg_", ""), title);
 
 			}
 
