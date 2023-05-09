@@ -610,7 +610,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       }
 
   });
-	
+  
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:dynamicCharactValue",
@@ -772,6 +772,15 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName : "bcpg:dynamicCharactTitle",
         renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+			
+			var title = null;
+			if (data.displayValue != null) {
+			    title = oRecord.getData("itemData")["prop_cm_title"].value;
+				if (title == null) {
+					title = data.displayValue;
+				}
+			}
+			
             var column = oRecord.getData("itemData")["prop_bcpg_dynamicCharactColumn"].value;
             
             if (column !=null && column.length > 0) {                
@@ -780,10 +789,10 @@ if (beCPG.module.EntityDataGridRenderers) {
                     Dom.addClass(elCell.parentNode.parentNode, "hidden");
                 }
                 
-               return "<b>"+Alfresco.util.encodeHTML(data.displayValue)+"</b>";
+               return "<b>"+Alfresco.util.encodeHTML(title)+"</b>";
             }
             
-            return Alfresco.util.encodeHTML(data.displayValue);
+            return Alfresco.util.encodeHTML(title);
         }
     });
 
@@ -832,9 +841,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope) {
 
 			if (data.value != null && data.value.length > 0) {
+				var title = oRecord.getData("itemData")["prop_cm_title"].value;
+				if (title == null) {
+					title =  oRecord.getData("itemData")["prop_bcpg_dynamicCharactTitle"].value;
+				}
+				
 				YAHOO.Bubbling.fire("columnRenamed", {
 					columnId : "prop_" + data.value,
-					label : oRecord.getData("itemData")["prop_bcpg_dynamicCharactTitle"].value
+					label : title
 				});
 			}
 
