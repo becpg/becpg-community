@@ -575,8 +575,11 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						boolean isFound = false;
 						for (DynamicCharactListItem targetItem : targetList) {
 							// charact renamed
-							if (sourceItem.getName().equals(targetItem.getName()) && !sourceItem.getTitle().equals(targetItem.getTitle())) {
+							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getTitle()!=null && !sourceItem.getTitle().equals(targetItem.getTitle())) {
 								targetItem.setTitle(sourceItem.getTitle());
+							}
+							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getMlTitle()!=null && !sourceItem.getMlTitle().equals(targetItem.getMlTitle())) {
+								targetItem.setMlTitle(sourceItem.getMlTitle());
 							}
 							// update formula
 							if (sourceItem.getName().equals(targetItem.getName())) {
