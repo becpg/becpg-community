@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.productList;
 
+import org.alfresco.service.cmr.repository.MLText;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -42,6 +44,8 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	private static final long serialVersionUID = -8824174891991469677L;
 
 	private String title;
+	
+	private MLText mlTitle;
 
 	private String formula;
 
@@ -100,6 +104,22 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	public void setTitle(String title) {
 		this.title = title;
 	}
+	
+	/**
+	 * <p>Getter for the field <code>title</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfMlText
+	@AlfProp
+	@AlfQname(qname = "cm:title")
+	public MLText getMlTitle() {
+		return mlTitle;
+	}
+
+	public void setMlTitle(MLText mlTitle) {
+		this.mlTitle = mlTitle;
+	}
 
 	/**
 	 * <p>Getter for the field <code>color</code>.</p>
@@ -111,6 +131,8 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 	public String getColor() {
 		return color;
 	}
+
+
 
 	/** {@inheritDoc} */
 	public void setColor(String color) {
