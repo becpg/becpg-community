@@ -135,8 +135,8 @@
                                   htmlid: this.id + "-formContainer",
                                   itemKind: "node",
                                   itemId: this.options.nodeRef,
-                                  formId: this.options.formId,
-                                  siteId: this.options.siteId,
+                                  formId: this.options.formId!=null ? this.options.formId :"",
+                                  siteId: this.options.siteId!=null? this.options.siteId :"",
                                   mode: "view"
                                },
                                successCallback:
