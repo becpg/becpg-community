@@ -19,6 +19,8 @@ import fr.becpg.repo.product.data.productList.LCAListDataItem;
 
 public class LCACalculatingFormulationHandler extends AbstractCostCalculatingFormulationHandler<LCAListDataItem> {
 
+	private static final String MESSAGE_FORMULATE_LCA_LIST_ERROR = "message.formulate.lcaList.error";
+	
 	@Override
 	protected void afterProcess(ProductData formulatedProduct) {
 		// nothing
@@ -75,5 +77,8 @@ public class LCACalculatingFormulationHandler extends AbstractCostCalculatingFor
 	protected QName getCostUnitPropName() {
 		return PLMModel.PROP_LCAUNIT;
 	}
-
+	@Override
+	protected String getFormulationErrorMessage() {
+		return MESSAGE_FORMULATE_LCA_LIST_ERROR;
+	}
 }
