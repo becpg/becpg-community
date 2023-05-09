@@ -44,6 +44,10 @@
  * 
  * removeAssocs(node, assocName) remove association from given node
  * 
+ * addAspectToNode(node, aspectName) Add aspect to a node
+ * 
+ * removeAspectToNode(node, aspectName) Remove aspect to a node
+ * 
  * setValue(node, propName, value) Set property value checking if property changed, returns true if property has changed
  * 
  * setExtraValue(entity, propName, value) Set property value on repository entity
@@ -352,6 +356,32 @@ function removeAssocs(node, assocName) {
 }
 
 /**
+ * Add aspect to a node
+ *
+ * @param {(ScriptNode|NodeRef|string)} node
+ * @param {string} aspectName
+ */
+function addAspectToNode(node, aspectName) {
+    if (!getNode(node).hasAspect(aspectName)) {
+        getNode(node).addAspect(aspectName);
+    }
+}
+
+/**
+ * Remove aspect of a node
+ *
+ * @param {(ScriptNode|NodeRef|string)} node
+ * @param {string} aspectQName
+ */
+function removeAspectToNode(node, aspectName) {
+    if (getNode(node).hasAspect(aspectName)) {
+        getNode(node).removeAspect(aspectName);
+    }
+}
+
+
+
+/**
  * Copy association property value to node property
  *
  * @param {(ScriptNode|NodeRef|string)} node
@@ -403,6 +433,7 @@ function setExtraValue(entity, propName, value) {
 	bcpg.setExtraValue(entity, propName, value);
 	return true
 }
+
 
 /**
  * Copy association association value to node association
