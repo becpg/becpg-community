@@ -403,21 +403,33 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	}
 	
 	private List<NodeRef> filterByEntityCriteria(List<NodeRef> nodes, NotificationRuleFilter filter) {
+		if(logger.isDebugEnabled()) {
+			logger.debug("Filter by entity criteria, size before: "+nodes.size()); 
+		}
+		
 		List<NodeRef> ret = new ArrayList<>();
-		if (advSearchPlugins != null) {
+		if(filter.getEntityCriteria()!=null && ! filter.getEntityCriteria().isEmpty()) {
+			
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(filter.getEntityType()).excludeDefaults();
+			List<NodeRef> entities = advSearchService.queryAdvSearch(filter.getEntityType(), queryBuilder, filter.getEntityCriteria(),
+					RepoConsts.MAX_RESULTS_UNLIMITED);
 			for(NodeRef nodeRef : nodes) {
-				NodeRef entityRef = entityService.getEntityNodeRef(nodeRef, nodeService.getType(nodeRef));
-				if(entityRef!=null && filter.getEntityType()!=null && matchEntityType(entityRef, filter.getEntityType())) {
-					List<NodeRef> entityList = new ArrayList<>(Collections.singletonList(entityRef));
-					for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
-						entityList = advSearchPlugin.filter(entityList, filter.getEntityType(), filter.getEntityCriteria(), advSearchService.getSearchConfig());
-					}
-					
-					if(entityList !=  null && !entityList.isEmpty()) {
-						ret.add(nodeRef);
-					}
+				if(entities.contains(nodeRef)) {
+					ret.add(nodeRef);
 				}
 			}
+			
+		} else {
+			for(NodeRef nodeRef : nodes) {
+				NodeRef entityRef = entityService.getEntityNodeRef(nodeRef, nodeService.getType(nodeRef));
+				if(entityRef!=null && matchEntityType(entityRef, filter.getEntityType())) {
+					ret.add(nodeRef);
+				}
+			}
+		}
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug(" - new size: "+ret.size()); 
 		}
 		return ret;
 	}
