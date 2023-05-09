@@ -22,6 +22,7 @@ package fr.becpg.repo.helper;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -59,7 +60,11 @@ public class DynamicCharactAttributeExtractorPlugin implements AttributeExtracto
 	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		return (String) nodeService.getProperty(nodeRef, PLMModel.PROP_DYNAMICCHARACT_TITLE);
+		String title =  (String) nodeService.getProperty(nodeRef, ContentModel.PROP_TITLE);
+		if(title == null || title.isBlank()) {
+			title = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_DYNAMICCHARACT_TITLE);
+		}
+		return title;
 	}
 
 	
