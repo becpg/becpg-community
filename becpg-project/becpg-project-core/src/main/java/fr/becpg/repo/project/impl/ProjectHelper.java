@@ -313,9 +313,11 @@ public class ProjectHelper {
 	public static Date getLastEndDate(Set<TaskWrapper> tasks) {
 		Date endDate = null;
 		for (TaskWrapper task : tasks) {
-			if (!task.isCancelled() && !task.isParent()
-					&& ((endDate == null) || ((task.getTask().getEnd() != null) && task.getTask().getEnd().after(endDate)))) {
-				endDate = task.getTask().getEnd();
+			if(task.getTask()!=null && task.getTask().getEnd() != null) {
+				if (!task.isCancelled() && !task.isParent()
+						&& ((endDate == null) || task.getTask().getEnd().after(endDate))) {
+					endDate = task.getTask().getEnd();
+				}
 			}
 		}
 
