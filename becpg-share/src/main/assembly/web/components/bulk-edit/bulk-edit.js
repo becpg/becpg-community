@@ -823,7 +823,7 @@
 								// item type
 								Alfresco.util.Ajax.jsonGet({
 									url : $combine(this.columnsUrl + "?mode=bulk-edit&itemType=" + encodeURIComponent(this.options.itemType)
-											+ "&formId=" + encodeURIComponent(this.options.formId)),
+											+ "&formId=" + encodeURIComponent(this.options.formId))+"&siteId="+ encodeURIComponent(this.options.siteId),
 									successCallback : {
 										fn : this.onDatalistColumns,
 										scope : this
@@ -1905,7 +1905,7 @@
 												itemId : item.nodeRef,
 												mode : "edit",
 												submitType : "json",
-												siteId : this.options.siteId
+												siteId : this.options.siteId!=null ? this.options.siteId : ""
 											});
 
 							// Using Forms Service, so always create new
