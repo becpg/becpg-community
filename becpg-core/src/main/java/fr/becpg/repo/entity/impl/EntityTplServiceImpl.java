@@ -663,8 +663,6 @@ public class EntityTplServiceImpl implements EntityTplService {
 			try {
 				((RuleService) ruleService).disableRules(entityNodeRef);
 
-				// Desactivate for all the transaction (do not reactivate it)
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 
 				for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
 					entityTplPlugin.beforeSynchronizeEntity(entityNodeRef, entityTplNodeRef);
@@ -672,11 +670,14 @@ public class EntityTplServiceImpl implements EntityTplService {
 
 				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
+				// copy datalists, but not the activity list (keep the TYPE_ACTIVITY_LIST behaviour that skips it)
+				entityListDAO.copyDataLists(entityTplNodeRef, entityNodeRef, false);
+				
+				// Desactivate for all the transaction (do not reactivate it)
+				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
+
 				// copy files
 				entityService.copyFiles(entityTplNodeRef, entityNodeRef);
-
-				// copy datalists
-				entityListDAO.copyDataLists(entityTplNodeRef, entityNodeRef, false);
 
 				// copy missing aspects
 				Set<QName> aspects = nodeService.getAspects(entityTplNodeRef);
