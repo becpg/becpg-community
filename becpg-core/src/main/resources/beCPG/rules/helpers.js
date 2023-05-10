@@ -311,7 +311,7 @@ function assocPropValue(node, assocName, propName) {
  * @returns {NodeRef} association association nodeRef
  */
 function assocAssocValue(node, assocName, assocAssocName) {
-	return isEmpty(node) ? null : orEmpty(bcpg.assocPropValue(node, assocName, assocAssocName));
+	return isEmpty(node) ? null : orEmpty(bcpg.assocAssocValue(node, assocName, assocAssocName));
 }
 
 /**
