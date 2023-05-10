@@ -3,6 +3,7 @@ package fr.becpg.repo.entity.version;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -18,6 +19,9 @@ import org.alfresco.model.ImapModel;
 import org.alfresco.model.RenditionModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
+import org.alfresco.repo.batch.BatchProcessWorkProvider;
+import org.alfresco.repo.batch.BatchProcessor;
+import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -69,6 +73,9 @@ import fr.becpg.model.BeCPGPermissions;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
@@ -79,6 +86,7 @@ import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext;
+import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -171,6 +179,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
+	
+	@Autowired
+	private EntityReportService entityReportService;
+	
+	@Autowired
+	private BatchQueueService batchQueueService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -950,6 +964,8 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							
 							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_MODIFIED, new Date());
 							
+							generateReportsAsync(internalBranchToNodeRef);
+							
 							return internalBranchToNodeRef;
 
 						} finally {
@@ -978,6 +994,26 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		}
 		return null;
+	}
+
+	private void generateReportsAsync(final NodeRef internalBranchToNodeRef) {
+		String entityDescription = nodeService.getProperty(internalBranchToNodeRef, BeCPGModel.PROP_CODE) + " " + nodeService.getProperty(internalBranchToNodeRef, ContentModel.PROP_NAME);
+
+		BatchInfo batchInfo = new BatchInfo(String.format("generateReports-%s", Calendar.getInstance().getTimeInMillis()),
+				"becpg.batch.entity.generateReports", entityDescription);
+		batchInfo.setRunAsSystem(true);
+
+		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(List.of(internalBranchToNodeRef));
+
+		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+
+			@Override
+			public void process(NodeRef entityNodeRef) throws Throwable {
+				entityReportService.generateReports(entityNodeRef);
+			}
+		};
+
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
 	}
 
 	private NodeRef convertNodeAndWhereUsed(NodeRef notConvertedNode) {
@@ -1088,7 +1124,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties) {
-		return internalCreateVersion(entityNodeRef, versionProperties, null, null, false);
+		NodeRef versionNodeRef = internalCreateVersion(entityNodeRef, versionProperties, null, null, false);
+		generateReportsAsync(entityNodeRef);
+		return versionNodeRef;
 	}
 	
 	private NodeRef internalCreateVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date newEffectivity, String manualVersionLabel, boolean isInitialVersion) {
