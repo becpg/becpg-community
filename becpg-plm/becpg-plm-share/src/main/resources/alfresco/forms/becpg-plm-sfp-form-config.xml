@@ -36,6 +36,15 @@
           <show force="true" id="bcpg:preparationTips"/>
           <show force="false" id="bcpg:productMicrobioCriteriaRef"/>
           <show force="false" id="bcpg:meatType"/>
+          
+          <show force="false" id="gs1:cheeseMaturationPeriodDescription"/>
+		  <show force="false" id="gs1:cheeseMaturationProcessContainerTypeCode"/>
+		  <show force="false" id="gs1:fatPercentageInDryMatter"/>
+		  <show force="false" id="gs1:isRindEdible"/>
+	      <show force="false" id="gs1:rennetTypeCode"/>
+		  <show force="false" id="gs1:ripeningTimePeriod"/>
+		  <show force="false" id="gs1:surfaceOfCheeseAtEndOfRipeningCode"/>			
+       
           <show force="false" id="pack:length"/>
           <show force="false" id="pack:width"/>
           <show force="false" id="pack:height"/>
@@ -206,6 +215,29 @@
             </control>
           </field>
           <field id="bcpg:meatType" mandatory="false" read-only="false" set="consumer"/>
+          
+           <set appearance="bordered-panel" id="cheese" label-id="becpg.forms.set.cheese.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          
+          <field id="gs1:cheeseMaturationPeriodDescription"  mandatory="false" read-only="false" set="cheese">
+            <control template="/org/alfresco/components/form/controls/textarea.ftl">
+              <control-param name="rows">2</control-param>
+              <control-param name="maxLength">70</control-param>
+            </control>
+          </field>
+		  <field  id="gs1:cheeseMaturationProcessContainerTypeCode"  mandatory="false" read-only="false" set="cheese"/>
+		  <field  id="gs1:fatPercentageInDryMatter"  mandatory="false" read-only="false" set="cheese"/>
+		  <field  id="gs1:isRindEdible" mandatory="false" read-only="false" set="cheese">
+            <control template="/org/alfresco/components/form/controls/boolean.ftl"/>
+          </field>
+	      <field  id="gs1:rennetTypeCode" mandatory="false" read-only="false" set="cheese"/>
+		  <field  id="gs1:ripeningTimePeriod" mandatory="false" read-only="false" set="cheese">
+            <control template="/org/alfresco/components/form/controls/number-unit.ftl">
+              <control-param name="unit">d</control-param>
+            </control>
+          </field>
+		  <field  id="gs1:surfaceOfCheeseAtEndOfRipeningCode" mandatory="false" read-only="false" set="cheese"/>		
+	
+          
           <set appearance="bordered-panel" id="dimension" label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="pack:length" mandatory="false" read-only="false" set="dimension">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
@@ -792,7 +824,8 @@
           <show force="true" id="bcpg:precautionOfUseRef"/>
           <show force="true" id="bcpg:preparationTips"/>
           <show force="false" id="bcpg:productMicrobioCriteriaRef"/>
-          <show force="false" id="bcpg:meatType"/>
+
+      
           <show force="false" id="bcpg:productQty"/>
           <show force="false" id="bcpg:productUnit"/>
           <show force="true" id="bcpg:netWeight"/>
@@ -883,7 +916,7 @@
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
             </control>
           </field>
-          <field id="bcpg:meatType" mandatory="false" read-only="false" set="consumer"/>
+        
           <set appearance="bordered-panel" id="formulation" label-id="becpg.forms.set.formulation.label" template="/org/alfresco/components/form/3-column-set.ftl"/>
           <field help-id="becpg.forms.help.productQty" id="bcpg:productQty" mandatory="false" read-only="false" set="formulation"/>
           <field id="bcpg:productUnit" mandatory="false" read-only="false" set="formulation">
@@ -994,6 +1027,8 @@
           <show force="true" id="bcpg:preparationTips"/>
           <show force="true" id="bcpg:productMicrobioCriteriaRef"/>
           <show force="true" id="bcpg:meatType"/>
+            
+          
           <show force="true" id="pack:length"/>
           <show force="true" id="pack:width"/>
           <show force="true" id="pack:height"/>
@@ -1120,6 +1155,7 @@
             </control>
           </field>
           <field id="bcpg:meatType" mandatory="false" read-only="false" set="consumer"/>
+        
           <set appearance="bordered-panel" id="dimension" label-id="becpg.forms.set.pack.size.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="pack:length" mandatory="false" read-only="false" set="dimension">
             <control template="/org/alfresco/components/form/controls/number-unit.ftl">
