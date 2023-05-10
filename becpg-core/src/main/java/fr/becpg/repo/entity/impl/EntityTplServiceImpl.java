@@ -659,85 +659,85 @@ public class EntityTplServiceImpl implements EntityTplService {
 				watch = new StopWatch();
 				watch.start();
 			}
-
-			try {
-				((RuleService) ruleService).disableRules(entityNodeRef);
-
-
-				for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
-					entityTplPlugin.beforeSynchronizeEntity(entityNodeRef, entityTplNodeRef);
-				}
-
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-
-				// copy datalists, but not the activity list (keep the TYPE_ACTIVITY_LIST behaviour that skips it)
-				entityListDAO.copyDataLists(entityTplNodeRef, entityNodeRef, false);
+			
+			// do in cache context to lock it and prevent activity registration
+			L2CacheSupport.doInCacheContext(() -> {
 				
-				// Desactivate for all the transaction (do not reactivate it)
-				policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
-
-				// copy files
-				entityService.copyFiles(entityTplNodeRef, entityNodeRef);
-
-				// copy missing aspects
-				Set<QName> aspects = nodeService.getAspects(entityTplNodeRef);
-				for (QName aspect : aspects) {
-					if (!nodeService.hasAspect(entityNodeRef, aspect) && !ignoreAspect(aspect)) {
-						nodeService.addAspect(entityNodeRef, aspect, null);
+				try {
+					((RuleService) ruleService).disableRules(entityNodeRef);
+					
+					for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
+						entityTplPlugin.beforeSynchronizeEntity(entityNodeRef, entityTplNodeRef);
 					}
-				}
-
-				for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
-					entityTplPlugin.synchronizeEntity(entityNodeRef, entityTplNodeRef);
-				}
-
-			} finally {
-				((RuleService) ruleService).enableRules(entityNodeRef);
-				policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-			}
-
-			// Copy rules
-			if (nodeService.hasAspect(entityTplNodeRef, RuleModel.ASPECT_RULES)
-					&& !((RuleService) ruleService).getRules(entityTplNodeRef, false).isEmpty()) {
-				boolean hasRule = false;
-
-				// Check whether the node already has rules or not
-				if (nodeService.hasAspect(entityNodeRef, RuleModel.ASPECT_RULES)) {
-
-					// Check for a linked to node
-					NodeRef linkedToNode = ((RuleService) ruleService).getLinkedToRuleNode(entityNodeRef);
-					if (linkedToNode == null) {
-						// if the node has no rules we can delete the folder
-						// ready to link
-						List<Rule> rules = ((RuleService) ruleService).getRules(entityNodeRef, false);
-						if (!rules.isEmpty()) {
-							hasRule = true;
-						} else {
-							// Delete the rules system folder
-							NodeRef ruleFolder = ruleService.getSavedRuleFolderAssoc(entityNodeRef).getChildRef();
-							nodeService.deleteNode(ruleFolder);
+					
+					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+					
+					entityListDAO.copyDataLists(entityTplNodeRef, entityNodeRef, false);
+					
+					// copy files
+					entityService.copyFiles(entityTplNodeRef, entityNodeRef);
+					
+					// copy missing aspects
+					Set<QName> aspects = nodeService.getAspects(entityTplNodeRef);
+					for (QName aspect : aspects) {
+						if (!nodeService.hasAspect(entityNodeRef, aspect) && !ignoreAspect(aspect)) {
+							nodeService.addAspect(entityNodeRef, aspect, null);
 						}
-					} else {
-						// Just remove the aspect and have the associated
-						// data automatically removed
-						nodeService.removeAspect(entityNodeRef, RuleModel.ASPECT_RULES);
 					}
+					
+					for (EntityTplPlugin entityTplPlugin : entityTplPlugins) {
+						entityTplPlugin.synchronizeEntity(entityNodeRef, entityTplNodeRef);
+					}
+					
+				} finally {
+					((RuleService) ruleService).enableRules(entityNodeRef);
+					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				}
-
-				if (!hasRule) {
-
-					// Create the destination folder as a secondary child of
-					// the first
-					NodeRef ruleSetNodeRef = ruleService.getSavedRuleFolderAssoc(entityTplNodeRef).getChildRef();
-					// The required aspect will automatically be added to
-					// the node
-					nodeService.addChild(entityNodeRef, ruleSetNodeRef, RuleModel.ASSOC_RULE_FOLDER, RuleModel.ASSOC_RULE_FOLDER);
-
-				} else {
-					logger.warn("The current folder has rules and can not be linked to another folder.");
+				
+				// Copy rules
+				if (nodeService.hasAspect(entityTplNodeRef, RuleModel.ASPECT_RULES)
+						&& !((RuleService) ruleService).getRules(entityTplNodeRef, false).isEmpty()) {
+					boolean hasRule = false;
+					
+					// Check whether the node already has rules or not
+					if (nodeService.hasAspect(entityNodeRef, RuleModel.ASPECT_RULES)) {
+						
+						// Check for a linked to node
+						NodeRef linkedToNode = ((RuleService) ruleService).getLinkedToRuleNode(entityNodeRef);
+						if (linkedToNode == null) {
+							// if the node has no rules we can delete the folder
+							// ready to link
+							List<Rule> rules = ((RuleService) ruleService).getRules(entityNodeRef, false);
+							if (!rules.isEmpty()) {
+								hasRule = true;
+							} else {
+								// Delete the rules system folder
+								NodeRef ruleFolder = ruleService.getSavedRuleFolderAssoc(entityNodeRef).getChildRef();
+								nodeService.deleteNode(ruleFolder);
+							}
+						} else {
+							// Just remove the aspect and have the associated
+							// data automatically removed
+							nodeService.removeAspect(entityNodeRef, RuleModel.ASPECT_RULES);
+						}
+					}
+					
+					if (!hasRule) {
+						
+						// Create the destination folder as a secondary child of
+						// the first
+						NodeRef ruleSetNodeRef = ruleService.getSavedRuleFolderAssoc(entityTplNodeRef).getChildRef();
+						// The required aspect will automatically be added to
+						// the node
+						nodeService.addChild(entityNodeRef, ruleSetNodeRef, RuleModel.ASSOC_RULE_FOLDER, RuleModel.ASSOC_RULE_FOLDER);
+						
+					} else {
+						logger.warn("The current folder has rules and can not be linked to another folder.");
+					}
+					
 				}
-
-			}
+				
+			}, false, true);
 
 			if (logger.isDebugEnabled() && (watch != null)) {
 				watch.stop();

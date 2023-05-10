@@ -3,24 +3,33 @@
  */
 package fr.becpg.test.repo.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.entity.EntityTplService;
+import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.test.PLMBaseTestCase;
 
@@ -167,7 +176,79 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 
+		final NodeRef fpTplNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			FinishedProductData fpTplData = new FinishedProductData();
+			fpTplData.setName("Finished product Tpl");
+			fpTplData.getAspects().add(BeCPGModel.ASPECT_ENTITY_TPL);
+			
+			List<NutListDataItem> nutList = new LinkedList<>();
+			
+			NutListDataItem parentNut = new NutListDataItem();
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut1");
+			properties.put(PLMModel.PROP_NUTUNIT, "kcal");
+			NodeRef nut1 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_NUT, properties).getChildRef();
+			parentNut.setNut(nut1);
+			
+			nutList.add(parentNut);
+			
+			fpTplData.setNutList(nutList);
+			
+			return alfrescoRepository.create(getTestFolderNodeRef(), fpTplData).getNodeRef();
+
+		}, false, true);
 		
+		inWriteTx(() -> {
+
+			FinishedProductData fpTplData = (FinishedProductData) alfrescoRepository.findOne(fpTplNodeRef);
+			
+			List<NutListDataItem> nutList = fpTplData.getNutList();
+			NutListDataItem parentNut = nutList.get(0);
+			
+			Map<QName, Serializable> properties = new HashMap<>();
+			properties.put(BeCPGModel.PROP_CHARACT_NAME, "nut2");
+			NodeRef nut2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
+					PLMModel.TYPE_NUT, properties).getChildRef();
+			
+			NutListDataItem childNut = new NutListDataItem();
+			childNut.setNut(nut2);
+			childNut.setParent(parentNut);
+			
+			nutList.add(childNut);
+			
+			return alfrescoRepository.create(getTestFolderNodeRef(), fpTplData).getNodeRef();
+
+		});
+		
+		// check that an activity is present for the template
+		inReadTx(() -> {
+			NodeRef activityListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(fpTplNodeRef), BeCPGModel.TYPE_ACTIVITY_LIST);
+			List<NodeRef> activityItems = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+			assertEquals(1, activityItems.size());
+			
+			return null;
+		});
+		
+		final NodeRef fpNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData fpData = new FinishedProductData();
+			fpData.setName("Finished product");
+			fpData.setEntityTpl(alfrescoRepository.findOne(fpTplNodeRef));
+			
+			return alfrescoRepository.create(getTestFolderNodeRef(), fpData).getNodeRef();
+		}, false, true);
+		
+		// check no extra activity is created during synchronization with template
+		inReadTx(() -> {
+			NodeRef activityListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(fpNodeRef), BeCPGModel.TYPE_ACTIVITY_LIST);
+			List<NodeRef> activityItems = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+			assertEquals(1, activityItems.size());
+			
+			return null;
+		});
 		
 	}
 
