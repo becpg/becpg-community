@@ -412,7 +412,8 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 			List<NodeRef> entities = advSearchService.queryAdvSearch(filter.getEntityType(), queryBuilder, filter.getEntityCriteria(),
 					RepoConsts.MAX_RESULTS_5000);
 			for(NodeRef nodeRef : nodes) {
-				if(entities.contains(nodeRef)) {
+				NodeRef entityRef = entityService.getEntityNodeRef(nodeRef, nodeService.getType(nodeRef));
+				if(entities.contains(entityRef)) {
 					ret.add(nodeRef);
 				}
 			}
