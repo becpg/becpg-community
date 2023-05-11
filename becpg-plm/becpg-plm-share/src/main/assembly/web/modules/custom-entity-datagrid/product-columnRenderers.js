@@ -741,7 +741,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var title = null;
 			if (data.displayValue != null) {
 			    title = oRecord.getData("itemData")["prop_cm_title"].value;
-				if (title == null) {
+				if (title == null || title.length == 0) {
 					title = data.displayValue;
 				}
 			}
@@ -807,7 +807,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 			if (data.value != null && data.value.length > 0) {
 				var title = oRecord.getData("itemData")["prop_cm_title"].value;
-				if (title == null) {
+				if (title == null || title.length == "") {
 					title =  oRecord.getData("itemData")["prop_bcpg_dynamicCharactTitle"].value;
 				}
 				
