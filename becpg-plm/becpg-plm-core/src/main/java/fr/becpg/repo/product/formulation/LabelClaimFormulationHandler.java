@@ -193,10 +193,16 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				}
 
 				productData.getLabelClaimList().removeAll(toRemove);
+				
+				for (LabelClaimListDataItem labelClaimDataListItem : productData.getLabelClaimList()) {
+					if (!labelClaimDataListItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
+						labelClaimDataListItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+					}
+				}
 			}
 
 			computeClaimList(productData, parser, context);
-
+			
 		}
 
 		return true;
