@@ -144,22 +144,22 @@ public class CharactDetailsHelper {
 
 			// set charact value, increase its total
 			for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
-				Integer currentIndex = indexMap.get(currentDetailsName);
-				Double total = (Double) totals.get(currentIndex);
-				Optional<CharactDetailsValue> matchingCharact = compEls.stream()
-						.filter(elt -> elt.keyEquals(charactDetailsValue) && elt.getName().equals(currentDetailsName)).findFirst();
-				if (matchingCharact.isPresent()) {
-
-					int entryIndex = entry.getValue().indexOf(matchingCharact.get());
-					if (entryIndex != -1) {
-						Double value = entry.getValue().get(entryIndex).getValue();
-						tmp.set(currentIndex, value);
-						if (entry.getValue().get(entryIndex).getLevel() == 0) {
-							total += value != null ? value : 0d;
+					Integer currentIndex = indexMap.get(currentDetailsName);
+					Double total = (Double) totals.get(currentIndex);
+					Optional<CharactDetailsValue> matchingCharact = compEls.stream()
+							.filter(elt -> elt.keyEquals(charactDetailsValue) && elt.getName().equals(currentDetailsName)).findFirst();
+					if (matchingCharact.isPresent()) {
+						
+						int entryIndex = entry.getValue().indexOf(matchingCharact.get());
+						if (entryIndex != -1) {
+							Double value = entry.getValue().get(entryIndex).getValue();
+							tmp.set(currentIndex, value);
+							if (entry.getValue().get(entryIndex).getLevel() == 0) {
+								total += value != null ? value : 0d;
+							}
 						}
 					}
-				}
-				totals.set(currentIndex, total);
+					totals.set(currentIndex, total);
 			}
 
 			// set additional values to tmp
@@ -182,8 +182,10 @@ public class CharactDetailsHelper {
 					currentAdditionalValue = charactDetailsValue.getMini();
 				} else if (key.equals(MAXI_VALUE_KEY)) {
 					currentAdditionalValue = charactDetailsValue.getMaxi();
+				} else if (charactDetailsValue.getAdditionalValues().containsKey(key)) {
+					currentAdditionalValue = charactDetailsValue.getAdditionalValues().get(key);
 				}
-
+				
 				Integer level = charactDetailsValue.getLevel();
 
 				Object elementToDisplay = currentAdditionalValue;
@@ -230,7 +232,7 @@ public class CharactDetailsHelper {
 				// Mini, Maxi, Future, Previous columns
 				colUnit = colUnits.get(entry.getKey());
 			}
-			metadata.put("colUnit", colUnit);
+				metadata.put("colUnit", colUnit);
 			metadatas.put(metadata);
 		}
 	}
@@ -240,7 +242,7 @@ public class CharactDetailsHelper {
 		Map<String, Integer> res = new LinkedHashMap<>();
 		for (Entry<NodeRef, List<CharactDetailsValue>> currentCharact : characts.entrySet()) {
 			String currentCharactName = attributeExtractorService.extractPropName(currentCharact.getKey());
-			res.put(currentCharactName, idx);
+				res.put(currentCharactName, idx);
 			idx = completeAdditionalValues(currentCharactName, res, idx, additionalValues);
 			++idx;
 		}
@@ -279,6 +281,10 @@ public class CharactDetailsHelper {
 		}
 		if (currentValue.getMaxi() != null) {
 			additionalValues.put(MAXI_VALUE_KEY, propName);
+		}
+		
+		for (String key : currentValue.getAdditionalValues().keySet()) {
+			additionalValues.put(key, propName);
 		}
 
 	}
@@ -390,18 +396,18 @@ public class CharactDetailsHelper {
 				// set charact value to cell
 				for (Map.Entry<NodeRef, List<CharactDetailsValue>> entry : charactDetails.getData().entrySet()) {
 
-					Integer currentIndex = indexMap.get(currentDetailsName);
-
-					Optional<CharactDetailsValue> matchingCharact = compEls.stream()
-							.filter(elt -> elt.keyEquals(charactDetailsValue) && elt.getName().equals(currentDetailsName)).findFirst();
-					if (matchingCharact.isPresent()) {
-
-						int entryIndex = entry.getValue().indexOf(matchingCharact.get());
-						if (entryIndex != -1) {
-							Double value = entry.getValue().get(entryIndex).getValue();
-							cell = row.createCell(currentIndex);
-							cell.setCellValue(value);
-						}
+						Integer currentIndex = indexMap.get(currentDetailsName);
+						
+						Optional<CharactDetailsValue> matchingCharact = compEls.stream()
+								.filter(elt -> elt.keyEquals(charactDetailsValue) && elt.getName().equals(currentDetailsName)).findFirst();
+						if (matchingCharact.isPresent()) {
+							
+							int entryIndex = entry.getValue().indexOf(matchingCharact.get());
+							if (entryIndex != -1) {
+								Double value = entry.getValue().get(entryIndex).getValue();
+								cell = row.createCell(currentIndex);
+								cell.setCellValue(value);
+							}
 
 					}
 				}
@@ -426,8 +432,10 @@ public class CharactDetailsHelper {
 						currentAdditionalValue = charactDetailsValue.getMini();
 					} else if (key.equals(MAXI_VALUE_KEY)) {
 						currentAdditionalValue = charactDetailsValue.getMaxi();
+					} else if (charactDetailsValue.getAdditionalValues().containsKey(key)) {
+						currentAdditionalValue = charactDetailsValue.getAdditionalValues().get(key);
 					}
-
+					
 					if (currentAdditionalValue == null) {
 						currentAdditionalValue = 0d;
 					}

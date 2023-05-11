@@ -31,7 +31,9 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
+import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.CopiableDataItem;
+import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 /**
  * <p>LabelClaimListDataItem class.</p>
@@ -41,7 +43,7 @@ import fr.becpg.repo.repository.model.CopiableDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:labelClaimList")
-public class LabelClaimListDataItem extends AbstractManualDataItem implements  CopiableDataItem {
+public class LabelClaimListDataItem extends AbstractManualDataItem implements SimpleCharactDataItem, CopiableDataItem, AspectAwareDataItem {
 
 	/**
 	 * 
@@ -296,6 +298,29 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 				+ percentClaim + ", percentApplicable=" + percentApplicable + ", isFormulated=" + isFormulated + ", errorLog=" + errorLog
 				+ ", missingLabelClaims=" + missingLabelClaims + ", isManual=" + isManual + ", sort=" + sort + ", nodeRef=" + nodeRef
 				+ ", parentNodeRef=" + parentNodeRef + ", name=" + name + "]";
+	}
+	
+	@Override
+	public void setCharactNodeRef(NodeRef nodeRef) {
+		setLabelClaim(nodeRef);
+	}
+	
+	@Override
+	public void setValue(Double value) {
+		setPercentClaim(value);
+	}
+	@Override
+	public NodeRef getCharactNodeRef() {
+		return getLabelClaim();
+	}
+	@Override
+	public Double getValue() {
+		return getPercentClaim();
+	}
+	
+	@Override
+	public Boolean shouldDetailIfZero() {
+		return true;
 	}
 		
 
