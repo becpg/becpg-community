@@ -1,0 +1,87 @@
+package fr.becpg.repo.product.formulation.details;
+
+import org.springframework.extensions.surf.util.I18NUtil;
+import org.springframework.stereotype.Service;
+
+import fr.becpg.repo.product.data.CharactDetailsValue;
+import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
+import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.repository.model.SimpleCharactDataItem;
+
+@Service
+public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
+
+	private String percentApplicableKey;
+	
+	private String getPercentApplicableKey() {
+		if (percentApplicableKey == null) {
+			percentApplicableKey = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_lclPercentApplicable.title");
+		}
+		return percentApplicableKey;
+	}
+	
+	@Override
+	protected String provideUnit() {
+		return "%";
+	}
+	
+	@Override
+	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
+		
+		LabelClaimListDataItem labelClaimItem = (LabelClaimListDataItem) simpleCharact;
+		
+		Double percentClaim = labelClaimItem.getPercentClaim();
+		
+		switch (labelClaimItem.getLabelClaimValue()) {
+		case LabelClaimListDataItem.VALUE_TRUE:
+		case LabelClaimListDataItem.VALUE_CERTIFIED:
+
+			if (percentClaim == null) {
+				percentClaim = 100d;
+			}
+
+			break;
+		case LabelClaimListDataItem.VALUE_NA:
+			percentClaim = 0d;
+
+			break;
+		case LabelClaimListDataItem.VALUE_SUITABLE:
+
+			if (percentClaim == null) {
+				percentClaim = 100d;
+			}
+
+			break;
+		case LabelClaimListDataItem.VALUE_FALSE:
+			percentClaim = 0d;
+
+			break;
+		case LabelClaimListDataItem.VALUE_EMPTY:
+		default:
+			percentClaim = 0d;
+			break;
+		}
+	
+		return percentClaim;
+		
+	}
+	
+	@Override
+	protected void provideAdditionalValues(SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
+		
+		LabelClaimListDataItem labelClaimItem = (LabelClaimListDataItem) simpleCharact;
+		
+		Double percentApplicable = labelClaimItem.getPercentApplicable();
+		
+		if (percentApplicable == null) {
+			if (LabelClaimListDataItem.VALUE_NA.equals(labelClaimItem.getLabelClaimValue())) {
+				percentApplicable = 0d;
+			} else {
+				percentApplicable = 100d;
+			}
+		}
+		
+		currentCharactDetailsValue.getAdditionalValues().put(getPercentApplicableKey(), FormulationHelper.calculateValue(0d, qtyUsed, percentApplicable, netQty));
+	}
+}

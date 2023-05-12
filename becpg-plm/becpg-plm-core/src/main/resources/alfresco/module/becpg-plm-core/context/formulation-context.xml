@@ -53,7 +53,13 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
-
+	
+	<bean id="labelClaimCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.LabelClaimCharactDetailsVisitor">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	</bean>
+	
 	<bean id="charactDetailsVisitorFactory" class="fr.becpg.repo.product.CharactDetailsVisitorFactoryImpl">
 		<property name="visitorRegistry">
 			<map>
@@ -77,6 +83,9 @@
 				</entry>
 				<entry key="pack:packMaterialList">
 					<ref bean="packagingMaterialCharactDetailsVisitor" />
+				</entry>
+				<entry key="bcpg:labelClaimList">
+					<ref bean="labelClaimCharactDetailsVisitor" />
 				</entry>
 			</map>
 		</property>

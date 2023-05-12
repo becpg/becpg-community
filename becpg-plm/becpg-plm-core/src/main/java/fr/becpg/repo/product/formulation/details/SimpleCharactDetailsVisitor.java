@@ -199,10 +199,10 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		List<NodeRef> tmp = new ArrayList<>();
 		if (dataListItems != null) {
 			for (NodeRef dataListItem : dataListItems) {
-
+				
 				SimpleCharactDataItem o = (SimpleCharactDataItem) alfrescoRepository.findOne(dataListItem);
-				if (o != null) {
-					tmp.add(o.getCharactNodeRef());
+					if (o != null) {
+						tmp.add(o.getCharactNodeRef());
 				}
 			}
 		}
@@ -250,6 +250,9 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				if ((unit == null) && (simpleCharact instanceof UnitAwareDataItem)) {
 					unit = ((UnitAwareDataItem) simpleCharact).getUnit();
 				}
+				if (unit == null) {
+					unit = provideUnit();
+				}
 
 				// calculate charact from qty or vol ?
 				boolean formulateInVol = (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
@@ -294,7 +297,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 						currentCharactDetailsValue = new CharactDetailsValue(formulatedProduct.getNodeRef(), partProduct.getNodeRef(),
 								componentDataList, value, currLevel, unit);
-
+						
 						if ((simpleCharact instanceof ForecastValueDataItem) && !charactDetails.isMultiple()) {
 							ForecastValueDataItem forecastValue = (ForecastValueDataItem) simpleCharact;
 
@@ -326,12 +329,24 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 								currentCharactDetailsValue.setMaxi(FormulationHelper.calculateValue(0d, qtyUsed, minMaxValue.getMaxi(), netQty));
 							}
 						}
-
+						
+						if (!charactDetails.isMultiple()) {
+							provideAdditionalValues(simpleCharact, unit, qtyUsed, netQty, currentCharactDetailsValue);
+						}
+						
 						charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), currentCharactDetailsValue);
 					}
 				}
 			}
 		}
+	}
+
+	protected String provideUnit() {
+		return null;
+	}
+
+	protected void provideAdditionalValues(SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
+		// nothing by default
 	}
 
 	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
