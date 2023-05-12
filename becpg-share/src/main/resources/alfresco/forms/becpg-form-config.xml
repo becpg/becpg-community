@@ -8,6 +8,25 @@
 	should have received a copy of the GNU Lesser General Public License along 
 	with beCPG. If not, see <http://www.gnu.org/licenses/>. -->
 <alfresco-config>
+
+   <config evaluator="node-type" condition="dl:dataList" replace="true">
+      <forms>
+         <!-- Data Lists: Edit Data List details -->
+         <form>
+            <field-visibility>
+               <show id="cm:title" force="true" />
+               <show id="cm:description" force="true" />
+            </field-visibility>
+            <edit-form template="../data-lists/forms/datalist-edit.ftl" />
+            <appearance>
+               <field id="cm:title" mandatory="true">
+                  <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+               </field>
+            </appearance>
+         </form>
+      </forms>
+   </config>
+
 	<!-- (creating nodes) for entityV2 -->
 
 	<config evaluator="model-type" condition="bcpg:entityV2">
