@@ -19,6 +19,7 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  */
 package fr.becpg.repo.search;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -146,7 +147,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private final Set<String> ftsQueries = new HashSet<>();
 	private final Set<QName> excludedAspects = new HashSet<>();
 	private final Set<QName> excludedTypes = new HashSet<>();
-	private final Map<QName, String> excludedPropQueriesMap = new HashMap<>();
+	private final Map<QName, List<String>> excludedPropQueriesMap = new HashMap<>();
 	private QueryConsistency queryConsistancy = QueryConsistency.DEFAULT;
 	private boolean isExactType = false;
 	private String searchTemplate = null;
@@ -780,7 +781,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	 * @return a {@link fr.becpg.repo.search.BeCPGQueryBuilder} object.
 	 */
 	public BeCPGQueryBuilder excludeProp(QName propName, String query) {
-		excludedPropQueriesMap.put(propName, query);
+		List<String> queries = excludedPropQueriesMap.computeIfAbsent(propName, a  -> {return new ArrayList<>();});
+		queries.add(query);
+		excludedPropQueriesMap.put(propName, queries);
 		return this;
 	}
 
@@ -1159,8 +1162,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		if (!excludedPropQueriesMap.isEmpty()) {
-			for (Map.Entry<QName, String> propQueryEntry : excludedPropQueriesMap.entrySet()) {
-				runnedQuery.append(prohibided(getCondContainsValue(propQueryEntry.getKey(), propQueryEntry.getValue())));
+			for (Map.Entry<QName, List<String>> propQueryEntry : excludedPropQueriesMap.entrySet()) {
+				for(String query : propQueryEntry.getValue()) {
+					runnedQuery.append(prohibided(getCondContainsValue(propQueryEntry.getKey(), query)));
+				}
 			}
 		}
 
@@ -1232,7 +1237,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			for (QName tmpQName : notNullProps) {
 				whereClause.append(" AND ").append(getCmisPrefix(tmpQName)).append(" IS NOT NULL");
 			}
-
 		}
 
 		if (!nullOrUnsetProps.isEmpty()) {
@@ -1276,9 +1280,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		}
 
 		if (!excludedPropQueriesMap.isEmpty()) {
-			for (Map.Entry<QName, String> propQueryEntry : excludedPropQueriesMap.entrySet()) {
-				whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" <> '").append(propQueryEntry.getValue())
-						.append("'");
+			for (Map.Entry<QName, List<String>> propQueryEntry : excludedPropQueriesMap.entrySet()) {
+				for(String query : propQueryEntry.getValue()) {
+					whereClause.append(" AND ").append(getCmisPrefix(propQueryEntry.getKey())).append(" <> '").append(query)
+							.append("'");
+				}
 			}
 		}
 
