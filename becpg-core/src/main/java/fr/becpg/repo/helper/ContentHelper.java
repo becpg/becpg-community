@@ -22,8 +22,10 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.dictionary.InvalidTypeException;
@@ -113,6 +115,8 @@ public class ContentHelper {
 
 			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
+			Set<String> resourcesUpdatedFromFile = new HashSet<>();
+			
 			boolean doUpdate = forceUpdate;
 			for (Resource res : resolver.getResources(pattern)) {
 
@@ -139,15 +143,24 @@ public class ContentHelper {
 					ret.add(nodeRef);
 
 					if (doUpdate) {
-						ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
-
-						try (InputStream in = res.getInputStream()) {
-							writer.setMimetype(mimetypeService.guessMimetype(fileName));
-							if (fileName.endsWith(".csv")) {
-								writer.setEncoding(RepoConsts.ISO_CHARSET);
+						
+						if (!res.isFile() && resourcesUpdatedFromFile.contains(res.getFilename())) {
+							logger.debug("Do not update file " + fileName + " as it was already updated from file resource");
+						} else {
+							ContentWriter writer = contentService.getWriter(nodeRef, ContentModel.PROP_CONTENT, true);
+							
+							try (InputStream in = res.getInputStream()) {
+								writer.setMimetype(mimetypeService.guessMimetype(fileName));
+								if (fileName.endsWith(".csv")) {
+									writer.setEncoding(RepoConsts.ISO_CHARSET);
+								}
+								writer.putContent(in);
 							}
-							writer.putContent(in);
+							if (res.isFile()) {
+								resourcesUpdatedFromFile.add(res.getFilename());
+							}
 						}
+						
 					}
 					doUpdate = forceUpdate;
 				}
