@@ -80,7 +80,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		watch.start();
 		SearchRuleResult searchRuleResult = new SearchRuleResult();
 		try {
-			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().excludeDefaults();
 
 			if (filter.getNodeType() != null) {
 				queryBuilder.ofType(filter.getNodeType());
