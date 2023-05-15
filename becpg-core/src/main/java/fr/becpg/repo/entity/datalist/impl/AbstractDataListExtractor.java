@@ -272,17 +272,17 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			
 			boolean hasWrite = hasWriteAccess(nodeRef);
 			
-			boolean hasLockUnlock = hasWrite && !AuthorityHelper.isCurrentUserExternal();
+			boolean isExternal = AuthorityHelper.isCurrentUserExternal();
 			
 			permissions.put(PROP_USERACCESS, userAccess);
 			userAccess.put("delete", accessRight && !isLocked && (permissionService.hasPermission(nodeRef, "Delete") == AccessStatus.ALLOWED));
-			userAccess.put("create", accessRight && (permissionService.hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
+			userAccess.put("create", accessRight && hasWrite && !isLocked && (permissionService.hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
 			userAccess.put("edit", accessRight && hasWrite && !isLocked);
 			userAccess.put("sort", accessRight && hasWrite && !isLocked
 					&& nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SORTABLE_LIST));
 			userAccess.put("details", accessRight && isDetaillable(nodeRef));
-			userAccess.put("lock", hasLockUnlock && !isLocked);
-			userAccess.put("unlock", hasLockUnlock && isLocked);
+			userAccess.put("lock", hasWrite && !isExternal && !isLocked);
+			userAccess.put("unlock", hasWrite && !isExternal && isLocked);
 			userAccess.put("wused", accessRight);
 			userAccess.put("content", accessRight && hasWrite && !isLocked && hasContentField(metadataFields));
 			
