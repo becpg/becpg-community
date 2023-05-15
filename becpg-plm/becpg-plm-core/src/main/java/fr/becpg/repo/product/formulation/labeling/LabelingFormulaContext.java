@@ -879,13 +879,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			return applyRoundingMode(new MessageFormat(ingDefaultFormat, getContentLocale()), qty);
 		} else if (lblComponent instanceof IngTypeItem) {
-
-			boolean doNotDetailsDeclType = isDoNotDetails(
-					((IngTypeItem) lblComponent).getOrigNodeRef() != null ? ((IngTypeItem) lblComponent).getOrigNodeRef()
-							: lblComponent.getNodeRef());
-
-			if (doNotDetailsDeclType || (((((IngTypeItem) lblComponent)).getDecThreshold() != null)
-					&& ((((IngTypeItem) lblComponent)).getQty(ingsLabelingWithYield) <= ((((IngTypeItem) lblComponent)).getDecThreshold() / 100)))) {
+			if (isDoNotDetails((IngTypeItem) lblComponent) ) {		
 				return applyRoundingMode(new MessageFormat(ingTypeDecThresholdFormat, getContentLocale()), qty);
 			}
 			return applyRoundingMode(new MessageFormat(ingTypeDefaultFormat, getContentLocale()), qty);
@@ -893,6 +887,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		return applyRoundingMode(new MessageFormat(ingDefaultFormat, getContentLocale()), qty);
 	}
+
 
 	private MessageFormat applyRoundingMode(MessageFormat messageFormat, Double qty) {
 		return applyRoundingMode(messageFormat, qty, false);
@@ -1061,9 +1056,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			if (lblComponent instanceof IngTypeItem) {
 
-				nodeRef = ((IngTypeItem) lblComponent).getOrigNodeRef() != null ? ((IngTypeItem) lblComponent).getOrigNodeRef()
-						: lblComponent.getNodeRef();
-				if (!isDoNotDetails(nodeRef)) {
+				if (!isDoNotDetails((IngTypeItem) lblComponent)) {
 					applyAllPerc = false;
 				}
 
@@ -1537,8 +1530,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				String ingTypeLegalName = getLegalIngName(kv.getKey(), null,
 						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())), false);
 
-				boolean doNotDetailsDeclType = isDoNotDetails(
-						kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef());
+				boolean doNotDetailsDeclType = isDoNotDetails(kv.getKey()) ;
 
 				if (doNotDetailsDeclType) {
 					ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
@@ -1884,8 +1876,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				String ingName = getLegalIngName(component, qtyPerc, false, false);
 
 				if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
-					boolean doNotDetailsDeclType = isDoNotDetails(
-							kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef());
+					boolean doNotDetailsDeclType = isDoNotDetails(kv.getKey());
 
 					String ingTypeLegalName = getLegalIngName(kv.getKey(), null,
 							((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())), false);
@@ -1927,6 +1918,12 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		}
 		return ret;
+	}
+	
+	private boolean isDoNotDetails(IngTypeItem ingTypeItem) {
+		return  isDoNotDetails(ingTypeItem.getOrigNodeRef() != null ? ingTypeItem.getOrigNodeRef()
+				: ingTypeItem.getNodeRef()) || (ingTypeItem.getDecThreshold() != null
+						&& ingTypeItem.getQty(ingsLabelingWithYield) <= (ingTypeItem.getDecThreshold() / 100));
 	}
 
 	private boolean isDoNotDetails(NodeRef nodeRef) {
@@ -2038,8 +2035,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				String ingTypeLegalName = getLegalIngName(kv.getKey(), qtyPerc,
 						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())), false);
 
-				boolean doNotDetailsDeclType = isDoNotDetails(
-						kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef());
+				boolean doNotDetailsDeclType = isDoNotDetails(kv.getKey());
 
 				if (doNotDetailsDeclType) {
 					ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
