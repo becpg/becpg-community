@@ -35,6 +35,14 @@
 	background-image:  url("../../components/images/select-color-16.png");
 }
 
+.datagrid-bar  .onActionLock, .datagrid .onActionLock a {
+	background-image:  url("../entity-datagrid/images/lock-16.png");
+}
+
+.datagrid-bar  .onActionUnlock, .datagrid .onActionUnlock a {
+	background-image:  url("../entity-datagrid/images/unlock-16.png");
+}
+
 .form-container  .bulk-edit label {
     display: inline;
 }
