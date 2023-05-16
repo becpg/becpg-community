@@ -107,17 +107,21 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 					if (!toUpdate.containsKey(key)) {
 						toRemove.add(packmaterial);
 					} else {
-						packmaterial.setPmlWeight(toUpdate.get(key).getFirst().doubleValue());
-						packmaterial.setPmlRecycledPercentage(toUpdate.get(key).getSecond()
-								.divide(toUpdate.get(key).getFirst(),MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue());
-						toUpdate.remove(key);
+						if(toUpdate.get(key).getFirst().doubleValue()!=0d) {
+							packmaterial.setPmlWeight(toUpdate.get(key).getFirst().doubleValue());
+							packmaterial.setPmlRecycledPercentage(toUpdate.get(key).getSecond()
+									.divide(toUpdate.get(key).getFirst(),MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue());
+							toUpdate.remove(key);
+						}
 					}
 				}
 
 				for (Map.Entry<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> entry : toUpdate.entrySet()) {
-					formulatedProduct.getPackMaterialList().add(new PackMaterialListDataItem(entry.getKey().getSecond(),
-							entry.getValue().getFirst().doubleValue(),
-							entry.getValue().getSecond().divide(entry.getValue().getFirst(),MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue() , entry.getKey().getFirst()));
+					if(entry.getValue().getFirst().doubleValue()!=0d) {
+						formulatedProduct.getPackMaterialList().add(new PackMaterialListDataItem(entry.getKey().getSecond(),
+								entry.getValue().getFirst().doubleValue(),
+								entry.getValue().getSecond().divide(entry.getValue().getFirst(),MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue() , entry.getKey().getFirst()));
+					}
 				}
 
 				formulatedProduct.getPackMaterialList().removeAll(toRemove);
