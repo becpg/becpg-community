@@ -7871,6 +7871,7 @@
 					<show id="bcpg:lclClaimValue" />
 					<show id="bcpg:lclPercentClaim" />
 					<show id="bcpg:lclPercentApplicable" />
+					<show id="bcpg:lclCertification" force="true" />
 					<show id="bcpg:lclMissingLabelClaims" force="true"/>
 					<show id="bcpg:lclComments" force="true" />
 					<show id="fm:commentCount" force="true" />
@@ -7926,12 +7927,10 @@
 					<show id="bcpg:lclCertification" />
 				<!-- <show id="bcpg:certificateDate" force="true" />  -->	
 					<show id="bcpg:lclComments" />
-					<show id="bcpg:lclMissingLabelClaims" force="true"/>
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:lclMissingLabelClaims" read-only="true"/>
 					<field id="bcpg:lclComments">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
