@@ -12,15 +12,6 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 @Service
 public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 
-	private String percentApplicableKey;
-	
-	private String getPercentApplicableKey() {
-		if (percentApplicableKey == null) {
-			percentApplicableKey = I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_lclPercentApplicable.title");
-		}
-		return percentApplicableKey;
-	}
-	
 	@Override
 	protected String provideUnit() {
 		return "%";
@@ -82,6 +73,6 @@ public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor
 			}
 		}
 		
-		currentCharactDetailsValue.getAdditionalValues().put(getPercentApplicableKey(), FormulationHelper.calculateValue(0d, qtyUsed, percentApplicable, netQty));
+		currentCharactDetailsValue.getAdditionalValues().put(I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_lclPercentApplicable.title"), FormulationHelper.calculateValue(0d, qtyUsed, percentApplicable, netQty));
 	}
 }
