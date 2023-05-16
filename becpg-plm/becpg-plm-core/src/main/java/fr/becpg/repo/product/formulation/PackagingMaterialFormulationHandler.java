@@ -247,7 +247,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 						BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight()).multiply(tare);
 
 						BigDecimal productTare = FormulationHelper.getTareInKg(packagingProduct);
-						if (productTare != null) {
+						if (productTare != null && productTare.doubleValue()!=0d ) {
 							plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)), MathContext.DECIMAL64);
 						}
 						BigDecimal pmlRecycledPercentage = BigDecimal
