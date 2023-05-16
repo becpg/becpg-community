@@ -631,6 +631,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public void setIngTypeDefaultFormat(String ingTypeDefaultFormat) {
 		this.ingTypeDefaultFormat = ingTypeDefaultFormat;
 	}
+	
+	
+	
 
 	public void setIngTypeSingleValueFormat(String ingTypeSingleValueFormat) {
 		this.ingTypeSingleValueFormat = ingTypeSingleValueFormat;
@@ -885,7 +888,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		} else if (lblComponent instanceof IngTypeItem) {
 			if (isDoNotDetails((IngTypeItem) lblComponent)) {
 				return applyRoundingMode(new MessageFormat(ingTypeDecThresholdFormat, getContentLocale()), qty);
-			} else if (ingTypeSingleValueFormat != null && !multiple) {
+			} else if (ingTypeSingleValueFormat!=null && ! multiple) {
 				return applyRoundingMode(new MessageFormat(ingTypeSingleValueFormat, getContentLocale()), qty);
 			}
 			return applyRoundingMode(new MessageFormat(ingTypeDefaultFormat, getContentLocale()), qty);
@@ -1377,57 +1380,58 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return detectedAllergensByLocale.computeIfAbsent(I18NUtil.getLocale(), r -> new LinkedHashSet<>());
 	}
 
-	private class CompositeParent {
-		CompositeLabeling parent;
-		LabelingComponent component;
-		Double ratio;
-
-		public CompositeParent(CompositeLabeling parent, LabelingComponent component, Double ratio) {
-			super();
-			this.parent = parent;
-			this.component = component;
-			this.ratio = ratio;
-		}
-	}
-
+	 private  class CompositeParent {
+			CompositeLabeling parent;
+	    	LabelingComponent component;    
+	    	Double ratio;
+			public CompositeParent(CompositeLabeling parent, LabelingComponent component, Double ratio) {
+				super();
+				this.parent = parent;
+				this.component = component;
+				this.ratio = ratio;
+			}
+	    }
+		
+	
 	public String renderFootNotes() {
-
+	    
 		return footNotes.stream().filter(f -> f.matchLocale(I18NUtil.getLocale())).sorted().map(f -> {
 			Double qtyPerc = 0d;
 			Queue<CompositeParent> queue = new LinkedList<>();
 
 			// Add all LabelingComponents with a ratio of 1 to the queue
 			for (LabelingComponent component : lblCompositeContext.getIngList().values()) {
-				queue.add(new CompositeParent(lblCompositeContext, component, 1d));
+			    queue.add(new CompositeParent(lblCompositeContext, component, 1d));
 			}
 
 			while (!queue.isEmpty()) {
 				CompositeParent compositeParent = queue.poll();
+			    
+			    Double subQty = computeQtyPerc(compositeParent.parent, compositeParent.component, compositeParent.ratio);
 
-				Double subQty = computeQtyPerc(compositeParent.parent, compositeParent.component, compositeParent.ratio);
+			    if (compositeParent.component.getFootNotes() != null && compositeParent.component.getFootNotes().contains(f)) {
+			        qtyPerc +=  subQty;
+			    
+			    }
 
-				if (compositeParent.component.getFootNotes() != null && compositeParent.component.getFootNotes().contains(f)) {
-					qtyPerc += subQty;
+			    if (compositeParent.component instanceof CompositeLabeling) {
+			        CompositeLabeling composite = (CompositeLabeling) compositeParent.component;
 
-				}
+			        // If the CompositeLabeling component is a Kit, set subRatio to 1
+			        if (DeclarationType.Kit.equals(composite.getDeclarationType())) {
+			        	subQty = 1d;
+			        } 
 
-				if (compositeParent.component instanceof CompositeLabeling) {
-					CompositeLabeling composite = (CompositeLabeling) compositeParent.component;
-
-					// If the CompositeLabeling component is a Kit, set subRatio to 1
-					if (DeclarationType.Kit.equals(composite.getDeclarationType())) {
-						subQty = 1d;
-					}
-
-					// Add all child LabelingComponents to the queue with the updated ratio
-					for (LabelingComponent child : composite.getIngList().values()) {
-						queue.add(new CompositeParent(composite, child, subQty));
-					}
-				}
+			        // Add all child LabelingComponents to the queue with the updated ratio
+			        for (LabelingComponent child : composite.getIngList().values()) {
+			            queue.add(new CompositeParent(composite, child, subQty));
+			        }
+			    }
 			}
 			MessageFormat messageFormat = new MessageFormat(f.getFootNoteLabel(I18NUtil.getLocale()), getContentLocale());
 
-			return messageFormat.format(new Object[] { qtyPerc });
+			return messageFormat.format(new Object[] { qtyPerc});
+
 
 		}).collect(Collectors.joining(footNotesLabelSeparator));
 	}
@@ -1585,7 +1589,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				String ingTypeLegalName = getLegalIngName(kv.getKey(), null,
 						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())), false);
 
-				if (isDoNotDetails(kv.getKey())) {
+				boolean doNotDetailsDeclType = isDoNotDetails(kv.getKey());
+
+				if (doNotDetailsDeclType) {
 					ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
 				}
 
@@ -1593,10 +1599,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				String otherGeoOriginsLabel = createGeoOriginsLabel(null, kv.getValue(), PlaceOfActivityTypeCode.EMPTY);
 				String bioOriginsLabel = createBioOriginsLabel(null, kv.getValue());
 
-				String subLabel = getIngTextFormat(kv.getKey(), qtyPerc, kv.getValue().size() > 1).format(new Object[] { ingTypeLegalName, null,
-						isDoNotDetails(kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef()) ? null
-								: renderLabelingComponent(lblCompositeContext, kv.getValue(), true, 1d, null, true, true),
-						null, null });
+				String subLabel = getIngTextFormat(kv.getKey(), qtyPerc, kv.getValue().size()>1).format(new Object[] { ingTypeLegalName, null,
+						doNotDetailsDeclType ? null : renderLabelingComponent(lblCompositeContext, kv.getValue(), true, 1d, null, true, true), null,
+						null });
 
 				if ((subLabel != null) && !subLabel.isEmpty()) {
 
@@ -1662,9 +1667,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 								subRatio = 1d;
 							}
 
-							subLabel = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size() > 1)
-									.format(new Object[] { ingName, qtyPerc,
-											renderCompositeIng((CompositeLabeling) component, subRatio, null, true, true), null, null });
+							subLabel = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size()>1).format(new Object[] { ingName, qtyPerc,
+									renderCompositeIng((CompositeLabeling) component, subRatio, null, true, true), null, null });
 
 						} else {
 							logger.error(String.format(UNSUPPORTED_ING_TYPE, component.getName()));
@@ -1930,19 +1934,17 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				String ingName = getLegalIngName(component, qtyPerc, false, false);
 
 				if ((kv.getKey() != null) && (getLegalIngName(kv.getKey(), null, false, false) != null)) {
-					;
+					boolean doNotDetailsDeclType = isDoNotDetails(kv.getKey());
 
 					String ingTypeLegalName = getLegalIngName(kv.getKey(), null,
 							((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())), false);
 
-					if (isDoNotDetails(kv.getKey())) {
+					if (doNotDetailsDeclType) {
 						ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
 					}
 
-					ingName = getIngTextFormat(kv.getKey(), qtyPerc, false).format(new Object[] { ingTypeLegalName, null,
-							isDoNotDetails(kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef()) ? null
-									: ingName,
-							null });
+					ingName = getIngTextFormat(kv.getKey(), qtyPerc,false)
+							.format(new Object[] { ingTypeLegalName, null, doNotDetailsDeclType ? null : ingName, null });
 
 				}
 
@@ -2090,15 +2092,17 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				String ingTypeLegalName = getLegalIngName(kv.getKey(), qtyPerc,
 						((kv.getValue().size() > 1) || (!kv.getValue().isEmpty() && kv.getValue().get(0).isPlural())), false);
 
-				if (isDoNotDetails(kv.getKey())) {
+				boolean doNotDetailsDeclType = isDoNotDetails(kv.getKey());
+
+				if (doNotDetailsDeclType) {
 					ingTypeLegalName = createAllergenAwareLabel(ingTypeLegalName, kv.getValue());
 				}
 
 				String geoOriginsLabel = createGeoOriginsLabel(kv.getKey().getNodeRef(), kv.getValue(), PlaceOfActivityTypeCode.LAST_PROCESSING);
 				String bioOriginsLabel = createBioOriginsLabel(kv.getKey().getNodeRef(), kv.getValue());
 
-				toAppend.append(getIngTextFormat(kv.getKey(), qtyPerc, kv.getValue().size() > 1).format(new Object[] { ingTypeLegalName, qtyPerc,
-						isDoNotDetails(kv.getKey().getOrigNodeRef() != null ? kv.getKey().getOrigNodeRef() : kv.getKey().getNodeRef()) ? null
+				toAppend.append(getIngTextFormat(kv.getKey(), qtyPerc, kv.getValue().size()>1).format(new Object[] { ingTypeLegalName, qtyPerc,
+						doNotDetailsDeclType ? null
 								: renderLabelingComponent(compositeLabeling, kv.getValue(), true, ratio, first ? total : null, hideGeo, hideBio),
 						hideGeo ? null : geoOriginsLabel, hideBio ? null : bioOriginsLabel }));
 
@@ -2223,7 +2227,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				if (component instanceof CompositeLabeling) {
 
-					MessageFormat formater = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size() > 1);
+					MessageFormat formater = getIngTextFormat(component, qtyPerc, ((CompositeLabeling) component).getIngList().size()>1);
 					Double subRatio = computeQtyPerc(parent, component, ratio, ingsLabelingWithYield && (component instanceof IngItem));
 
 					if (DeclarationType.Kit.equals(((CompositeLabeling) component).getDeclarationType()) || computePercByParent) {
