@@ -10,6 +10,7 @@
       <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
    </actionSetToolbar>
    <actionSetDataGrid>
+      <action type="action-link" id="onActionUnlock"  permission="unlock" label="actions.unlock" />
       <action type="action-link" id="onActionEdit" permission="edit" label="actions.edit" />
       <action type="action-link" id="onActionShowDetails" permission="details"  label="actions.show-details" />
       <action type="action-link" id="onActionDuplicate" permission="create" label="actions.duplicate-row" />
@@ -19,6 +20,5 @@
       <action type="action-link" id="onActionSelectColor"  permission="edit" label="actions.select-color" />
       <action type="action-link" id="onActionUploadContent"  permission="content" label="actions.upload-content" />
       <action type="action-link" id="onActionLock"  permission="lock" label="actions.lock" />
-      <action type="action-link" id="onActionUnlock"  permission="unlock" label="actions.unlock" />
    </actionSetDataGrid>
 </datagrid-view>
