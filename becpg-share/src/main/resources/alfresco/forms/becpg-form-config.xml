@@ -16,6 +16,7 @@
             <field-visibility>
                <show id="cm:title" force="true" />
                <show id="cm:description" force="true" />
+               <show id="cm:name" force="true" />
             </field-visibility>
             <edit-form template="../data-lists/forms/datalist-edit.ftl" />
             <appearance>
