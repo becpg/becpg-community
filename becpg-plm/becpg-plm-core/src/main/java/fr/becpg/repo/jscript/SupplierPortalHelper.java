@@ -174,76 +174,79 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 					} else {
 						logger.info("No account provided for supplier");
 					}
+					
+
+					List<NodeRef> ret =	AuthenticationUtil.runAs(new RunAsWork<List<NodeRef>>() {
+
+						@Override
+						public List<NodeRef> doWork() throws Exception {
+
+							List<NodeRef> resources = projectService.extractResources(project.getNodeRef(),
+									task.getResources());
+
+							resources.removeIf((resource -> ContentModel.TYPE_AUTHORITY_CONTAINER
+									.equals(nodeService.getType(resource))));
+
+							if ((resources != null) && !resources.isEmpty()) {
+
+								NodeRef dest = supplierPortalService.getOrCreateSupplierDestFolder(supplierNodeRef,
+										resources);
+
+								
+								if(entityNodeRef != supplierNodeRef) {
+
+									repoService.moveNode(entityNodeRef, dest);
+								
+								}
+								permissionService.setInheritParentPermissions(entityNodeRef, true);
+
+								for (NodeRef resourceRef : resources) {
+									permissionService.setPermission(task.getNodeRef(),
+											(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
+											PermissionService.COORDINATOR, true);
+									for (DeliverableListDataItem deliverable : ProjectHelper.getDeliverables(project,
+											task.getNodeRef())) {
+										permissionService.setPermission(deliverable.getNodeRef(),
+												(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
+												PermissionService.COORDINATOR, true);
+										if ((deliverable.getContent() != null)
+												&& ((deliverable.getScriptOrder() == null)
+														|| DeliverableScriptOrder.None.equals(deliverable.getScriptOrder()))
+												&& isInProjectFolder(deliverable.getContent(), project.getNodeRef())) {
+											String name = (String) nodeService.getProperty(deliverable.getContent(),
+													ContentModel.PROP_NAME);
+											NodeRef existingNodeWithSameName = nodeService.getChildByName(
+													entityNodeRef, ContentModel.ASSOC_CONTAINS, name);
+											if (existingNodeWithSameName != null) {
+												nodeService.deleteNode(deliverable.getContent());
+												deliverable.setContent(existingNodeWithSameName);
+											} else {
+												if(deliverable.getContent() != supplierNodeRef) {
+													repoService.moveNode(deliverable.getContent(), entityNodeRef);
+												}
+											}
+										}
+
+									}
+								}
+							} else {
+								logger.warn("No one is assign to task");
+								task.setTaskState(TaskState.OnHold);
+							}
+
+							return resources;
+						}
+
+					}, AuthenticationUtil.SYSTEM_USER_NAME);
+
+					return ret.stream().map(n -> new ActivitiScriptNode(n, serviceRegistry))
+							.toArray(ScriptNode[]::new);
+					
 
 				} else {
 					logger.info("No supplier provided for entity");
 				}
 
-				List<NodeRef> ret =	AuthenticationUtil.runAs(new RunAsWork<List<NodeRef>>() {
-
-					@Override
-					public List<NodeRef> doWork() throws Exception {
-
-						List<NodeRef> resources = projectService.extractResources(project.getNodeRef(),
-								task.getResources());
-
-						resources.removeIf((resource -> ContentModel.TYPE_AUTHORITY_CONTAINER
-								.equals(nodeService.getType(resource))));
-
-						if ((resources != null) && !resources.isEmpty()) {
-
-							NodeRef dest = supplierPortalService.getOrCreateSupplierDestFolder(supplierNodeRef,
-									resources);
-
-							
-							if(entityNodeRef != supplierNodeRef) {
-
-								repoService.moveNode(entityNodeRef, dest);
-							
-							}
-							permissionService.setInheritParentPermissions(entityNodeRef, true);
-
-							for (NodeRef resourceRef : resources) {
-								permissionService.setPermission(task.getNodeRef(),
-										(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
-										PermissionService.COORDINATOR, true);
-								for (DeliverableListDataItem deliverable : ProjectHelper.getDeliverables(project,
-										task.getNodeRef())) {
-									permissionService.setPermission(deliverable.getNodeRef(),
-											(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
-											PermissionService.COORDINATOR, true);
-									if ((deliverable.getContent() != null)
-											&& ((deliverable.getScriptOrder() == null)
-													|| DeliverableScriptOrder.None.equals(deliverable.getScriptOrder()))
-											&& isInProjectFolder(deliverable.getContent(), project.getNodeRef())) {
-										String name = (String) nodeService.getProperty(deliverable.getContent(),
-												ContentModel.PROP_NAME);
-										NodeRef existingNodeWithSameName = nodeService.getChildByName(
-												entityNodeRef, ContentModel.ASSOC_CONTAINS, name);
-										if (existingNodeWithSameName != null) {
-											nodeService.deleteNode(deliverable.getContent());
-											deliverable.setContent(existingNodeWithSameName);
-										} else {
-											if(deliverable.getContent() != supplierNodeRef) {
-												repoService.moveNode(deliverable.getContent(), entityNodeRef);
-											}
-										}
-									}
-
-								}
-							}
-						} else {
-							logger.warn("No one is assign to task");
-							task.setTaskState(TaskState.OnHold);
-						}
-
-						return resources;
-					}
-
-				}, AuthenticationUtil.SYSTEM_USER_NAME);
-
-				return ret.stream().map(n -> new ActivitiScriptNode(n, serviceRegistry))
-						.toArray(ScriptNode[]::new);
 
 			} else {
 				logger.info("No entity provided for project");
