@@ -78,6 +78,7 @@
                         {
                             currentValue : "",
                             mode : "view",
+                            formId : null,
                             readOnly : false,
                             multipleSelectMode : true,
                             targetLinkTemplate : null,
@@ -103,7 +104,9 @@
                          *            {array} Event parameters
                          */
                         onFormContainerDestroyed : function AutoCompletePicker_onFormContainerDestroyed(layer, args) {
-                        	if(this.widgets.oAC){
+							var form = args[1];
+							
+                        	if((form==null || (form!=null && form.id == this.options.formId)) &&  this.widgets.oAC){
                         		this.widgets.oAC.destroy();
                         		delete this.widgets.oAC
                         	}
