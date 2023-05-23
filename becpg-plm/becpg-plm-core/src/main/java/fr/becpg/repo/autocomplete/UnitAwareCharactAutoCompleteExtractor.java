@@ -95,7 +95,7 @@ public class UnitAwareCharactAutoCompleteExtractor implements AutoCompleteExtrac
 				}
 				
 				if ((charactType != null) && !charactType.isEmpty()) {
-					name = "[" + charactType + "] "+name;
+					name +=  " [" + charactType + "]";
 				}
 
 				if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COLOR)) {
