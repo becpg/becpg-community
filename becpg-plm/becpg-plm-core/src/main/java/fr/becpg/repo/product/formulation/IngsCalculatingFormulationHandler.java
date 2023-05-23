@@ -118,6 +118,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 								il.getGeoOrigin().clear();
 								il.getGeoTransfo().clear();
 								il.getBioOrigin().clear();
+								il.getClaims().clear();
 								il.setDeclType(null);
 							}
 						}
@@ -391,6 +392,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 			if (!retainNodes.contains(newIngListDataItem)) {
 				retainNodes.add(newIngListDataItem);
+				newIngListDataItem.getClaims().addAll(ingListDataItem.getClaims());
+			} else {
+				newIngListDataItem.getClaims().retainAll(ingListDataItem.getClaims());
 			}
 
 			Double totalQtyIng = totalQtyIngMap.get(newIngListDataItem.getName());

@@ -588,7 +588,7 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	@Override
 	public String toString() {
 		return "IngListDataItem [qtyPerc=" + qtyPerc + ", qtyPercWithYield=" + qtyPercWithYield + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin="
-				+ geoOrigin + ", geoTransfo=" + geoTransfo + ", bioOrigin=" + bioOrigin + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing="
+				+ geoOrigin + ", geoTransfo=" + geoTransfo + ", bioOrigin=" + bioOrigin + ", claims=" + claims + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing="
 				+ ing + ", isProcessingAid=" + isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent
 				+ ", mini=" + mini + ", maxi=" + maxi + "]";
 	}
