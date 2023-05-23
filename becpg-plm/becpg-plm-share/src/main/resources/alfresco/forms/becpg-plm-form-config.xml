@@ -6455,6 +6455,7 @@
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
+					<show id="bcpg:ingListClaims" />
 					<show id="dataList_bcpg:reqCtrlList" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:glopTarget" />
