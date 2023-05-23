@@ -6679,7 +6679,9 @@
 				<appearance>
 					<field id="bcpg:mblMicrobio">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/microbio</control-param>
+						</control>
 					</field>
 					<field id="bcpg:mblTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
@@ -6729,7 +6731,9 @@
 				<appearance>
 					<field id="bcpg:mblMicrobio">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/microbio</control-param>
+						</control>
 					</field>
 					<field id="bcpg:mblTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
