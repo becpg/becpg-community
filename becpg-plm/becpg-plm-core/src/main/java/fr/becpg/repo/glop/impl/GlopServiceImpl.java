@@ -57,18 +57,6 @@ public class GlopServiceImpl implements GlopService {
 
 	private static final Log logger = LogFactory.getLog(GlopServiceImpl.class);
 	
-	private static final String CONSTRAINTS = "constraints";
-	private static final String VARIABLES = "variables";
-	private static final String OBJECTIVE = "objective";
-	private static final String OPTIMAL = "optimal";
-	private static final String SUBOPTIMAL = "suboptimal";
-	private static final String COEFFICIENTS = "coefficients";
-	private static final String STATUS = "status";
-	private static final String COMPONENTS = "components";
-	private static final String VALUE = "value";
-	private static final String NAME = "name";
-	private static final String ID = "id";
-
 	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 	
@@ -151,7 +139,7 @@ public class GlopServiceImpl implements GlopService {
 				if (response != null) {
 					JSONObject jsonResponse = new JSONObject(response);
 					
-					jsonResponse.put(STATUS, SUBOPTIMAL);
+					jsonResponse.put(GlopData.STATUS, GlopData.SUBOPTIMAL);
 					
 					if (logger.isDebugEnabled()) {
 						stopWatch.stop();
@@ -211,7 +199,7 @@ public class GlopServiceImpl implements GlopService {
 		
 		JSONArray components = new JSONArray();
 		
-		JSONObject coeff = (JSONObject) obj.get(COEFFICIENTS);
+		JSONObject coeff = (JSONObject) obj.get(GlopData.COEFFICIENTS);
 		
 		Iterator<String> keys = coeff.keys();
 
@@ -220,22 +208,22 @@ public class GlopServiceImpl implements GlopService {
 			
 			JSONObject component = new JSONObject();
 			
-			component.put(STATUS, OPTIMAL);
-			component.put(VALUE, coeff.getDouble(key));
+			component.put(GlopData.STATUS, GlopData.OPTIMAL);
+			component.put(GlopData.VALUE, coeff.getDouble(key));
 			
 			if (key.contains("/")) {
 				NodeRef nodeRef = new NodeRef(key);
-				component.put(ID, nodeRef.toString());
-				component.put(NAME, attributeExtractorService.extractPropName(nodeRef));
+				component.put(GlopData.ID, nodeRef.toString());
+				component.put(GlopData.NAME, attributeExtractorService.extractPropName(nodeRef));
 				
 				GlopConstraint constraint = findMatchingConstraint(constraints, nodeRef);
 				
 				if (constraint != null) {
 					if (coeff.getDouble(key) < constraint.getMinValue() || coeff.getDouble(key) > constraint.getMaxValue()) {
-						component.put(STATUS, SUBOPTIMAL);
+						component.put(GlopData.STATUS, GlopData.SUBOPTIMAL);
 					}
 					
-					component.put(VALUE, coeff.getDouble(key) / (constraint.getData() instanceof SimpleListDataItem ? totalQuantity : 1d));
+					component.put(GlopData.VALUE, coeff.getDouble(key) / (constraint.getData() instanceof SimpleListDataItem ? totalQuantity : 1d));
 					
 					nodeService.setProperty(((SimpleCharactDataItem) constraint.getData()).getNodeRef(), PLMModel.PROP_GLOP_VALUE, component.toString());
 				} else {
@@ -248,15 +236,15 @@ public class GlopServiceImpl implements GlopService {
 				}
 				
 			} else {
-				component.put(NAME, key);
+				component.put(GlopData.NAME, key);
 			}
 			
 			components.put(component);
 		}
 		
-		ret.put(COMPONENTS, components);
-		ret.put(VALUE, obj.get(VALUE));
-		ret.put(STATUS, obj.get(STATUS));
+		ret.put(GlopData.COMPONENTS, components);
+		ret.put(GlopData.VALUE, obj.get(GlopData.VALUE));
+		ret.put(GlopData.STATUS, obj.get(GlopData.STATUS));
 		
 		return ret;
 	}
@@ -296,15 +284,15 @@ public class GlopServiceImpl implements GlopService {
 				CompoListDataItem compoListDataItem = contribution.getKey();
 				Double value = contribution.getValue();
 				
-				if (jsonResponse.getJSONObject(COEFFICIENTS).has(compoListDataItem.getProduct().toString())) {
-					totalItemQuantity += value * jsonResponse.getJSONObject(COEFFICIENTS).getDouble(compoListDataItem.getProduct().toString());
+				if (jsonResponse.getJSONObject(GlopData.COEFFICIENTS).has(compoListDataItem.getProduct().toString())) {
+					totalItemQuantity += value * jsonResponse.getJSONObject(GlopData.COEFFICIENTS).getDouble(compoListDataItem.getProduct().toString());
 				}
 			}
 				
 			if (constraintItem instanceof SimpleCharactDataItem) {
-				jsonResponse.getJSONObject(COEFFICIENTS).put(((SimpleCharactDataItem) constraintItem).getCharactNodeRef().toString(), totalItemQuantity);
+				jsonResponse.getJSONObject(GlopData.COEFFICIENTS).put(((SimpleCharactDataItem) constraintItem).getCharactNodeRef().toString(), totalItemQuantity);
 			} else {
-				jsonResponse.getJSONObject(COEFFICIENTS).put(constraintItem.toString(), totalItemQuantity);
+				jsonResponse.getJSONObject(GlopData.COEFFICIENTS).put(constraintItem.toString(), totalItemQuantity);
 			}
 			
 		}
@@ -354,10 +342,10 @@ public class GlopServiceImpl implements GlopService {
 		
 		JSONObject ret = new JSONObject();
 		
-		ret.put(VARIABLES, buildJsonVariables(variables, constraints, applyTolerance));
+		ret.put(GlopData.VARIABLES, buildJsonVariables(variables, constraints, applyTolerance));
 		
 		for (GlopConstraint constraint : constraints) {
-			ret.append(CONSTRAINTS, serializeConstraint(constraint, constraintContributions));
+			ret.append(GlopData.CONSTRAINTS, serializeConstraint(constraint, constraintContributions));
 		}
 		
 		JSONObject jsonTarget = new JSONObject();
@@ -369,8 +357,8 @@ public class GlopServiceImpl implements GlopService {
 			jsonCoefficients.put(entry.getKey().getProduct().toString(), entry.getValue());
 		}
 		
-		jsonTarget.put(COEFFICIENTS, jsonCoefficients);
-		ret.put(OBJECTIVE, jsonTarget);
+		jsonTarget.put(GlopData.COEFFICIENTS, jsonCoefficients);
+		ret.put(GlopData.OBJECTIVE, jsonTarget);
 		
 		return ret;
 	}
@@ -416,7 +404,7 @@ public class GlopServiceImpl implements GlopService {
 		
 		JSONObject ret = new JSONObject();
 		
-		ret.put(COEFFICIENTS, serializeCoefficients(constraint, constraintContributions));
+		ret.put(GlopData.COEFFICIENTS, serializeCoefficients(constraint, constraintContributions));
 		
 		ret.put("lower", serializeValue(constraint.getMinTolerance() != null ? constraint.getMinTolerance() : constraint.getMinValue()));
 		
