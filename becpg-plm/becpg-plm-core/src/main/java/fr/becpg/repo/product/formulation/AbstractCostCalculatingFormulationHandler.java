@@ -477,7 +477,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	}
 
 	private void calculateSimulationCosts(ProductData formulatedProduct) {
-		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
+		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct,null);
 
 		for (T c : getDataListVisited(formulatedProduct)) {
 			if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
