@@ -170,9 +170,9 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 					Double qty = qtyProvider.getQty(packagingListDataItem, partProduct) * ratio;
 
-					FormulatedQties qties = new FormulatedQties(qty, qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight());
+					FormulatedQties qties = new FormulatedQties(qty, qty, qtyProvider.getNetQty(null), qtyProvider.getNetWeight(null));
 
-					Double newRatio = qty / qtyProvider.getNetQty();
+					Double newRatio = qty / qtyProvider.getNetQty(null);
 
 					visitPart(formulatedProduct, partProduct, packagingListDataItem.getNodeRef(), ret, qties, currLevel, unitProvider);
 
@@ -191,12 +191,12 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 			/*
 			 * ProcessList
 			 */
-			Double netQtyForCost = qtyProvider.getNetQty();
+			Double netQtyForCost = qtyProvider.getNetQty(null);
 
 			for (ProcessListDataItem processListDataItem : formulatedProduct
 					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
-				Double qty = qtyProvider.getQty(processListDataItem) * ratio;
+				Double qty = qtyProvider.getQty(processListDataItem,null) * ratio;
 
 				if ((processListDataItem.getResource() != null) && (qty != null)) {
 					if (ProductUnit.P.equals(processListDataItem.getUnit()) && ProductUnit.P.equals(formulatedProduct.getUnit())) {
@@ -206,7 +206,7 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 					ProductData partProduct = (ProductData) alfrescoRepository.findOne(processListDataItem.getResource());
 
 					FormulatedQties qties = new FormulatedQties(qty, null, netQtyForCost, null);
-					Double newRatio = qty / qtyProvider.getNetQty();
+					Double newRatio = qty / qtyProvider.getNetQty(null);
 					
 					visitPart(formulatedProduct, partProduct, processListDataItem.getNodeRef(), ret, qties, currLevel, unitProvider);
 
@@ -361,9 +361,9 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 				Double qty = qtyProvider.getQty(compoListDataItem, parentLossRatio, componentProduct) * ratio;
 
 				FormulatedQties qties = new FormulatedQties(qty, qtyProvider.getVolume(compoListDataItem, parentLossRatio, componentProduct) * ratio,
-						qtyProvider.getNetQty(), qtyProvider.getNetWeight());
+						qtyProvider.getNetQty(null), qtyProvider.getNetWeight(null));
 
-				Double newRatio = qty / qtyProvider.getNetQty();
+				Double newRatio = qty / qtyProvider.getNetQty(null);
 
 				visitPart(productData, componentProduct, component.getData().getNodeRef(), ret, qties, currLevel, unitProvider);
 

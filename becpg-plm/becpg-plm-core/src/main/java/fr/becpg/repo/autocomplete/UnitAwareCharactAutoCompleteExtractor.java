@@ -29,8 +29,11 @@ import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.config.format.FormatMode;
+import fr.becpg.config.format.PropertyFormats;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 
 /**
@@ -50,6 +53,10 @@ public class UnitAwareCharactAutoCompleteExtractor implements AutoCompleteExtrac
 
 	@Autowired
 	private AttributeExtractorService attributeExtractorService;
+	
+
+	@Autowired
+	private EntityDictionaryService entityDictionaryService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -66,15 +73,29 @@ public class UnitAwareCharactAutoCompleteExtractor implements AutoCompleteExtrac
 				props.put("type", type.toPrefixString(namespaceService));
 
 				String unit = "";
+				String charactType = "";
+				
+				PropertyFormats formats = attributeExtractorService.getPropertyFormats(FormatMode.JSON, false);
 
 				if (PLMModel.TYPE_NUT.equals(type)) {
 					unit = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_NUTUNIT);
 				} else if (PLMModel.TYPE_PHYSICO_CHEM.equals(type)) {
 					unit = (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PHYSICO_CHEM_UNIT);
+					charactType=  (String) nodeService.getProperty(nodeRef, PLMModel.PROP_PHYSICO_CHEM_TYPE);
+					unit = attributeExtractorService.getStringValue(entityDictionaryService.getProperty( PLMModel.PROP_PHYSICO_CHEM_UNIT), unit,formats );
+					charactType = attributeExtractorService.getStringValue(entityDictionaryService.getProperty( PLMModel.PROP_PHYSICO_CHEM_TYPE),charactType, formats);
+				}else if (PLMModel.TYPE_MICROBIO.equals(type)) {
+					charactType=  (String) nodeService.getProperty(nodeRef, PLMModel.PROP_MICROBIO_TYPE);
+					charactType = attributeExtractorService.getStringValue(entityDictionaryService.getProperty( PLMModel.PROP_MICROBIO_TYPE), charactType, formats);
+					
 				}
 
 				if ((unit != null) && !unit.isEmpty()) {
 					name += " (" + unit + ")";
+				}
+				
+				if ((charactType != null) && !charactType.isEmpty()) {
+					name +=  " [" + charactType + "]";
 				}
 
 				if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COLOR)) {

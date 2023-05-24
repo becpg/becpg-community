@@ -115,9 +115,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 		SimpleListQtyProvider qtyProvider = new SimpleListQtyProvider() {
 
-			Double netQty = FormulationHelper.getNetQtyForNuts(formulatedProduct);
-			Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-
 			@Override
 			public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
 				return FormulationHelper.getQtyInKg(compoListDataItem);
@@ -134,18 +131,18 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 			}
 
 			@Override
-			public Double getQty(ProcessListDataItem processListDataItem) {
+			public Double getQty(ProcessListDataItem processListDataItem, VariantData variant) {
 				return 0d;
 			}
 
 			@Override
-			public Double getNetWeight() {
-				return netWeight;
+			public Double getNetWeight(VariantData variant) {
+				return FormulationHelper.getNetWeight(formulatedProduct, variant, FormulationHelper.DEFAULT_NET_WEIGHT);
 			}
 
 			@Override
-			public Double getNetQty() {
-				return netQty;
+			public Double getNetQty(VariantData variant) {
+				return  FormulationHelper.getNetQtyForNuts(formulatedProduct,variant);
 			}
 
 			@Override
@@ -179,7 +176,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							FormulatedQties qties = new FormulatedQties(
 									qtyProvider.getQty(compoListDataItem, formulatedProduct.getProductLossPerc(), componentProduct),
 									qtyProvider.getVolume(compoListDataItem, formulatedProduct.getProductLossPerc(), componentProduct),
-									qtyProvider.getNetQty(), qtyProvider.getNetWeight());
+									qtyProvider.getNetQty(variant), qtyProvider.getNetWeight(variant));
 
 							if (qties.isNotNull()) {
 
@@ -272,7 +269,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 				}
 
 				if (formulatedProduct.isGeneric()) {
-					formulateGenericRawMaterial(formulatedProduct.getNutList(), totalQtiesValue, qtyProvider.getNetQty());
+					formulateGenericRawMaterial(formulatedProduct.getNutList(), totalQtiesValue, qtyProvider.getNetQty(variant));
 				}
 			}
 		}
