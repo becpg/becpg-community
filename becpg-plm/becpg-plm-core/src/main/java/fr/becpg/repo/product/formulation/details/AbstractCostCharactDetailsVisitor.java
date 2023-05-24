@@ -41,14 +41,12 @@ import fr.becpg.repo.product.data.productList.AbstractCostListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.formulation.CostCalculatingHelper;
 import fr.becpg.repo.product.formulation.CostListQtyProvider;
 import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.FormulatedQties;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.PackagingHelper;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
-import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -382,9 +380,4 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 	
 	protected abstract QName getCostUnitPropName();
 
-	
-	@Override
-	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
-		return CostCalculatingHelper.extractValue(formulatedProduct, partProduct, simpleCharact);
-	}
 }

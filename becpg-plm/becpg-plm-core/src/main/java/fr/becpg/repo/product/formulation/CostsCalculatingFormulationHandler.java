@@ -19,6 +19,7 @@ import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.repository.model.SimpleListDataItem;
 
 /**
  * The Class CostCalculatingVisitor.
@@ -64,7 +65,12 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 	protected boolean accept(ProductData formulatedProduct) {
 		return !(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
 				|| ((formulatedProduct.getCostList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_COSTLIST)));
-
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem slDataItem) {
+		return CostCalculatingHelper.extractValue(formulatedProduct, partProduct, slDataItem);
 	}
 
 	/** {@inheritDoc} */

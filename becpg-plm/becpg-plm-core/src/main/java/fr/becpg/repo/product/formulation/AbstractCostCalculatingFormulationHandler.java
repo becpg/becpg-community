@@ -26,7 +26,6 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AbstractCostListDataItem;
 import fr.becpg.repo.product.helper.SimulationCostHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
 
 /**
@@ -357,12 +356,6 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		if (!isCalculated) {
 			calculateValues(templateCostList, costList, null, null);
 		}
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem slDataItem) {
-		return CostCalculatingHelper.extractValue(formulatedProduct, partProduct, slDataItem);
 	}
 
 	private void calculateValues(T templateCostList, T costList, Boolean divide, Double qty) {
