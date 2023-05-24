@@ -145,7 +145,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-		queueListNodeRef(assocRef.getSourceRef());
+		queueListNodeRef(nodeService.getPrimaryParent(assocRef.getSourceRef()).getParentRef());
 	}
 
 	private void queueListNodeRef(NodeRef listNodeRef) {
