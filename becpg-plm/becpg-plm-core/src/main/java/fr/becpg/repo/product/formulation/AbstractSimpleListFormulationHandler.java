@@ -342,8 +342,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 					} else {
 
 						FormulatedQties qties = new FormulatedQties(qtyProvider.getQty(compoListDataItem, parentLossRatio, componentProduct),
-								qtyProvider.getVolume(compoListDataItem, parentLossRatio, componentProduct), qtyProvider.getNetQty(),
-								qtyProvider.getNetWeight());
+								qtyProvider.getVolume(compoListDataItem, parentLossRatio, componentProduct), qtyProvider.getNetQty(variant),
+								qtyProvider.getNetWeight(variant));
 
 						if (qties.isNotNull()) {
 							visitPart(formulatedProduct, componentProduct, simpleListDataList, qties, mandatoryCharacts, totalQtiesInKg,
@@ -357,9 +357,9 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		// Case Generic MP
 		if (isFormulatedProduct && formulatedProduct.isGeneric()) {
 
-			Double netQtyForGeneric = qtyProvider.getNetQty();
+			Double netQtyForGeneric = qtyProvider.getNetQty(variant);
 			if (ProductUnit.P.equals(formulatedProduct.getUnit())) {
-				netQtyForGeneric = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
+				netQtyForGeneric = FormulationHelper.getNetQtyInLorKg(formulatedProduct,variant, FormulationHelper.DEFAULT_NET_WEIGHT);
 			}
 
 			formulateGenericRawMaterial(simpleListDataList, totalQtiesInKg, netQtyForGeneric);
@@ -387,7 +387,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 					Double qty = qtyProvider.getQty(packagingListDataItem, partProduct);
 
-					FormulatedQties qties = new FormulatedQties(qty, qty, qtyProvider.getNetQty(), qtyProvider.getNetWeight());
+					FormulatedQties qties = new FormulatedQties(qty, qty, qtyProvider.getNetQty(variant), qtyProvider.getNetWeight(variant));
 
 					visitPart(formulatedProduct, partProduct, simpleListDataList, qties, mandatoryCharacts2, null, null, variant);
 				}
@@ -406,14 +406,14 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			 * ProcessList
 			 */
 
-			Double netQtyForCost = qtyProvider.getNetQty();
+			Double netQtyForCost = qtyProvider.getNetQty(variant);
 
 			Map<NodeRef, List<NodeRef>> mandatoryCharacts3 = getMandatoryCharacts(formulatedProduct, PLMModel.TYPE_RESOURCEPRODUCT);
 			for (ProcessListDataItem processListDataItem : formulatedProduct
 					.getProcessList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
 							(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
 
-				Double qty = qtyProvider.getQty(processListDataItem);
+				Double qty = qtyProvider.getQty(processListDataItem,variant);
 
 				if ((processListDataItem.getResource() != null) && (qty != null)) {
 					if (ProductUnit.P.equals(processListDataItem.getUnit()) && ProductUnit.P.equals(formulatedProduct.getUnit())) {

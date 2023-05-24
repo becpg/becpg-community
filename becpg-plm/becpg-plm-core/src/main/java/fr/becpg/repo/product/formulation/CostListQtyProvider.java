@@ -4,16 +4,15 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.variant.model.VariantData;
 
 public class CostListQtyProvider implements SimpleListQtyProvider {
 
 		ProductData formulatedProduct;
-		Double netQty;
 
 
 		public CostListQtyProvider (ProductData formulatedProduct) {
 			this.formulatedProduct = formulatedProduct;
-			this.netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
 		}
 
 
@@ -34,19 +33,19 @@ public class CostListQtyProvider implements SimpleListQtyProvider {
 		}
 
 		@Override
-		public Double getQty(ProcessListDataItem processListDataItem) {
-			return  FormulationHelper.getQtyForCost(formulatedProduct, processListDataItem);
+		public Double getQty(ProcessListDataItem processListDataItem, VariantData variant) {
+			return  FormulationHelper.getQtyForCost(formulatedProduct, variant, processListDataItem);
 		}
 
 
 		@Override
-		public Double getNetWeight() {
-			return netQty;
+		public Double getNetWeight( VariantData variant) {
+			return FormulationHelper.getNetQtyForCost(formulatedProduct,variant);
 		}
 
 		@Override
-		public Double getNetQty() {
-			return  netQty;
+		public Double getNetQty( VariantData variant) {
+			return  FormulationHelper.getNetQtyForCost(formulatedProduct,variant);
 		}
 
 		@Override
