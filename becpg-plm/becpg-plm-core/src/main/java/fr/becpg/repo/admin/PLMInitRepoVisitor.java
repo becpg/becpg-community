@@ -171,6 +171,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	static {
 		reportKindCodes.put(PRODUCT_REPORT_CLIENT_PATH, "CustomerSheet");
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
+		reportKindCodes.put(PRODUCT_REPORT_RAWMATERIAL_PATH, "SupplierSheet");
 		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_PATH, "SupplierSheet");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
@@ -1431,8 +1432,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			defaultKindReport.add(NONE_KIND_REPORT);
 
 			for (String reportKind : defaultKindReport) {
-				if (PRODUCT_REPORT_RAWMATERIAL_PATH.equals(reportKind) || PRODUCT_REPORT_PACKAGING_PATH.equals(reportKind)
-						|| PRODUCT_REPORT_COST_PATH.equals(reportKind) || PRODUCT_REPORT_RD_PATH.equals(reportKind)) {
+				if (PRODUCT_REPORT_PACKAGING_PATH.equals(reportKind) || PRODUCT_REPORT_COST_PATH.equals(reportKind) || PRODUCT_REPORT_RD_PATH.equals(reportKind)) {
 					continue;
 				}
 
