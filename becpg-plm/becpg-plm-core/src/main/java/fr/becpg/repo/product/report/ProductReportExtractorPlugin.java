@@ -486,7 +486,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			this.lossRatio = processListItem.getLossPerc() != null ? processListItem.getLossPerc() : 0d;
 			this.lossRatio = FormulationHelper.calculateLossPerc(productData.getProductLossPerc(), lossRatio);
 			this.netQtyForCost = FormulationHelper.getNetQtyForCost(productData);
-			this.qtyForCost = FormulationHelper.getQtyForCost(productData, processListItem);
+			this.qtyForCost = FormulationHelper.getQtyForCost(productData,null, processListItem);
 			this.qtyForProduct = qty;
 
 		}

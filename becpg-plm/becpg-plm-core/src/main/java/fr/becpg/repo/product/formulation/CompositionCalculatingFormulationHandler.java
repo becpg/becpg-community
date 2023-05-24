@@ -151,7 +151,7 @@ public class CompositionCalculatingFormulationHandler extends FormulationBaseHan
 
 		
 
-		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct,null);
+		Double netVolume = FormulationHelper.getNetVolume(formulatedProduct,null,null);
 		if ((netVolume != null) && (volumeUsed!=null) && (volumeUsed != 0d)) {
 			formulatedProduct.setYieldVolume((100 * netVolume) / volumeUsed);
 		}

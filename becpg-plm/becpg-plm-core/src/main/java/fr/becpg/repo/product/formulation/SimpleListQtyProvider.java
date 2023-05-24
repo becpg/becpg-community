@@ -4,6 +4,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.variant.model.VariantData;
 
 public interface SimpleListQtyProvider {
 
@@ -14,12 +15,12 @@ public interface SimpleListQtyProvider {
 
 	Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct);
 
-	Double getQty(ProcessListDataItem processListDataItem);
+	Double getQty(ProcessListDataItem processListDataItem, VariantData variant);
 
 
-	Double getNetWeight();
+	Double getNetWeight(VariantData variant);
 
-	Double getNetQty();
+	Double getNetQty(VariantData variant);
 
 	Boolean omitElement(CompoListDataItem compoListDataItem);
 }
