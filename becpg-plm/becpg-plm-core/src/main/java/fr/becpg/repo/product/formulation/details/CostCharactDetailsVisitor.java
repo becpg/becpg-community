@@ -28,7 +28,9 @@ import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.SupplierData;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.product.formulation.CostCalculatingHelper;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 @Service
 public class CostCharactDetailsVisitor extends AbstractCostCharactDetailsVisitor<CostListDataItem> {
@@ -43,6 +45,11 @@ public class CostCharactDetailsVisitor extends AbstractCostCharactDetailsVisitor
 			return ((SupplierData) product).getCostList();
 		}
 		return new LinkedList<>();
+	}
+	
+	@Override
+	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleCharactDataItem simpleCharact) {
+		return CostCalculatingHelper.extractValue(formulatedProduct, partProduct, simpleCharact);
 	}
 
 	@Override
