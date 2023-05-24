@@ -31,7 +31,6 @@ import java.util.Map;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.dictionary.constraint.NumericRangeConstraint;
-import org.alfresco.repo.dictionary.constraint.RegexConstraint;
 import org.alfresco.repo.dictionary.constraint.StringLengthConstraint;
 import org.alfresco.repo.rule.RuleModel;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
@@ -177,8 +176,10 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 			}
 		}
 
+		QName propName = RemoteHelper.getPropName(nodeType, entityDictionaryService);
+		
 		addProperty(entity, RemoteEntityService.ATTR_TYPE, TYPE_STRING, "Prefixed qname type of the entity", null);
-		addProperty(entity, RemoteEntityService.ATTR_NAME, TYPE_STRING, "Name of the entity", null);
+		addProperty(entity,entityDictionaryService.toPrefixString( propName), TYPE_STRING, "Name of the entity", null);
 
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
 
@@ -537,9 +538,10 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 				object.put("minLength", ((StringLengthConstraint) constraint.getConstraint()).getMinLength());
 			}
 
-			if (constraint.getConstraint() instanceof RegexConstraint) {
-				object.put("pattern", ((RegexConstraint) constraint.getConstraint()).getExpression());
-			}
+//	TODO convert to Javascript regexp
+//			if (constraint.getConstraint() instanceof RegexConstraint) {
+//				object.put("pattern", ((RegexConstraint) constraint.getConstraint()).getExpression().replaceAll("\\\\\\\\", "\\").replaceAll("\\(\\?[a-zA-Z]+\\)", ""));
+//			}
 
 			if (constraint.getConstraint() instanceof NumericRangeConstraint) {
 				object.put("maximum", ((NumericRangeConstraint) constraint.getConstraint()).getMaxValue());

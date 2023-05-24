@@ -39,6 +39,7 @@ public class UnitAwareCharactAutoCompletePlugin extends TargetAssocAutoCompleteP
 
 	private static final String SOURCE_TYPE_NUT = "nut";
 	private static final String SOURCE_TYPE_PHYSICO_CHEM = "physicoChem";
+	private static final String SOURCE_TYPE_MICROBIO = "microbio";
 
 	@Autowired
 	private UnitAwareCharactAutoCompleteExtractor charactValueExtractor;
@@ -46,7 +47,7 @@ public class UnitAwareCharactAutoCompletePlugin extends TargetAssocAutoCompleteP
 	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
-		return new String[] { SOURCE_TYPE_NUT, SOURCE_TYPE_PHYSICO_CHEM };
+		return new String[] { SOURCE_TYPE_NUT, SOURCE_TYPE_PHYSICO_CHEM,SOURCE_TYPE_MICROBIO };
 	}
 
 	/** {@inheritDoc} */
@@ -54,8 +55,10 @@ public class UnitAwareCharactAutoCompletePlugin extends TargetAssocAutoCompleteP
 	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 		if (SOURCE_TYPE_NUT.equals(sourceType)) {
 			return suggestTargetAssoc(null, PLMModel.TYPE_NUT, query, pageNum, pageSize, null, props);
-		} else {
+		} else if (SOURCE_TYPE_PHYSICO_CHEM.equals(sourceType)) {
 			return suggestTargetAssoc(null, PLMModel.TYPE_PHYSICO_CHEM, query, pageNum, pageSize, null, props);
+		} else {
+			return suggestTargetAssoc(null, PLMModel.TYPE_MICROBIO, query, pageNum, pageSize, null, props);
 		}
 	}
 
