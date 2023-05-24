@@ -793,7 +793,7 @@
 					<field id="rep:reportTpls" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue%2Crep%3AreportTplType%7CExportSearch%2Crep%3AreportTplType%7CCompare%2Crep%3AreportTplType%7CSystem</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -3574,7 +3574,7 @@
 					</field>
 					<field id="rep:reportTpls" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue%2Crep%3AreportTplType%7CExportSearch%2Crep%3AreportTplType%7CCompare%2Crep%3AreportTplType%7CSystem</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -4169,7 +4169,7 @@
 			          </field>
 			          <field id="rep:reportTpls" mandatory="false" read-only="false">
 			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue%2Crep%3AreportTplType%7CExportSearch%2Crep%3AreportTplType%7CCompare%2Crep%3AreportTplType%7CSystem</control-param>
 			            </control>
 			          </field>
 			        </appearance>
@@ -4597,6 +4597,7 @@
 			
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
@@ -4624,6 +4625,7 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:compoListQtySubFormula" help="{&quot;className&quot;: &quot;align-right&quot;, &quot;numberFormat&quot;:  { &quot;minimumFractionDigits&quot;: 2, &quot;maximumFractionDigits&quot;: 2}}" />
 					<field id="bcpg:compareWithDynColumn" label="hidden" read-only="true"/>
@@ -5057,6 +5059,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="pack:labelingPosition" force="true" />
 					<show id="bcpg:packagingListProduct" />
@@ -5082,6 +5085,7 @@
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="pack:labelingPosition" label="hidden" />
 					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden"></field>
@@ -5372,6 +5376,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:allergenListAllergen" />
 					<show id="bcpg:allergenListQtyPerc" />
@@ -5390,6 +5395,7 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:allergenListDecisionTree" read-only="true" />
@@ -5575,6 +5581,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:costListCost" />
@@ -5610,6 +5617,7 @@
 					<field id="bcpg:costListIsFormulated"  label="hidden"/>
 					<field id="bcpg:costListFormulaErrorLog"  label="hidden"/>
 					<field id="bcpg:costListValuePerProduct" read-only="true" />
+					<field id="bcpg:entityDataListState" label="hidden" />
 				</appearance>				
 			</form>
 			<form id="customListDatagrid">
@@ -5772,6 +5780,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:lcaListLca" />
@@ -5807,6 +5816,7 @@
 					<field id="bcpg:lcaListIsFormulated"  label="hidden"/>
 					<field id="bcpg:lcaListFormulaErrorLog"  label="hidden"/>
 					<field id="bcpg:lcaListValuePerProduct" read-only="true" />
+					<field id="bcpg:entityDataListState" label="hidden" />
 				</appearance>				
 			</form>
 			<form id="customListDatagrid">
@@ -6007,6 +6017,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:priceListCost" />
 					<show id="bcpg:priceListPrefRank" />
 					<show id="bcpg:priceListValue" />
@@ -6021,6 +6032,9 @@
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -6106,6 +6120,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:lrLocales" force="true"/>
@@ -6115,6 +6130,7 @@
 					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:lrLocales" label="hidden" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -6244,6 +6260,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:lrIsActive" />
 					<show id="cm:name" />
 					<show id="bcpg:lrComponents" />
@@ -6252,6 +6269,7 @@
 					<show id="bcpg:lrGroup" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 				   <field id="bcpg:lrIsActive" label="hidden" />
 				</appearance>
 			</form>
@@ -6423,6 +6441,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
@@ -6443,6 +6462,7 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden"></field>
 					<field id="bcpg:ingListQtyPercWithYield" read-only="true"  ></field>
@@ -6479,6 +6499,7 @@
 			
 			<form id="datagrid-rawMaterial">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
@@ -6494,6 +6515,7 @@
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -6692,6 +6714,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:mblMicrobio" />
 					<show id="bcpg:mblValue" />
@@ -6706,6 +6729,7 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:pclType" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -6749,41 +6773,49 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
+				   
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
-					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListValuePrepared" force="true" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					 <show id="bcpg:parentLevel" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:nutListMeasurementPrecision" />
-					<show id="bcpg:parentLevel" />
+					
 					<show id="rep:reportKinds" />
 				</field-visibility>
 
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="bcpg:nutListNut">
+					<field id="bcpg:nutListNut" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							<control-param name="ds">becpg/autocomplete/nut</control-param>
-						</control>	
+						</control>
 					</field>
-					<field id="bcpg:nutListValue">
+					<field id="bcpg:nutListValue"  >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">-</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nutListValuePrepared"/>
+					<field id="bcpg:nutListValuePrepared"  >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">-</control-param>
+						</control>
+					</field>
 					<field id="bcpg:nutListMini" set="2-col"/>
 					<field id="bcpg:nutListMaxi" set="2-col"/>
 					<field id="bcpg:nutListLossPerc" set="2-col"/>
 					<field id="bcpg:nutListMethod" set="2-col"/>
+					<field id="bcpg:nutListMeasurementPrecision" set="2-col"/>
 					<field id="bcpg:parentLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="rep:reportKinds" set="2-col"/>
@@ -6829,6 +6861,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:nutListNut" />
@@ -6864,6 +6897,7 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
@@ -6983,18 +7017,19 @@
 		<forms>
 			<!-- Data List pop-up edit form -->
 			<form>
-				<field-visibility>
+				<field-visibility>	   
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
-					<show id="bcpg:nutListUnit"  />
 					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListUnit"  />
 					<show id="bcpg:nutListUnitPrepared" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					 <show id="bcpg:parentLevel" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:nutListMeasurementPrecision" />
-					<show id="bcpg:parentLevel" />
+					
 					<show id="rep:reportKinds" />
 				</field-visibility>
 
@@ -7006,19 +7041,25 @@
 							<control-param name="ds">becpg/autocomplete/nut</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nutListValue" >
+					<field id="bcpg:nutListValue"  >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">-</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nutListValuePrepared"  >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">-</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nutListUnit" read-only="true" set="2-col"/>
-					<field id="bcpg:nutListValuePrepared" />
-					<field id="bcpg:nutListUnitPrepared" />
+					<field id="bcpg:nutListUnitPrepared"  read-only="true" set="2-col"/>
 					<field id="bcpg:nutListMini" set="2-col"/>
 					<field id="bcpg:nutListMaxi" set="2-col"/>
 					<field id="bcpg:nutListLossPerc" set="2-col"/>
 					<field id="bcpg:nutListMethod" set="2-col"/>
+					<field id="bcpg:nutListMeasurementPrecision" set="2-col"/>
 					<field id="bcpg:parentLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut</control-param>
@@ -7057,12 +7098,14 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:organoListOrgano" />
 					<show id="bcpg:organoListValue" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
@@ -7147,6 +7190,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:pclPhysicoChem" />
 					<show id="bcpg:pclValue" />
@@ -7169,6 +7213,7 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:pclUnit" read-only="true"></field>
 				    <field id="bcpg:pclType" read-only="true"></field>
@@ -7397,6 +7442,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
 					<show id="bcpg:filQtyPercMaxi" />
@@ -7411,6 +7457,7 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -7673,6 +7720,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show force="true" id="bcpg:eanCode"/>
 				    <show id="bcpg:contactListType" />
 					<show id="bcpg:contactListFirstName" />
@@ -7687,6 +7735,7 @@
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:isDeleted" >
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
@@ -7822,6 +7871,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:lclLabelClaim" />
 					<show id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" />
 					<show id="bcpg:lclType" />
@@ -7838,6 +7888,7 @@
 					<show id="dataList_bcpg:reqCtrlList" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:lclMissingLabelClaims" read-only="true"/>
 					<field id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" label="hidden"/>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -7909,6 +7960,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:dynamicCharactTitle" />
+				    <show id="cm:title" force="true"/>
 					<show id="bcpg:dynamicCharactColumn" />
 					<show id="bcpg:dynamicCharactFormula" />
 					<show id="bcpg:dynamicCharactGroupColor" />
@@ -7937,6 +7989,7 @@
 					<show id="bcpg:dynamicCharactColumn" />
 					<show id="bcpg:dynamicCharactErrorLog" />
 					<show id="bcpg:dynamicCharactValue" />
+					<show id="cm:title" force="true"/>
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -7944,6 +7997,7 @@
 					<field id="bcpg:dynamicCharactColumn" label="hidden" />
 					<field id="bcpg:dynamicCharactErrorLog" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="cm:title" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 
@@ -7982,6 +8036,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:dynamicCharactTitle" />
+					<show id="cm:title" force="true"/>
 					<show id="bcpg:dynamicCharactColumn" />
 					<show id="bcpg:dynamicCharactFormula" />
 					<show id="bcpg:dynamicCharactGroupColor" />
