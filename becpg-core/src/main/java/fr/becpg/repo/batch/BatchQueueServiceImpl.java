@@ -65,6 +65,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 	
 	private BatchMonitor lastRunningBatch;
 	
+	private Runnable runningCommand;
+
 	private Set<String> cancelledBatches = new HashSet<>();
 	
 	@Override
@@ -208,57 +210,56 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			
 			runningCommand = this;
 			
-			try {
-			boolean hasError = false;
-			
-			Date startTime = null;
-			Date endTime = null;
-			
-			int totalItems = 0;
-			int totalErrors = 0;
-			
-			String batchUserName = batchInfo.getBatchUser();
-			
-			if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-				batchUserName = AuthenticationUtil.getSystemUserName();
-				if (tenantAdminService.isEnabled()) {
-					batchUserName = tenantAdminService.getDomainUser(batchUserName, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-				}
-			}
-			
 			try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.BATCH)) {
-				
+				boolean hasError = false;
+
+				Date startTime = null;
+				Date endTime = null;
+
+				int totalItems = 0;
+				int totalErrors = 0;
+
+				String batchUserName = batchInfo.getBatchUser();
+
+				if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
+					batchUserName = AuthenticationUtil.getSystemUserName();
+					if (tenantAdminService.isEnabled()) {
+						batchUserName = tenantAdminService.getDomainUser(batchUserName,
+								tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
+					}
+				}
+
 				beCPGAuditService.putAttribute(BatchAuditPlugin.BATCH_USER, batchInfo.getBatchUser());
 				beCPGAuditService.putAttribute(BatchAuditPlugin.BATCH_ID, batchInfo.getBatchId());
 				beCPGAuditService.putAttribute(BatchAuditPlugin.IS_COMPLETED, false);
-				
+
 				Integer stepCount = batchSteps.size() > 1 ? 1 : null;
-				
+
 				for (BatchStep<T> batchStep : batchSteps) {
-					
+
 					if (batchStep.getBatchStepListener() != null) {
-						
+
 						AuthenticationUtil.pushAuthentication();
-						
+
 						AuthenticationUtil.setFullyAuthenticatedUser(batchUserName);
-						
+
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 							batchStep.getBatchStepListener().beforeStep();
 							return true;
 						}, false, true);
-						
+
 						AuthenticationUtil.popAuthentication();
-						
+
 					}
-					
+
 					JSONObject jsonBatch = new JSONObject();
-					
+
 					try {
 						jsonBatch.put("batchId", batchInfo.getBatchId());
 						jsonBatch.put("batchDescId", batchInfo.getBatchDescId());
 						jsonBatch.put("batchUser", batchInfo.getBatchUser());
 						jsonBatch.put("entityDescription", batchInfo.getEntityDescription());
-						
+
 						if (stepCount != null) {
 							jsonBatch.put("stepCount", stepCount);
 							jsonBatch.put("stepsMax", batchSteps.size());
@@ -267,48 +268,50 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					} catch (JSONException e) {
 						logger.error("Failed to fill JSON information", e);
 					}
-					
-					
+
 					BatchProcessor<T> batchProcessor = new BatchProcessor<>(jsonBatch.toString(),
-							transactionService.getRetryingTransactionHelper(), getNextWorkWrapper(batchStep.getWorkProvider()),
-							batchInfo.getWorkerThreads(), batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
-					
+							transactionService.getRetryingTransactionHelper(),
+							getNextWorkWrapper(batchStep.getWorkProvider()), batchInfo.getWorkerThreads(),
+							batchInfo.getBatchSize(), applicationEventPublisher, logger, 100);
+
 					batchProcessor.processLong(runAsWrapper(batchStep.getProcessWorker()), true);
-					
+
 					// first step only
 					if (startTime == null) {
 						startTime = batchProcessor.getStartTime();
 					}
-					
+
 					endTime = batchProcessor.getEndTime();
-					
+
 					totalItems += batchProcessor.getTotalResultsLong();
 					totalErrors += batchProcessor.getTotalErrorsLong();
-					
+
 					if (batchProcessor.getTotalErrorsLong() > 0 && batchStep.getBatchStepListener() != null) {
-						
+
 						hasError = true;
-						
-						AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-							batchStep.getBatchStepListener().onError(batchProcessor.getLastErrorEntryId(), batchProcessor.getLastError());
-							return null;
-							
-						}, true, false), batchInfo.getBatchUser());
-						
+
+						AuthenticationUtil
+								.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+									batchStep.getBatchStepListener().onError(batchProcessor.getLastErrorEntryId(),
+											batchProcessor.getLastError());
+									return null;
+
+								}, true, false), batchInfo.getBatchUser());
+
 					}
 					if (batchStep.getBatchStepListener() != null) {
-						
+
 						AuthenticationUtil.pushAuthentication();
-						
+
 						AuthenticationUtil.setFullyAuthenticatedUser(batchUserName);
-						
+
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 							batchStep.getBatchStepListener().afterStep();
 							return true;
 						}, false, true);
-						
+
 						AuthenticationUtil.popAuthentication();
-						
+
 					}
 				}
 
@@ -326,33 +329,34 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					AuthenticationUtil.popAuthentication();
 
 				}
-				
-				batchInfo.setIsCompleted(true); 
-				
+
+				batchInfo.setIsCompleted(true);
+
 				beCPGAuditService.putAttribute(BatchAuditPlugin.TOTAL_ITEMS, totalItems);
 				beCPGAuditService.putAttribute(BatchAuditPlugin.TOTAL_ERRORS, totalErrors);
 				beCPGAuditService.putAttribute(BatchAuditPlugin.IS_COMPLETED, true);
-					
-	
+
 				if (Boolean.TRUE.equals(batchInfo.getNotifyByMail())) {
-	
+
 					final boolean finalHasError = hasError;
 					final Date finalEndTime = endTime;
 					final Date finalStartTime = startTime;
-					
+
 					int secondsBetween = (int) ((finalEndTime.getTime() - finalStartTime.getTime()) / 1000);
-	
-					AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-	
-						beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(), batchInfo.getMailAction(), batchInfo.getMailActionUrl(),
-								!finalHasError, secondsBetween, batchInfo.getEntityDescription());
-	
-						return null;
-					}, true, false), batchInfo.getBatchUser());
+
+					AuthenticationUtil
+							.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+								beCPGMailService.sendMailOnAsyncAction(batchInfo.getBatchUser(),
+										batchInfo.getMailAction(), batchInfo.getMailActionUrl(), !finalHasError,
+										secondsBetween, batchInfo.getEntityDescription());
+
+								return null;
+							}, true, false), batchInfo.getBatchUser());
 				}
-	
+
 				batchInfo.setIsCompleted(true);
-	
+
 				if (cancelledBatches.contains(batchId)) {
 					cancelledBatches.remove(batchId);
 				}
