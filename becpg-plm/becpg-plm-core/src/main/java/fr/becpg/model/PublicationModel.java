@@ -54,9 +54,9 @@ public class PublicationModel {
 
 	public static final QName PROP_PUBCHANNELLIST_BATCHID = QName.createQName(PUBLICATION_URI, "pubChannelListBatchId");
 	public static final QName PROP_PUBCHANNELLIST_PUBLISHEDDATE = QName.createQName(PUBLICATION_URI, "pubChannellListPublishedDate");
-	public static final QName PROP_PUBCHANNELLIST_STATUS = QName.createQName(PUBLICATION_URI, "pubChannellListStatus");
-	public static final QName PROP_PUBCHANNELLIST_ERROR = QName.createQName(PUBLICATION_URI, "pubChannellListError");
-	public static final QName PROP_PUBCHANNELLIST_FORCEPUBLICATION = QName.createQName(PUBLICATION_URI, "pubChannelListForcePublication");
+	public static final QName PROP_PUBCHANNELLIST_STATUS = QName.createQName(PUBLICATION_URI, "pubChannelListStatus");
+	public static final QName PROP_PUBCHANNELLIST_ERROR = QName.createQName(PUBLICATION_URI, "pubChannelListError");
+	public static final QName PROP_PUBCHANNELLIST_ACTION = QName.createQName(PUBLICATION_URI, "pubChannelListAction");
 	public static final QName PROP_PUBCHANNEL_CONFIG = QName.createQName(PUBLICATION_URI, "pubChannelConfig");
 	public static final QName ASSOC_PUBCHANNEL_CONFIGFILE = QName.createQName(PUBLICATION_URI, "pubChannelConfigFile");
 

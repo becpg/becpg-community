@@ -12,6 +12,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.InitializingBean;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import com.google.common.base.Objects;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.SystemGroup;
 
 @Service
 public class AuthorityHelper implements InitializingBean {
@@ -128,6 +130,15 @@ public class AuthorityHelper implements InitializingBean {
 		}
 
 		return ret;
+	}
+	
+	public static boolean isCurrentUserExternal() {
+		for (String currAuth : INSTANCE.authorityService.getAuthorities()) {
+			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }

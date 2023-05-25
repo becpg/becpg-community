@@ -701,6 +701,100 @@
                     });
 
 		},
+		
+		onActionLock : function EntityDataGrid_onActionLock(item) {
+			var me = this;
+
+			var fnActionLock = function EntityDataGrid__onActionLock() {
+				   this.modules.actions.genericAction({
+				      success : {
+				         event : {
+				            name : me.scopeId + "refreshDataGrid",
+				            obj : {
+					            items : [item]
+				            }
+				         },
+				         message : me.msg("message.lock.success")
+				      },
+				      failure : {
+					      message : me.msg("message.lock.failure")
+				      },
+				      webscript : {
+				         method : Alfresco.util.Ajax.POST,
+                         stem : Alfresco.constants.PROXY_URI + "becpg/entitylist/",
+				         name : "node/" + item.nodeRef.replace(":/", "") + "?state=Valid"
+				      },
+				      config : {
+				         requestContentType : Alfresco.util.Ajax.JSON,
+				      }
+				   });
+			   }
+
+		Alfresco.util.PopupManager.displayPrompt({
+			      title : me.msg("message.lock.title"),
+			      text : me.msg("message.lock.description"),
+			      buttons : [ {
+			         text : me.msg("button.ok"),
+			         handler : function () {
+				         this.destroy();
+				         fnActionLock.call(me);
+			         }
+			      }, {
+			         text : this.msg("button.cancel"),
+			         handler : function () {
+				         this.destroy();
+			         },
+			         isDefault : true
+			      } ]
+			   });  
+		},
+		
+		onActionUnlock : function EntityDataGrid_onActionUnlock(item) {
+			var me = this;
+
+			var fnActionUnlock = function EntityDataGrid__onActionUnlock() {
+				   this.modules.actions.genericAction({
+				      success : {
+				         event : {
+				            name : me.scopeId + "refreshDataGrid",
+				            obj : {
+					            items : [item]
+				            }
+				         },
+				         message : me.msg("message.unlock.success")
+				      },
+				      failure : {
+					      message : me.msg("message.unlock.failure")
+				      },
+				      webscript : {
+				         method : Alfresco.util.Ajax.POST,
+                         stem : Alfresco.constants.PROXY_URI + "becpg/entitylist/",
+				         name : "node/" + item.nodeRef.replace(":/", "") + "?state=ToValidate"
+				      },
+				      config : {
+				         requestContentType : Alfresco.util.Ajax.JSON,
+				      }
+				   });
+			   }
+
+		Alfresco.util.PopupManager.displayPrompt({
+			      title : me.msg("message.unlock.title"),
+			      text : me.msg("message.unlock.description"),
+			      buttons : [ {
+			         text : me.msg("button.ok"),
+			         handler : function () {
+				         this.destroy();
+				         fnActionUnlock.call(me);
+			         }
+			      }, {
+			         text : this.msg("button.cancel"),
+			         handler : function () {
+				         this.destroy();
+			         },
+			         isDefault : true
+			      } ]
+			   });  
+		},
 
 		_manageAspect : function EntityDataGrid_manageAspect(itemNodeRef, aspect) {
 			var itemUrl = itemNodeRef.replace(":/", ""), me = this;

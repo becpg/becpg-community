@@ -62,13 +62,13 @@ public class DynamicCharactListExcelReportSearchPlugin extends DefaultExcelRepor
 					for (NodeRef itemNodeRef : results) {
 						if (itemType.equals(nodeService.getType(itemNodeRef))) {
 							if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-								rownum = fillRow(sheet, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems);
+								rownum = fillRow(sheet, entityNodeRef, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems);
 							}
 						}
 					}
 
 				} else {
-					rownum = fillRow(sheet, entityNodeRef, itemType, metadataFields, cache, rownum, null, null);
+					rownum = fillRow(sheet, entityNodeRef, entityNodeRef, itemType, metadataFields, cache, rownum, null, null);
 				}
 			}
 		}

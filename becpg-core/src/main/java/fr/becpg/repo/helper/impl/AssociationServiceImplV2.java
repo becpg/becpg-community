@@ -74,6 +74,7 @@ import fr.becpg.repo.cache.impl.BeCPGCacheServiceImpl;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.helper.impl.AssociationCriteriaFilter.AssociationCriteriaFilterMode;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 /**
@@ -509,7 +510,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();
-			logger.debug("getEntitySourceAssocs  takes " + watch.getTotalTimeSeconds() + " seconds");
+			logger.debug("getEntitySourceAssocs  takes " + watch.getTotalTimeSeconds() + " seconds - size: "+(ret!=null ? ret.size():0));
 		}
 
 		return ret;
@@ -522,6 +523,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		if ((nodeRefs != null) && !nodeRefs.isEmpty()) {
 
 			StringBuilder query = new StringBuilder();
+			StringBuilder exclude = new StringBuilder();
 
 			query.append(SQL_SELECT_SOURCE_ASSOC_ENTITY_FIRST_PART);
 
@@ -538,16 +540,29 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 							Long qNameId = qNameIdPair.getFirst();
 
 							String propertyName = "p" + index;
+							
+							if(AssociationCriteriaFilterMode.NOT_EQUALS.equals(criteriaFilter.getMode())) {
+								query.append(" left");
+							}
 
 							query.append(" join alf_node_properties p" + index + " on (" + propertyName + ".node_id = dataListItem.id " + "and "
-									+ propertyName + ".qname_id= " + qNameId + " and ");
+									+ propertyName + ".qname_id= " + qNameId );
+							
+							if(!AssociationCriteriaFilterMode.NOT_EQUALS.equals(criteriaFilter.getMode())) {
+								query.append(" and ");
+							}
 							
 							String fieldName = DBQuery.getFieldName(entityDictionaryService, criteriaAttribute, true);
 						
 
 							if (criteriaFilter.getValue() != null) {
-								query.append(propertyName + "."+fieldName+" = "+wrap(fieldName, criteriaFilter.getValue())+"");
-
+								
+									if(AssociationCriteriaFilterMode.NOT_EQUALS.equals(criteriaFilter.getMode())) {
+										exclude.append(" and ("+propertyName + "."+fieldName+" IS NULL or "+propertyName + "."+fieldName+" != "+wrap(fieldName, criteriaFilter.getValue())+")");
+									}else {
+										query.append(propertyName + "."+fieldName+" = "+wrap(fieldName, criteriaFilter.getValue())+"");
+									}
+									
 							} else {
 								boolean isFirst = true;
 								if (criteriaFilter.getFromRange() != null && !criteriaFilter.isMinMax(criteriaFilter.getFromRange())) {
@@ -586,6 +601,8 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 				isFirst = false;
 			}
 			query.append(")");
+			
+			query.append(exclude);
 
 			Pair<Long, QName> aspectCompositeVersion = qnameDAO.getQName(BeCPGModel.ASPECT_COMPOSITE_VERSION);
 

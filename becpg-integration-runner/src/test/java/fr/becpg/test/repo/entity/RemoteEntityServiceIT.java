@@ -132,12 +132,13 @@ public class RemoteEntityServiceIT extends PLMBaseTestCase {
 				    JsonSchema jsonSchema = factory.getSchema(new FileInputStream(tempFile2));
 				    JsonNode jsonNode = mapper.readTree(tempFile);
 				    Set<ValidationMessage> errors = jsonSchema.validate(jsonNode);
+				    
 				 assertTrue(errors.isEmpty());
 
 				tempFile.delete();
 				tempFile2.delete();
 
-			} catch (BeCPGException e) {
+			} catch (Exception e) {
 				logger.error(e, e);
 				Assert.fail(e.getMessage());
 			}

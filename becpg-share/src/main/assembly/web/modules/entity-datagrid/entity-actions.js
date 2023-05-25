@@ -82,7 +82,7 @@
 		   var templateUrl = YAHOO.lang
 		         .substitute(
 		               Alfresco.constants.URL_SERVICECONTEXT
-		                     + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}&siteId={siteId}",
+		                     + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&entityType={entityType}&itemKind={itemKind}&itemId={itemId}&destination={destination}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}&siteId={siteId}",
 		               {
 		                  itemKind : "type",
 		                  itemId : itemType,
@@ -90,6 +90,7 @@
 		                  mode : "create",
 		                  submitType : "json",
 		                  entityNodeRef : this.options.entityNodeRef,
+		                  entityType:   this.entity!=null ?  encodeURIComponent(this.entity.type) :"",
 		                  dataListsName :  encodeURIComponent(this.datalistMeta.name!=null ? this.datalistMeta.name : this.options.list),
 		                  siteId : this.options.siteId
 		               });
@@ -237,12 +238,13 @@
 		   var templateUrl = YAHOO.lang
 		         .substitute(
 		               Alfresco.constants.URL_SERVICECONTEXT
-		                     + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}&siteId={siteId}",
+		                     + "components/form?bulkEdit=true&entityNodeRef={entityNodeRef}&entityType={entityType}&itemKind={itemKind}&itemId={itemId}&mode={mode}&submitType={submitType}&showCancelButton=true&dataListsName={dataListsName}&siteId={siteId}",
 		               {
 		                  itemKind : "node",
 		                  itemId : item.nodeRef,
 		                  mode : "edit",
 		                  submitType : "json",
+		                  entityType:  this.entity!=null ?  encodeURIComponent(this.entity.type) :"",
 		                  entityNodeRef : this.options.entityNodeRef,
 		                  dataListsName :  encodeURIComponent(this.datalistMeta.name!=null ? this.datalistMeta.name : this.options.list),
 		                  siteId : this.options.siteId

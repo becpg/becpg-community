@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.admin.SysAdminParams;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.lock.LockService;
@@ -130,6 +131,9 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 	private VersionService versionService;
 	
 	@Autowired
+	private SysAdminParams sysAdminParams;
+	
+	@Autowired
 	private LockService lockService;
 
 	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
@@ -177,7 +181,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 					siteService, attributeExtractor, versionService, lockService);
 			break;
 		case json_schema:
-			remoteEntityVisitor = new JsonSchemaEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
+			remoteEntityVisitor = new JsonSchemaEntityVisitor(sysAdminParams, mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
 					siteService, attributeExtractor, versionService, lockService);
 			break;
 		case xsd:

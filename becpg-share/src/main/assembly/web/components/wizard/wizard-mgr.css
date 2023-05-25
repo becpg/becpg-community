@@ -97,7 +97,12 @@ div.wizard-content {
     padding: 1em;
     text-decoration: none;
     width: auto;
+    background: none repeat scroll 0 0 rgb(238, 238, 238);
+    color: rgb(170, 170, 170);
+    cursor: default;
 }
+
+
 .wizard > .steps .disabled a, .wizard > .steps .disabled a:hover, .wizard > .steps .disabled a:active {
     background: none repeat scroll 0 0 rgb(238, 238, 238);
     color: rgb(170, 170, 170);
@@ -139,7 +144,7 @@ div.wizard-content {
 .wizard.vertical > .content {
     display: inline;
     float: left;
-    margin: 0 2.5% 0.5em;
+    margin: 0 1.5% 0.5em;
     width: 75%;
 }
 .wizard > .content > .body {

@@ -122,7 +122,7 @@ public interface PLMModel {
 	QName PROP_COSTLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "costListMaxi");
 	/** Constant <code>ASSOC_COSTLIST_COST</code> */
 	QName ASSOC_COSTLIST_COST = QName.createQName(BeCPGModel.BECPG_URI, "costListCost");
-
+	
 	// priceList
 	/** Constant <code>TYPE_PRICELIST</code> */
 	QName TYPE_PRICELIST = QName.createQName(BeCPGModel.BECPG_URI, "priceList");
@@ -171,6 +171,10 @@ public interface PLMModel {
 	QName PROP_NUTLIST_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListValue");
 	/** Constant <code>PROP_NUTLIST_VALUE_PER_SERVING</code> */
 	QName PROP_NUTLIST_VALUE_PER_SERVING = QName.createQName(BeCPGModel.BECPG_URI, "nutListValuePerServing");
+	
+	QName PROP_NUTLIST_MEASUREMENTPRECISION = QName.createQName(BeCPGModel.BECPG_URI, "nutListMeasurementPrecision");
+	
+	QName PROP_NUTLIST_FORMULATED_VALUE_PER_SERVING = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedValuePerServing");
 	/** Constant <code>PROP_NUTLIST_FORMULATED_VALUE</code> */
 	QName PROP_NUTLIST_FORMULATED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedValue");
 	/** Constant <code>PROP_NUTLIST_UNIT</code> */
@@ -182,6 +186,10 @@ public interface PLMModel {
 	
 	
 	QName ASPECT_NUTLIST_PREPARED = QName.createQName(BeCPGModel.BECPG_URI,"nutListPreparedAspect");
+	
+	QName PROP_NUTLIST_VALUE_PREPARED = QName.createQName(BeCPGModel.BECPG_URI,"nutListValuePrepared");
+	
+	QName PROP_NUTLIST_FORMULATED_PREPARED = QName.createQName(BeCPGModel.BECPG_URI,"nutListFormulatedValuePrepared");
 	
 
 	QName PROP_NUTLIST_FORMULATED_MINI = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulatedMini");
@@ -236,6 +244,8 @@ public interface PLMModel {
 	QName PROP_MICROBIOLIST_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "mblValue");
 	/** Constant <code>PROP_MICROBIOLIST_UNIT</code> */
 	QName PROP_MICROBIOLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "mblUnit");
+	
+	QName PROP_MICROBIOLIST_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "mblType");
 	/** Constant <code>PROP_MICROBIOLIST_MAXI</code> */
 	QName PROP_MICROBIOLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "mblMaxi");
 	/** Constant <code>PROP_MICROBIOLIST_TEXT_CRITERIA</code> */
@@ -369,6 +379,16 @@ public interface PLMModel {
 	/** Constant <code>PROP_COSTTYPE</code> */
 	QName PROP_COSTTYPE = QName.createQName(BeCPGModel.BECPG_URI, "costType");
 
+	// lca
+	QName TYPE_LCA = QName.createQName(BeCPGModel.BECPG_URI, "lca");
+	QName PROP_LCA_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "lcaFormula");
+	QName PROP_LCAUNIT = QName.createQName(BeCPGModel.BECPG_URI, "lcaUnit");
+	QName PROP_LCALIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "lcaListUnit");
+	QName PROP_LCAFIXED = QName.createQName(BeCPGModel.BECPG_URI, "lcaFixed");
+	QName PROP_LCATYPE = QName.createQName(BeCPGModel.BECPG_URI, "lcaType");
+	QName ASSOC_LCALIST_LCA = QName.createQName(BeCPGModel.BECPG_URI, "lcaListLca");
+	QName TYPE_LCALIST = QName.createQName(BeCPGModel.BECPG_URI, "lcaList");
+
 	// ing
 	/** Constant <code>TYPE_ING</code> */
 	QName TYPE_ING = QName.createQName(BeCPGModel.BECPG_URI, "ing");
@@ -392,7 +412,8 @@ public interface PLMModel {
 	// microbio
 	/** Constant <code>TYPE_MICROBIO</code> */
 	QName TYPE_MICROBIO = QName.createQName(BeCPGModel.BECPG_URI, "microbio");
-
+	
+	QName PROP_MICROBIO_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "microbioType");
 	// geoOrigin
 	/** Constant <code>TYPE_GEO_ORIGIN</code> */
 	QName TYPE_GEO_ORIGIN = QName.createQName(BeCPGModel.BECPG_URI, "geoOrigin");

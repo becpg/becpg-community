@@ -212,12 +212,15 @@
 					<type>d:text</type>
 					<index enabled="false"/>
 				</property>
-				<property name="bp:pubChannelListForcePublication">
-					<type>d:boolean</type>
+			    <property name="bp:pubChannelListAction">
+					<type>d:text</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					</index>
+					<constraints>
+						<constraint ref="bp:pubChannelActions" />
+					</constraints>
 				</property>
 				<property name="bp:pubChannelListModifiedDate">
 					<type>d:datetime</type>

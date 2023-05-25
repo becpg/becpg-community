@@ -19,6 +19,7 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthenticationService;
 import org.alfresco.service.namespace.QName;
+import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,6 +44,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	private static final String CATALOG_ONLY = "AuditEntityListItemPolicy.CatalogOnly";
 	private static final String UPDATED_LIST = "AuditEntityListItemPolicy.UpdatedList";
+	private static final String CHANGED_CATALOG_ENTRIES = "AuditEntityListItemPolicy.ChangedCatalogEntries";
 
 	private static final Log logger = LogFactory.getLog(AuditEntityListItemPolicy.class);
 
@@ -143,7 +145,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	/** {@inheritDoc} */
 	@Override
 	public void onCreateAssociation(AssociationRef assocRef) {
-		queueListNodeRef(assocRef.getSourceRef());
+		queueListNodeRef(nodeService.getPrimaryParent(assocRef.getSourceRef()).getParentRef());
 	}
 
 	private void queueListNodeRef(NodeRef listNodeRef) {
@@ -161,35 +163,43 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	 */
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
-
-		Set<NodeRef> listNodeRefs = new HashSet<>();
-		Set<NodeRef> listContainerNodeRefs = new HashSet<>();
-		Map<NodeRef, Set<NodeRef>> listNodeRefByContainer = new HashMap<>();
-		for (NodeRef listNodeRef : pendingNodes) {
-			if (nodeService.exists(listNodeRef)) {
-
-				if (!listNodeRefs.contains(listNodeRef)) {
-					listNodeRefs.add(listNodeRef);
-					NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
-
-					if (listNodeRefByContainer.get(listContainerNodeRef) != null) {
-						listNodeRefByContainer.get(listContainerNodeRef).add(listNodeRef);
-					} else {
-						listNodeRefByContainer.put(listContainerNodeRef, new HashSet<>(Arrays.asList(listNodeRef)));
-					}
-
-					if ((listContainerNodeRef != null) && !listContainerNodeRefs.contains(listContainerNodeRef)
-							&& nodeService.exists(listContainerNodeRef)) {
-						listContainerNodeRefs.add(listContainerNodeRef);
-
+		
+		if (CHANGED_CATALOG_ENTRIES.equals(key)) {
+			for (NodeRef nodeRef : pendingNodes) {
+				String diffKey = CHANGED_CATALOG_ENTRIES + nodeRef;
+				Set<QName> pendingDiff = TransactionSupportUtil.getResource(diffKey);
+				entityCatalogService.updateAuditedField(nodeRef, pendingDiff, null);
+			}
+		} else {
+			Set<NodeRef> listNodeRefs = new HashSet<>();
+			Set<NodeRef> listContainerNodeRefs = new HashSet<>();
+			Map<NodeRef, Set<NodeRef>> listNodeRefByContainer = new HashMap<>();
+			for (NodeRef listNodeRef : pendingNodes) {
+				if (nodeService.exists(listNodeRef)) {
+					
+					if (!listNodeRefs.contains(listNodeRef)) {
+						listNodeRefs.add(listNodeRef);
+						NodeRef listContainerNodeRef = nodeService.getPrimaryParent(listNodeRef).getParentRef();
+						
+						if (listNodeRefByContainer.get(listContainerNodeRef) != null) {
+							listNodeRefByContainer.get(listContainerNodeRef).add(listNodeRef);
+						} else {
+							listNodeRefByContainer.put(listContainerNodeRef, new HashSet<>(Arrays.asList(listNodeRef)));
+						}
+						
+						if ((listContainerNodeRef != null) && !listContainerNodeRefs.contains(listContainerNodeRef)
+								&& nodeService.exists(listContainerNodeRef)) {
+							listContainerNodeRefs.add(listContainerNodeRef);
+							
+						}
 					}
 				}
 			}
-		}
-
-		for (NodeRef listContainerNodeRef : listContainerNodeRefs) {
-			NodeRef entityNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
-			updateEntityAuditedFields(entityNodeRef, listNodeRefByContainer.get(listContainerNodeRef), CATALOG_ONLY.equals(key));
+			
+			for (NodeRef listContainerNodeRef : listContainerNodeRefs) {
+				NodeRef entityNodeRef = nodeService.getPrimaryParent(listContainerNodeRef).getParentRef();
+				updateEntityAuditedFields(entityNodeRef, listNodeRefByContainer.get(listContainerNodeRef), CATALOG_ONLY.equals(key));
+			}
 		}
 		return true;
 	}
@@ -220,23 +230,58 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		if (!isVersionNode(nodeRef) && isNotLocked(nodeRef) && before != null && after != null) {
 
 			MapDifference<QName, Serializable> diff = Maps.difference(before, after);
+			
 			if (!diff.areEqual()) {
-				entityCatalogService.updateAuditedField(nodeRef, diff.entriesDiffering().keySet(), null);
-				entityCatalogService.updateAuditedField(nodeRef, diff.entriesOnlyOnLeft().keySet(), null);
-				entityCatalogService.updateAuditedField(nodeRef, diff.entriesOnlyOnRight().keySet(), null);
+				Set<QName> changedEntries = new HashSet<>();
+				changedEntries.addAll(diff.entriesDiffering().keySet());
+				changedEntries.addAll(diff.entriesOnlyOnLeft().keySet());
+				changedEntries.addAll(diff.entriesOnlyOnRight().keySet());
+				
+				String diffKey = CHANGED_CATALOG_ENTRIES + nodeRef;
+				Set<QName> pendingDiff = TransactionSupportUtil.getResource(diffKey);
+				
+				if (pendingDiff == null) {
+					pendingDiff = new HashSet<>();
+				}
+				
+				pendingDiff.addAll(changedEntries);
+				TransactionSupportUtil.bindResource(diffKey, pendingDiff);
+				queueNode(CHANGED_CATALOG_ENTRIES, nodeRef);
 			}
 		}
 	}
 
 	public void onCreateEntityAssociation(AssociationRef assocRef) {
 		if (!isVersionNode(assocRef.getSourceRef()) && isNotLocked(assocRef.getSourceRef())) {
-			entityCatalogService.updateAuditedField(assocRef.getSourceRef(), Set.of(assocRef.getTypeQName()), null);
+			
+			String diffKey = CHANGED_CATALOG_ENTRIES + assocRef.getSourceRef();
+			Set<QName> pendingDiff = TransactionSupportUtil.getResource(diffKey);
+			
+			if (pendingDiff == null) {
+				pendingDiff = new HashSet<>();
+			}
+			
+			pendingDiff.add(assocRef.getTypeQName());
+			TransactionSupportUtil.bindResource(diffKey, pendingDiff);
+			
+			queueNode(CHANGED_CATALOG_ENTRIES, assocRef.getSourceRef());
 		}
 	}
 
 	public void onDeleteEntityAssociation(AssociationRef assocRef) {
 		if (!isVersionNode(assocRef.getSourceRef()) && isNotLocked(assocRef.getSourceRef())) {
-			entityCatalogService.updateAuditedField(assocRef.getSourceRef(), Set.of(assocRef.getTypeQName()), null);
+			
+			String diffKey = CHANGED_CATALOG_ENTRIES + assocRef.getSourceRef();
+			Set<QName> pendingDiff = TransactionSupportUtil.getResource(diffKey);
+			
+			if (pendingDiff == null) {
+				pendingDiff = new HashSet<>();
+			}
+			
+			pendingDiff.add(assocRef.getTypeQName());
+			TransactionSupportUtil.bindResource(diffKey, pendingDiff);
+			
+			queueNode(CHANGED_CATALOG_ENTRIES, assocRef.getSourceRef());
 		}
 	}
 

@@ -1,6 +1,8 @@
 <#if field.control.params.ds?exists><#assign ds=field.control.params.ds><#else><#assign ds=''></#if>
 <#if field.control.params.multiple?exists><#assign multiple=field.control.params.multiple?matches('true')><#else><#assign multiple=false></#if>
 <#if field.control.params.style?exists><#assign style=field.control.params.style></#if>
+<#assign formId=args.htmlid?js_string?html + "-form">
+
 <#if args.entityNodeRef?? >
 	<#if ds?contains("?")>
 		<#assign ds=ds+"&entityNodeRef="+args.entityNodeRef>
@@ -65,6 +67,7 @@ new beCPG.component.AutoCompletePicker('${fieldHtmlId}', '${fieldHtmlId}', <#if 
 			   {
 			 		currentValue: "${field.value}",
 			 		mode: "${form.mode}",
+			 		formId: "${formId}",
 			 		readOnly : ${(field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))?string},
 			<#if field.control.params.parentMode?exists>				 		
                     multipleSelectMode:true,

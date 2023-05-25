@@ -26,12 +26,12 @@
 					<show id="cm:name" />
 					<show id="sec:nodeType" />
 					<show id="sec:isLocalPermission" />
+					<show id="sec:isDefaultReadOnly" />
 				</field-visibility>
 				<appearance>
 					<field id="sec:nodeType" >
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/aclType
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/aclType</control-param>
 							<control-param name="showTooltip">false</control-param>
 							<control-param name="saveTitle">false</control-param>
 						</control>

@@ -84,6 +84,17 @@ function main()
 	 	   };
 	      
 	    model.widgets.push(entityCatalog);  
+	    
+	       var entitySuggestions = {
+	 	         id : "EntitySuggestions", 
+	 	         name : "beCPG.component.EntitySuggestions",
+	 	         initArgs :  ["\"" + args.htmlid+"_sug\""],
+	 	         options : {
+	 	        	 entityNodeRef : model.nodeRef
+	 	         }
+	 	   };
+	      
+	    model.widgets.push(entitySuggestions);  
       }
       
       

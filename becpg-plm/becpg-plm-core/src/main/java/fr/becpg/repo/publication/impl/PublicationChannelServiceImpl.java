@@ -21,6 +21,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogObserver;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
+import fr.becpg.repo.helper.impl.AssociationCriteriaFilter.AssociationCriteriaFilterMode;
 import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 import fr.becpg.repo.publication.PublicationChannelService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -49,14 +50,6 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 	@Autowired
 	private SearchRuleService searchRuleService;
 
-	enum PublicationChannelAction {
-		RESET, RETRY, STOP
-	}
-
-	enum PublicationChannelStatus {
-		COMPLETED, STARTING, STARTED, STOPPING, STOPPED, FAILED, ABANDONED, UNKNOWN
-	}
-
 	@Override
 	public void notifyAuditedFieldChange(String catalogId, NodeRef entityNodeRef) {
 		NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
@@ -66,8 +59,8 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 				for (NodeRef channelListItemNodeRef : entityListDAO.getListItems(listNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST)) {
 					NodeRef channelNodeRef = associationService.getTargetAssoc(channelListItemNodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
 					String channelCatalog = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CATALOG_ID);
-					if ((catalogId== null && (channelCatalog ==null || channelCatalog.isBlank())) 
-							|| (catalogId!=null &&  catalogId.equals(channelCatalog))) {
+					if ((catalogId == null && (channelCatalog == null || channelCatalog.isBlank()))
+							|| (catalogId != null && catalogId.equals(channelCatalog))) {
 						nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
 					}
 				}
@@ -114,7 +107,7 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 			List<EntitySourceAssoc> sourceAssocs = associationService.getEntitySourceAssocs(Arrays.asList(channelNodeRef),
 					PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST, false,
 					Arrays.asList(new AssociationCriteriaFilter(PublicationModel.PROP_PUBCHANNELLIST_STATUS,
-							PublicationChannelStatus.FAILED.toString(), false)));
+							PublicationChannelStatus.FAILED.toString())));
 
 			return sourceAssocs.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList());
 
@@ -124,51 +117,61 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 
 		SearchRuleFilter searchRuleFilter = new SearchRuleFilter();
 		searchRuleFilter.setCurrentDate(lastDate);
-		searchRuleFilter.getEnsureDbQuery();
+		searchRuleFilter.setEnsureDbQuery(true);
 		searchRuleFilter.setDateFilterType(DateFilterType.After);
 		searchRuleFilter.setDateFilterDelayUnit(DateFilterDelayUnit.MINUTE);
 		searchRuleFilter.fromJsonString(jsonConfig, namespaceService);
 
 		Set<NodeRef> ret = new HashSet<>();
+		Set<NodeRef> results = new HashSet<>();
 
 		//Two modes:
 		//  - query is specified in JSON, we append forced entity
 		//  - or we get all members of channel filtered by date
 
-		//Add all forced = true
-	
+		//Add all PROP_PUBCHANNEL_ACTION = RETRY
+
+		if (!searchRuleFilter.isEmptyJsonQuery() || lastDate != null) {
+			ret.addAll(associationService
+					.getEntitySourceAssocs(Arrays.asList(channelNodeRef), PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL,
+							PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST, false,
+							Arrays.asList(new AssociationCriteriaFilter(PublicationModel.PROP_PUBCHANNELLIST_ACTION,
+									PublicationChannelAction.RETRY.toString())))
+					.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList()));
+		}
 
 		if (!searchRuleFilter.isEmptyJsonQuery()) {
-			ret.addAll(associationService
-					.getEntitySourceAssocs(Arrays.asList(channelNodeRef), PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL,
-							PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST, true,
-							Arrays.asList(new AssociationCriteriaFilter(PublicationModel.PROP_PUBCHANNELLIST_FORCEPUBLICATION, "true", false)))
-					.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList()));
-
 			SearchRuleResult result = searchRuleService.search(searchRuleFilter);
+			results.addAll(result.getResults());
+		}
 
-			ret.addAll(result.getResults());
+		if (searchRuleFilter.isEmptyJsonQuery() || searchRuleFilter.isFilter()) {
+			if (lastDate != null) {
 
-		} else if (lastDate != null) {
-			ret.addAll(associationService
-					.getEntitySourceAssocs(Arrays.asList(channelNodeRef), PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL,
-							PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST, true,
-							Arrays.asList(new AssociationCriteriaFilter(PublicationModel.PROP_PUBCHANNELLIST_FORCEPUBLICATION, "true", false)))
-					.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList()));
+				ret.addAll(associationService
+						.getEntitySourceAssocs(Arrays.asList(channelNodeRef), PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL,
+								PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST, false,
+								Arrays.asList(new AssociationCriteriaFilter(PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE,
+										ISO8601DateFormat.format(lastDate), AssociationCriteriaFilterMode.RANGE),
+									new AssociationCriteriaFilter(PublicationModel.PROP_PUBCHANNELLIST_ACTION,
+											PublicationChannelAction.STOP.toString(), AssociationCriteriaFilterMode.NOT_EQUALS)
+								))
+						.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList()));
 
-			ret.addAll(associationService
-					.getEntitySourceAssocs(Arrays.asList(channelNodeRef), PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL,
-							PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST, true,
-							Arrays.asList(new AssociationCriteriaFilter(PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE,
-									ISO8601DateFormat.format(lastDate), true)))
-					.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList()));
+			} else {
+				ret.addAll(associationService
+						.getEntitySourceAssocs(Arrays.asList(channelNodeRef), PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL,
+								PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST, false, Arrays.asList(new AssociationCriteriaFilter(PublicationModel.PROP_PUBCHANNELLIST_ACTION,
+										PublicationChannelAction.STOP.toString(), AssociationCriteriaFilterMode.NOT_EQUALS)))
+						.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList()));
+			}
+
+			if (searchRuleFilter.isFilter()) {
+				ret.retainAll(results);
+			}
 
 		} else {
-			ret.addAll(associationService
-					.getEntitySourceAssocs(Arrays.asList(channelNodeRef), PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL,
-							PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST, true,
-							Arrays.asList())
-					.stream().map(EntitySourceAssoc::getEntityNodeRef).collect(Collectors.toList()));
+			ret.addAll(results);
 		}
 
 		return new ArrayList<>(ret);

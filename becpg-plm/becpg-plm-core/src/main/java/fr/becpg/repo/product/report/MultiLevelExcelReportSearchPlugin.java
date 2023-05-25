@@ -168,8 +168,8 @@ public class MultiLevelExcelReportSearchPlugin extends DynamicCharactExcelReport
 					
 					for (AttributeExtractorStructure metadataField : metadataFields) {
 						if (metadataField.isFormulaField()) {
-							if(metadataField.getFieldName().startsWith("formula")) {
-								item.put(metadataField.getFieldName(), eval(metadataField.getFormula(), item));
+							if(metadataField.getFieldName().startsWith("formula") || metadataField.getFieldName().startsWith("image")) {
+								item.put(metadataField.getFieldName(), eval(listData.getEntityNodeRef(), itemNodeRef, metadataField.getFormula(), item));
 							} else {
 								item.put(metadataField.getFieldName(),metadataField.getFormula());
 							}
