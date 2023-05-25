@@ -6,7 +6,7 @@ import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
+import fr.becpg.repo.security.data.PermissionModel;
 
 @Service
 public class DefaultSecurityServicePlugin implements SecurityServicePlugin {

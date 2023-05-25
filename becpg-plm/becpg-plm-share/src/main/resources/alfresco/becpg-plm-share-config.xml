@@ -95,6 +95,7 @@
 			<itemType name="bcpg:cost" />
 			<itemType name="bcpg:geoOrigin" />
 			<itemType name="bcpg:bioOrigin" />
+			<itemType name="bcpg:lca" />
 		</itemTypes>
 		<filterTypes>
 		<!-- <itemType name="bcpg:finishedProduct selected="true"  />-->
@@ -121,6 +122,7 @@
 			<list id="ingList" index="100" />
 			<list id="allergenList" index="110" />
 			<list id="costList" index="120" />
+			<list id="lcaList" index="125" />
 			<list id="priceList" index="130" />
 			<list id="nutList" index="140" />
 			<list id="ingLabelingList" index="150" view="true" />
@@ -130,6 +132,7 @@
 			<list id="replacementList" index="190" />
 			<list id="certification" index="200"/>
 			<list id="plant" index="210"/>
+			<list id="surveyList" index="211"/>
 			
 			<list id="wUsedList" index="220" />
 			<list id="calculatedCharactList" index="230" />
@@ -172,6 +175,7 @@
 			<list id="PhysicoUnits" index="60"/>
 			<list id="PhysicoTypes" index="70"/>
 			<list id="MicrobioUnits" index="80"/>
+			<list id="MicrobioTypes" index="81"/>
 			<list id="MicrobioControlSteps" index="90"/>
 			<list id="MeatTypes" index="100"/>
 			<list id="ResourceParamTypes" index="110"/>
@@ -184,6 +188,9 @@
 			<list id="TrademarkTypes" index="180"/>
 			<list id="pmPrintTypes" index="190"/>
 			<list id="pmPrintVarnishs" index="200"/> 
+			<list id="SortingBonusCriteria" index="210"/>
+			<list id="SortingMalusCriteria" index="220"/> 
+			<list id="LCAUnits" index="230"/>
 		</lists>
 	</config>
 	

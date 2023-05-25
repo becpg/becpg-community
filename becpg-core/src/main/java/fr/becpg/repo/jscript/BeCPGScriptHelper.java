@@ -1415,10 +1415,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	}
 	
 	public boolean classifyByHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy) {
-		return classifyByHierarchy(productNode.getNodeRef(), folderNode.getNodeRef(), propHierarchy);
+		return classifyByHierarchy(productNode.getNodeRef(), folderNode.getNodeRef(), propHierarchy, null);
+	}
+	
+	public boolean classifyByHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy, String locale) {
+		return classifyByHierarchy(productNode.getNodeRef(), folderNode.getNodeRef(), propHierarchy, locale);
 	}
 
-	private boolean classifyByHierarchy(NodeRef productNode, NodeRef folderNode, String propHierarchy) {
+	private boolean classifyByHierarchy(NodeRef productNode, NodeRef folderNode, String propHierarchy, String localeString) {
 		
 		QName hierarchyQname = null;
 		
@@ -1426,13 +1430,19 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 			hierarchyQname = getQName(propHierarchy);
 		}
 		
-		return hierarchyService.classifyByHierarchy(folderNode, productNode, hierarchyQname, Locale.getDefault());
+		Locale locale = Locale.getDefault();
+		
+		if (localeString != null && !localeString.isBlank()) {
+			locale = new Locale(localeString);
+		}
+		
+		return hierarchyService.classifyByHierarchy(folderNode, productNode, hierarchyQname, locale);
 	}
 
 	public boolean classifyByPropAndHierarchy(ScriptNode productNode, ScriptNode folderNode, String propHierarchy, String propPathName, String locale) {
 		
 		if (propPathName == null || propPathName.isEmpty()) {
-			return classifyByHierarchy(productNode, folderNode, propHierarchy);
+			return classifyByHierarchy(productNode, folderNode, propHierarchy, locale);
 		} else if (propPathName.split("\\|").length == 1) {
 			
 			QName propPathNameQName = getQName(propPathName);
@@ -1449,7 +1459,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 				childNodeRef = fileFolderService.create(folderNode.getNodeRef(), subFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 			}
 			
-			classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy);
+			classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy, locale);
 		} else {
 			String[] assocs = propPathName.split("\\|");
 			
@@ -1471,7 +1481,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 				childNodeRef = fileFolderService.create(folderNode.getNodeRef(), subFolderName, ContentModel.TYPE_FOLDER).getNodeRef();
 			}
 			
-			classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy);
+			classifyByHierarchy(productNode.getNodeRef(), childNodeRef, propHierarchy, locale);
 	
 		}
 		

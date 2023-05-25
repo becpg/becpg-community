@@ -25,7 +25,7 @@
 		<#assign ds=ds+"?entityNodeRef="+args.entityNodeRef>
 	</#if>
 </#if>
-
+<#assign formId=args.htmlid?js_string?html + "-form">
 <#if field.control.params.multipleSelectMode?? && "true" == field.control.params.multipleSelectMode>
 	<#assign multipleSelectMode=true>
 <#elseif field.control.params.multipleSelectMode?? && "false" == field.control.params.multipleSelectMode>
@@ -77,6 +77,7 @@
 		   {
 		 		currentValue: "${field.value}",
 		 		mode: "${form.mode}",
+		 		formId: "${formId}",
 		 		readOnly : ${(field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true"))?string},
 		        multipleSelectMode: ${multipleSelectMode?string}, 
 		        isMandatory : ${field.mandatory?string},

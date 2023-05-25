@@ -188,8 +188,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				// No list no activity
 				if (activityListNodeRef != null) {
 
-					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
-							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+					if (nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 						logger.debug(NO_ACTIVITY_MESSAGE);
 						return null;
 					}
@@ -266,8 +265,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				// No list no activity
 				if (activityListNodeRef != null) {
 
-					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
-							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+					if (nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 						logger.debug(NO_ACTIVITY_MESSAGE);
 						return false;
 					}
@@ -312,8 +310,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				// No list no activity
 				if (activityListNodeRef != null) {
 
-					if (nodeService.hasAspect(branchToNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
-							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+					if (nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 						logger.debug(NO_ACTIVITY_MESSAGE);
 						return false;
 					}
@@ -357,8 +354,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				// No list no activity
 				if (activityListNodeRef != null) {
 
-					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
-							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+					if (nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 						logger.debug(NO_ACTIVITY_MESSAGE);
 						return false;
 					}
@@ -712,8 +708,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				// No list no activity
 				if (activityListNodeRef != null) {
 
-					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
-							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+					if (nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 						logger.debug(NO_ACTIVITY_MESSAGE);
 						return false;
 					}
@@ -779,8 +774,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 				// No list no activity
 				if (activityListNodeRef != null) {
 
-					if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
-							|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+					if (nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 						logger.debug(NO_ACTIVITY_MESSAGE);
 						return false;
 					}
@@ -840,8 +834,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 			// No list no activity
 			if (activityListNodeRef != null) {
 
-				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)
-						|| nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
+				if (nodeService.hasAspect(activityListNodeRef, ContentModel.ASPECT_PENDING_DELETE)) {
 					logger.debug(NO_ACTIVITY_MESSAGE);
 					return false;
 				}
@@ -1141,11 +1134,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 
 						Set<String> users = new HashSet<>();
 						Date cronDate = new Date();
-
-						//Clear all activities of entity templates
-						if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
-							clearAllActivities(entityNodeRef);
-						}
 
 						// Get Activity list ordered by the date of creation
 						AuditQuery auditQuery = AuditQuery.createQuery()

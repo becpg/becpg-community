@@ -5,7 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>4.2.2</version>
+	<version>4.2.3</version>
 	<name>beCPG</name>
 	
 	<description>BeCPG Parent Project</description>
@@ -55,14 +55,6 @@
 			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
 		</repository>
 		<repository>
-			<id>alfresco-public-snapshots</id>
-			<url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
-		</repository>
-		<repository>
 			<id>becpg-registry</id>
 			<url>artifactregistry://europe-west1-maven.pkg.dev/becpg-314807/becpg-mvn</url>
 			<snapshots>
@@ -76,14 +68,6 @@
 		<pluginRepository>
 			<id>alfresco-plugin-public</id>
 			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>alfresco-plugin-public-snapshots</id>
-			<url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
 
@@ -131,6 +115,7 @@
 		<alfresco-data-model.version>14.145</alfresco-data-model.version>
 		<alfresco-core.version>14.145</alfresco-core.version>
 	    <spring-webscripts.version>8.28</spring-webscripts.version>
+	    <spring-webscripts-share.version>8.27</spring-webscripts-share.version>
 	
 
 
@@ -163,7 +148,7 @@
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
 		<docker.becpg.url>becpg</docker.becpg.url>
-		<docker.becpg.tag>4.2.2</docker.becpg.tag>
+		<docker.becpg.tag>4.2.3</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -353,32 +338,7 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
-            <!-- Filter the test resource files in the AIO parent project, and do property substitutions.
-                 We need this config so this is done before the Alfresco Maven Plugin 'run' is executed. -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-				<inherited>false</inherited>
-                <!-- Run only for the AIO parent Project -->
-				<executions>
-					<execution>
-						<id>copy-and-filter-docker-resources</id>
-						<phase>validate</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.outputDirectory}/docker</outputDirectory>
-							<resources>
-								<resource>
-									<directory>docker</directory>
-									<filtering>true</filtering>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+          
 
             <!-- Compress JavaScript files and store as *-min.js -->
 			<plugin>
@@ -455,8 +415,8 @@
 					</execution>
 				</executions>
 				<configuration>
-					<docheck>false</docheck>
-					<doupdate>false</doupdate>
+					<doCheck>false</doCheck>
+					<doUpdate>false</doUpdate>
 					<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
 				</configuration>
 			</plugin>

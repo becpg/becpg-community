@@ -48,52 +48,6 @@ public class ACLEntryDataItem extends BeCPGDataObject {
 
 	private List<NodeRef> groupsAssignee;
 
-	public class PermissionModel {
-
-		public static final String READ_ONLY = "read";
-		public static final String READ_WRITE = "write";
-		public static final String READ_READANDWRITE = "readandwrite";
-
-		public PermissionModel(String permission, List<NodeRef> groups) {
-			super();
-			this.permission = permission;
-			this.groups = groups;
-		}
-
-		private String permission;
-
-		private List<NodeRef> groups;
-
-		public String getPermission() {
-			return permission;
-		}
-
-		public void setPermission(String permission) {
-			this.permission = permission;
-		}
-
-		public List<NodeRef> getGroups() {
-			return groups;
-		}
-
-		public void setGroups(List<NodeRef> groups) {
-			this.groups = groups;
-		}
-
-		public boolean isReadOnly() {
-			return READ_ONLY.equals(permission)  || READ_READANDWRITE.equals(permission);
-		}
-
-		public boolean isWrite() {
-			return READ_WRITE.equals(permission) || READ_READANDWRITE.equals(permission);
-		}
-
-		@Override
-		public String toString() {
-			return "PermissionModel [permission=" + permission + ", groups=" + groups + "]";
-		}
-
-	}
 
 	/**
 	 * <p>Getter for the field <code>propName</code>.</p>
@@ -229,15 +183,6 @@ public class ACLEntryDataItem extends BeCPGDataObject {
 	@Override
 	public String toString() {
 		return "ACLEntryDataItem [propName=" + propName + ", aclPermission=" + aclPermission + ", groupsAssignee=" + groupsAssignee + "]";
-	}
-
-	/**
-	 * <p>getPermissionModel.</p>
-	 *
-	 * @return a {@link fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel} object.
-	 */
-	public PermissionModel getPermissionModel() {
-		return new PermissionModel(getAclPermission(), getGroupsAssignee());
 	}
 
 }

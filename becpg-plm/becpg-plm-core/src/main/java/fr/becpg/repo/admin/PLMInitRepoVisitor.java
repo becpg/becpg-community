@@ -171,6 +171,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	static {
 		reportKindCodes.put(PRODUCT_REPORT_CLIENT_PATH, "CustomerSheet");
 		reportKindCodes.put(PRODUCT_REPORT_PRODUCTION_PATH, "ProductionSheet");
+		reportKindCodes.put(PRODUCT_REPORT_RAWMATERIAL_PATH, "SupplierSheet");
 		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_PATH, "SupplierSheet");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
@@ -793,7 +794,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			// rule
 			Rule rule = new Rule();
-			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND, RuleType.UPDATE));
+			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND));
 			rule.setAction(compositeAction);
 			rule.applyToChildren(true);
 			rule.setTitle("import csv file");
@@ -832,7 +833,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			// rule
 			rule = new Rule();
-			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND, RuleType.UPDATE));
+			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND));
 			rule.setAction(compositeAction);
 			rule.applyToChildren(true);
 			rule.setTitle("import xlsx file");
@@ -865,7 +866,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			// rule
 			Rule rule = new Rule();
-			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND, RuleType.UPDATE));
+			rule.setRuleTypes(Arrays.asList(RuleType.INBOUND));
 			rule.setAction(compositeAction);
 			rule.applyToChildren(true);
 			rule.setTitle("import user");
@@ -1001,6 +1002,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_ORGANOS, PLMModel.TYPE_ORGANO);
 		entityLists.put(PlmRepoConsts.PATH_ALLERGENS, PLMModel.TYPE_ALLERGEN);
 		entityLists.put(PlmRepoConsts.PATH_COSTS, PLMModel.TYPE_COST);
+		entityLists.put(PlmRepoConsts.PATH_LCA, PLMModel.TYPE_LCA);
 		entityLists.put(PlmRepoConsts.PATH_PHYSICO_CHEM, PLMModel.TYPE_PHYSICO_CHEM);
 		entityLists.put(PlmRepoConsts.PATH_MICROBIOS, PLMModel.TYPE_MICROBIO);
 		entityLists.put(PlmRepoConsts.PATH_GEO_ORIGINS, PLMModel.TYPE_GEO_ORIGIN);
@@ -1068,6 +1070,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_LABELCLAIMS_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_MICROBIO_CONTROL_STEPS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_MICROBIO_UNITS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_MICROBIO_TYPES, BeCPGModel.TYPE_LIST_VALUE);
+		
 		entityLists.put(PlmRepoConsts.PATH_RESOURCE_PARAM_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_PHYSICO_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_PHYSICO_TYPES, BeCPGModel.TYPE_LIST_VALUE);
@@ -1077,6 +1081,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_VANISHS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_MEAT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
+		
+		entityLists.put(PlmRepoConsts.PATH_LCA_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_GS1_PACKAGING_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		
@@ -1085,7 +1091,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_GS1_PALLET_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_PLATFORM_TERM_AND_CONDITIONS_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_SORTING_BONUS_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
-
+		entityLists.put(PlmRepoConsts.PATH_GS1_SORTING_MALUS_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
+		
 		entityLists.put(PlmRepoConsts.PATH_GS1_HANDLING_INSTRUCTIONS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_PREPARATION_TYPE, BeCPGModel.TYPE_LIST_VALUE);
 
@@ -1175,6 +1182,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_LCALIST);
 				dataLists.add(PLMModel.TYPE_NUTLIST);
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
@@ -1188,6 +1196,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			} else if (productType.equals(PLMModel.TYPE_PACKAGINGMATERIAL)) {
 
 				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_LCALIST);
 				dataLists.add(PLMModel.TYPE_PRICELIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
@@ -1201,6 +1210,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			} else if (productType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
 
 				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_LCALIST);
 				dataLists.add(PLMModel.TYPE_PRICELIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(MPMModel.TYPE_RESOURCEPARAMLIST);
@@ -1213,6 +1223,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(MPMModel.TYPE_PROCESSLIST);
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_LCALIST);
 				dataLists.add(PLMModel.TYPE_NUTLIST);
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
@@ -1233,6 +1244,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(MPMModel.TYPE_PROCESSLIST);
 				dataLists.add(PLMModel.TYPE_ALLERGENLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_LCALIST);
 				dataLists.add(PLMModel.TYPE_NUTLIST);
 				dataLists.add(PLMModel.TYPE_INGLIST);
 				dataLists.add(PLMModel.TYPE_INGLABELINGLIST);
@@ -1247,6 +1259,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 				dataLists.add(PLMModel.TYPE_PACKAGINGLIST);
 				dataLists.add(PLMModel.TYPE_COSTLIST);
+				dataLists.add(PLMModel.TYPE_LCALIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
@@ -1419,8 +1432,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			defaultKindReport.add(NONE_KIND_REPORT);
 
 			for (String reportKind : defaultKindReport) {
-				if (PRODUCT_REPORT_RAWMATERIAL_PATH.equals(reportKind) || PRODUCT_REPORT_PACKAGING_PATH.equals(reportKind)
-						|| PRODUCT_REPORT_COST_PATH.equals(reportKind) || PRODUCT_REPORT_RD_PATH.equals(reportKind)) {
+				if (PRODUCT_REPORT_PACKAGING_PATH.equals(reportKind) || PRODUCT_REPORT_COST_PATH.equals(reportKind) || PRODUCT_REPORT_RD_PATH.equals(reportKind)) {
 					continue;
 				}
 

@@ -122,7 +122,8 @@ public class UsNutrientRegulation extends AbstractNutrientRegulation {
 	}
 
 	/** {@inheritDoc} */
-	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
+	@Override
+	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
 		if(value != null){
 			if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value<=5 && value >= 2) {
 				return "<5";

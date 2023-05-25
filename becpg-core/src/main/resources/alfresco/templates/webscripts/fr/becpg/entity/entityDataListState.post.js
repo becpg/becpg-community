@@ -11,3 +11,5 @@ if(node!=null  && state!=null){
 
 
 model.newValue = state;
+
+model.overallSuccess = true;

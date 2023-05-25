@@ -83,7 +83,7 @@ public class CentralAmericanNutrientRegulation extends AbstractNutrientRegulatio
 
 	/** {@inheritDoc} */
 	@Override
-	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
+	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
 		if(value != null){
 			if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value <= 5 && value >= 2) {
 				return "Less than 5mg";

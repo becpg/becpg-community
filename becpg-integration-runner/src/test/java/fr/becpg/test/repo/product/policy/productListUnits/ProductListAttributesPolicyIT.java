@@ -123,6 +123,7 @@ public class ProductListAttributesPolicyIT extends PLMBaseTestCase {
 			 * Change product unit
 			 */
 			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_UNIT, ProductUnit.L);
+			nodeService.setProperty(rawMaterialNodeRef, PLMModel.PROP_PRODUCT_SERVING_SIZE_UNIT, null);
 
 			return null;
 		}, false, true);

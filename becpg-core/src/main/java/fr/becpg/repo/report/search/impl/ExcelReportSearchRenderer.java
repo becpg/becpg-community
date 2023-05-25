@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ActionService;
 import org.alfresco.service.cmr.repository.ContentIOException;
@@ -25,7 +24,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -277,7 +275,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 				if (headerRow.getCell(i).getCellType() == CellType.STRING) {
 					String cellValue = headerRow.getCell(i).getStringCellValue();
 					if ((cellValue != null) && !cellValue.isEmpty() && !cellValue.startsWith("#")) {
-						if (cellValue.contains("_") && !cellValue.contains("formula") && !cellValue.startsWith("dyn_")) {
+						if (cellValue.contains("_") && !cellValue.contains("formula") && !cellValue.contains("image") && !cellValue.startsWith("dyn_")) {
 							if (cellValue.contains(BACKSLASH + "_")) {
 								cellValue = cellValue.replace(BACKSLASH + "_", BACKSLASH + "|");
 							}
@@ -308,7 +306,7 @@ public class ExcelReportSearchRenderer implements SearchReportRenderer {
 							}
 
 						} else {
-							if (!currentNested.isEmpty() && !cellValue.contains("formula")) {
+							if (!currentNested.isEmpty() && !cellValue.contains("formula") && !cellValue.contains("image")) {
 								logger.debug("Add nested field : " + currentNested);
 								metadataFields.add(new AttributeExtractorField(currentNested,null));
 								currentNested = "";

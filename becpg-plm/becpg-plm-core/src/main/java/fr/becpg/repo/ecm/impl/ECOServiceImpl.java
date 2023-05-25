@@ -36,6 +36,7 @@ import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.lock.mem.Lifetime;
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
 import org.alfresco.repo.version.VersionBaseModel;
@@ -249,16 +250,22 @@ public class ECOServiceImpl implements ECOService {
 			public void process(Object entry) throws Throwable {
 				if (entry instanceof NodeRef) {
 					
-					NodeRef nodeRef = (NodeRef) entry;
+					boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
 					
-					String propertiesToCopy = ecoData.getPropertiesToCopy();
-					
-					if (propertiesToCopy != null && !propertiesToCopy.isBlank()) {
-						for (String propertyToCopy : propertiesToCopy.split(",")) {
-							QName propertyQName = QName.createQName(propertyToCopy.split(":")[0], propertyToCopy.split(":")[1], namespacePrefixResolver);
-							Serializable property = nodeService.getProperty(ecoData.getNodeRef(), propertyQName);
-							nodeService.setProperty(nodeRef, propertyQName, property);
+					try {
+						NodeRef nodeRef = (NodeRef) entry;
+						
+						List<String> propertiesToCopy = ecoData.getPropertiesToCopy();
+						
+						if (propertiesToCopy != null) {
+							for (String propertyToCopy : propertiesToCopy) {
+								QName propertyQName = QName.createQName(propertyToCopy.split(":")[0], propertyToCopy.split(":")[1], namespacePrefixResolver);
+								Serializable property = nodeService.getProperty(ecoData.getNodeRef(), propertyQName);
+								nodeService.setProperty(nodeRef, propertyQName, property);
+							}
 						}
+					} finally {
+						MLPropertyInterceptor.setMLAware(isMLAware);
 					}
 				}
 			}

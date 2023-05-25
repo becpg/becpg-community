@@ -31,6 +31,7 @@
 				<aspect name="sec:securityAspect" />
 				<aspect name="bcpg:chemicalCodeAspect" />
 				<aspect name="bcpg:meatAspect" />
+				<aspect name="gs1:cheeseInformationAspect" />
 				<aspect name="ghs:sdsAspect" />
 				<aspect name="bcpg:undeletableAspect" />
 				
@@ -51,6 +52,7 @@
 				<subtype name="bcpg:nut" />
 				<subtype name="bcpg:organo" />
 				<subtype name="bcpg:physicoChem" />
+				<subtype name="bcpg:lca" />
 				
 				<subtype name="qa:controlPlan" />
 				<subtype name="qa:qualityControl" />
@@ -82,6 +84,7 @@
 			<type name="dl:dataListItem">
 				<subtype name="bcpg:allergenList" />
 				<subtype name="bcpg:costList" />
+				<subtype name="bcpg:lcaList" />
 				<subtype name="bcpg:compoList" />
 				<subtype name="mpm:processList" />
 				<subtype name="bcpg:packagingList" />

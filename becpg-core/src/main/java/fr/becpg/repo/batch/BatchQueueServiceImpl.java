@@ -110,7 +110,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		cancelledBatches.remove(batchInfo.getBatchId());
 		
 		Runnable command = new BatchCommand<>(batchInfo, batchSteps, closingHook);
-		if (!threadExecutor.getQueue().contains(command)) {
+		if (!threadExecutor.getQueue().contains(command) && !command.equals(runningCommand)) {
 			if(logger.isDebugEnabled()) {
 				logger.debug("Batch " + batchInfo.getBatchId() + " added to execution queue");
 			}
@@ -206,6 +206,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		@Override
 		public void run() {
 			
+			runningCommand = this;
+			
+			try {
 			boolean hasError = false;
 			
 			Date startTime = null;
@@ -353,6 +356,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				if (cancelledBatches.contains(batchId)) {
 					cancelledBatches.remove(batchId);
 				}
+			} finally {
+				runningCommand = null;
 			}
 		}
 

@@ -22,8 +22,9 @@ import fr.becpg.repo.helper.JsonHelper;
  */
 public class SearchRuleFilter {
 
-
 	private static final String PROP_QUERY = "query";
+
+	private static final String PROP_IS_FILTER = "isFilter";
 	private static final String ENTITY_FILTER = "entityFilter";
 	private static final String ENTITY_TYPE = "entityType";
 
@@ -52,17 +53,19 @@ public class SearchRuleFilter {
 	private QName entityType;
 	private Map<String, String> entityCriteria;
 
-	private Date currentDate; 
+	private Date currentDate;
 	private QName dateField;
-	
+
 	private Integer dateFilterDelay;
 	private DateFilterType dateFilterType = DateFilterType.From;
 	private DateFilterDelayUnit dateFilterDelayUnit = DateFilterDelayUnit.DATE;
 	private VersionFilterType versionFilterType = VersionFilterType.NONE;
 
 	private Boolean ensureDbQuery = false;
-	
+
 	private Boolean isEmptyJsonQuery = true;
+
+	private Boolean isFilter = false;
 
 	/**
 	 * <p>Constructor for NotificationRuleFilter.</p>
@@ -225,11 +228,16 @@ public class SearchRuleFilter {
 		this.ensureDbQuery = ensureDbQuery;
 	}
 
-	
-	
-	
 	public boolean isEmptyJsonQuery() {
 		return isEmptyJsonQuery;
+	}
+
+	public boolean isFilter() {
+		return isFilter;
+	}
+
+	public void setIsFilter(Boolean isFilter) {
+		this.isFilter = isFilter;
 	}
 
 	public SearchRuleFilter fromJsonString(String jsonString, NamespaceService namespaceService) {
@@ -239,6 +247,9 @@ public class SearchRuleFilter {
 				if (filterObject.has(PROP_QUERY)) {
 					setQuery(filterObject.getString(PROP_QUERY));
 					isEmptyJsonQuery = false;
+				}
+				if (filterObject.has(PROP_IS_FILTER)) {
+					setIsFilter(filterObject.getBoolean(PROP_IS_FILTER));
 				}
 				if (filterObject.has(ENTITY_FILTER)) {
 					isEmptyJsonQuery = false;
@@ -320,19 +331,19 @@ public class SearchRuleFilter {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if ((obj == null) || (getClass() != obj.getClass())) {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+		}
 		SearchRuleFilter other = (SearchRuleFilter) obj;
 		return Objects.equals(currentDate, other.currentDate) && Objects.equals(dateField, other.dateField)
-				&& Objects.equals(dateFilterDelay, other.dateFilterDelay) && dateFilterDelayUnit == other.dateFilterDelayUnit
-				&& dateFilterType == other.dateFilterType && Objects.equals(ensureDbQuery, other.ensureDbQuery)
+				&& Objects.equals(dateFilterDelay, other.dateFilterDelay) && (dateFilterDelayUnit == other.dateFilterDelayUnit)
+				&& (dateFilterType == other.dateFilterType) && Objects.equals(ensureDbQuery, other.ensureDbQuery)
 				&& Objects.equals(entityCriteria, other.entityCriteria) && Objects.equals(entityType, other.entityType)
 				&& Objects.equals(nodeCriteria, other.nodeCriteria) && Objects.equals(nodePath, other.nodePath)
-				&& Objects.equals(nodeType, other.nodeType) && Objects.equals(query, other.query) && versionFilterType == other.versionFilterType;
+				&& Objects.equals(nodeType, other.nodeType) && Objects.equals(query, other.query) && (versionFilterType == other.versionFilterType);
 	}
 
 	@Override
@@ -342,6 +353,5 @@ public class SearchRuleFilter {
 				+ ", dateFilterType=" + dateFilterType + ", dateFilterDelay=" + dateFilterDelay + ", dateFilterDelayUnit=" + dateFilterDelayUnit
 				+ ", versionFilterType=" + versionFilterType + ", ensureDbQuery=" + ensureDbQuery + "]";
 	}
-
 
 }

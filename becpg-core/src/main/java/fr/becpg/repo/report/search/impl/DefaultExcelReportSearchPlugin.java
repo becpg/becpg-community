@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
@@ -24,17 +25,21 @@ import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.formulation.spel.DataListItemSpelContext;
+import fr.becpg.repo.formulation.spel.SpelFormulaService;
+import fr.becpg.repo.formulation.spel.SpelHelper;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.ExcelHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * <p>DefaultExcelReportSearchPlugin class.</p>
@@ -66,11 +71,14 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	@Autowired
 	protected EntityDictionaryService entityDictionaryService;
 
+	@Autowired
+	protected SpelFormulaService spelFormulaService;
+
 	/** {@inheritDoc} */
 	@Override
 	public int fillSheet(XSSFSheet sheet, List<NodeRef> searchResults, QName mainType, QName itemType, int rownum, String[] parameters,
 			AttributeExtractorStructure keyColumn, List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache) {
-		
+
 		for (NodeRef entityNodeRef : searchResults) {
 			if (entityDictionaryService.isSubClass(nodeService.getType(entityNodeRef), mainType)) {
 				if (keyColumn != null) {
@@ -86,25 +94,25 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 					NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, itemType);
 					if (listNodeRef != null) {
 						Map<String, Object> entityItems = getEntityProperties(entityNodeRef, mainType, metadataFields, cache);
-						
+
 						// case of multiple lists of same type (ex: bcpg:surveyList@1)
 						QName actualType = QName.createQName(itemType.toString().split("@")[0]);
-						
+
 						List<NodeRef> results = entityListDAO.getListItems(listNodeRef, actualType);
 						for (NodeRef itemNodeRef : results) {
 							if (actualType.equals(nodeService.getType(itemNodeRef))) {
 								if (permissionService.hasPermission(itemNodeRef, "Read") == AccessStatus.ALLOWED) {
-									rownum = fillRow(sheet, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems);
+									rownum = fillRow(sheet, entityNodeRef, itemNodeRef, itemType, metadataFields, cache, rownum, key, entityItems);
 								}
 							}
 						}
 					}
 				} else {
-					rownum = fillRow(sheet, entityNodeRef, itemType, metadataFields, cache, rownum, null, null);
+					rownum = fillRow(sheet, entityNodeRef, entityNodeRef, itemType, metadataFields, cache, rownum, null, null);
 				}
 			}
 		}
-		
+
 		return rownum;
 
 	}
@@ -120,11 +128,11 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	 */
 	protected Map<String, Object> getEntityProperties(NodeRef itemNodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<NodeRef, Map<String, Object>> cache) {
-		
+
 		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 		Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
 		return item.entrySet().stream().filter(map -> map.getKey().contains("entity_") && (map.getValue() != null))
-				.collect(Collectors.toMap(p -> p.getKey(), p -> p.getValue()));
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 	}
 
 	/**
@@ -140,8 +148,9 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	 * @param entityItems a {@link java.util.Map} object.
 	 * @return a int.
 	 */
-	protected int fillRow(XSSFSheet sheet, NodeRef itemNodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
-			Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key, Map<String, Object> entityItems) {
+	protected int fillRow(XSSFSheet sheet, NodeRef entityNodeRef, NodeRef itemNodeRef, QName itemType,
+			List<AttributeExtractorStructure> metadataFields, Map<NodeRef, Map<String, Object>> cache, int rownum, Serializable key,
+			Map<String, Object> entityItems) {
 
 		Map<QName, Serializable> properties = nodeService.getProperties(itemNodeRef);
 		Map<String, Object> item = doExtract(itemNodeRef, itemType, metadataFields, properties, cache);
@@ -162,16 +171,16 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 
 		for (AttributeExtractorStructure metadataField : metadataFields) {
 			if (metadataField.isFormulaField()) {
-				if(metadataField.getFieldName().startsWith("formula") || metadataField.getFieldName().startsWith("dyn_")) {
-					item.put(metadataField.getFieldName(), eval(metadataField.getFormula(), item));
+				if (metadataField.getFieldName().startsWith("formula") || metadataField.getFieldName().startsWith("dyn_") || metadataField.getFieldName().startsWith("image_")) {
+					item.put(metadataField.getFieldName(), eval(entityNodeRef, itemNodeRef, metadataField.getFormula(), item));	
 				} else {
-					item.put(metadataField.getFieldName(),metadataField.getFormula());
+					item.put(metadataField.getFieldName(), metadataField.getFormula());
 				}
 			}
 
 		}
-		
-		cellNum = ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null);
+
+		ExcelHelper.appendExcelField(metadataFields, null, item, sheet, row, cellNum, rownum, null);
 
 		return rownum;
 	}
@@ -188,7 +197,6 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	 */
 	protected Map<String, Object> doExtract(NodeRef nodeRef, QName itemType, List<AttributeExtractorStructure> metadataFields,
 			Map<QName, Serializable> properties, final Map<NodeRef, Map<String, Object>> cache) {
-		
 
 		return attributeExtractorService.extractNodeData(nodeRef, itemType, properties, metadataFields, FormatMode.XLSX,
 				new AttributeExtractorService.DataListCallBack() {
@@ -196,7 +204,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 					@Override
 					public List<Map<String, Object>> extractNestedField(NodeRef nodeRef, AttributeExtractorStructure field, FormatMode mode) {
 						List<Map<String, Object>> ret = new ArrayList<>();
-						
+
 						if (field.isDataListItems()) {
 							NodeRef listContainerNodeRef = entityListDAO.getListContainer(nodeRef);
 							NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, field.getFieldQname());
@@ -204,7 +212,8 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 								List<NodeRef> results = entityListDAO.getListItems(listNodeRef, field.getFieldQname());
 
 								for (NodeRef itemNodeRef : results) {
-									if(field.getFilter()==null || attributeExtractorService.matchCriteria(itemNodeRef, field.getFilter().getCriteriaMap())) {
+									if (field.getFilter() == null
+											|| attributeExtractorService.matchCriteria(itemNodeRef, field.getFilter().getCriteriaMap())) {
 										addExtracted(itemNodeRef, field, ret);
 									}
 								}
@@ -226,23 +235,23 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 									addExtracted(itemNodeRef, field, ret);
 								}
 
-							}else if(field.getFieldDef() instanceof PropertyDefinition 
-									&& DataTypeDefinition.NODE_REF.equals(((PropertyDefinition)field.getFieldDef()).getDataType().getName())  ) {
+							} else if (field.getFieldDef() instanceof PropertyDefinition
+									&& DataTypeDefinition.NODE_REF.equals(((PropertyDefinition) field.getFieldDef()).getDataType().getName())) {
 
-									Object value = properties.get(field.getFieldDef().getName());
-									if(value!=null) {
-										if (!((PropertyDefinition) field.getFieldDef()).isMultiValued()) {
-											
-											addExtracted((NodeRef) value, field, ret);
-										} else {
-											@SuppressWarnings("unchecked")
-											List<NodeRef> values = (List<NodeRef>) value;
-											for (NodeRef tempValue : values) {
-												addExtracted(tempValue, field, ret);
-											}
-	
+								Object value = properties.get(field.getFieldDef().getName());
+								if (value != null) {
+									if (!((PropertyDefinition) field.getFieldDef()).isMultiValued()) {
+
+										addExtracted((NodeRef) value, field, ret);
+									} else {
+										@SuppressWarnings("unchecked")
+										List<NodeRef> values = (List<NodeRef>) value;
+										for (NodeRef tempValue : values) {
+											addExtracted(tempValue, field, ret);
 										}
+
 									}
+								}
 
 							}
 						}
@@ -250,8 +259,7 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 						return ret;
 					}
 
-					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field,
-							List<Map<String, Object>> ret) {
+					private void addExtracted(NodeRef itemNodeRef, AttributeExtractorStructure field, List<Map<String, Object>> ret) {
 						if (cache.containsKey(itemNodeRef)) {
 							ret.add(cache.get(itemNodeRef));
 						} else {
@@ -264,17 +272,25 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 					}
 
 				});
-		
-		
-	}
-	
-	
-	
 
-	public class FormulaContext {
+	}
+
+	public class SimpleRepositoryEntity extends BeCPGDataObject {
+
+		private static final long serialVersionUID = -8814912431022547846L;
+
+		public SimpleRepositoryEntity(NodeRef nodeRef) {
+			this.nodeRef = nodeRef;
+		}
+
+	}
+
+	public class FormulaContext extends DataListItemSpelContext<RepositoryEntity> {
 		private Map<String, Object> props;
 
-		FormulaContext(Map<String, Object> props) {
+		FormulaContext(SpelFormulaService spelFormulaService, NodeRef itemNodeRef, Map<String, Object> props) {
+			super(spelFormulaService);
+			this.setDataListItem(new SimpleRepositoryEntity(itemNodeRef));
 			this.props = props;
 		}
 
@@ -294,20 +310,23 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 	 * @param values a {@link java.util.Map} object.
 	 * @return a {@link java.lang.Object} object.
 	 */
-	protected Object eval(String formula, Map<String, Object> values) {
+	protected Object eval(NodeRef entityNodeRef, NodeRef itemNodeRef, String formula, Map<String, Object> values) {
 
-		if(formula.startsWith("dyn_")){
+		if (formula.startsWith("dyn_")) {
 			return values.get(formula);
 		}
-		
-		EvaluationContext context = new StandardEvaluationContext(new FormulaContext(values));
+
 		ExpressionParser parser = new SpelExpressionParser();
-	
-		Expression exp = parser.parseExpression(formula);
+
+		EvaluationContext context = spelFormulaService.createCustomSpelContext(new SimpleRepositoryEntity(entityNodeRef),
+				new FormulaContext(spelFormulaService, itemNodeRef, values), false);
+
+		Expression exp = parser.parseExpression(SpelHelper.formatFormula(formula));
+
 		return exp.getValue(context);
 
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean isDefault() {
@@ -320,5 +339,4 @@ public class DefaultExcelReportSearchPlugin implements ExcelReportSearchPlugin {
 		return false;
 	}
 
-	
 }

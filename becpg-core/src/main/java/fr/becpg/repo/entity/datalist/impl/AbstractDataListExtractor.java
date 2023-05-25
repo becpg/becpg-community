@@ -40,10 +40,12 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.EntityListState;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
 import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
@@ -266,17 +268,23 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 			boolean accessRight = (Boolean) (props.get(PROP_ACCESSRIGHT) != null ? props.get(PROP_ACCESSRIGHT) : false);
 
-			boolean hasWrite = (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED);
+			boolean isLocked = isLocked(nodeRef);
+			
+			boolean hasWrite = hasWriteAccess(nodeRef);
+			
+			boolean isExternal = AuthorityHelper.isCurrentUserExternal();
 			
 			permissions.put(PROP_USERACCESS, userAccess);
-			userAccess.put("delete", accessRight && (permissionService.hasPermission(nodeRef, "Delete") == AccessStatus.ALLOWED));
-			userAccess.put("create", accessRight && (permissionService.hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
-			userAccess.put("edit", accessRight && hasWrite);
-			userAccess.put("sort", accessRight && hasWrite 
+			userAccess.put("delete", accessRight && !isLocked && (permissionService.hasPermission(nodeRef, "Delete") == AccessStatus.ALLOWED));
+			userAccess.put("create", accessRight && hasWrite && !isLocked && (permissionService.hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
+			userAccess.put("edit", accessRight && hasWrite && !isLocked);
+			userAccess.put("sort", accessRight && hasWrite && !isLocked
 					&& nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SORTABLE_LIST));
 			userAccess.put("details", accessRight && isDetaillable(nodeRef));
+			userAccess.put("lock", hasWrite && !isExternal && !isLocked);
+			userAccess.put("unlock", hasWrite && !isExternal && isLocked);
 			userAccess.put("wused", accessRight);
-			userAccess.put("content", accessRight && hasWrite &&  hasContentField(metadataFields));
+			userAccess.put("content", accessRight && hasWrite && !isLocked && hasContentField(metadataFields));
 			
 
 			ret.put(PROP_PERMISSIONS, permissions);
@@ -334,6 +342,15 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 				logger.debug(getClass().getSimpleName() + " extract metadata in  " + watch.getTotalTimeSeconds() + "s");
 			}
 		}
+	}
+
+	private boolean isLocked(NodeRef nodeRef) {
+		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITYLIST_STATE)
+				&& EntityListState.Valid.toString().equals(nodeService.getProperty(nodeRef, BeCPGModel.PROP_ENTITYLIST_STATE));
+	}
+
+	private boolean hasWriteAccess(NodeRef nodeRef) {
+		return (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED);
 	}
 
 	private boolean hasContentField(List<AttributeExtractorStructure> metadataFields) {

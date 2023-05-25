@@ -3,7 +3,6 @@ package fr.becpg.repo.search.impl;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,7 +27,6 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
-import fr.becpg.repo.search.AdvSearchPlugin;
 import fr.becpg.repo.search.AdvSearchService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.SearchRuleService;
@@ -58,9 +56,6 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 	@Autowired
 	private AdvSearchService advSearchService;
 
-	@Autowired(required = false)
-	private AdvSearchPlugin[] advSearchPlugins;
-
 	@Autowired
 	private NodeService nodeService;
 
@@ -80,7 +75,7 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 		watch.start();
 		SearchRuleResult searchRuleResult = new SearchRuleResult();
 		try {
-			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().excludeDefaults();
 
 			if (filter.getNodeType() != null) {
 				queryBuilder.ofType(filter.getNodeType());
@@ -221,22 +216,34 @@ public class SearchRuleServiceImpl implements SearchRuleService {
 	}
 
 	private List<NodeRef> filterByEntityCriteria(List<NodeRef> nodes, SearchRuleFilter filter) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Filter by entity criteria, size before: " + nodes.size());
+		}
+
 		List<NodeRef> ret = new ArrayList<>();
-		if (advSearchPlugins != null) {
+		if (filter.getEntityCriteria() != null && !filter.getEntityCriteria().isEmpty()) {
+
+			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(filter.getEntityType()).excludeDefaults();
+			List<NodeRef> entities = advSearchService.queryAdvSearch(filter.getEntityType(), queryBuilder, filter.getEntityCriteria(),
+					RepoConsts.MAX_RESULTS_5000);
 			for (NodeRef nodeRef : nodes) {
 				NodeRef entityRef = entityService.getEntityNodeRef(nodeRef, nodeService.getType(nodeRef));
-				if (entityRef!=null &&  matchEntityType(entityRef, filter.getEntityType())) {
-					List<NodeRef> entityList = new ArrayList<>(Collections.singletonList(entityRef));
-					for (AdvSearchPlugin advSearchPlugin : advSearchPlugins) {
-						entityList = advSearchPlugin.filter(entityList, filter.getEntityType(), filter.getEntityCriteria(),
-								advSearchService.getSearchConfig());
-					}
-
-					if ((entityList != null) && !entityList.isEmpty()) {
-						ret.add(nodeRef);
-					}
+				if (entities.contains(entityRef)) {
+					ret.add(nodeRef);
 				}
 			}
+
+		} else {
+			for (NodeRef nodeRef : nodes) {
+				NodeRef entityRef = entityService.getEntityNodeRef(nodeRef, nodeService.getType(nodeRef));
+				if (entityRef != null && matchEntityType(entityRef, filter.getEntityType())) {
+					ret.add(nodeRef);
+				}
+			}
+		}
+
+		if (logger.isDebugEnabled()) {
+			logger.debug(" - new size: " + ret.size());
 		}
 		return ret;
 	}

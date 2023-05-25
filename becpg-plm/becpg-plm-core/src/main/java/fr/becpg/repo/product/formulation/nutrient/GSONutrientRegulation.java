@@ -91,7 +91,7 @@ public class GSONutrientRegulation extends AbstractNutrientRegulation {
 	
 	/** {@inheritDoc} */
 	@Override
-	public String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
+	public String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
 		return formatDouble(roundedValue, new Locale("en"));
 	}
 }

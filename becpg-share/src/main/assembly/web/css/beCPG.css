@@ -399,6 +399,7 @@ span.dynaCompNone {
     padding-left: 20px
 }
 span.cost-formulated-error,
+span.lca-formulated-error,
 span.dynaError,
 span.reqCtrlList,
 span.lcl-formulated-error,
@@ -419,6 +420,7 @@ span.reqTypeAuthorized {
 
 span.dynamicCharactList,
 span.cost-formulated,
+span.lca-formulated,
 span.lcl-formulated,
 span.nut-formulated,
 span.physicoChem-formulated {

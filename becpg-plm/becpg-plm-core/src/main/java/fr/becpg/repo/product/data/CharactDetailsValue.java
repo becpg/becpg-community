@@ -1,5 +1,9 @@
 package fr.becpg.repo.product.data;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 
 /**
@@ -21,6 +25,7 @@ public class CharactDetailsValue {
 	private Integer level;
 	private String unit;
 	private String name;
+	private Map<String, Double> additionalValues = new HashMap<>();
 
 	/**
 	 * <p>Constructor for CharactDetailsValue.</p>
@@ -40,6 +45,10 @@ public class CharactDetailsValue {
 		this.value = value;
 		this.level = level;
 		this.unit = unit;
+	}
+	
+	public Map<String, Double> getAdditionalValues() {
+		return additionalValues;
 	}
 
 	/**
@@ -228,6 +237,11 @@ public class CharactDetailsValue {
 				futureValue = 0d;
 			}
 			futureValue += caractValue.getFutureValue();
+		}
+		
+		for (Entry<String, Double> entry : caractValue.getAdditionalValues().entrySet()) {
+			Double currentValue = additionalValues.computeIfAbsent(entry.getKey(), key -> 0d);
+			additionalValues.put(entry.getKey(), currentValue + entry.getValue());
 		}
 		
 	}
