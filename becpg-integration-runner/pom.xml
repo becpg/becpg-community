@@ -12,7 +12,7 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>4.2.2</version>
+		<version>4.2.3</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -50,6 +50,14 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>fr.becpg.artworks</groupId>
+			<artifactId>becpg-artworks-platform</artifactId>
+			<type>jar</type>
+			<version>${becpg.artworks.version}</version>
 			<scope>test</scope>
 		</dependency>
 		
@@ -342,43 +350,6 @@
 							</execution>
 						</executions>
 					</plugin>
-					<plugin>
-						<groupId>com.spotify</groupId>
-						<artifactId>dockerfile-maven-plugin</artifactId>
-						<version>1.4.10</version>
-						<executions>
-							<execution>
-								<id>becpg-test-core</id>
-								<goals>
-									<goal>build</goal>
-								</goals>
-								<configuration>
-									<repository>${docker.becpg.url}/becpg-test-core</repository>
-									<contextDirectory>${project.build.directory}/becpg-test-core</contextDirectory>
-									<tag>${docker.becpg.tag}</tag>
-									<pullNewerImage>false</pullNewerImage>
-									<buildArgs>
-										<VERSION>${project.version}</VERSION>
-									</buildArgs>
-								</configuration>
-							</execution>
-							<execution>
-								<id>becpg-test-share</id>
-								<goals>
-									<goal>build</goal>
-								</goals>
-								<configuration>
-									<repository>${docker.becpg.url}/becpg-test-share</repository>
-									<contextDirectory>${project.build.directory}/becpg-test-share</contextDirectory>
-									<tag>${docker.becpg.tag}</tag>
-									<pullNewerImage>false</pullNewerImage>
-									<buildArgs>
-										<VERSION>${project.version}</VERSION>
-									</buildArgs>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
 				</plugins>
 			</build>
 
@@ -414,32 +385,6 @@
 								<configuration>
 									<repository>${docker.becpg.url}/becpg-base-share</repository>
 									<contextDirectory>${project.build.directory}/becpg-base-share</contextDirectory>
-									<pullNewerImage>true</pullNewerImage>
-									<tag>${docker.becpg.tag}</tag>
-								</configuration>
-							</execution>
-							<execution>
-								<id>becpg-db</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>build</goal>
-								</goals>
-								<configuration>
-									<repository>${docker.becpg.url}/becpg-db</repository>
-									<contextDirectory>${project.build.directory}/becpg-db</contextDirectory>
-									<pullNewerImage>true</pullNewerImage>
-									<tag>${docker.becpg.tag}</tag>
-								</configuration>
-							</execution>
-							<execution>
-								<id>becpg-solr</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>build</goal>
-								</goals>
-								<configuration>
-									<repository>${docker.becpg.url}/becpg-solr</repository>
-									<contextDirectory>${project.build.directory}/becpg-solr</contextDirectory>
 									<pullNewerImage>true</pullNewerImage>
 									<tag>${docker.becpg.tag}</tag>
 								</configuration>

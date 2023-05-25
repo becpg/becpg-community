@@ -3,7 +3,6 @@ package fr.becpg.repo.product.formulation.nutrient;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.Locale;
 
 /**
  * <p>SouthAfricanNutrientRegulation class.</p>
@@ -73,10 +72,5 @@ public class SouthAfricanNutrientRegulation extends AbstractNutrientRegulation {
 		return  roundValue(value, 1d);
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
-		return formatDouble(roundedValue, locale);
-	}
 
 }

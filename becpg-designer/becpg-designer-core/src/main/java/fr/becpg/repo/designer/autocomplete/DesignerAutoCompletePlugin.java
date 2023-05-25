@@ -108,6 +108,10 @@ public class DesignerAutoCompletePlugin implements AutoCompletePlugin {
 
 		String nodeRef = (String) props.get(AutoCompleteService.PROP_NODEREF);
 
+		if (nodeRef == null || nodeRef.isBlank()) {
+			nodeRef = (String) props.get(AutoCompleteService.PROP_ENTITYNODEREF);
+		}
+		
 		NodeRef modelNodeRef = null;
 		if(nodeRef!=null){
 			modelNodeRef = designerService.findModelNodeRef(new NodeRef(nodeRef));

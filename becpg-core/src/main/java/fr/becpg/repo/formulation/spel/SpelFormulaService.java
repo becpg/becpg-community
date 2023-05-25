@@ -159,7 +159,8 @@ public class SpelFormulaService {
 		registerCustomFunctions(entity, dataContext);
 		return dataContext;
 	}
-
+	
+	
 	/**
 	 * <p>aggreate.</p>
 	 *
@@ -227,5 +228,6 @@ public class SpelFormulaService {
 	public RepositoryEntity findOne(NodeRef nodeRef) {
 		return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 	}
+
 
 }

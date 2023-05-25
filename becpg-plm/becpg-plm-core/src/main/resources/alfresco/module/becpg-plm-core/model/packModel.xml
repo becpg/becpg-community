@@ -192,6 +192,10 @@
 					<type>d:double</type>
 					<index enabled="false"/>
 				</property>
+				<property name="pack:pmlRecycledPercentage">
+					<type>d:double</type>
+					<index enabled="false"/>
+				</property>
 				<property name="pack:pmlLevel">
 					<type>d:text</type>
 					<index enabled="true">
@@ -220,7 +224,7 @@
 			<mandatory-aspects>
 				<aspect>bcpg:sortableListAspect</aspect>
 			</mandatory-aspects>
-		</type>
+	</type>
 
 	<type name="pack:packMaterial">
 		<parent>bcpg:listValue</parent>

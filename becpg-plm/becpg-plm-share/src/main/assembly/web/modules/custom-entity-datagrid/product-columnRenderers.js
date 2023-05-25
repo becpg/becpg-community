@@ -345,46 +345,53 @@ if (beCPG.module.EntityDataGridRenderers) {
     });
 	
 	
-	
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:nutListValue","bcpg:nutListMini","bcpg:nutListMaxi"],
-      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-          var ret = "";
-          
-        
-          var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
-          
-          if(oColumn.label!=null && oColumn.label.indexOf && oColumn.label.indexOf("100g")>0){
-        	  unit = unit.replace("/100g","");
-          }
-          
-          if (data.value != null) {
-        	  ret+=data.value.toLocaleString( beCPG.util.getJSLocale() )+" "+unit;
-          }
-          
-          var key ="prop_bcpg_nutListFormulatedValue";
 
-		if(oColumn.field == "prop_bcpg_nutListMini"){
-			key = "prop_bcpg_nutListFormulatedMini";
-		} else if(oColumn.field == "prop_bcpg_nutListMaxi"){
-			key = "prop_bcpg_nutListFormulatedMaxi";
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName: ["bcpg:nutListValue", "bcpg:nutListMini", "bcpg:nutListMaxi", "bcpg:nutListValuePrepared", "bcpg:nutListValuePerServing"],
+		renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+			var ret = "";
+
+
+			var unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
+			if (oColumn.field == "prop_bcpg_nutListValuePrepared" && oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value != null) {
+				unit = oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value;
+			}
+
+			if (oColumn.label != null && oColumn.label.indexOf && oColumn.label.indexOf("100g") > 0) {
+				unit = unit.replace("/100g", "");
+			}
+
+			if (data.value != null) {
+				ret += data.value.toLocaleString(beCPG.util.getJSLocale()) + " " + unit;
+			}
+
+			var key = "prop_bcpg_nutListFormulatedValue";
+
+			if (oColumn.field == "prop_bcpg_nutListMini") {
+				key = "prop_bcpg_nutListFormulatedMini";
+			} else if (oColumn.field == "prop_bcpg_nutListMaxi") {
+				key = "prop_bcpg_nutListFormulatedMaxi";
+			} else if (oColumn.field == "prop_bcpg_nutListValuePrepared") {
+				key = "prop_bcpg_nutListFormulatedValuePrepared";
+			} else if (oColumn.field == "prop_bcpg_nutListValuePerServing") {
+				key = "prop_bcpg_nutListFormulatedValuePerServing";
+			}
+
+
+			var formulatedValue = oRecord.getData("itemData")[key];
+			if (formulatedValue != null && formulatedValue.value != null) {
+				if (ret.length > 0) {
+					ret += '&nbsp;&nbsp;(' + beCPG.util.exp(formulatedValue.value) + ')';
+				} else {
+					ret += beCPG.util.exp(formulatedValue.value) + " " + unit;
+				}
+			}
+
+			return ret;
 		}
 
-          
-          var formulatedValue = oRecord.getData("itemData")[key];
-          if(formulatedValue!=null && formulatedValue.value!=null ){
-              if(ret.length>0){
-                  ret+= '&nbsp;&nbsp;(' + beCPG.util.exp(formulatedValue.value) + ')';
-              } else {
-                ret+= beCPG.util.exp(formulatedValue.value)+" "+unit ;
-              }
-          }
-          
-         return ret;
-      }
+	});
 
-  });
-  
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName: ["bcpg:nutListRoundedValue"],
@@ -436,7 +443,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				var key = getLocalKey(Alfresco.constants.JS_LOCALE);
 				var jsonData = JSON.parse(data.value);
 				if (jsonData && jsonData.v) {
-					if (jsonData.v[key]) {
+					if (jsonData.v[key]!=null) {
 						if (jsonData.tu && jsonData.tu[key]) {
 							ret +=  '<span class="red">'+jsonData.tu[key].toLocaleString( beCPG.util.getJSLocale() ) +'</span>'+ "<";
 						}
@@ -505,41 +512,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 		return true;
 	});
 
-  
-  	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:nutListValuePrepared"],
-      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-          var ret = "";
-        
-          var unit = oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value;
-          if(unit == null){
-			  unit = oRecord._oData.itemData.prop_bcpg_nutListUnit.value;
-		  }
-          if(oColumn.label!=null && oColumn.label.indexOf && oColumn.label.indexOf("100g")>0){
-        	  unit = unit.replace("/100g","");
-          }
-          
-      
-          if (data.value != null) {
-        	  ret+=beCPG.util.exp(data.value)+" "+unit;
-          }
-     
-          
-         return ret;
-      }
 
-  });
   
-  
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:nutListValuePerServing"],
-      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-      	if(data.value != null){
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString( beCPG.util.getJSLocale() ));
-      	}      
-      	return "";
-      }
-  });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
@@ -551,10 +525,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       		} else if(Math.abs(data.value) < 0.01){
       			qty = data.value * 10000;
       			unit = " ppm";
-      		} else if(Math.abs(data.value) < 0.1){
-      			qty = data.value * 10;
-      			unit = " ‰";
-      		} else{
+      		}  else{
       			qty = data.value;
       			unit = " %";
       		}
@@ -563,7 +534,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				  return '<span class="total">'+qty.toLocaleString( beCPG.util.getJSLocale() ) + unit+"</span>";
 			 }
       		
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,4).toLocaleString( beCPG.util.getJSLocale() ) + unit);
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,5).toLocaleString( beCPG.util.getJSLocale() ) + unit);
       	}      
       	return "";
       }
@@ -605,6 +576,41 @@ if (beCPG.module.EntityDataGridRenderers) {
 
   });
 	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : "bcpg:lca",
+      renderer : function(oRecord, data, label, scope) {
+          
+    	  var url = null;
+			if(scope.datalistMeta  && scope.datalistMeta.name.indexOf("WUsed")>-1){
+				url = beCPG.util.entityURL(data.siteId, data.value);
+			}
+    	  
+          var title = Alfresco.util.encodeHTML(data.metadata);
+          var cssClass = data.metadata;
+          
+          if(oRecord.getData("itemData")["prop_bcpg_lcaListIsFormulated"]!=null){
+              var isFormulated = oRecord.getData("itemData")["prop_bcpg_lcaListIsFormulated"].value;
+              var error = oRecord.getData("itemData")["prop_bcpg_lcaListFormulaErrorLog"].value;
+              if(error != null){
+             	 cssClass= "lca-formulated-error";
+                 title = Alfresco.util.encodeHTML(error);
+              } else if(isFormulated){
+             	 cssClass= "lca-formulated";
+              }
+          }
+          
+          if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
+              var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
+              return '<span class="' + cssClass + '" style="margin-left:' + padding + 'px;" title="'+title+'">' 
+              +(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue)
+                      + (url!=null?'</a>':'')+ '</span>';
+          }
+
+          return '<span class="' + cssClass + '" title="'+title+'">' +(url!=null?'<a href="' + url + '">':'') + Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+ '</span>';
+      }
+
+  });
+  
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:dynamicCharactValue",
@@ -766,6 +772,15 @@ if (beCPG.module.EntityDataGridRenderers) {
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
         propertyName : "bcpg:dynamicCharactTitle",
         renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+			
+			var title = null;
+			if (data.displayValue != null) {
+			    title = oRecord.getData("itemData")["prop_cm_title"].value;
+				if (title == null || title.length == 0) {
+					title = data.displayValue;
+				}
+			}
+			
             var column = oRecord.getData("itemData")["prop_bcpg_dynamicCharactColumn"].value;
             
             if (column !=null && column.length > 0) {                
@@ -774,10 +789,10 @@ if (beCPG.module.EntityDataGridRenderers) {
                     Dom.addClass(elCell.parentNode.parentNode, "hidden");
                 }
                 
-               return "<b>"+Alfresco.util.encodeHTML(data.displayValue)+"</b>";
+               return "<b>"+Alfresco.util.encodeHTML(title)+"</b>";
             }
             
-            return Alfresco.util.encodeHTML(data.displayValue);
+            return Alfresco.util.encodeHTML(title);
         }
     });
 
@@ -826,9 +841,14 @@ if (beCPG.module.EntityDataGridRenderers) {
 		renderer : function(oRecord, data, label, scope) {
 
 			if (data.value != null && data.value.length > 0) {
+				var title = oRecord.getData("itemData")["prop_cm_title"].value;
+				if (title == null || title.length == "") {
+					title =  oRecord.getData("itemData")["prop_bcpg_dynamicCharactTitle"].value;
+				}
+				
 				YAHOO.Bubbling.fire("columnRenamed", {
 					columnId : "prop_" + data.value,
-					label : oRecord.getData("itemData")["prop_bcpg_dynamicCharactTitle"].value
+					label : title
 				});
 			}
 
@@ -1038,6 +1058,25 @@ if (beCPG.module.EntityDataGridRenderers) {
 			return "";
 		}
 
+	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : "bcpg:entityDataListState",
+		renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+			if (data.value != null) {
+				if (oRecord._oData.itemData.prop_bcpg_entityDataListState && oRecord._oData.itemData.prop_bcpg_entityDataListState.value == "Valid") {
+					if (oColumn.hidden) {
+						oColumn.showAfterRender = true;
+					}
+					if(oColumn.label == "" ){
+						oColumn.showAfterRenderSize = 16;
+					}
+					Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+					return "<span class='locked'></span>";
+				}
+			}
+			return "";
+		}
 	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
@@ -1499,19 +1538,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 	});
 	
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName : [ "bcpg:nutListValuePerServing" ],
-		renderer : function(oRecord, data, label, scope) {
-			if(data.value != null && data.value > 0){
-				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"] ? oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData: null;
-				var unit =additionalProps!=null ? additionalProps.prop_bcpg_nutUnit.displayValue : "";
-				
-				return Alfresco.util.encodeHTML(beCPG.util.sigFigs(data.value,3).toLocaleString( beCPG.util.getJSLocale() )+" "+unit);
-				
-			}
-			return "";
-		}
-	});
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "mltext_survey:questionLabel",

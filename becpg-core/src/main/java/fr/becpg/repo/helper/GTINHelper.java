@@ -34,7 +34,7 @@ public class GTINHelper {
 	 * @throws org.apache.commons.validator.routines.checkdigit.CheckDigitException if any.
 	 */
 	public static String createEAN13Code(String prefix, String serialNumber) throws CheckDigitException {
-		String eanCode = prefix + StringUtils.leftPad( serialNumber, 6 , "0");
+		String eanCode = prefix + StringUtils.leftPad( serialNumber, 12-prefix.length() , "0");
 		EAN13CheckDigit validator = new EAN13CheckDigit();
 		return eanCode + validator.calculate(eanCode);
 	}

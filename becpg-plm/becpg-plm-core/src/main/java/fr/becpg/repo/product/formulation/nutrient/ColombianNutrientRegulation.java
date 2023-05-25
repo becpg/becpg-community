@@ -119,7 +119,7 @@ public class ColombianNutrientRegulation extends AbstractNutrientRegulation {
 
 	/** {@inheritDoc} */
 	@Override
-	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
+	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
 
 		if(value != null && roundedValue != null && nutrientTypeCode != null){
 			if (nutrientTypeCode.equals(NutrientCode.Cholesterol) && value > 2 && value < 5) {

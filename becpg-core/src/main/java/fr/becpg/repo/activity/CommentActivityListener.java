@@ -14,6 +14,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.workflow.PackageManager;
 import org.alfresco.repo.workflow.WorkflowModel;
+import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -82,10 +83,14 @@ public class CommentActivityListener implements InitializingBean, EntityActivity
 		if (ActivityType.Comment.equals(activityListDataItem.getActivityType())) {
 
 			NodeRef commentNodeRef = new NodeRef(activityData.getString("commentNodeRef"));
+			
+			ContentReader reader = contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT);
 
-			String comment = contentService.getReader(commentNodeRef, ContentModel.PROP_CONTENT).getContentString();
+			if (reader != null) {
+				String comment = reader.getContentString();
+				sendCommentNotification(comment, entityNodeRef, commentNodeRef);
+			}
 
-			sendCommentNotification(comment, entityNodeRef, commentNodeRef);
 
 		} else if (ActivityType.Version.equals(activityListDataItem.getActivityType())) {
 

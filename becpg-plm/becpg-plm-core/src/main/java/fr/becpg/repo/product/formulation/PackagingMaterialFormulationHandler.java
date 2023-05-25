@@ -89,7 +89,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 					return true;
 				}
 				// CompoList
-				Map<Pair<PackagingLevel, NodeRef>, BigDecimal> toUpdate = calculateMaterialOfComposition(formulatedProduct);
+				Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate = calculateMaterialOfComposition(formulatedProduct);
 
 				// PackagingList
 				for (PackagingListDataItem packagingItem : formulatedProduct.getPackagingList()) {
@@ -107,14 +107,21 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 					if (!toUpdate.containsKey(key)) {
 						toRemove.add(packmaterial);
 					} else {
-						packmaterial.setPmlWeight(toUpdate.get(key).doubleValue());
-						toUpdate.remove(key);
+						if(toUpdate.get(key).getFirst().doubleValue()!=0d) {
+							packmaterial.setPmlWeight(toUpdate.get(key).getFirst().doubleValue());
+							packmaterial.setPmlRecycledPercentage(toUpdate.get(key).getSecond()
+									.divide(toUpdate.get(key).getFirst(),MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue());
+							toUpdate.remove(key);
+						}
 					}
 				}
 
-				for (Map.Entry<Pair<PackagingLevel, NodeRef>, BigDecimal> entry : toUpdate.entrySet()) {
-					formulatedProduct.getPackMaterialList()
-							.add(new PackMaterialListDataItem(entry.getKey().getSecond(), entry.getValue().doubleValue(), entry.getKey().getFirst()));
+				for (Map.Entry<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> entry : toUpdate.entrySet()) {
+					if(entry.getValue().getFirst().doubleValue()!=0d) {
+						formulatedProduct.getPackMaterialList().add(new PackMaterialListDataItem(entry.getKey().getSecond(),
+								entry.getValue().getFirst().doubleValue(),
+								entry.getValue().getSecond().divide(entry.getValue().getFirst(),MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue() , entry.getKey().getFirst()));
+					}
 				}
 
 				formulatedProduct.getPackMaterialList().removeAll(toRemove);
@@ -124,6 +131,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 					if (!packMaterialListDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
 						packMaterialListDataItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 					}
+
 				}
 
 			}
@@ -131,9 +139,9 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 		return true;
 	}
 
-	private Map<Pair<PackagingLevel, NodeRef>, BigDecimal> calculateMaterialOfComposition(ProductData formulatedProduct) {
+	private Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> calculateMaterialOfComposition(ProductData formulatedProduct) {
 
-		Map<Pair<PackagingLevel, NodeRef>, BigDecimal> toUpdate = new HashMap<>();
+		Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate = new HashMap<>();
 		if (!Boolean.TRUE.equals(formulatedProduct.getDropPackagingOfComponents())) {
 
 			for (CompoListDataItem compoList : formulatedProduct
@@ -169,17 +177,23 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 								if (packMateriDataItem.getPmlWeight() != null) {
 									if ((compoProductQty != null) && !compoProductQty.isNaN() && !compoProductQty.isInfinite()
 											&& (compoProductQty != 0d)) {
+
 										BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight())
 												.multiply(BigDecimal.valueOf(qtyUsed))
 												.divide(BigDecimal.valueOf(compoProductQty), MathContext.DECIMAL64);
+										BigDecimal pmlRecycledPercentage = BigDecimal.valueOf(
+												packMateriDataItem.getPmlRecycledPercentage() != null ? packMateriDataItem.getPmlRecycledPercentage()
+														: 0d)
+												.multiply(plmWeight).divide(BigDecimal.valueOf(100d), MathContext.DECIMAL64);
 										Pair<PackagingLevel, NodeRef> key = new Pair<>(packMateriDataItem.getPkgLevel(),
 												packMateriDataItem.getPmlMaterial());
 
 										if (toUpdate.containsKey(key)) {
-											BigDecimal newPlmWeight = toUpdate.get(key).add(plmWeight);
-											toUpdate.put(key, newPlmWeight);
+											BigDecimal newPlmWeight = toUpdate.get(key).getFirst().add(plmWeight);
+											BigDecimal newPmlRecycledPercentage = toUpdate.get(key).getSecond().add(pmlRecycledPercentage);
+											toUpdate.put(key, new Pair<>(newPlmWeight, newPmlRecycledPercentage));
 										} else {
-											toUpdate.put(key, plmWeight);
+											toUpdate.put(key, new Pair<>(plmWeight, pmlRecycledPercentage));
 										}
 									} else {
 										logger.error("QtyUsed/CompoProductQty is NaN or 0 or infinite:" + qtyUsed + " " + compoProductQty + " for "
@@ -195,7 +209,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 		return toUpdate;
 	}
 
-	private void calculateTareByMaterialItem(PackagingListDataItem dataItem, Map<Pair<PackagingLevel, NodeRef>, BigDecimal> toUpdate, double subQty) {
+	private void calculateTareByMaterialItem(PackagingListDataItem dataItem,
+			Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate, double subQty) {
 
 		if (nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_PACKAGINGKIT)) {
 			if ((dataItem.getQty() != null) && ProductUnit.P.equals(dataItem.getPackagingListUnit())) {
@@ -213,7 +228,8 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 		}
 	}
 
-	private void calculateTareByMaterial(PackagingListDataItem dataItem, Map<Pair<PackagingLevel, NodeRef>, BigDecimal> toUpdate, double subQty) {
+	private void calculateTareByMaterial(PackagingListDataItem dataItem, Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> toUpdate,
+			double subQty) {
 
 		// Keep materials of primary packaging (without packaging kit)
 		if ((dataItem.getProduct() != null)) {
@@ -231,33 +247,38 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 						BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight()).multiply(tare);
 
 						BigDecimal productTare = FormulationHelper.getTareInKg(packagingProduct);
-						if (productTare != null) {
-							plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)));
+						if (productTare != null && productTare.doubleValue()!=0d ) {
+							plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)), MathContext.DECIMAL64);
 						}
+						BigDecimal pmlRecycledPercentage = BigDecimal
+								.valueOf(packMateriDataItem.getPmlRecycledPercentage() != null ? packMateriDataItem.getPmlRecycledPercentage() : 0d)
+								.multiply(plmWeight).divide(BigDecimal.valueOf(100d), MathContext.DECIMAL64);
 
 						Pair<PackagingLevel, NodeRef> key = new Pair<>(dataItem.getPkgLevel(), packMateriDataItem.getPmlMaterial());
 
 						if (toUpdate.containsKey(key)) {
-							BigDecimal newPlmWeight = toUpdate.get(key).add(plmWeight);
-							toUpdate.put(key, newPlmWeight);
+							BigDecimal newPlmWeight = toUpdate.get(key).getFirst().add(plmWeight);
+							BigDecimal newPmlRecycledPercentage = toUpdate.get(key).getSecond().add(pmlRecycledPercentage);
+							toUpdate.put(key, new Pair<>(newPlmWeight, newPmlRecycledPercentage));
 						} else {
-							toUpdate.put(key, plmWeight);
+							toUpdate.put(key, new Pair<>(plmWeight, pmlRecycledPercentage));
 						}
 					}
 				}
 
 			} else if ((packagingProduct.getPackagingMaterials() != null) && (!packagingProduct.getPackagingMaterials().isEmpty())) {
 
-				BigDecimal tareByMaterial = tare.divide(BigDecimal.valueOf(packagingProduct.getPackagingMaterials().size()));
+				BigDecimal tareByMaterial = tare.divide(BigDecimal.valueOf(packagingProduct.getPackagingMaterials().size()), MathContext.DECIMAL64);
 				for (NodeRef packagingMaterial : packagingProduct.getPackagingMaterials()) {
 
 					Pair<PackagingLevel, NodeRef> key = new Pair<>(dataItem.getPkgLevel(), packagingMaterial);
 
 					if (toUpdate.containsKey(key)) {
-						BigDecimal newTare = toUpdate.get(key).add(tareByMaterial);
-						toUpdate.put(key, newTare);
+						BigDecimal newPlmWeight = toUpdate.get(key).getFirst().add(tareByMaterial);
+						BigDecimal newPmlRecycledPercentage = toUpdate.get(key).getSecond().add(BigDecimal.valueOf(0d));
+						toUpdate.put(key, new Pair<>(newPlmWeight, newPmlRecycledPercentage));
 					} else {
-						toUpdate.put(key, tareByMaterial);
+						toUpdate.put(key, new Pair<>(tareByMaterial, BigDecimal.valueOf(0d)));
 					}
 				}
 			}

@@ -209,9 +209,9 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 
 	/** {@inheritDoc} */
 	@Override
-	public String displayValue(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
+	public String displayValue(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
 		if (nutrientTypeCode != null && !nutrientTypeCode.isEmpty()) {
-			return displayValueByCode(value, roundedValue, nutrientTypeCode, locale);
+			return displayValueByCode(value, roundedValue, nutrientTypeCode, measurementPrecision , locale);
 		}
 		return formatDouble(roundedValue, locale);
 	}
@@ -365,7 +365,9 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	 * @param locale a {@link java.util.Locale} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	protected abstract String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale);
+	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
+		return formatDouble(roundedValue, locale);
+	}
 	
 
 	protected Pair<Double, Double> tolerancesByCode(Double value, String nutrientTypeCode) {

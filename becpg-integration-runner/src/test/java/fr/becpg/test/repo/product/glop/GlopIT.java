@@ -481,5 +481,56 @@ public class GlopIT extends AbstractFinishedProductTest {
 		}, false, true);
 		
 	}
+	
+	@Test
+	public void testToleranceApplication() {
+		
+		NodeRef fpNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP tolerance application");
+			finishedProduct.setQty(2d);
+			finishedProduct.setUnit(ProductUnit.kg);
+			finishedProduct.setDensity(1d);
+			
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial1NodeRef));
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, rawMaterial2NodeRef));
+			finishedProduct.getCompoListView().setCompoList(compoList);
+			
+			List<CostListDataItem> costList = new ArrayList<>();
+			costList.add(new CostListDataItem(null, null, "€/kg", null, cost1, null));
+			finishedProduct.setCostList(costList);
+			
+			List<NutListDataItem> nutList = new ArrayList<>();
+			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut1, null));
+			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut2, null));
+			nutList.add(new NutListDataItem(null, null, null, null, null, null, nut3, null));
+			finishedProduct.setNutList(nutList);
+			
+			List<DynamicCharactListItem> dynamicCharactList = new ArrayList<>();
+			dynamicCharactList.add(new DynamicCharactListItem("test1", "var glopData = @glop.optimize({target: {var: cost['" + cost1 + "'], task: \"min\"}, constraints: {{var: nut['" + nut1 + "'], min: 2, max: 2, tol:50}, {var: nut['" + nut2 + "'], min: 3, max: 3, tol:50}, {var: nut['" + nut3 + "'], min: 8, max: 8, tol:50}}}); #glopData.toString();"));
+			finishedProduct.getCompoListView().setDynamicCharactList(dynamicCharactList);
+			
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+			
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+			productService.formulate(fpNodeRef);
+
+			ProductData formulatedProduct = alfrescoRepository.findOne(fpNodeRef);
+			
+			List<DynamicCharactListItem> dynamicCharacts = formulatedProduct.getCompoListView().getDynamicCharactList();
+			DynamicCharactListItem dynamicCharact = dynamicCharacts.get(0);
+			JSONObject result = new JSONObject((String) dynamicCharact.getValue());
+			assertEpsilon(2d, (double) result.getDouble("value"), 1e-6);
+			
+			assertEquals("suboptimal", result.getString("status"));
+			
+			return null;
+		}, false, true);
+	}
 
 }

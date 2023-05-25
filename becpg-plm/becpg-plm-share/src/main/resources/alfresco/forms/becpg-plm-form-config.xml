@@ -793,7 +793,7 @@
 					<field id="rep:reportTpls" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue%2Crep%3AreportTplType%7CExportSearch%2Crep%3AreportTplType%7CCompare%2Crep%3AreportTplType%7CSystem</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -1352,32 +1352,23 @@
 			</form>
 		</forms>
 	</config>
-
-	<!-- bcpg:ing type (existing nodes) -->
-	<config evaluator="node-type" condition="bcpg:ing">
+	
+	<!-- bcpg:lca type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:lca">
 		<forms>
 			<form>
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:pluralLegalName"/>
+					<show id="bcpg:lcaType" />
+					<show id="bcpg:lcaUnit" />
+					<show id="bcpg:lcaFixed" />
+					<show id="bcpg:lcaFormula" />
+					<show id="bcpg:lcaPonderation" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:ingCEECode"  force="true"/>
-					<show id="bcpg:casNumber"  force="true"/>
-					<show id="bcpg:ceNumber"  force="true"/>
-					<show id="bcpg:ecNumber"  force="true"/>
-					<show id="bcpg:fdaNumber"  force="true"/>
-					<show id="bcpg:femaNumber"  force="true"/>
-					<show id="bcpg:flNumber"  force="true"/>
-					<show id="bcpg:regulatoryCode" force="true"/>
-					<show id="bcpg:ingTypeV2"  force="true"/>
-					<show id="bcpg:ingAllergens" />
-					<show id="gs1:productActivityTypeCode" force="true"/>
-                    <show id="bcpg:linkedSearchAssociation" force="true" />
-                    <show id="sec:readGroups" force="true"/>
-                    <show id="bcpg:isDeleted"/>
-               
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />
@@ -1386,30 +1377,9 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:ingCEECode" />
-					<field id="bcpg:casNumber" />
-					<field id="bcpg:ceNumber" />
-					<field id="bcpg:ecNumber" />
-					<field id="bcpg:fdaNumber" />
-					<field id="bcpg:femaNumber" />
-					<field id="bcpg:flNumber" />
-					<field id="bcpg:regulatoryCode" />
-					<field id="bcpg:ingTypeV2">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
-							</control-param>
-						</control>
-					</field>
-                     <field id="bcpg:linkedSearchAssociation">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:ingAllergens">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<field id="bcpg:lcaFormula">
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -1417,65 +1387,33 @@
 		</forms>
 	</config>
 
-	<config evaluator="model-type" condition="bcpg:ing">
+	<config evaluator="model-type" condition="bcpg:lca">
 		<forms>
 			<!-- Create item form -->
 			<form>
-
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:pluralLegalName"/>
+					<show id="bcpg:lcaType" />
+					<show id="bcpg:lcaUnit" />
+					<show id="bcpg:lcaFixed" />
+					<show id="bcpg:lcaFormula" />
+					<show id="bcpg:lcaPonderation" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
-					<show id="bcpg:ingCEECode" force="true"/>
-					<show id="bcpg:casNumber" force="true"/>
-					<show id="bcpg:ceNumber"  force="true"/>
-					<show id="bcpg:ecNumber"  force="true"/>
-					<show id="bcpg:fdaNumber"  force="true"/>
-					<show id="bcpg:femaNumber"  force="true"/>
-					<show id="bcpg:flNumber"  force="true"/>
-					<show id="bcpg:regulatoryCode" force="true"/>
-					<show id="bcpg:ingTypeV2"  force="true"/>
-					<show id="bcpg:ingAllergens" />
-					<show id="gs1:productActivityTypeCode" force="true"/>
-                    <show id="bcpg:linkedSearchAssociation" force="true" />	
-                    <show id="sec:readGroups" force="true"/>	
-                    <show id="bcpg:isDeleted"/>
-               </field-visibility>
-
+					<show id="bcpg:isDeleted"/>
+				</field-visibility>
 				<appearance>
-
 					<field id="bcpg:charactName" />
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
-					<field id="bcpg:ingCEECode" />
-					<field id="bcpg:casNumber"/>
-					<field id="bcpg:ceNumber" />
-					<field id="bcpg:ecNumber" />
-					<field id="bcpg:fdaNumber" />
-					<field id="bcpg:femaNumber" />
-					<field id="bcpg:flNumber" />
-					<field id="bcpg:regulatoryCode"/>
-					<field id="bcpg:ingTypeV2">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:linkedSearchAssociation">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
-							</control-param>
-						</control>
-					</field>
-					<field id="bcpg:ingAllergens">
-						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+					<field id="bcpg:lcaFormula">
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -1484,17 +1422,8 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
-					<show id="bcpg:charactName" force="true"/>
-					<show id="bcpg:legalName" force="true"/>
-					<show id="bcpg:ingCEECode" force="true"/>
-					<show id="bcpg:casNumber" force="true"/>
-					<show id="bcpg:ceNumber"  force="true"/>
-					<show id="bcpg:ecNumber"  force="true"/>
-					<show id="bcpg:fdaNumber"  force="true"/>
-					<show id="bcpg:femaNumber"  force="true"/>
-					<show id="bcpg:flNumber"  force="true"/>
-					<show id="bcpg:regulatoryCode" force="true"/>
-					<show id="bcpg:ingTypeV2"  force="true"/>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:lcaFixed" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1502,25 +1431,8 @@
 					<field id="bcpg:charactName">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
-					<field id="bcpg:ingTypeV2">
-						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
-							</control-param>
-						</control>
-					</field>
 					<field id="bcpg:isDeleted" >
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
-					</field>
-				</appearance>
-			</form>
-			<form id="sub-datagrid-filter">
-				<field-visibility>
-					<show id="bcpg:charactName" />
-					<show id="bcpg:isDeleted"/>
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:charactName" label-id="becpg.forms.field.ing" >
-						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -1529,26 +1441,246 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
-					<show id="bcpg:pluralLegalName"/>
-					<show id="bcpg:ingCEECode" force="true"/>
-					<show id="bcpg:casNumber" force="true"/>
-					<show id="bcpg:ceNumber"  force="true"/>
-					<show id="bcpg:ecNumber"  force="true"/>
-					<show id="bcpg:fdaNumber"  force="true"/>
-					<show id="bcpg:femaNumber"  force="true"/>
-					<show id="bcpg:flNumber"  force="true"/>
-					<show id="bcpg:regulatoryCode" force="true"/>
-					<show id="bcpg:ingTypeV2"  force="true"/>
-					<show id="gs1:productActivityTypeCode" force="true"/>
-                    <show id="bcpg:linkedSearchAssociation" force="true" />
-                    <show id="bcpg:ingAllergens" />
-                    <show id="sec:readGroups" force="true"/>
+					<show id="bcpg:lcaType" />
+					<show id="bcpg:lcaUnit" />
+					<show id="bcpg:lcaFixed" />
+					<show id="bcpg:lcaPonderation" />
+					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
-                    <show id="bcpg:isDeleted"/>
+					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 			</form>
 		</forms>
 	</config>
+
+    <!-- bcpg:ing type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:ing">
+        <forms>
+            <form>
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="cm:description" force="true" />
+                    <show id="bcpg:legalName" />
+                    <show id="bcpg:pluralLegalName"/>
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:ingCEECode" force="true"/>
+                    <show id="bcpg:casNumber" force="true"/>
+                    <show id="bcpg:ceNumber" force="true"/>
+                    <show id="bcpg:ecNumber" force="true"/>
+                    <show id="bcpg:fdaNumber" force="true"/>
+                    <show id="bcpg:femaNumber" force="true"/>
+                    <show id="bcpg:flNumber" force="true"/>
+                    <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="bcpg:ingTypeV2" force="true"/>
+                    <show id="bcpg:ingAllergens" force="true" />
+                    <show id="gs1:productActivityTypeCode" force="true"/>
+                    <show id="bcpg:linkedSearchAssociation" force="true" />
+                    <show id="sec:readGroups" force="true"/>
+                    <show id="bcpg:isDeleted"/>
+
+                </field-visibility>
+                <appearance>
+                    <set id="1-col-1" />
+                    <set id="2-col-1" template="/org/alfresco/components/form/2-column-set.ftl" />
+                    <set id="1-col-2" />
+                    <set id="2-col-2" template="/org/alfresco/components/form/2-column-set.ftl" />
+
+                    <field id="bcpg:charactName" set="1-col-1" />
+                    <field id="cm:description" set="1-col-1" >
+                        <control>
+                            <control-param name="activateLinks">true</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:pluralLegalName" set="2-col-1" />
+                    <field id="bcpg:legalName" set="2-col-1" />
+                    <field id="bcpg:ingCEECode" set="2-col-1" />
+                    <field id="bcpg:casNumber" set="2-col-1" />
+                    <field id="bcpg:ceNumber" set="2-col-1" />
+                    <field id="bcpg:ecNumber" set="2-col-1" />
+                    <field id="bcpg:fdaNumber" set="2-col-1" />
+                    <field id="bcpg:femaNumber" set="2-col-1" />
+                    <field id="bcpg:flNumber" set="2-col-1" />
+                    <field id="bcpg:regulatoryCode" set="2-col-1" />
+                    <field id="bcpg:erpCode" set="1-col-2" />
+                    <field id="bcpg:ingTypeV2" set="1-col-2" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+                            </control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:linkedSearchAssociation" set="1-col-2" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
+                            </control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:ingAllergens" set="1-col-2" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                        </control>
+                    </field>
+                    <field id="gs1:productActivityTypeCode" set="1-col-2" />
+                    <field id="bcpg:isDeleted" set="2-col-2" />
+                    <field id="sec:readGroups" set="2-col-2" />
+                </appearance>
+            </form>
+        </forms>
+    </config>
+
+    <config evaluator="model-type" condition="bcpg:ing" replace="false" >
+        <forms>
+            <!-- Create item form -->
+            <form>
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="cm:description" force="true" />
+                    <show id="bcpg:legalName" />
+                    <show id="bcpg:pluralLegalName"/>
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:ingCEECode" force="true"/>
+                    <show id="bcpg:casNumber" force="true"/>
+                    <show id="bcpg:ceNumber"  force="true"/>
+                    <show id="bcpg:ecNumber"  force="true"/>
+                    <show id="bcpg:fdaNumber"  force="true"/>
+                    <show id="bcpg:femaNumber"  force="true"/>
+                    <show id="bcpg:flNumber"  force="true"/>
+                    <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="bcpg:ingTypeV2"  force="true"/>
+                    <show id="bcpg:ingAllergens" />
+                    <show id="gs1:productActivityTypeCode" force="true"/>
+                    <show id="bcpg:linkedSearchAssociation" force="true" />        
+                    <show id="sec:readGroups" force="true"/>	
+                    <show id="bcpg:isDeleted"/>
+                </field-visibility>
+
+                <appearance>
+                    <set id="1-col-1" />
+                    <set id="2-col-1" template="/org/alfresco/components/form/2-column-set.ftl" />
+                    <set id="1-col-2" />
+                    <set id="2-col-2" template="/org/alfresco/components/form/2-column-set.ftl" />
+
+                    <field id="bcpg:charactName" set="1-col-1" />
+                    <field id="cm:description" set="1-col-1" >
+                        <control>
+                            <control-param name="activateLinks">true</control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:pluralLegalName" set="2-col-1" />
+                    <field id="bcpg:legalName" set="2-col-1" />
+                    <field id="bcpg:ingCEECode" set="2-col-1" />
+                    <field id="bcpg:casNumber" set="2-col-1" />
+                    <field id="bcpg:ceNumber" set="2-col-1" />
+                    <field id="bcpg:ecNumber" set="2-col-1" />
+                    <field id="bcpg:fdaNumber" set="2-col-1" />
+                    <field id="bcpg:femaNumber" set="2-col-1" />
+                    <field id="bcpg:flNumber" set="2-col-1" />
+                    <field id="bcpg:regulatoryCode" set="2-col-1" />
+                    <field id="bcpg:erpCode" set="1-col-2" />
+                    <field id="bcpg:ingTypeV2" set="1-col-2" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+                            </control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:linkedSearchAssociation" set="1-col-2" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/cm:cmobject?classNames=bcpg:ing
+                            </control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:ingAllergens" set="1-col-2" >
+                        <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+                        </control>
+                    </field>
+                    <field id="gs1:productActivityTypeCode" set="1-col-2" />
+                    <field id="bcpg:isDeleted" set="2-col-2" />
+                    <field id="sec:readGroups" set="2-col-2" />
+                </appearance>
+            </form>
+
+            <!-- Data Grid view -->
+            <form id="filter">
+                <field-visibility>
+                    <show id="bcpg:charactName" force="true"/>
+                    <show id="bcpg:legalName" force="true"/>
+                    <show id="bcpg:ingCEECode" force="true"/>
+                    <show id="bcpg:casNumber" force="true"/>
+                    <show id="bcpg:ceNumber"  force="true"/>
+                    <show id="bcpg:ecNumber"  force="true"/>
+                    <show id="bcpg:fdaNumber"  force="true"/>
+                    <show id="bcpg:femaNumber"  force="true"/>
+                    <show id="bcpg:flNumber"  force="true"/>
+                    <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="bcpg:ingTypeV2"  force="true"/>
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted"/>
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:charactName">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+                    </field>
+                    <field id="bcpg:legalName">
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+                    </field>
+                    <field id="bcpg:ingTypeV2">
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ingTypeItem
+                            </control-param>
+                        </control>
+                    </field>
+                    <field id="bcpg:isDeleted" >
+                        <control template="/org/alfresco/components/form/controls/selectone.ftl">
+                            <control-param name="isSearch">true</control-param>
+                            <control-param name="insertBlank">true</control-param>
+                            <control-param name="options">true|data.boolean.true,false|data.boolean.false
+                            </control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
+            <form id="sub-datagrid-filter">
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="bcpg:isDeleted"/>
+                </field-visibility>
+                <appearance>
+                    <field id="bcpg:charactName" label-id="becpg.forms.field.ing" >
+                        <control template="/org/alfresco/components/form/controls/textfield.ftl" />
+                    </field>
+                    <field id="bcpg:isDeleted" >
+                        <control template="/org/alfresco/components/form/controls/selectone.ftl">
+                            <control-param name="isSearch">true</control-param>
+                            <control-param name="insertBlank">true</control-param>
+                            <control-param name="options">true|data.boolean.true,false|data.boolean.false
+                            </control-param>
+                        </control>
+                    </field>
+                </appearance>
+            </form>
+
+            <form id="datagrid">
+                <field-visibility>
+                    <show id="bcpg:charactName" />
+                    <show id="bcpg:legalName" />
+                    <show id="bcpg:pluralLegalName"/>
+                    <show id="bcpg:ingCEECode" force="true"/>
+                    <show id="bcpg:casNumber" force="true"/>
+                    <show id="bcpg:ceNumber" force="true"/>
+                    <show id="bcpg:ecNumber" force="true"/>
+                    <show id="bcpg:fdaNumber" force="true"/>
+                    <show id="bcpg:femaNumber" force="true"/>
+                    <show id="bcpg:flNumber" force="true"/>
+                    <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="bcpg:ingTypeV2" force="true"/>
+                    <show id="gs1:productActivityTypeCode" force="true"/>
+                    <show id="bcpg:linkedSearchAssociation" force="true" />
+                    <show id="bcpg:ingAllergens" />
+                    <show id="sec:readGroups" force="true"/>
+                    <show id="bcpg:erpCode" force="true" />
+                    <show id="bcpg:isDeleted"/>
+                </field-visibility>
+            </form>
+        </forms>
+    </config>
 
 	<!-- bcpg:microBio type (existing nodes) -->
 	<config evaluator="node-type" condition="bcpg:microbio">
@@ -1559,6 +1691,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:microbioType" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -1586,6 +1719,7 @@
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:microbioType" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -1606,8 +1740,9 @@
 
 			<!-- Data Grid view -->
 			<form id="filter">
-				<field-visibility>
+				<field-visibility>	 
 					<show id="bcpg:charactName" />
+					 <show id="bcpg:microbioType" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -1618,6 +1753,12 @@
 					<field id="bcpg:isDeleted" >
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
 					</field>
+						<field id="bcpg:physicoChemType">
+						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+							<control-param name="isSearch">true</control-param>
+							<control-param name="insertBlank">true</control-param>
+						</control>	
+					</field>
 				</appearance>
 			</form>
 
@@ -1625,6 +1766,7 @@
 				<field-visibility>
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
+					<show id="bcpg:microbioType" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -2521,6 +2663,12 @@
 							<control-param name="activateLinks">true</control-param>
 						</control>
 					</field>
+					<field id="bcpg:subsidiaryCertifications">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:certification?path=cm:System/cm:Characts/bcpg:entityLists/cm:Certifications&amp;attributeName=cm:name
+							</control-param>
+						</control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -2545,6 +2693,12 @@
 					<field id="cm:description">
 						<control>
 							<control-param name="activateLinks">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:subsidiaryCertifications">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:certification?path=cm:System/cm:Characts/bcpg:entityLists/cm:Certifications&amp;attributeName=cm:name
+							</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -2910,6 +3064,22 @@
 					<show id="sec:readGroups" force="true"/>
 					<show id="rep:reportLocales" force="true" />
 					<show id="bcpg:isDeleted"/>
+						<!-- hide exif:exif -->
+					<hide id="exif:dateTimeOriginal" />
+					<hide id="exif:pixelXDimension" />
+					<hide id="exif:pixelYDimension" />
+					<hide id="exif:exposureTime" />
+					<hide id="exif:fNumber" />
+					<hide id="exif:flash" />
+					<hide id="exif:focalLength" />
+					<hide id="exif:isoSpeedRatings" />
+					<hide id="exif:manufacturer" />
+					<hide id="exif:model" />
+					<hide id="exif:software" />
+					<hide id="exif:orientation" />
+					<hide id="exif:xResolution" />
+					<hide id="exif:yResolution" />
+					<hide id="exif:resolutionUnit" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:charactName" />	
@@ -3404,7 +3574,7 @@
 					</field>
 					<field id="rep:reportTpls" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue%2Crep%3AreportTplType%7CExportSearch%2Crep%3AreportTplType%7CCompare%2Crep%3AreportTplType%7CSystem</control-param>
 						</control>
 					</field>
 				</appearance>
@@ -3999,7 +4169,7 @@
 			          </field>
 			          <field id="rep:reportTpls" mandatory="false" read-only="false">
 			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep:reportTplIsSystem%7Cfalse,rep:reportTplIsDisabled%7Cfalse,rep:reportTplType%7CExportSearch,rep:reportTplType%7CCompare,rep:reportTplType%7CSystem</control-param>
+			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/rep:reportTpl?excludeProps=rep%3AreportTplIsSystem%7Ctrue%2Crep%3AreportTplIsDisabled%7Ctrue%2Crep%3AreportTplType%7CExportSearch%2Crep%3AreportTplType%7CCompare%2Crep%3AreportTplType%7CSystem</control-param>
 			            </control>
 			          </field>
 			        </appearance>
@@ -4427,6 +4597,7 @@
 			
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:compoListProduct" />
@@ -4454,6 +4625,7 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:compoListQtySubFormula" help="{&quot;className&quot;: &quot;align-right&quot;, &quot;numberFormat&quot;:  { &quot;minimumFractionDigits&quot;: 2, &quot;maximumFractionDigits&quot;: 2}}" />
 					<field id="bcpg:compareWithDynColumn" label="hidden" read-only="true"/>
@@ -4887,6 +5059,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="pack:labelingPosition" force="true" />
 					<show id="bcpg:packagingListProduct" />
@@ -4912,6 +5085,7 @@
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="pack:labelingPosition" label="hidden" />
 					<field id="bcpg:dynamicCharactColumn1" read-only="true" label="hidden"></field>
@@ -5115,7 +5289,7 @@
 						help-id="becpg.forms.help.allergenListQtyPerc" set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">perc</control-param>
+							<control-param name="unit">ppm</control-param>
 						</control>
 					</field>
 					<field id="bcpg:allergenListVoluntary"
@@ -5202,6 +5376,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:allergenListAllergen" />
 					<show id="bcpg:allergenListQtyPerc" />
@@ -5220,6 +5395,7 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:allergenListDecisionTree" read-only="true" />
@@ -5289,7 +5465,7 @@
 						help-id="becpg.forms.help.allergenListQtyPerc" set="1-col-1">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">perc</control-param>
+							<control-param name="unit">ppm</control-param>
 						</control>
 					</field>
 					<field id="bcpg:allergenListVoluntary"
@@ -5405,6 +5581,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:costListCost" />
@@ -5440,6 +5617,7 @@
 					<field id="bcpg:costListIsFormulated"  label="hidden"/>
 					<field id="bcpg:costListFormulaErrorLog"  label="hidden"/>
 					<field id="bcpg:costListValuePerProduct" read-only="true" />
+					<field id="bcpg:entityDataListState" label="hidden" />
 				</appearance>				
 			</form>
 			<form id="customListDatagrid">
@@ -5554,6 +5732,205 @@
 			</form>
 		</forms>
 	</config>
+	
+	<!-- bcpg:lcaList type -->
+	<config evaluator="model-type" condition="bcpg:lcaList">
+		<forms>
+			<!-- Create item form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:lcaListLca" />					
+					<show id="bcpg:lcaListValue" />
+					<show id="bcpg:lcaListUnit" />
+					<show id="bcpg:lcaListPreviousValue" />
+					<show id="bcpg:lcaListFutureValue" />
+					<show id="bcpg:parentLevel" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:lcaListComponent" />
+					<show id="bcpg:lcaListSimulatedValue" />
+					<show id="bcpg:isManualListItem" force="true" />
+				</field-visibility>
+
+				<appearance>
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:lcaListLca" set="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:lcaListValue" set="2-col" />
+					<field id="bcpg:lcaListUnit" set="2-col" />
+					<field id="bcpg:lcaListPreviousValue" set="2-col" />
+					<field id="bcpg:lcaListFutureValue" set="2-col" />
+					<field id="bcpg:parentLevel" set="2-col">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:lcaList&#38;attributeName=bcpg:lcaListLca</control-param>
+						</control>
+					</field>
+					<field id="bcpg:plants" set="2-col" />
+					<field id="bcpg:lcaListComponent" set="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:packagingMaterial</control-param>
+						</control>
+					</field>
+					<field id="bcpg:lcaListSimulatedValue" set="2-col" />
+					<field id="bcpg:isManualListItem" set="2-col" />
+				</appearance>
+			</form>
+			<!-- Data Grid view -->
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:lcaListLca" />
+					<show id="bcpg:lcaListValue" />
+					<show id="bcpg:lcaListUnit" />					
+					<show id="bcpg:lcaListPreviousValue" />
+					<show id="bcpg:lcaListFutureValue" />
+					<show id="bcpg:lcaListValuePerProduct" />
+					<show id="bcpg:variantColumn1" force="true" />
+					<show id="bcpg:variantColumn2" force="true" />
+					<show id="bcpg:variantColumn3" force="true" />
+					<show id="bcpg:variantColumn4" force="true" />
+					<show id="bcpg:variantColumn5" force="true" />
+					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:lcaListComponent" />
+					<show id="bcpg:lcaListSimulatedValue" />
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:lcaListIsFormulated" />
+					<show id="bcpg:lcaListFormulaErrorLog" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>	
+					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn2" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn3" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn4" read-only="true" label="hidden"></field>
+					<field id="bcpg:variantColumn5" read-only="true" label="hidden"></field>				
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:lcaListIsFormulated"  label="hidden"/>
+					<field id="bcpg:lcaListFormulaErrorLog"  label="hidden"/>
+					<field id="bcpg:lcaListValuePerProduct" read-only="true" />
+					<field id="bcpg:entityDataListState" label="hidden" />
+				</appearance>				
+			</form>
+			<form id="customListDatagrid">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:lcaListLca" />
+					<show id="bcpg:lcaListValue" />
+					<show id="bcpg:lcaListUnit" />					
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:lcaListIsFormulated" />
+					<show id="bcpg:lcaListFormulaErrorLog" />
+					<show id="bcpg:glopTarget" />
+					<show id="bcpg:glopValue" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>					
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:lcaListIsFormulated"  label="hidden"/>
+					<field id="bcpg:lcaListFormulaErrorLog"  label="hidden"/>
+					<field id="bcpg:lcaListValuePerProduct" read-only="true" />
+				</appearance>				
+			</form>
+			<form id="datagridWUsed">
+				<field-visibility>
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:depthLevel" />
+					<show id="bcpg:lcaListLca" />
+					<show id="bcpg:lcaListValue" />
+					<show id="bcpg:lcaListUnit" />					
+					<show id="bcpg:lcaListPreviousValue" />
+					<show id="bcpg:lcaListFutureValue" />
+					<show id="bcpg:lcaListValuePerProduct" />
+					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:lcaListComponent" />
+					<show id="bcpg:lcaListSimulatedValue" />
+					<show id="fm:commentCount" force="true" />
+					<show id="bcpg:lcaListIsFormulated" />
+					<show id="bcpg:lcaListFormulaErrorLog" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:depthLevel" label="hidden"></field>					
+					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:lcaListIsFormulated"  label="hidden"/>
+					<field id="bcpg:lcaListFormulaErrorLog"  label="hidden"/>
+					<field id="bcpg:lcaListValuePerProduct" read-only="true" />
+				</appearance>				
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:lcaListLca" for-mode="create"/>
+					<show id="entity_bcpg:lcaListLca_bcpg:product" for-mode="view"/>
+					<show id="bcpg:plants"   for-mode="create" force="true" />
+				</field-visibility>	
+				<appearance>
+					<field id="bcpg:lcaListLca">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+			   </appearance>		
+			</form>
+			
+		</forms>
+	</config>
+	<!-- bcpg:lcaList type (existing nodes) -->
+	<config evaluator="node-type" condition="bcpg:lcaList">
+		<forms>
+			<!-- Data List pop-up edit form -->
+			<form>
+				<field-visibility>
+					<show id="bcpg:lcaListLca" />
+					<show id="bcpg:parentLevel" />
+					<show id="bcpg:lcaListValue" />
+					<show id="bcpg:lcaListPreviousValue" />
+					<show id="bcpg:lcaListFutureValue" />
+					<show id="bcpg:lcaListUnit" />
+					<show id="bcpg:parentLevel" force="true" />
+					<show id="bcpg:plants" force="true" />
+					<show id="bcpg:lcaListComponent" />
+					<show id="bcpg:lcaListSimulatedValue" />
+					<show id="bcpg:isManualListItem" force="true" />
+				</field-visibility>
+
+				<appearance>
+					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
+					<field id="bcpg:lcaListLca" set="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:lcaListValue" set="2-col" />
+					<field id="bcpg:lcaListUnit" set="2-col" />
+					<field id="bcpg:lcaListPreviousValue" set="2-col" />
+					<field id="bcpg:lcaListFutureValue" set="2-col" />
+					<field id="bcpg:parentLevel" set="2-col">
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:lcaList&#38;attributeName=bcpg:lcaListLca</control-param>
+						</control>
+					</field>
+					<field id="bcpg:plants" set="2-col" />
+					<field id="bcpg:lcaListComponent" set="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/product?classNames=bcpg:rawMaterial,bcpg:packagingMaterial</control-param>
+						</control>
+					</field>
+					<field id="bcpg:lcaListSimulatedValue" set="2-col" />
+					<field id="bcpg:isManualListItem" set="2-col" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
 
 	<!-- bcpg:priceList type -->
 	<config evaluator="model-type" condition="bcpg:priceList">
@@ -5640,6 +6017,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:priceListCost" />
 					<show id="bcpg:priceListPrefRank" />
 					<show id="bcpg:priceListValue" />
@@ -5654,6 +6032,9 @@
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
@@ -5739,6 +6120,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:lrLocales" force="true"/>
@@ -5748,6 +6130,7 @@
 					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:lrLocales" label="hidden" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -5850,7 +6233,9 @@
 					<field id="bcpg:lrIsActive"  set="1-col-2"/>
 					<field id="bcpg:lrSyncState" set="1-col-2" />
 					<field id="bcpg:lrFormula" >
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
 					</field>
 					<field id="bcpg:lrComponents" >
 						<control
@@ -5875,6 +6260,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:lrIsActive" />
 					<show id="cm:name" />
 					<show id="bcpg:lrComponents" />
@@ -5883,6 +6269,7 @@
 					<show id="bcpg:lrGroup" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 				   <field id="bcpg:lrIsActive" label="hidden" />
 				</appearance>
 			</form>
@@ -5939,7 +6326,9 @@
 					<field id="bcpg:lrIsActive"  set="1-col-2"/>
 					<field id="bcpg:lrSyncState" set="1-col-2" />
 					<field id="bcpg:lrFormula" >
-						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+						<control template="/org/alfresco/components/form/controls/spel-editor.ftl">
+							<control-param name="rows">10</control-param>
+						</control>
 					</field>
 					<field id="bcpg:lrComponents" >
 						<control
@@ -5974,9 +6363,9 @@
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
 			
-				<!--  <show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" /> -->	
-				   <show id="bcpg:ingListIsProcessingAid" />
+				    <show id="bcpg:ingListIsGMO" />
+				    <show id="bcpg:ingListIsIonized" /> 
+				    <show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
@@ -6025,7 +6414,9 @@
 					     <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 			              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:labelClaim?andProps=bcpg:labelClaimType%7CCertification</control-param>
 			            </control>
-			         </field>			
+			         </field>
+			         <field id="bcpg:ingListIsIonized" set="2-col-1"/>
+					<field id="bcpg:ingListIsGMO" set="2-col-1"/>					
 			         <field id="bcpg:ingListIsProcessingAid" set="2-col-1"/>
 					<field id="bcpg:ingListIsSupport" set="2-col-1"/>		
 					
@@ -6050,25 +6441,28 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListVolumeQtyPerc" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyPercWithYield" />
-						<!--  <show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" /> -->
+				    <show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
 					<show id="bcpg:ingListBioOrigin" />
+					<show id="bcpg:ingListClaims" />
 					<show id="dataList_bcpg:reqCtrlList" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden"></field>
 					<field id="bcpg:ingListQtyPercWithYield" read-only="true"  ></field>
@@ -6105,12 +6499,13 @@
 			
 			<form id="datagrid-rawMaterial">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:ingListIng" />
 					<show id="bcpg:ingListQtyPerc" />
-					<!--  <show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" /> -->
+					<show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
@@ -6120,6 +6515,7 @@
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -6131,8 +6527,8 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
-					<!--  <show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" /> -->
+			    	<show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" /> 
 					<show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
 					<show id="bcpg:ingListGeoOrigin" />
@@ -6155,18 +6551,18 @@
 					<field id="bcpg:ingListQtyMini" set="2-col"/>
 					<field id="bcpg:ingListQtyMaxi" set="2-col"/>
 					
-			<!--		<field id="bcpg:ingListIsGMO">
+					<field id="bcpg:ingListIsGMO" set="2-col">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:ingListIsIonized">
+					<field id="bcpg:ingListIsIonized" set="2-col">
 					<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
 							</control-param>
 						</control>
-					</field>  -->
+					</field>  
 					<field id="bcpg:ingListIsProcessingAid" set="2-col">
 					<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">,false|data.boolean.false,true|data.boolean.true
@@ -6208,10 +6604,10 @@
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyMini" />
 					<show id="bcpg:ingListQtyMaxi" />
+					<show id="bcpg:ingListIsGMO" />
+					<show id="bcpg:ingListIsIonized" /> 
 				    <show id="bcpg:ingListIsProcessingAid" />
 					<show id="bcpg:ingListIsSupport" />
-				<!--  <show id="bcpg:ingListIsGMO" />
-					<show id="bcpg:ingListIsIonized" /> -->	
 				
 					<show id="bcpg:ingListGeoOrigin" />
 					<show id="bcpg:ingListGeoTransfo" />
@@ -6263,7 +6659,8 @@
 			         </field>			
 			         <field id="bcpg:ingListIsProcessingAid" set="2-col-1"/>
 					<field id="bcpg:ingListIsSupport" set="2-col-1"/>		
-					
+					  <field id="bcpg:ingListIsGMO" set="2-col-1"/>
+					<field id="bcpg:ingListIsIonized" set="2-col-1"/>		
 						
 					<field id="bcpg:parentLevel" set="1-col-2">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -6304,7 +6701,9 @@
 				<appearance>
 					<field id="bcpg:mblMicrobio">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/microbio</control-param>
+						</control>
 					</field>
 					<field id="bcpg:mblTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
@@ -6315,10 +6714,12 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:mblMicrobio" />
 					<show id="bcpg:mblValue" />
 					<show id="bcpg:mblUnit" />
+					<show id="bcpg:mblType" />
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
 					<show id="bcpg:mblControlStep" />
@@ -6328,7 +6729,9 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
+					<field id="bcpg:pclType" read-only="true"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -6352,7 +6755,9 @@
 				<appearance>
 					<field id="bcpg:mblMicrobio">
 						<control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/microbio</control-param>
+						</control>
 					</field>
 					<field id="bcpg:mblTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
@@ -6368,40 +6773,49 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
+				   
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
-					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListValuePrepared" force="true" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					 <show id="bcpg:parentLevel" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
-					<show id="bcpg:parentLevel" />
+					<show id="bcpg:nutListMeasurementPrecision" />
+					
 					<show id="rep:reportKinds" />
 				</field-visibility>
 
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
-					<field id="bcpg:nutListNut">
+					<field id="bcpg:nutListNut" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
 							<control-param name="ds">becpg/autocomplete/nut</control-param>
-						</control>	
+						</control>
 					</field>
-					<field id="bcpg:nutListValue">
+					<field id="bcpg:nutListValue"  >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">-</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nutListValuePrepared"/>
+					<field id="bcpg:nutListValuePrepared"  >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">-</control-param>
+						</control>
+					</field>
 					<field id="bcpg:nutListMini" set="2-col"/>
 					<field id="bcpg:nutListMaxi" set="2-col"/>
 					<field id="bcpg:nutListLossPerc" set="2-col"/>
 					<field id="bcpg:nutListMethod" set="2-col"/>
+					<field id="bcpg:nutListMeasurementPrecision" set="2-col"/>
 					<field id="bcpg:parentLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut
-							</control-param>
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut</control-param>
+							<control-param name="urlParamsToPass">itemId</control-param>
 						</control>
 					</field>
 					<field id="rep:reportKinds" set="2-col"/>
@@ -6416,6 +6830,7 @@
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
+					<show id="bcpg:nutListMeasurementPrecision" />
 					<show id="bcpg:parentLevel" />
 					<show id="rep:reportKinds" />
 					<show id="bcpg:glopTarget" force ="true"/>
@@ -6446,6 +6861,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:depthLevel" />
 					<show id="bcpg:nutListNut" />
@@ -6453,6 +6869,7 @@
 					<show id="bcpg:nutListFormulatedValue" />
 					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListFormulatedValuePrepared" force="true"/>
 					<show id="bcpg:nutListUnitPrepared"  force="true" />
 					<show id="bcpg:nutListRoundedValue" />
 					<show id="bcpg:nutListMini" />
@@ -6460,6 +6877,7 @@
 					<show id="bcpg:nutListFormulatedMini" />
 					<show id="bcpg:nutListFormulatedMaxi" />
 					<show id="bcpg:nutListValuePerServing" force="true" />
+					<show id="bcpg:nutListFormulatedValuePerServing" force="true" />
 					<show id="bcpg:variantColumn1" force="true" />
 					<show id="bcpg:variantColumn2" force="true" />
 					<show id="bcpg:variantColumn3" force="true" />
@@ -6479,12 +6897,15 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
 				    <field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
+					<field id="bcpg:nutListFormulatedValuePrepared" label="hidden" read-only="true" />
+					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnitPrepared" read-only="true" label="hidden"></field>
 					<field id="bcpg:nutListRoundedValue" read-only="true" ></field>
 					<field id="bcpg:variantColumn1" read-only="true" label="hidden"></field>
@@ -6538,12 +6959,14 @@
 					<show id="bcpg:nutListFormulatedValue" />
 					<show id="bcpg:nutListUnit" />
 					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListFormulatedValuePrepared" force="true"/>
 					<show id="bcpg:nutListUnitPrepared" force="true"/>
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListFormulatedMini" />
 					<show id="bcpg:nutListFormulatedMaxi" />
 					<show id="bcpg:nutListValuePerServing" force="true" />
+					<show id="bcpg:nutListFormulatedValuePerServing" force="true" />
 					<show id="bcpg:nutListGDAPerc" force="true" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
@@ -6556,7 +6979,8 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
-					
+					<field id="bcpg:nutListFormulatedValuePrepared" label="hidden" read-only="true" />
+					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
 				    <field id="bcpg:nutListFormulatedMaxi" label="hidden" read-only="true" />
 					<field id="bcpg:nutListFormulatedMini" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
@@ -6593,17 +7017,19 @@
 		<forms>
 			<!-- Data List pop-up edit form -->
 			<form>
-				<field-visibility>
+				<field-visibility>	   
 					<show id="bcpg:nutListNut" />
 					<show id="bcpg:nutListValue" />
-					<show id="bcpg:nutListUnit"  />
 					<show id="bcpg:nutListValuePrepared" />
+					<show id="bcpg:nutListUnit"  />
 					<show id="bcpg:nutListUnitPrepared" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
+					 <show id="bcpg:parentLevel" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
-					<show id="bcpg:parentLevel" />
+					<show id="bcpg:nutListMeasurementPrecision" />
+					
 					<show id="rep:reportKinds" />
 				</field-visibility>
 
@@ -6615,19 +7041,25 @@
 							<control-param name="ds">becpg/autocomplete/nut</control-param>
 						</control>
 					</field>
-					<field id="bcpg:nutListValue" >
+					<field id="bcpg:nutListValue"  >
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">-</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nutListValuePrepared"  >
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">-</control-param>
 						</control>
 					</field>
 					<field id="bcpg:nutListUnit" read-only="true" set="2-col"/>
-					<field id="bcpg:nutListValuePrepared" read-only="true" />
-					<field id="bcpg:nutListUnitPrepared" />
+					<field id="bcpg:nutListUnitPrepared"  read-only="true" set="2-col"/>
 					<field id="bcpg:nutListMini" set="2-col"/>
 					<field id="bcpg:nutListMaxi" set="2-col"/>
 					<field id="bcpg:nutListLossPerc" set="2-col"/>
 					<field id="bcpg:nutListMethod" set="2-col"/>
+					<field id="bcpg:nutListMeasurementPrecision" set="2-col"/>
 					<field id="bcpg:parentLevel" set="2-col">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=bcpg:nutList&#38;attributeName=bcpg:nutListNut</control-param>
@@ -6666,12 +7098,14 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:organoListOrgano" />
 					<show id="bcpg:organoListValue" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
@@ -6756,6 +7190,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:pclPhysicoChem" />
 					<show id="bcpg:pclValue" />
@@ -6778,6 +7213,7 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:pclUnit" read-only="true"></field>
 				    <field id="bcpg:pclType" read-only="true"></field>
@@ -7006,6 +7442,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
 					<show id="bcpg:filQtyPercMaxi" />
@@ -7020,6 +7457,7 @@
 					<show id="bcpg:glopValue" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
@@ -7282,6 +7720,7 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show force="true" id="bcpg:eanCode"/>
 				    <show id="bcpg:contactListType" />
 					<show id="bcpg:contactListFirstName" />
@@ -7296,6 +7735,7 @@
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:isDeleted" >
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
@@ -7431,12 +7871,14 @@
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:lclLabelClaim" />
 					<show id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" />
 					<show id="bcpg:lclType" />
 					<show id="bcpg:lclClaimValue" />
 					<show id="bcpg:lclPercentClaim" />
 					<show id="bcpg:lclPercentApplicable" />
+					<show id="bcpg:lclCertification" force="true" />
 					<show id="bcpg:lclMissingLabelClaims" force="true"/>
 					<show id="bcpg:lclComments" force="true" />
 					<show id="fm:commentCount" force="true" />
@@ -7446,6 +7888,7 @@
 					<show id="dataList_bcpg:reqCtrlList" />
 				</field-visibility>
 				<appearance>
+					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:lclMissingLabelClaims" read-only="true"/>
 					<field id="entity_bcpg:lclLabelClaim_bcpg:labelClaim" label="hidden"/>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -7491,12 +7934,10 @@
 					<show id="bcpg:lclCertification" />
 				<!-- <show id="bcpg:certificateDate" force="true" />  -->	
 					<show id="bcpg:lclComments" />
-					<show id="bcpg:lclMissingLabelClaims" force="true"/>
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:lclMissingLabelClaims" read-only="true"/>
 					<field id="bcpg:lclComments">
 						<control template="/org/alfresco/components/form/controls/richtext.ftl">
 							<control-param name="rows">10</control-param>
@@ -7519,6 +7960,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:dynamicCharactTitle" />
+				    <show id="cm:title" force="true"/>
 					<show id="bcpg:dynamicCharactColumn" />
 					<show id="bcpg:dynamicCharactFormula" />
 					<show id="bcpg:dynamicCharactGroupColor" />
@@ -7547,6 +7989,7 @@
 					<show id="bcpg:dynamicCharactColumn" />
 					<show id="bcpg:dynamicCharactErrorLog" />
 					<show id="bcpg:dynamicCharactValue" />
+					<show id="cm:title" force="true"/>
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -7554,6 +7997,7 @@
 					<field id="bcpg:dynamicCharactColumn" label="hidden" />
 					<field id="bcpg:dynamicCharactErrorLog" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="cm:title" label="hidden" read-only="true" />
 				</appearance>
 			</form>
 
@@ -7592,6 +8036,7 @@
 			<form>
 				<field-visibility>
 					<show id="bcpg:dynamicCharactTitle" />
+					<show id="cm:title" force="true"/>
 					<show id="bcpg:dynamicCharactColumn" />
 					<show id="bcpg:dynamicCharactFormula" />
 					<show id="bcpg:dynamicCharactGroupColor" />

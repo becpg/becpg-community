@@ -28,6 +28,7 @@ import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.variant.model.VariantData;
 
 /**
  * <p>PhysicoChemCalculatingFormulationHandler class.</p>
@@ -71,9 +72,6 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 			}
 
 			formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList(), new SimpleListQtyProvider() {
-
-				Double netQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
-				Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 				
 				@Override
 				public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
@@ -86,13 +84,13 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 				}
 
 				@Override
-				public Double getNetWeight() {
-					return netWeight;
+				public Double getNetWeight(VariantData variant) {
+					return FormulationHelper.getNetWeight(formulatedProduct, variant, FormulationHelper.DEFAULT_NET_WEIGHT);
 				}
 
 				@Override
-				public Double getNetQty() {
-					return  netQty;
+				public Double getNetQty(VariantData variant) {
+					return  FormulationHelper.getNetQtyInLorKg(formulatedProduct ,variant , FormulationHelper.DEFAULT_NET_WEIGHT);
 				}
 
 				@Override
@@ -106,8 +104,8 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 				}
 
 				@Override
-				public Double getQty(ProcessListDataItem processListDataItem) {
-					return FormulationHelper.getQty(formulatedProduct, processListDataItem);
+				public Double getQty(ProcessListDataItem processListDataItem, VariantData variant) {
+					return FormulationHelper.getQty(formulatedProduct, variant , processListDataItem);
 				}
 
 				

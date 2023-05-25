@@ -5,6 +5,8 @@ import java.util.Locale;
 
 import org.alfresco.util.Pair;
 
+import fr.becpg.repo.product.data.constraints.NutMeasurementPrecision;
+
 /**
  * <p>EuropeanNutrientRegulation class.</p>
  *
@@ -143,23 +145,26 @@ public class EuropeanNutrientRegulation extends AbstractNutrientRegulation {
 
 	/** {@inheritDoc} */
 	@Override
-	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, Locale locale) {
+	protected String displayValueByCode(Double value, Double roundedValue, String nutrientTypeCode, String measurementPrecision, Locale locale) {
 		if ("MM".equals(locale.getCountry())) {
 			locale = new Locale("en");
 		}
-		if (value != null && roundedValue != null && nutrientTypeCode != null) {
-			if (nutrientTypeCode.equals(NutrientCode.FatSaturated) && value <= 0.1) {
-				return "< " + formatDouble(0.1, locale);
-			} else if ((nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
-					|| nutrientTypeCode.equals(NutrientCode.Sugar) || nutrientTypeCode.equals(NutrientCode.FiberDietary)
-					|| nutrientTypeCode.equals(NutrientCode.Protein)) && value <= 0.5) {
-				return "< " + formatDouble(0.5, locale);
-			} else if (nutrientTypeCode.equals(NutrientCode.Sodium) && value < 0.005) {
-				return "< " + formatDouble(0.005, locale);
-			} else if (nutrientTypeCode.equals(NutrientCode.Salt) && value < 0.0125) {
-				return "< " + formatDouble(0.01, locale);
+		if(measurementPrecision == null || NutMeasurementPrecision.LessThan.toString().equals(measurementPrecision)) {
+			if (value != null && roundedValue != null && nutrientTypeCode != null) {
+				if (nutrientTypeCode.equals(NutrientCode.FatSaturated) && value <= 0.1) {
+					return "< " + formatDouble(0.1, locale);
+				} else if ((nutrientTypeCode.equals(NutrientCode.Fat) || nutrientTypeCode.equals(NutrientCode.CarbohydrateByDiff)
+						|| nutrientTypeCode.equals(NutrientCode.Sugar) || nutrientTypeCode.equals(NutrientCode.FiberDietary)
+						|| nutrientTypeCode.equals(NutrientCode.Protein)) && value <= 0.5) {
+					return "< " + formatDouble(0.5, locale);
+				} else if (nutrientTypeCode.equals(NutrientCode.Sodium) && value < 0.005) {
+					return "< " + formatDouble(0.005, locale);
+				} else if (nutrientTypeCode.equals(NutrientCode.Salt) && value < 0.0125) {
+					return "< " + formatDouble(0.01, locale);
+				}
 			}
 		}
+		
 		return formatDouble(roundedValue, locale);
 	}
 

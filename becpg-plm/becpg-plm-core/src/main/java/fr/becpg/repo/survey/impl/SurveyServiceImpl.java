@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.StoreRef;
 import org.apache.commons.logging.Log;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.survey.SurveyModel;
@@ -69,40 +71,45 @@ public class SurveyServiceImpl implements SurveyService {
 	@Override
 	public JSONObject getSurveyData(NodeRef entityNodeRef, String dataListName) throws JSONException {
 		JSONObject ret = new JSONObject();
-		JSONArray data = new JSONArray();
-		JSONArray definitions = new JSONArray();
+		L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
 
-		Set<SurveyQuestion> questions = new HashSet<>();
+			JSONArray data = new JSONArray();
+			JSONArray definitions = new JSONArray();
 
-		for (Survey survey : getSurveys(entityNodeRef, dataListName)) {
-			JSONObject value = new JSONObject();
+			Set<SurveyQuestion> questions = new HashSet<>();
 
-			SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository.findOne(survey.getQuestion());
+			for (Survey survey : getSurveys(entityNodeRef, dataListName)) {
+				JSONObject value = new JSONObject();
 
-			appendQuestionDefinition(definitions, surveyQuestion, questions, survey.getSort());
-			if ((survey.getComment() != null) || !survey.getChoices().isEmpty()) {
-				value.put("qid", survey.getQuestion().getId());
-				if (survey.getComment() != null) {
-					value.put("comment", survey.getComment());
-				}
+				SurveyQuestion surveyQuestion = (SurveyQuestion) alfrescoRepository.findOne(survey.getQuestion());
 
-				if ((surveyQuestion.getResponseType() == null) || surveyQuestion.getResponseType().isEmpty()) {
-					for (NodeRef choice : survey.getChoices()) {
-						value.put("cid", choice.getId());
+				appendQuestionDefinition(definitions, surveyQuestion, questions);
+				if ((survey.getComment() != null) || !survey.getChoices().isEmpty()) {
+					value.put("qid", survey.getQuestion().getId());
+					if (survey.getComment() != null) {
+						value.put("comment", survey.getComment());
 					}
 
-				} else {
+					if ((surveyQuestion.getResponseType() == null) || surveyQuestion.getResponseType().isEmpty()) {
+						for (NodeRef choice : survey.getChoices()) {
+							value.put("cid", choice.getId());
+						}
 
-					value.put("listOptions", getOptions(survey.getChoices()));
-					value.put("cid", "sub-" + surveyQuestion.getNodeRef().getId().substring(4));
+					} else {
+
+						value.put("listOptions", getOptions(survey.getChoices()));
+						value.put("cid", "sub-" + surveyQuestion.getNodeRef().getId().substring(4));
+					}
+					data.put(value);
 				}
-				data.put(value);
+
 			}
 
-		}
+			ret.put("data", data);
+			ret.put("def", definitions);
 
-		ret.put("data", data);
-		ret.put("def", definitions);
+			return ret;
+		}), false, true, true);
 
 		return ret;
 	}
@@ -131,11 +138,12 @@ public class SurveyServiceImpl implements SurveyService {
 								choices.add(createNodeRef(cid));
 							}
 						} else if (value.has("cid")) {
-							choices.add(createNodeRef(value.getString("cid")));
+							for (String cid : value.getString("cid").split(",")) {
+								choices.add(createNodeRef(cid));
+							}
 						}
 
 						break;
-
 					}
 
 				}
@@ -175,14 +183,15 @@ public class SurveyServiceImpl implements SurveyService {
 		return new ArrayList<>();
 	}
 
-	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions, Integer sort) throws JSONException {
+	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions)
+			throws JSONException {
 
 		if (!questions.contains(surveyQuestion)) {
 
 			JSONObject definition = new JSONObject();
 
 			definition.put("id", surveyQuestion.getNodeRef().getId());
-			definition.put("sort", sort);
+			definition.put("sort", surveyQuestion.getSort());
 			definition.put("label", surveyQuestion.getLabel());
 			definition.put("start", questions.isEmpty() || Boolean.TRUE.equals(surveyQuestion.getIsVisible()));
 
@@ -226,20 +235,17 @@ public class SurveyServiceImpl implements SurveyService {
 					if (ResponseType.checkboxes.toString().equals(surveyQuestion.getResponseType())) {
 						choice.put("checkboxes", true);
 					}
-					
+
 					if (CommentType.text.toString().equals(surveyQuestion.getResponseCommentType())
 							|| CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 						choice.put("comment", true);
-						choice.put("commentLabel",  surveyQuestion.getResponseCommentLabel());
+						choice.put("commentLabel", surveyQuestion.getResponseCommentLabel());
 						if (CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 							choice.put("textarea", true);
 						}
 					}
-					
-					if (surveyQuestion.getNextQuestion() != null) {
-						choice.put("cid", surveyQuestion.getNextQuestion().getNodeRef().getId());
-						appendQuestionDefinition(definitions, surveyQuestion.getNextQuestion(), questions, sort + 1);
-					}
+
+					appendCids(choice, surveyQuestion, definitions, questions);
 
 					choices.put(choice);
 
@@ -251,10 +257,8 @@ public class SurveyServiceImpl implements SurveyService {
 						JSONObject choice = new JSONObject();
 						choice.put("id", defChoice.getNodeRef().getId());
 						choice.put("label", defChoice.getLabel());
-						if (defChoice.getNextQuestion() != null) {
-							choice.put("cid", defChoice.getNextQuestion().getNodeRef().getId());
-							appendQuestionDefinition(definitions, defChoice.getNextQuestion(), questions, sort + 1);
-						}
+						appendCids(choice, defChoice, definitions, questions);
+						
 						if (CommentType.text.toString().equals(defChoice.getResponseCommentType())
 								|| CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
 							choice.put("comment", true);
@@ -273,17 +277,14 @@ public class SurveyServiceImpl implements SurveyService {
 					|| CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 				JSONObject choice = new JSONObject();
 				choice.put("id", "sub-" + surveyQuestion.getNodeRef().getId().substring(4));
-				choice.put("label","hidden");
+				choice.put("label", "hidden");
 				choice.put("comment", true);
-				choice.put("commentLabel", surveyQuestion.getResponseCommentLabel() );
+				choice.put("commentLabel", surveyQuestion.getResponseCommentLabel());
 				if (CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 					choice.put("textarea", true);
 				}
 
-				if (surveyQuestion.getNextQuestion() != null) {
-					choice.put("cid", surveyQuestion.getNextQuestion().getNodeRef().getId());
-					appendQuestionDefinition(definitions, surveyQuestion.getNextQuestion(), questions, sort + 1);
-				}
+				appendCids(choice, surveyQuestion, definitions, questions);
 
 				choices.put(choice);
 			}
@@ -294,11 +295,26 @@ public class SurveyServiceImpl implements SurveyService {
 		}
 	}
 
+	private void appendCids(JSONObject choice, SurveyQuestion surveyQuestion, JSONArray definitions, Set<SurveyQuestion> questions) {
+		if (surveyQuestion.getNextQuestions() != null) {
+			JSONArray cids = new JSONArray();
+			for (SurveyQuestion question : surveyQuestion.getNextQuestions()) {
+				cids.put(question.getNodeRef().getId());
+				appendQuestionDefinition(definitions, question, questions);
+			}
+			if (cids.length() > 0) {
+				choice.put("cid", cids);
+			}
+
+		}
+
+	}
+
 	private List<NodeRef> getDefinitionChoices(SurveyQuestion surveyQuestion) {
 		BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().ofType(SurveyModel.TYPE_SURVEY_QUESTION).andPropEquals(BeCPGModel.PROP_PARENT_LEVEL,
 				surveyQuestion.getNodeRef().toString());
-	 	
-	    Map<String, Boolean> sortBy = new LinkedHashMap<>();
+
+		Map<String, Boolean> sortBy = new LinkedHashMap<>();
 		sortBy.put("@bcpg:sort", true);
 		return query.addSort(sortBy).inDB().list();
 	}

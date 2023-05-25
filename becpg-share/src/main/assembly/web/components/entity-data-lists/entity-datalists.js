@@ -219,10 +219,21 @@
                                         for(var z in me.options.sortOptions){
                                             if(listId1.name.indexOf(me.options.sortOptions[z].id) == 0){
                                                 val1 = me.options.sortOptions[z].sortIndex;
+                                                 if(listId1.name.indexOf("@")>0){
+													val1+=listId1.name.split("@")[1];
+												 }
+                                                
                                             }
                                             if(listId2.name.indexOf(me.options.sortOptions[z].id) == 0){
                                                 val2 = me.options.sortOptions[z].sortIndex;
+                                                 if(listId2.name.indexOf("@")>0){
+													val2+=listId2.name.split("@")[1];
+												 }
                                             }
+                                            
+                                           
+                                            
+                                            
                                             if(val1!=500 && val2!=500){
                                             	break;
                                             }

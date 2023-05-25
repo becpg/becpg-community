@@ -50,6 +50,7 @@
 				</list>
 			</parameter>
 		</constraint>
+		
 
 
 		<constraint name="bcpg:systemState" type="LIST">
@@ -305,6 +306,17 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+		
+		
+		<constraint name="bcpg:nutListMeasurementPrecisions" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+				    <value>Approximatly</value>
+					<value>LessThan</value>
+				</list>
+			</parameter>
+		</constraint>
+		
 
 		<constraint name="bcpg:allergenType" type="LIST">
 			<parameter name="allowedValues">
@@ -391,6 +403,16 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:lcaTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>Composition</value>
+					<value>Packaging</value>
+					<value>Process</value>
+				</list>
+			</parameter>
+		</constraint>
 		
 		<!-- TODO Create a dynamic constraint 
 		based on productUnit and currency  -->
@@ -459,6 +481,23 @@
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/MicrobioUnits</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="addEmptyValue">
+				<value>true</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="bcpg:microbioTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/MicrobioTypes</value>
 				</list>
 			</parameter>
 			<parameter name="constraintType">
@@ -679,6 +718,58 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:lcaUnits" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/LCAUnits</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+		</constraint>
+		
+		<constraint name="bcpg:lcaListUnits" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>/System/Lists/bcpg:entityLists/LCAUnits</value>
+				</list>
+			</parameter>
+			<parameter name="constraintType">
+				<value>bcpg:listValue</value>
+			</parameter>
+			<parameter name="constraintProp">
+				<value>bcpg:lvValue</value>
+			</parameter>
+			<parameter name="allowedValuesSuffix">
+				<list>
+					<value></value>
+					<value>/L</value>
+					<value>/cL</value>
+					<value>/mL</value>
+					<value>/kg</value>
+					<value>/g</value>
+					<value>/lb</value>
+					<value>/oz</value>
+					<value>/P</value>
+					<value>/m</value>
+					<value>/mm</value>
+					<value>/in</value>
+					<value>/ft</value>
+					<value>/gal</value>
+					<value>/cp</value>
+					<value>/fl_oz</value>
+					<value>/m2</value>
+					<value>/h</value>
+					<value>/Pal</value>
+				</list>
+			</parameter>
+		</constraint>
+		
 	</constraints>
 
 	<types>
@@ -1139,6 +1230,50 @@
 				</property>
 			</properties>
 		</type>
+		
+		<type name="bcpg:lca">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:lcaUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="bcpg:lcaUnits" />
+					</constraints>
+				</property>
+				<property name="bcpg:lcaType">
+					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="bcpg:lcaTypes" />
+					</constraints>
+				</property>
+				<property name="bcpg:lcaFixed">
+					<type>d:boolean</type>
+					<mandatory enforced="true">true</mandatory>
+					<default>false</default>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				<property name="bcpg:lcaFormula">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:lcaPonderation">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+			</properties>
+		</type>
 
 		<type name="bcpg:ingTypeItem">
 			<parent>bcpg:listValue</parent>
@@ -1187,6 +1322,19 @@
 
 		<type name="bcpg:microbio">
 			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:microbioType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="bcpg:microbioTypes" />
+					</constraints>
+				</property>
+			</properties>
 		</type>
 
 		<type name="bcpg:nut">
@@ -1949,6 +2097,86 @@
 				<aspect>bcpg:depthLevelAspect</aspect>
 			</mandatory-aspects>
 		</type>
+		
+		<type name="bcpg:lcaList">
+			<parent>bcpg:productListItem</parent>
+			<properties>
+				<property name="bcpg:lcaListValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:lcaListUnit">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:lcaListUnits" />
+					</constraints>
+				</property>
+				<property name="bcpg:lcaListPreviousValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:lcaListFutureValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:lcaListValuePerProduct">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:lcaListMaxi">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:lcaListIsFormulated">
+					<type>d:boolean</type>
+					<default>false</default>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:lcaListFormulaErrorLog">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:lcaListSimulatedValue">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:lcaListLca">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:lca</class>
+						<mandatory>true</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+				<association name="bcpg:lcaListComponent">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:product</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:depthLevelAspect</aspect>
+			</mandatory-aspects>
+		</type>
 
 		<type name="bcpg:priceList">
 			<parent>bcpg:productListItem</parent>
@@ -2289,6 +2517,17 @@
 						<constraint ref="bcpg:microbioUnit" />
 					</constraints>
 				</property>
+				<property name="bcpg:mblType">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="bcpg:microbioTypes" />
+					</constraints>
+				</property>
 				<property name="bcpg:mblMaxi">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -2397,6 +2636,18 @@
 						<constraint ref="bcpg:nutListMethods" />
 					</constraints>
 				</property>
+					<property name="bcpg:nutListMeasurementPrecision">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="bcpg:nutListMeasurementPrecisions" />
+					</constraints>
+				</property>
+				
 				<property name="bcpg:nutListIsFormulated">
 					<type>d:boolean</type>
 					<default>false</default>
@@ -4748,6 +4999,12 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:nutListFormulatedValuePerServing">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				
 				<property name="bcpg:nutListGDAPerc">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -4756,9 +5013,13 @@
 			</properties>
 		</aspect>
 		
-			<aspect name="bcpg:nutListPreparedAspect">
+		<aspect name="bcpg:nutListPreparedAspect">
 			<properties>
 				<property name="bcpg:nutListValuePrepared">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+				</property>
+				<property name="bcpg:nutListFormulatedValuePrepared">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 				</property>

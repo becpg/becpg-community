@@ -36,6 +36,13 @@
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
 
+	<bean id="lcaCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.LCACharactDetailsVisitor">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="packagingHelper" ref="packagingHelper" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	</bean>
+
 	<bean id="packagingMaterialCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.PackagingMaterialCharactDetailsVisitor">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
@@ -46,7 +53,13 @@
 		<property name="nodeService" ref="nodeService" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
-
+	
+	<bean id="labelClaimCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.LabelClaimCharactDetailsVisitor">
+		<property name="alfrescoRepository" ref="alfrescoRepository" />
+		<property name="nodeService" ref="nodeService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
+	</bean>
+	
 	<bean id="charactDetailsVisitorFactory" class="fr.becpg.repo.product.CharactDetailsVisitorFactoryImpl">
 		<property name="visitorRegistry">
 			<map>
@@ -59,6 +72,9 @@
 				<entry key="bcpg:costList">
 					<ref bean="costCharactDetailsVisitor" />
 				</entry>
+				<entry key="bcpg:lcaList">
+					<ref bean="lcaCharactDetailsVisitor" />
+				</entry>
 				<entry key="bcpg:physicoChemList">
 					<ref bean="simpleCharactDetailsVisitor" />
 				</entry>
@@ -67,6 +83,9 @@
 				</entry>
 				<entry key="pack:packMaterialList">
 					<ref bean="packagingMaterialCharactDetailsVisitor" />
+				</entry>
+				<entry key="bcpg:labelClaimList">
+					<ref bean="labelClaimCharactDetailsVisitor" />
 				</entry>
 			</map>
 		</property>
@@ -142,6 +161,12 @@
 					<property name="packagingHelper" ref="packagingHelper" />
 					<property name="alfrescoRepositoryProductData" ref="alfrescoRepository" />
 					<property name="keepProductUnit" value="${beCPG.formulation.costList.keepProductUnit}" />
+				</bean>
+				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.LCACalculatingFormulationHandler">
+					<property name="entityTplService" ref="entityTplService" />
+					<property name="formulaService" ref="formulaService" />
+					<property name="packagingHelper" ref="packagingHelper" />
+					<property name="alfrescoRepositoryProductData" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.IngsCalculatingFormulationHandler">
 					<property name="nodeService" ref="nodeService" />

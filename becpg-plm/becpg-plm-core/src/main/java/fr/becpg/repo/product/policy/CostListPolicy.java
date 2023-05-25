@@ -66,6 +66,7 @@ public class CostListPolicy extends AbstractBeCPGPolicy implements CopyServicePo
 	 */
 	public void doInit() {
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, PLMModel.TYPE_COSTLIST, new JavaBehaviour(this, "getCopyCallback"));
+		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, PLMModel.TYPE_LCALIST, new JavaBehaviour(this, "getCopyCallback"));
 	}
 
 

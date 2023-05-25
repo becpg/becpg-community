@@ -28,8 +28,7 @@ public class SearchConfig {
 
 	private List<DataListSearchFilter> dataListSearchFilters = new ArrayList<>();
 	
-
-	private static Set<String> keysToExclude = new HashSet<>();
+	private  Set<String> keysToExclude = new HashSet<>();
 
 
 	/**
@@ -56,7 +55,7 @@ public class SearchConfig {
 	 *
 	 * @return a {@link java.util.Set} object.
 	 */
-	public static Set<String> getKeysToExclude() {
+	public  Set<String> getKeysToExclude() {
 		return keysToExclude;
 	}
 
@@ -70,7 +69,7 @@ public class SearchConfig {
 	 */
 	public void parse(String content, NamespaceService namespaceService, EntityDictionaryService entityDictionaryService) {
 		try {
-
+			
 			JSONObject jsonObject = new JSONObject(content);
 
 			JSONObject filters = jsonObject.getJSONObject("dataListSearchFilters");
