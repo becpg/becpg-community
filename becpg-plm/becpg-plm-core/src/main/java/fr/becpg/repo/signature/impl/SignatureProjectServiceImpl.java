@@ -104,7 +104,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 		
 		List<NodeRef> recipients = AuthorityHelper.extractPeople(viewRecipients);
 
-		NodeRef lastTask = createSignatureTasks(project, preparedDocuments, recipients, rejectTask.getNodeRef(), rejectTask);
+		NodeRef lastTask = createOrUpdateSignatureTasks(project, preparedDocuments, recipients, rejectTask.getNodeRef(), rejectTask);
 
 		createValidatingTask(project, originalDocuments, lastTask, rejectTask);
 
@@ -148,13 +148,13 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 	
 				List<NodeRef> recipients = AuthorityHelper.extractPeople(viewRecipients);
 	
-				NodeRef lastTask = createSignatureTasks(project, List.of(documentToSign), recipients, previousTask, null);
+				NodeRef lastTask = createOrUpdateSignatureTasks(project, List.of(documentToSign), recipients, previousTask, null);
 	
 				lastsTasks.add(lastTask);
 			}
 	
 			if (signatureProjectPlugin != null) {
-				signatureProjectPlugin.createClosingTask(project, lastsTasks);
+				signatureProjectPlugin.createOrUpdateClosingTask(project, lastsTasks);
 			}
 	
 		}
@@ -329,7 +329,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 
 	}
 
-	private NodeRef createSignatureTasks(ProjectData project, List<NodeRef> documents, List<NodeRef> recipients, NodeRef previousTask,
+	private NodeRef createOrUpdateSignatureTasks(ProjectData project, List<NodeRef> documents, List<NodeRef> recipients, NodeRef previousTask,
 			TaskListDataItem rejectTask) {
 
 		for (NodeRef recipient : recipients) {
@@ -337,16 +337,21 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 			String resourceFirstName = (String) nodeService.getProperty(recipient, ContentModel.PROP_FIRSTNAME);
 			String resourceLastName = (String) nodeService.getProperty(recipient, ContentModel.PROP_LASTNAME);
 
-			TaskListDataItem newTask = projectService.createNewTask(project);
-
+			String taskName = I18NUtil.getMessage("signatureWorkflow.task-signature.name");
+			
+			TaskListDataItem newTask = project.getTaskList().stream().filter(task -> task.getTaskName().equals(taskName)).findFirst().orElseGet(() -> projectService.createNewTask(project));
+			
 			newTask.setRefusedTask(rejectTask);
 
-			newTask.getPrevTasks().add(previousTask);
-
-			newTask.setTaskName(nodeService.getProperty(recipient, ContentModel.PROP_FIRSTNAME) + " "
-					+ nodeService.getProperty(recipient, ContentModel.PROP_LASTNAME) + " - SIGNATURE");
-
-			newTask.getResources().add(recipient);
+			if (!newTask.getPrevTasks().contains(previousTask)) {
+				newTask.getPrevTasks().add(previousTask);
+			}
+			
+			newTask.setTaskName(taskName);
+			
+			if (!newTask.getResources().contains(recipient)) {
+				newTask.getResources().add(recipient);
+			}
 
 			newTask.setTaskName(I18NUtil.getMessage("signatureWorkflow.task-signature.name"));
 			newTask.setNotificationFrequency(7);
@@ -357,16 +362,27 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 
 				String docName = (String) nodeService.getProperty(doc, ContentModel.PROP_NAME);
 
-				project.getDeliverableList()
-						.add(ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - prepare", docName,
-								DeliverableScriptOrder.Pre, newTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
-										"/app:company_home/app:dictionary/app:scripts/cm:prepare-signature.js")));
-				project.getDeliverableList()
-						.add(ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - url", docName, null, newTask, doc));
-				project.getDeliverableList()
-						.add(ProjectHelper.createDeliverable(docName + resourceFirstName + resourceLastName + " - sign", docName,
-								DeliverableScriptOrder.Post, newTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
-										"/app:company_home/app:dictionary/app:scripts/cm:sign-document.js")));
+				String prepareDeliverableName = docName + resourceFirstName + resourceLastName + " - prepare";
+				
+				if (project.getDeliverableList().stream().noneMatch(del -> del.getName().equals(prepareDeliverableName))) {
+					project.getDeliverableList().add(ProjectHelper.createDeliverable(prepareDeliverableName, docName,
+							DeliverableScriptOrder.Pre, newTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
+									"/app:company_home/app:dictionary/app:scripts/cm:prepare-signature.js")));
+				}
+				
+				String urlDeliverableName = docName + resourceFirstName + resourceLastName + " - url";
+				
+				if (project.getDeliverableList().stream().noneMatch(del -> del.getName().equals(urlDeliverableName))) {
+					project.getDeliverableList().add(ProjectHelper.createDeliverable(urlDeliverableName, docName, null, newTask, doc));
+				}
+				
+				String signDeliverableName = docName + resourceFirstName + resourceLastName + " - sign";
+				
+				if (project.getDeliverableList().stream().noneMatch(del -> del.getName().equals(signDeliverableName))) {
+					project.getDeliverableList().add(ProjectHelper.createDeliverable(signDeliverableName, docName,
+							DeliverableScriptOrder.Post, newTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
+									"/app:company_home/app:dictionary/app:scripts/cm:sign-document.js")));
+				}
 			}
 
 			previousTask = newTask.getNodeRef();

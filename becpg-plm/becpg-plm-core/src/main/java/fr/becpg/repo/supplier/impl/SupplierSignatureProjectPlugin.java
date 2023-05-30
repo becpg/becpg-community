@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
@@ -123,21 +124,29 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	}
 
 	@Override
-	public void createClosingTask(ProjectData project, List<NodeRef> lastTasks) {
-		TaskListDataItem closingTask = projectService.createNewTask(project);
-	
-		closingTask.setTaskName(I18NUtil.getMessage("plm.supplier.portal.task.closing.name"));
+	public void createOrUpdateClosingTask(ProjectData project, List<NodeRef> lastTasks) {
+		
+		String taskName = I18NUtil.getMessage("plm.supplier.portal.task.closing.name");
+		
+		TaskListDataItem closingTask = project.getTaskList().stream().filter(task -> task.getTaskName().equals(taskName)).findFirst().orElseGet(() -> projectService.createNewTask(project));
+
+		closingTask.setTaskName(taskName);
 	
 		NodeRef creator = personService.getPerson(project.getCreator());
 	
-		closingTask.getResources().add(creator);
+		if (!closingTask.getResources().contains(creator)) {
+			closingTask.getResources().add(creator);
+		}
+		
+		lastTasks.stream().filter(Predicate.not(closingTask.getPrevTasks()::contains)).forEach(closingTask.getPrevTasks()::add);
 	
-		closingTask.getPrevTasks().addAll(lastTasks);
-	
-		project.getDeliverableList()
-				.add(ProjectHelper.createDeliverable(project.getName(), I18NUtil.getMessage("plm.supplier.portal.task.closing.name"),
-						DeliverableScriptOrder.Post, closingTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
-								"/app:company_home/app:dictionary/app:scripts/cm:validateProjectEntity.js")));
+		String closingTaskDeliverableName = project.getName();
+		
+		if (project.getDeliverableList().stream().noneMatch(del -> del.getName().equals(closingTaskDeliverableName))) {
+			project.getDeliverableList().add(ProjectHelper.createDeliverable(closingTaskDeliverableName, I18NUtil.getMessage("plm.supplier.portal.task.closing.name"),
+					DeliverableScriptOrder.Post, closingTask, BeCPGQueryBuilder.createQuery().selectNodeByPath(repository.getCompanyHome(),
+							"/app:company_home/app:dictionary/app:scripts/cm:validateProjectEntity.js")));
+		}
 	
 	}
 
