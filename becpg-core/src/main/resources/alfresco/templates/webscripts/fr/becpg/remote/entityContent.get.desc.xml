@@ -19,6 +19,7 @@
 	<shortname>Get entity content</shortname>
 	<description>Get the entity's content</description>	
 	<url>/becpg/remote/entity/content?nodeRef={nodeRef}</url>
+	<url>/becpg/remote/content?nodeRef={nodeRef}</url>
 	<authentication>user</authentication>
 	<format default="">extension</format>
 	<!-- beCPG Do not remove buffersize=0 
