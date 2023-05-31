@@ -164,6 +164,13 @@
 		<property name="checkOutCheckInService" ref="checkOutCheckInService" />
 		<property name="entityVersionService" ref="entityVersionService" />
 	</bean>
+	
+	<bean id="webscript.fr.becpg.entity.compareEntityDataSource.get" class="fr.becpg.repo.web.scripts.entity.CompareEntityDataSourceWebScript" parent="webscript">
+		<property name="compareEntityReportService" ref="compareEntityReportService" />
+		<property name="versionService" ref="versionService" />
+		<property name="entityVersionService" ref="entityVersionService" />
+		<property name="nodeService" ref="NodeService" />
+	</bean>
 
 	<bean id="webscript.fr.becpg.entity.compareEntityReport.get" class="fr.becpg.repo.web.scripts.entity.CompareEntityReportWebScript" parent="webscript">
 		<property name="compareEntityReportService" ref="compareEntityReportService" />

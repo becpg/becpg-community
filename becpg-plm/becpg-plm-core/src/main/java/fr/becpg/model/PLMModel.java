@@ -78,6 +78,12 @@ public interface PLMModel {
 	QName ASSOC_COMPOLIST_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "compoListProduct");
 	/** Constant <code>PROP_COMPOLIST_QTY</code> */
 	QName PROP_COMPOLIST_QTY = QName.createQName(BeCPGModel.BECPG_URI, "compoListQty");
+	/** Constant <code>PROP_COMPOLIST_QTY_FOR_PRODUCT</code> */
+	QName PROP_COMPOLIST_QTY_FOR_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "compoListQtyForProduct");
+	/** Constant <code>PROP_COMPOLIST_QTY_PERC_FOR_PRODUCT</code> */
+	QName PROP_COMPOLIST_QTY_PERC_FOR_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "compoListQtyPercForProduct");
+	/** Constant <code>PROP_COMPOLIST_QTY_PERC_FOR_SF</code> */
+	QName PROP_COMPOLIST_QTY_PERC_FOR_SF = QName.createQName(BeCPGModel.BECPG_URI, "compoListQtyPercForSF");
 	/** Constant <code>PROP_COMPOLIST_QTY_SUB_FORMULA</code> */
 	QName PROP_COMPOLIST_QTY_SUB_FORMULA = QName.createQName(BeCPGModel.BECPG_URI, "compoListQtySubFormula");
 	/** Constant <code>PROP_COMPOLIST_QTY_AFTER_PROCESS</code> */
@@ -102,6 +108,12 @@ public interface PLMModel {
 	QName ASSOC_PACKAGINGLIST_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "packagingListProduct");
 	/** Constant <code>PROP_PACKAGINGLIST_QTY</code> */
 	QName PROP_PACKAGINGLIST_QTY = QName.createQName(BeCPGModel.BECPG_URI, "packagingListQty");
+	/** Constant <code>PROP_PACKAGINGLIST_QTY_FOR_PRODUCT</code> */
+	QName PROP_PACKAGINGLIST_QTY_FOR_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "packagingListQtyForProduct");
+	/** Constant <code>PROP_PACKAGINGLIST_QTY_PERC_FOR_PRODUCT</code> */
+	QName PROP_PACKAGINGLIST_QTY_PERC_FOR_PRODUCT = QName.createQName(BeCPGModel.BECPG_URI, "packagingListQtyPercForProduct");
+	/** Constant <code>PROP_PACKAGINGLIST_QTY_PERC_FOR_SF</code> */
+	QName PROP_PACKAGINGLIST_QTY_PERC_FOR_SF = QName.createQName(BeCPGModel.BECPG_URI, "packagingListQtyPercForSF");
 	/** Constant <code>PROP_PACKAGINGLIST_UNIT</code> */
 	QName PROP_PACKAGINGLIST_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "packagingListUnit");
 	/** Constant <code>PROP_PACKAGINGLIST_PKG_LEVEL</code> */
