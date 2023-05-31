@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
+import fr.becpg.repo.report.entity.impl.DefaultExtractorContext;
 
 /**
  * <p>ProjectReportExtractor class.</p>
@@ -23,7 +24,7 @@ public class ProjectReportExtractor extends DefaultEntityReportExtractor {
 	
 	/** {@inheritDoc} */
 	@Override
-	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt,  DefaultExtractorContext context) {
+	protected boolean loadTargetAssoc(NodeRef entityNodeRef, AssociationDefinition assocDef, Element entityElt, DefaultExtractorContext context) {
 		
 		if (assocDef != null && assocDef.getName() != null) {
 			if (assocDef.getName().equals(ProjectModel.ASSOC_PROJECT_ENTITY)) {					
