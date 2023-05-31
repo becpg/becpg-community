@@ -354,59 +354,6 @@
 			</build>
 
 		</profile>
-		<profile>
-			<id>full</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>com.spotify</groupId>
-						<artifactId>dockerfile-maven-plugin</artifactId>
-						<version>1.4.10</version>
-						<executions>
-							<execution>
-								<id>becpg-base-core</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>build</goal>
-								</goals>
-								<configuration>
-									<repository>${docker.becpg.url}/becpg-base-core</repository>
-									<contextDirectory>${project.build.directory}/becpg-base-core</contextDirectory>
-									<pullNewerImage>true</pullNewerImage>
-									<tag>${docker.becpg.tag}</tag>
-								</configuration>
-							</execution>
-							<execution>
-								<id>becpg-base-share</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>build</goal>
-								</goals>
-								<configuration>
-									<repository>${docker.becpg.url}/becpg-base-share</repository>
-									<contextDirectory>${project.build.directory}/becpg-base-share</contextDirectory>
-									<pullNewerImage>true</pullNewerImage>
-									<tag>${docker.becpg.tag}</tag>
-								</configuration>
-							</execution>
-							<execution>
-								<id>becpg-glop</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>build</goal>
-								</goals>
-								<configuration>
-									<repository>${docker.becpg.url}/becpg-glop</repository>
-									<contextDirectory>${project.build.directory}/becpg-glop</contextDirectory>
-									<pullNewerImage>true</pullNewerImage>
-									<tag>${docker.becpg.tag}</tag>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
 		
 		<profile>
 			<id>sonar</id>
