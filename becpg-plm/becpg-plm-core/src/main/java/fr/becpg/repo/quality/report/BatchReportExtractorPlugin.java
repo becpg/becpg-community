@@ -30,9 +30,11 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
+import fr.becpg.repo.product.comparison.CurrentLevelQuantities;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.report.ProductReportExtractorPlugin;
 import fr.becpg.repo.quality.data.BatchData;
+import fr.becpg.repo.report.entity.impl.DefaultExtractorContext;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
@@ -110,7 +112,8 @@ public class BatchReportExtractorPlugin extends ProductReportExtractorPlugin {
 
 			for (CompoListDataItem dataItem : batchData.getCompoList()) {
 				if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
-					loadCompoListItem(batchData.getNodeRef(), null, compoListElt, 1, new CurrentLevelQuantities(dataItem), context);
+					loadCompoListItem(batchData.getNodeRef(), null, compoListElt, 1, 
+					new CurrentLevelQuantities(alfrescoRepository, packagingHelper, dataItem), context);
 				}
 			}
 

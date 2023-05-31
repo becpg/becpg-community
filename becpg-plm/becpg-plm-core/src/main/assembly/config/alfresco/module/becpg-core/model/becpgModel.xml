@@ -1786,6 +1786,21 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:compoListQtyForProduct">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:compoListQtyPercForProduct">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:compoListQtyPercForSF">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:compoListQtySubFormula">
 					<type>d:double</type>
 					<mandatory>true</mandatory>
@@ -1857,6 +1872,21 @@
 				<property name="bcpg:packagingListQty">
 					<type>d:double</type>
 					<mandatory>true</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:packagingListQtyForProduct">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:packagingListQtyPercForProduct">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+				<property name="bcpg:packagingListQtyPercForSF">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
 				<property name="bcpg:packagingListUnit">
