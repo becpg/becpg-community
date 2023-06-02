@@ -30,7 +30,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.QualityModel;
-import fr.becpg.repo.product.comparison.CurrentLevelQuantities;
+import fr.becpg.repo.product.data.CurrentLevelQuantities;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.report.ProductReportExtractorPlugin;
 import fr.becpg.repo.quality.data.BatchData;
