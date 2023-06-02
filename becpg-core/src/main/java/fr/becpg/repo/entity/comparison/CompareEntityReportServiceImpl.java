@@ -20,6 +20,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.commons.text.StringEscapeUtils;
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
@@ -172,6 +173,28 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		
 		return documentName;
 	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public String getXmlReportDataSource(NodeRef entity, List<NodeRef> entities) {
+		List<CompareResultDataItem> compareResult = new ArrayList<>();
+		Map<String, List<StructCompareResultDataItem>> structCompareResults = new HashMap<>();
+		
+		compareEntityService.compare(entity, entities, compareResult, structCompareResults);
+		
+		// Prepare data source
+		Document document = DocumentHelper.createDocument();
+		Element entitiesCmpElt = document.addElement(TAG_ENTITIES_COMPARISON);
+		
+		entitiesCmpElt.add(renderComparisonAsXmlData(entity, entities, compareResult));
+		entitiesCmpElt.add(renderStructComparisonAsXmlData(structCompareResults));
+		
+		if (logger.isDebugEnabled()) {
+			logger.debug("comparison XML " + entitiesCmpElt.asXML());
+		}
+		
+		return entitiesCmpElt.asXML();
+	}
 
 	/**
 	 * Render the comparison as xml data.
@@ -212,13 +235,15 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 				cmpRowElt.addAttribute(ATTR_ENTITYLIST_QNAME, c.getEntityList().toPrefixString(namespaceService));
 			}
 			
-			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC,c.getCharactName());
+			cmpRowElt.addAttribute(ATTR_CHARACTERISTIC, c.getCharactName());
 			cmpRowElt.addAttribute(ATTR_PROPERTY, getClassAttributeTitle(def, c.getProperty()));
 			cmpRowElt.addAttribute(ATTR_PROPERTY_QNAME, c.getProperty().toPrefixString(namespaceService));
 			cmpRowElt.addAttribute(ATTR_IS_DIFFERENT, Boolean.toString(c.isDifferent()));
 
 			i = 1;
 			for (String value : c.getValues()) {
+				// Escaping text to replace invalid chars in rendered XML output (e.g: 'property="Name "value""')
+				value = StringEscapeUtils.escapeXml11(value);
 				if (logger.isDebugEnabled()) {
 					logger.debug("compare prop: " + c.getProperty() + " - " + ATTR_VALUE + i + " " + value);
 				}
@@ -352,7 +377,8 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 			}
 		}
 
-		return (title != null) ? title : "";
+		// Escaping text to replace invalid chars in rendered XML output (e.g: 'property="Name "value""')
+		return (title != null) ? StringEscapeUtils.escapeXml11(title) : "";
 	}
 
 	private BecpgFormDefinition getFormDef(Map<String, BecpgFormDefinition> defs, QName property, 
