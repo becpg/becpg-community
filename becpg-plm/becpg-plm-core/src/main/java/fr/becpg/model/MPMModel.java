@@ -48,6 +48,18 @@ public class MPMModel {
 	/** Constant <code>PROP_PL_QTY</code> */
 	public static final QName PROP_PL_QTY = QName.createQName(MPM_URI,
 			"plQty");
+	/** Constant <code>PROP_PL_QTY_FOR_PRODUCT</code> */
+	public static final QName PROP_PL_QTY_FOR_PRODUCT = QName.createQName(MPM_URI,
+			"plQtyForProduct");
+	/** Constant <code>PROP_PL_QTY_PERC_FOR_PRODUCT</code> */
+	public static final QName PROP_PL_QTY_PERC_FOR_PRODUCT = QName.createQName(MPM_URI,
+			"plQtyPercForProduct");
+	/** Constant <code>PROP_PL_QTY_PERC_FOR_SF</code> */
+	public static final QName PROP_PL_QTY_PERC_FOR_SF = QName.createQName(MPM_URI,
+			"plQtyPercForSF");
+	/** Constant <code>PROP_PL_UNIT</code> */
+	public static final QName PROP_PL_UNIT = QName.createQName(MPM_URI,
+			"plUnit");
 	/** Constant <code>PROP_PL_QTY_RESOURCE</code> */
 	public static final QName PROP_PL_QTY_RESOURCE = QName.createQName(MPM_URI,
 			"plQtyResource");

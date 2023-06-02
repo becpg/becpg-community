@@ -22,11 +22,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ApplicationModel;
@@ -244,99 +242,6 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 		public void run();
 	}
 
-	public class DefaultExtractorContext {
-
-		boolean isInDataListContext = false;
-
-		Map<String, String> preferences;
-		Map<String, Boolean> cache = new HashMap<>(4);
-
-		Set<NodeRef> extractedNodes = new HashSet<>();
-
-		EntityReportData reportData = new EntityReportData();
-
-		public DefaultExtractorContext(Map<String, String> preferences) {
-			super();
-			this.preferences = preferences;
-		}
-
-
-		public Map<String, Boolean> getCache() {
-			return cache;
-		}
-
-
-		public Map<String, String> getPreferences() {
-			return preferences;
-		}
-
-		public Set<NodeRef> getExtractedNodes() {
-			return extractedNodes;
-		}
-
-
-		public EntityReportData getReportData() {
-			return reportData;
-		}
-
-		public boolean prefsContains(String key, String defaultValue, String query) {
-			if (((defaultValue != null) && defaultValue.contains(query)) || (preferences.containsKey(key) && preferences.get(key).contains(query))) {
-				return true;
-			}
-
-			return false;
-		}
-
-		public boolean multiPrefsEquals(String key, String defaultValue, String query) {
-			if (((defaultValue != null) && Arrays.asList(defaultValue.split(",")).contains(query)) || (preferences.containsKey(key) && Arrays.asList(preferences.get(key).split(",")).contains(query))) {
-				return true;
-			}
-
-			return false;
-		}
-
-		public boolean isPrefOn(String key, Boolean defaultValue) {
-			if (Boolean.TRUE.equals(defaultValue) || (preferences.containsKey(key) && "true".equalsIgnoreCase(preferences.get(key)))) {
-				return true;
-			}
-
-			return false;
-		}
-
-		public String getPrefValue(String key, String defaultValue) {
-
-
-			if (preferences.containsKey(key) ) {
-				return preferences.get(key);
-			}
-
-			return defaultValue;
-		}
-
-		public boolean isNotEmptyPrefs(String key, String defaultValue) {
-			if (((defaultValue != null) && !defaultValue.isEmpty()) || (preferences.containsKey(key) && !preferences.get(key).isEmpty())) {
-				return true;
-			}
-
-			return false;
-		}
-
-		public boolean isInDataListContext() {
-			return isInDataListContext;
-		}
-
-		public void doInDataListContext(DefaultExtractorContextCallBack callBack) {
-			try {
-				isInDataListContext = true;
-				callBack.run();
-			} finally {
-				isInDataListContext = false;
-			}
-
-		}
-
-	}
-
 	/** {@inheritDoc} */
 	@Override
 	public EntityReportData extract(NodeRef entityNodeRef, Map<String, String> preferences) {
@@ -548,15 +453,17 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			if (context.prefsContains("assocsToExtractWithImage", assocsToExtractWithImage, prefixedAssocName)) {
 				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
 				Element imgsElt = (Element) entityElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
-				int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
-
-				for (NodeRef nodeRef : nodeRefs) {
-					if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-						extractImage(nodeRef, nodeRef, assocDef.getName().getLocalName() + "_" + cnt, imgsElt, context);
-					} else {
-						extractEntityImages(nodeRef, imgsElt, context);
+				if (imgsElt != null) {
+					int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
+	
+					for (NodeRef nodeRef : nodeRefs) {
+						if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
+							extractImage(nodeRef, nodeRef, assocDef.getName().getLocalName() + "_" + cnt, imgsElt, context);
+						} else {
+							extractEntityImages(nodeRef, imgsElt, context);
+						}
+						cnt++;
 					}
-					cnt++;
 				}
 			}
 		}
