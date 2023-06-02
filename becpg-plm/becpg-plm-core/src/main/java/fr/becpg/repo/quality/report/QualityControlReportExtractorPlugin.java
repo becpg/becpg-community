@@ -30,6 +30,7 @@ import fr.becpg.model.QualityModel;
 import fr.becpg.repo.quality.data.QualityControlData;
 import fr.becpg.repo.report.entity.EntityReportExtractorPlugin;
 import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
+import fr.becpg.repo.report.entity.impl.DefaultExtractorContext;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 

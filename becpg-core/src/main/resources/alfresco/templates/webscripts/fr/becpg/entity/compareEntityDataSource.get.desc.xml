@@ -16,14 +16,9 @@
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
 <webscript>
-	<shortname>Get entity content</shortname>
-	<description>Get the entity's content</description>	
-	<url>/becpg/remote/entity/content?nodeRef={nodeRef}</url>
-	<url>/becpg/remote/content?nodeRef={nodeRef}</url>
+	<shortname>Get entity comparison datasource</shortname>
+	<description>Get entity comparison datasource</description>	
+	<url>/becpg/entity/compare/datasource?entity={entity}&amp;entities={entities}</url>
 	<authentication>user</authentication>
-	<format default="">extension</format>
-	<!-- beCPG Do not remove buffersize=0 
-      buffersize wrap response for transactional concurrency failure but it will not work for large stream 
-    -->
-   <transaction buffersize="0" allow="readwrite" >required</transaction>
+	<transaction allow="readonly" >required</transaction>
 </webscript>

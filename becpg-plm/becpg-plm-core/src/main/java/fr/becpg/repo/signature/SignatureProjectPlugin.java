@@ -12,7 +12,7 @@ public interface SignatureProjectPlugin {
 	
 	NodeRef getExternalSignatureFolder(NodeRef projectNodeRef, List<NodeRef> documents, List<NodeRef> viewRecipients);
 
-	void createClosingTask(ProjectData project, List<NodeRef> lastsTasks);
+	void createOrUpdateClosingTask(ProjectData project, List<NodeRef> lastsTasks);
 
 	boolean applyTo(String projectType);
 
