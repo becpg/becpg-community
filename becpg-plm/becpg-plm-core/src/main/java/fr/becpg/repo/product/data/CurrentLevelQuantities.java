@@ -1,8 +1,7 @@
-package fr.becpg.repo.product.comparison;
+package fr.becpg.repo.product.data;
 
 import org.alfresco.service.cmr.repository.NodeService;
 
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
@@ -21,7 +20,6 @@ public class CurrentLevelQuantities {
 	private ProductData componentProductData;
 	private CompoListDataItem compoListItem;
 
-	private CurrentLevelQuantities() {}
 
 	public CurrentLevelQuantities(AlfrescoRepository<BeCPGDataObject> alfrescoRepository, ProductData productData,
 			PackagingListDataItem packagingListDataItem) {
