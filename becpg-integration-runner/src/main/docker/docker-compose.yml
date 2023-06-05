@@ -94,18 +94,14 @@ services:
         timeout: 10s
         retries: 3
         
-  becpg-bus:
-     image: alfresco/alfresco-activemq:5.16.1
-     mem_limit: 1g
-     environment:
-      ACTIVEMQ_ADMIN_LOGIN: "admin"
-      ACTIVEMQ_ADMIN_PASSWORD: "becpg"
-     ports:
-        - 8161:8161 # Web Console
-#        - 5672:5672 # AMQP
-#        - 61616:61616 # OpenWire
-#        - 61613:61613 # STOMP
-          
+#  becpg-bus:
+#     image: alfresco/alfresco-activemq:5.16.1
+#     mem_limit: 1g
+#     environment:
+#      ACTIVEMQ_ADMIN_LOGIN: "admin"
+#      ACTIVEMQ_ADMIN_PASSWORD: "becpg"
+#     ports:
+#        - 8161:8161 # Web Console
 
   becpg-report:
     image:  ${docker.becpg.url}/becpg-report:3.2.3
