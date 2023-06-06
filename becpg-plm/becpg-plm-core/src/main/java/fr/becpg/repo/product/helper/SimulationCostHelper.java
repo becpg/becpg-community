@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.helper;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -56,7 +57,7 @@ public class SimulationCostHelper implements InitializingBean {
 	private static Log logger = LogFactory.getLog(SimulationCostHelper.class);
 
 	// T(fr.becpg.repo.product.helper.SimulationCostHelper).priceListItemByCriteria(ProductData
-	// productData, NodeRef cost, Double qtyInKg, List<NodeRef> geoOrigins)
+	// productData, NodeRef cost, Double qtyInKg, List<NodeRef> geoOrigins, Date effectiveDate)
 
 	/*
 	 * Rang 1 Coût MP 0 Coût MP 100 Coût MP 200
@@ -78,7 +79,15 @@ public class SimulationCostHelper implements InitializingBean {
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost, List<NodeRef> geoOrigins) {
 		return priceListItemByCriteria(productData, new NodeRef(cost), null, geoOrigins);
 	}
+	
+	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost) {
+		return priceListItemByCriteria(productData, new NodeRef(cost), null, null);
+	}
 
+	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost, Date effectiveDate) {
+		return priceListItemByCriteria(productData, new NodeRef(cost), null, null,effectiveDate);
+	}
+	
 	/*
 	 * Spel helper do not remove
 	 */
@@ -109,6 +118,10 @@ public class SimulationCostHelper implements InitializingBean {
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost, Double qtyInKg, List<NodeRef> geoOrigins) {
 		return priceListItemByCriteria(productData, new NodeRef(cost), qtyInKg, geoOrigins);
 	}
+	
+	public static PriceListDataItem priceListItemByCriteria(ProductData productData, NodeRef cost, Double qtyInKg, List<NodeRef> geoOrigins) {
+		return priceListItemByCriteria(productData,cost, qtyInKg, geoOrigins, new Date());
+	}
 
 	/**
 	 * <p>priceListItemByCriteria.</p>
@@ -119,9 +132,13 @@ public class SimulationCostHelper implements InitializingBean {
 	 * @param geoOrigins a {@link java.util.List} object.
 	 * @return a {@link fr.becpg.repo.product.data.productList.PriceListDataItem} object.
 	 */
-	public static PriceListDataItem priceListItemByCriteria(ProductData productData, NodeRef cost, Double qtyInKg, List<NodeRef> geoOrigins) {
+	public static PriceListDataItem priceListItemByCriteria(ProductData productData, NodeRef cost, Double qtyInKg, List<NodeRef> geoOrigins, Date effectiveDate) {
 		PriceListDataItem ret = null;
 		for (PriceListDataItem priceListDataItem : productData.getPriceList()) {
+			if (((priceListDataItem.getStartEffectivity() == null)
+					|| (priceListDataItem.getStartEffectivity().getTime() <= effectiveDate.getTime()))
+					&& ((priceListDataItem.getEndEffectivity() == null)
+							|| (priceListDataItem.getEndEffectivity().getTime() > effectiveDate.getTime()))) {
 			if ((cost != null) && cost.equals(priceListDataItem.getCost())) {
 				Double purchaseQtyInKg = priceListDataItem.getPurchaseValue();
 				if (purchaseQtyInKg != null) {
@@ -150,7 +167,6 @@ public class SimulationCostHelper implements InitializingBean {
 							}
 
 							if ((purchaseQtyInKg != null) && ((retPurchaseQtyInKgorL == null)
-
 									|| (purchaseQtyInKg > retPurchaseQtyInKgorL))) {
 								ret = priceListDataItem;
 							}
@@ -159,6 +175,7 @@ public class SimulationCostHelper implements InitializingBean {
 					}
 
 				}
+			}
 			}
 		}
 		return ret;
