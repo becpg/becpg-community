@@ -413,6 +413,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (dataListItem instanceof PackagingListDataItem) {
 			VariantPackagingData variantPackagingData = productData.getDefaultVariantPackagingData();
 
+			if (ProductUnit.PP.equals(((PackagingListDataItem)dataListItem).getPackagingListUnit()) && (dataListItem.getQty() != null)
+					 && dataListItem.getQty()!=0d) {
+				return 1/ dataListItem.getQty();
+			}
+			
+			
 			if ((variantPackagingData != null) && (dataListItem.getQty() != null)) {
 				if (PackagingLevel.Secondary.equals(((PackagingListDataItem) dataListItem).getPkgLevel())
 						&& (variantPackagingData.getProductPerBoxes() != null)) {
