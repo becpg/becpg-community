@@ -12,7 +12,6 @@ import org.alfresco.service.cmr.discussion.TopicInfo;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.json.simple.JSONObject;
 import org.springframework.extensions.webscripts.Cache;
@@ -21,7 +20,7 @@ import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 
 import fr.becpg.model.PLMModel;
-import fr.becpg.model.SystemGroup;
+import fr.becpg.repo.helper.AuthorityHelper;
 
 /**
  * <p>BeCPGForumPostGet class.</p>
@@ -64,7 +63,7 @@ public class BeCPGForumPostGet extends AbstractDiscussionWebScript {
 			model.put(KEY_POSTDATA, tmp);
 			
 			String supplierUserName = supplierAccountRef.get("userName") != null ? supplierAccountRef.get("userName") : "";
-			if(isCurrentUserExternal() && !AuthenticationUtil.getFullyAuthenticatedUser().equals(supplierUserName)) {
+			if(AuthorityHelper.isCurrentUserExternal() && !AuthenticationUtil.getFullyAuthenticatedUser().equals(supplierUserName)) {
 				String error = "Not allowed for this user";
 				throw new WebScriptException(Status.STATUS_BAD_REQUEST, error);
 			}
@@ -93,13 +92,4 @@ public class BeCPGForumPostGet extends AbstractDiscussionWebScript {
 		return ret;
 	}
 
-	private boolean isCurrentUserExternal() {
-		for (String currAuth : authorityService.getAuthorities()) {
-			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
 }
