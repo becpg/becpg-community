@@ -238,4 +238,12 @@
 	background-image:  url("../../components/images/select-color-16.png") ;
 }
 
+.datalist-toolbar .onActionLock  {
+	background-image:  url("../../modules/entity-datagrid/images/lock-16.png") ;
+}
+
+.datalist-toolbar .onActionUnlock  {
+	background-image:  url("../../modules/entity-datagrid/images/unlock-16.png") ;
+}
+
 
