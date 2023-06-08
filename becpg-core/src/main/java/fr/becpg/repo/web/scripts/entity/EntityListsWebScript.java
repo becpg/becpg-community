@@ -66,10 +66,10 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
 import fr.becpg.model.SecurityModel;
-import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.report.jscript.ReportAssociationDecorator;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -599,7 +599,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 			// filter list with perms
 			if (!skipFilter) {
 
-				boolean isExternalUser = isCurrentUserExternal();
+				boolean isExternalUser = AuthorityHelper.isCurrentUserExternal();
 
 				Iterator<NodeRef> it = listsNodeRef.iterator();
 				while (it.hasNext()) {
@@ -664,15 +664,6 @@ public class EntityListsWebScript extends AbstractWebScript {
 			logger.error(e, e);
 			throw new WebScriptException("Failed to build JSON file", e);
 		}
-	}
-
-	private boolean isCurrentUserExternal() {
-		for (String currAuth : authorityService.getAuthorities()) {
-			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 }

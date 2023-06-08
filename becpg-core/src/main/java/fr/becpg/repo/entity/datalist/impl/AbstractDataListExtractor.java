@@ -272,7 +272,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			
 			boolean hasWrite = hasWriteAccess(nodeRef);
 			
-			boolean isExternal = AuthorityHelper.isCurrentUserExternal();
+			boolean isLockAvailable = isLockAvailable(itemType);
 			
 			permissions.put(PROP_USERACCESS, userAccess);
 			userAccess.put("delete", accessRight && !isLocked && (permissionService.hasPermission(nodeRef, "Delete") == AccessStatus.ALLOWED));
@@ -281,8 +281,8 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			userAccess.put("sort", accessRight && hasWrite && !isLocked
 					&& nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SORTABLE_LIST));
 			userAccess.put("details", accessRight && isDetaillable(nodeRef));
-			userAccess.put("lock", hasWrite && !isExternal && !isLocked);
-			userAccess.put("unlock", hasWrite && !isExternal && isLocked);
+			userAccess.put("lock", hasWrite && isLockAvailable && !isLocked);
+			userAccess.put("unlock", hasWrite && isLockAvailable && isLocked);
 			userAccess.put("wused", accessRight);
 			userAccess.put("content", accessRight && hasWrite && !isLocked && hasContentField(metadataFields));
 			
@@ -342,6 +342,10 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 				logger.debug(getClass().getSimpleName() + " extract metadata in  " + watch.getTotalTimeSeconds() + "s");
 			}
 		}
+	}
+
+	private boolean isLockAvailable(QName itemType) {
+		return !BeCPGModel.TYPE_ACTIVITY_LIST.equals(itemType) && !AuthorityHelper.isCurrentUserExternal();
 	}
 
 	private boolean isLocked(NodeRef nodeRef) {
