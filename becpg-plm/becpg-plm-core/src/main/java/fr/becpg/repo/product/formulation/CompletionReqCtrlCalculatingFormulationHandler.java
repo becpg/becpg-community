@@ -94,7 +94,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 				if (view.getMainDataList() != null) {
 					for (CompositionDataItem dataItem : view.getMainDataList()) {
 						if ((dataItem.getComponent() != null) && !checkProductValidity(dataItem.getComponent()) && predicate.test(dataItem)) {
-							rclDataItem.getSources().add(dataItem.getComponent());
+							rclDataItem.addSource(dataItem.getComponent());
 							shouldAdd = true;
 
 						}
@@ -139,7 +139,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 
 						ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, new ArrayList<>(),
 								RequirementDataType.Completion);
-						rclDataItem.getSources().add(productData.getNodeRef());
+				//		rclDataItem.getSources().add(productData.getNodeRef());
 
 						productData.getReqCtrlList().add(rclDataItem);
 
@@ -211,7 +211,7 @@ public class CompletionReqCtrlCalculatingFormulationHandler extends FormulationB
 	public boolean checkProductValidity(NodeRef node) {
 		ProductData found = alfrescoRepository.findOne(node);
 		if (found != null) {
-			return SystemState.Valid.equals(found.getState());
+			return SystemState.Valid.equals(found.getState()) ||  SystemState.Stopped.equals(found.getState()) ||  SystemState.Archived.equals(found.getState());
 		}
 		return false;
 	}

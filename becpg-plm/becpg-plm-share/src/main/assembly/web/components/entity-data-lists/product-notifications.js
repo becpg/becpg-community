@@ -416,7 +416,7 @@
 						getParameters : function ProductNotifications_getParameters() {
 
 							return {
-								fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSources", "bcpg_rclDataType", "bcpg_regulatoryCode" ],
+								fields : [ "bcpg_rclReqType", "bcpg_rclReqMessage", "bcpg_rclSourcesV2", "bcpg_rclDataType", "bcpg_regulatoryCode" ],
 								page : this.currentPage,
 								filter : {
 									filterId : this.filterId,
@@ -454,7 +454,7 @@
 								var reqDataType = oRecord.getData("itemData")["prop_bcpg_rclDataType"].value;
 								var regulatoryCode = oRecord.getData("itemData")["prop_bcpg_regulatoryCode"].value;
 								
-								var reqProducts = oRecord.getData("itemData")["assoc_bcpg_rclSources"];
+								var reqProducts = oRecord.getData("itemData")["prop_bcpg_rclSourcesV2"];
 								desc += '<div class="rclReq-details">';
 								if (reqType) {
 									desc += '   <div class="icon" ><span class="reqType' + reqType + '" title="'

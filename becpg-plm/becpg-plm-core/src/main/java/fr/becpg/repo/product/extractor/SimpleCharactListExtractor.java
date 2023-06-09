@@ -78,9 +78,12 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 										List<NodeRef> reqCtrlList = entityListDAO.getListItems(listNodeRef, PLMModel.TYPE_REQCTRLLIST);
 
 										for (NodeRef reqCtrl : reqCtrlList) {
+											
+											@SuppressWarnings("unchecked")
+											List<NodeRef> sources = (List<NodeRef>) nodeService.getProperty(reqCtrl, PLMModel.PROP_RCL_SOURCES_V2);
 
 											if (((charact != null) && charact.equals(associationService.getTargetAssoc(reqCtrl, PLMModel.ASSOC_RCL_CHARACT))
-													|| associationService.getTargetAssocs(reqCtrl, PLMModel.ASSOC_RCL_SOURCES).contains(charact))
+													|| (sources!=null && sources.contains(charact)))
 													&& RequirementDataType.Specification.toString().equals(nodeService.getProperty(reqCtrl, PLMModel.PROP_RCL_REQ_DATA_TYPE))) {
 												addExtracted(reqCtrl, field, mode, ret);
 											}
