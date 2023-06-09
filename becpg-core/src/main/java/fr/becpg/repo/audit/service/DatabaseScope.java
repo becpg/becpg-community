@@ -11,7 +11,7 @@ import org.alfresco.util.ISO8601DateFormat;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 
-public class DatabaseServiceWrapper {
+public class DatabaseScope {
 	
 	private DatabaseAuditService databaseAuditService;
 	
@@ -19,7 +19,7 @@ public class DatabaseServiceWrapper {
 	
 	private Map<String, Serializable> auditValues = new HashMap<>();
 	
-	public DatabaseServiceWrapper(DatabaseAuditPlugin auditPlugin, DatabaseAuditService databaseAuditService) {
+	public DatabaseScope(DatabaseAuditPlugin auditPlugin, DatabaseAuditService databaseAuditService) {
 		this.databaseAuditService = databaseAuditService;
 		this.auditPlugin = auditPlugin;
 	}

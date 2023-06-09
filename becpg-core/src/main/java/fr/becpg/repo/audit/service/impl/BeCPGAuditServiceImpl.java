@@ -17,13 +17,13 @@ import fr.becpg.repo.audit.model.AuditScope;
 import fr.becpg.repo.audit.model.AuditType;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
+import fr.becpg.repo.audit.service.AuditScopeListener;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
-import fr.becpg.repo.audit.service.StopWatchAuditService;
 import fr.becpg.repo.audit.service.TracerAuditService;
 
 @Service("beCPGAuditService")
-public class BeCPGAuditServiceImpl implements BeCPGAuditService {
+public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListener {
 
 	private static final String NOT_DATABASE_PLUGIN = "Audit plugin for type '%s' is not a database plugin";
 	
@@ -32,9 +32,6 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 	
 	@Autowired
 	private DatabaseAuditService databaseAuditService;
-	
-	@Autowired(required = false)
-	private StopWatchAuditService stopWatchAuditService;
 	
 	@Autowired(required = false)
 	private TracerAuditService tracerAuditService;
@@ -52,8 +49,7 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 		
 		AuditPlugin plugin = getPlugin(auditType);
 		
-		return new AuditScope(threadLocalScope, plugin, databaseAuditService, stopWatchAuditService, tracerAuditService, plugin.getAuditClass(), plugin.getAuditClass().getSimpleName()).start();
-		
+		return new AuditScope(plugin, databaseAuditService, tracerAuditService, this, plugin.getAuditClass(), plugin.getAuditClass().getSimpleName()).start();
 	}
 	
 	@SuppressWarnings("resource")
@@ -62,7 +58,7 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 		
 		AuditPlugin plugin = getPlugin(auditType);
 		
-		return new AuditScope(threadLocalScope, plugin, databaseAuditService, stopWatchAuditService, tracerAuditService, auditClass, scopeName).start();
+		return new AuditScope(plugin, databaseAuditService, tracerAuditService, this, auditClass, scopeName).start();
 	}
 
 	@Override
@@ -129,6 +125,18 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService {
 		if (threadLocalScope.get() != null) {
 			threadLocalScope.get().addAnnotation(description, attributes);
 		}
+	}
+
+	@Override
+	public void onStart(AuditScope auditScope) {
+		auditScope.setParentScope(threadLocalScope.get());
+		threadLocalScope.set(auditScope);
+	}
+
+	@Override
+	public void onClose(AuditScope auditScope) {
+		threadLocalScope.remove();
+		threadLocalScope.set(auditScope.getParentScope());
 	}
 
 }
