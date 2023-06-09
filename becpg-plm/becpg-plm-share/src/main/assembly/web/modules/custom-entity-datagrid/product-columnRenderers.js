@@ -725,7 +725,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                 return data.displayValue;
             } else {
                 var reqType = oRecord.getData("itemData")["prop_bcpg_rclReqType"].value;
-                var reqProducts = oRecord.getData("itemData")["assoc_bcpg_rclSources"];
+                var reqProducts = oRecord.getData("itemData")["prop_bcpg_rclSourcesV2"];
                 var html = "";
                     html += '<div class="rclReq-details">';
                     if(reqType){
