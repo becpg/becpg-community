@@ -879,7 +879,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			
 			HashMap<NodeRef, Set<ReportEngineLog>> engineLogs = new HashMap<>();
 			
-			beCPGAuditService.putAttribute("becpg/entityNodeRef", entityNodeRef.toString());
+			auditScope.putAttribute("becpg/entityNodeRef", entityNodeRef.toString());
 			
 			L2CacheSupport.doInCacheContext(() -> {
 				
@@ -944,7 +944,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							map.put("format", reportFormat);
 							map.put("name", documentName);
 
-							beCPGAuditService.addAnnotation("extract", map);
+							auditScope.addAnnotation("extract", map);
 							
 							BeCPGReportEngine engine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
 							
@@ -1072,7 +1072,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 			try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.TRACER, getClass(), "reportService.Generate")){
 
-				beCPGAuditService.putAttribute("becpg/entityNodeRef", entityNodeRef.toString());
+				auditScope.putAttribute("becpg/entityNodeRef", entityNodeRef.toString());
 				
 				I18NUtil.setLocale(locale);
 				I18NUtil.setContentLocale(locale);
@@ -1081,7 +1081,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				map.put("locale", MLTextHelper.localeKey(locale));
 				map.put("format", reportFormat.toString());
 
-				beCPGAuditService.addAnnotation("extract", map);
+				auditScope.addAnnotation("extract", map);
 				
 				EntityReportData reportData = extractor.extract(entityNodeRef, reportParameters.getPreferences());
 

@@ -229,9 +229,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					}
 				}
 
-				beCPGAuditService.putAttribute(BatchAuditPlugin.BATCH_USER, batchInfo.getBatchUser());
-				beCPGAuditService.putAttribute(BatchAuditPlugin.BATCH_ID, batchInfo.getBatchId());
-				beCPGAuditService.putAttribute(BatchAuditPlugin.IS_COMPLETED, false);
+				auditScope.putAttribute(BatchAuditPlugin.BATCH_USER, batchInfo.getBatchUser());
+				auditScope.putAttribute(BatchAuditPlugin.BATCH_ID, batchInfo.getBatchId());
+				auditScope.putAttribute(BatchAuditPlugin.IS_COMPLETED, false);
 
 				Integer stepCount = batchSteps.size() > 1 ? 1 : null;
 
@@ -332,9 +332,9 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				batchInfo.setIsCompleted(true);
 
-				beCPGAuditService.putAttribute(BatchAuditPlugin.TOTAL_ITEMS, totalItems);
-				beCPGAuditService.putAttribute(BatchAuditPlugin.TOTAL_ERRORS, totalErrors);
-				beCPGAuditService.putAttribute(BatchAuditPlugin.IS_COMPLETED, true);
+				auditScope.putAttribute(BatchAuditPlugin.TOTAL_ITEMS, totalItems);
+				auditScope.putAttribute(BatchAuditPlugin.TOTAL_ERRORS, totalErrors);
+				auditScope.putAttribute(BatchAuditPlugin.IS_COMPLETED, true);
 
 				if (Boolean.TRUE.equals(batchInfo.getNotifyByMail())) {
 

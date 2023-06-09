@@ -2,7 +2,7 @@ package fr.becpg.repo.audit.service;
 
 import java.util.Map;
 
-public class TracerServiceWrapper {
+public class TracerScope {
 
 	private TracerAuditService tracerAuditService;
 
@@ -10,7 +10,7 @@ public class TracerServiceWrapper {
 	
 	private String scopeName;
 	
-	public TracerServiceWrapper(TracerAuditService tracerAuditService, String scopeName) {
+	public TracerScope(TracerAuditService tracerAuditService, String scopeName) {
 		this.tracerAuditService = tracerAuditService;
 		this.scopeName = scopeName;
 	}

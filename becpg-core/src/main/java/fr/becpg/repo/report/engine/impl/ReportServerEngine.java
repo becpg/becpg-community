@@ -140,7 +140,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				
 				String templateId = (instanceName != null ? instanceName : "") + tplNodeRef.toString();
 				
-				beCPGAuditService.addAnnotation("sendReportTpl");
+				auditScope.addAnnotation("sendReportTpl");
 				
 				sendTplFile(reportSession, templateId, tplNodeRef);
 				
@@ -161,7 +161,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				
 				reportSession.setTemplateId(templateId);
 				
-				beCPGAuditService.addAnnotation("sendReportImages");
+				auditScope.addAnnotation("sendReportImages");
 				
 				for (EntityImageInfo entry : reportData.getImages()) {
 					byte[] imageBytes = entityService.getImage(entry.getImageNodeRef());
@@ -180,7 +180,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 					}
 				}
 				
-				beCPGAuditService.addAnnotation("sendReportData");
+				auditScope.addAnnotation("sendReportData");
 				
 				reportSession.setFormat(format.toString());
 				reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
