@@ -276,9 +276,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 			reqCtrl.setReqDataType(requirementDataType);
 		}
 
-		if (!reqCtrl.getSources().contains(sourceNodeRef)) {
-			reqCtrl.getSources().add(sourceNodeRef);
-		}
+		reqCtrl.addSource(sourceNodeRef);
 
 	}
 
