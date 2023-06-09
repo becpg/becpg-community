@@ -6,59 +6,67 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
+import fr.becpg.repo.audit.service.AuditScopeListener;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
-import fr.becpg.repo.audit.service.DatabaseServiceWrapper;
-import fr.becpg.repo.audit.service.StopWatchAuditService;
-import fr.becpg.repo.audit.service.StopWatchServiceWrapper;
+import fr.becpg.repo.audit.service.DatabaseScope;
+import fr.becpg.repo.audit.service.StopWatchScope;
 import fr.becpg.repo.audit.service.TracerAuditService;
-import fr.becpg.repo.audit.service.TracerServiceWrapper;
+import fr.becpg.repo.audit.service.TracerScope;
 
 public class AuditScope implements AutoCloseable {
 
-	private DatabaseServiceWrapper databaseService;
+	private DatabaseScope databaseScope;
 	
-	private StopWatchServiceWrapper stopWatchService;
+	private StopWatchScope stopWatchScope;
 	
-	private TracerServiceWrapper tracerService;
+	private TracerScope tracerScope;
 	
-	private ThreadLocal<AuditScope> threadLocalScope;
+	private AuditScopeListener auditScopeListener;
 	
 	private AuditScope parentScope;
 	
-	public AuditScope(ThreadLocal<AuditScope> threadLocalScope, AuditPlugin plugin, DatabaseAuditService databaseAuditService,
-			StopWatchAuditService stopWatchAuditService, TracerAuditService tracerAuditService, Class<?> callerClass, String scopeName) {
+	public AuditScope(AuditPlugin plugin, DatabaseAuditService databaseAuditService,
+			TracerAuditService tracerAuditService, AuditScopeListener auditScopeListener, Class<?> callerClass, String scopeName) {
 		
-		this.threadLocalScope = threadLocalScope;
-		
-		parentScope = threadLocalScope.get();
+		this.auditScopeListener = auditScopeListener;
 		
 		if (plugin.isDatabaseEnable()) {
-			databaseService = new DatabaseServiceWrapper((DatabaseAuditPlugin) plugin, databaseAuditService);
+			databaseScope = new DatabaseScope((DatabaseAuditPlugin) plugin, databaseAuditService);
 		}
 		
 		if (plugin.isStopWatchEnable()) {
-			stopWatchService = new StopWatchServiceWrapper(stopWatchAuditService, plugin.getClass().getSimpleName() + " : " + callerClass.getName(), LogFactory.getLog(callerClass));
+			stopWatchScope = new StopWatchScope(scopeName, LogFactory.getLog(callerClass));
 		}
 		
 		if (plugin.isTracerEnable()) {
-			tracerService = new TracerServiceWrapper(tracerAuditService, scopeName);
+			tracerScope = new TracerScope(tracerAuditService, scopeName);
 		}
+	}
+	
+	public void setParentScope(AuditScope parentScope) {
+		this.parentScope = parentScope;
+	}
+	
+	public AuditScope getParentScope() {
+		return parentScope;
 	}
 
 	public AuditScope start() {
 		
-		threadLocalScope.set(this);
-		
-		if (databaseService != null) {
-			databaseService.start();
+		if (auditScopeListener != null) {
+			auditScopeListener.onStart(this);
 		}
 		
-		if (stopWatchService != null) {
-			stopWatchService.start();
+		if (databaseScope != null) {
+			databaseScope.start();
 		}
 		
-		if (tracerService != null) {
-			tracerService.start();
+		if (stopWatchScope != null) {
+			stopWatchScope.start();
+		}
+		
+		if (tracerScope != null) {
+			tracerScope.start();
 		}
 		
 		return this;
@@ -67,45 +75,45 @@ public class AuditScope implements AutoCloseable {
 	@Override
 	public void close() {
 		
-		threadLocalScope.remove();
-		
-		threadLocalScope.set(parentScope);
-		
-		if (databaseService != null) {
-			databaseService.stop();
+		if (databaseScope != null) {
+			databaseScope.stop();
 		}
 		
-		if (stopWatchService != null) {
-			stopWatchService.stop();
+		if (stopWatchScope != null) {
+			stopWatchScope.stop();
 		}
 		
-		if (tracerService != null) {
-			tracerService.stop();
+		if (tracerScope != null) {
+			tracerScope.stop();
+		}
+		
+		if (auditScopeListener != null) {
+			auditScopeListener.onClose(this);
 		}
 		
 	}
 
 	public void putAttribute(String string, Object attribute) {
-		if (databaseService != null) {
-			databaseService.putAttribute(string, attribute);
+		if (databaseScope != null) {
+			databaseScope.putAttribute(string, attribute);
 		}
-		if (tracerService != null) {
-			tracerService.putAttribute(string, attribute);
+		if (tracerScope != null) {
+			tracerScope.putAttribute(string, attribute);
 		}
 	}
 
 	public void addAnnotation(String annotation) {
-		if (stopWatchService != null) {
-			stopWatchService.addAnnotation(annotation);
+		if (stopWatchScope != null) {
+			stopWatchScope.addAnnotation(annotation);
 		}
-		if (tracerService != null) {
-			tracerService.addAnnotation(annotation);
+		if (tracerScope != null) {
+			tracerScope.addAnnotation(annotation);
 		}
 	}
 	
 	public void addAnnotation(String description, Map<String, String> attributes) {
-		if (tracerService != null) {
-			tracerService.addAnnotation(description, attributes);
+		if (tracerScope != null) {
+			tracerScope.addAnnotation(description, attributes);
 		}
 	}
 
