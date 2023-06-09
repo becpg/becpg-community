@@ -7536,7 +7536,7 @@
 				<field-visibility>
 					<show id="bcpg:rclReqType" />
 					<show id="bcpg:rclReqMessage" />
-					<show id="bcpg:rclSources" />
+					<show id="bcpg:rclSourcesV2" />
 					<show id="bcpg:rclDataType" />
 				</field-visibility>
 
@@ -7552,13 +7552,13 @@
 				<field-visibility>
 					<show id="bcpg:rclReqType" />
 					<show id="bcpg:rclReqMessage" />
-					<show id="bcpg:rclSources" />
+					<show id="bcpg:rclSourcesV2" />
 					<show id="bcpg:rclDataType" />
 				</field-visibility>
 				<appearance>
 					<field label="hidden" id="bcpg:rclReqType" />
 					<field label="hidden" id="bcpg:rclDataType" />
-					<field label="hidden" id="bcpg:rclSources" />
+					<field label="hidden" id="bcpg:rclSourcesV2" />
 				</appearance>
 			</form>
 			
@@ -7574,7 +7574,7 @@
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:rclReqType" />
-					<show id="bcpg:rclSources" />
+					<show id="bcpg:rclSourcesV2" />
 				</field-visibility>
 			</form>
 		</forms>
@@ -7587,7 +7587,7 @@
 				<field-visibility>
 					<show id="bcpg:rclReqType" />
 					<show id="bcpg:rclReqMessage" />
-					<show id="bcpg:rclSources" />
+					<show id="bcpg:rclSourcesV2" />
 					<show id="bcpg:rclDataType" />
 				</field-visibility>
 

@@ -3,6 +3,7 @@
  */
 package fr.becpg.model;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 /**
@@ -312,7 +313,11 @@ public interface PLMModel {
 	/** Constant <code>PROP_RCL_REQ_MESSAGE</code> */
 	QName PROP_RCL_REQ_MESSAGE = QName.createQName(BeCPGModel.BECPG_URI, "rclReqMessage");
 	/** Constant <code>ASSOC_RCL_SOURCES</code> */
+	@Deprecated
 	QName ASSOC_RCL_SOURCES = QName.createQName(BeCPGModel.BECPG_URI, "rclSources");
+	
+	QName PROP_RCL_SOURCES_V2 =  QName.createQName(BeCPGModel.BECPG_URI, "rclSourcesV2");
+	
 	/** Constant <code>ASSOC_RCL_CHARACT</code> */
 	QName ASSOC_RCL_CHARACT = QName.createQName(BeCPGModel.BECPG_URI, "rclCharact");
 	
@@ -738,6 +743,7 @@ public interface PLMModel {
 	QName ASPECT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "propagateUpAspect");
 
 	QName ASSOC_PROPAGATED_CHARACTS = QName.createQName(BeCPGModel.BECPG_URI, "propagatedCharacts");
+	
 	
 	
 	

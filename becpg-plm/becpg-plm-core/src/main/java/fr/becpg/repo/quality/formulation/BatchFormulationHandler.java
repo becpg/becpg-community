@@ -148,9 +148,7 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 								batchData.getReqCtrlList().add(reqCtrl);
 							}
 
-							if (!reqCtrl.getSources().contains(entry.getKey())) {
-								reqCtrl.getSources().add(entry.getKey());
-							}
+							reqCtrl.addSource(entry.getKey());
 
 							canApply = false;
 						} else {

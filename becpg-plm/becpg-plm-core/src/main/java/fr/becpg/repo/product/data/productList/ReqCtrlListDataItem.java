@@ -238,10 +238,19 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
-	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:rclSources")
+	@AlfProp
+	@AlfQname(qname="bcpg:rclSourcesV2")
 	public List<NodeRef> getSources() {
 		return sources;
+	}
+	
+	public void addSource(NodeRef sourceNodeRef) {
+		if(sources == null) {
+			sources = new LinkedList<>();
+		}
+		if(!sources.contains(sourceNodeRef)) {
+			sources.add(sourceNodeRef);
+		}
 	}
 
 	/**

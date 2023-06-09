@@ -1615,7 +1615,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			hiddenFields.add(ContentModel.PROP_NAME);
 
 			if (!RequirementDataType.Specification.equals(r.getReqDataType())) {
-				hiddenFields.add(PLMModel.ASSOC_RCL_SOURCES);
+				hiddenFields.add(PLMModel.PROP_RCL_SOURCES_V2);
 			}
 
 			loadDataListItemAttributes(r, reqCtrlListElt, context, hiddenFields);
