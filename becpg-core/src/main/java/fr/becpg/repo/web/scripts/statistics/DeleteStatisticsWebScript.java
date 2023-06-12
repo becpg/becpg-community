@@ -31,26 +31,14 @@ public class DeleteStatisticsWebScript extends AbstractWebScript {
 		Map<String, String> templateArgs = req.getServiceMatch().getTemplateVars();
 
 		String reqType = templateArgs.get(PARAM_TYPE);
-		String fromId = templateArgs.get(PARAM_FROM_ID);
-		String toId = templateArgs.get(PARAM_TO_ID);
+		String fromId = req.getParameter(PARAM_FROM_ID);
+		String toId = req.getParameter(PARAM_TO_ID);
 		
-		AuditType type = null;
-		
-		switch (reqType) {
-		case "batch":
-			type = AuditType.BATCH;
-			break;
-		case "formulation":
-			type = AuditType.FORMULATION;
-			break;
-		case "activity":
-			type = AuditType.ACTIVITY;
-			break;
-		default:
-			throw new WebScriptException("Unknown audit type : '" + reqType + "'");
+		if (fromId == null || toId == null) {
+			throw new WebScriptException("Missing 'fromId' or 'toId' request parameter");
 		}
 		
-		beCPGAuditService.deleteAuditEntries(type, Long.parseLong(fromId), Long.parseLong(toId));
+		beCPGAuditService.deleteAuditEntries(getAuditType(reqType), Long.parseLong(fromId), Long.parseLong(toId));
 		
 		try {
 			JSONObject ret = new JSONObject();
@@ -63,6 +51,16 @@ public class DeleteStatisticsWebScript extends AbstractWebScript {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		}
 		
+	}
+	
+	private AuditType getAuditType(String reqType) {
+		AuditType[] auditTypes = AuditType.class.getEnumConstants();
+		for (AuditType auditType : auditTypes) {
+			if (auditType.toString().equalsIgnoreCase(reqType)) {
+				return auditType;
+			}
+		}
+		throw new WebScriptException("Unknown audit type : '" + reqType + "'");
 	}
 	
 }

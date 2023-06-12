@@ -25,6 +25,9 @@ public class BatchAuditPlugin extends AbstractAuditPlugin implements DatabaseAud
 	private static final String BATCH_AUDIT_ID = "beCPGBatchAudit";
 	
 	static {
+		KEY_MAP.put(STARTED_AT, AuditDataType.DATE);
+		KEY_MAP.put(COMPLETED_AT, AuditDataType.DATE);
+		KEY_MAP.put(DURATION, AuditDataType.INTEGER);
 		KEY_MAP.put(BATCH_ID, AuditDataType.STRING);
 		KEY_MAP.put(BATCH_USER, AuditDataType.STRING);
 		KEY_MAP.put(IS_COMPLETED, AuditDataType.BOOLEAN);
@@ -54,7 +57,7 @@ public class BatchAuditPlugin extends AbstractAuditPlugin implements DatabaseAud
 	}
 
 	@Override
-	public Class<?> getAuditClass() {
+	public Class<?> getAuditedClass() {
 		return BatchQueueService.class;
 	}
 

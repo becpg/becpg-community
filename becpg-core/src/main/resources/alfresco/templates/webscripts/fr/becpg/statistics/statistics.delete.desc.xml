@@ -18,7 +18,7 @@
 <webscript>
   <shortname>Delete statistics</shortname>
   <description>Delete statistics</description>
-  <url>/becpg/stats/{type}/{fromId}/{toId}</url>
+  <url>/becpg/stats/{type}</url>
   <format default="json" />
   <authentication>user</authentication>
   <transaction>required</transaction>

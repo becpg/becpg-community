@@ -13,10 +13,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.alfresco.repo.audit.AuditComponent;
-import org.alfresco.repo.audit.model.AuditApplication;
-import org.alfresco.repo.audit.model.AuditModelRegistry;
-import org.alfresco.repo.domain.audit.AuditDAO;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.rest.api.Audit;
 import org.alfresco.rest.api.model.AuditEntry;
 import org.alfresco.rest.framework.resource.parameters.Paging;
@@ -55,12 +51,6 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	
 	@Autowired
 	private AuditComponent auditComponent;
-	
-	@Autowired
-	private AuditDAO auditDAO;
-	
-	@Autowired
-	private AuditModelRegistry auditModelRegistry;
 	
 	@Override
 	public int recordAuditEntry(DatabaseAuditPlugin auditPlugin, Map<String, Serializable> auditValues, boolean deleteOldEntry) {
@@ -133,25 +123,6 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	@Override
 	public void deleteAuditEntries(DatabaseAuditPlugin plugin, Long fromId, Long toId) {
 		auditComponent.deleteAuditEntriesByIdRange(plugin.getAuditApplicationId(), fromId, toId);
-	}
-
-	@Override
-	public void updateAuditEntry(DatabaseAuditPlugin plugin, Long id, Long time, Map<String, Serializable> values) {
-		
-		AuditEntry auditEntry = audit.getAuditEntry(plugin.getAuditApplicationId(), id, null);
-		
-        AuditApplication application = auditModelRegistry.getAuditApplicationByKey(plugin.getAuditApplicationId());
-		
-		Long applicationId = application.getApplicationId();
-		
-		deleteAuditEntries(plugin, auditEntry.getId(), auditEntry.getId() + 1);
-		
-		for (Entry<String, Serializable> entry : values.entrySet()) {
-			auditEntry.getValues().put("/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + entry.getKey() + "/value", entry.getValue());
-		}
-		
-		auditDAO.createAuditEntry(applicationId, time, AuthenticationUtil.getFullyAuthenticatedUser(), auditEntry.getValues());
-		
 	}
 
 	private Collection<AuditEntry> internalListAuditEntries(DatabaseAuditPlugin plugin, AuditQuery auditFilter) {

@@ -3,12 +3,12 @@ package fr.becpg.repo.audit.service;
 import org.apache.commons.lang3.time.StopWatch;
 import org.apache.commons.logging.Log;
 
-public class StopWatchScope {
+public class StopWatchScope implements AutoCloseable {
 	
 	private String scopeName;
 	private Log logger;
 	private StopWatch stopWatch;
-	private long lastSplitTime;
+	private long lastCheckpointTime;
 	
 	public StopWatchScope(String scopeName, Log logger) {
 		this.scopeName = scopeName;
@@ -17,24 +17,25 @@ public class StopWatchScope {
 	
 	public void start() {
 		if (logger.isDebugEnabled()) {
-			logger.debug("start of StopWatchScope '" + scopeName + "'");
+			logger.debug("start '" + scopeName + "'");
 			stopWatch = new StopWatch();
 			stopWatch.start();
-			lastSplitTime = stopWatch.getTime();
+			lastCheckpointTime = stopWatch.getTime();
 		}
 	}
-
-	public void stop() {
+	
+	@Override
+	public void close() {
 		if (logger.isDebugEnabled() && stopWatch != null) {
 			stopWatch.stop();
-			logger.debug("StopWatchScope '" + scopeName + "' takes " + stopWatch.getTime() + " ms");
+			logger.debug("finish '" + scopeName + "' => " + stopWatch.getTime() + " ms");
 		}
 	}
 
-	public void addAnnotation(Object annotation) {
+	public void addCheckpoint(String checkpointName) {
 		if (logger.isDebugEnabled() && stopWatch != null) {
-			logger.debug("'" + annotation + "' takes " + (stopWatch.getTime() - lastSplitTime) + " ms");
-			lastSplitTime = stopWatch.getTime();
+			logger.debug("'" + checkpointName + "' from '" + scopeName + "' => " + (stopWatch.getTime() - lastCheckpointTime) + " ms");
+			lastCheckpointTime = stopWatch.getTime();
 		}
 	}
 
