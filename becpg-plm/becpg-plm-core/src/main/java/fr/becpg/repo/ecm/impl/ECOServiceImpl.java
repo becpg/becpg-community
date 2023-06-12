@@ -1079,7 +1079,7 @@ public class ECOServiceImpl implements ECOService {
 					
 					if (!itemReplacements.isEmpty()) {
 						
-						boolean copyItem = isFuture || itemReplacements.size() > 1 || ecoData.getReplacementList().stream().anyMatch(r -> getSourceItems(ecoData, r).contains(itemReplacements.get(0).getTargetItem()));
+						boolean copyItem = isFuture || itemReplacements.size() > 1 || ecoData.getReplacementList().stream().anyMatch(r -> !r.equals(itemReplacements.get(0)) && getSourceItems(ecoData, r).contains(itemReplacements.get(0).getTargetItem()));
 						
 						for (ReplacementListDataItem itemReplacement : itemReplacements) {
 							

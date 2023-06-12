@@ -443,9 +443,18 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			if (totalQtiesValue.containsKey(newSimpleListDataItem.getCharactNodeRef())) {
 				Double totalQty = totalQtiesValue.get(newSimpleListDataItem.getCharactNodeRef());
 				if ((netQty != null) && (totalQty != null) && (totalQty != 0d)) {
+                                        Double value = null;
+					
+					if (newSimpleListDataItem instanceof FormulatedCharactDataItem) {
+						value = ((FormulatedCharactDataItem) newSimpleListDataItem).getFormulatedValue();
+					} else {
+						value = newSimpleListDataItem.getValue();
+					}
+					
+
 
 					if ((newSimpleListDataItem.getValue() != null)) {
-						newSimpleListDataItem.setValue((newSimpleListDataItem.getValue() * netQty) / totalQty);
+						newSimpleListDataItem.setValue((value * netQty) / totalQty);
 					}
 
 					if (newSimpleListDataItem instanceof ForecastValueDataItem) {
