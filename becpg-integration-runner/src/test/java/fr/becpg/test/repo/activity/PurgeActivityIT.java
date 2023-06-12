@@ -9,14 +9,25 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.audit.AuditComponent;
+import org.alfresco.repo.audit.model.AuditApplication;
+import org.alfresco.repo.audit.model.AuditModelRegistry;
+import org.alfresco.repo.domain.audit.AuditDAO;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.rest.api.Audit;
+import org.alfresco.rest.api.model.AuditEntry;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
@@ -24,7 +35,7 @@ import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityEvent;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
-import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -49,6 +60,24 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 	private static Log logger = LogFactory.getLog(PurgeActivityIT.class);
 
 	ContentService contentService;
+	
+	@Autowired
+	@Qualifier("auditApi")
+	@Lazy
+	private Audit audit;
+	
+	@Autowired
+	private AuditComponent auditComponent;
+	
+	@Autowired
+	private AuditDAO auditDAO;
+	
+	@Autowired
+	private AuditModelRegistry auditModelRegistry;
+	
+	@Autowired
+	private ActivityAuditPlugin activityAuditPlugin;
+
 
 	private static final int MAX_PAGE = 50;
 
@@ -612,10 +641,32 @@ public class PurgeActivityIT extends PlmActivityServiceIT {
 			
 			values.put(ActivityAuditPlugin.PROP_CM_CREATED, ISO8601DateFormat.format(customDate));
 			
-			beCPGAuditService.updateAuditEntry(AuditType.ACTIVITY, activity.getId(), customDate.getTime(), values);
+			updateAuditEntry(activityAuditPlugin, activity.getId(), (Long) customDate.getTime(), values);
 			
 			return null;
 		}, false, true);
+	}
+	
+	public void deleteAuditEntries(DatabaseAuditPlugin plugin, Long fromId, Long toId) {
+		auditComponent.deleteAuditEntriesByIdRange(plugin.getAuditApplicationId(), fromId, toId);
+	}
+	
+	private void updateAuditEntry(DatabaseAuditPlugin plugin, Long id, Long time, Map<String, Serializable> values) {
+		
+		AuditEntry auditEntry = audit.getAuditEntry(plugin.getAuditApplicationId(), id, null);
+		
+        AuditApplication application = auditModelRegistry.getAuditApplicationByKey(plugin.getAuditApplicationId());
+		
+		Long applicationId = application.getApplicationId();
+		
+		deleteAuditEntries(plugin, auditEntry.getId(), auditEntry.getId() + 1);
+		
+		for (Entry<String, Serializable> entry : values.entrySet()) {
+			auditEntry.getValues().put("/" + plugin.getAuditApplicationId() + "/" + plugin.getAuditApplicationPath() + "/" + entry.getKey() + "/value", entry.getValue());
+		}
+		
+		auditDAO.createAuditEntry(applicationId, time, AuthenticationUtil.getFullyAuthenticatedUser(), auditEntry.getValues());
+		
 	}
 
 	/**

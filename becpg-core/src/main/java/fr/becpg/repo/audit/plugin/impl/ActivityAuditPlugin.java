@@ -45,7 +45,7 @@ public class ActivityAuditPlugin extends AbstractAuditPlugin implements Database
 	}
 
 	@Override
-	public Class<?> getAuditClass() {
+	public Class<?> getAuditedClass() {
 		return EntityActivityService.class;
 	}
 	
@@ -57,12 +57,12 @@ public class ActivityAuditPlugin extends AbstractAuditPlugin implements Database
 
 	@Override
 	public void beforeRecordAuditEntry(Map<String, Serializable> auditValues) {
-		
+		// nothing
 	}
 
 	@Override
 	public void afterRecordAuditEntry(Map<String, Serializable> auditValues) {
-		
+		// nothing
 	}
 
 }

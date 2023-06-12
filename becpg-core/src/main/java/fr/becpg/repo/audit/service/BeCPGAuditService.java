@@ -1,8 +1,6 @@
 package fr.becpg.repo.audit.service;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 import org.json.JSONObject;
 
@@ -20,12 +18,4 @@ public interface BeCPGAuditService {
 	
 	void deleteAuditEntries(AuditType type, Long fromId, Long toId);
 	
-	void updateAuditEntry(AuditType type, Long id, Long time, Map<String, Serializable> values);
-	
-	void putAttribute(String string, Object attribute);
-
-	void addAnnotation(String annotation);
-
-	void addAnnotation(String description, Map<String, String> attributes);
-
 }
