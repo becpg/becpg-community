@@ -2941,6 +2941,12 @@
 						<constraint ref="bcpg:reqDataTypes" />
 					</constraints>
 				</property>
+				<property name="bcpg:rclSourcesV2">
+					<type>d:noderef</type>
+					<mandatory>false</mandatory>
+					<multiple>true</multiple>
+					<index enabled="false"/>
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:rclCharact">
