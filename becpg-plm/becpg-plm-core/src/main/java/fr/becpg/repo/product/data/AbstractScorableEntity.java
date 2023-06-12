@@ -3,9 +3,12 @@ package fr.becpg.repo.product.data;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -137,7 +140,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 					reqCtrlList.remove(newReqCtrlListDataItem);
 				}
 			}
-
+			
 			// sort
 			sort(reqCtrlList);
 		}
@@ -151,9 +154,9 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 
 			duplicates.add(r);
 			// Merge sources
-			for (NodeRef tmpref : r.getSources()) {
-				if (!dbReq.getSources().contains(tmpref)) {
-					dbReq.getSources().add(tmpref);
+			if(r.getSources()!=null) {
+				for (NodeRef tmpref : r.getSources()) {
+					dbReq.addSource(tmpref);
 				}
 			}
 
@@ -169,6 +172,13 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	 *
 	 */
 	private void sort(List<ReqCtrlListDataItem> reqCtrlList) {
+		
+		//Sort sources
+		for(ReqCtrlListDataItem r : reqCtrlList) {
+			if(r.getSources()!=null) {
+				r.getSources().sort(Comparator.comparing(NodeRef::getId));
+			}
+		}
 
 		AtomicInteger index = new AtomicInteger();
 		reqCtrlList.stream().sorted(Comparator.comparing(ReqCtrlListDataItem::getReqType, Comparator.nullsFirst(Comparator.naturalOrder())))

@@ -1116,9 +1116,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										if (error != null) {
 
 											if ((parent.getNodeRef() != null) && nodeService.exists(parent.getNodeRef())) {
-												if (!error.getSources().contains(parent.getNodeRef())) {
-													error.getSources().add(parent.getNodeRef());
-												}
+												error.addSource(parent.getNodeRef());
 											}
 											if (logger.isDebugEnabled()) {
 												logger.debug("Adding aggregate error " + error.toString());
@@ -2180,9 +2178,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						String message = I18NUtil.getMessage(NULL_ING_ERROR, getName(ingLabelItem));
 						ReqCtrlListDataItem error = errors.get(message);
 						if (error != null) {
-							if (!error.getSources().contains(product.getNodeRef())) {
-								error.getSources().add(product.getNodeRef());
-							}
+							error.addSource(product.getNodeRef());
 						} else {
 							if (logger.isDebugEnabled()) {
 								logger.debug("Store error for future qtyPerc is null " + getName(ingLabelItem));

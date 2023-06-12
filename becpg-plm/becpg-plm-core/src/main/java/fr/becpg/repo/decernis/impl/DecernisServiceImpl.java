@@ -548,7 +548,7 @@ public class DecernisServiceImpl implements DecernisService {
 		ReqCtrlListDataItem reqCtrlItem = new ReqCtrlListDataItem();
 		reqCtrlItem.setReqType(reqType);
 		reqCtrlItem.setCharact(ing);
-		reqCtrlItem.getSources().add(ing);
+		reqCtrlItem.addSource(ing);
 		reqCtrlItem.setReqDataType(RequirementDataType.Specification);
 		reqCtrlItem.setReqMlMessage(reqCtrlMessage);
 		reqCtrlItem.setFormulationChainId(DECERNIS_CHAIN_ID);

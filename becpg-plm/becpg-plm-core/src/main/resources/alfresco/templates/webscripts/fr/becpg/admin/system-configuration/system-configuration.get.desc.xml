@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<webscript>
+    <shortname>beCPG System configuration</shortname>
+    <description>Allow to configure beCPG system</description>
+    <url>/becpg/admin/system-configuration</url>
+    <family>AdminConsole</family>
+    <format default="html"/>
+    <authentication>admin</authentication>
+    <lifecycle>internal</lifecycle>
+    <transaction allow="readonly">required</transaction>
+</webscript>

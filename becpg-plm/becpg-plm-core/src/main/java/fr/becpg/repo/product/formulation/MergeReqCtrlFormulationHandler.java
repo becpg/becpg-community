@@ -47,6 +47,7 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Merge ReqCtrlListDataItem to avoid duplication of items and sort them
@@ -61,8 +62,23 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 
 	private AlfrescoRepository<ScorableEntity> alfrescoRepository;
 
+	private SystemConfigurationService systemConfigurationService;
+	
 	private NodeService nodeService;
+	
 
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
+
+	private Integer maxRclSourcesToKeep() {
+		return Integer.valueOf(systemConfigurationService.confValue("beCPG.formulation.reqCtrlList.maxRclSourcesToKeep"));
+	}
+
+	private Boolean addChildRclSources() {
+		return Boolean.valueOf(systemConfigurationService.confValue("beCPG.formulation.reqCtrlList.addChildRclSources"));
+	}
+	
 	/**
 	 * <p>Setter for the field <code>alfrescoRepository</code>.</p>
 	 *
@@ -87,14 +103,24 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 
 		// Add child requirements
 		if (scorableEntity.getReqCtrlList() != null) {
-			if(scorableEntity instanceof ProductData) {
-				appendChildReq((ProductData)scorableEntity, scorableEntity.getReqCtrlList());
+			if (scorableEntity instanceof ProductData) {
+				appendChildReq((ProductData) scorableEntity, scorableEntity.getReqCtrlList());
 			}
-	
+
 			scorableEntity.merge();
 			
-			if(scorableEntity instanceof ProductData) {
-				updateFormulatedCharactInError((ProductData)scorableEntity, scorableEntity.getReqCtrlList());
+			if (maxRclSourcesToKeep() != null && maxRclSourcesToKeep() > 0) {
+
+				for (ReqCtrlListDataItem r : scorableEntity.getReqCtrlList()) {
+					if (r.getSources() != null) {
+						r.setSources(r.getSources().subList(0, Math.min(r.getSources().size(), maxRclSourcesToKeep())));
+					}
+
+				}
+			}
+
+			if (scorableEntity instanceof ProductData) {
+				updateFormulatedCharactInError((ProductData) scorableEntity, scorableEntity.getReqCtrlList());
 			}
 		}
 
@@ -108,42 +134,43 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(componentProductNodeRef);
 				if (((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof SemiFinishedProductData))
 						|| (componentProductData instanceof FinishedProductData) || (componentProductData instanceof RawMaterialData))
-					&& ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null))) {					
+						&& ((componentProductData.getCompoListView() != null) && (componentProductData.getReqCtrlList() != null))) {
 					reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
 				}
 			}
 		}
-		
+
 		for (PackagingListDataItem packagingListDataItem : productData.getPackagingListView().getPackagingList()) {
 			NodeRef componentProductNodeRef = packagingListDataItem.getProduct();
 			if (componentProductNodeRef != null) {
 				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(componentProductNodeRef);
 				if (((!componentProductNodeRef.equals(productData.getNodeRef()) && (componentProductData instanceof PackagingKitData))
-						|| (componentProductData instanceof PackagingMaterialData)) 
-					&& ((componentProductData.getPackagingListView() != null) && (componentProductData.getReqCtrlList() != null))) {					
+						|| (componentProductData instanceof PackagingMaterialData))
+						&& ((componentProductData.getPackagingListView() != null) && (componentProductData.getReqCtrlList() != null))) {
 					reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
 				}
 			}
 		}
-		
+
 		for (ProcessListDataItem processListDataItem : productData.getProcessListView().getProcessList()) {
 			NodeRef componentProductNodeRef = processListDataItem.getResource();
 			if (componentProductNodeRef != null) {
 				ProductData componentProductData = (ProductData) alfrescoRepository.findOne(componentProductNodeRef);
 				if (componentProductData instanceof ResourceProductData
-					&& ((componentProductData.getProcessList() != null) && (componentProductData.getReqCtrlList() != null))) {					
+						&& ((componentProductData.getProcessList() != null) && (componentProductData.getReqCtrlList() != null))) {
 					reqCtrlList.addAll(reqCtrlToAdd(componentProductData));
 				}
 			}
 		}
 	}
-	
+
 	private Set<ReqCtrlListDataItem> reqCtrlToAdd(ProductData componentProductData) {
 		Set<ReqCtrlListDataItem> toAdd = new HashSet<>();
 		for (ReqCtrlListDataItem tmp : componentProductData.getReqCtrlList()) {
 			if (tmp.getReqDataType() != RequirementDataType.Completion) {
 				ReqCtrlListDataItem reqCtl = new ReqCtrlListDataItem(null, tmp.getReqType(), tmp.getReqMlMessage(), tmp.getCharact(),
-						tmp.getSources(), tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient);
+						(addChildRclSources() == null || Boolean.TRUE.equals(addChildRclSources())) ? tmp.getSources() : null,
+						tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient);
 				reqCtl.setRegulatoryCode(tmp.getRegulatoryCode());
 				toAdd.add(reqCtl);
 			}
@@ -172,12 +199,12 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 						StringBuilder message = new StringBuilder(r.getReqMessage());
 						if ((r.getSources() != null) && !r.getSources().isEmpty()) {
 							int i = 0;
-							message.append( " : ");
+							message.append(" : ");
 							for (NodeRef n : r.getSources()) {
 								if (i >= 5) {
 									message.append("...");
 									break;
-								} else if(i > 0) {
+								} else if (i > 0) {
 									message.append(", ");
 								}
 								message.append(nodeService.getProperty(n, ContentModel.PROP_NAME));
@@ -194,7 +221,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 			}
 		}
 	}
-	
+
 	@Override
 	public void onError(ScorableEntity repositoryEntity) {
 		repositoryEntity.merge();
