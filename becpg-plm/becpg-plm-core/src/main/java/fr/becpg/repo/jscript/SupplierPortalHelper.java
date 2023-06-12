@@ -160,6 +160,10 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 			if (entityNode != null) {
 				NodeRef entityNodeRef = entityNode.getNodeRef();
 				NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(project.getNodeRef());
+				
+				if(supplierNodeRef == null) {
+					 supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
+				}
 
 				if (supplierNodeRef != null) {
 
