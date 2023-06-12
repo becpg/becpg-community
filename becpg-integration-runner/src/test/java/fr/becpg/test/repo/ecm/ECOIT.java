@@ -1940,6 +1940,80 @@ public class ECOIT extends AbstractFinishedProductTest {
 		
 	}
 	
+	@Test
+	public void testSingleItemPersistence() throws InterruptedException {
+		NodeRef semiFinishedProductNodeRef = inWriteTx(() -> {
+			
+			SemiFinishedProductData product = new SemiFinishedProductData();
+			product.setName("SF1");
+			product.setQty(2d);
+			List<CompoListDataItem> compoList = new ArrayList<>();
+
+			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Detail, rawMaterial1NodeRef));
+
+			product.getCompoListView().setCompoList(compoList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), product).getNodeRef();
+
+		});
+		
+		NodeRef originalCompoListItem = findCompoListItemNodeRef(semiFinishedProductNodeRef, rawMaterial1NodeRef);
+		
+		NodeRef ecoNodeRef1 = inWriteTx(() -> {
+
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO_1", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, new ArrayList<>());
+			
+			List<ReplacementListDataItem> replacementList = new ArrayList<>();
+
+			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial1NodeRef), rawMaterial2NodeRef, 100);
+			replacementList.add(replacement);
+			changeOrderData.setReplacementList(replacementList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
+
+		});
+		
+		waitForBatchEnd(ecoService.apply(ecoNodeRef1, false, true, false));
+		
+		NodeRef newCompoListItem = findCompoListItemNodeRef(semiFinishedProductNodeRef, rawMaterial2NodeRef);
+		
+		assertEquals(originalCompoListItem, newCompoListItem);
+		
+		NodeRef ecoNodeRef2 = inWriteTx(() -> {
+
+			ChangeOrderData changeOrderData = new ChangeOrderData("ECO_2", ECOState.ToCalculateWUsed, ChangeOrderType.Replacement, new ArrayList<>());
+			
+			List<ReplacementListDataItem> replacementList = new ArrayList<>();
+
+			ReplacementListDataItem replacement = new ReplacementListDataItem(RevisionType.Minor, Arrays.asList(rawMaterial2NodeRef), rawMaterial2NodeRef, 75);
+			replacementList.add(replacement);
+			changeOrderData.setReplacementList(replacementList);
+
+			return alfrescoRepository.create(getTestFolderNodeRef(), changeOrderData).getNodeRef();
+
+		});
+		
+		waitForBatchEnd(ecoService.apply(ecoNodeRef2, false, true, false));
+		
+		newCompoListItem = findCompoListItemNodeRef(semiFinishedProductNodeRef, rawMaterial2NodeRef);
+		
+		assertEquals(originalCompoListItem, newCompoListItem);
+		
+	}
+
+	private NodeRef findCompoListItemNodeRef(NodeRef semiFinishedProductNodeRef, NodeRef productNodeRef) {
+		return inReadTx(() -> {
+			SemiFinishedProductData semiFinishedProductData = (SemiFinishedProductData) alfrescoRepository.findOne(semiFinishedProductNodeRef);
+			
+			for (CompoListDataItem compoListItem : semiFinishedProductData.getCompoList()) {
+				if (compoListItem.getProduct().equals(productNodeRef)) {
+					return compoListItem.getNodeRef();
+				}
+			}
+			return null;
+		});
+	}
+	
 	private String getVersionLabel(NodeRef productNodeRef) {
 		return (String) nodeService.getProperty(productNodeRef, ContentModel.PROP_VERSION_LABEL);
 	}
