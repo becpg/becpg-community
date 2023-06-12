@@ -151,13 +151,15 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 									String message = I18NUtil.getMessage(MESSAGE_NOT_VALIDATED_ALLERGEN);
 									ReqCtrlListDataItem error = rclCtrlMap.get(message);
 
-									List<NodeRef> sourceNodeRefs = new ArrayList<>();
+									List<NodeRef> sourceNodeRefs = new LinkedList<>();
 									if (error == null) {
 										error = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
 												MLTextHelper.getI18NMessage(MESSAGE_NOT_VALIDATED_ALLERGEN), null, sourceNodeRefs,
 												RequirementDataType.Allergen);
 									} else {
-										sourceNodeRefs = error.getSources();
+										if(error.getSources()!=null) {
+											sourceNodeRefs.addAll(error.getSources());
+										}
 									}
 
 									sourceNodeRefs.add(partProduct.getNodeRef());
@@ -471,9 +473,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 							if (error != null) {
 								if ((allergenListDataItem.getQtyPerc() == null) || (qtyUsed == null)) {
-									if (!error.getSources().contains(partProduct.getNodeRef())) {
-										error.getSources().add(partProduct.getNodeRef());
-									}
+									error.addSource(partProduct.getNodeRef());
 								}
 							} else {
 								List<NodeRef> sourceNodeRefs = new ArrayList<>();
@@ -528,16 +528,21 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		String message = I18NUtil.getMessage(MESSAGE_EMPTY_ALLERGEN);
 		ReqCtrlListDataItem error = errors.get(message);
 
-		List<NodeRef> sourceNodeRefs = new ArrayList<>();
+		List<NodeRef> sourceNodeRefs = new LinkedList<>();
 		if (error == null) {
 			error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage(MESSAGE_EMPTY_ALLERGEN), null,
 					sourceNodeRefs, RequirementDataType.Allergen);
 			ret.add(error);
 		} else {
-			sourceNodeRefs = error.getSources();
+			if(error.getSources()!=null) {
+				sourceNodeRefs.addAll(error.getSources());
+			}
+			
 		}
 
-		sourceNodeRefs.add(partProduct.getNodeRef());
+		if(!sourceNodeRefs.contains(partProduct.getNodeRef())) {
+			sourceNodeRefs.add(partProduct.getNodeRef());
+		}
 
 		errors.put(message, error);
 

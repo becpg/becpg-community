@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.alfresco.service.cmr.repository.MLText;
 
@@ -51,8 +53,9 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 
 								if (!isAllergenAllowed || Boolean.TRUE.equals(addInfoReqCtrl)) {
 									MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
-									ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, isAllergenAllowed ? RequirementType.Info : RequirementType.Forbidden, message,
-											listDataItem.getAllergen(), new ArrayList<>(), RequirementDataType.Specification);
+									ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null,
+											isAllergenAllowed ? RequirementType.Info : RequirementType.Forbidden, message, listDataItem.getAllergen(),
+											new ArrayList<>(), RequirementDataType.Specification);
 
 									if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 										rclDataItem.setRegulatoryCode(specification.getRegulatoryCode());
@@ -60,8 +63,10 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 										rclDataItem.setRegulatoryCode(specification.getName());
 									}
 
-									rclDataItem.getSources().addAll(listDataItem.getVoluntarySources());
-									rclDataItem.getSources().addAll(listDataItem.getInVoluntarySources());
+									rclDataItem.setSources(Stream
+											.of(listDataItem.getVoluntarySources(), listDataItem.getInVoluntarySources(), rclDataItem.getSources())
+											.flatMap(List::stream).distinct().collect(Collectors.toList()));
+
 									ret.add(rclDataItem);
 								}
 							}

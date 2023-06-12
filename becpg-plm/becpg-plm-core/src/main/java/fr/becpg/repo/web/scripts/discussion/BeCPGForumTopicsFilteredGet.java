@@ -15,13 +15,12 @@ import org.alfresco.service.cmr.discussion.TopicInfo;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.util.Pair;
 
 import fr.becpg.model.PLMModel;
-import fr.becpg.model.SystemGroup;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.AuthorityHelper;
 
 /**
  * <p>BeCPGForumTopicsFilteredGet class.</p>
@@ -61,7 +60,7 @@ public class BeCPGForumTopicsFilteredGet extends ForumTopicsFilteredGet {
 	@Override
 	protected PagingResults<TopicInfo> doSearch(Pair<String, String> searchQuery, boolean sortAscending, PagingRequest paging) {
 		
-		if (isCurrentUserExternal()) {
+		if (AuthorityHelper.isCurrentUserExternal()) {
 			List<TopicInfo> topics = new ArrayList<>();
 			
 			for(NodeRef nodeRef : associationService.getSourcesAssocs(personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()),
@@ -133,7 +132,7 @@ public class BeCPGForumTopicsFilteredGet extends ForumTopicsFilteredGet {
 			// dashlet.
 			// Into "My Discussions" dashlet forum topic will be displayed only
 			// if user is a member of that site.
-			if (null == site && null != topic.getShortSiteName() && !isCurrentUserExternal()) {
+			if (null == site && null != topic.getShortSiteName() && !AuthorityHelper.isCurrentUserExternal()) {
 				String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 				String siteShortName = topic.getShortSiteName();
 				boolean isSiteMember = siteService.isMember(siteShortName, currentUser);
@@ -153,14 +152,5 @@ public class BeCPGForumTopicsFilteredGet extends ForumTopicsFilteredGet {
 		return model;
 	}
 
-
-	private boolean isCurrentUserExternal() {
-		for (String currAuth : authorityService.getAuthorities()) {
-			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
-				return true;
-			}
-		}
-		return false;
-	}
 
 }

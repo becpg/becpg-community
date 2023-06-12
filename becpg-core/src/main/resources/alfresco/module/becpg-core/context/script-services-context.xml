@@ -91,6 +91,14 @@
 		</property>
 	</bean>	
 	
+	<bean id="systemConfigScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.SystemConfigScriptHelper">
+		<property name="extensionName">
+			<value>bSys</value>
+		</property>
+		<property name="systemConfigurationService">
+			<ref bean="systemConfigurationService" />
+		</property>
+	</bean>
 	
 	
 	<bean id="pdfScriptHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.PDFScriptHelper">

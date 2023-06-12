@@ -851,6 +851,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		return propDef instanceof AssociationDefinition;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Object extractNodeData(NodeRef nodeRef, Map<QName, Serializable> properties, Locale locale, ClassAttributeDefinition attribute,
 			FormatMode mode, int order) {
 
@@ -859,7 +860,7 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 		QName type;
 
 		// property
-		if (attribute instanceof PropertyDefinition) {
+		if (attribute instanceof PropertyDefinition && !isPropertyToExtractAsAssoc(attribute)) {
 
 			value = properties.get(attribute.getName());
 			if (locale != null) {
@@ -935,57 +936,73 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 
 		}
 
-		if (attribute instanceof AssociationDefinition) {// associations
+		if (attribute instanceof AssociationDefinition || isPropertyToExtractAsAssoc(attribute)) {// associations
 
-			List<NodeRef> assocRefs;
-			if (((AssociationDefinition) attribute).isChild()) {
-				assocRefs = associationService.getChildAssocs(nodeRef, attribute.getName());
+			List<NodeRef> assocRefs = null;
+			if (attribute instanceof PropertyDefinition){
+				if (((PropertyDefinition) attribute).isMultiValued()) {
+				  assocRefs  = (List<NodeRef>) properties.get(attribute.getName());
+				}
 			} else {
-				assocRefs = associationService.getTargetAssocs(nodeRef, attribute.getName());
+			
+				if (((AssociationDefinition) attribute).isChild()) {
+					assocRefs = associationService.getChildAssocs(nodeRef, attribute.getName());
+				} else {
+					assocRefs = associationService.getTargetAssocs(nodeRef, attribute.getName());
+				}
 			}
 
-			if (FormatMode.SEARCH.equals(mode)) {
-				HashMap<String, Object> tmp = new HashMap<>(5);
-
-				String nodeRefs = "";
-				for (NodeRef assocNodeRef : assocRefs) {
-
-					if (!displayName.isEmpty()) {
-						displayName += RepoConsts.LABEL_SEPARATOR;
-						nodeRefs += RepoConsts.LABEL_SEPARATOR;
+			if(assocRefs!=null) {
+				if (FormatMode.SEARCH.equals(mode)) {
+					HashMap<String, Object> tmp = new HashMap<>(5);
+	
+					String nodeRefs = "";
+					for (NodeRef assocNodeRef : assocRefs) {
+	
+						if (!displayName.isEmpty()) {
+							displayName += RepoConsts.LABEL_SEPARATOR;
+							nodeRefs += RepoConsts.LABEL_SEPARATOR;
+						}
+	
+						type = nodeService.getType(assocNodeRef);
+						displayName += extractPropName(type, assocNodeRef);
+						nodeRefs += assocNodeRef.toString();
 					}
-
-					type = nodeService.getType(assocNodeRef);
-					displayName += extractPropName(type, assocNodeRef);
-					nodeRefs += assocNodeRef.toString();
-				}
-				tmp.put("order", order);
-				tmp.put("label", attribute.getTitle(dictionaryService));
-				tmp.put("type", "subtype");
-				tmp.put("displayValue", displayName);
-				tmp.put("value", nodeRefs);
-				return tmp;
-
-			} else if (FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
-				StringBuilder ret = new StringBuilder();
-				for (NodeRef assocNodeRef : assocRefs) {
-					type = nodeService.getType(assocNodeRef);
-					if (ret.length() > 0) {
-						ret.append(RepoConsts.LABEL_SEPARATOR);
+					tmp.put("order", order);
+					tmp.put("label", attribute.getTitle(dictionaryService));
+					tmp.put("type", "subtype");
+					tmp.put("displayValue", displayName);
+					tmp.put("value", nodeRefs);
+					return tmp;
+	
+				} else if (FormatMode.CSV.equals(mode) || FormatMode.XLSX.equals(mode)) {
+					StringBuilder ret = new StringBuilder();
+					for (NodeRef assocNodeRef : assocRefs) {
+						type = nodeService.getType(assocNodeRef);
+						if (ret.length() > 0) {
+							ret.append(RepoConsts.LABEL_SEPARATOR);
+						}
+						ret.append(extractPropName(type, assocNodeRef));
 					}
-					ret.append(extractPropName(type, assocNodeRef));
+					return ret.toString();
+	
+				} else {
+					List<Map<String, Object>> ret = new ArrayList<>(assocRefs.size());
+					for (NodeRef assocNodeRef : assocRefs) {
+						ret.add(extractCommonNodeData(assocNodeRef));
+					}
+					return ret;
 				}
-				return ret.toString();
-
-			} else {
-				List<Map<String, Object>> ret = new ArrayList<>(assocRefs.size());
-				for (NodeRef assocNodeRef : assocRefs) {
-					ret.add(extractCommonNodeData(assocNodeRef));
-				}
-				return ret;
 			}
 		}
 		return null;
+	}
+
+	private boolean isPropertyToExtractAsAssoc(ClassAttributeDefinition attribute) {
+		if(attribute instanceof PropertyDefinition ) {
+			return ((PropertyDefinition)attribute).isMultiValued() && DataTypeDefinition.NODE_REF.equals(((PropertyDefinition)attribute).getDataType().getName().getPrefixedQName(namespaceService));
+		}
+		return false;
 	}
 
 	/** {@inheritDoc} */

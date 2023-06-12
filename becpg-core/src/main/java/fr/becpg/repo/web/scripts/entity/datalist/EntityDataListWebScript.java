@@ -19,7 +19,6 @@ import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -37,7 +36,6 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
-import fr.becpg.model.SystemGroup;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.datalist.AsyncPaginatedExtractorWrapper;
 import fr.becpg.repo.entity.datalist.DataListExtractor;
@@ -45,6 +43,7 @@ import fr.becpg.repo.entity.datalist.DataListExtractorFactory;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.DataListOutputWriterFactory;
+import fr.becpg.repo.helper.AuthorityHelper;
 import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
@@ -498,20 +497,11 @@ public class EntityDataListWebScript extends AbstractWebScript {
 		if ((dataListFilter.getParentNodeRef() != null) && nodeService.exists(dataListFilter.getParentNodeRef())
 				&& nodeService.hasAspect(dataListFilter.getParentNodeRef(), BeCPGModel.ASPECT_ENTITYLIST_STATE)
 				&& SystemState.Valid.toString().equals(nodeService.getProperty(dataListFilter.getParentNodeRef(), BeCPGModel.PROP_ENTITYLIST_STATE))
-				&& isCurrentUserExternal()) {
+				&& AuthorityHelper.isCurrentUserExternal()) {
 			return false;
 
 		}
 		return true;
-	}
-
-	private boolean isCurrentUserExternal() {
-		for (String currAuth : authorityService.getAuthorities()) {
-			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

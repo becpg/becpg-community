@@ -702,16 +702,25 @@
 
 		},
 		
-		onActionLock : function EntityDataGrid_onActionLock(item) {
+		onActionLock : function EntityDataGrid_onActionLock(p_items) {
+			
 			var me = this;
-
+			var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
+			
+			var nodeRefs = [];
+			
+			for (var index in items) {
+				var item = items[index];
+				nodeRefs.push(item.nodeRef.toString());
+			}
+			
 			var fnActionLock = function EntityDataGrid__onActionLock() {
 				   this.modules.actions.genericAction({
 				      success : {
 				         event : {
 				            name : me.scopeId + "refreshDataGrid",
 				            obj : {
-					            items : [item]
+					            items : items
 				            }
 				         },
 				         message : me.msg("message.lock.success")
@@ -722,7 +731,7 @@
 				      webscript : {
 				         method : Alfresco.util.Ajax.POST,
                          stem : Alfresco.constants.PROXY_URI + "becpg/entitylist/",
-				         name : "node/" + item.nodeRef.replace(":/", "") + "?state=Valid"
+				         name : "nodes?state=Valid&nodeRefs=" + nodeRefs.join(",")
 				      },
 				      config : {
 				         requestContentType : Alfresco.util.Ajax.JSON,
@@ -749,16 +758,24 @@
 			   });  
 		},
 		
-		onActionUnlock : function EntityDataGrid_onActionUnlock(item) {
+		onActionUnlock : function EntityDataGrid_onActionUnlock(p_items) {
 			var me = this;
-
+			var items = YAHOO.lang.isArray(p_items) ? p_items : [ p_items ];
+			
+			var nodeRefs = [];
+			
+			for (var index in items) {
+				var item = items[index];
+				nodeRefs.push(item.nodeRef.toString());
+			}
+			
 			var fnActionUnlock = function EntityDataGrid__onActionUnlock() {
 				   this.modules.actions.genericAction({
 				      success : {
 				         event : {
 				            name : me.scopeId + "refreshDataGrid",
 				            obj : {
-					            items : [item]
+					            items : items
 				            }
 				         },
 				         message : me.msg("message.unlock.success")
@@ -769,7 +786,7 @@
 				      webscript : {
 				         method : Alfresco.util.Ajax.POST,
                          stem : Alfresco.constants.PROXY_URI + "becpg/entitylist/",
-				         name : "node/" + item.nodeRef.replace(":/", "") + "?state=ToValidate"
+				         name : "nodes?state=ToValidate&nodeRefs=" + nodeRefs.join(",")
 				      },
 				      config : {
 				         requestContentType : Alfresco.util.Ajax.JSON,
