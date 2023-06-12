@@ -17,6 +17,4 @@ public interface DatabaseAuditService {
 
 	void deleteAuditEntries(DatabaseAuditPlugin plugin, Long fromId, Long toId);
 
-	void updateAuditEntry(DatabaseAuditPlugin plugin, Long id, Long time, Map<String, Serializable> auditValues);
-
 }

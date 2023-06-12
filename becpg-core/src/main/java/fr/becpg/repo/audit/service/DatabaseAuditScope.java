@@ -11,7 +11,7 @@ import org.alfresco.util.ISO8601DateFormat;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 
-public class DatabaseScope {
+public class DatabaseAuditScope implements AutoCloseable {
 	
 	private DatabaseAuditService databaseAuditService;
 	
@@ -19,19 +19,23 @@ public class DatabaseScope {
 	
 	private Map<String, Serializable> auditValues = new HashMap<>();
 	
-	public DatabaseScope(DatabaseAuditPlugin auditPlugin, DatabaseAuditService databaseAuditService) {
+	public DatabaseAuditScope(DatabaseAuditPlugin auditPlugin, DatabaseAuditService databaseAuditService) {
 		this.databaseAuditService = databaseAuditService;
 		this.auditPlugin = auditPlugin;
 	}
-
-	public void stop() {
+	
+	@Override
+	public void close() {
 		Date end = new Date();
 		
-		auditValues.put(AuditPlugin.COMPLETED_AT, ISO8601DateFormat.format(end));
+		if (auditPlugin.getKeyMap().containsKey(AuditPlugin.COMPLETED_AT)) {
+			auditValues.put(AuditPlugin.COMPLETED_AT, ISO8601DateFormat.format(end));
+		}
 		
-		Date start = ISO8601DateFormat.parse(auditValues.get(AuditPlugin.STARTED_AT).toString());
-		
-		auditValues.put(AuditPlugin.DURATION, end.getTime() - start.getTime());
+		if (auditPlugin.getKeyMap().containsKey(AuditPlugin.STARTED_AT) && auditPlugin.getKeyMap().containsKey(AuditPlugin.DURATION)) {
+			Date start = ISO8601DateFormat.parse(auditValues.get(AuditPlugin.STARTED_AT).toString());
+			auditValues.put(AuditPlugin.DURATION, end.getTime() - start.getTime());
+		}
 
 		databaseAuditService.recordAuditEntry(auditPlugin, auditValues, false);
 	}
@@ -43,7 +47,9 @@ public class DatabaseScope {
 	}
 
 	public void start() {
-		auditValues.put(AuditPlugin.STARTED_AT, ISO8601DateFormat.format(new Date()));
+		if (auditPlugin.getKeyMap().containsKey(AuditPlugin.STARTED_AT)) {
+			auditValues.put(AuditPlugin.STARTED_AT, ISO8601DateFormat.format(new Date()));
+		}
 		int id = Objects.hash(auditValues);
 		auditValues.put(AuditPlugin.ID, id);
 	}

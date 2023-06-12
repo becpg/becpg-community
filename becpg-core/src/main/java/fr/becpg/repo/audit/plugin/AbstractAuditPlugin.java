@@ -11,12 +11,6 @@ public abstract class AbstractAuditPlugin implements AuditPlugin, InitializingBe
 	
 	protected static final Map<String, AuditDataType> KEY_MAP = new HashMap<>();
 
-	static {
-		KEY_MAP.put(STARTED_AT, AuditDataType.DATE);
-		KEY_MAP.put(COMPLETED_AT, AuditDataType.DATE);
-		KEY_MAP.put(DURATION, AuditDataType.INTEGER);
-	}
-	
 	private boolean databaseEnable = false;
 	
 	private boolean stopWatchEnable = false;

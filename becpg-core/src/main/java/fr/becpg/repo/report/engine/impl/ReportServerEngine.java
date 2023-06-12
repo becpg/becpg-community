@@ -34,9 +34,6 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StopWatch;
 
-import fr.becpg.repo.audit.model.AuditScope;
-import fr.becpg.repo.audit.model.AuditType;
-import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
@@ -64,18 +61,12 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 
 	private EntityService entityService;
 	
-	private BeCPGAuditService beCPGAuditService;
-
 	private String instanceName;
 
 	private long reportImageMaxSizeInBytes;
 
 	private long reportDatasourceMaxSizeInBytes;
 
-	public void setBeCPGAuditService(BeCPGAuditService beCPGAuditService) {
-		this.beCPGAuditService = beCPGAuditService;
-	}
-	
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
 	 *
@@ -128,81 +119,72 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			watch.start();
 		}
 		
-		try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.TRACER, getClass(), "reportEngine.Create")){
+		final ReportFormat format = (ReportFormat) params.get(ReportParams.PARAM_FORMAT);
+		
+		if (format == null) {
+			throw new IllegalArgumentException("Format is a mandatory param");
+		}
+		
+		executeInSession(reportSession -> {
 			
-			final ReportFormat format = (ReportFormat) params.get(ReportParams.PARAM_FORMAT);
+			String templateId = (instanceName != null ? instanceName : "") + tplNodeRef.toString();
 			
-			if (format == null) {
-				throw new IllegalArgumentException("Format is a mandatory param");
+			sendTplFile(reportSession, templateId, tplNodeRef);
+			
+			@SuppressWarnings("unchecked")
+			List<NodeRef> associatedTplFiles = (List<NodeRef>) params.get(ReportParams.PARAM_ASSOCIATED_TPL_FILES);
+			
+			if (associatedTplFiles != null) {
+				for (NodeRef nodeRef : associatedTplFiles) {
+					String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
+					if (name.startsWith("logo")) {
+						reportData.getImages().add(new EntityImageInfo(name, nodeRef));
+					} else {
+						String assocFileId = getAssociatedTplFileId(templateId, name);
+						sendTplFile(reportSession, assocFileId, nodeRef);
+					}
+				}
 			}
 			
-			executeInSession(reportSession -> {
-				
-				String templateId = (instanceName != null ? instanceName : "") + tplNodeRef.toString();
-				
-				auditScope.addAnnotation("sendReportTpl");
-				
-				sendTplFile(reportSession, templateId, tplNodeRef);
-				
-				@SuppressWarnings("unchecked")
-				List<NodeRef> associatedTplFiles = (List<NodeRef>) params.get(ReportParams.PARAM_ASSOCIATED_TPL_FILES);
-				
-				if (associatedTplFiles != null) {
-					for (NodeRef nodeRef : associatedTplFiles) {
-						String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
-						if (name.startsWith("logo")) {
-							reportData.getImages().add(new EntityImageInfo(name, nodeRef));
-						} else {
-							String assocFileId = getAssociatedTplFileId(templateId, name);
-							sendTplFile(reportSession, assocFileId, nodeRef);
-						}
-					}
-				}
-				
-				reportSession.setTemplateId(templateId);
-				
-				auditScope.addAnnotation("sendReportImages");
-				
-				for (EntityImageInfo entry : reportData.getImages()) {
-					byte[] imageBytes = entityService.getImage(entry.getImageNodeRef());
-					if (imageBytes != null) {
-						
-						if (imageBytes.length > reportImageMaxSizeInBytes) {
-							reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Image size exceeds: " + entry,
-									MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(), reportImageMaxSizeInBytes), tplNodeRef));
-						}
-						
-						try (InputStream in = new ByteArrayInputStream(imageBytes)) {
-							sendImage(reportSession, entry.getId(), in);
-						} catch (ReportException e) {
-							logger.error(e, e);
-						}
-					}
-				}
-				
-				auditScope.addAnnotation("sendReportData");
-				
-				reportSession.setFormat(format.toString());
-				reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
-				
-				byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
-				
-				try (InputStream in = new ByteArrayInputStream(datasourceBytes)) {
+			reportSession.setTemplateId(templateId);
+			
+			for (EntityImageInfo entry : reportData.getImages()) {
+				byte[] imageBytes = entityService.getImage(entry.getImageNodeRef());
+				if (imageBytes != null) {
 					
-					if (datasourceBytes.length > reportDatasourceMaxSizeInBytes) {
-						reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Datasource size exceeds: " + params,
-								MLTextHelper.getI18NMessage("message.report.datasource.size", reportDatasourceMaxSizeInBytes), tplNodeRef));
+					if (imageBytes.length > reportImageMaxSizeInBytes) {
+						reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Image size exceeds: " + entry,
+								MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(), reportImageMaxSizeInBytes), tplNodeRef));
 					}
 					
-					List<String> errors = generateReport(reportSession, in, out);
-					
-					for (String error : errors) {
-						reportData.getLogs().add(
-								new ReportEngineLog(ReportLogType.ERROR, error, MLTextHelper.getI18NMessage("message.report.error", error), tplNodeRef));
+					try (InputStream in = new ByteArrayInputStream(imageBytes)) {
+						sendImage(reportSession, entry.getId(), in);
+					} catch (ReportException e) {
+						logger.error(e, e);
 					}
 				}
-			});
-		}
+			}
+			
+			reportSession.setFormat(format.toString());
+			reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
+			
+			byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
+			
+			try (InputStream in = new ByteArrayInputStream(datasourceBytes)) {
+				
+				if (datasourceBytes.length > reportDatasourceMaxSizeInBytes) {
+					reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Datasource size exceeds: " + params,
+							MLTextHelper.getI18NMessage("message.report.datasource.size", reportDatasourceMaxSizeInBytes), tplNodeRef));
+				}
+				
+				List<String> errors = generateReport(reportSession, in, out);
+				
+				for (String error : errors) {
+					reportData.getLogs().add(
+							new ReportEngineLog(ReportLogType.ERROR, error, MLTextHelper.getI18NMessage("message.report.error", error), tplNodeRef));
+				}
+			}
+		});
 
 
 		if (logger.isDebugEnabled() && (watch != null)) {

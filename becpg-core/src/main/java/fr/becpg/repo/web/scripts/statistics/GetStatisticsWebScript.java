@@ -42,23 +42,6 @@ public class GetStatisticsWebScript extends AbstractWebScript {
 		String ascendingOrder = req.getParameter(PARAM_ASCENDING_ORDER);
 		String dbAscendingOrder = req.getParameter(PARAM_DB_ASCENDING_ORDER);
 		
-		
-		AuditType type = null;
-		
-		switch (reqType) {
-		case "batch":
-			type = AuditType.BATCH;
-			break;
-		case "formulation":
-			type = AuditType.FORMULATION;
-			break;
-		case "activity":
-			type = AuditType.ACTIVITY;
-			break;
-		default:
-			throw new WebScriptException("Unknown audit type : '" + reqType + "'");
-		}
-		
 		AuditQuery auditQuery = AuditQuery.createQuery().sortBy(sortBy).filter(filter);
 		
 		if (reqMaxResults != null) {
@@ -73,7 +56,7 @@ public class GetStatisticsWebScript extends AbstractWebScript {
 			auditQuery.dbAsc(Boolean.parseBoolean(dbAscendingOrder));
 		}
 		
-		List<JSONObject> statistics = beCPGAuditService.listAuditEntries(type, auditQuery);
+		List<JSONObject> statistics = beCPGAuditService.listAuditEntries(getAuditType(reqType), auditQuery);
 		
 		try {
 			JSONObject ret = new JSONObject();
@@ -87,6 +70,16 @@ public class GetStatisticsWebScript extends AbstractWebScript {
 			throw new WebScriptException("Unable to serialize JSON", e);
 		}
 		
+	}
+	
+	private AuditType getAuditType(String reqType) {
+		AuditType[] auditTypes = AuditType.class.getEnumConstants();
+		for (AuditType auditType : auditTypes) {
+			if (auditType.toString().equalsIgnoreCase(reqType)) {
+				return auditType;
+			}
+		}
+		throw new WebScriptException("Unknown audit type : '" + reqType + "'");
 	}
 	
 }

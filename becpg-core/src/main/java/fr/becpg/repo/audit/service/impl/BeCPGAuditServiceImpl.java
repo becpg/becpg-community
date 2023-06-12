@@ -1,14 +1,9 @@
 package fr.becpg.repo.audit.service.impl;
 
-import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
-import org.alfresco.rest.api.Audit;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
@@ -20,7 +15,6 @@ import fr.becpg.repo.audit.plugin.DatabaseAuditPlugin;
 import fr.becpg.repo.audit.service.AuditScopeListener;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.audit.service.DatabaseAuditService;
-import fr.becpg.repo.audit.service.TracerAuditService;
 
 @Service("beCPGAuditService")
 public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListener {
@@ -33,14 +27,6 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 	@Autowired
 	private DatabaseAuditService databaseAuditService;
 	
-	@Autowired(required = false)
-	private TracerAuditService tracerAuditService;
-	
-	@Autowired
-	@Qualifier("auditApi")
-	@Lazy
-	private Audit audit;
-	
 	private ThreadLocal<AuditScope> threadLocalScope = new ThreadLocal<>();
 	
 	@SuppressWarnings("resource")
@@ -49,7 +35,7 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 		
 		AuditPlugin plugin = getPlugin(auditType);
 		
-		return new AuditScope(plugin, databaseAuditService, tracerAuditService, this, plugin.getAuditClass(), plugin.getAuditClass().getSimpleName()).start();
+		return new AuditScope(plugin, databaseAuditService, this, plugin.getAuditedClass(), plugin.getClass().getSimpleName()).start();
 	}
 	
 	@SuppressWarnings("resource")
@@ -58,7 +44,7 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 		
 		AuditPlugin plugin = getPlugin(auditType);
 		
-		return new AuditScope(plugin, databaseAuditService, tracerAuditService, this, auditClass, scopeName).start();
+		return new AuditScope(plugin, databaseAuditService, this, auditClass, scopeName).start();
 	}
 
 	@Override
@@ -85,17 +71,6 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 		}
 	}
 	
-	@Override
-	public void updateAuditEntry(AuditType type, Long id, Long time, Map<String, Serializable> values) {
-		AuditPlugin plugin = getPlugin(type);
-		
-		if (plugin.isDatabaseEnable()) {
-			databaseAuditService.updateAuditEntry((DatabaseAuditPlugin) plugin, id, time, values);
-		} else {
-			throw new BeCPGAuditException(String.format(NOT_DATABASE_PLUGIN, type));
-		}
-	}
-
 	private AuditPlugin getPlugin(AuditType type) {
 		for (AuditPlugin auditPlugin : auditPlugins) {
 			if (auditPlugin.applyTo(type)) {
@@ -105,28 +80,7 @@ public class BeCPGAuditServiceImpl implements BeCPGAuditService, AuditScopeListe
 		
 		throw new BeCPGAuditException("Audit plugin for type '" + type + "' is not implemented yet");
 	}
-
-	@Override
-	public void putAttribute(String string, Object attribute) {
-		if (threadLocalScope.get() != null) {
-			threadLocalScope.get().putAttribute(string, attribute);
-		}
-	}
-
-	@Override
-	public void addAnnotation(String annotation) {
-		if (threadLocalScope.get() != null) {
-			threadLocalScope.get().addAnnotation(annotation);
-		}
-	}
 	
-	@Override
-	public void addAnnotation(String description, Map<String, String> attributes) {
-		if (threadLocalScope.get() != null) {
-			threadLocalScope.get().addAnnotation(description, attributes);
-		}
-	}
-
 	@Override
 	public void onStart(AuditScope auditScope) {
 		auditScope.setParentScope(threadLocalScope.get());

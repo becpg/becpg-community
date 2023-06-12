@@ -17,6 +17,6 @@ public interface AuditPlugin {
 	
 	boolean isTracerEnable();
 
-	Class<?> getAuditClass();
+	Class<?> getAuditedClass();
 
 }
