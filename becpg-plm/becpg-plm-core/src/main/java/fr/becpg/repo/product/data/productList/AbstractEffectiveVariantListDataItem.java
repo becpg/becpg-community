@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.productList;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -41,6 +42,17 @@ public abstract class AbstractEffectiveVariantListDataItem extends AbstractEffec
 	 */
 	private static final long serialVersionUID = -2500364866935247636L;
 	private List<NodeRef> variants;
+	
+	
+
+	public AbstractEffectiveVariantListDataItem() {
+		super();
+	}
+	
+	public AbstractEffectiveVariantListDataItem(AbstractEffectiveVariantListDataItem c) {
+		super(c);
+		this.variants = c.variants;
+	}
 
 	/**
 	 * <p>Getter for the field <code>variants</code>.</p>
