@@ -1707,7 +1707,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							if (!isLocalSemiFinished) {
 
-								recurYield = computeYield(productData);
+								recurYield =  productData.getYield() != null ? productData.getYield() : 100d;
 								if (recurYield != null) {
 
 									if ((calculatedYield != null) && (calculatedYield != 100d)) {
@@ -1849,16 +1849,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	}
 
-	private Double computeYield(ProductData productData) {
-		Double qtyUsed = productData.getRecipeQtyUsed();
-		Double netWeight = productData.getNetWeight();
-
-		if ((netWeight != null) && (qtyUsed != null) && (qtyUsed != 0d)) {
-			return (100 * netWeight) / qtyUsed;
-		}
-
-		return 100d;
-	}
 
 	private String getName(CompositeLabeling component) {
 		if (component instanceof IngItem) {
