@@ -548,6 +548,7 @@
 					<value>Formulation</value>
 					<value>Completion</value>
 					<value>Validation</value>
+					<value>Lca</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -3471,6 +3472,13 @@
 		                  <tokenised>false</tokenised>
 		                  <facetable>true</facetable>
 		            </index>
+				</property>
+				<property name="bcpg:regulatoryRecipeId">
+					<type>d:text</type>
+					<index enabled="true">
+					    <tokenised>both</tokenised>
+					    <facetable>false</facetable>
+					</index>
 				</property>
 				<property name="bcpg:requirementChecksum">
 					<type>d:text</type>
