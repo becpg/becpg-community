@@ -97,7 +97,7 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 				// get the content reader
 				ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
 				if ((reader == null) || !reader.exists()) {
-					throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef);
+					throw new WebScriptException(Status.STATUS_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef);
 				}
 
 				String mimetype = reader.getMimetype();
