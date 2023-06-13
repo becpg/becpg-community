@@ -403,7 +403,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	 *            object.
 	 */
 	public CompoListDataItem(CompoListDataItem c) {
-		super();
+		super(c);
 		this.nodeRef = c.nodeRef;
 		this.depthLevel = c.depthLevel;
 		this.qty = c.qty;
