@@ -411,7 +411,7 @@ public class CharactDetailsFormulationIT extends AbstractFinishedProductTest {
 				Assert.assertTrue("no metadata array", jsonRet.has("metadatas"));
 				JSONArray metadataArray = jsonRet.getJSONArray("metadatas");
 
-				Assert.assertEquals(7, metadataArray.length());
+				Assert.assertEquals(8, metadataArray.length());
 				Assert.assertEquals("nut1 unset", ((JSONObject) metadataArray.get(1)).get("colName"), "nut1");
 				Assert.assertEquals("nut2 unset", ((JSONObject) metadataArray.get(2)).get("colName"), "nut2");
 				Assert.assertEquals("nut3 unset", ((JSONObject) metadataArray.get(3)).get("colName"), "nut3");
