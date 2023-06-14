@@ -5,8 +5,6 @@ import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
