@@ -223,6 +223,8 @@ public class CreateProduct extends BaseJavaDelegate {
 
 			for (PackagingListDataItem packagingListDataItem : sourceData.getPackagingList(new EffectiveFilters<>(EffectiveFilters.FUTUR))) {
 				PackagingListDataItem toAdd = packagingListDataItem.copy();
+				toAdd.setName(null);
+				toAdd.setParentNodeRef(null);
 				toAdd.setNodeRef(null);
 				productData.getPackagingList().add(toAdd);
 			}
@@ -230,6 +232,8 @@ public class CreateProduct extends BaseJavaDelegate {
 
 			for (CompoListDataItem compoListDataItem : sourceData.getCompoList(new EffectiveFilters<>(EffectiveFilters.FUTUR))) {
 				CompoListDataItem toAdd = compoListDataItem.copy();
+				toAdd.setName(null);
+				toAdd.setParentNodeRef(null);
 				toAdd.setNodeRef(null);
 				productData.getCompoList().add(toAdd);
 			}

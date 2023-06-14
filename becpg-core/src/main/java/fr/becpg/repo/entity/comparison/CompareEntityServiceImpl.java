@@ -992,6 +992,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				|| qName.equals(ReportModel.ASSOC_REPORTS) || qName.equals(BeCPGModel.PROP_VERSION_LABEL) || qName.equals(BeCPGModel.PROP_COLOR)
 				// TODO plugin
 				|| qName.getLocalName().contains("compareWithDynColumn")
+				|| qName.getLocalName().contains("nutListRoundedValue")
 				|| qName.getLocalName().contains("ErrorLog")
 				|| qName.equals(ContentModel.PROP_IS_INDEXED) || qName.equals(ContentModel.PROP_IS_CONTENT_INDEXED)) {
 
