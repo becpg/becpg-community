@@ -469,7 +469,11 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	/** {@inheritDoc} */
 	@Override
 	public CompoListDataItem copy() {
-		return new CompoListDataItem(this);
+		CompoListDataItem ret = new CompoListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 	/** {@inheritDoc} */
