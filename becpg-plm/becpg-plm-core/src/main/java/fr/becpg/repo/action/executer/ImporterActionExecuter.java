@@ -3,14 +3,10 @@
  */
 package fr.becpg.repo.action.executer;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.function.BiFunction;
 
 import org.alfresco.repo.action.ParameterDefinitionImpl;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
@@ -26,7 +22,6 @@ import org.alfresco.util.transaction.TransactionSupportUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.ImportService;
 
 /**
@@ -46,12 +41,6 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 	/** Constant <code>XLSX_EXTENSION=".xlsx"</code> */
 	public static final String XLSX_EXTENSION = ".xlsx";
 
-	private static final String LOG_STARTING_DATE = "Starting date: ";
-	private static final String LOG_ENDING_DATE = "Ending date: ";
-	private static final String LOG_ERROR = "Error: ";
-	private static final int ERROR_LOGS_LIMIT = 50;
-	private static final String LOG_ERROR_MAX_REACHED = "More than " + ERROR_LOGS_LIMIT + " errors, stop printing";
-	private static final String LOG_SEPARATOR = "\n";
 	private static final String KEY_FILES_TO_IMPORT = "keyFilesToImport";
 
 	private static final Log logger = LogFactory.getLog(ImporterActionExecuter.class);
@@ -161,72 +150,8 @@ public class ImporterActionExecuter extends ActionExecuterAbstractBase {
 		@Override
 		public void run() {
 			
-			
 			RunAsWork<Object> actionRunAs = () -> {
-				// import file
-				String startlog = LOG_STARTING_DATE + Calendar.getInstance().getTime();
-				
-				BiFunction<ImportContext, String, Void> afterImportCallBack = (importContext, unhandledLog) -> {
-					
-					boolean hasFailed = unhandledLog != null;
-
-					StringBuilder first50ErrorsLog = new StringBuilder(); // log stored in title, first
-					// 50 errors
-					StringBuilder after50ErrorsLog = new StringBuilder(); // log store in
-					
-					if (importContext != null && !importContext.getLog().isEmpty()) {
-						int limit = 0;
-						for (String error : importContext.getLog()) {
-							if (limit <= ERROR_LOGS_LIMIT) {
-								first50ErrorsLog.append(LOG_SEPARATOR);
-								first50ErrorsLog.append(error);
-							} else {
-								after50ErrorsLog.append(LOG_ERROR);
-								after50ErrorsLog.append(error);
-							}
-							limit++;
-						}
-
-						hasFailed = true;
-					}
-					
-					String endlog = LOG_ENDING_DATE + Calendar.getInstance().getTime().toString();
-					
-					String log = startlog + LOG_SEPARATOR + (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "")
-							+ (first50ErrorsLog.toString().isEmpty() ? "" : first50ErrorsLog.toString() + LOG_SEPARATOR)
-							+ (after50ErrorsLog.toString().isEmpty() ? "" : LOG_ERROR_MAX_REACHED + LOG_SEPARATOR) + endlog;
-
-					String allLog = startlog + LOG_SEPARATOR + (unhandledLog != null ? unhandledLog + LOG_SEPARATOR : "")
-							+ (first50ErrorsLog.toString().isEmpty() ? "" : first50ErrorsLog.toString() + LOG_SEPARATOR)
-							+ (after50ErrorsLog.toString().isEmpty() ? "" : after50ErrorsLog.toString() + LOG_SEPARATOR) + endlog;
-
-					// set log, stackTrace and move file
-					if ((doNotMoveNode == null) || Boolean.FALSE.equals(doNotMoveNode)) {
-						importService.moveImportedFile(nodeRef, hasFailed, log, allLog);
-					} else {
-						importService.writeLogInFileTitle(nodeRef, log, hasFailed);
-					}
-
-					return null;
-				};
-						
-				try {
-							
-					importService.importText(nodeRef, true, true, afterImportCallBack);
-
-				} catch (Exception e) {
-
-					logger.error("Failed to import file text", e);
-
-					// set printStackTrance in description
-					try (StringWriter sw = new StringWriter()) {
-						try (PrintWriter pw = new PrintWriter(sw)) {
-							e.printStackTrace(pw);
-							String stackTrace = sw.toString();
-							afterImportCallBack.apply(null, LOG_ERROR + stackTrace);
-						}
-					}
-				}
+				importService.importText(nodeRef, true, true, doNotMoveNode);
 				return null;
 			};
 			AuthenticationUtil.runAs(actionRunAs, runAsUser);
