@@ -146,7 +146,11 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 
 	@Override
 	public PackMaterialListDataItem copy() {
-		return new PackMaterialListDataItem(this);
+		PackMaterialListDataItem ret = new PackMaterialListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;	
 	}
 
 

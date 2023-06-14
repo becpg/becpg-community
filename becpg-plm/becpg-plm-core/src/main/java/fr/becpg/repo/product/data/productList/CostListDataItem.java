@@ -409,7 +409,11 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	/** {@inheritDoc} */
 	@Override
 	public CostListDataItem copy() {
-		return new CostListDataItem(this);
+		CostListDataItem ret =  new CostListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 
