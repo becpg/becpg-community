@@ -277,7 +277,11 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 	/** {@inheritDoc} */
 	@Override
 	public PhysicoChemListDataItem copy() {
-		return new PhysicoChemListDataItem(this);
+		PhysicoChemListDataItem ret = new PhysicoChemListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 

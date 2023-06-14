@@ -1,15 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>becpg-plm-core</name>
-	<comment>beCPG PLM. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+	<comment></comment>
 	<projects>
-		<project>becpg-core</project>
-		<project>becpg-report</project>
-		<project>becpg-project-core</project>
-		<project>becpg-designer-core</project>
-		<project>alfresco-remote-api-alfresco-remote-api-7.101</project>
-		<project>alfresco-repository-alfresco-repository-7.131</project>
-		<project>alfresco-core-7.22</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

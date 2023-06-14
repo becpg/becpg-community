@@ -120,6 +120,7 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 					CompoListDataItem toAdd = new CompoListDataItem(compoListItem);
+					toAdd.setName(null);
 					toAdd.setParentNodeRef(null);
 					toAdd.setNodeRef(null);
 					toAdd.setVariants(new ArrayList<>());

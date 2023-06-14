@@ -162,8 +162,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
 				new JavaBehaviour(this, "onDeleteAssociation"));
 		
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, this, new JavaBehaviour(this, "onAddAspect"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRemoveAspectPolicy.QNAME, this, new JavaBehaviour(this, "onRemoveAspect"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, 
+				this, new JavaBehaviour(this, "onAddAspect"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRemoveAspectPolicy.QNAME, 
+			    this, new JavaBehaviour(this, "onRemoveAspect"));
 	}
 
 	/** {@inheritDoc} */
@@ -180,12 +182,17 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 	
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
-		purgeCache(nodeRef);
+		if(nodeService.exists(nodeRef) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+			purgeCache(nodeRef);
+		}
+		
 	}
 	
 	@Override
 	public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName) {
-		purgeCache(nodeRef);
+		if(nodeService.exists(nodeRef) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+			purgeCache(nodeRef);
+		}
 	}
 	
 	@Override
@@ -199,15 +206,29 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 	}
 
 	private void purgeCache(NodeRef nodeRef) {
-		if (logger.isDebugEnabled()) {
+		
 			if (nodeService.exists(nodeRef)) {
-				logger.info("Clear cache of:" + nodeRef + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+				QName type = nodeService.getType(nodeRef);
+				Class<T> entityClass = repositoryEntityDefReader.getEntityClass(type);
+				if (entityClass != null) {
+					if(entityClass.isAnnotationPresent(AlfCacheable.class) ) {
+						if (logger.isDebugEnabled()) {
+							logger.info("Clear cache of:" + nodeRef + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+						}
+						if (entityClass.getAnnotation(AlfCacheable.class).isCharact()) {
+							charactCache.remove(nodeRef);
+						} else {
+							cache.remove(nodeRef);
+						}
+					}
+				}
 			} else {
-				logger.info("Clear cache of:" + nodeRef + " - deleted");
+				if (logger.isDebugEnabled()) {
+					logger.info("Clear cache of:" + nodeRef + " - deleted");
+				}
+				charactCache.remove(nodeRef);
+				cache.remove(nodeRef);
 			}
-		}
-		cache.remove(nodeRef);
-		charactCache.remove(nodeRef);
 	}
 
 	/** {@inheritDoc} */
