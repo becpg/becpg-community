@@ -16,19 +16,19 @@ export MVN_EXEC="${PWD}/mvnw"
 export BECPG_VERSION_PROFILE=becpg_4_2_2
 
 start() {
-   	 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
+   	 	docker-compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
 }
 
 start_test() {
-   	 	docker compose -p becpg_test -f $COMPOSE_FILE_PATH up -d --remove-orphans
+   	 	docker-compose -p becpg_test -f $COMPOSE_FILE_PATH up -d --remove-orphans
 }
 
 pull() {
-   	 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
+   	 	docker-compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
 }
 
 pull() {
-   	 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
+   	 	docker-compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
 }
 
 down() {
@@ -40,7 +40,7 @@ down() {
    	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
     fi 
     if [ -f $COMPOSE_FILE_PATH ]; then
-        docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH  -f docker-compose.override.yml down
+        docker-compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH  -f docker-compose.override.yml down
     fi
 }
 
@@ -53,7 +53,7 @@ down_test() {
    	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
     fi 
     if [ -f $COMPOSE_FILE_PATH ]; then
-        docker compose -p becpg_test -f $COMPOSE_FILE_PATH  down -v
+        docker-compose -p becpg_test -f $COMPOSE_FILE_PATH  down -v
     fi
 }
 
@@ -84,18 +84,18 @@ deploy_fast(){
 }
 
 purge() {
-    docker compose -p $BECPG_VERSION_PROFILE -f  $COMPOSE_FILE_PATH down -v
+    docker-compose -p $BECPG_VERSION_PROFILE -f  $COMPOSE_FILE_PATH down -v
 }
 
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
    	 $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
-     docker compose -f ./distribution/target/docker-compose-build.yml build
+     docker-compose -f ./distribution/target/docker-compose-build.yml build
    	 cd ..
    else
    	 $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
-   	 docker compose -f ./becpg-integration-runner/target/docker-compose-build.yml build
+   	 docker-compose -f ./becpg-integration-runner/target/docker-compose-build.yml build
    fi 
    
    
@@ -113,7 +113,7 @@ install() {
 }
 
 tail() {
-    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-share
+    docker-compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg becpg-share
 }
 
 test() {
@@ -121,10 +121,10 @@ test() {
 }
 
 reindex() {
-	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
-    docker compose  -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml rm -v solr
+	docker-compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
+    docker-compose  -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml rm -v solr
     docker volume rm $BECPG_VERSION_PROFILE_solr_data
-	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr
+	docker-compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr
 }
 
 
