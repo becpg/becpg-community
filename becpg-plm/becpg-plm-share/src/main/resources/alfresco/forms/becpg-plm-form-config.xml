@@ -6871,7 +6871,6 @@
 					<show id="bcpg:nutListValuePrepared" />
 					<show id="bcpg:nutListFormulatedValuePrepared" force="true"/>
 					<show id="bcpg:nutListUnitPrepared"  force="true" />
-					<show id="bcpg:nutListRoundedValue" />
 					<show id="bcpg:nutListMini" />
 					<show id="bcpg:nutListMaxi" />
 					<show id="bcpg:nutListFormulatedMini" />
@@ -6883,6 +6882,7 @@
 					<show id="bcpg:variantColumn3" force="true" />
 					<show id="bcpg:variantColumn4" force="true" />
 					<show id="bcpg:variantColumn5" force="true" />
+					<show id="bcpg:nutListRoundedValue" />
 					<show id="bcpg:nutListGDAPerc" force="true" />
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
@@ -6930,13 +6930,14 @@
 					<show id="bcpg:nutListUnit" />
 				
 					<show id="bcpg:nutListValuePerServing" force="true" />
+					<show id="bcpg:nutListFormulatedValuePerServing" force="true" />
+					<show id="bcpg:nutListRoundedValue" />
 					<show id="bcpg:nutListGDAPerc" force="true" />
 				
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:nutListIsFormulated" />
 					<show id="bcpg:nutListFormulaErrorLog" />					
 					<show id="entity_bcpg:nutListNut_bcpg:nut" force="true"/>
-					<show id="rep:reportKinds" />
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
 				</field-visibility>
@@ -6944,10 +6945,12 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="bcpg:nutListFormulatedValue" label="hidden" read-only="true" />
+					<field id="bcpg:nutListFormulatedValuePerServing" label="hidden" read-only="true" />
 					<field id="bcpg:nutListUnit" read-only="true" label="hidden"></field>
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 					<field id="bcpg:nutListIsFormulated" label="hidden"/>
 					<field id="bcpg:nutListFormulaErrorLog" label="hidden"/>
+					<field id="bcpg:nutListRoundedValue" read-only="true" ></field>
 				</appearance>
 			</form>
 			<form id="datagridWUsed">
