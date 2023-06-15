@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>becpg-core</name>
-	<comment>BeCPG repository. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+	<comment></comment>
 	<projects>
-		<project>becpg-report</project>
-		<project>alfresco-repository-alfresco-repository-7.131</project>
-		<project>alfresco-core-7.22</project>
-		<project>alfresco-remote-api-alfresco-remote-api-7.101</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
@@ -24,15 +20,4 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 	</natures>
-	<filteredResources>
-		<filter>
-			<id>1574850499293</id>
-			<name></name>
-			<type>26</type>
-			<matcher>
-				<id>org.eclipse.ui.ide.multiFilter</id>
-				<arguments>1.0-name-matches-false-false-target</arguments>
-			</matcher>
-		</filter>
-	</filteredResources>
 </projectDescription>

@@ -757,7 +757,7 @@ public class ImportEntityJsonVisitor {
 									if (pd.getDataType().getName().equals(DataTypeDefinition.NODE_REF) || pd.getDataType().getName().equals(DataTypeDefinition.CATEGORY) ) {
 										val = visit(values.getJSONObject(i), JsonVisitNodeType.ASSOC, propQName, context);
 									} else {
-										if (RemoteHelper.isJSONValue(propQName)) {
+										if (RemoteHelper.isJSONValue(propQName) || values.get(i) instanceof JSONObject) {
 											val = values.getJSONObject(i).toString();
 										} else {
 											val = (Serializable) values.get(i);
@@ -770,16 +770,13 @@ public class ImportEntityJsonVisitor {
 								if (pd.getDataType().getName().equals(DataTypeDefinition.NODE_REF) || pd.getDataType().getName().equals(DataTypeDefinition.CATEGORY) ) {
 									value = visit(entity.getJSONObject(key), JsonVisitNodeType.ASSOC, propQName, context);
 								} else {
-									if (RemoteHelper.isJSONValue(propQName)) {
+									if (RemoteHelper.isJSONValue(propQName) || entity.get(key) instanceof JSONObject) {
 										value = entity.getJSONObject(key).toString();
 									} else {
 										value = (Serializable) entity.get(key);
 									}
-
 								}
-
 							}
-
 							nodeProps.put(propQName, value);
 						} else {
 							nodeProps.put(propQName, null);
