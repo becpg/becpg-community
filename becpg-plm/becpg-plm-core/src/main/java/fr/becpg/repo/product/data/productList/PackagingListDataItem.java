@@ -268,14 +268,15 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	 *            object.
 	 */
 	public PackagingListDataItem(PackagingListDataItem c) {
-		super();
-		this.nodeRef = c.nodeRef;
+		super(c);
 		this.qty = c.qty;
 		this.packagingListUnit = c.packagingListUnit;
 		this.pkgLevel = c.pkgLevel;
 		this.isMaster = c.isMaster;
 		this.isRecycle = c.isRecycle;
 		this.product = c.product;
+		this.lossPerc = c.lossPerc;
+
 	}
 
 	/** {@inheritDoc} */
@@ -345,7 +346,11 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 	/** {@inheritDoc} */
 	@Override
 	public PackagingListDataItem copy() {
-		return new PackagingListDataItem(this);
+		PackagingListDataItem ret =  new PackagingListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 	/** {@inheritDoc} */

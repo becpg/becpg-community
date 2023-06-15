@@ -669,7 +669,11 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	/** {@inheritDoc} */
 	@Override
 	public NutListDataItem copy() {
-		return new NutListDataItem(this);
+		NutListDataItem ret = new NutListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 	/** {@inheritDoc} */
