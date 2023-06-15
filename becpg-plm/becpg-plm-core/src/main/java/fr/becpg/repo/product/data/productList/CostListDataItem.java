@@ -240,7 +240,11 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	/** {@inheritDoc} */
 	@Override
 	public CostListDataItem copy() {
-		return new CostListDataItem(this);
+		CostListDataItem ret =  new CostListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 
