@@ -357,7 +357,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 				unit = oRecord._oData.itemData.prop_bcpg_nutListUnitPrepared.value;
 			}
 
-			if (oColumn.label != null && oColumn.label.indexOf && oColumn.label.indexOf("100g") > 0) {
+			if ((oColumn.label != null && oColumn.label.indexOf && oColumn.label.indexOf("100g") > 0 )
+			|| (oColumn.field == "prop_bcpg_nutListValuePerServing")) {
 				unit = unit.replace("/100g", "");
 			}
 
@@ -397,59 +398,23 @@ if (beCPG.module.EntityDataGridRenderers) {
 		propertyName: ["bcpg:nutListRoundedValue"],
 		renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
 			var ret = "";
-			var getLocalKey = function(loc) {
-				var language = loc.split("_")[0];
-				var country = loc.split("_").length > 1 ? loc.split("_")[1] : language.toUpperCase();
-				if (country === "US" || country === "CA" || country === "AU" || country === "ID" || country === "HK" || country === "MY"
-					|| country === "IL" || country === "IN" || country === "KR"
-					|| country === "MA" || country === "MX" || country === "DZ"
-					|| country === "TR" || country === "SG" || country === "TH"
-					|| country === "PK" || country === "ZA" || country === "TN"
-					|| country === "EG" || country === "CL" || country === "UY"
-					|| country === "BR" || country === "TT" || country === "DO"
-					|| country === "PE") {
-					return country;
-				} else if (language === "zh") {
-					return "CN";
-				} else if (language === "ru") {
-					return "RU";
-				} else if (country === "NZ") {
-					return "AU";
-				} else if (country === "PR") {
-					return "US";
-				} else if (country === "PY") {
-					return "BR";
-				} else if (country === "GT" || country === "PA" || country === "SV") {
-					return "CTA";
-				} else if (country === "AE" || country === "BH" || country === "SA"
-					|| country === "QA" || country === "OM" || country === "KW") {
-					return "GSO";
-				} else if (country === "KE" || country === "NG" || country === "GH"
-					|| country === "CI" || country === "UG" || country === "MZ"
-					|| country === "MW" || country === "TZ" || country === "ZM"
-					|| country === "ZW" || country === "KH" || country === "MM"
-					|| country === "JO" || country === "IQ" || country === "PS") {
-					return "CODEX";
-				} else if (country === "CO") {
-					return "CO";
-				}
-
-				return "EU";
-			};
-
 
 			if (data.value != null) {
 
-				var key = getLocalKey(Alfresco.constants.JS_LOCALE);
+				var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
 				var jsonData = JSON.parse(data.value);
 				if (jsonData && jsonData.v) {
 					if (jsonData.v[key]!=null) {
 						if (jsonData.tu && jsonData.tu[key]) {
 							ret +=  '<span class="red">'+jsonData.tu[key].toLocaleString( beCPG.util.getJSLocale() ) +'</span>'+ "<";
 						}
-
-						ret += '<span class="green">'+jsonData.v[key].toLocaleString( beCPG.util.getJSLocale() )+'</span>';
-
+						if(key == "US"){		
+							if(jsonData.vps[key]){
+								ret += '<span class="green">'+jsonData.vps[key].toLocaleString( beCPG.util.getJSLocale() )+'</span>';
+							}
+						} else {
+							ret += '<span class="green">'+jsonData.v[key].toLocaleString( beCPG.util.getJSLocale() )+'</span>';
+						}
 
 						if (jsonData.tl && jsonData.tl[key]) {
 							ret +=  "<" +  '<span class="red">'+jsonData.tl[key].toLocaleString( beCPG.util.getJSLocale() )+'</span>' ;
@@ -1471,12 +1436,24 @@ if (beCPG.module.EntityDataGridRenderers) {
 			   nutColor = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].color;
 			}
 			
+			
 			if(percentValue !== null && percentValue > 0 && nutColor!=null && nutColor !== undefined){
 				
 				var additionalProps = oRecord.getData("itemData")["dt_bcpg_nutListNut"][0].itemData;
 				var nutValue = oRecord.getData("itemData")["prop_bcpg_nutListValue"].displayValue;
 				var gda = additionalProps.prop_bcpg_nutGDA.value;
 				var ul = additionalProps.prop_bcpg_nutUL.value;
+				
+				if (oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"] 
+					&&  oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value !=null) {
+						var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
+						var jsonData = JSON.parse( oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value );
+						if(jsonData.ul[key]){
+							ul = jsonData.ul[key];
+							percentValue = jsonData.gda[key];
+						}
+				}
+				
 				var unit = additionalProps.prop_bcpg_nutUnit.displayValue;
 	
 				var ulExceeded = false;
