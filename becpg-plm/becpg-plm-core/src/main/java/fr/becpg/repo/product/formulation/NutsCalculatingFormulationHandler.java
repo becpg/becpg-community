@@ -342,7 +342,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						}
 						Double ul = nut.getNutUL();
 						if (ul != null) {
-							if (valuePerserving > ul) {
+							if (n.getValuePerServing() > ul) {
 								MLText message = MLTextHelper.getI18NMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nut.getCharactName());
 
 								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(),
