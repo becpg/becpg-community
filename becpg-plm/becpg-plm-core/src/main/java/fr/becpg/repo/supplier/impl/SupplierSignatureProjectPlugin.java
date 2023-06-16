@@ -90,7 +90,7 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
 			props.put(ContentModel.PROP_NAME, supplierDocumentsFolderName);
 
-			supplierDocumentsFolder = nodeService.createNode(supplierDocumentsFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER, props)
+			supplierDocumentsFolder = nodeService.createNode(entityNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER, props)
 					.getChildRef();
 		}
 
