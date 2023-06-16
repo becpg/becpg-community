@@ -35,7 +35,6 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	protected Double maxi = null;	
 	protected NodeRef cost;	
 	protected Boolean isFormulated;	
-	protected String errorLog;	
 	protected List<NodeRef> plants = new ArrayList<>();
 	protected Integer depthLevel;
 	protected T parent;
@@ -75,7 +74,6 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 		this.maxi = c.maxi;	
 		this.cost = c.cost;	
 		this.isFormulated = c.isFormulated;	
-		this.errorLog = c.errorLog;	
 		this.plants = c.plants;
 		this.depthLevel = c.depthLevel;
 		this.parent = c.parent;
@@ -155,11 +153,6 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 		this.isFormulated = isFormulated;
 	}
 
-	@Override
-	public void setErrorLog(String errorLog) {
-		this.errorLog = errorLog;
-	}
-
 	@AlfMultiAssoc
 	@InternalField
 	@AlfQname(qname="bcpg:plants")
@@ -217,7 +210,7 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(componentNodeRef, cost, depthLevel, errorLog, futureValue, isFormulated, maxi, parent, plants,
+		result = prime * result + Objects.hash(componentNodeRef, cost, depthLevel, futureValue, isFormulated, maxi, parent, plants,
 				previousValue, simulatedValue, unit, value, valuePerProduct);
 		return result;
 	}
@@ -232,7 +225,7 @@ MinMaxValueDataItem, UnitAwareDataItem, FormulatedCharactDataItem, ForecastValue
 			return false;
 		AbstractCostListDataItem<?> other = (AbstractCostListDataItem<?>) obj;
 		return Objects.equals(componentNodeRef, other.componentNodeRef) && Objects.equals(cost, other.cost)
-				&& Objects.equals(depthLevel, other.depthLevel) && Objects.equals(errorLog, other.errorLog)
+				&& Objects.equals(depthLevel, other.depthLevel)
 				&& Objects.equals(futureValue, other.futureValue) && Objects.equals(isFormulated, other.isFormulated)
 				&& Objects.equals(maxi, other.maxi) && Objects.equals(parent, other.parent) && Objects.equals(plants, other.plants)
 				&& Objects.equals(previousValue, other.previousValue) && Objects.equals(simulatedValue, other.simulatedValue)
