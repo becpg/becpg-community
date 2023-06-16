@@ -3,6 +3,7 @@ package fr.becpg.repo.entity.version;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -18,6 +19,9 @@ import org.alfresco.model.ImapModel;
 import org.alfresco.model.RenditionModel;
 import org.alfresco.query.PagingRequest;
 import org.alfresco.query.PagingResults;
+import org.alfresco.repo.batch.BatchProcessWorkProvider;
+import org.alfresco.repo.batch.BatchProcessor;
+import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -68,6 +72,9 @@ import fr.becpg.model.BeCPGPermissions;
 import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.activity.EntityActivityService;
+import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
@@ -75,6 +82,7 @@ import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -169,6 +177,13 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
+	
+	
+	@Autowired
+	private EntityReportService entityReportService;
+	
+	@Autowired
+	private BatchQueueService batchQueueService;
 
 	/** {@inheritDoc} */
 	@Deprecated
@@ -759,15 +774,13 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 
 			StopWatch watch = null;
 
-			boolean mlAware = MLPropertyInterceptor.isMLAware();
+			boolean mlAware = 	MLPropertyInterceptor.setMLAware(true);
 			try {
 
 				if (logger.isDebugEnabled()) {
 					watch = new StopWatch();
 					watch.start();
 				}
-
-				MLPropertyInterceptor.setMLAware(true);
 
 				final NodeRef internalBranchToNodeRef = branchToNodeRef;
 
@@ -950,6 +963,9 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							/**
 							 * After working copy deletion
 							 */
+							//Fire rules once for entity
+							((RuleService) ruleService).enableRules();
+							
 							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_NAME, finalBranchName);
 							
 							associationService.removeAllCacheAssocs(internalBranchToNodeRef);
@@ -960,6 +976,9 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							}
 							
 							nodeService.setProperty(internalBranchToNodeRef, ContentModel.PROP_MODIFIED, new Date());
+						
+							generateReportsAsync(internalBranchToNodeRef);
+							
 							
 							return internalBranchToNodeRef;
 
@@ -990,6 +1009,26 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 		}
 		return null;
 	}
+	
+	private void generateReportsAsync(final NodeRef internalBranchToNodeRef) {
+		String entityDescription = nodeService.getProperty(internalBranchToNodeRef, BeCPGModel.PROP_CODE) + " " + nodeService.getProperty(internalBranchToNodeRef, ContentModel.PROP_NAME);
+
+		BatchInfo batchInfo = new BatchInfo(String.format("generateReports-%s", Calendar.getInstance().getTimeInMillis()),
+				"becpg.batch.entity.generateReports", entityDescription);
+		batchInfo.setRunAsSystem(true);
+
+		BatchProcessWorkProvider<NodeRef> workProvider = new EntityListBatchProcessWorkProvider<>(List.of(internalBranchToNodeRef));
+
+		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
+
+			@Override
+			public void process(NodeRef entityNodeRef) throws Throwable {
+				entityReportService.generateReports(entityNodeRef);
+			}
+		};
+
+		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
+	}	
 
 	public NodeRef revert() {
 		//TODO
@@ -1000,7 +1039,9 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties) {
-		return internalCreateVersion(entityNodeRef, versionProperties, null, null);
+		NodeRef versionNodeRef = internalCreateVersion(entityNodeRef, versionProperties, null, null);
+		generateReportsAsync(entityNodeRef);
+		return versionNodeRef;
 	}
 
 	private NodeRef internalCreateVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date newEffectivity, String manualVersionLabel) {
@@ -1139,6 +1180,8 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 		if (comments != null) {
 			for (NodeRef commentNodeRef : comments.getPage()) {
 				NodeRef newComment = null;
+				boolean mlAware = 	MLPropertyInterceptor.setMLAware(false);
+				
 				try {
 
 					MLPropertyInterceptor.setMLAware(false);
@@ -1156,7 +1199,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 							nodeService.getProperty(commentNodeRef, ContentModel.PROP_MODIFIED));
 					commentService.deleteComment(commentNodeRef);
 				} finally {
-					MLPropertyInterceptor.setMLAware(true);
+					MLPropertyInterceptor.setMLAware(mlAware);
 					if (newComment != null) {
 						policyBehaviourFilter.enableBehaviour(newComment, ContentModel.ASPECT_AUDITABLE);
 					}
@@ -1170,7 +1213,7 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 	public NodeRef createBranch(NodeRef entityNodeRef, NodeRef parentRef) {
 		StopWatch watch = null;
 
-		boolean mlAware = MLPropertyInterceptor.isMLAware();
+		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
 		try {
 
 			if (logger.isDebugEnabled()) {
@@ -1178,7 +1221,6 @@ public class EntityVersionServiceImpl2 implements EntityVersionService {
 				watch.start();
 			}
 
-			MLPropertyInterceptor.setMLAware(true);
 
 			return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
