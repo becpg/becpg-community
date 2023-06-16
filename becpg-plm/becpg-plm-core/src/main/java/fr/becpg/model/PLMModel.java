@@ -3,7 +3,6 @@
  */
 package fr.becpg.model;
 
-import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 /**
@@ -215,6 +214,7 @@ public interface PLMModel {
 	/** Constant <code>PROP_NUTLIST_ROUNDED_VALUE</code> */
 	QName PROP_NUTLIST_ROUNDED_VALUE = QName.createQName(BeCPGModel.BECPG_URI, "nutListRoundedValue");
 	/** Constant <code>PROP_NUTLIST_FORMULA_ERROR</code> */
+	@Deprecated
 	QName PROP_NUTLIST_FORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "nutListFormulaErrorLog");
 	/** Constant <code>PROP_NUTLIST_METHOD</code> */
 	QName PROP_NUTLIST_METHOD = QName.createQName(BeCPGModel.BECPG_URI, "nutListMethod");
@@ -281,6 +281,7 @@ public interface PLMModel {
 	/** Constant <code>PROP_PHYSICOCHEMLIST_MAXI</code> */
 	QName PROP_PHYSICOCHEMLIST_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "pclMaxi");
 	/** Constant <code>PROP_PHYSICOCHEMFORMULA_ERROR</code> */
+	@Deprecated
 	QName PROP_PHYSICOCHEMFORMULA_ERROR = QName.createQName(BeCPGModel.BECPG_URI, "physicoChemFormulaErrorLog");
 	/** Constant <code>ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM</code> */
 	QName ASSOC_PHYSICOCHEMLIST_PHYSICOCHEM = QName.createQName(BeCPGModel.BECPG_URI, "pclPhysicoChem");
