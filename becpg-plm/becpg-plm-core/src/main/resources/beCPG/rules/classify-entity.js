@@ -17,7 +17,7 @@ function main() {
 			state = document.properties["bcpg:clientState"];
 		} else if (document.isSubType("bcpg:supplier")) {
 			state = document.properties["bcpg:supplierState"];
-			if (isInSite(document, SUPPLIER_PORTAL_SITE_ID) && !document.parent.parent.isSubType("bcpg:supplier")) {
+			if (isInSite(document, SUPPLIER_PORTAL_SITE_ID) && !(document.parent.hasPermission("Read") && document.parent.parent.hasPermission("Read") && document.parent.parent.isSubType("bcpg:supplier"))) {
 				site = getDocumentLibraryNodeRef(SUPPLIER_PORTAL_SITE_ID);	
 			}
 		} else if (document.isSubType("bcpg:productCollection")) {
