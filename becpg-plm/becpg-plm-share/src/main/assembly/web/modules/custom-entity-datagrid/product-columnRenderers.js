@@ -1397,21 +1397,21 @@ if (beCPG.module.EntityDataGridRenderers) {
 				
 				if (type && type.value == rclDataType && reqCtrl["itemData"]["prop_bcpg_rclReqMessage"]) {
 					errorMessage += reqCtrl["itemData"]["prop_bcpg_rclReqMessage"].value;
-				}
-				
-				var sources = reqCtrl["itemData"]["prop_bcpg_rclSourcesV2"];
-				
-				if (sources && sources.length > 0) {
-					errorMessage += ": ";
-					for (var index in sources) {
-						if (index >= 5) {
-							errorMessage += "...";
-						} else {
-							var source = sources[index];
-							if (index == 0) {
-								errorMessage += source.displayValue;
+					
+					var sources = reqCtrl["itemData"]["prop_bcpg_rclSourcesV2"];
+					
+					if (sources && sources.length > 0) {
+						errorMessage += ": ";
+						for (var index in sources) {
+							if (index >= 5) {
+								errorMessage += "...";
 							} else {
-								errorMessage += ("," + source.displayValue);
+								var source = sources[index];
+								if (index == 0) {
+									errorMessage += source.displayValue;
+								} else {
+									errorMessage += ("," + source.displayValue);
+								}
 							}
 						}
 					}
