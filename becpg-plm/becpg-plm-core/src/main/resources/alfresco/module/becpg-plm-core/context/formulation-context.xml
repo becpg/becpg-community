@@ -214,7 +214,6 @@
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="nodeService" ref="nodeService" />
 					<property name="systemConfigurationService" ref="systemConfigurationService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
