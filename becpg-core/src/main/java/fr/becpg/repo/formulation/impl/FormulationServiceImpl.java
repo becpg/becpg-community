@@ -179,7 +179,7 @@ public class FormulationServiceImpl<T extends FormulatedEntity> implements Formu
 				StopWatchSupport.addCheckpoint("save");
 				
 				return entity;
-			}, getClass(), "formulate entity: " + entityNodeRef);
+			}, entityNodeRef);
 			
 			
 		} finally {
