@@ -267,7 +267,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							updateReportsAssoc(nodeRefTo, newReports);
 							
 							return null;
-						}, getClass(), "internalGenerateReports");
+						});
 						
 
 					} finally {
@@ -620,7 +620,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 			
 			return null;
-		}, getClass(), "Filter XML");
+		});
 
 	}
 
@@ -1200,7 +1200,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 				I18NUtil.setLocale(currentLocal);
 				I18NUtil.setContentLocale(currentContentLocal);
 			}
-		}, getClass(), "XmlReportDataSource");
+		});
 		
 	}
 
@@ -1525,7 +1525,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 			logger.debug("Check from extractor");
 			
 			return retrieveExtractor(entityNodeRef).shouldGenerateReport(entityNodeRef, generatedReportDate);
-		}, getClass(), "ShouldGenerateReport");
+		});
 		
 	}
 
