@@ -159,7 +159,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		if (task != null) {
 			if (entityNode != null) {
 				NodeRef entityNodeRef = entityNode.getNodeRef();
-				NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(project.getNodeRef());
+				NodeRef supplierNodeRef = getSupplierNodeRef(project, entityNodeRef);
 
 				if (supplierNodeRef != null) {
 
@@ -257,6 +257,15 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		}
 
 		return new ScriptNode[0];
+	}
+
+	private NodeRef getSupplierNodeRef(final ProjectData project, NodeRef entityNodeRef) {
+		NodeRef supplierNodeRef = supplierPortalService.getSupplierNodeRef(project.getNodeRef());
+		
+		if(supplierNodeRef == null) {
+			 supplierNodeRef = supplierPortalService.getSupplierNodeRef(entityNodeRef);
+		}
+		return supplierNodeRef;
 	}
 
 

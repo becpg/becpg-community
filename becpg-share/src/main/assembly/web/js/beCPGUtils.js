@@ -378,7 +378,45 @@
        }
     };
 
-    
+     beCPG.util.getRegulatoryCountryKey = function(loc) {
+				var language = loc.split("_")[0];
+				var country = loc.split("_").length > 1 ? loc.split("_")[1] : language.toUpperCase();
+				if (country === "US" || country === "CA" || country === "AU" || country === "ID" || country === "HK" || country === "MY"
+					|| country === "IL" || country === "IN" || country === "KR"
+					|| country === "MA" || country === "MX" || country === "DZ"
+					|| country === "TR" || country === "SG" || country === "TH"
+					|| country === "PK" || country === "ZA" || country === "TN"
+					|| country === "EG" || country === "CL" || country === "UY"
+					|| country === "BR" || country === "TT" || country === "DO"
+					|| country === "PE") {
+					return country;
+				} else if (language === "zh") {
+					return "CN";
+				} else if (language === "ru") {
+					return "RU";
+				} else if (country === "NZ") {
+					return "AU";
+				} else if (country === "PR") {
+					return "US";
+				} else if (country === "PY") {
+					return "BR";
+				} else if (country === "GT" || country === "PA" || country === "SV") {
+					return "CTA";
+				} else if (country === "AE" || country === "BH" || country === "SA"
+					|| country === "QA" || country === "OM" || country === "KW") {
+					return "GSO";
+				} else if (country === "KE" || country === "NG" || country === "GH"
+					|| country === "CI" || country === "UG" || country === "MZ"
+					|| country === "MW" || country === "TZ" || country === "ZM"
+					|| country === "ZW" || country === "KH" || country === "MM"
+					|| country === "JO" || country === "IQ" || country === "PS") {
+					return "CODEX";
+				} else if (country === "CO") {
+					return "CO";
+				}
+
+				return "EU";
+	};
 
     Alfresco.util.getFileIcon.types =
     {

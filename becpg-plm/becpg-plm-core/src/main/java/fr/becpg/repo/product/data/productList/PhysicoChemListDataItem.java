@@ -43,9 +43,6 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 	
 	private Boolean isFormulated;
 	
-	private String errorLog;
-
-
 	private String type;
 	
 
@@ -186,22 +183,6 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 	public void setIsFormulated(Boolean isFormulated) {
 		this.isFormulated = isFormulated;
 	}
-	
-
-	/** {@inheritDoc} */
-	@AlfProp
-	@InternalField
-	@AlfQname(qname="bcpg:physicoChemFormulaErrorLog")
-	@Override
-	public String getErrorLog() {
-		return errorLog;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void setErrorLog(String errorLog) {
-		this.errorLog = errorLog;
-	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -277,7 +258,11 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 	/** {@inheritDoc} */
 	@Override
 	public PhysicoChemListDataItem copy() {
-		return new PhysicoChemListDataItem(this);
+		PhysicoChemListDataItem ret = new PhysicoChemListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 

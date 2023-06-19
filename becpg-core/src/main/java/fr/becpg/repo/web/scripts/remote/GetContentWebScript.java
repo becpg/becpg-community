@@ -5,8 +5,6 @@ import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.content.MimetypeMap;
 import org.alfresco.service.cmr.quickshare.QuickShareService;
@@ -97,7 +95,7 @@ public class GetContentWebScript extends AbstractEntityWebScript {
 				// get the content reader
 				ContentReader reader = contentService.getReader(documentNodeRef, ContentModel.PROP_CONTENT);
 				if ((reader == null) || !reader.exists()) {
-					throw new WebScriptException(HttpServletResponse.SC_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef);
+					throw new WebScriptException(Status.STATUS_NOT_FOUND, "Unable to locate content for node ref " + documentNodeRef);
 				}
 
 				String mimetype = reader.getMimetype();

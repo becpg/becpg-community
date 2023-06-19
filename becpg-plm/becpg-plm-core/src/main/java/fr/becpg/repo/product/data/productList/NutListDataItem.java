@@ -85,8 +85,6 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 
 	private Boolean isFormulated;
 
-	private String errorLog;
-
 	private Integer depthLevel;
 
 	private NutListDataItem parent;
@@ -561,21 +559,6 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	}
 
 	/** {@inheritDoc} */
-	@AlfProp
-	@InternalField
-	@AlfQname(qname = "bcpg:nutListFormulaErrorLog")
-	@Override
-	public String getErrorLog() {
-		return errorLog;
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	public void setErrorLog(String errorLog) {
-		this.errorLog = errorLog;
-	}
-
-	/** {@inheritDoc} */
 	@Override
 	public String getTextCriteria() {
 		return null;
@@ -658,7 +641,6 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		this.method = n.method;
 		this.nut = n.nut;
 		this.isFormulated = n.isFormulated;
-		this.errorLog = n.errorLog;
 		this.roundedValue = n.roundedValue;
 		this.manualPreparedValue = n.manualPreparedValue;
 		this.formulatedPreparedValue = n.formulatedPreparedValue;
@@ -669,7 +651,11 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	/** {@inheritDoc} */
 	@Override
 	public NutListDataItem copy() {
-		return new NutListDataItem(this);
+		NutListDataItem ret = new NutListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 	/** {@inheritDoc} */
@@ -683,7 +669,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(depthLevel, errorLog, formulatedMaxi, formulatedMini, formulatedPreparedValue, formulatedValue,
+		result = prime * result + Objects.hash(depthLevel, formulatedMaxi, formulatedMini, formulatedPreparedValue, formulatedValue,
 				formulatedValuePerServing, gdaPerc, group, isFormulated, lossPerc, manualMaxi, manualMini, manualPreparedValue, manualValue,
 				manualValuePerServing, measurementPrecision, method, nut, parent, roundedValue, sources, unit);
 		return result;
@@ -698,7 +684,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 		if (getClass() != obj.getClass())
 			return false;
 		NutListDataItem other = (NutListDataItem) obj;
-		return Objects.equals(depthLevel, other.depthLevel) && Objects.equals(errorLog, other.errorLog)
+		return Objects.equals(depthLevel, other.depthLevel)
 				&& Objects.equals(formulatedMaxi, other.formulatedMaxi) && Objects.equals(formulatedMini, other.formulatedMini)
 				&& Objects.equals(formulatedPreparedValue, other.formulatedPreparedValue) && Objects.equals(formulatedValue, other.formulatedValue)
 				&& Objects.equals(formulatedValuePerServing, other.formulatedValuePerServing) && Objects.equals(gdaPerc, other.gdaPerc)
@@ -718,7 +704,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 				+ formulatedMini + ", manualMaxi=" + manualMaxi + ", formulatedMaxi=" + formulatedMaxi + ", manualValuePerServing="
 				+ manualValuePerServing + ", formulatedValuePerServing=" + formulatedValuePerServing + ", gdaPerc=" + gdaPerc + ", lossPerc="
 				+ lossPerc + ", group=" + group + ", method=" + method + ", measurementPrecision=" + measurementPrecision + ", nut=" + nut
-				+ ", isFormulated=" + isFormulated + ", errorLog=" + errorLog + ", depthLevel=" + depthLevel + ", parent=" + parent
+				+ ", isFormulated=" + isFormulated + ", depthLevel=" + depthLevel + ", parent=" + parent
 				+ ", roundedValue=" + roundedValue + ", sources=" + sources + "]";
 	}
 

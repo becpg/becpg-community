@@ -17,21 +17,16 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.helper.LargeTextHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -46,7 +41,6 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
-import fr.becpg.repo.repository.model.FormulatedCharactDataItem;
 import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
@@ -63,8 +57,6 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 	private AlfrescoRepository<ScorableEntity> alfrescoRepository;
 
 	private SystemConfigurationService systemConfigurationService;
-	
-	private NodeService nodeService;
 	
 
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
@@ -88,15 +80,6 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 		this.alfrescoRepository = alfrescoRepository;
 	}
 
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ScorableEntity scorableEntity) {
@@ -113,14 +96,9 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 
 				for (ReqCtrlListDataItem r : scorableEntity.getReqCtrlList()) {
 					if (r.getSources() != null) {
-						r.setSources(r.getSources().subList(0, Math.min(r.getSources().size(), maxRclSourcesToKeep())));
+						r.setSources(new LinkedList<>(r.getSources().subList(0, Math.min(r.getSources().size(), maxRclSourcesToKeep()))));
 					}
-
 				}
-			}
-
-			if (scorableEntity instanceof ProductData) {
-				updateFormulatedCharactInError((ProductData) scorableEntity, scorableEntity.getReqCtrlList());
 			}
 		}
 
@@ -176,50 +154,6 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 			}
 		}
 		return toAdd;
-	}
-
-	@SuppressWarnings("unchecked")
-	private void updateFormulatedCharactInError(ProductData productData, List<ReqCtrlListDataItem> reqCtrlList) {
-		for (ReqCtrlListDataItem r : reqCtrlList) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("r " + r.getReqMessage() + " " + r.getCharact());
-			}
-			if (r.getCharact() != null && !RequirementDataType.Specification.equals(r.getReqDataType())) {
-				QName type = nodeService.getType(r.getCharact());
-				List<FormulatedCharactDataItem> simpleList = new ArrayList<>();
-				if (PLMModel.TYPE_NUT.equals(type)) {
-					simpleList = (List<FormulatedCharactDataItem>) (List<?>) productData.getNutList();
-				} else if (PLMModel.TYPE_COST.equals(type)) {
-					simpleList = (List<FormulatedCharactDataItem>) (List<?>) productData.getCostList();
-				} else if (PLMModel.TYPE_LCA.equals(type)) {
-					simpleList = (List<FormulatedCharactDataItem>) (List<?>) productData.getLcaList();
-				}
-				for (FormulatedCharactDataItem sl : simpleList) {
-					if (r.getCharact().equals(sl.getCharactNodeRef())) {
-						StringBuilder message = new StringBuilder(r.getReqMessage());
-						if ((r.getSources() != null) && !r.getSources().isEmpty()) {
-							int i = 0;
-							message.append(" : ");
-							for (NodeRef n : r.getSources()) {
-								if (i >= 5) {
-									message.append("...");
-									break;
-								} else if (i > 0) {
-									message.append(", ");
-								}
-								message.append(nodeService.getProperty(n, ContentModel.PROP_NAME));
-								i++;
-							}
-						}
-						sl.setErrorLog(LargeTextHelper.elipse((sl.getErrorLog() != null ? sl.getErrorLog() + ". " : "") + message.toString()));
-						if (logger.isDebugEnabled()) {
-							logger.debug("setErrorLog " + sl.getErrorLog());
-						}
-						break;
-					}
-				}
-			}
-		}
 	}
 
 	@Override
