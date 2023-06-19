@@ -775,7 +775,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 			for (FormulatedCharactDataItem formulatedCharactDataItem : formulatedCharactDataItems) {
 				String error = null;
 				formulatedCharactDataItem.setIsFormulated(false);
-				formulatedCharactDataItem.setErrorLog(null);
 				if (((formulatedCharactDataItem.getIsManual() == null) || !formulatedCharactDataItem.getIsManual())
 						&& (formulatedCharactDataItem.getCharactNodeRef() != null)) {
 
@@ -865,7 +864,6 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 				if (error != null) {
 					formulatedCharactDataItem.setValue(null);
-					formulatedCharactDataItem.setErrorLog(error);
 
 					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
 							MLTextHelper.getI18NMessage(errorKey,

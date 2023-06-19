@@ -104,7 +104,7 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	/** {@inheritDoc} */
 	@Override
 	public void setMini(Double value) {
-		
+		//DO Nothing
 	}
 	
 	/**
@@ -153,14 +153,14 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef microbio) {
-		this.microbio = microbio;
+		setMicrobio(microbio);
 	}
 
 
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getCharactNodeRef() {
-		return microbio;
+		return getMicrobio();
 	}
 	
 	
@@ -169,7 +169,7 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	 * Instantiates a new microbio list data item.
 	 */
 	public MicrobioListDataItem(){
-		
+		super();
 	}
 	
 	/**
@@ -198,17 +198,20 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	 */
 	public MicrobioListDataItem(MicrobioListDataItem m){
 		super(m);
-		setNodeRef(m.getNodeRef());
-		setValue(m.getValue());
-		setUnit(m.getUnit());
-		setMaxi(m.getMaxi());
-		setTextCriteria(m.getTextCriteria());
-		setMicrobio(m.getMicrobio());
+		this.value =  m.value;
+		this.unit =  m.unit;
+		this.maxi =  m.maxi;
+		this.microbio =  m.microbio;		
+		this.textCriteria =  m.textCriteria;
 	}
 	
 	@Override
 	public MicrobioListDataItem copy() {
-		return new MicrobioListDataItem(this);
+		MicrobioListDataItem ret = new MicrobioListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;	
 	}
 
 	/** {@inheritDoc} */

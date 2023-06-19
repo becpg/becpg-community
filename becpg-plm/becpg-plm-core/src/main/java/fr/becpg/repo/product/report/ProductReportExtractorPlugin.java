@@ -906,10 +906,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_MAXI.getLocalName());
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_MAXI.getLocalName(), value);
 					}
-
-					if ((dataListItem.getErrorLog() != null) && !dataListItem.getErrorLog().isEmpty()) {
-						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_FORMULA_ERROR.getLocalName(), "Error");
+					
+					for (ReqCtrlListDataItem reqCtrlList : productData.getReqCtrlList()) {
+						if (reqCtrlList.getReqDataType().equals(RequirementDataType.Nutrient) && dataListItem.getCharactNodeRef().equals(reqCtrlList.getCharact())) {
+							nutListElt.addAttribute(PLMModel.PROP_NUTLIST_FORMULA_ERROR.getLocalName(), "Error");
+						}
 					}
+					
 					nutListElt.addAttribute(RegulationFormulationHelper.ATTR_NUT_CODE, nut.getNutCode());
 					nutListElt.addAttribute(BeCPGModel.PROP_COLOR.getLocalName(), nut.getNutColor());
 					boolean isDisplayed = isCharactDisplayedForLocale(dataListItem.getNut());

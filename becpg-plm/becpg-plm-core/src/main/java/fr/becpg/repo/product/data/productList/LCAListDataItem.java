@@ -92,14 +92,6 @@ public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 	public Boolean getIsFormulated() {
 		return isFormulated;
 	}
-
-	@AlfProp
-	@InternalField
-	@AlfQname(qname="bcpg:lcaListFormulaErrorLog")
-	@Override
-	public String getErrorLog() {
-		return errorLog;
-	}
 	
 	@AlfSingleAssoc
 	@InternalField

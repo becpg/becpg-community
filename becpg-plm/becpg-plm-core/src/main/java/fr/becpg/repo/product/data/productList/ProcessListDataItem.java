@@ -261,23 +261,26 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	 * @param p a {@link fr.becpg.repo.product.data.productList.ProcessListDataItem} object.
 	 */
 	public ProcessListDataItem(ProcessListDataItem p) {
-
-		setNodeRef(p.getNodeRef());
-		setQty(p.getQty());
-		setUnit(p.getUnit());
-		setQtyResource(p.getQtyResource());
-		setRateResource(p.getRateResource());
-		setYield(p.getYield());
-		setRateProduct(p.getRateProduct());
-		setStep(p.getStep());
-		setProduct(p.getProduct());
-		setResource(p.getResource());
+		super(p);
+		this.qty = p.qty;
+		this.qtyResource = p.qtyResource;
+		this.rateResource = p.rateResource;
+		this.yield = p.yield;
+		this.rateProduct = p.rateProduct;
+		this.unit = p.unit;
+		this.step = p.step;
+		this.product =p.product;
+		this.resource = p.resource;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public CompositionDataItem copy() {
-		return new ProcessListDataItem(this);
+		ProcessListDataItem ret = new ProcessListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 	/** {@inheritDoc} */

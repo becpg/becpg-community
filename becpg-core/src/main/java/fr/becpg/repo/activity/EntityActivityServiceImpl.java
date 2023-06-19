@@ -281,6 +281,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityType(ActivityType.Content);
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
+					
+					mergeWithLastActivity(activityListDataItem);
 
 					recordAuditActivity(entityNodeRef, activityListDataItem);
 
@@ -1167,6 +1169,7 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							int activityInPage = 0;
 							boolean hasFormulation = false;
 							boolean hasReport = false;
+							Set<String> contentSet = new HashSet<>();
 
 							for (ActivityListDataItem activity : sortedActivityList) {
 								if (activityInPage == MAX_PAGE) {
@@ -1186,6 +1189,16 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 										|| (activityType.equals(ActivityType.Report) && hasReport)) {
 									deleteAuditActivity(activity);
 									nbrActivity--;
+								} else if (activityType.equals(ActivityType.Content)) {
+									String contentNodeRef = extractContentNode(activity.getActivityData());
+									if (contentNodeRef != null) {
+										if (!contentSet.contains(contentNodeRef)) {
+											contentSet.add(contentNodeRef);
+										} else {
+											deleteAuditActivity(activity);
+											nbrActivity--;
+										}
+									}
 								}
 								// Arrange activities by type
 								else {
@@ -1221,6 +1234,14 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		batchQueueService.queueBatch(batchInfo, workProvider, processWorker, null);
 
 		return batchInfo;
+	}
+
+	private String extractContentNode(String alData) {
+		JSONObject data = new JSONObject(alData);
+		if (data.has("contentNodeRef")) {
+			return data.getString("contentNodeRef");
+		}
+		return null;
 	}
 
 	/** {@inheritDoc} */
@@ -1423,3 +1444,4 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 	}
 
 }
+

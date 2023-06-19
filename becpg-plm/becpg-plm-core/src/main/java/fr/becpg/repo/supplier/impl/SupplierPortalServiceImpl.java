@@ -373,7 +373,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 		NodeRef destFolder =  nodeService.getChildByName(documentLibraryNodeRef, ContentModel.ASSOC_CONTAINS,
 				PropertiesHelper.cleanFolderName(I18NUtil.getMessage("path.referencing")));
-			
+		
 		if (destFolder != null) {
 
 			NodeRef oldSupplierDestNodeRef = repoService.getFolderByPath(destFolder, supplierNodeRef.getId());
@@ -384,7 +384,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 						PropertiesHelper.cleanFolderName((String) nodeService.getProperty(supplierNodeRef, ContentModel.PROP_NAME)));
 			}
 
-			if (oldSupplierDestNodeRef != null) {
+			if (oldSupplierDestNodeRef != null && !isChildOf(documentsFolderNodeRef, oldSupplierDestNodeRef)) {
 
 				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(oldSupplierDestNodeRef);
 
@@ -397,6 +397,26 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			}
 		}
 
+	}
+	
+	private boolean isChildOf(NodeRef child, NodeRef targetParent) {
+		
+		ChildAssociationRef currentParent = nodeService.getPrimaryParent(child);
+		
+		if (currentParent == null) {
+			return false;
+		}
+		
+		if (currentParent.getParentRef() == null) {
+			return false;
+		}
+		
+		if (currentParent.getParentRef().equals(targetParent)) {
+			return true;
+		}
+		
+		return isChildOf(currentParent.getParentRef(), targetParent);
+		
 	}
 
 	@Override

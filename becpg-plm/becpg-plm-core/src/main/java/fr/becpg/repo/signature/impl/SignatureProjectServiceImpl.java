@@ -339,7 +339,11 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 
 			String taskName = I18NUtil.getMessage("signatureWorkflow.task-signature.name");
 			
-			TaskListDataItem newTask = project.getTaskList().stream().filter(task -> task.getTaskName().equals(taskName)).findFirst().orElseGet(() -> projectService.createNewTask(project));
+			TaskListDataItem newTask = project.getTaskList().stream()
+					.filter(task -> task.getResources() != null && task.getResources().contains(recipient))
+					.filter(task -> task.getTaskName() != null && task.getTaskName().equals(taskName))
+					.findFirst()
+					.orElseGet(() -> projectService.createNewTask(project));
 			
 			newTask.setRefusedTask(rejectTask);
 

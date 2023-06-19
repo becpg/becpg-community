@@ -48,6 +48,9 @@
 
         beCPG.module.EntityDataGrid.superclass.constructor.call(this, "beCPG.module.EntityDataGrid", htmlId, [
                 "button", "container", "datasource", "datatable", "paginator", "animation", "history" ]);
+                
+         //Fix message popup #17918
+         Alfresco.util.PopupManager.zIndex = 2000;        
 
         // Initialise prototype properties
         this.rendererHelper = beCPG.module.EntityDataRendererHelper;
