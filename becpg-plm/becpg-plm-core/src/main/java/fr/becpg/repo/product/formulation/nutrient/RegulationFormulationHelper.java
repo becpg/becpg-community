@@ -19,7 +19,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.NutMeasurementPrecision;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.product.formulation.nutrient.AbstractNutrientRegulation.NutrientDefinition;
@@ -51,6 +50,7 @@ public class RegulationFormulationHelper {
 	private static final String KEY_SECONDARY_VALUE_PER_SERVING = "v2ps";
 	private static final String KEY_VALUE_PER_SERVING = "vps";
 	private static final String KEY_GDA_PERC = "gda";
+	private static final String KEY_UL = "ul";
 	private static final String KEY_VALUE_PER_CONTAINER = "vpc";
 	private static final String KEY_GDA_PERC_PER_CONTAINER = "gdapc";
 	private static final String KEY_UNIT = "unit";
@@ -219,19 +219,20 @@ public class RegulationFormulationHelper {
 	}
 
 	private static Double extractValueByKey(String roundedValue, String item, String key) {
-
-		try {
-			JSONTokener tokener = new JSONTokener(roundedValue);
-			JSONObject jsonRound = new JSONObject(tokener);
-			if (jsonRound.has(item)) {
-				JSONObject value = (JSONObject) jsonRound.get(item);
-				if (value.has(key)) {
-					return parseDouble(value.get(key));
+		if(roundedValue!=null) {
+			try {
+				JSONTokener tokener = new JSONTokener(roundedValue);
+				JSONObject jsonRound = new JSONObject(tokener);
+				if (jsonRound.has(item)) {
+					JSONObject value = (JSONObject) jsonRound.get(item);
+					if (value.has(key)) {
+						return parseDouble(value.get(key));
+					}
 				}
+	
+			} catch (JSONException e) {
+				logger.error(e, e);
 			}
-
-		} catch (JSONException e) {
-			logger.error(e, e);
 		}
 
 		return null;
@@ -456,6 +457,7 @@ public class RegulationFormulationHelper {
 			JSONObject maxi = new JSONObject();
 			JSONObject valuePerServing = new JSONObject();
 			JSONObject gda = new JSONObject();
+			JSONObject ul = new JSONObject();
 			JSONObject valuePerContainer = new JSONObject();
 			JSONObject gdaPerContainer = new JSONObject();
 			Map<String, JSONObject> variants = new HashMap<>();
@@ -493,10 +495,15 @@ public class RegulationFormulationHelper {
 
 				if ((n.getValue() != null) && (servingSize != null)) {
 					Double valuePerserving = (n.getValue() * (servingSize * 1000d)) / 100;
+					if(n.getManualValuePerServing()!=null) {
+						valuePerserving = n.getManualValuePerServing();
+					}
+					
 					Double vps = regulation.round(valuePerserving, nutCode, nutUnit);
 					valuePerServing.put(key, vps);
 					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
 						gda.put(key, regulation.roundGDA((100 * vps) / def.getGda(), nutCode));
+						ul.put(key, def.getGda());
 					}
 				}
 
@@ -523,6 +530,7 @@ public class RegulationFormulationHelper {
 				jsonRound.put(KEY_MAXI, maxi);
 				jsonRound.put(KEY_VALUE_PER_SERVING, valuePerServing);
 				jsonRound.put(KEY_GDA_PERC, gda);
+				jsonRound.put(KEY_UL, ul);
 				jsonRound.put(KEY_VALUE_PER_CONTAINER, valuePerContainer);
 				jsonRound.put(KEY_GDA_PERC_PER_CONTAINER, gdaPerContainer);
 

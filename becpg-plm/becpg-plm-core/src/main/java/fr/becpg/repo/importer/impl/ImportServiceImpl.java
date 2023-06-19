@@ -6,16 +6,18 @@ package fr.becpg.repo.importer.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorkerAdaptor;
@@ -101,6 +103,14 @@ public class ImportServiceImpl implements ImportService {
 	private static final int COLUMN_ENTITY_TYPE = 1;
 	private static final int COLUMN_IMPORT_TYPE = 1;
 	private static final int COLUMN_DISABLED_POLICIES = 1;
+	
+	private static final String LOG_STARTING_DATE = "Starting date: ";
+	private static final String LOG_ENDING_DATE = "Ending date: ";
+	private static final String LOG_ERROR = "Error: ";
+	private static final int ERROR_LOGS_LIMIT = 50;
+	private static final String LOG_ERROR_MAX_REACHED = "More than " + ERROR_LOGS_LIMIT + " errors, stop printing";
+	private static final String LOG_SEPARATOR = "\n";
+
 
 	private static final int BATCH_SIZE = 10;
 
@@ -157,9 +167,11 @@ public class ImportServiceImpl implements ImportService {
 	 * Import a text file
 	 */
 	@Override
-	public BatchInfo importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction, BiFunction<ImportContext, String, Void> afterImportCallBack)  {
+	public BatchInfo importText(final NodeRef nodeRef, boolean doUpdate, boolean requiresNewTransaction, Boolean doNotMoveNode)  {
 
 		logger.debug("start import");
+		
+		String startlog = LOG_STARTING_DATE + Calendar.getInstance().getTime();
 
 		// prepare context
 		final ImportContext importContext = transactionService.getRetryingTransactionHelper().doInTransaction(() -> createImportContext(nodeRef), true, requiresNewTransaction);
@@ -170,7 +182,7 @@ public class ImportServiceImpl implements ImportService {
 
 		int lastIndex = importContext.getImportFileReader().getTotalLineCount();
 		int nbBatches = (lastIndex / BATCH_SIZE) + 1;
-
+		
 		BatchInfo batchInfo = new BatchInfo("import_" + importContext.getImportFileName(), "becpg.batch.import", importContext.getImportFileName());
 		
 		batchInfo.setRunAsSystem(true);
@@ -184,10 +196,13 @@ public class ImportServiceImpl implements ImportService {
 		BatchStepAdapter batchStepAdapter = new BatchStepAdapter() {
 			@Override
 			public void afterStep() {
-				if (afterImportCallBack != null) {
-					afterImportCallBack.apply(importContext, null);
-				}
+				afterImport(importContext, startlog, doNotMoveNode);
 			}
+			
+			@Override
+			public void onError(String lastErrorEntryId, String lastError) {
+				importContext.setErrorLogs(importContext.getErrorLogs() + LOG_ERROR + lastError);
+			};
 		};
 		
 		batchStep.setBatchStepListener(batchStepAdapter);
@@ -223,10 +238,19 @@ public class ImportServiceImpl implements ImportService {
 	                }
 					if (importContext.isStopOnFirstError()) {
 						hasToStop = true;
-						importContext.markCurrLineError(e);
+					}
+					
+					logger.error("Failed to import file text", e);
+
+					// set printStackTrance in description
+					try (StringWriter sw = new StringWriter()) {
+						try (PrintWriter pw = new PrintWriter(sw)) {
+							e.printStackTrace(pw);
+							String stackTrace = sw.toString();
+							finalImportContext.setErrorLogs(finalImportContext.getErrorLogs() + LOG_ERROR + stackTrace);
+						}
 					}
 				}
-
 			}
 		});
 		
@@ -255,6 +279,51 @@ public class ImportServiceImpl implements ImportService {
 		}
 		
 		return batchInfo;
+	}
+	
+	private void afterImport(ImportContext importContext, String startlog, Boolean doNotMoveNode) {
+			
+		String errosLogs = importContext.getErrorLogs();
+		
+		boolean hasFailed = errosLogs != null && !errosLogs.isBlank();
+
+		StringBuilder first50ErrorsLog = new StringBuilder(); // log stored in title, first
+		// 50 errors
+		StringBuilder after50ErrorsLog = new StringBuilder(); // log store in
+		
+		if (!importContext.getLog().isEmpty()) {
+			int limit = 0;
+			for (String error : importContext.getLog()) {
+				if (limit <= ERROR_LOGS_LIMIT) {
+					first50ErrorsLog.append(LOG_SEPARATOR);
+					first50ErrorsLog.append(error);
+				} else {
+					after50ErrorsLog.append(LOG_ERROR);
+					after50ErrorsLog.append(error);
+				}
+				limit++;
+			}
+
+			hasFailed = true;
+		}
+		
+		String endlog = LOG_ENDING_DATE + Calendar.getInstance().getTime().toString();
+		
+		String log = startlog + LOG_SEPARATOR + (errosLogs != null ? errosLogs + LOG_SEPARATOR : "")
+				+ (first50ErrorsLog.toString().isEmpty() ? "" : first50ErrorsLog.toString() + LOG_SEPARATOR)
+				+ (after50ErrorsLog.toString().isEmpty() ? "" : LOG_ERROR_MAX_REACHED + LOG_SEPARATOR) + endlog;
+
+		String allLog = startlog + LOG_SEPARATOR + (errosLogs != null ? errosLogs + LOG_SEPARATOR : "")
+				+ (first50ErrorsLog.toString().isEmpty() ? "" : first50ErrorsLog.toString() + LOG_SEPARATOR)
+				+ (after50ErrorsLog.toString().isEmpty() ? "" : after50ErrorsLog.toString() + LOG_SEPARATOR) + endlog;
+
+		// set log, stackTrace and move file
+		if ((doNotMoveNode == null) || Boolean.FALSE.equals(doNotMoveNode)) {
+			moveImportedFile(importContext.getNodeRef(), hasFailed, log, allLog);
+		} else {
+			writeLogInFileTitle(importContext.getNodeRef(), log, hasFailed);
+		}
+
 	}
 
 	/** {@inheritDoc} */
@@ -338,6 +407,8 @@ public class ImportServiceImpl implements ImportService {
 	private ImportContext createImportContext(final NodeRef nodeRef) throws IOException {
 		ImportContext importContext1 = new ImportContext();
 	
+		importContext1.setNodeRef(nodeRef);
+		
 		ContentReader reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 		try (InputStream is = reader.getContentInputStream()) {
 	

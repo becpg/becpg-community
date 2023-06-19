@@ -153,15 +153,6 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	public Boolean getIsFormulated() {
 		return isFormulated;
 	}
-
-	/** {@inheritDoc} */
-	@AlfProp
-	@InternalField
-	@AlfQname(qname="bcpg:costListFormulaErrorLog")
-	@Override
-	public String getErrorLog() {
-		return errorLog;
-	}
 	
 	/**
 	 * <p>Getter for the field <code>componentNodeRef</code>.</p>
@@ -240,7 +231,11 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	/** {@inheritDoc} */
 	@Override
 	public CostListDataItem copy() {
-		return new CostListDataItem(this);
+		CostListDataItem ret =  new CostListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 

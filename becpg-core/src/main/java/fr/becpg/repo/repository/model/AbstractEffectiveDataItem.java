@@ -40,7 +40,16 @@ public abstract class AbstractEffectiveDataItem extends BeCPGDataObject implemen
 	
 	protected Date endEffectivity;
 	
+	protected AbstractEffectiveDataItem() {
+		super();
+	}
 	
+	protected AbstractEffectiveDataItem(AbstractEffectiveDataItem c) {
+		super(c);
+		this.startEffectivity = c.startEffectivity;
+		this.endEffectivity = c.endEffectivity;
+	}
+
 	/** {@inheritDoc} */
 	@AlfProp
 	@AlfQname(qname="bcpg:startEffectivity")

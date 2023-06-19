@@ -37,6 +37,8 @@ public class ImportContext {
 	private static final String MSG_ERROR_IMPORT_LINE = "import_service.error.err_import_line";
 	private static final String MSG_INFO_IMPORT_LINE = "import_service.info.import_line";
 
+	private NodeRef nodeRef;
+	
 	private NodeRef parentNodeRef;
 
 	private NodeRef entityNodeRef;
@@ -68,6 +70,8 @@ public class ImportContext {
 	private Map<String, NodeRef> cacheNodes = new HashMap<>();
 
 	private List<String> log = new LinkedList<>();
+	
+	private String errorsLogs = "";
 
 	private String path;
 
@@ -75,6 +79,22 @@ public class ImportContext {
 
 	private boolean isSiteDocLib = false;
 
+	public NodeRef getNodeRef() {
+		return nodeRef;
+	}
+	
+	public void setNodeRef(NodeRef nodeRef) {
+		this.nodeRef = nodeRef;
+	}
+	
+	public String getErrorLogs() {
+		return errorsLogs;
+	}
+	
+	public void setErrorLogs(String unhandledLog) {
+		this.errorsLogs = unhandledLog;
+	}
+	
 	/**
 	 * <p>Getter for the field <code>parentNodeRef</code>.</p>
 	 *
