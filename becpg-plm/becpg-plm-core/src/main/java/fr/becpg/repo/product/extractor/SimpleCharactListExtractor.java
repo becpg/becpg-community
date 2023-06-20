@@ -19,7 +19,6 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -35,7 +34,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 public class SimpleCharactListExtractor extends SimpleExtractor {
 
-	private static final List<String> APPLIED_LISTS = Arrays.asList("allergenList", "nutList", "physicoChemList", "labelClaimList");
+	private static final List<String> APPLIED_LISTS = Arrays.asList("allergenList", "nutList", "physicoChemList", "labelClaimList", "costList", "lcaList");
 	
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	
@@ -83,8 +82,7 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 											List<NodeRef> sources = (List<NodeRef>) nodeService.getProperty(reqCtrl, PLMModel.PROP_RCL_SOURCES_V2);
 
 											if (((charact != null) && charact.equals(associationService.getTargetAssoc(reqCtrl, PLMModel.ASSOC_RCL_CHARACT))
-													|| (sources!=null && sources.contains(charact)))
-													&& RequirementDataType.Specification.toString().equals(nodeService.getProperty(reqCtrl, PLMModel.PROP_RCL_REQ_DATA_TYPE))) {
+													|| (sources!=null && sources.contains(charact)))) {
 												addExtracted(reqCtrl, field, mode, ret);
 											}
 										}

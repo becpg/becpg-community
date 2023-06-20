@@ -36,17 +36,4 @@ public interface FormulatedCharactDataItem extends SimpleCharactDataItem, Manual
 	 */
 	void setIsFormulated(Boolean isFormulated);
 
-	/**
-	 * <p>getErrorLog.</p>
-	 *
-	 * @return a {@link java.lang.String} object.
-	 */
-	String getErrorLog();
-	
-	/**
-	 * <p>setErrorLog.</p>
-	 *
-	 * @param errorLog a {@link java.lang.String} object.
-	 */
-	void setErrorLog(String errorLog);
 }
