@@ -2090,10 +2090,6 @@
 					<default>false</default>
 					<index enabled="false"/>
 				</property>
-				<property name="bcpg:costListFormulaErrorLog">
-					<type>d:text</type>
-					<index enabled="false" />
-				</property>
 				<property name="bcpg:costListSimulatedValue">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -2169,10 +2165,6 @@
 					<type>d:boolean</type>
 					<default>false</default>
 					<index enabled="false"/>
-				</property>
-				<property name="bcpg:lcaListFormulaErrorLog">
-					<type>d:text</type>
-					<index enabled="false" />
 				</property>
 				<property name="bcpg:lcaListSimulatedValue">
 					<type>d:double</type>
@@ -2684,10 +2676,6 @@
 					<default>false</default>
 					<index enabled="false" />
 				</property>
-				<property name="bcpg:nutListFormulaErrorLog">
-					<type>d:text</type>
-					<index enabled="false" />
-				</property>
 
 			</properties>
 			<associations>
@@ -2786,10 +2774,6 @@
 				<property name="bcpg:physicoChemIsFormulated">
 					<type>d:boolean</type>
 					<default>false</default>
-					<index enabled="false" />
-				</property>
-				<property name="bcpg:physicoChemFormulaErrorLog">
-					<type>d:text</type>
 					<index enabled="false" />
 				</property>
 			</properties>
