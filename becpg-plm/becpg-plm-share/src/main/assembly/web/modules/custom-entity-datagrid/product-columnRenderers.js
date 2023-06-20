@@ -292,8 +292,8 @@ if (beCPG.module.EntityDataGridRenderers) {
             var title = Alfresco.util.encodeHTML(data.metadata);
             var cssClass = data.metadata;
             var isFormulated = oRecord.getData("itemData")["prop_bcpg_physicoChemIsFormulated"].value;
-            var error = oRecord.getData("itemData")["prop_bcpg_physicoChemFormulaErrorLog"].value;
-            if(error != null){
+			var error = extractErrorMessage(oRecord.getData("itemData")["dt_bcpg_reqCtrlList"], "Physicochem");
+            if(error){
            	 cssClass= "physicoChem-formulated-error";
                title = Alfresco.util.encodeHTML(error);
             } else if(isFormulated){
@@ -322,15 +322,16 @@ if (beCPG.module.EntityDataGridRenderers) {
 			}
             
             var title = Alfresco.util.encodeHTML(data.metadata);
-            var cssClass = data.metadata;
-            if(oRecord.getData("itemData")["prop_bcpg_nutListIsFormulated"]){
-	            if( oRecord.getData("itemData")["prop_bcpg_nutListFormulaErrorLog"]  &&  oRecord.getData("itemData")["prop_bcpg_nutListFormulaErrorLog"].value  != null){
+			var cssClass = data.metadata;
+			if (oRecord.getData("itemData")["prop_bcpg_nutListIsFormulated"]) {
+				var message = extractErrorMessage(oRecord.getData("itemData")["dt_bcpg_reqCtrlList"], "Nutrient");
+	            if(message){
 	           	 cssClass= "nut-formulated-error";
-	               title = Alfresco.util.encodeHTML( oRecord.getData("itemData")["prop_bcpg_nutListFormulaErrorLog"].value );
+	               title = Alfresco.util.encodeHTML( message );
 	            } else if(oRecord.getData("itemData")["prop_bcpg_nutListIsFormulated"].value){
 	           	 cssClass= "nut-formulated";
 	            }
-            }
+			}
             
             if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
                 var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
@@ -518,16 +519,15 @@ if (beCPG.module.EntityDataGridRenderers) {
           var title = Alfresco.util.encodeHTML(data.metadata);
           var cssClass = data.metadata;
           
-          if(oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"]!=null){
-              var isFormulated = oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"].value;
-              var error = oRecord.getData("itemData")["prop_bcpg_costListFormulaErrorLog"].value;
-              if(error != null){
-             	 cssClass= "cost-formulated-error";
-                 title = Alfresco.util.encodeHTML(error);
-              } else if(isFormulated){
-             	 cssClass= "cost-formulated";
-              }
-          }
+		  if (oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"]) {
+			  var message = extractErrorMessage(oRecord.getData("itemData")["dt_bcpg_reqCtrlList"], "Cost");
+			  if (message) {
+				  cssClass = "cost-formulated-error";
+				  title = Alfresco.util.encodeHTML(message);
+			  } else if (oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"].value) {
+				  cssClass = "cost-formulated";
+			  }
+		  }
           
           if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
               var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
@@ -553,16 +553,15 @@ if (beCPG.module.EntityDataGridRenderers) {
           var title = Alfresco.util.encodeHTML(data.metadata);
           var cssClass = data.metadata;
           
-          if(oRecord.getData("itemData")["prop_bcpg_lcaListIsFormulated"]!=null){
-              var isFormulated = oRecord.getData("itemData")["prop_bcpg_lcaListIsFormulated"].value;
-              var error = oRecord.getData("itemData")["prop_bcpg_lcaListFormulaErrorLog"].value;
-              if(error != null){
-             	 cssClass= "lca-formulated-error";
-                 title = Alfresco.util.encodeHTML(error);
-              } else if(isFormulated){
-             	 cssClass= "lca-formulated";
-              }
-          }
+          if (oRecord.getData("itemData")["prop_bcpg_lcaListIsFormulated"]) {
+			  var message = extractErrorMessage(oRecord.getData("itemData")["dt_bcpg_reqCtrlList"], "Lca");
+			  if (message) {
+				  cssClass = "lca-formulated-error";
+				  title = Alfresco.util.encodeHTML(message);
+			  } else if (oRecord.getData("itemData")["prop_bcpg_lcaListIsFormulated"].value) {
+				  cssClass = "lca-formulated";
+			  }
+		  }
           
           if (oRecord.getData("itemData")["prop_bcpg_depthLevel"] != null) {
               var padding = (oRecord.getData("itemData")["prop_bcpg_depthLevel"].value - 1) * 25;
@@ -658,23 +657,20 @@ if (beCPG.module.EntityDataGridRenderers) {
 			   return '<span class="' + data.metadata + '">' +(url!=null?'<a href="' + url + '">':'') +  Alfresco.util.encodeHTML(data.displayValue) + (url!=null?'</a>':'')+ '</span>';
 			}
 			
-
 			var isFormulated = oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"]!=null 
 						? oRecord.getData("itemData")["prop_bcpg_lclIsFormulated"].value : false;
 			if (isFormulated) {
-				var error = oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"]!=null ?
-						oRecord.getData("itemData")["prop_bcpg_lclFormulaErrorLog"].value : null;
-				if (error == null) {
-					
-					var description = oRecord.getData("itemData")["dt_bcpg_lclLabelClaim"][0]["itemData"]["prop_cm_description"]!=null 
-					? oRecord.getData("itemData")["dt_bcpg_lclLabelClaim"][0]["itemData"]["prop_cm_description"].displayValue : "";
-					
-					return '<span class="lcl-formulated"  title="' + Alfresco.util.encodeHTML(description) + '">'
-							+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';
-				}
-
-				return '<span class="lcl-formulated-error" title="' + Alfresco.util.encodeHTML(error) + '">'
+				var error = extractErrorMessage(oRecord.getData("itemData")["dt_bcpg_reqCtrlList"], "Labelclaim");
+				if (error) {
+					return '<span class="lcl-formulated-error" title="' + Alfresco.util.encodeHTML(error) + '">'
 						+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+				}
+				var description = oRecord.getData("itemData")["dt_bcpg_lclLabelClaim"][0]["itemData"]["prop_cm_description"] != null
+					? oRecord.getData("itemData")["dt_bcpg_lclLabelClaim"][0]["itemData"]["prop_cm_description"].displayValue : "";
+
+				return '<span class="lcl-formulated"  title="' + Alfresco.util.encodeHTML(description) + '">'
+					+ Alfresco.util.encodeHTML(data.displayValue) + '</span>';
+
 			}			
 			
 			return '<span>' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
@@ -1366,28 +1362,65 @@ if (beCPG.module.EntityDataGridRenderers) {
 	  });	
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-	      propertyName : "cm:cmobject_bcpg:lclMissingLabelClaims",
-	      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
-	    	 
+		propertyName: "cm:cmobject_bcpg:lclMissingLabelClaims",
+		renderer: function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+
 	    	 var missingSources = oRecord.getData("itemData")["assoc_bcpg_lclMissingLabelClaims"];
-	    	 
-	    	 //only put text on first result
+		
+						//only put text on first result
 	         if(data.value != null && data.value.length>0 && missingSources.length > 0 && i==0){
-					var description = scope.msg("becpg.forms.help.lclMissingSources", missingSources.length);
-					var tooltip = "";
-					
-					for(var source in missingSources){
-						tooltip+=missingSources[source].displayValue+"\n";
+							var description = scope.msg("becpg.forms.help.lclMissingSources", missingSources.length);
+							var tooltip = "";
+		
+							for (var source in missingSources) {
+								tooltip += missingSources[source].displayValue + "\n";
 						
+							}
+		
+							var tooltipText = scope.msg("becpg.forms.help.lclMissingSources.list", tooltip);
+		
+							return "<span class=\"lcl-formulated-error\" title=\"" + tooltipText + "\">" + description + "</span>";
+						}
+			return "";
+		}
+	});
+	
+	function extractErrorMessage(reqCtrlList, rclDataType) {
+		
+		var errorMessage = "";
+		
+		if (reqCtrlList) {
+			for (var i in reqCtrlList) {
+				var reqCtrl = reqCtrlList[i];
+				
+				var type = reqCtrl["itemData"]["prop_bcpg_rclDataType"];
+				
+				if (type && type.value == rclDataType && reqCtrl["itemData"]["prop_bcpg_rclReqMessage"]) {
+					errorMessage += reqCtrl["itemData"]["prop_bcpg_rclReqMessage"].value;
+					
+					var sources = reqCtrl["itemData"]["prop_bcpg_rclSourcesV2"];
+					
+					if (sources && sources.length > 0) {
+						errorMessage += ": ";
+						for (var index in sources) {
+							if (index >= 5) {
+								errorMessage += "...";
+							} else {
+								var source = sources[index];
+								if (index == 0) {
+									errorMessage += source.displayValue;
+								} else {
+									errorMessage += ("," + source.displayValue);
+								}
+							}
+						}
 					}
-					
-					var tooltipText = scope.msg("becpg.forms.help.lclMissingSources.list", tooltip);
-					
-				return "<span class=\"lcl-formulated-error\" title=\"" + tooltipText +"\">"+description+"</span>";
-	         }
-	         return "";
-	      }
-	  });
+				}
+			}
+		}
+		
+		return errorMessage;
+	}
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:compoListVolume",
@@ -1539,45 +1572,50 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 				   if (idx == 0) {
 					   
-					   Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
-		
-					   YAHOO.Bubbling.fire("columnRenamed", {
-						   columnId: "dt_bcpg_reqCtrlList",
-						   label: scope.msg("becpg.forms.field.compliance.label")
-					   });
-		
 					   var reqCtrlList = oRecord.getData("itemData")["dt_bcpg_reqCtrlList"];
 
 					   var reqHtlm = "<ul>";
 
 					   for (j in reqCtrlList) {
 						   var reqCtrl = reqCtrlList[j];
-						   var desc ="";
-						   
-						   var reqType = reqCtrl["itemData"]["prop_bcpg_rclReqType"].value;
-						   
-						   desc += '<div class="rclReq-details">';
-						   if (reqType) {
-							   desc += '<span class="reqType' + reqType + '" title="'
-							   + Alfresco.util.encodeHTML(scope.msg("data.reqtype." + reqType.toLowerCase())) + '">&nbsp;</span>';
-						   }
-						   if (reqCtrl["itemData"]["prop_bcpg_regulatoryCode"] && reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value!=null && reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value.length>1) {
-							   var regulatoryCode = reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value;   
-							   desc += '      <span class="rclReq-regulatoryCode" title="'
-								   + beCPG.util.encodeAttr(reqCtrl["itemData"]["prop_bcpg_rclReqMessage"].displayValue.replace(regulatoryCode,"")) +'"  >'
-								   + Alfresco.util.encodeHTML(regulatoryCode);
-								if(reqCtrl["itemData"]["prop_bcpg_rclReqMaxQty"] && reqCtrl["itemData"]["prop_bcpg_rclReqMaxQty"].value!=null){
-									desc += " ("+reqCtrl["itemData"]["prop_bcpg_rclReqMaxQty"].displayValue+" %)";
-								}   
-								   
-							   desc += '</span>';
-						   } else {
-							   desc += '      <span class="rclReq-title">'
-								   + Alfresco.util.encodeHTML(reqCtrl["itemData"]["prop_bcpg_rclReqMessage"].displayValue) + '</span>';
-						   }
-						   desc += "</div>";					  
+						   var rclDataType = reqCtrl["itemData"]["prop_bcpg_rclDataType"].value;
 
-						   reqHtlm += "<li>" + desc + "</li>";
+							if (rclDataType == "Specification") {
+								
+							   Dom.removeClass(elCell.parentNode, "yui-dt-hidden");
+				
+							   YAHOO.Bubbling.fire("columnRenamed", {
+								   columnId: "dt_bcpg_reqCtrlList",
+								   label: scope.msg("becpg.forms.field.compliance.label")
+							   });
+				
+							   var desc ="";
+							   
+							   var reqType = reqCtrl["itemData"]["prop_bcpg_rclReqType"].value;
+							   
+							   desc += '<div class="rclReq-details">';
+							   if (reqType) {
+								   desc += '<span class="reqType' + reqType + '" title="'
+								   + Alfresco.util.encodeHTML(scope.msg("data.reqtype." + reqType.toLowerCase())) + '">&nbsp;</span>';
+							   }
+							   if (reqCtrl["itemData"]["prop_bcpg_regulatoryCode"] && reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value!=null && reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value.length>1) {
+								   var regulatoryCode = reqCtrl["itemData"]["prop_bcpg_regulatoryCode"].value;   
+								   desc += '      <span class="rclReq-regulatoryCode" title="'
+									   + beCPG.util.encodeAttr(reqCtrl["itemData"]["prop_bcpg_rclReqMessage"].displayValue.replace(regulatoryCode,"")) +'"  >'
+									   + Alfresco.util.encodeHTML(regulatoryCode);
+									if(reqCtrl["itemData"]["prop_bcpg_rclReqMaxQty"] && reqCtrl["itemData"]["prop_bcpg_rclReqMaxQty"].value!=null){
+										desc += " ("+reqCtrl["itemData"]["prop_bcpg_rclReqMaxQty"].displayValue+" %)";
+									}   
+									   
+								   desc += '</span>';
+							   } else {
+								   desc += '      <span class="rclReq-title">'
+									   + Alfresco.util.encodeHTML(reqCtrl["itemData"]["prop_bcpg_rclReqMessage"].displayValue) + '</span>';
+							   }
+							   desc += "</div>";					  
+	
+							   reqHtlm += "<li>" + desc + "</li>";
+							}
 						  
 					   }
 					   reqHtlm += "</ul>";
