@@ -15,8 +15,8 @@ ENV I18_VERSION=1.0-106
    
 ## JDBC - MYSQL
 RUN curl --silent --location \
-      https://repo1.maven.org/maven2/mysql/mysql-connector-java/${MYSQL_CONNECTOR}/mysql-connector-java-${MYSQL_CONNECTOR}.jar \
-	-o $TOMCAT_DIR/lib/mysql-connector-java-${MYSQL_CONNECTOR}.jar && \
+      https://repo1.maven.org/maven2/com/mysql/mysql-connector-j/${MYSQL_CONNECTOR}/mysql-connector-j-${MYSQL_CONNECTOR}.jar \
+	-o $TOMCAT_DIR/lib/mysql-connector-j-${MYSQL_CONNECTOR}.jar && \
 	rm $TOMCAT_DIR/lib/postgres*
 
 
