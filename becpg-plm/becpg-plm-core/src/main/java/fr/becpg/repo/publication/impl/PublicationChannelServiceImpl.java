@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.alfresco.model.ContentModel;
+import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -49,6 +51,9 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 	private NamespaceService namespaceService;
 	@Autowired
 	private SearchRuleService searchRuleService;
+	
+	@Autowired
+	private BehaviourFilter policyBehaviourFilter;
 
 	@Override
 	public void notifyAuditedFieldChange(String catalogId, NodeRef entityNodeRef) {
@@ -56,13 +61,18 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 		if (listContainer != null) {
 			NodeRef listNodeRef = entityListDAO.getList(listContainer, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
 			if (listNodeRef != null) {
-				for (NodeRef channelListItemNodeRef : entityListDAO.getListItems(listNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST)) {
-					NodeRef channelNodeRef = associationService.getTargetAssoc(channelListItemNodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
-					String channelCatalog = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CATALOG_ID);
-					if ((catalogId == null && (channelCatalog == null || channelCatalog.isBlank()))
-							|| (catalogId != null && catalogId.equals(channelCatalog))) {
-						nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
+				try {
+					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+					for (NodeRef channelListItemNodeRef : entityListDAO.getListItems(listNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST)) {
+						NodeRef channelNodeRef = associationService.getTargetAssoc(channelListItemNodeRef, PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL);
+						String channelCatalog = (String) nodeService.getProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CATALOG_ID);
+						if ((catalogId == null && (channelCatalog == null || channelCatalog.isBlank()))
+								|| (catalogId != null && catalogId.equals(channelCatalog))) {
+							nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE, new Date());
+						}
 					}
+				} finally {
+					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 				}
 			}
 		}
