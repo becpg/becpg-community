@@ -443,10 +443,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				if ((maxi != null)) {
 					if (isGeneric) {
 
-						double newMaxiValue = 100 * maxi;
-
-						if ((totalQtyMaxi == null) || (newMaxiValue > totalQtyMaxi)) {
-							totalQtyMaxi = newMaxiValue;
+						if ((totalQtyMaxi == null) || (maxi > totalQtyMaxi)) {
+							totalQtyMaxi = maxi;
 						}
 
 					} else {
@@ -463,10 +461,8 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				if ((mini != null)) {
 					if (isGeneric) {
-						double newMiniValue = 100 * mini;
-
-						if ((totalQtyMini == null) || (newMiniValue < totalQtyMini)) {
-							totalQtyMini = newMiniValue;
+						if ((totalQtyMini == null) || (mini < totalQtyMini)) {
+							totalQtyMini = mini;
 						}
 					} else {
 						double valueToAdd = qty * mini;
