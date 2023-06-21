@@ -270,7 +270,7 @@
           <field id="bcpg:flNumber" mandatory="false" read-only="false" set="mainInfo"/>
           <field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/textfield.ftl">
-                 <control-param name="maxLength">14</control-param>
+                 <control-param name="maxLength">13</control-param>
             </control>
             <constraint-handlers>
               <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
@@ -1001,7 +1001,7 @@
           </field>
           <field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/textfield.ftl">
-                 <control-param name="maxLength">14</control-param>
+                 <control-param name="maxLength">13</control-param>
             </control>
             <constraint-handlers>
               <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
@@ -1255,7 +1255,7 @@
           </field>
           <field id="bcpg:eanCode" mandatory="false" read-only="false" set="2-col-product-criteria">
 	          <control>
-	            <control-param name="maxLength">14</control-param>
+	            <control-param name="maxLength">13</control-param>
 	          	<control-param name="forceEditable">true</control-param>
 	          </control>
           </field>
@@ -1548,7 +1548,7 @@
           <field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo"/>
           <field help-id="becpg.forms.help.eanCode" id="bcpg:eanCode" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/textfield.ftl">
-                 <control-param name="maxLength">14</control-param>
+                 <control-param name="maxLength">13</control-param>
             </control>
             <constraint-handlers>
               <constraint event="keyup,change" type="MANDATORY" validation-handler="beCPG.forms.validation.GTIN"/>
