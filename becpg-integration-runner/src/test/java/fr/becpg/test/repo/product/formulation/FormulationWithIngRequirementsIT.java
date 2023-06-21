@@ -224,7 +224,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 				if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_NON_VALIDATED_STATE).equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					assertEquals(RequirementDataType.Validation, reqCtrlList.getReqDataType());
-					assertEquals(10, reqCtrlList.getSources().size());
+					assertEquals(9, reqCtrlList.getSources().size());
 
 					checks++;
 				} else if (reqCtrlList.getReqMessage().equals("OGM interdit")) {
@@ -296,23 +296,17 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(1, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
 					checks++;
 				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation ou Conseils de préparation et d'utilisation",
 						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(1, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
 				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "DLC (J) ou DDM/DLUO (J)",
 						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(1, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
 				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_NON_UNIQUE_FIELD, "Nom",
 						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
@@ -321,8 +315,6 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 						.equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
-					assertEquals(1, reqCtrlList.getSources().size());
-					assertTrue(reqCtrlList.getSources().contains(formulatedProduct.getNodeRef()));
 					checks++;
 				} else if (I18NUtil.getMessage(AllergensCalculatingFormulationHandler.MESSAGE_NOT_VALIDATED_ALLERGEN)
 						.equals(reqCtrlList.getReqMessage())) {

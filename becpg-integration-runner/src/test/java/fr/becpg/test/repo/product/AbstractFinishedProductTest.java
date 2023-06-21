@@ -61,7 +61,6 @@ import fr.becpg.test.PLMBaseTestCase;
 
 public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
-	
 	protected static final Log logger = LogFactory.getLog(AbstractFinishedProductTest.class);
 
 	/** The product service. */
@@ -240,7 +239,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 	 */
 	protected void initParts() {
 
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+		inWriteTx(() -> {
 
 			/*-- characteristics --*/
 			Map<QName, Serializable> properties = new HashMap<>();
@@ -469,7 +468,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 					PLMModel.TYPE_GEO_ORIGIN, properties).getChildRef();
 			nodeService.setProperty(geoOrigin1, PLMModel.PROP_GEO_ORIGIN_ISOCODE, "FR");
-			
+
 			properties.clear();
 			properties.put(BeCPGModel.PROP_CHARACT_NAME, "geoOrigin2");
 			geoOrigin2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
@@ -553,6 +552,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			plant2 = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
 					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(ContentModel.PROP_NAME)), PLMModel.TYPE_PLANT,
 					properties).getChildRef();
+			return null;
+		});
+
+		inWriteTx(() -> {
 
 			/*-- Create raw materials --*/
 			logger.debug("/*-- Create raw materials --*/");
@@ -591,23 +594,24 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin1);
 			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
-			
+
 			IngListDataItem rawMaterial1Ing1 = new IngListDataItem(null, 100 / 3d, geoOrigins, bioOrigins, false, false, false, ing1, false);
 			rawMaterial1Ing1.setMini(25d);
 			rawMaterial1Ing1.setMaxi(90d);
 			ingList.add(rawMaterial1Ing1);
-			
+
 			geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
 			geoOrigins.add(geoOrigin2);
 			List<NodeRef> geoTransfo = new ArrayList<>();
 			geoTransfo.add(geoOrigin2);
-			
-			IngListDataItem rawMaterial1Ing2 = new IngListDataItem(null, null, 200 / 3d, geoOrigins, geoTransfo, bioOrigins, false, false, false, false, ing2, false);
+
+			IngListDataItem rawMaterial1Ing2 = new IngListDataItem(null, null, 200 / 3d, geoOrigins, geoTransfo, bioOrigins, false, false, false,
+					false, ing2, false);
 			rawMaterial1Ing2.setMini(18d);
 			rawMaterial1Ing2.setMaxi(80d);
 			ingList.add(rawMaterial1Ing2);
-			
+
 			rawMaterial1.setIngList(ingList);
 			// physicoChem
 			List<PhysicoChemListDataItem> physicoChemList;
@@ -620,40 +624,45 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial1.setPhysicoChemList(physicoChemList);
 			rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
+
 			/*-- Raw material 2 --*/
 			RawMaterialData rawMaterial2 = new RawMaterialData();
 			rawMaterial2.setName("Raw material 2");
-			legalName = new MLText("Legal Raw material 2");
+			MLText legalName = new MLText("Legal Raw material 2");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 2");
 			legalName.addValue(Locale.ENGLISH, "Legal Raw material 2");
 			rawMaterial2.setLegalName(legalName);
 			rawMaterial2.setDensity(1d);
 			rawMaterial2.setSuppliers(Collections.singletonList(supplier2));
 			// costList
-			costList = new ArrayList<>();
+			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, 1d, "€/kg", 2.1d, cost1, false, null, 0.5d, 2d));
 			costList.add(new CostListDataItem(null, 2d, "€/kg", 2.2d, cost2, false, null, 1d, 4d));
 			rawMaterial2.setCostList(costList);
 			// nutList
-			nutList = new ArrayList<>();
+			List<NutListDataItem> nutList = new ArrayList<>();
 			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0.8d, 1.1d, "Groupe 1", nut1, false));
 			nutList.add(new NutListDataItem(null, 2d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut2, false));
 			nutList.add(new NutListDataItem(null, 6d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
 			rawMaterial2.setNutList(nutList);
 			// allergenList
-			allergenList = new ArrayList<>();
+			List<AllergenListDataItem> allergenList = new ArrayList<>();
 			allergenList.add(new AllergenListDataItem(null, 10d, true, false, null, null, allergen1, false));
 			allergenList.add(new AllergenListDataItem(null, 50d, false, true, null, null, allergen2, false));
 			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen3, false));
 			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen4, false));
 			rawMaterial2.setAllergenList(allergenList);
 			// ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
-			ingList = new ArrayList<>();
-			bioOrigins = new ArrayList<>();
+			List<IngListDataItem> ingList = new ArrayList<>();
+			List<NodeRef> bioOrigins = new ArrayList<>();
 			bioOrigins.add(bioOrigin1);
-			geoOrigins = new ArrayList<>();
+			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
-			
+
 			IngListDataItem rawMaterial2Ing1 = new IngListDataItem(null, 100 / 4d, geoOrigins, bioOrigins, true, true, false, ing1, false);
 			rawMaterial2Ing1.setMini(15d);
 			rawMaterial2Ing1.setMaxi(75d);
@@ -663,14 +672,14 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			bioOrigins.add(bioOrigin2);
 			geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
-			
+
 			IngListDataItem rawMaterial2Ing2 = new IngListDataItem(null, 300 / 4d, geoOrigins, bioOrigins, false, false, false, ing2, false);
 			rawMaterial2Ing2.setMini(25d);
 			rawMaterial2Ing2.setMaxi(86d);
 			ingList.add(rawMaterial2Ing2);
 
 			// physicoChem
-			physicoChemList = new ArrayList<>();
+			List<PhysicoChemListDataItem> physicoChemList = new ArrayList<>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, 2.1d, physicoChem1));
 			physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", null, 2.2d, physicoChem2));
 			physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", 0.8d, 1.1d, physicoChem3));
@@ -681,42 +690,46 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 
 			rawMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Raw material 3 --*/
 			RawMaterialData rawMaterial3 = new RawMaterialData();
 			rawMaterial3.setName("Raw material 3");
-			legalName = new MLText("Legal Raw material 3");
+			MLText legalName = new MLText("Legal Raw material 3");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 3");
 			legalName.addValue(Locale.ENGLISH, "Legal Raw material 3");
 			rawMaterial3.setLegalName(legalName);
 			rawMaterial3.setDensity(1d);
 			// costList
-			costList = new ArrayList<>();
+			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, 1d, "€/kg", null, cost1, false, null, 0.5d, 2d));
 			costList.add(new CostListDataItem(null, 2d, "€/kg", null, cost2, false, null, 1d, 4d));
 			rawMaterial3.setCostList(costList);
 			// nutList
-			nutList = new ArrayList<>();
+			List<NutListDataItem> nutList = new ArrayList<>();
 			nutList.add(new NutListDataItem(null, 1d, "g/100g", null, null, "Groupe 1", nut1, false));
 			nutList.add(new NutListDataItem(null, 2d, "g/100g", null, null, "Groupe 1", nut2, false));
 			nutList.add(new NutListDataItem(null, 4d, "g/100g", 0.8d, 2.1d, "Groupe 1", nut3, false));
 			rawMaterial3.setNutList(nutList);
 			// allergenList
-			allergenList = new ArrayList<>();
+			List<AllergenListDataItem> allergenList = new ArrayList<>();
 			allergenList.add(new AllergenListDataItem(null, 15d, false, false, null, null, allergen1, false));
 			allergenList.add(new AllergenListDataItem(null, 15d, false, false, null, null, allergen2, false));
 			allergenList.add(new AllergenListDataItem(null, null, true, true, null, null, allergen3, false));
 			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen4, false));
 			rawMaterial3.setAllergenList(allergenList);
 			// ingList : 4 ing3 ; bio1|bio2 ; geo2
-			ingList = new ArrayList<>();
-			bioOrigins = new ArrayList<>();
+			List<IngListDataItem> ingList = new ArrayList<>();
+			List<NodeRef> bioOrigins = new ArrayList<>();
 			bioOrigins.add(bioOrigin1);
 			bioOrigins.add(bioOrigin2);
-			geoOrigins = new ArrayList<>();
+			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true, false, ing3, false));
 			// physicoChem
-			physicoChemList = new ArrayList<>();
+			List<PhysicoChemListDataItem> physicoChemList = new ArrayList<>();
 			physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, null, physicoChem1));
 			physicoChemList.add(new PhysicoChemListDataItem(null, 2d, "-", null, null, physicoChem2));
 			physicoChemList.add(new PhysicoChemListDataItem(null, 1d, "-", null, null, physicoChem3));
@@ -726,38 +739,51 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial3.setIngList(ingList);
 			rawMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial3).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Raw material 4 --*/
 			RawMaterialData rawMaterial4 = new RawMaterialData();
 			rawMaterial4.setName("Raw material 4");
-			legalName = new MLText("Legal Raw material 4");
+			MLText legalName = new MLText("Legal Raw material 4");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 4");
 			legalName.addValue(Locale.ENGLISH, "Legal Raw material 4");
 			rawMaterial4.setLegalName(legalName);
 			rawMaterial4.setDensity(1.1d);
 			// ingList : 4 ing3 ; bio1|bio2 ; geo2
-			ingList = new ArrayList<>();
-			bioOrigins = new ArrayList<>();
+			List<IngListDataItem> ingList = new ArrayList<>();
+			List<NodeRef> bioOrigins = new ArrayList<>();
 			bioOrigins.add(bioOrigin1);
 			bioOrigins.add(bioOrigin2);
-			geoOrigins = new ArrayList<>();
+			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true, false, ing3, false));
 			rawMaterial4.setIngList(ingList);
 			rawMaterial4.setCostList(new LinkedList<CostListDataItem>());
 			rawMaterial4.setNutList(new LinkedList<NutListDataItem>());
-			nutList = new ArrayList<>();
+			List<NutListDataItem> nutList = new ArrayList<>();
 			nutList.add(new NutListDataItem(null, 0d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 			nutList.add(new NutListDataItem(null, 0d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 			rawMaterial4.setNutList(nutList);
 			rawMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial4).getNodeRef();
+			return null;
+		});
 
+		inWriteTx(() -> {
 			/*-- Raw material 5 --*/
-			ingList = new ArrayList<>();
+			List<IngListDataItem> ingList = new ArrayList<>();
+			List<NodeRef> bioOrigins = new ArrayList<>();
+			bioOrigins.add(bioOrigin1);
+			bioOrigins.add(bioOrigin2);
+			List<NodeRef> geoOrigins = new ArrayList<>();
+			geoOrigins.add(geoOrigin2);
+
 			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true, false, ing3, false));
 
 			RawMaterialData rawMaterial5 = new RawMaterialData();
 			rawMaterial5.setName("Raw material 5");
-			legalName = new MLText("Legal Raw material 5");
+			MLText legalName = new MLText("Legal Raw material 5");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 5");
 			legalName.addValue(Locale.ENGLISH, "Legal Raw material 5");
 			rawMaterial5.setLegalName(legalName);
@@ -768,62 +794,70 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial5.setTare(9d);
 			rawMaterial5.setTareUnit(TareUnit.g);
 			// costList
-			costList = new ArrayList<>();
+			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, 5d, "€/m", null, cost1, false));
 			costList.add(new CostListDataItem(null, 6d, "€/m", null, cost2, false));
 			rawMaterial5.setCostList(costList);
 			// nutList
-			nutList = new ArrayList<>();
+			List<NutListDataItem> nutList = new ArrayList<>();
 			nutList.add(new NutListDataItem(null, 1d, "g/100g", 0d, 0d, "Groupe 1", nut1, false));
 			nutList.add(new NutListDataItem(null, 3d, "g/100g", 0d, 0d, "Groupe 1", nut2, false));
 			rawMaterial5.setNutList(nutList);
 			rawMaterial5.setIngList(ingList);
 			rawMaterial5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial5).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Raw material 8 --*/
 			RawMaterialData rawMaterial8 = new RawMaterialData();
 			rawMaterial8.setName("Raw material 8");
-			legalName = new MLText("Legal Raw material 8");
+			MLText legalName = new MLText("Legal Raw material 8");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 5");
 			rawMaterial8.setLegalName(legalName);
 			rawMaterial8.setUnit(ProductUnit.lb);
 			// costList
-			costList = new ArrayList<>();
+			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, 5d, "€/lb", null, cost1, false));
 			rawMaterial8.setCostList(costList);
 			rawMaterial8NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial8).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Raw material 6 --*/
 			RawMaterialData rawMaterial6 = new RawMaterialData();
 			rawMaterial6.setName("Raw material 6");
-			legalName = new MLText("Legal Raw material 6");
+			MLText legalName = new MLText("Legal Raw material 6");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 6");
 			legalName.addValue(Locale.ENGLISH, "Legal Raw material 6");
 			rawMaterial6.setLegalName(legalName);
 			rawMaterial6.setUnit(ProductUnit.L);
 			rawMaterial6.setDensity(0.7d);
 			// costList
-			costList = new ArrayList<>();
+			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, 1d, "€/L", 2.1d, cost1, false));
 			costList.add(new CostListDataItem(null, 2d, "€/L", 2.2d, cost2, false));
 			rawMaterial6.setCostList(costList);
 			// nutList
-			nutList = new ArrayList<>();
+			List<NutListDataItem> nutList = new ArrayList<>();
 			nutList.add(new NutListDataItem(null, 1d, "g/100mL", 0.8d, 1.1d, "Groupe 1", nut1, false));
 			nutList.add(new NutListDataItem(null, 2d, "g/100mL", 0.8d, 2.1d, "Groupe 1", nut2, false));
 			rawMaterial6.setNutList(nutList);
 			// allergenList
-			allergenList = new ArrayList<>();
+			List<AllergenListDataItem> allergenList = new ArrayList<>();
 			allergenList.add(new AllergenListDataItem(null, 100d, true, false, null, null, allergen1, false));
 			allergenList.add(new AllergenListDataItem(null, 100d, false, true, null, null, allergen2, false));
 			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen3, false));
 			allergenList.add(new AllergenListDataItem(null, null, false, false, null, null, allergen4, false));
 			rawMaterial6.setAllergenList(allergenList);
 			// ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
-			ingList = new ArrayList<>();
-			bioOrigins = new ArrayList<>();
+			List<IngListDataItem> ingList = new ArrayList<>();
+			List<NodeRef> bioOrigins = new ArrayList<>();
 			bioOrigins.add(bioOrigin1);
-			geoOrigins = new ArrayList<>();
+			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
 			ingList.add(new IngListDataItem(null, 80d, geoOrigins, bioOrigins, true, true, false, ing1, false));
 			bioOrigins = new ArrayList<>();
@@ -834,78 +868,104 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial6.setIngList(ingList);
 			rawMaterial6NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial6).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Raw material 7 --*/
 			RawMaterialData rawMaterial7 = new RawMaterialData();
 			rawMaterial7.setName("Raw material 7");
-			legalName = new MLText("Legal Raw material 7");
+			MLText legalName = new MLText("Legal Raw material 7");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 7");
 			legalName.addValue(Locale.ENGLISH, "Legal Raw material 7");
 			rawMaterial7.setLegalName(legalName);
 			rawMaterial7.setUnit(ProductUnit.kg);
 			rawMaterial7.setDensity(1d);
 			// ingList : ing5
-			ingList = new ArrayList<>();
+
+			List<IngListDataItem> ingList = new ArrayList<>();
 			ingList.add(new IngListDataItem(null, 100d, null, null, false, false, false, ing5, false));
 			ingList.add(new IngListDataItem(null, ingList.get(0), 70d, null, null, null, false, false, true, false, ing1, false));
 			ingList.add(new IngListDataItem(null, ingList.get(0), 30d, null, null, null, false, false, false, false, ing4, false));
 			rawMaterial7.setIngList(ingList);
 			rawMaterial7NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial7).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/** Water **/
 			RawMaterialData waterRawMaterial = new RawMaterialData();
 			waterRawMaterial.setName("Water");
-			legalName = new MLText();
+			MLText legalName = new MLText();
 			legalName.addValue(Locale.FRENCH, "eau");
 			legalName.addValue(Locale.ENGLISH, "water");
 			waterRawMaterial.setLegalName(legalName);
 			waterRawMaterial.setUnit(ProductUnit.kg);
 			waterRawMaterial.setDensity(1d);
 			// ingList : ing5
-			ingList = new ArrayList<>();
+
+			List<IngListDataItem> ingList = new ArrayList<>();
 			ingList.add(new IngListDataItem(null, 100d, null, null, false, false, false, ingWater, false));
 			waterRawMaterial.setIngList(ingList);
 			rawMaterialWaterNodeRef = alfrescoRepository.create(getTestFolderNodeRef(), waterRawMaterial).getNodeRef();
 			nodeService.addAspect(rawMaterialWaterNodeRef, PLMModel.ASPECT_WATER, null);
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Local semi finished product 1 --*/
 			LocalSemiFinishedProductData localSF1 = new LocalSemiFinishedProductData();
 			localSF1.setName("Local semi finished 1");
-			mlName = new MLText();
+			MLText mlName = new MLText();
 			mlName.addValue(I18NUtil.getContentLocaleLang(), "Pâte default");
 			mlName.addValue(Locale.ENGLISH, "Pâte english");
 			mlName.addValue(Locale.FRENCH, "Pâte french");
 			localSF1.setLegalName(mlName);
 			localSF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF1).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Local semi finished product 1 --*/
 			LocalSemiFinishedProductData localSF2 = new LocalSemiFinishedProductData();
 			localSF2.setName("Local semi finished 2");
-			mlName = new MLText();
+			MLText mlName = new MLText();
 			mlName.addValue(I18NUtil.getContentLocaleLang(), "Garniture default");
 			mlName.addValue(Locale.ENGLISH, "Garniture english");
 			mlName.addValue(Locale.FRENCH, "Garniture french");
 			localSF2.setLegalName(mlName);
 			localSF2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF2).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			LocalSemiFinishedProductData localSF3 = new LocalSemiFinishedProductData();
 			localSF3.setName("Local semi finished 3");
 			localSF3.setLegalName("Legal Local semi finished 3");
 			localSF3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF3).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			logger.debug("/*-- Create raw materials 11 => 14 with ingList only--*/");
 			/*-- Raw material 11 --*/
 			RawMaterialData rawMaterial11 = new RawMaterialData();
 			rawMaterial11.setName("Raw material 11");
-			legalName = new MLText("Legal Raw material 11");
+			MLText legalName = new MLText("Legal Raw material 11");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 11");
 			legalName.addValue(Locale.ENGLISH, "Legal Raw material 11");
 			rawMaterial11.setLegalName(legalName);
 			rawMaterial11.setDensity(1d);
 			// ingList : 1 ing1 ; bio1 ; geo1 // 2 ing2 ; bio1 ; geo1|geo2
-			ingList = new ArrayList<>();
-			bioOrigins = new ArrayList<>();
+			List<IngListDataItem> ingList = new ArrayList<>();
+			List<NodeRef> bioOrigins = new ArrayList<>();
 			bioOrigins.add(bioOrigin1);
-			geoOrigins = new ArrayList<>();
+			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
 			ingList.add(new IngListDataItem(null, 100 / 3d, geoOrigins, bioOrigins, false, false, false, ing1, false));
 			geoOrigins = new ArrayList<>();
@@ -915,19 +975,23 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial11.setIngList(ingList);
 			rawMaterial11NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial11).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Raw material 12 --*/
 			RawMaterialData rawMaterial12 = new RawMaterialData();
 			rawMaterial12.setName("Raw material 12");
-			legalName = new MLText("Legal Raw material 12");
+			MLText legalName = new MLText("Legal Raw material 12");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 12");
 			legalName.addValue(Locale.ENGLISH, "Legal Raw material 12");
 			rawMaterial12.setLegalName(legalName);
 			rawMaterial12.setDensity(1d);
 			// ingList : 1 ing1 ; bio1 ; geo1 // 3 ing2 ; bio2 ; geo1|geo2
-			ingList = new ArrayList<>();
-			bioOrigins = new ArrayList<>();
+			List<IngListDataItem> ingList = new ArrayList<>();
+			List<NodeRef> bioOrigins = new ArrayList<>();
 			bioOrigins.add(bioOrigin1);
-			geoOrigins = new ArrayList<>();
+			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin1);
 			ingList.add(new IngListDataItem(null, 100 / 4d, geoOrigins, bioOrigins, true, true, false, ing1, false));
 			bioOrigins = new ArrayList<>();
@@ -938,69 +1002,89 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial12.setIngList(ingList);
 			rawMaterial12NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial12).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Raw material 13 --*/
 			RawMaterialData rawMaterial13 = new RawMaterialData();
 			rawMaterial13.setName("Raw material 13");
-			legalName = new MLText("Legal Raw material 13");
+			MLText legalName = new MLText("Legal Raw material 13");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 13");
 			legalName.addValue(Locale.ENGLISH, "Legal Raw material 13");
 			rawMaterial13.setLegalName(legalName);
 			rawMaterial13.setDensity(1d);
 			// ingList : 4 ing3 ; bio1|bio2 ; geo2
-			ingList = new ArrayList<>();
-			bioOrigins = new ArrayList<>();
+			List<IngListDataItem> ingList = new ArrayList<>();
+			List<NodeRef> bioOrigins = new ArrayList<>();
 			bioOrigins.add(bioOrigin1);
 			bioOrigins.add(bioOrigin2);
-			geoOrigins = new ArrayList<>();
+			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 100d, geoOrigins, bioOrigins, true, true, false, ing3, false));
 			rawMaterial13.setIngList(ingList);
 			rawMaterial13NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial13).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Raw material 14 --*/
 			RawMaterialData rawMaterial14 = new RawMaterialData();
 			rawMaterial14.setName("Raw material 14");
-			legalName = new MLText("Legal Raw material 14");
+			MLText legalName = new MLText("Legal Raw material 14");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 14");
 			legalName.addValue(Locale.ENGLISH, "Legal Raw material 14");
 			rawMaterial14.setLegalName(legalName);
 			rawMaterial14.setDensity(1d);
 			// ingList : 4 ing3 ; bio1|bio2 ; geo2
-			ingList = new ArrayList<>();
-			bioOrigins = new ArrayList<>();
+			List<IngListDataItem> ingList = new ArrayList<>();
+			List<NodeRef> bioOrigins = new ArrayList<>();
 			bioOrigins.add(bioOrigin1);
 			bioOrigins.add(bioOrigin2);
-			geoOrigins = new ArrayList<>();
+			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, 200 / 3d, geoOrigins, bioOrigins, true, true, false, ing3, false));
 			ingList.add(new IngListDataItem(null, 100 / 3d, geoOrigins, bioOrigins, true, true, false, ing4, false));
 			rawMaterial14.setIngList(ingList);
 			rawMaterial14NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial14).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Local semi finished product 11 --*/
 			LocalSemiFinishedProductData localSF11 = new LocalSemiFinishedProductData();
 			localSF11.setName("Local semi finished 11");
-			mlName = new MLText();
+			MLText mlName = new MLText();
 			mlName.addValue(I18NUtil.getContentLocaleLang(), "Pâte default");
 			mlName.addValue(Locale.ENGLISH, "Pâte english");
 			mlName.addValue(Locale.FRENCH, "Pâte french");
 			localSF11.setLegalName(mlName);
 			localSF11NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF11).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Local semi finished product 12 --*/
 			LocalSemiFinishedProductData localSF12 = new LocalSemiFinishedProductData();
 			localSF12.setName("Local semi finished 12");
-			mlName = new MLText();
+			MLText mlName = new MLText();
 			mlName.addValue(I18NUtil.getContentLocaleLang(), "Garniture default");
 			mlName.addValue(Locale.ENGLISH, "Garniture english");
 			mlName.addValue(Locale.FRENCH, "Garniture french");
 			localSF12.setLegalName(mlName);
 			localSF12NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), localSF12).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Raw material 15 --*/
 			RawMaterialData rawMaterial15 = new RawMaterialData();
 			rawMaterial15.setName("Raw material 15");
-			legalName = new MLText("Legal Raw material 15");
+			MLText legalName = new MLText("Legal Raw material 15");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 15");
 			legalName.addValue(Locale.ENGLISH, "Legal Raw material 15");
 			rawMaterial15.setLegalName(legalName);
@@ -1010,20 +1094,24 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial15.setNetWeight(2d);
 			rawMaterial15NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial15).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Raw material 16 --*/
 			RawMaterialData rawMaterial16 = new RawMaterialData();
 			rawMaterial16.setName("Raw material 16");
-			legalName = new MLText("Legal Raw material 16");
+			MLText legalName = new MLText("Legal Raw material 16");
 			legalName.addValue(Locale.FRENCH, "Legal Raw material 16");
 			legalName.addValue(Locale.ENGLISH, "Legal Raw material 16");
 			rawMaterial16.setLegalName(legalName);
 			rawMaterial16.setDensity(1d);
 			// ingList : 4 ing3 ; bio1|bio2 ; geo2
-			ingList = new ArrayList<>();
-			bioOrigins = new ArrayList<>();
+			List<IngListDataItem> ingList = new ArrayList<>();
+			List<NodeRef> bioOrigins = new ArrayList<>();
 			bioOrigins.add(bioOrigin1);
 			bioOrigins.add(bioOrigin2);
-			geoOrigins = new ArrayList<>();
+			List<NodeRef> geoOrigins = new ArrayList<>();
 			geoOrigins.add(geoOrigin2);
 			ingList.add(new IngListDataItem(null, null, geoOrigins, bioOrigins, true, true, false, ing1, false));
 			ingList.add(new IngListDataItem(null, 55d, geoOrigins, bioOrigins, true, true, false, ing3, false));
@@ -1031,6 +1119,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			rawMaterial16.setIngList(ingList);
 			rawMaterial16NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial16).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Packaging material 1 --*/
 			PackagingMaterialData packagingMaterial1 = new PackagingMaterialData();
 			packagingMaterial1.setName("Packaging material 1");
@@ -1038,12 +1130,16 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			packagingMaterial1.setTare(0.015d);
 			packagingMaterial1.setTareUnit(TareUnit.kg);
 			// costList
-			costList = new ArrayList<>();
+			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, 3d, "€/P", null, pkgCost1, false));
 			costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 			packagingMaterial1.setCostList(costList);
 			packagingMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial1).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Packaging material 2 --*/
 			PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
 			packagingMaterial2.setName("Packaging material 2");
@@ -1051,23 +1147,31 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			packagingMaterial2.setTare(5d);
 			packagingMaterial2.setTareUnit(TareUnit.g);
 			// costList
-			costList.clear();
+			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, 1d, "€/m", null, pkgCost1, false));
 			costList.add(new CostListDataItem(null, 2d, "€/m", null, pkgCost2, false));
 			packagingMaterial2.setCostList(costList);
 			packagingMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial2).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Packaging material 3 --*/
 			PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
 			packagingMaterial3.setName("Packaging material 3");
 			packagingMaterial3.setLegalName("Legal Packaging material 3");
 			// costList
-			costList.clear();
+			List<CostListDataItem> costList = new ArrayList<>();
 			costList.add(new CostListDataItem(null, 1d, "€/P", null, pkgCost1, false));
 			costList.add(new CostListDataItem(null, 2d, "€/P", null, pkgCost2, false));
 			packagingMaterial3.setCostList(costList);
 			packagingMaterial3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Packaging material 4 --*/
 			PackagingMaterialData packagingMaterial4 = new PackagingMaterialData();
 			packagingMaterial4.setName("Packaging material 4");
@@ -1076,6 +1180,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			packagingMaterial4.setTareUnit(TareUnit.lb);
 			packagingMaterial4NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial4).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			/*-- Packaging material 5 --*/
 			PackagingMaterialData packagingMaterial5 = new PackagingMaterialData();
 			packagingMaterial5.setName("Packaging material 5");
@@ -1084,6 +1192,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			packagingMaterial5.setTareUnit(TareUnit.oz);
 			packagingMaterial5NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial5).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			PackagingMaterialData packagingMaterial6 = new PackagingMaterialData();
 			packagingMaterial6.setName("Packaging material 6");
 			packagingMaterial6.setLegalName("Legal Packaging material 6");
@@ -1092,6 +1204,10 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			packagingMaterial6.setTareUnit(TareUnit.g);
 			packagingMaterial6NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial6).getNodeRef();
 
+			return null;
+		});
+
+		inWriteTx(() -> {
 			PackagingKitData packagingKit1 = new PackagingKitData();
 			packagingKit1.setName("Packaging kit 1");
 			packagingKit1.setLegalName("Legal Packaging kit 1");
@@ -1100,8 +1216,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 			nodeService.setProperty(packagingKit1NodeRef, PackModel.PROP_PALLET_NUMBER_ON_GROUND, 2);
 
 			return null;
-
-		}, false, true);
+		});
 	}
 
 	protected void checkILL(String expectedStr1, String expectedStr2, String actualStr) {

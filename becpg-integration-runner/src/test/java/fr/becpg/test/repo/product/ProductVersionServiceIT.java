@@ -714,7 +714,6 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
 			dbNodeService.deleteNode(rawMaterialNodeRef);
 			return null;
 
@@ -770,7 +769,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+			logger.info("Generate reports");
 			entityReportService.generateReports(rawMaterialNodeRef);
 
 			return true;
@@ -789,7 +788,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}
 
 		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+			logger.info("createBranch");
 			List<NodeRef> dbReports = associationService.getTargetAssocs(rawMaterialNodeRef, ReportModel.ASSOC_REPORTS);
 
 			assertEquals(1, dbReports.size());
@@ -803,7 +802,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+			logger.info("mergeBranch");
 			// Check in
 			return entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version", false, false);
 		}, false, true);
@@ -817,7 +816,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+			logger.info("deleteNode");
 			dbNodeService.deleteNode(rawMaterialNodeRef);
 			return null;
 

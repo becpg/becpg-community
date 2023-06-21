@@ -32,6 +32,8 @@ import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.repo.transaction.TransactionalResourceHelper;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
@@ -213,6 +215,19 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 		return nodeService.exists(nodeRef) && (lockService.getLockStatus(nodeRef) == LockStatus.NO_LOCK);
 	}
 
+
+	/** Constant <code>KEY_PENDING_DELETE_NODES="DbNodeServiceImpl.pendingDeleteNodes"</code> */
+	public static final String KEY_PENDING_DELETE_NODES = "DbNodeServiceImpl.pendingDeleteNodes";
+
+	protected boolean isPendingDelete(NodeRef nodeRef) {
+		// Avoid creating a Set if the transaction is read-only
+		if (AlfrescoTransactionSupport.getTransactionReadState() != TxnReadState.TXN_READ_WRITE) {
+			return false;
+		}
+		Set<NodeRef> nodesPendingDelete = TransactionalResourceHelper.getSet(KEY_PENDING_DELETE_NODES);
+		return nodesPendingDelete.contains(nodeRef);
+	}
+	
 	/**
 	 * <p>doInit.</p>
 	 */
