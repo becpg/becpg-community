@@ -277,8 +277,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
 
-					mergeWithLastActivity(activityListDataItem);
-					
 					alfrescoRepository.save(activityListDataItem);
 
 					notifyListeners(entityNodeRef, activityListDataItem);
