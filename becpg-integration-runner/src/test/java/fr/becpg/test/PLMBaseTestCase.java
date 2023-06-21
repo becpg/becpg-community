@@ -19,6 +19,7 @@ package fr.becpg.test;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -136,6 +137,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 	}
 
 	private void initConstraints() {
+		
+		logger.info("initConstraints");
 
 		NodeRef listsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_LISTS);
 
@@ -247,6 +250,7 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 	 * Initialize the characteristics of the repository.
 	 */
 	private void getOrInitCharacteristics() {
+		
 
 		NodeRef charactsFolder = entitySystemService.getSystemEntity(systemFolderNodeRef, RepoConsts.PATH_CHARACTS);
 
@@ -270,6 +274,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 					ChildAssociationRef childAssocRef = nodeService.createNode(allergenFolder, ContentModel.ASSOC_CONTAINS,
 							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
 							PLMModel.TYPE_ALLERGEN, properties);
+
+					
 					allergens.add(childAssocRef.getChildRef());
 				}
 			}
@@ -283,20 +289,25 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 		if (costs.isEmpty()) {
 			NodeRef costFolder = entitySystemService.getSystemEntityDataList(charactsFolder, PlmRepoConsts.PATH_COSTS);
 			List<NodeRef> costsNodeRef = entityListDAO.getListItems(costFolder, PLMModel.TYPE_COST);
-			String[] costNames = { "Coût MP", "Coût prév MP", "Coût Emb", "Coût prév Emb" };
+			 List<String> costNames = new ArrayList<>(Arrays.asList( "Coût MP", "Coût prév MP", "Coût Emb", "Coût prév Emb" ));
 
 			for (NodeRef fileInfo : costsNodeRef) {
 				String name = (String) nodeService.getProperty(fileInfo, BeCPGModel.PROP_CHARACT_NAME);
-				for (String costName : costNames) {
-					if (name.equals(costName)) {
-						costs.add(fileInfo);
-
+				if(!costNames.isEmpty()) {
+					boolean found = false;
+					for (String costName : costNames) {
+						if (name.equals(costName)) {
+							costs.add(fileInfo);
+							found = true;
+						}
+					}
+					if(found) {
+						costNames.remove(name);
 					}
 				}
-
 			}
 
-			if (costs.isEmpty()) {
+			if (!costNames.isEmpty()) {
 				for (String costName : costNames) {
 					Map<QName, Serializable> properties = new HashMap<>();
 					properties.put(BeCPGModel.PROP_CHARACT_NAME, costName);
@@ -306,20 +317,9 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 							PLMModel.TYPE_COST, properties);
 					costs.add(childAssocRef.getChildRef());
 				}
-			} else if (costs.size() != 4) {
-				for (String costName : new String[] { "Coût prév MP", "Coût prév Emb" }) {
-					Map<QName, Serializable> properties = new HashMap<>();
-					properties.put(BeCPGModel.PROP_CHARACT_NAME, costName);
-					properties.put(PLMModel.PROP_COSTCURRENCY, VALUE_COST_CURRENCY);
-					ChildAssociationRef childAssocRef = nodeService.createNode(costFolder, ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_CHARACT_NAME)),
-							PLMModel.TYPE_COST, properties);
-					costs.add(childAssocRef.getChildRef());
-				}
-
 			}
 
-		//	Assert.assertEquals(4, costs.size());
+		    Assert.assertEquals(4, costs.size());
 			costs = Collections.unmodifiableList(costs);
 		}
 
@@ -438,6 +438,8 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 	}
 
 	private void initEntityTemplates() {
+		
+		logger.info("initEntityTemplates");
 
 		NodeRef rawMaterialTplNodeRef = entityTplService.getEntityTpl(PLMModel.TYPE_RAWMATERIAL);
 		ProductData rawMaterialData = alfrescoRepository.findOne(rawMaterialTplNodeRef);
