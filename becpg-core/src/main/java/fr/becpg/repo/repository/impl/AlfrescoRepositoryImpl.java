@@ -37,7 +37,6 @@ import javax.annotation.PostConstruct;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.cache.TransactionalCache;
 import org.alfresco.repo.node.NodeServicePolicies;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.service.cmr.repository.AssociationRef;
@@ -129,9 +128,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 	@Autowired
 	@Qualifier("policyComponent")
 	private PolicyComponent policyComponent;
-
-	@Autowired
-	private BehaviourFilter policyBehaviourFilter;
 
 	@Autowired
 	private AsynchronouslyRefreshedCacheRegistry asynchronouslyRefreshedCacheRegistry;
@@ -253,10 +249,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 
 			if (isDirty(entity)) {
 
-				try {
-
-					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
-
 					Map<QName, Serializable> properties = extractProperties(entity);
 
 					//Handle null value, it should be add because it add not needed aspects
@@ -304,10 +296,6 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					saveAspects(entity);
 
 					entity.setDbHashCode(createCollisionSafeHashCode(entity));
-
-				} finally {
-					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
-				}
 
 			} else {
 				if (logger.isTraceEnabled()) {
