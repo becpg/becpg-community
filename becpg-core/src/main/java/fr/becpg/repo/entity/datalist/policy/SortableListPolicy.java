@@ -7,13 +7,10 @@ import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
-import org.alfresco.repo.copy.CopyBehaviourCallback;
-import org.alfresco.repo.copy.CopyDetails;
+import org.alfresco.model.ContentModel;
 import org.alfresco.repo.copy.CopyServicePolicies;
-import org.alfresco.repo.copy.DefaultCopyBehaviourCallback;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
-import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
@@ -48,11 +45,8 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 	private EntityDictionaryService entityDictionaryService;
 
 	private EntityListDAO entityListDAO;
-	
+
 	private RepoService repoService;
-	
-	
-	
 
 	public void setRepoService(RepoService repoService) {
 		this.repoService = repoService;
@@ -94,14 +88,12 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 	public void doInit() {
 		logger.debug("Init DepthLevelListPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
-				new JavaBehaviour(this, "onUpdateProperties", NotificationFrequency.TRANSACTION_COMMIT));
+				new JavaBehaviour(this, "onUpdateProperties", NotificationFrequency.EVERY_EVENT));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
 				new JavaBehaviour(this, "onDeleteNode", NotificationFrequency.TRANSACTION_COMMIT));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
 				new JavaBehaviour(this, "onAddAspect", NotificationFrequency.TRANSACTION_COMMIT));
 
-		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyNodePolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
-				new JavaBehaviour(this, "getCopyCallback"));
 		policyComponent.bindClassBehaviour(CopyServicePolicies.OnCopyCompletePolicy.QNAME, BeCPGModel.ASPECT_DEPTH_LEVEL,
 				new JavaBehaviour(this, "onCopyComplete"));
 
@@ -133,7 +125,8 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 			// has changed ?
 			boolean hasChanged;
-			if ((afterParentLevel != null) && !afterParentLevel.equals(beforeParentLevel) && nodeService.exists(nodeRef) && nodeService.exists(afterParentLevel)) {
+			if ((afterParentLevel != null) && !afterParentLevel.equals(beforeParentLevel) && nodeService.exists(nodeRef)
+					&& nodeService.exists(afterParentLevel)) {
 
 				if (entityDictionaryService.isSubClass(nodeService.getType(afterParentLevel), BeCPGModel.TYPE_ENTITY_V2)) {
 
@@ -200,7 +193,6 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 
 							if (!nodeService.getPrimaryParent(parentNodeRef).getParentRef()
 									.equals(nodeService.getPrimaryParent(nodeRef).getParentRef())) {
-								
 
 								repoService.moveNode(nodeRef, nodeService.getPrimaryParent(parentNodeRef).getParentRef());
 
@@ -214,7 +206,8 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 						&& !nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
 					addInQueue = true;
 					if (logger.isDebugEnabled()) {
-						logger.debug("Add sortable aspect policy ");
+						logger.debug("Add sortable aspect policy "+nodeService.getType(nodeRef)+ " "+nodeService.getProperty( entityListDAO.getEntity(nodeRef), ContentModel.PROP_NAME));
+						
 					}
 				}
 
@@ -229,7 +222,7 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 						queueNode(parentNodeRef);
 					}
 					if (logger.isDebugEnabled()) {
-						logger.debug("Add depthLevel aspect policy ");
+						logger.debug("Add depthLevel aspect policy on :"+nodeService.getType(nodeRef)+ " "+nodeService.getProperty( entityListDAO.getEntity(nodeRef), ContentModel.PROP_NAME) );
 					}
 				}
 
@@ -244,84 +237,79 @@ public class SortableListPolicy extends AbstractBeCPGPolicy
 	@Override
 	protected boolean doBeforeCommit(String key, Set<NodeRef> pendingNodes) {
 
-			L2CacheSupport.doInCacheContext(() -> {
-				AuthenticationUtil.runAsSystem(() -> {
-					dataListSortService.computeDepthAndSort(pendingNodes);
-					return true;
-				});
+		L2CacheSupport.doInCacheContext(() -> {
+			AuthenticationUtil.runAsSystem(() -> {
+				dataListSortService.computeDepthAndSort(pendingNodes);
+				return true;
+			});
 
-			}, false, true);
+		}, false, true);
 		return true;
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void onDeleteNode(ChildAssociationRef childRef, boolean isNodeArchived) {
-		
+
 		// if folder is deleted, all children are
-		if (nodeService.exists(childRef.getParentRef()) 
-				&& isNodeArchived) {
-
-				logger.debug("SortableListPolicy.onDeleteNode");
-				dataListSortService.deleteChildrens(childRef.getParentRef(),childRef.getChildRef());
+		
+		if (nodeService.exists(childRef.getParentRef()) && isNodeArchived && ! isPendingDelete(childRef.getParentRef())) {
 			
-		}
-	}
+			logger.debug("SortableListPolicy.onDeleteNode");
+			dataListSortService.deleteChildrens(childRef.getParentRef(), childRef.getChildRef());
 
-	/** {@inheritDoc} */
-	@Override
-	public CopyBehaviourCallback getCopyCallback(QName classRef, CopyDetails copyDetails) {
-		return new DepthLevelAspectCopyBehaviourCallback(policyBehaviourFilter);
+		}
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public void onCopyComplete(QName classRef, NodeRef sourceNodeRef, NodeRef destinationRef, boolean copyToNewNode, Map<NodeRef, NodeRef> copyMap) {
 
-		logger.debug("onCopyComplete destinationRef " + destinationRef);
+		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+			policyBehaviourFilter.disableBehaviour( BeCPGModel.TYPE_ACTIVITY_LIST);
 
-		NodeRef sourceParentLevelNodeRef = (NodeRef) nodeService.getProperty(sourceNodeRef, BeCPGModel.PROP_PARENT_LEVEL);
+			logger.debug("onCopyComplete destinationRef " + destinationRef);
 
-		// parent equals -> need to update the parent of copied node
-		if (sourceParentLevelNodeRef != null) {
+			NodeRef sourceParentLevelNodeRef = (NodeRef) nodeService.getProperty(sourceNodeRef, BeCPGModel.PROP_PARENT_LEVEL);
 
-			NodeRef targetParentLevelNodeRef = (NodeRef) nodeService.getProperty(destinationRef, BeCPGModel.PROP_PARENT_LEVEL);
-			if (sourceParentLevelNodeRef.equals(targetParentLevelNodeRef)) {
+			// parent equals -> need to update the parent of copied node
+			if (sourceParentLevelNodeRef != null) {
 
-				// we assume sort is keeped during copy
-				Integer sourceParentSort = (Integer) nodeService.getProperty(sourceParentLevelNodeRef, BeCPGModel.PROP_SORT);
+				NodeRef targetParentLevelNodeRef = (NodeRef) nodeService.getProperty(destinationRef, BeCPGModel.PROP_PARENT_LEVEL);
+				if (sourceParentLevelNodeRef.equals(targetParentLevelNodeRef)) {
 
-				NodeRef targetParentNodeRef = nodeService.getPrimaryParent(destinationRef).getParentRef();
+					NodeRef copiedParentNodeRef = null;
+					if(copyMap.containsKey(sourceParentLevelNodeRef)) {
+						logger.debug("Find new parent in copyMap");
+						copiedParentNodeRef = copyMap.get(sourceParentLevelNodeRef);
 
-				NodeRef copiedParentNodeRef = BeCPGQueryBuilder.createQuery().parent(targetParentNodeRef)
-						.ofType(nodeService.getType(sourceParentLevelNodeRef))
-						.andPropEquals(BeCPGModel.PROP_SORT, sourceParentSort != null ? sourceParentSort.toString() : null).inDB().singleValue();
-
-				if (copiedParentNodeRef != null) {
-					logger.debug("update the parent of copied node " + targetParentLevelNodeRef + " with value " + copiedParentNodeRef);
-					nodeService.setProperty(destinationRef, BeCPGModel.PROP_PARENT_LEVEL, copiedParentNodeRef);
-				} else {
-					logger.warn("DepthLevelAspectCopyBehaviourCallback : parent not found.");
+					} else {
+						// we assume sort is keeped during copy
+						Integer sourceParentSort = (Integer) nodeService.getProperty(sourceParentLevelNodeRef, BeCPGModel.PROP_SORT);
+	
+						NodeRef targetParentNodeRef = nodeService.getPrimaryParent(destinationRef).getParentRef();
+	
+						 copiedParentNodeRef = BeCPGQueryBuilder.createQuery().parent(targetParentNodeRef)
+								.ofType(nodeService.getType(sourceParentLevelNodeRef))
+								.andPropEquals(BeCPGModel.PROP_SORT, sourceParentSort != null ? sourceParentSort.toString() : null).inDB().singleValue();
+					}
+					
+					if (copiedParentNodeRef != null) {
+						logger.debug("update the parent of copied node " + targetParentLevelNodeRef + " with value " + copiedParentNodeRef);
+						nodeService.setProperty(destinationRef, BeCPGModel.PROP_PARENT_LEVEL, copiedParentNodeRef);
+					} else {
+						logger.warn("DepthLevelAspectCopyBehaviourCallback : parent not found.");
+					}
 				}
 			}
+		} finally {
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_SORTABLE_LIST);
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+			policyBehaviourFilter.enableBehaviour( BeCPGModel.TYPE_ACTIVITY_LIST);
 		}
 
-		policyBehaviourFilter.enableBehaviour(destinationRef, BeCPGModel.ASPECT_DEPTH_LEVEL);
 	}
 
-	private class DepthLevelAspectCopyBehaviourCallback extends DefaultCopyBehaviourCallback {
-
-		private final BehaviourFilter policyBehaviourFilter;
-
-		private DepthLevelAspectCopyBehaviourCallback(BehaviourFilter policyBehaviourFilter) {
-			this.policyBehaviourFilter = policyBehaviourFilter;
-		}
-
-		@Override
-		public boolean getMustCopy(QName classQName, CopyDetails copyDetails) {
-			policyBehaviourFilter.disableBehaviour(copyDetails.getTargetNodeRef(), BeCPGModel.ASPECT_DEPTH_LEVEL);
-
-			return true;
-		}
-	}
 }
