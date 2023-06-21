@@ -662,6 +662,9 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        
 	        // Prevent any rules being fired on the new destination node
 	        this.ruleService.disableRules(copyTarget);
+	        //beCPG Disable sort
+	        this.behaviourFilter.disableBehaviour( BeCPGModel.ASPECT_DEPTH_LEVEL);
+	        this.behaviourFilter.disableBehaviour( BeCPGModel.ASPECT_SORTABLE_LIST);
 	        try
 	        {
 	            // Apply the remaining aspects and properties
@@ -717,6 +720,9 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	        finally
 	        {
 	            this.ruleService.enableRules(copyTarget);
+
+	            this.behaviourFilter.enableBehaviour(BeCPGModel.ASPECT_DEPTH_LEVEL);
+	    		this.behaviourFilter.enableBehaviour( BeCPGModel.ASPECT_SORTABLE_LIST);
 	        }
 	        
 	        return copyTarget;
