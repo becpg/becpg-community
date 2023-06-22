@@ -281,8 +281,6 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					activityListDataItem.setActivityType(ActivityType.Content);
 					activityListDataItem.setActivityData(data.toString());
 					activityListDataItem.setParentNodeRef(activityListNodeRef);
-					
-					mergeWithLastActivity(activityListDataItem);
 
 					recordAuditActivity(entityNodeRef, activityListDataItem);
 

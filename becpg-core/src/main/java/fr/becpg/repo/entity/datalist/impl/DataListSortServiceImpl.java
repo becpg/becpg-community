@@ -17,8 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.datalist.impl;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -98,9 +100,12 @@ public class DataListSortServiceImpl implements DataListSortService {
 		 * Get the last sibling node of the level
 		 */
 		public NodeRef getLastChildOfLevel(NodeRef parentLevel, Set<NodeRef> pendingNodeRefs) {
-
-			return getQueryByParentLevel(parentLevel, true).andNotIDs(pendingNodeRefs).isNotNull(BeCPGModel.PROP_SORT)
-					.addSort(BeCPGModel.PROP_SORT, false).inDB().singleValue();
+			List<NodeRef> ret = getQueryByParentLevel(parentLevel, true).isNotNull(BeCPGModel.PROP_SORT)
+					.addSort(BeCPGModel.PROP_SORT, false).inDB().maxResults(pendingNodeRefs.size()+1).list();
+			
+			ret.removeAll(pendingNodeRefs);
+			return !ret.isEmpty() ? ret.get(0) : null;
+			
 		}
 
 		/*
@@ -268,15 +273,39 @@ public class DataListSortServiceImpl implements DataListSortService {
 			int sort = RepoConsts.SORT_DEFAULT_STEP - RepoConsts.SORT_INSERTING_STEP;
 			int level = RepoConsts.DEFAULT_LEVEL;
 
-			HashSet<NodeRef> pendingNodeRefs = new HashSet<>(nodeRefs);
-
+			Map<NodeRef,Set<NodeRef>> pendingNodeRefsMap = new HashMap<>();
+			Map<NodeRef, SortableDataList> cache = new HashMap<>();
+			
 			for (NodeRef nodeRef : nodeRefs) {
 
 				if (nodeService.exists(nodeRef)) {
-
 					SortableDataList list = new SortableDataList(nodeRef);
 
 					if (list.exists()) {
+						cache.put(nodeRef, list);
+						
+						Set<NodeRef> nodesByParent = new HashSet<>();
+						if(pendingNodeRefsMap.containsKey(list.listContainer)) {
+							nodesByParent = pendingNodeRefsMap.get(list.listContainer);
+						}
+						nodesByParent.add(nodeRef);
+						pendingNodeRefsMap.put(list.listContainer, nodesByParent);				
+					} else {
+						logger.error("No list Container skipping sort");
+					}
+					
+				}
+			}
+			
+			
+			
+
+			for (NodeRef nodeRef : nodeRefs) {
+
+				if (cache.containsKey(nodeRef)) {
+
+					SortableDataList list = cache.get(nodeRef);
+					Set<NodeRef> pendingNodeRefs = pendingNodeRefsMap.get(list.listContainer);
 
 						// depthLevel manage sort
 						if (nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DEPTH_LEVEL)) {
@@ -321,9 +350,6 @@ public class DataListSortServiceImpl implements DataListSortService {
 							sort += RepoConsts.SORT_INSERTING_STEP;
 							nodeService.setProperty(nodeRef, BeCPGModel.PROP_SORT, sort);
 						}
-					} else {
-						logger.error("No list Container skipping sort");
-					}
 
 					pendingNodeRefs.remove(nodeRef);
 					
@@ -490,7 +516,7 @@ public class DataListSortServiceImpl implements DataListSortService {
 		}
 	}
 
-	private void insertAfter(SortableDataList list, NodeRef siblingNode, NodeRef nodeRef, HashSet<NodeRef> pendingNodeRefs) {
+	private void insertAfter(SortableDataList list, NodeRef siblingNode, NodeRef nodeRef, Set<NodeRef> pendingNodeRefs) {
 
 
 		Integer nextSort = getNextSort(list, siblingNode, nodeRef);

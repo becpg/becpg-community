@@ -247,9 +247,6 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 	@Override
 	public void beforeArchiveNode(NodeRef entityNodeRef) {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Creating " + REMOTE_FILE_NAME + " for " + entityNodeRef);
-		}
 
 		AuthenticationUtil.runAsSystem(() -> {
 
@@ -264,6 +261,11 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 				if (isPendingDelete(entityParent) || !nodeService.exists(entityParent)) {
 					return null;
 				}
+			}
+			
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Creating " + REMOTE_FILE_NAME + " for " + entityNodeRef);
 			}
 
 			NodeRef rootArchiveRef = nodeService.getStoreArchiveNode(entityNodeRef.getStoreRef());
@@ -312,17 +314,6 @@ public class DeleteAndRestoreEntityPolicy extends AbstractBeCPGPolicy implements
 
 	}
 
-	/** Constant <code>KEY_PENDING_DELETE_NODES="DbNodeServiceImpl.pendingDeleteNodes"</code> */
-	public static final String KEY_PENDING_DELETE_NODES = "DbNodeServiceImpl.pendingDeleteNodes";
-
-	private boolean isPendingDelete(NodeRef nodeRef) {
-		// Avoid creating a Set if the transaction is read-only
-		if (AlfrescoTransactionSupport.getTransactionReadState() != TxnReadState.TXN_READ_WRITE) {
-			return false;
-		}
-		Set<NodeRef> nodesPendingDelete = TransactionalResourceHelper.getSet(KEY_PENDING_DELETE_NODES);
-		return nodesPendingDelete.contains(nodeRef);
-	}
 
 	/** {@inheritDoc} */
 	@Override
