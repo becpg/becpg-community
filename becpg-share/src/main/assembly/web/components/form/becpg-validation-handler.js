@@ -191,15 +191,15 @@
      };
      
    beCPG.forms.validation.checkEmailValidity = function checkEmailValidity(field, args, event, form, silent, message) {
-	    var valid = true;
-	
-	    valid = YAHOO.lang.trim(field.value).length !== 0;
-	    if (valid) {
-	        var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-	        valid = re.test(field.value);
-	    }
-	
-	    return valid;
+	    var barcode  = field.value;
+	      
+	      if(barcode == null || barcode.length == 0){
+	    	  return true;
+	      }
+	      
+	     var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+	     return re.test(field.value);
+	    
 	}   
 	   
 
