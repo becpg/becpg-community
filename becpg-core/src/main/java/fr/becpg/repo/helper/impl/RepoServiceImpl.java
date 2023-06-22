@@ -9,17 +9,21 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.domain.node.NodeDAO;
+import org.alfresco.repo.domain.permissions.AccessControlListDAO;
 import org.alfresco.repo.model.Repository;
 import org.alfresco.service.cmr.model.FileExistsException;
 import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.StoreRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.ConcurrencyFailureException;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.RepoConsts;
@@ -50,6 +54,12 @@ public class RepoServiceImpl implements RepoService {
 
 	@Autowired
 	private NamespaceService namespaceService;
+	
+	@Autowired
+	private NodeDAO nodeDAO;
+	
+	@Autowired
+	private AccessControlListDAO accessControlListDAO;
 
 	/** {@inheritDoc} */
 	@Override
@@ -112,7 +122,7 @@ public class RepoServiceImpl implements RepoService {
 		NodeRef parentOfNodeRefToMove = nodeService.getPrimaryParent(nodeRefToMove).getParentRef();
 		if (destinationNodeRef.equals(parentOfNodeRefToMove)) {
 			// nothing to do...
-			logger.debug("nodeRefToMove is not already moved, nothing to do...");
+			logger.debug("nodeRefToMove is already moved, nothing to do...");
 			return false;
 		}
 		FileExistsException ex = null;
@@ -129,10 +139,25 @@ public class RepoServiceImpl implements RepoService {
 
 				try {
 					fileFolderService.move(nodeRefToMove, destinationNodeRef, name);
+
 				} catch (FileExistsException e) {
 					ex = e;
 					// Concurrency error retry
 					continue;
+				} catch(ConcurrencyFailureException e) {
+					String message = e.getMessage();
+					if(message!=null && message.startsWith("setFixedAcls: unexpected shared acl: ")) {
+						  final Long nodeId = nodeDAO.getNodePair(nodeRefToMove).getFirst();
+	                        // retrieve acl properties from node
+	                        Long inheritFrom = (Long) nodeDAO.getNodeProperty(nodeId, ContentModel.PROP_INHERIT_FROM_ACL);
+	                        Long sharedAclToReplace = (Long) nodeDAO.getNodeProperty(nodeId, ContentModel.PROP_SHARED_ACL_TO_REPLACE);
+
+	                        // set inheritance using retrieved prop
+	                        accessControlListDAO.setInheritanceForChildren(nodeRefToMove, inheritFrom, sharedAclToReplace, true,
+	                                true);
+	                        continue;
+					} 
+					throw e;
 				}
 				ex = null;
 				break;

@@ -92,8 +92,9 @@ import fr.becpg.repo.repository.model.DefaultListDataItem;
  * @version $Id: $Id
  */
 @Repository("alfrescoRepository")
-public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
-		implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.OnRemoveAspectPolicy, RefreshableCacheListener, InitializingBean, NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy {
+public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements AlfrescoRepository<T>, NodeServicePolicies.OnDeleteNodePolicy,
+		NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.OnRemoveAspectPolicy,
+		RefreshableCacheListener, InitializingBean, NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy {
 
 	@Autowired
 	private NodeService nodeService;
@@ -127,7 +128,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 	@Autowired
 	@Qualifier("policyComponent")
 	private PolicyComponent policyComponent;
-	
+
 	@Autowired
 	private AsynchronouslyRefreshedCacheRegistry asynchronouslyRefreshedCacheRegistry;
 
@@ -151,21 +152,19 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 				new JavaBehaviour(this, "onUpdateProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_LIST_VALUE,
 				new JavaBehaviour(this, "onUpdateProperties"));
-		
+
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onCreateAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnCreateAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
 				new JavaBehaviour(this, "onCreateAssociation"));
-				
+
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_ENTITY_V2,
 				new JavaBehaviour(this, "onDeleteAssociation"));
 		policyComponent.bindAssociationBehaviour(NodeServicePolicies.OnDeleteAssociationPolicy.QNAME, BeCPGModel.TYPE_CHARACT,
 				new JavaBehaviour(this, "onDeleteAssociation"));
-		
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, 
-				this, new JavaBehaviour(this, "onAddAspect"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRemoveAspectPolicy.QNAME, 
-			    this, new JavaBehaviour(this, "onRemoveAspect"));
+
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnAddAspectPolicy.QNAME, this, new JavaBehaviour(this, "onAddAspect"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnRemoveAspectPolicy.QNAME, this, new JavaBehaviour(this, "onRemoveAspect"));
 	}
 
 	/** {@inheritDoc} */
@@ -173,28 +172,28 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 	public void onDeleteNode(ChildAssociationRef associationRef, boolean arg1) {
 		purgeCache(associationRef.getChildRef());
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
 		purgeCache(nodeRef);
 	}
-	
+
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
-		if(nodeService.exists(nodeRef) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+		if (nodeService.exists(nodeRef) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
 			purgeCache(nodeRef);
 		}
-		
+
 	}
-	
+
 	@Override
 	public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName) {
-		if(nodeService.exists(nodeRef) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
+		if (nodeService.exists(nodeRef) && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2)) {
 			purgeCache(nodeRef);
 		}
 	}
-	
+
 	@Override
 	public void onCreateAssociation(AssociationRef nodeAssocRef) {
 		purgeCache(nodeAssocRef.getSourceRef());
@@ -206,29 +205,29 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 	}
 
 	private void purgeCache(NodeRef nodeRef) {
-		
-			if (nodeService.exists(nodeRef)) {
-				QName type = nodeService.getType(nodeRef);
-				Class<T> entityClass = repositoryEntityDefReader.getEntityClass(type);
-				if (entityClass != null) {
-					if(entityClass.isAnnotationPresent(AlfCacheable.class) ) {
-						if (logger.isDebugEnabled()) {
-							logger.info("Clear cache of:" + nodeRef + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
-						}
-						if (entityClass.getAnnotation(AlfCacheable.class).isCharact()) {
-							charactCache.remove(nodeRef);
-						} else {
-							cache.remove(nodeRef);
-						}
+
+		if (nodeService.exists(nodeRef)) {
+			QName type = nodeService.getType(nodeRef);
+			Class<T> entityClass = repositoryEntityDefReader.getEntityClass(type);
+			if (entityClass != null) {
+				if (entityClass.isAnnotationPresent(AlfCacheable.class)) {
+					if (logger.isDebugEnabled()) {
+						logger.info("Clear cache of:" + nodeRef + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+					}
+					if (entityClass.getAnnotation(AlfCacheable.class).isCharact()) {
+						charactCache.remove(nodeRef);
+					} else {
+						cache.remove(nodeRef);
 					}
 				}
-			} else {
-				if (logger.isDebugEnabled()) {
-					logger.info("Clear cache of:" + nodeRef + " - deleted");
-				}
-				charactCache.remove(nodeRef);
-				cache.remove(nodeRef);
 			}
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.info("Clear cache of:" + nodeRef + " - deleted");
+			}
+			charactCache.remove(nodeRef);
+			cache.remove(nodeRef);
+		}
 	}
 
 	/** {@inheritDoc} */
@@ -250,53 +249,53 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 
 			if (isDirty(entity)) {
 
-				Map<QName, Serializable> properties = extractProperties(entity);
+					Map<QName, Serializable> properties = extractProperties(entity);
 
-				//Handle null value, it should be add because it add not needed aspects
-				Set<QName> propsToDelete = new HashSet<>();
-				for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
-					Map.Entry<QName, Serializable> prop = iterator.next();
-					if (prop.getValue() == null) {
-						propsToDelete.add(prop.getKey());
-						iterator.remove();
-					}
-				}
-
-				if (entity.getNodeRef() == null) {
-					if (logger.isDebugEnabled()) {
-						logger.debug("Create instanceOf :" + entity.getClass().getName());
+					//Handle null value, it should be add because it add not needed aspects
+					Set<QName> propsToDelete = new HashSet<>();
+					for (Iterator<Map.Entry<QName, Serializable>> iterator = properties.entrySet().iterator(); iterator.hasNext();) {
+						Map.Entry<QName, Serializable> prop = iterator.next();
+						if (prop.getValue() == null) {
+							propsToDelete.add(prop.getKey());
+							iterator.remove();
+						}
 					}
 
-					String name = entity.getName();
-					if ((name == null) || name.isEmpty()) {
-						name = UUID.randomUUID().toString();
+					if (entity.getNodeRef() == null) {
+						if (logger.isDebugEnabled()) {
+							logger.debug("Create instanceOf :" + entity.getClass().getName());
+						}
+
+						String name = entity.getName();
+						if ((name == null) || name.isEmpty()) {
+							name = UUID.randomUUID().toString();
+						}
+
+						properties.put(ContentModel.PROP_NAME, name);
+
+						NodeRef productNodeRef = nodeService.createNode(entity.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
+								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)),
+								repositoryEntityDefReader.getType(entity.getClass()), properties).getChildRef();
+						entity.setNodeRef(productNodeRef);
+
+					} else {
+
+						if (logger.isDebugEnabled()) {
+							logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
+							logger.debug(" HashDiff :" + BeCPGHashCodeBuilder.printDiff(entity,
+									findOne(entity.getNodeRef(), CacheType.NO_SHARED_CACHE, new HashMap<>())));
+						}
+
+						nodeService.addProperties(entity.getNodeRef(), properties);
+
+						removeProperties(entity.getNodeRef(), propsToDelete);
+
 					}
 
-					properties.put(ContentModel.PROP_NAME, name);
+					saveAssociations(entity);
+					saveAspects(entity);
 
-					NodeRef productNodeRef = nodeService.createNode(entity.getParentNodeRef(), ContentModel.ASSOC_CONTAINS,
-							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(name)),
-							repositoryEntityDefReader.getType(entity.getClass()), properties).getChildRef();
-					entity.setNodeRef(productNodeRef);
-
-				} else {
-
-					if (logger.isDebugEnabled()) {
-						logger.debug("Update instanceOf :" + entity.getClass().getName() + " " + entity.getName());
-						logger.debug(" HashDiff :"
-								+ BeCPGHashCodeBuilder.printDiff(entity, findOne(entity.getNodeRef(), CacheType.NO_SHARED_CACHE, new HashMap<>())));
-					}
-
-					nodeService.addProperties(entity.getNodeRef(), properties);
-
-					removeProperties(entity.getNodeRef(), propsToDelete);
-
-				}
-
-				saveAssociations(entity);
-				saveAspects(entity);
-
-				entity.setDbHashCode(createCollisionSafeHashCode(entity));
+					entity.setDbHashCode(createCollisionSafeHashCode(entity));
 
 			} else {
 				if (logger.isTraceEnabled()) {
@@ -373,7 +372,7 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 					}
 				}
 			}
-			
+
 			//Reload Aspect 
 			((AspectAwareDataItem) entity).setAspects(new HashSet<>(nodeService.getAspects(entity.getNodeRef())));
 		}
@@ -592,12 +591,11 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 			}
 
 			Map<QName, Serializable> properties = repositoryNodeService.getProperties(id);
-			
+
 			entity.setNodeRef(id);
 			entity.setName((String) properties.get(ContentModel.PROP_NAME));
-			
+
 			storeInCache(id, entity, localCache, cacheType);
-	
 
 			BeanWrapper beanWrapper = new BeanWrapperImpl(entity);
 
@@ -887,15 +885,14 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 
 		return new LinkedList<>();
 	}
-	
+
 	@Override
 	public List<T> loadDataList(NodeRef dataListNodeRef, QName datalistQname) {
-		return loadDataList(dataListNodeRef,datalistQname, L2CacheSupport.getCurrentThreadCache());
+		return loadDataList(dataListNodeRef, datalistQname, L2CacheSupport.getCurrentThreadCache());
 	}
-		
-		
+
 	private List<T> loadDataList(NodeRef dataListNodeRef, QName datalistQname, Map<NodeRef, RepositoryEntity> localCache) {
-		
+
 		if (dataListNodeRef != null) {
 
 			return entityListDAO.getListItems(dataListNodeRef, datalistQname).stream().map(el -> {
@@ -1039,11 +1036,10 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity>
 
 		return new ArrayList<>();
 	}
-	
-	
+
 	private void removeProperties(NodeRef nodeRef, Set<QName> qnames) {
 		qnames.remove(ContentModel.PROP_NAME);
-		for(QName qname: qnames) {
+		for (QName qname : qnames) {
 			nodeService.removeProperty(nodeRef, qname);
 		}
 	}

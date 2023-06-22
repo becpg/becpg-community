@@ -48,6 +48,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.test.BeCPGDBTestMetricReporter;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.BeCPGTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
@@ -84,6 +85,9 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 
 	@Autowired
 	private NodeArchiveService nodeArchiveService;
+	
+	@Autowired
+	private BeCPGDBTestMetricReporter beCPGDBTestMetricReporter;
 	
 	@Autowired
 	@Qualifier("mtAwareNodeService")
@@ -174,9 +178,16 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			try {
+				beCPGDBTestMetricReporter.setEnabled(true);
 
-			// Check in
-			return entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version", false, false);
+				// Check in
+				return entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version", false, false);
+				
+			} finally {
+				beCPGDBTestMetricReporter.setEnabled(false);
+			}
 		}, false, true);
 
 		validateNewVersion(newRawMaterialNodeRef, rawMaterialNodeRef, rawMaterial, productUnit, valueAdded, true);
@@ -523,6 +534,10 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			return true;
 
 		}, false, true);
+		
+		final NodeRef destFolder = inWriteTx(() -> {
+			return repoService.getOrCreateFolderByPath(getTestFolderNodeRef(),"Test ACL","Test ACL");
+		});
 
 		final NodeRef branchNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -530,8 +545,18 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 			assertEquals(1, dbReports.size());
 
 			// Check out
-			logger.debug("branch nodeRef: " + rawMaterialNodeRef);
-			return entityVersionService.createBranch(rawMaterialNodeRef, getTestFolderNodeRef());
+			logger.warn("branch nodeRef: " + rawMaterialNodeRef);
+			
+			try {
+				beCPGDBTestMetricReporter.setEnabled(true);
+
+
+				return entityVersionService.createBranch(rawMaterialNodeRef, getTestFolderNodeRef());
+				
+			} finally {
+				beCPGDBTestMetricReporter.setEnabled(false);
+			}
+			
 
 		}, false, true);
 
@@ -539,6 +564,8 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 
 		final ProductData rawMaterial = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
+
+			
 			assertNotNull("Check branch exists", branchNodeRef);
 			List<NodeRef> dbReports = associationService.getTargetAssocs(branchNodeRef, ReportModel.ASSOC_REPORTS);
 			assertEquals(1, dbReports.size());
@@ -589,8 +616,28 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		assertTrue(dbNodeService.hasAspect(branchNodeRef, PLMWorkflowModel.ASPECT_PRODUCT_VALIDATION_ASPECT));
 		assertEquals(dbNodeService.getProperty(branchNodeRef, PLMWorkflowModel.PROP_PV_VALIDATION_DATE), validationDate);
 
-		final NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(
-				() -> entityVersionService.mergeBranch(branchNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version"), false, true);
+		final NodeRef newRawMaterialNodeRef = inWriteTx(
+				() -> {
+					
+					// Check out
+					logger.warn("merge and move branch: " + rawMaterialNodeRef);
+					
+					try {
+						beCPGDBTestMetricReporter.setEnabled(true);
+
+
+						NodeRef ret =	
+								entityVersionService.mergeBranch(branchNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version");
+								repoService.moveNode(ret, destFolder);
+							return ret;
+					} finally {
+						beCPGDBTestMetricReporter.setEnabled(false);
+					}
+					
+					
+				});
+		
+		
 
 		validateNewVersion(newRawMaterialNodeRef, rawMaterialNodeRef, rawMaterial, productUnit, valueAdded, false);
 
@@ -598,6 +645,8 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		assertEquals(dbNodeService.getProperty(newRawMaterialNodeRef, PLMWorkflowModel.PROP_PV_VALIDATION_DATE), validationDate);
 
 	}
+	
+	
 
 	@Test
 	public void testDeleteVersion() throws InterruptedException {
@@ -665,7 +714,6 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
 			dbNodeService.deleteNode(rawMaterialNodeRef);
 			return null;
 
@@ -721,7 +769,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+			logger.info("Generate reports");
 			entityReportService.generateReports(rawMaterialNodeRef);
 
 			return true;
@@ -740,7 +788,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}
 
 		final NodeRef workingCopyNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+			logger.info("createBranch");
 			List<NodeRef> dbReports = associationService.getTargetAssocs(rawMaterialNodeRef, ReportModel.ASSOC_REPORTS);
 
 			assertEquals(1, dbReports.size());
@@ -754,7 +802,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		NodeRef newRawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+			logger.info("mergeBranch");
 			// Check in
 			return entityVersionService.mergeBranch(workingCopyNodeRef, rawMaterialNodeRef, VersionType.MAJOR, "This is a test version", false, false);
 		}, false, true);
@@ -768,7 +816,7 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
+			logger.info("deleteNode");
 			dbNodeService.deleteNode(rawMaterialNodeRef);
 			return null;
 
