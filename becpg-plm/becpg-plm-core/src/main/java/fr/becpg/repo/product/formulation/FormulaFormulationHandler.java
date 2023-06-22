@@ -107,7 +107,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		SpelHelper.registerShortcut(
 				new SpelShortcut("physico\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "physicoChemList.^[physicoChem.toString() == '$1']"));
 		SpelHelper.registerShortcut(
-				new SpelShortcut("microbio\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "microbioList.^[microBio.toString() == '$1']"));
+				new SpelShortcut("microbio\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "microbioList.^[microbio.toString() == '$1']"));
 		SpelHelper.registerShortcut(new SpelShortcut("compo\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",
 				"compoListView.compoList.^[product.toString() == '$1']"));
 		SpelHelper.registerShortcut(new SpelShortcut("process\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]",
@@ -413,6 +413,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (dataListItem instanceof PackagingListDataItem) {
 			VariantPackagingData variantPackagingData = productData.getDefaultVariantPackagingData();
 
+			if (ProductUnit.PP.equals(((PackagingListDataItem)dataListItem).getPackagingListUnit()) && (dataListItem.getQty() != null)
+					 && dataListItem.getQty()!=0d) {
+				return 1/ dataListItem.getQty();
+			}
+			
+			
 			if ((variantPackagingData != null) && (dataListItem.getQty() != null)) {
 				if (PackagingLevel.Secondary.equals(((PackagingListDataItem) dataListItem).getPkgLevel())
 						&& (variantPackagingData.getProductPerBoxes() != null)) {
