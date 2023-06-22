@@ -3250,7 +3250,7 @@
 					<field id="bcpg:supplierTel" set="mainInfo" />
 					<field id="bcpg:supplierEmail" set="mainInfo">
 						<constraint-handlers>
-							<constraint type="MANDATORY" validation-handler="MyCustomNamespace.forms.validation.checkEmailValidity" event="keyup" />
+							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.checkEmailValidity" event="keyup" />
 						</constraint-handlers>
 					</field>
 					<field id="bcpg:supplierFax" set="mainInfo"/>
@@ -3326,7 +3326,7 @@
 					<field id="bcpg:supplierTel" set="mainInfo" />
 					<field id="bcpg:supplierEmail" set="mainInfo">
 						<constraint-handlers>
-							<constraint type="MANDATORY" validation-handler="MyCustomNamespace.forms.validation.checkEmailValidity" event="keyup" />
+							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.checkEmailValidity" event="keyup" />
 						</constraint-handlers>
 					</field>
 					<field id="bcpg:supplierFax" set="mainInfo"/>
@@ -3440,7 +3440,7 @@
 					<field id="bcpg:supplierTel" set="mainInfo" />
 					<field id="bcpg:supplierEmail" set="mainInfo">
 						<constraint-handlers>
-							<constraint type="MANDATORY" validation-handler="MyCustomNamespace.forms.validation.checkEmailValidity" event="keyup" />
+							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.checkEmailValidity" event="keyup" />
 						</constraint-handlers>
 					</field>
 					<field id="bcpg:supplierFax" set="mainInfo"/>
