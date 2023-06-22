@@ -110,13 +110,13 @@ public class FormulationGenericRawMaterialIT extends AbstractFinishedProductTest
 			for (IngListDataItem ing : formulatedProduct.getIngList()) {
 				if (ing.getIng().equals(ing1) && ing.getMini() != null && ing.getMaxi() != null) {
 					logger.info("ing1 mini: " + ing.getMini() + " maxi: " + ing.getMaxi());
-					assertEquals(ing.getMini(), 1500.0);
-					assertEquals(ing.getMaxi(), 9000.0);
+					assertEquals(ing.getMini(), 15.0);
+					assertEquals(ing.getMaxi(), 90.0);
 					checks++;
 				} else if (ing.getIng().equals(ing2) && ing.getMini() != null && ing.getMaxi() != null) {
 					logger.info("ing2 mini: " + ing.getMini() + " maxi: " + ing.getMaxi());
-					assertEquals(ing.getMini(), 1800.0);
-					assertEquals(ing.getMaxi(), 8600.0);
+					assertEquals(ing.getMini(), 18.0);
+					assertEquals(ing.getMaxi(), 86.0);
 					checks++;
 				}
 			}
