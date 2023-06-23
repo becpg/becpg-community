@@ -731,7 +731,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 				}
 
 				if (ignore) {
-					break;
+					continue;
 				}
 
 			}
