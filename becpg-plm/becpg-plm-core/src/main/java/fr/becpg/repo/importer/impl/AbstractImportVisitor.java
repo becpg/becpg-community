@@ -1028,7 +1028,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					logger.debug("attribute: " + attribute + " value: " + properties.get(attribute));
 				}
 
-				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute) || BeCPGModel.PROP_LV_VALUE.isMatch(attribute)
+				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute) || BeCPGModel.PROP_LV_VALUE.isMatch(attribute)  || BeCPGModel.PROP_LV_CODE.isMatch(attribute)
 						|| BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
 					// query by path
 					NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
