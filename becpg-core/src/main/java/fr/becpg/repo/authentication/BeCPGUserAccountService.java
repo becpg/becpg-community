@@ -84,6 +84,10 @@ public class BeCPGUserAccountService {
 				propMap.put(ContentModel.PROP_FIRSTNAME, userAccount.getFirstName());
 				propMap.put(ContentModel.PROP_EMAIL, userAccount.getEmail());
 				propMap.putAll(userAccount.getExtraProps());
+				
+				if (propMap.containsKey(ContentModel.PROP_LASTNAME) && propMap.get(ContentModel.PROP_LASTNAME) == null) {
+					propMap.put(ContentModel.PROP_LASTNAME, "");
+				}
 
 				personNodeRef = personService.createPerson(propMap);
 
