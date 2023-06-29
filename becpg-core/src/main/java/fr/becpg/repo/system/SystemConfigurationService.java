@@ -8,6 +8,7 @@ package fr.becpg.repo.system;
 public interface SystemConfigurationService {
 
 	String confValue(String propKey);	
+	void resetConfValue(String propKey);	
 	void updateConfValue(String propKey, String value);
 	
 }
