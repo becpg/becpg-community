@@ -3,6 +3,7 @@
  */
 package fr.becpg.test.repo.product.glop;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,8 +11,9 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -29,7 +31,11 @@ import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactListItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 
 /**
  * Integration tests for the Glop service.
@@ -38,11 +44,35 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
  */
 public class GlopIT extends AbstractFinishedProductTest {
 
-	protected static final Log logger = LogFactory.getLog(GlopIT.class);
+	private static final String GLOP_SERVER_URL_KEY = "beCPG.glop.serverUrl";
 
+	protected static final Log logger = LogFactory.getLog(GlopIT.class);
+	
+	private static MockWebServer mockWebServer;
+	
+	private static String mockServerUrl;
+	
+	@Autowired
+	private AlfrescoRepository<ProductData> alfrescoRepository;
+	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
 	@Autowired
 	private GlopService glopService;
-
+	
+	@BeforeClass
+	public static void beforeClass() throws IOException {
+		mockWebServer = new MockWebServer();
+		mockWebServer.start();
+		mockServerUrl = "http://" + mockWebServer.getHostName() + ":" + mockWebServer.getPort();
+	}
+	
+	@AfterClass
+	public static void afterClass() throws IOException {
+		mockWebServer.shutdown();
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -53,75 +83,21 @@ public class GlopIT extends AbstractFinishedProductTest {
 		super.setUp();
 		// create RM and lSF
 		initParts();
+		inWriteTx(() -> {
+			systemConfigurationService.updateConfValue(GLOP_SERVER_URL_KEY, mockServerUrl);
+			return null;
+		});
 	}
 	
-	private static JSONObject exampleRequest() throws JSONException {
-		JSONObject request = new JSONObject();
-		
-		// variables
-		JSONObject variables = new JSONObject();
-		variables.put("x", 0);
-		variables.put("y", 0);
-		request.put("variables", variables);
-		
-		// constraints
-		JSONArray constraints = new JSONArray();
-		
-		JSONObject constraintA = new JSONObject();
-		constraintA.put("lower", "-inf");
-		constraintA.put("upper", 14);
-		JSONObject coefA = new JSONObject();
-		coefA.put("x", 1);
-		coefA.put("y", 2);
-		constraintA.put("coefficients", coefA);
-		constraints.put(constraintA);
-		
-		JSONObject constraintB = new JSONObject();
-		constraintB.put("lower", 0);
-		constraintB.put("upper", "inf");
-		JSONObject coefB = new JSONObject();
-		coefB.put("x", 3);
-		coefB.put("y", -1);
-		constraintB.put("coefficients", coefB);
-		constraints.put(constraintB);
-		
-		JSONObject constraintC = new JSONObject();
-		constraintC.put("lower", "-inf");
-		constraintC.put("upper", 2);
-		JSONObject coefC = new JSONObject();
-		coefC.put("x", 1);
-		coefC.put("y", -1);
-		constraintC.put("coefficients", coefC);
-		constraints.put(constraintC);
-		
-		request.put("constraints", constraints);
-		
-		// objective
-		JSONObject objective = new JSONObject();
-		objective.put("task", "max");
-		JSONObject coefObj = new JSONObject();
-		coefObj.put("x", 3);
-		coefObj.put("y", 4);
-		objective.put("coefficients", coefObj);
-		request.put("objective", objective);
-		
-		return request;
+	@Override
+	public void tearDown() throws Exception {
+		inWriteTx(() -> {
+			systemConfigurationService.resetConfValue(GLOP_SERVER_URL_KEY);
+			return null;
+		});
+		super.tearDown();
 	}
 
-	/**
-	 * Makes a sample Glop request and tries to send it to the Glop server.
-	 */
-	@Test
-	public void testSendRequest() {
-		assertTrue(transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			JSONObject request = exampleRequest();
-			logger.debug("Sending " + request.toString());
-			JSONObject response = new JSONObject(glopService.sendRequest(request));
-			logger.debug(response.toString());
-			return true;
-		}, false, true));
-	}
-	
 	private static void assertEpsilon(double expected, double actual, double epsilon) {
 		double x = expected;
 		double y = actual;
@@ -143,6 +119,9 @@ public class GlopIT extends AbstractFinishedProductTest {
 	 */
 	@Test
 	public void testGlopService() {
+
+		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":0.05,\"%s\":0.0},\"status\":\"optimal\",\"value\":4.0}", rawMaterial6NodeRef, rawMaterial2NodeRef)));
+		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":1.3333333333333333,\"%s\":0.7777777777777778},\"status\":\"optimal\",\"value\":4.777777777777778}", rawMaterial1NodeRef, rawMaterial2NodeRef)));
 
 		logger.info("testGlopService");
 		
@@ -335,6 +314,8 @@ public class GlopIT extends AbstractFinishedProductTest {
 	 */
 	@Test
 	public void testCompoList() {
+		
+		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":1.0},\"status\":\"optimal\",\"value\":1.0}", rawMaterial2NodeRef)));
 
 		logger.info("testGlopService");
 		
@@ -405,6 +386,8 @@ public class GlopIT extends AbstractFinishedProductTest {
 	@Test
 	public void testSpelFunctions() {
 		
+		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":0.7777777777777778,\"%s\":1.3333333333333333},\"status\":\"optimal\",\"value\":4.777777777777778}", rawMaterial2NodeRef, rawMaterial1NodeRef)));
+
 		NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			/**
@@ -484,6 +467,9 @@ public class GlopIT extends AbstractFinishedProductTest {
 	
 	@Test
 	public void testToleranceApplication() {
+		
+		mockWebServer.enqueue(new MockResponse().setBody(""));
+		mockWebServer.enqueue(new MockResponse().setBody(String.format("{\"coefficients\":{\"%s\":-0.0,\"%s\":2.0},\"status\":\"optimal\",\"value\":2.0}", rawMaterial1NodeRef, rawMaterial2NodeRef)));
 		
 		NodeRef fpNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
