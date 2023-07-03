@@ -224,49 +224,54 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 					}
 
 					@SuppressWarnings("unchecked")
-					List<NodeRef> itemVariantIds = (List<NodeRef>) nodeService.getProperty(itemTargetRef, BeCPGModel.PROP_VARIANTIDS);
+					List<NodeRef> currentVariantIds = (List<NodeRef>) nodeService.getProperty(itemTargetRef, BeCPGModel.PROP_VARIANTIDS);
 
-					if (itemVariantIds != null) {
-						Map<NodeRef, String> originVariantIds = new HashMap<>();
-						itemVariantIds.stream()
-						.filter(variantId -> !nodeService.hasAspect(nodeService.getPrimaryParent(variantId).getParentRef(), BeCPGModel.ASPECT_ENTITY_TPL))
-						.forEach(variantRef -> originVariantIds.put(variantRef, (String) nodeService.getProperty(variantRef, ContentModel.PROP_NAME)));
-						List<NodeRef> newVariantIds = new ArrayList<>();
-
-						for (NodeRef variantId : itemVariantIds) {
-							if (originVariantIds.containsKey(variantId)) {
-								String variantName = originVariantIds.get(variantId);
-								NodeRef newVariantRef = null;
-								
-								if (targetEntityVariants.containsValue(variantName)) {
-									newVariantRef = getKeyByValue(targetEntityVariants, variantName);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Replace variant : " + variantId + " by : " + newVariantRef);
-									}
-									
-								} else {
-									if (logger.isDebugEnabled()) {
-										logger.debug("Create variant : " + variantName);
-									}
-									
-									Map<QName, Serializable> props = new HashMap<>();
-									props.put(ContentModel.PROP_NAME, variantName);
-									props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, nodeService.getProperty(variantId, BeCPGModel.PROP_IS_DEFAULT_VARIANT));
-									newVariantRef = nodeService.createNode(targetEntityRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS,
-											BeCPGModel.TYPE_VARIANT, props).getChildRef();
-									targetEntityVariants.put(newVariantRef, variantName);
-								}
-								if (newVariantRef != null) {
-									newVariantIds.add(newVariantRef);
-								}
-							}
-							
+					if (currentVariantIds != null) {
+						
+						List<NodeRef> updatedVariantIds = new ArrayList<>();
+						
+						for (NodeRef currentVariantId : currentVariantIds) {
+							NodeRef updatedVariantId = updateVariantId(currentVariantId, targetEntityVariants, targetEntityRef);
+							updatedVariantIds.add(updatedVariantId);
 						}
-						nodeService.setProperty(itemTargetRef, BeCPGModel.PROP_VARIANTIDS, (Serializable) newVariantIds);
+
+						nodeService.setProperty(itemTargetRef, BeCPGModel.PROP_VARIANTIDS, (Serializable) updatedVariantIds);
 					}
 				}
 			}
 		}
+	}
+
+	private NodeRef updateVariantId(NodeRef currentVariantId, Map<NodeRef, String> targetEntityVariants, NodeRef targetEntityRef) {
+		
+		if (nodeService.hasAspect(nodeService.getPrimaryParent(currentVariantId).getParentRef(), BeCPGModel.ASPECT_ENTITY_TPL)) {
+			return currentVariantId;
+		}
+		
+		String variantName = (String) nodeService.getProperty(currentVariantId, ContentModel.PROP_NAME);
+		
+		NodeRef newVariantRef = null;
+		
+		if (targetEntityVariants.containsValue(variantName)) {
+			newVariantRef = getKeyByValue(targetEntityVariants, variantName);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Replace variant : " + currentVariantId + " by : " + newVariantRef);
+			}
+		} else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("Create variant : " + variantName);
+			}
+			
+			Map<QName, Serializable> props = new HashMap<>();
+			props.put(ContentModel.PROP_NAME, variantName);
+			props.put(BeCPGModel.PROP_IS_DEFAULT_VARIANT, nodeService.getProperty(currentVariantId, BeCPGModel.PROP_IS_DEFAULT_VARIANT));
+			newVariantRef = nodeService.createNode(targetEntityRef, BeCPGModel.ASSOC_VARIANTS, BeCPGModel.ASSOC_VARIANTS,
+					BeCPGModel.TYPE_VARIANT, props).getChildRef();
+			targetEntityVariants.put(newVariantRef, variantName);
+		}
+		
+		return newVariantRef;
+		
 	}
 
 	private <K, V> K getKeyByValue(Map<K, V> map, V value) {
