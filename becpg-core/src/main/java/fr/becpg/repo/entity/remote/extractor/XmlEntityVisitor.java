@@ -524,7 +524,11 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			}
 			xmlw.writeEndElement();
 		} else if (value instanceof NodeRef) {
-			visitNode((NodeRef) value, xmlw, shouldDumpAll((NodeRef) value), shouldDumpAll((NodeRef) value), false, false);
+			if (nodeService.exists((NodeRef) value)) {
+				visitNode((NodeRef) value, xmlw, shouldDumpAll((NodeRef) value), shouldDumpAll((NodeRef) value), false, false);
+			} else {
+				logger.warn("node does not exist: " + value);
+			}
 		} else if (value instanceof Date) {
 			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
 		} else {
