@@ -566,9 +566,15 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			entity.put(entityDictionaryService.toPrefixString(propType), tmp);
 			for (Serializable subEl : (List<Serializable>) value) {
 				if (subEl instanceof NodeRef) {
-					JSONObject node = new JSONObject();
-					tmp.put(node);
-					visitNode((NodeRef) subEl, node, JsonVisitNodeType.ASSOC, context);
+					
+					if (nodeService.exists((NodeRef) subEl)) {
+						JSONObject node = new JSONObject();
+						tmp.put(node);
+						visitNode((NodeRef) subEl, node, JsonVisitNodeType.ASSOC, context);
+					} else {
+						logger.warn("node does not exist: " + subEl);
+					}
+					
 				} else {
 					if (subEl != null) {
 						if (RemoteHelper.isJSONValue(propType)) {
@@ -581,9 +587,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 			}
 		} else if (value instanceof NodeRef) {
-			JSONObject node = new JSONObject();
-			entity.put(entityDictionaryService.toPrefixString(propType), node);
-			visitNode((NodeRef) value, node, JsonVisitNodeType.ASSOC, context);
+			if (nodeService.exists((NodeRef) value)) {
+				JSONObject node = new JSONObject();
+				entity.put(entityDictionaryService.toPrefixString(propType), node);
+				visitNode((NodeRef) value, node, JsonVisitNodeType.ASSOC, context);
+			} else {
+				logger.warn("node does not exist: " + value);
+			}
 		} else {
 
 			if (value != null) {
