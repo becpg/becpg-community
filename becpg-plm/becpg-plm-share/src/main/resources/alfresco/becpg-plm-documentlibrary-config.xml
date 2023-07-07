@@ -11,7 +11,6 @@
 				<aspect name="bcpg:profitabilityAspect" />
 				<aspect name="bcpg:reconstitutableAspect" />
 				<aspect name="bcpg:customsCodeAspect" />
-				<aspect name="bcpg:regulatoryCodeAspect" />
 				<aspect name="qa:batchAspect" />
 				<aspect name="qa:acAspect" />
 				<aspect name="gs1:gs1Aspect" />
@@ -34,6 +33,7 @@
 				<aspect name="gs1:cheeseInformationAspect" />
 				<aspect name="ghs:sdsAspect" />
 				<aspect name="bcpg:undeletableAspect" />
+				<aspect name="bcpg:regulatoryAspect" />
 				
 			</visible>
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->
@@ -94,6 +94,7 @@
 				<subtype name="bcpg:nutList" />
 				<subtype name="bcpg:organoList" />
 				<subtype name="bcpg:physicoChemList" />
+				<subtype name="bcpg:regulatoryList" />
 			</type>
 			<type name="trx:transferTarget">
 				<subtype name="trx:fileTransferTarget" />

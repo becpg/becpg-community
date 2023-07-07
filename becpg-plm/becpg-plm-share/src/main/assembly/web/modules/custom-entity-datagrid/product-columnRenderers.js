@@ -1457,6 +1457,37 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 	});
 	
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : [ "bcpg:regulatoryUsageRef" ],
+		renderer : function(oRecord, data, label, scope) {
+			
+			var url;
+			
+			if (data.displayValue) {
+				var recipeId = oRecord.getData("itemData")["prop_bcpg_regulatoryRecipeId"].value;
+				var usages = oRecord.getData("itemData")["dt_bcpg_regulatoryUsageRef"];
+				var countries = oRecord.getData("itemData")["dt_bcpg_regulatoryCountries"];
+				if (usages && countries && recipeId) {
+					var countriesParam = "";
+					for (var i in countries) {
+						var country = countries[i];
+						countriesParam += ("&countries=" + country.itemData["prop_bcpg_regulatoryCode"].value);
+					}
+					for (var i in usages) {
+						var usage = usages[i];
+						if (usage.nodeRef == data.value) {
+							var usageID = usage.itemData["prop_bcpg_regulatoryId"].value;
+							url = "https://formula.decernis.com/recipes-analysis/analyze?recipe=" + recipeId + "&moduleId=1&removeRecipe=false&usage=" + usageID + countriesParam;
+						}
+					}
+				}
+			}
+			
+			return (url!=null?'<a href="' + url + '">':'')  + Alfresco.util.encodeHTML(data.displayValue);
+		}
+	});
+	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : [ "bcpg:nutListGDAPerc" ],
 		renderer : function(oRecord, data, label, scope) {
