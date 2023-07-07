@@ -202,6 +202,8 @@ public class PlmRepoConsts {
 	
 	public static final String PATH_CONTACTS = "Contacts";
 	
+	public static final String PATH_REGULATORY_USAGES = "RegulatoryUsages";
+	
 	public static final String PATH_CONTACT_TYPES = "ContactTypes";
 	
 	/** Constant <code>PATH_PRODUCT_REPORTTEMPLATES="ProductReportTemplates"</code> */

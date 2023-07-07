@@ -1022,6 +1022,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_GS1_TARGET_MARKETS, GS1Model.TYPE_TARGET_MARKET);
 		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAXES, GS1Model.TYPE_DUTY_FEE_TAX);
 		entityLists.put(PlmRepoConsts.PATH_CONTACTS, PLMModel.TYPE_CONTACTLIST);
+		entityLists.put(PlmRepoConsts.PATH_REGULATORY_USAGES, PLMModel.TYPE_REGULATORY_USAGE);
 
 		entityLists.put(RepoConsts.PATH_NOTIFICATIONS, BeCPGModel.TYPE_NOTIFICATIONRULELIST);
 		entityLists.put(PlmRepoConsts.PATH_PUBCHANNELS, PublicationModel.TYPE_PUBLICATION_CHANNEL);
