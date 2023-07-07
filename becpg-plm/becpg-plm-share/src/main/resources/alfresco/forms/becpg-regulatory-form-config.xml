@@ -1,0 +1,145 @@
+<!--
+  Copyright (C) 2010-2021 beCPG. 
+   
+  This file is part of beCPG 
+   
+  beCPG is free software: you can redistribute it and/or modify 
+  it under the terms of the GNU Lesser General Public License as published by 
+  the Free Software Foundation, either version 3 of the License, or 
+  (at your option) any later version. 
+   
+  beCPG is distributed in the hope that it will be useful, 
+  but WITHOUT ANY WARRANTY; without even the implied warranty of 
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+  GNU Lesser General Public License for more details. 
+   
+  You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
+-->
+<alfresco-config>
+	
+	<config evaluator="node-type" condition="bcpg:regulatoryList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:regulatoryCountries" />
+					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:regulatoryResult" />
+					<show id="bcpg:regulatoryState" />
+					<show id="bcpg:regulatoryValidationDate" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:regulatoryResult" read-only="true" />
+					<field id="bcpg:regulatoryValidationDate" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	<config evaluator="model-type" condition="bcpg:regulatoryList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:regulatoryCountries" />
+					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:regulatoryState" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+				</appearance>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:regulatoryCountries" />
+					<show id="bcpg:regulatoryUsageRef" />
+					<show id="bcpg:regulatoryResult" />
+					<show id="bcpg:regulatoryState" />
+					<show id="bcpg:regulatoryValidationDate" />
+					<show id="bcpg:regulatoryRecipeId" />
+					<show id="entity_bcpg:regulatoryUsageRef_bcpg:regulatoryUsage@regulatoryDatagrid" />
+					<show id="entity_bcpg:regulatoryCountries_bcpg:geoOrigin@regulatoryDatagrid" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+						</control>
+					</field>
+					<field id="bcpg:regulatoryResult" read-only="true" />
+					<field id="bcpg:regulatoryValidationDate" mandatory="false" read-only="false" >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:regulatoryRecipeId" label="hidden" />
+					<field id="entity_bcpg:regulatoryUsageRef_bcpg:regulatoryUsage@regulatoryDatagrid" label="hidden" />
+					<field id="entity_bcpg:regulatoryCountries_bcpg:geoOrigin@regulatoryDatagrid" label="hidden" />
+				</appearance>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="bcpg:regulatoryUsage">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:regulatoryCode" force ="true"/>
+					<show id="bcpg:regulatoryModule" />
+				</field-visibility>
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:regulatoryCode" force ="true"/>
+					<show id="bcpg:regulatoryModule" />
+				</field-visibility>
+			</form>
+			<form id="regulatoryDatagrid">
+				<field-visibility>
+					<show id="bcpg:regulatoryId" force="true" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="model-type" condition="bcpg:geoOrigin">
+		<forms>
+			<form id="regulatoryDatagrid">
+				<field-visibility>
+					<show id="bcpg:regulatoryCode" force="true" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+	<config evaluator="node-type" condition="bcpg:regulatoryUsage">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:charactName" />
+					<show id="bcpg:regulatoryCode" force ="true"/>
+					<show id="bcpg:regulatoryModule" />
+				</field-visibility>
+			</form>
+		</forms>
+	</config>
+	
+</alfresco-config>

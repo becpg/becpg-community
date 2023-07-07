@@ -212,6 +212,12 @@
           <show id="bcpg:entityTplEnabled" force="false" />
           <show id="bcpg:entityTplIsDefault" force="false" />
           <show id="bcpg:entityTplScript" force="false" />
+			<show id="bcpg:regulatoryCountries" />
+			<show id="bcpg:regulatoryUsageRef" />
+			<show id="bcpg:regulatoryMode" />
+			<show id="bcpg:regulatoryRecipeId" />
+			<show id="bcpg:regulatoryResult" />
+			<show id="bcpg:regulatoryValidationDate" />
         </field-visibility>
         <appearance>
           <set id="mainTab" label-id="becpg.forms.set.characteristics.label"/>
@@ -484,6 +490,23 @@
               <control-param name="unit">mm</control-param>
             </control>
           </field>
+          
+          <set appearance="bordered-panel" id="regulatory" label-id="becpg.forms.set.regulatory.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="bcpg:regulatoryCountries" set="regulatory">
+				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+			</field>
+			<field id="bcpg:regulatoryUsageRef" set="regulatory">
+				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+			</field>
+			<field id="bcpg:regulatoryMode" set="regulatory"/>
+			<field id="bcpg:regulatoryRecipeId" read-only="true" set="regulatory"/>
+			<field id="bcpg:regulatoryResult" read-only="true" set="regulatory"/>
+			<field id="bcpg:regulatoryValidationDate" mandatory="false" read-only="false" set="regulatory">
+            <control template="/org/alfresco/components/form/controls/date.ftl">
+              <control-param name="showTime">false</control-param>
+            </control>
+          </field>
+          
           <set appearance="bordered-panel" id="security" label-id="becpg.forms.set.security.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="ghs:sdsSignalWord" mandatory="false" read-only="false" set="security"/>
           <field id="ghs:sdsPictograms" mandatory="false" read-only="false" set="security">
@@ -1495,6 +1518,9 @@
           <show force="true" id="bcpg:projectedQty"/>
           <show force="false" id="cm:taggable"/>
           <show force="false" id="cm:categories"/>
+			<show force ="true" id="bcpg:regulatoryMode" />
+          <show force ="true" id="bcpg:regulatoryCountries" />
+			<show force ="true" id="bcpg:regulatoryUsageRef" />
         </field-visibility>
         <appearance>
           <set appearance="bordered-panel" id="mainInfo" label-id="becpg.forms.set.designation.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
@@ -1646,6 +1672,16 @@
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
             </control>
           </field>
+          
+          <set appearance="bordered-panel" id="regulatory" label-id="becpg.forms.set.regulatory.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="bcpg:regulatoryCountries" set="regulatory">
+				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+			</field>
+			<field id="bcpg:regulatoryUsageRef" set="regulatory">
+				<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+			</field>
+			<field id="bcpg:regulatoryMode" set="regulatory"/>
+          
           <set appearance="bordered-panel" id="profitability" label-id="becpg.forms.set.rentability.label" template="/org/alfresco/components/form/3-column-set.ftl"/>
           <field help-id="becpg.forms.help.unitPrice" id="bcpg:unitPrice" mandatory="false" read-only="false" set="profitability"/>
           <field id="bcpg:priceCurrency" mandatory="false" read-only="false" set="profitability"/>
@@ -1661,6 +1697,7 @@
               <control-param name="createNewItemIcon">tag</control-param>
             </control>
           </field>
+			
           <field id="cm:categories" mandatory="false" read-only="false" set="categories">
             <control>
               <control-param name="compactMode">true</control-param>
