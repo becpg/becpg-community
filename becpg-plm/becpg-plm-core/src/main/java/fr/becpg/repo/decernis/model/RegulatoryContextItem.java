@@ -44,7 +44,7 @@ public class RegulatoryContextItem {
 	}
 	
 	public boolean isEmpty() {
-		return !countries.isEmpty() && !usages.isEmpty();
+		return countries.isEmpty() || usages.isEmpty();
 	}
 
 }
