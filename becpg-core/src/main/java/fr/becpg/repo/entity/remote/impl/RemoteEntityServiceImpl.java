@@ -178,11 +178,11 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		case json:
 		case json_all:
 			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor, versionService, lockService);
+					siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
 			break;
 		case json_schema:
 			remoteEntityVisitor = new JsonSchemaEntityVisitor(sysAdminParams, mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor, versionService, lockService);
+					siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
 			break;
 		case xsd:
 		case xsd_excel:
@@ -295,7 +295,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		case json:
 
 			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor, versionService, lockService);
+					siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
 			break;
 		default:
 			throw new BeCPGException("Unknown format " + format.toString());
@@ -328,7 +328,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 		case json:
 
 			remoteEntityVisitor = new JsonEntityVisitor(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor, versionService, lockService);
+					siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
 			break;
 		default:
 			throw new BeCPGException("Unknown format " + format.toString());

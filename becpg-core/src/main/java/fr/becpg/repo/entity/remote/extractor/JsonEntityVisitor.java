@@ -40,7 +40,6 @@ import org.alfresco.service.cmr.dictionary.DataTypeDefinition;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.dictionary.TypeDefinition;
 import org.alfresco.service.cmr.lock.LockService;
-import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.ContentReader;
@@ -70,9 +69,11 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.entity.remote.extractor.RemoteJSONContext.JsonVisitNodeType;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -92,15 +93,19 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	private AttributeExtractorService attributeExtractor;
 	private VersionService versionService;
 	private LockService lockService;
+	private AssociationService associationService;
+	private EntityListDAO entityListDAO;
 
 	public JsonEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
 			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService,
-			AttributeExtractorService attributeExtractor, VersionService versionService, LockService lockService) {
+			AttributeExtractorService attributeExtractor, VersionService versionService, LockService lockService, AssociationService associationService, EntityListDAO entityListDAO) {
 		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
 
 		this.attributeExtractor = attributeExtractor;
 		this.versionService = versionService;
 		this.lockService = lockService;
+		this.associationService = associationService;
+		this.entityListDAO = entityListDAO;
 	}
 
 	private static final Log logger = LogFactory.getLog(JsonEntityVisitor.class);
@@ -334,8 +339,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
 								|| entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM))) {
 
-							List<ChildAssociationRef> listItemRefs = nodeService.getChildAssocs(listNodeRef);
-
+							List<NodeRef> listItemRefs = entityListDAO.getListItems(listNodeRef, dataListTypeQName);
+							
 							if ((listItemRefs != null) && !listItemRefs.isEmpty()) {
 								JSONArray list = new JSONArray();
 
@@ -345,14 +350,11 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 									entityLists.put(dataListType + "|" + (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME), list);
 								}
 
-								for (ChildAssociationRef listItemRef : listItemRefs) {
-
-									NodeRef listItem = listItemRef.getChildRef();
+								for (NodeRef listItem : listItemRefs) {
 									JSONObject jsonAssocNode = new JSONObject();
 									list.put(jsonAssocNode);
 
 									visitNode(listItem, jsonAssocNode, JsonVisitNodeType.DATALIST, context);
-
 								}
 							}
 						} else {
@@ -464,13 +466,11 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 					JSONArray jsonAssocs = new JSONArray();
 
-					List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, assocDef.getName());
+					List<NodeRef> assocRefs = associationService.getTargetAssocs(nodeRef, assocDef.getName());
 					if (assocDef.isTargetMany() && !assocRefs.isEmpty()) {
 						entity.put(entityDictionaryService.toPrefixString(nodeType), jsonAssocs);
 					}
-					for (AssociationRef assocRef : assocRefs) {
-						NodeRef childRef = assocRef.getTargetRef();
-
+					for (NodeRef childRef : assocRefs) {
 						JSONObject jsonAssocNode = new JSONObject();
 						if (assocDef.isTargetMany()) {
 							jsonAssocs.put(jsonAssocNode);
@@ -603,9 +603,15 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 			entity.put(entityDictionaryService.toPrefixString(propType), tmp);
 			for (Serializable subEl : (List<Serializable>) value) {
 				if (subEl instanceof NodeRef) {
-					JSONObject node = new JSONObject();
-					tmp.put(node);
-					visitNode((NodeRef) subEl, node, JsonVisitNodeType.ASSOC, context);
+					
+					if (nodeService.exists((NodeRef) subEl)) {
+						JSONObject node = new JSONObject();
+						tmp.put(node);
+						visitNode((NodeRef) subEl, node, JsonVisitNodeType.ASSOC, context);
+					} else {
+						logger.warn("node does not exist: " + subEl);
+					}
+					
 				} else {
 					if (subEl != null) {
 						if (RemoteHelper.isJSONValue(propType)) {
@@ -618,9 +624,13 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 			}
 		} else if (value instanceof NodeRef) {
-			JSONObject node = new JSONObject();
-			entity.put(entityDictionaryService.toPrefixString(propType), node);
-			visitNode((NodeRef) value, node, JsonVisitNodeType.ASSOC, context);
+			if (nodeService.exists((NodeRef) value)) {
+				JSONObject node = new JSONObject();
+				entity.put(entityDictionaryService.toPrefixString(propType), node);
+				visitNode((NodeRef) value, node, JsonVisitNodeType.ASSOC, context);
+			} else {
+				logger.warn("node does not exist: " + value);
+			}
 		} else {
 
 			if (value != null) {

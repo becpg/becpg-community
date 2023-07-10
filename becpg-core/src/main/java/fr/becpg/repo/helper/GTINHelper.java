@@ -12,6 +12,10 @@ import org.apache.commons.validator.routines.checkdigit.EAN13CheckDigit;
  */
 public class GTINHelper {
 	
+	private GTINHelper() {
+		//DO NOTHING
+	}
+	
 	/**
 	 * SPEL T(fr.becpg.repo.helper.GTINHelper).generateEAN13Code("455121")
 	 *
@@ -26,7 +30,7 @@ public class GTINHelper {
 	
 
 	/**
-	 * <p>createEAN13Code.</p>
+	 *  SPEL T(fr.becpg.repo.helper.GTINHelper).createEAN13Code("360438", "25112")
 	 *
 	 * @param prefix a {@link java.lang.String} object.
 	 * @param serialNumber a {@link java.lang.String} object.
@@ -35,6 +39,18 @@ public class GTINHelper {
 	 */
 	public static String createEAN13Code(String prefix, String serialNumber) throws CheckDigitException {
 		String eanCode = prefix + StringUtils.leftPad( serialNumber, 12-prefix.length() , "0");
+		return addDigitToEANPrefix(eanCode);
+	}
+	
+	
+	
+	/**
+	 * SPEL T(fr.becpg.repo.helper.GTINHelper).addDigitToEANPrefix("0360428025112")
+	 * @param prefix a {@link java.lang.String} object.
+	 * @return a {@link java.lang.String} object.
+	 * @throws org.apache.commons.validator.routines.checkdigit.CheckDigitException if any.
+	 */
+	public static String addDigitToEANPrefix(String eanCode) throws CheckDigitException {
 		EAN13CheckDigit validator = new EAN13CheckDigit();
 		return eanCode + validator.calculate(eanCode);
 	}
