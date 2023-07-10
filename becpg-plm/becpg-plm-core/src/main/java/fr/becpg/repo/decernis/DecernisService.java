@@ -1,7 +1,6 @@
 package fr.becpg.repo.decernis;
 
 import java.util.List;
-import java.util.Set;
 
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -16,8 +15,8 @@ public interface DecernisService {
 
 
 	 /** Constant <code>DECERNIS_CHAIN_ID="decernis"</code> */
-	 static final String DECERNIS_CHAIN_ID = "decernis";
-	
+	 public static final String DECERNIS_CHAIN_ID = "decernis";
+	 
 	/**
 	 * <p>extractDecernisRequirements.</p>
 	 *
@@ -26,15 +25,6 @@ public interface DecernisService {
 	 * @param usages a {@link java.util.Set} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	List<ReqCtrlListDataItem> extractDecernisRequirements(ProductData product, Set<String> countries, Set<String> usages);
+	List<ReqCtrlListDataItem> extractRequirements(ProductData product);
 
-	/**
-	 * <p>createDecernisChecksum.</p>
-	 *
-	 * @param countries a {@link java.util.Set} object.
-	 * @param usages a {@link java.util.Set} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-	String createDecernisChecksum(Set<String> countries, Set<String> usages);
-	
 }
