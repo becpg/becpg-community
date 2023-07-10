@@ -315,7 +315,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 					wrongUnit = true;
 				}
 			} else if (productUnit.isVolume()) {
-				if (!((p.getPackagingListUnit() != null) && p.getPackagingListUnit().isWeight())) {
+				if (!((p.getPackagingListUnit() != null) && p.getPackagingListUnit().isVolume())) {
 					wrongUnit = true;
 				}
 			} else {
