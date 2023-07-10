@@ -7,11 +7,16 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.util.StopWatch;
 
+import fr.becpg.model.PLMModel;
+import fr.becpg.model.SystemState;
 import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
@@ -22,6 +27,7 @@ import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -36,14 +42,20 @@ import fr.becpg.repo.repository.impl.LazyLoadingDataList;
  */
 public class DecernisRequirementsScanner implements RequirementScanner {
 
-	private static Log logger = LogFactory.getLog(DecernisRequirementsScanner.class);
+	 public static final String DECERNIS_KEY = "decernis";
 
-	private static final String DECERNIS_KEY = "decernis";
+	private static final Log logger = LogFactory.getLog(DecernisRequirementsScanner.class);
 
-	DecernisService decernisService;
+	private DecernisService decernisService;
 
-	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
-
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	private NodeService nodeService;
+	
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
+	
 	/**
 	 * <p>Setter for the field <code>decernisService</code>.</p>
 	 *
@@ -66,100 +78,151 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 
-		if ((formulatedProduct.getRegulatoryCountries() != null) && !formulatedProduct.getRegulatoryCountries().isEmpty()
-				&& (formulatedProduct.getRegulatoryUsages() != null) && !formulatedProduct.getRegulatoryUsages().isEmpty()
-				&& (formulatedProduct.getIngList() != null) && !formulatedProduct.getIngList().isEmpty()) {
-
-			boolean shouldLaunchDecernis = false;
-
-			Set<String> countries = new HashSet<>(formulatedProduct.getRegulatoryCountries());
-			Set<String> usages = new HashSet<>(formulatedProduct.getRegulatoryUsages());
-
-			String checkSum = decernisService.createDecernisChecksum(countries, usages);
-
-			shouldLaunchDecernis = !CheckSumHelper.isSameChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum);
-
-			if (!shouldLaunchDecernis) {
-				logger.debug("Decernis checksum match test ingList");
-				shouldLaunchDecernis = true;
-
-				if ((formulatedProduct.getIngList() instanceof LazyLoadingDataList)
-						&& !isDirty((LazyLoadingDataList<IngListDataItem>) formulatedProduct.getIngList())) {
-
-					shouldLaunchDecernis = false;
-				} else if (logger.isDebugEnabled() && (formulatedProduct.getIngList() instanceof LazyLoadingDataList)) {
-					logger.debug("- ingList is dirty");
+		if (FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
+			logger.debug("Fast formulation skipping decernis");
+			return Collections.emptyList();
+		}
+		
+		if (formulatedProduct.getReformulateCount() != null && !formulatedProduct.getReformulateCount().equals(formulatedProduct.getCurrentReformulateCount())) {
+			logger.debug("Skip decernis in reformulateCount " + formulatedProduct.getCurrentReformulateCount());
+			return Collections.emptyList();
+		}
+			
+		updateProductFromRegulatoryList(formulatedProduct);
+		
+		boolean isDirty = isDirty(formulatedProduct);
+		if (isDirty) {
+			StopWatch watch = null;
+			try {
+				if (logger.isDebugEnabled()) {
+					watch = new StopWatch();
+					watch.start();
 				}
+				formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
+				formulatedProduct.setRegulatoryFormulatedDate(new Date());
+				updateChecksums(formulatedProduct);
+				return requirements;
 
-			} else if (logger.isDebugEnabled()) {
-				logger.debug("Decernis checksum doesn't match: " + formulatedProduct.getRequirementChecksum());
+			} catch (FormulateException e) {
+				if (logger.isWarnEnabled()) {
+					logger.warn(e, e);
+				}
+				ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+						MLTextHelper.getI18NMessage("message.decernis.error", e.getMessage()), null, new ArrayList<>(),
+						RequirementDataType.Specification);
+				req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+				return Arrays.asList(req);
+
+			} finally {
+				if (logger.isDebugEnabled() && (watch != null)) {
+					watch.stop();
+					logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds() + "s");
+				}
 			}
 
-			if (!FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())
-					&& ( formulatedProduct.getReformulateCount() ==null || formulatedProduct.getReformulateCount().equals(formulatedProduct.getCurrentReformulateCount()))) {
-
-				if (shouldLaunchDecernis) {
-					StopWatch watch = null;
-					try {
-
-						if (logger.isDebugEnabled()) {
-							watch = new StopWatch();
-							watch.start();
-						}
-
-						formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
-
-						List<ReqCtrlListDataItem> ret = decernisService.extractDecernisRequirements(formulatedProduct, countries, usages);
-
-						formulatedProduct.setRequirementChecksum(
-								CheckSumHelper.updateChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum));
-						formulatedProduct.setRegulatoryFormulatedDate(new Date());
-
-						return ret;
-
-					} catch (FormulateException e) {
-
-						if (logger.isWarnEnabled()) {
-							logger.warn(e, e);
-						}
-
-						ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-								MLTextHelper.getI18NMessage("message.decernis.error", e.getMessage()), null, new ArrayList<>(),
-								RequirementDataType.Specification);
-						req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
-						return Arrays.asList(req);
-
-					} finally {
-						if (logger.isDebugEnabled() && (watch != null)) {
-							watch.stop();
-							logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds() + "s");
-						}
-					}
-
-				}
-			} else {
-
-				logger.debug("Fast formulation skipping decernis");
-				if (shouldLaunchDecernis) {
-					logger.debug(" - mark dirty");
-					formulatedProduct
-							.setRequirementChecksum(CheckSumHelper.updateChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), null));
-				}
-				shouldLaunchDecernis = false;
-
-			}
-
-			if (!shouldLaunchDecernis) {
-				logger.debug("Decernis requirement is up to date");
-
-			}
-
+		} else {
+			logger.debug("product is not dirty");
 		}
 
 		return Collections.emptyList();
 	}
+	
+	private boolean isSameRequirementChecksum(ProductData product) {
+		
+		if (!CheckSumHelper.isSameChecksum(DECERNIS_KEY, product.getRequirementChecksum(), createProductCheckum(product))) {
+			return false;
+		}
+		
+		for (RegulatoryListDataItem regulatoryListDataItem : product.getRegulatoryList()) {
+			Set<String> countries = regulatoryListDataItem.getRegulatoryCountries().stream().map(this::extractCode).collect(Collectors.toSet());
+			Set<String> usages = regulatoryListDataItem.getRegulatoryUsages().stream().map(this::extractCode).collect(Collectors.toSet());
+			if (!CheckSumHelper.isSameChecksum(DECERNIS_KEY, regulatoryListDataItem.getRequirementChecksum(), createRequirementChecksum(countries, usages))) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-	private boolean isDirty(LazyLoadingDataList<IngListDataItem> dataList) {
+	private void updateChecksums(ProductData formulatedProduct) {
+		
+		String checkSum = createProductCheckum(formulatedProduct);
+		formulatedProduct.setRequirementChecksum(CheckSumHelper.updateChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum));
+		
+		for (RegulatoryListDataItem regulatoryListDataItem : formulatedProduct.getRegulatoryList()) {
+			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountries().stream().map(this::extractCode).collect(Collectors.toSet());
+			Set<String> itemUsages = regulatoryListDataItem.getRegulatoryUsages().stream().map(this::extractCode).collect(Collectors.toSet());
+			String itemCheckSum = createRequirementChecksum(itemCountries, itemUsages);
+			regulatoryListDataItem.setRequirementChecksum(CheckSumHelper.updateChecksum(DECERNIS_KEY, regulatoryListDataItem.getRequirementChecksum(), itemCheckSum));
+		}
+	}
+	
+	private String createProductCheckum(ProductData formulatedProduct) {
+		Set<String> countries = formulatedProduct.getRegulatoryCountries().stream().map(this::extractCode).collect(Collectors.toSet());
+		Set<String> usages = formulatedProduct.getRegulatoryUsages().stream().map(this::extractCode).collect(Collectors.toSet());
+		StringBuilder checksumBuilder = new StringBuilder();
+		checksumBuilder.append(createRequirementChecksum(countries, usages));
+		
+		formulatedProduct.getIngList().stream().map(ing -> ing.getNodeRef().toString() + ing.getIng() + ing.getValue()).sorted().forEach(checksumBuilder::append);
+		
+		return checksumBuilder.toString();
+	}
+	
+	private String createRequirementChecksum(Set<String> countries, Set<String> usages) {
+		StringBuilder key = new StringBuilder();
+		if (countries != null) {
+			countries.stream().filter(c -> (c != null) && !c.isEmpty()).sorted().forEach(key::append);
+		}
+		if (usages != null) {
+			usages.stream().filter(c -> (c != null) && !c.isEmpty()).sorted().forEach(key::append);
+		}
+		return key.toString();
+	}
+	
+	private String extractCode(NodeRef node) {
+		return (String) nodeService.getProperty(node, PLMModel.PROP_REGULATORY_CODE);
+	}
+	
+	private void updateProductFromRegulatoryList(ProductData product) {
+		
+		Set<NodeRef> countries = new HashSet<>();
+		Set<NodeRef> usages = new HashSet<>();
+		
+		for (RegulatoryListDataItem item : product.getRegulatoryList()) {
+			if (SystemState.Valid.equals(item.getRegulatoryState())) {
+				countries.addAll(item.getRegulatoryCountries());
+				usages.addAll(item.getRegulatoryUsages());
+			}
+		}
+		
+		if (!countries.isEmpty() || !usages.isEmpty()) {
+			product.getRegulatoryCountries().clear();
+			product.getRegulatoryCountries().addAll(countries);
+			product.getRegulatoryUsages().clear();
+			product.getRegulatoryUsages().addAll(usages);
+		}
+	}
+
+	private boolean isDirty(ProductData formulatedProduct) {
+		
+		if (!isSameRequirementChecksum(formulatedProduct)) {
+			logger.debug("Decernis checksum doesn't match: " + formulatedProduct.getRequirementChecksum());
+			return true;
+		}
+		
+		logger.debug("Decernis checksum match test ingList");
+		
+		if (formulatedProduct.getIngList() instanceof LazyLoadingDataList 
+				&& !isIngListDirty((LazyLoadingDataList<IngListDataItem>) formulatedProduct.getIngList())) {
+			return false;
+		} else if (logger.isDebugEnabled() && (formulatedProduct.getIngList() instanceof LazyLoadingDataList)) {
+			logger.debug("- ingList is dirty");
+		}
+		
+		return true;
+	}
+	
+	private boolean isIngListDirty(LazyLoadingDataList<IngListDataItem> dataList) {
 		if (dataList.isLoaded()) {
 			if (!dataList.getDeletedNodes().isEmpty()) {
 				if (logger.isDebugEnabled()) {

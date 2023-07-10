@@ -771,8 +771,25 @@
 			</parameter>
 		</constraint>
 		
+		<constraint name="bcpg:regulatoryModes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>BECPG_ONLY</value>
+					<value>DECERNIS_ONLY</value>
+					<value>BOTH</value>
+				</list>
+			</parameter>
+		</constraint>
+		<constraint name="bcpg:regulatoryModules" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>FOOD_ADDITIVES</value>
+					<value>COSMETICS</value>
+				</list>
+			</parameter>
+		</constraint>
 	</constraints>
-
+	
 	<types>
 
 		<type name="bcpg:listValue">
@@ -3416,7 +3433,34 @@
 				</association>
 			</associations>
 		</type>
+		
+		<type name="bcpg:regulatoryUsage">
+			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:regulatoryModule">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:regulatoryModules"></constraint>
+					</constraints>
+				</property>
+				<property name="bcpg:regulatoryId">
+					<type>d:text</type>
+					<index enabled="false">
+					</index>
+				</property>
+			</properties>
+		</type>
 
+		<type name="bcpg:regulatoryList">
+			<parent>bcpg:entityListItem</parent>
+			<mandatory-aspects>
+				<aspect>bcpg:regulatoryAspect</aspect>
+			</mandatory-aspects>
+		</type>
 	</types>
 
 	<aspects>
@@ -3449,24 +3493,6 @@
 		                  <tokenised>false</tokenised>
 		                  <facetable>true</facetable>
 		            </index>
-				</property>
-				<property name="bcpg:regulatoryFormulatedDate">
-					<type>d:datetime</type>
-					<index enabled="true">
-		                  <tokenised>false</tokenised>
-		                  <facetable>true</facetable>
-		            </index>
-				</property>
-				<property name="bcpg:regulatoryRecipeId">
-					<type>d:text</type>
-					<index enabled="true">
-					    <tokenised>both</tokenised>
-					    <facetable>false</facetable>
-					</index>
-				</property>
-				<property name="bcpg:requirementChecksum">
-					<type>d:text</type>
-					<index enabled="false"></index>
 				</property>
 			</properties>
 		</aspect>
@@ -5498,6 +5524,87 @@
 		</aspect>
 		
 		<aspect name="bcpg:undeletableAspect">
+		</aspect>
+		
+		<aspect name="bcpg:regulatoryAspect">
+			<properties>
+				<property name="bcpg:regulatoryMode">
+					<type>d:text</type>
+					<default>BECPG_ONLY</default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:regulatoryModes"></constraint>
+					</constraints>
+				</property>
+				<property name="bcpg:regulatoryResult">
+					<type>d:text</type>
+					<index enabled="true">
+					    <tokenised>true</tokenised>
+					    <facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:regulatoryState">
+					<type>d:text</type>
+					<default>Simulation</default>
+					<index enabled="true">
+					    <tokenised>false</tokenised>
+					    <facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:systemState" />
+					</constraints>
+				</property>
+				<property name="bcpg:regulatoryValidationDate">
+					<type>d:date</type>
+					<index enabled="true">
+					    <tokenised>false</tokenised>
+					    <facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:regulatoryRecipeId">
+					<type>d:text</type>
+					<index enabled="true">
+					    <tokenised>both</tokenised>
+					    <facetable>false</facetable>
+					</index>
+				</property>
+				<property name="bcpg:regulatoryFormulatedDate">
+					<type>d:datetime</type>
+					<index enabled="true">
+					    <tokenised>false</tokenised>
+					    <facetable>true</facetable>
+					</index>
+				</property>
+				<property name="bcpg:requirementChecksum">
+					<type>d:text</type>
+					<index enabled="false"></index>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:regulatoryUsageRef">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:regulatoryUsage</class>
+						<many>true</many>
+					</target>
+				</association>
+				<association name="bcpg:regulatoryCountries">
+					<source>
+						<mandatory>true</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:geoOrigin</class>
+						<many>true</many>
+					</target>
+				</association>
+			</associations>
 		</aspect>
 	</aspects>
 </model>

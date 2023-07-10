@@ -19,7 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -41,6 +40,7 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Implementation for Glop service using an auxiliary Glop server
@@ -51,11 +51,10 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
 @Service("glopService")
 public class GlopServiceImpl implements GlopService {
 
-
-
-
-
 	private static final Log logger = LogFactory.getLog(GlopServiceImpl.class);
+	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 	
 	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
@@ -66,11 +65,11 @@ public class GlopServiceImpl implements GlopService {
 	@Autowired
 	private NodeService nodeService;
 
-
-	@Value("${beCPG.glop.serverUrl}")
-	private String serverUrl;
-
 	private RestTemplate restTemplate = new RestTemplate();
+	
+	private String serverUrl() {
+		return systemConfigurationService.confValue("beCPG.glop.serverUrl");
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -181,9 +180,9 @@ public class GlopServiceImpl implements GlopService {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> requestEntity = new HttpEntity<>(request.toString(), headers);
 	
-		URI uri = new URI(serverUrl);
+		URI uri = new URI(serverUrl());
 		if (logger.isDebugEnabled()) {
-			logger.debug("Sending " + request + " to " + serverUrl);
+			logger.debug("Sending " + request + " to " + serverUrl());
 		}
 		String response = restTemplate.postForObject(uri, requestEntity, String.class);
 		
