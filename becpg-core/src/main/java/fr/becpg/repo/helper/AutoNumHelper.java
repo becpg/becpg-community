@@ -17,28 +17,23 @@ import fr.becpg.repo.entity.AutoNumService;
  * @version $Id: $Id
  */
 @Service
-public class AutoNumHelper implements InitializingBean{
-
+public class AutoNumHelper implements InitializingBean {
 
 	@Autowired
 	@Qualifier("autoNumService")
 	private AutoNumService autoNumService;
-	
+
 	@Autowired
 	private NamespaceService namespaceService;
-	
-	
-    private static 	AutoNumHelper INSTANCE = null;
-    
-    
+
+	private static AutoNumHelper instance = null;
 
 	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		INSTANCE = this;	
+		instance = this;
 	}
 
-	
 	/**
 	 * SPEL HELPER
 	 * T(fr.becpg.repo.helper.AutoNumHelper).getAutoNumValue("bcpg:finishedProduct","bcpg:eanCode")
@@ -49,9 +44,10 @@ public class AutoNumHelper implements InitializingBean{
 	 * @return a {@link java.lang.String} object.
 	 */
 	public static String getAutoNumValue(String className, String propertyName) {
-	  return INSTANCE.autoNumService.getAutoNumValue( QName.createQName(className, INSTANCE.namespaceService), QName.createQName(propertyName, INSTANCE.namespaceService));
+		return instance.autoNumService.getAutoNumValue(QName.createQName(className, instance.namespaceService),
+				QName.createQName(propertyName, instance.namespaceService));
 	}
-	
+
 	/**
 	 * <p>getOrCreateCode.</p>
 	 *
@@ -59,9 +55,8 @@ public class AutoNumHelper implements InitializingBean{
 	 * @param propertyName a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public static String getOrCreateCode( NodeRef nodeRef,String propertyName) {
-	  return INSTANCE.autoNumService.getOrCreateCode(nodeRef, QName.createQName(propertyName, INSTANCE.namespaceService));
+	public static String getOrCreateCode(NodeRef nodeRef, String propertyName) {
+		return instance.autoNumService.getOrCreateCode(nodeRef, QName.createQName(propertyName, instance.namespaceService));
 	}
 
-	
 }
