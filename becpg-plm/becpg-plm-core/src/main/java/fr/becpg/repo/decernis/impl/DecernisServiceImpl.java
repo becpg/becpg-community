@@ -164,6 +164,7 @@ public class DecernisServiceImpl implements DecernisService {
 				
 				if (context.getRegulatoryMode().equals(DecernisMode.BECPG_ONLY) && context.getRegulatoryRecipeId() != null) {
 					deleteRecipe(context.getRegulatoryRecipeId());
+					context.getProduct().setRegulatoryRecipeId(null);
 				}
 			}
 			
@@ -174,7 +175,7 @@ public class DecernisServiceImpl implements DecernisService {
 			logger.error("- error body: " + e.getResponseBodyAsString());
 			throw new FormulateException("Error calling decernis service: " + e.getStatusText(), e);
 		} catch (Exception e) {
-			throw new FormulateException("Unexpected decernis error", e);
+			throw new FormulateException("Unexpected decernis error: " + e.getMessage(), e);
 		}
 		
 	}
@@ -253,13 +254,6 @@ public class DecernisServiceImpl implements DecernisService {
 				try {
 					if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
 							&& ((ingName != null) && !ingName.isEmpty()) && (ingQtyPerc != null)) {
-
-						if (context.getIngRegulatoryMapping().get(rid) == null) {
-							context.getIngRegulatoryMapping().put(rid, new ArrayList<>());
-						}
-
-						context.getIngRegulatoryMapping().get(rid).add(ingListDataItem);
-
 						JSONObject ingredient = new JSONObject();
 						ingredient.put("name", ingName);
 						ingredient.put("percentage", ingQtyPerc);
@@ -295,6 +289,10 @@ public class DecernisServiceImpl implements DecernisService {
 					rid = fetchIngredientId(ingListDataItem, context.getRequirements());
 					nodeService.setProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE, rid);
 				}
+				if (context.getIngRegulatoryMapping().get(rid) == null) {
+					context.getIngRegulatoryMapping().put(rid, new ArrayList<>());
+				}
+				context.getIngRegulatoryMapping().get(rid).add(ingListDataItem);
 			}
 		}
 	}
