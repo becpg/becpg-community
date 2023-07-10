@@ -45,6 +45,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
+import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
@@ -198,11 +199,13 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	/*
 	 * Compliance 
 	 */
-	private List<String> regulatoryCountries = new ArrayList<>();
-	private List<String> regulatoryUsages = new ArrayList<>();
+	private List<NodeRef> regulatoryCountries = new ArrayList<>();
+	private List<NodeRef> regulatoryUsages = new ArrayList<>();
 	private Date regulatoryFormulatedDate;
 	private DecernisMode regulatoryMode = DecernisMode.BECPG_ONLY;
 	private String regulatoryRecipeId;
+	private String regulatoryResult;
+	private String regulatoryUrl;
 	
 	/** 
 	 * JSON Data { 
@@ -236,6 +239,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private List<ResourceParamListItem> resourceParamList;
 	private List<PackMaterialListDataItem> packMaterialList;
 	private List<StockListDataItem> stockList;
+	private List<RegulatoryListDataItem> regulatoryList;
 
 	/*
 	 * View
@@ -1983,6 +1987,16 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setStockList(List<StockListDataItem> stockList) {
 		this.stockList = stockList;
 	}
+	
+	@DataList
+	@AlfQname(qname = "bcpg:regulatoryList")
+	public List<RegulatoryListDataItem> getRegulatoryList() {
+		return regulatoryList;
+	}
+	
+	public void setRegulatoryList(List<RegulatoryListDataItem> regulatoryList) {
+		this.regulatoryList = regulatoryList;
+	}
 
 	/**
 	 * <p>Getter for the field <code>compoListView</code>.</p>
@@ -2035,14 +2049,34 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		this.reportLocales = reportLocales;
 	}
 	
-
-	
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryMode")
 	public DecernisMode getRegulatoryMode() {
 		return regulatoryMode;
 	}
 
-	public void setRegulatoryMode(String regulatoryMode) {
-		this.regulatoryMode = DecernisMode.valueOf(regulatoryMode);
+	public void setRegulatoryMode(DecernisMode regulatoryMode) {
+		this.regulatoryMode = regulatoryMode;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryUrl")
+	public String getRegulatoryUrl() {
+		return regulatoryUrl;
+	}
+	
+	public void setRegulatoryUrl(String regulatoryUrl) {
+		this.regulatoryUrl = regulatoryUrl;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryResult")
+	public String getRegulatoryResult() {
+		return regulatoryResult;
+	}
+	
+	public void setRegulatoryResult(String regulatoryResult) {
+		this.regulatoryResult = regulatoryResult;
 	}
 
 	/**
@@ -2070,7 +2104,9 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
-	public List<String> getRegulatoryCountries() {
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryCountries")
+	public List<NodeRef> getRegulatoryCountries() {
 		return regulatoryCountries;
 	}
 
@@ -2079,7 +2115,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 *
 	 * @param regulatoryCountries a {@link java.util.List} object.
 	 */
-	public void setRegulatoryCountries(List<String> regulatoryCountries) {
+	public void setRegulatoryCountries(List<NodeRef> regulatoryCountries) {
 		this.regulatoryCountries = regulatoryCountries;
 	}
 
@@ -2088,7 +2124,9 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
-	public List<String> getRegulatoryUsages() {
+	@AlfMultiAssoc
+	@AlfQname(qname = "bcpg:regulatoryUsageRef")
+	public List<NodeRef> getRegulatoryUsages() {
 		return regulatoryUsages;
 	}
 
@@ -2097,7 +2135,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 *
 	 * @param regulatoryUsages a {@link java.util.List} object.
 	 */
-	public void setRegulatoryUsages(List<String> regulatoryUsages) {
+	public void setRegulatoryUsages(List<NodeRef> regulatoryUsages) {
 		this.regulatoryUsages = regulatoryUsages;
 	}
 

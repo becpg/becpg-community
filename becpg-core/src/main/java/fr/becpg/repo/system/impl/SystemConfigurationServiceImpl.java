@@ -54,4 +54,10 @@ public class SystemConfigurationServiceImpl implements SystemConfigurationServic
 		
 	}
 
+	@Override
+	public void resetConfValue(String propKey) {
+		attributeService.removeAttribute(propKey);
+		beCPGCacheService.clearCache(CACHE_KEY);
+	}
+
 }

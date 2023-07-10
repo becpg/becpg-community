@@ -682,7 +682,7 @@
 					
 					<!-- main info -->
 					<field id="cm:name" mandatory="false" read-only="false" set="mainInfo"/>
-					<field id="cm:title" label-id="becpg.forms.field.tradeName" mandatory="false" read-only="false" set="mainInfo">
+					<field id="cm:title" label-id="becpg.forms.field.tradeName" description-id="becpg.forms.field.tradeName" mandatory="false" read-only="false" set="mainInfo">
 						<control template="/org/alfresco/components/form/controls/textfield.ftl"/>
 					</field>
 					<field help-id="becpg.forms.help.legalName" id="bcpg:legalName" mandatory="false" read-only="false" set="mainInfo"/>
@@ -3466,7 +3466,7 @@
 					<field id="bcpg:supplierTel" set="mainInfo" />
 					<field id="bcpg:supplierEmail" set="mainInfo">
 						<constraint-handlers>
-							<constraint type="MANDATORY" validation-handler="MyCustomNamespace.forms.validation.checkEmailValidity" event="keyup" />
+							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.checkEmailValidity" event="keyup" />
 						</constraint-handlers>
 					</field>
 					<field id="bcpg:supplierFax" set="mainInfo"/>
@@ -3542,7 +3542,7 @@
 					<field id="bcpg:supplierTel" set="mainInfo" />
 					<field id="bcpg:supplierEmail" set="mainInfo">
 						<constraint-handlers>
-							<constraint type="MANDATORY" validation-handler="MyCustomNamespace.forms.validation.checkEmailValidity" event="keyup" />
+							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.checkEmailValidity" event="keyup" />
 						</constraint-handlers>
 					</field>
 					<field id="bcpg:supplierFax" set="mainInfo"/>
@@ -3656,7 +3656,7 @@
 					<field id="bcpg:supplierTel" set="mainInfo" />
 					<field id="bcpg:supplierEmail" set="mainInfo">
 						<constraint-handlers>
-							<constraint type="MANDATORY" validation-handler="MyCustomNamespace.forms.validation.checkEmailValidity" event="keyup" />
+							<constraint type="MANDATORY" validation-handler="beCPG.forms.validation.checkEmailValidity" event="keyup" />
 						</constraint-handlers>
 					</field>
 					<field id="bcpg:supplierFax" set="mainInfo"/>
