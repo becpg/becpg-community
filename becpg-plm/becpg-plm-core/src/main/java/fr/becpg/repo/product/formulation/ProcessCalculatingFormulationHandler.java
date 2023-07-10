@@ -176,7 +176,12 @@ public class ProcessCalculatingFormulationHandler extends FormulationBaseHandler
 
 			if (p.getRateResource() != null) {
 				if (ProductUnit.P.equals(p.getUnit())) {
-					p.setRateProduct(p.getRateResource());
+					if(formulatedProduct.getUnit()!=null && formulatedProduct.getUnit().isP()) {
+						Double nbP = formulatedProduct.getQty() != null && formulatedProduct.getQty()!=0d ? formulatedProduct.getQty() : 1d;
+						p.setRateProduct(p.getRateResource()/nbP);
+					} else {
+						p.setRateProduct(p.getRateResource());
+					}
 				} else if (ProductUnit.Box.equals(p.getUnit())) {
 					//TODO not variant aware
 					if ((formulatedProduct.getDefaultVariantPackagingData() != null)
