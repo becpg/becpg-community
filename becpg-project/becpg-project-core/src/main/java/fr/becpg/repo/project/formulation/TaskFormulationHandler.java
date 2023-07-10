@@ -613,45 +613,15 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 	private void assign(ProjectData projectData, TaskListDataItem taskListDataItem, List<DeliverableListDataItem> deliverables) {
 		if ((taskListDataItem.getResources() != null) && !taskListDataItem.getResources().isEmpty()) {
 
-			List<NodeRef> resources = new ArrayList<>();
-
-			for (NodeRef resource : projectService.extractResources(projectData.getNodeRef(), taskListDataItem.getResources())) {
-				NodeRef reassignResource = projectService.getReassignedResource(resource, new HashSet<>());
-				
-				NodeRef toAdd = resource;
-				// check delegation
-				if (reassignResource != null) {
-
-					Date delegationStart = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
-					Date delegationEnd = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);
-
-					if ((delegationStart != null)
-							&& (taskListDataItem.getStart().after(delegationStart) || taskListDataItem.getStart().equals(delegationStart))) {
-
-						if ((delegationEnd == null)
-								|| (taskListDataItem.getStart().before(delegationEnd) || taskListDataItem.getStart().equals(delegationEnd))) {
-
-							// reassign new tasks
-							toAdd = reassignResource;
-						}
-					}
-
-					else {
-						if ((boolean) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_REASSIGN_TASK)) {
-							// reassign current tasks
-							toAdd = reassignResource;
-						}
-					}
-				}
-
-				projectService.updateProjectPermission(projectData.getNodeRef(), taskListDataItem.getNodeRef(), toAdd, true);
-
-				resources.add(toAdd);
-			}
-
-			taskListDataItem.setResources(resources);
+			// reassign task resources
+			List<NodeRef> reassignedResources = extractReassignedPeople(projectData, taskListDataItem, taskListDataItem.getResources(), true);
+			taskListDataItem.setResources(reassignedResources);
+			
+			//reassign notification authorities
+			List<NodeRef> reassignedNotficationAuthorities = extractReassignedPeople(projectData, taskListDataItem, taskListDataItem.getNotificationAuthorities(), false);
+			taskListDataItem.setNotificationAuthorities(reassignedNotficationAuthorities);
+			
 			taskListDataItem.setObservers(projectService.extractResources(projectData.getNodeRef(), taskListDataItem.getObservers()));
-
 
 		}
 
@@ -671,6 +641,49 @@ public class TaskFormulationHandler extends FormulationBaseHandler<ProjectData> 
 
 		}
 
+	}
+
+	private List<NodeRef> extractReassignedPeople(ProjectData projectData, TaskListDataItem taskListDataItem, List<NodeRef> originalResources, boolean updatePermission) {
+		
+		List<NodeRef> resources = new ArrayList<>();
+		
+		for (NodeRef resource : projectService.extractResources(projectData.getNodeRef(), originalResources)) {
+			NodeRef reassignResource = projectService.getReassignedResource(resource, new HashSet<>());
+			
+			NodeRef toAdd = resource;
+			// check delegation
+			if (reassignResource != null) {
+
+				Date delegationStart = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_START);
+				Date delegationEnd = (Date) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_DELEGATION_END);
+
+				if ((delegationStart != null)
+						&& (taskListDataItem.getStart().after(delegationStart) || taskListDataItem.getStart().equals(delegationStart))) {
+
+					if ((delegationEnd == null)
+							|| (taskListDataItem.getStart().before(delegationEnd) || taskListDataItem.getStart().equals(delegationEnd))) {
+
+						// reassign new tasks
+						toAdd = reassignResource;
+					}
+				}
+
+				else {
+					if ((boolean) nodeService.getProperty(resource, ProjectModel.PROP_QNAME_REASSIGN_TASK)) {
+						// reassign current tasks
+						toAdd = reassignResource;
+					}
+				}
+			}
+
+			if (updatePermission) {
+				projectService.updateProjectPermission(projectData.getNodeRef(), taskListDataItem.getNodeRef(), toAdd, true);
+			}
+
+			resources.add(toAdd);
+		}
+
+		return resources;
 	}
 
 	private void calculatePlanning(ProjectData projectData, TaskWrapper task) {

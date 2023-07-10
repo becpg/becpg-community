@@ -176,18 +176,23 @@ public class SpelFormulaService {
 		}
 
 		Expression exp = getSpelParser().parseExpression(formula);
-		Double sum = 0d;
+		Double ref = 0d;
+		if(SpelFormulaContext.Operator.MIN.equals(operator)) {
+			ref = Double.POSITIVE_INFINITY;
+		} else if(SpelFormulaContext.Operator.MAX.equals(operator)) {
+			ref = Double.NEGATIVE_INFINITY;
+		}
 		int count = 0;
 		for (RepositoryEntity item : range) {
 			StandardEvaluationContext context = createDataListItemSpelContext(entity, item, false);
 			Double value = exp.getValue(context, Double.class);
 			if (value != null) {
 				if(SpelFormulaContext.Operator.MIN.equals(operator)) {
-					sum = Math.min(sum, value);
+					ref = Math.min(ref, value);
 				} else if(SpelFormulaContext.Operator.MAX.equals(operator)) {
-					sum = Math.max(sum, value);
+					ref = Math.max(ref, value);
 				} else {
-					sum += value;
+					ref += value;
 				}
 				count++;
 			} else {
@@ -195,10 +200,14 @@ public class SpelFormulaService {
 			}
 		}
 		if (SpelFormulaContext.Operator.AVG.equals(operator) && (count != 0)) {
-			sum /= count;
+			ref /= count;
+		}
+		
+		if (ref.isInfinite()) {
+			ref = 0d;
 		}
 
-		return sum;
+		return ref;
 	}
 
 	/**
