@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -64,7 +65,11 @@ public class ProjectTaskDelegationIT extends AbstractProjectTestCase {
 			assigneesFour.add(userFour);
 
 			List<TaskListDataItem> taskList = new LinkedList<>();
-			taskList.add(new TaskListDataItem(null, "task5", false, 2, null, assigneesThree, taskLegends.get(1), "activiti$projectAdhoc"));
+			
+			TaskListDataItem task5 = new TaskListDataItem(null, "task5", false, 2, null, assigneesThree, taskLegends.get(1), "activiti$projectAdhoc");
+			task5.setNotificationAuthorities(assigneesThree);
+			taskList.add(task5);
+			
 			taskList.add(new TaskListDataItem(null, "task6", false, 2, null, assigneesFour, taskLegends.get(1), "activiti$projectAdhoc"));
 			projectData.setTaskList(taskList);
 
@@ -89,6 +94,14 @@ public class ProjectTaskDelegationIT extends AbstractProjectTestCase {
 
 			assertEquals(projectData.getTaskList().get(0).getResources().get(0), userOne);
 			assertEquals(projectData.getTaskList().get(1).getResources().get(0), userOne);
+			
+			Optional<TaskListDataItem> t5 = projectData.getTaskList().stream().filter(t -> "task5".equals(t.getTaskName())).findFirst();
+			assertTrue(t5.isPresent());
+			assertTrue(t5.get().getNotificationAuthorities() != null && t5.get().getNotificationAuthorities().contains(userOne));
+			
+			Optional<TaskListDataItem> t6 = projectData.getTaskList().stream().filter(t -> "task6".equals(t.getTaskName())).findFirst();
+			assertTrue(t6.isPresent());
+			assertTrue(t6.get().getNotificationAuthorities() == null || t6.get().getNotificationAuthorities().isEmpty());
 
 			return null;
 		}, false, true);

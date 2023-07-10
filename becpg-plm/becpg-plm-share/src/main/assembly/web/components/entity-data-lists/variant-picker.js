@@ -221,19 +221,21 @@
 							}
 
                            Dom.setStyle(this.widgets.createVariantButton, 'display', 'none');
-                           if(this.options.edit){
-                           		Dom.setStyle(this.widgets.editVariantButton, 'display', '');
-                          	    Dom.setStyle(this.widgets.duplicateVariantButton, 'display', '');
-                           }
+
+							if (this.options.edit) {
 								
-							if (currentVariant.isModelVariant && this.options.entity.nodeRef != currentVariant.variantParent) {
-	                           Dom.setStyle(this.widgets.deleteVariantButton, 'display', 'none');
-							} else {
-							   if(this.options.edit){
-	                             Dom.setStyle(this.widgets.deleteVariantButton, 'display', '');
-	                           }
+								Dom.setStyle(this.widgets.duplicateVariantButton, 'display', '');
+								
+								var isProtected = currentVariant.isModelVariant && this.options.entity.nodeRef != currentVariant.variantParent;
+								
+								if (isProtected) {
+									Dom.setStyle(this.widgets.deleteVariantButton, 'display', 'none');
+									Dom.setStyle(this.widgets.editVariantButton, 'display', 'none');
+								} else {
+									Dom.setStyle(this.widgets.deleteVariantButton, 'display', '');
+									Dom.setStyle(this.widgets.editVariantButton, 'display', '');
+								}
 							}
-							
                         }
                      }
                   },
