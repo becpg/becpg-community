@@ -82,8 +82,13 @@ public class RegulatoryContext {
 		if (product.getIngList() == null || product.getIngList().isEmpty()) {
 			return false;
 		}
+		
+		if (!usages.isEmpty() && !countries.isEmpty()) {
+			return true;
+		}
+		
 		for (RegulatoryContextItem contextItem : contextItems) {
-			if (contextItem.isEmpty()) {
+			if (!contextItem.isEmpty()) {
 				return true;
 			}
 		}

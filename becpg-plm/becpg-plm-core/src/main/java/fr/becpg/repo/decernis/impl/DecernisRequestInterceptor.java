@@ -19,7 +19,7 @@ import org.springframework.http.client.ClientHttpResponse;
  */
 public class DecernisRequestInterceptor implements ClientHttpRequestInterceptor {
 
-    final static Logger log = LoggerFactory.getLogger(DecernisRequestInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(DecernisRequestInterceptor.class);
 
     /** {@inheritDoc} */
     @Override
@@ -31,27 +31,31 @@ public class DecernisRequestInterceptor implements ClientHttpRequestInterceptor 
     }
 
     private void traceRequest(HttpRequest request, byte[] body) throws IOException {
-        log.trace("===========================request begin================================================");
-        log.trace("URI         : {}", request.getURI());
-        log.trace("Method      : {}", request.getMethod());
-        log.trace("Headers     : {}", request.getHeaders() );
-        log.trace("Request body: {}", new String(body, "UTF-8"));
+    	if (log.isTraceEnabled()) {
+    		log.trace("===========================request begin================================================");
+    		log.trace("URI         : {}", request.getURI());
+    		log.trace("Method      : {}", request.getMethod());
+    		log.trace("Headers     : {}", request.getHeaders() );
+    		log.trace("Request body: {}", new String(body, "UTF-8"));
+    	}
     }
 
     private void traceResponse(ClientHttpResponse response) throws IOException {
-        StringBuilder inputStringBuilder = new StringBuilder();
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody(), "UTF-8"));
-        String line = bufferedReader.readLine();
-        while (line != null) {
-            inputStringBuilder.append(line);
-            inputStringBuilder.append('\n');
-            line = bufferedReader.readLine();
-        }
-        log.trace("Status code  : {}", response.getStatusCode());
-        log.trace("Status text  : {}", response.getStatusText());
-        log.trace("Headers      : {}", response.getHeaders());
-        log.trace("Response body: {}", inputStringBuilder.toString());
-        log.trace("=======================response end======================================================");
+    	if (log.isTraceEnabled()) {
+    		StringBuilder inputStringBuilder = new StringBuilder();
+    		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(response.getBody(), "UTF-8"));
+    		String line = bufferedReader.readLine();
+    		while (line != null) {
+    			inputStringBuilder.append(line);
+    			inputStringBuilder.append('\n');
+    			line = bufferedReader.readLine();
+    		}
+    		log.trace("Status code  : {}", response.getStatusCode());
+    		log.trace("Status text  : {}", response.getStatusText());
+    		log.trace("Headers      : {}", response.getHeaders());
+    		log.trace("Response body: {}", inputStringBuilder.toString());
+    		log.trace("=======================response end======================================================");
+    	}
     }
 
 }
