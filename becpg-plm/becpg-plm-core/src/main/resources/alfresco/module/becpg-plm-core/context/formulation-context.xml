@@ -317,6 +317,7 @@
 				<bean class="fr.becpg.repo.product.requirement.DecernisRequirementsScanner">
 					<property name="decernisService" ref="decernisService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="nodeService" ref="nodeService" />
 				</bean>
 
 			</list>

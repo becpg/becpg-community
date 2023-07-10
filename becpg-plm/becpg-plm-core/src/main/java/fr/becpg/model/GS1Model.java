@@ -95,6 +95,8 @@ public interface GS1Model {
 
 	/** Constant <code>TYPE_TARGET_MARKET</code> */
 	QName TYPE_TARGET_MARKET = QName.createQName(GS1_URI, "targetMarket");
+	
+	QName ASSOC_TARGET_MARKET_COUNTRIES = QName.createQName(GS1_URI, "targetMarketCountries");
 
 	/** Constant <code>TYPE_DUTY_FEE_TAX</code> */
 	QName TYPE_DUTY_FEE_TAX = QName.createQName(GS1_URI, "dutyFeeTax");
