@@ -35,15 +35,13 @@ import org.springframework.web.client.RestTemplate;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.decernis.DecernisAnalysisPlugin;
 import fr.becpg.repo.decernis.DecernisService;
-import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
+import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
-import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
 @Service
@@ -117,30 +115,30 @@ public class LegacyAPIDecernisPlugin implements DecernisAnalysisPlugin {
 	public void analyzeRecipe(RegulatoryContext productContext) {
 		
 		if (productContext.getRegulatoryRecipeId() != null) {
+			String regulatoryResult = analyzeContext(productContext, productContext.getUsages(), productContext.getCountries(), productContext.getModuleId());
+			productContext.getProduct().setRegulatoryResult(regulatoryResult);
 			for (RegulatoryContextItem contextItem : productContext.getContextItems()) {
-				if (contextItem.isTreatable()) {
-					for (String usage : contextItem.getUsages()) {
-						JSONObject analysisResults = recipeAnalysis(productContext.getRegulatoryRecipeId(), contextItem.getCountries(), usage, contextItem.getModuleId());
-						if (analysisResults != null) {
-							productContext.getRequirements().addAll(extractItemRequirements(contextItem, analysisResults, productContext.getIngRegulatoryMapping()));
-							
-							if (analysisResults.has("overall_recipe_conclusion") ) {
-								String regulatoryResult = analysisResults.getJSONObject("overall_recipe_conclusion").getString("description");
-								
-								if (contextItem.getItem() instanceof ProductData) {
-									((ProductData) contextItem.getItem()).setRegulatoryResult(regulatoryResult);
-								} else if (contextItem.getItem() instanceof RegulatoryListDataItem) {
-									((RegulatoryListDataItem) contextItem.getItem()).setRegulatoryResult(regulatoryResult);
-								}
-							}
-							
-						} else {
-							throw new FormulateException("Error analyzing recipe");
-						}
-					}
+				if (contextItem.isEmpty()) {
+					String contextResult = analyzeContext(productContext, contextItem.getUsages(), contextItem.getCountries(), contextItem.getModuleId());
+					contextItem.getItem().setRegulatoryResult(contextResult);
 				}
 			}
 		}
+	}
+
+	private String analyzeContext(RegulatoryContext productContext, Set<String> usages, Set<String> countries,
+			Integer moduleId) {
+		for (String usage : usages) {
+			JSONObject analysisResults = recipeAnalysis(productContext.getRegulatoryRecipeId(), countries, usage, moduleId);
+			if (analysisResults != null) {
+				productContext.getRequirements().addAll(extractItemRequirements(usages, moduleId, analysisResults, productContext.getIngRegulatoryMapping()));
+				if (analysisResults.has("overall_recipe_conclusion") ) {
+					return analysisResults.getJSONObject("overall_recipe_conclusion").getString("description");
+				}
+				
+			}
+		}
+		throw new FormulateException("Error analyzing recipe");
 	}
 	
 	/**
@@ -254,12 +252,12 @@ public class LegacyAPIDecernisPlugin implements DecernisAnalysisPlugin {
 		return new HttpEntity<>(param, headers);
 	}
 	
-	private List<ReqCtrlListDataItem> extractItemRequirements(RegulatoryContextItem itemContext, JSONObject analysisResults, Map<String, List<IngListDataItem>> ings)
+	private List<ReqCtrlListDataItem> extractItemRequirements(Set<String> countries, Integer moduleId, JSONObject analysisResults, Map<String, List<IngListDataItem>> ings)
 			throws JSONException {
 		List<ReqCtrlListDataItem> reqCtrlList = new ArrayList<>();
 
-		for (String country : itemContext.getCountries()) {
-			if (isAvailableCountry(country, itemContext.getModuleId()) && analysisResults.getJSONObject(PARAM_ANALYSIS_RESULTS).has(country)) {
+		for (String country : countries) {
+			if (isAvailableCountry(country, moduleId) && analysisResults.getJSONObject(PARAM_ANALYSIS_RESULTS).has(country)) {
 				JSONObject countryResults = analysisResults.getJSONObject(PARAM_ANALYSIS_RESULTS).getJSONObject(country);
 				if (countryResults.has("tabular") && countryResults.getJSONObject("tabular").has("INGREDIENT_DATA_PDF")) {
 					JSONArray tabularResults = countryResults.getJSONObject("tabular").getJSONArray("INGREDIENT_DATA_PDF");

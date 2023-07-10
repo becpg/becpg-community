@@ -42,8 +42,8 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisAnalysisPlugin;
 import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.decernis.DecernisService;
-import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
+import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
@@ -52,7 +52,6 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 /**
  * <p>DecernisServiceImpl class.</p>
@@ -171,9 +170,9 @@ public class DecernisServiceImpl implements DecernisService {
 			return context.getRequirements();
 			
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
-			logger.error("Decernis HTTP ERROR STATUS:" + e.getStatusText());
-			logger.error("- error body:" + e.getResponseBodyAsString());
-			throw new FormulateException("Error calling decernis service: " + e.getLocalizedMessage(), e);
+			logger.error("Decernis HTTP ERROR STATUS: " + e.getStatusText());
+			logger.error("- error body: " + e.getResponseBodyAsString());
+			throw new FormulateException("Error calling decernis service: " + e.getStatusText(), e);
 		} catch (Exception e) {
 			throw new FormulateException("Unexpected decernis error", e);
 		}
@@ -181,24 +180,19 @@ public class DecernisServiceImpl implements DecernisService {
 	}
 
 	private void checkUsagesID(RegulatoryContext context) {
+		for (NodeRef usageRef : context.getProduct().getRegulatoryUsages()) {
+			updateUsageID(usageRef, context.getModuleId());
+		}
 		for (RegulatoryContextItem contextItem : context.getContextItems()) {
-			if (contextItem.getItem() instanceof ProductData) {
-				for (NodeRef usageRef : ((ProductData) contextItem.getItem()).getRegulatoryUsages()) {
-					updateUsageID(usageRef, contextItem.getModuleId());
-				}
-			} else if (contextItem.getItem() instanceof RegulatoryListDataItem) {
-				for (NodeRef usageRef : ((RegulatoryListDataItem) contextItem.getItem()).getRegulatoryUsages()) {
-					updateUsageID(usageRef, contextItem.getModuleId());
-				}
+			for (NodeRef usageRef : contextItem.getItem().getRegulatoryUsages()) {
+				updateUsageID(usageRef, contextItem.getModuleId());
 			}
 		}
 	}
 
 	private void updateContextItemsRecipeId(RegulatoryContext context) {
 		for (RegulatoryContextItem contextItem : context.getContextItems()) {
-			if (contextItem.getItem() instanceof RegulatoryListDataItem) {
-				((RegulatoryListDataItem) contextItem.getItem()).setRegulatoryRecipeId(context.getRegulatoryRecipeId());
-			}
+			contextItem.getItem().setRegulatoryRecipeId(context.getRegulatoryRecipeId());
 		}
 	}
 
@@ -220,11 +214,7 @@ public class DecernisServiceImpl implements DecernisService {
 		context.getProduct().setRegulatoryRecipeId(recipeId);
 		
 		for (RegulatoryContextItem contextItem : context.getContextItems()) {
-			if (contextItem.getItem() instanceof ProductData) {
-				((ProductData) contextItem.getItem()).setRegulatoryRecipeId(recipeId);
-			} else if (contextItem.getItem() instanceof RegulatoryListDataItem) {
-				((RegulatoryListDataItem) contextItem.getItem()).setRegulatoryRecipeId(recipeId);
-			}
+			contextItem.getItem().setRegulatoryRecipeId(recipeId);
 		}
 	}
 	
@@ -470,7 +460,20 @@ public class DecernisServiceImpl implements DecernisService {
 	private RegulatoryContext createContext(ProductData product) {
 		RegulatoryContext context = new RegulatoryContext();
 		context.setProduct(product);
-		context.getContextItems().add(createContextItem(product, context));
+		
+		Set<String> countries = new HashSet<>();
+		Set<String> usages = new HashSet<>();
+		
+		for (NodeRef nodeRef : product.getRegulatoryCountries()) {
+			extractCodes(context, countries, nodeRef);
+		}
+		for (NodeRef nodeRef : product.getRegulatoryUsages()) {
+			extractCodes(context, usages, nodeRef);
+		}
+		
+		context.setCountries(countries);
+		context.setUsages(usages);
+		context.setModuleId(extractModuleId(product.getRegulatoryUsages()));
 		
 		for (RegulatoryListDataItem item : product.getRegulatoryList()) {
 			context.getContextItems().add(createContextItem(item, context));
@@ -481,32 +484,22 @@ public class DecernisServiceImpl implements DecernisService {
 		return context;
 	}
 
-	private RegulatoryContextItem createContextItem(BeCPGDataObject object, RegulatoryContext context) {
+	private RegulatoryContextItem createContextItem(RegulatoryListDataItem item, RegulatoryContext context) {
 		
 		RegulatoryContextItem contextItem = new RegulatoryContextItem();
-		contextItem.setItem(object);
+		contextItem.setItem(item);
 		
 		Set<String> countries = new HashSet<>();
 		Set<String> usages = new HashSet<>();
 		Integer moduleId = null;
 		
-		if (object instanceof ProductData) {
-			for (NodeRef nodeRef : ((ProductData) object).getRegulatoryCountries()) {
-				extractCodes(context, countries, nodeRef);
-			}
-			for (NodeRef nodeRef : ((ProductData) object).getRegulatoryUsages()) {
-				extractCodes(context, usages, nodeRef);
-			}
-			moduleId = extractModuleId(((ProductData) object).getRegulatoryUsages());
-		} else if (object instanceof RegulatoryListDataItem) {
-			for (NodeRef nodeRef : ((RegulatoryListDataItem) object).getRegulatoryCountries()) {
-				extractCodes(context, countries, nodeRef);
-			}
-			for (NodeRef nodeRef : ((RegulatoryListDataItem) object).getRegulatoryUsages()) {
-				extractCodes(context, usages, nodeRef);
-			}
-			moduleId = extractModuleId(((RegulatoryListDataItem) object).getRegulatoryUsages());
+		for (NodeRef nodeRef : item.getRegulatoryCountries()) {
+			extractCodes(context, countries, nodeRef);
 		}
+		for (NodeRef nodeRef : item.getRegulatoryUsages()) {
+			extractCodes(context, usages, nodeRef);
+		}
+		moduleId = extractModuleId(item.getRegulatoryUsages());
 		
 		contextItem.setCountries(countries);
 		contextItem.setUsages(usages);

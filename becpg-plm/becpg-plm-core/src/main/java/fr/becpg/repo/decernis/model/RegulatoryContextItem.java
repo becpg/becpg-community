@@ -3,19 +3,19 @@ package fr.becpg.repo.decernis.model;
 import java.util.HashSet;
 import java.util.Set;
 
-import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 
 public class RegulatoryContextItem {
 
-	private BeCPGDataObject item;
+	private RegulatoryListDataItem item;
 	private Set<String> countries = new HashSet<>();
 	private Set<String> usages = new HashSet<>();
 	private Integer moduleId;
 	private String analysisResult;
-	public BeCPGDataObject getItem() {
+	public RegulatoryListDataItem getItem() {
 		return item;
 	}
-	public void setItem(BeCPGDataObject item) {
+	public void setItem(RegulatoryListDataItem item) {
 		this.item = item;
 	}
 	public Set<String> getCountries() {
@@ -43,7 +43,7 @@ public class RegulatoryContextItem {
 		this.analysisResult = analysisResult;
 	}
 	
-	public boolean isTreatable() {
+	public boolean isEmpty() {
 		return !countries.isEmpty() && !usages.isEmpty();
 	}
 
