@@ -80,7 +80,6 @@ import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AuthorityHelper;
-import fr.becpg.repo.helper.AutoNumHelper;
 import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.helper.GTINHelper;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -1291,8 +1290,19 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @throws org.apache.commons.validator.routines.checkdigit.CheckDigitException if any.
 	 */
 	public static String generateEAN13Code(String prefix) throws CheckDigitException {
-		return GTINHelper.createEAN13Code(prefix, AutoNumHelper.getAutoNumValue("bcpg:eanCode", "bcpg:ean13Pref" + prefix));
+		return GTINHelper.generateEAN13Code(prefix);
 	}
+	
+	
+	public static String createEAN13Code(String prefix, String serialNumber) throws CheckDigitException {
+		return GTINHelper.createEAN13Code(prefix, serialNumber);
+	}
+
+	
+	public static String addDigitToEANPrefix(String eanCode) throws CheckDigitException {
+		return GTINHelper.addDigitToEANPrefix(eanCode);
+	}
+
 
 	public ScriptNode getDocumentLibraryNodeRef(String siteId) {
 
