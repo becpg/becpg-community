@@ -21,6 +21,14 @@ public class GTINHelperTest {
 
 		ean13 = GTINHelper.createEAN13Code("353152003", "1");
 		Assert.assertEquals(ean13, "3531520030019");
+		
+
+		ean13 = GTINHelper.createEAN13Code("360438", "25112");
+		Assert.assertEquals(ean13, "3604380251129");
+		
+		ean13 = GTINHelper.addDigitToEANPrefix("360438025112");
+		Assert.assertEquals(ean13, "3604380251129");
+		
 	}
 	
 	@Test
