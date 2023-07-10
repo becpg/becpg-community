@@ -163,7 +163,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		StringBuilder checksumBuilder = new StringBuilder();
 		checksumBuilder.append(createRequirementChecksum(countries, usages));
 		
-		formulatedProduct.getIngList().stream().map(ing -> ing.getNodeRef().toString() + ing.getIng() + ing.getValue()).sorted().forEach(checksumBuilder::append);
+		formulatedProduct.getIngList().stream().filter(ing -> ing != null && ing.getNodeRef() != null).map(ing -> ing.getNodeRef().toString() + ing.getIng() + ing.getValue()).sorted().forEach(checksumBuilder::append);
 		
 		return checksumBuilder.toString();
 	}
