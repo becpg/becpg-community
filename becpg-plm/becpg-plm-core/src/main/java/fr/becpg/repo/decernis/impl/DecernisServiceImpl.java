@@ -328,9 +328,15 @@ public class DecernisServiceImpl implements DecernisService {
 				JSONArray synonyms = result.getJSONArray("synonyms");
 				int j = 0;
 				while (j < synonyms.length()) {
-					if (synonyms.getString(j).toLowerCase().replace(",", "").equals(ingName.toLowerCase().replace(",", ""))) {
-						return result;
+					
+					String[] split = synonyms.getString(j).split(",");
+					
+					for (String syn : split) {
+						if (syn.toLowerCase().trim().equals(ingName.toLowerCase().replace(",", "").trim())) {
+							return result;
+						}
 					}
+					
 					j++;
 				}
 			}
@@ -369,7 +375,7 @@ public class DecernisServiceImpl implements DecernisService {
 
 			if (jsonObject.has(PARAM_COUNT) && (jsonObject.getInt(PARAM_COUNT) >= 1) && jsonObject.has(PARAM_RESULTS)) {
 				JSONArray results = jsonObject.getJSONArray(PARAM_RESULTS);
-				JSONObject result = results.getJSONObject(0);
+				JSONObject result = null;
 				if (jsonObject.getInt(PARAM_COUNT) > 1) {
 					result = getRidByIngName(results, ingName);
 				}
