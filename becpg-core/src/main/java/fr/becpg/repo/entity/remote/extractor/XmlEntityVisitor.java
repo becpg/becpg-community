@@ -463,7 +463,11 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 							}
 						}
 						cachedAssocRef = null;
-						visitPropValue(entry.getValue(), xmlw);
+						try {
+							visitPropValue(entry.getValue(), xmlw);
+						} catch (RemoteException e) {
+							logger.warn("Error while visiting prop: " + entry.getKey() + " for nodeRef " + nodeRef + ": " + e.getMessage());
+						}
 						cachedAssocRef = tmpCachedAssocRef;
 						xmlw.writeEndElement();
 
@@ -514,7 +518,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void visitPropValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException {
+	private void visitPropValue(Serializable value, XMLStreamWriter xmlw) throws XMLStreamException, RemoteException {
 		if (value instanceof List) {
 			xmlw.writeStartElement(RemoteEntityService.ELEM_LIST);
 			for (Serializable subEl : (List<Serializable>) value) {
@@ -527,7 +531,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 			if (nodeService.exists((NodeRef) value)) {
 				visitNode((NodeRef) value, xmlw, shouldDumpAll((NodeRef) value), shouldDumpAll((NodeRef) value), false, false);
 			} else {
-				logger.warn("node does not exist: " + value);
+				throw new RemoteException("node does not exist: " + value);
 			}
 		} else if (value instanceof Date) {
 			xmlw.writeCharacters(ISO8601DateFormat.format((Date) value));
