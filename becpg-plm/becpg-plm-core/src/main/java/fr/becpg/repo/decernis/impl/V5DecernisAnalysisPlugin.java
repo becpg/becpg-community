@@ -53,35 +53,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 	
 	private List<String> availableCountries;
 	
-	private static final List<String> functions = List.of("Acidity Regulator/Buffer/Alkalizing Agents",
-        "Anticaking Agent",
-        "Antioxidant",
-        "Flour Treatment Agent",
-        "Bleaching Agent (Not for Flour)",
-        "Bulking Agent",
-        "Carrier/Solvent",
-        "Colorant",
-        "Emulsifier",
-        "Enzyme/Catalyst",
-        "Flavor",
-        "Foam Control Agent",
-        "Gases",
-        "Gelling, Thickening, Stabilizing and Firming Agents",
-        "Chewing Gum Base",
-        "Humectant",
-        "Leavening/Raising Agent",
-        "Release Agent",
-        "Surface Finishing/Glazing Agent",
-        "Preservative",
-        "Processing Aid",
-        "Sequestrant/Chelating Agent",
-        "Sweetener",
-        "Nutrient Supplement",
-        "Food",
-        "Flavor Enhancer",
-        "Fat Replacer",
-        "Carry-Over",
-        "Microorganisms");
+	private static Map<Integer, List<String>> functionsMap = new HashMap<>();
 	
 	@Override
 	public boolean isEnabled() {
@@ -111,7 +83,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 					for (int j = 0; j < matrixReports.length(); j++) {
 						JSONObject matrixReport = matrixReports.getJSONObject(i);
 						String resultIndicator = matrixReport.getString(RESULT_INDICATOR);
-						if (resultIndicator.toLowerCase().startsWith("prohibited")) {
+						if (resultIndicator.toLowerCase().startsWith("prohibited") || resultIndicator.toLowerCase().startsWith("over limit")) {
 							return "prohibited";
 						}
 						if (resultIndicator.toLowerCase().startsWith("not listed")) {
@@ -165,7 +137,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 				ingredient.put("idType", "Decernis ID");
 				ingredient.put("idValue", rid);
 				ingredient.put("percentage", ingQtyPerc);
-				ingredient.put("function", findFunction((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE)));
+				ingredient.put("function", findFunction(moduleId, (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE)));
 				ingredients.put(ingredient);
 			}
 		}
@@ -201,13 +173,41 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 		return new JSONObject(restTemplate.postForObject(url, entity, String.class, new HashMap<>()));
 	}
 	
-	private String findFunction(String ingTypeValue) {
-		for (String function : functions) {
-			if (function.toLowerCase().contains(ingTypeValue.toLowerCase())) {
+	private String findFunction(Integer moduelId, String ingTypeValue) {
+		if (!functionsMap.containsKey(moduelId)) {
+			List<String> functions = fetchFunctions(moduelId);
+			functionsMap.put(moduelId, functions);
+		}
+		for (String function : functionsMap.get(moduelId)) {
+			if (function.toLowerCase().contains(ingTypeValue.toLowerCase()) || ingTypeValue.toLowerCase().contains(function.toLowerCase())) {
 				return function;
 			}
 		}
 		throw new FormulateException("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue);
+	}
+
+	private List<String> fetchFunctions(Integer moduelId) {
+		
+		List<String> functions = new ArrayList<>();
+		
+		String url = analysisUrl + "scope/function?topic=" + moduleIdMap.get(moduelId);
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Authorization", token);
+
+		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
+		
+		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
+			JSONObject responseBody = new JSONObject(response.getBody());
+			
+			if (responseBody.has("functions")) {
+				JSONArray functionArray = responseBody.getJSONArray("functions");
+				for (int i = 0; i < functionArray.length(); i++) {
+					functions.add(functionArray.getString(i));
+				}
+			}
+		}
+		return functions;
 	}
 
 	@Override
@@ -236,13 +236,18 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 							
 							for (IngListDataItem ing : ingList) {
 								String ingName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
-								if (tabularReport.getString("decernisName").toLowerCase().contains(ingName.toLowerCase())) {
+								String legalName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
+								if ((tabularReport.has("decernisName") && tabularReport.getString("decernisName").toLowerCase().contains(ingName.toLowerCase())
+										|| tabularReport.has("name") && tabularReport.getString("name").toLowerCase().contains(ingName.toLowerCase()))
+										|| ((tabularReport.has("decernisName") && tabularReport.getString("decernisName").toLowerCase().contains(legalName.toLowerCase())
+										|| tabularReport.has("name") && tabularReport.getString("name").toLowerCase().contains(legalName.toLowerCase()))
+										)) {
 									ingItem = ing;
 									break;
 								}
 							}
 							if (ingItem != null) {
-								if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("prohibited")) {
+								if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("prohibited") || tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("over limit")) {
 									String threshold = (tabularReport.has("threshold") && !tabularReport.getString("threshold").equals("None")
 											? "(" + tabularReport.getString("threshold") + ")"
 													: "");
