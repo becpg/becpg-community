@@ -193,7 +193,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 		String url = analysisUrl + "scope/function?topic=" + moduleIdMap.get(moduelId);
 		
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", token);
+		headers.setBearerAuth(token);
 
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 		
@@ -237,11 +237,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 							for (IngListDataItem ing : ingList) {
 								String ingName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
 								String legalName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
-								if ((tabularReport.has("decernisName") && tabularReport.getString("decernisName").toLowerCase().contains(ingName.toLowerCase())
-										|| tabularReport.has("name") && tabularReport.getString("name").toLowerCase().contains(ingName.toLowerCase()))
-										|| ((tabularReport.has("decernisName") && tabularReport.getString("decernisName").toLowerCase().contains(legalName.toLowerCase())
-										|| tabularReport.has("name") && tabularReport.getString("name").toLowerCase().contains(legalName.toLowerCase()))
-										)) {
+								if (contains(tabularReport, ingName) || contains(tabularReport, legalName)) {
 									ingItem = ing;
 									break;
 								}
@@ -297,6 +293,11 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 		return requirements;
 	}
 
+	private boolean contains(JSONObject tabularReport, String ingName) {
+		return tabularReport.has("decernisName") && tabularReport.getString("decernisName").toLowerCase().contains(ingName.toLowerCase())
+				|| tabularReport.has("name") && tabularReport.getString("name").toLowerCase().contains(ingName.toLowerCase());
+	}
+
 	@Override
 	protected boolean isAvailableCountry(String country, Integer moduleId) {
 		if (availableCountries == null) {
@@ -312,7 +313,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 		String url = analysisUrl + "scope/country";
 		
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Authorization", token);
+		headers.setBearerAuth(token);
 
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 		
