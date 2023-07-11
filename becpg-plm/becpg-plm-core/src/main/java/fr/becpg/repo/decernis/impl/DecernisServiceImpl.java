@@ -300,7 +300,7 @@ public class DecernisServiceImpl implements DecernisService {
 	private HttpEntity<String> createEntity(String param) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		headers.set("Authorization", token);
+		headers.setBearerAuth(token);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		return new HttpEntity<>(param, headers);

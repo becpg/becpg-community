@@ -152,7 +152,7 @@ public abstract class AbstractDecernisAnalysisPlugin implements DecernisAnalysis
 	protected HttpEntity<String> createEntity(String body) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		headers.set("Authorization", token);
+		headers.setBearerAuth(token);
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		return new HttpEntity<>(body, headers);
