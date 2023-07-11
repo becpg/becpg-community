@@ -226,7 +226,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 						JSONArray tabularReports = report.getJSONArray("tabularReport");
 						
 						for (int j = 0; j < tabularReports.length(); j++) {
-							JSONObject tabularReport = tabularReports.getJSONObject(i);
+							JSONObject tabularReport = tabularReports.getJSONObject(j);
 							
 							String usage = tabularReport.getString("usage");
 							
