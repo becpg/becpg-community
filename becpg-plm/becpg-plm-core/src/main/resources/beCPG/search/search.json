@@ -27,7 +27,8 @@
            {"attribute": "bcpg:ingListIng" , "htmlId":"assoc_bcpg_advIlIngNot_added",  "listType": "bcpg:ingList", "operator": "NOT" }
          ], 
          "ing3" : [ 
-          {"attribute": "bcpg:ingListIng" , "htmlId":"assoc_bcpg_advIlIngAnd_added",  "listType": "bcpg:ingList", "operator": "AND" }
+          {"attribute": "bcpg:ingListIng" , "htmlId":"assoc_bcpg_advIlIngAnd_added",  "listType": "bcpg:ingList", "operator": "AND" },
+          {"attribute": "bcpg:ingListQtyPerc" , "htmlId":"prop_bcpg_ingListQtyPerc-range" }
          ],
          
         "al1":
