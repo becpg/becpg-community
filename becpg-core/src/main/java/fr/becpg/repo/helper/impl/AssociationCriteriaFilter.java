@@ -30,7 +30,7 @@ public class AssociationCriteriaFilter {
 		if (AssociationCriteriaFilterMode.RANGE.equals(mode)) {
 			String[] splitted = criteriaValue.split("\\|");
 			
-			if(!splitted[0].isBlank()) {
+			if(splitted.length > 0 && !splitted[0].isBlank()) {
 				fromRange = splitted[0];
 			}
 			if(splitted.length>1 && !splitted[1].isBlank()) {
