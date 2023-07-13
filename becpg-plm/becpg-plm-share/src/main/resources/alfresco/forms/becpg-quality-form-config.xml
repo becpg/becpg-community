@@ -138,7 +138,7 @@
 					<field id="qa:product" set="product-info" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct&amp;excludeProps=bcpg:productState%7CArchived,bcpg:productState%7CRefused
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
@@ -239,7 +239,7 @@
 					<!-- product-info -->
 					<field id="qa:product" set="product-info" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct&amp;excludeProps=bcpg:productState%7CArchived,bcpg:productState%7CRefused
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
@@ -344,7 +344,7 @@
 					<field id="qa:product" set="product-info" >
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:product?classNames=bcpg:finishedProduct,bcpg:semiFinishedProduct&amp;excludeProps=bcpg:productState%7CArchived,bcpg:productState%7CRefused
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
