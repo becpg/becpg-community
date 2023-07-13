@@ -1,6 +1,8 @@
 package fr.becpg.repo.decernis.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,31 +10,39 @@ import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.decernis.DecernisAnalysisPlugin;
+import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 @Service
-public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
+public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
 	private static final String RESULT_INDICATOR = "resultIndicator";
 
@@ -42,6 +52,35 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 
 	private static final Log logger = LogFactory.getLog(V5DecernisAnalysisPlugin.class);
 	
+	private final NodeService nodeService;
+	
+	private final SystemConfigurationService systemConfigurationService;
+	
+	private final RestTemplate restTemplate;
+	
+	public V5DecernisAnalysisPlugin(NodeService nodeService, SystemConfigurationService systemConfigurationService, @Qualifier("logRestTemplate") RestTemplate restTemplate) {
+		super();
+		this.nodeService = nodeService;
+		this.systemConfigurationService = systemConfigurationService;
+		this.restTemplate = restTemplate;
+	}
+	
+	public String serverUrl() {
+		return systemConfigurationService.confValue("beCPG.decernis.serverUrl");
+	}
+	public String analysisUrl() {
+		return systemConfigurationService.confValue("beCPG.decernis.analysisUrl");
+	}
+	public String companyName() {
+		return systemConfigurationService.confValue("beCPG.decernis.companyName");
+	}
+	public String token() {
+		return systemConfigurationService.confValue("beCPG.decernis.token");
+	}
+	public String addInfoReqCtrl() {
+		return systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrll");
+	}
+
 	private static final Map<Integer, String> moduleIdMap = new HashMap<>();
 
 	static {
@@ -57,7 +96,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 	
 	@Override
 	public boolean isEnabled() {
-		return this.analysisUrl != null && !this.analysisUrl.equals(serverUrl);
+		return analysisUrl() != null && !analysisUrl().isBlank() && !analysisUrl().equals(serverUrl());
 	}
 	
 	@Override
@@ -66,7 +105,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 	}
 
 	@Override
-	protected String extractResult(JSONObject analysisResults) {
+	public String extractAnalysisResult(JSONObject analysisResults) {
 		
 		boolean notListed = false;
 		
@@ -81,7 +120,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 					JSONArray matrixReports = report.getJSONArray("matrixReport");
 					
 					for (int j = 0; j < matrixReports.length(); j++) {
-						JSONObject matrixReport = matrixReports.getJSONObject(i);
+						JSONObject matrixReport = matrixReports.getJSONObject(j);
 						String resultIndicator = matrixReport.getString(RESULT_INDICATOR);
 						if (resultIndicator.toLowerCase().startsWith("prohibited") || resultIndicator.toLowerCase().startsWith("over limit")) {
 							return "prohibited";
@@ -102,7 +141,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 	}
 
 	@Override
-	protected JSONObject postRecipeAnalysis(RegulatoryContext context, Set<String> countries, String usage, Integer moduleId) throws JSONException {
+	public JSONObject postRecipeAnalysis(RegulatoryContext context, Set<String> countries, String usage, Integer moduleId) throws JSONException {
 		
 		JSONObject payload = new JSONObject();
 		
@@ -166,7 +205,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 		
 		scopeDetail.put("usage", usages);
 		
-		String url = analysisUrl + "recipe-analysis/transaction";
+		String url = analysisUrl() + "/recipe-analysis/transaction";
 		
 		HttpEntity<String> entity = createEntity(payload.toString());
 		
@@ -179,7 +218,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 			functionsMap.put(moduelId, functions);
 		}
 		for (String function : functionsMap.get(moduelId)) {
-			if (function.toLowerCase().contains(ingTypeValue.toLowerCase()) || ingTypeValue.toLowerCase().contains(function.toLowerCase())) {
+			if (function.trim().equalsIgnoreCase(ingTypeValue.trim())) {
 				return function;
 			}
 		}
@@ -190,10 +229,10 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 		
 		List<String> functions = new ArrayList<>();
 		
-		String url = analysisUrl + "scope/function?topic=" + moduleIdMap.get(moduelId);
+		String url = analysisUrl() + "/scope/function?topic=" + moduleIdMap.get(moduelId);
 		
 		HttpHeaders headers = new HttpHeaders();
-		headers.setBearerAuth(token);
+		headers.setBearerAuth(token());
 
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 		
@@ -211,82 +250,92 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 	}
 
 	@Override
-	protected List<ReqCtrlListDataItem> extractRequirements(JSONObject analysisResults, Map<String, List<IngListDataItem>> ings, String country) {
+	public List<ReqCtrlListDataItem> extractRequirements(JSONObject analysisResults, Map<String, List<IngListDataItem>> ings, String country, Integer moduleId) {
+		
+		if (!isAvailableCountry(country)) {
+			return Collections.emptyList();
+		}
+		
+		if (!analysisResults.has(RECIPE_ANALAYSIS_REPORT)) {
+			return Collections.emptyList();
+		}
+		
+		JSONObject recipeAnalaysisReport = analysisResults.getJSONObject(RECIPE_ANALAYSIS_REPORT);
+		
+		if (!recipeAnalaysisReport.has(RECIPE_REPORT)) {
+			return Collections.emptyList();
+		}
+		
+		JSONArray recipeReport = recipeAnalaysisReport.getJSONArray(RECIPE_REPORT);
+		
 		List<ReqCtrlListDataItem> requirements = new ArrayList<>();
 		
-		if (analysisResults.has(RECIPE_ANALAYSIS_REPORT)) {
-			JSONObject recipeAnalaysisReport = analysisResults.getJSONObject(RECIPE_ANALAYSIS_REPORT);
-			if (recipeAnalaysisReport.has(RECIPE_REPORT)) {
-				JSONArray recipeReport = recipeAnalaysisReport.getJSONArray(RECIPE_REPORT);
+		for (int i = 0; i < recipeReport.length(); i++) {
+			JSONObject report = recipeReport.getJSONObject(i);
+			if (report.has("country") && report.getString("country").equals(country)) {
 				
-				for (int i = 0; i < recipeReport.length(); i++) {
-					JSONObject report = recipeReport.getJSONObject(i);
-					if (report.has("country") && report.getString("country").equals(country)) {
-						
-						JSONArray tabularReports = report.getJSONArray("tabularReport");
-						
-						for (int j = 0; j < tabularReports.length(); j++) {
-							JSONObject tabularReport = tabularReports.getJSONObject(j);
-							
-							String usage = tabularReport.getString("usage");
-							
-							List<IngListDataItem> ingList = ings.get(tabularReport.getString("did"));
-							
-							IngListDataItem ingItem = null;
-							
-							for (IngListDataItem ing : ingList) {
-								String ingName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
-								String legalName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
-								if (contains(tabularReport, ingName) || contains(tabularReport, legalName)) {
-									ingItem = ing;
-									break;
-								}
-							}
-							if (ingItem != null) {
-								if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("prohibited") || tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("over limit")) {
-									String threshold = (tabularReport.has("threshold") && !tabularReport.getString("threshold").equals("None")
-											? "(" + tabularReport.getString("threshold") + ")"
-													: "");
-									
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Forbidden);
-									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-									
-									requirements.add(reqCtrlItem);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding prohibited ing :" + tabularReport.getString("did"));
-									}
-									
-								} else if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("not listed")) {
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Tolerated);
-									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-									requirements.add(reqCtrlItem);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding not listed ing :" + tabularReport.getString("did"));
-									}
-								} else if (Boolean.TRUE.equals(addInfoReqCtrl)) {
-									
-									String threshold = (tabularReport.has("threshold") && !tabularReport.getString("threshold").equals("None")
-											? tabularReport.getString("threshold")
-													: "");
-									
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, tabularReport.getString(RESULT_INDICATOR),
-											threshold);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Info);
-									
-									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-									requirements.add(reqCtrlItem);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + tabularReport.getString("did"));
-									}
-									
-								}
-							}
+				JSONArray tabularReports = report.getJSONArray("tabularReport");
+				
+				for (int j = 0; j < tabularReports.length(); j++) {
+					JSONObject tabularReport = tabularReports.getJSONObject(j);
+					
+					String usage = tabularReport.getString("usage");
+					
+					List<IngListDataItem> ingList = ings.get(tabularReport.getString("did"));
+					
+					IngListDataItem ingItem = null;
+					
+					for (IngListDataItem ing : ingList) {
+						String ingName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
+						String legalName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
+						if (contains(tabularReport, ingName) || contains(tabularReport, legalName)) {
+							ingItem = ing;
+							break;
 						}
-						
+					}
+					if (ingItem != null) {
+						if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("prohibited") || tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("over limit")) {
+							String threshold = (tabularReport.has("threshold") && !tabularReport.getString("threshold").equals("None")
+									? "(" + tabularReport.getString("threshold") + ")"
+											: "");
+							
+							MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
+							ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Forbidden);
+							reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+							
+							requirements.add(reqCtrlItem);
+							if (logger.isDebugEnabled()) {
+								logger.debug("Adding prohibited ing :" + tabularReport.getString("did"));
+							}
+							
+						} else if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("not listed")) {
+							MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
+							ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Tolerated);
+							reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+							requirements.add(reqCtrlItem);
+							if (logger.isDebugEnabled()) {
+								logger.debug("Adding not listed ing :" + tabularReport.getString("did"));
+							}
+						} else if (Boolean.TRUE.equals(addInfoReqCtrl())) {
+							
+							String threshold = (tabularReport.has("threshold") && !tabularReport.getString("threshold").equals("None")
+									? tabularReport.getString("threshold")
+											: "");
+							
+							MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, tabularReport.getString(RESULT_INDICATOR),
+									threshold);
+							ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Info);
+							
+							reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+							requirements.add(reqCtrlItem);
+							if (logger.isDebugEnabled()) {
+								logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + tabularReport.getString("did"));
+							}
+							
+						}
 					}
 				}
+				
 			}
 		}
 		
@@ -298,8 +347,7 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 				|| tabularReport.has("name") && tabularReport.getString("name").toLowerCase().contains(ingName.toLowerCase());
 	}
 
-	@Override
-	protected boolean isAvailableCountry(String country, Integer moduleId) {
+	private boolean isAvailableCountry(String country) {
 		if (availableCountries == null) {
 			availableCountries = fetchAvailableCountries();
 		}
@@ -310,10 +358,10 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 		
 		List<String> countries = new ArrayList<>();
 		
-		String url = analysisUrl + "scope/country";
+		String url = analysisUrl() + "/scope/country";
 		
 		HttpHeaders headers = new HttpHeaders();
-		headers.setBearerAuth(token);
+		headers.setBearerAuth(token());
 
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 		
@@ -331,5 +379,24 @@ public class V5DecernisAnalysisPlugin extends AbstractDecernisAnalysisPlugin {
 		return countries;
 	}
 
+	protected ReqCtrlListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
+		ReqCtrlListDataItem reqCtrlItem = new ReqCtrlListDataItem();
+		reqCtrlItem.setReqType(reqType);
+		reqCtrlItem.setCharact(ing);
+		reqCtrlItem.addSource(ing);
+		reqCtrlItem.setReqDataType(RequirementDataType.Specification);
+		reqCtrlItem.setReqMlMessage(reqCtrlMessage);
+		reqCtrlItem.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+		return reqCtrlItem;
+	}
+	
+	protected HttpEntity<String> createEntity(String body) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+		headers.setBearerAuth(token());
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		return new HttpEntity<>(body, headers);
+	}
 
 }
