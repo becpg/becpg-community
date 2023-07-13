@@ -101,7 +101,6 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
 				formulatedProduct.setRegulatoryFormulatedDate(new Date());
-				updateChecksums(formulatedProduct);
 				return requirements;
 
 			} catch (FormulateException e) {
@@ -115,6 +114,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				return Arrays.asList(req);
 
 			} finally {
+				updateChecksums(formulatedProduct);
 				if (logger.isDebugEnabled() && (watch != null)) {
 					watch.stop();
 					logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds() + "s");
@@ -163,7 +163,11 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		StringBuilder checksumBuilder = new StringBuilder();
 		checksumBuilder.append(createRequirementChecksum(countries, usages));
 		
-		formulatedProduct.getIngList().stream().filter(ing -> ing != null && ing.getNodeRef() != null).map(ing -> ing.getNodeRef().toString() + ing.getIng() + ing.getValue()).sorted().forEach(checksumBuilder::append);
+		formulatedProduct.getIngList().stream()
+			.filter(ing -> ing != null && ing.getNodeRef() != null)
+			.map(ing -> ing.getNodeRef().toString() + ing.getIng() + ing.getValue())
+			.sorted()
+			.forEach(checksumBuilder::append);
 		
 		return checksumBuilder.toString();
 	}
