@@ -289,7 +289,7 @@ var Filters =
          filterParams.query += " " + (Filters.TYPE_MAP[parsedArgs.type] || "");
          if(args.searchTerm!=null &&  args.searchTerm != "" ){
          	filterParams.query += " AND (@cm\\:name:\""+args.searchTerm+"\" OR @cm\\:title:\""+args.searchTerm+"\" OR  " +
-         			"@bcpg\\:erpCode:\""+args.searchTerm+"\" OR  @bcpg\\:code:\""+args.searchTerm+"\" OR  @cm\\:description:\""+args.searchTerm+"\")";	
+         			"@bcpg\\:erpCode:\""+args.searchTerm+"\" OR  @bcpg\\:code:\""+args.searchTerm+"\" OR  @bcpg\\:eanCode:\""+args.searchTerm+"\" OR  @cm\\:description:\""+args.searchTerm+"\")";	
          }
       }
 
