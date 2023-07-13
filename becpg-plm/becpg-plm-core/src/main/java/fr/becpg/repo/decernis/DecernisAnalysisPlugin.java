@@ -1,13 +1,29 @@
 package fr.becpg.repo.decernis;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.json.JSONObject;
+
 import fr.becpg.repo.decernis.model.RegulatoryContext;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
 public interface DecernisAnalysisPlugin {
+
+	public static final String MESSAGE_PROHIBITED_ING = "message.decernis.ingredient.prohibited";
+	public static final String MESSAGE_PERMITTED_ING = "message.decernis.ingredient.permitted";
+	public static final String MESSAGE_NOTLISTED_ING = "message.decernis.ingredient.notListed";
 
 	boolean isEnabled();
 	
 	boolean needsRecipeId();
 	
-	void analyzeRecipe(RegulatoryContext context);
+	List<ReqCtrlListDataItem> extractRequirements(JSONObject analysisResults, Map<String, List<IngListDataItem>> ings, String country, Integer moduleId);
+
+	JSONObject postRecipeAnalysis(RegulatoryContext productContext, Set<String> countries, String usage, Integer moduleId);
+
+	String extractAnalysisResult(JSONObject analysis);
 	
 }
