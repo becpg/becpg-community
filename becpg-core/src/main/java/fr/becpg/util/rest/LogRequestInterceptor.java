@@ -1,4 +1,4 @@
-package fr.becpg.repo.decernis.impl;
+package fr.becpg.util.rest;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,14 +12,14 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
 /**
- * <p>DecernisRequestInterceptor class.</p>
+ * <p>LogRequestInterceptor class.</p>
  *
  * @author matthieu
  * @version $Id: $Id
  */
-public class DecernisRequestInterceptor implements ClientHttpRequestInterceptor {
+public class LogRequestInterceptor implements ClientHttpRequestInterceptor {
 
-    private static final Logger log = LoggerFactory.getLogger(DecernisRequestInterceptor.class);
+    private static final Logger log = LoggerFactory.getLogger(LogRequestInterceptor.class);
 
     /** {@inheritDoc} */
     @Override

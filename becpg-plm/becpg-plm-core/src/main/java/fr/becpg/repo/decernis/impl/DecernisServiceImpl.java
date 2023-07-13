@@ -18,19 +18,15 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -52,6 +48,7 @@ import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>DecernisServiceImpl class.</p>
@@ -69,6 +66,10 @@ public class DecernisServiceImpl implements DecernisService {
 	private static final String MESSAGE_NO_CODE_CHARACT = "message.decernis.charact.noCode";
 	private static final String MESSAGE_SEVERAL_RID_ING = "message.decernis.ingredient.severalRid";
 
+	private static final String PROHIBITED = "message.decernis.ingredient.result.prohibited";
+	private static final String PERMITTED = "message.decernis.ingredient.result.permitted";
+	private static final String NOT_LISTED = "message.decernis.ingredient.result.notListed";
+
 	private static final String PARAM_COMPANY = "company";
 	private static final String PARAM_FORMULA = "formula";
 	private static final String PARAM_COUNT = "count";
@@ -77,23 +78,13 @@ public class DecernisServiceImpl implements DecernisService {
 	
 	private static final String MISSING_VALUE = "NA";
 
-	@Value("${beCPG.decernis.serverUrl}")
-	private String serverUrl;
+	private final RestTemplate restTemplate;
 
-	@Value("${beCPG.decernis.companyName}")
-	private String companyName;
-
-	@Value("${beCPG.decernis.token}")
-	private String token;
-
-	@Value("#{new Boolean('${beCPG.formulation.specification.addInfoReqCtrll}'.trim())}")
-	private Boolean addInfoReqCtrl;
-
-	@Autowired
-	private NodeService nodeService;
+	private final NodeService nodeService;
 	
-	@Autowired
-	private DecernisAnalysisPlugin[] decernisPlugins;
+	private final DecernisAnalysisPlugin[] decernisPlugins;
+	
+	private final SystemConfigurationService systemConfigurationService;
 	
 	private static final Map<String, Integer> moduleIdMap = new HashMap<>();
 	
@@ -113,25 +104,23 @@ public class DecernisServiceImpl implements DecernisService {
 		moduleIdMap.put("FORMULATION_CHECK", 100);
 	}
 	
-	private RestTemplate restTemplate;
-	
-	/**
-	 * <p>Constructor for DecernisServiceImpl.</p>
-	 */
-	public DecernisServiceImpl() {
+	public DecernisServiceImpl(@Qualifier("logRestTemplate") RestTemplate restTemplate, NodeService nodeService, DecernisAnalysisPlugin[] decernisPlugins,
+			SystemConfigurationService systemConfigurationService) {
 		super();
-		if (logger.isTraceEnabled()) {
-			restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
-
-			List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-			if (CollectionUtils.isEmpty(interceptors)) {
-				interceptors = new ArrayList<>();
-			}
-			interceptors.add(new DecernisRequestInterceptor());
-			restTemplate.setInterceptors(interceptors);
-		} else {
-			restTemplate = new RestTemplate();
-		}
+		this.restTemplate = restTemplate;
+		this.nodeService = nodeService;
+		this.decernisPlugins = decernisPlugins;
+		this.systemConfigurationService = systemConfigurationService;
+	}
+	
+	public String serverUrl() {
+		return systemConfigurationService.confValue("beCPG.decernis.serverUrl");
+	}
+	public String companyName() {
+		return systemConfigurationService.confValue("beCPG.decernis.companyName");
+	}
+	public String token() {
+		return systemConfigurationService.confValue("beCPG.decernis.token");
 	}
 
 	/** {@inheritDoc} */
@@ -151,14 +140,10 @@ public class DecernisServiceImpl implements DecernisService {
 				}
 				
 				if (!DecernisMode.DECERNIS_ONLY.equals(context.getRegulatoryMode())) {
-					for (DecernisAnalysisPlugin plugin : decernisPlugins) {
-						if (plugin.isEnabled()) {
-							if (plugin.needsRecipeId() && !recipeCreated) {
-								createRecipe(context);
-							}
-							plugin.analyzeRecipe(context);
-						}
+					if (getAnalysisPlugin().needsRecipeId() && !recipeCreated) {
+						createRecipe(context);
 					}
+					analyzeRecipe(context);
 					checkUsagesID(context);
 				}
 				
@@ -177,9 +162,63 @@ public class DecernisServiceImpl implements DecernisService {
 		} catch (Exception e) {
 			throw new FormulateException("Unexpected decernis error: " + e.getMessage(), e);
 		}
-		
+	}
+	
+	private DecernisAnalysisPlugin getAnalysisPlugin() {
+		for (DecernisAnalysisPlugin plugin : decernisPlugins) {
+			if (plugin.isEnabled()) {
+				return plugin;
+			}
+		}
+		return null;
+	}
+	
+	private void analyzeRecipe(RegulatoryContext productContext) {
+		for (RegulatoryContextItem contextItem : productContext.getContextItems()) {
+			if (!contextItem.isEmpty()) {
+				List<JSONObject> analysisList = analyzeContext(productContext, contextItem.getUsages(), contextItem.getCountries(), contextItem.getModuleId());
+				contextItem.getItem().setRegulatoryResult(extractResult(analysisList));
+			}
+		}
+		List<JSONObject> analysisList = analyzeContext(productContext, productContext.getUsages(), productContext.getCountries(), productContext.getModuleId());
+		productContext.getProduct().setRegulatoryResult(extractResult(analysisList));
 	}
 
+	private String extractResult(List<JSONObject> analysisList) {
+		
+		boolean notListed = false;
+		
+		for (JSONObject analysis : analysisList) {
+			String result = getAnalysisPlugin().extractAnalysisResult(analysis);
+			if (result.startsWith("prohibited")) {
+				return I18NUtil.getMessage(PROHIBITED);
+			}
+			if (result.startsWith("not listed")) {
+				notListed = true;
+			}
+		}
+		
+		if (notListed) {
+			return I18NUtil.getMessage(NOT_LISTED);
+		}
+		
+		return I18NUtil.getMessage(PERMITTED);
+	}
+	
+	private List<JSONObject> analyzeContext(RegulatoryContext productContext, Set<String> usages, Set<String> countries, Integer moduleId) {
+		List<JSONObject> analysisList = new ArrayList<>();
+		for (String usage : usages) {
+			JSONObject analysis = getAnalysisPlugin().postRecipeAnalysis(productContext, countries, usage, moduleId);
+			if (analysis != null) {
+				for (String country : countries) {
+					productContext.getRequirements().addAll(getAnalysisPlugin().extractRequirements(analysis, productContext.getIngRegulatoryMapping(), country, moduleId));
+				}
+				analysisList.add(analysis);
+			}
+		}
+		return analysisList;
+	}
+	
 	private void checkUsagesID(RegulatoryContext context) {
 		for (NodeRef usageRef : context.getProduct().getRegulatoryUsages()) {
 			updateUsageID(usageRef, context.getModuleId());
@@ -204,7 +243,7 @@ public class DecernisServiceImpl implements DecernisService {
 		String recipeId = null;
 		
 		if (recipePayload != null) {
-			String url = serverUrl + "formulas";
+			String url = serverUrl() + "/formulas";
 			HttpEntity<String> request = createEntity(recipePayload.toString());
 			JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
 			if (jsonObject.has("id")) {
@@ -229,7 +268,7 @@ public class DecernisServiceImpl implements DecernisService {
 
 		ret.put("spec", code);
 		ret.put("name", code + " " + context.getProduct().getName());
-		ret.put(PARAM_COMPANY, companyName);
+		ret.put(PARAM_COMPANY, companyName());
 
 		JSONArray ingredients = new JSONArray();
 		ret.put("ingredients", ingredients);
@@ -300,7 +339,7 @@ public class DecernisServiceImpl implements DecernisService {
 	private HttpEntity<String> createEntity(String param) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		headers.setBearerAuth(token);
+		headers.setBearerAuth(token());
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		return new HttpEntity<>(param, headers);
@@ -353,10 +392,10 @@ public class DecernisServiceImpl implements DecernisService {
 
 		String ingredientId = "";
 		
-		String url = serverUrl + "ingredients?current_company={company}&q={query}&identifier_type={type}&limit=25";
+		String url = serverUrl() + "/ingredients?current_company={company}&q={query}&identifier_type={type}&limit=25";
 
 		Map<String, String> params = new HashMap<>();
-		params.put(PARAM_COMPANY, companyName);
+		params.put(PARAM_COMPANY, companyName());
 		
 		if (!buildQuery(ingListDataItem, params)) {
 			params.put(PARAM_QUERY, ingName);
@@ -451,10 +490,10 @@ public class DecernisServiceImpl implements DecernisService {
 	private void deleteRecipe(String recipeId) {
 		try {
 			Map<String, String> params = new HashMap<>();
-			params.put(PARAM_COMPANY, companyName);
+			params.put(PARAM_COMPANY, companyName());
 			params.put(PARAM_FORMULA, recipeId);
 			
-			restTemplate.exchange(serverUrl + "formulas/" + recipeId + "?current_company={company}", HttpMethod.DELETE, createEntity(null), String.class,
+			restTemplate.exchange(serverUrl() + "/formulas/" + recipeId + "?current_company={company}", HttpMethod.DELETE, createEntity(null), String.class,
 					params);
 		} catch (Exception e) {
 			logger.error("failed to delete recipe: " + recipeId, e);
@@ -542,7 +581,7 @@ public class DecernisServiceImpl implements DecernisService {
 		
 		String usageCode = extractCode(usageRef);
 
-		ResponseEntity<String> response = restTemplate.exchange(serverUrl + "usages/structurized" + "?module_id=" + moduleId + "&phrase=" + usageCode, HttpMethod.GET, createEntity(null), String.class,
+		ResponseEntity<String> response = restTemplate.exchange(serverUrl() + "/usages/structurized" + "?module_id=" + moduleId + "&phrase=" + usageCode, HttpMethod.GET, createEntity(null), String.class,
 				new HashMap<>());
 		
 		if (HttpStatus.OK.equals(response.getStatusCode()) && response.getBody() != null) {
