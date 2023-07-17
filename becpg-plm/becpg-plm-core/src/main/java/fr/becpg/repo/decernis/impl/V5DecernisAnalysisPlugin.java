@@ -92,7 +92,7 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	
 	private List<String> availableCountries;
 	
-	private static Map<Integer, List<String>> functionsMap = new HashMap<>();
+	private Map<Integer, List<String>> functionsMap = new HashMap<>();
 	
 	@Override
 	public boolean isEnabled() {
@@ -250,7 +250,7 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	}
 
 	@Override
-	public List<ReqCtrlListDataItem> extractRequirements(JSONObject analysisResults, Map<String, List<IngListDataItem>> ings, String country, Integer moduleId) {
+	public List<ReqCtrlListDataItem> extractRequirements(JSONObject analysisResults, List<IngListDataItem> ingList, String country, Integer moduleId) {
 		
 		if (!isAvailableCountry(country)) {
 			return Collections.emptyList();
@@ -280,19 +280,11 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 					JSONObject tabularReport = tabularReports.getJSONObject(j);
 					
 					String usage = tabularReport.getString("usage");
+					String decernisID = tabularReport.getString("did");
+					String function = tabularReport.getString("function");
 					
-					List<IngListDataItem> ingList = ings.get(tabularReport.getString("did"));
+					IngListDataItem ingItem = findIngredientItem(ingList, decernisID, function);
 					
-					IngListDataItem ingItem = null;
-					
-					for (IngListDataItem ing : ingList) {
-						String ingName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
-						String legalName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_LEGAL_NAME);
-						if (contains(tabularReport, ingName) || contains(tabularReport, legalName)) {
-							ingItem = ing;
-							break;
-						}
-					}
 					if (ingItem != null) {
 						if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("prohibited") || tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("over limit")) {
 							String threshold = (tabularReport.has("threshold") && !tabularReport.getString("threshold").equals("None")
@@ -342,9 +334,16 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		return requirements;
 	}
 
-	private boolean contains(JSONObject tabularReport, String ingName) {
-		return tabularReport.has("decernisName") && tabularReport.getString("decernisName").toLowerCase().contains(ingName.toLowerCase())
-				|| tabularReport.has("name") && tabularReport.getString("name").toLowerCase().contains(ingName.toLowerCase());
+	private IngListDataItem findIngredientItem(List<IngListDataItem> ingList, String decernisID, String function) {
+		for (IngListDataItem ing : ingList) {
+			if (decernisID.equals(nodeService.getProperty(ing.getIng(), PLMModel.PROP_REGULATORY_CODE))) {
+				NodeRef ingType = (NodeRef) nodeService.getProperty(ing.getIng(), PLMModel.PROP_ING_TYPE_V2);
+				if (function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE))) {
+					return ing;
+				}
+			}
+		}
+		return null;
 	}
 
 	private boolean isAvailableCountry(String country) {

@@ -211,7 +211,7 @@ public class DecernisServiceImpl implements DecernisService {
 			JSONObject analysis = getAnalysisPlugin().postRecipeAnalysis(productContext, countries, usage, moduleId);
 			if (analysis != null) {
 				for (String country : countries) {
-					productContext.getRequirements().addAll(getAnalysisPlugin().extractRequirements(analysis, productContext.getIngRegulatoryMapping(), country, moduleId));
+					productContext.getRequirements().addAll(getAnalysisPlugin().extractRequirements(analysis, productContext.getProduct().getIngList(), country, moduleId));
 				}
 				analysisList.add(analysis);
 			}
