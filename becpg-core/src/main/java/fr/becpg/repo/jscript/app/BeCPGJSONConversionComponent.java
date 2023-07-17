@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript.app;
 
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +32,9 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.json.simple.JSONObject;
+import org.springframework.extensions.surf.util.URLEncoder;
 
+import fr.becpg.model.ReportModel;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.security.SecurityService;
 
@@ -46,6 +49,9 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 	private AssociationService associationService;
 
 	private SecurityService securityService;
+	
+	private static final String REPORT_DOWNLOAD_API_URL = "becpg/report/node/{0}/{1}/{2}/content/{3}";
+
 
 	/**
 	 * <p>Setter for the field <code>securityService</code>.</p>
@@ -106,6 +112,15 @@ public class BeCPGJSONConversionComponent extends JSONConversionComponent {
 
 				// Set root values
 				setRootValues(nodeInfo, json, useShortQNames);
+				
+				if (ReportModel.TYPE_REPORT.equals(nodeService.getType(nodeRef))) {
+					json.put("contentURL", MessageFormat.format(
+							REPORT_DOWNLOAD_API_URL,
+	                                nodeRef.getStoreRef().getProtocol(),
+	                                nodeRef.getStoreRef().getIdentifier(),
+	                                nodeRef.getId(),
+	                                URLEncoder.encode(nodeInfo.getName())));
+				}
 
 				// add permissions
 				json.put("permissions", permissionsToJSON(nodeRef));
