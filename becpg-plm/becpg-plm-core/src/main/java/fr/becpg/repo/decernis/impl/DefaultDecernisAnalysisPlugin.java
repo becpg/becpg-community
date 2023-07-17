@@ -29,6 +29,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisAnalysisPlugin;
 import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
@@ -217,7 +218,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	}
 
 	@Override
-	public List<ReqCtrlListDataItem> extractRequirements(JSONObject analysisResults, Map<String, List<IngListDataItem>> ings, String country, Integer moduleId) {
+	public List<ReqCtrlListDataItem> extractRequirements(JSONObject analysisResults, List<IngListDataItem> ingList, String country, Integer moduleId) {
 		
 		if (!isAvailableCountry(country, moduleId)) {
 			return Collections.emptyList();
@@ -238,63 +239,54 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		for (int row = 0; row < tabularResults.length(); row++) {
 			JSONObject result = tabularResults.getJSONObject(row);
 			if (result.has("did") && result.has(RESULT_INDICATOR)) {
-				if (ings.containsKey(result.getString("did")) && (ings.get(result.getString("did")) != null)) {
-					String usage = (analysisResults.has(SEARCH_PARAMETERS)
-							&& analysisResults.getJSONObject(SEARCH_PARAMETERS).has(PARAM_USAGE)
-							? analysisResults.getJSONObject(SEARCH_PARAMETERS).getString("usage")
-									: "");
+				
+				String decernisID = result.getString("did");
+				String function = result.getString("function_name");
+				IngListDataItem ingItem = findIngredientItem(ingList, decernisID, function);
+				
+				String usage = (analysisResults.has(SEARCH_PARAMETERS) && analysisResults.getJSONObject(SEARCH_PARAMETERS).has(PARAM_USAGE)
+						? analysisResults.getJSONObject(SEARCH_PARAMETERS).getString("usage")
+						: "");
 					
-					List<IngListDataItem> ingList = ings.get(result.getString("did"));
-					
-					IngListDataItem ingItem = null;
-					
-					for (IngListDataItem ing : ingList) {
-						String ingName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
-						if (result.getString("ingredient").toLowerCase().contains(ingName.toLowerCase())) {
-							ingItem = ing;
-							break;
+				if (ingItem != null) {
+					if (result.getString(RESULT_INDICATOR).toLowerCase().startsWith("prohibited")) {
+						String threshold = (result.has(THRESHOLD) && !result.getString(THRESHOLD).equals("None")
+								? "(" + result.getString(THRESHOLD) + ")"
+										: "");
+						
+						MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
+						ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Forbidden);
+						reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+						
+						reqCtrlList.add(reqCtrlItem);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Adding prohibited ing :" + result.getString("did"));
 						}
-					}
-					if (ingItem != null) {
-						if (result.getString(RESULT_INDICATOR).toLowerCase().startsWith("prohibited")) {
-							String threshold = (result.has(THRESHOLD) && !result.getString(THRESHOLD).equals("None")
-									? "(" + result.getString(THRESHOLD) + ")"
-											: "");
-							
-							MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
-							ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Forbidden);
-							reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-							
-							reqCtrlList.add(reqCtrlItem);
-							if (logger.isDebugEnabled()) {
-								logger.debug("Adding prohibited ing :" + result.getString("did"));
-							}
-							
-						} else if (result.getString(RESULT_INDICATOR).toLowerCase().startsWith("not listed")) {
-							MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
-							ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Tolerated);
-							reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-							reqCtrlList.add(reqCtrlItem);
-							if (logger.isDebugEnabled()) {
-								logger.debug("Adding not listed ing :" + result.getString("did"));
-							}
-						} else if (Boolean.TRUE.equals(addInfoReqCtrl())) {
-							
-							String threshold = (result.has(THRESHOLD) && !result.getString(THRESHOLD).equals("None")
-									? result.getString(THRESHOLD)
-											: "");
-							
-							MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, result.getString(RESULT_INDICATOR),
-									threshold);
-							ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Info);
-							
-							reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-							reqCtrlList.add(reqCtrlItem);
-							if (logger.isDebugEnabled()) {
-								logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.getString("did"));
-							}
-							
+						
+					} else if (result.getString(RESULT_INDICATOR).toLowerCase().startsWith("not listed")) {
+						MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
+						ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Tolerated);
+						reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+						reqCtrlList.add(reqCtrlItem);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Adding not listed ing :" + result.getString("did"));
 						}
+					} else if (Boolean.TRUE.equals(addInfoReqCtrl())) {
+						
+						String threshold = (result.has(THRESHOLD) && !result.getString(THRESHOLD).equals("None")
+								? result.getString(THRESHOLD)
+										: "");
+						
+						MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, result.getString(RESULT_INDICATOR),
+								threshold);
+						ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Info);
+						
+						reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+						reqCtrlList.add(reqCtrlItem);
+						if (logger.isDebugEnabled()) {
+							logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.getString("did"));
+						}
+						
 					}
 				}
 			}
@@ -302,6 +294,18 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		return reqCtrlList;
 	}
 	
+	private IngListDataItem findIngredientItem(List<IngListDataItem> ingList, String decernisID, String function) {
+		for (IngListDataItem ing : ingList) {
+			if (decernisID.equals(nodeService.getProperty(ing.getIng(), PLMModel.PROP_REGULATORY_CODE))) {
+				NodeRef ingType = (NodeRef) nodeService.getProperty(ing.getIng(), PLMModel.PROP_ING_TYPE_V2);
+				if (function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE))) {
+					return ing;
+				}
+			}
+		}
+		return null;
+	}
+
 	protected ReqCtrlListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
 		ReqCtrlListDataItem reqCtrlItem = new ReqCtrlListDataItem();
 		reqCtrlItem.setReqType(reqType);
