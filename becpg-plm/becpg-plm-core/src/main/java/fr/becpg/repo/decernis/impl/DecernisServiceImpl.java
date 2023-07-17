@@ -486,8 +486,8 @@ public class DecernisServiceImpl implements DecernisService {
 								IngListDataItem ingItem = null;
 								
 								for (IngListDataItem ing : ingList) {
-									String ingName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
-									if (result.getString("ingredient").contains(ingName)) {
+									String ingName = (String) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_CHARACT_NAME);
+									if (result.getString("ingredient").toLowerCase().contains(ingName.toLowerCase())) {
 										ingItem = ing;
 										break;
 									}
