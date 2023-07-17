@@ -1033,6 +1033,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
 					}
+					
+					value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName());
+					if ((value == null) || value.isEmpty()) {
+						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_VALUE_PER_SERVING.getLocalName());
+						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName(), value);
+					}
 
 					value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_MINI.getLocalName());
 					if ((value == null) || value.isEmpty()) {
