@@ -222,6 +222,7 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 				return function;
 			}
 		}
+		logger.error("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue + ", available functions are: " + functionsMap.get(moduelId));
 		throw new FormulateException("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue);
 	}
 
