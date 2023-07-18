@@ -745,6 +745,7 @@
 					<show id="pjt:projectManager" />
 					<show id="pjt:projectPriority" />
 					<show id="pjt:projectState" />
+					<show id="bcpg:entityTplRef" />
 					<show id="pjt:projectHierarchy1" />
 					<show id="pjt:projectHierarchy2" />
 					<show id="pjt:projectOrigin" />
@@ -775,9 +776,14 @@
 						</control>
 					</field>
 					<field id="pjt:projectState" set="mainInfo">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
-							<control-param name="insertBlank">true</control-param>
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
 							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:entityTplRef" set="mainInfo" >
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/pjt:project?classNames=pjt:project,bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse</control-param>
 						</control>
 					</field>
 					<field id="pjt:projectHierarchy1" set="mainInfo">
