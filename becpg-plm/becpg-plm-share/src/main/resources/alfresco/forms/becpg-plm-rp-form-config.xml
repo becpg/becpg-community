@@ -263,6 +263,7 @@
           <show force="false" id="cm:name"/>
           <show force="false" id="bcpg:productHierarchy1"/>
           <show force="false" id="bcpg:productState"/>
+          <show force="false" id="bcpg:entityTplRef"/>
           <show force="true" id="bcpg:code"/>
           <show force="true" id="bcpg:erpCode"/>
           <show force="false" id="bcpg:eanCode"/>
@@ -283,10 +284,15 @@
             </control>
           </field>
           <field id="bcpg:productState" mandatory="false" read-only="false" set="product-criteria">
-            <control template="/org/alfresco/components/form/controls/selectone.ftl">
+            <control template="/org/alfresco/components/form/controls/selectmany.ftl">
               <control-param name="isSearch">true</control-param>
-              <control-param name="insertBlank">true</control-param>
               <control-param name="forceEditable">true</control-param>
+            </control>
+          </field>
+          <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="product-criteria">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:resourceProduct?classNames=bcpg:entityTplAspect
+							</control-param>
             </control>
           </field>
           <field id="bcpg:code" mandatory="false" read-only="true" set="product-criteria">

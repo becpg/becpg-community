@@ -229,9 +229,8 @@
 						<control template="/org/alfresco/components/form/controls/textfield.ftl" />
 					</field>
 					<field id="qa:batchState" set="mainInfo" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
 							<control-param name="options">Simulation|status.entity-simulation,Valid|status.entity-valid</control-param>
-							<control-param name="insertBlank">true</control-param>
 							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
