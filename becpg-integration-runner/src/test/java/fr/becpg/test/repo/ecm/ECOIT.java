@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -48,6 +49,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.activity.data.ActivityListDataItem;
+import fr.becpg.repo.activity.data.ActivityType;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.ECOState;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
@@ -374,6 +377,9 @@ public class ECOIT extends AbstractFinishedProductTest {
 			
 			FinishedProductData FP2 = (FinishedProductData) alfrescoRepository.findOne(finishedProduct2NodeRef);
 				
+			assertEquals(0, Collections.frequency(getActivityTypes(finishedProduct1NodeRef), ActivityType.ChangeOrder));
+			assertEquals(0, Collections.frequency(getActivityTypes(finishedProduct2NodeRef), ActivityType.ChangeOrder));
+			
 			assertEquals(6, FP1.getCompoList().size());
 			assertEquals(6, FP2.getCompoList().size());
 			
@@ -446,10 +452,6 @@ public class ECOIT extends AbstractFinishedProductTest {
 			
 		}, false, true);
 		
-		// calculate WUsed
-//		waitForBatchEnd(ecoService.calculateWUsedList(ecoNodeRef, false));
-		
-		
 		logger.info("Version Before : " + getVersionLabel(finishedProduct1NodeRef));
 		
 		// apply
@@ -499,6 +501,9 @@ public class ECOIT extends AbstractFinishedProductTest {
 			
 			FinishedProductData FP2 = (FinishedProductData) alfrescoRepository.findOne(finishedProduct2NodeRef);
 			
+			assertEquals(1, Collections.frequency(getActivityTypes(finishedProduct1NodeRef), ActivityType.ChangeOrder));
+			assertEquals(1, Collections.frequency(getActivityTypes(finishedProduct2NodeRef), ActivityType.ChangeOrder));
+
 			assertEquals(6, FP1.getCompoList().size());
 			assertEquals(6, FP2.getCompoList().size());
 			
@@ -578,6 +583,32 @@ public class ECOIT extends AbstractFinishedProductTest {
 			
 		}, false, true);
 		
+	}
+
+	private List<ActivityType> getActivityTypes(NodeRef entityNodeRef) {
+		 beCPGCacheService.clearAllCaches();
+			
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			List<ActivityType> ret = new ArrayList<>();
+			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+			if (activityListNodeRef != null) {
+				// All activities of product
+				ret = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST).stream().map(n -> ((ActivityListDataItem) alfrescoRepository.findOne(n)).getActivityType()).collect(Collectors.toList());
+			} else {
+				logger.error("No activity list");
+			}
+			return ret;
+		}, false,true);
+	}
+
+	private NodeRef getActivityList(NodeRef productNodeRef) {
+		NodeRef listNodeRef = null;
+		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
+		if (listContainerNodeRef != null) {
+			listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
+		}
+		return listNodeRef;
+	
 	}
 
 	@Test
