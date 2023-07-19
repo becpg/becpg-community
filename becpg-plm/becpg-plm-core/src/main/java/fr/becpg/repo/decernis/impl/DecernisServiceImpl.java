@@ -7,11 +7,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -475,48 +477,47 @@ public class DecernisServiceImpl implements DecernisService {
 
 							String decernisID = result.getString("did");
 							String function = result.getString("function_name");
-							IngListDataItem ingItem = findIngredientItem(ingList, decernisID, function);
+							String ingredientName = result.getString("ingredient");
+							IngListDataItem ingItem = findIngredientItem(ingList, decernisID, function, ingredientName);
 							
-							if (ingItem != null) {
-								if (result.getString("resultIndicator").toLowerCase().startsWith("prohibited")) {
-									String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
-											? "(" + result.getString("threshold") + ")"
-													: "");
-									
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Forbidden);
-									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-									
-									reqCtrlList.add(reqCtrlItem);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding prohibited ing :" + result.getString("did"));
-									}
-									
-								} else if (result.getString("resultIndicator").toLowerCase().startsWith("not listed")) {
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Tolerated);
-									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-									reqCtrlList.add(reqCtrlItem);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding not listed ing :" + result.getString("did"));
-									}
-								} else if (Boolean.TRUE.equals(addInfoReqCtrl)) {
-									
-									String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
-											? result.getString("threshold")
-													: "");
-									
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, result.getString("resultIndicator"),
-											threshold);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Info);
-									
-									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-									reqCtrlList.add(reqCtrlItem);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.getString("did"));
-									}
-									
+							if (result.getString("resultIndicator").toLowerCase().startsWith("prohibited")) {
+								String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
+										? "(" + result.getString("threshold") + ")"
+												: "");
+								
+								MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
+								ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem == null ? null : ingItem.getIng(), reqMessage, RequirementType.Forbidden);
+								reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+								
+								reqCtrlList.add(reqCtrlItem);
+								if (logger.isDebugEnabled()) {
+									logger.debug("Adding prohibited ing :" + result.getString("did"));
 								}
+								
+							} else if (result.getString("resultIndicator").toLowerCase().startsWith("not listed")) {
+								MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
+								ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem == null ? null : ingItem.getIng(), reqMessage, RequirementType.Tolerated);
+								reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+								reqCtrlList.add(reqCtrlItem);
+								if (logger.isDebugEnabled()) {
+									logger.debug("Adding not listed ing :" + result.getString("did"));
+								}
+							} else if (Boolean.TRUE.equals(addInfoReqCtrl)) {
+								
+								String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
+										? result.getString("threshold")
+												: "");
+								
+								MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, result.getString("resultIndicator"),
+										threshold);
+								ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem == null ? null : ingItem.getIng(), reqMessage, RequirementType.Info);
+								
+								reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+								reqCtrlList.add(reqCtrlItem);
+								if (logger.isDebugEnabled()) {
+									logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.getString("did"));
+								}
+								
 							}
 							
 						}
@@ -528,7 +529,7 @@ public class DecernisServiceImpl implements DecernisService {
 		return reqCtrlList;
 	}
 	
-	private IngListDataItem findIngredientItem(List<IngListDataItem> ingList, String decernisID, String function) {
+	private IngListDataItem findIngredientItem(List<IngListDataItem> ingList, String decernisID, String function, String ingredientName) {
 		for (IngListDataItem ing : ingList) {
 			if (decernisID.equals(nodeService.getProperty(ing.getIng(), PLMModel.PROP_REGULATORY_CODE))) {
 				NodeRef ingType = (NodeRef) nodeService.getProperty(ing.getIng(), PLMModel.PROP_ING_TYPE_V2);
@@ -536,6 +537,32 @@ public class DecernisServiceImpl implements DecernisService {
 					return ing;
 				}
 			}
+		}
+		
+		if (ingredientName.split("\\|").length > 1) {
+			ingredientName = ingredientName.split("\\|")[1];
+		}
+		
+		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
+		try {
+			for (IngListDataItem ing : ingList) {
+				MLText charactName = (MLText) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_CHARACT_NAME);
+				if (ingredientName.equalsIgnoreCase(charactName.getDefaultValue())) {
+					return ing;
+				}
+				if (ingredientName.equalsIgnoreCase(charactName.getValue(Locale.ENGLISH))) {
+					return ing;
+				}
+				MLText legalName = (MLText) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_LEGAL_NAME);
+				if (ingredientName.equalsIgnoreCase(legalName.getDefaultValue())) {
+					return ing;
+				}
+				if (ingredientName.equalsIgnoreCase(legalName.getValue(Locale.ENGLISH))) {
+					return ing;
+				}
+			}
+		} finally {
+			MLPropertyInterceptor.setMLAware(mlAware);
 		}
 		return null;
 	}
