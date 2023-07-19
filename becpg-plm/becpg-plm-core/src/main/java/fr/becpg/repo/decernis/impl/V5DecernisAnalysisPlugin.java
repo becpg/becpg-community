@@ -44,6 +44,8 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service
 public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
+	private static final String THRESHOLD = "threshold";
+
 	private static final String RESULT_INDICATOR = "resultIndicator";
 
 	private static final String RECIPE_REPORT = "recipeReport";
@@ -283,13 +285,14 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 					String usage = tabularReport.getString("usage");
 					String decernisID = tabularReport.getString("did");
 					String function = tabularReport.getString("function");
+					String ingredientName = tabularReport.getString("name");
 					
-					IngListDataItem ingItem = findIngredientItem(ingList, decernisID, function);
+					IngListDataItem ingItem = findIngredientItem(ingList, decernisID, function, ingredientName);
 					
 					if (ingItem != null) {
 						if (tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("prohibited") || tabularReport.getString(RESULT_INDICATOR).toLowerCase().startsWith("over limit")) {
-							String threshold = (tabularReport.has("threshold") && !tabularReport.getString("threshold").equals("None")
-									? "(" + tabularReport.getString("threshold") + ")"
+							String threshold = (tabularReport.has(THRESHOLD) && !tabularReport.getString(THRESHOLD).equals("None")
+									? "(" + tabularReport.getString(THRESHOLD) + ")"
 											: "");
 							
 							MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
@@ -311,8 +314,8 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 							}
 						} else if (Boolean.TRUE.equals(addInfoReqCtrl())) {
 							
-							String threshold = (tabularReport.has("threshold") && !tabularReport.getString("threshold").equals("None")
-									? tabularReport.getString("threshold")
+							String threshold = (tabularReport.has(THRESHOLD) && !tabularReport.getString(THRESHOLD).equals("None")
+									? tabularReport.getString(THRESHOLD)
 											: "");
 							
 							MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, tabularReport.getString(RESULT_INDICATOR),
@@ -335,13 +338,24 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		return requirements;
 	}
 
-	private IngListDataItem findIngredientItem(List<IngListDataItem> ingList, String decernisID, String function) {
+	private IngListDataItem findIngredientItem(List<IngListDataItem> ingList, String decernisID, String function, String ingredientName) {
 		for (IngListDataItem ing : ingList) {
 			if (decernisID.equals(nodeService.getProperty(ing.getIng(), PLMModel.PROP_REGULATORY_CODE))) {
 				NodeRef ingType = (NodeRef) nodeService.getProperty(ing.getIng(), PLMModel.PROP_ING_TYPE_V2);
 				if (function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE))) {
 					return ing;
 				}
+			}
+		}
+		
+		for (IngListDataItem ing : ingList) {
+			String legalName = (String) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_LEGAL_NAME);
+			
+			String ingName = (legalName != null) && !legalName.isEmpty() ? legalName
+					: (String) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_CHARACT_NAME);
+			
+			if (ingredientName.equals(ingName)) {
+				return ing;
 			}
 		}
 		return null;
