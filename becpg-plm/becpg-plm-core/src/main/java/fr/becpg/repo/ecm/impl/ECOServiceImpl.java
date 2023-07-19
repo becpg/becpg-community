@@ -65,6 +65,7 @@ import fr.becpg.model.ECMModel;
 import fr.becpg.model.MPMModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.batch.BatchClosingHook;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
@@ -154,6 +155,9 @@ public class ECOServiceImpl implements ECOService {
 	@Autowired
 	@Qualifier("namespaceService")
     private NamespacePrefixResolver namespacePrefixResolver;
+	
+	@Autowired
+	private EntityActivityService entityActivityService;
 
 	/** {@inheritDoc} */
 	@Override
@@ -745,6 +749,10 @@ public class ECOServiceImpl implements ECOService {
 										changeUnitDataItem.getRevision().equals(RevisionType.Major) ? VersionType.MAJOR : VersionType.MINOR,
 												ecoData, wusedData.getParent());
 							}
+						}
+						
+						if (!isSimulation) {
+							entityActivityService.postChangeOrderActivity(productNodeRef, ecoData.getNodeRef());
 						}
 						
 					} else {

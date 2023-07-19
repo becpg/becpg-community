@@ -293,6 +293,39 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return false;
 
 	}
+	
+	@Override
+	public boolean postChangeOrderActivity(NodeRef entityNodeRef, NodeRef changeOrderNodeRef) {
+		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+
+			// No list no activity
+			if (activityListNodeRef != null) {
+
+				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
+				
+				JSONObject data = new JSONObject();
+
+				data.put(PROP_TITLE, nodeService.getProperty(changeOrderNodeRef, ContentModel.PROP_NAME));
+				data.put(PROP_ENTITY_NODEREF, changeOrderNodeRef);
+
+				activityListDataItem.setActivityType(ActivityType.ChangeOrder);
+				activityListDataItem.setActivityData(data.toString());
+				activityListDataItem.setParentNodeRef(activityListNodeRef);
+
+				alfrescoRepository.save(activityListDataItem);
+
+				notifyListeners(entityNodeRef, activityListDataItem);
+			}
+		} catch (JSONException e) {
+			logger.error(e, e);
+		} finally {
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
+		return false;
+	}
 
 	/** {@inheritDoc} */
 	@Override
