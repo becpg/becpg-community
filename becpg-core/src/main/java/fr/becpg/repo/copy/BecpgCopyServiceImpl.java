@@ -325,40 +325,48 @@ public class BecpgCopyServiceImpl extends AbstractBaseCopyService implements Cop
 	            QName assocQName, 
 	            boolean copyChildren) 
 	    {
-	        // To fix ETWOONE-224 issue it is necessary to change a QName of the new node accordingly to its name.
-	        NodeRef result = null;
-	        String sourceName = (String)this.internalNodeService.getProperty(sourceNodeRef, ContentModel.PROP_NAME);
-	                
-	        // Find a non-duplicate name
-	        String newName = sourceName;
-
-	        // rename top-level node if it should be renamed in process of copy
-	        QName qname = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(newName));
-	        String newNameAfterCopy = getTopLevelNodeNewName(sourceNodeRef, destinationParent, assocTypeQName, qname);
-	        if (newNameAfterCopy != null && !newNameAfterCopy.equals(newName))
-	        {
-	            newName = newNameAfterCopy;
-	        }
-
-	        while (this.internalNodeService.getChildByName(destinationParent, assocTypeQName, newName) != null)
-	        {
-	            newName = I18NUtil.getMessage(COPY_OF_LABEL, newName);                        
-	        }
-	                
-	        if (assocQName == null)
-	        {
-	            // Change a QName of the new node accordingly to its name
-	            assocQName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(newName));
-	        }
-	        
-	        // Make a copy
-	        result = copy(sourceNodeRef, destinationParent, assocTypeQName, assocQName, copyChildren);
-	        
-	        // Set name property
-	        this.internalNodeService.setProperty(result, ContentModel.PROP_NAME, newName);
-	        
-	        // Return new NodeRef
-	        return result;    
+	    	try {
+	    		
+	    		behaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
+	    		
+	    		// To fix ETWOONE-224 issue it is necessary to change a QName of the new node accordingly to its name.
+	    		NodeRef result = null;
+	    		String sourceName = (String)this.internalNodeService.getProperty(sourceNodeRef, ContentModel.PROP_NAME);
+	    		
+	    		// Find a non-duplicate name
+	    		String newName = sourceName;
+	    		
+	    		// rename top-level node if it should be renamed in process of copy
+	    		QName qname = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(newName));
+	    		String newNameAfterCopy = getTopLevelNodeNewName(sourceNodeRef, destinationParent, assocTypeQName, qname);
+	    		if (newNameAfterCopy != null && !newNameAfterCopy.equals(newName))
+	    		{
+	    			newName = newNameAfterCopy;
+	    		}
+	    		
+	    		while (this.internalNodeService.getChildByName(destinationParent, assocTypeQName, newName) != null)
+	    		{
+	    			newName = I18NUtil.getMessage(COPY_OF_LABEL, newName);                        
+	    		}
+	    		
+	    		if (assocQName == null)
+	    		{
+	    			// Change a QName of the new node accordingly to its name
+	    			assocQName = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(newName));
+	    		}
+	    		
+	    		// Make a copy
+	    		result = copy(sourceNodeRef, destinationParent, assocTypeQName, assocQName, copyChildren);
+	    		
+	    		// Set name property
+	    		this.internalNodeService.setProperty(result, ContentModel.PROP_NAME, newName);
+	    		
+	    		// Return new NodeRef
+	    		return result;    
+	    	} finally {
+	    		behaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
+	    	}
+	    	
 	    }
 	    
 	    /**
