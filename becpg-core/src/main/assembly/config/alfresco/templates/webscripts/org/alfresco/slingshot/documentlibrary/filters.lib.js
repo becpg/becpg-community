@@ -9,7 +9,7 @@ var Filters =
       "documents": '+(TYPE:"content" OR TYPE:"app:filelink" OR TYPE:"folder" )',
       "folders": '+(TYPE:"folder" OR TYPE:"app:folderlink")',
       "images": '+@cm\\:content.mimetype:image/*',
-      "product": args.type!=null ? '+(TYPE:"bcpg:'+args.type+'")': '+(TYPE:"bcpg:product")',
+      "product": args.type!=null ? ( args.type.includes('_') ? '+(TYPE:"'+args.type.replace('_', ':')+'")' : '+(TYPE:"bcpg:'+args.type+'")') : '+(TYPE:"bcpg:product")',
       "project": '+(TYPE:"pjt:project")'
    },
    

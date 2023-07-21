@@ -18,6 +18,15 @@
    	<type name="packagingKit" />
    	<type name="resourceProduct" />
    	<type name="productCollection" />
+   	<type name="supplier" />
+   	<type name="client" />
+   	<type name="qa_nc" />
+   	<type name="qa_controlPlan" />
+   	<type name="qa_qualityControl" />
+   	<type name="qa_batch" />
+   	<type name="ecm_changeOrder" />
+   	<type name="productSpecification" />
+   	<type name="productMicrobioCriteria" />
    	<type name="product" />
    
    </types>
