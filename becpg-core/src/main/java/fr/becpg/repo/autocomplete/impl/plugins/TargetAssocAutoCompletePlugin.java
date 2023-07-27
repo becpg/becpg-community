@@ -327,53 +327,9 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 				if ((propParent != null) && !propParent.isBlank() && NodeRef.isNodeRef(propParent)) {
 					targetNodeRef = new NodeRef(propParent);
 				}
-
 				if ((filterByAssoc != null) && (filterByAssoc.length() > 0)) {
-					
-
-					boolean isOrOperand = false;
-					if (filterByAssoc.endsWith("_or")) {
-						isOrOperand = true;
-						filterByAssoc = filterByAssoc.replace("_or", "");
-					}
-
-					QName assocQName = QName.createQName(filterByAssoc, namespaceService);
-
-				
-					List<NodeRef> targetNodeRefs = null;
-
-					if (targetNodeRef != null) {
-						targetNodeRefs = Arrays.asList(targetNodeRef);
-					} else if (entityNodeRef != null) {
-						targetNodeRefs = associationService.getTargetAssocs(entityNodeRef, assocQName);
-					}
-
-					if ((targetNodeRefs != null) && !targetNodeRefs.isEmpty()) {
-						
-						if(logger.isDebugEnabled()) {
-							logger.debug("Filter by assoc: " +filterByAssoc+ " " +targetNodeRefs.toString() );
-						}
-						
-						List<NodeRef> tmp = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
-						List<NodeRef> nodesToKeep = new ArrayList<>();
-
-						if (isOrOperand) {
-							for (NodeRef assocNodeRef : targetNodeRefs) {
-								nodesToKeep.addAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
-							}
-						} else if (!targetNodeRefs.isEmpty()) {
-							nodesToKeep.addAll(associationService.getSourcesAssocs(targetNodeRefs.get(0), assocQName));
-						}
-
-						tmp.retainAll(nodesToKeep);
-						if (!RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
-							ret = tmp.subList(0, Math.min(RepoConsts.MAX_SUGGESTIONS, tmp.size()));
-						} else {
-							ret = tmp;
-						}
-					}
+					ret = filterByAssoc(queryBuilder, pageSize, entityNodeRef, filterByAssoc, targetNodeRef);
 				}
-				
 			}
 		}
 
@@ -388,7 +344,80 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 			
 			ret = queryBuilder.list();
 		}
+		
+		if (props.containsKey(AutoCompleteService.PROP_EXCLUDE_SOURCES) && "true".equals(props.get(AutoCompleteService.PROP_EXCLUDE_SOURCES))) {
+			String itemId = (String) props.get(AutoCompleteService.PROP_ITEM_ID);
+			String fieldName = (String) props.get(AutoCompleteService.PROP_FIELD_NAME);
+			excludeSources(ret, itemId, fieldName);
+		}
 
+		return ret;
+	}
+
+	private void excludeSources(List<NodeRef> ret, String itemId, String fieldName) {
+		if (itemId != null && NodeRef.isNodeRef(itemId) && fieldName != null && fieldName.startsWith("assoc_")) {
+			QName fieldQName = QName.createQName(fieldName.split("assoc_")[1].replace("_", ":"), namespaceService);
+			NodeRef rootNodeRef = new NodeRef(itemId);
+			ret.removeAll(extractAllSources(rootNodeRef, fieldQName, new ArrayList<>()));
+		}
+	}
+
+	private List<NodeRef> extractAllSources(NodeRef source, QName fieldQname, List<NodeRef> allSources) {
+		if (!allSources.contains(source)) {
+			allSources.add(source);
+			List<NodeRef> sourceSources = associationService.getSourcesAssocs(source, fieldQname);
+			for (NodeRef sourceSource : sourceSources) {
+				extractAllSources(sourceSource, fieldQname, allSources);
+			}
+		}
+		return allSources;
+	}
+
+	private List<NodeRef> filterByAssoc(BeCPGQueryBuilder queryBuilder, Integer pageSize, NodeRef entityNodeRef,
+			String filterByAssoc, NodeRef targetNodeRef) {
+		
+		List<NodeRef> ret = null;
+		boolean isOrOperand = false;
+		if (filterByAssoc.endsWith("_or")) {
+			isOrOperand = true;
+			filterByAssoc = filterByAssoc.replace("_or", "");
+		}
+
+		QName assocQName = QName.createQName(filterByAssoc, namespaceService);
+
+
+		List<NodeRef> targetNodeRefs = null;
+
+		if (targetNodeRef != null) {
+			targetNodeRefs = Arrays.asList(targetNodeRef);
+		} else if (entityNodeRef != null) {
+			targetNodeRefs = associationService.getTargetAssocs(entityNodeRef, assocQName);
+		}
+
+		if ((targetNodeRefs != null) && !targetNodeRefs.isEmpty()) {
+			
+			if(logger.isDebugEnabled()) {
+				logger.debug("Filter by assoc: " +filterByAssoc+ " " +targetNodeRefs.toString() );
+			}
+			
+			List<NodeRef> tmp = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
+			List<NodeRef> nodesToKeep = new ArrayList<>();
+
+			if (isOrOperand) {
+				for (NodeRef assocNodeRef : targetNodeRefs) {
+					nodesToKeep.addAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
+				}
+			} else if (!targetNodeRefs.isEmpty()) {
+				nodesToKeep.addAll(associationService.getSourcesAssocs(targetNodeRefs.get(0), assocQName));
+			}
+
+			tmp.retainAll(nodesToKeep);
+			if (!RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
+				ret = tmp.subList(0, Math.min(RepoConsts.MAX_SUGGESTIONS, tmp.size()));
+			} else {
+				ret = tmp;
+			}
+		}
 		return ret;
 	}
 
