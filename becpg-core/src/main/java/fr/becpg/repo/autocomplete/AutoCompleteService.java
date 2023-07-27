@@ -73,6 +73,12 @@ public interface AutoCompleteService {
 
 	/** Constant <code>PROP_EXCLUDE_PROPS="excludeProps"</code> */
 	final String PROP_EXCLUDE_PROPS = "excludeProps";
+	
+	final String PROP_EXCLUDE_SOURCES = "excludeSources";
+	
+	final String PROP_ITEM_ID = "itemId";
+	
+	final String PROP_FIELD_NAME = "fieldName";
 
 	final String PROP_AND_PROPS = "andProps";
 
