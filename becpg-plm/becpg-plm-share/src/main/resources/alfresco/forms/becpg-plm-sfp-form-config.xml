@@ -156,6 +156,7 @@
               <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct
               </control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+              <control-param name="excludeSources">true</control-param>
             </control>
           </field>
           <field id="bcpg:suppliers" mandatory="false" read-only="false" set="mainInfo"/>
@@ -1098,6 +1099,7 @@
               <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct
 							</control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+              <control-param name="excludeSources">true</control-param>
             </control>
           </field>
           <field id="bcpg:plants" mandatory="false" read-only="false" set="mainInfo"/>

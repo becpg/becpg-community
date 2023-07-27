@@ -319,6 +319,7 @@
               <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct
               </control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+              <control-param name="excludeSources">true</control-param>
             </control>
           </field>
           <set appearance="bordered-panel" id="marketing" label-id="becpg.forms.set.marketing.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
@@ -1982,6 +1983,7 @@
               <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:finishedProduct
 								</control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+              <control-param name="excludeSources">true</control-param>
             </control>
           </field>
           <set appearance="bordered-panel" id="marketing" label-id="becpg.forms.set.marketing.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
