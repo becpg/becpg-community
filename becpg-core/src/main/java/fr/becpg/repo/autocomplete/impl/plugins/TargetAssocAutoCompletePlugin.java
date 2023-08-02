@@ -345,7 +345,7 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 			ret = queryBuilder.list();
 		}
 		
-		if (props.containsKey(AutoCompleteService.PROP_EXCLUDE_SOURCES) && "true".equals(props.get(AutoCompleteService.PROP_EXCLUDE_SOURCES))) {
+		if (props != null && props.containsKey(AutoCompleteService.PROP_EXCLUDE_SOURCES) && "true".equals(props.get(AutoCompleteService.PROP_EXCLUDE_SOURCES))) {
 			String itemId = (String) props.get(AutoCompleteService.PROP_ITEM_ID);
 			String fieldName = (String) props.get(AutoCompleteService.PROP_FIELD_NAME);
 			excludeSources(ret, itemId, fieldName);
