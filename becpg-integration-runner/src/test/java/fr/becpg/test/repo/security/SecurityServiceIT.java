@@ -19,13 +19,16 @@ package fr.becpg.test.repo.security;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessPermission;
+import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -42,7 +45,9 @@ import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.autocomplete.AutoCompleteEntry;
 import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.product.ProductService;
+import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.security.SecurityService;
@@ -51,9 +56,9 @@ import fr.becpg.repo.security.data.ACLGroupData;
 import fr.becpg.repo.security.data.PermissionModel;
 import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
 import fr.becpg.test.BeCPGTestHelper;
-import fr.becpg.test.RepoBaseTestCase;
+import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
-public class SecurityServiceIT extends RepoBaseTestCase {
+public class SecurityServiceIT extends AbstractFinishedProductTest {
 
 	protected static final String USER_ONE = "matthieu_secu";
 
@@ -83,7 +88,7 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 
 	@Autowired
 	NamespaceService namespaceService;
-
+	
 	private void createUsers() {
 
 		/*
@@ -602,5 +607,151 @@ public class SecurityServiceIT extends RepoBaseTestCase {
 		}, false, true);
 
 	}
+	
+	@Test
+	public void testDataListPermissions() {
+		
+		initParts();
+		
+		NodeRef securityRuleNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef ret = createDataListSecurityRule();
+			securityService.refreshAcls();
+			return ret;
+		}, false, true);
 
+		NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData productData = new FinishedProductData();
+			productData.setParentNodeRef(getTestFolderNodeRef());
+			productData.setName("FP testDataListPermissions");
+			List<NutListDataItem> nutList = new LinkedList<>();
+			nutList.add(new NutListDataItem(null, 1d, null, null, null, null, nut1, null));
+			productData.setNutList(nutList);
+			return alfrescoRepository.save(productData).getNodeRef();
+		}, false, true);
+		
+		// grp1 write and grp2 read
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			productService.formulate(productNodeRef);
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
+			assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
+			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
+			checkPermissions(permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
+			return null;
+		}, false, true);
+		
+		// grp2 read
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
+			for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
+				if (permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
+					permissionList.setPropName("cm:description");
+				}
+			}
+			alfrescoRepository.save(securityRule);
+			securityService.refreshAcls();
+			productService.formulate(productNodeRef);
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
+			assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
+			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
+			checkPermissions(permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of()));
+			return null;
+		}, false, true);
+		
+		// grp1 write
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
+			for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
+				if (permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
+					permissionList.setPropName("bcpg:nutList");
+				} else if (permissionList.getAclPermission().equals(PermissionModel.READ_ONLY)) {
+					permissionList.setPropName("cm:description");
+				}
+			}
+			alfrescoRepository.save(securityRule);
+			securityService.refreshAcls();
+			productService.formulate(productNodeRef);
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
+			assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
+			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
+			checkPermissions(permissions, new ArrayList<>(List.of()), new ArrayList<>(List.of(grp1)));
+			return null;
+		}, false, true);
+		
+		// grp1 write and grp2 read
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
+			for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
+				if (permissionList.getAclPermission().equals(PermissionModel.READ_ONLY) || permissionList.getAclPermission().equals(PermissionModel.READ_WRITE)) {
+					permissionList.setPropName("bcpg:nutList");
+				}
+			}
+			alfrescoRepository.save(securityRule);
+			securityService.refreshAcls();
+			productService.formulate(productNodeRef);
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
+			assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
+			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
+			checkPermissions(permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
+			return null;
+		}, false, true);
+		
+		// nothing
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			ACLGroupData securityRule = (ACLGroupData) alfrescoRepository.findOne(securityRuleNodeRef);
+			for (ACLEntryDataItem permissionList : securityRule.getAcls()) {
+				permissionList.setPropName("cm:description");
+			}
+			alfrescoRepository.save(securityRule);
+			securityService.refreshAcls();
+			productService.formulate(productNodeRef);
+			FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
+			assertTrue(permissionService.getInheritParentPermissions(nutListNodeRef));
+			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
+			checkPermissions(permissions, new ArrayList<>(List.of()), new ArrayList<>(List.of()));
+			return null;
+		}, false, true);
+		
+	}
+	
+	private boolean checkPermissions(Set<AccessPermission> permissions, List<String> allowedRead, List<String> allowedWrite) {
+		for (AccessPermission permission : permissions) {
+			if (AccessStatus.ALLOWED.equals(permission.getAccessStatus())) {
+				if ((PermissionService.READ.equals(permission.getPermission()) || PermissionService.CONSUMER.equals(permission.getPermission())) && allowedRead.contains(permission.getAuthority())) {
+					allowedRead.remove(permission.getAuthority());
+				}
+				if ((PermissionService.WRITE.equals(permission.getPermission()) || PermissionService.CONTRIBUTOR.equals(permission.getPermission())) && allowedWrite.contains(permission.getAuthority())) {
+					allowedWrite.remove(permission.getAuthority());
+				}
+			}
+		}
+		return allowedRead.isEmpty() && allowedWrite.isEmpty();
+	}
+
+	private NodeRef createDataListSecurityRule() {
+		createUsers();
+		List<NodeRef> group1s = new ArrayList<>();
+		group1s.add(authorityService.getAuthorityNodeRef(grp1));
+		List<NodeRef> group2s = new ArrayList<>();
+		group2s.add(authorityService.getAuthorityNodeRef(grp2));
+
+		ACLGroupData rmAclGroupData = new ACLGroupData();
+		rmAclGroupData.setName("Test Datalist ACL");
+		rmAclGroupData.setNodeType(PLMModel.TYPE_FINISHEDPRODUCT.toPrefixString(namespaceService));
+		rmAclGroupData.setIsLocalPermission(false);
+
+		List<ACLEntryDataItem> permissionList = new ArrayList<>();
+
+		permissionList.add(new ACLEntryDataItem("bcpg:nutList", PermissionModel.READ_WRITE, group1s));
+		permissionList.add(new ACLEntryDataItem("bcpg:nutList", PermissionModel.READ_ONLY, group2s));
+
+		rmAclGroupData.setAcls(permissionList);
+
+		return alfrescoRepository.create(getTestFolderNodeRef(), rmAclGroupData).getNodeRef();
+
+	}
 }
