@@ -46,8 +46,8 @@ import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.security.SecurityService;
-import fr.becpg.repo.security.data.dataList.ACLEntryDataItem;
-import fr.becpg.repo.security.data.dataList.ACLEntryDataItem.PermissionModel;
+import fr.becpg.repo.security.data.PermissionContext;
+import fr.becpg.repo.security.data.PermissionModel;
 
 
 /**
@@ -134,15 +134,16 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			//Set datalist permissions
 			for(NodeRef dataListNodeRef : datalists) {
 				String dataListQName = (String)nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
-				List<ACLEntryDataItem.PermissionModel> perms = securityService.getNodeACLPermissions(productDataNodeRef, nodeService.getType(productDataNodeRef), dataListQName);
-				updatePermissions(siteInfo, dataListNodeRef, perms);
+				PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), dataListQName);
+				updatePermissions(siteInfo, dataListNodeRef, permissionContext.getPermissions());
 			}
 
 			//Set document permissions
-			List<ACLEntryDataItem.PermissionModel> perms = securityService.getNodeACLPermissions(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
+			
+			PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
 			List<ChildAssociationRef> folders = nodeService.getChildAssocs(productDataNodeRef, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
 			for (ChildAssociationRef folder : folders) {
-				updatePermissions(siteInfo, folder.getChildRef(), perms);
+				updatePermissions(siteInfo, folder.getChildRef(), permissionContext.getPermissions());
 			}
 		}
 		return true;
@@ -216,6 +217,9 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 				for (String authority : parentPermissions.keySet()) {
 					addPermission(authority, PermissionService.READ, toAdd, toRemove);
 				}
+				for (String authority : specificPermissions.keySet()) {
+					addPermission(authority, PermissionService.READ, toAdd, toRemove);
+				}
 			}
 			
 			for (String authority : specificPermissions.keySet()) {
@@ -227,17 +231,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		
 		return true;
 	}
-
-	private void addPermission(String authority, String permission, HashMap<String, String> toAdd, Set<String> toRemove) {
-		if (PermissionService.READ.equals(permission) && toAdd.containsKey(authority)) {
-			return;
-		}
-		toAdd.put(authority, permission);
-		if (toRemove.contains(authority)) {
-			toRemove.remove(authority);
-		}
-	}
-
+	
 	private String adaptPermissionWithSite(String basePermission, SiteInfo siteInfo, String authorityName) {
 		if (siteInfo != null) {
 			String sitePermission = siteService.getMembersRole(siteInfo.getShortName(), authorityName);
@@ -257,4 +251,15 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		return basePermission;
 	}
 
+
+	private void addPermission(String authority, String permission, HashMap<String, String> toAdd, Set<String> toRemove) {
+		if (PermissionService.READ.equals(permission) && toAdd.containsKey(authority)) {
+			return;
+		}
+		toAdd.put(authority, permission);
+		if (toRemove.contains(authority)) {
+			toRemove.remove(authority);
+		}
+	}
+	
 }
