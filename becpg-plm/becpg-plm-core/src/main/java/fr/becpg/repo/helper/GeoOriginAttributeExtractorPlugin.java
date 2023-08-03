@@ -55,13 +55,14 @@ public class GeoOriginAttributeExtractorPlugin implements AttributeExtractorPlug
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
 		
-		@SuppressWarnings("unchecked")
-		List<String> placeOfActivityCode = (List<String>) nodeService.getProperty(nodeRef, GS1Model.PROP_PRODUCT_ACTIVITY_TYPE_CODE);
 		StringBuilder ret = new StringBuilder();
 		ret.append(PLMModel.TYPE_GEO_ORIGIN.toPrefixString(namespaceService).split(":")[1]);
-
-		if(placeOfActivityCode!=null && !placeOfActivityCode.isEmpty()){
-			ret.append("-"+placeOfActivityCode.get(0));
+		if(nodeRef!=null) {
+			@SuppressWarnings("unchecked")
+			List<String> placeOfActivityCode = (List<String>) nodeService.getProperty(nodeRef, GS1Model.PROP_PRODUCT_ACTIVITY_TYPE_CODE);
+			if(placeOfActivityCode!=null && !placeOfActivityCode.isEmpty()){
+				ret.append("-"+placeOfActivityCode.get(0));
+			}
 		}
 		return ret.toString();
 	}
