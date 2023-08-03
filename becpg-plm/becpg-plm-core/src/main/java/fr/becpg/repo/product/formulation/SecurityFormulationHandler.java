@@ -217,9 +217,6 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 				for (String authority : parentPermissions.keySet()) {
 					addPermission(authority, PermissionService.READ, toAdd, toRemove);
 				}
-				for (String authority : specificPermissions.keySet()) {
-					addPermission(authority, PermissionService.READ, toAdd, toRemove);
-				}
 			}
 			
 			for (String authority : specificPermissions.keySet()) {
