@@ -17,8 +17,13 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authority.AuthorityDAO;
@@ -28,6 +33,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
@@ -123,12 +129,13 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(productDataNodeRef);
 			List<NodeRef> datalists = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
 
+			SiteInfo siteInfo = siteService.getSite(productDataNodeRef);
+			
 			//Set datalist permissions
-			for(NodeRef dataList : datalists) {
-				String dataListQName = (String)nodeService.getProperty(dataList, DataListModel.PROP_DATALISTITEMTYPE);
-				
+			for(NodeRef dataListNodeRef : datalists) {
+				String dataListQName = (String)nodeService.getProperty(dataListNodeRef, DataListModel.PROP_DATALISTITEMTYPE);
 				PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), dataListQName);
-				setAclPermissions(productDataNodeRef, dataList, permissionContext);
+				updatePermissions(siteInfo, dataListNodeRef, permissionContext.getPermissions());
 			}
 
 			//Set document permissions
@@ -136,75 +143,123 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
 			List<ChildAssociationRef> folders = nodeService.getChildAssocs(productDataNodeRef, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
 			for (ChildAssociationRef folder : folders) {
-				setAclPermissions(productDataNodeRef, folder.getChildRef(), permissionContext);
+				updatePermissions(siteInfo, folder.getChildRef(), permissionContext.getPermissions());
 			}
 		}
 		return true;
 	}
 
-	private void setAclPermissions(NodeRef productDataNodeRef, NodeRef nodeRef, PermissionContext permissionContext) {
+	private void updatePermissions(SiteInfo siteInfo, NodeRef nodeRef, List<PermissionModel> permissionModels) {
 		
-		List<PermissionModel> permissions = permissionContext.getPermissions();
+		boolean hasParentPermissions = permissionService.getInheritParentPermissions(nodeRef);
 		
-		if (permissions != null) {
-			for (PermissionModel permissionModel : permissions) {
-				
-				String permissionToSet = PermissionService.CONSUMER;
-				boolean setOtherGroupPermissions = false;
-				List<String> authorityPermissionGroup = new ArrayList<>();
-				
-				if (PermissionModel.READ_READANDWRITE.equals(permissionModel.getPermission())) {
-					permissionToSet = PermissionService.CONTRIBUTOR;
-				} else if (PermissionModel.READ_WRITE.equals(permissionModel.getPermission())) {
-					permissionToSet = PermissionService.CONTRIBUTOR;
-					setOtherGroupPermissions = true;
-				}
-				
-				for(NodeRef authorityNodeRef : permissionModel.getGroups()) {
-					String authorityName = authorityDAO.getAuthorityName(authorityNodeRef);
-					authorityPermissionGroup.add(authorityName);
-					if (siteService.getSite(productDataNodeRef) != null) {
-						String sitePermission = siteService.getMembersRole(siteService.getSite(productDataNodeRef).getShortName(), authorityName);
-						if (sitePermission != null) {							
-							if (PermissionService.CONSUMER.equals(permissionToSet) || sitePermission.contains(permissionToSet)) {
-								permissionService.setPermission(nodeRef, authorityName, permissionToSet, true);
-							} else if (SiteModel.SITE_COLLABORATOR.equals(sitePermission) || SiteModel.SITE_MANAGER.equals(sitePermission)) {
-								permissionService.setPermission(nodeRef, authorityName, PermissionService.COORDINATOR, true);
-							} else if(SiteModel.SITE_CONSUMER.equals(sitePermission)) {
-								permissionService.setPermission(nodeRef, authorityName, PermissionService.CONSUMER, true);
-							}
-						}
-					} else {
-						permissionService.setPermission(nodeRef, authorityName, permissionToSet, true);
-					}
-				}
-				
-				setReadPermissions(nodeRef, setOtherGroupPermissions, authorityPermissionGroup);
+		Map<String, String> specificPermissions = new HashMap<>();
+		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
+			if (!hasParentPermissions) {
+				specificPermissions.put(permission.getAuthority(), permission.getPermission());
 			}
 		}
-	}
-
-	private void setReadPermissions(NodeRef nodeRef, boolean setOtherGroupPermissions, List<String> authorityPermissionGroup) {
-		if (setOtherGroupPermissions) {
+		if (!hasParentPermissions) {
+			permissionService.setInheritParentPermissions(nodeRef, true);
+		}
+		Map<String, String> parentPermissions = new HashMap<>();
+		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
+			if (!specificPermissions.containsKey(permission.getAuthority())) {
+				parentPermissions.put(permission.getAuthority(), permission.getPermission());
+			}
+		}
+		
+		HashMap<String, String> toAdd = new HashMap<>();
+		Set<String> toRemove = new HashSet<>();
+		
+		if (extractPermissions(siteInfo, parentPermissions, specificPermissions, permissionModels, toAdd, toRemove)) {
+			for (Entry<String, String> entry : toAdd.entrySet()) {
+				String authority = entry.getKey();
+				String permission = entry.getValue();
+				if (!specificPermissions.containsKey(authority) || !specificPermissions.get(entry.getKey()).equals(permission)) {
+					permissionService.clearPermission(nodeRef, authority);
+					permissionService.setPermission(nodeRef, authority, permission, true);
+				}
+			}
+			for (String authority : toRemove) {
+				permissionService.clearPermission(nodeRef, authority);
+			}
+			permissionService.setInheritParentPermissions(nodeRef, false);
+		} else {
+			for (String authority : specificPermissions.keySet()) {
+				permissionService.clearPermission(nodeRef, authority);
+			}
 			if (!permissionService.getInheritParentPermissions(nodeRef)) {
 				permissionService.setInheritParentPermissions(nodeRef, true);
 			}
-			for(AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
-				if (!authorityPermissionGroup.contains(permission.getAuthority()) && !PermissionService.READ.equals(permission.getPermission())) {
-					permissionService.setPermission(nodeRef, permission.getAuthority(), PermissionService.READ , true);
+		}
+	}
+	
+	private boolean extractPermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
+		
+		if (permissionModels == null || permissionModels.isEmpty()) {
+			return false;
+		}
+		
+		for (PermissionModel permissionModel : permissionModels) {
+			String basePermission = PermissionModel.READ_ONLY.equals(permissionModel.getPermission()) ? PermissionService.CONSUMER : PermissionService.CONTRIBUTOR;
+			
+			List<String> permissionAuthorities = permissionModel.getGroups().stream()
+					.map(n -> authorityDAO.getAuthorityName(n))
+					.collect(Collectors.toList());
+			
+			for (String authority : permissionAuthorities) {
+				String permission = adaptPermissionWithSite(basePermission, siteInfo, authority);
+				addPermission(authority, permission, toAdd, toRemove);
+			}
+			
+			if (PermissionModel.READ_WRITE.equals(permissionModel.getPermission())) {
+				for (String authority : parentPermissions.keySet()) {
+					addPermission(authority, PermissionService.READ, toAdd, toRemove);
+				}
+				for (String authority : specificPermissions.keySet()) {
+					addPermission(authority, PermissionService.READ, toAdd, toRemove);
 				}
 			}
-		} else {
-			for(AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
-				if (!authorityPermissionGroup.contains(permission.getAuthority())){
-					permissionService.clearPermission(nodeRef, permission.getAuthority());
+			
+			for (String authority : specificPermissions.keySet()) {
+				if (!toAdd.containsKey(authority)) {
+					toRemove.add(authority);
 				}
 			}
 		}
 		
-		//Set inherit permission
-		if (permissionService.getInheritParentPermissions(nodeRef)) {
-			permissionService.setInheritParentPermissions(nodeRef, false);
+		return true;
+	}
+	
+	private String adaptPermissionWithSite(String basePermission, SiteInfo siteInfo, String authorityName) {
+		if (siteInfo != null) {
+			String sitePermission = siteService.getMembersRole(siteInfo.getShortName(), authorityName);
+			if (sitePermission != null) {		
+				if (PermissionService.CONSUMER.equals(basePermission) || sitePermission.contains(basePermission)) {
+					return basePermission;
+				}
+				if (SiteModel.SITE_COLLABORATOR.equals(sitePermission) || SiteModel.SITE_MANAGER.equals(sitePermission)) {
+					return PermissionService.COORDINATOR;
+				} 
+				if(SiteModel.SITE_CONSUMER.equals(sitePermission)) {
+					return PermissionService.CONSUMER;
+				}
+			}
+		}
+		
+		return basePermission;
+	}
+
+
+	private void addPermission(String authority, String permission, HashMap<String, String> toAdd, Set<String> toRemove) {
+		if (PermissionService.READ.equals(permission) && toAdd.containsKey(authority)) {
+			return;
+		}
+		toAdd.put(authority, permission);
+		if (toRemove.contains(authority)) {
+			toRemove.remove(authority);
 		}
 	}
+	
 }
