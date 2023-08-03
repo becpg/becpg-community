@@ -286,59 +286,66 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 			return ret;
 
 		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			authenticationComponent.setCurrentUser(USER_TWO);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
+					SecurityService.READ_ACCESS);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
+					SecurityService.READ_ACCESS);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
+					SecurityService.NONE_ACCESS);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
+					SecurityService.READ_ACCESS);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
+					SecurityService.READ_ACCESS);
+			
+			authenticationComponent.setCurrentUser(USER_ONE);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
+					SecurityService.NONE_ACCESS);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
+					SecurityService.WRITE_ACCESS);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
+					SecurityService.READ_ACCESS);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
+					SecurityService.WRITE_ACCESS);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
+					SecurityService.WRITE_ACCESS);
+			
+			authenticationComponent.setCurrentUser(USER_THREE);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
+					SecurityService.NONE_ACCESS);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
+					SecurityService.NONE_ACCESS);
+			
+			authenticationComponent.setCurrentUser("admin");
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
+					SecurityService.WRITE_ACCESS);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
+					SecurityService.WRITE_ACCESS);
+			
+			assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
+					SecurityService.WRITE_ACCESS);
 
-		authenticationComponent.setCurrentUser(USER_TWO);
+			return null;
 
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-				SecurityService.READ_ACCESS);
+		}, false, true);
 
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-				SecurityService.NONE_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-				SecurityService.READ_ACCESS);
-
-		authenticationComponent.setCurrentUser(USER_ONE);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-				SecurityService.NONE_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-				SecurityService.WRITE_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-				SecurityService.READ_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-				SecurityService.WRITE_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-				SecurityService.WRITE_ACCESS);
-
-		authenticationComponent.setCurrentUser(USER_THREE);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:description"),
-				SecurityService.NONE_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:titled"),
-				SecurityService.NONE_ACCESS);
-
-		authenticationComponent.setCurrentUser("admin");
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "cm:name"),
-				SecurityService.WRITE_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:propName"),
-				SecurityService.WRITE_ACCESS);
-
-		assertEquals(securityService.computeAccessMode(null, SecurityModel.TYPE_ACL_ENTRY, "sec:aclPermission"),
-				SecurityService.WRITE_ACCESS);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -372,127 +379,134 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 			return ret;
 
 		}, false, true);
-
-		NodeRef rmGlobalNodeRef = products.get(RM_GLOBAL_ACL);
-		NodeRef rmLocalNodeRef = products.get(RM_LOCAL_ACL);
-
-		productService.formulate(rmGlobalNodeRef);
-		productService.formulate(rmLocalNodeRef);
-
-		if (rmGlobalNodeRef != null && rmLocalNodeRef != null) {
-
-			authenticationComponent.setCurrentUser(USER_ONE);
-
-			assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-					PLMModel.TYPE_NUTLIST), SecurityService.READ_ACCESS);
-
-			assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-					BeCPGModel.PROP_ERP_CODE), SecurityService.NONE_ACCESS);
-
-			assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-					PLMModel.TYPE_ORGANOLIST), SecurityService.NONE_ACCESS);
-
-			assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-					PLMModel.TYPE_ALLERGENLIST), SecurityService.WRITE_ACCESS);
-
-			assertEquals(
-					securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_NUTLIST),
-					SecurityService.WRITE_ACCESS);
-
-			assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-					BeCPGModel.PROP_ERP_CODE), SecurityService.WRITE_ACCESS);
-
-			authenticationComponent.setCurrentUser(USER_TWO);
-
-			assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-					PLMModel.TYPE_NUTLIST), SecurityService.NONE_ACCESS);
-
-			assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-					BeCPGModel.PROP_ERP_CODE), SecurityService.WRITE_ACCESS);
-
-			assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-					PLMModel.TYPE_ORGANOLIST), SecurityService.WRITE_ACCESS);
-
-			assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-					PLMModel.TYPE_ALLERGENLIST), SecurityService.READ_ACCESS);
-
-			assertEquals(
-					securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_NUTLIST),
-					SecurityService.WRITE_ACCESS);
-
-			assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
-					BeCPGModel.PROP_ERP_CODE), SecurityService.WRITE_ACCESS);
-
-			// Check permissions
-
-			authenticationComponent.setSystemUserAsCurrentUser();
-			// Global rm datalists
-			NodeRef globalRmListContainerNodeRef = entityListDAO.getListContainer(rmGlobalNodeRef);
-			List<NodeRef> globalRmDatalists = entityListDAO.getExistingListsNodeRef(globalRmListContainerNodeRef);
-			for (NodeRef globalRmDatalist : globalRmDatalists) {
-				String globalDataListQName = (String) nodeService.getProperty(globalRmDatalist, DataListModel.PROP_DATALISTITEMTYPE);
-				if (globalDataListQName.equals("bcpg:nutList")) {
-					for (AccessPermission permission : permissionService.getAllSetPermissions(globalRmDatalist)) {
-						if (permission.getAuthority().equals(grp2)) {
-							logger.info("Global nutList permission: " + permission);
-							assertEquals(permission.getPermission(), PermissionService.CONSUMER);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			NodeRef rmGlobalNodeRef = products.get(RM_GLOBAL_ACL);
+			NodeRef rmLocalNodeRef = products.get(RM_LOCAL_ACL);
+			
+			productService.formulate(rmGlobalNodeRef);
+			productService.formulate(rmLocalNodeRef);
+			
+			if (rmGlobalNodeRef != null && rmLocalNodeRef != null) {
+				
+				authenticationComponent.setCurrentUser(USER_ONE);
+				
+				assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL,
+						PLMModel.TYPE_NUTLIST), SecurityService.READ_ACCESS);
+				
+				assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL,
+						BeCPGModel.PROP_ERP_CODE), SecurityService.NONE_ACCESS);
+				
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
+						PLMModel.TYPE_ORGANOLIST), SecurityService.NONE_ACCESS);
+				
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
+						PLMModel.TYPE_ALLERGENLIST), SecurityService.WRITE_ACCESS);
+				
+				assertEquals(
+						securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_NUTLIST),
+						SecurityService.WRITE_ACCESS);
+				
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
+						BeCPGModel.PROP_ERP_CODE), SecurityService.WRITE_ACCESS);
+				
+				authenticationComponent.setCurrentUser(USER_TWO);
+				
+				assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL,
+						PLMModel.TYPE_NUTLIST), SecurityService.NONE_ACCESS);
+				
+				assertEquals(securityService.computeAccessMode(rmGlobalNodeRef, PLMModel.TYPE_RAWMATERIAL,
+						BeCPGModel.PROP_ERP_CODE), SecurityService.WRITE_ACCESS);
+				
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
+						PLMModel.TYPE_ORGANOLIST), SecurityService.WRITE_ACCESS);
+				
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
+						PLMModel.TYPE_ALLERGENLIST), SecurityService.READ_ACCESS);
+				
+				assertEquals(
+						securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_NUTLIST),
+						SecurityService.WRITE_ACCESS);
+				
+				assertEquals(securityService.computeAccessMode(rmLocalNodeRef, PLMModel.TYPE_RAWMATERIAL,
+						BeCPGModel.PROP_ERP_CODE), SecurityService.WRITE_ACCESS);
+				
+				// Check permissions
+				
+				authenticationComponent.setSystemUserAsCurrentUser();
+				// Global rm datalists
+				NodeRef globalRmListContainerNodeRef = entityListDAO.getListContainer(rmGlobalNodeRef);
+				List<NodeRef> globalRmDatalists = entityListDAO.getExistingListsNodeRef(globalRmListContainerNodeRef);
+				for (NodeRef globalRmDatalist : globalRmDatalists) {
+					String globalDataListQName = (String) nodeService.getProperty(globalRmDatalist, DataListModel.PROP_DATALISTITEMTYPE);
+					if (globalDataListQName.equals("bcpg:nutList")) {
+						for (AccessPermission permission : permissionService.getAllSetPermissions(globalRmDatalist)) {
+							if (permission.getAuthority().equals(grp2)) {
+								logger.info("Global nutList permission: " + permission);
+								assertEquals(permission.getPermission(), PermissionService.CONSUMER);
+							}
+						}
+					}
+				}
+				// Global rm folder
+				List<PermissionModel> globalFolderPerms = securityService.getPermissionContext(rmGlobalNodeRef,
+						nodeService.getType(rmGlobalNodeRef), "View-documents").getPermissions();
+				if (globalFolderPerms != null) {
+					List<ChildAssociationRef> folders = nodeService.getChildAssocs(rmGlobalNodeRef,
+							ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
+					for (ChildAssociationRef folder : folders) {
+						for (AccessPermission permission : permissionService.getAllSetPermissions(folder.getChildRef())) {
+							if (permission.getAuthority().equals(grp1)) {
+								logger.info("Global folder permission: " + permission);
+								assertEquals(permission.getPermission(), PermissionService.CONTRIBUTOR);
+							}
+						}
+					}
+				}
+				// Local rm datalists
+				NodeRef localRmListContainerNodeRef = entityListDAO.getListContainer(rmLocalNodeRef);
+				List<NodeRef> localRmDatalists = entityListDAO.getExistingListsNodeRef(localRmListContainerNodeRef);
+				for (NodeRef localRmDatalist : localRmDatalists) {
+					String localDataListQName = (String) nodeService.getProperty(localRmDatalist,
+							DataListModel.PROP_DATALISTITEMTYPE);
+					if (localDataListQName.equals("bcpg:organoList")) {
+						for (AccessPermission permission : permissionService.getAllSetPermissions(localRmDatalist)) {
+							if (permission.getAuthority().equals(grp3)) {
+								logger.info("Local organoList permission: " +  permission);
+								assertEquals(permission.getPermission(), PermissionService.CONTRIBUTOR);
+							}
+						}
+					} else if (localDataListQName.equals("bcpg:allergenList")) {
+						for (AccessPermission permission : permissionService.getAllSetPermissions(localRmDatalist)) {
+							if (permission.getAuthority().equals(grp1)) {
+								logger.info("Local allergenList permission: " +  permission);
+								assertEquals(permission.getPermission(), PermissionService.CONTRIBUTOR);
+							}
+						}
+					}
+				}
+				//Local folder permission
+				List<PermissionModel> localDocPerms = securityService.getPermissionContext(rmLocalNodeRef,
+						nodeService.getType(rmLocalNodeRef), "View-documents").getPermissions();
+				if (localDocPerms != null) {
+					List<ChildAssociationRef> folders = nodeService.getChildAssocs(rmLocalNodeRef,
+							ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
+					for (ChildAssociationRef folder : folders) {
+						for (AccessPermission permission : permissionService.getAllSetPermissions(folder.getChildRef())) {
+							if (permission.getAuthority().equals(grp2)) {
+								logger.info("Local folder permission: " + permission);
+								assertEquals(permission.getPermission(), PermissionService.CONSUMER);
+							}
 						}
 					}
 				}
 			}
-			// Global rm folder
-			List<PermissionModel> globalFolderPerms = securityService.getPermissionContext(rmGlobalNodeRef,
-					nodeService.getType(rmGlobalNodeRef), "View-documents").getPermissions();
-			if (globalFolderPerms != null) {
-				List<ChildAssociationRef> folders = nodeService.getChildAssocs(rmGlobalNodeRef,
-						ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
-				for (ChildAssociationRef folder : folders) {
-					for (AccessPermission permission : permissionService.getAllSetPermissions(folder.getChildRef())) {
-						if (permission.getAuthority().equals(grp1)) {
-							logger.info("Global folder permission: " + permission);
-							assertEquals(permission.getPermission(), PermissionService.CONTRIBUTOR);
-						}
-					}
-				}
-			}
-			// Local rm datalists
-			NodeRef localRmListContainerNodeRef = entityListDAO.getListContainer(rmLocalNodeRef);
-			List<NodeRef> localRmDatalists = entityListDAO.getExistingListsNodeRef(localRmListContainerNodeRef);
-			for (NodeRef localRmDatalist : localRmDatalists) {
-				String localDataListQName = (String) nodeService.getProperty(localRmDatalist,
-						DataListModel.PROP_DATALISTITEMTYPE);
-				if (localDataListQName.equals("bcpg:organoList")) {
-					for (AccessPermission permission : permissionService.getAllSetPermissions(localRmDatalist)) {
-						if (permission.getAuthority().equals(grp3)) {
-							logger.info("Local organoList permission: " +  permission);
-							assertEquals(permission.getPermission(), PermissionService.CONTRIBUTOR);
-						}
-					}
-				} else if (localDataListQName.equals("bcpg:allergenList")) {
-					for (AccessPermission permission : permissionService.getAllSetPermissions(localRmDatalist)) {
-						if (permission.getAuthority().equals(grp1)) {
-							logger.info("Local allergenList permission: " +  permission);
-							assertEquals(permission.getPermission(), PermissionService.CONTRIBUTOR);
-						}
-					}
-				}
-			}
-			//Local folder permission
-			List<PermissionModel> localDocPerms = securityService.getPermissionContext(rmLocalNodeRef,
-					nodeService.getType(rmLocalNodeRef), "View-documents").getPermissions();
-			if (localDocPerms != null) {
-				List<ChildAssociationRef> folders = nodeService.getChildAssocs(rmLocalNodeRef,
-						ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
-				for (ChildAssociationRef folder : folders) {
-					for (AccessPermission permission : permissionService.getAllSetPermissions(folder.getChildRef())) {
-						if (permission.getAuthority().equals(grp2)) {
-							logger.info("Local folder permission: " + permission);
-							assertEquals(permission.getPermission(), PermissionService.CONSUMER);
-						}
-					}
-				}
-			}
-		}
+			
+			return null;
+
+		}, false, true);
+
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -718,18 +732,30 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 		
 	}
 	
-	private boolean checkPermissions(Set<AccessPermission> permissions, List<String> allowedRead, List<String> allowedWrite) {
+	private void checkPermissions(Set<AccessPermission> permissions, List<String> allowedRead, List<String> allowedWrite) {
+		
+		int readChecks = 0;
+		int writeChecks = 0;
+		
 		for (AccessPermission permission : permissions) {
 			if (AccessStatus.ALLOWED.equals(permission.getAccessStatus())) {
-				if ((PermissionService.READ.equals(permission.getPermission()) || PermissionService.CONSUMER.equals(permission.getPermission())) && allowedRead.contains(permission.getAuthority())) {
-					allowedRead.remove(permission.getAuthority());
+				if ((PermissionService.READ.equals(permission.getPermission()) || PermissionService.CONSUMER.equals(permission.getPermission()))) {
+					if (grp1.equals(permission.getAuthority()) || grp2.equals(permission.getAuthority())) {
+						assertTrue(allowedRead.contains(permission.getAuthority()));
+						readChecks++;
+					}
 				}
-				if ((PermissionService.WRITE.equals(permission.getPermission()) || PermissionService.CONTRIBUTOR.equals(permission.getPermission())) && allowedWrite.contains(permission.getAuthority())) {
-					allowedWrite.remove(permission.getAuthority());
+				if ((PermissionService.WRITE.equals(permission.getPermission()) || PermissionService.CONTRIBUTOR.equals(permission.getPermission()))) {
+					if (grp1.equals(permission.getAuthority()) || grp2.equals(permission.getAuthority())) {
+						assertTrue(allowedWrite.contains(permission.getAuthority()));
+						writeChecks++;
+					}
 				}
 			}
 		}
-		return allowedRead.isEmpty() && allowedWrite.isEmpty();
+		
+		assertEquals(allowedRead.size(), readChecks);
+		assertEquals(allowedWrite.size(), writeChecks);
 	}
 
 	private NodeRef createDataListSecurityRule() {
