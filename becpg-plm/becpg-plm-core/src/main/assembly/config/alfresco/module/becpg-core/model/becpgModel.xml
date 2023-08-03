@@ -97,6 +97,7 @@
 					<value>Merge</value>
 					<value>Version</value>
 					<value>Export</value>
+					<value>ChangeOrder</value>
 				</list>
 			</parameter>
 		</constraint>
