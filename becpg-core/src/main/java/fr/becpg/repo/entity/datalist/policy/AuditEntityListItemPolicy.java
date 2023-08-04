@@ -42,6 +42,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
 		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
+	private static final String LIST_NODE_REFS = "listNodeRefs";
 	private static final String CATALOG_ONLY = "AuditEntityListItemPolicy.CatalogOnly";
 	private static final String UPDATED_LIST = "AuditEntityListItemPolicy.UpdatedList";
 	private static final String CHANGED_CATALOG_ENTRIES = "AuditEntityListItemPolicy.ChangedCatalogEntries";
@@ -51,7 +52,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 	private AuthenticationService authenticationService;
 
 	private EntityCatalogService entityCatalogService;
-
+	
 	/**
 	 * <p>
 	 * Setter for the field <code>entityCatalogService</code>.
@@ -168,7 +169,8 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 			for (NodeRef nodeRef : pendingNodes) {
 				String diffKey = CHANGED_CATALOG_ENTRIES + nodeRef;
 				Set<QName> pendingDiff = TransactionSupportUtil.getResource(diffKey);
-				entityCatalogService.updateAuditedField(nodeRef, pendingDiff, null);
+				Set<NodeRef> listNodeRefs = TransactionSupportUtil.getResource(LIST_NODE_REFS + nodeRef);
+				entityCatalogService.updateAuditedField(nodeRef, pendingDiff, listNodeRefs);
 			}
 		} else {
 			Set<NodeRef> listNodeRefs = new HashSet<>();
@@ -212,6 +214,8 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 					if (logger.isDebugEnabled()) {
 						logger.debug("Update modified date of entity:" + entityNodeRef);
 					}
+					
+					TransactionSupportUtil.bindResource(LIST_NODE_REFS + entityNodeRef, listNodeRefs);
 					policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
 					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
