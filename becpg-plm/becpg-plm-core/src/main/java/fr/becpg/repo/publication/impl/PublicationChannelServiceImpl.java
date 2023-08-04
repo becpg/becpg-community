@@ -18,7 +18,6 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.PublicationModel;
 import fr.becpg.repo.entity.EntityListDAO;
