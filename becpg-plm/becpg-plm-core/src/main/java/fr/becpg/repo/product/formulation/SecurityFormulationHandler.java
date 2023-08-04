@@ -154,14 +154,14 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		boolean hasParentPermissions = permissionService.getInheritParentPermissions(nodeRef);
 		
 		Map<String, String> specificPermissions = new HashMap<>();
-		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
-			if (!hasParentPermissions) {
+		
+		if (!hasParentPermissions) {
+			for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
 				specificPermissions.put(permission.getAuthority(), permission.getPermission());
 			}
-		}
-		if (!hasParentPermissions) {
 			permissionService.setInheritParentPermissions(nodeRef, true);
 		}
+		
 		Map<String, String> parentPermissions = new HashMap<>();
 		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
 			if (!specificPermissions.containsKey(permission.getAuthority())) {
