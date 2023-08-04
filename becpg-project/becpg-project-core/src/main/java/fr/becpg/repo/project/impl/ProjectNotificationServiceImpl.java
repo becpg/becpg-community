@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -184,7 +185,7 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 	}
 
 	@Override
-	public boolean acceptCatalogEvents(QName type, NodeRef entityNodeRef) {
+	public boolean acceptCatalogEvents(QName type, NodeRef entityNodeRef, Set<NodeRef> listNodeRefs) {
 		return ProjectModel.TYPE_PROJECT.equals(type);
 	}
 	
