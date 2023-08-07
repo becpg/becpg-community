@@ -18,6 +18,7 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.DataListModel;
 import fr.becpg.model.PublicationModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogObserver;
@@ -79,7 +80,12 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 	}
 
 	@Override
-	public boolean acceptCatalogEvents(QName type, NodeRef entityNodeRef) {
+	public boolean acceptCatalogEvents(QName type, NodeRef entityNodeRef, Set<NodeRef> listNodeRefs) {
+		
+		if (listNodeRefs != null && listNodeRefs.stream().allMatch(n -> PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST.equals(QName.createQName((String) nodeService.getProperty(n, DataListModel.PROP_DATALISTITEMTYPE),
+				namespaceService)))) {
+			return false;
+		}
 
 		NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
 		if (listContainer != null) {
