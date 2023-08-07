@@ -7,5 +7,11 @@ package fr.becpg.repo.importer.annotation;
  * @version $Id: $Id
  */
 public class DataListKey extends Annotation {
+
+	@Override
+	public String toString() {
+		return "DataListKey [id=" + id + ", attribute=" + attribute + ", targetClass=" + targetClass + ", targetKey=" + targetKey + ", type=" + type
+				+ ", key=" + key + "]";
+	}
 	
 }
