@@ -1032,9 +1032,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						|| BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
 					// query by path
 					NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
-							importContext.getPath());
+							AbstractBeCPGQueryBuilder.encodePath(importContext.getPath()));
 
-					queryBuilder.parent(folderNodeRef);
+					if(folderNodeRef == null) {
+						logger.warn("No folder found for :"+importContext.getPath());
+					} else {
+						queryBuilder.parent(folderNodeRef);
+					}
 
 					if (BeCPGModel.PROP_LV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
 						if ( (properties.get(attribute) instanceof MLText)) {
@@ -1072,7 +1076,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 
 		} else {
-			logger.debug("nodeColumnKeys is empty type: " + type);
+			logger.debug("No key is define for type: " + type);
 
 			// look for codeAspect
 			if ((entityDictionaryService.getType(type) != null) && (entityDictionaryService.getType(type).getDefaultAspects() != null)) {
