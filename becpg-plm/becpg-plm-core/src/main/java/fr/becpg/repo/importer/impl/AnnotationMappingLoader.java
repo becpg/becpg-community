@@ -35,6 +35,7 @@ import fr.becpg.config.mapping.FormulaMapping;
 import fr.becpg.config.mapping.HierarchyMapping;
 import fr.becpg.config.mapping.MappingException;
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.importer.ClassMapping;
 import fr.becpg.repo.importer.ImportContext;
@@ -105,8 +106,7 @@ public class AnnotationMappingLoader implements MappingLoader {
 						if (StringUtils.isEmpty(annotation.getId())) {
 							annotation.setId(columns.get(i));
 						}
-						
-						
+
 						QName targetClassQName = null;
 						QName targetKey = null;
 						QName columnQname = null;
@@ -122,17 +122,15 @@ public class AnnotationMappingLoader implements MappingLoader {
 							targetClassQName = typeDef.getName();
 							annotation.setTargetClass(targetClassQName.getPrefixString());
 						}
-						
-						if(!StringUtils.isEmpty(annotation.getKey())) {
+
+						if (!StringUtils.isEmpty(annotation.getKey())) {
 							targetKey = QName.createQName(annotation.getKey(), namespaceService);
 						}
-						
-						
 
 						logger.debug("Parsed Annotation, " + annotation);
-						
-						if(targetClassQName!=null) {
-							 targetClassMapping = importContext.getClassMappings().get(targetClassQName) != null
+
+						if (targetClassQName != null) {
+							targetClassMapping = importContext.getClassMappings().get(targetClassQName) != null
 									? importContext.getClassMappings().get(targetClassQName)
 									: new ClassMapping();
 							targetClassMapping.setType(targetClassQName);
@@ -175,7 +173,6 @@ public class AnnotationMappingLoader implements MappingLoader {
 
 							CharacteristicMapping attributeMapping = new CharacteristicMapping(charactAnnot.getId(), attributeDef, dataListQName,
 									charactQName, charactNodeRef);
-							
 
 							if (targetClassMapping != null) {
 								targetClassMapping.getColumns().add(attributeMapping);
@@ -223,13 +220,17 @@ public class AnnotationMappingLoader implements MappingLoader {
 						if (annotation instanceof Key) {
 							classMapping.getNodeColumnKeys().add(columnQname);
 
-							if (ImportType.EntityListItem.equals(importContext.getImportType()) && (importContext.getEntityType() != null)) {
-								ClassMapping entityClassMapping = importContext.getClassMappings().get(importContext.getEntityType()) != null
-										? importContext.getClassMappings().get(importContext.getEntityType())
+							if (ImportType.EntityListItem.equals(importContext.getImportType())) {
+
+								QName entityType = importContext.getEntityType() != null ? importContext.getEntityType() : PLMModel.TYPE_PRODUCT;
+
+								ClassMapping entityClassMapping = importContext.getClassMappings().get(entityType) != null
+										? importContext.getClassMappings().get(entityType)
 										: new ClassMapping();
-								entityClassMapping.setType(importContext.getEntityType());
-								entityClassMapping.getNodeColumnKeys().add(targetKey!=null ? targetKey : columnQname );
-								importContext.getClassMappings().put(importContext.getEntityType(), entityClassMapping);
+								entityClassMapping.setType(entityType);
+								entityClassMapping.getNodeColumnKeys().add(targetKey != null ? targetKey : columnQname);
+								importContext.getClassMappings().put(entityType, entityClassMapping);
+
 							}
 						}
 
@@ -241,13 +242,13 @@ public class AnnotationMappingLoader implements MappingLoader {
 						// Assoc
 						if ((annotation instanceof Assoc) || (annotation instanceof Attribute)) {
 							AttributeMapping attributeMapping = new AttributeMapping(annotation.getId(), attributeDef);
-							if (targetClassQName!=null) {
+							if (targetClassQName != null) {
 								attributeMapping.setTargetClass(targetClassQName);
 							}
 							classMapping.getColumns().add(attributeMapping);
 
 							if (targetClassMapping != null) {
-								targetClassMapping.getNodeColumnKeys().add(targetKey!=null ? targetKey : columnQname);
+								targetClassMapping.getNodeColumnKeys().add(targetKey != null ? targetKey : columnQname);
 								if ((annotation instanceof Assoc) && StringUtils.isNotEmpty(((Assoc) annotation).getPath())) {
 									targetClassMapping.getPaths().put(QName.createQName(annotation.getId(), namespaceService),
 											((Assoc) annotation).getPath());
@@ -274,7 +275,7 @@ public class AnnotationMappingLoader implements MappingLoader {
 						// Hierarchy
 						if (annotation instanceof Hierarchy) {
 							Hierarchy hierarchyAnnot = (Hierarchy) annotation;
-							
+
 							AbstractAttributeMapping attributeMapping = new HierarchyMapping(hierarchyAnnot.getId(), attributeDef,
 									hierarchyAnnot.getParentLevelColumn(), hierarchyAnnot.getPath(), hierarchyAnnot.getKey());
 							classMapping.getColumns().add(attributeMapping);
