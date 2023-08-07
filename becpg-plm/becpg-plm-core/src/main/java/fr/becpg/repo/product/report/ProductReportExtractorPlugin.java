@@ -913,6 +913,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_MAXI.getLocalName(), value);
 					}
 					
+					value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PREPARED.getLocalName());
+					if ((value == null) || value.isEmpty()) {
+						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_PREPARED.getLocalName());
+						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE_PREPARED.getLocalName(), value);
+					}
+					
 					for (ReqCtrlListDataItem reqCtrlList : productData.getReqCtrlList()) {
 						if (reqCtrlList.getReqDataType().equals(RequirementDataType.Nutrient) && dataListItem.getCharactNodeRef().equals(reqCtrlList.getCharact())) {
 							nutListElt.addAttribute(PLMModel.PROP_NUTLIST_FORMULA_ERROR.getLocalName(), "Error");
