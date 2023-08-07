@@ -1072,7 +1072,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 
 		} else {
-			logger.debug("nodeColumnKeys is empty type: " + type);
+			logger.debug("No key is define for type: " + type);
 
 			// look for codeAspect
 			if ((entityDictionaryService.getType(type) != null) && (entityDictionaryService.getType(type).getDefaultAspects() != null)) {
