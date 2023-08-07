@@ -148,6 +148,12 @@ public class RegulationFormulationHelper {
 		return extractValueByKey(roundedValue, KEY_VALUE_PER_SERVING, key);
 	}
 
+	public static Double extractPreparedValuePerServing(String roundedValue, String key) {
+		return extractValueByKey(roundedValue, KEY_SECONDARY_VALUE_PER_SERVING, key);
+	}
+	
+	
+	
 	/**
 	 * <p>extractValuePerContainer.</p>
 	 *
@@ -292,6 +298,8 @@ public class RegulationFormulationHelper {
 			String measurementPrecision =  nutListElt.attributeValue(PLMModel.PROP_NUTLIST_MEASUREMENTPRECISION.getLocalName());
 			String nutListValue = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE.getLocalName());
 			String nutListValuePerServing = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName());
+			String nutListValuePrepared = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PREPARED.getLocalName());
+			
 			try {
 				JSONTokener tokener = new JSONTokener(roundedValue);
 				JSONObject jsonRound = new JSONObject(tokener);
@@ -364,6 +372,21 @@ public class RegulationFormulationHelper {
 									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing),
 											extractValuePerServing(roundedValue, locKey),measurementPrecision, nutCode, locale, locKey));
 						}
+						
+						
+						
+						if ((nutListValuePrepared != null) && (!nutListValuePrepared.equals(""))) {
+							nutListElt.addAttribute("roundedDisplayValuePrepared" + suffix, RegulationFormulationHelper
+									.displayValue(Double.parseDouble(nutListValue), extractPreparedValue(roundedValue, locKey), nutCode,measurementPrecision, locale, locKey));
+							
+							
+							if ((nutListValuePerServing != null) && (!nutListValuePerServing.equals(""))) {
+								nutListElt.addAttribute("roundedDisplayValuePreparedPerServing" + suffix,
+										RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing),
+												extractPreparedValuePerServing(roundedValue, locKey),measurementPrecision, nutCode, locale, locKey));
+							}
+						}
+						
 					}
 				}
 			} catch (JSONException e) {
