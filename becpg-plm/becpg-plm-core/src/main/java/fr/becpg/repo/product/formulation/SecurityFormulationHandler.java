@@ -154,14 +154,14 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		boolean hasParentPermissions = permissionService.getInheritParentPermissions(nodeRef);
 		
 		Map<String, String> specificPermissions = new HashMap<>();
-		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
-			if (!hasParentPermissions) {
+		
+		if (!hasParentPermissions) {
+			for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
 				specificPermissions.put(permission.getAuthority(), permission.getPermission());
 			}
-		}
-		if (!hasParentPermissions) {
 			permissionService.setInheritParentPermissions(nodeRef, true);
 		}
+		
 		Map<String, String> parentPermissions = new HashMap<>();
 		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
 			if (!specificPermissions.containsKey(permission.getAuthority())) {
@@ -172,7 +172,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		HashMap<String, String> toAdd = new HashMap<>();
 		Set<String> toRemove = new HashSet<>();
 		
-		if (extractPermissions(siteInfo, parentPermissions, specificPermissions, permissionModels, toAdd, toRemove)) {
+		if (visitPermissions(siteInfo, parentPermissions, specificPermissions, permissionModels, toAdd, toRemove)) {
 			for (Entry<String, String> entry : toAdd.entrySet()) {
 				String authority = entry.getKey();
 				String permission = entry.getValue();
@@ -195,7 +195,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 	
-	private boolean extractPermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
+	private boolean visitPermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
 		
 		if (permissionModels == null || permissionModels.isEmpty()) {
 			return false;
@@ -209,15 +209,13 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 					.collect(Collectors.toList());
 			
 			for (String authority : permissionAuthorities) {
-				String permission = adaptPermissionWithSite(basePermission, siteInfo, authority);
+				String permission = extractPermission(basePermission, siteInfo, authority);
 				addPermission(authority, permission, toAdd, toRemove);
 			}
 			
+			// set read to parent permissions as business logic is "read for others"
 			if (PermissionModel.READ_WRITE.equals(permissionModel.getPermission())) {
 				for (String authority : parentPermissions.keySet()) {
-					addPermission(authority, PermissionService.READ, toAdd, toRemove);
-				}
-				for (String authority : specificPermissions.keySet()) {
 					addPermission(authority, PermissionService.READ, toAdd, toRemove);
 				}
 			}
@@ -232,7 +230,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		return true;
 	}
 	
-	private String adaptPermissionWithSite(String basePermission, SiteInfo siteInfo, String authorityName) {
+	private String extractPermission(String basePermission, SiteInfo siteInfo, String authorityName) {
 		if (siteInfo != null) {
 			String sitePermission = siteService.getMembersRole(siteInfo.getShortName(), authorityName);
 			if (sitePermission != null) {		
