@@ -7,11 +7,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -188,7 +190,7 @@ public class DecernisServiceImpl implements DecernisService {
 		return countries.contains(country);
 	}
 
-	private JSONObject getIngredients(ProductData product, List<ReqCtrlListDataItem> errors, Map<String, List<IngListDataItem>> ings) throws JSONException {
+	private JSONObject getIngredients(ProductData product, List<ReqCtrlListDataItem> errors) throws JSONException {
 
 		Map<QName, String> ingNumbers = new HashMap<>();
 		ingNumbers.put(PLMModel.PROP_CAS_NUMBER, "CAS");
@@ -333,13 +335,6 @@ public class DecernisServiceImpl implements DecernisService {
 
 					if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
 							&& ((ingName != null) && !ingName.isEmpty()) && (ingQtyPerc != null)) {
-						
-						if (ings.get(rid) == null) {
-							ings.put(rid, new ArrayList<>());
-						}
-						
-						ings.get(rid).add(ingListDataItem);
-						
 						JSONObject ingredient = new JSONObject();
 						ingredient.put("name", ingName);
 						ingredient.put("percentage", ingQtyPerc);
@@ -463,7 +458,7 @@ public class DecernisServiceImpl implements DecernisService {
 		return null;
 	}
 
-	private List<ReqCtrlListDataItem> createReqCtrl(Set<String> countries, JSONObject analysisResults, Map<String, List<IngListDataItem>> ings)
+	private List<ReqCtrlListDataItem> createReqCtrl(Set<String> countries, JSONObject analysisResults, List<IngListDataItem> ingList)
 			throws JSONException {
 		List<ReqCtrlListDataItem> reqCtrlList = new ArrayList<>();
 
@@ -475,64 +470,56 @@ public class DecernisServiceImpl implements DecernisService {
 					for (int row = 0; row < tabularResults.length(); row++) {
 						JSONObject result = tabularResults.getJSONObject(row);
 						if (result.has("did") && result.has("resultIndicator")) {
-							if (ings.containsKey(result.getString("did")) && (ings.get(result.getString("did")) != null)) {
 								String usage = (analysisResults.has("search_parameters")
 										&& analysisResults.getJSONObject("search_parameters").has(PARAM_USAGE)
 												? analysisResults.getJSONObject("search_parameters").getString("usage")
 												: "");
 
-								List<IngListDataItem> ingList = ings.get(result.getString("did"));
+							String decernisID = result.getString("did");
+							String function = result.getString("function_name");
+							String ingredientName = result.getString("ingredient");
+							IngListDataItem ingItem = findIngredientItem(ingList, decernisID, function, ingredientName);
+							
+							if (result.getString("resultIndicator").toLowerCase().startsWith("prohibited")) {
+								String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
+										? "(" + result.getString("threshold") + ")"
+												: "");
 								
-								IngListDataItem ingItem = null;
+								MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
+								ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem == null ? null : ingItem.getIng(), reqMessage, RequirementType.Forbidden);
+								reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 								
-								for (IngListDataItem ing : ingList) {
-									String ingName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
-									if (result.getString("ingredient").contains(ingName)) {
-										ingItem = ing;
-										break;
-									}
+								reqCtrlList.add(reqCtrlItem);
+								if (logger.isDebugEnabled()) {
+									logger.debug("Adding prohibited ing :" + result.getString("did"));
 								}
 								
-								if (result.getString("resultIndicator").toLowerCase().startsWith("prohibited")) {
-									String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
-											? "(" + result.getString("threshold") + ")"
-											: "");
-
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Forbidden);
-									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-
-									reqCtrlList.add(reqCtrlItem);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding prohibited ing :" + result.getString("did"));
-									}
-
-								} else if (result.getString("resultIndicator").toLowerCase().startsWith("not listed")) {
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Tolerated);
-									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-									reqCtrlList.add(reqCtrlItem);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding not listed ing :" + result.getString("did"));
-									}
-								} else if (Boolean.TRUE.equals(addInfoReqCtrl)) {
-
-									String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
-											? result.getString("threshold")
-											: "");
-
-									MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, result.getString("resultIndicator"),
-											threshold);
-									ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Info);
-
-									reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
-									reqCtrlList.add(reqCtrlItem);
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.getString("did"));
-									}
-
+							} else if (result.getString("resultIndicator").toLowerCase().startsWith("not listed")) {
+								MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_NOTLISTED_ING);
+								ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem == null ? null : ingItem.getIng(), reqMessage, RequirementType.Tolerated);
+								reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+								reqCtrlList.add(reqCtrlItem);
+								if (logger.isDebugEnabled()) {
+									logger.debug("Adding not listed ing :" + result.getString("did"));
 								}
+							} else if (Boolean.TRUE.equals(addInfoReqCtrl)) {
+								
+								String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
+										? result.getString("threshold")
+												: "");
+								
+								MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, result.getString("resultIndicator"),
+										threshold);
+								ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem == null ? null : ingItem.getIng(), reqMessage, RequirementType.Info);
+								
+								reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+								reqCtrlList.add(reqCtrlItem);
+								if (logger.isDebugEnabled()) {
+									logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.getString("did"));
+								}
+								
 							}
+							
 						}
 					}
 				}
@@ -540,6 +527,44 @@ public class DecernisServiceImpl implements DecernisService {
 
 		}
 		return reqCtrlList;
+	}
+	
+	private IngListDataItem findIngredientItem(List<IngListDataItem> ingList, String decernisID, String function, String ingredientName) {
+		for (IngListDataItem ing : ingList) {
+			if (decernisID.equals(nodeService.getProperty(ing.getIng(), PLMModel.PROP_REGULATORY_CODE))) {
+				NodeRef ingType = (NodeRef) nodeService.getProperty(ing.getIng(), PLMModel.PROP_ING_TYPE_V2);
+				if (function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE))) {
+					return ing;
+				}
+			}
+		}
+		
+		if (ingredientName.split("\\|").length > 1) {
+			ingredientName = ingredientName.split("\\|")[1];
+		}
+		
+		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
+		try {
+			for (IngListDataItem ing : ingList) {
+				MLText charactName = (MLText) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_CHARACT_NAME);
+				if (ingredientName.equalsIgnoreCase(charactName.getDefaultValue())) {
+					return ing;
+				}
+				if (ingredientName.equalsIgnoreCase(charactName.getValue(Locale.ENGLISH))) {
+					return ing;
+				}
+				MLText legalName = (MLText) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_LEGAL_NAME);
+				if (ingredientName.equalsIgnoreCase(legalName.getDefaultValue())) {
+					return ing;
+				}
+				if (ingredientName.equalsIgnoreCase(legalName.getValue(Locale.ENGLISH))) {
+					return ing;
+				}
+			}
+		} finally {
+			MLPropertyInterceptor.setMLAware(mlAware);
+		}
+		return null;
 	}
 
 	private ReqCtrlListDataItem createReqCtrl(NodeRef ing, MLText reqCtrlMessage, RequirementType reqType) {
@@ -561,9 +586,7 @@ public class DecernisServiceImpl implements DecernisService {
 		try {
 
 			if (!usages.isEmpty() && !countries.isEmpty()) {
-				Map<String, List<IngListDataItem>> ings = new HashMap<>();
-
-				JSONObject data = getIngredients(product, ret, ings);
+				JSONObject data = getIngredients(product, ret);
 				if ((data != null) && data.has("ingredients")) {
 					String recipeId = sendRecipe(data);
 					if (recipeId != null) {
@@ -573,7 +596,7 @@ public class DecernisServiceImpl implements DecernisService {
 								for (String usage : usages) {
 									JSONObject analysisResults = recipeAnalysis(recipeId, countries, usage.trim());
 									if (analysisResults != null) {
-										ret.addAll(createReqCtrl(countries, analysisResults, ings));
+										ret.addAll(createReqCtrl(countries, analysisResults, product.getIngList()));
 									} else {
 										throw new FormulateException("Error analysing recipe");
 									}
