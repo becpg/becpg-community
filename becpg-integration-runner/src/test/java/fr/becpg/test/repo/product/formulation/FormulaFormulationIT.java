@@ -77,6 +77,60 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 		// create RM and lSF
 		initParts();
 	}
+	
+	@Test
+	public void testAuthorizedTypes() {
+		
+		NodeRef finishedProductDataNodeRef = inWriteTx(() -> {
+
+			FinishedProductData finishedProductData = new FinishedProductData();
+			finishedProductData.setName("testAuthorizedTypes FP");
+
+			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
+			dynamicCharactListItems.add(new DynamicCharactListItem("formula", "T(fr.becpg.repo.product.data.RawMaterialData).toString();"));
+
+			finishedProductData.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
+
+			alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData);
+			return finishedProductData.getNodeRef();
+		});
+		
+		inWriteTx(() -> {
+			 L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
+				return formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID);
+			}), false, true);
+			 return true;
+		});
+		
+		inReadTx(() -> {
+			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
+			DynamicCharactListItem dynamicCharactListItem = finishedProductData.getCompoListView().getDynamicCharactList().get(0);
+			assertEquals("class fr.becpg.repo.product.data.RawMaterialData", dynamicCharactListItem.getValue().toString());
+			return null;
+		});
+		
+		inWriteTx(() -> {
+			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
+			List<DynamicCharactListItem> dynamicCharactList = finishedProductData.getCompoListView().getDynamicCharactList();
+			dynamicCharactList.clear();
+			dynamicCharactList.add(new DynamicCharactListItem("formula", "T(java.lang.System).toString();"));
+			return alfrescoRepository.save(finishedProductData);
+		});
+		
+		inWriteTx(() -> {
+			L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
+				return formulationService.formulate(finishedProductDataNodeRef, FormulationService.DEFAULT_CHAIN_ID);
+			}), false, true);
+			return true;
+		});
+		
+		inReadTx(() -> {
+			FinishedProductData finishedProductData = (FinishedProductData) alfrescoRepository.findOne(finishedProductDataNodeRef);
+			DynamicCharactListItem dynamicCharactListItem = finishedProductData.getCompoListView().getDynamicCharactList().get(0);
+			assertTrue(dynamicCharactListItem.getErrorLog().toString().contains("Type is not authorized"));
+			return null;
+		});
+	}
 
 	@Test
 	public void testCopyHelperFormula() throws Exception {
