@@ -14,6 +14,7 @@ function main() {
 		"beCPG.report.datasource.maxSizeInBytes",
 		"beCPG.report.image.maxSizeInBytes",
 		"beCPG.formulation.maxRclSourcesToKeep",
+		"beCPG.spel.security.authorizedTypes",
 		"beCPG.formulation.reqCtrlList.addChildRclSources"].forEach(function(p) {
 			model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p) }
 
