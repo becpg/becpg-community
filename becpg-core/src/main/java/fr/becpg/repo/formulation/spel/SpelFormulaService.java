@@ -1,23 +1,30 @@
 package fr.becpg.repo.formulation.spel;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.expression.EvaluationException;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.SpelCompilerMode;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.expression.spel.support.StandardTypeLocator;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.security.aop.SecurityMethodBeforeAdvice;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>SpelFormulaService class.</p>
@@ -30,6 +37,9 @@ public class SpelFormulaService {
 
 	private static final Log logger = LogFactory.getLog(SpelFormulaService.class);
 
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
 	@Autowired
 	private SecurityMethodBeforeAdvice securityMethodBeforeAdvice;
 
@@ -82,6 +92,11 @@ public class SpelFormulaService {
 		return parser;
 	}
 
+	public StandardEvaluationContext createSpelContext(@Nullable Object rootObject) {
+		StandardEvaluationContext context = new StandardEvaluationContext(rootObject);
+		context.setTypeLocator(new BecpgSpelSecurityTypeLocator(systemConfigurationService.confValue("beCPG.spel.security.authorizedTypes")));
+		return context;
+	}
 	
 	/**
 	 * <p>createEntitySpelContext.</p>
@@ -91,7 +106,7 @@ public class SpelFormulaService {
 	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
 	 */
 	public <T extends RepositoryEntity> StandardEvaluationContext createEntitySpelContext(T entity) {
-		StandardEvaluationContext context = new StandardEvaluationContext(createSecurityProxy(entity));
+		StandardEvaluationContext context = createSpelContext(createSecurityProxy(entity));
 		registerCustomFunctions(entity, context);
 		return context;
 	}
@@ -105,7 +120,7 @@ public class SpelFormulaService {
 			formulaContext.setEntity(entity);
 		}
 		formulaContext.setDataListItem(dataListItem);
-		StandardEvaluationContext context = new StandardEvaluationContext(formulaContext);
+		StandardEvaluationContext context = createSpelContext(formulaContext);
 		registerCustomFunctions(entity, context);
 		return context;
 	}
@@ -131,7 +146,7 @@ public class SpelFormulaService {
 	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
 	 */
 	public <T extends RepositoryEntity> StandardEvaluationContext createCustomSpelContext(T entity, SpelFormulaContext<T> formulaContext, boolean applySecurity) {
-		StandardEvaluationContext context = new StandardEvaluationContext(formulaContext);
+		StandardEvaluationContext context = createSpelContext(formulaContext);
 		if(applySecurity) {
 			formulaContext.setEntity(createSecurityProxy(entity));
 		} else {
@@ -155,7 +170,7 @@ public class SpelFormulaService {
 	 * @return a {@link org.springframework.expression.spel.support.StandardEvaluationContext} object.
 	 */
 	public <T> StandardEvaluationContext createItemSpelContext(RepositoryEntity entity, T item) {
-		StandardEvaluationContext dataContext = new StandardEvaluationContext(item);
+		StandardEvaluationContext dataContext = createSpelContext(item);
 		registerCustomFunctions(entity, dataContext);
 		return dataContext;
 	}
@@ -238,5 +253,25 @@ public class SpelFormulaService {
 		return createSecurityProxy(alfrescoRepository.findOne(nodeRef));
 	}
 
+	private class BecpgSpelSecurityTypeLocator extends StandardTypeLocator {
+		
+		private static final String TYPE_NOT_AUTHORIZED = "Type is not authorized: ";
+		
+		private List<String> authorizedTypes = new ArrayList<>();
+		
+		private BecpgSpelSecurityTypeLocator(String authorizedTypes) {
+			if (authorizedTypes != null && !authorizedTypes.isBlank()) {
+				this.authorizedTypes = Arrays.asList(authorizedTypes.split(","));
+			}
+		}
+		
+		@Override
+		public Class<?> findType(String typeName) throws EvaluationException {
+			if (authorizedTypes.stream().anyMatch(clazz -> clazz.equals(typeName) || clazz.endsWith("*") && typeName.startsWith(clazz.replace("*", "")))) {
+				return super.findType(typeName);
+			}
+			throw new EvaluationException(TYPE_NOT_AUTHORIZED + typeName);
+		}
+	}
 
 }
