@@ -15,6 +15,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ import fr.becpg.model.DataListModel;
 import fr.becpg.model.PublicationModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.catalog.EntityCatalogObserver;
+import fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter;
 import fr.becpg.repo.helper.impl.AssociationCriteriaFilter.AssociationCriteriaFilterMode;
@@ -40,7 +42,7 @@ import fr.becpg.repo.search.data.SearchRuleResult;
  *
  */
 @Service("publicationChannelService")
-public class PublicationChannelServiceImpl implements PublicationChannelService, EntityCatalogObserver {
+public class PublicationChannelServiceImpl implements PublicationChannelService, EntityCatalogObserver, InitializingBean {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -56,6 +58,14 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE);
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNELLIST_BATCHID);
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNELLIST_STATUS);
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNELLIST_ERROR);
+	}
+	
 	@Override
 	public void notifyAuditedFieldChange(String catalogId, NodeRef entityNodeRef) {
 		NodeRef listContainer = entityListDAO.getListContainer(entityNodeRef);
