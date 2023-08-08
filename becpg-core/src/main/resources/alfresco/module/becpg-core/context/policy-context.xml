@@ -106,6 +106,10 @@
 		<property name="repoService" ref="repoService" />
 	</bean>
 
+   	<!-- Catalog -->
+	<bean id="entityCatalogPolicy" class="fr.becpg.repo.entity.catalog.policy.EntityCatalogPolicy" parent="abstractBeCPGPolicy">
+		<property name="entityCatalogService" ref="entityCatalogService" />
+	</bean>
 
    	<!-- Variant -->
 	<bean id="variantPolicy" class="fr.becpg.repo.variant.policy.VariantPolicy" parent="abstractBeCPGPolicy">
