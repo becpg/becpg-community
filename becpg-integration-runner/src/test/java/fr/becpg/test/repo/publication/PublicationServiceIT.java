@@ -311,22 +311,33 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 			return true;
 		});
 		
-		Date currentodifiedDate = (Date) inReadTx(() -> {
+		Date currentModifiedDate = (Date) inReadTx(() -> {
 			return nodeService.getProperty(pfNodeRef, ContentModel.PROP_MODIFIED);
 		});
 		
-		assertEquals(currentodifiedDate,beforeModifiedDate);
+		assertEquals(currentModifiedDate, beforeModifiedDate);
+		
+		Date beforeChannelModifiedDate = (Date) inReadTx(() -> {
+			return nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE);
+		});
 		
 		inWriteTx(() -> {
+			nodeService.removeProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CATALOG_ID);
 			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, PublicationChannelAction.RETRY);
 			return true;
 		});
 		
-		currentodifiedDate = (Date) inReadTx(() -> {
+		currentModifiedDate = (Date) inReadTx(() -> {
 			return nodeService.getProperty(pfNodeRef, ContentModel.PROP_MODIFIED);
 		});
 		
-		assertTrue(currentodifiedDate.compareTo(beforeModifiedDate) > 0);
+		assertTrue(currentModifiedDate.compareTo(beforeModifiedDate) > 0);
+		
+		Date currentChannelModifiedDate = (Date) inReadTx(() -> {
+			return nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE);
+		});
+		
+		assertEquals(beforeChannelModifiedDate, currentChannelModifiedDate);
 
 	}
 
