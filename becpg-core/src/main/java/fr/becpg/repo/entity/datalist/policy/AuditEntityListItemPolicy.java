@@ -44,9 +44,8 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
 		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
-	private static final String LIST_NODE_REFS = "listNodeRefs";
+	public static final String UPDATED_LISTS = "AuditEntityListItemPolicy.UpdatedLists";
 	private static final String CATALOG_ONLY = "AuditEntityListItemPolicy.CatalogOnly";
-	private static final String UPDATED_LIST = "AuditEntityListItemPolicy.UpdatedList";
 
 	private static final Log logger = LogFactory.getLog(AuditEntityListItemPolicy.class);
 
@@ -149,7 +148,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	private void queueListNodeRef(NodeRef listNodeRef) {
 		if (policyBehaviourFilter.isEnabled(BeCPGModel.TYPE_ENTITYLIST_ITEM) && policyBehaviourFilter.isEnabled(ContentModel.ASPECT_AUDITABLE)) {
-			queueNode(UPDATED_LIST, listNodeRef);
+			queueNode(listNodeRef);
 		} else {
 			queueNode(CATALOG_ONLY, listNodeRef);
 		}
@@ -201,7 +200,7 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 						logger.debug("Update modified date of entity:" + entityNodeRef);
 					}
 					
-					TransactionSupportUtil.bindResource(LIST_NODE_REFS + entityNodeRef, listNodeRefs);
+					TransactionSupportUtil.bindResource(UPDATED_LISTS + entityNodeRef, listNodeRefs);
 					policyBehaviourFilter.disableBehaviour(entityNodeRef, ContentModel.ASPECT_AUDITABLE);
 					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIED, Calendar.getInstance().getTime());
 					nodeService.setProperty(entityNodeRef, ContentModel.PROP_MODIFIER, authenticationService.getCurrentUserName());
