@@ -20,12 +20,12 @@ import com.google.common.collect.Maps;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
+import fr.becpg.repo.entity.datalist.policy.AuditEntityListItemPolicy;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 
 public class EntityCatalogPolicy extends AbstractBeCPGPolicy
 		implements NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
-	private static final String LIST_NODE_REFS = "EntityCatalogPolicy.ListNodeRefs";
 	private static final String CHANGED_CATALOG_ENTRIES = "EntityCatalogPolicy.ChangedCatalogEntries";
 
 	private EntityCatalogService entityCatalogService;
@@ -94,8 +94,8 @@ public class EntityCatalogPolicy extends AbstractBeCPGPolicy
 		for (NodeRef nodeRef : pendingNodes) {
 			String diffKey = CHANGED_CATALOG_ENTRIES + nodeRef;
 			Set<QName> pendingDiff = TransactionSupportUtil.getResource(diffKey);
-			Set<NodeRef> listNodeRefs = TransactionSupportUtil.getResource(LIST_NODE_REFS + nodeRef);
-			entityCatalogService.updateAuditedField(nodeRef, pendingDiff, listNodeRefs);
+			Set<NodeRef> updatedLists = TransactionSupportUtil.getResource(AuditEntityListItemPolicy.UPDATED_LISTS + nodeRef);
+			entityCatalogService.updateAuditedField(nodeRef, pendingDiff, updatedLists);
 		}
 		return true;
 	}
