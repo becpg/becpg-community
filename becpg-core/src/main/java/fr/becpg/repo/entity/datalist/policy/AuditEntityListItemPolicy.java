@@ -51,11 +51,6 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 
 	private static final List<QName> ignoredTypes = new ArrayList<>();
 	
-	static {
-		// a change within other ignored properties will trigger cm:modified property change
-		ignoredTypes.add(ContentModel.PROP_MODIFIED);
-	}
-	
 	public static void registerIgnoredType(QName type) {
 		ignoredTypes.add(type);
 	}
@@ -225,7 +220,10 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 				changedEntries.addAll(diff.entriesDiffering().keySet());
 				changedEntries.addAll(diff.entriesOnlyOnLeft().keySet());
 				changedEntries.addAll(diff.entriesOnlyOnRight().keySet());
-				if (!ignoredTypes.containsAll(changedEntries)) {
+				
+				boolean isIgnoredTypePresent = ignoredTypes.stream().anyMatch(changedEntries::contains);
+				
+				if (!isIgnoredTypePresent) {
 					queueListNodeRef(nodeService.getPrimaryParent(nodeRef).getParentRef());
 				}
 			}
