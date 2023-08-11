@@ -24,15 +24,24 @@ import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.PLMBaseTestCase;
 
 public class NutriScoreIT extends PLMBaseTestCase {
 
 	@Autowired
 	private ProductService productService;
+	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 
 	@Test
 	public void testNutriScore() {
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			systemConfigurationService.updateConfValue("beCPG.score.nutriscore.regulatoryCass", "fr.becpg.repo.product.helper.Nutrient5C2021Helper");
+			return null;
+		}, false, true);
 
 		NodeRef energyKjNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "ENER-KJO");
 		NodeRef satFatNode = findOrCreateNode(PLMModel.TYPE_NUT, GS1Model.PROP_NUTRIENT_TYPE_CODE, "FASAT");
@@ -173,6 +182,10 @@ public class NutriScoreIT extends PLMBaseTestCase {
 			return null;
 		}, false, true);
 
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			systemConfigurationService.resetConfValue("beCPG.score.nutriscore.regulatoryCass");
+			return null;
+		}, false, true);
 	}
 
 	private NodeRef findOrCreateNode(QName type, QName property, String value) {
