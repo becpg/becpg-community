@@ -151,7 +151,8 @@
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
 		<becpg.version>4.2.3</becpg.version>
 		<docker.becpg.url>becpg</docker.becpg.url>
-		<docker.becpg.tag>${becpg.version}</docker.becpg.tag>
+		<docker.becpg.version>${becpg.version}</docker.becpg.version>
+		<docker.becpg.tag>${project.version}</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
