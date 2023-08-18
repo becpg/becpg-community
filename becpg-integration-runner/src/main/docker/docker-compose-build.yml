@@ -4,19 +4,19 @@ services:
     image: ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag}
     build:
       dockerfile: ./Dockerfile
-      context: ${project.basedir}/becpg-integration-runner/target/becpg-base-core
+      context: ${project.basedir}/target/becpg-base-core
 
   becpg-base-share:
     image: ${docker.becpg.url}/becpg-base-share:${docker.becpg.tag}
     build:
       dockerfile: ./Dockerfile
-      context: ${project.basedir}/becpg-integration-runner/target/becpg-base-share    
+      context: ${project.basedir}/target/becpg-base-share    
 
   becpg-test-core:
     image: ${docker.becpg.url}/becpg-test-core:${docker.becpg.tag}
     build:
       dockerfile: ./Dockerfile
-      context: ${project.basedir}/becpg-integration-runner/target/becpg-test-core
+      context: ${project.basedir}/target/becpg-test-core
     depends_on:
       - becpg-base-core
       
@@ -24,7 +24,7 @@ services:
     image: ${docker.becpg.url}/becpg-test-share:${docker.becpg.tag}
     build:
       dockerfile: ./Dockerfile
-      context: ${project.basedir}/becpg-integration-runner/target/becpg-test-share
+      context: ${project.basedir}/target/becpg-test-share
     depends_on:
       - becpg-base-share      
       
@@ -32,10 +32,10 @@ services:
     image: ${docker.becpg.url}/becpg-db:${docker.becpg.tag}
     build:
       dockerfile: ./Dockerfile
-      context: ${project.basedir}/becpg-integration-runner/target/becpg-db  
+      context: ${project.basedir}/target/becpg-db  
       
   becpg-solr:
     image: ${docker.becpg.url}/becpg-solr:${docker.becpg.tag}
     build:
       dockerfile: ./Dockerfile
-      context: ${project.basedir}/becpg-integration-runner/target/becpg-solr              
+      context: ${project.basedir}/target/becpg-solr              

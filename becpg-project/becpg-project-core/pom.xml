@@ -3,10 +3,11 @@
 	<parent>
 		<artifactId>becpg-parent</artifactId>
 		<groupId>fr.becpg</groupId>
-		<version>4.2.3.1-SNAPSHOT</version>
+		<version>4.2.3</version>
 		<relativePath>../../</relativePath>
 	</parent>
-	<modelVersion>4.0.0</modelVersion>
+    <version>4.2.3.1-SNAPSHOT</version>
+    <modelVersion>4.0.0</modelVersion>    
 	<artifactId>becpg-project-core</artifactId>
 	<packaging>jar</packaging>
 	<name>beCPG Project Core</name>
