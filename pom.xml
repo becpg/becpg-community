@@ -19,16 +19,16 @@
 			<post>support@becpg.fr</post>
 		</mailingList>
 	</mailingLists>
-	<scm>
-		<connection>scm:hg:https://www.becpg.fr/hg/becpg-community</connection>
-		<developerConnection>scm:hg:https://${maven.username}@becpg.fr/hg/becpg-community/</developerConnection>
-		<url>https://www.becpg.fr/hg/becpg-community</url>
-	</scm>
 
 	<issueManagement>
 		<system>RedMine</system>
 		<url>https://support.becpg.fr</url>
 	</issueManagement>
+	
+	<scm>
+		<connection>scm:git:https://source.cloud.google.com/becpg-314807/becpg</connection>
+		<url>https://source.cloud.google.com/becpg-314807/becpg</url>
+	</scm>
 
 	<licenses>
 		<license>
@@ -114,6 +114,7 @@
 		<alfresco-remote-api.version>14.145</alfresco-remote-api.version>
 		<alfresco-data-model.version>14.145</alfresco-data-model.version>
 		<alfresco-core.version>14.145</alfresco-core.version>
+		<spring-surf.version>8.18</spring-surf.version>
 	    <spring-webscripts.version>8.28</spring-webscripts.version>
 	    <spring-webscripts-share.version>8.27</spring-webscripts-share.version>
 	
@@ -147,8 +148,10 @@
 		<test.acs.endpoint.path />
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
+		<becpg.version>4.2.2</becpg.version>
 		<docker.becpg.url>becpg</docker.becpg.url>
-		<docker.becpg.tag>4.2.2</docker.becpg.tag>
+		<docker.becpg.version>${becpg.version}</docker.becpg.version>
+		<docker.becpg.tag>${project.version}</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -163,8 +166,7 @@
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.ws.timeout>3600</sonar.ws.timeout>
 		<sonar.language>java</sonar.language>
-		
-		<becpg.artworks.version>4.2.1-SNAPSHOT</becpg.artworks.version>
+        <becpg.artworks.version>4.2.1.0</becpg.artworks.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -293,13 +295,13 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.1.0</version>
+					<version>3.3.0</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.0.0-M1</version>
+					<version>3.1.0</version>
 					<executions>
 						<execution>
 							<id>integration-test</id>
@@ -323,7 +325,7 @@
 						<dependency>
 							<groupId>org.apache.maven.surefire</groupId>
 							<artifactId>surefire-junit47</artifactId>
-							<version>3.0.0-M1</version>
+							<version>3.1.0</version>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -331,7 +333,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.1.1</version>
+					<version>3.6.0</version>
 				</plugin>
 
 
@@ -405,7 +407,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.2</version>
+				<version>3.2.0</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -415,16 +417,15 @@
 					</execution>
 				</executions>
 				<configuration>
-					<doCheck>false</doCheck>
-					<doUpdate>false</doUpdate>
 					<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+					<shortRevisionLength>7</shortRevisionLength>
 				</configuration>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M1</version>
+				<version>3.1.0</version>
 				<configuration>
 					<runOrder>alphabetical</runOrder>
 				</configuration>
@@ -433,15 +434,21 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.2.0</version>
+				<version>3.5.0</version>
 				<configuration>
 				</configuration>
 			</plugin>
+			
+		    <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.4.1</version>
+			</plugin>	
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
+				<version>3.11.0</version>
 				<configuration>
 					<release>11</release>
 				</configuration>
@@ -450,7 +457,7 @@
 			<plugin>
 				<groupId>org.owasp</groupId>
 				<artifactId>dependency-check-maven</artifactId>
-				<version>7.2.1</version>
+				<version>8.2.1</version>
 				<configuration>
 					<skipProvidedScope>false</skipProvidedScope>
 					<skipRuntimeScope>true</skipRuntimeScope>
@@ -497,7 +504,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.2.0</version>
+				<version>3.5.0</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -509,7 +516,7 @@
 			<plugin>
 				<groupId>org.owasp</groupId>
 				<artifactId>dependency-check-maven</artifactId>
-				<version>7.2.1</version>
+				<version>8.2.1</version>
 				<configuration>
 					<skipProvidedScope>false</skipProvidedScope>
 					<skipRuntimeScope>true</skipRuntimeScope>
