@@ -19,12 +19,29 @@ public class RegulatoryContext {
 	private ProductData product;
 	private Set<String> countries = new HashSet<>();
 	private Set<String> usages = new HashSet<>();
+	private Integer moduleId;
 	
 	private List<RegulatoryContextItem> contextItems = new ArrayList<>();
 	
 	private Map<String, List<IngListDataItem>> ingRegulatoryMapping = new HashMap<>();
 	
 	private List<ReqCtrlListDataItem> requirements = new LinkedList<>();
+	
+	public void setCountries(Set<String> countries) {
+		this.countries = countries;
+	}
+	
+	public void setUsages(Set<String> usages) {
+		this.usages = usages;
+	}
+	
+	public Integer getModuleId() {
+		return moduleId;
+	}
+	
+	public void setModuleId(Integer moduleId) {
+		this.moduleId = moduleId;
+	}
 	
 	public Set<String> getCountries() {
 		return countries;
@@ -65,8 +82,13 @@ public class RegulatoryContext {
 		if (product.getIngList() == null || product.getIngList().isEmpty()) {
 			return false;
 		}
+		
+		if (!usages.isEmpty() && !countries.isEmpty()) {
+			return true;
+		}
+		
 		for (RegulatoryContextItem contextItem : contextItems) {
-			if (contextItem.isTreatable()) {
+			if (!contextItem.isEmpty()) {
 				return true;
 			}
 		}

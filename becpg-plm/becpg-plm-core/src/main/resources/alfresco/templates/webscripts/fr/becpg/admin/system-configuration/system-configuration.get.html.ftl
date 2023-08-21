@@ -18,8 +18,8 @@
       
 	       Admin.request({
 	            url : serviceContext + '/becpg/admin/system/config/update',
-	            method : "POST"
-	            data : {"key": id ,"value": field.value}
+	            method : "POST",
+	            data : {"key": id ,"value": field.value},
 	            fnSuccess : function(res)
 	            {
 	            	alert(OK);
@@ -30,8 +30,8 @@
       function reset(id){
         Admin.request({
 	            url : serviceContext + '/becpg/admin/system/config/reset',
-	            method : "POST"
-	            data : {"key": id }
+	            method : "POST",
+	            data : {"key": id },
 	            fnSuccess : function(res)
 	            {
 	            	alert(OK);
@@ -53,6 +53,7 @@
 	  <@sysField id="beCPG.multilinguale.supportedLocales" />
 	  <@sysField id="beCPG.report.datasource.maxSizeInBytes" />
 	  <@sysField id="beCPG.report.image.maxSizeInBytes" />
+	  <@sysField id="beCPG.spel.security.authorizedTypes" />
    </div>
    
       <div class="column-full">

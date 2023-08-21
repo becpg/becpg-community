@@ -169,11 +169,15 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	protected void visitNode(NodeRef entityNodeRef, JSONObject entity, JsonVisitNodeType type, RemoteJSONContext context) throws JSONException {
-		visitNode(entityNodeRef, entity, type, null, context);
+		try {
+			visitNode(entityNodeRef, entity, type, null, context);
+		} catch (RemoteException e) {
+			logger.warn("Error while visiting nodeRef " + entityNodeRef + ": " + e.getMessage());
+		}
 	}
 
 	protected void visitNode(NodeRef nodeRef, JSONObject entity, JsonVisitNodeType type, QName assocName, RemoteJSONContext context)
-			throws JSONException {
+			throws JSONException, RemoteException {
 		cacheList.add(nodeRef);
 		QName nodeType = nodeService.getType(nodeRef).getPrefixedQName(namespaceService);
 
@@ -393,7 +397,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	}
 
-	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException {
+	protected void visitAssocs(NodeRef nodeRef, JSONObject entity, QName assocName, RemoteJSONContext context) throws JSONException, RemoteException {
 
 		TypeDefinition typeDef = entityDictionaryService.getType(nodeService.getType(nodeRef));
 		if (typeDef != null) {
@@ -512,7 +516,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	protected void visitProps(NodeRef nodeRef, JSONObject entity, QName assocName, Map<QName, Serializable> props, RemoteJSONContext context)
-			throws JSONException {
+			throws JSONException, RemoteException {
 
 		if (props != null) {
 			for (Map.Entry<QName, Serializable> entry : props.entrySet()) {
@@ -597,7 +601,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context) throws JSONException {
+	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context) throws JSONException, RemoteException {
 		if (value instanceof List) {
 			JSONArray tmp = new JSONArray();
 			entity.put(entityDictionaryService.toPrefixString(propType), tmp);
@@ -609,7 +613,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						tmp.put(node);
 						visitNode((NodeRef) subEl, node, JsonVisitNodeType.ASSOC, context);
 					} else {
-						logger.warn("node does not exist: " + subEl);
+						throw new RemoteException("node does not exist: " + subEl + ", for prop: " + propType);
 					}
 					
 				} else {
@@ -629,7 +633,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				entity.put(entityDictionaryService.toPrefixString(propType), node);
 				visitNode((NodeRef) value, node, JsonVisitNodeType.ASSOC, context);
 			} else {
-				logger.warn("node does not exist: " + value);
+				throw new IllegalStateException("node does not exist: " + value + ", for prop: " + propType);
 			}
 		} else {
 

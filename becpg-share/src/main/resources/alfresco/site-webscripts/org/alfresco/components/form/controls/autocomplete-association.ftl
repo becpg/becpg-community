@@ -25,6 +25,15 @@
 		<#assign ds=ds+"?entityNodeRef="+args.entityNodeRef>
 	</#if>
 </#if>
+<#if field.control.params.excludeSources?? && "true" == field.control.params.excludeSources>
+	<#if ds?contains("?")>
+		<#assign ds=ds+"&excludeSources=true">
+	<#else>
+		<#assign ds=ds+"?excludeSources=true">
+	</#if>
+	<#assign ds=ds+"&itemId="+args.itemId>
+	<#assign ds=ds+"&fieldName="+field.name>
+</#if>
 <#assign formId=args.htmlid?js_string?html + "-form">
 <#if field.control.params.multipleSelectMode?? && "true" == field.control.params.multipleSelectMode>
 	<#assign multipleSelectMode=true>

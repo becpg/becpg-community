@@ -181,6 +181,7 @@
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial
               </control-param>
+              <control-param name="excludeSources">true</control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
             </control>
           </field>
@@ -801,6 +802,7 @@
       <form id="search">
         <field-visibility>
           <show force="true" id="cm:name"/>
+          <show force="true" id="cm:title"/>
           <show force="true" id="cm:description"/>
           <show force="true" id="bcpg:legalName"/>
           <show force="true" id="bcpg:productHierarchy1"/>
@@ -809,11 +811,16 @@
           <show force="true" id="bcpg:erpCode"/>
           <show force="true" id="bcpg:certificateDate"/>
           <show force="true" id="bcpg:suppliers"/>
+          <show force="true" id="bcpg:supplierPlants"/>
+          <show force="true" id="bcpg:supplierRefCode"/>
+          <show force="true" id="bcpg:plants"/>
+          <show force="true" id="bcpg:productGeoOrigin"/>
+          <show force="true" id="bcpg:entityTplRef"/>
           <show force="true" id="bcpg:productCollections"/>
-          <show force="false" id="cm:modified"/>
-          <show force="false" id="cm:modifier"/>
-          <show force="false" id="cm:created"/>
           <show force="false" id="cm:creator"/>
+          <show force="false" id="cm:created"/>
+          <show force="false" id="cm:modifier"/>
+          <show force="false" id="cm:modified"/>
           <show force="true" id="bcpg:advAlVolAnd"/>
           <show force="true" id="bcpg:advAlVolNot"/>
           <show force="true" id="bcpg:advAlInVolAnd"/>
@@ -851,6 +858,11 @@
           		<control-param name="forceEditable">true</control-param>
           	</control>
           </field>
+          <field id="cm:title" mandatory="false" label-id="becpg.forms.field.tradeName" read-only="false" set="2-col-product-criteria">
+          	<control>
+          		<control-param name="forceEditable">true</control-param>
+          	</control>
+          </field>
           <field id="cm:description" mandatory="false" read-only="false" set="2-col-product-criteria">
             <control template="/org/alfresco/components/form/controls/textfield.ftl">
           		<control-param name="forceEditable">true</control-param>
@@ -870,12 +882,17 @@
             </control>
           </field>
           <field id="bcpg:productState" mandatory="false" read-only="false" set="2-col-product-criteria">
-            <control template="/org/alfresco/components/form/controls/selectone.ftl">
+            <control template="/org/alfresco/components/form/controls/selectmany.ftl">
               <control-param name="isSearch">true</control-param>
-              <control-param name="insertBlank">true</control-param>
         	  <control-param name="forceEditable">true</control-param>
             </control>
             
+          </field>
+          <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="2-col-product-criteria">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial?classNames=bcpg:entityTplAspect
+							</control-param>
+            </control>
           </field>
           <field id="bcpg:code" mandatory="false" read-only="false" set="2-col-product-criteria">
 	          <control template="/org/alfresco/components/form/controls/textfield.ftl">
@@ -883,6 +900,11 @@
 			  </control>
           </field>
           <field id="bcpg:erpCode" mandatory="false" read-only="false" set="2-col-product-criteria">
+	          <control template="/org/alfresco/components/form/controls/textfield.ftl">
+			  	<control-param name="forceEditable">true</control-param>
+			  </control>
+          </field>
+          <field id="bcpg:supplierRefCode" mandatory="false" read-only="false" set="2-col-product-criteria">
 	          <control template="/org/alfresco/components/form/controls/textfield.ftl">
 			  	<control-param name="forceEditable">true</control-param>
 			  </control>
@@ -895,23 +917,32 @@
           <field id="bcpg:suppliers" mandatory="false" read-only="false" set="2-col-product-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
           </field>
+          <field id="bcpg:supplierPlants" mandatory="false" read-only="false" set="2-col-product-criteria">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
+          </field>
+          <field id="bcpg:plants" mandatory="false" read-only="false" set="2-col-product-criteria">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
+          </field>
+          <field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="2-col-product-criteria">
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
+          </field>
             <field id="bcpg:productCollections" mandatory="false" read-only="false" set="2-col-product-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
           </field>
           <set id="3-col-product-criteria" parent="product-criteria" template="/org/alfresco/components/form/3-column-set.ftl"/>
           <set id="1-col-product-criteria" parent="product-criteria"/>
-          <field id="cm:modified" mandatory="false" read-only="false" set="1-col-product-criteria">
+          <field id="cm:modified" mandatory="false" read-only="false" set="2-col-product-criteria">
             <control template="/org/alfresco/components/form/controls/daterange.ftl"/>
           </field>
-          <field id="cm:modifier" mandatory="false" read-only="false" set="1-col-product-criteria">
+          <field id="cm:modifier" mandatory="false" read-only="false" set="2-col-product-criteria">
             <control>
               <control-param name="forceEditable">true</control-param>
             </control>
           </field>
-          <field id="cm:created" mandatory="false" read-only="false" set="1-col-product-criteria">
+          <field id="cm:created" mandatory="false" read-only="false" set="2-col-product-criteria">
             <control template="/org/alfresco/components/form/controls/daterange.ftl"/>
           </field>
-          <field id="cm:creator" mandatory="false" read-only="false" set="1-col-product-criteria">
+          <field id="cm:creator" mandatory="false" read-only="false" set="2-col-product-criteria">
             <control>
               <control-param name="forceEditable">true</control-param>
             </control>
@@ -1206,6 +1237,7 @@
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:rawMaterial
 							</control-param>
+			  <control-param name="excludeSources">true</control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
             </control>
           </field>
