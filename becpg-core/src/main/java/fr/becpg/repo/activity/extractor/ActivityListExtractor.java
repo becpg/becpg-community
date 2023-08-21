@@ -321,14 +321,16 @@ public class ActivityListExtractor extends SimpleExtractor {
 					if (Pattern.matches("\\(.*,.*\\)", propertyArray.getString(i))) {
 						String nodeRefString = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf("(") + 1,
 								propertyArray.getString(i).indexOf(","));
-						nodeRef = new NodeRef(nodeRefString);
+						if (NodeRef.isNodeRef(nodeRefString)) {
+							nodeRef = new NodeRef(nodeRefString);
+						}
 						name = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf(",") + 1,
 								propertyArray.getString(i).indexOf(")"));
 
-					} else {
+					} else if (NodeRef.isNodeRef(propertyArray.getString(i))){
 						nodeRef = new NodeRef(propertyArray.getString(i));
 					}
-					if (nodeService.exists(nodeRef)) {
+					if (nodeRef != null && nodeService.exists(nodeRef)) {
 						if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
 							if (propertyDef != null) {
 								postproperty.put(attributeExtractorService.getStringValue(propertyDef, nodeRef,
