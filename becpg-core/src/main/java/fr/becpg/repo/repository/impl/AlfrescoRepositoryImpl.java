@@ -219,14 +219,29 @@ public class AlfrescoRepositoryImpl<T extends RepositoryEntity> implements Alfre
 					} else {
 						cache.remove(nodeRef);
 					}
+				} else {
+					if(cache.contains(nodeRef)){
+						if (logger.isDebugEnabled()) {
+							logger.info("Clear cache of:" + nodeRef + " - " + nodeService.getProperty(nodeRef, ContentModel.PROP_NAME));
+						}
+						cache.remove(nodeRef);
+					}
 				}
 			}
 		} else {
-			if (logger.isDebugEnabled()) {
-				logger.info("Clear cache of:" + nodeRef + " - deleted");
+			
+			if(cache.contains(nodeRef)){
+				if (logger.isDebugEnabled()) {
+					logger.info("Clear cache of:" + nodeRef + " - deleted");
+				}
+				cache.remove(nodeRef);
+			} else if(charactCache.contains(nodeRef)) {
+				if (logger.isDebugEnabled()) {
+					logger.info("Clear charactCache of:" + nodeRef + " - deleted");
+				}
+				charactCache.remove(nodeRef);
 			}
-			charactCache.remove(nodeRef);
-			cache.remove(nodeRef);
+		
 		}
 	}
 
