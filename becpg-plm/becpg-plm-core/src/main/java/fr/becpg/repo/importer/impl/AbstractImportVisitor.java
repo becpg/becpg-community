@@ -71,6 +71,7 @@ import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.remote.extractor.RemoteHelper;
+import fr.becpg.repo.formulation.spel.SpelFormulaService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.PropertiesHelper;
 import fr.becpg.repo.helper.RepoService;
@@ -121,6 +122,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	protected AssociationService associationService;
 	
 	protected PermissionService permissionService;
+	
+	private SpelFormulaService formulaService;
+	
+	public void setFormulaService(SpelFormulaService spelFormulaService) {
+		this.formulaService = spelFormulaService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>entityListDAO</code>.</p>
@@ -451,7 +458,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	private String parseFormula(String formula) throws ImporterException {
 		try {
 			ExpressionParser parser = new SpelExpressionParser();
-			StandardEvaluationContext context = new StandardEvaluationContext(this);
+			StandardEvaluationContext context = formulaService.createSpelContext(this);
 
 			return parser.parseExpression(formula, new ParserContext() {
 
@@ -1032,9 +1039,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						|| BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
 					// query by path
 					NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
-							importContext.getPath());
+							AbstractBeCPGQueryBuilder.encodePath(importContext.getPath()));
 
-					queryBuilder.parent(folderNodeRef);
+					if(folderNodeRef == null) {
+						logger.warn("No folder found for :"+importContext.getPath());
+					} else {
+						queryBuilder.parent(folderNodeRef);
+					}
 
 					if (BeCPGModel.PROP_LV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
 						if ( (properties.get(attribute) instanceof MLText)) {
@@ -1072,7 +1083,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 			}
 
 		} else {
-			logger.debug("nodeColumnKeys is empty type: " + type);
+			logger.debug("No key is define for type: " + type);
 
 			// look for codeAspect
 			if ((entityDictionaryService.getType(type) != null) && (entityDictionaryService.getType(type).getDefaultAspects() != null)) {

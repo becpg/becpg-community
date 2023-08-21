@@ -164,12 +164,16 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 					i++;
 				}
 
-				String value = values.get(z_idx);
+				String value = null;
+				if( z_idx < values.size()	) {
+				   value = values.get(z_idx);
+				}
+				
 				PropertyDefinition propertyDef = entityDictionaryService.getProperty(qName);
 
 				if (propertyDef instanceof PropertyDefinition) {
 					dataListColumnsProps.put(qName, value);
-				} else {
+				} else if(value!=null){
 
 					AssociationDefinition associationDef = entityDictionaryService.getAssociation(qName);
 					List<NodeRef> targetRefs = findTargetNodesByValue(importContext, associationDef.isTargetMany(),

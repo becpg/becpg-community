@@ -127,7 +127,7 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		//Test query search
 		inReadTx(() -> {
 			Assert.assertEquals(channelNodeRef, publicationChannelService.getChannelById(CHANNEL_ID));
-			Assert.assertTrue(!publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
+			Assert.assertFalse(publicationChannelService.getEntitiesByChannel(channelNodeRef).isEmpty());
 			Assert.assertEquals(pfNodeRef, publicationChannelService.getEntitiesByChannel(channelNodeRef).get(0));
 			return true;
 		});
@@ -154,7 +154,13 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 		final NodeRef channelListItemNodeRef = inWriteTx(() -> {
 
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(pfNodeRef);
-			NodeRef listNodeRef = entityListDAO.createList(listContainerNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
+			
+			NodeRef listNodeRef = entityListDAO.getList(listContainerNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
+			
+			if (listNodeRef == null) {
+				listNodeRef = entityListDAO.createList(listContainerNodeRef, PublicationModel.TYPE_PUBLICATION_CHANNEL_LIST);
+			}
+			
 			Map<QName, Serializable> properties = new HashMap<>();
 			Map<QName, List<NodeRef>> associations = new HashMap<>();
 			associations.put(PublicationModel.ASSOC_PUBCHANNELLIST_CHANNEL, Arrays.asList(channelNodeRef));
@@ -294,6 +300,44 @@ public class PublicationServiceIT extends PLMBaseTestCase {
 			return true;
 		});
 		
+		
+		// test audit
+		Date beforeModifiedDate = (Date) inReadTx(() -> {
+			return nodeService.getProperty(pfNodeRef, ContentModel.PROP_MODIFIED);
+		});
+		
+		inWriteTx(() -> {
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE, new Date());
+			return true;
+		});
+		
+		Date currentModifiedDate = (Date) inReadTx(() -> {
+			return nodeService.getProperty(pfNodeRef, ContentModel.PROP_MODIFIED);
+		});
+		
+		assertEquals(currentModifiedDate, beforeModifiedDate);
+		
+		Date beforeChannelModifiedDate = (Date) inReadTx(() -> {
+			return nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE);
+		});
+		
+		inWriteTx(() -> {
+			nodeService.removeProperty(channelNodeRef, PublicationModel.PROP_PUBCHANNEL_CATALOG_ID);
+			nodeService.setProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_ACTION, PublicationChannelAction.RETRY);
+			return true;
+		});
+		
+		currentModifiedDate = (Date) inReadTx(() -> {
+			return nodeService.getProperty(pfNodeRef, ContentModel.PROP_MODIFIED);
+		});
+		
+		assertTrue(currentModifiedDate.compareTo(beforeModifiedDate) > 0);
+		
+		Date currentChannelModifiedDate = (Date) inReadTx(() -> {
+			return nodeService.getProperty(channelListItemNodeRef, PublicationModel.PROP_PUBCHANNELLIST_MODIFIED_DATE);
+		});
+		
+		assertEquals(beforeChannelModifiedDate, currentChannelModifiedDate);
 
 	}
 

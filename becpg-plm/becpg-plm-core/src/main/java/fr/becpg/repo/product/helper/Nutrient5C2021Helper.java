@@ -4,11 +4,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.NodeService;
 import org.json.JSONObject;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import fr.becpg.model.NutrientProfileCategory;
-import fr.becpg.repo.product.formulation.score.NutriScore;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.formulation.score.NutriScoreContext;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
  * Helper to compute 5C Nutrient Profile Score
@@ -16,45 +22,38 @@ import fr.becpg.repo.product.formulation.score.NutriScoreContext;
  * @author matthieu
  * @version $Id: $Id
  */
-public class Nutrient5C2021Helper {
+@Service
+public class Nutrient5C2021Helper implements InitializingBean, NutriScoreRegulatoryHelper {
 	
-	private static final String UPPER_VALUE = "upperValue";
+	private static Nutrient5C2021Helper INSTANCE = null;
+	
+	@Autowired
+	private NodeService nodeService;
+	
+	@Autowired
+	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	private static final double[] sugarsRange = { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d };
+	private static final double[] saltRange = { 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d };
+	private static final double[] fiberRange = { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d };
+	private static final double[] nspFiberRange = { 3.5d, 2.8d, 2.1d, 1.4d, 0.7d };
+	private static final double[] proteinRange = { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d };
+	private static final double[] fruitVegetableRange = { -1d, -1d, -1d, -1d, -1d, 80d, -1d, -1d, 60d, 40d };
+	private static final double[] fatsRange = { 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d };
+	private static final double[] energyRange = { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d };
 
-	private static final String LOWER_VALUE = "lowerValue";
+	private static final double[][] othersACategories = new double[][] { energyRange, fatsRange, sugarsRange, saltRange };
+	private static final double[][] cheeseACategories = new double[][] { energyRange, fatsRange, sugarsRange, saltRange };
+	private static final double[][] fatsACategories = new double[][] { energyRange, { 64d, 58d, 52d, 46d, 40d, 34d, 28d, 22d, 16d, 10d }, sugarsRange, saltRange };
 
-	private static final String VALUE = "value";
-
-	private static final String SCORE = "score";
-
-	private static final List<String> NUTRIENT_PROFILE_CLASSES = Arrays.asList("E","D","C","B","A");
-
-	private static final double[][] othersACategories = new double[][] { { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
-			{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d }, { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d },
-			{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d } };
-
-	private static final double[][] othersCCategories = new double[][] { { -1d, -1d, -1d, -1d, -1d, 80d, -1d, -1d, 60d, 40d },
-			{ 3.5d, 2.8d, 2.1d, 1.4d, 0.7d }, { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d }, { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
-
-	private static final double[][] cheeseACategories = new double[][] { { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
-			{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d }, { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d },
-			{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d } };
-
-	private static final double[][] cheeseCCategories = new double[][] { { -1d, -1d, -1d, -1d, -1d, 80d, -1d, -1d, 60d, 40d },
-			{ 3.5d, 2.8d, 2.1d, 1.4d, 0.7d }, { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d }, { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
-
-	private static final double[][] fatsACategories = new double[][] { { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d },
-			{ 64d, 58d, 52d, 46d, 40d, 34d, 28d, 22d, 16d, 10d }, { 45d, 40d, 36d, 31d, 27d, 22.5d, 18d, 13.5d, 9d, 4.5d },
-			{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d } };
-
-	private static final double[][] fatsCCategories = new double[][] { { -1d, -1d, -1d, -1d, -1d, 80d, -1d, -1d, 60d, 40d },
-			{ 3.5d, 2.8d, 2.1d, 1.4d, 0.7d }, { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d }, { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
+	private static final double[][] othersCCategories = new double[][] { fruitVegetableRange, nspFiberRange, fiberRange, proteinRange };
+	private static final double[][] cheeseCCategories = new double[][] { fruitVegetableRange, nspFiberRange, fiberRange, proteinRange };
+	private static final double[][] fatsCCategories = new double[][] { fruitVegetableRange, nspFiberRange, fiberRange, proteinRange };
 
 	private static final double[][] beveragesACategories = new double[][] { { 270d, 240d, 210d, 180d, 150d, 120d, 90d, 60d, 30d, 0d },
-			{ 10d, 9d, 8d, 7d, 6d, 5d, 4d, 3d, 2d, 1d }, { 13.5d, 12d, 10.5d, 9d, 7.5d, 6d, 4.5d, 3d, 1.5d, 0d },
-			{ 900d, 810d, 720d, 630d, 540d, 450d, 360d, 270d, 180d, 90d } };
-
+		fatsRange, { 13.5d, 12d, 10.5d, 9d, 7.5d, 6d, 4.5d, 3d, 1.5d, 0d }, saltRange };
 	private static final double[][] beveragesCCategories = new double[][] { { 80d, -1d, -1d, -1d, -1d, -1d, 60d, -1d, 40d, -1d },
-			{ 3.5d, 2.8d, 2.1d, 1.4d, 0.7d }, { 4.7d, 3.7d, 2.8d, 1.9d, 0.9d }, { 8.0d, 6.4d, 4.8d, 3.2d, 1.6d } };
+		nspFiberRange, fiberRange, proteinRange };
 
 	private static final List<Double> BEVERAGES_RANGES = Arrays.asList(9d, 5d, 1d, 0d);
 	private static final List<Double> CHEESES_RANGES = Arrays.asList(18d, 10d, 2d, -1d);
@@ -63,6 +62,11 @@ public class Nutrient5C2021Helper {
 			
 	private Nutrient5C2021Helper() {
 		
+	}
+	
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		INSTANCE = this;
 	}
 	
 	private static double[][] getACategory(NutrientProfileCategory category) {
@@ -91,6 +95,25 @@ public class Nutrient5C2021Helper {
 			return othersCCategories;
 		}
 	}
+	
+	@Override
+	public NutriScoreContext buildContext(ProductData productData) {
+		return buildNutriScoreContext(productData);
+	}
+	
+	@Override
+	public String extractClass(NutriScoreContext context) {
+		return extractNutrientClass(context);
+	}
+	
+	@Override
+	public Double computeScore(NutriScoreContext context) {
+		return (double) compute5CScore(context);
+	}
+	
+	public static NutriScoreContext buildNutriScoreContext(ProductData productData) {
+		return NutrientHelper.buildNutriScoreContext(productData, INSTANCE.alfrescoRepository, INSTANCE.nodeService);
+	}
 
 	public static int compute5CScore(Double energyKj, Double satFat, Double totalFat, Double totalSugar, Double sodium, Double percFruitsAndVetgs,
 			Double nspFibre, Double aoacFibre, Double protein, String category) {
@@ -98,15 +121,17 @@ public class Nutrient5C2021Helper {
 		NutriScoreContext nutriScoreContext = new NutriScoreContext(energyKj, satFat, totalFat, totalSugar, sodium,
 				percFruitsAndVetgs, nspFibre, aoacFibre, protein, category);
 		
-		return build5CScore(nutriScoreContext);
+		return compute5CScore(nutriScoreContext);
 	}
 	
-	private static void buildNutriScorePart(JSONObject part, int score, double[] categories) {
+	private static void buildNutriScorePart(JSONObject part, double[] categories) {
+		
+		int score = categories.length;
 		
 		Double value = 0d;
 		
-		if (part.has(VALUE)) {
-			value = part.getDouble(VALUE);
+		if (part.has(NutriScoreContext.VALUE)) {
+			value = part.getDouble(NutriScoreContext.VALUE);
 		}
 		
 		double lower = 0;
@@ -131,12 +156,12 @@ public class Nutrient5C2021Helper {
 			lower = 0;
 		}
 		
-		part.put(LOWER_VALUE, lower);
-		part.put(UPPER_VALUE, upper == Double.POSITIVE_INFINITY ? "+Inf" : upper);
-		part.put(SCORE, score);
+		part.put(NutriScoreContext.LOWER_VALUE, lower);
+		part.put(NutriScoreContext.UPPER_VALUE, upper == Double.POSITIVE_INFINITY ? "+Inf" : upper);
+		part.put(NutriScoreContext.SCORE, score);
 	}
 	
-	public static int build5CScore(NutriScoreContext nutriScoreContext) {
+	public static int compute5CScore(NutriScoreContext nutriScoreContext) {
 
 		String category = nutriScoreContext.getCategory();
 
@@ -148,38 +173,38 @@ public class Nutrient5C2021Helper {
 		double[][] aCategories = getACategory(NutrientProfileCategory.valueOf(category));
 		double[][] cCategories = getCCategory(NutrientProfileCategory.valueOf(category));
 
-		buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScore.ENERGY_CODE), 10, aCategories[0]);
-		aScore += nutriScoreContext.getParts().getJSONObject(NutriScore.ENERGY_CODE).getDouble(SCORE);
+		buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE), aCategories[0]);
+		aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE).getDouble(NutriScoreContext.SCORE);
 		
 		if (NutrientProfileCategory.Fats.equals(NutrientProfileCategory.valueOf(category))) {
 
-			double satFat = nutriScoreContext.getParts().getJSONObject(NutriScore.SATFAT_CODE).getDouble(VALUE);
+			double satFat = nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SATFAT_CODE).getDouble(NutriScoreContext.VALUE);
 			
-			double totalFat = nutriScoreContext.getParts().getJSONObject(NutriScore.FAT_CODE).getDouble(VALUE);
+			double totalFat = nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE).getDouble(NutriScoreContext.VALUE);
 			
 			if (totalFat != 0) {
-				nutriScoreContext.getParts().getJSONObject(NutriScore.FAT_CODE).put(VALUE, (satFat / totalFat) * 100);
+				nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE).put(NutriScoreContext.VALUE, (satFat / totalFat) * 100);
 			}
-			buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScore.FAT_CODE), 10, aCategories[1]);
+			buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE), aCategories[1]);
 			
-			aScore += nutriScoreContext.getParts().getJSONObject(NutriScore.FAT_CODE).getDouble(SCORE);
+			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE).getDouble(NutriScoreContext.SCORE);
 
 		} else {
-			buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScore.SATFAT_CODE), 10, aCategories[1]);
-			aScore += nutriScoreContext.getParts().getJSONObject(NutriScore.SATFAT_CODE).getDouble(SCORE);
+			buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SATFAT_CODE), aCategories[1]);
+			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SATFAT_CODE).getDouble(NutriScoreContext.SCORE);
 		}
 
-		buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScore.SUGAR_CODE), 10, aCategories[2]);
+		buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SUGAR_CODE), aCategories[2]);
 		
-		aScore += nutriScoreContext.getParts().getJSONObject(NutriScore.SUGAR_CODE).getDouble(SCORE);
+		aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SUGAR_CODE).getDouble(NutriScoreContext.SCORE);
 		
-		buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScore.SODIUM_CODE), 10, aCategories[3]);
+		buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SODIUM_CODE), aCategories[3]);
 		
-		aScore += nutriScoreContext.getParts().getJSONObject(NutriScore.SODIUM_CODE).getDouble(SCORE);
+		aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SODIUM_CODE).getDouble(NutriScoreContext.SCORE);
 
-		buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScore.FRUIT_VEGETABLE_CODE), 10, cCategories[0]);
+		buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE), cCategories[0]);
 		
-		cScore += nutriScoreContext.getParts().getJSONObject(NutriScore.FRUIT_VEGETABLE_CODE).getDouble(SCORE);
+		cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE);
 
 		if ((aScore < 11) || NutrientProfileCategory.Cheeses.equals(NutrientProfileCategory.valueOf(category))
 				|| ((aScore >= 11) && (cScore >= 5)
@@ -187,20 +212,20 @@ public class Nutrient5C2021Helper {
 				|| ((aScore >= 11) && (cScore >= 10)
 						&& NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)))) {
 
-			buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScore.PROTEIN_CODE), 5, cCategories[3]);
+			buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.PROTEIN_CODE), cCategories[3]);
 			
-			cScore += nutriScoreContext.getParts().getJSONObject(NutriScore.PROTEIN_CODE).getDouble(SCORE);
+			cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.PROTEIN_CODE).getDouble(NutriScoreContext.SCORE);
 			
 			nutriScoreContext.setHasProteinScore(true);
 		}
 
-		buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScore.NSP_CODE), 5, cCategories[1]);
+		buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.NSP_CODE), cCategories[1]);
 		
-		cScore += nutriScoreContext.getParts().getJSONObject(NutriScore.NSP_CODE).getDouble(SCORE);
+		cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.NSP_CODE).getDouble(NutriScoreContext.SCORE);
 
-		buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScore.AOAC_CODE), 5, cCategories[2]);
+		buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.AOAC_CODE), cCategories[2]);
 		
-		cScore += nutriScoreContext.getParts().getJSONObject(NutriScore.AOAC_CODE).getDouble(SCORE);
+		cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.AOAC_CODE).getDouble(NutriScoreContext.SCORE);
 
 		int result = aScore - cScore;
 
@@ -211,7 +236,7 @@ public class Nutrient5C2021Helper {
 		return nutriScoreContext.getNutriScore();
 	}
 
-		public static String buildNutrientClass(NutriScoreContext nutriScoreContext) {
+		public static String extractNutrientClass(NutriScoreContext nutriScoreContext) {
 
 			List<Double> ranges = new ArrayList<>();
 
@@ -235,7 +260,7 @@ public class Nutrient5C2021Helper {
 				if (score > ranges.get(i)) {
 					nutriScoreContext.setClassLowerValue(lower == Double.NEGATIVE_INFINITY ? "-Inf" : lower.toString());
 					nutriScoreContext.setClassUpperValue(upper == Double.POSITIVE_INFINITY ? "+Inf" : upper.toString());
-					nutriScoreContext.setNutrientClass(NUTRIENT_PROFILE_CLASSES.get(i));
+					nutriScoreContext.setNutrientClass(NutriScoreContext.NUTRIENT_PROFILE_CLASSES.get(i));
 					return nutriScoreContext.getNutrientClass();
 				}
 				upper = ranges.get(i);
@@ -247,7 +272,7 @@ public class Nutrient5C2021Helper {
 
 			nutriScoreContext.setClassLowerValue(lower == Double.NEGATIVE_INFINITY ? "-Inf" : lower.toString());
 			nutriScoreContext.setClassUpperValue(upper == Double.POSITIVE_INFINITY ? "+Inf" : upper.toString());
-			nutriScoreContext.setNutrientClass(NUTRIENT_PROFILE_CLASSES.get(NUTRIENT_PROFILE_CLASSES.size() - 1));
+			nutriScoreContext.setNutrientClass(NutriScoreContext.NUTRIENT_PROFILE_CLASSES.get(NutriScoreContext.NUTRIENT_PROFILE_CLASSES.size() - 1));
 
 			// case of beverages : never get "A" class except for water
 			if (NutrientProfileCategory.Beverages.toString().equals(nutriScoreContext.getCategory())

@@ -181,7 +181,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 									nodeService.setProperty(entityNodeRef, catalogModifiedDate, new Date());
 								}
 								for (EntityCatalogObserver observer : observers) {
-									if (observer.acceptCatalogEvents(type, entityNodeRef)) {
+									if (observer.acceptCatalogEvents(type, entityNodeRef, listNodeRefs)) {
 										observer.notifyAuditedFieldChange(catalog.getString(PROP_ID), entityNodeRef);
 									}
 								}
@@ -194,7 +194,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 						new HashSet<>(Arrays.asList(ContentModel.PROP_MODIFIED, ContentModel.PROP_CREATED, BeCPGModel.PROP_FORMULATED_DATE)),
 						diffQnames, null) != null) {
 					for (EntityCatalogObserver observer : observers) {
-						if (observer.acceptCatalogEvents(ContentModel.PROP_MODIFIED, entityNodeRef)) {
+						if (observer.acceptCatalogEvents(ContentModel.PROP_MODIFIED, entityNodeRef, listNodeRefs)) {
 							observer.notifyAuditedFieldChange(null, entityNodeRef);
 						}
 					}

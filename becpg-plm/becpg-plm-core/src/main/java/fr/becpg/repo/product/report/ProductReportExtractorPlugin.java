@@ -894,6 +894,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
 					}
+					
+					value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName());
+					if ((value == null) || value.isEmpty()) {
+						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_VALUE_PER_SERVING.getLocalName());
+						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName(), value);
+					}
 
 					value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_MINI.getLocalName());
 					if ((value == null) || value.isEmpty()) {
@@ -905,6 +911,12 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					if ((value == null) || value.isEmpty()) {
 						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_MAXI.getLocalName());
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_MAXI.getLocalName(), value);
+					}
+					
+					value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PREPARED.getLocalName());
+					if ((value == null) || value.isEmpty()) {
+						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_PREPARED.getLocalName());
+						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE_PREPARED.getLocalName(), value);
 					}
 					
 					for (ReqCtrlListDataItem reqCtrlList : productData.getReqCtrlList()) {

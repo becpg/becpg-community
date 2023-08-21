@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>becpg-integration-runner</artifactId>
 	<name>Alfresco, Share and Solr Tomcat Runner</name>
@@ -15,6 +14,7 @@
 		<version>4.2.3</version>
 		<relativePath>../</relativePath>
 	</parent>
+	<version>4.2.3.4-SNAPSHOT</version>
 
 	<dependencies>
 		<dependency>
@@ -52,7 +52,7 @@
 			<artifactId>spring-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>fr.becpg.artworks</groupId>
 			<artifactId>becpg-artworks-platform</artifactId>
@@ -60,9 +60,8 @@
 			<version>${becpg.artworks.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
-	
-		
+
+
 		<!-- beCPG AMPs -->
 		<dependency>
 			<groupId>fr.becpg</groupId>
@@ -144,12 +143,12 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>com.networknt</groupId>
-		    <artifactId>json-schema-validator</artifactId>
-		    <version>1.0.77</version>
-		    <scope>test</scope>
+			<groupId>com.networknt</groupId>
+			<artifactId>json-schema-validator</artifactId>
+			<version>1.0.77</version>
+			<scope>test</scope>
 		</dependency>
 		
 		<dependency>
@@ -168,8 +167,9 @@
 			</testResource>
 		</testResources>
 		<plugins>
-			
-            <!-- Filter the Dockerfile and the other files added to the container to be able to replace maven properties -->
+
+			<!-- Filter the Dockerfile and the other files added to the
+			container to be able to replace maven properties -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-resources-plugin</artifactId>
@@ -223,24 +223,28 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/becpg-test-core/forms</outputDirectory>
+							<outputDirectory>
+								${project.build.directory}/becpg-test-core/forms</outputDirectory>
 							<resources>
 								<resource>
-									<directory>../becpg-share/src/main/resources/alfresco/forms</directory>
+									<directory>
+										../becpg-share/src/main/resources/alfresco/forms</directory>
 									<filtering>false</filtering>
 									<includes>
 										<include>*-config.xml</include>
 									</includes>
 								</resource>
 								<resource>
-									<directory>../becpg-plm/becpg-plm-share/src/main/resources/alfresco/forms</directory>
+									<directory>
+										../becpg-plm/becpg-plm-share/src/main/resources/alfresco/forms</directory>
 									<filtering>false</filtering>
 									<includes>
 										<include>*-config.xml</include>
 									</includes>
 								</resource>
 								<resource>
-									<directory>../becpg-project/becpg-project-share/src/main/resources/alfresco/forms</directory>
+									<directory>
+										../becpg-project/becpg-project-share/src/main/resources/alfresco/forms</directory>
 									<filtering>false</filtering>
 									<includes>
 										<include>*-config.xml</include>
@@ -256,10 +260,12 @@
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/becpg-test-core/becpg-plm/messages</outputDirectory>
+							<outputDirectory>
+								${project.build.directory}/becpg-test-core/becpg-plm/messages</outputDirectory>
 							<resources>
 								<resource>
-									<directory>../becpg-plm/becpg-plm-share/src/main/resources/alfresco/messages</directory>
+									<directory>
+										../becpg-plm/becpg-plm-share/src/main/resources/alfresco/messages</directory>
 									<filtering>false</filtering>
 									<includes>
 										<include>becpg-forms*.properties</include>
@@ -272,8 +278,8 @@
 			</plugin>
 
 
-			
-            <!-- Make sure we attach the tests so we can include them when running -->
+			<!-- Make sure we attach the tests so we can include them when
+			running -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -285,95 +291,89 @@
 							<goal>test-jar</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.build.directory}/becpg-test-core/extensions</outputDirectory>
+							<outputDirectory>
+								${project.build.directory}/becpg-test-core/extensions</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
-			</plugin> 
-            <!-- Runs the integration tests, any class that follows naming convention
-                 "**/IT*.java", "**/*IT.java", and "**/*ITCase.java" will be considered an integration test -->
+			</plugin>
+			<!-- Runs the integration tests, any class that follows naming
+			convention
+                 "**/IT*.java", "**/*IT.java", and
+			"**/*ITCase.java" will be considered an integration test -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 			</plugin>
 			<plugin>
-				 <groupId>org.apache.maven.plugins</groupId>
-    			<artifactId>maven-surefire-plugin</artifactId>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<!-- Copy the repository extension and the dependencies
+					required for execute integration tests -->
+					<execution>
+						<id>collect-test-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/becpg-test-core/extensions</outputDirectory>
+							<excludeScope>compile</excludeScope>
+							<excludeTypes>amp</excludeTypes>
+						</configuration>
+					</execution>
+					<!-- Collect extensions (JARs or AMPs) declared in this
+					module do be deployed to docker -->
+					<execution>
+						<id>collect-extensions-core</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/becpg-test-core</outputDirectory>
+							<includeScope>runtime</includeScope>
+							<includeTypes>amp</includeTypes>
+						</configuration>
+					</execution>
+					<execution>
+						<id>collect-extensions-share</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>
+								${project.build.directory}/becpg-test-share</outputDirectory>
+							<includeScope>runtime</includeScope>
+							<includeTypes>amp</includeTypes>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
 	<profiles>
-		<profile>
-			<id>becpg-test</id>
-			<activation>
-				<property>
-					<name>skipTests</name>
-					<value>true</value>
-				</property>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-dependency-plugin</artifactId>
-						<executions>
-                    <!-- Copy the repository extension and the dependencies required for execute integration tests -->
-							<execution>
-								<id>collect-test-artifacts</id>
-								<phase>package</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.directory}/becpg-test-core/extensions</outputDirectory>
-									<excludeScope>compile</excludeScope>
-									<excludeTypes>amp</excludeTypes>
-								</configuration>
-							</execution>
-                    <!-- Collect extensions (JARs or AMPs) declared in this module do be deployed to docker -->
-							<execution>
-								<id>collect-extensions-core</id>
-								<phase>package</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.directory}/becpg-test-core</outputDirectory>
-									<includeScope>runtime</includeScope>
-									<includeTypes>amp</includeTypes>
-								</configuration>
-							</execution>
-							<execution>
-								<id>collect-extensions-share</id>
-								<phase>package</phase>
-								<goals>
-									<goal>copy-dependencies</goal>
-								</goals>
-								<configuration>
-									<outputDirectory>${project.build.directory}/becpg-test-share</outputDirectory>
-									<includeScope>runtime</includeScope>
-									<includeTypes>amp</includeTypes>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 
-		</profile>
-		
 		<profile>
 			<id>sonar</id>
 			<build>
 				<plugins>
-		
+
 					<plugin>
 						<groupId>org.jacoco</groupId>
 						<artifactId>jacoco-maven-plugin</artifactId>
 						<version>0.8.8</version>
 						<configuration>
 							<append>true</append>
-							
+
 							<includes>
 								<include>fr/becpg/**</include>
 							</includes>
@@ -400,33 +400,34 @@
 									<goal>dump</goal>
 								</goals>
 								<configuration>
-								    <address>${jacoco.host}</address>
-									<destFile>${project.build.directory}/jacoco.exec</destFile>
+									<address>${jacoco.host}</address>
+									<destFile>
+										${project.build.directory}/jacoco.exec</destFile>
 									<port>10001</port>
 									<reset>true</reset>
 									<append>true</append>
 								</configuration>
 							</execution>
-							
-							 <execution>
-					            <id>merge-results</id>
-					            <phase>verify</phase>
-					            <goals>
-					                <goal>merge</goal>
-					            </goals>
-					            <configuration>
-					                <fileSets>
-					                    <fileSet>
-					                       <directory>${project.basedir}</directory>
-		                                    <includes>
-		                                        <include>**/*.exec</include>
-		                                    </includes>
-					                    </fileSet>
-					                </fileSets>
-					                <destFile>${sonar.jacoco.reportPaths}</destFile>
-					            </configuration>
-					        </execution>
-							
+
+							<execution>
+								<id>merge-results</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>merge</goal>
+								</goals>
+								<configuration>
+									<fileSets>
+										<fileSet>
+											<directory>${project.basedir}</directory>
+											<includes>
+												<include>**/*.exec</include>
+											</includes>
+										</fileSet>
+									</fileSets>
+									<destFile>${sonar.jacoco.reportPaths}</destFile>
+								</configuration>
+							</execution>
+
 							<execution>
 								<id>report-integration-test-report</id>
 								<phase>verify</phase>
@@ -441,5 +442,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>

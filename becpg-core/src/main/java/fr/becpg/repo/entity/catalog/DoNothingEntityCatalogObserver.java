@@ -1,5 +1,7 @@
 package fr.becpg.repo.entity.catalog;
 
+import java.util.Set;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,7 @@ public class DoNothingEntityCatalogObserver implements EntityCatalogObserver {
 	}
 
 	@Override
-	public boolean acceptCatalogEvents(QName type, NodeRef entityNodeRef) {
+	public boolean acceptCatalogEvents(QName type, NodeRef entityNodeRef, Set<NodeRef> listNodeRefs) {
 		return false;
 	}
 

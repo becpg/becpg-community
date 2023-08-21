@@ -362,19 +362,20 @@
 									case "checkbox":
 										cntrl.checked = (savedValue === "true");
 										break;
-									default: // "select-multiple"
-										// - and
-										// potentially
-										// others following
-										// the same pattern
-												
+									case "select-multiple":
+										if (cntrl.options) {
+											for (var k in cntrl.options) {
+												var option = cntrl.options[k];
+												if (option.value && savedValue.includes(option.value)) {
+													option.selected = true;
+												}
+											}
+										}
+										break;
+									default:
 										cntrl.value = savedValue;
 										break;
 									}
-								} else {
-									
-									
-									
 								}
 							}
 						}
