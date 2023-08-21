@@ -324,7 +324,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 					if (!propertyDef.isMultiValued()) {
 						NodeRef nodeRef = null;
 						nodeRef = extractNodeRef(stringVal);
-						if (nodeService.exists(nodeRef)) {
+						if (nodeRef != null && nodeService.exists(nodeRef)) {
 							postproperty.put(attributeExtractorService.getStringValue(propertyDef, nodeRef,
 									attributeExtractorService.getPropertyFormats(FormatMode.JSON, true)));
 						} else {
@@ -361,7 +361,9 @@ public class ActivityListExtractor extends SimpleExtractor {
 		NodeRef nodeRef = null;
 		if (Pattern.matches("\\(.*,.*\\)", stringVal)) {
 			String nodeRefString = stringVal.substring(stringVal.indexOf("(") + 1, stringVal.indexOf(","));
-			nodeRef = new NodeRef(nodeRefString);
+			if (NodeRef.isNodeRef(nodeRefString)) {
+				nodeRef = new NodeRef(nodeRefString);
+			}
 		} else {
 			
 			int lastForwardSlash = stringVal.lastIndexOf('/');
@@ -371,7 +373,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 				JSONObject jsonNodeRef = new JSONObject(stringVal);
 				nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://"
 						+ jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
-			} else {
+			} else if (NodeRef.isNodeRef(stringVal)) {
 				nodeRef = new NodeRef(stringVal);
 			}
 		}
