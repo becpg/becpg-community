@@ -145,6 +145,7 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+							<control-param name="excludeSources">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:specCompatibilityTpls"  >
@@ -185,6 +186,7 @@
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
+							<control-param name="excludeSources">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:specCompatibilityTpls"  >
@@ -902,6 +904,7 @@
 
 					<show id="bcpg:productHierarchy1" />
 					<show id="bcpg:productState" />
+					<show id="bcpg:entityTplRef" />
 					<show id="bcpg:code" />
 					<show id="bcpg:erpCode" force="true" />
 
@@ -927,10 +930,16 @@
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
 							<control-param name="isSearch">true</control-param>
-							<control-param name="insertBlank">true</control-param>
 							<control-param name="forceEditable">true</control-param>
+						</control>
+					</field>
+					<field id="bcpg:entityTplRef" set="mainInfo">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingKit?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
+							</control-param>
 						</control>
 					</field>
 					
@@ -3424,6 +3433,7 @@
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
+							<control-param name="excludeSources">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:entityTplRef" mandatory="false"
@@ -3623,6 +3633,7 @@
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
+							<control-param name="excludeSources">true</control-param>
 						</control>
 					</field>
 					<field id="cm:title" set="mainInfo" />
@@ -3706,9 +3717,8 @@
 						</control>
 					</field>
 					<field id="bcpg:supplierState" mandatory="false" read-only="false" set="2-col-product-criteria" >
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
 							<control-param name="isSearch">true</control-param>
-							<control-param name="insertBlank">true</control-param>
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
@@ -3962,9 +3972,8 @@
 						</control>
 					</field>
 					<field id="bcpg:clientState">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
 							<control-param name="isSearch">true</control-param>
-							<control-param name="insertBlank">true</control-param>
 							<control-param name="forceEditable">true</control-param>
 						</control>
 					</field>
@@ -4321,9 +4330,8 @@
 						</control>
 					</field>
 					<field id="bcpg:productCollectionState"  set="mainInfo">
-						<control template="/org/alfresco/components/form/controls/selectone.ftl">
+						<control template="/org/alfresco/components/form/controls/selectmany.ftl">
 			              <control-param name="isSearch">true</control-param>
-			              <control-param name="insertBlank">true</control-param>
 			              <control-param name="forceEditable">true</control-param>
 			            </control>
 					</field>

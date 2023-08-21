@@ -208,5 +208,6 @@ public interface EntityActivityService {
 
 	void postExportActivity(NodeRef entityNodeRef, QName dataType, String fileName);
 
+	boolean postChangeOrderActivity(NodeRef entityNodeRef, NodeRef changeOrderNodeRef);
 
 }

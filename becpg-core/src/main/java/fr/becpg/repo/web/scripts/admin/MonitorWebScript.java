@@ -141,7 +141,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		ret.put("allowedNamedRead", licenseManager.getAllowedNamedRead());
 		ret.put("licenseName", licenseManager.getLicenseName());
 		ret.put("withoutLicenseUsers", withoutLicenseUsers);
-		ret.put("becpgSchema", becpgSchema);
+		ret.put("becpgSchema", becpgSchema.replace("-SNAPSHOT",""));
 		
 		BatchMonitor lastRunningBatch = batchQueueService.getLastRunningBatch();
 		

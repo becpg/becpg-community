@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -298,6 +299,39 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		return false;
 
 	}
+	
+	@Override
+	public boolean postChangeOrderActivity(NodeRef entityNodeRef, NodeRef changeOrderNodeRef) {
+		try {
+			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+
+			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
+
+			// No list no activity
+			if (activityListNodeRef != null) {
+
+				ActivityListDataItem activityListDataItem = new ActivityListDataItem();
+				
+				JSONObject data = new JSONObject();
+
+				data.put(PROP_TITLE, nodeService.getProperty(changeOrderNodeRef, ContentModel.PROP_NAME));
+				data.put(PROP_ENTITY_NODEREF, changeOrderNodeRef);
+
+				activityListDataItem.setActivityType(ActivityType.ChangeOrder);
+				activityListDataItem.setActivityData(data.toString());
+				activityListDataItem.setParentNodeRef(activityListNodeRef);
+
+				alfrescoRepository.save(activityListDataItem);
+
+				notifyListeners(entityNodeRef, activityListDataItem);
+			}
+		} catch (JSONException e) {
+			logger.error(e, e);
+		} finally {
+			policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
+		}
+		return false;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -414,70 +448,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 
 							if (mlTextBefore != null) {
-
-								LargeTextHelper.elipse(mlTextBefore);
-
-								newMlTextBefore = new MLText();
-
-								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
-
-								while (it.hasNext()) {
-									Locale locale = it.next().getKey();
-
-									String textBefore = mlTextBefore.get(locale);
-
-									newMlTextBefore.put(locale, textBefore);
-
-									if ((textBefore != null) && (textBefore.length() > ML_TEXT_SIZE_LIMIT)) {
-										String textAfter = mlTextAfter != null ? mlTextAfter.get(locale) : null;
-										if ((textAfter == null) || (textAfter.length() <= ML_TEXT_SIZE_LIMIT)) {
-											textBefore = textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
-											newMlTextBefore.put(locale, textBefore);
-										} else {
-											Pair<String, String> diffs = LargeTextHelper.createTextDiffs(textBefore, textAfter);
-
-											textBefore = diffs.getFirst().replace(" ", "").equals("") ? textBefore : diffs.getFirst();
-											textBefore = textBefore.length() > ML_TEXT_SIZE_LIMIT
-													? textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ..."
-													: textBefore;
-
-											newMlTextBefore.put(locale, textBefore);
-										}
-									}
-								}
+								newMlTextBefore = compareMLTexts(mlTextBefore, mlTextAfter);
 							}
 
 							if (mlTextAfter != null) {
-
-								LargeTextHelper.elipse(mlTextAfter);
-
-								newMlTextAfter = new MLText();
-
-								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
-
-								while (it.hasNext()) {
-									Locale locale = it.next().getKey();
-
-									String textAfter = mlTextAfter.get(locale);
-
-									newMlTextAfter.put(locale, textAfter);
-
-									if ((textAfter != null) && (textAfter.length() > ML_TEXT_SIZE_LIMIT)) {
-										String textBefore = mlTextBefore != null ? mlTextBefore.get(locale) : null;
-										if ((textBefore == null) || (textBefore.length() <= ML_TEXT_SIZE_LIMIT)) {
-											textAfter = textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
-											newMlTextAfter.put(locale, textAfter);
-										} else {
-											Pair<String, String> diffs = LargeTextHelper.createTextDiffs(textBefore, textAfter);
-
-											textAfter = diffs.getSecond().replace(" ", "").equals("") ? textAfter : diffs.getSecond();
-											textAfter = textAfter.length() > ML_TEXT_SIZE_LIMIT ? textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ..."
-													: textAfter;
-
-											newMlTextAfter.put(locale, textAfter);
-										}
-									}
-								}
+								newMlTextAfter = compareMLTexts(mlTextAfter, mlTextBefore);
 							}
 
 							if (newMlTextBefore != null) {
@@ -508,6 +483,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 										beforeList.add(ISO8601DateFormat.format((Date) ent));
 									} else if (ent instanceof Pair || ent instanceof NodeRef) {
 										beforeList.add(ent.toString());
+									} else if (ent instanceof List) {
+										beforeList.add(((List<?>) ent).stream().map(o -> o.toString()).collect(Collectors.toList()));
 									} else {
 										beforeList.add(ent);
 									}
@@ -529,6 +506,8 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 											afterList.add(ISO8601DateFormat.format((Date) ent));
 										} else if (ent instanceof Pair || ent instanceof NodeRef) {
 											afterList.add(ent.toString());
+										} else if (ent instanceof List) {
+											afterList.add(((List<?>) ent).stream().map(o -> o.toString()).collect(Collectors.toList()));
 										} else {
 											afterList.add(ent);
 										}
@@ -565,6 +544,31 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 		}
 		return false;
 
+	}
+	
+	private MLText compareMLTexts(MLText mlText, MLText otherMlText) {
+		LargeTextHelper.elipse(mlText);
+		MLText newMlText = new MLText();
+		Iterator<Entry<Locale, String>> it = mlText.entrySet().iterator();
+
+		while (it.hasNext()) {
+			Locale locale = it.next().getKey();
+			String text = mlText.get(locale);
+			newMlText.put(locale, text);
+			if ((text != null) && (text.length() > ML_TEXT_SIZE_LIMIT)) {
+				String otherText = otherMlText != null ? otherMlText.get(locale) : null;
+				if ((otherText == null) || (otherText.length() <= ML_TEXT_SIZE_LIMIT)) {
+					text = text.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
+					newMlText.put(locale, text);
+				} else {
+					Pair<String, String> diffs = LargeTextHelper.createTextDiffs(text, otherText);
+					text = diffs.getFirst().replace(" ", "").equals("") ? text : diffs.getFirst();
+					text = text.length() > ML_TEXT_SIZE_LIMIT ? text.substring(0, ML_TEXT_SIZE_LIMIT) + " ..." : text;
+					newMlText.put(locale, text);
+				}
+			}
+		}
+		return newMlText;
 	}
 
 	private void recordAuditActivity(NodeRef entityNodeRef, ActivityListDataItem activityListDataItem) {
@@ -878,70 +882,11 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 							}
 
 							if (mlTextBefore != null) {
-
-								LargeTextHelper.elipse(mlTextBefore);
-
-								newMlTextBefore = new MLText();
-
-								Iterator<Entry<Locale, String>> it = mlTextBefore.entrySet().iterator();
-
-								while (it.hasNext()) {
-									Locale locale = it.next().getKey();
-
-									String textBefore = mlTextBefore.get(locale);
-
-									newMlTextBefore.put(locale, textBefore);
-
-									if ((textBefore != null) && (textBefore.length() > ML_TEXT_SIZE_LIMIT)) {
-										String textAfter = mlTextAfter != null ? mlTextAfter.get(locale) : null;
-										if ((textAfter == null) || (textAfter.length() <= ML_TEXT_SIZE_LIMIT)) {
-											textBefore = textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
-											newMlTextBefore.put(locale, textBefore);
-										} else {
-											Pair<String, String> diffs = LargeTextHelper.createTextDiffs(textBefore, textAfter);
-
-											textBefore = diffs.getFirst().replace(" ", "").equals("") ? textBefore : diffs.getFirst();
-											textBefore = textBefore.length() > ML_TEXT_SIZE_LIMIT
-													? textBefore.substring(0, ML_TEXT_SIZE_LIMIT) + " ..."
-													: textBefore;
-
-											newMlTextBefore.put(locale, textBefore);
-										}
-									}
-								}
+								newMlTextBefore = compareMLTexts(mlTextBefore, mlTextAfter);
 							}
 
 							if (mlTextAfter != null) {
-
-								LargeTextHelper.elipse(mlTextAfter);
-
-								newMlTextAfter = new MLText();
-
-								Iterator<Entry<Locale, String>> it = mlTextAfter.entrySet().iterator();
-
-								while (it.hasNext()) {
-									Locale locale = it.next().getKey();
-
-									String textAfter = mlTextAfter.get(locale);
-
-									newMlTextAfter.put(locale, textAfter);
-
-									if ((textAfter != null) && (textAfter.length() > ML_TEXT_SIZE_LIMIT)) {
-										String textBefore = mlTextBefore != null ? mlTextBefore.get(locale) : null;
-										if ((textBefore == null) || (textBefore.length() <= ML_TEXT_SIZE_LIMIT)) {
-											textAfter = textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ...";
-											newMlTextAfter.put(locale, textAfter);
-										} else {
-											Pair<String, String> diffs = LargeTextHelper.createTextDiffs(textBefore, textAfter);
-
-											textAfter = diffs.getSecond().replace(" ", "").equals("") ? textAfter : diffs.getSecond();
-											textAfter = textAfter.length() > ML_TEXT_SIZE_LIMIT ? textAfter.substring(0, ML_TEXT_SIZE_LIMIT) + " ..."
-													: textAfter;
-
-											newMlTextAfter.put(locale, textAfter);
-										}
-									}
-								}
+								newMlTextAfter = compareMLTexts(mlTextAfter, mlTextBefore);
 							}
 
 							if (newMlTextBefore != null) {
