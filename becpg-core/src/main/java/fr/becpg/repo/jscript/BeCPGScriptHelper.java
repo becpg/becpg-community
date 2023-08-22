@@ -85,6 +85,7 @@ import fr.becpg.repo.helper.CheckSumHelper;
 import fr.becpg.repo.helper.GTINHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.RepoService;
+import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyService;
 import fr.becpg.repo.license.BeCPGLicenseManager;
@@ -1399,6 +1400,14 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	@SuppressWarnings("unchecked")
 	public void sendMLAwareMail(String[] authorities, String fromEmail, String subjectKey, Object[] subjectParams, String mailTemplate, Map<String, Object> templateArgs) {
 		beCPGMailService.sendMLAwareMail(Set.of(authorities), fromEmail, subjectKey, subjectParams, mailTemplate, (Map<String, Object>) ScriptValueConverter.unwrapValue(templateArgs));
+	}
+	
+	public String extractSiteDisplayPath(ScriptNode scriptNode) {
+		return SiteHelper.extractSiteDisplayPath(nodeService.getPath(scriptNode.getNodeRef()), permissionService, nodeService, namespaceService);
+	}
+	
+	public boolean isEntityV2SubType(ScriptNode scriptNode) {
+		return dictionaryService.isSubClass(nodeService.getType(scriptNode.getNodeRef()), BeCPGModel.TYPE_ENTITY_V2);
 	}
 
 	public void generateVersionReport(ScriptNode node, String versionLabel) {
