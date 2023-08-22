@@ -679,6 +679,15 @@
 				<value>true</value>
 			</parameter>
 		</constraint>
+
+		<constraint name="bcpg:nrScriptModes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>EACH</value>
+					<value>ALL</value>
+				</list>
+			</parameter>
+		</constraint>
 	</constraints>
 
 	<types>
@@ -3108,6 +3117,13 @@
 						<constraint ref="bcpg:nrRecurringDays" />
 					</constraints>
 				</property>
+				<property name="bcpg:nrScriptMode">
+					<type>d:text</type>	
+					<index enabled="false"/>
+					<constraints>
+						<constraint ref="bcpg:nrScriptModes" />
+					</constraints>				
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:nrNotificationAuthorities">
@@ -3142,8 +3158,20 @@
 						<many>false</many>
 					</target>
 				</association>
+				<association name="bcpg:nrScript">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>cm:content</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
 			</associations>
 		</type>
+
 
 	</types>
 
