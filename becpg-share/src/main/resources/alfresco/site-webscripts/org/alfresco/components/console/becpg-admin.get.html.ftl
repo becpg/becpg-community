@@ -55,7 +55,7 @@
 									<span class="info">${systemInfo.nonHeapMemoryUsage?string("0")} Mo</span><br/>
 									<label>${msg("label.becpgSchema")}</label>
 									<#if versionDate??>
-										<span class="info">${version?string} - <a href="https://www.becpg.fr/hg/becpg/rev/${schema?string}">${versionDate?datetime}</a></span><br/>
+										<span class="info">${version?string} - ${versionDate?datetime}</span><br/>
 									<#else>
 										<span class="info">${systemInfo.becpgSchema}</span><br/>
 									</#if>
