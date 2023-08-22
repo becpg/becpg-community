@@ -491,6 +491,8 @@
 					<show id="bcpg:nrTimeType" />
 					<show id="bcpg:nrTimeNumber" />
 					<show id="bcpg:nrDateField" />
+					<show id="bcpg:nrScript" />
+					<show id="bcpg:nrScriptMode" />
 					
 					<show id="bcpg:nrNodeType" />
 					<show id="bcpg:nrTarget" />
@@ -529,6 +531,16 @@
 						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
 							<control-param name="syntax">channel</control-param>
 						</control>
+					</field>
+					<field id="bcpg:nrScript" set="notificationRule" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">{ancestor}</control-param>
+							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrScriptMode" set="notificationRule" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
 					</field>
 					<field id="bcpg:nrDateField" set="notificationRule">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -621,6 +633,8 @@
 					<show id="bcpg:nrTimeType" />
 					<show id="bcpg:nrTimeNumber" />
 					<show id="bcpg:nrDateField" />
+					<show id="bcpg:nrScript" />
+					<show id="bcpg:nrScriptMode" />
 					
 					<show id="bcpg:nrNodeType" />
 					<show id="bcpg:nrTarget" />
@@ -658,6 +672,16 @@
 						<control template="/org/alfresco/components/form/controls/config-editor.ftl">
 							<control-param name="syntax">channel</control-param>
 						</control>
+					</field>
+					<field id="bcpg:nrScript" set="notificationRule" mandatory="false" read-only="false">
+						<control template="/org/alfresco/components/form/controls/association.ftl">
+							<control-param name="startLocation">{ancestor}</control-param>
+							<control-param name="startLocationParams">aspect=bcpg:entityListsAspect
+							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:nrScriptMode" set="notificationRule" >
+						<control template="/org/alfresco/components/form/controls/selectone.ftl" />
 					</field>
 					<field id="bcpg:nrDateField" set="notificationRule">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
