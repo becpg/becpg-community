@@ -60,6 +60,15 @@ public class PublicationChannelServiceImpl implements PublicationChannelService,
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNEL_BATCHSTARTTIME);
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNEL_BATCHENDTIME);
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNEL_BATCHDURATION);
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNEL_BATCHID);
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNEL_FAILCOUNT);
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNEL_READCOUNT);
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNEL_ERROR);
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNEL_LASTSUCCESSBATCHID);
+		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNEL_STATUS);
 		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNELLIST_PUBLISHEDDATE);
 		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNELLIST_BATCHID);
 		AuditEntityListItemPolicy.registerIgnoredType(PublicationModel.PROP_PUBCHANNELLIST_STATUS);
