@@ -117,7 +117,7 @@ public class SecurityServiceImpl implements SecurityService {
 
 			List<ACLEntryDataItem.PermissionModel> perms = getNodeACLPermissions(nodeRef, nodeType, propName);
 			if (!perms.isEmpty()) {
-				if (isAdmin()) {
+				if (isAdmin() || nodeRef != null && isEntityTemplate(nodeRef)) {
 					return SecurityService.WRITE_ACCESS;
 				}
 
@@ -156,6 +156,10 @@ public class SecurityServiceImpl implements SecurityService {
 			}
 
 		}
+	}
+	
+	private boolean isEntityTemplate(NodeRef nodeRef) {
+		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
 	}
 
 	@Override
