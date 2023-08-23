@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 
 import fr.becpg.api.BeCPGPublicApi;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.SystemState;
 import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.glop.model.GlopData;
@@ -2447,6 +2448,10 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	}
 
 	
+	public boolean isEntityTemplate() {
+		return getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL);
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public Integer getReformulateCount() {
