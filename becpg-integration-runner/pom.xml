@@ -370,7 +370,7 @@
 
 		</profile>
 		<profile>
-			<id>full</id>
+			<id>release</id>
 			<build>
 				<plugins>
 					<plugin>
