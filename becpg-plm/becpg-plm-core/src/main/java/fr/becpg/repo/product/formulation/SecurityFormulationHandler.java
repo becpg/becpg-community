@@ -39,10 +39,13 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.security.SecurityService;
@@ -72,6 +75,12 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	private AuthorityDAO authorityDAO;
 
 	private SiteService siteService;
+	
+	private AssociationService associationService;
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
 
 	public EntityListDAO getEntityListDAO() {
 		return entityListDAO;
@@ -124,8 +133,12 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
-		if (!L2CacheSupport.isCacheOnlyEnable()) {
+		if (!L2CacheSupport.isCacheOnlyEnable() && isSecurityApplicable(productData)) {
+			
+			updateSecurityRuleFromTemplate(productData);
+			
 			NodeRef productDataNodeRef = productData.getNodeRef();
+			
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(productDataNodeRef);
 			List<NodeRef> datalists = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
 
@@ -139,7 +152,6 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			//Set document permissions
-			
 			PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
 			List<ChildAssociationRef> folders = nodeService.getChildAssocs(productDataNodeRef, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
 			for (ChildAssociationRef folder : folders) {
@@ -147,6 +159,20 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 		}
 		return true;
+	}
+
+	private boolean isSecurityApplicable(ProductData productData) {
+		return !productData.isEntityTemplate();
+	}
+
+	private void updateSecurityRuleFromTemplate(ProductData productData) {
+		NodeRef tplNodeRef = productData.getEntityTpl().getNodeRef();
+		if (tplNodeRef != null && nodeService.exists(tplNodeRef)) {
+			NodeRef tplSecurityRef = associationService.getTargetAssoc(tplNodeRef, SecurityModel.ASSOC_SECURITY_REF);
+			if (tplSecurityRef != null && nodeService.exists(tplSecurityRef)) {
+				associationService.update(productData.getNodeRef(), SecurityModel.ASSOC_SECURITY_REF, tplSecurityRef);
+			}
+		}
 	}
 
 	private void updatePermissions(SiteInfo siteInfo, NodeRef nodeRef, List<PermissionModel> permissionModels) {
