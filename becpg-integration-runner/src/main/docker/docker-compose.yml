@@ -93,7 +93,4 @@ services:
     user: root
     
 
-  becpg-glop:
-    image:  ${docker.becpg.url}/becpg-glop:${docker.becpg.tag}
-
 
