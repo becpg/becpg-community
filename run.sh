@@ -9,23 +9,24 @@ echo -e "888 \"88b d8P  Y8b  \e[32m888        8888888P\"  888  88888\e[0m"
 echo -e "888  888 88888888  \e[32m888    888 888        888    888\e[0m" 
 echo -e "888 d88P Y8b.      \e[32mY88b  d88P 888        Y88b  d88P\e[0m" 
 echo -e "88888P\"   \"Y8888    \e[32m\"Y8888P\"  888         \"Y8888P88\e[0m" 
-echo -e " \e[91mCopyright (C) 2010-2021 beCPG.\e[0m"
+echo -e " \e[91mCopyright (C) 2010-2023 beCPG.\e[0m"
 
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 
 export MVN_EXEC="${PWD}/mvnw"
+export BECPG_VERSION_PROFILE=becpg_3_2_3
 
 start() {
-   	 	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
+   	 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
 }
 
 pull() {
-   	 	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
+   	 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
 }
 
 pull() {
-   	 	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
+   	 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml pull 
 }
 
 down() {
@@ -37,73 +38,73 @@ down() {
    	 $MVN_EXEC clean validate $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
     fi 
     if [ -f $COMPOSE_FILE_PATH ]; then
-        docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml  down
+        docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH  -f docker-compose.override.yml down
     fi
 }
 
 deploy_fast(){
 
 	#becpg-amp
-	docker cp becpg-core/src/main/resources/alfresco/templates/. target_becpg_1:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
-	docker cp becpg-plm/becpg-plm-core/src/main/resources/alfresco/templates/. target_becpg_1:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
+	docker cp becpg-core/src/main/resources/alfresco/templates/. $BECPG_VERSION_PROFILE_becpg_1:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
+	docker cp becpg-plm/becpg-plm-core/src/main/resources/alfresco/templates/. $BECPG_VERSION_PROFILE_becpg_1:/usr/local/tomcat/webapps/alfresco/WEB-INF/classes/alfresco/templates
 	
 	#becpg-share
-	docker cp becpg-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	docker cp becpg-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker cp becpg-designer/becpg-designer-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	docker cp becpg-designer/becpg-designer-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker cp becpg-project/becpg-project-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	docker cp becpg-project/becpg-project-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	docker cp becpg-plm/becpg-plm-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
-	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	docker cp becpg-plm/becpg-plm-share/src/main/assembly/config/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE_becpg_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-designer/becpg-designer-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-designer/becpg-designer-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-project/becpg-project-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-project/becpg-project-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-plm/becpg-plm-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/
+	docker cp becpg-plm/becpg-plm-share/src/main/assembly/config/alfresco/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	if [ -d becpg-enterprise ]; then
-	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/assembly/web/. target_becpg_1:/usr/local/tomcat/webapps/share/
-	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/resources/alfresco/. target_becpg_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
+	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/
+	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	fi
 	
-	wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8080/share/page/index
+	wget --delete-after --http-user=admin --http-password=becpg --header=Accept-Charset:iso-8859-1,utf-8 --header=Accept-Language:en-us --post-data reset=on http://localhost:8180/share/page/index
 
 }
 
 purge() {
-    docker-compose -f  $COMPOSE_FILE_PATH down -v
+    docker compose -p $BECPG_VERSION_PROFILE -f  $COMPOSE_FILE_PATH down -v
 }
 
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
+   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true  -P release -Dbecpg.dockerbuild.name="enterprise-test"
     cd ..
    else
-   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
+   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true  -P release -Dbecpg.dockerbuild.name="test"
    fi 
 }
 
 install() {
   if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-    $MVN_EXEC  install $EXTRA_ENV -DskipTests=true -P full
+    $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true -P release
      cd ..
    else
-    $MVN_EXEC  install $EXTRA_ENV -DskipTests=true -P full
+    $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true -P release
   fi
 }
 
 tail() {
-    docker-compose -f $COMPOSE_FILE_PATH logs -f --tail=50 becpg 
+    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH logs -f --tail=100 becpg 
 }
 
 test() {
-    $MVN_EXEC verify $EXTRA_ENV -pl becpg-integration-runner
+    $MVN_EXEC verify $EXTRA_ENV
 }
 
 reindex() {
-	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
-	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml  rm -v solr
-    docker volume rm target_solr_data
-	docker-compose -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up solr
+    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
+    docker compose  -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml rm -v solr
+    docker volume rm $BECPG_VERSION_PROFILE_solr_data
+	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr
 }
 
 
