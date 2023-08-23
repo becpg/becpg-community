@@ -125,7 +125,7 @@ public class Nutrient5C2023Helper implements InitializingBean, NutriScoreRegulat
 		NutriScoreContext context = NutrientHelper.buildNutriScoreContext(productData, INSTANCE.alfrescoRepository, INSTANCE.nodeService);
 		for (IngListDataItem ing : productData.getIngList()) {
 			String ceeCode = (String) INSTANCE.nodeService.getProperty(ing.getIng(), PLMModel.PROP_ING_CEECODE);
-			if (NON_NUTRITIVE_SUGARS.contains(ceeCode)) {
+			if (ceeCode != null && NON_NUTRITIVE_SUGARS.contains(ceeCode)) {
 				context.getNonNutritiveSugars().add((String) INSTANCE.nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 			}
 		}
