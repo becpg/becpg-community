@@ -205,7 +205,7 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 	 */
 	public void updateAuditedField(NodeRef entityNodeRef, Set<QName> diffQnames, Set<NodeRef> listNodeRefs) {
 		try {
-			if ((diffQnames != null) || (listNodeRefs != null)) {
+			if ((diffQnames != null) || (listNodeRefs != null) && nodeService.exists(entityNodeRef)) {
 
 				for (JSONArray catalogDef : getCatalogsDef()) {
 
@@ -706,10 +706,14 @@ public class EntityCatalogService<T extends RepositoryEntity> {
 
 							propDef = dictionaryService.getAssociation(fieldQname);
 
-							// only check assoc when lang is null
-							logger.debug("Checking if assoc is found");
-							if (associationService.getTargetAssoc(formulatedEntity.getNodeRef(), fieldQname) != null) {
-								present = true;
+							if (propDef == null) {
+								ignore = true;
+							} else {
+								// only check assoc when lang is null
+								logger.debug("Checking if assoc is found");
+								if (associationService.getTargetAssoc(formulatedEntity.getNodeRef(), fieldQname) != null) {
+									present = true;
+								}
 							}
 
 						} else {
