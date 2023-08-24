@@ -91,5 +91,5 @@ services:
   becpg-report:
     image:  ${docker.becpg.url}/becpg-report:3.2.3
     user: root
-
+    
 
