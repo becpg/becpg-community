@@ -366,7 +366,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		if ((sortFieldQName != null) && (sortDirection != null)) {
 			DataTypeDefinition dateType = entityDictionaryService.getProperty(sortFieldQName).getDataType();
 			String fieldType = "string_value";
-			sortOrderSql = "";
+			sortOrderSql = " group by alf_node.uuid";
 			if (DataTypeDefinition.INT.equals(dateType.getName()) || DataTypeDefinition.LONG.equals(dateType.getName())) {
 				fieldType = "long_value";
 			} else if (DataTypeDefinition.DOUBLE.equals(dateType.getName())) {
@@ -386,7 +386,6 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 
 				sql += "and alf_node_properties.locale_id in (select id from alf_locale where locale_str like '"
 						+ MLTextHelper.localeKey(I18NUtil.getContentLocale()) + "%' ) ";
-				sortOrderSql = " group by alf_node.uuid";
 			}
 
 			sql += ") ";
