@@ -15,7 +15,7 @@ echo -e " \e[91mCopyright (C) 2010-2023 beCPG.\e[0m"
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 
 export MVN_EXEC="${PWD}/mvnw"
-export BECPG_VERSION_PROFILE=becpg_4_2_0 
+export BECPG_VERSION_PROFILE=becpg_4_2_0
 
 start() {
    	 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
@@ -75,20 +75,20 @@ purge() {
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
+   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true  -P release -Dbecpg.dockerbuild.name="enterprise-test"
     cd ..
    else
-   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
+   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true  -P release -Dbecpg.dockerbuild.name="test"
    fi 
 }
 
 install() {
   if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-    $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true -P full
+    $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true -P release
      cd ..
    else
-    $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true -P full
+    $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true -P release
   fi
 }
 
@@ -101,7 +101,7 @@ test() {
 }
 
 reindex() {
-	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
+    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
     docker compose  -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml rm -v solr
     docker volume rm $BECPG_VERSION_PROFILE_solr_data
 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr

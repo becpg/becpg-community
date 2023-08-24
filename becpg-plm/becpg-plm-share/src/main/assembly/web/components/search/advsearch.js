@@ -42,6 +42,7 @@
 
 		Bubbling.on("beforeFormRuntimeInit", this.onBeforeFormRuntimeInit, this);
 		Bubbling.on("afterFormRuntimeInit", this.onAfterFormRuntimeInit, this);
+		Bubbling.on("objectFinderReady", this.onObjectFinderReady, this);
 
 		return this;
 	};
@@ -325,6 +326,9 @@
 								if(Dom.get(cleanElementId + "-autocomplete") != null){
 									Bubbling.fire(cleanElementId + "refreshContent", savedValue, this );
 								}
+								
+								
+								
 							} else if(name.indexOf("assoc_") != 0){
 								element.value = savedValue;
 								
@@ -425,7 +429,7 @@
 		},
 		
 
-        cleanFilterData : function EntityDataGrid_cleanFilterData(formData)
+        cleanFilterData : function ADVSearch_cleanFilterData(formData)
         {
             var ret = {};
             if (formData != null)
@@ -440,6 +444,27 @@
             }
             return ret;
         },
+
+		/**
+		   * Will populate the form objectFinder with selectedItems when its ready
+		   *
+		   * @method onObjectFinderReady
+		   * @param layer {object} Event fired (unused)
+		   * @param args {array} Event parameters
+		   */
+		onObjectFinderReady: function ADVSearch_onObjectFinderReady(layer, args) {
+
+			if (this.options.savedQuery.length !== 0) {
+				var savedQuery = YAHOO.lang.JSON.parse(this.options.savedQuery);
+
+				var objectFinder = args[1].eventGroup;
+				var savedValue = savedQuery[objectFinder.options.field+"_added"];
+				if (savedValue !== undefined && savedValue !== "") {
+					objectFinder.selectItems(savedValue);
+				}
+
+			}
+		},
 
 		/**
 		 * Event handler called when the "beforeFormRuntimeInit" event is
