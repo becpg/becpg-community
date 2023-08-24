@@ -18,22 +18,22 @@
 			<post>support@becpg.fr</post>
 		</mailingList>
 	</mailingLists>
+	
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/becpg/becpg-community/issues</url>
+  </issueManagement>
+	
 	<scm>
-		<connection>scm:hg:https://www.becpg.fr/hg/becpg-community</connection>
-		<developerConnection>scm:hg:https://${maven.username}@becpg.fr/hg/becpg-community/</developerConnection>
-		<url>https://www.becpg.fr/hg/becpg-community</url>
+		<connection>scm:git:https://github.com/becpg/becpg-community.git</connection>
+		<url>https://github.com/becpg/becpg-community.git</url>
 	</scm>
-
-	<issueManagement>
-		<system>RedMine</system>
-		<url>https://support.becpg.fr</url>
-	</issueManagement>
 
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
 			<url>http://www.gnu.org/licenses/lgpl-3.0.en.html</url>
-			<comments>Copyright (C) 2010-2021 beCPG. 
+			<comments>Copyright (C) 2010-2023 beCPG. 
   
 			  beCPG is free software: you can redistribute it and/or modify 
 			  it under the terms of the GNU Lesser General Public License as published by 
@@ -54,8 +54,8 @@
 			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
 		</repository>
 		<repository>
-			<id>alfresco-public-snapshots</id>
-			<url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
+			<id>becpg-registry</id>
+			<url>artifactregistry://europe-west1-maven.pkg.dev/becpg-314807/becpg-mvn</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>daily</updatePolicy>
@@ -68,14 +68,6 @@
 		<pluginRepository>
 			<id>alfresco-plugin-public</id>
 			<url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
-		</pluginRepository>
-		<pluginRepository>
-			<id>alfresco-plugin-public-snapshots</id>
-			<url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>daily</updatePolicy>
-			</snapshots>
 		</pluginRepository>
 	</pluginRepositories>
 
@@ -92,6 +84,14 @@
 			<id>philippe.quere</id>
 			<name>Philippe Quéré</name>
 			<email>philippe.quere@becpg.fr</email>
+			<timezone>1</timezone>
+			<organization>beCPG</organization>
+			<organizationUrl>http://www.becpg.fr</organizationUrl>
+		</developer>
+		<developer>
+			<id>valentin.leblanc</id>
+			<name>Valentin Leblanc</name>
+			<email>valentin.leblanc@becpg.fr</email>
 			<timezone>1</timezone>
 			<organization>beCPG</organization>
 			<organizationUrl>http://www.becpg.fr</organizationUrl>
@@ -124,12 +124,8 @@
 		<!--  <mysql.connector.version>8.0.23</mysql.connector.version> Not yet supported for java11-->
 		<mysql.connector.version>5.1.48</mysql.connector.version>
 		<alfresco.bomDependencyArtifactId>acs-community-packaging</alfresco.bomDependencyArtifactId>
+        <spring-surf.version>7.3</spring-surf.version>
 
-
-		<!-- Docker images
-        <docker.acs.image>alfresco/alfresco-content-repository-community</docker.acs.image>
-        <docker.share.image>alfresco/alfresco-share</docker.share.image>
- 		-->
 
 		<!-- Environment configuration properties -->
 		<share.port>8180</share.port>
@@ -141,8 +137,10 @@
 		<test.acs.endpoint.path />
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
+		<becpg.version>3.2.4</becpg.version>
 		<docker.becpg.url>becpg</docker.becpg.url>
-		<docker.becpg.tag>3.2.4</docker.becpg.tag>
+	    <docker.becpg.version>${becpg.version}</docker.becpg.version>
+		<docker.becpg.tag>${project.version}</docker.becpg.tag>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
@@ -285,13 +283,13 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-jar-plugin</artifactId>
-					<version>3.1.0</version>
+					<version>3.3.0</version>
 				</plugin>
 
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-failsafe-plugin</artifactId>
-					<version>3.0.0-M1</version>
+					<version>3.1.0</version>
 					<executions>
 						<execution>
 							<id>integration-test</id>
@@ -315,7 +313,7 @@
 						<dependency>
 							<groupId>org.apache.maven.surefire</groupId>
 							<artifactId>surefire-junit47</artifactId>
-							<version>3.0.0-M1</version>
+							<version>3.1.0</version>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -323,7 +321,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
-					<version>3.1.1</version>
+					<version>3.6.0</version>
 				</plugin>
 
 
@@ -416,7 +414,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.2</version>
+				<version>3.2.0</version>
 				<executions>
 					<execution>
 						<phase>validate</phase>
@@ -426,16 +424,15 @@
 					</execution>
 				</executions>
 				<configuration>
-					<docheck>false</docheck>
-					<doupdate>false</doupdate>
 					<getRevisionOnlyOnce>true</getRevisionOnlyOnce>
+					<shortRevisionLength>7</shortRevisionLength>
 				</configuration>
 			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M1</version>
+				<version>3.1.0</version>
 				<configuration>
 					<runOrder>alphabetical</runOrder>
 				</configuration>
@@ -444,14 +441,20 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.2.0</version>
+				<version>3.5.0</version>
 				<configuration></configuration>
 			</plugin>
+			
+		    <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.4.1</version>
+			</plugin>	
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
+				<version>3.11.0</version>
 				<configuration>
 					<release>11</release>
 				</configuration>
@@ -480,6 +483,14 @@
 
 
 		</plugins>
+		
+		<extensions>
+			<extension>
+				<groupId>com.google.cloud.artifactregistry</groupId>
+				<artifactId>artifactregistry-maven-wagon</artifactId>
+				<version>2.2.0</version>
+			</extension>
+		</extensions>
 	</build>
 
 	<modules>
@@ -500,7 +511,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.2.0</version>
+				<version>3.5.0</version>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -586,10 +597,6 @@
 					<groupId>javax.xml.bind</groupId>
 					<artifactId>jaxb-api</artifactId>
 				</exclusion>
-				<!-- <exclusion>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-				</exclusion> -->
 				<exclusion>
 					<groupId>javax.xml.ws</groupId>
 					<artifactId>jaxws-api</artifactId>
