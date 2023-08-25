@@ -1084,3 +1084,9 @@ span a.show-details {
 	vertical-align: bottom;
 }
 
+/** Fix dialog scroll **/
+
+
+div.yui-dialog {
+	padding-bottom: 250px !important;
+}
