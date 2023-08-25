@@ -338,12 +338,15 @@ public class ActivityListExtractor extends SimpleExtractor {
 						|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && (stringVal != null)
 								&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
 					NodeRef nodeRef = null;
-					String name = null;
-					if (Pattern.matches("\\(.*,.*\\)", stringVal)) {
-						String nodeRefString = stringVal.substring(stringVal.indexOf("(") + 1, stringVal.indexOf(","));
-						nodeRef = new NodeRef(nodeRefString);
-						name = stringVal.substring(stringVal.indexOf(",") + 1, stringVal.indexOf(")"));
-
+				 	String name = null;
+					if (Pattern.matches("\\(.*,.*\\)", propertyArray.getString(i))) {
+						String nodeRefString = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf("(") + 1,
+								propertyArray.getString(i).indexOf(","));
+						if (NodeRef.isNodeRef(nodeRefString)) {
+							nodeRef = new NodeRef(nodeRefString);
+						}
+						name = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf(",") + 1,
+								propertyArray.getString(i).indexOf(")"));
 					} else {
 						
 						int lastForwardSlash = stringVal.lastIndexOf('/');
@@ -357,7 +360,7 @@ public class ActivityListExtractor extends SimpleExtractor {
 							nodeRef = new NodeRef(stringVal);
 						}
 					}
-					if (nodeService.exists(nodeRef)) {
+					if (nodeRef != null && nodeService.exists(nodeRef)) {
 						if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
 							if (propertyDef != null) {
 								postproperty.put(attributeExtractorService.getStringValue(propertyDef, nodeRef,

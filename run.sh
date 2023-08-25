@@ -60,7 +60,7 @@ deploy_fast(){
 	docker cp becpg-plm/becpg-plm-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/
 	docker cp becpg-plm/becpg-plm-share/src/main/assembly/config/alfresco/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	if [ -d becpg-enterprise ]; then
-	   docker cp becpg-enterprise/becpg-enterprise-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/
+	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/assembly/web/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/
 	  docker cp becpg-enterprise/becpg-enterprise-share/src/main/resources/alfresco/. $BECPG_VERSION_PROFILE_becpg-share_1:/usr/local/tomcat/webapps/share/WEB-INF/classes/alfresco/
 	fi
 	
@@ -75,20 +75,20 @@ purge() {
 build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
+   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true  -P release -Dbecpg.dockerbuild.name="enterprise-test"
     cd ..
    else
-   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"
+   	 $MVN_EXEC  package $EXTRA_ENV -DskipTests=true  -P release -Dbecpg.dockerbuild.name="test"
    fi 
 }
 
 install() {
   if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
-    $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true -P full
+    $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true -P release
      cd ..
    else
-    $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true -P full
+    $MVN_EXEC  clean install $EXTRA_ENV -DskipTests=true -P release
   fi
 }
 
@@ -101,7 +101,7 @@ test() {
 }
 
 reindex() {
-	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
+    docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
     docker compose  -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml rm -v solr
     docker volume rm $BECPG_VERSION_PROFILE_solr_data
 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr
