@@ -22,9 +22,9 @@
 		{
 		    new beCPG.dashlet.BeCPGCatalog("${el}").setOptions(
 		   {
-		   	catalogType: "${prefType?js_string}",
+		   	  catalogType: "${prefType?js_string}",
 		      filter: "${prefFilter?js_string}",
-		      validFilters: [<#list filters as filter>"${filter.type?js_string}"<#if filter_has_next>,</#if></#list>],
+		      types: [<#list types as type>"${type.name?js_string}:${type.filter?js_string}"<#if type_has_next>,</#if></#list>],
 		      simpleView: ${prefSimpleView?string?js_string},
 		      maxItems: ${maxItems?c}
 		   }).setMessages(${messages});
