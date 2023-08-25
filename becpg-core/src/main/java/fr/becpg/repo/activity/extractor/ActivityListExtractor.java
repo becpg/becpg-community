@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
@@ -34,6 +33,7 @@ import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.MalformedNodeRefException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AccessStatus;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
@@ -61,7 +61,7 @@ import fr.becpg.repo.security.SecurityService;
  */
 public class ActivityListExtractor extends SimpleExtractor {
 
-	private static final Log logger = LogFactory.getLog(ActivityListExtractor.class);
+	private static Log logger = LogFactory.getLog(ActivityListExtractor.class);
 
 	private EntityActivityService entityActivityService;
 
@@ -148,121 +148,145 @@ public class ActivityListExtractor extends SimpleExtractor {
 			JSONObject postLookup = entityActivityService.postActivityLookUp(
 					ActivityType.valueOf((String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_TYPE)),
 					(String) properties.get(BeCPGModel.PROP_ACTIVITYLIST_DATA));
-			
-			if (postLookup == null) {
-				logger.warn("No activity type for node :" + nodeRef);
-				return;
-			}
-			
-			if (FormatMode.JSON.equals(mode) || FormatMode.XLSX.equals(mode)) {
-				NodeRef entityNodeRef = null;
-				NodeRef charactNodeRef = null;
-				QName entityType = null;
-				try {
-					
-					if (postLookup.has(EntityActivityService.PROP_ENTITY_NODEREF)
-							&& nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF)))) {
-						entityNodeRef = new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF));
-					}
-
-					if (postLookup.has(EntityActivityService.PROP_CHARACT_NODEREF)
-							&& nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF)))) {
-						charactNodeRef = new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF));
-					}
-
-					if (postLookup.has(EntityActivityService.PROP_ENTITY_TYPE)) {
-						entityType = QName.createQName(postLookup.getString(EntityActivityService.PROP_ENTITY_TYPE));
-					} else if (entityNodeRef != null) {
-						entityType = nodeService.getType(entityNodeRef);
-					}
-
-					if (((entityType != null)
-							&& (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityNodeRef,
-									entityType, postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS)))
-							|| ((charactNodeRef != null) && (permissionService.hasPermission(charactNodeRef, "Read") != AccessStatus.ALLOWED))) {
-
-						// Entity Title
-						if (postLookup.has(EntityActivityService.PROP_TITLE)) {
-							postLookup.put(EntityActivityService.PROP_TITLE, I18NUtil.getMessage("message.becpg.access.denied"));
-						}
-						if (postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
-							postLookup.remove(EntityActivityService.PROP_PROPERTIES);
+			if (postLookup != null) {
+				if (FormatMode.JSON.equals(mode) || FormatMode.XLSX.equals(mode)) {
+					NodeRef entityNodeRef = null;
+					NodeRef charactNodeRef = null;
+					QName entityType = null;
+					try {
+						if (postLookup.has(EntityActivityService.PROP_ENTITY_NODEREF)
+								&& nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF)))) {
+							entityNodeRef = new NodeRef(postLookup.getString(EntityActivityService.PROP_ENTITY_NODEREF));
 						}
 
-					} else if (postLookup.has("activityEvent") && postLookup.get("activityEvent").equals(ACTIVITYEVENT_UPDATE)
-							&& postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
-						JSONArray activityProperties = postLookup.getJSONArray(EntityActivityService.PROP_PROPERTIES);
-						JSONArray postActivityProperties = new JSONArray();
-						for (int i = 0; i < activityProperties.length(); i++) {
-							JSONObject activityProperty = activityProperties.getJSONObject(i);
-							JSONObject postProperty = activityProperty;
-							QName propertyName = QName.createQName(activityProperty.getString(EntityActivityService.PROP_TITLE));
+						if (postLookup.has(EntityActivityService.PROP_CHARACT_NODEREF)
+								&& nodeService.exists(new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF)))) {
+							charactNodeRef = new NodeRef(postLookup.getString(EntityActivityService.PROP_CHARACT_NODEREF));
+						}
 
-							if ((entityType != null)
-									&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS)
-									&& !isIgnoredTypes.contains(propertyName)) {
-								
-								PropertyDefinition propertyDef = dictionaryService.getProperty(propertyName);
-								ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
-								
-								putTitleProperty(postProperty, propertyName, propDef);
-								
-								if (activityProperty.has(EntityActivityService.BEFORE)) {
-									putProperties(activityProperty, postProperty, propertyDef, EntityActivityService.BEFORE, EntityActivityService.AFTER);
-								}
+						if (postLookup.has(EntityActivityService.PROP_ENTITY_TYPE)) {
+							entityType = QName.createQName(postLookup.getString(EntityActivityService.PROP_ENTITY_TYPE));
+						} else if (entityNodeRef != null) {
+							entityType = nodeService.getType(entityNodeRef);
+						}
 
-								if (activityProperty.has(EntityActivityService.AFTER)) {
-									putProperties(activityProperty, postProperty, propertyDef, EntityActivityService.AFTER, EntityActivityService.BEFORE);
-								}
+						if (((entityType != null)
+								&& (postLookup.has(EntityActivityService.PROP_DATALIST_TYPE) && (securityService.computeAccessMode(entityNodeRef,
+										entityType, postLookup.getString(EntityActivityService.PROP_DATALIST_TYPE)) == SecurityService.NONE_ACCESS)))
+								|| ((charactNodeRef != null) && (permissionService.hasPermission(charactNodeRef, "Read") != AccessStatus.ALLOWED))) {
 
-								if (!postProperty.has(EntityActivityService.BEFORE) || !postProperty.has(EntityActivityService.AFTER)
-										|| areStringsDifferent(postProperty.get(EntityActivityService.BEFORE),
-												postProperty.get(EntityActivityService.AFTER))) {
-									postActivityProperties.put(postProperty);
-								}
-
+							// Entity Title
+							if (postLookup.has(EntityActivityService.PROP_TITLE)) {
+								postLookup.put(EntityActivityService.PROP_TITLE, I18NUtil.getMessage("message.becpg.access.denied"));
 							}
+							if (postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
+								postLookup.remove(EntityActivityService.PROP_PROPERTIES);
+							}
+
+						} else if (postLookup.has("activityEvent") && postLookup.get("activityEvent").equals(ACTIVITYEVENT_UPDATE)
+								&& postLookup.has(EntityActivityService.PROP_PROPERTIES)) {
+							JSONArray activityProperties = postLookup.getJSONArray(EntityActivityService.PROP_PROPERTIES);
+							JSONArray postActivityProperties = new JSONArray();
+							for (int i = 0; i < activityProperties.length(); i++) {
+								JSONObject activityProperty = activityProperties.getJSONObject(i);
+								JSONObject postProperty = activityProperty;
+								QName propertyName = QName.createQName(activityProperty.getString(EntityActivityService.PROP_TITLE));
+
+								if ((entityType != null)
+										&& (securityService.computeAccessMode(entityNodeRef, entityType, propertyName) != SecurityService.NONE_ACCESS)
+										&& !isIgnoredTypes.contains(propertyName)) {
+									// Property Title
+									PropertyDefinition propertyDef = dictionaryService.getProperty(propertyName);
+									ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyName);
+									if ((propDef != null) && (propDef.getTitle(dictionaryService) != null)
+											&& (propDef.getTitle(dictionaryService).length() > 0)) {
+										postProperty.put(PROP_TITLE, propDef.getTitle(dictionaryService));
+									} else {
+										postProperty.put(PROP_TITLE, propertyName.toPrefixString());
+									}
+									// Before Property
+									if (activityProperty.has(EntityActivityService.BEFORE)) {
+										Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
+										if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
+
+											if (activityProperty.has(EntityActivityService.AFTER)) {
+												Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
+
+												if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
+													adaptProperty((JSONArray) beforeProperty, (JSONArray) afterProperty);
+												}
+											}
+
+											postProperty.put(EntityActivityService.BEFORE, checkProperty((JSONArray) beforeProperty, propertyDef));
+										} else {
+											if ((beforeProperty instanceof String) && (propertyDef != null)
+													&& (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
+															|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
+												postProperty.put(EntityActivityService.BEFORE, extractDate((String) beforeProperty));
+											} else {
+												postProperty.put(EntityActivityService.BEFORE, beforeProperty);
+											}
+										}
+									}
+
+									// AfterProperty
+									if (activityProperty.has(EntityActivityService.AFTER)) {
+										Object afterProperty = activityProperty.get(EntityActivityService.AFTER);
+										if ((afterProperty instanceof JSONArray) && (((JSONArray) afterProperty).length() > 0)) {
+
+											if (activityProperty.has(EntityActivityService.BEFORE)) {
+												Object beforeProperty = activityProperty.get(EntityActivityService.BEFORE);
+
+												if ((beforeProperty instanceof JSONArray) && (((JSONArray) beforeProperty).length() > 0)) {
+													adaptProperty((JSONArray) afterProperty, (JSONArray) beforeProperty);
+												}
+											}
+
+											postProperty.put(EntityActivityService.AFTER, checkProperty((JSONArray) afterProperty, propertyDef));
+										} else {
+
+											if ((afterProperty instanceof String) && (propertyDef != null)
+													&& (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
+															|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
+												postProperty.put(EntityActivityService.AFTER, extractDate((String) afterProperty));
+											} else {
+												postProperty.put(EntityActivityService.AFTER, afterProperty);
+											}
+										}
+									}
+
+									if (!postProperty.has(EntityActivityService.BEFORE) || !postProperty.has(EntityActivityService.AFTER)
+											|| areStringsDifferent(postProperty.get(EntityActivityService.BEFORE),
+													postProperty.get(EntityActivityService.AFTER))) {
+										postActivityProperties.put(postProperty);
+									}
+
+								}
+							}
+
+							postLookup.put(EntityActivityService.PROP_PROPERTIES, postActivityProperties);
+
 						}
-
-						postLookup.put(EntityActivityService.PROP_PROPERTIES, postActivityProperties);
-
+					} catch (JSONException e) {
+						logger.error(e, e);
 					}
-				} catch (JSONException e) {
-					logger.error(e, e);
+					ret.put(PROP_BECPG_ALDATA, postLookup);
+				} else {
+					try {
+						if (postLookup.has("content")) {
+							ret.put(PROP_BECPG_ALDATA, postLookup.get("content"));
+						} else {
+							ret.put(PROP_BECPG_ALDATA, "");
+						}
+					} catch (JSONException e) {
+						logger.error(e, e);
+					}
 				}
-				ret.put(PROP_BECPG_ALDATA, postLookup);
-			}
-		}
-	}
-
-	private void putProperties(JSONObject activityProperty, JSONObject postProperty, PropertyDefinition propertyDef, String current, String ref) {
-		Object currentProperty = activityProperty.get(current);
-		if ((currentProperty instanceof JSONArray) && (((JSONArray) currentProperty).length() > 0)) {
-			if (activityProperty.has(ref)) {
-				Object refProperty = activityProperty.get(ref);
-				if ((refProperty instanceof JSONArray) && (((JSONArray) refProperty).length() > 0)) {
-					adaptProperty((JSONArray) currentProperty, (JSONArray) refProperty);
-				}
-			}
-			postProperty.put(current, extractJSONArrayProperty((JSONArray) currentProperty, propertyDef));
-		} else {
-			if ((currentProperty instanceof String) && (propertyDef != null)
-					&& (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
-							|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
-				postProperty.put(current, extractDate((String) currentProperty));
 			} else {
-				postProperty.put(current, currentProperty);
+				logger.warn("No activity type for node :" + nodeRef);
 			}
 		}
-	}
 
-	private void putTitleProperty(JSONObject postProperty, QName propertyName, ClassAttributeDefinition propDef) {
-		if ((propDef != null) && (propDef.getTitle(dictionaryService) != null)
-				&& (propDef.getTitle(dictionaryService).length() > 0)) {
-			postProperty.put(PROP_TITLE, propDef.getTitle(dictionaryService));
-		} else {
-			postProperty.put(PROP_TITLE, propertyName.toPrefixString());
-		}
 	}
 
 	private boolean areStringsDifferent(Object object, Object object2) {
@@ -278,17 +302,22 @@ public class ActivityListExtractor extends SimpleExtractor {
 		return !object.toString().equals(object2.toString());
 	}
 
-	private void adaptProperty(JSONArray currentProp, JSONArray refProp) throws JSONException {
-		if ((currentProp.get(0) == JSONObject.NULL) && (refProp.get(0) instanceof JSONArray)) {
+	private void adaptProperty(JSONArray propToAdapt, JSONArray propRef) throws JSONException {
+
+		if ((propToAdapt.get(0) == JSONObject.NULL) && (propRef.get(0) instanceof JSONArray)) {
+
 			JSONArray newArray = new JSONArray();
-			for (int k = 0; k < ((JSONArray) refProp.get(0)).length(); k++) {
+
+			for (int k = 0; k < ((JSONArray) propRef.get(0)).length(); k++) {
 				newArray.put("");
 			}
-			currentProp.put(0, newArray);
-		} else if ((currentProp.get(0) instanceof JSONArray) && (refProp.get(0) instanceof JSONArray)
-				&& (((JSONArray) currentProp.get(0)).length() < ((JSONArray) refProp.get(0)).length())) {
-			for (int k = 0; k < (((JSONArray) refProp.get(0)).length() - ((JSONArray) currentProp.get(0)).length()); k++) {
-				((JSONArray) currentProp.get(0)).put("");
+
+			propToAdapt.put(0, newArray);
+
+		} else if ((propToAdapt.get(0) instanceof JSONArray) && (propRef.get(0) instanceof JSONArray)
+				&& (((JSONArray) propToAdapt.get(0)).length() < ((JSONArray) propRef.get(0)).length())) {
+			for (int k = 0; k < (((JSONArray) propRef.get(0)).length() - ((JSONArray) propToAdapt.get(0)).length()); k++) {
+				((JSONArray) propToAdapt.get(0)).put("");
 			}
 		}
 	}
@@ -300,46 +329,55 @@ public class ActivityListExtractor extends SimpleExtractor {
 	 * @param propertyDef a {@link org.alfresco.service.cmr.dictionary.PropertyDefinition} object.
 	 * @return a {@link org.json.JSONArray} object.
 	 */
-	private JSONArray extractJSONArrayProperty(JSONArray propertyArray, PropertyDefinition propertyDef) {
+	public JSONArray checkProperty(JSONArray propertyArray, PropertyDefinition propertyDef) {
 		JSONArray postproperty = new JSONArray();
 		for (int i = 0; i < propertyArray.length(); i++) {
 			try {
-				
-				Object property = propertyArray.get(i);
-				
-				String stringVal = property.toString();
-				
-				if (propertyDef == null && stringVal.contains("workspace")) {
-					NodeRef nodeRef = extractNodeRef(stringVal);
-					if (nodeService.exists(nodeRef)) {
-						postproperty.put(attributeExtractorService.extractPropName(nodeRef));
+				String stringVal = propertyArray.get(i).toString();
+				if (((propertyDef == null) && stringVal.contains("workspace"))
+						|| ((propertyDef != null) && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName()) && (stringVal != null)
+								&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal))) {
+					NodeRef nodeRef = null;
+				 	String name = null;
+					if (Pattern.matches("\\(.*,.*\\)", propertyArray.getString(i))) {
+						String nodeRefString = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf("(") + 1,
+								propertyArray.getString(i).indexOf(","));
+						if (NodeRef.isNodeRef(nodeRefString)) {
+							nodeRef = new NodeRef(nodeRefString);
+						}
+						name = propertyArray.getString(i).substring(propertyArray.getString(i).indexOf(",") + 1,
+								propertyArray.getString(i).indexOf(")"));
 					} else {
-						String name = stringVal.substring(stringVal.indexOf(",") + 1, stringVal.indexOf(")"));;
+						
+						int lastForwardSlash = stringVal.lastIndexOf('/');
+
+						// case of malformed activities
+						if (lastForwardSlash == -1) {
+							JSONObject jsonNodeRef = new JSONObject(stringVal);
+							nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://"
+									+ jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
+						} else {
+							nodeRef = new NodeRef(stringVal);
+						}
+					}
+					if (nodeRef != null && nodeService.exists(nodeRef)) {
+						if (permissionService.hasPermission(nodeRef, PermissionService.READ) == AccessStatus.ALLOWED) {
+							if (propertyDef != null) {
+								postproperty.put(attributeExtractorService.getStringValue(propertyDef, nodeRef,
+										attributeExtractorService.getPropertyFormats(FormatMode.JSON, true)));
+							} else {
+								postproperty.put(attributeExtractorService.extractPropName(nodeRef));
+							}
+						} else {
+							postproperty.put(I18NUtil.getMessage("message.becpg.access.denied"));
+						}
+					} else {
 						if (name != null) {
 							postproperty.put(name);
 						}
 					}
-				} else if (propertyDef != null && DataTypeDefinition.NODE_REF.equals(propertyDef.getDataType().getName())
-						&& !stringVal.isBlank() && !"null".equals(stringVal)  && !"[\"\"]".equals(stringVal)) {
-					if (!propertyDef.isMultiValued()) {
-						NodeRef nodeRef = null;
-						nodeRef = extractNodeRef(stringVal);
-						if (nodeRef != null && nodeService.exists(nodeRef)) {
-							postproperty.put(attributeExtractorService.getStringValue(propertyDef, nodeRef,
-									attributeExtractorService.getPropertyFormats(FormatMode.JSON, true)));
-						} else {
-							String name = stringVal.substring(stringVal.indexOf(",") + 1, stringVal.indexOf(")"));;
-							if (name != null) {
-								postproperty.put(name);
-							}
-						}
-					} else {
-						List<NodeRef> nodeRefs = ((JSONArray) property).toList().stream().map(s -> extractNodeRef(s.toString())).collect(Collectors.toList());
-						postproperty.put(attributeExtractorService.getStringValue(propertyDef, (Serializable) nodeRefs,
-								attributeExtractorService.getPropertyFormats(FormatMode.JSON, true)));
-					}
 				} else {
-					Object prop = property;
+					Object prop = propertyArray.get(i);
 
 					if ((prop instanceof String) && (propertyDef != null) && (DataTypeDefinition.DATE.equals(propertyDef.getDataType().getName())
 							|| DataTypeDefinition.DATETIME.equals(propertyDef.getDataType().getName()))) {
@@ -355,30 +393,6 @@ public class ActivityListExtractor extends SimpleExtractor {
 		}
 
 		return postproperty;
-	}
-
-	private NodeRef extractNodeRef(String stringVal) {
-		NodeRef nodeRef = null;
-		if (Pattern.matches("\\(.*,.*\\)", stringVal)) {
-			String nodeRefString = stringVal.substring(stringVal.indexOf("(") + 1, stringVal.indexOf(","));
-			if (NodeRef.isNodeRef(nodeRefString)) {
-				nodeRef = new NodeRef(nodeRefString);
-			}
-		} else {
-			
-			int lastForwardSlash = stringVal.lastIndexOf('/');
-
-			// case of malformed activities
-			if (lastForwardSlash == -1) {
-				JSONObject jsonNodeRef = new JSONObject(stringVal);
-				nodeRef = new NodeRef(jsonNodeRef.getJSONObject("storeRef").getString("protocol") + "://"
-						+ jsonNodeRef.getJSONObject("storeRef").getString("identifier") + "/" + jsonNodeRef.getString("id"));
-			} else if (NodeRef.isNodeRef(stringVal)) {
-				nodeRef = new NodeRef(stringVal);
-			}
-		}
-		
-		return nodeRef;
 	}
 
 	private Object extractDate(String prop) {
