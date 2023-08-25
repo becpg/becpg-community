@@ -59,13 +59,6 @@
                         lazyloadmenu : false
                      });
 
-                     // Select the preferred filter in the ui
-                     var filter = this.options.filter;
-                     filter = Alfresco.util.arrayContains(this.options.validFilters, filter) ? filter
-                           : this.options.validFilters[0];
-                     this.widgets.filter.set("label", this.msg("filter." + filter)+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
-                     this.widgets.filter.value = filter;
-
                      this.widgets.type = Alfresco.util.createYUIButton(this, "types", this.onTypeChange, {
                         type : "menu",
                         menu : "types-menu",
@@ -84,6 +77,14 @@
                               this.widgets.simpleDetailed, this);
                      }
 
+					this.options.originalFilterItems = [];
+					
+					for (var f in this.widgets.filter._menu.getItems()) {
+						this.options.originalFilterItems.push(this.widgets.filter._menu.getItems()[f]);
+					}
+
+					 this.updateFilterMenu(this.options.catalogType);
+					
                      this.configureSearch();
 
                      // Display the toolbar now that we have selected the filter
@@ -229,6 +230,8 @@
                         
                         this.services.preferences.set(this.substitute(PREFERENCES_BECPGCATALOG_DASHLET_FILTER),
                               this.widgets.filter.value);
+						
+						this.options.filter = this.widgets.filter.value;
 
                         var searchText = this.getSearchText();
                         if (searchText.replace(/\*/g, "").length < 3) {
@@ -245,9 +248,12 @@
                   onTypeChange : function BeCPGCatalog_onTypeChange(p_sType, p_aArgs) {
                      var menuItem = p_aArgs[1];
                      if (menuItem) {
+	
+						this.updateFilterMenu(menuItem.value);
+							
                         this.widgets.type.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                         this.widgets.type.value = menuItem.value;
-
+						
                         this.services.preferences.set(this.substitute(PREFERENCES_BECPGCATALOG_DASHLET_TYPE),
                               this.widgets.type.value);
 
@@ -262,6 +268,56 @@
                         this.reloadDataTable();
                      }
                   },
+
+				  updateFilterMenu : function BeCPGCatalog_updateFilterMenu(typeValue) {
+					
+					this.widgets.filter._menu.clearContent();
+					
+					var filter = null;
+						
+					for (var i in this.options.types) {
+						var type = this.options.types[i].split(":");
+						if (type[0] == typeValue) {
+							if (type.length > 1) {
+								filter = type[1];
+							}
+							break;
+						}
+					}
+					
+					if (filter) {
+						var splitFilters = filter.split(",");
+						for (var g in this.options.originalFilterItems) {
+							var filterItem = this.options.originalFilterItems[g];
+							if (splitFilters.includes(filterItem.value)) {
+								this.widgets.filter._menu.addItem(filterItem);
+							}
+						}
+					} else {
+						for (var g in this.options.originalFilterItems) {
+							this.widgets.filter._menu.addItem(this.options.originalFilterItems[g]);
+						}
+					}
+					
+					var validFilters = [];
+					
+					for (var i in this.widgets.filter._menu.getItems()) {
+						var menuItem = this.widgets.filter._menu.getItems()[i];
+						validFilters.push(menuItem.value);
+					}
+					
+					// Select the preferred filter in the ui
+                     var filter = this.options.filter;
+                     filter = Alfresco.util.arrayContains(validFilters, filter) ? filter : validFilters[0];
+                     this.widgets.filter.set("label", this.msg("filter." + filter)+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
+                     this.widgets.filter.value = filter;
+
+					this.services.preferences.set(this.substitute(PREFERENCES_BECPGCATALOG_DASHLET_FILTER), filter);
+					
+					this.options.filter = this.widgets.filter.value;
+					
+					this.widgets.filter._menu.render();
+				},
 
                   /**
                    * Show/Hide detailed list buttongroup click handler
