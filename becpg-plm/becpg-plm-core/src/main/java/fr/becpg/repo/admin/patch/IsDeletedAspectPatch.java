@@ -65,6 +65,7 @@ public class IsDeletedAspectPatch extends AbstractBeCPGPatch {
 		doApply(GS1Model.TYPE_DUTY_FEE_TAX);
 		doApply(GS1Model.TYPE_TARGET_MARKET);
 		doApply(PLMModel.TYPE_PLANT);
+		doApply(PLMModel.TYPE_COST);
 		doApply(PLMModel.TYPE_SUBSIDIARY);
 		doApply(PLMModel.TYPE_TRADEMARK);
 		doApply(PLMModel.TYPE_CERTIFICATION);
