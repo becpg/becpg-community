@@ -27,7 +27,8 @@ function getTypes()
       types.push(
       {
          name: xmlType.@name.toString(),
-         parameters: xmlType.@parameters.toString()
+         parameters: xmlType.@parameters.toString(),
+         filter: xmlType.@filter.toString()
       });
    }
    return types;
