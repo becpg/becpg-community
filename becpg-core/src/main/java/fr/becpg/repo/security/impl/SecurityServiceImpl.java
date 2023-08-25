@@ -142,7 +142,7 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 	
 	private boolean isEntityTemplate(NodeRef nodeRef) {
-		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
+		return nodeRef != null && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
 	}
 
 	private int computeAccessMode(NodeRef nodeRef, QName nodeType, List<PermissionModel> permissions) {
