@@ -185,9 +185,28 @@ var Filters =
  		 case "Valid":         
          case "Refused":
          case "Archived":
+         case "Compliant":
+         case "NonCompliant":
+         case "new":
+         case "analysis":
+         case "treatment":
+         case "response":
+         case "classification":
+         case "closing":
+         case "closed":
          	filterQuery += this.constructPathQuery(parsedArgs);
-         	if( args.type == "productCollection" ){
+         	if (args.type == "productCollection" ){
 				filterQuery += " +@bcpg\\:productCollectionState:\""+filter+"\"";
+			} else if (args.type == "supplier" ){
+				filterQuery += " +@bcpg\\:supplierState:\""+filter+"\"";
+			} else if (args.type == "client" ){
+				filterQuery += " +@bcpg\\:clientState:\""+filter+"\"";
+			} else if (args.type == "qa_batch" ){
+				filterQuery += " +@qa\\:batchState:\""+filter+"\"";
+			} else if (args.type == "qa_nc" ){
+				filterQuery += " +@qa\\:ncState:\""+filter+"\"";
+			} else if (args.type == "qa_qualityControl" ){
+				filterQuery += " +@qa\\:qcState:\""+filter+"\"";
 			} else {
          		filterQuery += " +@bcpg\\:productState:\""+filter+"\"";
          	}
