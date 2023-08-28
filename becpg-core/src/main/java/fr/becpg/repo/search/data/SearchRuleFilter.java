@@ -243,83 +243,83 @@ public class SearchRuleFilter {
 	public SearchRuleFilter fromJsonString(String jsonString, NamespaceService namespaceService) {
 		try {
 			if ((jsonString != null) && !jsonString.isEmpty()) {
-				JSONObject filterObject = new JSONObject(jsonString);
-				if (filterObject.has(PROP_QUERY)) {
-					setQuery(filterObject.getString(PROP_QUERY));
-					isEmptyJsonQuery = false;
-				}
-				if (filterObject.has(PROP_IS_FILTER)) {
-					setIsFilter(filterObject.getBoolean(PROP_IS_FILTER));
-				}
-				if (filterObject.has(ENTITY_FILTER)) {
-					isEmptyJsonQuery = false;
-					JSONObject entityFilter = filterObject.getJSONObject(ENTITY_FILTER);
-					if (entityFilter.has(ENTITY_TYPE)) {
-						setEntityType(QName.createQName(entityFilter.getString(ENTITY_TYPE), namespaceService));
-					}
-					if (entityFilter.has(CRITERIA)) {
-						JSONObject entityAssocs = entityFilter.getJSONObject(CRITERIA);
-						setEntityCriteria(JsonHelper.extractCriteria(entityAssocs));
-					}
-				}
-				if (filterObject.has(NODE_FILTER)) {
-					isEmptyJsonQuery = false;
-					JSONObject nodeFilter = filterObject.getJSONObject(NODE_FILTER);
-					if (nodeFilter.has(NODE_TYPE)) {
-						setNodeType(QName.createQName(nodeFilter.getString(NODE_TYPE), namespaceService));
-					}
-
-					if (nodeFilter.has(NODE_PATH)) {
-						//TODOsetNodeType();
-					}
-
-					if (nodeFilter.has(CRITERIA)) {
-						JSONObject nodeAssocs = nodeFilter.getJSONObject(CRITERIA);
-						setNodeCriteria(JsonHelper.extractCriteria(nodeAssocs));
-					}
-
-				}
-
-				if (filterObject.has(DATE_FILTER)) {
-					isEmptyJsonQuery = false;
-					JSONObject dateFilter = filterObject.getJSONObject(DATE_FILTER);
-
-					if (dateFilter.has(DATE_FIELD)) {
-						setDateField(QName.createQName(dateFilter.getString(DATE_FIELD), namespaceService));
-					}
-
-					if (dateFilter.has(DATE_FILTER_DELAY)) {
-						setDateFilterDelay(dateFilter.getInt(DATE_FILTER_DELAY));
-					}
-
-					if (dateFilter.has(DATE_FILTER_DELAY_UNIT)) {
-						setDateFilterDelayUnit(DateFilterDelayUnit.valueOf(dateFilter.getString(DATE_FILTER_DELAY_UNIT)));
-					}
-					if (dateFilter.has(DATE_FILTER_TYPE)) {
-						setDateFilterType(DateFilterType.valueOf(dateFilter.getString(DATE_FILTER_TYPE)));
-					}
-
-				}
-
-				if (filterObject.has(VERSION_FILTER)) {
-					isEmptyJsonQuery = false;
-					JSONObject versionFilter = filterObject.getJSONObject(VERSION_FILTER);
-					if (versionFilter.has(VERSION_FILTER_TYPE)) {
-						setVersionFilterType(VersionFilterType.valueOf(versionFilter.getString(VERSION_FILTER_TYPE)));
-					}
-				}
-
+				return fromJsonObject(new JSONObject(jsonString), namespaceService);
 			}
-
 		} catch (JSONException e) {
 			if (jsonString.contains("{")) {
 				logger.warn("Invalid JSON notification filter", e);
 			} else {
 				setQuery(jsonString);
 			}
+		}
+		return this;
+	}
+
+	public SearchRuleFilter fromJsonObject(JSONObject filterObject, NamespaceService namespaceService) {
+		if (filterObject.has(PROP_QUERY)) {
+			setQuery(filterObject.getString(PROP_QUERY));
+			isEmptyJsonQuery = false;
+		}
+		if (filterObject.has(PROP_IS_FILTER)) {
+			setIsFilter(filterObject.getBoolean(PROP_IS_FILTER));
+		}
+		if (filterObject.has(ENTITY_FILTER)) {
+			isEmptyJsonQuery = false;
+			JSONObject entityFilter = filterObject.getJSONObject(ENTITY_FILTER);
+			if (entityFilter.has(ENTITY_TYPE)) {
+				setEntityType(QName.createQName(entityFilter.getString(ENTITY_TYPE), namespaceService));
+			}
+			if (entityFilter.has(CRITERIA)) {
+				JSONObject entityAssocs = entityFilter.getJSONObject(CRITERIA);
+				setEntityCriteria(JsonHelper.extractCriteria(entityAssocs));
+			}
+		}
+		if (filterObject.has(NODE_FILTER)) {
+			isEmptyJsonQuery = false;
+			JSONObject nodeFilter = filterObject.getJSONObject(NODE_FILTER);
+			if (nodeFilter.has(NODE_TYPE)) {
+				setNodeType(QName.createQName(nodeFilter.getString(NODE_TYPE), namespaceService));
+			}
+
+			if (nodeFilter.has(NODE_PATH)) {
+				//TODOsetNodeType();
+			}
+
+			if (nodeFilter.has(CRITERIA)) {
+				JSONObject nodeAssocs = nodeFilter.getJSONObject(CRITERIA);
+				setNodeCriteria(JsonHelper.extractCriteria(nodeAssocs));
+			}
 
 		}
 
+		if (filterObject.has(DATE_FILTER)) {
+			isEmptyJsonQuery = false;
+			JSONObject dateFilter = filterObject.getJSONObject(DATE_FILTER);
+
+			if (dateFilter.has(DATE_FIELD)) {
+				setDateField(QName.createQName(dateFilter.getString(DATE_FIELD), namespaceService));
+			}
+
+			if (dateFilter.has(DATE_FILTER_DELAY)) {
+				setDateFilterDelay(dateFilter.getInt(DATE_FILTER_DELAY));
+			}
+
+			if (dateFilter.has(DATE_FILTER_DELAY_UNIT)) {
+				setDateFilterDelayUnit(DateFilterDelayUnit.valueOf(dateFilter.getString(DATE_FILTER_DELAY_UNIT)));
+			}
+			if (dateFilter.has(DATE_FILTER_TYPE)) {
+				setDateFilterType(DateFilterType.valueOf(dateFilter.getString(DATE_FILTER_TYPE)));
+			}
+
+		}
+
+		if (filterObject.has(VERSION_FILTER)) {
+			isEmptyJsonQuery = false;
+			JSONObject versionFilter = filterObject.getJSONObject(VERSION_FILTER);
+			if (versionFilter.has(VERSION_FILTER_TYPE)) {
+				setVersionFilterType(VersionFilterType.valueOf(versionFilter.getString(VERSION_FILTER_TYPE)));
+			}
+		}
 		return this;
 	}
 
