@@ -619,7 +619,11 @@
 					<show id="bcpg:nrFrequencyStartDate" />
 					<show id="bcpg:nrForceNotification" />
 					<show id="bcpg:nrConditions" />
+					<show id="bcpg:nrErrorLog" />
 				</field-visibility>
+				<appearance>
+					<field id="bcpg:nrErrorLog" read-only="true" />
+				</appearance>
 			</form>
 		</forms>
 	</config>
