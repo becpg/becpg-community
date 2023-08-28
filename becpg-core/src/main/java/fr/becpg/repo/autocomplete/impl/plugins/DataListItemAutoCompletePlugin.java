@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -127,7 +128,6 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 	@Autowired
 	private EntityListDAO entityListDAO;
 
-	
 	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
@@ -138,8 +138,8 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 	@Override
 	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
 
-		NodeRef entityNodeRef = null;
-		
+		List<NodeRef> entityNodeRefs = new ArrayList<>();
+
 		NodeRef itemId = null;
 		String listName = null;
 
@@ -158,155 +158,174 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 		String queryFilter = (String) props.get(AutoCompleteService.PROP_FILTER);
 		if ((queryFilter != null) && FILTER_PARENT_AS_ENTITY.equals(queryFilter) && (parent != null)) {
 			queryFilter = null;
-			if (!parent.isEmpty() && NodeRef.isNodeRef(parent)) {
-				entityNodeRef = new NodeRef(parent);
-				parent = null;
+			if (!parent.isEmpty()) {
+				String[] splitted = parent.split(",");
+
+				for (String node : splitted) {
+					if (NodeRef.isNodeRef(node)) {
+						entityNodeRefs.add(new NodeRef(node));
+						parent = null;
+					}
+				}
+
 			}
 		} else if ((queryFilter != null) && FILTER_ITEM_AS_ENTITY.equals(queryFilter) && (itemId != null)) {
-			entityNodeRef = itemId;
+			entityNodeRefs.add(itemId);
 			itemId = null;
 			queryFilter = null;
 		} else if (((String) props.get(AutoCompleteService.PROP_ENTITYNODEREF) != null)
 
 				&& NodeRef.isNodeRef((String) props.get(AutoCompleteService.PROP_ENTITYNODEREF))) {
-			entityNodeRef = new NodeRef((String) props.get(AutoCompleteService.PROP_ENTITYNODEREF));
+			entityNodeRefs.add(new NodeRef((String) props.get(AutoCompleteService.PROP_ENTITYNODEREF)));
 		}
 
-		if (entityNodeRef != null) {
-			
-			String path = (String) props.get(AutoCompleteService.PROP_PATH);
-			if ((path != null) && !path.isEmpty()) {
-				if (path.contains(":") || path.contains("{")) {
-					try {
-						QName assocQname = QName.createQName(path, namespaceService);
+		if (!entityNodeRefs.isEmpty()) {
 
-						NodeRef targetAssocNodeRef = associationService.getTargetAssoc(entityNodeRef, assocQname);
-						if (targetAssocNodeRef != null) {
-							entityNodeRef = targetAssocNodeRef;
-						}
-						
-
-					} catch (NamespaceException e) {
-						logger.warn("Wrong path assoc:" + path);
-					}
-				} else {
-					listName = path;
-				}
-			}
-
-			if(logger.isDebugEnabled()) {
-				logger.debug("ParentValue sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
-			}
-			
+			List<NodeRef> dataListNodeRefs = new ArrayList<>();
 			String className = (String) props.get(AutoCompleteService.PROP_CLASS_NAME);
 			QName type = QName.createQName(className, namespaceService);
 
-			
+			for (NodeRef entityNodeRef : entityNodeRefs) {
 
-			String attributeNames = (String) props.get(AutoCompleteService.PROP_ATTRIBUTE_NAME);
-			Set<QName> attributeQNames = new HashSet<>();
-			if (attributeNames != null) {
-				for (String attributeName : attributeNames.split(",")) {
-					attributeQNames.add(QName.createQName(attributeName, namespaceService));
-				}
-			}
+				String path = (String) props.get(AutoCompleteService.PROP_PATH);
+				if ((path != null) && !path.isEmpty()) {
+					if (path.contains(":") || path.contains("{")) {
+						try {
+							QName assocQname = QName.createQName(path, namespaceService);
 
-			
-			NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-			if (listsContainerNodeRef != null) {
-				NodeRef dataListNodeRef;
-				if (listName == null) {
-					dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, type);
-				} else {
-					dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, listName);
-				}
-				if (dataListNodeRef != null) {
-					if (dictionaryService.getProperty(attributeQNames.iterator().next()) != null) {
-						return suggestFromProp(dataListNodeRef, itemId, type, attributeQNames, query, queryFilter, parent, pageNum, pageSize);
+							NodeRef targetAssocNodeRef = associationService.getTargetAssoc(entityNodeRefs.get(0), assocQname);
+							if (targetAssocNodeRef != null) {
+								entityNodeRef = targetAssocNodeRef;
+							}
+
+						} catch (NamespaceException e) {
+							logger.warn("Wrong path assoc:" + path);
+						}
 					} else {
-						return suggestFromAssoc(sourceType, dataListNodeRef, itemId, type, attributeQNames.iterator().next(), query, pageNum,
-								pageSize);
+						listName = path;
 					}
+				}
+
+				if (logger.isDebugEnabled()) {
+					logger.debug("ParentValue sourceType: " + sourceType + " - entityNodeRef: " + entityNodeRef);
+				}
+
+				NodeRef listsContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
+				if (listsContainerNodeRef != null) {
+					NodeRef dataListNodeRef;
+					if (listName == null) {
+						dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, type);
+					} else {
+						dataListNodeRef = entityListDAO.getList(listsContainerNodeRef, listName);
+					}
+
+					if (dataListNodeRef != null) {
+						dataListNodeRefs.add(dataListNodeRef);
+					} else {
+						logger.warn("No datalists found for type: " + (listName != null ? listName : type));
+					}
+				}
+
+			}
+
+			if (!dataListNodeRefs.isEmpty()) {
+
+				String attributeNames = (String) props.get(AutoCompleteService.PROP_ATTRIBUTE_NAME);
+				Set<QName> attributeQNames = new HashSet<>();
+				if (attributeNames != null) {
+					for (String attributeName : attributeNames.split(",")) {
+						attributeQNames.add(QName.createQName(attributeName, namespaceService));
+					}
+				}
+
+				if (dictionaryService.getProperty(attributeQNames.iterator().next()) != null) {
+					return suggestFromProp(dataListNodeRefs, itemId, type, attributeQNames, query, queryFilter, parent, pageNum, pageSize);
 				} else {
-					logger.warn("No datalists found for type: "+(listName!=null ? listName: type));
+					return suggestFromAssoc(sourceType, dataListNodeRefs, itemId, type, attributeQNames.iterator().next(), query, pageNum, pageSize);
 				}
 			}
+
 		}
 		return new AutoCompletePage(new ArrayList<>(), pageNum, pageSize, null);
 	}
 
-	private AutoCompletePage suggestFromProp(NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, Set<QName> propertyQNames, String query,
-			String queryFilter, String parent, Integer pageNum, Integer pageSize) {
+	private AutoCompletePage suggestFromProp(List<NodeRef> dataListNodeRefs, NodeRef itemId, QName datalistType, Set<QName> propertyQNames,
+			String query, String queryFilter, String parent, Integer pageNum, Integer pageSize) {
+		List<NodeRef> ret = new LinkedList<>();
+		for (NodeRef dataListNodeRef : dataListNodeRefs) {
+			BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).parent(dataListNodeRef);
 
-		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().ofType(datalistType).parent(dataListNodeRef);
-
-		if (propertyQNames.size() == 1) {
-			beCPGQueryBuilder.andPropQuery(propertyQNames.iterator().next(), prepareQuery(query));
-		} else {
-			StringBuilder searchTemplate = new StringBuilder();
-			searchTemplate.append("%(");
-			for (QName propertyQName : propertyQNames) {
-				searchTemplate.append(" " + entityDictionaryService.toPrefixString(propertyQName));
-			}
-			searchTemplate.append(")");
-
-			beCPGQueryBuilder.excludeDefaults().inSearchTemplate(searchTemplate.toString()).locale(I18NUtil.getContentLocale()).andOperator()
-					.ftsLanguage();
-
-			if (!isAllQuery(query)) {
-				StringBuilder ftsQuery = new StringBuilder();
-				if (query.length() > 2) {
-					ftsQuery.append("(" + prepareQuery(query.trim()) + ") OR ");
-				}
-				ftsQuery.append("(" + query + ")");
-				beCPGQueryBuilder.andFTSQuery(ftsQuery.toString());
-			}
-
-		}
-
-		if ((queryFilter != null) && (queryFilter.length() > 0)) {
-			String[] splitted = queryFilter.split("\\|");
-			beCPGQueryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), splitted[1]);
-		}
-
-		if (parent != null) {
-			if (!parent.isEmpty() && NodeRef.isNodeRef(parent)) {
-				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parent);
+			if (propertyQNames.size() == 1) {
+				beCPGQueryBuilder.andPropQuery(propertyQNames.iterator().next(), prepareQuery(query));
 			} else {
-				beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, String.valueOf(RepoConsts.DEFAULT_LEVEL));
-			}
-		}
+				StringBuilder searchTemplate = new StringBuilder();
+				searchTemplate.append("%(");
+				for (QName propertyQName : propertyQNames) {
+					searchTemplate.append(" " + entityDictionaryService.toPrefixString(propertyQName));
+				}
+				searchTemplate.append(")");
 
-		if (itemId != null) {
-			beCPGQueryBuilder.andNotID(itemId);
+				beCPGQueryBuilder.excludeDefaults().inSearchTemplate(searchTemplate.toString()).locale(I18NUtil.getContentLocale()).andOperator()
+						.ftsLanguage();
+
+				if (!isAllQuery(query)) {
+					StringBuilder ftsQuery = new StringBuilder();
+					if (query.length() > 2) {
+						ftsQuery.append("(" + prepareQuery(query.trim()) + ") OR ");
+					}
+					ftsQuery.append("(" + query + ")");
+					beCPGQueryBuilder.andFTSQuery(ftsQuery.toString());
+				}
+
+			}
+
+			if ((queryFilter != null) && (queryFilter.length() > 0)) {
+				String[] splitted = queryFilter.split("\\|");
+				beCPGQueryBuilder.andPropEquals(QName.createQName(splitted[0], namespaceService), splitted[1]);
+			}
+
+			if (parent != null) {
+				if (!parent.isEmpty() && NodeRef.isNodeRef(parent)) {
+					beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_PARENT_LEVEL, parent);
+				} else {
+					beCPGQueryBuilder.andPropEquals(BeCPGModel.PROP_DEPTH_LEVEL, String.valueOf(RepoConsts.DEFAULT_LEVEL));
+				}
+			}
+
+			if (itemId != null) {
+				beCPGQueryBuilder.andNotID(itemId);
+			}
+			if (logger.isDebugEnabled()) {
+				logger.debug("suggestDatalistItem for query : " + beCPGQueryBuilder.toString());
+			}
+			ret.addAll(beCPGQueryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS).list());
+
 		}
-		if(logger.isDebugEnabled()) {
-			logger.debug("suggestDatalistItem for query : " + beCPGQueryBuilder.toString());
-		}
-		List<NodeRef> ret = beCPGQueryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS).list();
 		return new AutoCompletePage(ret, pageNum, pageSize, new NodeRefAutoCompleteExtractor(propertyQNames, nodeService));
 	}
 
-	private AutoCompletePage suggestFromAssoc(String sourceType, NodeRef dataListNodeRef, NodeRef itemId, QName datalistType, QName associationQName,
-			String query, Integer pageNum, Integer pageSize) {
+	private AutoCompletePage suggestFromAssoc(String sourceType, List<NodeRef> dataListNodeRefs, NodeRef itemId, QName datalistType,
+			QName associationQName, String query, Integer pageNum, Integer pageSize) {
 
 		List<AutoCompleteEntry> result = new ArrayList<>();
-		for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, datalistType)) {
-			if (accepts(dataListItemNodeRef, itemId, sourceType)) {
-				NodeRef targetNode = associationService.getTargetAssoc(dataListItemNodeRef, associationQName);
+		for (NodeRef dataListNodeRef : dataListNodeRefs) {
+			for (NodeRef dataListItemNodeRef : entityListDAO.getListItems(dataListNodeRef, datalistType)) {
+				if (accepts(dataListItemNodeRef, itemId, sourceType)) {
+					NodeRef targetNode = associationService.getTargetAssoc(dataListItemNodeRef, associationQName);
 
-				if (targetNode != null) {
-					QName type = nodeService.getType(targetNode);
-					String name = attributeExtractorService.extractPropName(type, targetNode);
-					
-					if (isQueryMatch(query, name)) {
-						String cssClass = attributeExtractorService.extractMetadata(type, targetNode);
-						if (SOURCE_TYPE_DATA_LIST_CHARACT.equals(sourceType)) {
-							result.add(new AutoCompleteEntry(targetNode.toString(), name, cssClass));
-						} else {
-							result.add(new AutoCompleteEntry(dataListItemNodeRef.toString(), name, cssClass));
+					if (targetNode != null) {
+						QName type = nodeService.getType(targetNode);
+						String name = attributeExtractorService.extractPropName(type, targetNode);
+
+						if (isQueryMatch(query, name)) {
+							String cssClass = attributeExtractorService.extractMetadata(type, targetNode);
+							if (SOURCE_TYPE_DATA_LIST_CHARACT.equals(sourceType)) {
+								result.add(new AutoCompleteEntry(targetNode.toString(), name, cssClass));
+							} else {
+								result.add(new AutoCompleteEntry(dataListItemNodeRef.toString(), name, cssClass));
+							}
+
 						}
-
 					}
 				}
 			}
@@ -315,31 +334,30 @@ public class DataListItemAutoCompletePlugin extends TargetAssocAutoCompletePlugi
 	}
 
 	private boolean accepts(NodeRef dataListItemNodeRef, NodeRef itemId, String sourceType) {
-		
+
 		if (dataListItemNodeRef.equals(itemId)) {
 			return false;
 		}
-		
+
 		if (SOURCE_TYPE_PARENT_VALUE.equals(sourceType)) {
 			return !isChildOf(dataListItemNodeRef, itemId);
 		}
-		
+
 		return true;
 	}
 
 	private boolean isChildOf(NodeRef dataListItemNodeRef, NodeRef itemId) {
-		
+
 		NodeRef parentNodeRef = (NodeRef) nodeService.getProperty(dataListItemNodeRef, BeCPGModel.PROP_PARENT_LEVEL);
-		
+
 		if (parentNodeRef != null) {
 			if (parentNodeRef.equals(itemId)) {
 				return true;
 			}
 			return isChildOf(parentNodeRef, itemId);
 		}
-		
+
 		return false;
 	}
-	
-	
+
 }
