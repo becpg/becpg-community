@@ -647,6 +647,16 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+		propertyName : "bcpg:nrErrorLog",
+		renderer : function(oRecord, data, label, scope) {
+			if (data.value != null) {
+				return '<span class="notificationError">' + Alfresco.util.encodeHTML(data.value) + '</span>';
+			}
+			return "";
+		}
+	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:labelClaim",
