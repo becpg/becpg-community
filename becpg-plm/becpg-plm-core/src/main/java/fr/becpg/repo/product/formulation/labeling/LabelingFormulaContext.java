@@ -2920,9 +2920,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			if (repositoryEntity instanceof IngTypeItem) {
 				ingType = (IngTypeItem) repositoryEntity;
 			}
-		} else {
+		} else if(aggregateRule.getLabel()!=null && !MLTextHelper.isEmpty(aggregateRule.getLabel())){
+			
 			ingType = new IngTypeItem();
 			ingType.setLegalName(aggregateRule.getLabel());
+			ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, "ingType-" + aggregateRule.getLabel().getDefaultValue()));
 		}
 
 		return ingType;
