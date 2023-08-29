@@ -50,7 +50,7 @@ public class ImportProductVisitor extends ImportEntityListAspectVisitor implemen
 	@Override
 	protected NodeRef findNode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException {
 
-		NodeRef nodeRef = findNodeByKeyOrCode(importContext,null, type, properties, null);
+		NodeRef nodeRef = findNodeByKeyOrCode(importContext,null, type, properties, null, true);
 
 		// check key columns, we don't want to update the wrong product
 		if (nodeRef != null) {
