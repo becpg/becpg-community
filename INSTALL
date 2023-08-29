@@ -1,71 +1,57 @@
-##################################################################################
-# 
-#  beCPG developers INSTALL
-#
-#  Copyright (C) 2010-2021 beCPG. 
-#   
-#  This file is part of beCPG 
-#   
-#  beCPG is free software: you can redistribute it and/or modify 
-#  it under the terms of the GNU Lesser General Public License as published by 
-#  the Free Software Foundation, either version 3 of the License, or 
-#  (at your option) any later version. 
-#   
-#  beCPG is distributed in the hope that it will be useful, 
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-#  GNU Lesser General Public License for more details. 
-#   
-#  You should have received a copy of the GNU Lesser General Public License along with beCPG. 
-#  If not, see <http://www.gnu.org/licenses/>.
-# 
-##################################################################################
+# beCPG Developers Installation Guide
 
-Projects should be build (refers to README) and alfresco set-up and running. Once build you will find files under target dirs.
+## Installation Steps
 
-1 - Install becpg-designer
---------------------------
+### Install becpg-designer
 
 Install core AMPS
 
+```shell
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-core/target/becpg-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-designer/becpg-designer-core/target/becpg-designer-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
+```
 
 Install share AMPS
 
+```shell
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-share/target/becpg-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-designer/becpg-designer-share/target/becpg-designer-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
+```
 
-
-2 - Install becpg-project
--------------------------
+### Install becpg-project
 
 Install core AMPS
 
+```shell
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-core/target/becpg-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-project/becpg-project-core/target/becpg-project-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
+```
 
 Install share AMPS
 
+```shell
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-share/target/becpg-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-project/becpg-project-share/target/becpg-project-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
+```
 
-3 - Install becpg-plm
----------------------
+### Install becpg-plm
 
 
 Install core AMPS
 
+```shell
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-core/target/becpg-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-designer/becpg-designer-core/target/becpg-designer-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-project/becpg-project-core/target/becpg-project-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-plm/becpg-plm-core/target/becpg-plm-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
+```
 
 Install share AMPS
 
+```shell
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-share/target/becpg-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-designer/becpg-designer-share/target/becpg-designer-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-project/becpg-project-share/target/becpg-project-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-plm/becpg-plm-share/target/becpg-plm-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
-
+```
 
