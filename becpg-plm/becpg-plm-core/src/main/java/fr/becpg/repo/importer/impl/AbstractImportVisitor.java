@@ -975,7 +975,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 */
 	protected NodeRef findNode(ImportContext importContext, QName type, Map<QName, Serializable> properties) throws ImporterException {
 
-		NodeRef nodeRef = findNodeByKeyOrCode(importContext, null, type, properties, null);
+		NodeRef nodeRef = findNodeByKeyOrCode(importContext, null, type, properties, null, true);
 
 		if (nodeRef == null) {
 
@@ -1009,7 +1009,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 	 * @throws fr.becpg.repo.importer.ImporterException if any.
 	 */
 	protected NodeRef findNodeByKeyOrCode(ImportContext importContext, PropertyDefinition propDef, QName type, Map<QName, Serializable> properties,
-			NodeRef parentRef) throws ImporterException {
+			NodeRef parentRef, boolean useContextPath) throws ImporterException {
 
 		NodeRef nodeRef = null;
 
@@ -1030,14 +1030,16 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 
 				if (ContentModel.ASSOC_CONTAINS.isMatch(attribute) || BeCPGModel.PROP_LV_VALUE.isMatch(attribute)  || BeCPGModel.PROP_LV_CODE.isMatch(attribute)
 						|| BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
-					// query by path
-					NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
-							AbstractBeCPGQueryBuilder.encodePath(importContext.getPath()));
 
-					if(folderNodeRef == null) {
-						logger.warn("No folder found for :"+importContext.getPath());
-					} else {
-						queryBuilder.parent(folderNodeRef);
+					if (parentRef == null && useContextPath) {
+						// query by path
+						NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+								AbstractBeCPGQueryBuilder.encodePath(importContext.getPath()));
+						if(folderNodeRef == null) {
+							logger.warn("No folder found for :"+importContext.getPath());
+						} else {
+							queryBuilder.parent(folderNodeRef);
+						}
 					}
 
 					if (BeCPGModel.PROP_LV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
@@ -1283,9 +1285,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		boolean doQuery = false;
 
 		if (classMapping != null) {
-			assocPath = classMapping.getPaths().get(assoc);
+			if (assoc != null) {
+				assocPath = classMapping.getPaths().get(assoc);
+			} else {
+				assocPath = classMapping.getPaths().get(propDef.getName());
+			}
 		}
-
+		
 		// look in the cache
 		String key = String.format(CACHE_KEY, type, value);
 		key = StringUtils.isEmpty(assocPath) ? key : key + assocPath;
@@ -1329,7 +1335,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 							AbstractBeCPGQueryBuilder.encodePath(assocPath));
 				}
 
-				nodeRef = findNodeByKeyOrCode(importContext, propDef, type, properties, parentRef);
+				nodeRef = findNodeByKeyOrCode(importContext, propDef, type, properties, parentRef, false);
 
 				if (nodeRef == null) {
 					String typeTitle = type.toString();
