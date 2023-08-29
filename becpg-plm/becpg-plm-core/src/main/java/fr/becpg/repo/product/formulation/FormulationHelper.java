@@ -171,9 +171,11 @@ public class FormulationHelper {
 	 * @param subProductData a {@link fr.becpg.repo.product.data.ProductData} object.
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public static Double getQtyForCost(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem) {
-		Double lossPerc = packagingListDataItem.getLossPerc() != null ? packagingListDataItem.getLossPerc() : 0d;
-		lossPerc = calculateLossPerc(formulatedProduct.getProductLossPerc(), lossPerc);
+	public static Double getQtyForCost(PackagingListDataItem packagingListDataItem, Double parentLossRatio, ProductData componentProduct) {
+
+		Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio != null ? parentLossRatio : 0d,
+				FormulationHelper.getComponentLossPerc(componentProduct, packagingListDataItem));		
+		
 		return FormulationHelper.getQtyWithLoss(FormulationHelper.getQty(packagingListDataItem), lossPerc);
 	}
 
@@ -681,12 +683,12 @@ public class FormulationHelper {
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public static Double getQtyForCostByPackagingLevel(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem,
-			ProductData subProductData) {
-
-		Double qty = FormulationHelper.getQtyForCost(formulatedProduct, packagingListDataItem);
-
-		return getQtyByPackagingLevel(qty, formulatedProduct, packagingListDataItem, subProductData);
+			ProductData componentProduct) {
 		
+		Double qty = FormulationHelper.getQtyForCost( packagingListDataItem, formulatedProduct.getProductLossPerc(), componentProduct);
+
+		return getQtyByPackagingLevel(qty, formulatedProduct, packagingListDataItem, componentProduct);
+
 	}
 	
 	
@@ -763,6 +765,13 @@ public class FormulationHelper {
 	public static Double getComponentLossPerc(ProductData componentProduct, CompoListDataItem compoListDataItem) {
 		if (compoListDataItem.getLossPerc() != null) {
 			return compoListDataItem.getLossPerc();
+		}
+		return componentProduct.getComponentLossPerc() != null ? componentProduct.getComponentLossPerc() : 0d;
+	}
+	
+	public static Double getComponentLossPerc(ProductData componentProduct, PackagingListDataItem packagingListDataItem) {
+		if (packagingListDataItem.getLossPerc() != null) {
+			return packagingListDataItem.getLossPerc();
 		}
 		return componentProduct.getComponentLossPerc() != null ? componentProduct.getComponentLossPerc() : 0d;
 	}
