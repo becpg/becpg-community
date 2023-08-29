@@ -17,6 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.jscript;
 
+import java.util.List;
+
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.jscript.BaseScopableProcessorExtension;
 import org.alfresco.repo.jscript.ScriptNode;
@@ -26,6 +28,7 @@ import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.virtual.VirtualContentModel;
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -33,6 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.common.BeCPGException;
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityService;
@@ -49,6 +53,7 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 
 	private static final String THUMB_CACHE_KEY_PREFIX = "thumbCache_";
 	private static final String ICON_THUMBNAIL_NAME = "generic-%s-thumb.png";
+	private static final String ICON_THUMBNAIL_NAME_TEMPLATE = "generic-%s-%s-thumb.png";
 
 	private static final Log logger = LogFactory.getLog(Thumbnail.class);
 
@@ -129,6 +134,14 @@ public final class Thumbnail extends BaseScopableProcessorExtension {
 				logger.debug(e, e);
 			}
 
+			if (img == null) {
+				List<AssociationRef> entityTplAssocs = nodeService.getTargetAssocs(sourceNode.getNodeRef(), BeCPGModel.ASSOC_ENTITY_TPL_REF);
+				if (!entityTplAssocs.isEmpty()) {
+					NodeRef entityTplNodeRef = entityTplAssocs.get(0).getTargetRef();
+					img = getImage(String.format(ICON_THUMBNAIL_NAME_TEMPLATE, type.getLocalName(), entityTplNodeRef.getId()));
+				}
+			}
+			
 			if (img == null) {
 				img = getImage(String.format(ICON_THUMBNAIL_NAME, type.getLocalName()));
 			}
