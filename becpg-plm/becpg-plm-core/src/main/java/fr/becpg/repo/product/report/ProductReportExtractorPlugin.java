@@ -1533,12 +1533,29 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					isPackagingOfComponent);
 			Element imgsElt = (Element) packagingListElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
 			if (imgsElt != null) {
-				extractEntityImages(dataItem.getProduct(), imgsElt, context);
+				extractPackagingImages(dataItem.getProduct(), imgsElt, context, dataItem, dropPackagingOfComponents, isPackagingOfComponent);
 			}
 		} else {
 			loadPackaging(entityNodeRef, currentLevelQuantities, dataItem, packagingListElt, context, level, dropPackagingOfComponents,
 					isPackagingOfComponent);
 		}
+	}
+
+	private void extractPackagingImages(NodeRef product, Element imgsElt, DefaultExtractorContext context, PackagingListDataItem dataItem,
+			boolean dropPackagingOfComponents, boolean isPackagingOfComponent) {
+
+		Map<String, String> extraAttributes = new HashMap<>();
+
+		PackagingLevel packLevel = dataItem.getPkgLevel();
+		if (packLevel == null) {
+			packLevel = PackagingLevel.Primary;
+		}
+
+		extraAttributes.put(PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(),
+				Boolean.toString((!packLevel.equals(PackagingLevel.Primary) && isPackagingOfComponent) || dropPackagingOfComponents));
+
+		extractEntityImages(product, imgsElt, context, extraAttributes);
+
 	}
 
 	private Element loadPackaging(NodeRef entityNodeRef, CurrentLevelQuantities currentLevelQuantities, PackagingListDataItem dataItem,
