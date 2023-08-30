@@ -33,7 +33,7 @@ public class NoXmlEntityReportExtractor extends DefaultEntityReportExtractor{
 		Element entityElt = document.addElement(TAG_ENTITY);
 
 		Element imgsElt = entityElt.addElement(TAG_IMAGES);
-		extractEntityImages(entityNodeRef, imgsElt, context);
+		extractEntityImages(entityNodeRef, imgsElt, context, null);
 
 		context.getReportData().setXmlDataSource(entityElt);
 
