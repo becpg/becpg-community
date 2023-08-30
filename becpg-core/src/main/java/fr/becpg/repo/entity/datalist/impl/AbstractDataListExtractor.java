@@ -267,23 +267,20 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 			Map<String, Boolean> userAccess = new HashMap<>(5);
 
 			boolean accessRight = (Boolean) (props.get(PROP_ACCESSRIGHT) != null ? props.get(PROP_ACCESSRIGHT) : false);
-
 			boolean isLocked = isLocked(nodeRef);
-			
 			boolean hasWrite = hasWriteAccess(nodeRef);
-			
+			boolean hasRead = hasReadAccess(nodeRef);
 			boolean isLockAvailable = isLockAvailable(itemType);
 			
 			permissions.put(PROP_USERACCESS, userAccess);
 			userAccess.put("delete", accessRight && !isLocked && (permissionService.hasPermission(nodeRef, "Delete") == AccessStatus.ALLOWED));
 			userAccess.put("create", accessRight && hasWrite && !isLocked && (permissionService.hasPermission(nodeRef, "CreateChildren") == AccessStatus.ALLOWED));
 			userAccess.put("edit", accessRight && hasWrite && !isLocked);
-			userAccess.put("sort", accessRight && hasWrite && !isLocked
-					&& nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SORTABLE_LIST));
-			userAccess.put("details", accessRight && isDetaillable(nodeRef));
+			userAccess.put("sort", accessRight && hasWrite && !isLocked && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_SORTABLE_LIST));
+			userAccess.put("details", hasRead && isDetailable(nodeRef));
 			userAccess.put("lock", hasWrite && isLockAvailable && !isLocked);
 			userAccess.put("unlock", hasWrite && isLockAvailable && isLocked);
-			userAccess.put("wused", accessRight);
+			userAccess.put("wused", hasRead);
 			userAccess.put("content", accessRight && hasWrite && !isLocked && hasContentField(metadataFields));
 			
 
@@ -355,6 +352,10 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 
 	private boolean hasWriteAccess(NodeRef nodeRef) {
 		return (permissionService.hasPermission(nodeRef, "Write") == AccessStatus.ALLOWED);
+	}
+	
+	private boolean hasReadAccess(NodeRef nodeRef) {
+		return (permissionService.hasPermission(nodeRef, "Read") == AccessStatus.ALLOWED);
 	}
 
 	private boolean hasContentField(List<AttributeExtractorStructure> metadataFields) {
@@ -463,7 +464,7 @@ public abstract class AbstractDataListExtractor implements DataListExtractor {
 		return null;
 	}
 
-	private boolean isDetaillable(NodeRef nodeRef) {
+	private boolean isDetailable(NodeRef nodeRef) {
 		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 	}
 	
