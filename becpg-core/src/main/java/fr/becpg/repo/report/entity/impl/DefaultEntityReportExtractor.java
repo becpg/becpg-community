@@ -394,7 +394,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 		// load images
 		Element imgsElt = entityElt.addElement(TAG_IMAGES);
-		extractEntityImages(entityNodeRef, imgsElt, context);
+		extractEntityImages(entityNodeRef, imgsElt, context,null);
 
 		// extract site info
 		extractSiteInfo(entityNodeRef, entityElt);
@@ -431,7 +431,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param imgsElt a {@link org.dom4j.Element} object.
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
 	 */
-	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, DefaultExtractorContext context) {
+	protected void extractEntityImages(NodeRef entityNodeRef, Element imgsElt, DefaultExtractorContext context, Map<String, String> extratAttributes) {
 
 		int cnt = imgsElt.selectNodes(TAG_IMAGE) != null ? imgsElt.selectNodes(TAG_IMAGE).size() : 1;
 		NodeRef imagesFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
@@ -446,7 +446,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					imgId = REPORT_LOGO_ID;
 				}
 
-				extractImage(entityNodeRef, imgNodeRef, imgId, imgsElt, context);
+				extractImage(entityNodeRef, imgNodeRef, imgId, imgsElt, context, extratAttributes);
 				cnt++;
 			}
 		}
@@ -461,7 +461,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @param imgsElt a {@link org.dom4j.Element} object.
 	 * @param context a {@link fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor.DefaultExtractorContext} object.
 	 */
-	protected void extractImage(NodeRef entityNodeRef, NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context) {
+	protected void extractImage(NodeRef entityNodeRef, NodeRef imgNodeRef, String imgId, Element imgsElt, DefaultExtractorContext context,
+			Map<String, String> extratAttributes) {
 
 		if (ApplicationModel.TYPE_FILELINK.equals(nodeService.getType(imgNodeRef))) {
 			imgNodeRef = (NodeRef) nodeService.getProperty(imgNodeRef, ContentModel.PROP_LINK_DESTINATION);
@@ -490,6 +491,13 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			imgElt.addAttribute(ATTR_IMAGE_ID, imgId);
 			imgElt.addAttribute(ContentModel.PROP_NAME.getLocalName(), XMLTextHelper.writeAttribute(imgInfo.getName()));
 			imgElt.addAttribute(ContentModel.PROP_TITLE.getLocalName(), XMLTextHelper.writeAttribute(imgInfo.getTitle()));
+
+			if (extratAttributes != null) {
+				for (Map.Entry<String, String> extratAttribute : extratAttributes.entrySet()) {
+					imgElt.addAttribute(extratAttribute.getKey(), extratAttribute.getValue());
+				}
+			}
+
 			addCDATA(imgElt, ContentModel.PROP_DESCRIPTION, imgInfo.getDescription(), null);
 			context.getReportData().getImages().add(imgInfo);
 		}
@@ -542,9 +550,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 				for (NodeRef nodeRef : nodeRefs) {
 					if (entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITYLIST_ITEM)) {
-						extractImage(nodeRef, nodeRef, assocDef.getName().getLocalName() + "_" + cnt, imgsElt, context);
+						extractImage(nodeRef, nodeRef, assocDef.getName().getLocalName() + "_" + cnt, imgsElt, context,null);
 					} else {
-						extractEntityImages(nodeRef, imgsElt, context);
+						extractEntityImages(nodeRef, imgsElt, context,null);
 					}
 					cnt++;
 				}
@@ -1216,7 +1224,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			// extract avatar
 			List<AssociationRef> avatorAssocs = nodeService.getTargetAssocs(creatorNodeRef, ContentModel.ASSOC_AVATAR);
 			if (!avatorAssocs.isEmpty()) {
-				extractImage(creatorNodeRef, avatorAssocs.get(0).getTargetRef(), AVATAR_IMG_ID, imgsElt, context);
+				extractImage(creatorNodeRef, avatorAssocs.get(0).getTargetRef(), AVATAR_IMG_ID, imgsElt, context,null);
 			}
 		}
 	}
