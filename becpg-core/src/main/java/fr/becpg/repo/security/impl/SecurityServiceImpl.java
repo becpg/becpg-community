@@ -142,11 +142,6 @@ public class SecurityServiceImpl implements SecurityService {
 	}
 	
 	private boolean isEntityTemplate(NodeRef nodeRef) {
-		return nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
-	}
-
-	
-	private boolean isEntityTemplate(NodeRef nodeRef) {
 		return nodeRef != null && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
 	}
 
