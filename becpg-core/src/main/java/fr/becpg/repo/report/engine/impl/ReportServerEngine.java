@@ -31,6 +31,7 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StopWatch;
 
@@ -155,8 +156,9 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				if (imageBytes != null) {
 
 					if (imageBytes.length > reportImageMaxSizeInBytes) {
+						
 						reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Image size exceeds: " + entry,
-								MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(), imageBytes.length, reportImageMaxSizeInBytes), tplNodeRef));
+								MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(), FileUtils.byteCountToDisplaySize(imageBytes.length), FileUtils.byteCountToDisplaySize(reportImageMaxSizeInBytes)), tplNodeRef));
 					}
 
 					try (InputStream in = new ByteArrayInputStream(imageBytes)) {
@@ -176,7 +178,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 
 				if (datasourceBytes.length > reportDatasourceMaxSizeInBytes) {
 					reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Datasource size exceeds: " + params,
-							MLTextHelper.getI18NMessage("message.report.datasource.size", datasourceBytes.length, reportDatasourceMaxSizeInBytes), tplNodeRef));
+							MLTextHelper.getI18NMessage("message.report.datasource.size", FileUtils.byteCountToDisplaySize(datasourceBytes.length), FileUtils.byteCountToDisplaySize(reportDatasourceMaxSizeInBytes)), tplNodeRef));
 				}
 
 				List<String> errors = generateReport(reportSession, in, out);
