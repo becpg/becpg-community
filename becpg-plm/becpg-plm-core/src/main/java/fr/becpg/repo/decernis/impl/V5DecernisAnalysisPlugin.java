@@ -235,7 +235,7 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		String url = analysisUrl() + "/scope/function?topic=" + moduleIdMap.get(moduelId);
 		
 		HttpHeaders headers = new HttpHeaders();
-		headers.setBearerAuth(token());
+		headers.setBearerAuth(token().trim());
 
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 		
@@ -375,7 +375,7 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		String url = analysisUrl() + "/scope/country";
 		
 		HttpHeaders headers = new HttpHeaders();
-		headers.setBearerAuth(token());
+		headers.setBearerAuth(token().trim());
 
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 		
@@ -407,7 +407,7 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	protected HttpEntity<String> createEntity(String body) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		headers.setBearerAuth(token());
+		headers.setBearerAuth(token().trim());
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		return new HttpEntity<>(body, headers);
