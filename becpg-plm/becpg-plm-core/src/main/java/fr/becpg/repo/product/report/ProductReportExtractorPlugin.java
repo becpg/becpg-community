@@ -449,7 +449,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			for (CompoListDataItem dataItem : productData.getCompoList(new EffectiveFilters<>(filter))) {
 				if ((dataItem.getProduct() != null) && nodeService.exists(dataItem.getProduct())) {
-					loadCompoListItem(productData.getNodeRef(), null, compoListElt, level, 
+					loadCompoListItem(productData.getNodeRef(), null, compoListElt, level,
 							new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, dataItem), context);
 				}
 			}
@@ -471,8 +471,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			addDataListStateAndName(processListElt, productData.getProcessList().get(0).getParentNodeRef());
 
 			for (ProcessListDataItem dataItem : productData.getProcessList(new EffectiveFilters<>(filter))) {
-				loadProcessListItem(productData.getNodeRef(), 
-						new CurrentLevelQuantities(nodeService, alfrescoRepository, productData, dataItem),
+				loadProcessListItem(productData.getNodeRef(), new CurrentLevelQuantities(nodeService, alfrescoRepository, productData, dataItem),
 						dataItem, processListElt, 1, context);
 			}
 
@@ -571,8 +570,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			productData.setDefaultVariantPackagingData(defaultVariantPackagingData);
 
 			for (PackagingListDataItem dataItem : productData.getPackagingList(new EffectiveFilters<>(filter))) {
-				loadPackagingItem(productData.getNodeRef(), new CurrentLevelQuantities(alfrescoRepository, productData, dataItem),
-						dataItem, packagingListElt, context, 1, false, false);
+				loadPackagingItem(productData.getNodeRef(), new CurrentLevelQuantities(alfrescoRepository, productData, dataItem), dataItem,
+						packagingListElt, context, 1, false, false);
 			}
 
 			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) && isExtractedProduct) {
@@ -586,7 +585,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 									|| nodeService.getType(dataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
 
 								loadPackagingListItemForCompo(productData.getNodeRef(), packagingListElt, 1,
-										new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, dataItem), context, defaultVariantNodeRef,
+										new CurrentLevelQuantities(alfrescoRepository, packagingHelper, productData, dataItem), context,
+										defaultVariantNodeRef,
 										(productData.getDropPackagingOfComponents() != null) && productData.getDropPackagingOfComponents());
 							}
 						}
@@ -639,7 +639,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				for (PackagingListDataItem packagingListDataItem : currentLevelQuantities.getComponentProductData()
 						.getPackagingList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-					loadPackagingItem(entityNodeRef, new CurrentLevelQuantities(alfrescoRepository, packagingListDataItem, currentLevelQuantities), 
+					loadPackagingItem(entityNodeRef, new CurrentLevelQuantities(alfrescoRepository, packagingListDataItem, currentLevelQuantities),
 							packagingListDataItem, packagingListElt, context, level + 1, dropPackagingOfComponents, true);
 
 				}
@@ -656,8 +656,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							|| nodeService.getType(subDataItem.getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
 
 						loadPackagingListItemForCompo(entityNodeRef, packagingListElt, level + 1,
-								new CurrentLevelQuantities(alfrescoRepository, packagingHelper, subDataItem, currentLevelQuantities),
-								context, defaultVariantNodeRef, dropPackagingOfComponents
+								new CurrentLevelQuantities(alfrescoRepository, packagingHelper, subDataItem, currentLevelQuantities), context,
+								defaultVariantNodeRef,
+								dropPackagingOfComponents
 										|| ((currentLevelQuantities.getComponentProductData().getDropPackagingOfComponents() != null)
 												&& currentLevelQuantities.getComponentProductData().getDropPackagingOfComponents()));
 
@@ -713,8 +714,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				for (ProcessListDataItem processListDataItem : currentLevelQuantities.getComponentProductData()
 						.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
-					loadProcessListItem(entityNodeRef, 
-							new CurrentLevelQuantities(nodeService, alfrescoRepository, processListDataItem, currentLevelQuantities), 
+					loadProcessListItem(entityNodeRef,
+							new CurrentLevelQuantities(nodeService, alfrescoRepository, processListDataItem, currentLevelQuantities),
 							processListDataItem, processListElt, level + 1, context);
 
 				}
@@ -844,7 +845,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 							if (extractNextLevel) {
 								loadCompoListItem(entityNodeRef, currentLevelQuantities.getCompoListItem(), compoListElt, level + 1,
-										new CurrentLevelQuantities(alfrescoRepository, packagingHelper, subDataItem, currentLevelQuantities), context);
+										new CurrentLevelQuantities(alfrescoRepository, packagingHelper, subDataItem, currentLevelQuantities),
+										context);
 							}
 						}
 
@@ -894,7 +896,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_VALUE.getLocalName());
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE.getLocalName(), value);
 					}
-					
+
 					value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName());
 					if ((value == null) || value.isEmpty()) {
 						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_VALUE_PER_SERVING.getLocalName());
@@ -912,19 +914,20 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_MAXI.getLocalName());
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_MAXI.getLocalName(), value);
 					}
-					
+
 					value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PREPARED.getLocalName());
 					if ((value == null) || value.isEmpty()) {
 						value = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_FORMULATED_PREPARED.getLocalName());
 						nutListElt.addAttribute(PLMModel.PROP_NUTLIST_VALUE_PREPARED.getLocalName(), value);
 					}
-					
+
 					for (ReqCtrlListDataItem reqCtrlList : productData.getReqCtrlList()) {
-						if (reqCtrlList.getReqDataType().equals(RequirementDataType.Nutrient) && dataListItem.getCharactNodeRef().equals(reqCtrlList.getCharact())) {
+						if (reqCtrlList.getReqDataType().equals(RequirementDataType.Nutrient)
+								&& dataListItem.getCharactNodeRef().equals(reqCtrlList.getCharact())) {
 							nutListElt.addAttribute(PLMModel.PROP_NUTLIST_FORMULA_ERROR.getLocalName(), "Error");
 						}
 					}
-					
+
 					nutListElt.addAttribute(RegulationFormulationHelper.ATTR_NUT_CODE, nut.getNutCode());
 					nutListElt.addAttribute(BeCPGModel.PROP_COLOR.getLocalName(), nut.getNutColor());
 					boolean isDisplayed = isCharactDisplayedForLocale(dataListItem.getNut());
@@ -1398,12 +1401,29 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					isPackagingOfComponent);
 			Element imgsElt = (Element) packagingListElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
 			if (imgsElt != null) {
-				extractEntityImages(dataItem.getProduct(), imgsElt, context);
+				extractPackagingImages(dataItem.getProduct(), imgsElt, context, dataItem, dropPackagingOfComponents, isPackagingOfComponent);
 			}
 		} else {
 			loadPackaging(entityNodeRef, currentLevelQuantities, dataItem, packagingListElt, context, level, dropPackagingOfComponents,
 					isPackagingOfComponent);
 		}
+	}
+
+	private void extractPackagingImages(NodeRef product, Element imgsElt, DefaultExtractorContext context, PackagingListDataItem dataItem,
+			boolean dropPackagingOfComponents, boolean isPackagingOfComponent) {
+
+		Map<String, String> extraAttributes = new HashMap<>();
+
+		PackagingLevel packLevel = dataItem.getPkgLevel();
+		if (packLevel == null) {
+			packLevel = PackagingLevel.Primary;
+		}
+
+		extraAttributes.put(PLMModel.PROP_PRODUCT_DROP_PACKAGING_OF_COMPONENTS.getLocalName(),
+				Boolean.toString((!packLevel.equals(PackagingLevel.Primary) && isPackagingOfComponent) || dropPackagingOfComponents));
+
+		extractEntityImages(product, imgsElt, context, extraAttributes);
+
 	}
 
 	private Element loadPackaging(NodeRef entityNodeRef, CurrentLevelQuantities currentLevelQuantities, PackagingListDataItem dataItem,
@@ -1487,8 +1507,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				for (ProcessListDataItem subDataItem : currentLevelQuantities.getComponentProductData()
 						.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 					loadProcessListItem(entityNodeRef,
-							new CurrentLevelQuantities(nodeService, alfrescoRepository, subDataItem, currentLevelQuantities),
-							subDataItem, processListElt, level + 1, context);
+							new CurrentLevelQuantities(nodeService, alfrescoRepository, subDataItem, currentLevelQuantities), subDataItem,
+							processListElt, level + 1, context);
 				}
 			}
 		}
@@ -1505,8 +1525,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				if ((dataItem.getVariants() != null) && !dataItem.getVariants().isEmpty()) {
 					p.setVariants(dataItem.getVariants());
 				}
-				loadPackagingItem(entityNodeRef, new CurrentLevelQuantities(alfrescoRepository, p, currentLevelQuantities),
-						p, packagingListElt, context, level + 1, dropPackagingOfComponents, isPackagingOfComponent);
+				loadPackagingItem(entityNodeRef, new CurrentLevelQuantities(alfrescoRepository, p, currentLevelQuantities), p, packagingListElt,
+						context, level + 1, dropPackagingOfComponents, isPackagingOfComponent);
 			}
 		}
 	}
