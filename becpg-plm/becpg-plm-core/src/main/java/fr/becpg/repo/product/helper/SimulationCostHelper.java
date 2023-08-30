@@ -240,7 +240,7 @@ public class SimulationCostHelper implements InitializingBean {
 
 				ProductData subProductData = INSTANCE.alfrescoRepository.findOne(packList.getProduct());
 
-				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(productData, packList, subProductData);
+				Double qty = FormulationHelper.getQtyForCost(packList, productData.getComponentLossPerc() , subProductData);
 
 				if (qty != null) {
 					if ((netQty != null) && (netQty != 0d) && parentQty != null) {
