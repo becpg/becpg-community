@@ -122,6 +122,11 @@ public class DecernisServiceImpl implements DecernisService {
 	public String token() {
 		return systemConfigurationService.confValue("beCPG.decernis.token");
 	}
+	
+	@Override
+	public boolean isEnabled() {
+		return serverUrl() != null && !serverUrl().isBlank() && token() != null && !token().isBlank();
+	}
 
 	/** {@inheritDoc} */
 	@Override
