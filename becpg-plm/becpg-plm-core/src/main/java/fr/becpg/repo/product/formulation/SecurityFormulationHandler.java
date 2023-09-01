@@ -166,11 +166,13 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void updateSecurityRuleFromTemplate(ProductData productData) {
-		NodeRef tplNodeRef = productData.getEntityTpl().getNodeRef();
-		if (tplNodeRef != null && nodeService.exists(tplNodeRef)) {
-			NodeRef tplSecurityRef = associationService.getTargetAssoc(tplNodeRef, SecurityModel.ASSOC_SECURITY_REF);
-			if (tplSecurityRef != null && nodeService.exists(tplSecurityRef)) {
-				associationService.update(productData.getNodeRef(), SecurityModel.ASSOC_SECURITY_REF, tplSecurityRef);
+		if(productData.getEntityTpl()!=null) {
+			NodeRef tplNodeRef = productData.getEntityTpl().getNodeRef();
+			if (tplNodeRef != null && nodeService.exists(tplNodeRef)) {
+				NodeRef tplSecurityRef = associationService.getTargetAssoc(tplNodeRef, SecurityModel.ASSOC_SECURITY_REF);
+				if (tplSecurityRef != null && nodeService.exists(tplSecurityRef)) {
+					associationService.update(productData.getNodeRef(), SecurityModel.ASSOC_SECURITY_REF, tplSecurityRef);
+				}
 			}
 		}
 	}
