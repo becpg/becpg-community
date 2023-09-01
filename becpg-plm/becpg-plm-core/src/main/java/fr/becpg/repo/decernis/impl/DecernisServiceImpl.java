@@ -122,6 +122,11 @@ public class DecernisServiceImpl implements DecernisService {
 	public String token() {
 		return systemConfigurationService.confValue("beCPG.decernis.token");
 	}
+	
+	@Override
+	public boolean isEnabled() {
+		return serverUrl() != null && !serverUrl().isBlank() && token() != null && !token().isBlank();
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -339,7 +344,7 @@ public class DecernisServiceImpl implements DecernisService {
 	private HttpEntity<String> createEntity(String param) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		headers.setBearerAuth(token());
+		headers.setBearerAuth(token().trim());
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		return new HttpEntity<>(param, headers);
