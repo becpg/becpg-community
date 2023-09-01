@@ -453,7 +453,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				for(NodeRef imgNodeRef: imgNodeRefs) {
 
 					String nodePath = nodeService.getPath(imgNodeRef).toPrefixString(namespaceService).replace(entityPath, "");
-					extractImage(entityNodeRef, imgNodeRef, nodePath, imgsElt, context);
+					extractImage(entityNodeRef, imgNodeRef, nodePath, imgsElt, context,null);
 
 				}
 
