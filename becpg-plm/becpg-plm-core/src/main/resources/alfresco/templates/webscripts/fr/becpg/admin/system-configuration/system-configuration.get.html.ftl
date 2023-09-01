@@ -61,7 +61,7 @@
     
     
        <@sysField id="beCPG.formulation.maxRclSourcesToKeep" />
-       <@sysField id="beCPG.formulation.reqCtrlListaddChildRclSources" />
+       <@sysField id="beCPG.formulation.reqCtrlList.addChildRclSources" />
 
 
         </div>
