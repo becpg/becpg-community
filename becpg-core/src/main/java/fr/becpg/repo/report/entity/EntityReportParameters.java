@@ -87,8 +87,7 @@ XML :
  * @version $Id: $Id
  */
 public class EntityReportParameters {
-	
-	
+
 	public static final String PARAM_COMPONENT_DATALISTS_TO_EXTRACT = "componentDatalistsToExtract";
 	public static final String PARAM_ENTITY_DATALISTS_TO_EXTRACT = "entityDatalistsToExtract";
 	public static final String PARAM_EXTRACT_IN_MULTILEVEL = "extractInMultiLevel";
@@ -233,13 +232,11 @@ public class EntityReportParameters {
 	public Map<String, String> getPreferences() {
 		return preferences;
 	}
-	
+
 	private String reportNameFormat = null;
 
 	private String reportTitleFormat = null;
-	
-	
-	
+
 	/**
 	 * <p>Setter for the field <code>reportNameFormat</code>.</p>
 	 *
@@ -265,11 +262,11 @@ public class EntityReportParameters {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getReportNameFormat(String defaultNameFormat) {
-		
-		if(reportNameFormat!=null && ! reportNameFormat.isEmpty()) {
+
+		if (reportNameFormat != null && !reportNameFormat.isEmpty()) {
 			return reportNameFormat;
 		}
-		
+
 		return defaultNameFormat;
 	}
 
@@ -280,12 +277,11 @@ public class EntityReportParameters {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getReportTitleFormat(String defaultTitleFormat) {
-		if(reportTitleFormat!=null && ! reportTitleFormat.isEmpty()) {
+		if (reportTitleFormat != null && !reportTitleFormat.isEmpty()) {
 			return reportTitleFormat;
 		}
 		return defaultTitleFormat;
 	}
-
 
 	private List<EntityReportParameter> parameters = new ArrayList<>();
 
@@ -324,16 +320,15 @@ public class EntityReportParameters {
 	public void setParameters(List<EntityReportParameter> parameters) {
 		this.parameters = parameters;
 	}
-	
+
 	/**
 	 * <p>isParametersEmpty.</p>
 	 *
 	 * @return a boolean.
 	 */
 	public boolean isParametersEmpty() {
-		return parameters.isEmpty() ;
+		return parameters.isEmpty();
 	}
-	
 
 	/**
 	 * <p>isEmpty.</p>
@@ -341,7 +336,8 @@ public class EntityReportParameters {
 	 * @return a boolean.
 	 */
 	public boolean isEmpty() {
-		return parameters.isEmpty() && preferences.isEmpty() && (reportNameFormat==null || reportNameFormat.isEmpty()) && (reportTitleFormat==null || reportTitleFormat.isEmpty());
+		return parameters.isEmpty() && preferences.isEmpty() && (reportNameFormat == null || reportNameFormat.isEmpty())
+				&& (reportTitleFormat == null || reportTitleFormat.isEmpty());
 	}
 
 	/**
@@ -427,20 +423,23 @@ public class EntityReportParameters {
 					JSONArray keys = prefs.names();
 					for (int i = 0; i < keys.length(); i++) {
 						String key = keys.getString(i);
-						ret.getPreferences().put(key, prefs.getString(key));
-
+						Object value = prefs.get(key); 
+						if (value instanceof Boolean) {
+							ret.getPreferences().put(key, Boolean.toString((Boolean) value));
+						} else {
+							ret.getPreferences().put(key, value.toString());
+						}
 					}
 
 				}
-				
+
 				if (json.has("nameFormat")) {
 					ret.setReportNameFormat(json.getString("nameFormat"));
 				}
-				
+
 				if (json.has("titleFormat")) {
 					ret.setReportTitleFormat(json.getString("titleFormat"));
 				}
-				
 
 			}
 
@@ -479,25 +478,25 @@ public class EntityReportParameters {
 				}
 				ret.put("params", params);
 			}
-			
-			if(!preferences.isEmpty()) {
+
+			if (!preferences.isEmpty()) {
 				JSONObject prefs = new JSONObject();
-				
-				for(Map.Entry<String,String> pref :  preferences.entrySet()) {
+
+				for (Map.Entry<String, String> pref : preferences.entrySet()) {
 					prefs.put(pref.getKey(), pref.getValue());
 				}
 				ret.put("prefs", prefs);
-				
+
 			}
-			
-			if(reportNameFormat!=null && !reportNameFormat.isEmpty()) {
+
+			if (reportNameFormat != null && !reportNameFormat.isEmpty()) {
 				ret.put("nameFormat", reportNameFormat);
 			}
-			
-			if(reportTitleFormat!=null && !reportTitleFormat.isEmpty()) {
+
+			if (reportTitleFormat != null && !reportTitleFormat.isEmpty()) {
 				ret.put("titleFormat", reportTitleFormat);
 			}
-			
+
 		} catch (JSONException e) {
 			logger.warn("Failed to write JSON report params", e);
 		}
@@ -533,5 +532,4 @@ public class EntityReportParameters {
 		return "EntityReportParameters [iterationKey=" + iterationKey + ", parameters=" + parameters + ", preferences=" + preferences + "]";
 	}
 
-	
 }
