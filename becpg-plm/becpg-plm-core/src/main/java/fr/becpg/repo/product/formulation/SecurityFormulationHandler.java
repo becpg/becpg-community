@@ -39,7 +39,6 @@ import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -60,7 +59,7 @@ import fr.becpg.repo.security.data.PermissionModel;
 public class SecurityFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	/** Constant <code>logger</code> */
-	protected static final Log logger = LogFactory.getLog(SecurityFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(SecurityFormulationHandler.class);
 
 	private static final String VIEW_DOCUMENTS= "View-documents";
 
@@ -166,11 +165,16 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void updateSecurityRuleFromTemplate(ProductData productData) {
-		NodeRef tplNodeRef = productData.getEntityTpl().getNodeRef();
-		if (tplNodeRef != null && nodeService.exists(tplNodeRef)) {
-			NodeRef tplSecurityRef = associationService.getTargetAssoc(tplNodeRef, SecurityModel.ASSOC_SECURITY_REF);
-			if (tplSecurityRef != null && nodeService.exists(tplSecurityRef)) {
-				associationService.update(productData.getNodeRef(), SecurityModel.ASSOC_SECURITY_REF, tplSecurityRef);
+		if(productData.getEntityTpl()!=null) {
+			NodeRef tplNodeRef = productData.getEntityTpl().getNodeRef();
+			if (tplNodeRef != null && nodeService.exists(tplNodeRef)) {
+				NodeRef tplSecurityRef = associationService.getTargetAssoc(tplNodeRef, SecurityModel.ASSOC_SECURITY_REF);
+				if (tplSecurityRef != null && nodeService.exists(tplSecurityRef)) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("update sec:securityRef assoc from template on node: " + productData.getNodeRef());
+					}
+					associationService.update(productData.getNodeRef(), SecurityModel.ASSOC_SECURITY_REF, tplSecurityRef);
+				}
 			}
 		}
 	}
@@ -178,41 +182,52 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	private void updatePermissions(SiteInfo siteInfo, NodeRef nodeRef, List<PermissionModel> permissionModels) {
 		
 		boolean hasParentPermissions = permissionService.getInheritParentPermissions(nodeRef);
-		
 		Map<String, String> specificPermissions = new HashMap<>();
 		
 		if (!hasParentPermissions) {
 			for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
 				specificPermissions.put(permission.getAuthority(), permission.getPermission());
 			}
-			permissionService.setInheritParentPermissions(nodeRef, true);
 		}
 		
 		Map<String, String> parentPermissions = new HashMap<>();
-		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
-			if (!specificPermissions.containsKey(permission.getAuthority())) {
-				parentPermissions.put(permission.getAuthority(), permission.getPermission());
-			}
+		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeService.getPrimaryParent(nodeRef).getParentRef())) {
+			parentPermissions.put(permission.getAuthority(), permission.getPermission());
 		}
 		
 		HashMap<String, String> toAdd = new HashMap<>();
 		Set<String> toRemove = new HashSet<>();
 		
-		if (visitPermissions(siteInfo, parentPermissions, specificPermissions, permissionModels, toAdd, toRemove)) {
+		if (permissionModels != null && !permissionModels.isEmpty()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("specificPermissions: " + specificPermissions + " on node: " + nodeRef);
+				logger.debug("parentPermissions: " + parentPermissions + " on node: " + nodeRef);
+				logger.debug("permissionModels to be applied: " + permissionModels + " on node: " + nodeRef);
+			}
+			visitPermissions(siteInfo, parentPermissions, specificPermissions, permissionModels, toAdd, toRemove);
 			for (Entry<String, String> entry : toAdd.entrySet()) {
 				String authority = entry.getKey();
 				String permission = entry.getValue();
-				if (!specificPermissions.containsKey(authority) || !specificPermissions.get(entry.getKey()).equals(permission)) {
+				if (!specificPermissions.containsKey(authority) || !specificPermissions.get(authority).equals(permission)) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("adding permission: " + authority + ";" + permission + " on node: " + nodeRef);
+					}
 					permissionService.clearPermission(nodeRef, authority);
 					permissionService.setPermission(nodeRef, authority, permission, true);
 				}
 			}
 			for (String authority : toRemove) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("clearing permission: " + authority + " on node: " + nodeRef);
+				}
 				permissionService.clearPermission(nodeRef, authority);
 			}
 			permissionService.setInheritParentPermissions(nodeRef, false);
 		} else {
 			for (String authority : specificPermissions.keySet()) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("clearing permission: " + authority + " on node: " + nodeRef);
+				}
 				permissionService.clearPermission(nodeRef, authority);
 			}
 			if (!permissionService.getInheritParentPermissions(nodeRef)) {
@@ -221,12 +236,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 	}
 	
-	private boolean visitPermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
-		
-		if (permissionModels == null || permissionModels.isEmpty()) {
-			return false;
-		}
-		
+	private void visitPermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
 		for (PermissionModel permissionModel : permissionModels) {
 			String basePermission = PermissionModel.READ_ONLY.equals(permissionModel.getPermission()) ? PermissionService.CONSUMER : PermissionService.CONTRIBUTOR;
 			
@@ -252,8 +262,6 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 		}
-		
-		return true;
 	}
 	
 	private String extractPermission(String basePermission, SiteInfo siteInfo, String authorityName) {
