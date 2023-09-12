@@ -385,66 +385,61 @@ public class EntityReportParameters {
 	public static EntityReportParameters createFromJSON(String jsonString) {
 		EntityReportParameters ret = new EntityReportParameters();
 
-		try {
-			if ((jsonString != null) && !jsonString.isEmpty()) {
-				JSONObject json = new JSONObject(jsonString);
+		if ((jsonString != null) && !jsonString.isEmpty()) {
+			JSONObject json = new JSONObject(jsonString);
 
-				if (json.has("params")) {
-					JSONArray params = json.getJSONArray("params");
+			if (json.has("params")) {
+				JSONArray params = json.getJSONArray("params");
 
-					for (int i = 0; i < params.length(); i++) {
-						JSONObject param = params.getJSONObject(i);
-						if (param.has("id")) {
-							EntityReportParameter tmp = new EntityReportParameter();
-							tmp.setId(param.getString("id"));
-							if (param.has("prop")) {
-								tmp.setProp(param.getString("prop"));
-							}
-							if (param.has("nodeRef")) {
-								tmp.setNodeRef(new NodeRef(param.getString("nodeRef")));
-							}
-							if (param.has("value")) {
-								tmp.setValue(param.getString("value"));
-							}
-
-							ret.getParameters().add(tmp);
+				for (int i = 0; i < params.length(); i++) {
+					JSONObject param = params.getJSONObject(i);
+					if (param.has("id")) {
+						EntityReportParameter tmp = new EntityReportParameter();
+						tmp.setId(param.getString("id"));
+						if (param.has("prop")) {
+							tmp.setProp(param.getString("prop"));
+						}
+						if (param.has("nodeRef")) {
+							tmp.setNodeRef(new NodeRef(param.getString("nodeRef")));
+						}
+						if (param.has("value")) {
+							tmp.setValue(param.getString("value"));
 						}
 
+						ret.getParameters().add(tmp);
 					}
 
-				}
-
-				if (json.has("iterationKey")) {
-					ret.setIterationKey(json.getString("iterationKey"));
-				}
-
-				if (json.has("prefs")) {
-					JSONObject prefs = json.getJSONObject("prefs");
-					JSONArray keys = prefs.names();
-					for (int i = 0; i < keys.length(); i++) {
-						String key = keys.getString(i);
-						Object value = prefs.get(key); 
-						if (value instanceof Boolean) {
-							ret.getPreferences().put(key, Boolean.toString((Boolean) value));
-						} else {
-							ret.getPreferences().put(key, value.toString());
-						}
-					}
-
-				}
-
-				if (json.has("nameFormat")) {
-					ret.setReportNameFormat(json.getString("nameFormat"));
-				}
-
-				if (json.has("titleFormat")) {
-					ret.setReportTitleFormat(json.getString("titleFormat"));
 				}
 
 			}
 
-		} catch (JSONException e) {
-			logger.warn("Invalid JSON report params", e);
+			if (json.has("iterationKey")) {
+				ret.setIterationKey(json.getString("iterationKey"));
+			}
+
+			if (json.has("prefs")) {
+				JSONObject prefs = json.getJSONObject("prefs");
+				JSONArray keys = prefs.names();
+				for (int i = 0; i < keys.length(); i++) {
+					String key = keys.getString(i);
+					Object value = prefs.get(key); 
+					if (value instanceof Boolean) {
+						ret.getPreferences().put(key, Boolean.toString((Boolean) value));
+					} else {
+						ret.getPreferences().put(key, value.toString());
+					}
+				}
+
+			}
+
+			if (json.has("nameFormat")) {
+				ret.setReportNameFormat(json.getString("nameFormat"));
+			}
+
+			if (json.has("titleFormat")) {
+				ret.setReportTitleFormat(json.getString("titleFormat"));
+			}
+
 		}
 
 		return ret;
