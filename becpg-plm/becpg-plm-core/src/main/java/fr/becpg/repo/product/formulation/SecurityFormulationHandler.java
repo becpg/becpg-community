@@ -222,7 +222,9 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 				permissionService.clearPermission(nodeRef, authority);
 			}
-			permissionService.setInheritParentPermissions(nodeRef, false);
+			if (hasParentPermissions) {
+				permissionService.setInheritParentPermissions(nodeRef, false);
+			}
 		} else {
 			for (String authority : specificPermissions.keySet()) {
 				if (logger.isDebugEnabled()) {
@@ -230,7 +232,7 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 				permissionService.clearPermission(nodeRef, authority);
 			}
-			if (!permissionService.getInheritParentPermissions(nodeRef)) {
+			if (!hasParentPermissions) {
 				permissionService.setInheritParentPermissions(nodeRef, true);
 			}
 		}
