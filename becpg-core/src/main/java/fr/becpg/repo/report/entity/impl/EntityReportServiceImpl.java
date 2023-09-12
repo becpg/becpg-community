@@ -69,6 +69,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -324,7 +325,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 				tplsNodeRef.stream().forEach(tplNodeRef -> {
 
-					for (EntityReportParameters reportParameters : getEntityReportParametersList(tplNodeRef, entityNodeRef)) {
+					for (EntityReportParameters reportParameters : getEntityReportParametersList(tplNodeRef, entityNodeRef, engineLogs)) {
 
 						if (isLocaleEnableOnTemplate(tplNodeRef, locale, hideDefaultLocal)) {
 
@@ -338,7 +339,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 							String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
 									reportParameters.getReportTitleFormat(reportTitleFormat));
 
-							NodeRef documentNodeRef = getReportDocumentNodeRef(entityNodeTo, tplNodeRef, documentName, locale, reportParameters);
+							NodeRef documentNodeRef = getReportDocumentNodeRef(entityNodeTo, tplNodeRef, documentName, locale, reportParameters, engineLogs);
 
 							if (documentNodeRef != null) {
 
@@ -726,10 +727,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<EntityReportParameters> getEntityReportParametersList(NodeRef tplNodeRef, NodeRef entityNodeRef) {
+	private List<EntityReportParameters> getEntityReportParametersList(NodeRef tplNodeRef, NodeRef entityNodeRef, HashMap<NodeRef, Set<ReportEngineLog>> engineLogs) {
 
-		EntityReportParameters defaultEntityReportParameter = EntityReportParameters
-				.createFromJSON((String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS));
+		EntityReportParameters defaultEntityReportParameter = extractReportParametersAndHandleErrors(tplNodeRef, engineLogs);
 
 		if (!defaultEntityReportParameter.isParametersEmpty()) {
 
@@ -894,9 +894,8 @@ public class EntityReportServiceImpl implements EntityReportService {
 						I18NUtil.setContentLocale(locale);
 
 						Boolean isDefault = (Boolean) this.nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_IS_DEFAULT);
-
-						EntityReportParameters reportParameters = readParameters(EntityReportParameters
-								.createFromJSON((String) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS)));
+						
+						EntityReportParameters reportParameters = readParameters(extractReportParametersAndHandleErrors(documentNodeRef, engineLogs));
 
 						if (nodeService.hasAspect(documentNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
 							List<String> langs = (List<String>) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_LOCALES);
@@ -1032,11 +1031,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 	@Override
 	public void generateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
 			ReportFormat reportFormat, OutputStream outputStream) {
+		internalGenerateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, outputStream, new HashMap<>());
+	}
+
+	private void internalGenerateReport(NodeRef entityNodeRef, NodeRef templateNodeRef, EntityReportParameters reportParameters, Locale locale,
+			ReportFormat reportFormat, OutputStream outputStream, HashMap<NodeRef, Set<ReportEngineLog>> engineLogs) {
 		AuthenticationUtil.runAsSystem(() -> {
 			Locale currentLocal = I18NUtil.getLocale();
 			Locale currentContentLocal = I18NUtil.getContentLocale();
-
-			HashMap<NodeRef, Set<ReportEngineLog>> engineLogs = new HashMap<>();
 
 			BeCPGReportEngine engine = getReportEngine(templateNodeRef, reportFormat);
 
@@ -1111,8 +1113,9 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 		Locale locale = MLTextHelper.getNearestLocale(Locale.getDefault());
 
-		EntityReportParameters reportParameters = readParameters(
-				EntityReportParameters.createFromJSON((String) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS)));
+		HashMap<NodeRef, Set<ReportEngineLog>> engineLogs = new HashMap<>();
+		
+		EntityReportParameters reportParameters = readParameters(extractReportParametersAndHandleErrors(documentNodeRef, engineLogs));
 
 		if (nodeService.hasAspect(documentNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
 
@@ -1122,8 +1125,20 @@ public class EntityReportServiceImpl implements EntityReportService {
 			}
 		}
 
-		generateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, outputStream);
+		internalGenerateReport(entityNodeRef, templateNodeRef, reportParameters, locale, reportFormat, outputStream, engineLogs);
 
+	}
+
+	private EntityReportParameters extractReportParametersAndHandleErrors(NodeRef documentNodeRef, HashMap<NodeRef, Set<ReportEngineLog>> engineLogs) {
+		EntityReportParameters reportParameters = null;
+		try {
+			reportParameters = EntityReportParameters.createFromJSON((String) nodeService.getProperty(documentNodeRef, ReportModel.PROP_REPORT_TEXT_PARAMETERS));
+		} catch (JSONException e) {
+			reportParameters = new EntityReportParameters();
+			engineLogs.computeIfAbsent(documentNodeRef, 
+					m -> new HashSet<>()).add(new ReportEngineLog(ReportLogType.ERROR, "Wrong report text parameters syntax: " + e.getMessage(), MLTextHelper.getI18NMessage("message.report.params.syntax", e.getLocalizedMessage()), documentNodeRef));
+		}
+		return reportParameters;
 	}
 
 	/** {@inheritDoc} */
@@ -1286,15 +1301,14 @@ public class EntityReportServiceImpl implements EntityReportService {
 	}
 
 	private NodeRef getReportDocumentNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, String documentName, Locale locale,
-			EntityReportParameters reportParameters) {
+			EntityReportParameters reportParameters, HashMap<NodeRef, Set<ReportEngineLog>> engineLogs) {
 		NodeRef documentNodeRef = null;
 		NodeRef documentsFolderNodeRef = entityService.getOrCreateDocumentsFolder(entityNodeRef);
 		if (documentsFolderNodeRef != null) {
 
 			for (FileInfo fileInfo : fileFolderService.listFiles(documentsFolderNodeRef)) {
 				if (tplNodeRef.equals(associationService.getTargetAssoc(fileInfo.getNodeRef(), ReportModel.ASSOC_REPORT_TPL))) {
-					if (reportParameters.isParametersEmpty() || reportParameters.match(EntityReportParameters
-							.createFromJSON((String) nodeService.getProperty(fileInfo.getNodeRef(), ReportModel.PROP_REPORT_TEXT_PARAMETERS)))) {
+					if (reportParameters.isParametersEmpty() || reportParameters.match(extractReportParametersAndHandleErrors(fileInfo.getNodeRef(), engineLogs))) {
 						for (Locale tmpLocale : getEntityReportLocales(fileInfo.getNodeRef())) {
 							if (tmpLocale.equals(locale)) {
 								documentNodeRef = fileInfo.getNodeRef();
