@@ -53,6 +53,7 @@ import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.entity.version.EntityVersionService;
+import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.product.data.ProductData;
@@ -383,11 +384,10 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				}
 
 				for (NodeRef wusedLeaf : wused) {
-					if (!toReformulateEntities.contains(wusedLeaf) && nodeService.exists(wusedLeaf)) {
+					if (!toReformulateEntities.contains(wusedLeaf)) {
 						toReformulateEntities.add(wusedLeaf);
 					}
 				}
-
 			}
 		});
 
@@ -404,9 +404,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		ReformulateChangedEntitiesProcessWorker processWorker = new ReformulateChangedEntitiesProcessWorker();
 
 		formulateStep.setProcessWorker(processWorker);
-
 		steps.add(formulateStep);
-
 
 		batchQueueService.queueBatch(batchInfo, steps);
 
@@ -418,7 +416,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		@Override
 		public void process(NodeRef toReformulate) throws Throwable {
 
-			if (nodeService.exists(toReformulate)) {
+			if (nodeService.exists(toReformulate) && alfrescoRepository.findOne(toReformulate) instanceof FormulatedEntity) {
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Reformulating product: " + nodeService.getProperty(toReformulate, ContentModel.PROP_NAME) + " (" + toReformulate
@@ -429,12 +427,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 					policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
 					policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 
-					L2CacheSupport.doInCacheContext(() -> AuthenticationUtil.runAsSystem(() -> {
-						formulationService.formulate(toReformulate);
-
-						return true;
-					})
-
+					L2CacheSupport.doInCacheContext(
+							() -> AuthenticationUtil.runAsSystem(
+									() -> formulationService.formulate(toReformulate))
 							, false, true, true);
 
 				} catch (Exception e) {
@@ -447,9 +442,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 					policyBehaviourFilter.enableBehaviour(ContentModel.ASPECT_AUDITABLE);
 					policyBehaviourFilter.enableBehaviour(BeCPGModel.TYPE_ENTITYLIST_ITEM);
 				}
-
 			}
-
 		}
 	}
 
