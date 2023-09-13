@@ -94,10 +94,12 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 				@SuppressWarnings("deprecation")
 				List<Tenant> tenants = tenantAdminService.getAllTenants();
 				for (Tenant tenant : tenants) {
-					String tenantDomain = tenant.getTenantDomain();
-					AuthenticationUtil.clearCurrentSecurityContext();
-					AuthenticationUtil.setFullyAuthenticatedUser(tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
-					convertAndDeleteVersions(maxProcessedNodes, tenantDomain, path);
+					if(tenant.isEnabled()) {
+						String tenantDomain = tenant.getTenantDomain();
+						AuthenticationUtil.clearCurrentSecurityContext();
+						AuthenticationUtil.setFullyAuthenticatedUser(tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+						convertAndDeleteVersions(maxProcessedNodes, tenantDomain, path);
+					}
 				}
 			}
 		} finally {
@@ -282,10 +284,12 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 				@SuppressWarnings("deprecation")
 				List<Tenant> tenants = tenantAdminService.getAllTenants();
 				for (Tenant tenant : tenants) {
-					String tenantDomain = tenant.getTenantDomain();
-					AuthenticationUtil.clearCurrentSecurityContext();
-					AuthenticationUtil.setFullyAuthenticatedUser(tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
-					cleanOrphanVersions(tenantDomain);
+					if(tenant.isEnabled()) {
+						String tenantDomain = tenant.getTenantDomain();
+						AuthenticationUtil.clearCurrentSecurityContext();
+						AuthenticationUtil.setFullyAuthenticatedUser(tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+						cleanOrphanVersions(tenantDomain);
+					}
 				}
 			}
 		} finally {
