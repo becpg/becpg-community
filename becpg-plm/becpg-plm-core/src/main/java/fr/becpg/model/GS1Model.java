@@ -40,6 +40,9 @@ public interface GS1Model {
 	QName ASPECT_MEASURES_ASPECT = QName.createQName(GS1_URI, "measuresAspect");
 
 	QName ASPECT_GS1_ASPECT = QName.createQName(GS1_URI, "gs1Aspect");
+	
+
+	QName ASPECT_PACK_SORTING = QName.createQName(GS1_URI, "packSortingAspect");
 
 	/** Constant <code>PROP_WEIGHT</code> */
 	QName PROP_WEIGHT = QName.createQName(GS1_URI, "weight");
@@ -110,4 +113,5 @@ public interface GS1Model {
 	QName PROP_PACKAGINGTERMSANSCONDITION_CODE = QName.createQName(GS1_URI, "packagingTermsAndConditionsCode");
 
 	QName PROP_SECONDARY_PACKAGING_TYPE_CODE = QName.createQName(GS1_URI, "secondaryPackagingTypeCode");
+
 }
