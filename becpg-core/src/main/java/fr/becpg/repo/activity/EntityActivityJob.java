@@ -44,11 +44,13 @@ public class EntityActivityJob  extends AbstractScheduledLockedJob implements Jo
 			@SuppressWarnings("deprecation")
 			List<Tenant> tenants = tenantAdminService.getAllTenants();
 			for (Tenant tenant : tenants) {
-				String tenantDomain = tenant.getTenantDomain();
-				AuthenticationUtil.runAs(() -> {
-					entityActivityService.cleanActivities();
-					return null;
-				} , tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				if(tenant.isEnabled()) {
+					String tenantDomain = tenant.getTenantDomain();
+					AuthenticationUtil.runAs(() -> {
+						entityActivityService.cleanActivities();
+						return null;
+					} , tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				}
 			}
 		}
 
