@@ -51,12 +51,14 @@ public class AutomaticECOJob extends AbstractScheduledLockedJob implements Job {
 			@SuppressWarnings("deprecation")
 			List<Tenant> tenants = tenantAdminService.getAllTenants();
 			for (Tenant tenant : tenants) {
-				String tenantDomain = tenant.getTenantDomain();
-				if (!TenantService.DEFAULT_DOMAIN.equals(tenantDomain)) {
-					AuthenticationUtil.runAs(() -> {
-						automaticECOService.applyAutomaticEco();
-						return null;
-					}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				if(tenant.isEnabled()) {
+					String tenantDomain = tenant.getTenantDomain();
+					if (!TenantService.DEFAULT_DOMAIN.equals(tenantDomain)) {
+						AuthenticationUtil.runAs(() -> {
+							automaticECOService.applyAutomaticEco();
+							return null;
+						}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+					}
 				}
 			}
 		}
