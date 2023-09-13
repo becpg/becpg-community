@@ -72,13 +72,15 @@ public class ProductSpecificationFormulationJob extends AbstractScheduledLockedJ
 			@SuppressWarnings("deprecation")
 			List<Tenant> tenants = tenantAdminService.getAllTenants();
 			for (Tenant tenant : tenants) {
-				String tenantDomain = tenant.getTenantDomain();
-				AuthenticationUtil.runAs(new RunAsWork<Object>() {
-					public Object doWork() throws Exception {
-						productSpecificationsFormulationHandler.run();
-						return null;
-					}
-				}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				if(tenant.isEnabled()) {
+					String tenantDomain = tenant.getTenantDomain();
+					AuthenticationUtil.runAs(new RunAsWork<Object>() {
+						public Object doWork() throws Exception {
+							productSpecificationsFormulationHandler.run();
+							return null;
+						}
+					}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				}
 			}
 		} 
 		logger.info("End of Product Specification Formulation Job.");
