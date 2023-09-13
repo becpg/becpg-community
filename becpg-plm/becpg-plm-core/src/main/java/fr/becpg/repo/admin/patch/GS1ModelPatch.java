@@ -2,6 +2,7 @@ package fr.becpg.repo.admin.patch;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
@@ -13,7 +14,6 @@ import org.alfresco.repo.domain.qname.QNameDAO;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.util.Pair;
@@ -211,7 +211,7 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 					
 					nodeService.removeAspect(productNodeRef, ASPECT_GS1_DATES_ASPECT);
 					nodeService.removeAspect(productNodeRef, ASPECT_GS1_INDICATORS_ASPECT);
-					nodeService.addAspect(productNodeRef, GS1Model.ASPECT_PACK_SORTING);
+					nodeService.addAspect(productNodeRef, GS1Model.ASPECT_PACK_SORTING, new HashMap<>());
 				} else {
 					logger.warn("productNodeRef doesn't exist : " + productNodeRef + " or is not in workspace store");
 				}
