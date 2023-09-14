@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.product.data.CharactDetailAdditionalValue;
 import fr.becpg.repo.product.data.CharactDetails;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 
@@ -104,6 +105,10 @@ public class CharactDetailsHelper {
 					compEls.add(value);
 				}
 				colUnits.put(propName, value.getUnit());
+				
+				for (CharactDetailAdditionalValue additionalValue : value.getAdditionalValues()) {
+					colUnits.put(additionalValue.getColumnName(), additionalValue.getUnit());
+				}
 
 				fillAdditionalValuesMap(additionalValues, value, propName);
 			}
@@ -182,8 +187,11 @@ public class CharactDetailsHelper {
 					currentAdditionalValue = charactDetailsValue.getMini();
 				} else if (key.equals(MAXI_VALUE_KEY)) {
 					currentAdditionalValue = charactDetailsValue.getMaxi();
-				} else if (charactDetailsValue.getAdditionalValues().containsKey(key)) {
-					currentAdditionalValue = charactDetailsValue.getAdditionalValues().get(key);
+				} else {
+					CharactDetailAdditionalValue additionalValue = charactDetailsValue.getAdditionalValue(key);
+					if (additionalValue != null) {
+						currentAdditionalValue = additionalValue.getValue();
+					}
 				}
 				
 				Integer level = charactDetailsValue.getLevel();
@@ -283,8 +291,8 @@ public class CharactDetailsHelper {
 			additionalValues.put(MAXI_VALUE_KEY, propName);
 		}
 		
-		for (String key : currentValue.getAdditionalValues().keySet()) {
-			additionalValues.put(key, propName);
+		for (CharactDetailAdditionalValue additionalValue : currentValue.getAdditionalValues()) {
+			additionalValues.put(additionalValue.getColumnName(), propName);
 		}
 
 	}
@@ -432,8 +440,11 @@ public class CharactDetailsHelper {
 						currentAdditionalValue = charactDetailsValue.getMini();
 					} else if (key.equals(MAXI_VALUE_KEY)) {
 						currentAdditionalValue = charactDetailsValue.getMaxi();
-					} else if (charactDetailsValue.getAdditionalValues().containsKey(key)) {
-						currentAdditionalValue = charactDetailsValue.getAdditionalValues().get(key);
+					} else {
+						CharactDetailAdditionalValue additionalValue = charactDetailsValue.getAdditionalValue(key);
+						if (additionalValue != null) {
+							currentAdditionalValue = additionalValue.getValue();
+						}
 					}
 					
 					if (currentAdditionalValue == null) {
