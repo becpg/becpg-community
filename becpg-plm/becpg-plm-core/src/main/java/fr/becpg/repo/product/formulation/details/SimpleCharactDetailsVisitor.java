@@ -121,7 +121,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		Double netWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netVol = FormulationHelper.getNetVolume(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 
-		visitRecur(productData, productData, ret, 0, level, netWeight, netVol, netQty);
+		visitRecur(productData, ret, 0, level, netWeight, netVol, netQty);
 
 		return ret;
 	}
@@ -139,7 +139,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	public CharactDetails visitRecur(ProductData rootProductData, ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight,
+	public CharactDetails visitRecur(ProductData subProductData, CharactDetails ret, Integer currLevel, Integer maxLevel, Double subWeight,
 			Double subVol, Double netQty) throws FormulateException {
 
 		if (!subProductData.isGeneric()
@@ -176,10 +176,10 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 					FormulatedQties qties = new FormulatedQties(weightUsed, volUsed, netQty, subWeight);
 
-					visitPart(rootProductData, subProductData, compoListProduct, compoListDataItem.getNodeRef(), ret, qties, currLevel, null);
+					visitPart(subProductData, compoListProduct, compoListDataItem.getNodeRef(), ret, qties, currLevel, null);
 					if (((maxLevel < 0) || (currLevel < maxLevel))
 							&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-						visitRecur(rootProductData, compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
+						visitRecur(compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
 					}
 				}
 			}
@@ -225,7 +225,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 	 * @param unitProvider a {@link fr.becpg.repo.product.formulation.details.SimpleCharactDetailsVisitor.SimpleCharactUnitProvider} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	protected void visitPart(ProductData rootProduct, ProductData formulatedProduct, ProductData partProduct, NodeRef componentDataList, CharactDetails charactDetails,
+	protected void visitPart(ProductData formulatedProduct, ProductData partProduct, NodeRef componentDataList, CharactDetails charactDetails,
 			FormulatedQties qties, Integer currLevel, SimpleCharactUnitProvider unitProvider) throws FormulateException {
 
 		if (partProduct == null) {
@@ -331,7 +331,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 						}
 						
 						if (!charactDetails.isMultiple()) {
-							provideAdditionalValues(rootProduct, formulatedProduct, simpleCharact, unit, qtyUsed, netQty, currentCharactDetailsValue);
+							provideAdditionalValues(formulatedProduct, simpleCharact, unit, qtyUsed, netQty, currentCharactDetailsValue);
 						}
 						
 						charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), currentCharactDetailsValue);
@@ -345,7 +345,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return null;
 	}
 
-	protected void provideAdditionalValues(ProductData rootProduct, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
+	protected void provideAdditionalValues(ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
 		// nothing by default
 	}
 
