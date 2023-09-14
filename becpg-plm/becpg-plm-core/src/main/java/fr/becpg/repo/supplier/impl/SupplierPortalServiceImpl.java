@@ -169,7 +169,6 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE, VersionType.MAJOR.toString());
 				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_COMMENTS, projectName);
 				nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, branchName);
-				nodeService.addAspect(branchNodeRef, BeCPGModel.ASPECT_UNDELETABLE_ASPECT, null);
 
 				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SUPPLIER_DOCUMENTS));

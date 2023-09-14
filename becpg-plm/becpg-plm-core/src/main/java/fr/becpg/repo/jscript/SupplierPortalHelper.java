@@ -281,10 +281,6 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		if (entityNode != null) {
 
 			NodeRef entityNodeRef = entityNode.getNodeRef();
-			
-			if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_UNDELETABLE_ASPECT)) {
-				nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_UNDELETABLE_ASPECT);
-			}
 
 			if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT)
 					&& nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE) == null) {
