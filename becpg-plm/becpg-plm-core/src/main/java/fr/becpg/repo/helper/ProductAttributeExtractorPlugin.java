@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -86,9 +87,14 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		return extractExpr(nodeRef,productNameFormat);
+		return extractExpr(nodeRef, productNameFormat);
 	}
-
+	
+	@Override
+	public String extractPropName(JSONObject jsonEntity) {
+		return expressionService.extractExpr(jsonEntity, productNameFormat);
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public String extractMetadata(QName type, NodeRef nodeRef) {
