@@ -26,7 +26,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.RepoService;
-import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.DeliverableScriptOrder;
@@ -70,31 +69,21 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	@Autowired
 	private Repository repository;
 
-	private static final String SUPPLIER_REFERENCING = "supplierReferencing";
+	private static final String SUPPLIER_REFERENCING_PROJECT_TYPE = "supplierReferencing";
+	
+	private static final String SUPPLIER_REPORT_KIND = "SupplierSheet";
 	
 	@Override
 	public boolean applyTo(String projectType) {
-		return SUPPLIER_REFERENCING.equals(projectType);
+		return SUPPLIER_REFERENCING_PROJECT_TYPE.equals(projectType);
 	}
 
 	@Override
 	public NodeRef prepareEntitySignatureFolder(NodeRef projectNodeRef, NodeRef entityNodeRef) {
 		
-		String supplierDocumentsFolderName = TranslateHelper.getTranslatedPath("SupplierDocuments");
-		
-		NodeRef supplierDocumentsFolder = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS, supplierDocumentsFolderName);
+		NodeRef supplierDocumentsFolder = supplierPortalService.getOrCreateSupplierDocumentsFolder(entityNodeRef);
 
-		if (supplierDocumentsFolder == null) {
-
-			Map<QName, Serializable> props = new HashMap<>();
-
-			props.put(ContentModel.PROP_NAME, supplierDocumentsFolderName);
-
-			supplierDocumentsFolder = nodeService.createNode(entityNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER, props)
-					.getChildRef();
-		}
-
-		List<NodeRef> reports = entityReportService.getOrRefreshReportsOfKind(entityNodeRef, "SupplierSheet");
+		List<NodeRef> reports = entityReportService.getOrRefreshReportsOfKind(entityNodeRef, SUPPLIER_REPORT_KIND);
 		
 		List<NodeRef> suppliers = associationService.getTargetAssocs(projectNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 
