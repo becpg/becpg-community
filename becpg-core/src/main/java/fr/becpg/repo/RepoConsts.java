@@ -81,6 +81,9 @@ public class RepoConsts
 
 	public static final String PATH_SUPPLIER_DOCUMENTS= "SupplierDocuments";
 	
+
+	public static final String PATH_SUPPLIER_ENTITIES = "SupplierEntities";
+	
 	/** Constant <code>PATH_BRIEF="Brief"</code> */
 	public static final String PATH_BRIEF = "Brief";
 	/** Constant <code>PATH_LOGO_IMAGE="logoimage"</code> */
@@ -283,6 +286,7 @@ public class RepoConsts
 	
 	/** Constant <code>CATALOGS_PATH="/app:company_home/cm:System/cm:Property"{trunked}</code> */
 	public static final String CATALOGS_PATH = "/app:company_home/cm:System/cm:PropertyCatalogs";
+
 
 	
 }

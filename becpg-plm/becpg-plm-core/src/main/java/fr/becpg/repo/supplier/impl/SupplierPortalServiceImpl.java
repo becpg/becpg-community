@@ -169,8 +169,9 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_VERSIONTYPE, VersionType.MAJOR.toString());
 				nodeService.setProperty(branchNodeRef, BeCPGModel.PROP_AUTO_MERGE_COMMENTS, projectName);
 				nodeService.setProperty(branchNodeRef, ContentModel.PROP_NAME, branchName);
-				nodeService.addAspect(branchNodeRef, BeCPGModel.ASPECT_UNDELETABLE_ASPECT, null);
 
+				getOrCreateSupplierDocumentsFolder(branchNodeRef);
+				
 				Map<QName, Serializable> properties = new HashMap<>();
 				properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SUPPLIER_DOCUMENTS));
 				NodeRef documentsFolderNodeRef = nodeService.getChildByName(branchNodeRef, ContentModel.ASSOC_CONTAINS,
@@ -204,6 +205,29 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 		return projectNodeRef;
 
+	}
+
+	@Override
+	public NodeRef getOrCreateSupplierDocumentsFolder(NodeRef entityNodeRef) {
+		return getOrCreateDocumentFolder(entityNodeRef, RepoConsts.PATH_SUPPLIER_DOCUMENTS);
+		
+	}
+	
+	private NodeRef getOrCreateDocumentFolder(NodeRef entityNodeRef, String path) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(path));
+		NodeRef documentsFolderNodeRef = nodeService.getChildByName(entityNodeRef, ContentModel.ASSOC_CONTAINS,
+				(String) properties.get(ContentModel.PROP_NAME));
+		if (documentsFolderNodeRef == null) {
+			documentsFolderNodeRef = nodeService
+					.createNode(entityNodeRef, ContentModel.ASSOC_CONTAINS,
+							QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
+									QName.createValidLocalName(path)),
+							ContentModel.TYPE_FOLDER, properties)
+					.getChildRef();
+		}
+		return documentsFolderNodeRef;
+		
 	}
 
 	@Override
@@ -307,20 +331,10 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	public NodeRef getOrCreateSupplierDestFolder(NodeRef supplierNodeRef, List<NodeRef> resources) {
 
 		if (supplierNodeRef != null) {
+			
+			NodeRef documentsFolderNodeRef = getOrCreateDocumentFolder(supplierNodeRef,RepoConsts.PATH_SUPPLIER_ENTITIES );
 
-			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(ContentModel.PROP_NAME, TranslateHelper.getTranslatedPath(RepoConsts.PATH_SUPPLIER_DOCUMENTS));
-			NodeRef documentsFolderNodeRef = nodeService.getChildByName(supplierNodeRef, ContentModel.ASSOC_CONTAINS,
-					(String) properties.get(ContentModel.PROP_NAME));
-			if (documentsFolderNodeRef == null) {
-				documentsFolderNodeRef = nodeService
-						.createNode(supplierNodeRef, ContentModel.ASSOC_CONTAINS,
-								QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI,
-										QName.createValidLocalName(RepoConsts.PATH_SUPPLIER_DOCUMENTS)),
-								ContentModel.TYPE_FOLDER, properties)
-						.getChildRef();
-			}
-
+		
 			SiteInfo siteInfo = siteService.getSite(SupplierPortalHelper.SUPPLIER_SITE_ID);
 
 			if (siteInfo != null) {
@@ -342,7 +356,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 						for (NodeRef resourceRef : resources) {
 							permissionService.setPermission(supplierNodeRef,
-									(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.COORDINATOR, true);
+									(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.CONTRIBUTOR, true);
 						}
 					} finally {
 						I18NUtil.setLocale(currentLocal);
@@ -352,14 +366,15 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				}
 
 			} else {
-
+					
+				//For old supplier portal dest folder was the userHome this should be deprecated
 				NodeRef resourceRef = resources.get(0);
 				NodeRef destFolder = repository.getUserHome(resourceRef);
 
 				repoService.moveNode(supplierNodeRef, destFolder);
 
 				permissionService.setPermission(destFolder, PermissionService.GROUP_PREFIX + PLMGroup.ReferencingMgr.toString(),
-						PermissionService.COORDINATOR, true);
+						PermissionService.CONTRIBUTOR, true);
 
 			}
 
@@ -369,6 +384,8 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 
 		return null;
 	}
+
+
 
 	private void migrateOldSupplierDestFolder(NodeRef supplierNodeRef, NodeRef documentLibraryNodeRef, NodeRef documentsFolderNodeRef) {
 
