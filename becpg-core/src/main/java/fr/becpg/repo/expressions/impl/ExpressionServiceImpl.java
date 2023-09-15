@@ -19,6 +19,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.expression.Expression;
@@ -151,6 +152,36 @@ public class ExpressionServiceImpl implements ExpressionService {
 		return ret;
 	}
 	
+	@Override
+	public String extractExpr(JSONObject object, String exprFormat) {
+		Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(exprFormat);
+		StringBuffer sb = new StringBuffer();
+		while (patternMatcher.find()) {
+
+			String propQname = patternMatcher.group(1);
+			String replacement = "";
+			if (propQname.contains("|")) {
+				for (String propQnameAlt : propQname.split("\\|")) {
+					replacement = extractPropText(object, propQnameAlt);
+					if ((replacement != null) && !replacement.isEmpty()) {
+						break;
+					}
+				}
+
+			} else {
+				replacement = extractPropText(object, propQname);
+			}
+
+			patternMatcher.appendReplacement(sb, replacement != null ? replacement.replace("$", "") : "");
+
+		}
+		patternMatcher.appendTail(sb);
+		return sb.toString();
+	}
+	
+	private String extractPropText(JSONObject object, String propQname) {
+		return object.has(propQname) ? object.getString(propQname) : "";
+	}
 
 	@Override
 	public <T extends RepositoryEntity> Object eval(String condition, T formulatedEntity) {
