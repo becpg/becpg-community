@@ -43,6 +43,9 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	private boolean enforced;
 	private RecurringTimeType recurringTime;
 	private DayOfWeek recurringDay;
+	private NodeRef script;
+	private ScriptMode scriptMode;
+	private String errorLog;
 	
 	
 	
@@ -345,7 +348,27 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	public DayOfWeek getRecurringDay() {
 		return recurringDay;
 	}
-
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:nrScript")
+	public NodeRef getScript() {
+		return script;
+	}
+	
+	public void setScript(NodeRef script) {
+		this.script = script;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:nrScriptMode")
+	public ScriptMode getScriptMode() {
+		return scriptMode;
+	}
+	
+	public void setScriptMode(ScriptMode scriptMode) {
+		this.scriptMode = scriptMode;
+	}
+	
 	/**
 	 * <p>Setter for the field <code>recurringDay</code>.</p>
 	 *
@@ -353,6 +376,16 @@ public class NotificationRuleListDataItem extends BeCPGDataObject{
 	 */
 	public void setRecurringDay(DayOfWeek recurringDay) {
 		this.recurringDay = recurringDay;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:nrErrorLog")
+	public String getErrorLog() {
+		return errorLog;
+	}
+	
+	public void setErrorLog(String errorLog) {
+		this.errorLog = errorLog;
 	}
 
 	/** {@inheritDoc} */

@@ -22,9 +22,9 @@
 		{
 		    new beCPG.dashlet.BeCPGCatalog("${el}").setOptions(
 		   {
-		   	catalogType: "${prefType?js_string}",
+		   	  catalogType: "${prefType?js_string}",
 		      filter: "${prefFilter?js_string}",
-		      validFilters: [<#list filters as filter>"${filter.type?js_string}"<#if filter_has_next>,</#if></#list>],
+		      types: [<#list types as type>"${type.name?js_string}:${type.filter?js_string}"<#if type_has_next>,</#if></#list>],
 		      simpleView: ${prefSimpleView?string?js_string},
 		      maxItems: ${maxItems?c}
 		   }).setMessages(${messages});
@@ -65,16 +65,6 @@
 			            </ul>
 			         </div>
 			      </div>
-		         <span class="align-left yui-button yui-menu-button" id="${el}-filters">
-		            <span class="first-child">
-		               <button type="button" tabindex="0"></button>
-		            </span>
-		         </span>
-		         <select id="${el}-filters-menu">
-		         <#list filters as filter>
-		            <option value="${filter.type?html}">${msg("filter." + filter.type)}</option>
-		         </#list>
-		         </select>
 		         <span class="align-left yui-button yui-menu-button" id="${el}-types">
 		            <span class="first-child">
 		               <button type="button" tabindex="0"></button>
@@ -83,6 +73,16 @@
 		         <select id="${el}-types-menu">
 		         <#list types as type>
 		            <option value="${type.name?html}">${msg("type." + type.name)}</option>
+		         </#list>
+		         </select>
+		         <span class="align-left yui-button yui-menu-button" id="${el}-filters">
+		            <span class="first-child">
+		               <button type="button" tabindex="0"></button>
+		            </span>
+		         </span>
+		         <select id="${el}-filters-menu">
+		         <#list filters as filter>
+		            <option value="${filter.type?html}">${msg("filter." + filter.type)}</option>
 		         </#list>
 		         </select>
 		         <div id="${el}-simpleDetailed" class="align-right simple-detailed yui-buttongroup inline">

@@ -82,13 +82,15 @@ public class MigrationServiceImpl implements MigrationService {
 
 			if (tenantAdminService.isEnabled()) {
 				for (final Tenant tenant : tenantAdminService.getAllTenants()) {
-					AuthenticationUtil.runAs(() -> {
-						logger.info("addMandatoryAspectInMt for tenant: " + tenant.getTenantDomain());
-						addMandatoryAspect(type, aspect);
-
-						return null;
-					}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenant.getTenantDomain()));
-				}
+					if(tenant.isEnabled()) {
+						AuthenticationUtil.runAs(() -> {
+							logger.info("addMandatoryAspectInMt for tenant: " + tenant.getTenantDomain());
+							addMandatoryAspect(type, aspect);
+	
+							return null;
+						}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenant.getTenantDomain()));
+						}
+					}
 
 			} else {
 				logger.info("addMandatoryAspectInMt in non-tenant environment");
@@ -144,13 +146,14 @@ public class MigrationServiceImpl implements MigrationService {
 
 			if (tenantAdminService.isEnabled()) {
 				for (final Tenant tenant : tenantAdminService.getAllTenants()) {
+					if(tenant.isEnabled()) {
 					AuthenticationUtil.runAs(() -> {
 						logger.info("removeAspectInMt for tenant: " + tenant.getTenantDomain());
 						removeAspect(type, aspect);
 
 						return null;
 					}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenant.getTenantDomain()));
-				}
+				}}
 
 			} else {
 				logger.info("removeAspectInMt in non-tenant environment");
@@ -203,12 +206,14 @@ public class MigrationServiceImpl implements MigrationService {
 
 			if (tenantAdminService.isEnabled()) {
 				for (final Tenant tenant : tenantAdminService.getAllTenants()) {
+					if(tenant.isEnabled()) {
 					AuthenticationUtil.runAs(() -> {
 						logger.info("migrateAssociationInMt for tenant: " + tenant.getTenantDomain());
 						migrateAssociation(classQName, sourceAssoc, targetAssoc);
 
 						return null;
 					}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenant.getTenantDomain()));
+				}
 				}
 
 			} else {
@@ -259,13 +264,14 @@ public class MigrationServiceImpl implements MigrationService {
 
 			if (tenantAdminService.isEnabled()) {
 				for (final Tenant tenant : tenantAdminService.getAllTenants()) {
+					if(tenant.isEnabled()) {
 					AuthenticationUtil.runAs(() -> {
 						logger.info("migratePropertyInMt for tenant: " + tenant.getTenantDomain());
 						migrateProperty(classQName, sourceProp, targetProp);
 
 						return null;
 					}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenant.getTenantDomain()));
-				}
+				}}
 
 			} else {
 				logger.info("migratePropertyInMt in non-tenant environment");

@@ -1,71 +1,99 @@
-##################################################################################
-# 
-#  beCPG developers INSTALL
-#
-#  Copyright (C) 2010-2021 beCPG. 
-#   
-#  This file is part of beCPG 
-#   
-#  beCPG is free software: you can redistribute it and/or modify 
-#  it under the terms of the GNU Lesser General Public License as published by 
-#  the Free Software Foundation, either version 3 of the License, or 
-#  (at your option) any later version. 
-#   
-#  beCPG is distributed in the hope that it will be useful, 
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of 
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
-#  GNU Lesser General Public License for more details. 
-#   
-#  You should have received a copy of the GNU Lesser General Public License along with beCPG. 
-#  If not, see <http://www.gnu.org/licenses/>.
-# 
-##################################################################################
+# beCPG Developers README
 
-Projects should be build (refers to README) and alfresco set-up and running. Once build you will find files under target dirs.
+## Build project
 
-1 - Install becpg-designer
---------------------------
+Ensure you are using Apache Maven version 3 or newer to build the project. If you don't have Maven installed, you can find it at https://maven.apache.org/.
+
+To build the projects, use the following command:
+
+```shell
+$> mvn clean package -DskipTests=true 
+```
+
+The resulting AMP files can be located in the 'target' directories.
+
+## Starting beCPG in Docker
+
+Before you begin, make sure to install the necessary requirements:
+
+Copy the sample docker-compose.override.yml.sample file to docker-compose.override.yml.
+
+Execute the following commands:
+
+```shell
+$> ./run.sh build_start
+```
+
+For further guidance, refer to Alfresco Maven SDK 4.0 documentation.
+
+## Running Tests
+
+To execute all integration tests, use:
+
+```shell
+$> ./run.sh test
+```
+
+If you wish to run a specific test, employ the following command:
+
+```shell
+$> mvn test -Dtest=MyTest.java -DfailIfNoTests=false
+```
+
+Keep in mind that integration tests require the beCPG server to be launched first using the ./run.sh build_start command.
+
+## Manual AMP Deployment
+
+### Install becpg-designer
 
 Install core AMPS
 
+```shell
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-core/target/becpg-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-designer/becpg-designer-core/target/becpg-designer-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
+```
 
 Install share AMPS
 
+```shell
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-share/target/becpg-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-designer/becpg-designer-share/target/becpg-designer-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
+```
 
-
-2 - Install becpg-project
--------------------------
+### Install becpg-project
 
 Install core AMPS
 
+```shell
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-core/target/becpg-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-project/becpg-project-core/target/becpg-project-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
+```
 
 Install share AMPS
 
+```shell
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-share/target/becpg-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-project/becpg-project-share/target/becpg-project-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
+```
 
-3 - Install becpg-plm
----------------------
+### Install becpg-plm
 
 
 Install core AMPS
 
+```shell
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-core/target/becpg-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-designer/becpg-designer-core/target/becpg-designer-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-project/becpg-project-core/target/becpg-project-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-plm/becpg-plm-core/target/becpg-plm-core-$BECPG_VERSION.amp $SERVER/webapps/alfresco.war -force
+```
 
 Install share AMPS
 
+```shell
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-share/target/becpg-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-designer/becpg-designer-share/target/becpg-designer-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-project/becpg-project-share/target/becpg-project-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
 $>java -jar  $ALF/bin/alfresco-mmt.jar install ./becpg-plm/becpg-plm-share/target/becpg-plm-share-$BECPG_VERSION.amp $SERVER/webapps/share.war -force
-
+```
 

@@ -83,7 +83,7 @@
 	
 	<mapping name="bcpg:labelClaim">
 		<nodeColumnKeys>
-			<nodeColumnKey attribute="cm:name" />
+			<nodeColumnKey attribute="bcpg:labelClaimCode" />
 		</nodeColumnKeys>
 		<columns>
 			<column id="labelClaimFormula" type="Formula"

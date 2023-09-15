@@ -401,6 +401,7 @@ span.dynaCompNone {
 span.cost-formulated-error,
 span.lca-formulated-error,
 span.dynaError,
+span.notificationError,
 span.reqCtrlList,
 span.lcl-formulated-error,
 span.nut-formulated-error,
@@ -1084,3 +1085,9 @@ span a.show-details {
 	vertical-align: bottom;
 }
 
+/** Fix dialog scroll **/
+
+
+div.yui-dialog {
+	padding-bottom: 250px !important;
+}

@@ -118,7 +118,7 @@ public class SecurityServiceImpl implements SecurityService {
 			
 			int accesMode = SecurityService.WRITE_ACCESS;
 
-			if (!isAdmin()) {
+			if (!isAdmin() && !isEntityTemplate(nodeRef)) {
 				PermissionContext permissionContext = getPermissionContext(nodeRef, nodeType, propName);
 				
 				if (Boolean.TRUE.equals(permissionContext.isDefaultReadOnly())) {
@@ -139,6 +139,10 @@ public class SecurityServiceImpl implements SecurityService {
 			}
 
 		}
+	}
+	
+	private boolean isEntityTemplate(NodeRef nodeRef) {
+		return nodeRef != null && nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_ENTITY_TPL);
 	}
 
 	private int computeAccessMode(NodeRef nodeRef, QName nodeType, List<PermissionModel> permissions) {
