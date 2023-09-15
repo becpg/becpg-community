@@ -296,7 +296,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 											batchProcessor.getLastError());
 									return null;
 
-								}, true, false), batchInfo.getBatchUser());
+							}, false, true), batchInfo.getBatchUser());
 
 					}
 					if (batchStep.getBatchStepListener() != null) {
@@ -352,7 +352,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 										secondsBetween, batchInfo.getEntityDescription());
 
 								return null;
-							}, true, false), batchInfo.getBatchUser());
+					}, false, true), batchInfo.getBatchUser());
 				}
 
 				batchInfo.setIsCompleted(true);

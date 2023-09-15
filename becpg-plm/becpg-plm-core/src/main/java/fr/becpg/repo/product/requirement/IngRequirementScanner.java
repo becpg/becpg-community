@@ -95,7 +95,6 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 						
 						Double qtyPerc = null;
 						
-						Set<NodeRef> ingredientsConcerned = new HashSet<>();
 						
 						for (IngListDataItem ingListDataItem : productData.getIngList()) {
 							
@@ -103,8 +102,6 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 							if (!fil.getIngs().isEmpty() && (fil.getReqMessage() != null) && !fil.getReqMessage().isEmpty()) {
 								
 								if (fil.getIngs().contains(ingListDataItem.getIng())) {
-									
-									ingredientsConcerned.add(ingListDataItem.getIng());
 									
 									Double ingQtyPerc = ingListDataItem.getQtyPerc();
 									
@@ -127,16 +124,10 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 											|| Boolean.TRUE.equals(addInfoReqCtrl)) {
 
 										boolean isInfo = qtyPerc != null && fil.getQtyPercMaxi() != null && (fil.getQtyPercMaxi() > qtyPerc);
-
-										NodeRef rclCharact = null;
-										
-										if (ingredientsConcerned.size() == 1) {
-											rclCharact = ingredientsConcerned.iterator().next();
-										}
 										
 										// req not respecte
 										ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, isInfo ? RequirementType.Info : fil.getReqType(),
-													fil.getReqMessage(), rclCharact, new ArrayList<>(),
+													fil.getReqMessage(), ingListDataItem.getIng(), new ArrayList<>(),
 													RequirementDataType.Specification);
 										reqCtrlMap.add(reqCtrl);
 

@@ -650,9 +650,10 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
 			assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
 			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
-			checkPermissions(permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
+			checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
 			return null;
 		}, false, true);
+		
 		
 		// grp2 read
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -669,7 +670,7 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
 			assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
 			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
-			checkPermissions(permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of()));
+			checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of()));
 			return null;
 		}, false, true);
 		
@@ -690,7 +691,7 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
 			assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
 			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
-			checkPermissions(permissions, new ArrayList<>(List.of()), new ArrayList<>(List.of(grp1)));
+			checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of()), new ArrayList<>(List.of(grp1)));
 			return null;
 		}, false, true);
 		
@@ -709,7 +710,7 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
 			assertFalse(permissionService.getInheritParentPermissions(nutListNodeRef));
 			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
-			checkPermissions(permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
+			checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of(grp2)), new ArrayList<>(List.of(grp1)));
 			return null;
 		}, false, true);
 		
@@ -726,13 +727,13 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 			NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
 			assertTrue(permissionService.getInheritParentPermissions(nutListNodeRef));
 			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
-			checkPermissions(permissions, new ArrayList<>(List.of()), new ArrayList<>(List.of()));
+			checkPermissions(productNodeRef, permissions, new ArrayList<>(List.of()), new ArrayList<>(List.of()));
 			return null;
 		}, false, true);
 		
 	}
 	
-	private void checkPermissions(Set<AccessPermission> permissions, List<String> allowedRead, List<String> allowedWrite) {
+	private void checkPermissions(NodeRef productNodeRef, Set<AccessPermission> permissions, List<String> allowedRead, List<String> allowedWrite) {
 		
 		int readChecks = 0;
 		int writeChecks = 0;
@@ -756,6 +757,8 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 		
 		assertEquals(allowedRead.size(), readChecks);
 		assertEquals(allowedWrite.size(), writeChecks);
+		
+		checkPermissionsAreSameAfterReformulation(productNodeRef, permissions);
 	}
 
 	private NodeRef createDataListSecurityRule() {
@@ -779,5 +782,13 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 
 		return alfrescoRepository.create(getTestFolderNodeRef(), rmAclGroupData).getNodeRef();
 
+	}
+	
+	private void checkPermissionsAreSameAfterReformulation(NodeRef productNodeRef, Set<AccessPermission> expectedPermissions) {
+		productService.formulate(productNodeRef);
+		FinishedProductData productData = (FinishedProductData) alfrescoRepository.findOne(productNodeRef);
+		NodeRef nutListNodeRef = productData.getNutList().get(0).getParentNodeRef();
+		Set<AccessPermission> permissions = permissionService.getAllSetPermissions(nutListNodeRef);
+		assertEquals(expectedPermissions, permissions);
 	}
 }

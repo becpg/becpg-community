@@ -350,7 +350,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	protected HttpEntity<String> createEntity(String body) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		headers.setBearerAuth(token());
+		headers.setBearerAuth(token().trim());
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		return new HttpEntity<>(body, headers);

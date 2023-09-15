@@ -40,9 +40,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.DataListModel;
+import fr.becpg.model.SecurityModel;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.security.SecurityService;
@@ -57,7 +59,7 @@ import fr.becpg.repo.security.data.PermissionModel;
 public class SecurityFormulationHandler extends FormulationBaseHandler<ProductData> {
 
 	/** Constant <code>logger</code> */
-	protected static final Log logger = LogFactory.getLog(SecurityFormulationHandler.class);
+	private static final Log logger = LogFactory.getLog(SecurityFormulationHandler.class);
 
 	private static final String VIEW_DOCUMENTS= "View-documents";
 
@@ -72,6 +74,12 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	private AuthorityDAO authorityDAO;
 
 	private SiteService siteService;
+	
+	private AssociationService associationService;
+	
+	public void setAssociationService(AssociationService associationService) {
+		this.associationService = associationService;
+	}
 
 	public EntityListDAO getEntityListDAO() {
 		return entityListDAO;
@@ -124,8 +132,12 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData productData) throws FormulateException {
-		if (!L2CacheSupport.isCacheOnlyEnable()) {
+		if (!L2CacheSupport.isCacheOnlyEnable() && isSecurityApplicable(productData)) {
+			
+			updateSecurityRuleFromTemplate(productData);
+			
 			NodeRef productDataNodeRef = productData.getNodeRef();
+			
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(productDataNodeRef);
 			List<NodeRef> datalists = entityListDAO.getExistingListsNodeRef(listContainerNodeRef);
 
@@ -139,7 +151,6 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			//Set document permissions
-			
 			PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
 			List<ChildAssociationRef> folders = nodeService.getChildAssocs(productDataNodeRef, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
 			for (ChildAssociationRef folder : folders) {
@@ -149,58 +160,85 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 		return true;
 	}
 
+	private boolean isSecurityApplicable(ProductData productData) {
+		return !productData.isEntityTemplate();
+	}
+
+	private void updateSecurityRuleFromTemplate(ProductData productData) {
+		if(productData.getEntityTpl()!=null) {
+			NodeRef tplNodeRef = productData.getEntityTpl().getNodeRef();
+			if (tplNodeRef != null && nodeService.exists(tplNodeRef)) {
+				NodeRef tplSecurityRef = associationService.getTargetAssoc(tplNodeRef, SecurityModel.ASSOC_SECURITY_REF);
+				if (tplSecurityRef != null && nodeService.exists(tplSecurityRef)) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("update sec:securityRef assoc from template on node: " + productData.getNodeRef());
+					}
+					associationService.update(productData.getNodeRef(), SecurityModel.ASSOC_SECURITY_REF, tplSecurityRef);
+				}
+			}
+		}
+	}
+
 	private void updatePermissions(SiteInfo siteInfo, NodeRef nodeRef, List<PermissionModel> permissionModels) {
 		
 		boolean hasParentPermissions = permissionService.getInheritParentPermissions(nodeRef);
-		
 		Map<String, String> specificPermissions = new HashMap<>();
 		
 		if (!hasParentPermissions) {
 			for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
 				specificPermissions.put(permission.getAuthority(), permission.getPermission());
 			}
-			permissionService.setInheritParentPermissions(nodeRef, true);
 		}
 		
 		Map<String, String> parentPermissions = new HashMap<>();
-		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeRef)) {
-			if (!specificPermissions.containsKey(permission.getAuthority())) {
-				parentPermissions.put(permission.getAuthority(), permission.getPermission());
-			}
+		for (AccessPermission permission : permissionService.getAllSetPermissions(nodeService.getPrimaryParent(nodeRef).getParentRef())) {
+			parentPermissions.put(permission.getAuthority(), permission.getPermission());
 		}
 		
 		HashMap<String, String> toAdd = new HashMap<>();
 		Set<String> toRemove = new HashSet<>();
 		
-		if (visitPermissions(siteInfo, parentPermissions, specificPermissions, permissionModels, toAdd, toRemove)) {
+		if (permissionModels != null && !permissionModels.isEmpty()) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("specificPermissions: " + specificPermissions + " on node: " + nodeRef);
+				logger.debug("parentPermissions: " + parentPermissions + " on node: " + nodeRef);
+				logger.debug("permissionModels to be applied: " + permissionModels + " on node: " + nodeRef);
+			}
+			visitPermissions(siteInfo, parentPermissions, specificPermissions, permissionModels, toAdd, toRemove);
 			for (Entry<String, String> entry : toAdd.entrySet()) {
 				String authority = entry.getKey();
 				String permission = entry.getValue();
-				if (!specificPermissions.containsKey(authority) || !specificPermissions.get(entry.getKey()).equals(permission)) {
+				if (!specificPermissions.containsKey(authority) || !specificPermissions.get(authority).equals(permission)) {
+					if (logger.isDebugEnabled()) {
+						logger.debug("adding permission: " + authority + ";" + permission + " on node: " + nodeRef);
+					}
 					permissionService.clearPermission(nodeRef, authority);
 					permissionService.setPermission(nodeRef, authority, permission, true);
 				}
 			}
 			for (String authority : toRemove) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("clearing permission: " + authority + " on node: " + nodeRef);
+				}
 				permissionService.clearPermission(nodeRef, authority);
 			}
-			permissionService.setInheritParentPermissions(nodeRef, false);
+			if (hasParentPermissions) {
+				permissionService.setInheritParentPermissions(nodeRef, false);
+			}
 		} else {
 			for (String authority : specificPermissions.keySet()) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("clearing permission: " + authority + " on node: " + nodeRef);
+				}
 				permissionService.clearPermission(nodeRef, authority);
 			}
-			if (!permissionService.getInheritParentPermissions(nodeRef)) {
+			if (!hasParentPermissions) {
 				permissionService.setInheritParentPermissions(nodeRef, true);
 			}
 		}
 	}
 	
-	private boolean visitPermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
-		
-		if (permissionModels == null || permissionModels.isEmpty()) {
-			return false;
-		}
-		
+	private void visitPermissions(SiteInfo siteInfo, Map<String, String> parentPermissions, Map<String, String> specificPermissions, List<PermissionModel> permissionModels, HashMap<String, String> toAdd, Set<String> toRemove) {
 		for (PermissionModel permissionModel : permissionModels) {
 			String basePermission = PermissionModel.READ_ONLY.equals(permissionModel.getPermission()) ? PermissionService.CONSUMER : PermissionService.CONTRIBUTOR;
 			
@@ -226,8 +264,6 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 				}
 			}
 		}
-		
-		return true;
 	}
 	
 	private String extractPermission(String basePermission, SiteInfo siteInfo, String authorityName) {
