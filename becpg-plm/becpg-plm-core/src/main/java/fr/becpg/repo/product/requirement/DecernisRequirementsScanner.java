@@ -78,6 +78,11 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 
+		if (!decernisService.isEnabled()) {
+			logger.debug("Decernis service is not enabled");
+			return Collections.emptyList();
+		}
+		
 		if (FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
 			logger.debug("Fast formulation skipping decernis");
 			return Collections.emptyList();

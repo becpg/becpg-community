@@ -54,13 +54,15 @@ public class NotificationRuleJob extends AbstractScheduledLockedJob implements J
 			@SuppressWarnings("deprecation")
 			List<Tenant> tenants = tenantAdminService.getAllTenants();
 			for (Tenant tenant : tenants) {
-				String tenantDomain = tenant.getTenantDomain();
-				AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					notificationRuleService.sendNotifications();
-					return null;
-				}, false, true)
-
-						, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				if(tenant.isEnabled()) {
+					String tenantDomain = tenant.getTenantDomain();
+					AuthenticationUtil.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						notificationRuleService.sendNotifications();
+						return null;
+					}, false, true)
+	
+							, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				}
 			}
 		}
 

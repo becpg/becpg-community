@@ -105,7 +105,7 @@ public class JSONVersionExtractor extends SimpleExtractor {
 	public void setEntityFormatService(EntityFormatService entityJsonService) {
 		this.entityFormatService = entityJsonService;
 	}
-
+	
 	private JSONArray filterList(JSONArray list, DataListFilter dataListFilter) throws JSONException {
 		JSONArray ret = new JSONArray();
 
@@ -239,17 +239,27 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		Map<String, Object> ret = new HashMap<>();
 		
 		NodeRef nodeRef = new NodeRef("workspace://SpacesStore/" + object.getString("id"));
-		
 		String displayValue = null;
+		QName type = null;
+		if (nodeService.exists(nodeRef)) {
+			type = nodeService.getType(nodeRef);
+		}
 		
 		if (object.has(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService))) {
 			displayValue = object.getString(BeCPGModel.PROP_CHARACT_NAME.toPrefixString(namespaceService));
 		} else if (object.has(ContentModel.PROP_NAME.toPrefixString(namespaceService))) {
-			displayValue = object.getString(ContentModel.PROP_NAME.toPrefixString(namespaceService));
+			if (type != null) {
+				String entityName = object.getString(ContentModel.PROP_NAME.toPrefixString(namespaceService));
+				if (entityName != null && !entityName.matches(UUID_STRING)) {
+					displayValue = attributeExtractorService.extractPropName(type, object);
+				}
+			}
+			if (displayValue == null) {
+				displayValue = object.getString(ContentModel.PROP_NAME.toPrefixString(namespaceService));
+			}
 		}
 		
-		if (nodeService.exists(nodeRef)) {
-			QName type = nodeService.getType(nodeRef);
+		if (type != null) {
 			if (displayValue == null || displayValue.matches(UUID_STRING)) {
 				displayValue = attributeExtractorService.extractPropName(type, nodeRef);
 			}
@@ -272,7 +282,7 @@ public class JSONVersionExtractor extends SimpleExtractor {
 		
 		return ret;
 	}
-
+	
 	private Object extractNodeData(JSONObject properties, ClassAttributeDefinition attribute, FormatMode mode, QName itemType) throws JSONException {
 		if (attribute instanceof PropertyDefinition) {
 			if (attribute.getName().toPrefixString(namespaceService).contains("alData")) {

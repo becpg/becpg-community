@@ -96,15 +96,5 @@
 		<property name="dictionaryService" ref="cachedDictionaryService" />
 	</bean>
 
-	<bean id="workflowNotification"
-		class="org.alfresco.repo.workflow.WorkflowNotificationUtils">
-		<property name="workflowService" ref="workflowServiceImpl" />
-		<property name="nodeService" ref="NodeService" />
-		<property name="notificationService" ref="NotificationService" />
-		<property name="authorityService" ref="authorityService" />
-		<property name="fileFolderService" ref="fileFolderService" />
-		<property name="personService" ref="personService" />
-	</bean>
-	
 
 </beans>

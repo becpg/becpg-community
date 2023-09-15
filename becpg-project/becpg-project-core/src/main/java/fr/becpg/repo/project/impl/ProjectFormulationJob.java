@@ -67,11 +67,13 @@ public class ProjectFormulationJob extends AbstractScheduledLockedJob implements
 			@SuppressWarnings("deprecation")
 			List<Tenant> tenants = tenantAdminService.getAllTenants();
 			for (Tenant tenant : tenants) {
-				String tenantDomain = tenant.getTenantDomain();
-				AuthenticationUtil.runAs(() -> {
-					projectFormulationWorker.executeFormulation();
-					return null;
-				}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				if(tenant.isEnabled()) {
+					String tenantDomain = tenant.getTenantDomain();
+					AuthenticationUtil.runAs(() -> {
+						projectFormulationWorker.executeFormulation();
+						return null;
+					}, tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), tenantDomain));
+				}
 			}
 		}
 

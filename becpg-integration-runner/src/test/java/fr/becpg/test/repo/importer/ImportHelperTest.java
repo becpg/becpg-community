@@ -2,6 +2,7 @@ package fr.becpg.test.repo.importer;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
+import java.util.Locale;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,6 +14,8 @@ public class ImportHelperTest {
 
 	@Test
 	public void testParseNumber() throws ParseException  {
+		Locale.setDefault(Locale.FRENCH);
+		
 		Assert.assertEquals(1.2d, ImportHelper.parseNumber(new ImportContext(), "1,2"));
 
 		String input = "1. Allergen management has separate ";

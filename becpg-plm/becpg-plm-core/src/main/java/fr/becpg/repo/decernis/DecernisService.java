@@ -17,6 +17,8 @@ public interface DecernisService {
 	 /** Constant <code>DECERNIS_CHAIN_ID="decernis"</code> */
 	 public static final String DECERNIS_CHAIN_ID = "decernis";
 	 
+	 public boolean isEnabled();
+	 
 	/**
 	 * <p>extractDecernisRequirements.</p>
 	 *
