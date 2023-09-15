@@ -195,17 +195,20 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 								if(entityNodeRef!=null && !entityNodeRef.equals(supplierNodeRef)) {
 									repoService.moveNode(entityNodeRef, dest);				
 								}
-								permissionService.setInheritParentPermissions(entityNodeRef, true);
+								
+								if(!permissionService.getInheritParentPermissions(entityNodeRef)) {
+									permissionService.setInheritParentPermissions(entityNodeRef, true);
+								}
 
 								for (NodeRef resourceRef : resources) {
 									permissionService.setPermission(task.getNodeRef(),
 											(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
-											PermissionService.COORDINATOR, true);
+											PermissionService.CONTRIBUTOR, true);
 									for (DeliverableListDataItem deliverable : ProjectHelper.getDeliverables(project,
 											task.getNodeRef())) {
 										permissionService.setPermission(deliverable.getNodeRef(),
 												(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
-												PermissionService.COORDINATOR, true);
+												PermissionService.CONTRIBUTOR, true);
 										if ((deliverable.getContent() != null)
 												&& ((deliverable.getScriptOrder() == null)
 														|| DeliverableScriptOrder.None.equals(deliverable.getScriptOrder()))
@@ -278,7 +281,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 		if (entityNode != null) {
 
 			NodeRef entityNodeRef = entityNode.getNodeRef();
-
+			
 			if(nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT)
 					&& nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE) == null) {
 				entityNodeRef = entityVersionService.mergeBranch(entityNodeRef, null);
