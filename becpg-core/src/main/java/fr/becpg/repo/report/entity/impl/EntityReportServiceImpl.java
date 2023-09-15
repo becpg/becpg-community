@@ -1163,8 +1163,6 @@ public class EntityReportServiceImpl implements EntityReportService {
 		}
 		return reportParameters;
 	}
-		return reportParameters;
-	}
 
 	/** {@inheritDoc} */
 	@Override
