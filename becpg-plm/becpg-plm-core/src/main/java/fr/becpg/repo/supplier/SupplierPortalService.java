@@ -25,4 +25,6 @@ public interface SupplierPortalService {
 	NodeRef createExternalUser(String email, String firstName, String lastName, boolean notify, Map<QName, Serializable> extraProps);
 
 	List<NodeRef> extractSupplierAccountRefs(NodeRef document);
+
+	NodeRef getOrCreateSupplierDocumentsFolder(NodeRef entityNodeRef);
 }
