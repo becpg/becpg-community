@@ -19,6 +19,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.helper.AuthorityHelper;
 
 /**
  * <p>BeCPGOwnableServiceImpl class.</p>
@@ -39,11 +40,8 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 		this.disableOwner = disableOwner;
 	}
 
-	
 	private EntityDictionaryService entityDictionaryService;
-	
-	
-	
+
 	/**
 	 * <p>Setter for the field <code>entityDictionaryService</code>.</p>
 	 *
@@ -53,14 +51,11 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 		this.entityDictionaryService = entityDictionaryService;
 	}
 
-
 	private NodeService nodeService;
 	private SimpleCache<NodeRef, String> nodeOwnerCache;
 	private TenantService tenantService;
 	private Set<String> storesToIgnorePolicies = Collections.emptySet();
 	private RenditionService renditionService;
-	
-	
 
 	/**
 	 * <p>Constructor for BeCPGOwnableServiceImpl.</p>
@@ -72,37 +67,40 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 	// IOC
 
 	/** {@inheritDoc} */
+	@Override
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 		super.setNodeService(nodeService);
 	}
 
-
 	/** {@inheritDoc} */
+	@Override
 	public void setTenantService(TenantService tenantService) {
 		this.tenantService = tenantService;
 		super.setTenantService(tenantService);
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public void setStoresToIgnorePolicies(Set<String> storesToIgnorePolicies) {
 		this.storesToIgnorePolicies = storesToIgnorePolicies;
 		super.setStoresToIgnorePolicies(storesToIgnorePolicies);
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public void setNodeOwnerCache(SimpleCache<NodeRef, String> ownerCache) {
 		this.nodeOwnerCache = ownerCache;
 		super.setNodeOwnerCache(ownerCache);
 	}
 
 	/** {@inheritDoc} */
+	@Override
 	public void setRenditionService(RenditionService renditionService) {
 		this.renditionService = renditionService;
 		super.setRenditionService(renditionService);
 	}
 
-	
 	private Set<String> URI_TO_EXCLUDES = new HashSet<>();
 	{
 		URI_TO_EXCLUDES.add(DownloadModel.DOWNLOAD_MODEL_1_0_URI);
@@ -118,7 +116,6 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 		URI_TO_EXCLUDES.add(NamespaceService.LINKS_MODEL_1_0_URI);
 	}
 
-
 	// OwnableService implementation
 
 	/** {@inheritDoc} */
@@ -127,24 +124,26 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 		String userName = nodeOwnerCache.get(nodeRef);
 
 		if (userName == null) {
-			
-			if (userName == null) {
 
-				// If ownership is not explicitly set then we fall back to the
-				// creator
-				if (isRendition(nodeRef)) {
-					userName = getOwner(nodeService.getPrimaryParent(nodeRef).getParentRef());
-				} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_OWNABLE)) {
-					userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_OWNER));
-				} else { 
-					QName type = nodeService.getType(nodeRef);
-					if(disableOwner && !URI_TO_EXCLUDES.contains(type.getNamespaceURI()) 
-							&& !entityDictionaryService.isSubClass(type,  ContentModel.TYPE_PERSON) 
-						) {
+			// If ownership is not explicitly set then we fall back to the
+			// creator
+			if (isRendition(nodeRef)) {
+				userName = getOwner(nodeService.getPrimaryParent(nodeRef).getParentRef());
+			} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_OWNABLE)) {
+				userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_OWNER));
+			} else {
+				QName type = nodeService.getType(nodeRef);
+				if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_AUDITABLE)) {
+					userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
+				}
+
+				if (disableOwner && !URI_TO_EXCLUDES.contains(type.getNamespaceURI())
+						&& !entityDictionaryService.isSubClass(type, ContentModel.TYPE_PERSON)) {
+
+					if (!((userName != null) && AuthorityHelper.isExternalUser(userName))) {
 						userName = OwnableService.NO_OWNER;
-					} else if (nodeService.hasAspect(nodeRef, ContentModel.ASPECT_AUDITABLE) ) {
-						userName = DefaultTypeConverter.INSTANCE.convert(String.class, nodeService.getProperty(nodeRef, ContentModel.PROP_CREATOR));
-					} 
+					}
+
 				}
 			}
 			cacheOwner(nodeRef, userName);
@@ -152,9 +151,6 @@ public class BeCPGOwnableServiceImpl extends OwnableServiceImpl {
 
 		return userName;
 	}
-
-
-
 
 	private void cacheOwner(NodeRef nodeRef, String userName) {
 		// do not cache owners of nodes that are from stores that ignores
