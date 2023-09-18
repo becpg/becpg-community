@@ -1,5 +1,7 @@
 package fr.becpg.repo.entity.version;
 
+import java.util.Date;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.VersionType;
 
@@ -45,5 +47,5 @@ public interface EntityVersionPlugin {
 	 * @param versionType a {@link org.alfresco.service.cmr.version.VersionType} object.
 	 * @param description a {@link java.lang.String} object.
 	 */
-	void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description);
+	void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description, Date effectiveDate);
 }
