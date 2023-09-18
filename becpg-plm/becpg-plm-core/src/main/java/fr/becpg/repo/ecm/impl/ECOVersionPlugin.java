@@ -86,7 +86,7 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
+	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description, Date effectiveDate) {
 
 		String userName = AuthenticationUtil.getSystemUserName();
 		
@@ -123,6 +123,7 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 
 						changeOrderData.setDescription(description);
 						changeOrderData.setEcoState(ECOState.InProgress);
+						changeOrderData.setEffectiveDate(effectiveDate);
 
 						List<ReplacementListDataItem> replacementList = changeOrderData.getReplacementList();
 

@@ -336,7 +336,12 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public void createInitialVersion(NodeRef entityNodeRef) {
-		internalCreateInitialVersion(entityNodeRef, null);
+		createInitialVersion(entityNodeRef, null);
+	}
+	
+	@Override
+	public void createInitialVersion(NodeRef entityNodeRef, Date effectiveDate) {
+		internalCreateInitialVersion(entityNodeRef, effectiveDate);
 	}
 
 	private NodeRef internalCreateInitialVersion(NodeRef entityNodeRef, Date newEffectivity) {
@@ -728,7 +733,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		NodeRef newEntityNodeRef = internalMergeBranch(branchNodeRef, null, VersionType.valueOf(versionType), description, impactWused, false, newEffectivity);
 
 		if (impactWused) {
-			impactWUsed(newEntityNodeRef, VersionType.valueOf(versionType), description);
+			impactWUsed(newEntityNodeRef, VersionType.valueOf(versionType), description, newEffectivity);
 		}
 
 		return newEntityNodeRef;
@@ -1122,11 +1127,16 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		
 		return newBranch;
 	}
-
+	
 	/** {@inheritDoc} */
 	@Override
-	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties) {
-		NodeRef versionNodeRef = internalCreateVersion(entityNodeRef, versionProperties, null, null, false);
+	public NodeRef createVersion(NodeRef entityNodeRef, Map<String, Serializable> versionProperties) {
+		return createVersion(entityNodeRef, versionProperties, null);
+	}
+
+	@Override
+	public NodeRef createVersion(final NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date effectiveDate) {
+		NodeRef versionNodeRef = internalCreateVersion(entityNodeRef, versionProperties, effectiveDate, null, false);
 		generateReportsAsync(entityNodeRef);
 		return versionNodeRef;
 	}
@@ -1419,10 +1429,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	/** {@inheritDoc} */
 	@Override
-	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
+	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description, Date effectiveDate) {
 		if (entityVersionPlugins != null) {
 			for (EntityVersionPlugin entityVersionPlugin : entityVersionPlugins) {
-				entityVersionPlugin.impactWUsed(entityNodeRef, versionType, description);
+				entityVersionPlugin.impactWUsed(entityNodeRef, versionType, description, effectiveDate);
 			}
 		}
 

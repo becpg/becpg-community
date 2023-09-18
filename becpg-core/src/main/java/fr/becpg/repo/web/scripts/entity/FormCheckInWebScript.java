@@ -123,7 +123,7 @@ public class FormCheckInWebScript extends DeclarativeWebScript {
 		}
 
 		if (impactWused) {
-			entityVersionService.impactWUsed(newEntityNodeRef, versionType, description);
+			entityVersionService.impactWUsed(newEntityNodeRef, versionType, description, null);
 		}
 
 		Map<String, Object> model = new HashMap<>();
