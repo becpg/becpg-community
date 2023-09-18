@@ -101,6 +101,8 @@ public interface EntityVersionService {
 	 */
 	NodeRef createVersion(NodeRef entityNodeRef, Map<String, Serializable> versionProperties);
 
+	NodeRef createVersion(NodeRef entityNodeRef, Map<String, Serializable> versionProperties, Date effectiveDate);
+
 	/**
 	 * <p>createInitialVersion.</p>
 	 *
@@ -138,7 +140,7 @@ public interface EntityVersionService {
 	 * @param versionType a {@link org.alfresco.service.cmr.version.VersionType} object.
 	 * @param description a {@link java.lang.String} object.
 	 */
-	void impactWUsed(NodeRef newEntityNodeRef, VersionType versionType, String description);
+	void impactWUsed(NodeRef newEntityNodeRef, VersionType versionType, String description, Date effectiveDate);
 
 
 	/**
@@ -173,7 +175,6 @@ public interface EntityVersionService {
 	 */
 	NodeRef mergeBranch(NodeRef branchNodeRef, Date newEffectivity);
 
-
 	/**
 	 * <p>updateLastVersionLabel.</p>
 	 *
@@ -189,5 +190,7 @@ public interface EntityVersionService {
 	void createInitialVersionWithProps(NodeRef entityNodeRef, Map<QName, Serializable> before);
 
 	NodeRef revertVersion(NodeRef versionNodeRef) throws IllegalAccessException;
+
+	void createInitialVersion(NodeRef entityNodeRef, Date effectiveDate);
 
 }
