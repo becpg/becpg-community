@@ -18,6 +18,7 @@
 package fr.becpg.repo.quality.policy;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -246,7 +247,7 @@ NodeServicePolicies.OnUpdatePropertiesPolicy, NodeServicePolicies.OnCreateNodePo
 	}
 
 	@Override
-	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
+	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description, Date effetiveDate) {
 		// TODO Auto-generated method stub
 		
 	}

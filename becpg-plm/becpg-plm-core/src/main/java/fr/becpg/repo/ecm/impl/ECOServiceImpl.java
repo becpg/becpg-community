@@ -691,7 +691,7 @@ public class ECOServiceImpl implements ECOService {
 			final int finalSort = sort++;
 			final RetryingTransactionCallback<Object> actionCallback = () -> {
 				
-				NodeRef productNodeRef = getProductToImpact(changeUnitDataItem, isSimulation);
+				NodeRef productNodeRef = getProductToImpact(ecoData, changeUnitDataItem, isSimulation);
 				
 				if (productNodeRef != null) {
 					
@@ -1198,9 +1198,9 @@ public class ECOServiceImpl implements ECOService {
 
 				EffectiveFilters<EffectiveDataItem> filter = null;
 
-				boolean isFuture = isFuture(effectiveDate);
+				boolean impactEffectivity = !ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType()) && isFuture(effectiveDate);
 
-				if (isFuture) {
+				if (impactEffectivity) {
 					filter = new EffectiveFilters<>(effectiveDate);
 				} else {
 					filter = new EffectiveFilters<>(EffectiveFilters.EFFECTIVE);
@@ -1213,7 +1213,7 @@ public class ECOServiceImpl implements ECOService {
 					
 					if (!itemReplacements.isEmpty()) {
 						
-						boolean copyItem = isFuture || itemReplacements.size() > 1 || ecoData.getReplacementList().stream().anyMatch(r -> !r.equals(itemReplacements.get(0)) && getSourceItems(ecoData, r).contains(itemReplacements.get(0).getTargetItem()));
+						boolean copyItem = impactEffectivity || itemReplacements.size() > 1 || ecoData.getReplacementList().stream().anyMatch(r -> !r.equals(itemReplacements.get(0)) && getSourceItems(ecoData, r).contains(itemReplacements.get(0).getTargetItem()));
 						
 						for (ReplacementListDataItem itemReplacement : itemReplacements) {
 							
@@ -1229,7 +1229,7 @@ public class ECOServiceImpl implements ECOService {
 							
 							newItems.add(newItem);
 							
-							if (isFuture) {
+							if (impactEffectivity) {
 								item.setEndEffectivity(effectiveDate);
 								newItem.setStartEffectivity(effectiveDate);
 							} else {
@@ -1346,7 +1346,7 @@ public class ECOServiceImpl implements ECOService {
 		
 	}
 
-	private NodeRef getProductToImpact(ChangeUnitDataItem changeUnitDataItem, boolean isSimulation) {
+	private NodeRef getProductToImpact(ChangeOrderData ecoData, ChangeUnitDataItem changeUnitDataItem, boolean isSimulation) {
 		NodeRef productToImpact = changeUnitDataItem.getSourceItem();
 		if (productToImpact != null) {
 			// Create a new revision if apply else use
@@ -1355,7 +1355,8 @@ public class ECOServiceImpl implements ECOService {
 				 * Create initial version if needed
 				 */
 				if (!changeUnitDataItem.getRevision().equals(RevisionType.NoRevision)) {
-					entityVersionService.createInitialVersion(productToImpact);
+					Date effectiveDateToUse = ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType()) ? ecoData.getEffectiveDate() : null;
+					entityVersionService.createInitialVersion(productToImpact, effectiveDateToUse);
 				}
 			}
 		}
@@ -1381,7 +1382,10 @@ public class ECOServiceImpl implements ECOService {
 			String name = (String) nodeService.getProperty(productToImpact, ContentModel.PROP_NAME);
 			logger.debug("creating new version for: " + name + " (" + productToImpact + ")");
 		}
-		return entityVersionService.createVersion(productToImpact, properties);
+		
+		Date effectiveDateToUse = ChangeOrderType.ImpactWUsed.equals(ecoData.getEcoType()) ? ecoData.getEffectiveDate() : null;
+		
+		return entityVersionService.createVersion(productToImpact, properties, effectiveDateToUse);
 
 	}
 
