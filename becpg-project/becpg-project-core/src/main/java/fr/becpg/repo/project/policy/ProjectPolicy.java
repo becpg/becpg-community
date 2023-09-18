@@ -4,6 +4,7 @@
 package fr.becpg.repo.project.policy;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -188,7 +189,7 @@ public class ProjectPolicy extends AbstractBeCPGPolicy implements NodeServicePol
 
 	/** {@inheritDoc} */
 	@Override
-	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
+	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description, Date effetiveDate) {
 		// Empty
 	}
 

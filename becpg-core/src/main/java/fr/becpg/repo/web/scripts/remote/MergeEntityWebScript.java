@@ -121,7 +121,7 @@ public class MergeEntityWebScript extends AbstractEntityWebScript {
 						rename);
 
 				if (impactWused) {
-					entityVersionService.impactWUsed(newEntityNodeRef, versionType, description);
+					entityVersionService.impactWUsed(newEntityNodeRef, versionType, description, null);
 				}
 
 				sendOKStatus(newEntityNodeRef, resp, getFormat(req));

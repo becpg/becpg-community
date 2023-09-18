@@ -1,6 +1,7 @@
 package fr.becpg.test.repo.product;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.repo.version.common.VersionUtil;
@@ -17,6 +18,9 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.ibm.icu.util.Calendar;
+
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -138,15 +142,10 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 		assertNotNull(FP);
 		
 		inWriteTx(() -> {
-			
 			NodeRef destNodeRef = nodeService.getPrimaryParent(RM).getParentRef();
-			
 			NodeRef branchNodeRef = entityVersionService.createBranch(RM, destNodeRef);
-			
 			entityVersionService.mergeBranch(branchNodeRef, RM, VersionType.MAJOR, "test merge", true, false);
-			
-			entityVersionService.impactWUsed(RM, VersionType.MAJOR, "test merge");
-			
+			entityVersionService.impactWUsed(RM, VersionType.MAJOR, "test merge", null);
 			return null;
 		});
 		
@@ -164,7 +163,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 			
 			entityVersionService.mergeBranch(branchNodeRef, RM, VersionType.MINOR, "test merge", true, false);
 			
-			entityVersionService.impactWUsed(RM, VersionType.MINOR, "test merge");
+			entityVersionService.impactWUsed(RM, VersionType.MINOR, "test merge", null);
 			
 			return null;
 		});
@@ -174,48 +173,16 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 		checkVersion(FP, "2.0", SF3, null);
 		checkVersion(SF1, "2.0", RM, "2.0");
 		checkVersion(SF2, "2.0", RM, "2.0");
-			
 	}
 
 	private void checkVersion(final NodeRef parentProduct, String parentVersion, final NodeRef componentProduct, String componentVersion) throws InterruptedException {
 		
-		NodeRef versionNodeRef = null;
-		
-		int i = 0;
-		
-		while (versionNodeRef == null && i < 20) {
-			
-			Thread.sleep(1000);
-			logger.debug("waiting for version created...");
-			i++;
-				
-			versionNodeRef = inWriteTx(() -> {
-				
-				VersionHistory versionHistory = versionService.getVersionHistory(parentProduct);
-				
-				if (versionHistory != null) {
-					
-					Version version = versionHistory.getVersion(parentVersion);
-					
-					if (version != null) {
-						return VersionUtil.convertNodeRef(version.getFrozenStateNodeRef());
-					}
-				}
-				
-				return null;
-				
-			});
-			
-		}
+		NodeRef versionNodeRef = waitForVersion(parentProduct, parentVersion);
 		
 		assertNotNull(versionNodeRef);
-		
 		String entity = entityFormatService.getEntityData(versionNodeRef);
-		
 		assertNotNull(entity);
-		
 		JSONObject jsonEntity = new JSONObject(entity);
-		
 		JSONArray compoList = jsonEntity.getJSONObject("entity").getJSONObject("datalists").getJSONArray("bcpg:compoList");
 		
 		boolean check = false;
@@ -238,7 +205,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 		
 		assertTrue(check);
 		
-		i = 0;
+		int i = 0;
 		
 		boolean aspectsRemoved = false;
 		
@@ -255,6 +222,85 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 		}
 		
 		assertTrue(aspectsRemoved);
+	}
+
+	private NodeRef waitForVersion(final NodeRef product, String versionLabel) throws InterruptedException {
+		NodeRef versionNodeRef = null;
+		int i = 0;
+		while (versionNodeRef == null && i < 20) {
+			Thread.sleep(1000);
+			logger.debug("waiting for version created...");
+			i++;
+			versionNodeRef = inWriteTx(() -> {
+				VersionHistory versionHistory = versionService.getVersionHistory(product);
+				if (versionHistory != null) {
+					Version version = versionHistory.getVersion(versionLabel);
+					if (version != null) {
+						return VersionUtil.convertNodeRef(version.getFrozenStateNodeRef());
+					}
+				}
+				return null;
+			});
+			
+		}
+		return versionNodeRef;
+	}
+	
+	@Test
+	public void testEffectivityDate() throws InterruptedException {
+		
+		final NodeRef RM = inWriteTx(() -> {
+			RawMaterialData rawMaterial = new RawMaterialData();
+			rawMaterial.setName("MP effectivity version test");
+			rawMaterial.setParentNodeRef(getTestFolderNodeRef());
+			return alfrescoRepository.save(rawMaterial).getNodeRef();
+		});
+		
+		assertNotNull(RM);
+		
+		final NodeRef FP = inWriteTx(() -> {
+			FinishedProductData finishedProduct = new FinishedProductData();
+			finishedProduct.setName("FP effectivity version test");
+			finishedProduct.setParentNodeRef(getTestFolderNodeRef());
+			List<CompoListDataItem> compoList = new ArrayList<>();
+			CompoListDataItem child1 = new CompoListDataItem(null, null, 3d, 0d, ProductUnit.kg, 0d, DeclarationType.Omit, RM);
+			compoList.add(child1);
+			finishedProduct.getCompoListView().setCompoList(compoList);			
+			return alfrescoRepository.save(finishedProduct).getNodeRef();
+		});
+		
+		assertNotNull(FP);
+		
+		Calendar calendarPlusTwoDays = Calendar.getInstance();
+		calendarPlusTwoDays.add(Calendar.DATE, 2);
+		
+		inWriteTx(() -> {
+			NodeRef destNodeRef = nodeService.getPrimaryParent(RM).getParentRef();
+			NodeRef branchNodeRef = entityVersionService.createBranch(RM, destNodeRef);
+			entityVersionService.mergeBranch(branchNodeRef, RM, VersionType.MAJOR, "test merge", true, false);
+			entityVersionService.impactWUsed(RM, VersionType.MAJOR, "test merge", calendarPlusTwoDays.getTime());
+			return null;
+		});
+		
+		NodeRef initialVersionFP = waitForVersion(FP, "1.0");
+		
+		inReadTx(() -> {
+			Date initialEffectiveDate = (Date) nodeService.getProperty(initialVersionFP, BeCPGModel.PROP_END_EFFECTIVITY);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(initialEffectiveDate);
+			assertEquals(cal.get(Calendar.DAY_OF_MONTH), calendarPlusTwoDays.get(Calendar.DAY_OF_MONTH));
+			return null;
+		});
+		
+		waitForVersion(FP, "2.0");
+		
+		inReadTx(() -> {
+			Date effectiveDate = (Date) nodeService.getProperty(FP, BeCPGModel.PROP_START_EFFECTIVITY);
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(effectiveDate);
+			assertEquals(cal.get(Calendar.DAY_OF_MONTH), calendarPlusTwoDays.get(Calendar.DAY_OF_MONTH));
+			return null;
+		});
 	}
 	
 }
