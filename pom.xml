@@ -120,6 +120,7 @@
 		<alfresco-remote-api.version>20.164</alfresco-remote-api.version>
 		<alfresco-data-model.version>20.164</alfresco-data-model.version>
 		<alfresco-core.version>20.164</alfresco-core.version>
+		<spring-surf.version>8.29</spring-surf.version>
 	    <spring-webscripts.version>8.40</spring-webscripts.version>
 	    <spring-webscripts-share.version>8.40</spring-webscripts-share.version>
 	
