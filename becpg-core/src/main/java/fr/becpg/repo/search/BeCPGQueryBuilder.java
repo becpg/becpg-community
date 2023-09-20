@@ -74,6 +74,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.search.impl.AbstractBeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>
@@ -111,9 +112,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	@Autowired
 	private TenantService tenantService;
-
-	@Value("${beCPG.defaultSearchTemplate}")
-	private String defaultSearchTemplate;
+	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 
 	@Value("${beCPG.report.includeReportInSearch}")
 	private Boolean includeReportInSearch = false;
@@ -154,6 +155,10 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	private SearchParameters.Operator operator = null;
 	private Locale locale = Locale.getDefault();
 
+	private String defaultSearchTemplate() {
+		return systemConfigurationService.confValue("beCPG.defaultSearchTemplate");
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -189,7 +194,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (INSTANCE != null) {
 			builder.searchService = INSTANCE.searchService;
 			builder.namespaceService = INSTANCE.namespaceService;
-			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
 			builder.cannedQueryRegistry = INSTANCE.cannedQueryRegistry;
 			builder.nodeService = INSTANCE.nodeService;
 			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
@@ -1445,7 +1449,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 				}
 				sp.addQueryTemplate(DEFAULT_FIELD_NAME, searchTemplate);
 			} else {
-				sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate);
+				sp.addQueryTemplate(DEFAULT_FIELD_NAME, defaultSearchTemplate());
 			}
 		}
 
@@ -1708,7 +1712,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		if (INSTANCE != null) {
 			builder.searchService = INSTANCE.searchService;
 			builder.namespaceService = INSTANCE.namespaceService;
-			builder.defaultSearchTemplate = INSTANCE.defaultSearchTemplate;
 			builder.cannedQueryRegistry = INSTANCE.cannedQueryRegistry;
 			builder.nodeService = INSTANCE.nodeService;
 			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
