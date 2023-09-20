@@ -50,6 +50,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Interceptor to filter out multilingual text properties from getter methods and
@@ -83,13 +84,16 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     /** Used to access property definitions */
     private DictionaryService dictionaryService;
     
-    private String disabledMLTextFields; 
-    
     private NamespaceService namespaceService;
-   
     
-    public void setDisabledMLTextFields(String disabledMLTextFields) {
-		this.disabledMLTextFields = disabledMLTextFields;
+    private SystemConfigurationService systemConfigurationService;
+    
+    public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
+    
+    public String getDisabledMLTextFields() {
+		return systemConfigurationService.confValue("beCPG.multilinguale.disabledMLTextFields");
 	}
 
 	public void setNamespaceService(NamespaceService namespaceService) {
@@ -660,7 +664,8 @@ public class BeCPGMLPropertyInterceptor implements MethodInterceptor
     }
 
     private Locale getLocale( QName propertyQName) {
-    	if(disabledMLTextFields!=null && !disabledMLTextFields.isBlank()
+    	String disabledMLTextFields = getDisabledMLTextFields();
+    	if(disabledMLTextFields !=null && !disabledMLTextFields.isBlank()
     			&& propertyQName!=null && disabledMLTextFields.contains(propertyQName.toPrefixString(namespaceService))){
     		return Locale.getDefault();
     	}
