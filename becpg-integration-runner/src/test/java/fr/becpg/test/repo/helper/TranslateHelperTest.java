@@ -34,11 +34,11 @@ public class TranslateHelperTest {
 	public void testApostrophe() {
 		I18NUtil.registerResourceBundle( "beCPG.translations.plm" );
 		
-		MLTextHelper initHelper = new MLTextHelper();
-		initHelper.setSupportedLocales(RepoConsts.SUPPORTED_UI_LOCALES);
+		MLTextHelper helper = new MLTextHelper();
+		helper.setSupportedLocalesInstance(RepoConsts.SUPPORTED_UI_LOCALES);
 		
-		MLText key = MLTextHelper.getI18NMessage("message.formulate.wrong.unit");
-		Assert.assertEquals( RepoConsts.SUPPORTED_UI_LOCALES.split(",").length, key.getLocales().size());
+		MLText key = helper.getI18NMessageInstance("message.formulate.wrong.unit");
+		Assert.assertEquals(RepoConsts.SUPPORTED_UI_LOCALES.split(",").length, key.getLocales().size());
 		Assert.assertEquals(key.get(Locale.FRENCH),"L'unité utilisée n'est pas la bonne.");
 
 	}
