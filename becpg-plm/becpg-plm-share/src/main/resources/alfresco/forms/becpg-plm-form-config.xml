@@ -4930,6 +4930,33 @@
 					<field id="fm:commentCount" label="hidden" read-only="true" />
 				</appearance>
 			</form>
+			
+			<form id="security">
+				<field-visibility>
+					<show id="bcpg:entityDataListState" force="true" />
+					<show id="bcpg:variantIds" force="true" />
+					<show id="bcpg:compoListProduct" />
+					<show id="bcpg:compoListQtySubFormula" />
+					<show id="bcpg:compoListUnit" />
+					<show id="bcpg:compoListQty" />
+					<show id="bcpg:compoListYieldPerc" />
+					<show id="bcpg:compoListLossPerc" />
+					<show id="bcpg:compoListDeclType" />
+					<show id="bcpg:dynamicCharactColumn1" force="true" />
+					<show id="bcpg:dynamicCharactColumn2" force="true" />
+					<show id="bcpg:dynamicCharactColumn3" force="true" />
+					<show id="bcpg:dynamicCharactColumn4" force="true" />
+					<show id="bcpg:dynamicCharactColumn5" force="true" />
+					<show id="bcpg:dynamicCharactColumn6" force="true" />
+					<show id="bcpg:dynamicCharactColumn7" force="true" />
+					<show id="bcpg:dynamicCharactColumn8" force="true" />
+					<show id="bcpg:dynamicCharactColumn9" force="true" />
+					<show id="bcpg:dynamicCharactColumn10" force="true" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
+					<show id="bcpg:instruction" force="true" />
+				</field-visibility>
+			</form>	
 		
 			
 			<form id="labeling">
