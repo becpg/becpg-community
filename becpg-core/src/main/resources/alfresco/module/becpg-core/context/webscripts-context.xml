@@ -97,6 +97,11 @@
 		<property name="batchQueueService" ref="batchQueueService" />
 	</bean>
 	
+   <!-- System Configuration -->
+	<bean id="webscript.fr.becpg.admin.systemConfiguration.post" class="fr.becpg.repo.web.scripts.admin.SystemConfigurationWebScript" parent="webscript">
+		<property name="systemConfigurationService" ref="systemConfigurationService" />
+	</bean>
+	
 
 	<!-- Entity lists -->
 	<bean id="webscript.fr.becpg.entity.entityLists.get" class="fr.becpg.repo.web.scripts.entity.EntityListsWebScript" parent="webscript">
@@ -129,9 +134,8 @@
 		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
 		<property name="datalistOutputWriterFactory" ref="datalistOutputWriterFactory" />
 		<property name="namespaceService" ref="NamespaceService" />
-		<property name="authorityService" ref="authorityService"/>
 		<property name="lockService" ref="lockService" />
-		<property name="effectiveFilterEnabled" value="${beCPG.datalist.effectiveFilterEnabled}"/>
+		<property name="systemConfigurationService" ref="systemConfigurationService" />
 	</bean>
 
 	<bean id="webscript.fr.becpg.entity.datalist.sort.post" class="fr.becpg.repo.web.scripts.entity.datalist.SortDataListWebScript" parent="webscript">

@@ -18,7 +18,6 @@ import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -48,6 +47,7 @@ import fr.becpg.repo.helper.JsonHelper;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.security.SecurityService;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.web.scripts.BrowserCacheHelper;
 import fr.becpg.repo.web.scripts.WebscriptHelper;
 
@@ -156,20 +156,18 @@ public class EntityDataListWebScript extends AbstractWebScript {
 
 	private DataListExtractorFactory dataListExtractorFactory;
 
-	private AuthorityService authorityService;
-
 	private DataListOutputWriterFactory datalistOutputWriterFactory;
 
-	private boolean effectiveFilterEnabled = false;
-
-	/**
-	 * <p>Setter for the field <code>effectiveFilterEnabled</code>.</p>
-	 *
-	 * @param effectiveFilterEnabled a boolean.
-	 */
-	public void setEffectiveFilterEnabled(boolean effectiveFilterEnabled) {
-		this.effectiveFilterEnabled = effectiveFilterEnabled;
+	private SystemConfigurationService systemConfigurationService;
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
 	}
+	
+	private boolean effectiveFilterEnabled() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.datalist.effectiveFilterEnabled"));
+	}
+	
 
 	/**
 	 * <p>Setter for the field <code>datalistOutputWriterFactory</code>.</p>
@@ -214,15 +212,6 @@ public class EntityDataListWebScript extends AbstractWebScript {
 	 */
 	public void setDataListExtractorFactory(DataListExtractorFactory dataListExtractorFactory) {
 		this.dataListExtractorFactory = dataListExtractorFactory;
-	}
-
-	/**
-	 * <p>Setter for the field <code>authorityService</code>.</p>
-	 *
-	 * @param authorityService a {@link org.alfresco.service.cmr.security.AuthorityService} object.
-	 */
-	public void setAuthorityService(AuthorityService authorityService) {
-		this.authorityService = authorityService;
 	}
 
 	/**
@@ -403,7 +392,7 @@ public class EntityDataListWebScript extends AbstractWebScript {
 			dataListFilter.setFilterData(filterData);
 			dataListFilter.setFilterParams(filterParams);
 			dataListFilter.setExtraParams(extraParams);
-			dataListFilter.setEffectiveFilterOn(effectiveFilterEnabled && "true".equals(req.getParameter(PARAM_EFFECTIVE_FILTER_ON)));
+			dataListFilter.setEffectiveFilterOn(effectiveFilterEnabled() && "true".equals(req.getParameter(PARAM_EFFECTIVE_FILTER_ON)));
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Filter:" + dataListFilter.toString());
