@@ -145,37 +145,37 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		
 		flavorNodeRef = inWriteTx(() -> {
 			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(BeCPGModel.PROP_LV_CODE, "flavor");
+			properties.put(BeCPGModel.PROP_LV_VALUE, "flavor");
 			properties.put(PLMModel.PROP_REGULATORY_CODE, 1010);
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_CODE)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 					PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 		});
 		
 		preservativeNodeRef = inWriteTx(() -> {
 			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(BeCPGModel.PROP_LV_CODE, "preservative");
+			properties.put(BeCPGModel.PROP_LV_VALUE, "preservative");
 			properties.put(PLMModel.PROP_REGULATORY_CODE, 1019);
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_CODE)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 					PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 		});
 		
 		antioxidantNodeRef = inWriteTx(() -> {
 			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(BeCPGModel.PROP_LV_CODE, "antioxidant");
+			properties.put(BeCPGModel.PROP_LV_VALUE, "antioxidant");
 			properties.put(PLMModel.PROP_REGULATORY_CODE, 1002);
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_CODE)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 					PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 		});
 		
 		nutrientNodeRef = inWriteTx(() -> {
 			Map<QName, Serializable> properties = new HashMap<>();
-			properties.put(BeCPGModel.PROP_LV_CODE, "nutrient supplement");
+			properties.put(BeCPGModel.PROP_LV_VALUE, "nutrient supplement");
 			properties.put(PLMModel.PROP_REGULATORY_CODE, 1023);
 			return nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_CODE)),
+					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
 					PLMModel.TYPE_ING_TYPE_ITEM, properties).getChildRef();
 		});
 		
