@@ -195,6 +195,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
 			builder.includeReportInSearch = INSTANCE.includeReportInSearch;
+			builder.systemConfigurationService = INSTANCE.systemConfigurationService;
 		}
 		return builder;
 	}
@@ -1714,6 +1715,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
 			builder.includeReportInSearch = INSTANCE.includeReportInSearch;
+			builder.systemConfigurationService = INSTANCE.systemConfigurationService;
 		}
 
 		builder.maxResults = this.maxResults;
