@@ -31,7 +31,7 @@
             <span class="incomplete-warning"><img class="icon16" src="${url.context}/res/components/form/images/warning-16.png" title="${msg("form.field.incomplete")}" /><span>
          </#if>
          <span class="viewmode-label">${field.label?html}:</span>
-         <span id="${controlId}-currentValueDisplay" class="viewmode-value current-formula"></span>
+         <div id="${controlId}-currentValueDisplay" class="viewmode-value current-formula"></div>
       </div>
    <#else>
       <label for="${controlId}">${field.label?html}:<#if field.endpointMandatory!false || field.mandatory!false><span class="mandatory-indicator">${msg("form.required.fields.marker")}</span></#if></label>
