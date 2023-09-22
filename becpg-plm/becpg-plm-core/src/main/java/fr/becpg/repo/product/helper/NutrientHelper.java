@@ -215,7 +215,7 @@ public class NutrientHelper {
 		for (String nutrientCode : NutriScoreContext.NUTRIENT_CODE_LIST) {
 			// do not set sodium because salt is already set
 			if (NutriScoreContext.SODIUM_CODE.equals(nutrientCode) && nutriScoreContext.hasSaltScore()) {
-				return;
+				continue;
 			}
 			
 			NutListDataItem nutListItem = findNutrient(productData, nutrientCode, missingCharacts, alfrescoRepository);
@@ -225,7 +225,7 @@ public class NutrientHelper {
 				
 				if (value == null) {
 					missingCharacts.put(nutrientCode, nutListItem.getNut());
-					return;
+					continue;
 				}
 				
 				JSONObject nutrientPart = new JSONObject();
@@ -255,7 +255,7 @@ public class NutrientHelper {
 				
 				if (value == null) {
 					missingCharacts.put(physicoCode, physicoListItem.getPhysicoChem());
-					return;
+					continue;
 				}
 				
 				JSONObject nutrientPart = new JSONObject();
