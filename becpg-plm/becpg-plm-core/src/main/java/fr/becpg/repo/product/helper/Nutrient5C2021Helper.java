@@ -23,7 +23,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @version $Id: $Id
  */
 @Service
-public class Nutrient5C2021Helper implements InitializingBean, NutriScoreRegulatoryHelper {
+public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulatoryPlugin {
 	
 	private static Nutrient5C2021Helper INSTANCE = null;
 	

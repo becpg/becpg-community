@@ -78,11 +78,6 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 
-		if (!decernisService.isEnabled()) {
-			logger.debug("Decernis service is not enabled");
-			return Collections.emptyList();
-		}
-		
 		if (FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
 			logger.debug("Fast formulation skipping decernis");
 			return Collections.emptyList();
@@ -104,6 +99,12 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 					watch.start();
 				}
 				formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+				
+				if (!decernisService.isEnabled()) {
+					logger.debug("Decernis service is not enabled");
+					return Collections.emptyList();
+				}
+				
 				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
 				formulatedProduct.setRegulatoryFormulatedDate(new Date());
 				return requirements;
@@ -167,6 +168,11 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		Set<String> usages = formulatedProduct.getRegulatoryUsages().stream().map(this::extractCode).collect(Collectors.toSet());
 		StringBuilder checksumBuilder = new StringBuilder();
 		checksumBuilder.append(createRequirementChecksum(countries, usages));
+		for (RegulatoryListDataItem regulatoryListDataItem : formulatedProduct.getRegulatoryList()) {
+			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountries().stream().map(this::extractCode).collect(Collectors.toSet());
+			Set<String> itemUsages = regulatoryListDataItem.getRegulatoryUsages().stream().map(this::extractCode).collect(Collectors.toSet());
+			checksumBuilder.append(createRequirementChecksum(itemCountries, itemUsages));
+		}
 		
 		formulatedProduct.getIngList().stream()
 			.filter(ing -> ing != null && ing.getNodeRef() != null)
