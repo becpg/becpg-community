@@ -1130,6 +1130,7 @@
 					<show id="bcpg:allergenType" />
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenRegulatoryThreshold"/>
+					<show id="bcpg:allergenInVoluntaryRegulatoryThreshold"/>
 					<show id="bcpg:allergenSubset" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" force="true"/>
@@ -1151,6 +1152,12 @@
 					</field>
 					<field id="bcpg:allergenCode" />
 					<field id="bcpg:allergenRegulatoryThreshold">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">perc</control-param>
+						</control>
+					</field>
+					<field id="bcpg:allergenInVoluntaryRegulatoryThreshold">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">perc</control-param>
@@ -1182,6 +1189,7 @@
 					<show id="bcpg:allergenType" />
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenRegulatoryThreshold"/>
+					<show id="bcpg:allergenInVoluntaryRegulatoryThreshold"/>
 					<show id="bcpg:allergenSubset" />
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" force="true" />
@@ -1203,6 +1211,12 @@
 					</field>
 					<field id="bcpg:allergenCode" />
 					<field id="bcpg:allergenRegulatoryThreshold">
+						<control
+							template="/org/alfresco/components/form/controls/number-unit.ftl">
+							<control-param name="unit">perc</control-param>
+						</control>
+					</field>
+					<field id="bcpg:allergenInVoluntaryRegulatoryThreshold">
 						<control
 							template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">perc</control-param>
@@ -1256,6 +1270,7 @@
 					<show id="bcpg:allergenCode" />
 					<show id="bcpg:allergenSubset" />
 					<show id="bcpg:allergenRegulatoryThreshold"/>
+					<show id="bcpg:allergenInVoluntaryRegulatoryThreshold"/>
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="rep:reportLocales" />
@@ -1482,6 +1497,7 @@
                     <show id="bcpg:regulatoryCode" force="true"/>
                     <show id="bcpg:ingTypeV2" force="true"/>
                     <show id="bcpg:ingAllergens" force="true" />
+                    <show id="bcpg:ingAllergensQtyPerc" force="true" />
                     <show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
                     <show id="sec:readGroups" force="true"/>
@@ -1527,6 +1543,9 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
                         </control>
                     </field>
+                    <field id="bcpg:ingAllergensQtyPerc"  help-id="becpg.forms.help.ingAllergensQtyPerc" set="1-col-2" />
+                    
+                    
                     <field id="gs1:productActivityTypeCode" set="1-col-2" />
                     <field id="bcpg:isDeleted" set="2-col-2" />
                     <field id="sec:readGroups" set="2-col-2" />
@@ -1555,6 +1574,7 @@
                     <show id="bcpg:regulatoryCode" force="true"/>
                     <show id="bcpg:ingTypeV2"  force="true"/>
                     <show id="bcpg:ingAllergens" />
+                    <show id="bcpg:ingAllergensQtyPerc" />
                     <show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />        
                     <show id="sec:readGroups" force="true"/>	
@@ -1600,6 +1620,7 @@
                         <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
                         </control>
                     </field>
+                    <field id="bcpg:ingAllergensQtyPerc"  help-id="becpg.forms.help.ingAllergensQtyPerc" set="1-col-2" />
                     <field id="gs1:productActivityTypeCode" set="1-col-2" />
                     <field id="bcpg:isDeleted" set="2-col-2" />
                     <field id="sec:readGroups" set="2-col-2" />
@@ -1683,6 +1704,7 @@
                     <show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
                     <show id="bcpg:ingAllergens" />
+                    <show id="bcpg:ingAllergensQtyPerc" />
                     <show id="sec:readGroups" force="true"/>
                     <show id="bcpg:erpCode" force="true" />
                     <show id="bcpg:isDeleted"/>
