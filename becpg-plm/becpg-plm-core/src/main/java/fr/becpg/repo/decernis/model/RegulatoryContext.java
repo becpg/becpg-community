@@ -1,17 +1,14 @@
 package fr.becpg.repo.decernis.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 
 public class RegulatoryContext {
@@ -22,9 +19,6 @@ public class RegulatoryContext {
 	private Integer moduleId;
 	
 	private List<RegulatoryContextItem> contextItems = new ArrayList<>();
-	
-	private Map<String, List<IngListDataItem>> ingRegulatoryMapping = new HashMap<>();
-	
 	private List<ReqCtrlListDataItem> requirements = new LinkedList<>();
 	
 	public void setCountries(Set<String> countries) {
@@ -67,14 +61,6 @@ public class RegulatoryContext {
 		return contextItems;
 	}
 	
-	public Map<String, List<IngListDataItem>> getIngRegulatoryMapping() {
-		return ingRegulatoryMapping;
-	}
-	
-	public void setIngRegulatoryMapping(Map<String, List<IngListDataItem>> ingRegulatoryMapping) {
-		this.ingRegulatoryMapping = ingRegulatoryMapping;
-	}
-
 	public boolean isTreatable() {
 		if (!product.getAspects().contains(PLMModel.ASPECT_REGULATORY)) {
 			return false;

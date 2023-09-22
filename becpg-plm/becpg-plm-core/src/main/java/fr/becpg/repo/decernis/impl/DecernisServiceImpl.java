@@ -330,7 +330,7 @@ public class DecernisServiceImpl implements DecernisService {
 		return null;
 	}
 
-	private void checkIngredientIds(RegulatoryContext context) {
+	private void checkIngredients(RegulatoryContext context) {
 		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
 			if (ingListDataItem.getIng() != null) {
 				String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
@@ -338,10 +338,11 @@ public class DecernisServiceImpl implements DecernisService {
 					rid = fetchIngredientId(ingListDataItem, context.getRequirements());
 					nodeService.setProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE, rid);
 				}
-				if (context.getIngRegulatoryMapping().get(rid) == null) {
-					context.getIngRegulatoryMapping().put(rid, new ArrayList<>());
+				NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
+				if (ingType == null) {
+					context.getRequirements().add(createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_NO_FUNCTION_ING),
+							RequirementType.Tolerated));
 				}
-				context.getIngRegulatoryMapping().get(rid).add(ingListDataItem);
 			}
 		}
 	}
@@ -429,8 +430,15 @@ public class DecernisServiceImpl implements DecernisService {
 			if (jsonObject.has(PARAM_COUNT) && (jsonObject.getInt(PARAM_COUNT) >= 1) && jsonObject.has(PARAM_RESULTS)) {
 				JSONArray results = jsonObject.getJSONArray(PARAM_RESULTS);
 				JSONObject result = null;
-				if (jsonObject.getInt(PARAM_COUNT) > 1) {
+				if (jsonObject.getInt(PARAM_COUNT) == 1) {
+					result = results.getJSONObject(0);
+				} else {
 					result = getRidByIngName(results, ingName);
+				}
+				if (result == null) {
+					if (results.toList().stream().map(o -> ((Map<String, ?>) o).get("did")).distinct().count() == 1) {
+						result = results.getJSONObject(0);
+					}
 				}
 				if (result != null) {
 					ingredientId = result.get("did").toString();
@@ -531,7 +539,7 @@ public class DecernisServiceImpl implements DecernisService {
 			context.getContextItems().add(createContextItem(item, context));
 		}
 
-		checkIngredientIds(context);
+		checkIngredients(context);
 
 		return context;
 	}

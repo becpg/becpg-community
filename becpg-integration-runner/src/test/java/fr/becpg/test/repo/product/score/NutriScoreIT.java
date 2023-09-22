@@ -39,7 +39,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 	public void testNutriScore() {
 		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			systemConfigurationService.updateConfValue("beCPG.score.nutriscore.regulatoryCass", "fr.becpg.repo.product.helper.Nutrient5C2021Helper");
+			systemConfigurationService.updateConfValue("beCPG.score.nutriscore.regulatoryClass", "fr.becpg.repo.product.helper.Nutrient5C2021Helper");
 			return null;
 		}, false, true);
 
@@ -183,7 +183,7 @@ public class NutriScoreIT extends PLMBaseTestCase {
 		}, false, true);
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			systemConfigurationService.resetConfValue("beCPG.score.nutriscore.regulatoryCass");
+			systemConfigurationService.resetConfValue("beCPG.score.nutriscore.regulatoryClass");
 			return null;
 		}, false, true);
 	}
