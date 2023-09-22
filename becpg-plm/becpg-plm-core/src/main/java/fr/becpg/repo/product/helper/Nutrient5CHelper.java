@@ -253,7 +253,7 @@ public class Nutrient5CHelper {
 	 * @param clazz a {@link java.util.List} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public static String buildNutrientClass(Double score, List<Double> ranges, List<String> clazz) {
+	public static String extractNutrientClass(Double score, List<Double> ranges, List<String> clazz) {
 		if (score != null) {
 			for (int i = 0; i < ranges.size(); i++) {
 				if (score > ranges.get(i)) {
