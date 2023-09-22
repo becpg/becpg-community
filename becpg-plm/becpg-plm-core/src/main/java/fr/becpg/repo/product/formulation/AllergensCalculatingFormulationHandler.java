@@ -120,11 +120,10 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
 			Map<String, ReqCtrlListDataItem> rclCtrlMap = new HashMap<>();
 
-			
 			// compoList
 			Double netQty = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 			if (formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-				
+
 				for (CompoListDataItem compoItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 
 					NodeRef part = compoItem.getProduct();
@@ -157,7 +156,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 												MLTextHelper.getI18NMessage(MESSAGE_NOT_VALIDATED_ALLERGEN), null, sourceNodeRefs,
 												RequirementDataType.Allergen);
 									} else {
-										if(error.getSources()!=null) {
+										if (error.getSources() != null) {
 											sourceNodeRefs.addAll(error.getSources());
 										}
 									}
@@ -173,9 +172,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 				}
 
-			} 
-			
-			
+			}
+
 			// process
 			if (formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				formulatedProduct.getProcessList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)).forEach(processItem -> {
@@ -186,28 +184,26 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 				});
 			}
-			
-			
+
 			if (!formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
 					&& !formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
 				retainNodes.addAll(formulatedProduct.getAllergenList());
-				
+
 				if (!(formulatedProduct instanceof ResourceProductData)) {
 					for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
 						allergenListDataItem.setInVoluntary(false);
 						allergenListDataItem.getInVoluntarySources().clear();
 					}
 				}
-				
+
 			} else {
 				for (AllergenListDataItem allergenListDataItem : formulatedProduct.getAllergenList()) {
-					if(Boolean.TRUE.equals(allergenListDataItem.getIsManual())) {
+					if (Boolean.TRUE.equals(allergenListDataItem.getIsManual())) {
 						retainNodes.add(allergenListDataItem);
 					}
 				}
 			}
-			
-		
+
 			formulatedProduct.getAllergenList().retainAll(retainNodes);
 			formulatedProduct.getReqCtrlList().addAll(rclCtrlMap.values());
 
@@ -231,6 +227,21 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 						allergen.getVoluntarySources().add(ing.getIng());
 					}
 					allergen.setVoluntary(true);
+
+					if (!ingItem.getAllergensQtyMap().isEmpty()
+							&& !formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
+						String code = (String) nodeService.getProperty(allergenNodeRef, PLMModel.PROP_ALLERGEN_CODE);
+						Double allergenRate = null;
+						if (ingItem.getAllergensQtyMap().containsKey(code)) {
+							allergenRate = ingItem.getAllergensQtyMap().get(code);
+						} else if (ingItem.getAllergensQtyMap().containsKey("ALL")) {
+							allergenRate = ingItem.getAllergensQtyMap().get("ALL");
+						}
+
+						if (allergenRate != null) {
+							allergen.setQtyPerc(ing.getQtyPerc() * allergenRate / 100);
+						}
+					}
 				}
 			}
 		}
@@ -246,6 +257,17 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 							allergenListDataItem.setVoluntary(false);
 						} else if (regulatoryThreshold <= allergenListDataItem.getQtyPerc()) {
 							allergenListDataItem.setVoluntary(true);
+						}
+					}
+
+					if (!Boolean.TRUE.equals(allergenListDataItem.getVoluntary())) {
+						Double inVolRegulatoryThreshold = getInVolRegulatoryThreshold(formulatedProduct, allergenListDataItem.getAllergen());
+						if (inVolRegulatoryThreshold != null && allergenListDataItem.getQtyPerc() != null) {
+							if (inVolRegulatoryThreshold > allergenListDataItem.getQtyPerc()) {
+								allergenListDataItem.setInVoluntary(false);
+							} else if (inVolRegulatoryThreshold <= allergenListDataItem.getQtyPerc()) {
+								allergenListDataItem.setInVoluntary(true);
+							}
 						}
 					}
 				}
@@ -288,6 +310,10 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		}
 
 		return ret != null ? ret : (Double) nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
+	}
+
+	private Double getInVolRegulatoryThreshold(ProductData formulatedProduct, NodeRef allergen) {
+		return (Double) nodeService.getProperty(allergen, PLMModel.PROP_ALLERGEN_INVOL_REGULATORY_THRESHOLD);
 	}
 
 	private boolean accept(ProductData formulatedProduct) {
@@ -534,13 +560,13 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					sourceNodeRefs, RequirementDataType.Allergen);
 			ret.add(error);
 		} else {
-			if(error.getSources()!=null) {
+			if (error.getSources() != null) {
 				sourceNodeRefs.addAll(error.getSources());
 			}
-			
+
 		}
 
-		if(!sourceNodeRefs.contains(partProduct.getNodeRef())) {
+		if (!sourceNodeRefs.contains(partProduct.getNodeRef())) {
 			sourceNodeRefs.add(partProduct.getNodeRef());
 		}
 
