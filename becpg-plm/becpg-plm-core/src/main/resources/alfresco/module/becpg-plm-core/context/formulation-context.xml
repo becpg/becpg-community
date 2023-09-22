@@ -196,7 +196,6 @@
 					<property name="scorePlugins">
 						<list>
 							<ref bean="ecoScore"/>
-							<ref bean="nutriScore"/>
 						</list>
 					</property>
 				</bean>
