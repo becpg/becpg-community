@@ -1202,6 +1202,10 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:allergenInVoluntaryRegulatoryThreshold">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:allergenSubset">
@@ -1329,6 +1333,13 @@
 
 		<type name="bcpg:ing">
 			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:ingAllergensQtyPerc">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+			</properties>
 			<associations>
 				<association name="bcpg:ingAllergens">
 					<source>
