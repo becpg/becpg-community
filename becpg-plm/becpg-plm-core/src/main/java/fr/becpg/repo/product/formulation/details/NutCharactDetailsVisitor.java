@@ -20,11 +20,16 @@ package fr.becpg.repo.product.formulation.details;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.product.data.CharactDetailAdditionalValue;
 import fr.becpg.repo.product.data.CharactDetails;
+import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 /**
  * <p>NutCharactDetailsVisitor class.</p>
@@ -49,9 +54,24 @@ public class NutCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netVol = FormulationHelper.getNetVolume(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 
-		visitRecur(formulatedProduct, ret, 0, level, netWeight, netVol, netQty);
+		visitRecur(formulatedProduct, formulatedProduct, ret, 0, level, netWeight, netVol, netQty);
 
 		return ret;
+	}
+	
+	@Override
+	protected void provideAdditionalValues(ProductData rootProduct, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
+		NutListDataItem nutListDataItem = (NutListDataItem) simpleCharact;
+		Double value = nutListDataItem.getPreparedValue() != null ? nutListDataItem.getPreparedValue() : nutListDataItem.getValue();
+		Double servingSize = FormulationHelper.getServingSizeInLorKg(rootProduct);
+		
+		if (servingSize != null && value != null) {
+			Double valuePerServing = (value * (servingSize * 1000d)) / 100;
+			String newUnit = unit.split("/")[0];
+			CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue(I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_nutListValuePerServing.title"),
+					FormulationHelper.calculateValue(0d, qtyUsed, valuePerServing, netQty), newUnit);
+			currentCharactDetailsValue.getAdditionalValues().add(additionalValue);
+		}
 	}
 
 }
