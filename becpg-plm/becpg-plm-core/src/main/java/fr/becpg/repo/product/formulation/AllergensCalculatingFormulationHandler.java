@@ -5,9 +5,11 @@ package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -210,10 +212,11 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		}
 
 		if (formulatedProduct.getIngList() != null) {
+			Set<NodeRef> visitedAllergens = new HashSet<>();
 			for (IngListDataItem ing : formulatedProduct.getIngList()) {
 
 				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
-
+				
 				for (NodeRef allergenNodeRef : ingItem.getAllergenList()) {
 					AllergenListDataItem allergen = findAllergen(formulatedProduct, allergenNodeRef);
 
@@ -239,7 +242,11 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 						}
 
 						if (allergenRate != null) {
-							allergen.setQtyPerc(ing.getQtyPerc() * allergenRate / 100);
+							if(!visitedAllergens.contains(allergenNodeRef)) {
+								allergen.setQtyPerc(0d);
+								visitedAllergens.add(allergenNodeRef);
+							}
+							allergen.setQtyPerc(allergen.getQtyPerc()+(ing.getQtyPerc() * allergenRate / 100));
 						}
 					}
 				}
