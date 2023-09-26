@@ -172,6 +172,7 @@
 	    <sonar.dependencyCheck.severity.blocker>9.0</sonar.dependencyCheck.severity.blocker>
         <sonar.dependencyCheck.severity.critical>7.0</sonar.dependencyCheck.severity.critical>
         <sonar.dependencyCheck.severity.major>4.0</sonar.dependencyCheck.severity.major>
+        <sonar.junit.reportPaths>${project.basedir}/target/surefire-reports/,${project.basedir}/target/failsafe-reports/</sonar.junit.reportPaths>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.ws.timeout>3600</sonar.ws.timeout>
 		<sonar.language>java</sonar.language>
@@ -459,7 +460,7 @@
 			<plugin>
 				<groupId>org.owasp</groupId>
 				<artifactId>dependency-check-maven</artifactId>
-				<version>8.2.1</version>
+				<version>8.4.0</version>
 				<configuration>
 					<skipProvidedScope>false</skipProvidedScope>
 					<skipRuntimeScope>true</skipRuntimeScope>
@@ -518,7 +519,7 @@
 			<plugin>
 				<groupId>org.owasp</groupId>
 				<artifactId>dependency-check-maven</artifactId>
-				<version>8.2.1</version>
+				<version>8.4.0</version>
 				<configuration>
 					<skipProvidedScope>false</skipProvidedScope>
 					<skipRuntimeScope>true</skipRuntimeScope>
