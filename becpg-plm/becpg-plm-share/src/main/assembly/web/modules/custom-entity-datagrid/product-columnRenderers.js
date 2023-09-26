@@ -505,6 +505,30 @@ if (beCPG.module.EntityDataGridRenderers) {
       	return "";
       }
   });
+
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : ["", "bcpg:regulatoryResult"],
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+      	if(data.value != null && data.displayValue != null){
+			
+			var color = null;
+			
+			if (data.value == "PROHIBITED") {
+				color = "rgb(255, 106, 106)";
+			} else if (data.value == "PERMITTED") {
+				color = "rgb(190, 229, 84)";
+			}
+			
+			if (color) {
+				elCell.style = 'background-color:' + color + ';';
+			}
+			
+			return Alfresco.util.encodeHTML(data.displayValue);
+			
+      	}      
+      	return "";
+      }
+  });
 	
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
