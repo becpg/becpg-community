@@ -24,16 +24,36 @@
 		      						+ "\n">
 	      </#if>
 	      
+	      <#assign energy = msg("nutriscore.display.energy", nutrientDetails.parts['ENER-KJO'].lowerValue, nutrientDetails.parts['ENER-KJO'].value, nutrientDetails.parts['ENER-KJO'].upperValue, nutrientDetails.parts['ENER-KJO'].score)
+	      						+ "\n">
+	      
+	      <#assign sugar = msg("nutriscore.display.totalsugar", nutrientDetails.parts['SUGAR'].lowerValue, nutrientDetails.parts['SUGAR'].value, nutrientDetails.parts['SUGAR'].upperValue, nutrientDetails.parts['SUGAR'].score)
+	      						+ "\n">
+	      
+ 		  <#assign sodiumSalt = "">
+	      
+	      <#if nutrientDetails.displaySaltScore == true>
+		      <#assign sodiumSalt = msg("nutriscore.display.salt", nutrientDetails.parts['NA'].lowerValue, nutrientDetails.parts['NA'].value, nutrientDetails.parts['NA'].upperValue, nutrientDetails.parts['NA'].score)
+		      						+ "\n">
+	       <#else>
+		      <#assign sodiumSalt = msg("nutriscore.display.sodium", nutrientDetails.parts['NA'].lowerValue, nutrientDetails.parts['NA'].value, nutrientDetails.parts['NA'].upperValue, nutrientDetails.parts['NA'].score)
+		      						+ "\n">
+	      </#if>
+	      
+	      <#assign nonNutritiveSugars = "">
+	      
+	      <#if nutrientDetails.nonNutritiveSugars?size != 0>
+		      <#assign nonNutritiveSugars = msg("nutriscore.display.nns", nutrientDetails.nonNutritiveSugars?join(",")) + "\n">
+	      </#if>
+	      
 	      <#assign displayValue = msg("nutriscore.display.negative") 
 	      						+ "\n"
-	      						+ msg("nutriscore.display.energy", nutrientDetails.parts['ENER-KJO'].lowerValue, nutrientDetails.parts['ENER-KJO'].value, nutrientDetails.parts['ENER-KJO'].upperValue, nutrientDetails.parts['ENER-KJO'].score)
-	      						+ "\n"
+	      						+ energy
 	      						+ satFat
 	      						+ totalFat
-	      						+ msg("nutriscore.display.totalsugar", nutrientDetails.parts['SUGAR'].lowerValue, nutrientDetails.parts['SUGAR'].value, nutrientDetails.parts['SUGAR'].upperValue, nutrientDetails.parts['SUGAR'].score)
-	      						+ "\n"
-	      						+ msg("nutriscore.display.sodium", nutrientDetails.parts['NA'].lowerValue, nutrientDetails.parts['NA'].value, nutrientDetails.parts['NA'].upperValue, nutrientDetails.parts['NA'].score)
-	      						+ "\n"
+	      						+ sugar
+	      						+ sodiumSalt
+	      						+ nonNutritiveSugars
 	      						+ "\n"
 	      						+ msg("nutriscore.display.positive")
 	      						+ "\n"
