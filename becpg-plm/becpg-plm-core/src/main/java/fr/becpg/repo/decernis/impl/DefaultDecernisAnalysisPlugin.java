@@ -94,8 +94,8 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	public String token() {
 		return systemConfigurationService.confValue("beCPG.decernis.token");
 	}
-	public String addInfoReqCtrl() {
-		return systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrll");
+	public Boolean addInfoReqCtrl() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrl"));
 	}
 
 	@Override
@@ -276,7 +276,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Adding not listed ing :" + result.getString("did"));
 					}
-				} else if (Boolean.TRUE.equals(Boolean.parseBoolean(addInfoReqCtrl()))) {
+				} else if (Boolean.TRUE.equals(addInfoReqCtrl())) {
 					
 					String threshold = (result.has(THRESHOLD) && !result.getString(THRESHOLD).equals("None")
 							? result.getString(THRESHOLD)

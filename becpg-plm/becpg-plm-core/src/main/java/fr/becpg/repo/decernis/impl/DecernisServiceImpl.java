@@ -203,6 +203,10 @@ public class DecernisServiceImpl implements DecernisService {
 
 	private RegulatoryResult extractResult(List<JSONObject> analysisList) {
 
+		if (analysisList.isEmpty()) {
+			return null;
+		}
+		
 		boolean notListed = false;
 
 		for (JSONObject analysis : analysisList) {
