@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -87,7 +88,11 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 			logger.debug("Skip decernis in reformulateCount " + formulatedProduct.getCurrentReformulateCount());
 			return Collections.emptyList();
 		}
-			
+		
+		if (formulatedProduct.getRegulatoryList() == null) {
+			formulatedProduct.setRegulatoryList(new LinkedList<>());
+		}
+		
 		updateProductFromRegulatoryList(formulatedProduct);
 		
 		boolean isDirty = isDirty(formulatedProduct);
@@ -174,11 +179,13 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 			checksumBuilder.append(createRequirementChecksum(itemCountries, itemUsages));
 		}
 		
-		formulatedProduct.getIngList().stream()
+		if (formulatedProduct.getIngList() != null) {
+			formulatedProduct.getIngList().stream()
 			.filter(ing -> ing != null && ing.getNodeRef() != null)
 			.map(ing -> ing.getNodeRef().toString() + ing.getIng() + ing.getValue())
 			.sorted()
 			.forEach(checksumBuilder::append);
+		}
 		
 		return checksumBuilder.toString();
 	}
