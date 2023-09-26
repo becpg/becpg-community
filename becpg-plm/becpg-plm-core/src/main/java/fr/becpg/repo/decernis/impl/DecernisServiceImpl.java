@@ -19,7 +19,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -43,6 +42,7 @@ import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.RegulatoryResult;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -65,10 +65,6 @@ public class DecernisServiceImpl implements DecernisService {
 	private static final String MESSAGE_NO_FUNCTION_ING = "message.decernis.ingredient.noFunction";
 	private static final String MESSAGE_NO_CODE_CHARACT = "message.decernis.charact.noCode";
 	private static final String MESSAGE_SEVERAL_RID_ING = "message.decernis.ingredient.severalRid";
-
-	private static final String PROHIBITED = "message.decernis.ingredient.result.prohibited";
-	private static final String PERMITTED = "message.decernis.ingredient.result.permitted";
-	private static final String NOT_LISTED = "message.decernis.ingredient.result.notListed";
 
 	private static final String PARAM_COMPANY = "company";
 	private static final String PARAM_FORMULA = "formula";
@@ -135,9 +131,14 @@ public class DecernisServiceImpl implements DecernisService {
 	public List<ReqCtrlListDataItem> extractRequirements(ProductData product) {
 
 		try {
+			resetRegulatoryResults(product);
+			
 			RegulatoryContext context = createContext(product);
 
 			if (context.isTreatable()) {
+				
+				checkIngredients(context);
+				
 				boolean recipeCreated = false;
 
 				if (!context.getRegulatoryMode().equals(DecernisMode.BECPG_ONLY)) {
@@ -171,6 +172,13 @@ public class DecernisServiceImpl implements DecernisService {
 		}
 	}
 
+	private void resetRegulatoryResults(ProductData product) {
+		product.setRegulatoryResult(null);
+		for (RegulatoryListDataItem regulatoryItem : product.getRegulatoryList()) {
+			regulatoryItem.setRegulatoryResult(null);
+		}
+	}
+
 	private DecernisAnalysisPlugin getAnalysisPlugin() {
 		for (DecernisAnalysisPlugin plugin : decernisPlugins) {
 			if (plugin.isEnabled()) {
@@ -193,14 +201,14 @@ public class DecernisServiceImpl implements DecernisService {
 		productContext.getProduct().setRegulatoryResult(extractResult(analysisList));
 	}
 
-	private String extractResult(List<JSONObject> analysisList) {
+	private RegulatoryResult extractResult(List<JSONObject> analysisList) {
 
 		boolean notListed = false;
 
 		for (JSONObject analysis : analysisList) {
 			String result = getAnalysisPlugin().extractAnalysisResult(analysis);
 			if (result.startsWith("prohibited")) {
-				return I18NUtil.getMessage(PROHIBITED);
+				return RegulatoryResult.PROHIBITED;
 			}
 			if (result.startsWith("not listed")) {
 				notListed = true;
@@ -208,10 +216,10 @@ public class DecernisServiceImpl implements DecernisService {
 		}
 
 		if (notListed) {
-			return I18NUtil.getMessage(NOT_LISTED);
+			return RegulatoryResult.NOT_LISTED;
 		}
 
-		return I18NUtil.getMessage(PERMITTED);
+		return RegulatoryResult.PERMITTED;
 	}
 
 	private List<JSONObject> analyzeContext(RegulatoryContext productContext, Set<String> usages, Set<String> countries, Integer moduleId) {
@@ -538,8 +546,6 @@ public class DecernisServiceImpl implements DecernisService {
 		for (RegulatoryListDataItem item : product.getRegulatoryList()) {
 			context.getContextItems().add(createContextItem(item, context));
 		}
-
-		checkIngredients(context);
 
 		return context;
 	}

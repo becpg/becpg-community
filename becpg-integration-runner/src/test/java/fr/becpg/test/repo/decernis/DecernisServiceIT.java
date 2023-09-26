@@ -13,7 +13,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.model.BeCPGModel;
@@ -26,6 +25,7 @@ import fr.becpg.repo.decernis.impl.DefaultDecernisAnalysisPlugin;
 import fr.becpg.repo.decernis.impl.V5DecernisAnalysisPlugin;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.RegulatoryResult;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -288,7 +288,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				assertEquals(RequirementDataType.Specification, requirements.get(0).getReqDataType());
 				assertEquals(ing1, requirements.get(0).getCharact());
 				
-				assertEquals(I18NUtil.getMessage("message.decernis.ingredient.result.permitted"), item1.getRegulatoryResult());
+				assertEquals(RegulatoryResult.PERMITTED, item1.getRegulatoryResult());
 				
 				return null;
 			});
@@ -342,7 +342,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				assertEquals(RequirementDataType.Specification, requirements.get(0).getReqDataType());
 				assertEquals(ing1, requirements.get(0).getCharact());
 				
-				assertEquals(I18NUtil.getMessage("message.decernis.ingredient.result.notListed"), item1.getRegulatoryResult());
+				assertEquals(RegulatoryResult.NOT_LISTED, item1.getRegulatoryResult());
 				
 				return null;
 			});

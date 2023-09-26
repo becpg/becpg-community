@@ -10,6 +10,7 @@ import java.util.Objects;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.product.data.constraints.RegulatoryResult;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -26,7 +27,7 @@ public class RegulatoryListDataItem extends BeCPGDataObject {
 	
 	private List<NodeRef> regulatoryUsages;
 	
-	private String regulatoryResult;
+	private RegulatoryResult regulatoryResult;
 	
 	private SystemState regulatoryState;
 	
@@ -78,11 +79,11 @@ public class RegulatoryListDataItem extends BeCPGDataObject {
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryResult")
-	public String getRegulatoryResult() {
+	public RegulatoryResult getRegulatoryResult() {
 		return regulatoryResult;
 	}
 
-	public void setRegulatoryResult(String regulatoryResult) {
+	public void setRegulatoryResult(RegulatoryResult regulatoryResult) {
 		this.regulatoryResult = regulatoryResult;
 	}
 
