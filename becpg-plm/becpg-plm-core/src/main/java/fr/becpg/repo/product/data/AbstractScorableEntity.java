@@ -118,11 +118,8 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 			for (Map.Entry<String, ReqCtrlListDataItem> dbKV : dbReqCtrlList.entrySet()) {
 				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
 
-					if (((dbKV.getValue().getFormulationChainId() == null)
-							&& ((getFormulationChainId() == null) || FormulationService.FAST_FORMULATION_CHAINID.equals(getFormulationChainId())
-									|| FormulationService.DEFAULT_CHAIN_ID.equals(getFormulationChainId())))
-							|| ((dbKV.getValue().getFormulationChainId() != null)
-									&& dbKV.getValue().getFormulationChainId().equals(getFormulationChainId()))) {
+					if ((dbKV.getValue().getFormulationChainId() == null)
+							|| ((dbKV.getValue().getFormulationChainId() != null) && dbKV.getValue().getFormulationChainId().equals(getFormulationChainId()))) {
 						// remove
 						reqCtrlList.remove(dbKV.getValue());
 						hasChanged = true;
