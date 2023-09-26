@@ -212,9 +212,12 @@ public class NutrientHelper {
 	}
 
 	private static void visitNutrientList(ProductData productData, NutriScoreContext nutriScoreContext, Map<String, NodeRef> missingCharacts, AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		
+		boolean hasSalt = false;
+		
 		for (String nutrientCode : NutriScoreContext.NUTRIENT_CODE_LIST) {
 			// do not set sodium because salt is already set
-			if (NutriScoreContext.SODIUM_CODE.equals(nutrientCode) && nutriScoreContext.hasSaltScore()) {
+			if (NutriScoreContext.SODIUM_CODE.equals(nutrientCode) && hasSalt) {
 				continue;
 			}
 			
@@ -236,7 +239,7 @@ public class NutrientHelper {
 				if (NutriScoreContext.SALT_CODE.equals(nutrientCode)) {
 					nutrientCode = NutriScoreContext.SODIUM_CODE;
 					nutrientPart.put(NutriScoreContext.VALUE, value * 1000 / 2.5);
-					nutriScoreContext.setHasSaltScore(true);
+					hasSalt = true;
 				} else if (NutriScoreContext.SODIUM_CODE.equals(nutrientCode)) {
 					nutrientPart.put(NutriScoreContext.VALUE, value * 1000);
 				}
@@ -306,5 +309,47 @@ public class NutrientHelper {
 		
 		return null;
 	}
+	
+	public static void buildNutriScorePart(JSONObject part, double[] categories) {
+		buildNutriScorePart(part, categories, false);
+	}
+	
+	public static void buildNutriScorePart(JSONObject part, double[] categories, boolean includeLower) {
+		
+		int score = categories.length;
+		
+		Double value = 0d;
+		
+		if (part.has(NutriScoreContext.VALUE)) {
+			value = part.getDouble(NutriScoreContext.VALUE);
+		}
+		
+		double lower = 0;
+		double upper = Double.POSITIVE_INFINITY;
+		
+		for (double threshold : categories) {
+			
+			lower = threshold;
+			
+			if ((value > threshold || includeLower && value == threshold) && (threshold != -1)) {
+				break;
+			}
+			
+			if (threshold != -1) {
+				upper = threshold;
+			}
+			
+			score--;
+		}
+		
+		if (lower == upper) {
+			lower = Double.NEGATIVE_INFINITY;
+		}
+		
+		part.put(NutriScoreContext.LOWER_VALUE, lower == Double.NEGATIVE_INFINITY ? "-Inf" : lower);
+		part.put(NutriScoreContext.UPPER_VALUE, upper == Double.POSITIVE_INFINITY ? "+Inf" : upper);
+		part.put(NutriScoreContext.SCORE, score);
+	}
+	
 
 }
