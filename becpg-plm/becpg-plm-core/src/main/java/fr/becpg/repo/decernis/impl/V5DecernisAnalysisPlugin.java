@@ -78,8 +78,8 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	public String token() {
 		return systemConfigurationService.confValue("beCPG.decernis.token");
 	}
-	public String addInfoReqCtrl() {
-		return systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrll");
+	public Boolean addInfoReqCtrl() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrl"));
 	}
 
 	private static final Map<Integer, String> moduleIdMap = new HashMap<>();
