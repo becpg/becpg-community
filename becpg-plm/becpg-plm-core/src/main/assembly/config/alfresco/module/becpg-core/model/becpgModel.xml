@@ -781,6 +781,16 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:regulatoryResults" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>PROHIBITED</value>
+					<value>PERMITTED</value>
+					<value>NOT_LISTED</value>
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:regulatoryModules" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -5588,6 +5598,9 @@
 					    <tokenised>true</tokenised>
 					    <facetable>false</facetable>
 					</index>
+					<constraints>
+						<constraint ref="bcpg:regulatoryResults"></constraint>
+					</constraints>
 				</property>
 				<property name="bcpg:regulatoryState">
 					<type>d:text</type>

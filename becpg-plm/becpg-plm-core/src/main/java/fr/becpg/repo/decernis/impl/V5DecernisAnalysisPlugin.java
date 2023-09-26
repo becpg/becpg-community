@@ -170,6 +170,10 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 			if (ingType != null) {
 				String functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_VALUE);
 				String function = findFunction(moduleId, functionValue);
+				if (function == null) {
+					functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE);
+					function = findFunction(moduleId, functionValue);
+				}
 				if (function != null) {
 					String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
 					if (rid != null && !rid.isBlank()) {
@@ -240,7 +244,9 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 				return function;
 			}
 		}
-		logger.error("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue + ", available functions are: " + functionsMap.get(moduelId));
+		if (logger.isDebugEnabled()) {
+			logger.debug("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue + ", available functions are: " + functionsMap.get(moduelId));
+		}
 		return null;
 	}
 
