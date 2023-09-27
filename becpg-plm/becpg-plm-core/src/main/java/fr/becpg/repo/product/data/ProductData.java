@@ -27,6 +27,7 @@ import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.glop.model.GlopData;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RegulatoryResult;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.meat.MeatContentData;
@@ -205,7 +206,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private Date regulatoryFormulatedDate;
 	private DecernisMode regulatoryMode = DecernisMode.BECPG_ONLY;
 	private String regulatoryRecipeId;
-	private String regulatoryResult;
+	private RegulatoryResult regulatoryResult;
 	private String regulatoryUrl;
 	
 	/** 
@@ -2072,11 +2073,11 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryResult")
-	public String getRegulatoryResult() {
+	public RegulatoryResult getRegulatoryResult() {
 		return regulatoryResult;
 	}
 	
-	public void setRegulatoryResult(String regulatoryResult) {
+	public void setRegulatoryResult(RegulatoryResult regulatoryResult) {
 		this.regulatoryResult = regulatoryResult;
 	}
 

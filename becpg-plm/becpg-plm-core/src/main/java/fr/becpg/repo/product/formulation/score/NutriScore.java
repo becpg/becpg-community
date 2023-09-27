@@ -6,7 +6,6 @@ import java.util.Locale;
 import org.alfresco.service.cmr.repository.MLText;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
@@ -16,18 +15,11 @@ import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
-import fr.becpg.repo.product.helper.NutriScoreRegulatoryHelper;
+import fr.becpg.repo.product.helper.NutrientRegulatoryHelper;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
-import fr.becpg.repo.system.SystemConfigurationService;
 
 @Service("nutriScore")
 public class NutriScore implements ScoreCalculatingPlugin {
-
-	@Autowired
-	private SystemConfigurationService systemConfigurationService;
-	
-	@Autowired
-	private NutriScoreRegulatoryHelper[] regulatoryHelpers;
 	
 	private static final Log logger = LogFactory.getLog(NutriScore.class);
 	
@@ -42,15 +34,13 @@ public class NutriScore implements ScoreCalculatingPlugin {
 		
 		try {
 			
-			NutriScoreRegulatoryHelper regulatoryHelper = retrieveRegulatoryHelper();
-			
-			NutriScoreContext nutriScoreContext = regulatoryHelper.buildContext(productData);
+			NutriScoreContext nutriScoreContext = NutrientRegulatoryHelper.buildContext(productData);
 			
 			if (nutriScoreContext != null) {
-				double computedScore = regulatoryHelper.computeScore(nutriScoreContext);
+				double computedScore = NutrientRegulatoryHelper.computeScore(nutriScoreContext);
 				productData.setNutrientScore(computedScore);
 				
-				String extractedClass = regulatoryHelper.extractClass(nutriScoreContext);
+				String extractedClass = NutrientRegulatoryHelper.extractClass(nutriScoreContext);
 				productData.setNutrientClass(extractedClass);
 				
 				productData.setNutrientDetails(nutriScoreContext.toJSON().toString());
@@ -71,16 +61,6 @@ public class NutriScore implements ScoreCalculatingPlugin {
 		}
 		
 		return true;
-	}
-	
-	private NutriScoreRegulatoryHelper retrieveRegulatoryHelper() {
-		String regulatoryClassName = systemConfigurationService.confValue("beCPG.score.nutriscore.regulatoryCass");
-		for (NutriScoreRegulatoryHelper helper : regulatoryHelpers) {
-			if (helper.getClass().getName().equals(regulatoryClassName)) {
-				return helper;
-			}
-		}
-		throw new IllegalStateException("Regulatory helper class unknown: " + regulatoryClassName);
 	}
 	
 }

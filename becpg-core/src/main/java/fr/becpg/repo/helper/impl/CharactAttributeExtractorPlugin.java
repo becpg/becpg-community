@@ -24,11 +24,11 @@ import java.util.Collection;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>CharactAttributeExtractorPlugin class.</p>
@@ -39,8 +39,9 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 @Service
 public class CharactAttributeExtractorPlugin extends AbstractExprNameExtractor {
 
-	@Value("${beCPG.charact.name.format}")
-	private String charactNameFormat;
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+
 
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
@@ -54,7 +55,7 @@ public class CharactAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		return extractExpr(nodeRef, charactNameFormat);
+		return extractExpr(nodeRef, systemConfigurationService.confValue("beCPG.charact.name.format"));
 	}
 
 	/** {@inheritDoc} */

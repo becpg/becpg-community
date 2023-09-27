@@ -482,7 +482,7 @@ if (beCPG.module.EntityDataGridRenderers) {
   
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
+      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold","bcpg:allergenInVoluntaryRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
       		var unit, qty;
@@ -501,6 +501,30 @@ if (beCPG.module.EntityDataGridRenderers) {
 			 }
       		
       		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,5).toLocaleString( beCPG.util.getJSLocale() ) + unit);
+      	}      
+      	return "";
+      }
+  });
+
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : ["", "bcpg:regulatoryResult"],
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+      	if(data.value != null && data.displayValue != null){
+			
+			var color = null;
+			
+			if (data.value == "PROHIBITED") {
+				color = "rgb(255, 106, 106)";
+			} else if (data.value == "PERMITTED") {
+				color = "rgb(190, 229, 84)";
+			}
+			
+			if (color) {
+				elCell.style = 'background-color:' + color + ';';
+			}
+			
+			return Alfresco.util.encodeHTML(data.displayValue);
+			
       	}      
       	return "";
       }

@@ -384,7 +384,9 @@ public interface PLMModel {
 	QName PROP_ALLERGEN_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "allergenType");
 	/** Constant <code>PROP_ALLERGEN_REGULATORY_THRESHOLD</code> */
 	QName PROP_ALLERGEN_REGULATORY_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "allergenRegulatoryThreshold");
-
+	
+	QName PROP_ALLERGEN_INVOL_REGULATORY_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "allergenInVoluntaryRegulatoryThreshold");
+	
 	// cost
 	/** Constant <code>TYPE_COST</code> */
 	QName TYPE_COST = QName.createQName(BeCPGModel.BECPG_URI, "cost");
@@ -715,6 +717,8 @@ public interface PLMModel {
 	QName PROP_REGULATORY_MODULE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryModule");
 	
 	QName PROP_REGULATORY_ID = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryId");
+	
+	QName PROP_REGULATORY_RESULT = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryResult");
 
 	//Chemical code
 	/** Constant <code>PROP_CAS_NUMBER</code> */

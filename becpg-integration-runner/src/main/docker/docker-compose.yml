@@ -104,7 +104,8 @@ services:
 #        - 8161:8161 # Web Console
 
   becpg-report:
-    image:  ${docker.becpg.url}/becpg-report:3.2.3
+    image:  ${docker.becpg.url}/becpg-report:4.4.0
     user: root
-
+    ports:
+       - "8086:8080"
 
