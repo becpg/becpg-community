@@ -89,6 +89,11 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 			return Collections.emptyList();
 		}
 		
+		if (!decernisService.isEnabled()) {
+			logger.debug("Decernis service is not enabled");
+			return Collections.emptyList();
+		}
+		
 		if (formulatedProduct.getRegulatoryList() == null) {
 			formulatedProduct.setRegulatoryList(new LinkedList<>());
 		}
@@ -103,12 +108,8 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 					watch = new StopWatch();
 					watch.start();
 				}
-				formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 				
-				if (!decernisService.isEnabled()) {
-					logger.debug("Decernis service is not enabled");
-					return Collections.emptyList();
-				}
+				formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 				
 				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
 				formulatedProduct.setRegulatoryFormulatedDate(new Date());
@@ -227,6 +228,10 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 	private boolean isDirty(ProductData formulatedProduct) {
 		
+		if (isRegulatoryEmpty(formulatedProduct)) {
+			return false;
+		}
+			
 		if (!isSameRequirementChecksum(formulatedProduct)) {
 			logger.debug("Decernis checksum doesn't match: " + formulatedProduct.getRequirementChecksum());
 			return true;
@@ -242,6 +247,10 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		}
 		
 		return true;
+	}
+
+	private boolean isRegulatoryEmpty(ProductData formulatedProduct) {
+		return formulatedProduct.getRequirementChecksum() == null && (formulatedProduct.getRegulatoryCountries().isEmpty() || formulatedProduct.getRegulatoryUsages().isEmpty());
 	}
 	
 	private boolean isIngListDirty(LazyLoadingDataList<IngListDataItem> dataList) {
