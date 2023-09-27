@@ -781,6 +781,16 @@
 				</list>
 			</parameter>
 		</constraint>
+		<constraint name="bcpg:regulatoryResults" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>PROHIBITED</value>
+					<value>PERMITTED</value>
+					<value>NOT_LISTED</value>
+				</list>
+			</parameter>
+		</constraint>
 		<constraint name="bcpg:regulatoryModules" type="LIST">
 			<parameter name="allowedValues">
 				<list>
@@ -1202,6 +1212,10 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:allergenInVoluntaryRegulatoryThreshold">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
 			</properties>
 			<associations>
 				<association name="bcpg:allergenSubset">
@@ -1329,6 +1343,13 @@
 
 		<type name="bcpg:ing">
 			<parent>bcpg:charact</parent>
+			<properties>
+				<property name="bcpg:ingAllergensQtyPerc">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="false"/>
+				</property>
+			</properties>
 			<associations>
 				<association name="bcpg:ingAllergens">
 					<source>
@@ -5577,6 +5598,9 @@
 					    <tokenised>true</tokenised>
 					    <facetable>false</facetable>
 					</index>
+					<constraints>
+						<constraint ref="bcpg:regulatoryResults"></constraint>
+					</constraints>
 				</property>
 				<property name="bcpg:regulatoryState">
 					<type>d:text</type>

@@ -94,8 +94,8 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	public String token() {
 		return systemConfigurationService.confValue("beCPG.decernis.token");
 	}
-	public String addInfoReqCtrl() {
-		return systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrll");
+	public Boolean addInfoReqCtrl() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrl"));
 	}
 
 	@Override
@@ -276,7 +276,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Adding not listed ing :" + result.getString("did"));
 					}
-				} else if (Boolean.TRUE.equals(Boolean.parseBoolean(addInfoReqCtrl()))) {
+				} else if (Boolean.TRUE.equals(addInfoReqCtrl())) {
 					
 					String threshold = (result.has(THRESHOLD) && !result.getString(THRESHOLD).equals("None")
 							? result.getString(THRESHOLD)
@@ -302,7 +302,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		for (IngListDataItem ing : ingList) {
 			if (decernisID.equals(nodeService.getProperty(ing.getIng(), PLMModel.PROP_REGULATORY_CODE))) {
 				NodeRef ingType = (NodeRef) nodeService.getProperty(ing.getIng(), PLMModel.PROP_ING_TYPE_V2);
-				if (function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE))) {
+				if (ingType != null && function.equalsIgnoreCase((String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE))) {
 					return ing;
 				}
 			}

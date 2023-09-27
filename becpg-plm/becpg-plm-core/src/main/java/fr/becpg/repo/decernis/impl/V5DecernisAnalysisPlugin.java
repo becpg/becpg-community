@@ -33,7 +33,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisAnalysisPlugin;
 import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
@@ -79,8 +78,8 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	public String token() {
 		return systemConfigurationService.confValue("beCPG.decernis.token");
 	}
-	public String addInfoReqCtrl() {
-		return systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrll");
+	public Boolean addInfoReqCtrl() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.specification.addInfoReqCtrl"));
 	}
 
 	private static final Map<Integer, String> moduleIdMap = new HashMap<>();
@@ -145,6 +144,8 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	@Override
 	public JSONObject postRecipeAnalysis(RegulatoryContext context, Set<String> countries, String usage, Integer moduleId) throws JSONException {
 		
+		String recipeAnalysisResult = "";
+		
 		JSONObject payload = new JSONObject();
 		
 		JSONObject transaction = new JSONObject();
@@ -165,53 +166,72 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		recipe.put("ingredients", ingredients);
 		
 		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
-			String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
-			if (rid != null && !rid.isBlank()) {
-				String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
-				String ingName = (legalName != null) && !legalName.isEmpty() ? legalName
-						: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
-				Double ingQtyPerc = ingListDataItem.getQtyPerc();
-				JSONObject ingredient = new JSONObject();
-				NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
-				ingredient.put("name", ingName);
-				ingredient.put("spec", ingName);
-				ingredient.put("idType", "Decernis ID");
-				ingredient.put("idValue", rid);
-				ingredient.put("percentage", ingQtyPerc);
-				ingredient.put("function", findFunction(moduleId, (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE)));
-				ingredients.put(ingredient);
+			NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
+			if (ingType != null) {
+				String functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_VALUE);
+				String function = findFunction(moduleId, functionValue);
+				if (function == null) {
+					functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE);
+					function = findFunction(moduleId, functionValue);
+				}
+				if (function != null) {
+					String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
+					if (rid != null && !rid.isBlank()) {
+						String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
+						String ingName = (legalName != null) && !legalName.isEmpty() ? legalName
+								: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
+						Double ingQtyPerc = ingListDataItem.getQtyPerc();
+						JSONObject ingredient = new JSONObject();
+						ingredient.put("name", ingName);
+						ingredient.put("spec", ingName);
+						ingredient.put("idType", "Decernis ID");
+						ingredient.put("idValue", rid);
+						ingredient.put("percentage", ingQtyPerc);
+						ingredient.put("function", function);
+						ingredients.put(ingredient);
+					}
+				} else {
+					context.getRequirements().add(
+							createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_FUNCTION_NOT_RECOGNIZED, functionValue), RequirementType.Tolerated));
+				}
 			}
 		}
 		
-		JSONObject scope = new JSONObject();
-		transaction.put("scope", scope);
+		if (!ingredients.isEmpty()) {
+			JSONObject scope = new JSONObject();
+			transaction.put("scope", scope);
+			
+			scope.put("name", name);
+			
+			JSONArray country = new JSONArray();
+			scope.put("country", country);
+			countries.forEach(country::put);
+			
+			JSONArray topics = new JSONArray();
+			scope.put("topic", topics);
+			
+			JSONObject topic = new JSONObject();
+			topics.put(topic);
+			
+			topic.put("name", moduleIdMap.get(moduleId));
+			JSONObject scopeDetail = new JSONObject();
+			topic.put("scopeDetail", scopeDetail);
+			
+			JSONArray usages = new JSONArray();
+			usages.put(usage);
+			
+			scopeDetail.put("usage", usages);
+			
+			String url = analysisUrl() + "/recipe-analysis/transaction";
+			
+			HttpEntity<String> entity = createEntity(payload.toString());
+			
+			recipeAnalysisResult = restTemplate.postForObject(url, entity, String.class, new HashMap<>());
+			
+			return new JSONObject(recipeAnalysisResult);
+		}
 		
-		scope.put("name", name);
-		
-		JSONArray country = new JSONArray();
-		scope.put("country", country);
-		countries.forEach(country::put);
-		
-		JSONArray topics = new JSONArray();
-		scope.put("topic", topics);
-		
-		JSONObject topic = new JSONObject();
-		topics.put(topic);
-		
-		topic.put("name", moduleIdMap.get(moduleId));
-		JSONObject scopeDetail = new JSONObject();
-		topic.put("scopeDetail", scopeDetail);
-		
-		JSONArray usages = new JSONArray();
-		usages.put(usage);
-		
-		scopeDetail.put("usage", usages);
-		
-		String url = analysisUrl() + "/recipe-analysis/transaction";
-		
-		HttpEntity<String> entity = createEntity(payload.toString());
-		
-		return new JSONObject(restTemplate.postForObject(url, entity, String.class, new HashMap<>()));
+		return null;
 	}
 	
 	private String findFunction(Integer moduelId, String ingTypeValue) {
@@ -224,8 +244,10 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 				return function;
 			}
 		}
-		logger.error("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue + ", available functions are: " + functionsMap.get(moduelId));
-		throw new FormulateException("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue);
+		if (logger.isDebugEnabled()) {
+			logger.debug("Ingredient function is not recognized by Decernis v5 API: " + ingTypeValue + ", available functions are: " + functionsMap.get(moduelId));
+		}
+		return null;
 	}
 
 	private List<String> fetchFunctions(Integer moduelId) {

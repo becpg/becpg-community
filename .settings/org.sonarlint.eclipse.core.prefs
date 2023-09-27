@@ -1,6 +1,7 @@
 autoEnabled=true
 bindingSuggestionsDisabled=true
 eclipse.preferences.version=1
+idePrefixKey=
 projectKey=fr.becpg\:becpg-parent
 serverId=sonar.becpg.fr
 sqPrefixKey=

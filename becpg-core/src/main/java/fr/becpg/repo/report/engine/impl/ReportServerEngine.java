@@ -32,7 +32,6 @@ import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.entity.EntityService;
@@ -43,6 +42,7 @@ import fr.becpg.repo.report.entity.EntityReportData;
 import fr.becpg.repo.report.entity.ReportEngineLog;
 import fr.becpg.repo.report.entity.ReportEngineLog.ReportLogType;
 import fr.becpg.repo.report.template.ReportTplService;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.report.client.AbstractBeCPGReportClient;
 import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
@@ -63,10 +63,12 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	private EntityService entityService;
 	
 	private String instanceName;
-
-	private long reportImageMaxSizeInBytes;
-
-	private long reportDatasourceMaxSizeInBytes;
+	
+	private SystemConfigurationService systemConfigurationService;
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -89,17 +91,23 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	public void setEntityService(EntityService entityService) {
 		this.entityService = entityService;
 	}
-
-	@Value("${beCPG.report.image.maxSizeInBytes}")
-	public void setReportImageMaxSizeInBytes(long reportImageMaxSizeInBytes) {
-		this.reportImageMaxSizeInBytes = reportImageMaxSizeInBytes;
+	
+	private long reportImageMaxSizeInBytes() {
+		String confValue = systemConfigurationService.confValue("beCPG.report.image.maxSizeInBytes");
+		if (confValue != null && !confValue.isBlank()) {
+			return Long.parseLong(confValue);
+		}
+		return Long.MAX_VALUE;
 	}
-
-	@Value("${beCPG.report.datasource.maxSizeInBytes}")
-	public void setReportDatasourceMaxSizeInBytes(long reportDatasourceMaxSizeInBytes) {
-		this.reportDatasourceMaxSizeInBytes = reportDatasourceMaxSizeInBytes;
+	
+	private long reportDatasourceMaxSizeInBytes() {
+		String confValue = systemConfigurationService.confValue("beCPG.report.datasource.maxSizeInBytes");
+		if (confValue != null && !confValue.isBlank()) {
+			return Long.parseLong(confValue);
+		}
+		return Long.MAX_VALUE;
 	}
-
+	
 	public void setInstanceName(String instanceName) {
 		this.instanceName = instanceName;
 	}
@@ -153,10 +161,10 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				byte[] imageBytes = entityService.getImage(entry.getImageNodeRef());
 				if (imageBytes != null) {
 					
-					if (imageBytes.length > reportImageMaxSizeInBytes) {
+					if (imageBytes.length > reportImageMaxSizeInBytes()) {
 						
 						reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Image size exceeds: " + entry,
-								MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(), FileUtils.byteCountToDisplaySize(imageBytes.length), FileUtils.byteCountToDisplaySize(reportImageMaxSizeInBytes)), tplNodeRef));
+								MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(), FileUtils.byteCountToDisplaySize(imageBytes.length), FileUtils.byteCountToDisplaySize(reportImageMaxSizeInBytes())), tplNodeRef));
 					}
 					
 					try (InputStream in = new ByteArrayInputStream(imageBytes)) {
@@ -174,9 +182,9 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			
 			try (InputStream in = new ByteArrayInputStream(datasourceBytes)) {
 				
-				if (datasourceBytes.length > reportDatasourceMaxSizeInBytes) {
+				if (datasourceBytes.length > reportDatasourceMaxSizeInBytes()) {
 					reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Datasource size exceeds: " + params,
-							MLTextHelper.getI18NMessage("message.report.datasource.size", FileUtils.byteCountToDisplaySize(datasourceBytes.length), FileUtils.byteCountToDisplaySize(reportDatasourceMaxSizeInBytes)), tplNodeRef));
+							MLTextHelper.getI18NMessage("message.report.datasource.size", FileUtils.byteCountToDisplaySize(datasourceBytes.length), FileUtils.byteCountToDisplaySize(reportDatasourceMaxSizeInBytes())), tplNodeRef));
 				}
 				
 				List<String> errors = generateReport(reportSession, in, out);

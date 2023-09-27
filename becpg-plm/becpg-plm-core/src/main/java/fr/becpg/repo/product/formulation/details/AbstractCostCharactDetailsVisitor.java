@@ -87,7 +87,7 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 					(Boolean) nodeService.getProperty(c.getCost(), getCostFixedPropName()));
 		};
 
-		visitRecurCost(formulatedProduct, ret, 0, level, 1d, unitProvider);
+		visitRecurCost(formulatedProduct, formulatedProduct, ret, 0, level, 1d, unitProvider);
 
 		if ((formulatedProduct.getUnit() != null) && (formulatedProduct.getUnit().isLb() || formulatedProduct.getUnit().isGal())) {
 			for (NodeRef costItemNodeRef : dataListItems) {
@@ -132,7 +132,7 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 	 * @return a {@link fr.becpg.repo.product.data.CharactDetails} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	private CharactDetails visitRecurCost(ProductData formulatedProduct, CharactDetails ret, Integer currLevel, Integer maxLevel, Double ratio,
+	private CharactDetails visitRecurCost(ProductData rootProduct, ProductData formulatedProduct, CharactDetails ret, Integer currLevel, Integer maxLevel, Double ratio,
 			SimpleCharactUnitProvider unitProvider) throws FormulateException {
 
 		CostListQtyProvider qtyProvider = new CostListQtyProvider(formulatedProduct);
@@ -148,7 +148,7 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 			Composite<CompoListDataItem> composite = CompositeHelper.getHierarchicalCompoList(
 					formulatedProduct.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())));
-			visitCompoListChildren(formulatedProduct, composite, ret, formulatedProduct.getProductLossPerc(), ratio, currLevel, maxLevel, qtyProvider,
+			visitCompoListChildren(rootProduct, formulatedProduct, composite, ret, formulatedProduct.getProductLossPerc(), ratio, currLevel, maxLevel, qtyProvider,
 					unitProvider);
 		}
 
@@ -172,12 +172,12 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 					Double newRatio = qty / qtyProvider.getNetQty(null);
 
-					visitPart(formulatedProduct, partProduct, packagingListDataItem.getNodeRef(), ret, qties, currLevel, unitProvider);
+					visitPart(rootProduct, formulatedProduct, partProduct, packagingListDataItem.getNodeRef(), ret, qties, currLevel, unitProvider);
 
 					if ((maxLevel < 0) || (currLevel < maxLevel)) {
 						logger.debug("Finding one packaging with nr=" + packagingListDataItem.getProduct());
 
-						visitRecurCost(partProduct, ret, currLevel + 1, maxLevel, newRatio, unitProvider);
+						visitRecurCost(rootProduct, partProduct, ret, currLevel + 1, maxLevel, newRatio, unitProvider);
 					}
 				}
 
@@ -206,11 +206,11 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 					FormulatedQties qties = new FormulatedQties(qty, null, netQtyForCost, null);
 					Double newRatio = qty / qtyProvider.getNetQty(null);
 					
-					visitPart(formulatedProduct, partProduct, processListDataItem.getNodeRef(), ret, qties, currLevel, unitProvider);
+					visitPart(rootProduct, formulatedProduct, partProduct, processListDataItem.getNodeRef(), ret, qties, currLevel, unitProvider);
 
 					if ((maxLevel < 0) || (currLevel < maxLevel)) {
 
-						visitRecurCost(partProduct, ret, currLevel + 1, maxLevel, newRatio, unitProvider);
+						visitRecurCost(rootProduct, partProduct, ret, currLevel + 1, maxLevel, newRatio, unitProvider);
 					}
 
 				}
@@ -330,7 +330,7 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 	}
 
-	private void visitCompoListChildren(ProductData productData, Composite<CompoListDataItem> composite, CharactDetails ret, Double parentLossRatio,
+	private void visitCompoListChildren(ProductData rootProduct, ProductData productData, Composite<CompoListDataItem> composite, CharactDetails ret, Double parentLossRatio,
 			Double ratio, Integer currLevel, Integer maxLevel, CostListQtyProvider qtyProvider, SimpleCharactUnitProvider unitProvider)
 			throws FormulateException {
 
@@ -353,7 +353,7 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 				// calculate children
 				Composite<CompoListDataItem> c = component;
-				visitCompoListChildren(productData, c, ret, newLossPerc, ratio, currLevel, maxLevel, qtyProvider, unitProvider);
+				visitCompoListChildren(rootProduct, productData, c, ret, newLossPerc, ratio, currLevel, maxLevel, qtyProvider, unitProvider);
 			} else {
 
 				Double qty = qtyProvider.getQty(compoListDataItem, parentLossRatio, componentProduct) * ratio;
@@ -363,11 +363,11 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 
 				Double newRatio = qty / qtyProvider.getNetQty(null);
 
-				visitPart(productData, componentProduct, component.getData().getNodeRef(), ret, qties, currLevel, unitProvider);
+				visitPart(rootProduct, productData, componentProduct, component.getData().getNodeRef(), ret, qties, currLevel, unitProvider);
 
 				if (((maxLevel < 0) || (currLevel < maxLevel))
 						&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-					visitRecurCost(componentProduct, ret, currLevel + 1, maxLevel, newRatio, unitProvider);
+					visitRecurCost(rootProduct, componentProduct, ret, currLevel + 1, maxLevel, newRatio, unitProvider);
 				}
 
 			}
