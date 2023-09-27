@@ -19,6 +19,7 @@ package fr.becpg.repo.variant.policy;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -288,7 +289,7 @@ public class VariantPolicy extends AbstractBeCPGPolicy implements CopyServicePol
 
 	/** {@inheritDoc} */
 	@Override
-	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
+	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description, Date effetiveDate) {
 		// Do nothing
 	}
 

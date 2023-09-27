@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.version;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import org.alfresco.model.ContentModel;
@@ -112,7 +113,7 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 
 	/** {@inheritDoc} */
 	@Override
-	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description) {
+	public void impactWUsed(NodeRef entityNodeRef, VersionType versionType, String description, Date effetiveDate) {
 		//Do nothing
 	}
 

@@ -39,17 +39,18 @@ public class AuthorityHelper implements InitializingBean {
 	@Autowired
 	private AssociationService associationService;
 	
-	private static AuthorityHelper INSTANCE = null;
+	private static AuthorityHelper instance = null;
 	
 	private AuthorityHelper() {
-		
+		//Singleton
 	}
 	
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		INSTANCE = this;	
+		instance = this;	
 	}
 
+	@SuppressWarnings("deprecation")
 	public static Set<String> extractPeople(Set<String> authorities) {
 		Set<String> people = new HashSet<>();
 		
@@ -61,9 +62,9 @@ public class AuthorityHelper implements InitializingBean {
 				// Notify all members of the group
 				Set<String> users;
 				if (authType.equals(AuthorityType.GROUP)) {
-					users = INSTANCE.authorityService.getContainedAuthorities(AuthorityType.USER, authority, false);
+					users = instance.authorityService.getContainedAuthorities(AuthorityType.USER, authority, false);
 				} else {
-					users = INSTANCE.authorityService.getAllAuthorities(AuthorityType.USER);
+					users = instance.authorityService.getAllAuthorities(AuthorityType.USER);
 				}
 				
 				people.addAll(users);
@@ -79,10 +80,10 @@ public class AuthorityHelper implements InitializingBean {
 		List<NodeRef> recipients = new ArrayList<>();
 
 		for (NodeRef viewRecipient : viewRecipients) {
-			QName type = INSTANCE.nodeService.getType(viewRecipient);
+			QName type = instance.nodeService.getType(viewRecipient);
 
 			if (ContentModel.TYPE_AUTHORITY_CONTAINER.equals(type)) {
-				List<NodeRef> members = INSTANCE.associationService.getChildAssocs(viewRecipient, ContentModel.ASSOC_MEMBER);
+				List<NodeRef> members = instance.associationService.getChildAssocs(viewRecipient, ContentModel.ASSOC_MEMBER);
 				recipients.addAll(members);
 			} else {
 				recipients.add(viewRecipient);
@@ -98,9 +99,9 @@ public class AuthorityHelper implements InitializingBean {
 		boolean isFirst = true;
 		
 		for (String person : people) {
-			if (INSTANCE.personService.personExists(person)) {
+			if (instance.personService.personExists(person)) {
 				
-				String localeString = (String) INSTANCE.nodeService.getProperty(INSTANCE.personService.getPerson(person), BeCPGModel.PROP_USER_LOCALE);
+				String localeString = (String) instance.nodeService.getProperty(instance.personService.getPerson(person), BeCPGModel.PROP_USER_LOCALE);
 				
 				Locale personLocale = null;
 				
@@ -122,8 +123,8 @@ public class AuthorityHelper implements InitializingBean {
 	
 	public static List<String> extractAuthoritiesFromGroup(NodeRef group, boolean includeCurrentUser) {
 		List<String> ret = new ArrayList<>();
-		String authorityName = (String) INSTANCE.nodeService.getProperty(group, ContentModel.PROP_AUTHORITY_NAME);
-		for (String userAuth : INSTANCE.authorityService.getContainedAuthorities(AuthorityType.USER, authorityName, false)) {
+		String authorityName = (String) instance.nodeService.getProperty(group, ContentModel.PROP_AUTHORITY_NAME);
+		for (String userAuth : instance.authorityService.getContainedAuthorities(AuthorityType.USER, authorityName, false)) {
 			if (includeCurrentUser || !userAuth.equals(AuthenticationUtil.getFullyAuthenticatedUser())) {
 				ret.add(userAuth);
 			}
@@ -133,7 +134,16 @@ public class AuthorityHelper implements InitializingBean {
 	}
 	
 	public static boolean isCurrentUserExternal() {
-		for (String currAuth : INSTANCE.authorityService.getAuthorities()) {
+		for (String currAuth : instance.authorityService.getAuthorities()) {
+			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isExternalUser(String userName) {
+		for (String currAuth : instance.authorityService.getAuthoritiesForUser(userName)) {
 			if ((PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser.toString()).equals(currAuth)) {
 				return true;
 			}

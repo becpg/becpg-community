@@ -3,10 +3,12 @@
  */
 package fr.becpg.repo.product.data.ing;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -18,7 +20,6 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 
-
 /**
  * <p>IngItem class.</p>
  *
@@ -26,9 +27,9 @@ import fr.becpg.repo.repository.annotation.AlfType;
  * @version $Id: $Id
  */
 @AlfType
-@AlfQname(qname="bcpg:ing")
+@AlfQname(qname = "bcpg:ing")
 @AlfCacheable(isCharact = true)
-public class IngItem extends CompositeLabeling {	
+public class IngItem extends CompositeLabeling {
 
 	/**
 	 * 
@@ -36,20 +37,21 @@ public class IngItem extends CompositeLabeling {
 	private static final long serialVersionUID = -958461714975420707L;
 
 	private String charactName;
-	
+
 	private String ingCEECode;
-	
+
 	private String ingCASCode;
-	
+
 	private String ingRID;
-	
+
+	private String ingAllergensQtyPerc;
+
 	private IngTypeItem ingType;
-	
+
 	private Set<NodeRef> pluralParents = new HashSet<>();
-	
+
 	private List<NodeRef> allergenList = new LinkedList<>();
-	
-	
+
 	/**
 	 * <p>Constructor for IngItem.</p>
 	 */
@@ -62,15 +64,14 @@ public class IngItem extends CompositeLabeling {
 	 *
 	 * @param ingItem a {@link fr.becpg.repo.product.data.ing.IngItem} object.
 	 */
-	public IngItem(IngItem ingItem) 
-	{
+	public IngItem(IngItem ingItem) {
 		super(ingItem);
 		this.ingCEECode = ingItem.ingCEECode;
-	    this.ingType = ingItem.ingType;
-	    this.charactName = ingItem.charactName;
+		this.ingType = ingItem.ingType;
+		this.charactName = ingItem.charactName;
+		this.ingAllergensQtyPerc = ingItem.ingAllergensQtyPerc;
 	}
-	
-	
+
 	/**
 	 * <p>Getter for the field <code>charactName</code>.</p>
 	 *
@@ -81,8 +82,7 @@ public class IngItem extends CompositeLabeling {
 	public String getCharactName() {
 		return charactName;
 	}
-	
-	
+
 	/**
 	 * <p>Setter for the field <code>charactName</code>.</p>
 	 *
@@ -91,29 +91,26 @@ public class IngItem extends CompositeLabeling {
 	public void setCharactName(String charactName) {
 		this.charactName = charactName;
 	}
-	
-	
 
 	/** {@inheritDoc} */
 	@Override
 	public String getLegalName(Locale locale) {
 		String ret = MLTextHelper.getClosestValue(legalName, locale);
 
-		if(ret==null || ret.isEmpty()){
+		if (ret == null || ret.isEmpty()) {
 			return charactName;
 		}
-		
+
 		return ret;
 	}
-	
-	
+
 	/**
 	 * <p>Getter for the field <code>ingCEECode</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:ingCEECode")
+	@AlfQname(qname = "bcpg:ingCEECode")
 	public String getIngCEECode() {
 		return ingCEECode;
 	}
@@ -126,14 +123,14 @@ public class IngItem extends CompositeLabeling {
 	public void setIngCEECode(String ingCEECode) {
 		this.ingCEECode = ingCEECode;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>ingCASCode</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:ingCASCode")
+	@AlfQname(qname = "bcpg:ingCASCode")
 	public String getIngCASCode() {
 		return ingCASCode;
 	}
@@ -146,14 +143,14 @@ public class IngItem extends CompositeLabeling {
 	public void setIngCASCode(String ingCASCode) {
 		this.ingCASCode = ingCASCode;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>ingRID</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:ingRID")
+	@AlfQname(qname = "bcpg:ingRID")
 	public String getingRID() {
 		return ingRID;
 	}
@@ -167,13 +164,45 @@ public class IngItem extends CompositeLabeling {
 		this.ingRID = ingRID;
 	}
 
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingAllergensQtyPerc")
+	public String getIngAllergensQtyPerc() {
+		return ingAllergensQtyPerc;
+	}
+
+	public void setIngAllergensQtyPerc(String ingAllergensQtyPerc) {
+		this.ingAllergensQtyPerc = ingAllergensQtyPerc;
+	}
+
+	public Map<String, Double> getAllergensQtyMap() {
+		Map<String, Double> allergenMap = new HashMap<>();
+
+		if (ingAllergensQtyPerc != null && !ingAllergensQtyPerc.isBlank()) {
+			if (!ingAllergensQtyPerc.contains(",") && !ingAllergensQtyPerc.contains("|")) {
+				allergenMap.put("ALL", Double.parseDouble(ingAllergensQtyPerc));
+			} else {
+				String[] allergenEntries = ingAllergensQtyPerc.split(",");
+				for (String entry : allergenEntries) {
+					String[] parts = entry.split("\\|");
+					if (parts.length == 2) {
+						String allergenCode = parts[0];
+						Double allergenQty = Double.parseDouble(parts[1]);
+						allergenMap.put(allergenCode, allergenQty);
+					}
+				}
+			}
+		}
+
+		return allergenMap;
+	}
+
 	/**
 	 * <p>Getter for the field <code>ingType</code>.</p>
 	 *
 	 * @return a {@link fr.becpg.repo.product.data.ing.IngTypeItem} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:ingTypeV2")
+	@AlfQname(qname = "bcpg:ingTypeV2")
 	@Override
 	public IngTypeItem getIngType() {
 		return ingType;
@@ -185,7 +214,6 @@ public class IngItem extends CompositeLabeling {
 		this.ingType = ingType;
 	}
 
-	
 	/**
 	 * <p>Getter for the field <code>pluralParents</code>.</p>
 	 *
@@ -194,13 +222,13 @@ public class IngItem extends CompositeLabeling {
 	public Set<NodeRef> getPluralParents() {
 		return pluralParents;
 	}
-	
+
 	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:ingAllergens")
+	@AlfQname(qname = "bcpg:ingAllergens")
 	public List<NodeRef> getAllergenList() {
 		return allergenList;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>bioOrigin</code>.</p>
 	 *
@@ -209,10 +237,10 @@ public class IngItem extends CompositeLabeling {
 	public void setAllergenList(List<NodeRef> allergenList) {
 		this.allergenList = allergenList;
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
-	public IngItem createCopy()  {
+	public IngItem createCopy() {
 		return new IngItem(this);
 	}
 
@@ -226,9 +254,10 @@ public class IngItem extends CompositeLabeling {
 		result = prime * result + ((ingCEECode == null) ? 0 : ingCEECode.hashCode());
 		result = prime * result + ((ingRID == null) ? 0 : ingRID.hashCode());
 		result = prime * result + ((ingType == null) ? 0 : ingType.hashCode());
+		result = prime * result + ((ingAllergensQtyPerc == null) ? 0 : ingAllergensQtyPerc.hashCode());
+
 		return result;
 	}
-
 
 	/** {@inheritDoc} */
 	@Override
@@ -260,6 +289,11 @@ public class IngItem extends CompositeLabeling {
 				return false;
 		} else if (!ingRID.equals(other.ingRID))
 			return false;
+		if (ingAllergensQtyPerc == null) {
+			if (other.ingAllergensQtyPerc != null)
+				return false;
+		} else if (!ingAllergensQtyPerc.equals(other.ingAllergensQtyPerc))
+			return false;
 		if (ingType == null) {
 			if (other.ingType != null)
 				return false;
@@ -267,7 +301,5 @@ public class IngItem extends CompositeLabeling {
 			return false;
 		return true;
 	}
-
-	
 
 }

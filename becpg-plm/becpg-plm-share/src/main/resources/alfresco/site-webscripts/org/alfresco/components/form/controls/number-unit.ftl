@@ -162,7 +162,8 @@
 	             <#if field.control.params.size??>size="${field.control.params.size}"</#if> 
 	             <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> />
 				 <#if !field.disabled || (field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>	             
-	        <select id="${fieldHtmlId}-unit" name="-" tabindex="0" class="number-unit">
+	        <select id="${fieldHtmlId}-unit" name="-" tabindex="0" class="number-unit"
+	         <#if field.disabled && !(field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>disabled="true"</#if> >
 	               <#list currUnits?split(",") as nameValue>
 	                  <option value="${nameValue?html}"<#if nameValue == currUnit?string> selected="selected"</#if>>${msg("becpg.forms.unit."+nameValue?replace("-","empty"))}</option>
 	               </#list>
@@ -196,7 +197,9 @@
 	         	}, this);
 	         	})();
 			//]]></script>
-			<@formLib.renderFieldHelp field=field />
+			 <#if !field.disabled || (field.control.params.forceEditable?? && field.control.params.forceEditable == "true")>
+			      <@formLib.renderFieldHelp field=field />
+			 </#if>
 
 	   </#if>
    </#if>
