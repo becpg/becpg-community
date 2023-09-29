@@ -1333,15 +1333,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 	
 	
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName : ["bcpg:packagingListQty"],
-        renderer : function(oRecord, data, label, scope) {
-        	if (data.value != null) {
-        		return data.value.toLocaleString( beCPG.util.getJSLocale() );
-        	}
-        	return "";
-        }
-    });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:instruction"],
