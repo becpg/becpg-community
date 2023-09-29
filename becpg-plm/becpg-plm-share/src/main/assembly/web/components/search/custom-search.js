@@ -704,7 +704,7 @@
 							this.refreshSearch({
 								searchTag : "",
 								searchTerm : this.searchTerm,
-								searchQuery : encodeURIComponent("{\"" + key + "\":\"" + value + "\",\"datatype\":\"" + type + "\"}")
+								searchQuery :"{\"" + key + "\":\"" + value + "\",\"datatype\":\"" + type + "\"}"
 							});
 						},
 						/**
