@@ -4894,7 +4894,7 @@
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="bcpg:variantIds" label="hidden"></field>
-					<field id="bcpg:compoListQtySubFormula" help="{&quot;className&quot;: &quot;align-right&quot;, &quot;numberFormat&quot;:  { &quot;minimumFractionDigits&quot;: 2, &quot;maximumFractionDigits&quot;: 2}}" />
+					<field id="bcpg:compoListQtySubFormula" help="{&quot;className&quot;: &quot;align-right&quot;, &quot;numberFormat&quot;:  { &quot;minimumFractionDigits&quot;: 4, &quot;maximumFractionDigits&quot;: 4}}" />
 					<field id="bcpg:compareWithDynColumn" label="hidden" read-only="true"/>
 					<field id="bcpg:compoListQty" read-only="true"></field>
 					<field id="bcpg:compoListVolume" read-only="true"></field>
