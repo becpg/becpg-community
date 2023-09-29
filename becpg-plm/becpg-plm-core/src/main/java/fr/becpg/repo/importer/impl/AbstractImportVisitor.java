@@ -1042,11 +1042,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						}
 					}
 
-					if (BeCPGModel.PROP_LV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
+					if (BeCPGModel.PROP_LV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LKV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LV_CODE.isMatch(attribute)) {
 						if ( (properties.get(attribute) instanceof MLText)) {
 							queryBuilder.andPropEquals(attribute, ((MLText) properties.get(attribute)).getDefaultValue());
 						} else if (properties.get(attribute) != null) {
 							queryBuilder.andPropEquals(attribute, properties.get(attribute).toString());
+						} else {
+							logger.debug("Value of NodeColumnKey " + attribute + " is null (or it is not a property).");
 						}
 					}
 
