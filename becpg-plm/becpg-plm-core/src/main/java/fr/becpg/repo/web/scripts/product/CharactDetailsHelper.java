@@ -171,7 +171,7 @@ public class CharactDetailsHelper {
 				}
 
 				Integer index = indexMap.get(key);
-				Double currentAdditionalValue = 0d;
+				Double currentAdditionalValue = null;
 				boolean isNutrient = key.equals(MINI_VALUE_KEY) || key.equals(MAXI_VALUE_KEY);
 
 				if (key.equals(PREVIOUS_COST_KEY)) {
