@@ -484,10 +484,12 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
+			var forceUnit=oColumn.forceUnit;  
+			  
       		var unit, qty;
       		if(data.value == 0){
       			return "0";
-      		} else if(Math.abs(data.value) < 0.01){
+      		} else if(Math.abs(data.value) < 0.01 && !forceUnit=== "perc" || forceUnit === "ppm"){
       			qty = data.value * 10000;
       			unit = " ppm";
       		}  else{
