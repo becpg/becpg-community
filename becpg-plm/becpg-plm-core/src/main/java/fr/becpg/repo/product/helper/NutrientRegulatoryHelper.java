@@ -46,7 +46,7 @@ public class NutrientRegulatoryHelper {
 	}
 	
 	private static NutrientRegulatoryPlugin retrieveNutrientPlugin() {
-		String regulatoryClassName = instance.systemConfigurationService.confValue("beCPG.score.nutriscore.regulatoryClass");
+		String regulatoryClassName = instance.systemConfigurationService.confValue("beCPG.formulation.score.nutriscore.regulatoryClass");
 		for (NutrientRegulatoryPlugin helper : instance.nutrientPlugins) {
 			if (helper.getClass().getName().equals(regulatoryClassName)) {
 				return helper;

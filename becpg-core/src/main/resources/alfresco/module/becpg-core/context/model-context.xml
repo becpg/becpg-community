@@ -53,7 +53,7 @@
 	<!-- CurrencyConstraint -->
 	<bean id="currencyConstraint" class="fr.becpg.repo.dictionary.constraint.CurrencyConstraint">
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
-		<property name="propConstraints" value="${beCPG.currency.supported}">
+		<property name="systemConfigurationService" ref="systemConfigurationService">
 		</property>
 	</bean>
 	
