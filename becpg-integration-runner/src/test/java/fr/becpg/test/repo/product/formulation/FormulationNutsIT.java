@@ -38,7 +38,6 @@ import org.springframework.extensions.surf.util.I18NUtil;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationChain;
-import fr.becpg.repo.formulation.FormulationHandler;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -51,6 +50,7 @@ import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.repo.product.formulation.nutrient.NutrientCode;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.product.requirement.NutsRequirementScanner;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 public class FormulationNutsIT extends AbstractFinishedProductTest {
@@ -61,6 +61,9 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 	@Qualifier("productFormulationChain")
 	private FormulationChain<ProductData> formulationChain;
 
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
@@ -235,11 +238,10 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 		try {
 
 			if (propagate) {
-				for (FormulationHandler<ProductData> handler : formulationChain.getHandlers()) {
-					if (handler instanceof NutsCalculatingFormulationHandler) {
-						((NutsCalculatingFormulationHandler) handler).setPropagateModeEnable(true);
-					}
-				}
+				inWriteTx(() -> {
+					systemConfigurationService.updateConfValue("beCPG.formulation.nutList.propagateUpEnable", "true");
+					return null;
+				});
 			}
 
 			final NodeRef finishedProductNodeRef = createFullProductNodeRef("Nut formulation test 1 - " + propagate);
@@ -262,11 +264,10 @@ public class FormulationNutsIT extends AbstractFinishedProductTest {
 
 		} finally {
 			if (propagate) {
-				for (FormulationHandler<ProductData> handler : formulationChain.getHandlers()) {
-					if (handler instanceof NutsCalculatingFormulationHandler) {
-						((NutsCalculatingFormulationHandler) handler).setPropagateModeEnable(false);
-					}
-				}
+				inWriteTx(() -> {
+					systemConfigurationService.resetConfValue("beCPG.formulation.nutList.propagateUpEnable");
+					return null;
+				});
 			}
 		}
 

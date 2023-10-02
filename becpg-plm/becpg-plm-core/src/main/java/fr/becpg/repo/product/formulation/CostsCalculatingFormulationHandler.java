@@ -20,6 +20,7 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * The Class CostCalculatingVisitor.
@@ -31,7 +32,6 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 
 	private static final String MESSAGE_FORMULATE_COST_LIST_ERROR = "message.formulate.costList.error";
 	private static final Log logger = LogFactory.getLog(CostsCalculatingFormulationHandler.class);
-
 
 	/** {@inheritDoc} */
 	@Override

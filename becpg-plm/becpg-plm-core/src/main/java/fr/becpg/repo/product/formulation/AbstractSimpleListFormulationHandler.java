@@ -68,6 +68,7 @@ import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.repository.model.SourceableDataItem;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantData;
 
@@ -97,6 +98,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected boolean transientFormulation = false;
 
 	protected SpelFormulaService formulaService;
+	
+	protected SystemConfigurationService systemConfigurationService;
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>formulaService</code>.</p>
