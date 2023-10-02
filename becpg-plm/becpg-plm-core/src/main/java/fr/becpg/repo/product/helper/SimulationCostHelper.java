@@ -9,7 +9,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.product.data.EffectiveFilters;
@@ -23,6 +22,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -37,8 +37,12 @@ public class SimulationCostHelper implements InitializingBean {
 	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
-	@Value("${beCPG.formulation.costList.keepProductUnit}")
-	private boolean keepProductUnit = false;
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
+	private boolean keepProductUnit() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.costList.keepProductUnit"));
+	}
 
 	static SimulationCostHelper INSTANCE;
 
@@ -213,7 +217,7 @@ public class SimulationCostHelper implements InitializingBean {
 
 				ProductData componentProduct = INSTANCE.alfrescoRepository.findOne(productNodeRef);
 
-				Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, INSTANCE.keepProductUnit);
+				Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, INSTANCE.keepProductUnit());
 				if (logger.isDebugEnabled()) {
 					logger.debug("Get CompoListQty " + componentProduct.getName() + "qty: " + qty + " netQty " + netQty);
 				}
@@ -272,7 +276,7 @@ public class SimulationCostHelper implements InitializingBean {
 
 					ProductData componentProduct = INSTANCE.alfrescoRepository.findOne(productNodeRef);
 
-					Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, INSTANCE.keepProductUnit);
+					Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, INSTANCE.keepProductUnit());
 					if (logger.isDebugEnabled()) {
 						logger.debug("Get packagingListQty " + componentProduct.getName() + "qty: " + qty + " netQty " + netQty);
 					}

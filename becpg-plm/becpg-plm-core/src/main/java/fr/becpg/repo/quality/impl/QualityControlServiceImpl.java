@@ -60,6 +60,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.ControlableListDataItem;
 import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.UnitAwareDataItem;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>QualityControlServiceImpl class.</p>
@@ -77,22 +78,21 @@ public class QualityControlServiceImpl implements QualityControlService {
 	private EntityListDAO entityListDAO;
 	private RepositoryEntityDefReader<RepositoryEntity> repositoryEntityDefReader;
 	private NamespaceService namespaceService;
-	private String sampleIdPattern = "{qa:batchId}/{qa:qcSamplesCounter}";
+	private SystemConfigurationService systemConfigurationService;
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
+	
+	private String sampleIdPattern() {
+		return systemConfigurationService.confValue("beCPG.quality.sampleId.format");
+	}
 
 	private static final Set<QName> datalistsToCopy = new HashSet<>();
 
 	static {
 		datalistsToCopy.add(PLMModel.TYPE_COMPOLIST);
 		datalistsToCopy.add(MPMModel.TYPE_PROCESSLIST);
-	}
-
-	/**
-	 * <p>Setter for the field <code>sampleIdPattern</code>.</p>
-	 *
-	 * @param sampleIdPattern a {@link java.lang.String} object.
-	 */
-	public void setSampleIdPattern(String sampleIdPattern) {
-		this.sampleIdPattern = sampleIdPattern;
 	}
 
 	/**
@@ -287,7 +287,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 					samplesCounter = 0;
 				}
 
-				Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(sampleIdPattern);
+				Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(sampleIdPattern());
 				StringBuffer sb = new StringBuffer();
 				while (patternMatcher.find()) {
 

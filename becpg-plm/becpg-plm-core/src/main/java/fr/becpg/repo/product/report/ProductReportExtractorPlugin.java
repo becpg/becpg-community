@@ -22,7 +22,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -76,6 +75,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.variant.model.VariantData;
 
 /**
@@ -127,26 +127,36 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private static final String ATTR_ALLERGENLIST_INVOLUNTARY_FROM_PROCESS = "allergenListInVoluntaryFromProcess";
 	private static final String ATTR_ALLERGENLIST_INVOLUNTARY_FROM_RAW_MATERIAL = "allergenListInVoluntaryFromRawMaterial";
 
-	@Value("${beCPG.product.report.multiLevel}")
-	private Boolean extractInMultiLevel = false;
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
+	private Boolean extractInMultiLevel() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.multiLevel"));
+	}
 
-	@Value("${beCPG.product.report.nonEffectiveComponent}")
-	private Boolean extractNonEffectiveComponent = false;
+	private Boolean extractNonEffectiveComponent() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.nonEffectiveComponent"));
+	}
 
-	@Value("${beCPG.product.report.componentDatalistsToExtract}")
-	private String componentDatalistsToExtract = "";
+	private String componentDatalistsToExtract() {
+		return systemConfigurationService.confValue("beCPG.product.report.componentDatalistsToExtract");
+	}
 
-	@Value("${beCPG.product.report.priceBreaks}")
-	private Boolean extractPriceBreaks = false;
+	private Boolean extractPriceBreaks() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.priceBreaks"));
+	}
 
-	@Value("${beCPG.product.report.extractRawMaterial}")
-	private Boolean extractRawMaterial = false;
+	private Boolean extractRawMaterial() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.extractRawMaterial"));
+	}
 
-	@Value("${beCPG.product.report.showDeprecatedXml}")
-	private Boolean showDeprecated = false;
+	private Boolean showDeprecated() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.product.report.showDeprecatedXml"));
+	}
 
-	@Value("${beCPG.product.report.nutList.localesToExtract}")
-	private String nutLocalesToExtract;
+	private String nutLocalesToExtract() {
+		return systemConfigurationService.confValue("beCPG.product.report.nutList.localesToExtract");
+	}
 
 	@Autowired
 	protected PackagingHelper packagingHelper;
@@ -302,7 +312,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				loadAllergenLists(productData, dataListsElt, context);
 			}
 
-			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel)
+			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel())
 					|| shouldExtractList(isExtractedProduct, context, type, PLMModel.TYPE_COMPOLIST)) {
 				loadCompoList(productData, dataListsElt, context, level);
 			}
@@ -321,13 +331,13 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 			}
 
-			if (isExtractedProduct && context.isPrefOn("extractPriceBreaks", extractPriceBreaks)) {
+			if (isExtractedProduct && context.isPrefOn("extractPriceBreaks", extractPriceBreaks())) {
 
 				extractPriceBreaks(productData, dataListsElt);
 			}
 
 			// extract RawMaterials
-			if (isExtractedProduct && context.isPrefOn("extractRawMaterial", extractRawMaterial)) {
+			if (isExtractedProduct && context.isPrefOn("extractRawMaterial", extractRawMaterial())) {
 
 				extractRawMaterials(productData, dataListsElt, context);
 			}
@@ -407,9 +417,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 							entityDictionaryService.toPrefixString(dataListQName)));
 		}
 
-		return context.multiPrefsEquals(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract,
+		return context.multiPrefsEquals(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract(),
 				entityDictionaryService.toPrefixString(dataListQName))
-				|| context.multiPrefsEquals(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract,
+				|| context.multiPrefsEquals(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract(),
 						entityDictionaryService.toPrefixString(dataListQName) + "|" + entityDictionaryService.toPrefixString(type));
 	}
 
@@ -439,7 +449,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadCompoList(ProductData productData, Element dataListsElt, DefaultExtractorContext context, int level) {
 		// compoList
 		String filter = "";
-		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent)) {
+		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent())) {
 			filter = EffectiveFilters.EFFECTIVE;
 		}
 
@@ -462,7 +472,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 
 	private void loadProcessList(ProductData productData, Element dataListsElt, DefaultExtractorContext context, boolean isExtractedProduct) {
 		String filter = "";
-		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent)) {
+		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent())) {
 			filter = EffectiveFilters.EFFECTIVE;
 		}
 
@@ -475,7 +485,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						dataItem, processListElt, 1, context);
 			}
 
-			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) && isExtractedProduct) {
+			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel()) && isExtractedProduct) {
 
 				if (productData.hasCompoListEl(new EffectiveFilters<>(filter))) {
 
@@ -502,7 +512,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 	private void loadPackagingList(ProductData productData, Element dataListsElt, NodeRef defaultVariantNodeRef, DefaultExtractorContext context,
 			boolean isExtractedProduct) {
 		String filter = "";
-		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent)) {
+		if (!context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT, extractNonEffectiveComponent())) {
 			filter = EffectiveFilters.EFFECTIVE;
 		}
 
@@ -574,7 +584,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 						packagingListElt, context, 1, false, false);
 			}
 
-			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel) && isExtractedProduct) {
+			if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel()) && isExtractedProduct) {
 
 				if (productData.hasCompoListEl(new EffectiveFilters<>(filter))) {
 
@@ -771,7 +781,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 		extractVariants(currentLevelQuantities.getCompoListItem().getVariants(), partElt);
 
 		Element dataListsElt = null;
-		if (context.isNotEmptyPrefs(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract)) {
+		if (context.isNotEmptyPrefs(EntityReportParameters.PARAM_COMPONENT_DATALISTS_TO_EXTRACT, componentDatalistsToExtract())) {
 
 			boolean extractNextDatalist = true;
 
@@ -809,7 +819,7 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 			}
 		}
 
-		if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel)) {
+		if (context.isPrefOn(EntityReportParameters.PARAM_EXTRACT_IN_MULTILEVEL, extractInMultiLevel())) {
 
 			if ((nodeService.getType(currentLevelQuantities.getCompoListItem().getProduct()).equals(PLMModel.TYPE_SEMIFINISHEDPRODUCT)
 					|| nodeService.getType(currentLevelQuantities.getCompoListItem().getProduct()).equals(PLMModel.TYPE_FINISHEDPRODUCT))) {
@@ -933,9 +943,9 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 					boolean isDisplayed = isCharactDisplayedForLocale(dataListItem.getNut());
 
 					RegulationFormulationHelper.extractXMLAttribute(nutListElt, dataListItem.getRoundedValue(), I18NUtil.getLocale(), isDisplayed,
-							context.getPrefValue("nutLocalesToExtract", nutLocalesToExtract));
+							context.getPrefValue("nutLocalesToExtract", nutLocalesToExtract()));
 
-					if (Boolean.TRUE.equals(showDeprecated)) {
+					if (Boolean.TRUE.equals(showDeprecated())) {
 
 						addCDATA(nutListElt, PLMModel.PROP_NUTGDA, nut.getNutGDA() != null ? nut.getNutGDA().toString() : "", null);
 
@@ -1776,8 +1786,8 @@ public class ProductReportExtractorPlugin extends DefaultEntityReportExtractor {
 				return true;
 			}
 
-			if ((multilineProperties != null)
-					&& context.prefsContains("multilineProperties", multilineProperties, attribute.toPrefixString(namespaceService))) {
+			if ((multilineProperties() != null)
+					&& context.prefsContains("multilineProperties", multilineProperties(), attribute.toPrefixString(namespaceService))) {
 				return true;
 			}
 

@@ -39,6 +39,7 @@ import fr.becpg.repo.entity.datalist.WUsedListService;
 import fr.becpg.repo.entity.datalist.WUsedListService.WUsedOperator;
 import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>ProductAttributeExtractorPlugin class.</p>
@@ -52,26 +53,11 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	@Autowired
 	private WUsedListService wUsedListService;
 	
-	@Value("${beCPG.product.name.format}")
-	private String productNameFormat;
-
-
-	/**
-	 * <p>Setter for the field <code>productNameFormat</code>.</p>
-	 *
-	 * @param productNameFormat a {@link java.lang.String} object.
-	 */
-	public void setProductNameFormat(String productNameFormat) {
-		this.productNameFormat = productNameFormat;
-	}
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 	
-	/**
-	 * <p>Getter for the field <code>productNameFormat</code>.</p>
-	 *
-	 * @return a {@link java.lang.String} object.
-	 */
-	public String getProductNameFormat() {
-		return productNameFormat;
+	private String productNameFormat() {
+		return systemConfigurationService.confValue("beCPG.product.name.format");
 	}
 
 	@Autowired
@@ -87,12 +73,12 @@ public class ProductAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	/** {@inheritDoc} */
 	@Override
 	public String extractPropName(QName type, NodeRef nodeRef) {
-		return extractExpr(nodeRef, productNameFormat);
+		return extractExpr(nodeRef, productNameFormat());
 	}
 	
 	@Override
 	public String extractPropName(JSONObject jsonEntity) {
-		return expressionService.extractExpr(jsonEntity, productNameFormat);
+		return expressionService.extractExpr(jsonEntity, productNameFormat());
 	}
 	
 	/** {@inheritDoc} */

@@ -63,7 +63,7 @@
 		<property name="associationService" ref="associationService" />
 		<property name="paginatedSearchCache" ref="paginatedSearchCache"/>
 		<property name="repoService" ref="repoService"/>
-		<property name="showEntitiesInTree" value="${becpg.doclibtree.showEntities}"/>
+		<property name="systemConfigurationService" ref="systemConfigurationService"/>
 		<property name="permissionService" ref="permissionService"/>
 		<property name="entityService" ref="entityService"/>
 		<property name="useBrowserLocale" value="${beCPG.multilinguale.useBrowserLocale}"/>
