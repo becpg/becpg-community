@@ -813,6 +813,205 @@
 			</property>
 		</properties>
 	</aspect>
+<!-- 	
+	
+    <aspect name="gs1:alcoholInformationAspect">
+    <properties>
+        <property name="gs1:alcoholicBeverageSubregion">
+            <type>d:text</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:alcoholicPermissionLevel">
+            <type>d:text</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:degreeOfOriginalWort">
+            <type>d:double</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:percentageOfAlcoholByVolume">
+            <type>d:double</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:vintner">
+            <type>d:text</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:alcoholProof">
+            <type>d:float</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:alcoholicBeverageSugarContent">
+            <type>d:text</type>
+        </property>
+        <property name="gs1:vintage">
+            <type>d:text</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:isTradeItemAQualityVintageAlcoholProduct">
+            <type>d:boolean</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:alcoholUnits">
+            <type>d:double</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:alcoholBeverageAge">
+            <type>d:text</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:isCaskStrength">
+            <type>d:boolean</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:beerStyleCode">
+            <type>d:text</type>
+            <multiple>true</multiple>
+            <index enabled="false" />
+            <constraints>
+                <constraint ref="gs1:beerStyleCodes" />
+            </constraints>
+        </property>
+        <property name="gs1:alcoholBeverageFilteringMethodTypeCode">
+            <type>d:text</type>
+            <multiple>true</multiple>
+            <index enabled="false" />
+            <constraints>
+                <constraint ref="gs1:filteringMethodTypeCodes" />
+            </constraints>
+        </property>
+        <property name="gs1:alcoholBeverageProductionMethodTypeCode">
+            <type>d:text</type>
+            <index enabled="false" />
+            <constraints>
+                <constraint ref="gs1:alcoholBeverageProductionMethodTypeCodes" />
+            </constraints>
+        </property>
+        <property name="gs1:alcoholBeverageDistilledFromCode">
+            <type>d:text</type>
+            <multiple>true</multiple>
+            <index enabled="false" />
+            <constraints>
+                <constraint ref="gs1:distilledFromCodes" />
+            </constraints>
+        </property>
+        <property name="gs1:primaryAddedFlavouringCode">
+            <type>d:text</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:secondaryAddedFlavouringCode">
+            <type>d:text</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:alcoholBeverageTypeCode">
+            <type>d:text</type>
+            <multiple>true</multiple>
+            <index enabled="false" />
+            <constraints>
+                <constraint ref="gs1:alcoholBeverageTypeCodes" />
+            </constraints>
+        </property>
+        <property name="gs1:alcoholicBeverageColourCode">
+            <type>d:text</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:bitternessOfBeerMeasurement">
+            <type>d:text</type>
+            <multiple>true</multiple>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:originOfWineCode">
+            <type>d:text</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:percentageOfAlcoholByVolumeMeasurementPrecisionCode">
+            <type>d:text</type>
+            <index enabled="false" />
+        </property>
+        <property name="gs1:sweetnessLevelOfAlcoholicBeverageCode">
+            <type>d:text</type>
+            <index enabled="false" />
+        </property>
+        
+       
+    </properties>
+    <associations>
+      //TODO
+    	<property name="gs1:alcoholBeverageContainer">
+            <type>d:text</type>
+            <multiple>true</multiple>
+            <index enabled="false" />
+            <constraints>
+                <constraint ref="gs1:alcoholBeverageContainerTypes" />
+            </constraints>
+        </property>
+    
+    </associations>
+    
+    		
+		
+		<constraint name="gs1:alcoholicBeverageSugarContentCodes" type="LIST">
+    <parameter name="allowedValues">
+        <list>
+            <value></value>
+            <value>SOME_VALUE</value>
+            <value>ANOTHER_VALUE</value>
+            <!-- Add more allowed values as needed -->
+        </list>
+    </parameter>
+</constraint>
+
+<constraint name="gs1:beerStyleCodes" type="LIST">
+    <parameter name="allowedValues">
+        <list>
+            <value></value>
+            <value>STYLE1</value>
+            <value>STYLE2</value>
+            <!-- Add more allowed values as needed -->
+        </list>
+    </parameter>
+</constraint>
+
+<constraint name="gs1:filteringMethodTypeCodes" type="LIST">
+    <parameter name="allowedValues">
+        <list>
+            <value></value>
+            <value>FILTER1</value>
+            <value>FILTER2</value>
+            <!-- Add more allowed values as needed -->
+        </list>
+    </parameter>
+</constraint>
+
+<constraint name="gs1:distilledFromCodes" type="LIST">
+    <parameter name="allowedValues">
+        <list>
+            <value></value>
+            <value>DISTILL1</value>
+            <value>DISTILL2</value>
+            <!-- Add more allowed values as needed -->
+        </list>
+    </parameter>
+</constraint>
+
+<constraint name="gs1:alcoholBeverageTypeCodes" type="LIST">
+    <parameter name="allowedValues">
+        <list>
+            <value></value>
+            <value>TYPE1</value>
+            <value>TYPE2</value>
+            <!-- Add more allowed values as needed -->
+        </list>
+    </parameter>
+</constraint>
+		
+		
+		
+		
+		
+		
+     
+</aspect> -->
 	
 	<aspect name="gs1:dutyFeeTaxAspect">
 	   <properties>
