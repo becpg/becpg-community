@@ -24,11 +24,12 @@ import java.util.Collection;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>ProjectAttributeExtractorPlugin class.</p>
@@ -40,8 +41,12 @@ import fr.becpg.repo.helper.impl.AbstractExprNameExtractor;
 public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 	
 
-	@Value("${beCPG.project.name.format}")
-	private String projectNameFormat;
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
+	private String projectNameFormat() {
+		return systemConfigurationService.confValue("beCPG.project.name.format");
+	}
 
 
 	/** {@inheritDoc} */
@@ -61,7 +66,7 @@ public class ProjectAttributeExtractorPlugin extends AbstractExprNameExtractor {
 		}else if (ProjectModel.TYPE_INVOICE_LIST.equals(type) || ProjectModel.TYPE_LOG_TIME_LIST.equals(type)) {
 			return type.toPrefixString();
 		} else if (ProjectModel.TYPE_PROJECT.equals(type) ) {
-			return extractExpr(nodeRef,projectNameFormat);
+			return extractExpr(nodeRef,projectNameFormat());
 		} 
 		return (String) nodeService.getProperty(nodeRef, ProjectModel.PROP_TL_TASK_NAME);
 	}

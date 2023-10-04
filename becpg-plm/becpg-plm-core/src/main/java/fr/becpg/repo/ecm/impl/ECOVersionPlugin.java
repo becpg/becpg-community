@@ -15,7 +15,6 @@ import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +30,7 @@ import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>
@@ -54,9 +54,13 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 
 	@Autowired
 	private ECOService ecoService;
+	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 
-	@Value("${beCPG.eco.automatic.deleteOnApply}")
-	private Boolean deleteOnApply = false;
+	private Boolean deleteOnApply() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.deleteOnApply"));
+	}
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
@@ -147,7 +151,7 @@ public class ECOVersionPlugin implements EntityVersionPlugin {
 					}, false, true);
 
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						return ecoService.apply(ecoNodeRef, deleteOnApply, true, false);
+						return ecoService.apply(ecoNodeRef, deleteOnApply(), true, false);
 					}, false, true);
 					return null;
 				}, finalUsername);

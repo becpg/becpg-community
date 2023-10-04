@@ -61,6 +61,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>AutomaticECOServiceImpl class.</p>
@@ -80,24 +81,33 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 
-	@Value("${beCPG.eco.automatic.apply}")
-	private Boolean shouldApplyAutomaticECO = false;
+	private Boolean shouldApplyAutomaticECO() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.apply"));
+	}
 
-	@Value("${beCPG.eco.automatic.withoutRecord}")
-	private Boolean withoutRecord = false;
+	private Boolean withoutRecord() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.withoutRecord"));
+	}
 
-	@Value("${beCPG.eco.automatic.revision.type}")
-	private String automaticRevisionType = RevisionType.NoRevision.toString();
+	private String automaticRevisionType() {
+		return systemConfigurationService.confValue("beCPG.eco.automatic.revision.type");
+	}
 
-	@Value("${beCPG.eco.automatic.states}")
-	private String statesToRegister = "";
+	private String statesToRegister() {
+		return systemConfigurationService.confValue("beCPG.eco.automatic.states");
+	}
 
-	@Value("${beCPG.eco.automatic.deleteOnApply}")
-	private Boolean deleteOnApply = false;
+	private Boolean deleteOnApply() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.deleteOnApply"));
+	}
 
-	@Value("${beCPG.eco.automatic.enable}")
-	private Boolean isEnable = false;
+	private Boolean isEnable() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.enable"));
+	}
 
 	@Autowired
 	private TransactionService transactionService;
@@ -142,7 +152,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Override
 	public boolean addAutomaticChangeEntry(final NodeRef entityNodeRef, final ChangeOrderData currentUserChangeOrderData) {
 
-		if ((Boolean.TRUE.equals(withoutRecord) && (currentUserChangeOrderData == null)) || !accept(entityNodeRef)) {
+		if ((Boolean.TRUE.equals(withoutRecord()) && (currentUserChangeOrderData == null)) || !accept(entityNodeRef)) {
 			return false;
 		}
 
@@ -182,12 +192,12 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 				}
 			}
 
-			replacementList.add(new ReplacementListDataItem(RevisionType.valueOf(automaticRevisionType), Collections.singletonList(entityNodeRef),
+			replacementList.add(new ReplacementListDataItem(RevisionType.valueOf(automaticRevisionType()), Collections.singletonList(entityNodeRef),
 					entityNodeRef, 100));
 
 			if (logger.isDebugEnabled()) {
 				logger.debug("Adding nodeRef " + entityNodeRef + " to automatic change order :" + changeOrderData.getName());
-				logger.debug("Revision type : " + automaticRevisionType);
+				logger.debug("Revision type : " + automaticRevisionType());
 			}
 
 			changeOrderData.setReplacementList(replacementList);
@@ -204,7 +214,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 			String productState = (String) nodeService.getProperty(entityNodeRef, PLMModel.PROP_PRODUCT_STATE);
 
-			if ((productState == null) || productState.isEmpty() || !statesToRegister.contains(productState)) {
+			if ((productState == null) || productState.isEmpty() || !statesToRegister().contains(productState)) {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Skipping product state : " + productState);
 				}
@@ -245,13 +255,13 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Override
 	public boolean applyAutomaticEco() {
 
-		if (Boolean.TRUE.equals(isEnable)) {
+		if (Boolean.TRUE.equals(isEnable())) {
 
 			autoMergeBranch();
 
-			if (Boolean.TRUE.equals(withoutRecord)) {
+			if (Boolean.TRUE.equals(withoutRecord())) {
 				return reformulateChangedEntities();
-			} else if (Boolean.TRUE.equals(shouldApplyAutomaticECO)) {
+			} else if (Boolean.TRUE.equals(shouldApplyAutomaticECO())) {
 
 				if (logger.isDebugEnabled()) {
 					logger.debug("Try to apply automatic change order");
@@ -270,7 +280,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 						}
 						try {
 							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-								return ecoService.apply(ecoNodeRef, deleteOnApply, true, false);
+								return ecoService.apply(ecoNodeRef, deleteOnApply(), true, false);
 							}, false, true);
 
 						} catch (Exception e) {

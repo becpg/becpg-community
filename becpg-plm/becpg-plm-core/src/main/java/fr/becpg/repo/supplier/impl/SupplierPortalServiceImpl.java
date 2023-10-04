@@ -55,6 +55,7 @@ import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.supplier.SupplierPortalService;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 @Service("supplierPortalService")
 public class SupplierPortalServiceImpl implements SupplierPortalService {
@@ -100,20 +101,25 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 	@Autowired
 	private EntityService entityService;
 	
-	@Value("${beCPG.sendToSupplier.projectName.format}")
-	private String projectNameTpl = "{entity_cm:name} - {supplier_cm:name} - REFERENCING - {date_YYYY}";
-
-	@Value("${beCPG.sendToSupplier.entityName.format}")
-	private String entityNameTpl = "{entity_cm:name} - UPDATE - {date_YYYY}";
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
+	private String projectNameTpl() {
+		return systemConfigurationService.confValue("beCPG.sendToSupplier.projectName.format");
+	}
+	
+	private String entityNameTpl() {
+		return systemConfigurationService.confValue("beCPG.sendToSupplier.entityName.format");
+	}
 
 	@Override
 	public String getProjectNameTpl() {
-		return projectNameTpl;
+		return projectNameTpl();
 	}
 
 	@Override
 	public String getEntityNameTpl() {
-		return entityNameTpl;
+		return entityNameTpl();
 	}
 
 	@Override
@@ -134,7 +140,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			throw new IllegalStateException(I18NUtil.getMessage("message.project-template.destination.missed"));
 		}
 
-		String projectName = repoService.getAvailableName(destNodeRef, createName(entityNodeRef, supplierNodeRef, projectNameTpl, currentDate),
+		String projectName = repoService.getAvailableName(destNodeRef, createName(entityNodeRef, supplierNodeRef, projectNameTpl(), currentDate),
 				false);
 
 		ProjectData projectData = new ProjectData();
@@ -151,7 +157,7 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 				NodeRef supplierDestFolder = getOrCreateSupplierDestFolder(supplierNodeRef, supplierAccountNodeRefs);
 
 				String branchName = repoService.getAvailableName(supplierDestFolder,
-						createName(entityNodeRef, supplierNodeRef, entityNameTpl, currentDate), false);
+						createName(entityNodeRef, supplierNodeRef, entityNameTpl(), currentDate), false);
 
 				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH)) {
 					branchNodeRef = entityNodeRef;
