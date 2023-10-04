@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.NutrientProfileCategory;
+import fr.becpg.model.NutrientProfileVersion;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -78,7 +79,10 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		INSTANCE = this;
 	}
 	
-	
+	@Override
+	public String getVersion() {
+		return NutrientProfileVersion.VERSION_2023.toString();
+	}
 
 	private static double[][] getACategory(NutrientProfileCategory category) {
 		switch (category) {
