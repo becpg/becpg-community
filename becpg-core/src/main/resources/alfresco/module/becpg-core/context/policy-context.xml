@@ -38,7 +38,7 @@
 		<property name="autoNumService" ref="autoNumService" />
 	</bean>
 	
-	<bean id="dynListPolicy" class="fr.becpg.repo.dictionary.constraint.DynListPolicy" parent="abstractBeCPGPolicy">
+	<bean id="listValuePolicy" class="fr.becpg.repo.dictionary.constraint.ListValuePolicy" parent="abstractBeCPGPolicy">
 		<property name="beCPGCacheService" ref="beCPGCacheService" />
 		<property name="namespaceService" ref="namespaceService" />
 	</bean>

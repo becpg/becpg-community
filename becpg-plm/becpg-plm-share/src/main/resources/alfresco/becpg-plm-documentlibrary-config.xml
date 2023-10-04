@@ -16,6 +16,7 @@
 				<aspect name="gs1:gs1Aspect" />
 				<aspect name="gs1:organicAspect" />
 				<aspect name="gs1:innerPackAspect" />
+				<aspect name="gs1:alcoholInformationAspect" />
 				<aspect name="pack:palletAspect" />
 				<aspect name="pack:sizeAspect" />
 				<aspect name="pack:tareAspect" />
