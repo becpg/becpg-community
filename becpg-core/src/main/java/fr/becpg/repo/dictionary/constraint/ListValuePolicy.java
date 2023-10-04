@@ -25,10 +25,10 @@ import fr.becpg.repo.policy.AbstractBeCPGPolicy;
  * @author matthieu
  * @version $Id: $Id
  */
-public class DynListPolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnDeleteNodePolicy,
+public class ListValuePolicy extends AbstractBeCPGPolicy implements NodeServicePolicies.OnDeleteNodePolicy,
 		NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnCreateAssociationPolicy {
 
-	private static final Log logger = LogFactory.getLog(DynListPolicy.class);
+	private static final Log logger = LogFactory.getLog(ListValuePolicy.class);
 
 
 	private BeCPGCacheService beCPGCacheService;
