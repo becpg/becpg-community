@@ -210,51 +210,64 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 		return nutriScoreContext.getNutriScore();
 	}
 
-		public static String extractNutrientClass(NutriScoreContext nutriScoreContext) {
+	public static String extractNutrientClass(NutriScoreContext nutriScoreContext) {
 
-			List<Double> ranges = new ArrayList<>();
+		List<Double> ranges = new ArrayList<>();
 
-			if (NutrientProfileCategory.Beverages.toString().equals(nutriScoreContext.getCategory())) {
-				ranges = BEVERAGES_RANGES;
-			} else if (NutrientProfileCategory.Cheeses.toString().equals(nutriScoreContext.getCategory())) {
-				ranges = CHEESES_RANGES;
-			} else if (NutrientProfileCategory.Fats.toString().equals(nutriScoreContext.getCategory())) {
-				ranges = FATS_RANGES;
-			} else if (NutrientProfileCategory.Others.toString().equals(nutriScoreContext.getCategory())) {
-				ranges = OTHERS_RANGES;
-			}
-
-			double score = nutriScoreContext.getNutriScore();
-
-			Double lower = Double.NEGATIVE_INFINITY;
-			Double upper = Double.POSITIVE_INFINITY;
-
-			for (int i = 0; i < ranges.size(); i++) {
-				lower = ranges.get(i);
-				if (score > ranges.get(i)) {
-					nutriScoreContext.setClassLowerValue(lower == Double.NEGATIVE_INFINITY ? "-Inf" : lower.toString());
-					nutriScoreContext.setClassUpperValue(upper == Double.POSITIVE_INFINITY ? "+Inf" : upper.toString());
-					nutriScoreContext.setNutrientClass(NutriScoreContext.NUTRIENT_PROFILE_CLASSES.get(i));
-					return nutriScoreContext.getNutrientClass();
-				}
-				upper = ranges.get(i);
-			}
-
-			if (lower.equals(upper)) {
-				lower = Double.NEGATIVE_INFINITY;
-			}
-
-			nutriScoreContext.setClassLowerValue(lower == Double.NEGATIVE_INFINITY ? "-Inf" : lower.toString());
-			nutriScoreContext.setClassUpperValue(upper == Double.POSITIVE_INFINITY ? "+Inf" : upper.toString());
-			nutriScoreContext.setNutrientClass(NutriScoreContext.NUTRIENT_PROFILE_CLASSES.get(NutriScoreContext.NUTRIENT_PROFILE_CLASSES.size() - 1));
-
-			// case of beverages : never get "A" class except for water
-			if (NutrientProfileCategory.Beverages.toString().equals(nutriScoreContext.getCategory())
-					&& "A".equals(nutriScoreContext.getNutrientClass()) && !nutriScoreContext.isWater()) {
-				nutriScoreContext.setNutrientClass("B");
-			}
-			
-			return nutriScoreContext.getNutrientClass();
+		if (NutrientProfileCategory.Beverages.toString().equals(nutriScoreContext.getCategory())) {
+			ranges = BEVERAGES_RANGES;
+		} else if (NutrientProfileCategory.Cheeses.toString().equals(nutriScoreContext.getCategory())) {
+			ranges = CHEESES_RANGES;
+		} else if (NutrientProfileCategory.Fats.toString().equals(nutriScoreContext.getCategory())) {
+			ranges = FATS_RANGES;
+		} else if (NutrientProfileCategory.Others.toString().equals(nutriScoreContext.getCategory())) {
+			ranges = OTHERS_RANGES;
 		}
 
+		double score = nutriScoreContext.getNutriScore();
+
+		Double lower = Double.NEGATIVE_INFINITY;
+		Double upper = Double.POSITIVE_INFINITY;
+
+		for (int i = 0; i < ranges.size(); i++) {
+			lower = ranges.get(i);
+			if (score > ranges.get(i)) {
+				nutriScoreContext.setClassLowerValue(lower == Double.NEGATIVE_INFINITY ? "-Inf" : lower.toString());
+				nutriScoreContext.setClassUpperValue(upper == Double.POSITIVE_INFINITY ? "+Inf" : upper.toString());
+				nutriScoreContext.setNutrientClass(NutriScoreContext.NUTRIENT_PROFILE_CLASSES.get(i));
+				return nutriScoreContext.getNutrientClass();
+			}
+			upper = ranges.get(i);
+		}
+
+		if (lower.equals(upper)) {
+			lower = Double.NEGATIVE_INFINITY;
+		}
+
+		nutriScoreContext.setClassLowerValue(lower == Double.NEGATIVE_INFINITY ? "-Inf" : lower.toString());
+		nutriScoreContext.setClassUpperValue(upper == Double.POSITIVE_INFINITY ? "+Inf" : upper.toString());
+		nutriScoreContext.setNutrientClass(NutriScoreContext.NUTRIENT_PROFILE_CLASSES.get(NutriScoreContext.NUTRIENT_PROFILE_CLASSES.size() - 1));
+
+		// case of beverages : never get "A" class except for water
+		if (NutrientProfileCategory.Beverages.toString().equals(nutriScoreContext.getCategory())
+				&& "A".equals(nutriScoreContext.getNutrientClass()) && !nutriScoreContext.isWater()) {
+			nutriScoreContext.setNutrientClass("B");
+		}
+		
+		return nutriScoreContext.getNutrientClass();
+	}
+
+	public static String buildNutrientClass(Double score, List<Double> ranges, List<String> clazz) {
+		if (score != null) {
+			for (int i = 0; i < ranges.size(); i++) {
+				if (score > ranges.get(i)) {
+					return clazz.get(i);
+				}
+			}
+			return clazz.get(clazz.size() - 1);
+		}
+		return null;
+
+	}
+	
 }
