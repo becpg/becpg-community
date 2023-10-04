@@ -455,7 +455,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 							if (!propertyDefinition.getConstraints().isEmpty()) {
 								for (ConstraintDefinition constraint : propertyDefinition.getConstraints()) {
 									if (constraint.getConstraint() instanceof DynListConstraint) {
-										mlValues = ((DynListConstraint) constraint.getConstraint()).getMLAwareAllowedValues().get(entry.getValue());
+										mlValues = ((DynListConstraint) constraint.getConstraint()).getMLDisplayLabel((String)entry.getValue());
 										visitMltextAttributes(xmlw, mlValues);
 										break;
 									}
