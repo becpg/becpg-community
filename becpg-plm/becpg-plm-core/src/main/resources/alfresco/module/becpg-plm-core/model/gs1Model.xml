@@ -39,12 +39,6 @@
 					<value>/System/Lists/bcpg:entityLists/PackagingTypeCodes</value>
 				</list>
 			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
-			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
@@ -55,12 +49,6 @@
 				<list>
 					<value>/System/Lists/bcpg:entityLists/PalletTypeCodes</value>
 				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
 			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
@@ -74,12 +62,6 @@
 					<value>/System/Lists/bcpg:entityLists/PlatformTermsAndConditionsCodes</value>
 				</list>
 			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
-			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
@@ -91,114 +73,74 @@
 					<value>/System/Lists/bcpg:entityLists/SortingBonusCriteria</value>
 				</list>
 			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
-			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
 		</constraint>
-		
+
 		<constraint name="gs1:sortingMalusCriteriaConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/SortingMalusCriteria</value>
 				</list>
 			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
-			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
 		</constraint>
-		
 
-		<constraint name="gs1:packagingRecyclingProcessTypeCodes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value></value>
-					<value>COMPOSTABLE</value>
-					<value>RECYCLABLE</value>
-					<value>REUSABLE_SAME_FUNCTION</value>
-					<value>RECHARGEABLE</value>
-				</list>
-			</parameter>
-		</constraint>
-		
-		<constraint name="gs1:packagingShapeCodes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value></value>
-					<value>BAR</value>
-					<value>COIL</value>
-					<value>CONE</value>
-					<value>CYLINDRICAL</value>
-					<value>POLYGON</value>
-					<value>RECTANGULAR</value>
-					<value>SPHERICAL</value>
-					<value>TABLET</value>
-					<value>UNSPECIFIED</value>
-				</list>
-			</parameter>
-		</constraint>
-		
-	<!-- 	<constraint name="gs1:packagingFeatureCodes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-				<value></value>
-				</list>
-			</parameter>
-		</constraint>
-		
-		<constraint name="gs1:packagingFunctionCode" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value></value>
-				</list>
-			</parameter>
-		</constraint> -->
-		
-		
-		
 
-		<constraint name="gs1:variableTradeItemTypeCodes" type="LIST">
-			<parameter name="allowedValues">
+		 <constraint name="gs1:packagingRecyclingProcessTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-					<value></value>
-					<value>LOOSE</value>
-					<value>PRE_PACKED</value>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
 				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>PackagingRecyclingProcessTypeCode</value>
 			</parameter>
 		</constraint>
 
-
-		<constraint name="gs1:temperatureMeasurementUnits" type="LIST">
-			<parameter name="allowedValues">
+        <constraint name="gs1:packagingShapeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-					<value>CEL</value>
-					<value>FAH</value>
-					<value>KEL</value>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
 				</list>
 			</parameter>
+			<parameter name="constraintFilter">
+				<value>PackagingShapeCode</value>
+			</parameter>
 		</constraint>
+
+		<constraint name="gs1:variableTradeItemTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>VariableTradeItemTypeCode</value>
+			</parameter>
+		</constraint>
+
+		
+		<constraint name="gs1:temperatureMeasurementUnits" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>TemperatureMeasurementUnitCode</value>
+			</parameter>
+		</constraint>
+		
+		
 		<constraint name="gs1:tradeItemTradeChannelConstraint" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/TradeItemTradeChannel</value>
 				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
 			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
@@ -210,51 +152,38 @@
 					<value>/System/Lists/bcpg:entityLists/SellingUnitOfMeasure</value>
 				</list>
 			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
-			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
 		</constraint>
-		<constraint name="gs1:specialItemCodes" type="LIST">
-			<parameter name="allowedValues">
+		
+		<constraint name="gs1:specialItemCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-					<value></value>
-					<value>DEMONSTRATION_UNIT</value>
-					<value>GIFT_WITH_PURCHASE</value>
-					<value>LIMITED_PRODUCTION</value>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
 				</list>
 			</parameter>
-		</constraint>
-		<constraint name="gs1:promotionTypeCodes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value></value>
-					<value>BONUS_PACK</value>
-					<value>FREE_COMPONENTS</value>
-					<value>FREE_GIFT_ATTACHED</value>
-					<value>FREE_QUANTITY</value>
-					<value>MULTI_PACK_AND_COMBINATION_PACK</value>
-					<value>SAMPLE</value>
-					<value>SPECIAL_PACKAGING</value>
-				</list>
+			<parameter name="constraintFilter">
+				<value>SpecialItemCode</value>
 			</parameter>
 		</constraint>
+		
+		<constraint name="gs1:promotionTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>PromotionTypeCode</value>
+			</parameter>
+		</constraint>
+		
 		<constraint name="gs1:dataCarrierTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/DataCarrierTypeCode</value>
 				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
 			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
@@ -265,12 +194,6 @@
 				<list>
 					<value>/System/Lists/bcpg:entityLists/TradeItemUnitDescriptorCode</value>
 				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
 			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
@@ -283,12 +206,6 @@
 					<value>/System/Lists/bcpg:entityLists/PackagingRecyclingSchemeCode</value>
 				</list>
 			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
-			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
@@ -300,12 +217,6 @@
 					<value>/System/Lists/bcpg:entityLists/PackagingTermsAndConditionsCode</value>
 				</list>
 			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
-			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
@@ -315,12 +226,6 @@
 				<list>
 					<value>/System/Lists/bcpg:entityLists/HandlingInstructions</value>
 				</list>
-			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
 			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
@@ -332,201 +237,317 @@
 					<value>/System/Lists/bcpg:entityLists/PreparationType</value>
 				</list>
 			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
-			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
 		</constraint>
 
 
-		
-		
-		<constraint name="gs1:tradeItemPriceTypes" type="LIST">
-			<parameter name="allowedValues">
+		<constraint name="gs1:tradeItemPriceTypes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-				    <value></value>
-					<value>BULK_PRICE</value>
-					<value>INPATIENT_REGULATORY_REIMBURSMENT_PRICE</value>
-					<value>LOOSE_PRICE</value>
-					<value>MINIMUM_ADVERTISED_PRICE</value>
-					<value>OUTPATIENT_REGULATORY_REIMBURSMENT_PRICE</value>
-					<value>RETAIL_PRICE_ON_TRADE_ITEM</value>
-					<value>UMRP</value>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
 				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>TradeItemPriceTypeCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:productActivityTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>ProductActivityTypeCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:dutyFeeTaxCategoryCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>TaxCategoryCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:storageStateCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>StorageStateCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:productionMethodForFishAndSeafoodCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>ProductionMethodForFishAndSeafoodCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:organicProductPlaceOfFarmingCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>OrganicProductPlaceOfFarmingCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:cheeseMaturationProcessContainerTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>CheeseMaturationProcessContainerTypeCode</value>
 			</parameter>
 		</constraint>
 
 
-		<constraint name="gs1:productActivityTypeCodes" type="LIST">
-			<parameter name="allowedValues">
+      <constraint name="gs1:rennetTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-				  <value></value>
-				   <value>ASSEMBLY</value>
-				   <value>BIRTH</value>
-				   <value>BOTTLING</value>
-				   <value>CATCH_ZONE</value>
-				   <value>FARMING</value>
-				   <value>IMPORTATION</value>
-				   <value>LAST_PROCESSING</value>
-				   <value>MILKING</value>
-				   <value>REARING</value>
-				   <value>SLAUGHTER</value>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
 				</list>
 			</parameter>
-		</constraint>
-
-		<constraint name="gs1:dutyFeeTaxCategoryCodes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-				   <value></value>
-				   <value>AAD</value>
-				   <value>AAE</value>
-				   <value>AAF</value>
-				   <value>AAJ</value>
-				   <value>ACT</value>
-				   <value>CAR</value>
-				   <value>ENV</value>
-				   <value>EXC</value>
-				   <value>GST</value>
-				   <value>IMP</value>
-				   <value>OIL</value>
-				   <value>OTH</value>
-				   <value>VAT</value>
-				</list>
-			</parameter>
-		</constraint>
-
-		<constraint name="gs1:storageStateCodes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-				  <value></value>
-				   <value>NOT_PREVIOUSLY_FROZEN</value>
-				   <value>PREVIOUSLY_FROZEN</value>
-				</list>
-			</parameter>
-		</constraint>
-
-		
-		<constraint name="gs1:productionMethodForFishAndSeafoodCodes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-				    <value></value>
-					<value>AQUACULTURE</value>
-					<value>INLAND_FISHERY</value>
-					<value>MARINE_FISHERY</value>
-				</list>
-			</parameter>
-		</constraint>
-
-       <constraint name="gs1:organicProductPlaceOfFarmingCodes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-				    <value></value>
-					<value>EU_AGRICULTURE</value>
-					<value>EU_OR_NON_EU_AGRICULTURE</value>
-					<value>FARMING_COUNTRY_OF_ORIGIN</value>
-					<value>NON_EU_AGRICULTURE</value>
-				</list>
-			</parameter>
-		</constraint>
-       
-        <constraint name="gs1:cheeseMaturationProcessContainerTypeCodes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-				    <value></value>
-					<value>BRINE_SOLUTION</value>
-					<value>FOIL</value>
-					<value>MOULD</value>
-					<value>OTHER</value>
-					<value>TEXTILE</value>
-				</list>
+			<parameter name="constraintFilter">
+				<value>RennetTypeCode</value>
 			</parameter>
 		</constraint>
 		
-		<constraint name="gs1:rennetTypeCodes" type="LIST">
-			<parameter name="allowedValues">
+		
+		<constraint name="gs1:surfaceOfCheeseAtEndOfRipeningCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
 				<list>
-				    <value></value>
-					<value>ANIMAL_RENNET</value>
-					<value>MICROBIAL_RENNET</value>
-					<value>NO_RENNET</value>
-					<value>VEGETABLE_RENNET</value>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
 				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>SurfaceOfCheeseAtEndOfRipeningCode</value>
 			</parameter>
 		</constraint>
 		
-		<constraint name="gs1:surfaceOfCheeseAtEndOfRipeningCodes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-				    <value></value>
-					<value>NO_RIND</value>
-					<value>RIND</value>
-					<value>SOFT_RIPENED_MOULD_RIND</value>
-				</list>
-			</parameter>
-		</constraint>
-     
+		
+
 		<constraint name="gs1:speciesForFisheryStatisticsPurposesCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/SpeciesForFishery</value>
 				</list>
 			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
-			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
 		</constraint>
 
-		
+
 		<constraint name="gs1:catchMethodCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/CatchMethodCodes</value>
 				</list>
 			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
-			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
 		</constraint>
 
-		
+
 		<constraint name="gs1:catchAreaCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
 			<parameter name="path">
 				<list>
 					<value>/System/Lists/bcpg:entityLists/CatchAreaCodes</value>
 				</list>
 			</parameter>
-			<parameter name="constraintType">
-				<value>bcpg:listValue</value>
-			</parameter>
-			<parameter name="constraintProp">
-				<value>bcpg:lvValue</value>
-			</parameter>
 			<parameter name="addEmptyValue">
 				<value>true</value>
 			</parameter>
 		</constraint>
 
 
+		<constraint name="gs1:primaryAddedFlavouringCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>PrimaryAddedFlavouringCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:secondaryAddedFlavouringCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>SecondaryAddedFlavouringCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:originOfWineCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>OriginOfWineCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:distilledFromCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>AlcoholBeverageDistilledFromCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:filteringMethodTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>AlcoholBeverageFilteringMethodTypeCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:alcoholBeverageProductionMethodTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>AlcoholBeverageProductionMethodTypeCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:sweetnessLevelOfAlcoholicBeverageCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>SweetnessLevelOfAlcoholicBeverageCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:alcoholicBeverageColourCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>AlcoholicBeverageColourCode</value>
+			</parameter>
+		</constraint>
+
+
+		<constraint name="gs1:measurementPrecisionCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>MeasurementPrecisionCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:containerMaterialCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>ContainerMaterialCode</value>
+			</parameter>
+		</constraint>
+		<constraint name="gs1:containerProcessTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>ContainerProcessTypeCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:containerShapeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>ContainerShapeCode</value>
+			</parameter>
+		</constraint>
+		<constraint name="gs1:containerTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>ContainerTypeCode</value>
+			</parameter>
+		</constraint>
+
+		<constraint name="gs1:alcoholBeverageTypeCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>AlcoholBeverageTypeCode</value>
+			</parameter>
+		</constraint>
 		
-		
+	    <constraint name="gs1:beerStyleCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>BeerStyleTypeCode</value>
+			</parameter>
+		</constraint>
+
+
+
 	</constraints>
 	<types>
 
@@ -561,6 +582,59 @@
 			</mandatory-aspects>
 		</type>
 
+		<type name="gs1:alcoholBeverageContainer">
+			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="gs1:containerMaterialCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:containerMaterialCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:containerProcessTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:containerProcessTypeCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:containerShapeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:containerShapeCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:containerTypeCode">
+					<type>d:text</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<atomic>false</atomic>
+						<stored>false</stored>
+						<tokenised>TRUE</tokenised>
+					</index>
+					<constraints>
+						<constraint ref="gs1:containerTypeCodes" />
+					</constraints>
+				</property>
+			</properties>
+		</type>
 
 
 		<type name="gs1:dutyFeeTax">
@@ -676,14 +750,14 @@
 		<type name="gs1:collectionPriceList">
 			<parent>gs1:tradeItemPriceList</parent>
 			<properties>
-			  <property name="gs1:cplPriceTaxIncl">
+				<property name="gs1:cplPriceTaxIncl">
 					<type>d:double</type>
 					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>false</facetable>
 					</index>
 				</property>
-			  <property name="gs1:cplProfitabilityRatio">
+				<property name="gs1:cplProfitabilityRatio">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
@@ -691,7 +765,7 @@
 						<facetable>false</facetable>
 					</index>
 				</property>
-				 <property name="gs1:cplTurnover">
+				<property name="gs1:cplTurnover">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
@@ -722,8 +796,8 @@
 				</association>
 			</associations>
 			<mandatory-aspects>
-			    <aspect>bcpg:depthLevelAspect</aspect>
-			    <aspect>gs1:dutyFeeTaxAspect</aspect>
+				<aspect>bcpg:depthLevelAspect</aspect>
+				<aspect>gs1:dutyFeeTaxAspect</aspect>
 				<aspect>bcpg:effectivityAspect</aspect>
 			</mandatory-aspects>
 		</type>
@@ -758,64 +832,231 @@
 
 
 	<aspects>
-	
-	<aspect name="gs1:organicAspect">
-		<properties>
-			<property name="gs1:organicProductPlaceOfFarmingCode">
-				<type>d:text</type>
-				<index enabled="false" />
-				<constraints>
+
+		<aspect name="gs1:organicAspect">
+			<properties>
+				<property name="gs1:organicProductPlaceOfFarmingCode">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
 						<constraint ref="gs1:organicProductPlaceOfFarmingCodes" />
-				</constraints>
-			</property>
-		</properties>
-	</aspect>
-	
-	<aspect name="gs1:cheeseInformationAspect">
-		<properties>
-			<property name="gs1:cheeseMaturationPeriodDescription">
-				<type>d:mltext</type>
-				<index enabled="false" />
-			</property>
-			<property name="gs1:cheeseMaturationProcessContainerTypeCode">
-				<type>d:text</type>
-				<multiple>true</multiple>
-				<index enabled="false" />
-				<constraints>
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+
+		<aspect name="gs1:cheeseInformationAspect">
+			<properties>
+				<property name="gs1:cheeseMaturationPeriodDescription">
+					<type>d:mltext</type>
+					<index enabled="false" />
+				</property>
+				<property name="gs1:cheeseMaturationProcessContainerTypeCode">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="false" />
+					<constraints>
 						<constraint ref="gs1:cheeseMaturationProcessContainerTypeCodes" />
-				</constraints>
-			</property>
-			<property name="gs1:fatPercentageInDryMatter">
-				<type>d:double</type>
-				<index enabled="false" />
-			</property>
-			<property name="gs1:isRindEdible">
-				<type>d:boolean</type>
-				<index enabled="false" />
-			</property>
-			<property name="gs1:rennetTypeCode">
-				<type>d:text</type>
-				<index enabled="false" />
-				<constraints>
+					</constraints>
+				</property>
+				<property name="gs1:fatPercentageInDryMatter">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="gs1:isRindEdible">
+					<type>d:boolean</type>
+					<index enabled="false" />
+				</property>
+				<property name="gs1:rennetTypeCode">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
 						<constraint ref="gs1:rennetTypeCodes" />
-				</constraints>
-			</property>
-			<property name="gs1:ripeningTimePeriod">
-				<type>d:int</type>
-				<index enabled="false" />
-			</property>
-			<property name="gs1:surfaceOfCheeseAtEndOfRipeningCode">
-				<type>d:text</type>
-				<index enabled="false" />
-				<constraints>
+					</constraints>
+				</property>
+				<property name="gs1:ripeningTimePeriod">
+					<type>d:int</type>
+					<index enabled="false" />
+				</property>
+				<property name="gs1:surfaceOfCheeseAtEndOfRipeningCode">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
 						<constraint ref="gs1:surfaceOfCheeseAtEndOfRipeningCodes" />
-				</constraints>
-			</property>
-		</properties>
-	</aspect>
-	
-	<aspect name="gs1:dutyFeeTaxAspect">
-	   <properties>
+					</constraints>
+				</property>
+			</properties>
+		</aspect>
+
+
+		<aspect name="gs1:alcoholInformationAspect">
+			<properties>
+				<property name="gs1:percentageOfAlcoholByVolume">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="gs1:percentageOfAlcoholByVolumeMeasurementPrecisionCode">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="gs1:measurementPrecisionCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:alcoholicPermissionLevel">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="gs1:alcoholicBeverageSubregion">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+				<property name="gs1:vintner">
+					<type>d:text</type>
+					<index enabled="false" />
+				</property>
+
+				<property name="gs1:isTradeItemAQualityVintageAlcoholProduct">
+					<type>d:boolean</type>
+					<index enabled="false" />
+				</property>
+
+				<property name="gs1:vintage">
+					<type>d:int</type>
+					<index enabled="false" />
+				</property>
+
+				<property name="gs1:degreeOfOriginalWort">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="gs1:alcoholicBeverageSugarContent">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+
+				<property name="gs1:alcoholProof">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="gs1:alcoholUnits">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+				<property name="gs1:alcoholicBeverageColourCode">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="gs1:alcoholicBeverageColourCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:originOfWineCode">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="gs1:originOfWineCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:sweetnessLevelOfAlcoholicBeverageCode">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="gs1:sweetnessLevelOfAlcoholicBeverageCodes" />
+					</constraints>
+				</property>
+
+				<property name="gs1:alcoholBeverageAge">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+
+
+				<property name="gs1:bitternessOfBeerMeasurement">
+					<type>d:double</type>
+					<index enabled="false" />
+				</property>
+
+				<property name="gs1:isCaskStrength">
+					<type>d:boolean</type>
+					<index enabled="false" />
+				</property>
+
+				<property name="gs1:beerStyleCode">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="gs1:beerStyleCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:alcoholBeverageFilteringMethodTypeCode">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="gs1:filteringMethodTypeCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:alcoholBeverageProductionMethodTypeCode">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="gs1:alcoholBeverageProductionMethodTypeCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:alcoholBeverageDistilledFromCode">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="gs1:distilledFromCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:primaryAddedFlavouringCode">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="gs1:primaryAddedFlavouringCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:secondaryAddedFlavouringCode">
+					<type>d:text</type>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="gs1:secondaryAddedFlavouringCodes" />
+					</constraints>
+				</property>
+
+				<property name="gs1:alcoholBeverageTypeCode">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="gs1:alcoholBeverageTypeCodes" />
+					</constraints>
+				</property>
+
+			</properties>
+			<associations>
+				<association name="gs1:alcoholBeverageContainerRef">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>gs1:alcoholBeverageContainer</class>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
+
+			</associations>
+
+		</aspect>
+
+
+
+		<aspect name="gs1:dutyFeeTaxAspect">
+			<properties>
 				<property name="gs1:dutyFeeTaxAmount">
 					<type>d:double</type>
 					<index enabled="true">
@@ -845,60 +1086,60 @@
 					</target>
 				</association>
 			</associations>
-	</aspect>
-	
-	
+		</aspect>
+
+
 		<aspect name="gs1:fishCatchInformationAspect">
-		<properties>
-			<property name="gs1:catchMethodCode">
-				<type>d:text</type>
-				<multiple>true</multiple>
-				<index enabled="true">
-					<tokenised>false</tokenised>
-					<facetable>false</facetable>
-				</index>
-				<constraints>
-					<constraint ref="gs1:catchMethodCodes" />
-				</constraints>
-			</property>
-			<property name="gs1:productionMethodForFishAndSeafoodCode">
-				<type>d:text</type>
-				<index enabled="true">
-					<tokenised>false</tokenised>
-					<facetable>false</facetable>
-				</index>
-				<constraints>
-					<constraint ref="gs1:productionMethodForFishAndSeafoodCodes" />
-				</constraints>
-			</property>
-			<property name="gs1:storageStateCode">
-				<type>d:text</type>
-				<index enabled="true">
-					<tokenised>false</tokenised>
-					<facetable>false</facetable>
-				</index>
-				<constraints>
-					<constraint ref="gs1:storageStateCodes" />
-				</constraints>
-			</property>
-			<property name="gs1:catchAreaCode">
-				<type>d:text</type>
-				<multiple>true</multiple>
-				<index enabled="true">
-					<tokenised>false</tokenised>
-					<facetable>false</facetable>
-				</index>
-				<constraints>
-					<constraint ref="gs1:catchAreaCodes" />
-				</constraints>
-			</property>
-			<property name="gs1:fishCatchDateInformation">
-				<type>d:date</type>
-				<index enabled="true">
-					<tokenised>false</tokenised>
-					<facetable>false</facetable>
-				</index>
-			</property>
+			<properties>
+				<property name="gs1:catchMethodCode">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:catchMethodCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:productionMethodForFishAndSeafoodCode">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:productionMethodForFishAndSeafoodCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:storageStateCode">
+					<type>d:text</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:storageStateCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:catchAreaCode">
+					<type>d:text</type>
+					<multiple>true</multiple>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+					<constraints>
+						<constraint ref="gs1:catchAreaCodes" />
+					</constraints>
+				</property>
+				<property name="gs1:fishCatchDateInformation">
+					<type>d:date</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
 			</properties>
 		</aspect>
 
@@ -989,7 +1230,7 @@
 					<type>d:noderef</type>
 					<mandatory>false</mandatory>
 					<multiple>true</multiple>
-                                        <index enabled="true">
+					<index enabled="true">
 						<tokenised>false</tokenised>
 						<facetable>true</facetable>
 					</index>
@@ -1000,7 +1241,7 @@
 			<overrides />
 			<mandatory-aspects />
 		</aspect>
-		
+
 		<aspect name="gs1:productActivityDetailsAspect">
 			<properties>
 				<property name="gs1:productActivityTypeCode">
@@ -1022,7 +1263,7 @@
 
 		<aspect name="gs1:innerPackAspect">
 			<properties>
-			
+
 				<property name="gs1:innerPackTypeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1035,7 +1276,7 @@
 						<constraint ref="gs1:packagingTypeCodeConstraint" />
 					</constraints>
 				</property>
-			
+
 				<property name="gs1:eanCodeInnerPack">
 					<type>d:text</type>
 					<index enabled="true">
@@ -1104,7 +1345,7 @@
 				</property>
 			</properties>
 		</aspect>
-			
+
 		<aspect name="gs1:packagingAspect">
 			<properties>
 				<property name="gs1:height">
@@ -1171,6 +1412,14 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
+				<property name="gs1:secondaryDiameter">
+					<type>d:float</type>
+					<mandatory>false</mandatory>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
 				<property name="gs1:secondaryWeight">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -1220,7 +1469,7 @@
 					</index>
 				</property>
 
-		
+
 				<property name="gs1:packagingTypeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1232,12 +1481,12 @@
 						<constraint ref="gs1:packagingTypeCodeConstraint" />
 					</constraints>
 				</property>
-			
-				
+
+
 				<property name="gs1:packagingTypeDescription">
 					<type>d:mltext</type>
 					<mandatory>false</mandatory>
-					<index enabled="false"/>
+					<index enabled="false" />
 				</property>
 				<!-- 						
 				<property name="gs1:packagingFeatureCode">
@@ -1263,7 +1512,7 @@
 						<constraint ref="gs1:packagingFunctionCodes" />
 					</constraints>
 				</property> -->
-				
+
 				<property name="gs1:packagingShapeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1275,8 +1524,8 @@
 						<constraint ref="gs1:packagingShapeCodes" />
 					</constraints>
 				</property>
-				
-				
+
+
 				<property name="gs1:secondaryPackagingTypeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1322,8 +1571,8 @@
 						<constraint ref="gs1:platformTermsAndConditionsCodes" />
 					</constraints>
 				</property>
-				
-				
+
+
 				<property name="gs1:netContent">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -1333,8 +1582,8 @@
 						<tokenised>TRUE</tokenised>
 					</index>
 				</property>
-				
-			    <property name="gs1:netContentUnit">
+
+				<property name="gs1:netContentUnit">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
 					<index enabled="true">
@@ -1345,8 +1594,8 @@
 						<constraint ref="bcpg:productUnit" />
 					</constraints>
 				</property>
-				
-				
+
+
 			</properties>
 			<overrides />
 			<mandatory-aspects />
@@ -1365,8 +1614,8 @@
 						<facetable>true</facetable>
 					</index>
 				</property>
-				
-						
+
+
 				<property name="gs1:packagingRecyclingProcessTypeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1380,7 +1629,7 @@
 						<constraint ref="gs1:packagingRecyclingProcessTypeCodes" />
 					</constraints>
 				</property>
-				
+
 				<property name="gs1:packagingRecyclingSchemeCode">
 					<type>d:text</type>
 					<mandatory>false</mandatory>
@@ -1394,7 +1643,7 @@
 						<constraint ref="gs1:packagingRecyclingSchemeCodes" />
 					</constraints>
 				</property>
-	
+
 				<property name="gs1:isTradeItemMarkedAsRecyclable">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
@@ -1959,11 +2208,11 @@
 		
         <!-- Deprecated -->
 		<aspect name="gs1:datesAspect">
-		
+
 		</aspect>
 
 		<aspect name="gs1:indicatorsAspect">
-		
+
 		</aspect>
 
 	</aspects>
