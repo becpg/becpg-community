@@ -302,6 +302,7 @@
 			<action id="entity-compare" type="javascript" label="actions.entity.compare">
 				<param name="function">onActionCompareEntity</param>
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
 			</action>
 			<action id="entity-view-datalists" type="javascript" label="actions.entity.view-datalists">
 				<param name="function">onActionShowCharact</param>
@@ -319,6 +320,7 @@
 			<action id="entity-wused" type="pagelink" label="actions.entity.wused">
 				<param name="page">wused?nodeRefs={node.nodeRef}&amp;type={node.type}</param>
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
 			</action>
 			
 			
@@ -420,11 +422,13 @@
 				 <permission allow="true">Write</permission>
 			</permissions>
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
+            <evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
          </action>
          
           <action id="datalist-import-from" type="javascript" label="actions.datalist.import-from">
             <param name="function">onActionImportDataListFrom</param>
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
+            <evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
          </action>
 			
 		</actions>
