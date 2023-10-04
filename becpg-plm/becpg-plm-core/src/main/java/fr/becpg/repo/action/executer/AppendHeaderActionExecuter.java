@@ -27,6 +27,7 @@ import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.util.TempFileProvider;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,13 +41,13 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.common.csv.CSVReader;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * 
@@ -118,12 +119,12 @@ public class AppendHeaderActionExecuter extends ActionExecuterAbstractBase {
 			
 			try (InputStream mappingStream = reader.getContentInputStream()) {
 				reader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
-				
+				File output = TempFileProvider.createTempFile("output_", ".xlsx");
 				try (InputStream dataStream = reader.getContentInputStream();
 					 InputStreamReader dataISR = new InputStreamReader(new BOMInputStream(dataStream, false), reader.getEncoding());
 					 CSVReader dataCSVReader = new CSVReader(dataISR, SEPARATOR);) {
 					// Output file generation
-					File output = File.createTempFile("output_", ".xlsx");
+				
 					appendHeader(mappingStream, dataCSVReader, output, DataFormat.CSV);
 					
 					NodeRef outputFolderNodeRef = BeCPGQueryBuilder.createQuery()
@@ -138,6 +139,10 @@ public class AppendHeaderActionExecuter extends ActionExecuterAbstractBase {
 					
 					// Remove input file when finished
 					fileFolderService.delete(nodeRef);
+				} finally {
+					if (!output.delete()) {
+						logger.error("Cannot delete dir: " + output.getName());
+					}
 				}
 			} catch (IOException e) {
 				logger.error("Cannot append headers", e);
