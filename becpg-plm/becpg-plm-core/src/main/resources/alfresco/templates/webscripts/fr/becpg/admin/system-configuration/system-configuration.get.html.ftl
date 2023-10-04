@@ -22,7 +22,7 @@
 	            data : {"key": id ,"value": field.value},
 	            fnSuccess : function(res)
 	            {
-	            	alert("Conf updated");
+	            	alert("${msg("system-configuration.conf-updated")}");
 	            }
 	        });
       }
@@ -36,7 +36,7 @@
 	            data : {"key": id},
 	            fnSuccess : function(res)
 	            {
-	            	alert("Conf resetted");
+	            	alert("${msg("system-configuration.conf-reset")}");
 	            	location.reload();
 	            }
 	        });
@@ -46,18 +46,63 @@
     //]]></script>
    
    <div class="column-full">
-    <@section label=msg("system-configuration.section.core.title") />
+    <@section label=msg("system-configuration.section.system.title") />
 	<#list sysBeCPGAttributes?keys as key>
-		<#if sysBeCPGAttributes[key].set == "core">
+		<#if sysBeCPGAttributes[key].set == "system">
 			<@sysField id=key />
 		</#if>
 	</#list>
      </div>
    
     <div class="column-full">
-    <@section label=msg("system-configuration.section.plm.title") />
+    <@section label=msg("system-configuration.section.format.title") />
 	<#list sysBeCPGAttributes?keys as key>
-		<#if sysBeCPGAttributes[key].set == "plm">
+		<#if sysBeCPGAttributes[key].set == "format">
+			<@sysField id=key />
+		</#if>
+	</#list>
+    </div>
+   
+    <div class="column-full">
+    <@section label=msg("system-configuration.section.search.title") />
+	<#list sysBeCPGAttributes?keys as key>
+		<#if sysBeCPGAttributes[key].set == "search">
+			<@sysField id=key />
+		</#if>
+	</#list>
+    </div>
+   
+    <div class="column-full">
+    <@section label=msg("system-configuration.section.export.title") />
+	<#list sysBeCPGAttributes?keys as key>
+		<#if sysBeCPGAttributes[key].set == "export">
+			<@sysField id=key />
+		</#if>
+	</#list>
+    </div>
+   
+    <div class="column-full">
+    <@section label=msg("system-configuration.section.report.title") />
+	<#list sysBeCPGAttributes?keys as key>
+		<#if sysBeCPGAttributes[key].set == "report">
+			<@sysField id=key />
+		</#if>
+	</#list>
+    </div>
+   
+    <div class="column-full">
+    <@section label=msg("system-configuration.section.formulation.title") />
+	<#list sysBeCPGAttributes?keys as key>
+		<#if sysBeCPGAttributes[key].set == "formulation">
+			<@sysField id=key />
+		</#if>
+	</#list>
+    </div>
+   
+    <div class="column-full">
+    <@section label=msg("system-configuration.section.change-order.title") />
+	<#list sysBeCPGAttributes?keys as key>
+		<#if sysBeCPGAttributes[key].set == "change-order">
 			<@sysField id=key />
 		</#if>
 	</#list>

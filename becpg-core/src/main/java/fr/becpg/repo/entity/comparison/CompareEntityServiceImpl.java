@@ -48,6 +48,7 @@ import fr.becpg.repo.entity.datalist.data.MultiLevelListData;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Compare several entities (properties, datalists and composite datalists).
@@ -98,8 +99,12 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	@Value("${beCPG.comparison.pivots}")
 	private String customPivots;
 	
-	@Value("${beCPG.comparison.name.format}")
-	private String customNames;
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
+	private String customNames() {
+		return systemConfigurationService.confValue("beCPG.comparison.name.format");
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -541,9 +546,9 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				String dataListShortName = dataListType.getPrefixString();
 				NodeRef itemNodeRef = (c.getNodeRef1() == null ? c.getNodeRef2() : c.getNodeRef1());
 				String charactName = extractCharactName(itemNodeRef, entityDictionaryService.getDefaultPivotAssoc(dataListType));
-				if ((customNames != null) && customNames.contains(dataListShortName)) {
+				if ((customNames() != null) && customNames().contains(dataListShortName)) {
 					String nameFormat = "";
-					String[] dataTypesSplit = customNames.split(",");
+					String[] dataTypesSplit = customNames().split(",");
 					for (String dataType : dataTypesSplit) {
 						if (dataType.contains(dataListShortName)) {
 							// example of custom names string:

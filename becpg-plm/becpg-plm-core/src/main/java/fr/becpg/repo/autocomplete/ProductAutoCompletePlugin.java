@@ -28,7 +28,6 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +37,7 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>ProductAutoCompletePlugin class.</p>
@@ -82,8 +82,12 @@ public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 	private static final Log logger = LogFactory.getLog(ProductAutoCompletePlugin.class);
 
-	@Value("${beCPG.product.searchTemplate}")
-	private String productSearchTemplate = "%(cm:name bcpg:erpCode bcpg:code bcpg:legalName)";
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
+	private String productSearchTemplate() {
+		return systemConfigurationService.confValue("beCPG.product.searchTemplate");
+	}
 
 	@Autowired
 	private EntityListDAO entityListDAO;
@@ -182,7 +186,7 @@ public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).excludeDefaults()
-				.inSearchTemplate(productSearchTemplate).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
+				.inSearchTemplate(productSearchTemplate()).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		StringBuilder ftsQuery = new StringBuilder();
 

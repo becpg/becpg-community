@@ -29,7 +29,7 @@
 		<property name="entityTplService" ref="entityTplService" />
 		<property name="repositoryEntityDefReader" ref="repositoryEntityDefReader" />
 		<property name="namespaceService" ref="namespaceService" />
-		<property name="sampleIdPattern" value="${beCPG.quality.sampleId.format}"></property>
+		<property name="systemConfigurationService" ref="systemConfigurationService" />
     </bean>    
     <bean id="qualityControlPolicies" class="fr.becpg.repo.quality.policy.QualityControlPolicies" parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="qualityControlService" ref="qualityControlService" />

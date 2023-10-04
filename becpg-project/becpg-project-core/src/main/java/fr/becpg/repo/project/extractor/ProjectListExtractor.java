@@ -59,6 +59,7 @@ import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.SecurityService;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>ProjectListExtractor class.</p>
@@ -90,7 +91,9 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	
 	private static final String PROP_SORT = "sort";
 
-	private String myProjectAttributes = "pjt:projectManager,cm:creator";
+	private String myProjectAttributes() {
+		return systemConfigurationService.confValue("project.extractor.myProjectAttributes");
+	}
 	
 	private String projectSearchTemplate = "%(cm:name bcpg:code cm:title)";
 
@@ -103,6 +106,12 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	private SecurityService securityService;
 
 	private NamespaceService namespaceService;
+	
+	private SystemConfigurationService systemConfigurationService;
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
 
 	private static final Log logger = LogFactory.getLog(ProjectListExtractor.class);
 	
@@ -138,15 +147,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 	 */
 	public void setPreferenceService(PreferenceService preferenceService) {
 		this.preferenceService = preferenceService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>myProjectAttributes</code>.</p>
-	 *
-	 * @param myProjectAttributes a {@link java.lang.String} object.
-	 */
-	public void setMyProjectAttributes(String myProjectAttributes) {
-		this.myProjectAttributes = myProjectAttributes;
 	}
 
 	/**
@@ -380,7 +380,7 @@ public class ProjectListExtractor extends ActivityListExtractor {
 
 			NodeRef currentUserNodeRef = personService.getPerson(userName);
 
-			for (String prop : myProjectAttributes.split(",")) {
+			for (String prop : myProjectAttributes().split(",")) {
 				QName propQname = QName.createQName(prop, namespaceService);
 				if (entityDictionaryService.isAssoc(propQname)) {
 					criteriaMap.put("assoc_" + prop.replace(":", "_") + "_or_added", currentUserNodeRef.toString());
