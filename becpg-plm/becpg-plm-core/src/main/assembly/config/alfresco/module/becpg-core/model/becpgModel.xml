@@ -415,8 +415,7 @@
 			</parameter>
 		</constraint>
 		
-		<!-- TODO Create a dynamic constraint 
-		based on productUnit and currency  -->
+
 		<constraint name="bcpg:costListUnit" type="fr.becpg.repo.dictionary.constraint.CurrencyConstraint">
 			<parameter name="allowedValuesSuffix">
 				<list>
