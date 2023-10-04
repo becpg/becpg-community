@@ -68,6 +68,8 @@ public class NutriScoreContext {
 	private boolean displaySaltScore = false;
 	
 	private List<String> nonNutritiveSugars = new ArrayList<>();
+	
+	private String version;
 
 	public NutriScoreContext() {
 		createPartValue(ENERGY_CODE, 0d);
@@ -93,6 +95,14 @@ public class NutriScoreContext {
 		createPartValue(AOAC_CODE, aoacFibreValue);
 		createPartValue(PROTEIN_CODE, proteinValue);
 		this.category = category;
+	}
+	
+	public String getVersion() {
+		return version;
+	}
+	
+	public void setVersion(String version) {
+		this.version = version;
 	}
 	
 	public List<String> getNonNutritiveSugars() {
