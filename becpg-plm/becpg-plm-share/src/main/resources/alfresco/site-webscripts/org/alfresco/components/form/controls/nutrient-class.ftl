@@ -32,7 +32,7 @@
 	      
  		  <#assign sodiumSalt = "">
 	      
-	      <#if nutrientDetails.displaySaltScore == true>
+	      <#if nutrientDetails.displaySaltScore?? && nutrientDetails.displaySaltScore == true>
 		      <#assign sodiumSalt = msg("nutriscore.display.salt", nutrientDetails.parts['NA'].lowerValue, nutrientDetails.parts['NA'].value, nutrientDetails.parts['NA'].upperValue, nutrientDetails.parts['NA'].score)
 		      						+ "\n">
 	       <#else>

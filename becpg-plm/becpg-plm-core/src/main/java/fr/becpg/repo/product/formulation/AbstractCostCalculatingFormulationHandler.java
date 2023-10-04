@@ -43,18 +43,21 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	protected PackagingHelper packagingHelper;
 
 	protected AlfrescoRepository<ProductData> alfrescoRepositoryProductData;
-
-	/** Constant <code>keepProductUnit=false</code> */
-	public static boolean keepProductUnit = false;
-
-	/**
-	 * <p>Setter for the field <code>keepProductUnit</code>.</p>
-	 *
-	 * @param keepProductUnit a boolean.
-	 */
-	public void setKeepProductUnit(boolean keepProductUnit) {
-		AbstractCostCalculatingFormulationHandler.keepProductUnit = keepProductUnit;
+	
+	private static AbstractCostCalculatingFormulationHandler<?> instance;
+	
+	public AbstractCostCalculatingFormulationHandler() {
+		instance = this;
 	}
+
+	protected boolean internalKeepProductUnit() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.costList.keepProductUnit"));
+	}
+	
+	public static boolean keepProductUnit() {
+		return instance.internalKeepProductUnit();
+	}
+
 
 	/**
 	 * <p>Setter for the field <code>entityTplService</code>.</p>
@@ -142,12 +145,12 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 						c.setUnit(calculateUnit(unit, (String) nodeService.getProperty(c.getCost(), getCostUnitPropName()), fixed));
 
 						if (!Boolean.TRUE.equals(fixed) && hasCompoEl) {
-							if (!keepProductUnit && unit.isLb()) {
+							if (!internalKeepProductUnit() && unit.isLb()) {
 								c.setValue(ProductUnit.lbToKg(c.getValue()));
 								c.setMaxi(ProductUnit.lbToKg(c.getMaxi()));
 								c.setPreviousValue(ProductUnit.lbToKg(c.getPreviousValue()));
 								c.setFutureValue(ProductUnit.lbToKg(c.getFutureValue()));
-							} else if (!keepProductUnit && unit.isGal()) {
+							} else if (!internalKeepProductUnit() && unit.isGal()) {
 								c.setValue(ProductUnit.GalToL(c.getValue()));
 								c.setMaxi(ProductUnit.GalToL(c.getMaxi()));
 								c.setPreviousValue(ProductUnit.GalToL(c.getPreviousValue()));
@@ -197,7 +200,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	 * @return a {@link java.lang.String} object.
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit) {
-		if (!keepProductUnit) {
+		if (!instance.internalKeepProductUnit()) {
 			return UNIT_SEPARATOR + productUnit.getMainUnit().toString();
 		}
 		return UNIT_SEPARATOR + productUnit.toString();

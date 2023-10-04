@@ -747,7 +747,7 @@
 
 							// call webscript
 							var url = Alfresco.constants.PROXY_URI + "becpg/report/exportsearch/" + args.reportTpl.replace("://", "/") + "/"
-									+ encodeURI(args.reportFileName);
+									+ encodeURIComponent(args.reportFileName);
 
 							// add search data webscript arguments
 							url += "?term=" + encodeURIComponent(searchTerm);

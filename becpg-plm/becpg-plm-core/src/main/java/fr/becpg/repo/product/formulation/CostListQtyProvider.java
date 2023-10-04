@@ -18,7 +18,7 @@ public class CostListQtyProvider implements SimpleListQtyProvider {
 
 		@Override
 		public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-			return FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio, componentProduct, CostsCalculatingFormulationHandler.keepProductUnit);
+			return FormulationHelper.getQtyForCost(compoListDataItem, parentLossRatio, componentProduct, CostsCalculatingFormulationHandler.keepProductUnit());
 		}
 
 		@Override
