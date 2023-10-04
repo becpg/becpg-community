@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.NutrientProfileCategory;
+import fr.becpg.model.NutrientProfileVersion;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.formulation.score.NutriScoreContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -63,6 +64,11 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 
 	private Nutrient5C2021Helper() {
 		
+	}
+	
+	@Override
+	public String getVersion() {
+		return NutrientProfileVersion.VERSION_2017.toString();
 	}
 	
 	@Override

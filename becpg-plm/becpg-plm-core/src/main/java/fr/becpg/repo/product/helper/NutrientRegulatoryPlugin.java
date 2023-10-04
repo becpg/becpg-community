@@ -10,4 +10,6 @@ public interface NutrientRegulatoryPlugin {
 	Double computeScore(NutriScoreContext context);
 	
 	String extractClass(NutriScoreContext context);
+	
+	String getVersion();
 }
