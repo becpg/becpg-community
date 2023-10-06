@@ -102,7 +102,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	private static final Log logger = LogFactory.getLog(DefaultEntityReportExtractor.class);
 
 	/** Constant <code>TAG_ENTITY="entity"</code> */
-	protected static final String TAG_ENTITY = "entity";
+	public static final String TAG_ENTITY = "entity";
 
 	/** Constant <code>TAG_DATALISTS="dataLists"</code> */
 	protected static final String TAG_DATALISTS = "dataLists";
@@ -114,6 +114,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String TAG_VERSIONS = "versions";
 	/** Constant <code>TAG_VERSION="version"</code> */
 	protected static final String TAG_VERSION = "version";
+	
+	public static final String TAG_REPORT_PARAMS= "reportParams";
 	/** Constant <code>ATTR_SET="set"</code> */
 	protected static final String ATTR_SET = "set";
 	/** Constant <code>ATTR_NAME="name"</code> */
@@ -134,6 +136,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String ATTR_ENTITY_TYPE = "entityType";
 	/** Constant <code>PRODUCT_IMG_ID="Img%d"</code> */
 	protected static final String PRODUCT_IMG_ID = "Img%d";
+	
+	
 
 	protected static final String EXTRA_IMG_ID = "Extra%d";
 	/** Constant <code>ATTR_IMAGE_ID="id"</code> */
