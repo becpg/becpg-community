@@ -399,62 +399,58 @@ public class EntityReportParameters {
 		EntityReportParameters ret = new EntityReportParameters();
 
 		if ((jsonString != null) && !jsonString.isEmpty()) {
-			try {
-				JSONObject json = new JSONObject(jsonString);
+			JSONObject json = new JSONObject(jsonString);
 
-				if (json.has(JSON_PARAM_PARAMS)) {
-					JSONArray params = json.getJSONArray(JSON_PARAM_PARAMS);
+			if (json.has(JSON_PARAM_PARAMS)) {
+				JSONArray params = json.getJSONArray(JSON_PARAM_PARAMS);
 
-					for (int i = 0; i < params.length(); i++) {
-						JSONObject param = params.getJSONObject(i);
-						if (param.has(JSON_PROP_ID)) {
-							EntityReportParameter tmp = new EntityReportParameter();
-							tmp.setId(param.getString(JSON_PROP_ID));
-							if (param.has(JSON_PARAM_PROP)) {
-								tmp.setProp(param.getString(JSON_PARAM_PROP));
-							}
-							if (param.has(JSON_PROP_NODEREF)) {
-								tmp.setNodeRef(new NodeRef(param.getString(JSON_PROP_NODEREF)));
-							}
-							if (param.has(JSON_PROP_VALUE)) {
-								tmp.setValue(param.getString(JSON_PROP_VALUE));
-							}
-
-							ret.getParameters().add(tmp);
+				for (int i = 0; i < params.length(); i++) {
+					JSONObject param = params.getJSONObject(i);
+					if (param.has(JSON_PROP_ID)) {
+						EntityReportParameter tmp = new EntityReportParameter();
+						tmp.setId(param.getString(JSON_PROP_ID));
+						if (param.has(JSON_PARAM_PROP)) {
+							tmp.setProp(param.getString(JSON_PARAM_PROP));
+						}
+						if (param.has(JSON_PROP_NODEREF)) {
+							tmp.setNodeRef(new NodeRef(param.getString(JSON_PROP_NODEREF)));
+						}
+						if (param.has(JSON_PROP_VALUE)) {
+							tmp.setValue(param.getString(JSON_PROP_VALUE));
 						}
 
+						ret.getParameters().add(tmp);
 					}
 
 				}
 
-				if (json.has(JSON_PARAM_ITERATIONKEY)) {
-					ret.setIterationKey(json.getString(JSON_PARAM_ITERATIONKEY));
-				}
+			}
 
-				if (json.has(JSON_PARAM_PREFS)) {
-					JSONObject prefs = json.getJSONObject(JSON_PARAM_PREFS);
-					JSONArray keys = prefs.names();
-					for (int i = 0; i < keys.length(); i++) {
-						String key = keys.getString(i);
-						Object value = prefs.get(key);
-						if (value instanceof Boolean) {
-							ret.getPreferences().put(key, Boolean.toString((Boolean) value));
-						} else {
-							ret.getPreferences().put(key, value.toString());
-						}
+			if (json.has(JSON_PARAM_ITERATIONKEY)) {
+				ret.setIterationKey(json.getString(JSON_PARAM_ITERATIONKEY));
+			}
+
+			if (json.has(JSON_PARAM_PREFS)) {
+				JSONObject prefs = json.getJSONObject(JSON_PARAM_PREFS);
+				JSONArray keys = prefs.names();
+				for (int i = 0; i < keys.length(); i++) {
+					String key = keys.getString(i);
+					Object value = prefs.get(key);
+					if (value instanceof Boolean) {
+						ret.getPreferences().put(key, Boolean.toString((Boolean) value));
+					} else {
+						ret.getPreferences().put(key, value.toString());
 					}
-
 				}
 
-				if (json.has(JSON_PARAM_NAMEFORMAT)) {
-					ret.setReportNameFormat(json.getString(JSON_PARAM_NAMEFORMAT));
-				}
+			}
 
-				if (json.has(JSON_PARAM_TITLEFORMAT)) {
-					ret.setReportTitleFormat(json.getString(JSON_PARAM_TITLEFORMAT));
-				}
-			} catch (JSONException e) {
-				logger.error("Cannot parse reportParameters:  " + jsonString, e);
+			if (json.has(JSON_PARAM_NAMEFORMAT)) {
+				ret.setReportNameFormat(json.getString(JSON_PARAM_NAMEFORMAT));
+			}
+
+			if (json.has(JSON_PARAM_TITLEFORMAT)) {
+				ret.setReportTitleFormat(json.getString(JSON_PARAM_TITLEFORMAT));
 			}
 
 		}
