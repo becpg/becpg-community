@@ -1186,7 +1186,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		        if( scope.subCache!=null && scope.subCache["idx_"+oColumn.getKeyIndex()]!=null){
 		              for (var j = 0; j <  scope.subCache["idx_"+oColumn.getKeyIndex()].length; j++) {
                         var path =  scope.subCache["idx_"+oColumn.getKeyIndex()][j].path;
-                        if(path == oRecord.getData("itemData")["path"] && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value !=null){
+                        if(path == oRecord.getData("itemData")["path"] && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value  && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value !=null){
                         	 return  beCPG.util.formatNumber(oColumn.numberFormat, scope.subCache["idx_"+oColumn.getKeyIndex()][j].value);	  
              			
                         }
@@ -1204,7 +1204,7 @@ if (beCPG.module.EntityDataGridRenderers) {
                                 scope.subCache = [];
                             }
                             scope.subCache["idx_"+oColumn.getKeyIndex()] = json.sub;
-                            if(json.value!=null){
+                            if(json.value && json.value!=null){
             				    return  beCPG.util.formatNumber(oColumn.numberFormat, json.value);	   
             				} 
                         }
