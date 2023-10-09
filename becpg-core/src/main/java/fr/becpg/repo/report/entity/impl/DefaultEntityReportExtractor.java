@@ -889,7 +889,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 					} else if (DataTypeDefinition.TEXT.equals(propertyDef.getDataType().getName())) {
 						if (dynListConstraint != null) {
-							mlValues = dynListConstraint.getMLAwareAllowedValues().get(property.getValue());
+							mlValues = dynListConstraint.getMLDisplayLabel((String)property.getValue());
 						}
 					}
 

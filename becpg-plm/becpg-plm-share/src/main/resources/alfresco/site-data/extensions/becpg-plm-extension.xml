@@ -38,10 +38,6 @@
 					<sourcePackageRoot>org.alfresco.components.custom-create-topic
 					</sourcePackageRoot>
 				</customization>
-				<customization>
-		          <targetPackageRoot>de.fme.components.jsconsole</targetPackageRoot>
-		          <sourcePackageRoot>de.fme.components.custom-jsconsole</sourcePackageRoot>
-		        </customization>
 			</customizations>
 		</module>
 	</modules>

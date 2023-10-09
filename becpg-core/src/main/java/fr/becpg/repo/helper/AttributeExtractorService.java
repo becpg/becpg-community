@@ -25,6 +25,7 @@ import java.util.Map;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
+import org.json.JSONObject;
 
 import fr.becpg.config.format.FormatMode;
 import fr.becpg.config.format.PropertyFormats;
@@ -56,6 +57,10 @@ public interface AttributeExtractorService {
 	interface AttributeExtractorPlugin {
 
 		String extractPropName(QName type, NodeRef nodeRef);
+		
+		default String extractPropName(JSONObject jsonEntity) {
+			return null;
+		}
 
 		String extractMetadata(QName type,NodeRef nodeRef);
 		
@@ -177,6 +182,8 @@ public interface AttributeExtractorService {
 	 * @return a {@link java.lang.String} object.
 	 */
 	String extractPropName(NodeRef v);
+	
+	String extractPropName(QName type, JSONObject v);
 
 	/**
 	 * <p>extractPropName.</p>
