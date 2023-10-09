@@ -8,6 +8,7 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.repo.batch.BatchProcessWorkProvider;
 import org.alfresco.repo.batch.BatchProcessor;
 import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorker;
+import org.alfresco.repo.batch.BatchProcessor.BatchProcessWorkerAdaptor;
 import org.alfresco.repo.domain.node.NodeDAO;
 import org.alfresco.repo.domain.patch.PatchDAO;
 import org.alfresco.repo.domain.qname.QNameDAO;
@@ -192,28 +193,21 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREAD, BATCH_SIZE,
 				applicationEventPublisher, logger, 1000);
 
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorkerAdaptor<NodeRef>() {
 
-			public void afterProcess() throws Throwable {
-				ruleService.enableRules();
-				integrityChecker.setEnabled(false);
-			}
-
-			public void beforeProcess() throws Throwable {
-				ruleService.disableRules();
-				integrityChecker.setEnabled(true);
-			}
-
+			@Override
 			public String getIdentifier(NodeRef entry) {
 				return entry.toString();
 			}
 
+			@Override
 			public void process(NodeRef nutrientProfile) throws Throwable {
+				
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
+				ruleService.disableRules();
+				integrityChecker.setEnabled(false);
 				policyBehaviourFilter.disableBehaviour();
-				
-				
 				
 				List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
 				
@@ -234,7 +228,6 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 					
 					if (nutrientProfileClassKnown) {
 						for (AssociationRef sourceAssoc : sourceAssocs) {
-							
 							if (nutrientProfileClass.contains("Others") || nutrientProfileClass.contains("Autres")) {
 								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Others.toString());
 							} else if (nutrientProfileClass.contains("Beverages") || nutrientProfileClass.contains("Boissons")) {
@@ -258,8 +251,8 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				}
 				
 				policyBehaviourFilter.enableBehaviour();
-				
-		
+				ruleService.enableRules();
+				integrityChecker.setEnabled(true);
 			}
 
 		};
@@ -267,16 +260,26 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 		batchProcessor.processLong(worker, true);
 		
 		NodeRef companyHomeNodeRef = repository.getCompanyHome();
-		NodeRef systemNodeRef = repoService.getFolderByPath(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
-		NodeRef charactsNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
-		NodeRef entityListNodeRef = repoService.getFolderByPath(charactsNodeRef, "bcpg:entityLists");
-		NodeRef nutrientProfilesCategoryNodeRef = repoService.getFolderByPath(entityListNodeRef, PATH_NUTRIENTPROFILES);
-
-		if (nutrientProfilesCategoryNodeRef != null && nodeService.exists(nutrientProfilesCategoryNodeRef)) {
-			nodeService.addAspect(nutrientProfilesCategoryNodeRef, ContentModel.ASPECT_TEMPORARY, null);
-			nodeService.deleteNode(nutrientProfilesCategoryNodeRef);
+		if (companyHomeNodeRef != null) {
+			NodeRef systemNodeRef = repoService.getFolderByPath(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
+			if (systemNodeRef != null) {
+				NodeRef charactsNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
+				if (charactsNodeRef != null) {
+					NodeRef entityListNodeRef = repoService.getFolderByPath(charactsNodeRef, "bcpg:entityLists");
+					if (entityListNodeRef != null) {
+						NodeRef nutrientProfilesCategoryNodeRef = repoService.getFolderByPath(entityListNodeRef, PATH_NUTRIENTPROFILES);
+						if (nutrientProfilesCategoryNodeRef != null && nodeService.exists(nutrientProfilesCategoryNodeRef)) {
+							if (nodeService.getChildAssocs(nutrientProfilesCategoryNodeRef).isEmpty()) {
+								nodeService.addAspect(nutrientProfilesCategoryNodeRef, ContentModel.ASPECT_TEMPORARY, null);
+								nodeService.deleteNode(nutrientProfilesCategoryNodeRef);
+								logger.info("deleting nutrient profile list: " + nutrientProfilesCategoryNodeRef);
+							}
+						}
+					}
+				}
+			}
 		}
-
+		
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}
 
