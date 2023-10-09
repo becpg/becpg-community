@@ -41,6 +41,15 @@
 			</parameter>
 		</constraint>
 		
+		<constraint name="bcpg:nutrientProfileVersions" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value></value>
+					<value>2017</value>
+					<value>2023</value>
+				</list>
+			</parameter>
+		</constraint>
 		
 		<constraint name="bcpg:nutrientPreparationStates" type="LIST">
 			<parameter name="allowedValues">
@@ -4838,6 +4847,17 @@
 					</index>
 					<constraints>
 						<constraint ref="bcpg:nutrientProfileCategories" />
+					</constraints>
+				</property>
+				<property name="bcpg:nutrientProfileVersion">
+					<type>d:text</type>
+					<default></default>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+					<constraints>
+						<constraint ref="bcpg:nutrientProfileVersions" />
 					</constraints>
 				</property>
 			</properties>

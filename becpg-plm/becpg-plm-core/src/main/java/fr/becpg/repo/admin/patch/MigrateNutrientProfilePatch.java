@@ -24,6 +24,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.NutrientProfileCategory;
+import fr.becpg.model.NutrientProfileVersion;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 
@@ -158,11 +159,6 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				return result.size();
 			}
 			
-			@Override
-			public long getTotalEstimatedWorkSizeLong() {
-				return result.size();
-			}
-
 			public Collection<NodeRef> getNextWork() {
 
 				result.clear();
@@ -195,10 +191,12 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
 			public void afterProcess() throws Throwable {
 				ruleService.enableRules();
+				integrityChecker.setEnabled(false);
 			}
 
 			public void beforeProcess() throws Throwable {
 				ruleService.disableRules();
+				integrityChecker.setEnabled(true);
 			}
 
 			public String getIdentifier(NodeRef entry) {
@@ -210,7 +208,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 
 				policyBehaviourFilter.disableBehaviour();
 				
-				integrityChecker.setEnabled(false);
+				
 				
 				List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
 				
@@ -220,19 +218,30 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 					
 					String nutrientProfileClass = (String) nodeService.getProperty(nutrientProfile, BeCPGModel.PROP_CHARACT_NAME);
 					
-					boolean nutrientProfileClassKnown = nutrientProfileClass != null && (nutrientProfileClass.contains("Others") || nutrientProfileClass.contains("Beverages") || nutrientProfileClass.contains("Fats") || nutrientProfileClass.contains("Cheeses"));
+					boolean nutrientProfileClassKnown = nutrientProfileClass != null 
+							&& (nutrientProfileClass.contains("Others") ||
+									nutrientProfileClass.contains("Autres") 
+									|| nutrientProfileClass.contains("Beverages") 
+									|| nutrientProfileClass.contains("Boissons") 
+									|| nutrientProfileClass.contains("Fats") || nutrientProfileClass.contains("Matières grasses")
+									|| nutrientProfileClass.contains("Cheeses")
+									|| nutrientProfileClass.contains("Fromages"));
 					
 					if (nutrientProfileClassKnown) {
 						for (AssociationRef sourceAssoc : sourceAssocs) {
 							
-							if (nutrientProfileClass.contains("Others")) {
+							if (nutrientProfileClass.contains("Others") || nutrientProfileClass.contains("Autres")) {
 								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Others.toString());
-							} else if (nutrientProfileClass.contains("Beverages")) {
+							} else if (nutrientProfileClass.contains("Beverages") || nutrientProfileClass.contains("Boissons")) {
 								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Beverages.toString());
-							} else if (nutrientProfileClass.contains("Fats")) {
+							} else if (nutrientProfileClass.contains("Fats") || nutrientProfileClass.contains("Matières grasses")) {
 								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Fats.toString());
-							} else if (nutrientProfileClass.contains("Cheeses")) {
+							} else if (nutrientProfileClass.contains("Cheeses") || nutrientProfileClass.contains("Fromages")) {
 								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Cheeses.toString());
+							}
+							
+							if (nutrientProfileClass.contains(NutrientProfileVersion.VERSION_2023.toString())) {
+								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_VERSION, NutrientProfileVersion.VERSION_2023.toString());
 							}
 							
 							nodeService.removeAssociation(sourceAssoc.getSourceRef(), nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
@@ -245,7 +254,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				
 				policyBehaviourFilter.enableBehaviour();
 				
-				integrityChecker.setEnabled(true);
+		
 			}
 
 		};
@@ -253,13 +262,9 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 		batchProcessor.processLong(worker, true);
 		
 		NodeRef companyHomeNodeRef = repository.getCompanyHome();
-		
 		NodeRef systemNodeRef = repoService.getFolderByPath(companyHomeNodeRef, RepoConsts.PATH_SYSTEM);
-		
 		NodeRef charactsNodeRef = repoService.getFolderByPath(systemNodeRef, RepoConsts.PATH_CHARACTS);
-		
 		NodeRef entityListNodeRef = repoService.getFolderByPath(charactsNodeRef, "bcpg:entityLists");
-		
 		NodeRef nutrientProfilesCategoryNodeRef = repoService.getFolderByPath(entityListNodeRef, PATH_NUTRIENTPROFILES);
 
 		if (nutrientProfilesCategoryNodeRef != null && nodeService.exists(nutrientProfilesCategoryNodeRef)) {
