@@ -42,6 +42,7 @@
           <show for-mode="view" force="false" id="bcpg:nutrientProfilingScore"/>
           <show for-mode="view" force="false" id="bcpg:nutrientProfilingDetails"/>
           <show force="false" id="bcpg:nutrientProfileCategory"/>
+          <show force="false" id="bcpg:nutrientProfileVersion"/>
           <show force="false" id="ghs:sdsSignalWord"/>
           <show force="false" id="ghs:sdsPictograms"/>
           <show force="false" id="ghs:sdsHazardStatements"/>
@@ -228,6 +229,10 @@
             <control template="/org/alfresco/components/form/controls/nutrient-class.ftl"/>
           </field>
           <field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
+            <control template="/org/alfresco/components/form/controls/selectone.ftl">
+            </control>
+          </field>
+          <field id="bcpg:nutrientProfileVersion" mandatory="false" read-only="false" set="score">
             <control template="/org/alfresco/components/form/controls/selectone.ftl">
             </control>
           </field>
@@ -513,6 +518,7 @@
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingScore"/>
           <show for-mode="view" force="true" id="bcpg:nutrientProfilingDetails"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
+          <show force="true" id="bcpg:nutrientProfileVersion"/>
         </field-visibility>
         <appearance>
           <field help-id="becpg.forms.help.servingSize" id="bcpg:servingSize" mandatory="false" read-only="false"/>
@@ -528,6 +534,10 @@
             <control template="/org/alfresco/components/form/controls/nutrient-class.ftl"/>
           </field>
           <field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/selectone.ftl">
+            </control>
+          </field>
+          <field id="bcpg:nutrientProfileVersion" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/selectone.ftl">
             </control>
           </field>
@@ -998,6 +1008,7 @@
           <show force="true" id="pack:width"/>
           <show force="true" id="pack:height"/>
           <show force="false" id="bcpg:nutrientProfileCategory"/>
+          <show force="false" id="bcpg:nutrientProfileVersion"/>
           <show force="true" id="ghs:sdsSignalWord"/>
           <show force="true" id="ghs:sdsPictograms"/>
           <show force="true" id="ghs:sdsHazardStatements"/>
@@ -1138,6 +1149,10 @@
           </field>
           <set appearance="bordered-panel" id="score" label-id="becpg.forms.set.nutrient.score.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="bcpg:nutrientProfileCategory" mandatory="false" read-only="false" set="score">
+            <control template="/org/alfresco/components/form/controls/selectone.ftl">
+            </control>
+          </field>
+          <field id="bcpg:nutrientProfileVersion" mandatory="false" read-only="false" set="score">
             <control template="/org/alfresco/components/form/controls/selectone.ftl">
             </control>
           </field>
