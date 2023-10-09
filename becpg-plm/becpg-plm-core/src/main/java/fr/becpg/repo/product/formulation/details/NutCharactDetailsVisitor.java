@@ -54,16 +54,16 @@ public class NutCharactDetailsVisitor extends SimpleCharactDetailsVisitor {
 		Double netWeight = FormulationHelper.getNetWeight(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 		Double netVol = FormulationHelper.getNetVolume(formulatedProduct, FormulationHelper.DEFAULT_NET_WEIGHT);
 
-		visitRecur(formulatedProduct, ret, 0, level, netWeight, netVol, netQty);
+		visitRecur(formulatedProduct, formulatedProduct, ret, 0, level, netWeight, netVol, netQty);
 
 		return ret;
 	}
 	
 	@Override
-	protected void provideAdditionalValues(ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
+	protected void provideAdditionalValues(ProductData rootProduct, ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
 		NutListDataItem nutListDataItem = (NutListDataItem) simpleCharact;
 		Double value = nutListDataItem.getPreparedValue() != null ? nutListDataItem.getPreparedValue() : nutListDataItem.getValue();
-		Double servingSize = FormulationHelper.getServingSizeInLorKg(formulatedProduct);
+		Double servingSize = FormulationHelper.getServingSizeInLorKg(rootProduct);
 		
 		if (servingSize != null && value != null) {
 			Double valuePerServing = (value * (servingSize * 1000d)) / 100;
