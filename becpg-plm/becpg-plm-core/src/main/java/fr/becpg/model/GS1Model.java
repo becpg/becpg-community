@@ -114,4 +114,6 @@ public interface GS1Model {
 
 	QName PROP_SECONDARY_PACKAGING_TYPE_CODE = QName.createQName(GS1_URI, "secondaryPackagingTypeCode");
 
+	QName TYPE_ALCOHOL_BEVERAGE_CONTAINER = QName.createQName(GS1_URI, "alcoholBeverageContainer");
+
 }

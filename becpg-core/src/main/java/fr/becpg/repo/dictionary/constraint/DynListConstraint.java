@@ -3,16 +3,16 @@
  */
 package fr.becpg.repo.dictionary.constraint;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,9 +35,12 @@ import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.namespace.InvalidQNameException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
-import org.alfresco.util.Pair;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
@@ -65,25 +68,29 @@ public class DynListConstraint extends ListOfValuesConstraint {
 
 	private static final Log logger = LogFactory.getLog(DynListConstraint.class);
 
+	private static final String CLASSPATH_PREFIX = "classpath:";
+
 	private static ServiceRegistry serviceRegistry;
 
 	private static BeCPGCacheService beCPGCacheService;
-	
+
 	private static Set<String> pathRegistry = new HashSet<>();
-	
+
 	private List<String> paths = null;
 
-	private String constraintType = null;
-	private String constraintProp = null;
+	private String constraintType = "bcpg:listValue";
+	private String constraintProp = "bcpg:lvValue";
+	private String constraintFilterProp = "bcpg:lvType";
 	private String constraintCode = null;
+	private String constraintFilter = null;
 
 	private String level = null;
 	private String levelProp = null;
 
 	private Boolean addEmptyValue = null;
-	
+
 	private List<String> allowedValuesSuffix = null;
-	
+
 	public void setAllowedValuesSuffix(List<String> allowedValuesSuffix) {
 		this.allowedValuesSuffix = allowedValuesSuffix;
 	}
@@ -91,7 +98,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	public List<String> getPaths() {
 		return paths;
 	}
-	
+
 	/**
 	 * <p>setPath.</p>
 	 *
@@ -107,9 +114,11 @@ public class DynListConstraint extends ListOfValuesConstraint {
 			throw new DictionaryException(ERR_NO_VALUES);
 		}
 		this.paths = paths;
-		
+
 		for (String path : paths) {
-			pathRegistry.add("/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(path));
+			if (!path.startsWith(CLASSPATH_PREFIX)) {
+				pathRegistry.add("/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(path));
+			}
 		}
 	}
 
@@ -130,7 +139,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	public static void setBeCPGCacheService(BeCPGCacheService beCPGCacheService) {
 		DynListConstraint.beCPGCacheService = beCPGCacheService;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>constraintType</code>.</p>
 	 *
@@ -156,6 +165,14 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 */
 	public void setConstraintCode(String constraintCode) {
 		this.constraintCode = constraintCode;
+	}
+
+	public void setConstraintFilterProp(String constraintFilterProp) {
+		this.constraintFilterProp = constraintFilterProp;
+	}
+
+	public void setConstraintFilter(String constraintFilter) {
+		this.constraintFilter = constraintFilter;
 	}
 
 	/**
@@ -184,7 +201,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	public void setAddEmptyValue(Boolean addEmptyValue) {
 		this.addEmptyValue = addEmptyValue;
 	}
-	
+
 	public static Set<String> getPathRegistry() {
 		return pathRegistry;
 	}
@@ -208,47 +225,46 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		return getAllowedValues(true);
 	}
 
-	public List<String> getAllowedValues(boolean filterOnDeletedValuesAndGroups) {
+	public List<String> getAllowedValues(boolean filter) {
 
-		Map<String, Pair<MLText, List<String>>> values = getMLAwareAllowedValuesInternal(filterOnDeletedValuesAndGroups);
+		Map<String, DynListEntry> values = getDynListEntries();
 
 		if (values.isEmpty()) {
 			return Collections.singletonList(UNDIFINED_CONSTRAINT_VALUE);
 		}
-		
+
 		List<String> allowedValues = null;
-		
-		if (filterOnDeletedValuesAndGroups) {
-			
+
+		if (filter) {
+
 			String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
-			
+
 			allowedValues = AuthenticationUtil.runAsSystem(() -> {
 				List<String> valuesToReturn = new LinkedList<>();
-				for (Entry<String, Pair<MLText, List<String>>> entry : values.entrySet()) {
-					
-					boolean hasPermission = currentUser == null || entry.getValue().getSecond().isEmpty() || entry.getValue().getSecond().stream().anyMatch(key -> serviceRegistry.getAuthorityService().getContainedAuthorities(AuthorityType.USER, key, false).contains(currentUser));
-					
-					if (hasPermission) {
+				for (Map.Entry<String, DynListEntry> entry : values.entrySet()) {
+					if (!Boolean.TRUE.equals(entry.getValue().getIsDeleted()) && ((currentUser == null) || entry.getValue().getGroups() ==null || entry.getValue().getGroups().isEmpty()
+							|| entry.getValue().getGroups().stream().anyMatch(key -> serviceRegistry.getAuthorityService()
+									.getContainedAuthorities(AuthorityType.USER, key, false).contains(currentUser)))) {
 						valuesToReturn.add(entry.getKey());
+
 					}
 				}
-				
+
 				return valuesToReturn;
 			});
-			
+
 		} else {
 			allowedValues = new LinkedList<>(values.keySet());
 		}
-		
+
 		if (allowedValuesSuffix != null) {
 			List<String> valuesToReturnWithSuffixes = new LinkedList<>();
 			allowedValues.forEach(value -> allowedValuesSuffix.forEach(suffix -> valuesToReturnWithSuffixes.add(value + suffix)));
 			return valuesToReturnWithSuffixes;
-		} 
-		
+		}
+
 		return allowedValues;
 	}
-	
 
 	/** {@inheritDoc} */
 	@Override
@@ -278,6 +294,17 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		return getDisplayLabel(constraintAllowableValue, I18NUtil.getLocale());
 	}
 
+	public MLText getMLDisplayLabel(String constraintAllowableValue) {
+
+		DynListEntry entry = getDynListEntries().get(constraintAllowableValue);
+
+		if (entry != null) {
+			return entry.getValues();
+		}
+
+		return new MLText();
+	}
+
 	/**
 	 * <p>getDisplayLabel.</p>
 	 *
@@ -287,7 +314,7 @@ public class DynListConstraint extends ListOfValuesConstraint {
 	 */
 	public String getDisplayLabel(String constraintAllowableValue, Locale locale) {
 
-		MLText mlText = getMLAwareAllowedValues().get(constraintAllowableValue);
+		MLText mlText = getMLDisplayLabel(constraintAllowableValue);
 
 		String ret = MLTextHelper.getClosestValue(mlText, locale);
 
@@ -304,119 +331,173 @@ public class DynListConstraint extends ListOfValuesConstraint {
 		return getDisplayLabel(constraintAllowableValue);
 	}
 
-	/**
-	 * <p>getMLAwareAllowedValues.</p>
-	 *
-	 * @return a {@link java.util.Map} object.
-	 */
-	public Map<String, MLText> getMLAwareAllowedValues() {
-		
-		Map<String, MLText> values = new HashMap<>();
-		
-		Map<String, Pair<MLText, List<String>>> valuesMap = getMLAwareAllowedValuesInternal(true);
-		
-		for (Entry<String, Pair<MLText, List<String>>> entry : valuesMap.entrySet()) {
-			values.put(entry.getKey(), entry.getValue().getFirst());
-		}
-		
-		return values;
-	}
-
-	private Map<String, Pair<MLText, List<String>>> getMLAwareAllowedValuesInternal(boolean filterOnDeletedValues) {
-		return beCPGCacheService.getFromCache(DynListConstraint.class.getName(), getShortName() + filterOnDeletedValues,
+	private Map<String, DynListEntry> getDynListEntries() {
+		return beCPGCacheService.getFromCache(DynListConstraint.class.getName(), createCacheKey(),
 				() -> serviceRegistry.getRetryingTransactionHelper().doInTransaction(() -> {
-
-					logger.debug("Fill allowedValues  for :" + TenantUtil.getCurrentDomain());
-
-					Map<String, Pair<MLText, List<String>>> allowedValues = new LinkedHashMap<>();
+					logger.debug("Fill allowedValues for: " + TenantUtil.getCurrentDomain());
+					Map<String, DynListEntry> allowedValues = new LinkedHashMap<>();
 
 					if (Boolean.TRUE.equals(addEmptyValue)) {
-						allowedValues.put("", new Pair<>(null, new ArrayList<>()));
+						allowedValues.put("", new DynListEntry());
 					}
 
 					AuthenticationUtil.runAsSystem(() -> {
-
-						NamespaceService namespaceService = serviceRegistry.getNamespaceService();
-						QName constraintTypeQname = QName.createQName(constraintType, namespaceService);
-						QName constraintPropQname = QName.createQName(constraintProp, namespaceService);
-						QName constraintCodeQname = null;
-						if (constraintCode != null) {
-							constraintCodeQname = QName.createQName(constraintCode, namespaceService);
-						} else if (BeCPGModel.TYPE_LIST_VALUE.equals(constraintTypeQname)) {
-							constraintCodeQname = BeCPGModel.PROP_LV_CODE;
-						}
-
 						for (String path : paths) {
-							
-							boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
-							try {
-								
-								List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(
-										serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE),
-										"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(path) + "/*");
-
-								Collections.sort(nodeRefs, (o1, o2) -> {
-									Integer sort1 = (Integer) serviceRegistry.getNodeService().getProperty(o1, BeCPGModel.PROP_SORT);
-									Integer sort2 = (Integer) serviceRegistry.getNodeService().getProperty(o2, BeCPGModel.PROP_SORT);
-									if ((sort1 == null) && (sort2 == null)) {
-										return 0;
-									}
-									if (sort1 == null) {
-										return -1;
-									}
-									if (sort2 == null) {
-										return 1;
-									}
-
-									return sort1.compareTo(sort2);
-								});
-
-								for (NodeRef nodeRef : nodeRefs) {
-									if (serviceRegistry.getNodeService().exists(nodeRef)
-											&& serviceRegistry.getNodeService().getType(nodeRef).equals(constraintTypeQname)) {
-										
-										MLText mlText = (MLText) serviceRegistry.getNodeService().getProperty(nodeRef, constraintPropQname);
-										if (mlText != null) {
-
-											if (!filterOnDeletedValues || !Boolean.TRUE.equals(serviceRegistry.getNodeService().getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED))) {
-												String key = null;
-												
-												if (constraintCodeQname != null) {
-													key = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintCodeQname);
-													
-												}
-												if ((key == null) || key.isEmpty()) {
-													key = mlText.getClosestValue(Locale.getDefault());
-												}
-												
-												if (key != null) {
-													List<String> authorities = serviceRegistry.getNodeService().getTargetAssocs(nodeRef, SecurityModel.ASSOC_READ_GROUPS).stream().map(AssociationRef::getTargetRef).map(n -> (String) serviceRegistry.getNodeService().getProperty(n, ContentModel.PROP_AUTHORITY_NAME)).collect(Collectors.toList());
-													allowedValues.put(key, new Pair<>(mlText, authorities));
-												}
-											}
-										}
-									} else {
-										logger.warn("Node doesn't exist : " + nodeRef);
-									}
-								}
-
-								if (logger.isDebugEnabled()) {
-									logger.debug("allowedValues.size() : " + allowedValues.size());
-									logger.debug("allowed values: " + allowedValues.toString());
-								}
-							} catch (InvalidStoreRefException | InvalidQNameException e) {
-								logger.warn("Please reload constraint once tenant created: " + e.getMessage());
-							} finally {
-								MLPropertyInterceptor.setMLAware(wasMLAware);
+							if (path.startsWith(CLASSPATH_PREFIX)) {
+								processClasspathResource(path, allowedValues);
+							} else {
+								processSystemList(path, allowedValues);
 							}
 						}
 						return null;
-
 					});
 
 					return allowedValues;
-
 				}, true, false));
+	}
+
+	private void processClasspathResource(String path, Map<String, DynListEntry> allowedValues) {
+		ClassPathResource resource = new ClassPathResource(path.replace(CLASSPATH_PREFIX, ""));
+		try (InputStream in = resource.getInputStream();
+				InputStreamReader inReader = new InputStreamReader(in);
+				CSVParser csvParser = CSVFormat.DEFAULT.builder().setDelimiter(';').setQuote('"').setHeader().setSkipHeaderRecord(true).build()
+						.parse(inReader)) {
+
+			Set<String> locales = new HashSet<>();
+			String[] headers = csvParser.getHeaderMap().keySet().toArray(new String[0]);
+
+			for (String header : headers) {
+				if (header.startsWith(constraintProp + "_")) {
+					locales.add(header.split("_", 2)[1]);
+				}
+			}
+
+			for (CSVRecord csvRecord : csvParser) {
+				String key = getKeyFromRecord(csvRecord);
+				String filterPropValue = csvRecord.get(constraintFilterProp);
+
+				if (isValidEntry(key, filterPropValue)) {
+					DynListEntry entry = new DynListEntry();
+					MLText mlText = new MLText();
+
+					if (csvRecord.get(constraintProp) != null) {
+						mlText.addValue(Locale.getDefault(), csvRecord.get(constraintProp));
+					}
+
+					for (String locale : locales) {
+						mlText.addValue(MLTextHelper.parseLocale(locale), csvRecord.get(constraintProp + "_" + locale));
+					}
+
+					entry.setCode(getKeyFromRecord(csvRecord));
+					entry.setValues(mlText);
+
+					allowedValues.put(key, entry);
+				}
+			}
+		} catch (IOException e) {
+			logger.error(e, e);
+		}
+	}
+
+	private void processSystemList(String path, Map<String, DynListEntry> allowedValues) {
+
+		NamespaceService namespaceService = serviceRegistry.getNamespaceService();
+		QName constraintTypeQname = QName.createQName(constraintType, namespaceService);
+		QName constraintPropQname = QName.createQName(constraintProp, namespaceService);
+		QName constraintCodeQname = null;
+		if (constraintCode != null) {
+			constraintCodeQname = QName.createQName(constraintCode, namespaceService);
+		} else if (BeCPGModel.TYPE_LIST_VALUE.equals(constraintTypeQname)) {
+			constraintCodeQname = BeCPGModel.PROP_LV_CODE;
+		}
+
+		boolean wasMLAware = MLPropertyInterceptor.setMLAware(true);
+		try {
+
+			List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(
+					serviceRegistry.getNodeService().getRootNode(RepoConsts.SPACES_STORE),
+					"/app:company_home/" + AbstractBeCPGQueryBuilder.encodePath(path) + "/*");
+
+			sortNodeRefs(nodeRefs);
+
+			for (NodeRef nodeRef : nodeRefs) {
+				if (serviceRegistry.getNodeService().exists(nodeRef)
+						&& serviceRegistry.getNodeService().getType(nodeRef).equals(constraintTypeQname)) {
+
+					MLText mlText = (MLText) serviceRegistry.getNodeService().getProperty(nodeRef, constraintPropQname);
+					if (mlText != null) {
+
+						String key = null;
+
+						if (constraintCodeQname != null) {
+							key = (String) serviceRegistry.getNodeService().getProperty(nodeRef, constraintCodeQname);
+
+						}
+						if ((key == null) || key.isEmpty()) {
+							key = mlText.getClosestValue(Locale.getDefault());
+						}
+
+						if (key != null) {
+
+							DynListEntry entry = new DynListEntry();
+							entry.setCode(key);
+							entry.setGroups(serviceRegistry.getNodeService().getTargetAssocs(nodeRef, SecurityModel.ASSOC_READ_GROUPS).stream()
+									.map(AssociationRef::getTargetRef)
+									.map(n -> (String) serviceRegistry.getNodeService().getProperty(n, ContentModel.PROP_AUTHORITY_NAME))
+									.collect(Collectors.toList()));
+							entry.setValues(mlText);
+							entry.setIsDeleted((Boolean) serviceRegistry.getNodeService().getProperty(nodeRef, BeCPGModel.PROP_IS_DELETED));
+
+							allowedValues.put(key, entry);
+						}
+
+					}
+				} else {
+					logger.warn("Node doesn't exist : " + nodeRef);
+				}
+			}
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("allowedValues.size() : " + allowedValues.size());
+				logger.debug("allowed values: " + allowedValues.toString());
+			}
+		} catch (InvalidStoreRefException | InvalidQNameException e) {
+			logger.warn("Please reload constraint once tenant created: " + e.getMessage());
+		} finally {
+			MLPropertyInterceptor.setMLAware(wasMLAware);
+		}
+	}
+
+	private void sortNodeRefs(List<NodeRef> nodeRefs) {
+		nodeRefs.sort((o1, o2) -> {
+			Integer sort1 = (Integer) serviceRegistry.getNodeService().getProperty(o1, BeCPGModel.PROP_SORT);
+			Integer sort2 = (Integer) serviceRegistry.getNodeService().getProperty(o2, BeCPGModel.PROP_SORT);
+
+			if ((sort1 == null) && (sort2 == null)) {
+				return 0;
+			}
+			if (sort1 == null) {
+				return -1;
+			}
+			if (sort2 == null) {
+				return 1;
+			}
+
+			return sort1.compareTo(sort2);
+		});
+	}
+
+	private String getKeyFromRecord(CSVRecord csvRecord) {
+		return csvRecord.get((constraintCode != null) ? constraintCode : "bcpg:lvCode");
+	}
+
+	private boolean isValidEntry(String key, String filterPropValue) {
+		return (key != null) && (filterPropValue != null)
+				&& ((constraintFilter == null) || constraintFilter.equals("*") || filterPropValue.equals(constraintFilter));
+	}
+
+	private String createCacheKey() {
+		return getShortName() + (constraintFilter != null ? "_" + constraintFilter : "");
 	}
 
 }

@@ -3,6 +3,7 @@ package fr.becpg.repo.product.formulation.details;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.repo.product.data.CharactDetailAdditionalValue;
 import fr.becpg.repo.product.data.CharactDetailsValue;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
@@ -59,7 +60,7 @@ public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor
 	}
 	
 	@Override
-	protected void provideAdditionalValues(SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
+	protected void provideAdditionalValues(ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
 		
 		LabelClaimListDataItem labelClaimItem = (LabelClaimListDataItem) simpleCharact;
 		
@@ -73,6 +74,8 @@ public class LabelClaimCharactDetailsVisitor extends SimpleCharactDetailsVisitor
 			}
 		}
 		
-		currentCharactDetailsValue.getAdditionalValues().put(I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_lclPercentApplicable.title"), FormulationHelper.calculateValue(0d, qtyUsed, percentApplicable, netQty));
+		CharactDetailAdditionalValue additionalValue = new CharactDetailAdditionalValue(I18NUtil.getMessage("bcpg_bcpgmodel.property.bcpg_lclPercentApplicable.title"),
+				FormulationHelper.calculateValue(0d, qtyUsed, percentApplicable, netQty), unit);
+		currentCharactDetailsValue.getAdditionalValues().add(additionalValue);
 	}
 }
