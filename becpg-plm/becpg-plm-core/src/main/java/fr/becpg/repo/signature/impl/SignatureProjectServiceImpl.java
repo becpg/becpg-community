@@ -18,7 +18,6 @@ import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -28,7 +27,6 @@ import fr.becpg.artworks.signature.SignatureService;
 import fr.becpg.artworks.signature.model.SignatureModel;
 import fr.becpg.artworks.signature.model.SignatureStatus;
 import fr.becpg.model.ReportModel;
-import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AuthorityHelper;
@@ -413,9 +411,7 @@ public class SignatureProjectServiceImpl implements SignatureProjectService {
 					properties.put(ContentModel.PROP_NAME, signedReportsName);
 					
 					signedReportsFolder = nodeService.createNode(entity, ContentModel.ASSOC_CONTAINS,
-									QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, QName.createValidLocalName(RepoConsts.PATH_SUPPLIER_DOCUMENTS)),
-									ContentModel.TYPE_FOLDER, properties)
-							.getChildRef();
+							ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER, properties).getChildRef();
 				}
 				
 				documents.add(copyReport(signedReportsFolder, originalDocument));
