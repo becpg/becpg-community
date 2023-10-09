@@ -1,6 +1,28 @@
 package fr.becpg.repo.product.helper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import fr.becpg.model.NutrientProfileCategory;
+import fr.becpg.model.PLMModel;
+import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.product.data.productList.NutDataItem;
+import fr.becpg.repo.product.data.productList.NutListDataItem;
+import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
+import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.product.formulation.score.NutriScoreContext;
+import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.repository.RepositoryEntity;
 
 /**
  * Helper to compute OfCom Nutrient Profile Score
@@ -152,5 +174,184 @@ public class NutrientHelper {
 		return null;
 
 	}
+	
+	public static NutriScoreContext buildNutriScoreContext(ProductData productData, AlfrescoRepository<RepositoryEntity> alfrescoRepository, NodeService nodeService) throws JSONException {
+		
+		String nutrientProfileCategory = productData.getNutrientProfileCategory();
+		
+		boolean isApplicable = nutrientProfileCategory != null && !nutrientProfileCategory.isBlank() && !NutrientProfileCategory.NonApplicable.equals(NutrientProfileCategory.valueOf(nutrientProfileCategory));
+		
+		if (isApplicable) {
+			NutriScoreContext nutriScoreContext = new NutriScoreContext();
+			nutriScoreContext.setCategory(nutrientProfileCategory);
+			nutriScoreContext.setVersion(productData.getNutrientProfileVersion());
+			boolean containsWaterAspcet = productData.getAspects().contains(PLMModel.ASPECT_WATER);
+			nutriScoreContext.setWater(containsWaterAspcet);
+
+			Map<String, NodeRef> missingCharacts = visitCharactLists(productData, nutriScoreContext, alfrescoRepository, nodeService);
+			
+			if (!missingCharacts.isEmpty()) {
+				productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("nutriscore.message.missingCharacts"), null, new ArrayList<>(missingCharacts.values()), RequirementDataType.Formulation));
+			}
+			
+			return nutriScoreContext;
+		}
+		
+		return null;
+	}
+
+	private static Map<String, NodeRef> visitCharactLists(ProductData productData, NutriScoreContext nutriScoreContext, AlfrescoRepository<RepositoryEntity> alfrescoRepository, NodeService nodeService) throws JSONException {
+		Map<String, NodeRef> missingCharacts = new HashMap<>();
+		visitNutrientList(productData, nutriScoreContext, missingCharacts, alfrescoRepository);
+		visitPhysicoChemList(productData, nutriScoreContext, missingCharacts, nodeService);
+		if (missingCharacts.containsKey(NutriScoreContext.NSP_CODE) && !missingCharacts.containsKey(NutriScoreContext.AOAC_CODE)) {
+			missingCharacts.remove(NutriScoreContext.NSP_CODE);
+		}
+		if (missingCharacts.containsKey(NutriScoreContext.AOAC_CODE) && !missingCharacts.containsKey(NutriScoreContext.NSP_CODE)) {
+			missingCharacts.remove(NutriScoreContext.AOAC_CODE);
+		}
+		return missingCharacts;
+	}
+
+	private static void visitNutrientList(ProductData productData, NutriScoreContext nutriScoreContext, Map<String, NodeRef> missingCharacts, AlfrescoRepository<RepositoryEntity> alfrescoRepository) throws JSONException {
+		
+		boolean hasSalt = false;
+		
+		for (String nutrientCode : NutriScoreContext.NUTRIENT_CODE_LIST) {
+			// do not set sodium because salt is already set
+			if (NutriScoreContext.SODIUM_CODE.equals(nutrientCode) && hasSalt) {
+				continue;
+			}
+			
+			NutListDataItem nutListItem = findNutrient(productData, nutrientCode, missingCharacts, alfrescoRepository);
+			
+			if (nutListItem != null) {
+				Double value = productData.isPrepared() && nutListItem.preparedValue("EU")!=null ?   nutListItem.preparedValue("EU") : nutListItem.value("EU");
+				
+				if (value == null) {
+					missingCharacts.put(nutrientCode, nutListItem.getNut());
+					continue;
+				}
+				
+				JSONObject nutrientPart = new JSONObject();
+				
+				nutrientPart.put(NutriScoreContext.VALUE, value);
+				
+				// specific case of Salt/Sodium
+				if (NutriScoreContext.SALT_CODE.equals(nutrientCode)) {
+					nutrientCode = NutriScoreContext.SODIUM_CODE;
+					nutrientPart.put(NutriScoreContext.VALUE, value * 1000 / 2.5);
+					hasSalt = true;
+				} else if (NutriScoreContext.SODIUM_CODE.equals(nutrientCode)) {
+					nutrientPart.put(NutriScoreContext.VALUE, value * 1000);
+				}
+				
+				nutriScoreContext.getParts().put(nutrientCode, nutrientPart);
+			}
+		}
+	}
+
+	private static void visitPhysicoChemList(ProductData productData, NutriScoreContext nutriScoreContext, Map<String, NodeRef> missingCharacts, NodeService nodeService) throws JSONException {
+		for (String physicoCode : NutriScoreContext.PHYSICO_CODE_LIST) {
+			PhysicoChemListDataItem physicoListItem = findPhysico(productData, physicoCode, missingCharacts, nodeService);
+			
+			if (physicoListItem != null) {
+				Double value = physicoListItem.getValue();
+				
+				if (value == null) {
+					missingCharacts.put(physicoCode, physicoListItem.getPhysicoChem());
+					continue;
+				}
+				
+				JSONObject nutrientPart = new JSONObject();
+				
+				nutrientPart.put(NutriScoreContext.VALUE, value);
+				
+				nutriScoreContext.getParts().put(physicoCode, nutrientPart);
+			}
+		}
+	}
+	
+	private static PhysicoChemListDataItem findPhysico(ProductData productData, String physicoCode, Map<String, NodeRef> missingCharacts, NodeService nodeService) {
+		for (PhysicoChemListDataItem physico : productData.getPhysicoChemList()) {
+			
+			if (physicoCode.equals(nodeService.getProperty(physico.getPhysicoChem(), PLMModel.PROP_PHYSICO_CHEM_CODE))) {
+				
+				for (ReqCtrlListDataItem reqCtrl : productData.getReqCtrlList()) {
+					if (RequirementType.Forbidden.equals(reqCtrl.getReqType()) && RequirementDataType.Physicochem.equals(reqCtrl.getReqDataType()) && physico.getPhysicoChem().equals(reqCtrl.getCharact())) {
+						missingCharacts.put(physicoCode, reqCtrl.getCharact());
+						break;
+					}
+				}
+				
+				return physico;
+			}
+		}
+		
+		return null;
+	}
+	
+	private static NutListDataItem findNutrient(ProductData productData, String nutrientCode, Map<String, NodeRef> missingCharacts, AlfrescoRepository<RepositoryEntity> alfrescoRepository) {
+		for (NutListDataItem nutList : productData.getNutList()) {
+			
+			NutDataItem nut = (NutDataItem) alfrescoRepository.findOne(nutList.getNut());
+			
+			if (nutrientCode.equals(nut.getNutCode())) {
+				
+				for (ReqCtrlListDataItem reqCtrl : productData.getReqCtrlList()) {
+					if (RequirementType.Forbidden.equals(reqCtrl.getReqType()) && RequirementDataType.Nutrient.equals(reqCtrl.getReqDataType()) && nutList.getNut().equals(reqCtrl.getCharact())) {
+						missingCharacts.put(nutrientCode, reqCtrl.getCharact());
+						break;
+					}
+				}
+				
+				return nutList;
+			}
+		}
+		
+		return null;
+	}
+	
+	public static void buildNutriScorePart(JSONObject part, double[] categories) throws JSONException {
+		buildNutriScorePart(part, categories, false);
+	}
+	
+	public static void buildNutriScorePart(JSONObject part, double[] categories, boolean includeLower) throws JSONException {
+		
+		int score = categories.length;
+		
+		Double value = 0d;
+		
+		if (part.has(NutriScoreContext.VALUE)) {
+			value = part.getDouble(NutriScoreContext.VALUE);
+		}
+		
+		double lower = 0;
+		double upper = Double.POSITIVE_INFINITY;
+		
+		for (double threshold : categories) {
+			
+			lower = threshold;
+			
+			if ((value > threshold || includeLower && value == threshold) && (threshold != -1)) {
+				break;
+			}
+			
+			if (threshold != -1) {
+				upper = threshold;
+			}
+			
+			score--;
+		}
+		
+		if (lower == upper) {
+			lower = Double.NEGATIVE_INFINITY;
+		}
+		
+		part.put(NutriScoreContext.LOWER_VALUE, lower == Double.NEGATIVE_INFINITY ? "-Inf" : lower);
+		part.put(NutriScoreContext.UPPER_VALUE, upper == Double.POSITIVE_INFINITY ? "+Inf" : upper);
+		part.put(NutriScoreContext.SCORE, score);
+	}
+	
 
 }
