@@ -12,11 +12,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.batch.BatchProcessor;
+import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.ServiceRegistry;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.repository.ScriptService;
 import org.alfresco.service.cmr.security.AccessStatus;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.AuthorityType;
@@ -31,10 +34,15 @@ import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.BatchStep;
+import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
 import fr.becpg.repo.notification.NotificationRuleService;
 import fr.becpg.repo.notification.data.NotificationRuleListDataItem;
+import fr.becpg.repo.notification.data.ScriptMode;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.SearchRuleService;
@@ -61,8 +69,6 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	private static final String ENTITYV2_SUBTYPE = "isEntityV2SubType";
 	private static final String DISPLAY_PATH = "displayPath";
 
-
-	
 	@Autowired
 	private NodeService nodeService;
 
@@ -87,11 +93,15 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 	
 	@Autowired
 	private SearchRuleService searchRuleService;
+	
+	@Autowired
+	private ScriptService scriptService;
+	
+	@Autowired
+	private BatchQueueService batchQueueService;
 
 	@Autowired
 	private AlfrescoRepository<NotificationRuleListDataItem> alfrescoRepository;
-
-
 
 
 	/** {@inheritDoc} */
@@ -194,8 +204,36 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 					}
 				}
 			}
+			
+			if (notification.getScript() != null && nodeService.exists(notification.getScript())) {
+				executeScript(notification, items, templateArgs);
+			}
 		}
 
+	}
+	private void executeScript(NotificationRuleListDataItem notification, List<NodeRef> items, Map<String, Object> templateArgs) {
+		
+		Map<String, Object> model = new HashMap<>();
+		model.put(NODE_TYPE, templateArgs.get(NODE_TYPE));
+		model.put(DATE_FIELD, templateArgs.get(DATE_FIELD));
+		model.put(TARGET_PATH, templateArgs.get(TARGET_PATH));
+		model.put(NOTIFICATION, new ScriptNode(notification.getNodeRef(), serviceRegistry));
+		
+		if (ScriptMode.EACH.equals(notification.getScriptMode())) {
+			BatchStep<NodeRef> batchStep = new BatchStep<>();
+			batchStep.setWorkProvider(new EntityListBatchProcessWorkProvider<>(items));
+			batchStep.setProcessWorker(new BatchProcessor.BatchProcessWorkerAdaptor<NodeRef>() {
+				@Override
+				public void process(NodeRef nodeRef) throws Throwable {
+					model.put("item", new ScriptNode(nodeRef, serviceRegistry));
+					scriptService.executeScript(notification.getScript(), ContentModel.PROP_CONTENT, model);
+				}
+			});
+			batchQueueService.queueBatch(new BatchInfo("notificationScript", "becpg.batch.notificationScript"), List.of(batchStep));
+		} else if (ScriptMode.ALL.equals(notification.getScriptMode())) {
+			model.put("items", items.stream().map(n -> new ScriptNode(n, serviceRegistry)).toArray());
+			scriptService.executeScript(notification.getScript(), ContentModel.PROP_CONTENT, model);
+		}
 	}
 	private Set<String> extractAuthoritiesFromGroup(NodeRef authority) {
 		Set<String> ret = new HashSet<>();

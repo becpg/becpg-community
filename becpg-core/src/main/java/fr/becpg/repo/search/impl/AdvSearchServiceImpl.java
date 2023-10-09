@@ -170,7 +170,7 @@ public class AdvSearchServiceImpl implements AdvSearchService {
 		BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery();
 		// Simple keyword search and tag specific search
 		if ((term != null) && (term.length() != 0)) {
-			beCPGQueryBuilder.andFTSQuery(term);
+			beCPGQueryBuilder.andFTSQuery(cleanValue(term));
 		} else if ((tag != null) && (tag.length() != 0)) {
 			beCPGQueryBuilder.andFTSQuery("TAG:\"" + tag + "\"");
 		}

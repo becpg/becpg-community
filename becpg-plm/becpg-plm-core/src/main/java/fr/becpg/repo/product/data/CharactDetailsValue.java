@@ -1,8 +1,7 @@
 package fr.becpg.repo.product.data;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 
@@ -25,7 +24,7 @@ public class CharactDetailsValue {
 	private Integer level;
 	private String unit;
 	private String name;
-	private Map<String, Double> additionalValues = new HashMap<>();
+	private List<CharactDetailAdditionalValue> additionalValues = new ArrayList<>();
 
 	/**
 	 * <p>Constructor for CharactDetailsValue.</p>
@@ -47,7 +46,7 @@ public class CharactDetailsValue {
 		this.unit = unit;
 	}
 	
-	public Map<String, Double> getAdditionalValues() {
+	public List<CharactDetailAdditionalValue> getAdditionalValues() {
 		return additionalValues;
 	}
 
@@ -239,14 +238,25 @@ public class CharactDetailsValue {
 			futureValue += caractValue.getFutureValue();
 		}
 		
-		for (Entry<String, Double> entry : caractValue.getAdditionalValues().entrySet()) {
-			Double currentValue = additionalValues.computeIfAbsent(entry.getKey(), key -> 0d);
-			additionalValues.put(entry.getKey(), currentValue + entry.getValue());
+		for (CharactDetailAdditionalValue additionalValue : caractValue.getAdditionalValues()) {
+			CharactDetailAdditionalValue currentAdditionalValue = getAdditionalValue(additionalValue.getColumnName());
+			if (currentAdditionalValue == null) {
+				additionalValues.add(new CharactDetailAdditionalValue(additionalValue));
+			} else {
+				currentAdditionalValue.setValue(currentAdditionalValue.getValue() + additionalValue.getValue());
+			}
 		}
-		
 	}
 	
-
+	public CharactDetailAdditionalValue getAdditionalValue(String columnName) {
+		for (CharactDetailAdditionalValue additionalValue : additionalValues) {
+			if (columnName.equals(additionalValue.getColumnName())) {
+				return additionalValue;
+			}
+		}
+		return null;
+	}
+	
 	/**
 	 * <p>keyEquals.</p>
 	 *

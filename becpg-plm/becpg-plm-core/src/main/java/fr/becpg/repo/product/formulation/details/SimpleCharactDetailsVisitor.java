@@ -331,7 +331,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 						}
 						
 						if (!charactDetails.isMultiple()) {
-							provideAdditionalValues(simpleCharact, unit, qtyUsed, netQty, currentCharactDetailsValue);
+							provideAdditionalValues(formulatedProduct, simpleCharact, unit, qtyUsed, netQty, currentCharactDetailsValue);
 						}
 						
 						charactDetails.addKeyValue(simpleCharact.getCharactNodeRef(), currentCharactDetailsValue);
@@ -345,7 +345,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 		return null;
 	}
 
-	protected void provideAdditionalValues(SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
+	protected void provideAdditionalValues(ProductData formulatedProduct, SimpleCharactDataItem simpleCharact, String unit, Double qtyUsed, Double netQty, CharactDetailsValue currentCharactDetailsValue) {
 		// nothing by default
 	}
 

@@ -23,7 +23,7 @@ public abstract class AbstractExprNameExtractor implements AttributeExtractorPlu
 	protected NamespaceService namespaceService;
 
 	@Autowired
-	private ExpressionService expressionService;
+	protected ExpressionService expressionService;
 
 
 	public  String extractExpr(NodeRef nodeRef, String exprFormat) {
