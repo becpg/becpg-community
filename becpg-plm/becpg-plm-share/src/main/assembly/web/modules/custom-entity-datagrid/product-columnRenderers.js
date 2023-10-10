@@ -1236,8 +1236,10 @@ if (beCPG.module.EntityDataGridRenderers) {
                             scope.subCache["idx_"+oColumn.getKeyIndex()] = json.sub;
                             if(json.value && json.value!=null){
             				    return  beCPG.util.formatNumber(oColumn.numberFormat, json.value);	   
-            				} 
+            				}
+            			  return "";	 
                         }
+                        
     			    }
 			    }
 			    
