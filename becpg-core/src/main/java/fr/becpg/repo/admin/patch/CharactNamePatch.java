@@ -46,9 +46,9 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 	private IntegrityChecker integrityChecker;
 	private DictionaryService dictionaryService;
 	
-	private final int batchThreads = 3;
-	private final int batchSize = 40;
-	private final long count = (long)batchThreads * (long)batchSize;
+	private final int BATCH_THREADS = 3;
+	private final int BATCH_SIZE = 40;
+	private final long count = (long)BATCH_THREADS * (long)BATCH_SIZE;
 	
 	/**
 	 * <p>Setter for the field <code>dictionaryService</code>.</p>
@@ -133,7 +133,7 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("CharactNamePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
