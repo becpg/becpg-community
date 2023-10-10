@@ -48,9 +48,10 @@ public abstract class AbstractBeCPGPatch extends AbstractPatch {
 	protected EntitySystemService entitySystemService;
 	protected ContentHelper contentHelper;
 	
-	protected static final int BATCH_THREAD = 3;
-	protected static final int BATCH_SIZE = 40;
-	protected static final int INC = BATCH_THREAD * BATCH_SIZE;
+	protected static final int BATCH_THREADS = 4;
+	protected static final int BATCH_SIZE = 50;
+	protected static final long INC = BATCH_THREADS * BATCH_SIZE * 1L;
+	
 	
 	/**
 	 * <p>Setter for the field <code>repository</code>.</p>

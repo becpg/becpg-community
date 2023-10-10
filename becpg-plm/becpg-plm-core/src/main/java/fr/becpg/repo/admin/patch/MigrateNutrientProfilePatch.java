@@ -190,7 +190,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("MigrateNutrientProfilePatch",
-				transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREAD, BATCH_SIZE,
+				transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE,
 				applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorkerAdaptor<NodeRef>() {

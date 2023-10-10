@@ -41,9 +41,6 @@ public class ReqCtrlSourcesPatch extends AbstractBeCPGPatch {
 	private RuleService ruleService;
 	private AssociationService associationService;
 
-	private static final int batchThreads = 3;
-	private static final int batchSize = 40;
-	private static final long count = batchThreads * batchSize;
 
 	/** {@inheritDoc} */
 	@Override
@@ -59,7 +56,7 @@ public class ReqCtrlSourcesPatch extends AbstractBeCPGPatch {
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 0;
-			long maxSearchNodeId = count;
+			long maxSearchNodeId = INC;
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_REQCTRLLIST);
 
@@ -90,8 +87,8 @@ public class ReqCtrlSourcesPatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + count;
-						maxSearchNodeId = maxSearchNodeId + count;
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
 				}
 
@@ -100,7 +97,7 @@ public class ReqCtrlSourcesPatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ReqCtrlSourcesPatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
@@ -138,7 +135,7 @@ public class ReqCtrlSourcesPatch extends AbstractBeCPGPatch {
 
 		};
 
-		batchProcessor.process(worker, true);
+		batchProcessor.processLong(worker, true);
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}

@@ -139,13 +139,13 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 	@Value("${becpg.batch.automaticECO.reformulateChangedEntities.workerThreads}")
 	private Integer reformulateWorkerThreads;
 
-	@Value("${becpg.batch.automaticECO.reformulateChangedEntities.batchSize}")
+	@Value("${becpg.batch.automaticECO.reformulateChangedEntities.BATCH_SIZE}")
 	private Integer reformulateBatchSize;
 	
 	@Value("${becpg.batch.automaticECO.autoMergeBranch.workerThreads}")
 	private Integer autoMergeWorkerThreads;
 	
-	@Value("${becpg.batch.automaticECO.autoMergeBranch.batchSize}")
+	@Value("${becpg.batch.automaticECO.autoMergeBranch.BATCH_SIZE}")
 	private Integer autoMergeBatchSize;
 
 	/** {@inheritDoc} */

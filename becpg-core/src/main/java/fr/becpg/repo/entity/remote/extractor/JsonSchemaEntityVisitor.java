@@ -99,7 +99,8 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	public JsonSchemaEntityVisitor(SysAdminParams sysAdminParams, NodeService mlNodeService, NodeService nodeService,
 			NamespaceService namespaceService, EntityDictionaryService entityDictionaryService, ContentService contentService,
-			SiteService siteService, AttributeExtractorService attributeExtractor, VersionService versionService, LockService lockService, AssociationService associationService, EntityListDAO entityListDAO) {
+			SiteService siteService, AttributeExtractorService attributeExtractor, VersionService versionService, LockService lockService,
+			AssociationService associationService, EntityListDAO entityListDAO) {
 		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService, attributeExtractor, versionService,
 				lockService, associationService, entityListDAO);
 		this.sysAdminParams = sysAdminParams;
@@ -179,9 +180,9 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		}
 
 		QName propName = RemoteHelper.getPropName(nodeType, entityDictionaryService);
-		
+
 		addProperty(entity, RemoteEntityService.ATTR_TYPE, TYPE_STRING, "Prefixed qname type of the entity", null);
-		addProperty(entity,entityDictionaryService.toPrefixString( propName), TYPE_STRING, "Name of the entity", null);
+		addProperty(entity, entityDictionaryService.toPrefixString(propName), TYPE_STRING, "Name of the entity", null);
 
 		Map<QName, Serializable> properties = nodeService.getProperties(nodeRef);
 
@@ -248,20 +249,12 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 							if ((listItemRefs != null) && !listItemRefs.isEmpty()) {
 								JSONObject list = addProperty(entityLists, dataListType, TYPE_ARRAY,
 										classDefinition.getTitle(entityDictionaryService), classDefinition.getDescription(entityDictionaryService));
+								NodeRef listItem = listItemRefs.get(0).getChildRef();
+								JSONObject jsonAssocNode = new JSONObject();
+								jsonAssocNode.put(PROP_TYPE, TYPE_OBJECT);
 
-								for (ChildAssociationRef listItemRef : listItemRefs) {
-
-									NodeRef listItem = listItemRef.getChildRef();
-									JSONObject jsonAssocNode = new JSONObject();
-									jsonAssocNode.put(PROP_TYPE, TYPE_OBJECT);
-
-									list.put(PROP_ITEMS, jsonAssocNode);
-
-									visitNode(listItem, jsonAssocNode, JsonVisitNodeType.DATALIST, context);
-
-									break;
-
-								}
+								list.put(PROP_ITEMS, jsonAssocNode);
+								visitNode(listItem, jsonAssocNode, JsonVisitNodeType.DATALIST, context);
 							}
 						} else {
 							logger.warn(
@@ -321,21 +314,19 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 					}
 
-					for (ChildAssociationRef assocRef : assocRefs) {
-						if (assocRef.getTypeQName().equals(assocDef.getName())) {
+					if (!assocRefs.isEmpty() && (assocRefs.get(0).getTypeQName().equals(assocDef.getName()))) {
 
-							NodeRef childRef = assocRef.getChildRef();
-							JSONObject jsonAssocNode = new JSONObject();
-							if (assocDef.isTargetMany()) {
-								jsonAssocs.put(PROP_ITEMS, jsonAssocNode);
-							} else {
-								addProperty(entity, entityDictionaryService.toPrefixString(nodeType), TYPE_OBJECT,
-										assocDef.getTitle(entityDictionaryService), assocDef.getDescription(entityDictionaryService), jsonAssocNode);
-							}
-
-							visitNode(childRef, jsonAssocNode, JsonVisitNodeType.CHILD_ASSOC, context);
-							break;
+						NodeRef childRef = assocRefs.get(0).getChildRef();
+						JSONObject jsonAssocNode = new JSONObject();
+						if (assocDef.isTargetMany()) {
+							jsonAssocs.put(PROP_ITEMS, jsonAssocNode);
+						} else {
+							addProperty(entity, entityDictionaryService.toPrefixString(nodeType), TYPE_OBJECT,
+									assocDef.getTitle(entityDictionaryService), assocDef.getDescription(entityDictionaryService), jsonAssocNode);
 						}
+
+						visitNode(childRef, jsonAssocNode, JsonVisitNodeType.CHILD_ASSOC, context);
+
 					}
 				}
 
@@ -406,19 +397,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 						if (!matchProp(assocName, propName, false)) {
 							continue;
 						}
-						//						if (DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName())
-						//								&& (mlNodeService.getProperty(nodeRef, propertyDefinition.getName()) instanceof MLText)) {
-						//							visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, propertyDefinition);
-						//						} else if (DataTypeDefinition.TEXT.equals(propertyDefinition.getDataType().getName())
-						//								&& !propertyDefinition.getConstraints().isEmpty()
-						//								&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT_CONSTRAINT, Boolean.TRUE))) {
-						//							for (ConstraintDefinition constraint : propertyDefinition.getConstraints()) {
-						//								if (constraint.getConstraint() instanceof DynListConstraint) {
-						//									visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, propertyDefinition);
-						//									break;
-						//								}
-						//							}
-						//						}
+		
 						visitPropValue(propName, entity, entry.getValue(), context, propertyDefinition);
 					} else {
 						logger.debug("Properties not in dictionnary: " + entry.getKey());
@@ -429,16 +408,6 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 	}
 
-	//	private void visitMltextAttributes(String propType, JSONObject entity, PropertyDefinition propertyDefinition) throws JSONException {
-	//		for (Locale locale : MLTextHelper.getSupportedLocales()) {
-	//			String code = MLTextHelper.localeKey(locale);
-	//			if ((code != null) && !code.isBlank()) {
-	//				addProperty(entity, propType + "_" + code, TYPE_STRING, propertyDefinition.getTitle(entityDictionaryService),
-	//						propertyDefinition.getDescription(entityDictionaryService));
-	//			}
-	//		}
-	//
-	//	}
 
 	@SuppressWarnings("unchecked")
 	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context,
@@ -446,8 +415,9 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		if (propertyDefinition.isMultiValued() && (value != null)) {
 			JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_ARRAY,
 					propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
-			for (Serializable subEl : (List<Serializable>) value) {
+			if (!((List<Serializable>) value).isEmpty()) {
 				JSONObject node = new JSONObject();
+				Serializable subEl = ((List<Serializable>) value).get(0);
 
 				if (subEl instanceof NodeRef) {
 
@@ -463,7 +433,6 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 				}
 
 				arrayDef.put(PROP_ITEMS, node);
-				break;
 			}
 		} else if (value instanceof NodeRef) {
 			JSONObject node = addProperty(entity, entityDictionaryService.toPrefixString(propType), TYPE_OBJECT,
@@ -539,11 +508,6 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 				object.put("maxLength", ((StringLengthConstraint) constraint.getConstraint()).getMaxLength());
 				object.put("minLength", ((StringLengthConstraint) constraint.getConstraint()).getMinLength());
 			}
-
-//	TODO convert to Javascript regexp
-//			if (constraint.getConstraint() instanceof RegexConstraint) {
-//				object.put("pattern", ((RegexConstraint) constraint.getConstraint()).getExpression().replaceAll("\\\\\\\\", "\\").replaceAll("\\(\\?[a-zA-Z]+\\)", ""));
-//			}
 
 			if (constraint.getConstraint() instanceof NumericRangeConstraint) {
 				object.put("maximum", ((NumericRangeConstraint) constraint.getConstraint()).getMaxValue());

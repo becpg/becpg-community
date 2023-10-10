@@ -41,9 +41,9 @@ public class PlanningModePatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
-	private final int batchThreads = 3;
-	private final int batchSize = 40;
-	private final long count = batchThreads * batchSize;
+	private final int BATCH_THREADS = 3;
+	private final int BATCH_SIZE = 40;
+	private final long count = BATCH_THREADS * BATCH_SIZE;
 
 	/** {@inheritDoc} */
 	@Override
@@ -97,7 +97,7 @@ public class PlanningModePatch extends AbstractBeCPGPatch {
 			};
 
 			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("PlanningModePatch",
-					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+					transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
