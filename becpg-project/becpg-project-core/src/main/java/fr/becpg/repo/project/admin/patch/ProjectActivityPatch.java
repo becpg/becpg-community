@@ -138,9 +138,6 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 		this.attributeExtractorService = attributeExtractorService;
 	}
 
-	private final int BATCH_THREADS = 3;
-	private final int BATCH_SIZE = 40;
-	private final long count = BATCH_THREADS * BATCH_SIZE;
 
 	/** {@inheritDoc} */
 	@Override
@@ -155,7 +152,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 1;
-			long maxSearchNodeId = count;
+			long maxSearchNodeId = INC;
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(TYPE_ACTIVITY_LIST);
 
@@ -181,8 +178,8 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + count;
-						maxSearchNodeId = maxSearchNodeId + count;
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
 				}
 
@@ -276,7 +273,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 
 		};
 
-		batchProcessor.process(worker, true);
+		batchProcessor.processLong(worker, true);
 
 		new BatchProcessor<>("ProjectActivityPatch2", transactionService.getRetryingTransactionHelper(), new BatchProcessWorkProvider<NodeRef>() {
 			final List<NodeRef> result = new ArrayList<>();
@@ -284,7 +281,7 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 1;
-			long maxSearchNodeId = count;
+			long maxSearchNodeId = INC;
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(DataListModel.TYPE_DATALIST);
 
@@ -310,8 +307,8 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + count;
-						maxSearchNodeId = maxSearchNodeId + count;
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
 				}
 
