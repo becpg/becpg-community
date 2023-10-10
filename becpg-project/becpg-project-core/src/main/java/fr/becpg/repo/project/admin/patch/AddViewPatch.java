@@ -51,8 +51,8 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 		this.entityTplService = entityTplService;
 	}
 
-	private final int batchThreads = 3;
-	private final int batchSize = 40;
+	private final int BATCH_THREADS = 3;
+	private final int BATCH_SIZE = 40;
 	private final long count = 10000;
 
 	/** {@inheritDoc} */
@@ -114,7 +114,7 @@ public class AddViewPatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("AddViewPatch",
-				transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+				transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 

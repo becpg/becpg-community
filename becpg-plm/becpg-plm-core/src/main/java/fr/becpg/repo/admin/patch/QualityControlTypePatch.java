@@ -39,9 +39,6 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
-	private final int batchThreads = 3;
-	private final int batchSize = 40;
-	private final long count = batchThreads * batchSize;
 
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
@@ -78,7 +75,7 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 					result.clear();
 
 					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
-						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + count);
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + INC);
 
 						for (Long nodeid : nodeids) {
 							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -86,7 +83,7 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + count;
+						minSearchNodeId = minSearchNodeId + INC;
 					}
 				}
 
@@ -100,7 +97,7 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 0;
-			long maxSearchNodeId = count;
+			long maxSearchNodeId = INC;
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(QualityModel.ASPECT_CONTROL_LIST);
 
@@ -126,8 +123,8 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + count;
-						maxSearchNodeId = maxSearchNodeId + count;
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
 				}
 
@@ -136,10 +133,10 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("QualityControlTypePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
 
 		BatchProcessor<NodeRef> batchProcessor2 = new BatchProcessor<>("QualityControlTypePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider2, batchThreads, batchSize, applicationEventPublisher, logger, 500);
+				workProvider2, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
@@ -184,8 +181,8 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 			}
 
 		};
-		batchProcessor.process(worker, true);
-		batchProcessor2.process(worker, true);
+		batchProcessor.processLong(worker, true);
+		batchProcessor2.processLong(worker, true);
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 
