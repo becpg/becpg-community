@@ -2,6 +2,7 @@ package fr.becpg.repo.project.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -162,12 +163,23 @@ public class ProjectNotificationServiceImpl implements ProjectNotificationServic
 			}
 		}
 
-		if (!observerNodeRefs.isEmpty()) {
-			logger.debug("Notify "+observerNodeRefs.size()+" observers");	
-			observerNodeRefs = projectService.extractResources(projectNodeRef, observerNodeRefs);
+		List<NodeRef> finalObserverList = new ArrayList<>();
+		
+		for (NodeRef observer : observerNodeRefs) {
+			NodeRef reassignedObserver = projectService.getReassignedResource(observer, new HashSet<>());
+			if (reassignedObserver != null) {
+				finalObserverList.add(reassignedObserver);
+			} else {
+				finalObserverList.add(observer);
+			}
+		}
+		
+		if (!finalObserverList.isEmpty()) {
+			logger.debug("Notify "+finalObserverList.size()+" observers");	
+			finalObserverList = projectService.extractResources(projectNodeRef, finalObserverList);
 			Map<String, Object> argsMap = new HashMap<>();
 			argsMap.put("args", templateArgs);
-			beCPGMailService.sendMail(observerNodeRefs, subject, templateName, argsMap, false);
+			beCPGMailService.sendMail(finalObserverList, subject, templateName, argsMap, false);
 		}
 	}
 	
