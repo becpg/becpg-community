@@ -46,9 +46,6 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 	private RuleService ruleService;
 	private DictionaryService dictionaryService;
 
-	private final int BATCH_THREADS = 5;
-	private final int BATCH_SIZE = 1000;
-	private final long count = (long)BATCH_THREADS * (long)BATCH_SIZE;
 
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
@@ -98,7 +95,7 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 0;
-			long maxSearchNodeId = count;
+			long maxSearchNodeId = INC;
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(type);
 
@@ -128,8 +125,8 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + count;
-						maxSearchNodeId = maxSearchNodeId + count;
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
 				}
 
@@ -180,7 +177,7 @@ public class CopyFromPatch extends AbstractBeCPGPatch {
 
 		// Now set the batch processor to work
 
-		batchProcessor.process(worker, true);
+		batchProcessor.processLong(worker, true);
 
 	}
 

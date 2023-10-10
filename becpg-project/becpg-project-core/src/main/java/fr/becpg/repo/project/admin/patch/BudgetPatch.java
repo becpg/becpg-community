@@ -50,9 +50,6 @@ public class BudgetPatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
-	private final int BATCH_THREADS = 3;
-	private final int BATCH_SIZE = 40;
-	private final long count = BATCH_THREADS * BATCH_SIZE;
 
 	/** {@inheritDoc} */
 	@Override
@@ -66,7 +63,7 @@ public class BudgetPatch extends AbstractBeCPGPatch {
 				final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 				long minSearchNodeId = 1;
-				long maxSearchNodeId = count;
+				long maxSearchNodeId = INC;
 
 				final Pair<Long, QName> val = getQnameDAO().getQName(ProjectModel.TYPE_TASK_LIST);
 
@@ -96,8 +93,8 @@ public class BudgetPatch extends AbstractBeCPGPatch {
 									result.add(status.getNodeRef());
 								}
 							}
-							minSearchNodeId = minSearchNodeId + count;
-							maxSearchNodeId = maxSearchNodeId + count;
+							minSearchNodeId = minSearchNodeId + INC;
+							maxSearchNodeId = maxSearchNodeId + INC;
 						}
 					}
 
@@ -149,7 +146,7 @@ public class BudgetPatch extends AbstractBeCPGPatch {
 
 			};
 
-			batchProcessor.process(worker, true);
+			batchProcessor.processLong(worker, true);
 		
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
