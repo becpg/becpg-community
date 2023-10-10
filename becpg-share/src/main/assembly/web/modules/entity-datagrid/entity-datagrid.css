@@ -709,6 +709,23 @@ div.filterButtonsBar {
 	display:none;
 }
 
+.datagrid .mtl-level-1 td.hide-iflevel1 > div {
+	display:none;
+}
+
+.datagrid .mtl-level-2 td.hide-iflevel2 > div {
+	display:none;
+}
+
+.datagrid .mtl-level-3 td.hide-iflevel3 > div {
+	display:none;
+}
+
+.datagrid .mtl-level-4 td.hide-iflevel4 > div {
+	display:none;
+}
+
+
 .datagrid .mtl-expanded td.bold-ifopen {
 	font-weight: bold;
 }
