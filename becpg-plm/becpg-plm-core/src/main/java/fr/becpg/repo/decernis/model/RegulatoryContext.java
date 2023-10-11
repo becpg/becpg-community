@@ -81,6 +81,10 @@ public class RegulatoryContext {
 		return false;
 	}
 	
+	public boolean isEmpty() {
+		return countries.isEmpty() || usages.isEmpty();
+	}
+	
 	public DecernisMode getRegulatoryMode() {
 		return product.getRegulatoryMode();
 	}
