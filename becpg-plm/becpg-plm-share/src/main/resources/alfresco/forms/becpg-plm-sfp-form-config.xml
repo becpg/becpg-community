@@ -267,7 +267,7 @@
 		  <field  id="gs1:surfaceOfCheeseAtEndOfRipeningCode" mandatory="false" read-only="false" set="cheese"/>		
 	
 	
-	      <set appearance="bordered-panel" id="alcohol" label-id="becpg.forms.set.alcohol.label" parent="mainTab" template="/org/alfresco/components/form/2-column-set.ftl"/>
+	      <set appearance="bordered-panel" id="alcohol" label-id="becpg.forms.set.alcohol.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
 		  <field id="gs1:percentageOfAlcoholByVolume" mandatory="false" read-only="false" set="alcohol" />
 		  <field id="gs1:percentageOfAlcoholByVolumeMeasurementPrecisionCode" mandatory="false" read-only="false" set="alcohol" />
 		  <field id="gs1:alcoholicPermissionLevel" mandatory="false" read-only="false" set="alcohol" />
