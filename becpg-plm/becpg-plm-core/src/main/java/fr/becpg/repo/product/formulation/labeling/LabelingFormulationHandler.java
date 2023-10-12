@@ -8,6 +8,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -233,13 +234,31 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(formulatedProduct, labelingFormulaContext);
 
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();
+			
+			  // Apply Prefs first
+	        Comparator<LabelingRuleListDataItem> customComparator = (item1, item2) -> {
+	            LabelingRuleType type1 = item1.getLabelingRuleType();
+	            LabelingRuleType type2 = item2.getLabelingRuleType();
+	            
+	            // Compare based on the desired order
+	            if (LabelingRuleType.Prefs.equals(type1) && !LabelingRuleType.Prefs.equals(type2)) {
+	                return -1; // item1 comes before item2
+	            } else if (!LabelingRuleType.Prefs.equals(type1) && LabelingRuleType.Prefs.equals(type2)) {
+	                return 1; // item2 comes before item1
+	            } else {
+	                return 0; // They have the same type or neither is Prefs
+	            }
+	        };
+	        
+	        // Sort the list using the custom comparator
+	        Collections.sort(labelingRuleLists, customComparator);
+			
 
 			// Apply before formula
 			int groupSortOrder = 0;
 			for (LabelingRuleListDataItem labelingRuleListDataItem : labelingRuleLists) {
 				if (Boolean.TRUE.equals(labelingRuleListDataItem.getIsActive())) {
 					LabelingRuleType type = labelingRuleListDataItem.getLabelingRuleType();
-
 					if (LabelingRuleType.Prefs.equals(type)) {
 						try {
 							Expression exp = parser.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
@@ -252,7 +271,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 													labelingRuleListDataItem.getName(), e.getLocalizedMessage()),
 											null, new ArrayList<>(), RequirementDataType.Labelling));
 							if (logger.isDebugEnabled()) {
-								logger.debug("Error label rule formula : [" + labelingRuleListDataItem.getName() + "] - "
+								logger.warn("Error label rule formula : [" + labelingRuleListDataItem.getName() + "] - "
 										+ SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
 							}
 						}
@@ -388,7 +407,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 													null, new ArrayList<>(), RequirementDataType.Labelling));
 
 									if (logger.isDebugEnabled()) {
-										logger.debug("Error in formula : (" + labelingRuleListDataItem.getNodeRef() + ")"
+										logger.warn("Error in formula : (" + labelingRuleListDataItem.getNodeRef() + ")"
 												+ SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
 									}
 								} finally {
