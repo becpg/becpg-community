@@ -162,9 +162,9 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 			
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
-				return result.size();
+				return getTotalEstimatedWorkSize();
 			}
-
+			
 			public Collection<NodeRef> getNextWork() {
 
 				result.clear();
