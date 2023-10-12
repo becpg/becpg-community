@@ -19,7 +19,7 @@
 	      
 	      <#assign protein = "">
 	      
-	      <#if nutrientDetails.hasProteinScore == true>
+	      <#if nutrientDetails.hasProteinScore?? && nutrientDetails.hasProteinScore == true>
 		      <#assign protein = msg("nutriscore.display.protein", nutrientDetails.parts['PRO-'].lowerValue, nutrientDetails.parts['PRO-'].value, nutrientDetails.parts['PRO-'].upperValue, nutrientDetails.parts['PRO-'].score)
 		      						+ "\n">
 	      </#if>
@@ -42,7 +42,7 @@
 	      
 	      <#assign nonNutritiveSugars = "">
 	      
-	      <#if nutrientDetails.nonNutritiveSugars?size != 0>
+	      <#if nutrientDetails.nonNutritiveSugars?? && nutrientDetails.nonNutritiveSugars?size != 0>
 		      <#assign nonNutritiveSugars = msg("nutriscore.display.nns", nutrientDetails.nonNutritiveSugars?join(",")) + "\n">
 	      </#if>
 	      
