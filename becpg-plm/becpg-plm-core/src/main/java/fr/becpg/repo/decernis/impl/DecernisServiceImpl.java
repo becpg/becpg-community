@@ -196,9 +196,11 @@ public class DecernisServiceImpl implements DecernisService {
 				contextItem.getItem().setRegulatoryResult(extractResult(analysisList));
 			}
 		}
-		List<JSONObject> analysisList = analyzeContext(productContext, productContext.getUsages(), productContext.getCountries(),
-				productContext.getModuleId());
-		productContext.getProduct().setRegulatoryResult(extractResult(analysisList));
+		if (!productContext.isEmpty()) {
+			List<JSONObject> analysisList = analyzeContext(productContext, productContext.getUsages(), productContext.getCountries(),
+					productContext.getModuleId());
+			productContext.getProduct().setRegulatoryResult(extractResult(analysisList));
+		}
 	}
 
 	private RegulatoryResult extractResult(List<JSONObject> analysisList) {
@@ -448,7 +450,7 @@ public class DecernisServiceImpl implements DecernisService {
 					result = getRidByIngName(results, ingName);
 				}
 				if (result == null) {
-					if (results.toList().stream().map(o -> ((Map<String, ?>) o).get("did")).distinct().count() == 1) {
+					if (results.toList().stream().map(o -> ((Map<?, ?>) o).get("did")).distinct().count() == 1) {
 						result = results.getJSONObject(0);
 					}
 				}
@@ -580,7 +582,7 @@ public class DecernisServiceImpl implements DecernisService {
 
 	private void extractCodes(RegulatoryContext context, Set<String> countries, NodeRef nodeRef) {
 		String code = extractCode(nodeRef);
-		if (code == null) {
+		if (code == null || code.isBlank()) {
 			String name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME);
 			logger.warn("charact " + name + " has no regulatoryCode");
 			context.getRequirements().add(createReqCtrl(null, MLTextHelper.getI18NMessage(MESSAGE_NO_CODE_CHARACT, name), RequirementType.Tolerated));
