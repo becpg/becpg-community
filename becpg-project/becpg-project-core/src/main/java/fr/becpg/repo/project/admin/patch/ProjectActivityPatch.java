@@ -292,6 +292,12 @@ public class ProjectActivityPatch extends AbstractBeCPGPatch {
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
+			
+			@Override
+			public long getTotalEstimatedWorkSizeLong() {
+				return getTotalEstimatedWorkSize();
+			}
+			
 
 			@Override
 			public Collection<NodeRef> getNextWork() {
