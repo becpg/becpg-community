@@ -185,6 +185,11 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 
 								if (key.equals(PLMModel.PROP_DYNAMICCHARACT_TITLE) || key.equals(PLMModel.PROP_DYNAMICCHARACT_VALUE)) {
 									String mtField = "prop_" + key.toPrefixString(namespaceService).replace(":", "_");
+									
+									if (value != null && key.equals(PLMModel.PROP_DYNAMICCHARACT_VALUE)) {
+										value = (Serializable) JsonFormulaHelper.cleanCompareJSON(value.toString());
+									}
+									
 									temp.put(mtField, value);
 									if (ret.getComputedFields() == null) {
 										metadataFields.add(new AttributeExtractorField(key.toPrefixString(namespaceService),null));
@@ -196,13 +201,13 @@ public class ProductExcelDataListOutputPlugin implements ExcelDataListOutputPlug
 							if (!temp.isEmpty()) {
 								ret.addItem(temp);
 							}
-
-							if (ret.getComputedFields() == null) {
-								ret.setComputedFields(attributeExtractorService.readExtractStructure(PLMModel.TYPE_DYNAMICCHARACTLIST,
-										new ArrayList<>(metadataFields)));
-							}
 						});
 
+						if (ret.getComputedFields() == null) {
+							ret.setComputedFields(attributeExtractorService.readExtractStructure(PLMModel.TYPE_DYNAMICCHARACTLIST,
+									new ArrayList<>(metadataFields)));
+						}
+						
 						dataListFilter.setDataListName(PLMModel.TYPE_DYNAMICCHARACTLIST.getLocalName());
 						dataListFilter.setDataType(PLMModel.TYPE_DYNAMICCHARACTLIST);
 					}
