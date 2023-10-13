@@ -48,9 +48,6 @@ public class NutListMiniMaxiPatch extends AbstractBeCPGPatch {
 	private EntityListDAO entityListDAO;
 	private LockService lockService;
 
-	private final int batchThreads = 4;
-	private final int batchSize = 30;
-	private final long count = batchThreads * batchSize;
 
 	/** {@inheritDoc} */
 	@Override
@@ -72,7 +69,7 @@ public class NutListMiniMaxiPatch extends AbstractBeCPGPatch {
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 0;
-			long maxSearchNodeId = count;
+			long maxSearchNodeId = INC;
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(type);
 
@@ -101,8 +98,8 @@ public class NutListMiniMaxiPatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + count;
-						maxSearchNodeId = maxSearchNodeId + count;
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
 				}
 
@@ -110,7 +107,7 @@ public class NutListMiniMaxiPatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("NutListMiniMaxiPatch", transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize,
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("NutListMiniMaxiPatch", transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE,
 				applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
@@ -174,7 +171,7 @@ public class NutListMiniMaxiPatch extends AbstractBeCPGPatch {
 
 		integrityChecker.setEnabled(false);
 		try {
-			batchProcessor.process(worker, true);
+			batchProcessor.processLong(worker, true);
 		} finally {
 			integrityChecker.setEnabled(true);
 		}

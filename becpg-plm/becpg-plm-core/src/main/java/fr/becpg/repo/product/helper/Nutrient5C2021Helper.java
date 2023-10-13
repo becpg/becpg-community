@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.NutrientProfileCategory;
+import fr.becpg.model.NutrientProfileVersion;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.formulation.score.NutriScoreContext;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -66,6 +67,11 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 	}
 	
 	@Override
+	public String getVersion() {
+		return NutrientProfileVersion.VERSION_2017.toString();
+	}
+	
+	@Override
 	public void afterPropertiesSet() throws Exception {
 		INSTANCE = this;
 	}
@@ -110,6 +116,23 @@ public class Nutrient5C2021Helper implements InitializingBean, NutrientRegulator
 	@Override
 	public Double computeScore(NutriScoreContext context) {
 		return (double) compute5CScore(context);
+	}
+	
+	public static String extractClass(ProductData productData) {
+		NutriScoreContext context = buildNutriScoreContext(productData);
+		if (context != null) {
+			compute5CScore(context);
+			return extractNutrientClass(context);
+		}
+		throw new IllegalStateException("Product is not applicable for nutriscore: " + productData.getName());
+	}
+	
+	public static int computeScore(ProductData productData) {
+		NutriScoreContext context = buildNutriScoreContext(productData);
+		if (context != null) {
+			return compute5CScore(context);
+		}
+		throw new IllegalStateException("Product is not applicable for nutriscore: " + productData.getName());
 	}
 	
 	public static NutriScoreContext buildNutriScoreContext(ProductData productData) {

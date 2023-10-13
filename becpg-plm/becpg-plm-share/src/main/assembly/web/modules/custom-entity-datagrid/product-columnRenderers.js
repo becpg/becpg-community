@@ -485,10 +485,12 @@ if (beCPG.module.EntityDataGridRenderers) {
       propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold","bcpg:allergenInVoluntaryRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
+			var forceUnit=oColumn.forceUnit;  
+			  
       		var unit, qty;
       		if(data.value == 0){
       			return "0";
-      		} else if(Math.abs(data.value) < 0.01){
+      		} else if((Math.abs(data.value) < 0.01 && !forceUnit=== "perc") || forceUnit === "ppm"){
       			qty = data.value * 10000;
       			unit = " ppm";
       		}  else{
@@ -1214,7 +1216,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		        if( scope.subCache!=null && scope.subCache["idx_"+oColumn.getKeyIndex()]!=null){
 		              for (var j = 0; j <  scope.subCache["idx_"+oColumn.getKeyIndex()].length; j++) {
                         var path =  scope.subCache["idx_"+oColumn.getKeyIndex()][j].path;
-                        if(path == oRecord.getData("itemData")["path"] && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value !=null){
+                        if(path == oRecord.getData("itemData")["path"] && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value  && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value !=null){
                         	 return  beCPG.util.formatNumber(oColumn.numberFormat, scope.subCache["idx_"+oColumn.getKeyIndex()][j].value);	  
              			
                         }
@@ -1232,10 +1234,12 @@ if (beCPG.module.EntityDataGridRenderers) {
                                 scope.subCache = [];
                             }
                             scope.subCache["idx_"+oColumn.getKeyIndex()] = json.sub;
-                            if(json.value!=null){
+                            if(json.value && json.value!=null){
             				    return  beCPG.util.formatNumber(oColumn.numberFormat, json.value);	   
-            				} 
+            				}
+            			  return "";	 
                         }
+                        
     			    }
 			    }
 			    
@@ -1333,15 +1337,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 	
 	
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName : ["bcpg:packagingListQty"],
-        renderer : function(oRecord, data, label, scope) {
-        	if (data.value != null) {
-        		return data.value.toLocaleString( beCPG.util.getJSLocale() );
-        	}
-        	return "";
-        }
-    });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:instruction"],

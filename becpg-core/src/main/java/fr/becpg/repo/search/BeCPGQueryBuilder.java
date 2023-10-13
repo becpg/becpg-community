@@ -116,8 +116,9 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
 
-	@Value("${beCPG.report.includeReportInSearch}")
-	private Boolean includeReportInSearch = false;
+	private Boolean includeReportInSearch() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.report.includeReportInSearch"));
+	}
 
 	@Autowired
 	private NodeService nodeService;
@@ -199,7 +200,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.nodeService = INSTANCE.nodeService;
 			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
-			builder.includeReportInSearch = INSTANCE.includeReportInSearch;
 			builder.systemConfigurationService = INSTANCE.systemConfigurationService;
 		}
 		return builder;
@@ -887,7 +887,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeType(ContentModel.TYPE_FAILED_THUMBNAIL);
 		excludeType(ContentModel.TYPE_RATING);
 		excludeType(BeCPGModel.TYPE_ENTITYLIST_ITEM);
-		if (!Boolean.TRUE.equals(includeReportInSearch)) {
+		if (!Boolean.TRUE.equals(includeReportInSearch())) {
 			excludeType(ReportModel.TYPE_REPORT);
 		}
 		excludeType(ForumModel.TYPE_FORUM);
@@ -1738,7 +1738,6 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 			builder.nodeService = INSTANCE.nodeService;
 			builder.entityDictionaryService = INSTANCE.entityDictionaryService;
 			builder.tenantService = INSTANCE.tenantService;
-			builder.includeReportInSearch = INSTANCE.includeReportInSearch;
 			builder.systemConfigurationService = INSTANCE.systemConfigurationService;
 		}
 

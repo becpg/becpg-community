@@ -72,7 +72,6 @@ import org.dom4j.Element;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
@@ -110,6 +109,7 @@ import fr.becpg.repo.report.template.ReportType;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.L2CacheSupport;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.report.client.ReportException;
 import fr.becpg.report.client.ReportFormat;
 import fr.becpg.report.client.ReportParams;
@@ -136,15 +136,21 @@ public class EntityReportServiceImpl implements EntityReportService {
 
 	private static final String REPORT_KIND_SPLIT_REGEXP = "\\s*,\\s*";
 
-	@Value("${beCPG.report.name.format}")
-	private String reportNameFormat;
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
+	private String reportNameFormat() {
+		return systemConfigurationService.confValue("beCPG.report.name.format");
+	}
 
-	@Value("${beCPG.report.title.format}")
-	private String reportTitleFormat;
-
-	@Value("${beCPG.report.includeReportInSearch}")
-	private Boolean includeReportInSearch;
-
+	private String reportTitleFormat() {
+		return systemConfigurationService.confValue("beCPG.report.title.format");
+	}
+	
+	private Boolean includeReportInSearch() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.report.includeReportInSearch"));
+	}
+	
 	@Autowired
 	private NamespaceService namespaceService;
 
@@ -340,10 +346,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 							// prepare
 							String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 							String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale, reportParameters,
-									reportParameters.getReportNameFormat(reportNameFormat));
+									reportParameters.getReportNameFormat(reportNameFormat()));
 							
 							String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
-									reportParameters.getReportTitleFormat(reportTitleFormat));
+									reportParameters.getReportTitleFormat(reportTitleFormat()));
 							
 							NodeRef documentNodeRef = getReportDocumentNodeRef(entityNodeTo, tplNodeRef, documentName, locale, reportParameters, engineLogs);
 							
@@ -446,7 +452,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 										
 										nodeService.setProperty(documentNodeRef, ContentModel.PROP_TITLE, documentTitle);
 										
-										if (!Boolean.TRUE.equals(includeReportInSearch)) {
+										if (!Boolean.TRUE.equals(includeReportInSearch())) {
 											nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, false);
 										} else {
 											nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, true);
@@ -917,10 +923,10 @@ public class EntityReportServiceImpl implements EntityReportService {
 						
 						String reportFormat = (String) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_TPL_FORMAT);
 						String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat, locale, reportParameters,
-								reportParameters.getReportNameFormat(reportNameFormat));
+								reportParameters.getReportNameFormat(reportNameFormat()));
 						
 						String documentTitle = getReportDocumentName(entityNodeRef, tplNodeRef, null, locale, reportParameters,
-								reportParameters.getReportTitleFormat(reportTitleFormat));
+								reportParameters.getReportTitleFormat(reportTitleFormat()));
 						
 						BeCPGReportEngine engine = getReportEngine(tplNodeRef, ReportFormat.valueOf(reportFormat));
 						
@@ -1001,7 +1007,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 								
 								nodeService.setProperty(documentNodeRef, ContentModel.PROP_TITLE, documentTitle);
 								
-								if (!Boolean.TRUE.equals(includeReportInSearch)) {
+								if (!Boolean.TRUE.equals(includeReportInSearch())) {
 									nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, false);
 								} else {
 									nodeService.setProperty(documentNodeRef, ContentModel.PROP_IS_INDEXED, true);
@@ -1685,7 +1691,7 @@ public class EntityReportServiceImpl implements EntityReportService {
 	public NodeRef getAssociatedDocumentNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, EntityReportParameters reportParameters, Locale locale,
 			ReportFormat reportFormat) {
 		String documentName = getReportDocumentName(entityNodeRef, tplNodeRef, reportFormat.toString(), locale, reportParameters,
-				reportParameters.getReportNameFormat(reportNameFormat));
+				reportParameters.getReportNameFormat(reportNameFormat()));
 
 		NodeRef documentNodeRef = null;
 		NodeRef documentsFolderNodeRef = entityService.getDocumentsFolder(entityNodeRef, false);

@@ -316,18 +316,22 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		try {
 			for (IngListDataItem ing : ingList) {
 				MLText charactName = (MLText) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_CHARACT_NAME);
-				if (ingredientName.equalsIgnoreCase(charactName.getDefaultValue())) {
-					return ing;
-				}
-				if (ingredientName.equalsIgnoreCase(charactName.getValue(Locale.ENGLISH))) {
-					return ing;
+				if (charactName != null) {
+					if (ingredientName.equalsIgnoreCase(charactName.getDefaultValue())) {
+						return ing;
+					}
+					if (ingredientName.equalsIgnoreCase(charactName.getValue(Locale.ENGLISH))) {
+						return ing;
+					}
 				}
 				MLText legalName = (MLText) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_LEGAL_NAME);
-				if (ingredientName.equalsIgnoreCase(legalName.getDefaultValue())) {
-					return ing;
-				}
-				if (ingredientName.equalsIgnoreCase(legalName.getValue(Locale.ENGLISH))) {
-					return ing;
+				if (legalName != null) {
+					if (ingredientName.equalsIgnoreCase(legalName.getDefaultValue())) {
+						return ing;
+					}
+					if (ingredientName.equalsIgnoreCase(legalName.getValue(Locale.ENGLISH))) {
+						return ing;
+					}
 				}
 			}
 		} finally {

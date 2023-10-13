@@ -173,7 +173,7 @@
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.ws.timeout>3600</sonar.ws.timeout>
 		<sonar.language>java</sonar.language>
-		<becpg.artworks.version>4.2.1.0</becpg.artworks.version>
+		<becpg.artworks.version>4.2.1.1</becpg.artworks.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
