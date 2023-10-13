@@ -26,7 +26,7 @@ public class CharactDetailAdditionalValue {
 	}
 
 	public Double getValue() {
-		return value;
+		return value!=null && value != 0d && !value.isInfinite() && !value.isNaN() ? value : null;
 	}
 
 	public void setValue(Double value) {

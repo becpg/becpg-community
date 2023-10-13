@@ -543,10 +543,11 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 							visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, mlValues);
 						} else if (DataTypeDefinition.TEXT.equals(propertyDefinition.getDataType().getName())
 								&& !propertyDefinition.getConstraints().isEmpty()
+								&& !propertyDefinition.isMultiValued()
 								&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT_CONSTRAINT, Boolean.TRUE))) {
 							for (ConstraintDefinition constraint : propertyDefinition.getConstraints()) {
 								if (constraint.getConstraint() instanceof DynListConstraint) {
-									mlValues = ((DynListConstraint) constraint.getConstraint()).getMLAwareAllowedValues().get(entry.getValue());
+									mlValues = ((DynListConstraint) constraint.getConstraint()).getMLDisplayLabel((String)entry.getValue());
 									visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, mlValues);
 									break;
 								}

@@ -44,11 +44,7 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
-
-	private final int batchThreads = 3;
-	private final int batchSize = 40;
-	private final long count = batchThreads * batchSize;
-
+	
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
@@ -61,7 +57,7 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 
 			final long maxNodeId = nodeDAO.getMaxNodeId();
 			long minSearchNodeId = 0;
-			long maxSearchNodeId = count;
+			long maxSearchNodeId = INC;
 
 			@Override
 			public int getTotalEstimatedWorkSize() {
@@ -90,8 +86,8 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + count;
-						maxSearchNodeId = maxSearchNodeId + count;
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
 				}
 
@@ -101,7 +97,7 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ApprovalNumbersPatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
@@ -147,7 +143,7 @@ public class ApprovalNumbersPatch extends AbstractBeCPGPatch {
 
 		};
 
-		batchProcessor.process(worker, true);
+		batchProcessor.processLong(worker, true);
 
 		return I18NUtil.getMessage(MSG_SUCCESS);
 	}

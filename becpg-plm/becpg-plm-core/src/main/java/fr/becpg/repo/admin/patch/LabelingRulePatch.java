@@ -42,10 +42,6 @@ public class LabelingRulePatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
-	private final int batchThreads = 3;
-	private final int batchSize = 40;
-	private final long count = batchThreads * batchSize;
-
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
@@ -77,7 +73,7 @@ public class LabelingRulePatch extends AbstractBeCPGPatch {
 						result.clear();
 
 						while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + count);
+							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + INC);
 
 							for (Long nodeid : nodeids) {
 								NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -85,7 +81,7 @@ public class LabelingRulePatch extends AbstractBeCPGPatch {
 									result.add(status.getNodeRef());
 								}
 							}
-							minSearchNodeId = minSearchNodeId + count;
+							minSearchNodeId = minSearchNodeId + INC;
 						}
 					}
 
@@ -94,7 +90,7 @@ public class LabelingRulePatch extends AbstractBeCPGPatch {
 			};
 
 			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("LabelingRulePatch",
-					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+					transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
@@ -142,7 +138,7 @@ public class LabelingRulePatch extends AbstractBeCPGPatch {
 
 			};
 
-			batchProcessor.process(worker, true);
+			batchProcessor.processLong(worker, true);
 		
 
 		return I18NUtil.getMessage(MSG_SUCCESS);

@@ -13,6 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.becpg.repo.report.entity.impl.DefaultEntityReportExtractor;
+
 /*
  *
  *
@@ -93,6 +95,17 @@ public class EntityReportParameters {
 	public static final String PARAM_EXTRACT_IN_MULTILEVEL = "extractInMultiLevel";
 	public static final String PARAM_EXTRACT_NON_EFFECTIVE_COMPONENT = "extractNonEffectiveComponent";
 	public static final String PARAM_MAX_COMPOLIST_LEVEL_TO_EXTRACT = "maxCompoListLevelToExtract";
+
+	private static final String JSON_PARAM_PARAMS = "params";
+	private static final String JSON_PARAM_PROP = "prop";
+	private static final String JSON_PARAM_PREFS = "prefs";
+	private static final String JSON_PROP_ID = "id";
+	private static final String JSON_PROP_VALUE = "value";
+	private static final String JSON_PROP_NODEREF = "nodeRef";
+	private static final String JSON_PARAM_ITERATIONKEY = "iterationKey";
+
+	private static final String JSON_PARAM_NAMEFORMAT = "nameFormat";
+	private static final String JSON_PARAM_TITLEFORMAT = "titleFormat";
 
 	private static Log logger = LogFactory.getLog(EntityReportParameters.class);
 
@@ -347,24 +360,24 @@ public class EntityReportParameters {
 	 */
 	public void updateDataSource(Element xmlDataSource) {
 
-		Element entityEl = (Element) xmlDataSource.getDocument().selectSingleNode("entity");
+		Element entityEl = (Element) xmlDataSource.getDocument().selectSingleNode(DefaultEntityReportExtractor.TAG_ENTITY);
 		if (entityEl != null) {
 
-			Element reportParamsEl = (Element) entityEl.selectSingleNode("reportParams");
+			Element reportParamsEl = (Element) entityEl.selectSingleNode(DefaultEntityReportExtractor.TAG_REPORT_PARAMS);
 
 			if (reportParamsEl != null) {
 				reportParamsEl.detach();
 			}
-			reportParamsEl = entityEl.addElement("reportParams");
+			reportParamsEl = entityEl.addElement(DefaultEntityReportExtractor.TAG_REPORT_PARAMS);
 
 			for (EntityReportParameter param : getParameters()) {
 				if (param.getId() != null) {
 					Element reportParam = reportParamsEl.addElement(param.getId());
 					if (param.getNodeRef() != null) {
-						reportParam.addAttribute("nodeRef", param.getNodeRef().toString());
+						reportParam.addAttribute(JSON_PROP_NODEREF, param.getNodeRef().toString());
 					}
-					reportParam.addAttribute("prop", param.getProp());
-					reportParam.addAttribute("value", param.getValue());
+					reportParam.addAttribute(JSON_PARAM_PROP, param.getProp());
+					reportParam.addAttribute(JSON_PROP_VALUE, param.getValue());
 				} else {
 					logger.warn("No param id for parameter : " + param);
 				}
@@ -388,22 +401,22 @@ public class EntityReportParameters {
 		if ((jsonString != null) && !jsonString.isEmpty()) {
 			JSONObject json = new JSONObject(jsonString);
 
-			if (json.has("params")) {
-				JSONArray params = json.getJSONArray("params");
+			if (json.has(JSON_PARAM_PARAMS)) {
+				JSONArray params = json.getJSONArray(JSON_PARAM_PARAMS);
 
 				for (int i = 0; i < params.length(); i++) {
 					JSONObject param = params.getJSONObject(i);
-					if (param.has("id")) {
+					if (param.has(JSON_PROP_ID)) {
 						EntityReportParameter tmp = new EntityReportParameter();
-						tmp.setId(param.getString("id"));
-						if (param.has("prop")) {
-							tmp.setProp(param.getString("prop"));
+						tmp.setId(param.getString(JSON_PROP_ID));
+						if (param.has(JSON_PARAM_PROP)) {
+							tmp.setProp(param.getString(JSON_PARAM_PROP));
 						}
-						if (param.has("nodeRef")) {
-							tmp.setNodeRef(new NodeRef(param.getString("nodeRef")));
+						if (param.has(JSON_PROP_NODEREF)) {
+							tmp.setNodeRef(new NodeRef(param.getString(JSON_PROP_NODEREF)));
 						}
-						if (param.has("value")) {
-							tmp.setValue(param.getString("value"));
+						if (param.has(JSON_PROP_VALUE)) {
+							tmp.setValue(param.getString(JSON_PROP_VALUE));
 						}
 
 						ret.getParameters().add(tmp);
@@ -413,16 +426,16 @@ public class EntityReportParameters {
 
 			}
 
-			if (json.has("iterationKey")) {
-				ret.setIterationKey(json.getString("iterationKey"));
+			if (json.has(JSON_PARAM_ITERATIONKEY)) {
+				ret.setIterationKey(json.getString(JSON_PARAM_ITERATIONKEY));
 			}
 
-			if (json.has("prefs")) {
-				JSONObject prefs = json.getJSONObject("prefs");
+			if (json.has(JSON_PARAM_PREFS)) {
+				JSONObject prefs = json.getJSONObject(JSON_PARAM_PREFS);
 				JSONArray keys = prefs.names();
 				for (int i = 0; i < keys.length(); i++) {
 					String key = keys.getString(i);
-					Object value = prefs.get(key); 
+					Object value = prefs.get(key);
 					if (value instanceof Boolean) {
 						ret.getPreferences().put(key, Boolean.toString((Boolean) value));
 					} else {
@@ -432,12 +445,12 @@ public class EntityReportParameters {
 
 			}
 
-			if (json.has("nameFormat")) {
-				ret.setReportNameFormat(json.getString("nameFormat"));
+			if (json.has(JSON_PARAM_NAMEFORMAT)) {
+				ret.setReportNameFormat(json.getString(JSON_PARAM_NAMEFORMAT));
 			}
 
-			if (json.has("titleFormat")) {
-				ret.setReportTitleFormat(json.getString("titleFormat"));
+			if (json.has(JSON_PARAM_TITLEFORMAT)) {
+				ret.setReportTitleFormat(json.getString(JSON_PARAM_TITLEFORMAT));
 			}
 
 		}
@@ -454,24 +467,24 @@ public class EntityReportParameters {
 		JSONObject ret = new JSONObject();
 		try {
 			if ((iterationKey != null) && !iterationKey.isEmpty()) {
-				ret.put("iterationKey", iterationKey);
+				ret.put(JSON_PARAM_ITERATIONKEY, iterationKey);
 			}
 
 			if (!parameters.isEmpty()) {
 				JSONArray params = new JSONArray();
 				for (EntityReportParameter param : parameters) {
 					JSONObject tmp = new JSONObject();
-					tmp.put("id", param.getId());
-					tmp.put("prop", param.getProp());
+					tmp.put(JSON_PROP_ID, param.getId());
+					tmp.put(JSON_PARAM_PROP, param.getProp());
 					if (param.getValue() != null) {
-						tmp.put("value", param.getValue());
+						tmp.put(JSON_PROP_VALUE, param.getValue());
 					}
 					if (param.getNodeRef() != null) {
-						tmp.put("nodeRef", param.getNodeRef().toString());
+						tmp.put(JSON_PROP_NODEREF, param.getNodeRef().toString());
 					}
 					params.put(tmp);
 				}
-				ret.put("params", params);
+				ret.put(JSON_PARAM_PARAMS, params);
 			}
 
 			if (!preferences.isEmpty()) {
@@ -480,16 +493,16 @@ public class EntityReportParameters {
 				for (Map.Entry<String, String> pref : preferences.entrySet()) {
 					prefs.put(pref.getKey(), pref.getValue());
 				}
-				ret.put("prefs", prefs);
+				ret.put(JSON_PARAM_PREFS, prefs);
 
 			}
 
 			if (reportNameFormat != null && !reportNameFormat.isEmpty()) {
-				ret.put("nameFormat", reportNameFormat);
+				ret.put(JSON_PARAM_NAMEFORMAT, reportNameFormat);
 			}
 
 			if (reportTitleFormat != null && !reportTitleFormat.isEmpty()) {
-				ret.put("titleFormat", reportTitleFormat);
+				ret.put(JSON_PARAM_TITLEFORMAT, reportTitleFormat);
 			}
 
 		} catch (JSONException e) {

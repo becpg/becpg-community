@@ -51,9 +51,6 @@ public class IsDeletedAspectPatch extends AbstractBeCPGPatch {
 	private RuleService ruleService;
 	private LockService lockService;
 
-	private static final int BATCH_THREADS = 4;
-	private static final int BATCH_SIZE = 30;
-	private static final long COUNT = BATCH_THREADS * BATCH_SIZE;
 
 	/** {@inheritDoc} */
 	@Override
@@ -83,7 +80,7 @@ public class IsDeletedAspectPatch extends AbstractBeCPGPatch {
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 0;
-			long maxSearchNodeId = COUNT;
+			long maxSearchNodeId = INC;
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(type);
 
@@ -112,8 +109,8 @@ public class IsDeletedAspectPatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + COUNT;
-						maxSearchNodeId = maxSearchNodeId + COUNT;
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
 				}
 

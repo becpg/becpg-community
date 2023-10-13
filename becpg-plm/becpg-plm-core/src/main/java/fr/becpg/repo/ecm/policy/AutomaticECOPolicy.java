@@ -25,6 +25,7 @@ import fr.becpg.repo.ecm.data.ChangeOrderData;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
 import fr.becpg.repo.repository.L2CacheSupport;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>AutomaticECOPolicy class.</p>
@@ -39,31 +40,23 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 	private EntityVersionService entityVersionService;
 
 	private static final Log logger = LogFactory.getLog(AutomaticECOPolicy.class);
-
-	private boolean isEnable = true;
 	
-	private String automaticRecordVersionType = VersionType.MAJOR.toString();
+	private SystemConfigurationService systemConfigurationService;
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
+
+	private boolean isEnable() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.eco.automatic.enable"));
+	}
+	
+	private String automaticRecordVersionType() {
+		return systemConfigurationService.confValue("beCPG.eco.automatic.record.version.type");
+	}
 
 	JavaBehaviour onUpdatePropertiesBehaviour;
 	
-	/**
-	 * <p>Setter for the field <code>automaticRecordVersionType</code>.</p>
-	 *
-	 * @param automaticRecordVersionType a {@link java.lang.String} object.
-	 */
-	public void setAutomaticRecordVersionType(String automaticRecordVersionType) {
-		this.automaticRecordVersionType = automaticRecordVersionType;
-	}
-
-	/**
-	 * <p>setEnable.</p>
-	 *
-	 * @param isEnable a boolean.
-	 */
-	public void setEnable(boolean isEnable) {
-		this.isEnable = isEnable;
-	}
-
 	/**
 	 * <p>Setter for the field <code>automaticECOService</code>.</p>
 	 *
@@ -92,7 +85,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 	/** {@inheritDoc} */
 	@Override
 	public void onUpdateProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
-		if (isEnable && before.containsKey(ContentModel.PROP_MODIFIED) && after.containsKey(ContentModel.PROP_MODIFIED)
+		if (isEnable() && before.containsKey(ContentModel.PROP_MODIFIED) && after.containsKey(ContentModel.PROP_MODIFIED)
 				&& !before.get(ContentModel.PROP_MODIFIED).equals(after.get(ContentModel.PROP_MODIFIED)) && !AuthenticationUtil.isRunAsUserTheSystemUser()) {
 
 			if (L2CacheSupport.isThreadLockEnable()) {
@@ -131,7 +124,7 @@ public class AutomaticECOPolicy extends AbstractBeCPGPolicy implements NodeServi
 				try {
 					ChangeOrderData changeOrderData = automaticECOService.getCurrentUserChangeOrderData();
 					Map<String, Serializable> properties = new HashMap<>();
-					properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.valueOf(automaticRecordVersionType));
+					properties.put(VersionModel.PROP_VERSION_TYPE, VersionType.valueOf(automaticRecordVersionType()));
 					properties.put(Version.PROP_DESCRIPTION, I18NUtil.getMessage("plm.ecm.apply.version.label", changeOrderData.getCode()+" - "+changeOrderData.getName()));
 
 					entityVersionService.createVersion(nodeRef, properties);
