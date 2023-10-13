@@ -127,6 +127,8 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService" />
 					<property name="formulaService" ref="formulaService" />
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Pre" />
@@ -200,6 +202,8 @@
 					<property name="nodeService" ref="nodeService" />
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+					<property name="namespaceService" ref="namespaceService" />
 					<property name="formulaService" ref="formulaService" />
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Post" />
@@ -223,6 +227,7 @@
 					</property>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompareFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService" />
 					<property name="productService" ref="productService" />
 					<property name="associationService" ref="associationService" />
