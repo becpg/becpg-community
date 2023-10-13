@@ -1274,7 +1274,7 @@ public abstract class AbstractFinishedProductTest extends PLMBaseTestCase {
 				Assert.assertTrue(formulatedProduct.getLabelingListView().getIngLabelingList().size() > 0);
 
 				for (IngLabelingListDataItem illDataItem : formulatedProduct.getLabelingListView().getIngLabelingList()) {
-					if ((grpNodeRef == null) || illDataItem.getGrp().equals(grpNodeRef)) {
+					if ((grpNodeRef == null) || grpNodeRef.equals(illDataItem.getGrp())) {
 
 						String formulatedIll = illDataItem.getValue().getValue(locale);
 						Assert.assertTrue(illDataItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM));

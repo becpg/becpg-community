@@ -194,7 +194,7 @@ public abstract class RuleParser {
 	 *
 	 * @param mlNodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
 	 */
-	public RuleParser(NodeService mlNodeService) {
+	protected RuleParser(NodeService mlNodeService) {
 		super();
 		this.mlNodeService = mlNodeService;
 		availableLocales = new LinkedHashSet<>();

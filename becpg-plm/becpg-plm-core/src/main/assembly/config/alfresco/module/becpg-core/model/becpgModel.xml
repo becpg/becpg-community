@@ -2628,6 +2628,17 @@
 				</property>
 			</properties>
 			<associations>
+			    <association name="bcpg:mblMethod">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 				<association name="bcpg:mblMicrobio">
 					<source>
 						<mandatory>false</mandatory>
@@ -2773,6 +2784,17 @@
 				</property>
 			</properties>
 			<associations>
+				<association name="bcpg:organoListMethod">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 				<association name="bcpg:organoListOrgano">
 					<source>
 						<mandatory>true</mandatory>
@@ -2834,6 +2856,17 @@
 				</property>
 			</properties>
 			<associations>
+				<association name="bcpg:pclMethod">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:charact</class>
+						<mandatory enforced="false">false</mandatory>
+						<many>true</many>
+					</target>
+				</association>
 				<association name="bcpg:pclPhysicoChem">
 					<source>
 						<mandatory>false</mandatory>
