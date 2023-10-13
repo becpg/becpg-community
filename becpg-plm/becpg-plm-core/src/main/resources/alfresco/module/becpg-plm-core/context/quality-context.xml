@@ -62,9 +62,7 @@
 			<list>
 				<bean class="fr.becpg.repo.quality.formulation.BatchCompositionFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
-					<property name="namespaceService" ref="namespaceService" />
 					<property name="formulaService" ref="formulaService" />
-					<property name="nodeService" ref="nodeService" />
 				</bean>
 				<bean class="fr.becpg.repo.quality.formulation.BatchFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
