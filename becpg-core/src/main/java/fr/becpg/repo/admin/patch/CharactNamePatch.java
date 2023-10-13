@@ -46,9 +46,6 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 	private IntegrityChecker integrityChecker;
 	private DictionaryService dictionaryService;
 	
-	private final int batchThreads = 3;
-	private final int batchSize = 40;
-	private final long count = (long)batchThreads * (long)batchSize;
 	
 	/**
 	 * <p>Setter for the field <code>dictionaryService</code>.</p>
@@ -116,7 +113,7 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 					result.clear();
 
 					while (result.isEmpty() && minSearchNodeId < maxNodeId) {
-						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + count);
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + INC);
 
 						for (Long nodeid : nodeids) {
 							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -124,7 +121,7 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + count;
+						minSearchNodeId = minSearchNodeId + INC;
 					}
 				}
 
@@ -133,7 +130,7 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("CharactNamePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
@@ -176,7 +173,7 @@ public class CharactNamePatch extends AbstractBeCPGPatch {
 		};
 		integrityChecker.setEnabled(false);
 		try {
-			batchProcessor.process(worker, true);
+			batchProcessor.processLong(worker, true);
 		} finally {
 			integrityChecker.setEnabled(true);
 		}

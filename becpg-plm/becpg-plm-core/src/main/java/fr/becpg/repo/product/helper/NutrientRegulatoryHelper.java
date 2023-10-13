@@ -10,7 +10,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
 
 @Component
 public class NutrientRegulatoryHelper {
-
+	
 	private static NutrientRegulatoryHelper instance;
 	
 	@Autowired
@@ -28,7 +28,7 @@ public class NutrientRegulatoryHelper {
 	}
 	
 	public static Double computeScore(NutriScoreContext context) throws JSONException {
-		return retrieveNutrientPlugin().computeScore(context);
+		return retrieveNutrientPlugin(context.getVersion()).computeScore(context);
 	}
 	
 	public static String extractClass(ProductData productData) throws JSONException {
@@ -38,15 +38,22 @@ public class NutrientRegulatoryHelper {
 	}
 	
 	public static String extractClass(NutriScoreContext context) {
-		return retrieveNutrientPlugin().extractClass(context);
+		return retrieveNutrientPlugin(context.getVersion()).extractClass(context);
 	}
 	
 	public static NutriScoreContext buildContext(ProductData productData) throws JSONException {
-		return retrieveNutrientPlugin().buildContext(productData);
+		return retrieveNutrientPlugin(productData.getNutrientProfileVersion()).buildContext(productData);
 	}
 	
-	private static NutrientRegulatoryPlugin retrieveNutrientPlugin() {
-		String regulatoryClassName = instance.systemConfigurationService.confValue("beCPG.score.nutriscore.regulatoryClass");
+	private static NutrientRegulatoryPlugin retrieveNutrientPlugin(String version) {
+		
+		for (NutrientRegulatoryPlugin helper : instance.nutrientPlugins) {
+			if (helper.getVersion().equals(version)) {
+				return helper;
+			}
+		}
+		
+		String regulatoryClassName = instance.systemConfigurationService.confValue("beCPG.formulation.score.nutriscore.regulatoryClass");
 		for (NutrientRegulatoryPlugin helper : instance.nutrientPlugins) {
 			if (helper.getClass().getName().equals(regulatoryClassName)) {
 				return helper;

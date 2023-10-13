@@ -183,6 +183,7 @@ public class NutrientHelper {
 		if (isApplicable) {
 			NutriScoreContext nutriScoreContext = new NutriScoreContext();
 			nutriScoreContext.setCategory(nutrientProfileCategory);
+			nutriScoreContext.setVersion(productData.getNutrientProfileVersion());
 			boolean containsWaterAspcet = productData.getAspects().contains(PLMModel.ASPECT_WATER);
 			nutriScoreContext.setWater(containsWaterAspcet);
 

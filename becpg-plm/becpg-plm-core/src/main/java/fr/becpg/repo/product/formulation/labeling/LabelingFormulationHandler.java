@@ -70,6 +70,7 @@ import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -95,8 +96,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private AssociationService associationService;
 
 	private SpelFormulaService formulaService;
+	
+	private SystemConfigurationService systemConfigurationService;
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
 
-	private boolean ingsCalculatingWithYield = false;
+	private boolean ingsCalculatingWithYield() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.ingsCalculatingWithYield"));
+	}
 
 	/**
 	 * <p>
@@ -146,18 +155,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
-	}
-
-	/**
-	 * <p>
-	 * Setter for the field <code>ingsCalculatingWithYield</code>.
-	 * </p>
-	 *
-	 * @param ingsCalculatingWithYield
-	 *            a boolean.
-	 */
-	public void setIngsCalculatingWithYield(boolean ingsCalculatingWithYield) {
-		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
 	}
 
 	/**
@@ -230,7 +227,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository,
 					formulaService);
 
-			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield);
+			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield());
 
 			ExpressionParser parser = new SpelExpressionParser();
 			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(formulatedProduct, labelingFormulaContext);

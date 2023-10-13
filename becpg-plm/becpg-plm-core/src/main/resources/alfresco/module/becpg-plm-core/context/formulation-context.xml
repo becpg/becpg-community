@@ -100,6 +100,7 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="nodeService" ref="nodeService" />
 		<property name="mlNodeService" ref="mlAwareNodeService" />
+		<property name="systemConfigurationService" ref="systemConfigurationService" />
 	</bean>
 
 
@@ -154,14 +155,13 @@
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler">
 					<property name="formulaService" ref="formulaService" />
 					<property name="associationService" ref="associationService" />
-					<property name="propagateModeEnable" value="${beCPG.formulation.nutList.propagateUpEnable}" />
+					<property name="systemConfigurationService" ref="systemConfigurationService" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler">
 					<property name="entityTplService" ref="entityTplService" />
 					<property name="formulaService" ref="formulaService" />
 					<property name="packagingHelper" ref="packagingHelper" />
 					<property name="alfrescoRepositoryProductData" ref="alfrescoRepository" />
-					<property name="keepProductUnit" value="${beCPG.formulation.costList.keepProductUnit}" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.LCACalculatingFormulationHandler">
 					<property name="entityTplService" ref="entityTplService" />
@@ -181,8 +181,8 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="mlNodeService" ref="mlAwareNodeService" />
 					<property name="associationService" ref="associationService" />
-					<property name="ingsCalculatingWithYield" value="${beCPG.formulation.ingsCalculatingWithYield}" />
 					<property name="formulaService" ref="formulaService" />
+					<property name="systemConfigurationService" ref="systemConfigurationService" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.PhysicoChemCalculatingFormulationHandler">
 					<property name="formulaService" ref="formulaService" />

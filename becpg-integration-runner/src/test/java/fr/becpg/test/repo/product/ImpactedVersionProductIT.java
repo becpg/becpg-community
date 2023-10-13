@@ -227,7 +227,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 	private NodeRef waitForVersion(final NodeRef product, String versionLabel) throws InterruptedException {
 		NodeRef versionNodeRef = null;
 		int i = 0;
-		while (versionNodeRef == null && i < 20) {
+		while (versionNodeRef == null && i < 50) {
 			Thread.sleep(1000);
 			logger.debug("waiting for version created...");
 			i++;

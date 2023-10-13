@@ -46,9 +46,6 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 	private RuleService ruleService;
 	private EntityListDAO entityListDAO;
 
-	private final int batchThreads = 4;
-	private final int batchSize = 30;
-	private final long count = batchThreads * batchSize;
 
 	/** {@inheritDoc} */
 	@Override
@@ -70,7 +67,7 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 0;
-			long maxSearchNodeId = count;
+			long maxSearchNodeId = INC;
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(type);
 
@@ -99,8 +96,8 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + count;
-						maxSearchNodeId = maxSearchNodeId + count;
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
 				}
 
@@ -108,7 +105,7 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("NutListValuePatch", transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize,
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("NutListValuePatch", transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE,
 				applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
@@ -166,7 +163,7 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 
 		integrityChecker.setEnabled(false);
 		try {
-			batchProcessor.process(worker, true);
+			batchProcessor.processLong(worker, true);
 		} finally {
 			integrityChecker.setEnabled(true);
 		}

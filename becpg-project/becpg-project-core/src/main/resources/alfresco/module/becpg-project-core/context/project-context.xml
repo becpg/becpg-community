@@ -20,7 +20,7 @@
 
 	<!-- beCPG configuration files -->
 	<bean name="beCPGProjectPlaceholderConfigurer"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer">
 		<property name="ignoreUnresolvablePlaceholders" value="true" />
 		<property name="ignoreResourceNotFound" value="true"></property>
 		<property name="locations">
@@ -87,12 +87,11 @@
 				<bean class="fr.becpg.repo.project.formulation.SubProjectFormulationHandler" >
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="projectActivityService" ref="projectActivityService" />
-					<property name="propsToCopyFromParent" value="${project.subProject.propsToCopyFromParent}"/>
-					<property name="propsToCopyToParent" value="${project.subProject.propsToCopyToParent}"/>
 					<property name="nodeService" ref="nodeService"/>
 					<property name="namespaceService" ref="namespaceService"/>
 					<property name="associationService" ref="associationService"/>
 					<property name="entityDictionaryService" ref="entityDictionaryService"/>
+					<property name="systemConfigurationService" ref="systemConfigurationService"/>
 				</bean>
 			   <bean class="fr.becpg.repo.project.formulation.TaskFormulationHandler">
 					<property name="projectWorkflowService" ref="projectWorkflowService" />
@@ -146,17 +145,16 @@
 
 	<!-- DataList Extractor -->
 
-
 	<bean id="projectListExtractor" class="fr.becpg.repo.project.extractor.ProjectListExtractor" parent="simpleExtractor" >
 		<property name="personService" ref="personService" />
 		<property name="preferenceService" ref="preferenceService" />
 		<property name="projectService" ref="projectService" />
 		<property name="securityService" ref="securityService" />
-		<property name="myProjectAttributes" value="${project.extractor.myProjectAttributes}"/>
 	 	<property name="namespaceService" ref="namespaceService" />
 	 	<property name="entityActivityExtractorService" ref="entityActivityExtractorService" />
 	 	<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
 	 	<property name="defaultExtractor" value="false"/>
+	 	<property name="systemConfigurationService" ref="systemConfigurationService" />
 	</bean>
 
 

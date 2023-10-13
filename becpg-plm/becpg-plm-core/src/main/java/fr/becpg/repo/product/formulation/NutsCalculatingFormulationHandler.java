@@ -36,6 +36,7 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantData;
 
@@ -55,17 +56,16 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	private static final Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 
-	private boolean propagateModeEnable = false;
+	private boolean propagateModeEnable() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.nutList.propagateUpEnable"));
+	}
 
 	private AssociationService associationService;
-
-	/**
-	 * <p>Setter for the field <code>propagateModeEnable</code>.</p>
-	 *
-	 * @param propagateModeEnable a boolean.
-	 */
-	public void setPropagateModeEnable(boolean propagateModeEnable) {
-		this.propagateModeEnable = propagateModeEnable;
+	
+	private SystemConfigurationService systemConfigurationService;
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
 	}
 
 	public void setAssociationService(AssociationService associationService) {
@@ -152,7 +152,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 		};
 
-		if (!propagateModeEnable && !formulatedProduct.getAspects().contains(PLMModel.ASPECT_PROPAGATE_UP)) {
+		if (!propagateModeEnable() && !formulatedProduct.getAspects().contains(PLMModel.ASPECT_PROPAGATE_UP)) {
 			visitComposition(formulatedProduct, formulatedProduct.getNutList(), qtyProvider, variant);
 		} else {
 

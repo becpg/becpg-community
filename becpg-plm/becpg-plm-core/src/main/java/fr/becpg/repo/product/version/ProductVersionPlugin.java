@@ -12,7 +12,6 @@ import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
@@ -21,6 +20,7 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.version.EntityVersionPlugin;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>ProductVersionPlugin class.</p>
@@ -46,9 +46,12 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 	@Autowired
 	private AssociationService associationService;
 	
-	@Value("${beCPG.copyOrBranch.propertiesToReset}")
-	private String propertiesToKeep;
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 	
+	private String propertiesToKeep() {
+		return systemConfigurationService.confValue("beCPG.copyOrBranch.propertiesToReset");
+	}
 	
 	/** {@inheritDoc} */
 	@Override
@@ -69,8 +72,8 @@ public class ProductVersionPlugin implements EntityVersionPlugin {
 		if(entityDictionaryService.isSubClass(nodeService.getType(origNodeRef), PLMModel.TYPE_PRODUCT)){
 	        nodeService.setProperty(workingCopyNodeRef, PLMModel.PROP_PRODUCT_STATE, nodeService.getProperty(origNodeRef, PLMModel.PROP_PRODUCT_STATE));
      
-			if (propertiesToKeep != null) {
-				for (String propertyToKeep : propertiesToKeep.split(",")) {
+			if (propertiesToKeep() != null) {
+				for (String propertyToKeep : propertiesToKeep().split(",")) {
 					QName propertyQname = QName.createQName(propertyToKeep, namespaceService);
 
 					if (entityDictionaryService.getProperty(propertyQname) != null) {

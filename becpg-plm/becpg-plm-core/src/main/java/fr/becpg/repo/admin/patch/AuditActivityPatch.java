@@ -204,7 +204,7 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>(AuditActivityPatch.class.getSimpleName(), transactionService.getRetryingTransactionHelper(),
-				workProvider, BATCH_THREAD, BATCH_SIZE, applicationEventPublisher, logger, INC);
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 

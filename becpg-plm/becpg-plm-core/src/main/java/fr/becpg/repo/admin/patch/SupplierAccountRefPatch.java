@@ -43,10 +43,6 @@ public class SupplierAccountRefPatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
-	private final int batchThreads = 3;
-	private final int batchSize = 40;
-	private final long count = batchThreads * batchSize;
-
 	/**
 	 * <p>Setter for the field <code>ruleService</code>.</p>
 	 *
@@ -88,7 +84,7 @@ public class SupplierAccountRefPatch extends AbstractBeCPGPatch {
 						result.clear();
 
 						while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
-							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + count);
+							List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + INC);
 
 							for (Long nodeid : nodeids) {
 								NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -96,7 +92,7 @@ public class SupplierAccountRefPatch extends AbstractBeCPGPatch {
 									result.add(status.getNodeRef());
 								}
 							}
-							minSearchNodeId = minSearchNodeId + count;
+							minSearchNodeId = minSearchNodeId + INC;
 						}
 					}
 
@@ -105,7 +101,7 @@ public class SupplierAccountRefPatch extends AbstractBeCPGPatch {
 			};
 
 			BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("AddSupplierAccountPatch",
-					transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 500);
+					transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
 
 			BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
@@ -136,7 +132,7 @@ public class SupplierAccountRefPatch extends AbstractBeCPGPatch {
 				}
 
 			};
-			batchProcessor.process(worker, true);
+			batchProcessor.processLong(worker, true);
 
 		
 
