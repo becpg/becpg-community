@@ -122,7 +122,7 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		return (double) compute5CScore(context);
 	}
 	
-	public static String extractClass(ProductData productData) {
+	public static String extractClass(ProductData productData) throws JSONException {
 		NutriScoreContext context = buildNutriScoreContext(productData);
 		if (context != null) {
 			compute5CScore(context);
@@ -131,7 +131,7 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		throw new IllegalStateException("Product is not applicable for nutriscore: " + productData.getName());
 	}
 	
-	public static int computeScore(ProductData productData) {
+	public static int computeScore(ProductData productData) throws JSONException {
 		NutriScoreContext context = buildNutriScoreContext(productData);
 		if (context != null) {
 			return compute5CScore(context);
