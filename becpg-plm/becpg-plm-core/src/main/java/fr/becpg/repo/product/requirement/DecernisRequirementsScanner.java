@@ -36,6 +36,8 @@ import fr.becpg.repo.repository.impl.LazyLoadingDataList;
  */
 public class DecernisRequirementsScanner implements RequirementScanner {
 
+	private static final int DECERNIS_MAX_COUNTRIES = 20;
+
 	private static Log logger = LogFactory.getLog(DecernisRequirementsScanner.class);
 
 	private static final String DECERNIS_KEY = "decernis";
@@ -109,8 +111,21 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 						formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 
-						List<ReqCtrlListDataItem> ret = decernisService.extractDecernisRequirements(formulatedProduct, countries, usages);
+						List<ReqCtrlListDataItem> ret = new ArrayList<>();
+						Set<String> countriesBatch = new HashSet<>();
 
+						for (String country : countries) {
+						    countriesBatch.add(country);
+						    if (countriesBatch.size() == DECERNIS_MAX_COUNTRIES) {
+						        ret.addAll(decernisService.extractDecernisRequirements(formulatedProduct, countriesBatch, usages));
+						        countriesBatch.clear();
+						    }
+						}
+
+						if (!countriesBatch.isEmpty()) {
+						    ret.addAll(decernisService.extractDecernisRequirements(formulatedProduct, countriesBatch, usages));
+						}
+						
 						formulatedProduct.setRequirementChecksum(
 								CheckSumHelper.updateChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum));
 						formulatedProduct.setRegulatoryFormulatedDate(new Date());
