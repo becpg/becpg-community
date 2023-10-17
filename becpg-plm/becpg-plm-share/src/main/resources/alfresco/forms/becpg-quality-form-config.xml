@@ -1974,7 +1974,12 @@
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="1-col" />
-					<field id="qa:clCharacts" set="2-col"/>
+					<field id="qa:clCharacts" set="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/characts</control-param>
+							</control>
+					</field>
 					<field id="qa:cdlQty" set="2-col"/>
 					<field id="qa:cdlFreq" set="2-col"/>
 					<field id="qa:cdlFreqUnit" set="2-col"/>
@@ -2049,7 +2054,12 @@
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="1-col" />
-					<field id="qa:clCharacts" set="2-col"/>
+					<field id="qa:clCharacts" set="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/characts</control-param>
+						</control>
+					</field>
 					<field id="qa:cdlQty" set="2-col"/>
 					<field id="qa:cdlFreq" set="2-col"/>
 					<field id="qa:cdlFreqUnit" set="2-col"/>
