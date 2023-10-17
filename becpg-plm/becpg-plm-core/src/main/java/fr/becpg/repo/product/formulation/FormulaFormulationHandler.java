@@ -440,6 +440,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		JSONArray subList = new JSONArray();
 
 		String path = JSON_PATH_SEPARATOR + dataListItem.getNodeRef().getId();
+		
+		if (dataListItem instanceof CompoListDataItem && ((CompoListDataItem) dataListItem).getParent() != null) {
+			path = JSON_PATH_SEPARATOR + ((CompoListDataItem) dataListItem).getParent().getNodeRef().getId() + path;
+		}
 
 		extractJSONSubList(productData, dataListItem, exp, path, subList, new HashSet<>());
 		jsonObject.put(JsonFormulaHelper.JSON_SUB_VALUES, subList);
