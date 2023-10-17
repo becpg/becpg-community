@@ -6,23 +6,20 @@ import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
-import org.alfresco.service.namespace.QName;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.autocomplete.AutoCompleteEntry;
-import fr.becpg.repo.autocomplete.AutoCompleteExtractor;
 import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.autocomplete.AutoCompleteService;
-import fr.becpg.repo.autocomplete.impl.extractors.NodeRefAutoCompleteExtractor;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * <p>ListValueAutoCompletePlugin class.</p>
- * 
- * Datasource: 
- * 
+ *
+ * Datasource:
+ *
  * ds: becpg/autocomplete/listvalue/values/{path}
  * param: {path} return list values in path
  *
@@ -77,26 +74,21 @@ public class ListValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 
 		List<NodeRef> ret = queryBuilder.ftsLanguage().list();
 
-		return new AutoCompletePage(ret, pageNum, pageSize, new AutoCompleteExtractor<NodeRef>() {
+		return new AutoCompletePage(ret, pageNum, pageSize, (nodeRefs) -> {
+			List<AutoCompleteEntry> suggestions = new ArrayList<>();
+			if (nodeRefs != null) {
+				for (NodeRef nodeRef : nodeRefs) {
 
-			@Override
-			public List<AutoCompleteEntry> extract(List<NodeRef> nodeRefs) {
-				List<AutoCompleteEntry> suggestions = new ArrayList<>();
-				if (nodeRefs != null) {
-					for (NodeRef nodeRef : nodeRefs) {
-
-						String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_CODE);
-						String value = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_VALUE);
-						if (code == null || code.isEmpty()) {
-							code = value;
-						}
-
-						suggestions.add(new AutoCompleteEntry(code, value.trim(), nodeService.getType(nodeRef).getLocalName()));
+					String code = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_CODE);
+					String value = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_LV_VALUE);
+					if ((code == null) || code.isEmpty()) {
+						code = value;
 					}
-				}
-				return suggestions;
-			}
 
+					suggestions.add(new AutoCompleteEntry(code, value.trim(), nodeService.getType(nodeRef).getLocalName()));
+				}
+			}
+			return suggestions;
 		});
 
 	}
