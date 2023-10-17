@@ -1,6 +1,7 @@
 package fr.becpg.repo.helper;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -115,6 +116,8 @@ public class ExcelHelper {
 							cell.setCellValue((double) obj);
 						} else if (obj instanceof Integer) {
 							cell.setCellValue((int) obj);
+						} else if (obj instanceof BigDecimal) {
+							cell.setCellValue(((BigDecimal) obj).doubleValue());
 						}
 					}
 				}
