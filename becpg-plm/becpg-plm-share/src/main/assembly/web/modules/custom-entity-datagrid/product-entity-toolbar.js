@@ -248,7 +248,9 @@
 
 										if (me.parentInputNodeRef != null) {
 											Dom.get(me.id + "_prop_bcpg_parentLevel-added").value = me.parentInputNodeRef;
+											Dom.get(me.id + "_prop_bcpg_parentLevel").value = ' '; // avoid blur event to reset the field
 											YAHOO.Bubbling.fire(me.id + "_prop_bcpg_parentLevel" + "refreshContent", me.parentInputNodeRef, this);
+											
 										}
 
 
@@ -269,6 +271,10 @@
 
 
 							});
+							
+							formsRuntime.
+							
+							
 							YAHOO.Bubbling.unsubscribe("beforeFormRuntimeInit", onBeforeFormRuntimeInit, me);
 						};
 
