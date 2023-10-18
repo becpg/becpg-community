@@ -3,6 +3,7 @@ package fr.becpg.repo.batch;
 import java.util.Objects;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.tenant.TenantUtil;
 import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -42,6 +43,8 @@ public class BatchInfo {
 	
 	private Boolean isCompleted = Boolean.FALSE;
 	
+	private String tenant;
+	
 	public static final String BATCH_DESC_ID = "batchDescId";
 
 	public static final String BATCH_USER = "batchUser";
@@ -53,14 +56,16 @@ public class BatchInfo {
 		this.batchId = batchId;
 		this.batchDescId = batchDescId;
 		this.batchUser = AuthenticationUtil.getRunAsUser();
+		this.tenant = TenantUtil.getCurrentDomain();
 	}
 	
 	public BatchInfo(String batchId, String batchDescId, String entityDescription) {
-		super();
-		this.batchId = batchId;
-		this.batchDescId = batchDescId;
+		this(batchId, batchDescId);
 		this.entityDescription = entityDescription;
-		this.batchUser = AuthenticationUtil.getRunAsUser();
+	}
+	
+	public String getTenant() {
+		return tenant;
 	}
 
 	public String getBatchId() {
