@@ -217,16 +217,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 							
 							AuthenticationUtil.pushAuthentication();
 							
-							String username = batchInfo.getBatchUser();
-							if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-								
-								username = AuthenticationUtil.getSystemUserName();
-								if (tenantAdminService.isEnabled()) {
-									username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-									
-								}
-								
-							}
+							String username = extractUsername();
+							
 							AuthenticationUtil.setFullyAuthenticatedUser(username);
 							
 							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -277,16 +269,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 							
 							AuthenticationUtil.pushAuthentication();
 							
-							String username = batchInfo.getBatchUser();
-							if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-								
-								username = AuthenticationUtil.getSystemUserName();
-								if (tenantAdminService.isEnabled()) {
-									username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-									
-								}
-								
-							}
+							String username = extractUsername();
+							
 							AuthenticationUtil.setFullyAuthenticatedUser(username);
 							
 							transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -308,15 +292,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					
 					AuthenticationUtil.pushAuthentication();
 					
-					String username = batchInfo.getBatchUser();
-					if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-						
-						username = AuthenticationUtil.getSystemUserName();
-						if (tenantAdminService.isEnabled()) {
-							username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-							
-						}
-					}
+					String username = extractUsername();
 					
 					AuthenticationUtil.setFullyAuthenticatedUser(username);
 					
@@ -356,6 +332,23 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			}
 		}
 
+		private String extractUsername() {
+			String username = batchInfo.getBatchUser();
+			if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
+				
+				username = AuthenticationUtil.getSystemUserName();
+				
+				if (tenantAdminService.isEnabled()) {
+					if (AuthenticationUtil.getSystemUserName().equals(batchInfo.getBatchUser())) {
+						username = tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), batchInfo.getTenant());
+					} else {
+						username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
+					}
+				}
+			}
+			return username;
+		}
+
 		private BatchProcessWorkProvider<T> getNextWorkWrapper(BatchProcessWorkProvider<T> workProvider) {
 			return new BatchProcessWorkProvider<T>() {
 
@@ -389,16 +382,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				public void beforeProcess() throws Throwable {
 					AuthenticationUtil.pushAuthentication();
 
-					String username = batchInfo.getBatchUser();
-					if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-
-						username = AuthenticationUtil.getSystemUserName();
-						if (tenantAdminService.isEnabled()) {
-							username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-
-						}
-
-					}
+					String username = extractUsername();
+					
 					AuthenticationUtil.setFullyAuthenticatedUser(username);
 
 					processWorker.beforeProcess();
