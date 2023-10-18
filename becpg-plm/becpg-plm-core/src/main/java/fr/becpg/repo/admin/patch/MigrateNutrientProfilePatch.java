@@ -206,7 +206,6 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 				ruleService.disableRules();
-				integrityChecker.setEnabled(false);
 				policyBehaviourFilter.disableBehaviour();
 				
 				List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
@@ -252,12 +251,16 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				
 				policyBehaviourFilter.enableBehaviour();
 				ruleService.enableRules();
-				integrityChecker.setEnabled(true);
 			}
 
 		};
 
-		batchProcessor.processLong(worker, true);
+		integrityChecker.setEnabled(false);
+		try {
+			batchProcessor.processLong(worker, true);
+		} finally {
+			integrityChecker.setEnabled(true);
+		}
 		
 		NodeRef companyHomeNodeRef = repository.getCompanyHome();
 		if (companyHomeNodeRef != null) {
