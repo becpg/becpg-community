@@ -450,6 +450,8 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 						JSONArray nonUniqueFields = extractNonUniqueFields(entityType, entityNodeRef, uniqueFields, i18nMessages);
 
+						
+						boolean isFirst = true;
 						for (String lang : langs) {
 
 							JSONObject catalogDesc = new JSONObject();
@@ -459,7 +461,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 							}
 
 							JSONArray missingFields = extractMissingFields(formulatedEntity, properties, reqFields, i18nMessages,
-									defaultLocale.equals(lang) ? null : lang);
+									defaultLocale.equals(lang) ? null : lang, isFirst);
 							if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
 
 								catalogDesc.put(EntityCatalogService.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
@@ -482,7 +484,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 								}
 							}
 							ret.put(catalogDesc);
-
+							isFirst = false;
 						}
 					}
 				}
@@ -603,7 +605,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	}
 
 	private JSONArray extractMissingFields(RepositoryEntity formulatedEntity, Map<QName, Serializable> properties, JSONArray reqFields,
-			JSONObject i18nMessages, String lang) throws JSONException {
+			JSONObject i18nMessages, String lang, boolean isFirstLang) throws JSONException {
 		JSONArray ret = new JSONArray();
 		
 		
@@ -659,28 +661,22 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 									present = true;
 								} 
 							} else {
-								if ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty()) {
+								if (!isFirstLang || ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty())) {
 									logger.debug(" - regular prop is present: " + properties.get(fieldQname));
 									present = true;
 								} 
-								if (lang != null) {
-									logger.error(" - Error non ml prop with non null lang in catalog, " + fieldQname);
-									present = true;
-								}
 							}
 
 						} else {
 							propDef = dictionaryService.getAssociation(fieldQname);
 							// only check assoc when lang is null
-							if (propDef != null) {
+							if (isFirstLang && propDef != null) {
 								if (associationService.getTargetAssoc(formulatedEntity.getNodeRef(), fieldQname) != null) {
 									logger.debug(" - assoc is present");
 									present = true;
 								} 
 							} else {
-								present = true;
-								logger.error(" - Unknow fieldName in catalog, " + fieldQname);
-							}
+								present = true;							}
 						}
 
 					} catch (NamespaceException e) {
