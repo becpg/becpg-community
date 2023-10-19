@@ -559,19 +559,26 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			String type1 = (String) nodeService.getProperty(a1.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
 			String type2 = (String) nodeService.getProperty(a2.getAllergen(), PLMModel.PROP_ALLERGEN_TYPE);
 
-			if (((type1 != null) && type1.equals(type2)) || ((type1 == null) && (type2 == null))) {
+			String allergenName1 = extractName(a1.getAllergen());
+			String allergenName2 = extractName(a2.getAllergen());
 
-				String allergenName1 = extractName(a1.getAllergen());
-				String allergenName2 = extractName(a2.getAllergen());
+			if (type1 == null && type2 == null) {
+				return allergenName1.compareTo(allergenName2);
+			} else if (type1 == null) {
+				return BEFORE;
+			} else if (type2 == null) {
+				return AFTER;
+			}
 
+			if (type1.equals(type2)) {
 				return allergenName1.compareTo(allergenName2);
 			} else if (AllergenType.Major.toString().equals(type1) && AllergenType.Minor.toString().equals(type2)) {
 				return BEFORE;
-			} else if (AllergenType.Minor.toString().equals(type1) && type2 == null) {
-				return BEFORE;
-			} else {
+			} else if (AllergenType.Minor.toString().equals(type1) && AllergenType.Major.toString().equals(type2)) {
 				return AFTER;
 			}
+
+			return type1.compareTo(type2);
 
 		}).forEach(al -> al.setSort(atomicInteger.getAndIncrement()));
 
