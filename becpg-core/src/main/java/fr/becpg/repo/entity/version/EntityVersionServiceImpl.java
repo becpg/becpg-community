@@ -402,7 +402,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		if (nodeRef != null) {
 			NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
 			if (entitiesHistoryFolder != null) {
-				vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS, nodeRef.getId());
+				Optional<NodeRef> vhNodeRefOptional = nodeService.getChildAssocs(entitiesHistoryFolder)
+						.stream()
+						.map(ChildAssociationRef::getChildRef)
+						.filter(n -> nodeRef.getId().equals(nodeService.getProperty(n, ContentModel.PROP_NAME)))
+						.findFirst();
+				if (vhNodeRefOptional.isPresent()) {
+					vhNodeRef = vhNodeRefOptional.get();
+				}
 			}
 		}
 
