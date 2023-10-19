@@ -87,7 +87,6 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext;
 import fr.becpg.repo.report.entity.EntityReportService;
-import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Store the entity version history in the SpacesStore otherwise we cannot use
@@ -420,14 +419,17 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 		return beCPGCacheService.getFromCache(EntityVersionService.class.getName(), KEY_ENTITIES_HISTORY, () -> {
 
-			NodeRef entitiesHistoryNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE),
-					RepoConsts.ENTITIES_HISTORY_XPATH);
-			try {
-				if (entitiesHistoryNodeRef == null) {
-
+			final NodeRef storeNodeRef = nodeService.getRootNode(RepoConsts.SPACES_STORE);
+			
+			Optional<NodeRef> entitiesHistoryOptional = nodeService.getChildAssocs(storeNodeRef)
+					.stream()
+					.map(ChildAssociationRef::getChildRef)
+					.filter(n -> RepoConsts.ENTITIES_HISTORY_NAME.equals(nodeService.getProperty(n, ContentModel.PROP_NAME)))
+					.findFirst();
+			
+			if (entitiesHistoryOptional.isEmpty()) {
+				try {
 					// create folder
-					final NodeRef storeNodeRef = nodeService.getRootNode(RepoConsts.SPACES_STORE);
-
 					return AuthenticationUtil.runAsSystem(() -> {
 						HashMap<QName, Serializable> props = new HashMap<>();
 						props.put(ContentModel.PROP_NAME, RepoConsts.ENTITIES_HISTORY_NAME);
@@ -439,15 +441,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 						return n;
 					});
+				} catch (Exception e) {
+					if (RetryingTransactionHelper.extractRetryCause(e) != null) {
+						throw e;
+					}
+					logger.error("Failed to create entitiesHistory", e);
 				}
-			} catch (Exception e) {
-				if (RetryingTransactionHelper.extractRetryCause(e) != null) {
-					throw e;
-				}
-				logger.error("Failed to get entitysHistory", e);
 			}
-
-			return entitiesHistoryNodeRef;
+			return entitiesHistoryOptional.get();
 		}, true);
 	}
 
