@@ -3,12 +3,9 @@ package fr.becpg.repo.product.data;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -84,10 +81,17 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 		item.setFormulationChainId(formulationChainId);
 		reqCtrlList.add(item);
 	}
-
+	
 	@Override
 	public boolean merge() {
+		return merge(null);
+	}
 
+	@Override
+	public boolean merge(List<String> disabledChainIds) {
+
+		String currentChainId = getFormulationChainId();
+		
 		boolean hasChanged = false;
 
 		if (reqCtrlList != null) {
@@ -119,10 +123,10 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 				if (!newReqCtrlList.containsKey(dbKV.getKey())) {
 
 					if (((dbKV.getValue().getFormulationChainId() == null)
-							&& ((getFormulationChainId() == null) || FormulationService.FAST_FORMULATION_CHAINID.equals(getFormulationChainId())
-									|| FormulationService.DEFAULT_CHAIN_ID.equals(getFormulationChainId())))
+							&& ((getFormulationChainId() == null) || FormulationService.FAST_FORMULATION_CHAINID.equals(currentChainId)
+									|| FormulationService.DEFAULT_CHAIN_ID.equals(currentChainId)))
 							|| ((dbKV.getValue().getFormulationChainId() != null)
-									&& dbKV.getValue().getFormulationChainId().equals(getFormulationChainId()))) {
+									&& dbKV.getValue().getFormulationChainId().equals(currentChainId))) {
 						// remove
 						reqCtrlList.remove(dbKV.getValue());
 						hasChanged = true;
@@ -136,6 +140,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 					dbKV.getValue().setSources(newReqCtrlListDataItem.getSources());
 					dbKV.getValue().setCharact(newReqCtrlListDataItem.getCharact());
 					dbKV.getValue().setReqDataType(newReqCtrlListDataItem.getReqDataType());
+					dbKV.getValue().setFormulationChainId(newReqCtrlListDataItem.getFormulationChainId());
 
 					reqCtrlList.remove(newReqCtrlListDataItem);
 				}
@@ -143,6 +148,22 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 			
 			// sort
 			sort(reqCtrlList);
+			
+			if (disabledChainIds != null) {
+				
+				List<ReqCtrlListDataItem> toRemove = new ArrayList<>();
+				
+				for (ReqCtrlListDataItem reqCtrl : reqCtrlList) {
+					if (reqCtrl.getFormulationChainId() != null && disabledChainIds.contains(reqCtrl.getFormulationChainId())) {
+						toRemove.add(reqCtrl);
+					}
+				}
+				
+				if (!toRemove.isEmpty()) {
+					reqCtrlList.removeAll(toRemove);
+					hasChanged = true;
+				}
+			}
 		}
 
 		return hasChanged;
