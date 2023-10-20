@@ -35,12 +35,12 @@ import org.apache.commons.io.FileUtils;
 import org.springframework.util.StopWatch;
 
 import fr.becpg.repo.entity.EntityService;
+import fr.becpg.repo.formulation.ReportableError;
+import fr.becpg.repo.formulation.ReportableError.ReportableErrorType;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.report.engine.BeCPGReportEngine;
 import fr.becpg.repo.report.entity.EntityImageInfo;
 import fr.becpg.repo.report.entity.EntityReportData;
-import fr.becpg.repo.report.entity.ReportEngineLog;
-import fr.becpg.repo.report.entity.ReportEngineLog.ReportLogType;
 import fr.becpg.repo.report.template.ReportTplService;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.report.client.AbstractBeCPGReportClient;
@@ -165,8 +165,11 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 
 					if (imageBytes.length > reportImageMaxSizeInBytes()) {
 						
-						reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Image size exceeds: " + entry,
-								MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(), FileUtils.byteCountToDisplaySize(imageBytes.length), FileUtils.byteCountToDisplaySize(reportImageMaxSizeInBytes())), tplNodeRef));
+						reportData.getLogs()
+								.add(new ReportableError(ReportableErrorType.WARNING, "Image size exceeds: " + entry,
+										MLTextHelper.getI18NMessage("message.report.image.size", entry.getName(),
+												FileUtils.byteCountToDisplaySize(imageBytes.length),
+												FileUtils.byteCountToDisplaySize(reportImageMaxSizeInBytes())), List.of(tplNodeRef)));
 					}
 
 					try (InputStream in = new ByteArrayInputStream(imageBytes)) {
@@ -185,15 +188,19 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			try (InputStream in = new ByteArrayInputStream(datasourceBytes)) {
 
 				if (datasourceBytes.length > reportDatasourceMaxSizeInBytes()) {
-					reportData.getLogs().add(new ReportEngineLog(ReportLogType.WARNING, "Datasource size exceeds: " + params,
-							MLTextHelper.getI18NMessage("message.report.datasource.size", FileUtils.byteCountToDisplaySize(datasourceBytes.length), FileUtils.byteCountToDisplaySize(reportDatasourceMaxSizeInBytes())), tplNodeRef));
+					reportData.getLogs()
+							.add(new ReportableError(ReportableErrorType.WARNING, "Datasource size exceeds: " + params,
+									MLTextHelper.getI18NMessage("message.report.datasource.size",
+											FileUtils.byteCountToDisplaySize(datasourceBytes.length),
+											FileUtils.byteCountToDisplaySize(reportDatasourceMaxSizeInBytes())), List.of(tplNodeRef)));
 				}
 
 				List<String> errors = generateReport(reportSession, in, out);
 
 				for (String error : errors) {
 					reportData.getLogs().add(
-							new ReportEngineLog(ReportLogType.ERROR, error, MLTextHelper.getI18NMessage("message.report.error", error), tplNodeRef));
+							new ReportableError(ReportableErrorType.ERROR, error,
+									MLTextHelper.getI18NMessage("message.report.error", error), List.of(tplNodeRef)));
 				}
 			}
 		});
