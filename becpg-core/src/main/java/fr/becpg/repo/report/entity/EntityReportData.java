@@ -22,6 +22,8 @@ import java.util.Set;
 
 import org.dom4j.Element;
 
+import fr.becpg.repo.formulation.ReportableError;
+
 /**
  * <p>EntityReportData class.</p>
  *
@@ -36,7 +38,7 @@ public class EntityReportData {
 	
 	private Set<EntityImageInfo> images = new HashSet<>();
 	
-	private Set<ReportEngineLog> logs = new HashSet<>();
+	private Set<ReportableError> logs = new HashSet<>();
 	
 	/**
 	 * <p>Getter for the field <code>xmlDataSource</code>.</p>
@@ -64,11 +66,11 @@ public class EntityReportData {
 		this.images = images;
 	}
 
-	public Set<ReportEngineLog> getLogs() {
+	public Set<ReportableError> getLogs() {
 		return logs;
 	}
 	
-	public void setLogs(Set<ReportEngineLog> logs) {
+	public void setLogs(Set<ReportableError> logs) {
 		this.logs = logs;
 	}
 	
