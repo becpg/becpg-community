@@ -602,7 +602,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 0);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"),
-					"{\"query\":\"+@{http://www.bcpg.fr/model/becpg/1.0}rclDataType:\\\"Formulation\\\"\"}");
+					"{\"query\":\"+@{http://www.bcpg.fr/model/becpg/1.0}rclDataType:\\\"Formulation\\\" AND +@{http://www.bcpg.fr/model/becpg/1.0}rclReqType:\\\"Forbidden\\\"\"}");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
