@@ -40,6 +40,7 @@ import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
 import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationChainPlugin;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RegulatoryResult;
@@ -57,7 +58,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
  * @version $Id: $Id
  */
 @Service("decernisService")
-public class DecernisServiceImpl implements DecernisService {
+public class DecernisServiceImpl implements DecernisService, FormulationChainPlugin {
 
 	private static final Log logger = LogFactory.getLog(DecernisServiceImpl.class);
 
@@ -121,6 +122,16 @@ public class DecernisServiceImpl implements DecernisService {
 
 	private String token() {
 		return systemConfigurationService.confValue("beCPG.decernis.token");
+	}
+	
+	@Override
+	public String getChainId() {
+		return DECERNIS_CHAIN_ID;
+	}
+
+	@Override
+	public boolean isChainActiveOnEntity(NodeRef entityNodeRef) {
+		return isEnabled();
 	}
 
 	@Override
