@@ -18,5 +18,7 @@ public interface ReportableEntity extends FormulatedEntity {
 	void addError(MLText msg, String formulationChainId, List<NodeRef> sources);
 
 	boolean merge();
-
+	
+	boolean merge(List<String> inactiveChainIds);
+	
 }
