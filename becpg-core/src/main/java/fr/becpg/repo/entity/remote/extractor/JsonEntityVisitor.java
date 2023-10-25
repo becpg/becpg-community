@@ -339,6 +339,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
 					String dataListName = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
 					if (!(dataListName).startsWith(RepoConsts.WUSED_PREFIX)
+							&& !dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
 							&& params.shouldExtractList(dataListName)) {
 						if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
 								|| entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM))) {
@@ -348,10 +349,10 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 							if ((listItemRefs != null) && !listItemRefs.isEmpty()) {
 								JSONArray list = new JSONArray();
 
-								if (!entityLists.has(dataListType)) {
+								if ( dataListName.equals(dataListTypeQName.getLocalName())) {
 									entityLists.put(dataListType, list);
 								} else {
-									entityLists.put(dataListType + "|" + (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME), list);
+									entityLists.put(dataListType + "|" + dataListName, list);
 								}
 
 								for (NodeRef listItem : listItemRefs) {
