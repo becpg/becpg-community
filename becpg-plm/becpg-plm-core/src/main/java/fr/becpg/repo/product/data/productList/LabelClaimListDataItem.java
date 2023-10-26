@@ -235,6 +235,7 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 	 * @param labelClaimItem a {@link fr.becpg.repo.product.data.productList.LabelClaimListDataItem} object.
 	 */
 	public LabelClaimListDataItem(LabelClaimListDataItem labelClaimItem) {
+		super(labelClaimItem);
 		this.labelClaim = labelClaimItem.labelClaim;
 		this.type = labelClaimItem.type;
 		this.labelClaimValue = labelClaimItem.labelClaimValue;
@@ -245,7 +246,11 @@ public class LabelClaimListDataItem extends AbstractManualDataItem implements  C
 	/** {@inheritDoc} */
 	@Override
 	public LabelClaimListDataItem copy() {
-		return new LabelClaimListDataItem(this);
+		LabelClaimListDataItem ret =  new LabelClaimListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 	
 	@Override

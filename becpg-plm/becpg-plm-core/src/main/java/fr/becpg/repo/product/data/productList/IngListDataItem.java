@@ -541,7 +541,11 @@ public class IngListDataItem extends AbstractManualDataItem  implements SimpleCh
 	
 	@Override
 	public IngListDataItem copy() {
-		return new IngListDataItem(this);
+		IngListDataItem ret = new IngListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 	@Override
