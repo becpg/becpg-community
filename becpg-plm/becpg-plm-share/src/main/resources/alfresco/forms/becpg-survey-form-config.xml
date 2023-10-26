@@ -188,7 +188,7 @@
 					<field id="bcpg:parentLevel">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:questionLabel</control-param>
-							<control-param name="urlParamsToPass">dataListsName,itemId</control-param>
+							<control-param name="urlParamsToPass">dataListsName</control-param>
 						</control>
 					</field>
 					
@@ -201,8 +201,10 @@
 				</field-visibility>
 				<appearance>
 					 <field id="bcpg:parentLevel">
-                        <control
-							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+                        <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+							<control-param name="ds">becpg/autocomplete/ParentValue?className=survey:surveyQuestion&#38;attributeName=survey:questionLabel</control-param>
+							<control-param name="urlParamsToPass">dataListsName</control-param>
+						</control>
                     </field>
 				</appearance>
 			</form>
