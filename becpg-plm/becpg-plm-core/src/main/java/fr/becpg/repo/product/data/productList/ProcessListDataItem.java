@@ -277,7 +277,11 @@ public class ProcessListDataItem extends AbstractEffectiveVariantListDataItem im
 	/** {@inheritDoc} */
 	@Override
 	public CompositionDataItem copy() {
-		return new ProcessListDataItem(this);
+		ProcessListDataItem ret = new ProcessListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 	/** {@inheritDoc} */
