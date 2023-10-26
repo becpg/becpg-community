@@ -15,6 +15,7 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
+import fr.becpg.repo.repository.model.CopiableDataItem;
 
 /**
  * <p>IngLabelingListDataItem class.</p>
@@ -24,7 +25,7 @@ import fr.becpg.repo.repository.model.AspectAwareDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:ingLabelingList")
-public class IngLabelingListDataItem extends AbstractManualDataItem implements AspectAwareDataItem {
+public class IngLabelingListDataItem extends AbstractManualDataItem implements AspectAwareDataItem, CopiableDataItem{
 
 	
 	private static final long serialVersionUID = 3043212457177647400L;
@@ -180,6 +181,16 @@ public class IngLabelingListDataItem extends AbstractManualDataItem implements A
 		this.isManual = i.isManual;
 		this.locales = i.locales;
 		
+	}
+	
+	/** {@inheritDoc} */
+	@Override
+	public IngLabelingListDataItem copy() {
+		IngLabelingListDataItem ret = new IngLabelingListDataItem(this);
+		ret.setName(null);
+		ret.setNodeRef(null);
+		ret.setParentNodeRef(null);
+		return ret;
 	}
 
 	/** {@inheritDoc} */
