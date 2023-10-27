@@ -129,7 +129,7 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-				if (nodeService.exists(entityNodeRef) &&  entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)
+				if (nodeService.exists(entityNodeRef) &&  entityNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)
 						) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
@@ -155,7 +155,7 @@ public class NutListValuePatch extends AbstractBeCPGPatch {
 					}
 
 				} else {
-					if(entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)){
+					if(entityNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)){
 						logger.warn("dataListNodeRef doesn't exist : " + entityNodeRef);
 					}
 				}

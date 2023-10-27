@@ -137,7 +137,7 @@ public class IsDeletedAspectPatch extends AbstractBeCPGPatch {
 				ruleService.disableRules();
 				integrityChecker.setEnabled(false);
 
-				if (nodeService.exists(entityNodeRef) && entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)) {
+				if (nodeService.exists(entityNodeRef) && entityNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 					if (lockService.isLocked(entityNodeRef)) {
@@ -150,7 +150,7 @@ public class IsDeletedAspectPatch extends AbstractBeCPGPatch {
 						nodeService.addAspect(entityNodeRef, BeCPGModel.ASPECT_DELETED, new HashMap<>());
 					}
 				} else {
-					if (entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)) {
+					if (entityNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
 						logger.warn("entityNodeRef doesn't exist : " + entityNodeRef);
 					}
 				}

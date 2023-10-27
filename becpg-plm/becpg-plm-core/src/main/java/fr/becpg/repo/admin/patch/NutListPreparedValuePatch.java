@@ -131,14 +131,14 @@ public class NutListPreparedValuePatch extends AbstractBeCPGPatch {
 
 				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-				if (nodeService.exists(entityNodeRef) && entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)) {
+				if (nodeService.exists(entityNodeRef) && entityNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
 					if (lockService.isLocked(entityNodeRef)) {
 						lockService.unlock(entityNodeRef);
 					}
 
-					logger.info("Updating :" + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME));
+					logger.info("Updating :" + nodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME)+ " "+ tenantAdminService.getCurrentUserDomain());
 
 					NodeRef entityContainer = entityListDAO.getListContainer(entityNodeRef);
 					if (entityContainer != null) {
@@ -163,7 +163,7 @@ public class NutListPreparedValuePatch extends AbstractBeCPGPatch {
 					}
 
 				} else {
-					if (entityNodeRef.getStoreRef().equals(StoreRef.STORE_REF_WORKSPACE_SPACESSTORE)) {
+					if (entityNodeRef.getStoreRef().getProtocol().equals(StoreRef.PROTOCOL_WORKSPACE)) {
 						logger.warn("dataListNodeRef doesn't exist : " + entityNodeRef);
 					}
 				}
