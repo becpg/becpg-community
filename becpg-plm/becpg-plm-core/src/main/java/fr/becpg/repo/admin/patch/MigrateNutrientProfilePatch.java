@@ -210,7 +210,7 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 				
 				List<AssociationRef> sourceAssocs = nodeService.getSourceAssocs(nutrientProfile, ASSOC_NUTRIENT_PROFILE_REF);
 				
-				logger.info("identified nutrient profile to migrate : " + nutrientProfile);
+				logger.info("identified nutrient profile to migrate : " + nutrientProfile+ " "+ tenantAdminService.getCurrentUserDomain());
 				
 				if (sourceAssocs != null) {
 					
