@@ -383,21 +383,30 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 
 			String[] splitted = decodeParam(listsParams).split(",");
 			for (String list : splitted) {
-				String[] listName = list.split(":");
-				if ((listName != null) ) {
-					if(listName.length > 1){
-						if(listName[0].startsWith("!")) {
-							lists.add("!"+listName[1]);
-						} else {
-							lists.add(listName[1]);
-						}
-					} else {
-						lists.add(listName[0]);
-					}
+				
+				String listToAdd = "";
+				if (list.contains("@")) {
+					String firstPart = list.split("@")[0];
+					String secondPart = list.split("@")[1];
+					listToAdd = formatListName(firstPart) + "@" + secondPart;
+				} else {
+					listToAdd = formatListName(list);
 				}
+				lists.add(listToAdd);
 			}
 		}
 		return lists;
+	}
+
+	private String formatListName(String list) {
+		String[] listName = list.split(":");
+		if (listName.length > 1) {
+			if (listName[0].startsWith("!")) {
+				return "!" + listName[1];
+			}
+			return listName[1];
+		}
+		return listName[0];
 	}
 
 
