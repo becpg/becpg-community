@@ -19,14 +19,13 @@ public class ChildAssocCacheEntry implements Serializable {
 	private List<NodeRef> items = new LinkedList<>();
 	private Map<QName,List<NodeRef>> itemsByType = new HashMap<>();
 	
+	
+	
 	public void add(NodeRef item, QName type) {
 		 itemsByType.computeIfAbsent(type, k ->  new LinkedList<NodeRef>()).add(item);
 		 items.add(item);
 	}
 	
-	public Map<QName, List<NodeRef>> getItemsByType() {
-		return itemsByType;
-	}
 	
 	public void sort(CommonDataListSort commonDataListSort) {
 			items.sort(commonDataListSort);
