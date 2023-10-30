@@ -213,8 +213,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			try (AuditScope auditScope = beCPGAuditService.startAudit(AuditType.BATCH)) {
 				boolean hasError = false;
 
-				Date startTime = null;
-				Date endTime = null;
+				Date startTime = new Date();
 
 				int totalItems = 0;
 				int totalErrors = 0;
@@ -239,9 +238,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 					if (batchStep.getBatchStepListener() != null) {
 
-						AuthenticationUtil.pushAuthentication();
-
-						AuthenticationUtil.setFullyAuthenticatedUser(batchUserName);
+						pushAndSetBatchAuthentication();
 
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 							batchStep.getBatchStepListener().beforeStep();
@@ -276,13 +273,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 					batchProcessor.processLong(runAsWrapper(batchStep.getProcessWorker()), true);
 
-					// first step only
-					if (startTime == null) {
-						startTime = batchProcessor.getStartTime();
-					}
-
-					endTime = batchProcessor.getEndTime();
-
 					totalItems += batchProcessor.getTotalResultsLong();
 					totalErrors += batchProcessor.getTotalErrorsLong();
 
@@ -301,9 +291,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 					}
 					if (batchStep.getBatchStepListener() != null) {
 
-						AuthenticationUtil.pushAuthentication();
-
-						AuthenticationUtil.setFullyAuthenticatedUser(batchUserName);
+						pushAndSetBatchAuthentication();
 
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 							batchStep.getBatchStepListener().afterStep();
@@ -317,9 +305,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				if (closingHook != null) {
 
-					AuthenticationUtil.pushAuthentication();
-
-					AuthenticationUtil.setFullyAuthenticatedUser(batchUserName);
+					pushAndSetBatchAuthentication();
 
 					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 						closingHook.run();
@@ -338,11 +324,11 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				if (Boolean.TRUE.equals(batchInfo.getNotifyByMail())) {
 
-					final boolean finalHasError = hasError;
-					final Date finalEndTime = endTime;
-					final Date finalStartTime = startTime;
+					Date endTime = new Date();
+					
+					boolean finalHasError = hasError;
 
-					int secondsBetween = (int) ((finalEndTime.getTime() - finalStartTime.getTime()) / 1000);
+					int secondsBetween = (int) ((endTime.getTime() - startTime.getTime()) / 1000);
 
 					AuthenticationUtil
 							.runAs(() -> transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -363,6 +349,24 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 			} finally {
 				runningCommand = null;
 			}
+		}
+
+		private void pushAndSetBatchAuthentication() {
+			AuthenticationUtil.pushAuthentication();
+			String username = batchInfo.getBatchUser();
+			if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
+				
+				username = AuthenticationUtil.getSystemUserName();
+				
+				if (tenantAdminService.isEnabled()) {
+					if (AuthenticationUtil.getSystemUserName().equals(batchInfo.getBatchUser())) {
+						username = tenantAdminService.getDomainUser(AuthenticationUtil.getSystemUserName(), batchInfo.getTenant());
+					} else {
+						username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
+					}
+				}
+			}
+			AuthenticationUtil.setFullyAuthenticatedUser(username);
 		}
 
 		private BatchProcessWorkProvider<T> getNextWorkWrapper(BatchProcessWorkProvider<T> workProvider) {
@@ -396,22 +400,8 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 
 				@Override
 				public void beforeProcess() throws Throwable {
-					AuthenticationUtil.pushAuthentication();
-
-					String username = batchInfo.getBatchUser();
-					if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-
-						username = AuthenticationUtil.getSystemUserName();
-						if (tenantAdminService.isEnabled()) {
-							username = tenantAdminService.getDomainUser(username, tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-
-						}
-
-					}
-					AuthenticationUtil.setFullyAuthenticatedUser(username);
-
+					pushAndSetBatchAuthentication();
 					processWorker.beforeProcess();
-
 				}
 
 				@Override

@@ -183,8 +183,7 @@ public class SurveyServiceImpl implements SurveyService {
 		return new ArrayList<>();
 	}
 
-	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions)
-			throws JSONException {
+	private void appendQuestionDefinition(JSONArray definitions, SurveyQuestion surveyQuestion, Set<SurveyQuestion> questions) throws JSONException {
 
 		if (!questions.contains(surveyQuestion)) {
 
@@ -239,7 +238,7 @@ public class SurveyServiceImpl implements SurveyService {
 					if (CommentType.text.toString().equals(surveyQuestion.getResponseCommentType())
 							|| CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 						choice.put("comment", true);
-						choice.put("commentLabel", surveyQuestion.getResponseCommentLabel());
+						choice.put("commentLabel", getLabelOrHidden(surveyQuestion.getResponseCommentLabel()));
 						if (CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 							choice.put("textarea", true);
 						}
@@ -258,11 +257,11 @@ public class SurveyServiceImpl implements SurveyService {
 						choice.put("id", defChoice.getNodeRef().getId());
 						choice.put("label", defChoice.getLabel());
 						appendCids(choice, defChoice, definitions, questions);
-						
+
 						if (CommentType.text.toString().equals(defChoice.getResponseCommentType())
 								|| CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
 							choice.put("comment", true);
-							choice.put("commentLabel",  defChoice.getResponseCommentLabel());
+							choice.put("commentLabel", getLabelOrHidden(defChoice.getResponseCommentLabel()));
 							if (CommentType.textarea.toString().equals(defChoice.getResponseCommentType())) {
 								choice.put("textarea", true);
 							}
@@ -279,7 +278,7 @@ public class SurveyServiceImpl implements SurveyService {
 				choice.put("id", "sub-" + surveyQuestion.getNodeRef().getId().substring(4));
 				choice.put("label", "hidden");
 				choice.put("comment", true);
-				choice.put("commentLabel", surveyQuestion.getResponseCommentLabel());
+				choice.put("commentLabel", getLabelOrHidden(surveyQuestion.getResponseCommentLabel()));
 				if (CommentType.textarea.toString().equals(surveyQuestion.getResponseCommentType())) {
 					choice.put("textarea", true);
 				}
@@ -293,6 +292,10 @@ public class SurveyServiceImpl implements SurveyService {
 			}
 			definitions.put(definition);
 		}
+	}
+
+	private String getLabelOrHidden(String responseCommentLabel) {
+		return responseCommentLabel == null ? null : responseCommentLabel.isBlank() ? "hidden" : responseCommentLabel;
 	}
 
 	private void appendCids(JSONObject choice, SurveyQuestion surveyQuestion, JSONArray definitions, Set<SurveyQuestion> questions) {

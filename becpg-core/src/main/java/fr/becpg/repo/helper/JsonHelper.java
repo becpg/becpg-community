@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.util.ISO8601DateFormat;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,6 +72,8 @@ public class JsonHelper {
 				} else if(f.isNaN()) {
 					return null;
 				}
+			} else if (value instanceof NodeRef) {
+				return value.toString();
 			} 
 		}
 		return value;
