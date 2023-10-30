@@ -304,14 +304,7 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 		}
 
 		//Common sort returning from search
-		ChildAssocCacheEntry cachedAssocs = getChildAssocsByType(nodeRef, qName);
-
-		return cachedAssocs.get(childType);
-	}
-
-	@Override
-	public ChildAssocCacheEntry getChildAssocsByType(final NodeRef nodeRef, final QName qName) {
-		return getFromCache(childsAssocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
+		ChildAssocCacheEntry cachedAssocs = getFromCache(childsAssocsCache, new AssociationCacheRegion(nodeRef, qName), () -> {
 			ChildAssocCacheEntry childAssocCacheEntry = new ChildAssocCacheEntry();
 
 			for (ChildAssociationRef assocRef : nodeService.getChildAssocs(nodeRef, qName, RegexQNamePattern.MATCH_ALL, true)) {
@@ -326,6 +319,8 @@ public class AssociationServiceImplV2 extends AbstractBeCPGPolicy implements Ass
 			return childAssocCacheEntry;
 
 		});
+
+		return cachedAssocs.get(childType);
 	}
 
 	private boolean isDefaultSort(Map<String, Boolean> sortProps) {

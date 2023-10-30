@@ -238,13 +238,6 @@ public class EntityListDAOImpl implements EntityListDAO {
 		return existingLists;
 	}
 
-	/** {@inheritDoc} 
-	 * @return */
-	@Override
-	public Map<QName, List<NodeRef>> getListItemsByType(NodeRef dataListNodeRef) {
-		return associationService.getChildAssocsByType(dataListNodeRef, ContentModel.ASSOC_CONTAINS).getItemsByType();
-	}
-	
 	/** {@inheritDoc} */
 	@Override
 	public List<NodeRef> getListItems(NodeRef dataListNodeRef, QName dataType) {

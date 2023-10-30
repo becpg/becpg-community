@@ -632,36 +632,45 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 			
 			JSONObject datalists = (JSONObject) entity.get("datalists");
 			
-			JSONArray dataListJsonArray = extractDataList(datalists, dataListFilter);
-			
-			if (dataListJsonArray != null) {
-				JSONArray filteredList = filterList(dataListJsonArray, dataListFilter);
-				
-				JSONArray results = sortList(filteredList, dataListFilter);
-				
-				if (results.length() == 0) {
-					logger.warn("List is empty");
-				}
-				
-				for (int i = 0; i < results.length(); i++) {
-					JSONObject object = results.getJSONObject(i);
-					
-					if (ret.getComputedFields() == null) {
-						ret.setComputedFields(attributeExtractorService.readExtractStructure(QName.createQName(object.getString(TYPE), namespaceService), metadataFields));
-					}
-					
-					if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
-						logger.warn("CSV and XLSX unimplemented!");
-					} else {
-						
-						Map<String, Object> item = extractJSON(dataListFilter, object, ret.getComputedFields(), null);
-						ret.addItem(item);
-					}
-					
-				}
-				
-				ret.setFullListSize(dataListFilter.getPagination().getFullListSize());
+			if (!datalists.has(dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString())) {
+				return ret;
 			}
+			
+			String filterName = dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString();
+			
+			if (dataListFilter.getDataListName().contains("@")) {
+				filterName += "|" + dataListFilter.getDataListName();
+			}
+			
+			JSONArray dataListJsonArray = (JSONArray) datalists.get(filterName);
+
+			JSONArray filteredList = filterList(dataListJsonArray, dataListFilter);
+			
+			JSONArray results = sortList(filteredList, dataListFilter);
+
+
+			if (results.length() == 0) {
+				logger.warn("List is empty");
+			}
+			
+			for (int i = 0; i < results.length(); i++) {
+				JSONObject object = results.getJSONObject(i);
+				
+				if (ret.getComputedFields() == null) {
+					ret.setComputedFields(attributeExtractorService.readExtractStructure(QName.createQName(object.getString(TYPE), namespaceService), metadataFields));
+				}
+				
+				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
+					logger.warn("CSV and XLSX unimplemented!");
+				} else {
+					
+					Map<String, Object> item = extractJSON(dataListFilter, object, ret.getComputedFields(), null);
+					ret.addItem(item);
+				}
+				
+			}
+
+			ret.setFullListSize(dataListFilter.getPagination().getFullListSize());
 
 		} catch (JSONException e) {
 			logger.error("Failed to extract", e);
@@ -671,28 +680,6 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 			logger.debug("First itemData is " + ret.getPageItems().get(0).get(PROP_NODEDATA));
 		}
 		return ret;
-	}
-	
-	private JSONArray extractDataList(JSONObject datalists, DataListFilter dataListFilter) {
-		
-		String dataListType = dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString();
-		
-		if (dataListFilter.getDataListName().contains("@")) {
-			dataListType += "|" + dataListFilter.getDataListName();
-		}
-		
-		if (datalists.has(dataListType)) {
-			return datalists.getJSONArray(dataListType);
-		}
-		
-		String dataListNestedType = dataListFilter.getDataListName() + "@" + dataListType;
-		
-		for (String key : datalists.keySet()) {
-			if (key.endsWith(dataListNestedType) && datalists.has(key)) {
-				return datalists.getJSONArray(key);
-			}
-		}
-		return null;
 	}
 
 	@Override
