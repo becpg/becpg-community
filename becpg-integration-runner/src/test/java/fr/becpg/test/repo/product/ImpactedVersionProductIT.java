@@ -209,7 +209,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 		
 		boolean aspectsRemoved = false;
 		
-		while (!aspectsRemoved && i < 20) {
+		while (!aspectsRemoved && i < 60) {
 			i++;
 			Thread.sleep(1000);
 			logger.debug("waiting for unclocking...");

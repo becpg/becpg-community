@@ -1,5 +1,8 @@
 package fr.becpg.repo.formulation;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
@@ -19,6 +22,9 @@ public class FormulationExecutor {
 
 	@Autowired
 	private FormulationPlugin[] plugins;
+	
+	@Autowired
+	private FormulationChainPlugin[] formulationChainPlugins;
 	
 	@Autowired
 	private NodeService nodeService;
@@ -46,6 +52,17 @@ public class FormulationExecutor {
 		return FormulationExecutorState.SUCCESS;
 	}
 	
+	public List<String> getDisabledFormulationChainIds(ReportableEntity entity) {
+		List<String> disabledChainIds = new ArrayList<>();
+		if (formulationChainPlugins != null) {
+			for (FormulationChainPlugin formulationChainPlugin : formulationChainPlugins) {
+				if (!formulationChainPlugin.isChainActiveOnEntity(entity.getNodeRef())) {
+					disabledChainIds.add(formulationChainPlugin.getChainId());
+				}
+			}
+		}
+		return disabledChainIds;
+	}
 	
 	public FormulationExecutorState getState(NodeRef entityNodeRef) {
 		return FormulationExecutorState.INPROGRESS;

@@ -350,7 +350,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		ReqCtrlListDataItem other = (ReqCtrlListDataItem) obj;
-		return Objects.equals(charact, other.charact) && Objects.equals(reqMaxQty, other.reqMaxQty)
+		return Objects.equals(charact, other.charact) && Objects.equals(reqMaxQty, other.reqMaxQty) && Objects.equals(formulationChainId, other.formulationChainId)
 				&& Objects.equals(regulatoryCode, other.regulatoryCode) && reqDataType == other.reqDataType
 				&& Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType && Objects.equals(sources, other.sources);
 	}

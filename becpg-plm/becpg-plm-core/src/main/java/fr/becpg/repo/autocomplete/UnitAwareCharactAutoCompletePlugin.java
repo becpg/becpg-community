@@ -7,6 +7,7 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
 
@@ -40,14 +41,15 @@ public class UnitAwareCharactAutoCompletePlugin extends TargetAssocAutoCompleteP
 	private static final String SOURCE_TYPE_NUT = "nut";
 	private static final String SOURCE_TYPE_PHYSICO_CHEM = "physicoChem";
 	private static final String SOURCE_TYPE_MICROBIO = "microbio";
-
+	private static final String SOURCE_TYPE_CHARACTS=  "characts";
+	
 	@Autowired
 	private UnitAwareCharactAutoCompleteExtractor charactValueExtractor;
 
 	/** {@inheritDoc} */
 	@Override
 	public String[] getHandleSourceTypes() {
-		return new String[] { SOURCE_TYPE_NUT, SOURCE_TYPE_PHYSICO_CHEM,SOURCE_TYPE_MICROBIO };
+		return new String[] { SOURCE_TYPE_NUT, SOURCE_TYPE_PHYSICO_CHEM,SOURCE_TYPE_MICROBIO, SOURCE_TYPE_CHARACTS };
 	}
 
 	/** {@inheritDoc} */
@@ -57,8 +59,10 @@ public class UnitAwareCharactAutoCompletePlugin extends TargetAssocAutoCompleteP
 			return suggestTargetAssoc(null, PLMModel.TYPE_NUT, query, pageNum, pageSize, null, props);
 		} else if (SOURCE_TYPE_PHYSICO_CHEM.equals(sourceType)) {
 			return suggestTargetAssoc(null, PLMModel.TYPE_PHYSICO_CHEM, query, pageNum, pageSize, null, props);
-		} else {
+		} else if (SOURCE_TYPE_MICROBIO.equals(sourceType)) {
 			return suggestTargetAssoc(null, PLMModel.TYPE_MICROBIO, query, pageNum, pageSize, null, props);
+		} else {
+			return suggestTargetAssoc(null, BeCPGModel.TYPE_CHARACT, query, pageNum, pageSize, null, props);
 		}
 	}
 

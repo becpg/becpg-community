@@ -50,6 +50,8 @@
 
 					 draft : false,
 					 
+					 allSteps : false,
+					 
 					 wizardStruct : []
 				 },
 
@@ -75,7 +77,7 @@
 								 stepsOrientation : "vertical",
 								 enableCancelButton : true,
 								 showFinishButtonAlways : this.options.draft,
-								 enableAllSteps : true,
+								 enableAllSteps : this.options.allSteps,
 								 enableKeyNavigation : false,
 								 labels: {
 									 cancel: me.msg("wizard.cancel.button"),

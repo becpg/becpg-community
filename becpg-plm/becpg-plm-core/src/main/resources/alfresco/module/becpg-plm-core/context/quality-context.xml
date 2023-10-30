@@ -70,6 +70,7 @@
 				<bean  class="fr.becpg.repo.product.formulation.MergeReqCtrlFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="systemConfigurationService" ref="systemConfigurationService" />
+					<property name="formulationExecutor" ref="formulationExecutor" />
 				</bean>
 				<bean  class="fr.becpg.repo.product.formulation.ScoreCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />

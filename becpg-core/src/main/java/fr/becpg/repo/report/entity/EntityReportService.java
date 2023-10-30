@@ -33,7 +33,8 @@ import fr.becpg.report.client.ReportFormat;
  */
 public interface EntityReportService {
 
-	
+	public static final String REPORT_FORMULATION_CHAIN_ID = "ReportFormulationChainId";
+
 	void generateReports(NodeRef nodeRefFrom, NodeRef nodeRefTo);
 	
 	/**
