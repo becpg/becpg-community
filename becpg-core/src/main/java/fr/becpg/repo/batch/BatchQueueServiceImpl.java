@@ -218,16 +218,6 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 				int totalItems = 0;
 				int totalErrors = 0;
 
-				String batchUserName = batchInfo.getBatchUser();
-
-				if (Boolean.TRUE.equals(batchInfo.getRunAsSystem())) {
-					batchUserName = AuthenticationUtil.getSystemUserName();
-					if (tenantAdminService.isEnabled()) {
-						batchUserName = tenantAdminService.getDomainUser(batchUserName,
-								tenantAdminService.getUserDomain(batchInfo.getBatchUser()));
-					}
-				}
-
 				auditScope.putAttribute(BatchAuditPlugin.BATCH_USER, batchInfo.getBatchUser());
 				auditScope.putAttribute(BatchAuditPlugin.BATCH_ID, batchInfo.getBatchId());
 				auditScope.putAttribute(BatchAuditPlugin.IS_COMPLETED, false);
