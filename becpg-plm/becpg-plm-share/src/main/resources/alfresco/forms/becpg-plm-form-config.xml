@@ -6987,6 +6987,7 @@
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
 					<show id="bcpg:mblControlStep" />
+					<show id="bcpg:mblMethod" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
 
@@ -7000,6 +7001,13 @@
 					<field id="bcpg:mblTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
+					<field id="bcpg:mblMethod">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+							</control>
+					</field>
+					
 				</appearance>
 			</form>
 
@@ -7015,6 +7023,7 @@
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
 					<show id="bcpg:mblControlStep" />
+					<show id="bcpg:mblMethod" />
 					<show id="rep:reportKinds" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:glopTarget" />
@@ -7041,6 +7050,7 @@
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
 					<show id="bcpg:mblControlStep" />
+					<show id="bcpg:mblMethod" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
 
@@ -7053,6 +7063,12 @@
 					</field>
 					<field id="bcpg:mblTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+					<field id="bcpg:mblMethod">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+							</control>
 					</field>
 				</appearance>
 			</form>
@@ -7375,6 +7391,7 @@
 				<field-visibility>
 					<show id="bcpg:organoListOrgano" />
 					<show id="bcpg:organoListValue" />
+					<show id="bcpg:organoListMethod" />
 				</field-visibility>
 
 				<appearance>
@@ -7387,6 +7404,13 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
+					<field id="bcpg:organoListMethod">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+							</control>
+					</field>
+					
 				</appearance>
 			</form>
 
@@ -7397,6 +7421,7 @@
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:organoListOrgano" />
 					<show id="bcpg:organoListValue" />
+					<show id="bcpg:organoListMethod" />
 					<show id="fm:commentCount" force="true" />
 				</field-visibility>
 				<appearance>
@@ -7415,6 +7440,7 @@
 				<field-visibility>
 					<show id="bcpg:organoListOrgano" />
 					<show id="bcpg:organoListValue" />
+					<show id="bcpg:organoListMethod" />
 				</field-visibility>
 
 				<appearance>
@@ -7427,6 +7453,14 @@
 							<control-param name="rows">2</control-param>
 						</control>
 					</field>
+					
+					<field id="bcpg:organoListMethod">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+							</control>
+					</field>
+					
 				</appearance>
 			</form>
 		</forms>
@@ -7443,6 +7477,7 @@
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="bcpg:pclTextCriteria" />
+					<show id="bcpg:pclMethod" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
 
@@ -7456,6 +7491,13 @@
 					<field id="bcpg:pclTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
+					<field id="bcpg:pclMethod">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+							</control>
+					</field>
+					
 				</appearance>
 			</form>
 			<form id="create">
@@ -7465,6 +7507,7 @@
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="bcpg:pclTextCriteria" />
+					<show id="bcpg:pclMethod" />
 					<show id="rep:reportKinds" />
 					<show id="bcpg:glopTarget" force ="true"/>
 				</field-visibility>
@@ -7479,6 +7522,13 @@
 					<field id="bcpg:pclTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
+					<field id="bcpg:pclMethod">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+							</control>
+					</field>
+					
 				</appearance>
 			</form>
 
@@ -7499,6 +7549,7 @@
 					<show id="bcpg:variantColumn4" force="true" />
 					<show id="bcpg:variantColumn5" force="true" />
 					<show id="bcpg:pclTextCriteria" />
+					<show id="bcpg:pclMethod" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:physicoChemIsFormulated" />
 					<show id="bcpg:physicoChemFormulaErrorLog" />
@@ -7554,6 +7605,7 @@
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="bcpg:pclTextCriteria" />
+					<show id="bcpg:pclMethod" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:physicoChemIsFormulated" />
 					<show id="bcpg:physicoChemFormulaErrorLog" />
@@ -7601,6 +7653,7 @@
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="bcpg:pclTextCriteria" />
+					<show id="bcpg:pclMethod" />
 					<show id="rep:reportKinds" />
 				</field-visibility>
 
@@ -7613,6 +7666,12 @@
 					</field>
 					<field id="bcpg:pclTextCriteria">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
+					</field>
+				    <field id="bcpg:pclMethod">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+								<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:controlMethod</control-param>
+							</control>
 					</field>
 				</appearance>
 			</form>

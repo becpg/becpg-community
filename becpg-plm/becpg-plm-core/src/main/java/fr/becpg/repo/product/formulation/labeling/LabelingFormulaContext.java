@@ -1406,7 +1406,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				Double subQty = computeQtyPerc(compositeParent.parent, compositeParent.component, compositeParent.ratio);
 
-				if (compositeParent.component.getFootNotes() != null && compositeParent.component.getFootNotes().contains(f)) {
+				if (subQty!=null && compositeParent.component.getFootNotes() != null && compositeParent.component.getFootNotes().contains(f)) {
 					qtyPerc += subQty;
 
 				}

@@ -339,7 +339,7 @@ public abstract class AbstractEntityWebScript extends AbstractWebScript {
 		RemoteEntityFormat format = getFormat(req);
 		if (RemoteEntityFormat.csv.equals(format)) {
 			return "text/csv;charset=UTF-8";
-		} else if (RemoteEntityFormat.json.equals(format)) {
+		} else if (RemoteEntityFormat.json.equals(format) || RemoteEntityFormat.json_all.equals(format)) {
 			return "application/json;charset=UTF-8";
 		 } else if (RemoteEntityFormat.json_schema.equals(format)) {
 			return "application/schema+json;charset=UTF-8"; 

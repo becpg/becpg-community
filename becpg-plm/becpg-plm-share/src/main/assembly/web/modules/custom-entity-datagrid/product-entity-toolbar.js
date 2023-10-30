@@ -248,7 +248,9 @@
 
 										if (me.parentInputNodeRef != null) {
 											Dom.get(me.id + "_prop_bcpg_parentLevel-added").value = me.parentInputNodeRef;
+											Dom.get(me.id + "_prop_bcpg_parentLevel").value = ' '; // avoid blur event to reset the field
 											YAHOO.Bubbling.fire(me.id + "_prop_bcpg_parentLevel" + "refreshContent", me.parentInputNodeRef, this);
+											
 										}
 
 
@@ -269,6 +271,10 @@
 
 
 							});
+							
+							formsRuntime.
+							
+							
 							YAHOO.Bubbling.unsubscribe("beforeFormRuntimeInit", onBeforeFormRuntimeInit, me);
 						};
 
@@ -398,7 +404,7 @@
 					(asset.name === "compoList" || asset.name === "processList" || asset.name === "packagingList"
 						|| asset.name === "ingLabelingList" || asset.name === "nutList" || asset.name === "labelClaimList"
 						|| asset.name === "costList" || asset.name === "physicoChemList" || asset.name === "ingList" || asset.name === "allergenList"
-						|| asset.name === "priceList" || asset.name === "packMaterialList" || asset.name === "lcaList"
+						|| asset.name === "priceList" || asset.name === "packMaterialList" || asset.name === "lcaList" || asset.name === "regulatoryList"
 						|| asset.name === "View-properties") && beCPG.util.contains(entity.aspects,"bcpg:entityScoreAspect") ;
 			},
 			createWidget: function(containerDiv, instance) {

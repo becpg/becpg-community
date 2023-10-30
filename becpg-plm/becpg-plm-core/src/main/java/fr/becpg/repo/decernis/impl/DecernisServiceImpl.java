@@ -40,6 +40,7 @@ import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
 import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationChainPlugin;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.RegulatoryResult;
@@ -57,7 +58,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
  * @version $Id: $Id
  */
 @Service("decernisService")
-public class DecernisServiceImpl implements DecernisService {
+public class DecernisServiceImpl implements DecernisService, FormulationChainPlugin {
 
 	private static final Log logger = LogFactory.getLog(DecernisServiceImpl.class);
 
@@ -82,6 +83,8 @@ public class DecernisServiceImpl implements DecernisService {
 
 	private final SystemConfigurationService systemConfigurationService;
 
+	private static final int DECERNIS_MAX_COUNTRIES = 20;
+	
 	private static final Map<String, Integer> moduleIdMap = new HashMap<>();
 
 	private static final Map<QName, String> ingNumbers = new HashMap<>();
@@ -120,6 +123,16 @@ public class DecernisServiceImpl implements DecernisService {
 	private String token() {
 		return systemConfigurationService.confValue("beCPG.decernis.token");
 	}
+	
+	@Override
+	public String getChainId() {
+		return DECERNIS_CHAIN_ID;
+	}
+
+	@Override
+	public boolean isChainActiveOnEntity(NodeRef entityNodeRef) {
+		return isEnabled();
+	}
 
 	@Override
 	public boolean isEnabled() {
@@ -141,13 +154,13 @@ public class DecernisServiceImpl implements DecernisService {
 				
 				boolean recipeCreated = false;
 
-				if (!context.getRegulatoryMode().equals(DecernisMode.BECPG_ONLY)) {
+				if (DecernisMode.BOTH.equals(context.getRegulatoryMode()) || DecernisMode.DECERNIS_ONLY.equals(context.getRegulatoryMode())) {
 					createRecipe(context);
 					updateContextItemsRecipeId(context);
 					recipeCreated = true;
 				}
 
-				if (!DecernisMode.DECERNIS_ONLY.equals(context.getRegulatoryMode())) {
+				if (DecernisMode.BOTH.equals(context.getRegulatoryMode()) || DecernisMode.BECPG_ONLY.equals(context.getRegulatoryMode())) {
 					if (getAnalysisPlugin().needsRecipeId() && !recipeCreated) {
 						createRecipe(context);
 					}
@@ -155,7 +168,7 @@ public class DecernisServiceImpl implements DecernisService {
 					checkUsagesID(context);
 				}
 
-				if (context.getRegulatoryMode().equals(DecernisMode.BECPG_ONLY) && context.getRegulatoryRecipeId() != null) {
+				if (DecernisMode.BECPG_ONLY.equals(context.getRegulatoryMode()) && context.getRegulatoryRecipeId() != null) {
 					deleteRecipe(context.getRegulatoryRecipeId());
 					context.getProduct().setRegulatoryRecipeId(null);
 				}
@@ -231,16 +244,33 @@ public class DecernisServiceImpl implements DecernisService {
 	private List<JSONObject> analyzeContext(RegulatoryContext productContext, Set<String> usages, Set<String> countries, Integer moduleId) {
 		List<JSONObject> analysisList = new ArrayList<>();
 		for (String usage : usages) {
-			JSONObject analysis = getAnalysisPlugin().postRecipeAnalysis(productContext, countries, usage, moduleId);
-			if (analysis != null) {
-				for (String country : countries) {
-					productContext.getRequirements()
-							.addAll(getAnalysisPlugin().extractRequirements(analysis, productContext.getProduct().getIngList(), country, moduleId));
-				}
-				analysisList.add(analysis);
+			
+			Set<String> countriesBatch = new HashSet<>();
+
+			for (String country : countries) {
+			    countriesBatch.add(country);
+			    if (countriesBatch.size() == DECERNIS_MAX_COUNTRIES) {
+			    	analyzeSubContext(productContext, moduleId, analysisList, usage, countriesBatch);
+			        countriesBatch.clear();
+			    }
+			}
+
+			if (!countriesBatch.isEmpty()) {
+				analyzeSubContext(productContext, moduleId, analysisList, usage, countriesBatch);
 			}
 		}
 		return analysisList;
+	}
+
+	private void analyzeSubContext(RegulatoryContext productContext, Integer moduleId, List<JSONObject> analysisList, String usage, Set<String> countries) {
+		JSONObject analysis = getAnalysisPlugin().postRecipeAnalysis(productContext, countries, usage, moduleId);
+		if (analysis != null) {
+			for (String countryBatch : countries) {
+				productContext.getRequirements()
+						.addAll(getAnalysisPlugin().extractRequirements(analysis, productContext.getProduct().getIngList(), countryBatch, moduleId));
+			}
+			analysisList.add(analysis);
+		}
 	}
 
 	private void checkUsagesID(RegulatoryContext context) {
