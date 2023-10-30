@@ -223,6 +223,4 @@ public interface EntityListDAO {
 	 */
 	NodeRef findMatchingList(NodeRef dataListNodeRef, NodeRef targetListContainerNodeRef);
 
-	Map<QName, List<NodeRef>> getListItemsByType(NodeRef dataListNodeRef);
-
 }
