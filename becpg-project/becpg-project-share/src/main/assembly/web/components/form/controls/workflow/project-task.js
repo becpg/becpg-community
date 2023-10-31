@@ -6,6 +6,8 @@
     var Dom = YAHOO.util.Dom, Bubbling = YAHOO.Bubbling, TASK_EVENTCLASS = Alfresco.util.generateDomId(null, "task");
     var COMMENT_EVENTCLASS = Alfresco.util.generateDomId(null, "comment");
     var DELIVERABLE_STATE_EVENTCLASS = Alfresco.util.generateDomId(null, "deliverableState");
+    var $html = Alfresco.util.encodeHTML;
+    
     /**
      * ProjectTask constructor.
      * 
@@ -255,7 +257,7 @@
                         getTaskTitle : function PL_getTaskTitle(task, entityNodeRef)
                         {
 
-                            var ret = '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">' + task.name + ' (' + task.completionPercent + '%)';
+                            var ret = '<span class="node-' + task.nodeRef + '|' + entityNodeRef + '">' + $html(task.name) + ' (' + task.completionPercent + '%)';
                             ret += '<a class="task-comments ' + COMMENT_EVENTCLASS +((task.commentCount && task.commentCount!=0) ?" active-comments":"")+ '" title="' + this
                                     .msg("link.title.comment-task") + '" href="#" >';
 
@@ -276,6 +278,8 @@
                         {
 
                             var ret = "", url = deliverable.url, stateCss = deliverable.state;
+                            
+                            var delName = $html(deliverable.name);
 
                             if(url != null && url.length > 0 && url.indexOf("catalogId") > 0){
                             	var catalogId = YAHOO.util.History.getQueryStringParameter("catalogId",url)
@@ -296,7 +300,7 @@
                                 ret += '<a title="' + this.msg("form.control.project-task.link.title.open-link") + '" href="' + url + '">';
                                 ret += '<span class="wizard" ><h2>';
                                 ret += this.msg("form.control.project-task.wizard");
-                                ret += '</h2>' + deliverable.name + '</span>';
+                                ret += '</h2>' + delName + '</span>';
                                 ret += '</a>';
 
                             }
@@ -344,7 +348,7 @@
                                     ret += '<a class="theme-color-1 ' + '" title="' + this
                                             .msg("form.control.project-task.link.title.open-document") + '" href="' +contentUrl + '" >';
                                 }
-                                ret += deliverable.name;
+                                ret += delName;
                                 if (contentUrl.length > 0)
                                 {
                                     ret += '</a>';
