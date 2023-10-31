@@ -1,6 +1,7 @@
 <#macro renderDeliverables deliverables>
 	<#list deliverables as deliverable>
 		<#if deliverable?? && deliverable.hasPermission("Read")>
+			<#escape x as jsonUtils.encodeJSONString(x)>
 			{
 				"name": "${deliverable.properties["pjt:dlDescription"]!""}",
 				"sort": ${(deliverable.properties["bcpg:sort"]!0)?c},
@@ -27,6 +28,7 @@
 	   			</#if>
 	   			] 
 			}<#if deliverable_has_next>,</#if>	
+			</#escape>
 		</#if>	
 	</#list>
 </#macro>
