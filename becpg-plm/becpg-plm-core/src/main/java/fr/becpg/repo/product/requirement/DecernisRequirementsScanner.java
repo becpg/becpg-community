@@ -228,7 +228,8 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 	private boolean isDirty(ProductData formulatedProduct) {
 		
-		if (isRegulatoryEmpty(formulatedProduct)) {
+		if (!isProductCompatibleWithDecernis(formulatedProduct)) {
+			logger.debug("Product is not compatible with Decernis");
 			return false;
 		}
 			
@@ -249,8 +250,19 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		return true;
 	}
 
-	private boolean isRegulatoryEmpty(ProductData formulatedProduct) {
-		return formulatedProduct.getRequirementChecksum() == null && (formulatedProduct.getRegulatoryCountries().isEmpty() || formulatedProduct.getRegulatoryUsages().isEmpty());
+	private boolean isProductCompatibleWithDecernis(ProductData product) {
+		if (product.getRequirementChecksum() != null) {
+			return true;
+		}
+		if (!product.getRegulatoryCountries().isEmpty() && !product.getRegulatoryUsages().isEmpty()) {
+			return true;
+		}
+		for (RegulatoryListDataItem item : product.getRegulatoryList()) {
+			if (!item.getRegulatoryCountries().isEmpty() && !item.getRegulatoryUsages().isEmpty()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private boolean isIngListDirty(LazyLoadingDataList<IngListDataItem> dataList) {
