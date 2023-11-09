@@ -759,7 +759,9 @@ public interface PLMModel {
 
 	QName ASSOC_PROPAGATED_CHARACTS = QName.createQName(BeCPGModel.BECPG_URI, "propagatedCharacts");
 	
-	
+	QName PROP_BEST_BEFORE_DATE =  QName.createQName(BeCPGModel.BECPG_URI, "bestBeforeDate");
+	QName PROP_USE_BY_DATE =  QName.createQName(BeCPGModel.BECPG_URI, "useByDate");
+	QName PROP_PERIOD_AFTER_OPENING =  QName.createQName(BeCPGModel.BECPG_URI, "periodAfterOpening");
 	
 	
 }
