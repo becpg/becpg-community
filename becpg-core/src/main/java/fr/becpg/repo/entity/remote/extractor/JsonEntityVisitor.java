@@ -98,7 +98,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	public JsonEntityVisitor(NodeService mlNodeService, NodeService nodeService, NamespaceService namespaceService,
 			EntityDictionaryService entityDictionaryService, ContentService contentService, SiteService siteService,
-			AttributeExtractorService attributeExtractor, VersionService versionService, LockService lockService, AssociationService associationService, EntityListDAO entityListDAO) {
+			AttributeExtractorService attributeExtractor, VersionService versionService, LockService lockService,
+			AssociationService associationService, EntityListDAO entityListDAO) {
 		super(mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService, siteService);
 
 		this.attributeExtractor = attributeExtractor;
@@ -219,28 +220,32 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_ERP_CODE, Boolean.TRUE))) {
 				visitPropValue(BeCPGModel.PROP_ERP_CODE, entity, properties.get(BeCPGModel.PROP_ERP_CODE), context);
 			}
-			
-			if (properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL)!=null && !((String)properties.get( BeCPGModel.PROP_MANUAL_VERSION_LABEL)).isBlank()) {
-				entity.put(RemoteEntityService.ATTR_VERSION, properties.get( BeCPGModel.PROP_MANUAL_VERSION_LABEL));
-			} else if (properties.get( BeCPGModel.PROP_VERSION_LABEL)!=null && !((String)properties.get( BeCPGModel.PROP_VERSION_LABEL)).isBlank()) {
-				entity.put(RemoteEntityService.ATTR_VERSION, properties.get( BeCPGModel.PROP_VERSION_LABEL));
-			} else 	if (properties.get( ContentModel.PROP_VERSION_LABEL)!=null && !((String)properties.get( ContentModel.PROP_VERSION_LABEL)).isBlank()) {
-				entity.put(RemoteEntityService.ATTR_VERSION, properties.get( ContentModel.PROP_VERSION_LABEL));
+
+			if (properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL) != null
+					&& !((String) properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL)).isBlank()) {
+				entity.put(RemoteEntityService.ATTR_VERSION, properties.get(BeCPGModel.PROP_MANUAL_VERSION_LABEL));
+			} else if (properties.get(BeCPGModel.PROP_VERSION_LABEL) != null && !((String) properties.get(BeCPGModel.PROP_VERSION_LABEL)).isBlank()) {
+				entity.put(RemoteEntityService.ATTR_VERSION, properties.get(BeCPGModel.PROP_VERSION_LABEL));
+			} else if (properties.get(ContentModel.PROP_VERSION_LABEL) != null
+					&& !((String) properties.get(ContentModel.PROP_VERSION_LABEL)).isBlank()) {
+				entity.put(RemoteEntityService.ATTR_VERSION, properties.get(ContentModel.PROP_VERSION_LABEL));
 			}
-			
+
 			if (Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_IS_INITIAL_VERSION, Boolean.FALSE)) && lockService.isLocked(nodeRef)) {
-				
+
 				String lockInfo = lockService.getAdditionalInfo(nodeRef);
-				
+
 				try {
 					JSONObject jsonInfo = new JSONObject(lockInfo);
-					
+
 					if (jsonInfo.has("lockType") && jsonInfo.get("lockType").equals("versioning")) {
 						String currentVersion = (String) entity.get(RemoteEntityService.ATTR_VERSION);
-						
+
 						if (currentVersion != null) {
 							Collection<Version> nodeRefVersions = versionService.getVersionHistory(nodeRef).getAllVersions();
-							Optional<Double> previousVersion = nodeRefVersions.stream().map(Version::getVersionLabel).filter(label -> !label.equals(currentVersion)).map(Double::parseDouble).max(Comparator.comparing(Double::valueOf));
+							Optional<Double> previousVersion = nodeRefVersions.stream().map(Version::getVersionLabel)
+									.filter(label -> !label.equals(currentVersion)).map(Double::parseDouble)
+									.max(Comparator.comparing(Double::valueOf));
 							previousVersion.ifPresent(version -> entity.put(RemoteEntityService.ATTR_VERSION, version.toString()));
 						}
 					}
@@ -329,6 +334,14 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 		if (listContainerNodeRef != null) {
 			List<ChildAssociationRef> assocRefs = nodeService.getChildAssocs(listContainerNodeRef);
+
+			Map<String, Boolean> dataListTypeMap = new HashMap<>();
+
+			assocRefs.forEach(assocRef -> {
+				String dataListType = (String) nodeService.getProperty(assocRef.getChildRef(), DataListModel.PROP_DATALISTITEMTYPE);
+				dataListTypeMap.put(dataListType, dataListTypeMap.containsKey(dataListType));
+			});
+
 			for (ChildAssociationRef assocRef : assocRefs) {
 
 				NodeRef listNodeRef = assocRef.getChildRef();
@@ -338,18 +351,18 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 					QName dataListTypeQName = QName.createQName(dataListType, namespaceService);
 					String dataListName = (String) nodeService.getProperty(listNodeRef, ContentModel.PROP_NAME);
-					if (!(dataListName).startsWith(RepoConsts.WUSED_PREFIX)
-							&& !dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
+					if (!(dataListName).startsWith(RepoConsts.WUSED_PREFIX) && !dataListName.startsWith(RepoConsts.CUSTOM_VIEW_PREFIX)
 							&& params.shouldExtractList(dataListName)) {
 						if ((BeCPGModel.TYPE_ENTITYLIST_ITEM.equals(dataListTypeQName)
 								|| entityDictionaryService.isSubClass(dataListTypeQName, BeCPGModel.TYPE_ENTITYLIST_ITEM))) {
 
 							List<NodeRef> listItemRefs = entityListDAO.getListItems(listNodeRef, dataListTypeQName);
-							
+
 							if ((listItemRefs != null) && !listItemRefs.isEmpty()) {
 								JSONArray list = new JSONArray();
 
-								if ( dataListName.equals(dataListTypeQName.getLocalName())) {
+								if (Boolean.FALSE.equals(dataListTypeMap.get(dataListType))
+										|| dataListName.equals(dataListTypeQName.getLocalName())) {
 									entityLists.put(dataListType, list);
 								} else {
 									entityLists.put(dataListType + "|" + dataListName, list);
@@ -363,7 +376,8 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 								}
 							}
 						} else {
-							logger.warn("Existing "+ dataListName+ " (" + dataListTypeQName + ") list doesn't inheritate from 'bcpg:entityListItem'.");
+							logger.warn(
+									"Existing " + dataListName + " (" + dataListTypeQName + ") list doesn't inheritate from 'bcpg:entityListItem'.");
 						}
 					}
 				}
@@ -498,21 +512,21 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 
 	protected boolean matchProp(QName assocName, QName propName, boolean checkFilter) {
 
-		if(assocName == null) {
-			if(params.getFilteredProperties() != null && !params.getFilteredProperties().isEmpty()) {
+		if (assocName == null) {
+			if (params.getFilteredProperties() != null && !params.getFilteredProperties().isEmpty()) {
 				return params.getFilteredProperties().contains(propName);
 			} else {
 				return !checkFilter;
 			}
-			
+
 		} else {
-			if((params.getFilteredAssocProperties() != null) && !params.getFilteredAssocProperties().isEmpty()) {
-				return params.getFilteredAssocProperties().containsKey(assocName) && params.getFilteredAssocProperties().get(assocName).contains(propName);
+			if ((params.getFilteredAssocProperties() != null) && !params.getFilteredAssocProperties().isEmpty()) {
+				return params.getFilteredAssocProperties().containsKey(assocName)
+						&& params.getFilteredAssocProperties().get(assocName).contains(propName);
 			} else {
 				return !checkFilter;
 			}
 		}
-		
 
 	}
 
@@ -525,11 +539,10 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 				QName propName = entry.getKey().getPrefixedQName(namespaceService);
 				if ((entry.getValue() != null) && !propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
-						&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || matchProp(assocName, propName, true)) && !propQName.equals(ContentModel.PROP_CONTENT)
-						&& params.shouldExtractField(propQName)) {
+						&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI) || matchProp(assocName, propName, true))
+						&& !propQName.equals(ContentModel.PROP_CONTENT) && params.shouldExtractField(propQName)) {
 					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
 					if (propertyDefinition != null) {
-					
 
 						// Assoc properties filter
 						if (!matchProp(assocName, propName, false)) {
@@ -539,16 +552,15 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						MLText mlValues = null;
 						if (DataTypeDefinition.MLTEXT.equals(propertyDefinition.getDataType().getName())
 								&& (mlNodeService.getProperty(nodeRef, propertyDefinition.getName()) instanceof MLText)
-								&&   Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT, Boolean.TRUE))) {
+								&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT, Boolean.TRUE))) {
 							mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDefinition.getName());
 							visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, mlValues);
 						} else if (DataTypeDefinition.TEXT.equals(propertyDefinition.getDataType().getName())
-								&& !propertyDefinition.getConstraints().isEmpty()
-								&& !propertyDefinition.isMultiValued()
+								&& !propertyDefinition.getConstraints().isEmpty() && !propertyDefinition.isMultiValued()
 								&& Boolean.TRUE.equals(params.extractParams(RemoteParams.PARAM_APPEND_MLTEXT_CONSTRAINT, Boolean.TRUE))) {
 							for (ConstraintDefinition constraint : propertyDefinition.getConstraints()) {
 								if (constraint.getConstraint() instanceof DynListConstraint) {
-									mlValues = ((DynListConstraint) constraint.getConstraint()).getMLDisplayLabel((String)entry.getValue());
+									mlValues = ((DynListConstraint) constraint.getConstraint()).getMLDisplayLabel((String) entry.getValue());
 									visitMltextAttributes(entityDictionaryService.toPrefixString(propName), entity, mlValues);
 									break;
 								}
@@ -603,13 +615,14 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context) throws JSONException, RemoteException {
+	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context)
+			throws JSONException, RemoteException {
 		if (value instanceof List) {
 			JSONArray tmp = new JSONArray();
 			entity.put(entityDictionaryService.toPrefixString(propType), tmp);
 			for (Serializable subEl : (List<Serializable>) value) {
 				if (subEl instanceof NodeRef) {
-					
+
 					if (nodeService.exists((NodeRef) subEl)) {
 						JSONObject node = new JSONObject();
 						tmp.put(node);
@@ -617,7 +630,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 					} else {
 						throw new RemoteException("node does not exist: " + subEl + ", for prop: " + propType);
 					}
-					
+
 				} else {
 					if (subEl != null) {
 						if (RemoteHelper.isJSONValue(propType)) {
