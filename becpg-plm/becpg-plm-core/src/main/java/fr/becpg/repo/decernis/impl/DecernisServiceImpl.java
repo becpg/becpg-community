@@ -490,32 +490,31 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 						logger.debug("RID of ingredient " + params.get(PARAM_QUERY) + ": " + ingredientId);
 					}
 					nodeService.setProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE, ingredientId);
-					// Get ingredient numbers (CAS, FEMA,
-					// CE)
+					// Get ingredient numbers (CAS, FEMA, CE)
 					if (result.has("libidents")) {
 						JSONObject libidents = result.getJSONObject("libidents");
-						for (Map.Entry<QName, String> ingNumber : ingNumbers.entrySet()) {
-							if ((ingNumber.getKey() == PLMModel.PROP_CAS_NUMBER) || (ingNumber.getKey() == PLMModel.PROP_CE_NUMBER)
-									|| (ingNumber.getKey() == PLMModel.PROP_FEMA_NUMBER)) {
-								String ingNumberToFill = (String) nodeService.getProperty(ingListDataItem.getIng(), ingNumber.getKey());
-								if (((ingNumberToFill == null) || ingNumberToFill.isEmpty()) && libidents.has(ingNumber.getValue())) {
-									JSONArray numbers = libidents.getJSONArray(ingNumber.getValue());
-									String number = null;
-									if (numbers.length() > 0) {
-										StringBuilder sb = new StringBuilder();
-										for (int i = 0; i < numbers.length(); i++) {
-											sb.append(numbers.getString(i)).append(",");
-										}
-										number = sb.deleteCharAt(sb.length() - 1).toString();
+						for (Map.Entry<QName, String> entry : ingNumbers.entrySet()) {
+							QName numberPropName = entry.getKey();
+							String numberPropValue = entry.getValue();
+							String ingNumberToFill = (String) nodeService.getProperty(ingListDataItem.getIng(), numberPropName);
+							
+							if ((ingNumberToFill == null || ingNumberToFill.isEmpty()) && libidents.has(numberPropValue)) {
+								JSONArray numbers = libidents.getJSONArray(numberPropValue);
+								String number = null;
+								if (numbers.length() > 0) {
+									StringBuilder sb = new StringBuilder();
+									for (int i = 0; i < numbers.length(); i++) {
+										sb.append(numbers.getString(i)).append(",");
 									}
-									if ((number != null) && !number.isEmpty()) {
-										if (logger.isDebugEnabled()) {
-											logger.debug("Set ingredient RID: " + params.get(PARAM_QUERY) + " " + ingListDataItem.getIng() + " "
-													+ ingNumber.getKey() + " " + number);
-										}
-
-										nodeService.setProperty(ingListDataItem.getIng(), ingNumber.getKey(), number);
+									number = sb.deleteCharAt(sb.length() - 1).toString();
+								}
+								if ((number != null) && !number.isEmpty()) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("Set ingredient RID: " + params.get(PARAM_QUERY) + " " + ingListDataItem.getIng() + " "
+												+ numberPropName + " " + number);
 									}
+									
+									nodeService.setProperty(ingListDataItem.getIng(), numberPropName, number);
 								}
 							}
 						}
