@@ -256,7 +256,6 @@ public class SimulationCostHelper implements InitializingBean {
 					} else {
 						totalQty += qty;
 					}
-					break;
 				} else if (subProductData instanceof PackagingKitData) {
 					totalQty = qty
 							* getPackagingListQty(subProductData, componentNodeRef, ((PackagingKitData) subProductData).getPalletBoxesPerPallet(),null);
