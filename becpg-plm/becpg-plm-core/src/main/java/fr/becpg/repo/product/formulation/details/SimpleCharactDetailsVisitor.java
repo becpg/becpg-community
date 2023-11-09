@@ -38,6 +38,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.formulation.FormulatedQties;
@@ -275,6 +276,9 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 						}
 					}
 
+				} else if (simpleCharact instanceof IngListDataItem) {
+					formulateInVol = false;
+					forceWeight = true;
 				}
 
 				// calculate charact from qty or vol ?
