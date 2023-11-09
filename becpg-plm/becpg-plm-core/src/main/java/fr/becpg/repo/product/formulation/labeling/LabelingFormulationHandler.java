@@ -1678,7 +1678,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if (DeclarationType.Declare.equals(declarationType)) {
 							if (isMultiLevel && (qty != null) && !isLocalSemiFinished) {
 
-								Double qtyTotal = FormulationHelper.getQtyFromComposition(productData,null, FormulationHelper.DEFAULT_NET_WEIGHT);
+								Double qtyTotal = FormulationHelper.getQtyInKgFromComposition(productData,null, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 								if ((qtyTotal != null) && (qtyTotal != 0d)) {
 									computedRatio = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR);
