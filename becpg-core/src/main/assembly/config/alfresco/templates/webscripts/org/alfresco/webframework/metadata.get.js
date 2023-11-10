@@ -93,7 +93,7 @@ else if (args["user"] != null)
       model.capabilities["userContentLocale_"+userContentLocale] = true;
   }
 	
-	model.capabilities["isLicenseValid"] = bcpg.isLicenseValid() || !isAdmin;
+	model.capabilities["isLicenseValid"] = !bcpg.isShowLicenceWarning()  || bcpg.isLicenseValid() || !isAdmin;
 	model.capabilities["isMemberOfLicenseGroup"] = !bcpg.isShowUnauthorizedWarning() || userId == "admin"|| isMemberOfAllowedGroup;
 
   model.immutableProperties = people.getImmutableProperties(userId);
