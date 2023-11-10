@@ -461,7 +461,6 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 										break;
 									}
 								}
-							}
 						}
 						cachedAssocRef = null;
 						try {
