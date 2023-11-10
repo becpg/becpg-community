@@ -37,8 +37,3 @@ build/
 
 #Hive local devs specifics files
 ^devs-*
-/becpg-plm/
-/becpg-share/
-/becpg-core/
-/becpg-integration-runner/
-/becpg-project/
