@@ -37,7 +37,6 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
-import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -228,13 +227,6 @@ public class NotificationRuleServiceImpl implements NotificationRuleService {
 				public void process(NodeRef nodeRef) throws Throwable {
 					model.put("item", new ScriptNode(nodeRef, serviceRegistry));
 					scriptService.executeScript(notification.getScript(), ContentModel.PROP_CONTENT, model);
-				}
-			});
-			batchStep.setBatchStepListener(new BatchStepAdapter() {
-				@Override
-				public void onError(String lastErrorEntryId, String lastError) {
-					notification.setErrorLog(lastError);
-					alfrescoRepository.save(notification);
 				}
 			});
 			batchQueueService.queueBatch(new BatchInfo("notificationScript", "becpg.batch.notificationScript"), List.of(batchStep));
