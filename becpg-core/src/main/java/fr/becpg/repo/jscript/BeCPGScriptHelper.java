@@ -434,6 +434,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean isShowUnauthorizedWarning() {
 		return showUnauthorizedWarning;
 	}
+	
+	public boolean isShowLicenceWarning() {
+		return isShowUnauthorizedWarning();
+	}
+
 
 	/**
 	 * <p>Setter for the field <code>showUnauthorizedWarning</code>.</p>
