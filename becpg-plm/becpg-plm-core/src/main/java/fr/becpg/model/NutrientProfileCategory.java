@@ -6,6 +6,7 @@ public enum NutrientProfileCategory {
 	Cheeses,
 	Fats,
 	Others,
+	RedMeats,
 	NonApplicable
 	
 }

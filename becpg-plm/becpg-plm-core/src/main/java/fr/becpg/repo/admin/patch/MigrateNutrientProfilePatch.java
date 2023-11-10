@@ -221,7 +221,8 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 									|| nutrientProfileClass.contains("Boissons") 
 									|| nutrientProfileClass.contains("Fats") || nutrientProfileClass.contains("Matières grasses")
 									|| nutrientProfileClass.contains("Cheeses")
-									|| nutrientProfileClass.contains("Fromages"));
+									|| nutrientProfileClass.contains("Fromages")
+									|| nutrientProfileClass.contains("Red meats") || nutrientProfileClass.contains("Viandes rouges"));
 					
 					if (nutrientProfileClassKnown) {
 						for (AssociationRef sourceAssoc : sourceAssocs) {
@@ -233,6 +234,8 @@ public class MigrateNutrientProfilePatch extends AbstractBeCPGPatch {
 								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Fats.toString());
 							} else if (nutrientProfileClass.contains("Cheeses") || nutrientProfileClass.contains("Fromages")) {
 								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.Cheeses.toString());
+							} else if (nutrientProfileClass.contains("Red meats") || nutrientProfileClass.contains("Viandes rouges")) {
+								nodeService.setProperty(sourceAssoc.getSourceRef(), PLMModel.PROP_NUTRIENT_PROFILE_CATEGORY, NutrientProfileCategory.RedMeats.toString());
 							}
 							
 							if (nutrientProfileClass.contains(NutrientProfileVersion.VERSION_2023.toString())) {
