@@ -224,12 +224,12 @@ public class QualityControlServiceImpl implements QualityControlService {
 									cal.add(timeToAdd, freqDigit.intValue());
 									newDate = cal.getTime();
 								} else if (referenceDurationProp != null) {
-									Date referenceDuration = (Date) nodeService.getProperty(qcNodeRef, referenceDurationProp);
+									Integer referenceDuration = (Integer) nodeService.getProperty(qcNodeRef, referenceDurationProp);
 									if (referenceDuration == null && qualityControlData.getProduct() != null) {
-										referenceDuration = (Date) nodeService.getProperty(qualityControlData.getProduct(), referenceDurationProp);
+										referenceDuration = (Integer) nodeService.getProperty(qualityControlData.getProduct(), referenceDurationProp);
 									}
 									if (referenceDuration != null) {
-										newDate = new Date((long) (sampleDateTime.getTime() + freqDigit * referenceDuration.getTime()));
+										newDate = new Date((long) (sampleDateTime.getTime() + freqDigit * referenceDuration * 24 * 3600 * 1000));
 									}
 								}
 								if (newDate != null) {
