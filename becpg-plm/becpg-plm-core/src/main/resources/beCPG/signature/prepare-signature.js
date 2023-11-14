@@ -12,7 +12,7 @@ function main() {
 		}
 	}
 
-	if (task.resources != null && !task.resources.isEmpty()) {
+	if (task.resources != null && !task.resources.isEmpty() && urlDeliverable && urlDeliverable.content) {
 		var recipient = search.findNode(task.resources.get(0));
 		var document = search.findNode(urlDeliverable.content);
 	
