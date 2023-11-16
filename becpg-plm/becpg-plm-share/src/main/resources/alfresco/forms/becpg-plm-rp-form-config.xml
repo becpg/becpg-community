@@ -281,6 +281,7 @@
 							</control-param>
               <control-param name="multiple">true</control-param>
        		  <control-param name="forceEditable">true</control-param>
+       		  <control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:productState" mandatory="false" read-only="false" set="product-criteria">
@@ -293,6 +294,7 @@
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:resourceProduct?classNames=bcpg:entityTplAspect
 							</control-param>
+							<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:code" mandatory="false" read-only="true" set="product-criteria">
