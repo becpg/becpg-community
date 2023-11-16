@@ -59,6 +59,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 	private static final String PARAM_PATH = "path";
 	private static final String PARAM_PARENT = "parent";
 	private static final String PARAM_ENTITY_NODEREF = "entityNodeRef";
+	private static final String PARAM_IS_SEARCH = "isSearch";
 	private static final String PARAM_QUERY = "q";
 	private static final String PARAM_PRODUCT_TYPE = "productType";
 	private static final String MODEL_KEY_NAME_SUGGESTIONS = "suggestions";
@@ -106,6 +107,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		String query = req.getParameter(PARAM_QUERY);
 		String parent = req.getParameter(PARAM_PARENT);
 		String entityNodeRef = req.getParameter(PARAM_ENTITY_NODEREF);
+		String isSearch = req.getParameter(PARAM_IS_SEARCH);
 
 		String path = templateArgs.get(PARAM_PATH);
 		if(path==null){
@@ -152,6 +154,7 @@ public class AutoCompleteWebScript extends DeclarativeWebScript {
 		props.put(AutoCompleteService.PROP_AND_PROPS, req.getParameter(PARAM_AND_PROPS));
 		props.put(AutoCompleteService.PROP_PARENT, parent);
 		props.put(AutoCompleteService.PROP_PRODUCT_TYPE, productType);
+		props.put(AutoCompleteService.PROP_INCLUDE_DELETED, isSearch != null || Boolean.TRUE.equals(Boolean.parseBoolean(isSearch)));
 		props.put(AutoCompleteService.EXTRA_PARAM, getExtraParams(req));
 		
 		

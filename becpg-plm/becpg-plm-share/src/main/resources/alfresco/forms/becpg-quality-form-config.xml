@@ -220,6 +220,7 @@
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="qa:batchId" set="mainInfo" >
@@ -242,6 +243,7 @@
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="qa:batchQty" set="product-info" />
