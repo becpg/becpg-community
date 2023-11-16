@@ -1,3 +1,4 @@
+<#if field.control.params.isSearch?exists><#assign isSearch=field.control.params.isSearch></#if>
 <#if field.control.params.ds??>
 	<#assign ds=field.control.params.ds>
 <#else>
@@ -5,6 +6,13 @@
 		<#assign ds='becpg/autocomplete/targetassoc/associations/${field.dataType}'/>
 	<#else>
 		<#assign ds=''/>
+	</#if>
+</#if>
+<#if isSearch?? >
+	<#if ds?contains("?")>
+		<#assign ds=ds+"&isSearch="+isSearch>
+	<#else>
+		<#assign ds=ds+"?isSearch="+isSearch>
 	</#if>
 </#if>
 <#if field.control.params.style??><#assign style=field.control.params.style></#if>
