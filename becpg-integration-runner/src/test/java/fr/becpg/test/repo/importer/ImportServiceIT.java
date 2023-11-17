@@ -652,7 +652,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 		importHierarchies();
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			// search by name
-			List<NodeRef> ret = hierarchyService.getHierarchiesByPath(HIERARCHY_RAWMATERIAL_PATH, null, "USDA");
+			List<NodeRef> ret = hierarchyService.getHierarchiesByPath(HIERARCHY_RAWMATERIAL_PATH, null, "USDA", false);
 			assertEquals(1, ret.size());
 
 			// search by code
@@ -662,7 +662,7 @@ public class ImportServiceIT extends PLMBaseTestCase {
 			NodeRef parentNodeRef = ret.get(0);
 
 			// search by name
-			ret = hierarchyService.getHierarchiesByPath(HIERARCHY_RAWMATERIAL_PATH, parentNodeRef, "Dairy and Egg Products");
+			ret = hierarchyService.getHierarchiesByPath(HIERARCHY_RAWMATERIAL_PATH, parentNodeRef, "Dairy and Egg Products", false);
 
 			assertEquals(1, ret.size());
 

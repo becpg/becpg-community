@@ -1,6 +1,7 @@
 <#if field.control.params.ds?exists><#assign ds=field.control.params.ds><#else><#assign ds=''></#if>
 <#if field.control.params.multiple?exists><#assign multiple=field.control.params.multiple?matches('true')><#else><#assign multiple=false></#if>
 <#if field.control.params.style?exists><#assign style=field.control.params.style></#if>
+<#if field.control.params.isSearch?exists><#assign isSearch=field.control.params.isSearch></#if>
 <#assign formId=args.htmlid?js_string?html + "-form">
 
 <#if args.entityNodeRef?? >
@@ -8,6 +9,13 @@
 		<#assign ds=ds+"&entityNodeRef="+args.entityNodeRef>
 	<#else>
 		<#assign ds=ds+"?entityNodeRef="+args.entityNodeRef>
+	</#if>
+</#if>
+<#if isSearch?? >
+	<#if ds?contains("?")>
+		<#assign ds=ds+"&isSearch="+isSearch>
+	<#else>
+		<#assign ds=ds+"?isSearch="+isSearch>
 	</#if>
 </#if>
 
