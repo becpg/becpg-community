@@ -64,6 +64,8 @@ public interface AutoCompleteService {
 
 	/** Constant <code>PROP_PRODUCT_TYPE="productType"</code> */
 	final String PROP_PRODUCT_TYPE = "productType";
+	
+	final String PROP_INCLUDE_DELETED = "includeDeleted";
 
 	/** Constant <code>EXTRA_PARAM="extra"</code> */
 	final String EXTRA_PARAM = "extra";

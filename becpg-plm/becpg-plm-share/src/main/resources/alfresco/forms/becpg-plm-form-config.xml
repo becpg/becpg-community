@@ -927,6 +927,7 @@
 							</control-param>
 							<control-param name="multiple">true</control-param>
 							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo">
@@ -940,6 +941,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingKit?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					
@@ -3973,6 +3975,7 @@
 							</control-param>
 							<control-param name="multiple">true</control-param>
 							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:supplierState" mandatory="false" read-only="false" set="2-col-product-criteria" >
@@ -4219,6 +4222,7 @@
 							</control-param>
 							<control-param name="multiple">true</control-param>
 							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:clientHierarchy2">
@@ -4228,6 +4232,7 @@
 							<control-param name="parent">bcpg_clientHierarchy1
 							</control-param>
 							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:clientState">
@@ -4586,6 +4591,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
 							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productCollectionState"  set="mainInfo">
@@ -4599,6 +4605,7 @@
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
 							<control-param name="parent">bcpg_productCollectionHierarchy1</control-param>
 							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="cm:description" set="mainInfo">
