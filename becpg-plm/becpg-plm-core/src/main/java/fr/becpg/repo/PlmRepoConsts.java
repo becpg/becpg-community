@@ -169,7 +169,8 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_CONTROL_TEMPERATURES="clTemperatures"</code> */
 	public static final String PATH_CONTROL_TEMPERATURES= "clTemperatures";
 
-	
+	public static final String PATH_CONTROL_TYPES= "ControlTypes";
+
 
 	// GHS
 	/** Constant <code>PATH_SECURITY_LISTS="SecurityLists"</code> */
