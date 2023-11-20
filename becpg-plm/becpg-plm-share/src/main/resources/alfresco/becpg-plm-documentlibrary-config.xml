@@ -244,6 +244,9 @@
 			<content id="entity" label="menu.create-content.entity" type="pagelink" index="200" icon="entity">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:entityV2&amp;formId=create-entity&amp;isEntity=true</param>
 			</content>
+			<content id="externalLink" label="menu.create-content.externalLink" type="pagelink" index="210" icon="link">
+               <param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:externalLink</param>
+         	</content>
 		</create-content>
 		<create-content-by-template>true</create-content-by-template>
 
