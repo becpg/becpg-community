@@ -62,6 +62,11 @@ public class BeCPGDoclistActionGroupResolver implements DoclistActionGroupResolv
 		if (isLink) {
 			actionGroupId += "link-";
 		}
+		
+		if("bcpg:externalLink".equals(node.get("type"))) {
+			actionGroupId += "externallink-";
+		}
+		
 		if (view.equals("details")) {
 			actionGroupId += "details";
 		} else {
