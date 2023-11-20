@@ -848,10 +848,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	@Override
-	void updateDefaultFormat(String textFormat) {
+	void updateDefaultFormat(TextFormatRule textFormatRule) {
 
-		ingDefaultFormat = textFormat;
-		detailsDefaultFormat = textFormat;
+		formatsByName.put("ingDefaultFormat", textFormatRule);
+		formatsByName.put("detailsDefaultFormat", textFormatRule);
 
 	}
 
@@ -868,30 +868,39 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		if (lblComponent instanceof CompositeLabeling) {
 			if (((CompositeLabeling) lblComponent).isGroup()) {
-				return applyRoundingMode(new MessageFormat(groupDefaultFormat, getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(getTextFormatByName("groupDefaultFormat",groupDefaultFormat), getContentLocale()), qty);
 			}
 			if (DeclarationType.Detail.equals(((CompositeLabeling) lblComponent).getDeclarationType())) {
 				if ((lblComponent instanceof IngItem) && !((CompositeLabeling) lblComponent).getIngList().isEmpty()) {
-					return applyRoundingMode(new MessageFormat(subIngsDefaultFormat, getContentLocale()), qty);
+					return applyRoundingMode(new MessageFormat(getTextFormatByName("subIngsDefaultFormat",subIngsDefaultFormat), getContentLocale()), qty);
 				}
-				return applyRoundingMode(new MessageFormat(detailsDefaultFormat, getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(getTextFormatByName("detailsDefaultFormat",detailsDefaultFormat), getContentLocale()), qty);
 			}
 
-			return applyRoundingMode(new MessageFormat(ingDefaultFormat, getContentLocale()), qty);
+			return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat",ingDefaultFormat), getContentLocale()), qty);
 		} else if (lblComponent instanceof IngTypeItem) {
-
 			boolean doNotDetailsDeclType = isDoNotDetails(
 					((IngTypeItem) lblComponent).getOrigNodeRef() != null ? ((IngTypeItem) lblComponent).getOrigNodeRef()
 							: lblComponent.getNodeRef());
 
 			if (doNotDetailsDeclType || (((((IngTypeItem) lblComponent)).getDecThreshold() != null)
 					&& ((((IngTypeItem) lblComponent)).getQty(ingsLabelingWithYield) <= ((((IngTypeItem) lblComponent)).getDecThreshold() / 100)))) {
-				return applyRoundingMode(new MessageFormat(ingTypeDecThresholdFormat, getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeDecThresholdFormat",ingTypeDecThresholdFormat), getContentLocale()), qty);
 			}
-			return applyRoundingMode(new MessageFormat(ingTypeDefaultFormat, getContentLocale()), qty);
+			return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeDefaultFormat",ingTypeDefaultFormat), getContentLocale()), qty);
 		}
 
-		return applyRoundingMode(new MessageFormat(ingDefaultFormat, getContentLocale()), qty);
+		return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat",ingDefaultFormat), getContentLocale()), qty);
+	}
+
+	private String getTextFormatByName(String formatName, String defaultFormat) {
+		if(formatsByName.containsKey(formatName)) {
+			TextFormatRule textFormatRule = formatsByName.get(formatName);
+			if (textFormatRule.matchLocale(I18NUtil.getLocale())) {
+				return textFormatRule.getTextFormat();
+			}
+		}		
+		return defaultFormat;
 	}
 
 	private MessageFormat applyRoundingMode(MessageFormat messageFormat, Double qty) {
