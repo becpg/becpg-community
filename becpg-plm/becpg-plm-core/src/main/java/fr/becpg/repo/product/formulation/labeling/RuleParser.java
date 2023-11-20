@@ -55,6 +55,7 @@ public abstract class RuleParser {
 	protected final Map<NodeRef, List<FootNoteRule>> nodeFootNoteRules = new HashMap<>();
 
 	protected String defaultPercFormat = "0.#%";
+	protected boolean computePercByParent = false;
 	protected RoundingMode defaultRoundingMode = RoundingMode.HALF_DOWN;
 
 	protected List<ShowRule> showAllPerc = new ArrayList<>();
@@ -88,6 +89,10 @@ public abstract class RuleParser {
 	 */
 	public void setDefaultPercFormat(String defaultPercFormat) {
 		this.defaultPercFormat = defaultPercFormat;
+	}
+
+	public void setComputePercByParent(boolean computePercByParent) {
+		this.computePercByParent = computePercByParent;
 	}
 
 	/**
