@@ -2742,7 +2742,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						}
 					}
 					if (shouldBreak) {
-						break;
+						continue;
 					}
 
 				}
