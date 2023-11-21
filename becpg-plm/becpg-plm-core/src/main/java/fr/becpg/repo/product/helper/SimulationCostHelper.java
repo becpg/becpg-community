@@ -13,10 +13,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.product.data.EffectiveFilters;
-import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -79,15 +77,15 @@ public class SimulationCostHelper implements InitializingBean {
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost, List<NodeRef> geoOrigins) {
 		return priceListItemByCriteria(productData, new NodeRef(cost), null, geoOrigins);
 	}
-	
+
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost) {
 		return priceListItemByCriteria(productData, new NodeRef(cost), null, null);
 	}
 
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost, Date effectiveDate) {
-		return priceListItemByCriteria(productData, new NodeRef(cost), null, null,effectiveDate);
+		return priceListItemByCriteria(productData, new NodeRef(cost), null, null, effectiveDate);
 	}
-	
+
 	/*
 	 * Spel helper do not remove
 	 */
@@ -118,9 +116,9 @@ public class SimulationCostHelper implements InitializingBean {
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, String cost, Double qtyInKg, List<NodeRef> geoOrigins) {
 		return priceListItemByCriteria(productData, new NodeRef(cost), qtyInKg, geoOrigins);
 	}
-	
+
 	public static PriceListDataItem priceListItemByCriteria(ProductData productData, NodeRef cost, Double qtyInKg, List<NodeRef> geoOrigins) {
-		return priceListItemByCriteria(productData,cost, qtyInKg, geoOrigins, new Date());
+		return priceListItemByCriteria(productData, cost, qtyInKg, geoOrigins, new Date());
 	}
 
 	/**
@@ -132,50 +130,49 @@ public class SimulationCostHelper implements InitializingBean {
 	 * @param geoOrigins a {@link java.util.List} object.
 	 * @return a {@link fr.becpg.repo.product.data.productList.PriceListDataItem} object.
 	 */
-	public static PriceListDataItem priceListItemByCriteria(ProductData productData, NodeRef cost, Double qtyInKg, List<NodeRef> geoOrigins, Date effectiveDate) {
+	public static PriceListDataItem priceListItemByCriteria(ProductData productData, NodeRef cost, Double qtyInKg, List<NodeRef> geoOrigins,
+			Date effectiveDate) {
 		PriceListDataItem ret = null;
 		for (PriceListDataItem priceListDataItem : productData.getPriceList()) {
-			if (((priceListDataItem.getStartEffectivity() == null)
-					|| (priceListDataItem.getStartEffectivity().getTime() <= effectiveDate.getTime()))
+			if (((priceListDataItem.getStartEffectivity() == null) || (priceListDataItem.getStartEffectivity().getTime() <= effectiveDate.getTime()))
 					&& ((priceListDataItem.getEndEffectivity() == null)
 							|| (priceListDataItem.getEndEffectivity().getTime() > effectiveDate.getTime()))) {
-			if ((cost != null) && cost.equals(priceListDataItem.getCost())) {
-				Double purchaseQtyInKg = priceListDataItem.getPurchaseValue();
-				if (purchaseQtyInKg != null) {
-					ProductUnit unit = ProductUnit.getUnit(priceListDataItem.getPurchaseUnit());
-					purchaseQtyInKg /= unit.getUnitFactor();
-					if (unit.isVolume() && (productData.getDensity() != null)) {
-						purchaseQtyInKg *= productData.getDensity();
-					}
-
-				}
-				if (((qtyInKg == null) || ((purchaseQtyInKg == null) || (qtyInKg >= purchaseQtyInKg)))) {
-					if (((geoOrigins == null) && ((priceListDataItem.getGeoOrigins() == null) || priceListDataItem.getGeoOrigins().isEmpty()))
-							|| ((priceListDataItem.getGeoOrigins() == null) || ((geoOrigins != null) && !geoOrigins.isEmpty()
-									&& priceListDataItem.getGeoOrigins().containsAll(geoOrigins)))) {
-
-						if (ret == null) {
-							ret = priceListDataItem;
-						} else {
-							Double retPurchaseQtyInKgorL = ret.getPurchaseValue();
-							if (retPurchaseQtyInKgorL != null) {
-								ProductUnit unit = ProductUnit.getUnit(ret.getPurchaseUnit());
-								retPurchaseQtyInKgorL /= unit.getUnitFactor();
-								if (unit.isVolume() && (productData.getDensity() != null)) {
-									retPurchaseQtyInKgorL *= productData.getDensity();
-								}
-							}
-
-							if ((purchaseQtyInKg != null) && ((retPurchaseQtyInKgorL == null)
-									|| (purchaseQtyInKg > retPurchaseQtyInKgorL))) {
-								ret = priceListDataItem;
-							}
+				if ((cost != null) && cost.equals(priceListDataItem.getCost())) {
+					Double purchaseQtyInKg = priceListDataItem.getPurchaseValue();
+					if (purchaseQtyInKg != null) {
+						ProductUnit unit = ProductUnit.getUnit(priceListDataItem.getPurchaseUnit());
+						purchaseQtyInKg /= unit.getUnitFactor();
+						if (unit.isVolume() && (productData.getDensity() != null)) {
+							purchaseQtyInKg *= productData.getDensity();
 						}
 
 					}
+					if (((qtyInKg == null) || ((purchaseQtyInKg == null) || (qtyInKg >= purchaseQtyInKg)))) {
+						if (((geoOrigins == null) && ((priceListDataItem.getGeoOrigins() == null) || priceListDataItem.getGeoOrigins().isEmpty()))
+								|| ((priceListDataItem.getGeoOrigins() == null) || ((geoOrigins != null) && !geoOrigins.isEmpty()
+										&& priceListDataItem.getGeoOrigins().containsAll(geoOrigins)))) {
 
+							if (ret == null) {
+								ret = priceListDataItem;
+							} else {
+								Double retPurchaseQtyInKgorL = ret.getPurchaseValue();
+								if (retPurchaseQtyInKgorL != null) {
+									ProductUnit unit = ProductUnit.getUnit(ret.getPurchaseUnit());
+									retPurchaseQtyInKgorL /= unit.getUnitFactor();
+									if (unit.isVolume() && (productData.getDensity() != null)) {
+										retPurchaseQtyInKgorL *= productData.getDensity();
+									}
+								}
+
+								if ((purchaseQtyInKg != null) && ((retPurchaseQtyInKgorL == null) || (purchaseQtyInKg > retPurchaseQtyInKgorL))) {
+									ret = priceListDataItem;
+								}
+							}
+
+						}
+
+					}
 				}
-			}
 			}
 		}
 		return ret;
@@ -192,11 +189,11 @@ public class SimulationCostHelper implements InitializingBean {
 	 * @return a {@link java.lang.Double} object.
 	 */
 	public static Double getComponentQuantity(ProductData formulatedProduct, ProductData componentData) {
-		
+
 		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
-		
+
 		if (componentData instanceof PackagingMaterialData) {
-			return getPackagingListQty(formulatedProduct, componentData.getNodeRef(), 1, netQty);
+			return getPackagingListQty(formulatedProduct, componentData.getNodeRef(), netQty);
 		}
 
 		return getCompoListQty(formulatedProduct, componentData.getNodeRef(), netQty);
@@ -205,9 +202,9 @@ public class SimulationCostHelper implements InitializingBean {
 	private static double getCompoListQty(ProductData productData, NodeRef componentNodeRef, Double parentQty) {
 		double totalQty = 0d;
 		if (productData.hasCompoListEl()) {
-			
+
 			Double netQty = FormulationHelper.getNetQtyForCost(productData);
-			
+
 			for (CompoListDataItem compoList : productData
 					.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 				NodeRef productNodeRef = compoList.getProduct();
@@ -218,7 +215,7 @@ public class SimulationCostHelper implements InitializingBean {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Get CompoListQty " + componentProduct.getName() + "qty: " + qty + " netQty " + netQty);
 				}
-				if ((qty != null) && (netQty != null) && (netQty != 0d) && parentQty!=null) {
+				if ((qty != null) && (netQty != null) && (netQty != 0d) && parentQty != null) {
 					qty = (parentQty * qty) / netQty;
 
 					if (productNodeRef.equals(componentNodeRef)) {
@@ -232,33 +229,32 @@ public class SimulationCostHelper implements InitializingBean {
 		return totalQty;
 	}
 
-	private static double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, int palletBoxesPerPallet, Double parentQty) {
+	private static double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, Double parentQty) {
 		double totalQty = 0d;
 		if (productData.hasPackagingListEl()) {
-			
+
 			Double netQty = FormulationHelper.getNetQtyForCost(productData);
-			
+
 			for (PackagingListDataItem packList : productData
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 
 				ProductData subProductData = INSTANCE.alfrescoRepository.findOne(packList.getProduct());
 
-				Double qty = FormulationHelper.getQtyForCost(productData, packList);
-				if ((qty != null) && (netQty != null) && (netQty != 0d) && parentQty!=null) {
-					qty = (parentQty * qty) / netQty;
-				}
-				if (logger.isDebugEnabled()) {
-					logger.debug("Get packagingListQty " + subProductData.getName() + "qty: " + qty);
-				}
-				if (subProductData.getNodeRef().equals(componentNodeRef)) {
-					if (PackagingLevel.Tertiary.equals(packList.getPkgLevel())) {
-						totalQty = qty / palletBoxesPerPallet;
-					} else {
-						totalQty += qty;
+				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(productData, packList, subProductData);
+
+				if (qty != null) {
+					if ((netQty != null) && (netQty != 0d) && parentQty != null) {
+						qty = (parentQty * qty) / netQty;
 					}
-				} else if (subProductData instanceof PackagingKitData) {
-					totalQty = qty
-							* getPackagingListQty(subProductData, componentNodeRef, ((PackagingKitData) subProductData).getPalletBoxesPerPallet(),null);
+					if (logger.isDebugEnabled()) {
+						logger.debug("Get packagingListQty " + subProductData.getName() + "qty: " + qty);
+					}
+					if (subProductData.getNodeRef().equals(componentNodeRef)) {
+						totalQty += qty;
+					} else if (subProductData.isPackagingKit()) {
+						totalQty += qty * getPackagingListQty(subProductData, componentNodeRef, null);
+
+					}
 				}
 			}
 
@@ -267,15 +263,15 @@ public class SimulationCostHelper implements InitializingBean {
 						.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
 					NodeRef productNodeRef = compoList.getProduct();
 
-					ProductData componentProduct =  INSTANCE.alfrescoRepository.findOne(productNodeRef);
+					ProductData componentProduct = INSTANCE.alfrescoRepository.findOne(productNodeRef);
 
 					Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, INSTANCE.keepProductUnit);
 					if (logger.isDebugEnabled()) {
 						logger.debug("Get packagingListQty " + componentProduct.getName() + "qty: " + qty + " netQty " + netQty);
 					}
-					if ((qty != null) && (netQty != null) && (netQty != 0d) && parentQty!=null) {
+					if ((qty != null) && (netQty != null) && (netQty != 0d) && parentQty != null) {
 						qty = (parentQty * qty) / netQty;
-						totalQty += getPackagingListQty(componentProduct, componentNodeRef, palletBoxesPerPallet, qty);
+						totalQty += getPackagingListQty(componentProduct, componentNodeRef, qty);
 
 					}
 				}
