@@ -5,6 +5,7 @@ public enum NutrientProfileCategory {
 	Beverages,
 	Cheeses,
 	Fats,
-	Others
+	RedMeats,
+	Others,
 	
 }
