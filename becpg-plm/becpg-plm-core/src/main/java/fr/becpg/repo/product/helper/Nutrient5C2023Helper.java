@@ -50,10 +50,11 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 	private static final double[] fatsFatsRange = { 64d, 58d, 52d, 46d, 40d, 34d, 28d, 22d, 16d, 10d };
 	private static final double[] energyRange = { 3350d, 3015d, 2680d, 2345d, 2010d, 1675d, 1340d, 1005d, 670d, 335d };
 	private static final double[] beveragesEnergyRange = { 390d, 360d, 330d, 300d, 270d, 240d, 210d, 150d, 90d, 30d };
+	private static final double[] fatsEnergyRange = { 1200d, 1080d, 960d, 840d, 720d, 600d, 480d, 360d, 240d, 120d };
 	
 	private static final double[][] othersACategories = new double[][] { energyRange, fatsRange, sugarsRange, saltRange };
 	private static final double[][] cheeseACategories = new double[][] { energyRange, fatsRange, sugarsRange, saltRange };
-	private static final double[][] fatsACategories = new double[][] { energyRange, fatsFatsRange, sugarsRange, saltRange };
+	private static final double[][] fatsACategories = new double[][] { fatsEnergyRange, fatsFatsRange, sugarsRange, saltRange };
 	private static final double[][] beveragesACategories = new double[][] { beveragesEnergyRange, fatsRange, beveragesSugarsRange, saltRange };
 
 	private static final double[][] othersCCategories = new double[][] { fruitVegetableRange, nspFiberRange, fiberRange, proteinRange };
@@ -62,13 +63,12 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 	private static final double[][] beveragesCCategories = new double[][] { beveragesFruitVegetableRange, nspFiberRange, fiberRange, beveragesProteinRange };
 
 
+	private static final List<Double> OTHERS_RANGES = Arrays.asList(18d, 10d, 2d, 0d);
+	private static final List<Double> CHEESES_RANGES = OTHERS_RANGES;
+	private static final List<Double> FATS_RANGES = Arrays.asList(18d, 10d, 2d, -6d);
 	private static final List<Double> BEVERAGES_RANGES = Arrays.asList(9d, 6d, 2d, 0d);
-	private static final List<Double> CHEESES_RANGES = Arrays.asList(18d, 10d, 2d, 0d);
-	private static final List<Double> FATS_RANGES = CHEESES_RANGES;
-	private static final List<Double> OTHERS_RANGES = CHEESES_RANGES;
 	
-	private static final List<String> NON_NUTRITIVE_SUGARS = List.of( "E420", "E421", "E950", "E951", "E952", "E954", "E955", "E956", "E957", "E958",
-			"E959", "E960a", "E960b", "E960c", "E961", "E962", "E964", "E965", "E966", "E967", "E968", "E969" );
+	private static final List<String> NON_NUTRITIVE_SUGARS = List.of( "E950", "E951", "E952", "E954", "E955", "E957", "E959", "E960a", "E961", "E962", "E969" );
 			
 	private Nutrient5C2023Helper() {
 		
@@ -145,7 +145,7 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 			context.setDisplaySaltScore(true);
 			for (IngListDataItem ing : productData.getIngList()) {
 				String ceeCode = (String) INSTANCE.nodeService.getProperty(ing.getIng(), PLMModel.PROP_ING_CEECODE);
-				if (isNonNutritiveSugar(ceeCode)) {
+				if (NutrientProfileCategory.Beverages.toString().equals(context.getCategory()) && isNonNutritiveSugar(ceeCode)) {
 					context.getNonNutritiveSugars().add((String) INSTANCE.nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 				}
 			}
@@ -177,23 +177,27 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		double[][] aCategories = getACategory(NutrientProfileCategory.valueOf(category));
 		double[][] cCategories = getCCategory(NutrientProfileCategory.valueOf(category));
 
-		NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE), aCategories[0]);
-		aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE).getDouble(NutriScoreContext.SCORE);
-		
 		if (NutrientProfileCategory.Fats.equals(NutrientProfileCategory.valueOf(category))) {
 
 			double satFat = nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SATFAT_CODE).getDouble(NutriScoreContext.VALUE);
 			
-			double totalFat = nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE).getDouble(NutriScoreContext.VALUE);
+			double energyFats = satFat * 37;
+			nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE).put(NutriScoreContext.VALUE, energyFats);
 			
+			NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE), aCategories[0]);
+			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE).getDouble(NutriScoreContext.SCORE);
+			
+			double totalFat = nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE).getDouble(NutriScoreContext.VALUE);
 			if (totalFat != 0) {
 				nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE).put(NutriScoreContext.VALUE, (satFat / totalFat) * 100);
 			}
 			NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE), aCategories[1]);
-			
 			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FAT_CODE).getDouble(NutriScoreContext.SCORE);
 
 		} else {
+			NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE), aCategories[0]);
+			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.ENERGY_CODE).getDouble(NutriScoreContext.SCORE);
+			
 			NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SATFAT_CODE), aCategories[1]);
 			aScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.SATFAT_CODE).getDouble(NutriScoreContext.SCORE);
 		}
@@ -218,9 +222,27 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		
 		cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.FRUIT_VEGETABLE_CODE).getDouble(NutriScoreContext.SCORE);
 
-		if (aScore < 11 || !NutrientProfileCategory.Beverages.equals(NutrientProfileCategory.valueOf(category)) || aScore >= 11 && cScore >= 10) {
+		boolean addProteins = false;
+		
+		if (NutrientProfileCategory.valueOf(category) == NutrientProfileCategory.Fats) {
+			addProteins = aScore < 7;
+		} else if (NutrientProfileCategory.valueOf(category) == NutrientProfileCategory.Cheeses) {
+			addProteins = true;
+		} else if (NutrientProfileCategory.valueOf(category) == NutrientProfileCategory.Beverages) {
+			addProteins = true;
+		} else {
+			addProteins = aScore < 11;
+		}
+		
+		if (addProteins) {
 			NutrientHelper.buildNutriScorePart(nutriScoreContext.getParts().getJSONObject(NutriScoreContext.PROTEIN_CODE), cCategories[3]);
-			cScore += nutriScoreContext.getParts().getJSONObject(NutriScoreContext.PROTEIN_CODE).getDouble(NutriScoreContext.SCORE);
+			double proteinScore = nutriScoreContext.getParts().getJSONObject(NutriScoreContext.PROTEIN_CODE).getDouble(NutriScoreContext.SCORE);
+			if (NutrientProfileCategory.valueOf(category) == NutrientProfileCategory.RedMeats) {
+				proteinScore = Math.min(proteinScore, 2);
+				nutriScoreContext.getParts().getJSONObject(NutriScoreContext.PROTEIN_CODE).put(NutriScoreContext.SCORE, proteinScore);
+				nutriScoreContext.getParts().getJSONObject(NutriScoreContext.PROTEIN_CODE).put(NutriScoreContext.UPPER_VALUE, "+Inf");
+			}
+			cScore += proteinScore;
 			nutriScoreContext.setHasProteinScore(true);
 		}
 
@@ -256,6 +278,8 @@ public class Nutrient5C2023Helper implements InitializingBean, NutrientRegulator
 		} else if (NutrientProfileCategory.Fats.toString().equals(nutriScoreContext.getCategory())) {
 			ranges = FATS_RANGES;
 		} else if (NutrientProfileCategory.Others.toString().equals(nutriScoreContext.getCategory())) {
+			ranges = OTHERS_RANGES;
+		} else if (NutrientProfileCategory.RedMeats.toString().equals(nutriScoreContext.getCategory())) {
 			ranges = OTHERS_RANGES;
 		}
 
