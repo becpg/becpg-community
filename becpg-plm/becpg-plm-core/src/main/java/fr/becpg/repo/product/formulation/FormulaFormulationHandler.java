@@ -23,13 +23,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Matcher;
 
 import org.alfresco.error.ExceptionStackUtil;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -43,7 +41,6 @@ import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -198,55 +195,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			for (AbstractProductDataView view : productData.getViews()) {
 				computeFormula(productData, formulaService.getSpelParser(), context, view);
 			}
-
-			if (DynamicCharactExecOrder.Post.equals(execOrder)) {
-				computeNutrientProfile(productData, formulaService.getSpelParser(), context);
-			}
 		}
 		return true;
-	}
-
-	private void computeNutrientProfile(ProductData productData, ExpressionParser parser, StandardEvaluationContext context) {
-		if (productData.getNutrientProfile() != null && nodeService.exists(productData.getNutrientProfile())) {
-			String scoreformula = (String) nodeService.getProperty(productData.getNutrientProfile(), PLMModel.PROP_NUTRIENT_PROFILE_SCORE_FORMULA);
-			if ((scoreformula != null) && (scoreformula.length() > 0)) {
-				try {
-					productData.setNutrientScore(null);
-					productData.setNutrientClass(null);
-					Expression exp = parser.parseExpression(SpelHelper.formatFormula(scoreformula));
-					Object ret = exp.getValue(context);
-					if (ret instanceof Number) {
-						productData.setNutrientScore(Double.valueOf(ret.toString()));
-						String classformula = (String) nodeService.getProperty(productData.getNutrientProfile(),
-								PLMModel.PROP_NUTRIENT_PROFILE_CLASS_FORMULA);
-						if ((classformula != null) && (classformula.length() > 0)) {
-							exp = parser.parseExpression(SpelHelper.formatFormula(classformula));
-							productData.setNutrientClass((String) exp.getValue(context));
-						}
-					} else {
-						productData.setNutrientClass(I18NUtil.getMessage("message.formulate.formula.incorrect.nutrientProfile",
-								I18NUtil.getMessage("message.formulate.formula.incorrect.type.double", Locale.getDefault()), Locale.getDefault()));
-					}
-				} catch (Exception e) {
-					MLText errorMsg = MLTextHelper.getI18NMessage("message.formulate.formula.incorrect.nutrientProfile", e.getLocalizedMessage());
-
-					productData.setNutrientClass(MLTextHelper.getClosestValue(errorMsg, Locale.getDefault()));
-
-					productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, errorMsg, null, new ArrayList<>(Arrays.asList(productData.getNodeRef())),
-							RequirementDataType.Formulation));
-
-					if (logger.isDebugEnabled()) {
-						logger.warn("Error in nutrient score formula :" + SpelHelper.formatFormula(scoreformula));
-						logger.trace(e, e);
-					}
-				}
-			}
-
-		} else {
-			productData.setNutrientScore(null);
-			productData.setNutrientClass(null);
-		}
-
 	}
 
 	private void computeFormula(ProductData productData, ExpressionParser parser, EvaluationContext context, AbstractProductDataView view) {
