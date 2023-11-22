@@ -126,6 +126,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
+			
+			productData.getLabelClaimList().forEach(labelClaimItem -> labelClaimItem.getMissingLabelClaims().clear());
+			
 			List<CompositionDataItem> compoItems = new ArrayList<>();
 
 			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -142,8 +145,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				Double netQty = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 				productData.getLabelClaimList().forEach(labelClaimItem -> {
-
-					labelClaimItem.getMissingLabelClaims().clear();
 
 					labelClaimItem.setType((String) nodeService.getProperty(labelClaimItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_TYPE));
 
