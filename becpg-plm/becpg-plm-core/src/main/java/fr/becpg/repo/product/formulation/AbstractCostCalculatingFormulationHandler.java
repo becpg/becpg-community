@@ -57,6 +57,12 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	public static boolean keepProductUnit() {
 		return instance.internalKeepProductUnit();
 	}
+	
+
+	@Override
+	protected boolean propagateModeEnable(ProductData formulatedProduct) {
+		return false;
+	}
 
 
 	/**

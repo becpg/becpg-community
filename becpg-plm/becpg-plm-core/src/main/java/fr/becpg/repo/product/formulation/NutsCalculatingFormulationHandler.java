@@ -18,10 +18,7 @@ import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
-import fr.becpg.repo.product.data.EffectiveFilters;
-import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
@@ -36,7 +33,6 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.formulation.nutrient.RegulationFormulationHelper;
 import fr.becpg.repo.repository.model.VariantAwareDataItem;
-import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantData;
 
@@ -56,20 +52,9 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	private static final Log logger = LogFactory.getLog(NutsCalculatingFormulationHandler.class);
 
-	private boolean propagateModeEnable() {
-		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.nutList.propagateUpEnable"));
-	}
-
-	private AssociationService associationService;
-	
-	private SystemConfigurationService systemConfigurationService;
-	
-	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
-		this.systemConfigurationService = systemConfigurationService;
-	}
-
-	public void setAssociationService(AssociationService associationService) {
-		this.associationService = associationService;
+	protected boolean propagateModeEnable(ProductData formulatedProduct) {
+		return formulatedProduct.getAspects().contains(PLMModel.ASPECT_PROPAGATE_UP)
+				|| Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.nutList.propagateUpEnable"));
 	}
 
 	/** {@inheritDoc} */
@@ -78,27 +63,66 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 		return NutListDataItem.class;
 	}
 
+	@Override
+	protected NutListDataItem newSimpleListDataItem(NodeRef charactNodeRef) {
+		NutListDataItem newNutListDataItem = new NutListDataItem();
+		newNutListDataItem.setNut(charactNodeRef);
+		return newNutListDataItem;
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) {
 
-		if (accept(formulatedProduct)) {
+		boolean accept = accept(formulatedProduct);
+
+		if (accept) {
 			logger.debug("Nuts calculating visitor");
 
 			if (formulatedProduct.getNutList() == null) {
 				formulatedProduct.setNutList(new LinkedList<>());
 			}
 
-			cleanSimpleList(formulatedProduct.getNutList(), formulatedProduct.hasCompoListEl(new VariantFilters<>())
-					|| formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL));
+			formulateSimpleList(formulatedProduct, formulatedProduct.getNutList(), new SimpleListQtyProvider() {
 
-			synchronizeTemplate(formulatedProduct, formulatedProduct.getNutList());
+				@Override
+				public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
+					return FormulationHelper.getQtyInKg(compoListDataItem);
+				}
 
-			nutsCalculatingProcess(formulatedProduct, null);
-			for (VariantData variant : formulatedProduct.getVariants()) {
-				nutsCalculatingProcess(formulatedProduct, variant);
-			}
+				@Override
+				public Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
+					return FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
+				}
 
+				@Override
+				public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
+					return 0d;
+				}
+
+				@Override
+				public Double getQty(ProcessListDataItem processListDataItem, VariantData variant) {
+					return 0d;
+				}
+
+				@Override
+				public Double getNetWeight(VariantData variant) {
+					return FormulationHelper.getNetWeight(formulatedProduct, variant, FormulationHelper.DEFAULT_NET_WEIGHT);
+				}
+
+				@Override
+				public Double getNetQty(VariantData variant) {
+					return FormulationHelper.getNetQtyForNuts(formulatedProduct, variant);
+				}
+
+				@Override
+				public Boolean omitElement(CompoListDataItem compoListDataItem) {
+					return DeclarationType.Omit.equals(compoListDataItem.getDeclType());
+				}
+
+			}, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
+			
+			
 			if (formulatedProduct.getNutList() != null) {
 
 				calculateNutListDataItem(formulatedProduct, false, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
@@ -108,180 +132,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 			}
 		}
-		return true;
-	}
 
-	private void nutsCalculatingProcess(ProductData formulatedProduct, VariantData variant) {
-
-		SimpleListQtyProvider qtyProvider = new SimpleListQtyProvider() {
-
-			@Override
-			public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-				return FormulationHelper.getQtyInKg(compoListDataItem);
-			}
-
-			@Override
-			public Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-				return FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
-			}
-
-			@Override
-			public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
-				return 0d;
-			}
-
-			@Override
-			public Double getQty(ProcessListDataItem processListDataItem, VariantData variant) {
-				return 0d;
-			}
-
-			@Override
-			public Double getNetWeight(VariantData variant) {
-				return FormulationHelper.getNetWeight(formulatedProduct, variant, FormulationHelper.DEFAULT_NET_WEIGHT);
-			}
-
-			@Override
-			public Double getNetQty(VariantData variant) {
-				return  FormulationHelper.getNetQtyForNuts(formulatedProduct,variant);
-			}
-
-			@Override
-			public Boolean omitElement(CompoListDataItem compoListDataItem) {
-				return DeclarationType.Omit.equals(compoListDataItem.getDeclType());
-			}
-
-		};
-
-		if (!propagateModeEnable() && !formulatedProduct.getAspects().contains(PLMModel.ASPECT_PROPAGATE_UP)) {
-			visitComposition(formulatedProduct, formulatedProduct.getNutList(), qtyProvider, variant);
-		} else {
-
-			if (formulatedProduct.hasCompoListEl((variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>()))) {
-
-				List<NutListDataItem> retainNodes = new ArrayList<>();
-				Map<NodeRef, Double> totalQtiesValue = new HashMap<>();
-				
-				for (NutListDataItem nutListDataItem : formulatedProduct.getNutList()){
-					if (Boolean.TRUE.equals(nutListDataItem.getIsManual())) {
-						retainNodes.add(nutListDataItem);
-					}
-					
-				}
-				
-				for (CompoListDataItem compoListDataItem : formulatedProduct.getCompoList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-					if (compoListDataItem != null) {
-						ProductData componentProduct = (ProductData) alfrescoRepository.findOne(compoListDataItem.getProduct());
-						if (!Boolean.TRUE.equals(qtyProvider.omitElement(compoListDataItem))) {
-
-							FormulatedQties qties = new FormulatedQties(
-									qtyProvider.getQty(compoListDataItem, formulatedProduct.getProductLossPerc(), componentProduct),
-									qtyProvider.getVolume(compoListDataItem, formulatedProduct.getProductLossPerc(), componentProduct),
-									qtyProvider.getNetQty(variant), qtyProvider.getNetWeight(variant));
-
-							if (qties.isNotNull()) {
-
-								if (!(componentProduct instanceof LocalSemiFinishedProductData)) {
-
-									for (NutListDataItem nutListDataItem : componentProduct.getNutList()) {
-										NodeRef nutNodeRef = nutListDataItem.getNut();
-										if ((nutNodeRef != null) && shouldPropagate(compoListDataItem, nutListDataItem)) {
-
-											NutListDataItem newNutListDataItem = formulatedProduct.getNutList().stream()
-													.filter(n -> nutNodeRef.equals(n.getNut())).findFirst().orElse(null);
-
-											if (newNutListDataItem == null) {
-												newNutListDataItem = new NutListDataItem();
-												newNutListDataItem.setNut(nutNodeRef);
-												formulatedProduct.getNutList().add(newNutListDataItem);
-											}
-
-											if (!retainNodes.contains(newNutListDataItem)) {
-												retainNodes.add(newNutListDataItem);
-											}
-
-											boolean formulateInVol = (componentProduct.getUnit() != null) && componentProduct.getUnit().isVolume();
-											boolean forceWeight = false;
-
-											if (formulateInVol && (componentProduct.getServingSizeUnit() != null)
-													&& componentProduct.getServingSizeUnit().isWeight()) {
-												if ((formulatedProduct.getServingSizeUnit() != null)
-														&& formulatedProduct.getServingSizeUnit().isWeight()) {
-													formulateInVol = false;
-													forceWeight = true;
-												} else {
-													formulateInVol = false;
-												}
-											}
-
-											// calculate charact from qty or vol ?
-											Double qtyUsed = qties.getQtyUsed(formulateInVol);
-											Double netQty = qties.getNetQty(forceWeight);
-
-											if ((nutListDataItem != null) && (qtyUsed != null)) {
-
-												if (!newNutListDataItem.getSources().contains(componentProduct.getNodeRef())
-														&& !(componentProduct.isSemiFinished())) {
-													
-													newNutListDataItem.getSources().add(componentProduct.getNodeRef());
-												}
-												
-												for (NodeRef p : nutListDataItem.getSources()) {
-													if (!newNutListDataItem.getSources().contains(p)) {
-														if (!(componentProduct.isRawMaterial())) {
-															newNutListDataItem.getSources().add(p);
-														}
-													}
-												}
-												
-
-												calculate(formulatedProduct, componentProduct, newNutListDataItem, nutListDataItem, qtyUsed, netQty,
-														variant);
-
-												if ((totalQtiesValue != null) && (nutListDataItem.getValue() != null)) {
-													Double currentQty = totalQtiesValue.get(newNutListDataItem.getCharactNodeRef());
-													if (currentQty == null) {
-														currentQty = 0d;
-													}
-													totalQtiesValue.put(newNutListDataItem.getCharactNodeRef(), currentQty + qtyUsed);
-												}
-											}
-
-										}
-									}
-								}
-
-							}
-
-						}
-					}
-				}
-
-				formulatedProduct.getNutList().retainAll(retainNodes);
-
-				for (Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : getMandatoryCharacts(formulatedProduct, null).entrySet()) {
-					if ((mandatoryCharact.getValue() != null) && !mandatoryCharact.getValue().isEmpty()) {
-						MLText message = MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_CHARACT,
-								mlNodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME));
-
-						formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Tolerated, message,
-								mandatoryCharact.getKey(), mandatoryCharact.getValue(), RequirementDataType.Nutrient));
-					}
-				}
-
-				if (formulatedProduct.isGeneric()) {
-					formulateGenericRawMaterial(formulatedProduct.getNutList(), totalQtiesValue, qtyProvider.getNetQty(variant));
-				}
-			}
-		}
-	}
-
-	private boolean shouldPropagate(CompoListDataItem compoListDataItem, NutListDataItem nutListDataItem) {
-		
-		if (compoListDataItem.getAspects().contains(PLMModel.ASPECT_PROPAGATE_UP) && (compoListDataItem.getNodeRef() != null)
-				&& (nutListDataItem.getNut() != null)) {
-			List<NodeRef> propagatedCharacts = associationService.getTargetAssocs(compoListDataItem.getNodeRef(), PLMModel.ASSOC_PROPAGATED_CHARACTS);		
-			return propagatedCharacts.isEmpty() || propagatedCharacts.contains(nutListDataItem.getNut());
-		}
 		return true;
 	}
 
@@ -330,9 +181,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					}
 
 					Double servingSize = FormulationHelper.getServingSizeInLorKg(formulatedProduct);
-					Double valueForServing = formulatedProduct.isPrepared() && n.getPreparedValue() !=null ? n.getPreparedValue() : n.getValue();
-					
-					
+					Double valueForServing = formulatedProduct.isPrepared() && n.getPreparedValue() != null ? n.getPreparedValue() : n.getValue();
+
 					if ((servingSize != null) && (valueForServing != null)) {
 						Double valuePerserving = (valueForServing * (servingSize * 1000d)) / 100;
 						n.setValuePerServing(valuePerserving);
@@ -445,4 +295,5 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	protected RequirementDataType getRequirementDataType() {
 		return RequirementDataType.Nutrient;
 	}
+
 }

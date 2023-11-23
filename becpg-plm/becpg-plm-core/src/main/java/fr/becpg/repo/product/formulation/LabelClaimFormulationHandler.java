@@ -157,7 +157,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					if((labelClaimItem.getIsManual() == null) || !Boolean.TRUE.equals(labelClaimItem.getIsManual())){
 					
 						Boolean isPropagateUp = (Boolean) nodeService.getProperty(labelClaimItem.getLabelClaim(),
-								PLMModel.PROP_LABELCLAIM_PROPAGATE_UP);
+								PLMModel.PROP_IS_CHARACT_PROPAGATE_UP);
 
 						if (Boolean.TRUE.equals(isPropagateUp)) {
 							toRemove.add(labelClaimItem);
@@ -279,7 +279,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				.filter(n -> ((n.getLabelClaim() != null) && n.getLabelClaim().equals(subLabelClaimItem.getLabelClaim()))).findFirst().orElse(null);
 
 		if ((labelClaimItem == null)
-				&& Boolean.TRUE.equals(nodeService.getProperty(subLabelClaimItem.getLabelClaim(), PLMModel.PROP_LABELCLAIM_PROPAGATE_UP))) {
+				&& Boolean.TRUE.equals(nodeService.getProperty(subLabelClaimItem.getLabelClaim(), PLMModel.PROP_IS_CHARACT_PROPAGATE_UP))) {
 
 			labelClaimItem = subLabelClaimItem.copy();
 			labelClaimItem.setName(null);
