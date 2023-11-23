@@ -5645,7 +5645,7 @@
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
 					<show id="bcpg:illManualValue" />
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -6232,7 +6232,7 @@
 					<show id="bcpg:mblMaxi" />
 					<show id="bcpg:mblTextCriteria" />
 					<show id="bcpg:mblControlStep" />
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -6344,7 +6344,7 @@
 					<show id="bcpg:nutListLossPerc" />
 					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:parentLevel" />
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true"/>
 					<show id="bcpg:glopTarget" force ="true"/>
 				</field-visibility>
 
@@ -6569,6 +6569,7 @@
 				<field-visibility>
 					<show id="bcpg:organoListOrgano" />
 					<show id="bcpg:organoListValue" />
+					<show id="rep:reportKinds" force="true"/>
 				</field-visibility>
 
 				<appearance>
@@ -6591,6 +6592,7 @@
 					<show id="bcpg:organoListOrgano" />
 					<show id="bcpg:organoListValue" />
 					<show id="fm:commentCount" force="true" />
+					<show id="rep:reportKinds" force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:variantIds" label="hidden"></field>
@@ -6657,7 +6659,7 @@
 					<show id="bcpg:pclMini" />
 					<show id="bcpg:pclMaxi" />
 					<show id="bcpg:pclTextCriteria" />
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true"/>
 					<show id="bcpg:glopTarget" force ="true"/>
 				</field-visibility>
 
@@ -7235,7 +7237,7 @@
 				<!-- <show id="bcpg:certificateDate" force="true" />  -->	
 					<show id="bcpg:lclComments"  />
 					<show id="bcpg:isManualListItem" force="true" />
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true" />
 				</field-visibility>
 				<appearance>
 				   <field id="bcpg:lclComments">

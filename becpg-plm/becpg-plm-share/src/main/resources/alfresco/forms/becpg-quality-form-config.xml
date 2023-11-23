@@ -1935,7 +1935,7 @@
 					<show id="qa:clRequired" />
 					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true" />
 				</field-visibility>
 
 				<appearance>
