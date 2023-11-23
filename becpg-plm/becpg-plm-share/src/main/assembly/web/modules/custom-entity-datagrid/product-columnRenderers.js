@@ -482,10 +482,14 @@ if (beCPG.module.EntityDataGridRenderers) {
   
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold","bcpg:allergenInVoluntaryRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
+      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold","bcpg:allergenInVoluntaryRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield","bcpg:ingListQtyPercWithSecondaryYield"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
-			var forceUnit=oColumn.forceUnit;  
+			var forceUnit=oColumn.forceUnit; 
+
+			if (oColumn.hidden) {
+				oColumn.showAfterRender = true;
+			}
 			  
       		var unit, qty;
       		if(data.value == 0){

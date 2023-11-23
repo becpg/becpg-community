@@ -1471,6 +1471,7 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<!-- deprecated -->
 				<property name="bcpg:isNutPropagateUp">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
@@ -2479,6 +2480,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingListQtyPercWithSecondaryYield">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:ingListQtyMini">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -3333,6 +3339,7 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
+				<!-- Deprecated -->
 				<property name="bcpg:isLabelClaimPropagateUp">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
@@ -5665,6 +5672,13 @@
 		</aspect>
 
 		<aspect name="bcpg:propagateUpAspect">
+		    <properties>
+		       <property name="bcpg:isCharactPropagateUp">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+		    </properties>
 			<associations>
 				<association name="bcpg:propagatedCharacts">
 					<source>
