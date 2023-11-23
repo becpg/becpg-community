@@ -354,6 +354,9 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 						for (NodeRef resourceRef : resources) {
 							permissionService.setPermission(supplierNodeRef,
 									(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.CONTRIBUTOR, true);
+							
+							permissionService.deletePermission(supplierNodeRef,
+									(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME), PermissionService.COORDINATOR);
 						}
 					} finally {
 						I18NUtil.setLocale(currentLocal);
