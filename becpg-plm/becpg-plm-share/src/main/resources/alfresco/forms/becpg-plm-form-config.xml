@@ -1826,7 +1826,7 @@
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
 					
-					<!-- <show id="bcpg:isNutPropagateUp" /> -->
+					<show id="bcpg:isCharactPropagateUp" force="true"/>
 					<show id="rep:reportLocales" force="true" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
@@ -1889,7 +1889,7 @@
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
 				
-					<!-- <show id="bcpg:isNutPropagateUp" /> -->
+					<show id="bcpg:isCharactPropagateUp" force="true"/>
 					<show id="rep:reportLocales" force="true" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
@@ -2157,6 +2157,7 @@
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
 					<show id="bcpg:physicoChemFormula" />
+				    <show id="bcpg:isCharactPropagateUp" force="true"/>
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -2196,6 +2197,7 @@
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
 					<show id="bcpg:physicoChemFormula" />
+					<show id="bcpg:isCharactPropagateUp" force="true"/>
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -3330,7 +3332,7 @@
 					<show id="bcpg:labelClaimFormula" />
 					<show id="bcpg:labelClaimRegulatoryThreshold" />
 					<show id="bcpg:isManualListItem" force="true" />
-					<show id="bcpg:isLabelClaimPropagateUp" />
+					<show id="bcpg:isCharactPropagateUp" force="true"/>
 					<show id="sec:readGroups" force="true"/>
 					<show id="rep:reportLocales" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -3392,7 +3394,7 @@
 					<show id="bcpg:labelClaimFormula" />
 					<show id="bcpg:labelClaimRegulatoryThreshold" />
 					<show id="bcpg:isManualListItem" force="true" />
-					<show id="bcpg:isLabelClaimPropagateUp" />
+					<show id="bcpg:isCharactPropagateUp" force="true"/>
 					<show id="rep:reportLocales" force="true" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
@@ -6747,6 +6749,7 @@
 					<show id="bcpg:ingListVolumeQtyPerc" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyPercWithYield" />
+					<show id="bcpg:ingListQtyPercWithSecondaryYield" />
 				    <show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
@@ -6765,6 +6768,7 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden"></field>
 					<field id="bcpg:ingListQtyPercWithYield" read-only="true"  ></field>
+					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true"   ></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />		
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -6778,6 +6782,7 @@
 					<show id="bcpg:ingListVolumeQtyPerc" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyPercWithYield" />
+					<show id="bcpg:ingListQtyPercWithSecondaryYield" />
 				<!-- 	<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
@@ -6792,6 +6797,7 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden"></field>
 					<field id="bcpg:ingListQtyPercWithYield" read-only="true"  ></field>
+					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true"   label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 				</appearance>
 			</form>

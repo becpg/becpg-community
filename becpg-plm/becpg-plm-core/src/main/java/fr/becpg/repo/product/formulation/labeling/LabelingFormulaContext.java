@@ -420,6 +420,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private boolean shouldBreakIngType = false;
 	private boolean labelingByLanguage = false;
 	private boolean force100Perc = false;
+	private boolean useSecondaryYield = false;
 
 	private Double yield = null;
 
@@ -526,7 +527,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public Double getYield() {
 		return yield;
 	}
-
+	
 	/**
 	 * <p>
 	 * Setter for the field <code>yield</code>.
@@ -538,6 +539,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public void setYield(Double yield) {
 		this.yield = yield;
 		this.ingsLabelingWithYield = true;
+	}
+	
+	
+
+	public boolean isUseSecondaryYield() {
+		return useSecondaryYield;
+	}
+
+	public void setUseSecondaryYield(boolean useSecondaryYield) {
+		this.useSecondaryYield = useSecondaryYield;
 	}
 
 	public void setGeoPlaceOfActivityFormat(String geoPlaceOfActivityFormat) {
