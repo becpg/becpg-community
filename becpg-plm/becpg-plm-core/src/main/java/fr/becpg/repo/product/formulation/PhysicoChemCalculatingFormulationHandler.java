@@ -184,4 +184,16 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 		return RequirementDataType.Physicochem;
 	}
 
+	@Override
+	protected boolean propagateModeEnable(ProductData formulatedProduct) {
+		return false;
+	}
+
+	@Override
+	protected PhysicoChemListDataItem newSimpleListDataItem(NodeRef charactNodeRef) {
+		PhysicoChemListDataItem ret = new PhysicoChemListDataItem();
+		ret.setCharactNodeRef(charactNodeRef);
+		return ret;
+	}
+
 }
