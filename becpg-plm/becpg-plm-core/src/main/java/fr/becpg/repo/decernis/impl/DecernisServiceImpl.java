@@ -92,18 +92,14 @@ public class DecernisServiceImpl implements DecernisService {
 	public DecernisServiceImpl() {
 		super();
 
-		if (logger.isTraceEnabled()) {
-			restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
+		restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
 
-			List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-			if (CollectionUtils.isEmpty(interceptors)) {
-				interceptors = new ArrayList<>();
-			}
-			interceptors.add(new DecernisRequestInterceptor());
-			restTemplate.setInterceptors(interceptors);
-		} else {
-			restTemplate = new RestTemplate();
+		List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+		if (CollectionUtils.isEmpty(interceptors)) {
+			interceptors = new ArrayList<>();
 		}
+		interceptors.add(new DecernisRequestInterceptor());
+		restTemplate.setInterceptors(interceptors);
 
 	}
 
@@ -273,7 +269,7 @@ public class DecernisServiceImpl implements DecernisService {
 										result = getRidByIngName(results, ingName);
 									}
 									if (result != null) {
-										rid = result.getString("did");
+										rid = result.get("did").toString();
 										if (logger.isDebugEnabled()) {
 											logger.debug("RID of ingredient " + params.get(PARAM_QUERY) + ": " + rid);
 										}
@@ -387,7 +383,7 @@ public class DecernisServiceImpl implements DecernisService {
 			HttpEntity<String> request = createEntity(data.toString());
 			JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
 			if (jsonObject.has("id")) {
-				return jsonObject.getString("id");
+				return jsonObject.get("id").toString();
 			}
 
 		}
@@ -475,14 +471,14 @@ public class DecernisServiceImpl implements DecernisService {
 												? analysisResults.getJSONObject("search_parameters").getString("usage")
 												: "");
 
-							String decernisID = result.getString("did");
+							String decernisID = result.get("did").toString();
 							String function = result.getString("function_name");
 							String ingredientName = result.getString("ingredient");
 							IngListDataItem ingItem = findIngredientItem(ingList, decernisID, function, ingredientName);
 							
 							if (result.getString("resultIndicator").toLowerCase().startsWith("prohibited")) {
-								String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
-										? "(" + result.getString("threshold") + ")"
+								String threshold = (result.has("threshold") && !result.get("threshold").toString().equals("None")
+										? "(" + result.get("threshold").toString() + ")"
 												: "");
 								
 								MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
@@ -491,7 +487,7 @@ public class DecernisServiceImpl implements DecernisService {
 								
 								reqCtrlList.add(reqCtrlItem);
 								if (logger.isDebugEnabled()) {
-									logger.debug("Adding prohibited ing :" + result.getString("did"));
+									logger.debug("Adding prohibited ing :" + result.get("did").toString());
 								}
 								
 							} else if (result.getString("resultIndicator").toLowerCase().startsWith("not listed")) {
@@ -500,12 +496,12 @@ public class DecernisServiceImpl implements DecernisService {
 								reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 								reqCtrlList.add(reqCtrlItem);
 								if (logger.isDebugEnabled()) {
-									logger.debug("Adding not listed ing :" + result.getString("did"));
+									logger.debug("Adding not listed ing :" + result.get("did").toString());
 								}
 							} else if (Boolean.TRUE.equals(addInfoReqCtrl)) {
 								
-								String threshold = (result.has("threshold") && !result.getString("threshold").equals("None")
-										? result.getString("threshold")
+								String threshold = (result.has("threshold") && !result.get("threshold").toString().equals("None")
+										? result.get("threshold").toString()
 												: "");
 								
 								MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PERMITTED_ING, result.getString("resultIndicator"),
@@ -515,7 +511,7 @@ public class DecernisServiceImpl implements DecernisService {
 								reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 								reqCtrlList.add(reqCtrlItem);
 								if (logger.isDebugEnabled()) {
-									logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.getString("did"));
+									logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.get("did").toString());
 								}
 								
 							}
