@@ -247,7 +247,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 			JSONObject result = tabularResults.getJSONObject(row);
 			if (result.has("did") && result.has(RESULT_INDICATOR)) {
 				
-				String decernisID = result.getString("did");
+				String decernisID = result.get("did").toString();
 				String function = result.getString("function_name");
 				String ingredientName = result.getString("ingredient");
 				IngListDataItem ingItem = findIngredientItem(ingList, decernisID, function, ingredientName);
@@ -270,7 +270,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 					
 					reqCtrlList.add(reqCtrlItem);
 					if (logger.isDebugEnabled()) {
-						logger.debug("Adding prohibited ing :" + result.getString("did"));
+						logger.debug("Adding prohibited ing :" + result.get("did").toString());
 					}
 					
 				} else if (result.getString(RESULT_INDICATOR).toLowerCase().startsWith("not listed")) {
@@ -279,7 +279,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 					reqCtrlItem.setRegulatoryCode(regulatoryCode);
 					reqCtrlList.add(reqCtrlItem);
 					if (logger.isDebugEnabled()) {
-						logger.debug("Adding not listed ing :" + result.getString("did"));
+						logger.debug("Adding not listed ing :" + result.get("did").toString());
 					}
 				} else if (Boolean.TRUE.equals(addInfoReqCtrl())) {
 					
@@ -294,7 +294,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 					reqCtrlItem.setRegulatoryCode(regulatoryCode);
 					reqCtrlList.add(reqCtrlItem);
 					if (logger.isDebugEnabled()) {
-						logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.getString("did"));
+						logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.get("did").toString());
 					}
 					
 				}
