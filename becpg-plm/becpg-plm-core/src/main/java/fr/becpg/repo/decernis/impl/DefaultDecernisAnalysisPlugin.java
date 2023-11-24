@@ -129,6 +129,11 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	@Override
 	public JSONObject postRecipeAnalysis(RegulatoryContext productContext, Set<String> countries, String usage, Integer moduleId) throws JSONException {
 
+		if (productContext.getRegulatoryRecipeId() == null) {
+			logger.error("Recipe ID is null");
+			return null;
+		}
+		
 		StringBuilder countryParam = new StringBuilder("");
 		for (String country : countries) {
 			if (isAvailableCountry(country, moduleId)) {
