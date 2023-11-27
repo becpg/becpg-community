@@ -23,11 +23,9 @@ import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.regex.Matcher;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -248,7 +246,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param simpleListDataList a {@link java.util.List} object.
 	 * @param isFormulatedProduct a boolean.
 	 */
-	protected void cleanSimpleList(List<T> simpleListDataList, boolean isFormulatedProduct, Set<T> toRemove) {
+	protected void cleanSimpleList(List<T> simpleListDataList, boolean isFormulatedProduct, List<T> toRemove) {
 
 		if ((simpleListDataList != null) && isFormulatedProduct) {
 			simpleListDataList.forEach(sl -> {
@@ -296,7 +294,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	protected void formulateSimpleList(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider simpleListQtyProvider,
 			boolean isFormulatedProduct) {
 		
-		Set<T> toRemove = new HashSet<>();
+		List<T> toRemove = new ArrayList<>();
 
 		cleanSimpleList( simpleListDataList, isFormulatedProduct, toRemove);
 		synchronizeTemplate(formulatedProduct, simpleListDataList);
@@ -313,14 +311,15 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 			}
 			
-			simpleListDataList.removeAll(toRemove);
+		   simpleListDataList.removeAll(toRemove);
+			
 			
 		}
 
 	}
 
 	protected void visitComposition(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider,
-			VariantData variant,Set<T> toRemove ) {
+			VariantData variant,List<T> toRemove ) {
 		NodeRef variantNodeRef = variant != null ? variant.getNodeRef() : null;
 
 		if (formulatedProduct.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
@@ -345,7 +344,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	private void visitCompoListChildren(ProductData formulatedProduct, Composite<CompoListDataItem> composite, List<T> simpleListDataList,
 			Double parentLossRatio, SimpleListQtyProvider qtyProvider, Map<NodeRef, List<NodeRef>> mandatoryCharacts, VariantData variant,
-			boolean isFormulatedProduct,Set<T> toRemove ) {
+			boolean isFormulatedProduct,List<T> toRemove ) {
 
 		Map<NodeRef, Double> totalQtiesInKg = new HashMap<>();
 		for (Composite<CompoListDataItem> component : composite.getChildren()) {
@@ -393,7 +392,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		}
 	}
 
-	protected void visitPackaging(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider, VariantData variant, Set<T> toRemove ) {
+	protected void visitPackaging(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider, VariantData variant, List<T> toRemove ) {
 
 		if (formulatedProduct.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
 				(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
@@ -425,7 +424,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 	}
 
-	protected void visitProcess(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider, VariantData variant, Set<T> toRemove ) {
+	protected void visitProcess(ProductData formulatedProduct, List<T> simpleListDataList, SimpleListQtyProvider qtyProvider, VariantData variant, List<T> toRemove ) {
 
 		if (formulatedProduct.hasProcessListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE),
 				(variant != null ? new VariantFilters<>(variant.getNodeRef()) : new VariantFilters<>())))) {
@@ -547,8 +546,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param variant a {@link fr.becpg.repo.variant.model.VariantData} object.
 	 * @throws fr.becpg.repo.formulation.FormulateException if any.
 	 */
-	protected void visitPart(ProductData formulatedProduct, CompositionDataItem compositionDataItem, ProductData partProduct, List<T> simpleListDataList, FormulatedQties qties,
-			Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue, Double totalQtyUsed, VariantData variant, Set<T> toRemove ) {
+	private void visitPart(ProductData formulatedProduct, CompositionDataItem compositionDataItem, ProductData partProduct, List<T> simpleListDataList, FormulatedQties qties,
+			Map<NodeRef, List<NodeRef>> mandatoryCharacts, Map<NodeRef, Double> totalQtiesValue, Double totalQtyUsed, VariantData variant, List<T> toRemove ) {
 
 		if (!(partProduct instanceof LocalSemiFinishedProductData)) {
 
@@ -955,7 +954,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 									((CompositeDataItem<T>) sl).setParent(null);
 								}
 							}
-
+							
 							break;
 						}
 					}
