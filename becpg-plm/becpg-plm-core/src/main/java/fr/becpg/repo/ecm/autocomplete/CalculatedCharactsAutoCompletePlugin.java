@@ -71,8 +71,8 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 				
 			BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().inType(PLMModel.TYPE_NUT).inType(PLMModel.TYPE_COST).inType(PLMModel.TYPE_PHYSICO_CHEM)
 					.inType(PLMModel.TYPE_LABEL_CLAIM).andPropQuery(BeCPGModel.PROP_CHARACT_NAME, prepareQuery(query)).ftsLanguage();
-			boolean includeDeleted = (boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
-			if (!includeDeleted) {
+			Boolean includeDeleted = props != null && props.containsKey(AutoCompleteService.PROP_INCLUDE_DELETED) && (Boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
+			if (!includeDeleted.booleanValue()) {
 				beCPGQueryBuilder.excludeProp(BeCPGModel.PROP_IS_DELETED, "true");
 			}
 			

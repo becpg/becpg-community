@@ -140,8 +140,8 @@ public class CertificationAutoCompletePlugin extends TargetAssocAutoCompletePlug
 	
 						BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_CERTIFICATION).parent(dataListNodeRef);
 						beCPGQueryBuilder.andPropQuery(org.alfresco.model.ContentModel.PROP_NAME, prepareQuery(query));
-						boolean includeDeleted = (boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
-						if (!includeDeleted) {
+						Boolean includeDeleted = props != null && props.containsKey(AutoCompleteService.PROP_INCLUDE_DELETED) && (Boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
+						if (!includeDeleted.booleanValue()) {
 							beCPGQueryBuilder.excludeProp(BeCPGModel.PROP_IS_DELETED, "true");
 						}
 						List<NodeRef> ret = beCPGQueryBuilder.maxResults(RepoConsts.MAX_SUGGESTIONS).list();
