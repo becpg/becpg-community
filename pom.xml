@@ -164,7 +164,7 @@
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths>
+		<!-- <sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths> -->
 		<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	    <sonar.dependencyCheck.xmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.xml</sonar.dependencyCheck.xmlReportPath>
 		<sonar.dependencyCheck.jsonReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
@@ -476,7 +476,7 @@
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.9.1.2184</version>
+				<version>3.10.0.2594</version>
 			</plugin>
 		</plugins>
 		
