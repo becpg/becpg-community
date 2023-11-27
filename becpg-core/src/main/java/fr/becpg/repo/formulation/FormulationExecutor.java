@@ -56,7 +56,7 @@ public class FormulationExecutor {
 		List<String> disabledChainIds = new ArrayList<>();
 		if (formulationChainPlugins != null) {
 			for (FormulationChainPlugin formulationChainPlugin : formulationChainPlugins) {
-				if (!formulationChainPlugin.isChainActiveOnEntity(entity.getNodeRef())) {
+				if (entity.getNodeRef() != null && !formulationChainPlugin.isChainActiveOnEntity(entity.getNodeRef())) {
 					disabledChainIds.add(formulationChainPlugin.getChainId());
 				}
 			}
