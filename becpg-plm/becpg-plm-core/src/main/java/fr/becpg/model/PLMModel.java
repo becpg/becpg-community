@@ -725,7 +725,9 @@ public interface PLMModel {
 	QName PROP_REGULATORY_ID = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryId");
 	
 	QName PROP_REGULATORY_RESULT = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryResult");
-
+	
+	QName TYPE_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryList");
+	
 	//Chemical code
 	/** Constant <code>PROP_CAS_NUMBER</code> */
 	QName PROP_CAS_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "casNumber");
