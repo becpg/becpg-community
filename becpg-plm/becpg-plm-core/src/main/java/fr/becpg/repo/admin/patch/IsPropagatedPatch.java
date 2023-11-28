@@ -20,18 +20,19 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import fr.becpg.model.QualityModel;
+import fr.becpg.model.BeCPGModel;
+import fr.becpg.model.PLMModel;
 
 /**
- * <p>QualityControlTypePatch class.</p>
+ * Update NutListPatch
  *
  * @author matthieu
  * @version $Id: $Id
  */
-public class QualityControlTypePatch extends AbstractBeCPGPatch {
+public class IsPropagatedPatch extends AbstractBeCPGPatch {
 
-	private static final Log logger = LogFactory.getLog(QualityControlTypePatch.class);
-	private static final String MSG_SUCCESS = "patch.bcpg.qualityControlTypePatch.result";
+	private static final Log logger = LogFactory.getLog(IsPropagatedPatch.class);
+	private static final String MSG_SUCCESS = "patch.bcpg.plm.IsPropagatedPatch.result";
 
 	private NodeDAO nodeDAO;
 	private PatchDAO patchDAO;
@@ -39,59 +40,22 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 	private BehaviourFilter policyBehaviourFilter;
 	private RuleService ruleService;
 
-
-	/**
-	 * <p>Setter for the field <code>ruleService</code>.</p>
-	 *
-	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object.
-	 */
-	public void setRuleService(RuleService ruleService) {
-		this.ruleService = ruleService;
-	}
-
+	private static final QName PROP_NUT_PROPAGATE = QName.createQName(BeCPGModel.BECPG_URI, "isNutPropagateUp");
+	private static final QName PROP_CLAIM_PROPAGATE = QName.createQName(BeCPGModel.BECPG_URI, "isLabelClaimPropagateUp");
+	
 	/** {@inheritDoc} */
 	@Override
 	protected String applyInternal() throws Exception {
+		apply(PLMModel.TYPE_NUT, PROP_NUT_PROPAGATE);
+		apply(PLMModel.TYPE_LABEL_CLAIM, PROP_CLAIM_PROPAGATE);
+		
+		return I18NUtil.getMessage(MSG_SUCCESS);
+	}
 
-		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<NodeRef>() {
-			final List<NodeRef> result = new ArrayList<>();
+	private void apply(QName sourceType, QName prop) {
+		AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
 
-			final long maxNodeId = getNodeDAO().getMaxNodeId();
-
-			long minSearchNodeId = 0;
-
-			final Pair<Long, QName> val = getQnameDAO().getQName(QualityModel.TYPE_CONTROL_CHARACT);
-
-			@Override
-			public int getTotalEstimatedWorkSize() {
-				return result.size();
-			}
-
-			@Override
-			public Collection<NodeRef> getNextWork() {
-				if (val != null) {
-					Long typeQNameId = val.getFirst();
-
-					result.clear();
-
-					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
-						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, minSearchNodeId + INC);
-
-						for (Long nodeid : nodeids) {
-							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
-							if (!status.isDeleted()) {
-								result.add(status.getNodeRef());
-							}
-						}
-						minSearchNodeId = minSearchNodeId + INC;
-					}
-				}
-
-				return result;
-			}
-		};
-
-		BatchProcessWorkProvider<NodeRef> workProvider2 = new BatchProcessWorkProvider<NodeRef>() {
+		BatchProcessWorkProvider<NodeRef> workProvider = new BatchProcessWorkProvider<>() {
 			final List<NodeRef> result = new ArrayList<>();
 
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
@@ -99,18 +63,18 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 			long minSearchNodeId = 0;
 			long maxSearchNodeId = INC;
 
-			final Pair<Long, QName> val = getQnameDAO().getQName(QualityModel.ASPECT_CONTROL_LIST);
+			final Pair<Long, QName> val = getQnameDAO().getQName(sourceType);
 
 			@Override
 			public int getTotalEstimatedWorkSize() {
 				return result.size();
 			}
-			
+
 			@Override
 			public long getTotalEstimatedWorkSizeLong() {
 				return getTotalEstimatedWorkSize();
 			}
-			
+
 			@Override
 			public Collection<NodeRef> getNextWork() {
 				if (val != null) {
@@ -120,7 +84,7 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 
 					while (result.isEmpty() && (minSearchNodeId < maxNodeId)) {
 
-						List<Long> nodeids = getPatchDAO().getNodesByAspectQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
+						List<Long> nodeids = getPatchDAO().getNodesByTypeQNameId(typeQNameId, minSearchNodeId, maxSearchNodeId);
 
 						for (Long nodeid : nodeids) {
 							NodeRef.Status status = getNodeDAO().getNodeIdStatus(nodeid);
@@ -137,18 +101,14 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 			}
 		};
 
-		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("QualityControlTypePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
+		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ErrorLogPatch", transactionService.getRetryingTransactionHelper(),
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
-		BatchProcessor<NodeRef> batchProcessor2 = new BatchProcessor<>("QualityControlTypePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider2, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 500);
-
-		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
+		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
 			@Override
 			public void afterProcess() throws Throwable {
 				ruleService.enableRules();
-
 			}
 
 			@Override
@@ -163,33 +123,24 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 
 			@Override
 			public void process(NodeRef dataListNodeRef) throws Throwable {
+
+				AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
+				policyBehaviourFilter.disableBehaviour();
+
 				if (nodeService.exists(dataListNodeRef)) {
 					AuthenticationUtil.setAdminUserAsFullyAuthenticatedUser();
-					policyBehaviourFilter.disableBehaviour();
-					String type = (String) nodeService.getProperty(dataListNodeRef, QualityModel.PROP_CONTROL_CHARACT_TYPE);
-					if ((type != null) && !type.isEmpty() && !type.startsWith("bcpg_")) {
-						nodeService.setProperty(dataListNodeRef, QualityModel.PROP_CONTROL_CHARACT_TYPE, type.toLowerCase());
-						if("Poids".equals(type)){
-							nodeService.setProperty(dataListNodeRef, QualityModel.PROP_CONTROL_CHARACT_TYPE, "weight");
-						}
+					Boolean isPropagated = (Boolean) nodeService.getProperty(dataListNodeRef, prop);
+					if(isPropagated!=null) {
+						nodeService.setProperty(dataListNodeRef, PLMModel.PROP_IS_CHARACT_PROPAGATE_UP, isPropagated);
 					}
-
-					type = (String) nodeService.getProperty(dataListNodeRef, QualityModel.PROP_CL_TYPE);
-
-					if ((type != null) && !type.isEmpty() && !type.startsWith("bcpg_")) {
-						nodeService.setProperty(dataListNodeRef, QualityModel.PROP_CL_TYPE, type.toLowerCase());
-					}
-
 				} else {
 					logger.warn("dataListNodeRef doesn't exist : " + dataListNodeRef);
 				}
 			}
 
 		};
-		batchProcessor.processLong(worker, true);
-		batchProcessor2.processLong(worker, true);
 
-		return I18NUtil.getMessage(MSG_SUCCESS);
+		batchProcessor.processLong(worker, true);
 
 	}
 
@@ -256,4 +207,21 @@ public class QualityControlTypePatch extends AbstractBeCPGPatch {
 		this.policyBehaviourFilter = policyBehaviourFilter;
 	}
 
+	/**
+	 * <p>Getter for the field <code>ruleService</code>.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.rule.RuleService} object.
+	 */
+	public RuleService getRuleService() {
+		return ruleService;
+	}
+
+	/**
+	 * <p>Setter for the field <code>ruleService</code>.</p>
+	 *
+	 * @param ruleService a {@link org.alfresco.service.cmr.rule.RuleService} object.
+	 */
+	public void setRuleService(RuleService ruleService) {
+		this.ruleService = ruleService;
+	}
 }
