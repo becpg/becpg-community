@@ -126,7 +126,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 			taskQuery.setActive(null);
 			taskQuery.setProcessId(workflowInstanceId);
 			taskQuery.setTaskState(state);
-			taskQuery.setOrderBy(new OrderBy[] { OrderBy.TaskDue_Asc });
+			taskQuery.setOrderBy(new OrderBy[] { OrderBy.TaskCreated_Asc});
 
 			if (authority != null) {
 				taskQuery.setActorId(authority);
@@ -166,7 +166,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 
 				boolean orderAsc = (dir == null) || dir.equalsIgnoreCase("asc");
 
-				Comparator<WorkflowTask> taskComparator = new WorkflowTaskDueAscComparator();
+				Comparator<WorkflowTask> taskComparator =  new WorkflowDateComparator(WorkflowModel.PROP_START_DATE, false);
 				if (sortProp != null) {
 					if (QNAME_INITIATOR.equals(sortProp)) {
 						taskComparator = new WorkflowInitiatorComparator(orderAsc);
@@ -191,7 +191,7 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 				WorkflowTaskQuery taskQuery = new WorkflowTaskQuery();
 				taskQuery.setTaskState(state);
 				taskQuery.setActive(null);
-				taskQuery.setOrderBy(new OrderBy[] { OrderBy.TaskDue_Asc });
+				taskQuery.setOrderBy(new OrderBy[] { OrderBy.TaskCreated_Asc });
 				allTasks = workflowService.queryTasks(taskQuery, false);
 			}
 		}
@@ -259,17 +259,17 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 
 		if (parameter != null) {
 			switch (parameter) {
-			case "id":
+			case "priority":
 				return WorkflowModel.PROP_PRIORITY;
-			case "title":
+			case "description":
 				return WorkflowModel.PROP_DESCRIPTION;
-			case "state":
+			case "startDate":
 				return WorkflowModel.PROP_START_DATE;
-			case "path":
+			case "dueDate":
 				return WorkflowModel.PROP_DUE_DATE;
 			case "completionDate":
 				return WorkflowModel.PROP_COMPLETION_DATE;
-			case "description":
+			case "owner":
 				return QNAME_INITIATOR;
 			default:
 				break;
@@ -440,24 +440,24 @@ public class BeCPGTaskInstancesGet extends TaskInstancesGet {
 		return result;
 	}
 
-	/**
-	 * Comparator to sort workflow tasks by due date in ascending order.
-	 */
-	class WorkflowTaskDueAscComparator implements Comparator<WorkflowTask> {
-		@Override
-		public int compare(WorkflowTask o1, WorkflowTask o2) {
-			Date date1 = (Date) o1.getProperties().get(WorkflowModel.PROP_DUE_DATE);
-			Date date2 = (Date) o2.getProperties().get(WorkflowModel.PROP_DUE_DATE);
-
-			long time1 = date1 == null ? Long.MAX_VALUE : date1.getTime();
-			long time2 = date2 == null ? Long.MAX_VALUE : date2.getTime();
-
-			long result = time1 - time2;
-
-			return (result > 0) ? 1 : (result < 0 ? -1 : 0);
-		}
-
-	}
+//	/**
+//	 * Comparator to sort workflow tasks by due date in ascending order.
+//	 */
+//	class WorkflowTaskDueAscComparator implements Comparator<WorkflowTask> {
+//		@Override
+//		public int compare(WorkflowTask o1, WorkflowTask o2) {
+//			Date date1 = (Date) o1.getProperties().get(WorkflowModel.PROP_DUE_DATE);
+//			Date date2 = (Date) o2.getProperties().get(WorkflowModel.PROP_DUE_DATE);
+//
+//			long time1 = date1 == null ? Long.MAX_VALUE : date1.getTime();
+//			long time2 = date2 == null ? Long.MAX_VALUE : date2.getTime();
+//
+//			long result = time1 - time2;
+//
+//			return (result > 0) ? 1 : (result < 0 ? -1 : 0);
+//		}
+//
+//	}
 
 	private class WorkflowDateComparator implements Comparator<WorkflowTask> {
 
