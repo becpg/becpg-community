@@ -10,7 +10,6 @@
    </views>     
    
    <filters>
-      <filter type="All" />
       <filter type="Planned" />
       <filter type="InProgress" />
       <filter type="OnHold" />
