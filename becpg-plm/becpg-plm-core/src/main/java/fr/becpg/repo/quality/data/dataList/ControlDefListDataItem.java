@@ -79,10 +79,13 @@ public class ControlDefListDataItem extends ControlListDataItem {
 	}
 
 	
-	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "ControlDefListDataItem [type=" + type + ", mini=" + mini + ", maxi=" + maxi + ", required=" + required + ", method=" + method + ", characts=" + characts + "]";
+		return "ControlDefListDataItem [getType()=" + getType() + ", getMini()=" + getMini() + ", getMaxi()=" + getMaxi() + ", getRequired()="
+				+ getRequired() + ", getSampleId()=" + getSampleId() + ", getValue()=" + getValue() + ", getTextCriteria()=" + getTextCriteria()
+				+ ", getTarget()=" + getTarget() + ", getUnit()=" + getUnit() + ", getState()=" + getState() + ", getTemperature()="
+				+ getTemperature() + ", getMethod()=" + getMethod() + ", getControlPoint()=" + getControlPoint() + ", getTimePeriod()="
+				+ getTimePeriod() + "]";
 	}
 	
 	

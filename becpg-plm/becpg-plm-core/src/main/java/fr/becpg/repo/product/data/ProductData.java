@@ -84,7 +84,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private NodeRef hierarchy2;
 	private MLText legalName;
 	private MLText pluralLegalName;
-	private String title;
+	private MLText title;
 	private String erpCode;
 	private SystemState state = SystemState.Simulation;
 	private ProductUnit unit = ProductUnit.kg;
@@ -645,8 +645,9 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
+	@AlfMlText
 	@AlfQname(qname = "cm:title")
-	public String getTitle() {
+	public MLText getTitle() {
 		return title;
 	}
 
@@ -655,7 +656,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 *
 	 * @param title a {@link java.lang.String} object.
 	 */
-	public void setTitle(String title) {
+	public void setTitle(MLText title) {
 		this.title = title;
 	}
 

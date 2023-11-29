@@ -233,6 +233,20 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			return propValue(entity, qname);
 
 		}
+		
+
+		/**
+		 * Helper @beCPG.propMLValue($mltext, $locale)
+		 *
+		 * get mlText locale value
+		 *
+		 * @param mlText
+		 * @param locale
+		 * @return value being set
+		 */
+		public String propMLValue(MLText mlText, String locale) {
+			return MLTextHelper.getClosestValue(mlText, MLTextHelper.parseLocale(locale));
+		}
 
 		/**
 		 * Helper @beCPG.setValue($entity, $qname, $value)
@@ -475,7 +489,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param mlText
 		 * @param locale
 		 * @param value
-		 * @return value beeing set
+		 * @return value being set
 		 */
 		public MLText updateMLText(MLText mlText, String locale, String value) {
 
@@ -491,6 +505,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 			return mlText;
 		}
+		
 
 		/**
 		 * @beCPG.runScript($nodeRef)

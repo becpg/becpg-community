@@ -9,11 +9,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -37,6 +39,7 @@ import fr.becpg.repo.entity.catalog.EntityCatalogServiceImpl;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
@@ -138,7 +141,10 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 			assertTrue(missingFieldsString.contains("formula2.missingKey"));
 
 			sampleProduct.setUnit(ProductUnit.L);
-			sampleProduct.setTitle("Sample");
+			MLText title = new MLText();
+			title.addValue(Locale.getDefault(), "Sample");
+			
+			sampleProduct.setTitle(title);
 			sampleProduct.setLegalName("Test");
 			
 			alfrescoRepository.save(sampleProduct);
@@ -270,7 +276,10 @@ public class EntityCatalogIT extends PLMBaseTestCase {
 
 		inWriteTx(() -> {
 
-			sampleProduct.setTitle("Test new title");
+			MLText title = new MLText();
+			title.addValue(Locale.getDefault(),"Test new title");
+			
+			sampleProduct.setTitle(title);
 
 			return alfrescoRepository.save(sampleProduct);
 

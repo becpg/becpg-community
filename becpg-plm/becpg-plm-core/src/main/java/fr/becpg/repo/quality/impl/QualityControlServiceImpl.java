@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
@@ -391,7 +392,7 @@ public class QualityControlServiceImpl implements QualityControlService {
 						Double mini = null;
 						Double maxi = null;
 						String unit = null;
-						String textCriteria = null;
+						MLText textCriteria = null;
 
 						if (productData != null && cdl.getType().startsWith("bcpg_")) {
 
