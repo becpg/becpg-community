@@ -71,6 +71,8 @@
 					<show id="bcpg:regulatoryState" />
 					<show id="bcpg:regulatoryValidationDate" />
 					<show id="bcpg:regulatoryRecipeId" />
+					<show id="bcpg:limitingIngredient" />
+					<show id="bcpg:regulatoryMaximumDosage" />
 					<show id="entity_bcpg:regulatoryUsageRef_bcpg:regulatoryUsage@regulatoryDatagrid" />
 					<show id="entity_bcpg:regulatoryCountries_bcpg:geoOrigin@regulatoryDatagrid" />
 				</field-visibility>
