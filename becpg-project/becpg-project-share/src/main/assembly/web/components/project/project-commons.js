@@ -322,14 +322,14 @@
 			 ret += '<span class="task-status task-status-' + task["itemData"]["prop_pjt_tlState"].value +classGroup+subProjectClass+ '">';
 		  }          
 
-          var text = task["itemData"]["prop_pjt_tlTaskName"].displayValue;
+          var text = $html(task["itemData"]["prop_pjt_tlTaskName"].displayValue);
           
           if(task.permissions.userAccess.edit ){
         	  
         	  if(size && size > -1 && text.length>size){
         		  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef 
         		  + ' text-tooltip se" data-tooltip="'+ beCPG.util.encodeAttr(text) +'"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
-		          .msg("link.title.task-edit") + '" >' + Alfresco.util.encodeHTML(text.substring(0,size).trim())+"..." +"</span>";
+		          .msg("link.title.task-edit") + '" >' + $html(text.substring(0,size).trim())+"..." +"</span>";
         	  } else {
         		  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '"><a href="" class="theme-color-1 ' + TASK_EVENTCLASS + '" title="' + this
 		          .msg("link.title.task-edit") + '" >' + text +"</span>";
@@ -338,7 +338,7 @@
         	  if(size && size > -1 && text.length>size){
         		   ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef 
     	    		    + ' text-tooltip se" data-tooltip="'+ beCPG.util.encodeAttr(text) +'"><span>'
-    	    		  +Alfresco.util.encodeHTML(text.substring(0,size).trim())+"..."+'</span></span>';
+    	    		  +$html(text.substring(0,size).trim())+"..."+'</span></span>';
         	  } else {
 	        	  ret += '<span class="node-' + (subProject!=null ? subProject.value : task.nodeRef) + '|' + entityNodeRef + '">' + text +"</span>";
         	  }
@@ -358,7 +358,7 @@
 		         	 if(duration.length>0){
 		         		 duration+=" - ";
 		         	 }
-		         	 duration += '<span class="red" title="' + this.msg("overdue.title") + '">' + Alfresco.util.encodeHTML(task["itemData"]["prop_pjt_tlRealDuration"].value - task["itemData"]["prop_pjt_tlDuration"].value)+" "+this
+		         	 duration += '<span class="red" title="' + this.msg("overdue.title") + '">' + $html(task["itemData"]["prop_pjt_tlRealDuration"].value - task["itemData"]["prop_pjt_tlDuration"].value)+" "+this
 		             .msg("overdue.day")+ '</span>';
 		         }
 		} 
@@ -536,7 +536,7 @@
           
           if(size && displayTitle!=null && displayTitle.length>size){
     		  ret += '<span class="project-title text-tooltip se '+light+' project-status-'+state+'" data-tooltip="'+ beCPG.util.encodeAttr(displayTitle)+'" >';
-    		  displayTitle = Alfresco.util.encodeHTML(displayTitle.substring(0,size).trim())+"...";
+    		  displayTitle = $html(displayTitle.substring(0,size).trim())+"...";
     	  } else {
     	    	ret += '<span class="project-title '+light+' project-status-'+state+'"  >';
       	  }

@@ -6,6 +6,7 @@ package fr.becpg.repo.product.formulation;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
@@ -39,6 +40,13 @@ public class LCACalculatingFormulationHandler extends AbstractCostCalculatingFor
 	@Override
 	protected Class<LCAListDataItem> getInstanceClass() {
 		return LCAListDataItem.class;
+	}
+	
+	@Override
+	protected LCAListDataItem newSimpleListDataItem(NodeRef charactNodeRef) {
+		LCAListDataItem lcaListDataItem = new LCAListDataItem();
+		lcaListDataItem.setCharactNodeRef(charactNodeRef);
+		return lcaListDataItem;
 	}
 
 	@Override

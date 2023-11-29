@@ -41,7 +41,11 @@
    "type": "${item.type}",
    "mimetype": "${node.mimetype!""}",
    "isFolder": <#if item.linkedNode??>${item.linkedNode.isContainer?string}<#else>${node.isContainer?string}</#if>,
-   "isLink": ${(item.isLink!false)?string},
+<#if item.type == "bcpg:externalLink">   
+    "externalLinkUrl": "${node.properties["bcpg:externalLinkUrl"]!""}",
+    "externalLinkTarget":"${node.properties["bcpg:externalLinkTarget"]!""}",
+</#if>   
+   "isLink": ${(item.isLink!false)?string},   
 <#if item.linkedNode??>
    "linkedNodeRef": "${item.linkedNode.nodeRef?string}",
 </#if>

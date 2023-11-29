@@ -174,22 +174,22 @@ public class QualityControlServiceImpl implements QualityControlService {
 				Date sampleDateTime = (batchStart != null ? batchStart : new Date());
 				List<Date> sampleDates = new ArrayList<>();
 				Map<Date, String> sampleDateText = new HashMap<>();
-				Calendar cal = Calendar.getInstance();
 
 				// create samples to take
 
-				if(freqText != null && !freqText.isEmpty()){
+				if(freqText != null && !freqText.isBlank()){
 					String[] freqs = freqText.split(",");
 					for(String freq : freqs){
 						freq = freq.trim().toLowerCase();
-						Integer freqDigit = null;
+						Double freqDigit = null;
 						String freqUnit = null;
 						Integer timeToAdd = null;
-						Pattern p = Pattern.compile("[0-9]+[dmwy]+");
+						QName referenceDurationProp = null;
+						Pattern p = Pattern.compile("([0-9]+(\\.[0-9]+)?)([A-Za-z]+)");
 						Matcher m = p.matcher(freq);
-						if (m.find()) {
-							freqDigit = Integer.parseInt(freq.replaceAll("[^0-9]", ""));
-							freqUnit = freq.replaceAll("[0-9]", "");
+						if (m.matches()) {
+							freqDigit = Double.parseDouble(m.group(1));
+							freqUnit = m.group(3);
 							switch(freqUnit) {
 							case "d":
 								timeToAdd = Calendar.DAY_OF_YEAR;
@@ -203,15 +203,39 @@ public class QualityControlServiceImpl implements QualityControlService {
 							case "y":
 								timeToAdd = Calendar.YEAR;
 								break;
+							case "bbd":
+								referenceDurationProp = PLMModel.PROP_BEST_BEFORE_DATE;
+								break;
+							case "ubd":
+								referenceDurationProp = PLMModel.PROP_USE_BY_DATE;
+								break;
+							case "pao":
+								referenceDurationProp = PLMModel.PROP_PERIOD_AFTER_OPENING;
+								break;
 							default:
 								break;
 							}
-							if (sampleDateTime != null && freqDigit != null && timeToAdd != null) {
+							if (sampleDateTime != null && freqDigit != null && freqUnit != null) {
 								logger.debug("Update sample time add: " + freqDigit + " " + freqUnit + " to " + sampleDateTime);
-								cal.setTime(sampleDateTime);
-								cal.add(timeToAdd, freqDigit);
-								sampleDates.add(cal.getTime());
-								sampleDateText.put(cal.getTime(), freq.toUpperCase());
+								Date newDate = null;
+								if (timeToAdd != null) {
+									Calendar cal = Calendar.getInstance();
+									cal.setTime(sampleDateTime);
+									cal.add(timeToAdd, freqDigit.intValue());
+									newDate = cal.getTime();
+								} else if (referenceDurationProp != null) {
+									Integer referenceDuration = (Integer) nodeService.getProperty(qcNodeRef, referenceDurationProp);
+									if (referenceDuration == null && qualityControlData.getProduct() != null) {
+										referenceDuration = (Integer) nodeService.getProperty(qualityControlData.getProduct(), referenceDurationProp);
+									}
+									if (referenceDuration != null) {
+										newDate = new Date((long) (sampleDateTime.getTime() + freqDigit * referenceDuration * 24 * 3600 * 1000));
+									}
+								}
+								if (newDate != null) {
+									sampleDates.add(newDate);
+									sampleDateText.put(newDate, freq.toUpperCase());
+								}
 							}
 						}
 					}					

@@ -19,7 +19,6 @@ import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.annotation.MultiLevelDataList;
-import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
@@ -35,7 +34,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 @AlfQname(qname = "bcpg:compoList")
 @MultiLevelDataList
 public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
-		implements CompositeDataItem<CompoListDataItem>, CompositionDataItem, SimpleCharactDataItem, AspectAwareDataItem {
+		implements CompositeDataItem<CompoListDataItem>, CompositionDataItem, SimpleCharactDataItem {
 
 	/**
 	 * 

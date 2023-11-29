@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
@@ -45,6 +46,12 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	private static final String MESSAGE_FORBIDDEN_ING = "message.formulate.ingredient.forbidden";
 
 	AlfrescoRepository<RepositoryEntity> alfrescoRepository;
+	
+	private NodeService nodeService;
+	
+	public void setNodeService(NodeService nodeService) {
+		this.nodeService = nodeService;
+	}
 
 	/**
 	 * <p>
@@ -130,8 +137,12 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 													fil.getReqMessage(), ingListDataItem.getIng(), new ArrayList<>(),
 													RequirementDataType.Specification);
 										reqCtrlMap.add(reqCtrl);
-
-										if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
+										
+										String regulatoryId = extractRegulatoryId(fil, specification);
+										
+										if (regulatoryId != null && !regulatoryId.isBlank()) {
+											reqCtrl.setRegulatoryCode(regulatoryId);
+										} else if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
 											reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
 										} else {
 											reqCtrl.setRegulatoryCode(specification.getName());
@@ -206,6 +217,22 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 		return reqCtrlMap;
 
+	}
+	
+	private String extractRegulatoryId(ForbiddenIngListDataItem fil, ProductSpecificationData specification) {
+		if (fil.getRegulatoryCountries() != null && !fil.getRegulatoryCountries().isEmpty()) {
+			String countryCode = (String) nodeService.getProperty(fil.getRegulatoryCountries().get(0), PLMModel.PROP_REGULATORY_CODE);
+			if (fil.getRegulatoryUsages() != null && !fil.getRegulatoryUsages().isEmpty()) {
+				return countryCode + " - " + (String) nodeService.getProperty(fil.getRegulatoryUsages().get(0), PLMModel.PROP_REGULATORY_CODE);
+			}
+		}
+		if (specification.getRegulatoryCountries() != null && !specification.getRegulatoryCountries().isEmpty()) {
+			String countryCode = (String) nodeService.getProperty(specification.getRegulatoryCountries().get(0), PLMModel.PROP_REGULATORY_CODE);
+			if (specification.getRegulatoryUsages() != null && !specification.getRegulatoryUsages().isEmpty()) {
+				return countryCode + " - " + (String) nodeService.getProperty(specification.getRegulatoryUsages().get(0), PLMModel.PROP_REGULATORY_CODE);
+			}
+		}
+		return null;
 	}
 
 	/**

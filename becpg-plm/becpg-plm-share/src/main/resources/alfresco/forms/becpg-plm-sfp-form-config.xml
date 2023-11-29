@@ -173,7 +173,7 @@
           <field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
               </control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
               </control-param>
@@ -560,7 +560,7 @@
           </field>
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
@@ -720,6 +720,7 @@
 							</control-param>
               <control-param name="multiple">true</control-param>
          	  <control-param name="forceEditable">true</control-param>
+         	  <control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:productState" mandatory="false" read-only="false" set="2-col-product-criteria">
@@ -730,8 +731,9 @@
           </field>
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="2-col-product-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
               </control-param>
+              <control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:code" mandatory="false" read-only="false" set="2-col-product-criteria"/>
@@ -740,16 +742,23 @@
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="ds">becpg/autocomplete/product?classNames=bcpg:packagingMaterial,bcpg:packagingKit</control-param>
               <control-param name="forceEditable">true</control-param>
+              <control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:productCollections" mandatory="false" read-only="false" set="2-col-product-criteria">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+            	<control-param name="isSearch">true</control-param>
+            </control>
           </field>
           <field id="bcpg:plants" mandatory="false" read-only="false" set="2-col-product-criteria">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+            	<control-param name="isSearch">true</control-param>
+            </control>
           </field>
           <field id="bcpg:productGeoOrigin" mandatory="false" read-only="false" set="2-col-product-criteria">
-            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl"/>
+            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
+            	<control-param name="isSearch">true</control-param>
+            </control>
           </field>
           <set id="1-col-product-criteria" parent="product-criteria"/>
           <field id="cm:modified" mandatory="false" read-only="false" set="2-col-product-criteria">
@@ -774,37 +783,44 @@
           <field id="bcpg:advAlVolAnd" mandatory="false" read-only="false" set="allergens-claims">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:advAlVolNot" mandatory="false" read-only="false" set="allergens-claims">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:advAlInVolAnd" mandatory="false" read-only="false" set="allergens-claims">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:advAlInVolNot" mandatory="false" read-only="false" set="allergens-claims">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:advLclClaimAnd" mandatory="false" read-only="false" set="allergens-claims">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:advLclClaimNot" mandatory="false" read-only="false" set="allergens-claims">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <set appearance="bordered-panel" id="ings-criteria" label-id="becpg.forms.set.ings-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="bcpg:advIlIngAnd" mandatory="false" read-only="false" set="ings-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:ingListQtyPerc" mandatory="false" read-only="false" set="ings-criteria">
@@ -815,27 +831,32 @@
           <field id="bcpg:advIlIngNot" mandatory="false" read-only="false" set="ings-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:ingListGeoOrigin" mandatory="false" read-only="false" set="ings-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:advIlGeoOriginNot" mandatory="false" read-only="false" set="ings-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:ingListBioOrigin" mandatory="false" read-only="false" set="ings-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <set appearance="bordered-panel" id="costs-criteria" label-id="becpg.forms.set.costs-criteria.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
           <field id="bcpg:costListCost" mandatory="false" read-only="false" set="costs-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:costListValue" mandatory="false" read-only="false" set="costs-criteria">
@@ -847,6 +868,7 @@
           <field id="bcpg:advNlNut1" mandatory="false" read-only="false" set="nuts-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:advNlValue1" mandatory="false" read-only="false" set="nuts-criteria">
@@ -857,6 +879,7 @@
           <field id="bcpg:advNlNut2" mandatory="false" read-only="false" set="nuts-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:advNlValue2" mandatory="false" read-only="false" set="nuts-criteria">
@@ -867,6 +890,7 @@
           <field id="bcpg:advNlNut3" mandatory="false" read-only="false" set="nuts-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:advNlValue3" mandatory="false" read-only="false" set="nuts-criteria">
@@ -878,6 +902,7 @@
           <field id="bcpg:advPclPhysicoChem1" mandatory="false" read-only="false" set="physicoChems-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:advPclValue1" mandatory="false" read-only="false" set="physicoChems-criteria">
@@ -888,6 +913,7 @@
           <field id="bcpg:advPclPhysicoChem2" mandatory="false" read-only="false" set="physicoChems-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
             	<control-param name="forceEditable">true</control-param>
+            	<control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:advPclValue2" mandatory="false" read-only="false" set="physicoChems-criteria">
@@ -973,7 +999,7 @@
           </field>
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
@@ -1082,7 +1108,7 @@
           </field>
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
@@ -1185,7 +1211,7 @@
           <field id="bcpg:erpCode" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:entityTplRef" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect
+              <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:semiFinishedProduct?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
               <control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>

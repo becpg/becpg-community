@@ -138,6 +138,8 @@
 					<show id="bcpg:formulatedDate" force="true" for-mode="view" />
 					<!-- local security rule -->
 					<show id="sec:securityRef" />	
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 				<appearance>
 				
@@ -164,6 +166,12 @@
 						</control>
 					</field>
 					
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -180,6 +188,8 @@
 					<show id="bcpg:productSpecifications" force="true" />
 					<show id="bcpg:specCompatibilityTpls" force="true" />
 					<show id="bcpg:specCompatibilityJobOn" force="true" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:productSpecifications" help-id="becpg.forms.help.productSpecifications" >
@@ -195,6 +205,12 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
+					</field>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -927,6 +943,7 @@
 							</control-param>
 							<control-param name="multiple">true</control-param>
 							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productState" set="mainInfo">
@@ -940,6 +957,7 @@
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingKit?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					
@@ -1824,7 +1842,7 @@
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
 					
-					<!-- <show id="bcpg:isNutPropagateUp" /> -->
+					<show id="bcpg:isCharactPropagateUp" force="true"/>
 					<show id="rep:reportLocales" force="true" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
@@ -1887,7 +1905,7 @@
 					<show id="bcpg:nutUL" />
 					<show id="bcpg:nutFormula" />
 				
-					<!-- <show id="bcpg:isNutPropagateUp" /> -->
+					<show id="bcpg:isCharactPropagateUp" force="true"/>
 					<show id="rep:reportLocales" force="true" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
@@ -2155,6 +2173,7 @@
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
 					<show id="bcpg:physicoChemFormula" />
+				    <show id="bcpg:isCharactPropagateUp" force="true"/>
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -2194,6 +2213,7 @@
 					<show id="bcpg:physicoChemFormulated" />
 					<show id="bcpg:physicoChemFormulatedFromVol" />
 					<show id="bcpg:physicoChemFormula" />
+					<show id="bcpg:isCharactPropagateUp" force="true"/>
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -3328,7 +3348,7 @@
 					<show id="bcpg:labelClaimFormula" />
 					<show id="bcpg:labelClaimRegulatoryThreshold" />
 					<show id="bcpg:isManualListItem" force="true" />
-					<show id="bcpg:isLabelClaimPropagateUp" />
+					<show id="bcpg:isCharactPropagateUp" force="true"/>
 					<show id="sec:readGroups" force="true"/>
 					<show id="rep:reportLocales" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -3390,7 +3410,7 @@
 					<show id="bcpg:labelClaimFormula" />
 					<show id="bcpg:labelClaimRegulatoryThreshold" />
 					<show id="bcpg:isManualListItem" force="true" />
-					<show id="bcpg:isLabelClaimPropagateUp" />
+					<show id="bcpg:isCharactPropagateUp" force="true"/>
 					<show id="rep:reportLocales" force="true" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
@@ -3973,6 +3993,7 @@
 							</control-param>
 							<control-param name="multiple">true</control-param>
 							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:supplierState" mandatory="false" read-only="false" set="2-col-product-criteria" >
@@ -4219,6 +4240,7 @@
 							</control-param>
 							<control-param name="multiple">true</control-param>
 							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:clientHierarchy2">
@@ -4228,6 +4250,7 @@
 							<control-param name="parent">bcpg_clientHierarchy1
 							</control-param>
 							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:clientState">
@@ -4586,6 +4609,7 @@
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
 							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="bcpg:productCollectionState"  set="mainInfo">
@@ -4599,6 +4623,7 @@
 							<control-param name="ds">becpg/autocomplete/linkedvalue/values/System/ProductHierarchy/bcpg:entityLists/productCollection_Hierarchy</control-param>
 							<control-param name="parent">bcpg_productCollectionHierarchy1</control-param>
 							<control-param name="forceEditable">true</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="cm:description" set="mainInfo">
@@ -6381,7 +6406,7 @@
 					<show id="bcpg:illGrp" />
 					<show id="bcpg:illValue" />
 					<show id="bcpg:illManualValue" />
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -6740,6 +6765,7 @@
 					<show id="bcpg:ingListVolumeQtyPerc" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyPercWithYield" />
+					<show id="bcpg:ingListQtyPercWithSecondaryYield" />
 				    <show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
@@ -6758,6 +6784,7 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden"></field>
 					<field id="bcpg:ingListQtyPercWithYield" read-only="true"  ></field>
+					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true"   ></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 					<field id="dataList_bcpg:reqCtrlList" label-id="hidden" />		
 					<field id="fm:commentCount" label="hidden" read-only="true" />
@@ -6771,6 +6798,7 @@
 					<show id="bcpg:ingListVolumeQtyPerc" />
 					<show id="bcpg:ingListQtyPerc" />
 					<show id="bcpg:ingListQtyPercWithYield" />
+					<show id="bcpg:ingListQtyPercWithSecondaryYield" />
 				<!-- 	<show id="bcpg:ingListIsGMO" />
 					<show id="bcpg:ingListIsIonized" />
 					<show id="bcpg:ingListIsProcessingAid" />
@@ -6785,6 +6813,7 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden"></field>
 					<field id="bcpg:ingListQtyPercWithYield" read-only="true"  ></field>
+					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true"   label="hidden"></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 				</appearance>
 			</form>
@@ -6988,7 +7017,7 @@
 					<show id="bcpg:mblTextCriteria" />
 					<show id="bcpg:mblControlStep" />
 					<show id="bcpg:mblMethod" />
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -7140,7 +7169,7 @@
 					<show id="bcpg:nutListMethod" />
 					<show id="bcpg:nutListMeasurementPrecision" />
 					<show id="bcpg:parentLevel" />
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true"/>
 					<show id="bcpg:glopTarget" force ="true"/>
 				</field-visibility>
 
@@ -7392,6 +7421,7 @@
 					<show id="bcpg:organoListOrgano" />
 					<show id="bcpg:organoListValue" />
 					<show id="bcpg:organoListMethod" />
+					<show id="rep:reportKinds" force="true"/>
 				</field-visibility>
 
 				<appearance>
@@ -7423,6 +7453,7 @@
 					<show id="bcpg:organoListValue" />
 					<show id="bcpg:organoListMethod" />
 					<show id="fm:commentCount" force="true" />
+					<show id="rep:reportKinds" force="true"/>
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
@@ -7508,7 +7539,7 @@
 					<show id="bcpg:pclMaxi" />
 					<show id="bcpg:pclTextCriteria" />
 					<show id="bcpg:pclMethod" />
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true"/>
 					<show id="bcpg:glopTarget" force ="true"/>
 				</field-visibility>
 
@@ -7693,6 +7724,8 @@
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -7737,6 +7770,12 @@
 					<field id="bcpg:filBioOrigins">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -7806,6 +7845,8 @@
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
@@ -7813,6 +7854,12 @@
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -7832,6 +7879,8 @@
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -7876,6 +7925,12 @@
 					<field id="bcpg:filBioOrigins">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -8319,7 +8374,7 @@
 				<!-- <show id="bcpg:certificateDate" force="true" />  -->	
 					<show id="bcpg:lclComments"  />
 					<show id="bcpg:isManualListItem" force="true" />
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true" />
 				</field-visibility>
 				<appearance>
 				   <field id="bcpg:lclComments">

@@ -143,6 +143,32 @@
 			</parameter>
 		</constraint>
 		
+		
+		<constraint name="bcpg:externalLinkTargets" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>_self</value>
+					<value>_blank</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		
+		<constraint name="bcpg:externalLinkMediaTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>html</value>
+					<value>file</value>
+					<value>folder</value>
+					<value>img</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		
+		
+
+		
 	</constraints>
 	
 	<types>
@@ -462,9 +488,46 @@
 				<property name="bcpg:isDefaultVariant">
 					<type>d:boolean</type>
 					<index enabled="true">
-					    <tokenised>false</tokenised>
-					    <facetable>true</facetable>
-					</index>
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+				</property>
+				 <property name="bcpg:variantColumn">
+                    <type>d:text</type>
+                    <index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>true</facetable>
+		            </index>
+                    <constraints>
+                        <constraint ref="bcpg:variantColumns" />
+                    </constraints>
+                </property>
+			</properties>
+		</type>
+		
+		<type name="bcpg:externalLink">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="bcpg:externalLinkUrl">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:externalLinkTarget">
+					<type>d:text</type>
+					<default>_blank</default>
+					<index enabled="false"/>
+					<constraints>
+                        <constraint ref="bcpg:externalLinkTargets" />
+                    </constraints>
+				</property>
+				<property name="bcpg:externalLinkMediaType">
+					<type>d:text</type>
+					<default>page</default>
+					<index enabled="false"/>
+					<constraints>
+                        <constraint ref="bcpg:externalLinkMediaTypes" />
+                    </constraints>
 				</property>
 			</properties>
 		</type>

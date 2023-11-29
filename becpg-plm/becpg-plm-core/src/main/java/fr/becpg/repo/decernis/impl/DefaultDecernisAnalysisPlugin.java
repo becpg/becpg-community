@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.cmr.repository.MLText;
@@ -45,6 +47,8 @@ import fr.becpg.repo.system.SystemConfigurationService;
 
 @Service
 public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
+
+	private static final Pattern THRESHOLD_PATTERN = Pattern.compile("\\(?<=([0-9.]+)\\s*(mg/l|mg/kg)\\)?");
 
 	private Map<Integer, Set<String>> availableCountries = new HashMap<>();
 	
@@ -129,6 +133,11 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	@Override
 	public JSONObject postRecipeAnalysis(RegulatoryContext productContext, Set<String> countries, String usage, Integer moduleId) throws JSONException {
 
+		if (productContext.getRegulatoryRecipeId() == null) {
+			logger.error("Recipe ID is null");
+			return null;
+		}
+		
 		StringBuilder countryParam = new StringBuilder("");
 		for (String country : countries) {
 			if (isAvailableCountry(country, moduleId)) {
@@ -210,14 +219,6 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
 		return null;
 	}
-	
-	@Override
-	public String extractAnalysisResult(JSONObject analysisResults) {
-		if (analysisResults.has("overall_recipe_conclusion") ) {
-			return analysisResults.getJSONObject("overall_recipe_conclusion").getString("description");
-		}
-		return null;
-	}
 
 	@Override
 	public List<ReqCtrlListDataItem> extractRequirements(JSONObject analysisResults, List<IngListDataItem> ingList, String country, Integer moduleId) {
@@ -242,7 +243,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 			JSONObject result = tabularResults.getJSONObject(row);
 			if (result.has("did") && result.has(RESULT_INDICATOR)) {
 				
-				String decernisID = result.getString("did");
+				String decernisID = result.get("did").toString();
 				String function = result.getString("function_name");
 				String ingredientName = result.getString("ingredient");
 				IngListDataItem ingItem = findIngredientItem(ingList, decernisID, function, ingredientName);
@@ -262,10 +263,22 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 					
 					ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem == null ? null : ingItem.getIng(), reqMessage, RequirementType.Forbidden);
 					reqCtrlItem.setRegulatoryCode(regulatoryCode);
-					
+					reqCtrlItem.setReqMaxQty(0d);
+					if (!threshold.isBlank()) {
+						Matcher matcher = THRESHOLD_PATTERN.matcher(threshold);
+						if (matcher.find()) {
+							String extracted = matcher.group(1);
+							try {
+								Double numberThreshold =  Double.parseDouble(extracted.trim()) / 10000;
+								reqCtrlItem.setReqMaxQty(numberThreshold);
+							} catch (NumberFormatException e) {
+								logger.error("Error while parsing number: " + extracted);
+							}
+						}
+					}
 					reqCtrlList.add(reqCtrlItem);
 					if (logger.isDebugEnabled()) {
-						logger.debug("Adding prohibited ing :" + result.getString("did"));
+						logger.debug("Adding prohibited ing :" + result.get("did").toString());
 					}
 					
 				} else if (result.getString(RESULT_INDICATOR).toLowerCase().startsWith("not listed")) {
@@ -274,7 +287,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 					reqCtrlItem.setRegulatoryCode(regulatoryCode);
 					reqCtrlList.add(reqCtrlItem);
 					if (logger.isDebugEnabled()) {
-						logger.debug("Adding not listed ing :" + result.getString("did"));
+						logger.debug("Adding not listed ing :" + result.get("did").toString());
 					}
 				} else if (Boolean.TRUE.equals(addInfoReqCtrl())) {
 					
@@ -289,7 +302,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 					reqCtrlItem.setRegulatoryCode(regulatoryCode);
 					reqCtrlList.add(reqCtrlItem);
 					if (logger.isDebugEnabled()) {
-						logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.getString("did"));
+						logger.debug("Adding " + reqMessage.getDefaultValue() + " ing :" + result.get("did").toString());
 					}
 					
 				}
