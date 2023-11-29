@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.annotation.AlfProp;
@@ -200,7 +201,7 @@ public class PhysicoChemListDataItem extends VariantAwareDataItem implements Sim
 	
 	/** {@inheritDoc} */
 	@Override
-	public String getTextCriteria() {
+	public MLText getTextCriteria() {
 		return null;
 	}
 	
