@@ -138,6 +138,8 @@
 					<show id="bcpg:formulatedDate" force="true" for-mode="view" />
 					<!-- local security rule -->
 					<show id="sec:securityRef" />	
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 				<appearance>
 				
@@ -164,6 +166,12 @@
 						</control>
 					</field>
 					
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -180,6 +188,8 @@
 					<show id="bcpg:productSpecifications" force="true" />
 					<show id="bcpg:specCompatibilityTpls" force="true" />
 					<show id="bcpg:specCompatibilityJobOn" force="true" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:productSpecifications" help-id="becpg.forms.help.productSpecifications" >
@@ -195,6 +205,12 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:entityV2?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}</control-param>
 						</control>
+					</field>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -7708,6 +7724,8 @@
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -7752,6 +7770,12 @@
 					<field id="bcpg:filBioOrigins">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>
@@ -7821,6 +7845,8 @@
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
 					<show id="fm:commentCount" force="true" />
 					<show id="bcpg:glopTarget" />
 					<show id="bcpg:glopValue" />
@@ -7828,6 +7854,12 @@
 				<appearance>
 					<field id="bcpg:entityDataListState" label="hidden" />
 					<field id="fm:commentCount" label="hidden" read-only="true" />
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -7847,6 +7879,8 @@
 					<show id="bcpg:filGeoOrigins" />
 					<show id="bcpg:filRequiredGeoOrigins" />
 					<show id="bcpg:filBioOrigins" />
+					<show id="bcpg:regulatoryCountries" force="true" />
+					<show id="bcpg:regulatoryUsageRef" force="true" />
 				</field-visibility>
 
 				<appearance>
@@ -7891,6 +7925,12 @@
 					<field id="bcpg:filBioOrigins">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
 					</field>
 				</appearance>
 			</form>

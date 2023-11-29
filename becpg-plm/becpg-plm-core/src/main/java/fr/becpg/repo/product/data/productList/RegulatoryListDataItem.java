@@ -14,6 +14,7 @@ import fr.becpg.repo.product.data.constraints.RegulatoryResult;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
@@ -36,6 +37,30 @@ public class RegulatoryListDataItem extends BeCPGDataObject {
 	private String requirementChecksum;
 	
 	private String regulatoryRecipeId;
+	
+	private NodeRef limitingIngredient;
+	
+	private Double maximumDosage;
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryMaximumDosage")
+	public Double getMaximumDosage() {
+		return maximumDosage;
+	}
+	
+	public void setMaximumDosage(Double maximumDosage) {
+		this.maximumDosage = maximumDosage;
+	}
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:limitingIngredient")
+	public NodeRef getLimitingIngredient() {
+		return limitingIngredient;
+	}
+	
+	public void setLimitingIngredient(NodeRef limitingIngredient) {
+		this.limitingIngredient = limitingIngredient;
+	}
 	
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryRecipeId")

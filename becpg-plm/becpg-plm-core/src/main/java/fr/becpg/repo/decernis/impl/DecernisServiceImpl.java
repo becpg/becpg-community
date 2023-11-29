@@ -1,6 +1,5 @@
 package fr.becpg.repo.decernis.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,7 +43,6 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationChainPlugin;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.RegulatoryResult;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
@@ -205,45 +203,15 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	private void analyzeRecipe(RegulatoryContext productContext) {
 		for (RegulatoryContextItem contextItem : productContext.getContextItems()) {
 			if (!contextItem.isEmpty()) {
-				List<JSONObject> analysisList = analyzeContext(productContext, contextItem.getUsages(), contextItem.getCountries(),
-						contextItem.getModuleId());
-				contextItem.getItem().setRegulatoryResult(extractResult(analysisList));
+				analyzeContext(productContext, contextItem.getUsages(), contextItem.getCountries(), contextItem.getModuleId());
 			}
 		}
 		if (!productContext.isEmpty()) {
-			List<JSONObject> analysisList = analyzeContext(productContext, productContext.getUsages(), productContext.getCountries(),
-					productContext.getModuleId());
-			productContext.getProduct().setRegulatoryResult(extractResult(analysisList));
+			analyzeContext(productContext, productContext.getUsages(), productContext.getCountries(), productContext.getModuleId());
 		}
 	}
 
-	private RegulatoryResult extractResult(List<JSONObject> analysisList) {
-
-		if (analysisList.isEmpty()) {
-			return null;
-		}
-		
-		boolean notListed = false;
-
-		for (JSONObject analysis : analysisList) {
-			String result = getAnalysisPlugin().extractAnalysisResult(analysis);
-			if (result.startsWith("prohibited")) {
-				return RegulatoryResult.PROHIBITED;
-			}
-			if (result.startsWith("not listed")) {
-				notListed = true;
-			}
-		}
-
-		if (notListed) {
-			return RegulatoryResult.NOT_LISTED;
-		}
-
-		return RegulatoryResult.PERMITTED;
-	}
-
-	private List<JSONObject> analyzeContext(RegulatoryContext productContext, Set<String> usages, Set<String> countries, Integer moduleId) {
-		List<JSONObject> analysisList = new ArrayList<>();
+	private void analyzeContext(RegulatoryContext productContext, Set<String> usages, Set<String> countries, Integer moduleId) {
 		for (String usage : usages) {
 			
 			Set<String> countriesBatch = new HashSet<>();
@@ -251,26 +219,24 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 			for (String country : countries) {
 			    countriesBatch.add(country);
 			    if (countriesBatch.size() == DECERNIS_MAX_COUNTRIES) {
-			    	analyzeSubContext(productContext, moduleId, analysisList, usage, countriesBatch);
+			    	analyzeSubContext(productContext, moduleId, usage, countriesBatch);
 			        countriesBatch.clear();
 			    }
 			}
 
 			if (!countriesBatch.isEmpty()) {
-				analyzeSubContext(productContext, moduleId, analysisList, usage, countriesBatch);
+				analyzeSubContext(productContext, moduleId, usage, countriesBatch);
 			}
 		}
-		return analysisList;
 	}
 
-	private void analyzeSubContext(RegulatoryContext productContext, Integer moduleId, List<JSONObject> analysisList, String usage, Set<String> countries) {
+	private void analyzeSubContext(RegulatoryContext productContext, Integer moduleId, String usage, Set<String> countries) {
 		JSONObject analysis = getAnalysisPlugin().postRecipeAnalysis(productContext, countries, usage, moduleId);
 		if (analysis != null) {
 			for (String countryBatch : countries) {
 				productContext.getRequirements()
 						.addAll(getAnalysisPlugin().extractRequirements(analysis, productContext.getProduct().getIngList(), countryBatch, moduleId));
 			}
-			analysisList.add(analysis);
 		}
 	}
 
@@ -610,14 +576,14 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		return contextItem;
 	}
 
-	private void extractCodes(RegulatoryContext context, Set<String> countries, NodeRef nodeRef) {
+	private void extractCodes(RegulatoryContext context, Set<String> codes, NodeRef nodeRef) {
 		String code = extractCode(nodeRef);
 		if (code == null || code.isBlank()) {
 			String name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME);
 			logger.warn("charact " + name + " has no regulatoryCode");
 			context.getRequirements().add(createReqCtrl(null, MLTextHelper.getI18NMessage(MESSAGE_NO_CODE_CHARACT, name), RequirementType.Tolerated));
 		} else {
-			countries.add(code);
+			codes.add(code);
 		}
 	}
 

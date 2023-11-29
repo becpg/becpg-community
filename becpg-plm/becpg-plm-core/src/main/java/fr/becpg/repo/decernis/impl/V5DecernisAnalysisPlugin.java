@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -44,6 +46,8 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service
 public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
+	private static final Pattern THRESHOLD_PATTERN = Pattern.compile("<=([0-9.]+)\\s*(mg/l|mg/kg)");
+	
 	private static final String THRESHOLD = "threshold";
 
 	private static final String RESULT_INDICATOR = "resultIndicator";
@@ -104,42 +108,6 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	@Override
 	public boolean needsRecipeId() {
 		return false;
-	}
-
-	@Override
-	public String extractAnalysisResult(JSONObject analysisResults) {
-		
-		boolean notListed = false;
-		
-		if (analysisResults.has(RECIPE_ANALAYSIS_REPORT)) {
-			JSONObject recipeAnalaysisReport = analysisResults.getJSONObject(RECIPE_ANALAYSIS_REPORT);
-			if (recipeAnalaysisReport.has(RECIPE_REPORT)) {
-				JSONArray recipeReport = recipeAnalaysisReport.getJSONArray(RECIPE_REPORT);
-				
-				for (int i = 0; i < recipeReport.length(); i++) {
-					JSONObject report = recipeReport.getJSONObject(i);
-						
-					JSONArray matrixReports = report.getJSONArray("matrixReport");
-					
-					for (int j = 0; j < matrixReports.length(); j++) {
-						JSONObject matrixReport = matrixReports.getJSONObject(j);
-						String resultIndicator = matrixReport.getString(RESULT_INDICATOR);
-						if (resultIndicator.toLowerCase().startsWith("prohibited") || resultIndicator.toLowerCase().startsWith("over limit")) {
-							return "prohibited";
-						}
-						if (resultIndicator.toLowerCase().startsWith("not listed")) {
-							notListed = true;
-						}
-					}
-				}
-			}
-		}
-		
-		if (notListed) {
-			return "not listed";
-		}
-		
-		return "permitted";
 	}
 
 	@Override
@@ -321,6 +289,19 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 							MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
 							ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Forbidden);
 							reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+							reqCtrlItem.setReqMaxQty(0d);
+							if (!threshold.isBlank()) {
+								Matcher matcher = THRESHOLD_PATTERN.matcher(threshold);
+								if (matcher.find()) {
+									String extracted = matcher.group(1);
+									try {
+										Double numberThreshold =  Double.parseDouble(extracted.trim()) / 10000;
+										reqCtrlItem.setReqMaxQty(numberThreshold);
+									} catch (NumberFormatException e) {
+										logger.error("Error while parsing number: " + extracted);
+									}
+								}
+							}
 							
 							requirements.add(reqCtrlItem);
 							if (logger.isDebugEnabled()) {
