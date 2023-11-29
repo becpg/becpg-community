@@ -633,20 +633,10 @@ public class JSONVersionExtractor extends SimpleExtractor {
 			JSONArray dataListJsonArray = extractDataList(datalists, dataListFilter);
 			
 			if (dataListJsonArray != null) {
-			JSONArray filteredList = filterList(dataListJsonArray, dataListFilter);
-			
-			JSONArray results = sortList(filteredList, dataListFilter);
-
-
-			if (results.length() == 0) {
-				logger.warn("List is empty");
-			}
-			
-			for (int i = 0; i < results.length(); i++) {
-				JSONObject object = results.getJSONObject(i);
+				JSONArray filteredList = filterList(dataListJsonArray, dataListFilter);
 				
 				JSONArray results = sortList(filteredList, dataListFilter);
-				
+	
 				if (results.length() == 0) {
 					logger.warn("List is empty");
 				}
@@ -665,7 +655,6 @@ public class JSONVersionExtractor extends SimpleExtractor {
 						Map<String, Object> item = extractJSON(dataListFilter, object, ret.getComputedFields(), null);
 						ret.addItem(item);
 					}
-					
 				}
 				
 				ret.setFullListSize(dataListFilter.getPagination().getFullListSize());
