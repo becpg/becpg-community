@@ -28,6 +28,13 @@
 	 * Alfresco Slingshot aliases
 	 */
 	var $html = Alfresco.util.encodeHTML, $combine = Alfresco.util.combinePaths, $siteURL = Alfresco.util.siteURL, $isValueSet = Alfresco.util.isValueSet;
+	
+	
+	var externalIcons = {
+		"html": "html-file",
+		"img": "img-file",
+		"folder": "generic-folder"
+		};
 
 	// Define constructor...
 	beCPG.custom.DocumentList = function CustomDocumentList_constructor(htmlId) {
@@ -779,29 +786,29 @@
 		var jsNode = record.jsNode, recordSite = Alfresco.DocumentList.getRecordSite(record), currentSite = scope.options.siteId, recordPath = record.location.path, recordRepoPath = record.location.repoPath, html;
 
 		if (jsNode.isLink) {
-			var fileName = $isValueSet(jsNode.linkedNode.properties) ? jsNode.linkedNode.properties.name : null;
-			var linkedNodeIsContainer = jsNode.linkedNode.isContainer;
-
-			if (!linkedNodeIsContainer && (Alfresco.constants.PAGECONTEXT == "shared" || Alfresco.constants.PAGECONTEXT == "mine") && jsNode.linkedNode.nodeRef) {
-				var strNodeRef = jsNode.linkedNode.nodeRef.toString();
-				html = window.location.protocol + "//" + window.location.host + Alfresco.constants.URL_PAGECONTEXT + "document-details?nodeRef="
-						+ strNodeRef;
-			} else if (linkedNodeIsContainer) {
-				if ($isValueSet(scope.options.siteId) && record.location.site && record.location.site.name !== scope.options.siteId) {
-					html = $siteURL("documentlibrary?path=" + encodeURIComponent(recordPath + (recordPath != "/" ? "/" : "") + fileName), {
-						site : record.location.site.name
-					});
+				var fileName = $isValueSet(jsNode.linkedNode.properties) ? jsNode.linkedNode.properties.name : null;
+				var linkedNodeIsContainer = jsNode.linkedNode.isContainer;
+	
+				if (!linkedNodeIsContainer && (Alfresco.constants.PAGECONTEXT == "shared" || Alfresco.constants.PAGECONTEXT == "mine") && jsNode.linkedNode.nodeRef) {
+					var strNodeRef = jsNode.linkedNode.nodeRef.toString();
+					html = window.location.protocol + "//" + window.location.host + Alfresco.constants.URL_PAGECONTEXT + "document-details?nodeRef="
+							+ strNodeRef;
+				} else if (linkedNodeIsContainer) {
+					if ($isValueSet(scope.options.siteId) && record.location.site && record.location.site.name !== scope.options.siteId) {
+						html = $siteURL("documentlibrary?path=" + encodeURIComponent(recordPath + (recordPath != "/" ? "/" : "") + fileName), {
+							site : record.location.site.name
+						});
+					} else {
+						html = window.location.protocol + "//" + window.location.host + Alfresco.constants.URL_PAGECONTEXT + "repository?path="
+								+ encodeURIComponent(recordRepoPath + (recordRepoPath != "/" ? "/" : "") + fileName);
+					}
 				} else {
-					html = window.location.protocol + "//" + window.location.host + Alfresco.constants.URL_PAGECONTEXT + "repository?path="
-							+ encodeURIComponent(recordRepoPath + (recordRepoPath != "/" ? "/" : "") + fileName);
+					if ($isValueSet(scope.options.siteId) && record.location.site && record.location.site.name !== scope.options.siteId) {
+						html = scope.getActionUrls(record, record.location.site.name).documentDetailsUrl;
+					} else {
+						html = scope.getActionUrls(record).documentDetailsUrl;
+					}
 				}
-			} else {
-				if ($isValueSet(scope.options.siteId) && record.location.site && record.location.site.name !== scope.options.siteId) {
-					html = scope.getActionUrls(record, record.location.site.name).documentDetailsUrl;
-				} else {
-					html = scope.getActionUrls(record).documentDetailsUrl;
-				}
-			}
 		} else {
 			if (jsNode.isContainer) {
 
@@ -842,6 +849,11 @@
 					}
 				}
 			} else {
+				if(jsNode.properties["bcpg:externalLinkUrl"]!=null){
+					return '<a href="' + jsNode.properties["bcpg:externalLinkUrl"] + '"  target="' + jsNode.properties["bcpg:externalLinkTarget"] + '" >';
+				} 
+				
+				
 				var actionUrls = scope.getActionUrls(record);
 				html = actionUrls.documentDetailsUrl;
 			}
@@ -860,7 +872,7 @@
 		var record = oRecord.getData(), node = record.jsNode, properties = node.properties, name = record.displayName, isContainer = node.isContainer, isLink = node.isLink, extn = name
 				.substring(name.lastIndexOf(".")), imgId = node.nodeRef.nodeRef // DD
 																				// added
-		, isEntity = beCPG.util.isEntity(record);
+		, isEntity = beCPG.util.isEntity(record), isExternalLink = properties["bcpg:externalLinkUrl"]!=null;
 
 		if (isEntity) {
 			extn = node.type.substring(node.type.lastIndexOf(":"));
@@ -873,8 +885,18 @@
 		Dom.setStyle(elCell, "width", oColumn.width + "px");
 		Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
 
-		if (isContainer && !isEntity) {
-			elCell.innerHTML = '<span class="folder-small">' + (isLink ? '<span class="link"></span>' : '')
+		if(isExternalLink){
+			
+		   var media = properties["bcpg:externalLinkMediaType"];
+		   var externalIcon = externalIcons[media] || "generic-file";
+			
+			elCell.innerHTML = '<span class="folder-small"><span class="link"></span>'
+					+ Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="' + Alfresco.constants.URL_RESCONTEXT
+			    + 'components/images/filetypes/' + externalIcon
+			    + '-32.png"  /></a>';
+
+		} else if (isContainer && !isEntity) {
+			elCell.innerHTML = '<span class="folder-small">' + (isExternalLink ? '<span class="link"></span>' : '')
 					+ (scope.dragAndDropEnabled ? '<span class="droppable"></span>' : '')
 					+ Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="'
 					+ this.getFolderIcon(record.node) + '" /></a>';
@@ -887,7 +909,7 @@
 			if (fileIcon == "generic-file-32.png") {
 				fileIcon = Alfresco.util.getFileIconByMimetype(node.mimetype);
 			}
-			elCell.innerHTML = '<span id="' + id + '" class="icon32">' + (isLink ? '<span class="link"></span>' : '')
+			elCell.innerHTML = '<span id="' + id + '" class="icon32">' + (isExternalLink ?  '<span class="link"></span>' : '')
 					+ Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="'
 					+ Alfresco.constants.URL_RESCONTEXT + 'components/images/filetypes/' + fileIcon + '" alt="' + extn + '" title="' + $html(name)
 					+ '" /></a></span>';
@@ -916,7 +938,7 @@
 	Alfresco.DocumentListViewRenderer.prototype.renderCellThumbnail = function DL_VR_renderCellThumbnail(scope, elCell, oRecord, oColumn, oData) {
 
 		var record = oRecord.getData(), node = record.jsNode, properties = node.properties, name = record.displayName, isContainer = node.isContainer, isEntity = beCPG.util
-				.isEntity(record), isLink = node.isLink, extn = name.substring(name.lastIndexOf(".")), imgId = node.nodeRef.nodeRef; // DD
+				.isEntity(record), isLink = node.isLink, isExternalLink = properties["bcpg:externalLinkUrl"]!=null, extn = name.substring(name.lastIndexOf(".")), imgId = node.nodeRef.nodeRef; // DD
 																																		// added
 
 		var containerTarget; // This will only get set if thumbnail
@@ -929,8 +951,20 @@
 		oColumn.width = this.thumbnailColumnWidth;
 		Dom.setStyle(elCell, "width", oColumn.width + "px");
 		Dom.setStyle(elCell.parentNode, "width", oColumn.width + "px");
+		
+		if(isExternalLink){
+			var media = properties["bcpg:externalLinkMediaType"];
+		
+			
+			var externalIcon = externalIcons[media] || "generic-file";
+			
+			elCell.innerHTML = '<span class="thumbnail"><span class="link"></span>'
+			    + Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record)
+			    + '<img id="' + imgId + '" src="' + Alfresco.constants.URL_RESCONTEXT
+			    + 'components/images/filetypes/' + externalIcon
+			    + '-48.png" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
 
-		if ((isContainer || (isLink && node.linkedNode.isContainer)) && !isEntity) {
+		} else if ((isContainer || (isLink && node.linkedNode && node.linkedNode.isContainer)) && !isEntity) {
 			elCell.innerHTML = '<span class="folder">' + (isLink ? '<span class="link"></span>' : '')
 					+ (scope.dragAndDropEnabled ? '<span class="droppable"></span>' : '')
 					+ Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="'
@@ -939,7 +973,7 @@
 																// folder a
 																// target
 		} else {
-			elCell.innerHTML = '<span class="thumbnail">' + (isLink ? '<span class="link"></span>' : '')
+			elCell.innerHTML = '<span class="thumbnail">' + (isLink  ? '<span class="link"></span>' : '')
 					+ Alfresco.DocumentList.generateFileFolderLinkMarkup(scope, record) + '<img id="' + imgId + '" src="'
 					+ Alfresco.DocumentList.generateThumbnailUrl(record) + '" alt="' + extn + '" title="' + $html(name) + '" /></a></span>';
 		}

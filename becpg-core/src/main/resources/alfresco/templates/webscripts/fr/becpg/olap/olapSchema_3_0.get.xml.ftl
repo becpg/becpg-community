@@ -177,6 +177,7 @@
 							doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
 							doc->>"$.bcpg_code" as code,
 							doc->>"$.bcpg_erpCode" as erpCode,
+							doc->>"$.bcpg_eanCode" as eanCode,
 							doc->>"$.bcpg_legalName" as legalName,
 							doc->>"$.bcpg_productState" as productState,
 							doc->>"$.type" as productType,
@@ -241,6 +242,7 @@
 				<Level name="name" caption="${msg("jsolap.productName.title")}" table="products_dim" column="name"  type="String"  highCardinality="true"  />
 				<Level name="code" caption="${msg("jsolap.productCode.title")}" table="products_dim" column="code"  type="String" uniqueMembers="true" highCardinality="true"  />
 				<Level name="erpCode" caption="${msg("jsolap.productErpCode.title")}" table="products_dim" column="erpCode"  type="String"   />
+				<Level name="eanCode" caption="${msg("jsolap.productEanCode.title")}" table="products_dim" column="eanCode"  type="String"   />
 				<Level name="legalName" caption="${msg("jsolap.productLegalName.title")}" table="products_dim" column="legalName" type="String"    />
 				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" table="products_dim" column="versionLabel" type="String" >
 				<MemberFormatter>
@@ -1314,6 +1316,7 @@
 							b.doc->>"$.bcpg_productHierarchy2[0]" as productHierarchy2,
 							b.doc->>"$.bcpg_code" as productCode,
 							b.doc->>"$.bcpg_erpCode" as productErpCode,
+							b.doc->>"$.bcpg_eanCode" as productEanCode,
 							b.doc->>"$.bcpg_legalName" as productLegalName,
 							b.doc->>"$.bcpg_productState" as productState,
 							b.doc->>"$.type" as productType,
@@ -1365,6 +1368,7 @@
 				<Level name="code" caption="${msg("jsolap.productCode.title")}" column="productCode"  type="String" highCardinality="true" uniqueMembers="true"  />
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="productName"  type="String" highCardinality="true" />
 			    <Level name="erpCode" caption="${msg("jsolap.productErpCode.title")}" column="productErpCode"  type="String" />
+			    <Level name="eanCode" caption="${msg("jsolap.productEanCode.title")}" column="productEanCode"  type="String" />
 				<Level name="legalName" caption="${msg("jsolap.productLegalName.title")}" column="productLegalName"  type="String" />
 				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="productVersionLabel" type="String" >
 				<MemberFormatter>
@@ -1444,6 +1448,7 @@
 						doc->>"$.metadata_siteName" as siteName,
 						doc->>"$.bcpg_code" as code,
 						doc->>"$.bcpg_erpCode" as erpCode,
+						doc->>"$.bcpg_eanCode" as eanCode,
 						doc->>"$.bcpg_legalName" as legalName,
 						doc->>"$.bcpg_nutrientProfilingScore" as nutrientProfilingScore,
 						doc->>"$.bcpg_nutrientProfilingClass" as nutrientProfilingClass,
@@ -1483,6 +1488,7 @@
 				<Level name="code" caption="${msg("jsolap.productCode.title")}" column="code"  type="String" highCardinality="true" uniqueMembers="true"  />
 				<Level name="name" caption="${msg("jsolap.productName.title")}" column="name"  type="String" highCardinality="true" />
 			    <Level name="erpCode" caption="${msg("jsolap.productErpCode.title")}" column="erpCode"  type="String" />
+			    <Level name="eanCode" caption="${msg("jsolap.productEanCode.title")}" column="eanCode"  type="String" />
 				<Level name="legalName" caption="${msg("jsolap.productLegalName.title")}" column="legalName"  type="String" />
 				<Level name="versionLabel" caption="${msg("jsolap.productVersionLabel.title")}" column="versionLabel" type="String" >
 				<MemberFormatter>

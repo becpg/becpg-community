@@ -158,6 +158,10 @@ public interface PLMModel {
 	QName PROP_INGLIST_QTY_PERC = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyPerc");
 	
 	QName PROP_INGLIST_QTY_PERCWITHYIELD = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyPercWithYield");
+	
+	QName PROP_INGLIST_QTY_PERCWITHSECONDARYYIELD = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyPercWithSecondaryYield");
+	
+
 	/** Constant <code>PROP_INGLIST_IS_GMO</code> */
 	QName PROP_INGLIST_IS_GMO = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsGMO");
 	/** Constant <code>PROP_INGLIST_IS_IONIZED</code> */
@@ -721,7 +725,9 @@ public interface PLMModel {
 	QName PROP_REGULATORY_ID = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryId");
 	
 	QName PROP_REGULATORY_RESULT = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryResult");
-
+	
+	QName TYPE_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryList");
+	
 	//Chemical code
 	/** Constant <code>PROP_CAS_NUMBER</code> */
 	QName PROP_CAS_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "casNumber");
@@ -753,13 +759,14 @@ public interface PLMModel {
 	
 	QName PROP_GLOP_VALUE =  QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
 	
-	QName PROP_LABELCLAIM_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "isLabelClaimPropagateUp");
+	QName PROP_IS_CHARACT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "isCharactPropagateUp");
 	
 	QName ASPECT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "propagateUpAspect");
 
 	QName ASSOC_PROPAGATED_CHARACTS = QName.createQName(BeCPGModel.BECPG_URI, "propagatedCharacts");
 	
-	
-	
-	
+	QName PROP_BEST_BEFORE_DATE =  QName.createQName(BeCPGModel.BECPG_URI, "bestBeforeDate");
+	QName PROP_USE_BY_DATE =  QName.createQName(BeCPGModel.BECPG_URI, "useByDate");
+	QName PROP_PERIOD_AFTER_OPENING =  QName.createQName(BeCPGModel.BECPG_URI, "periodAfterOpening");
+		
 }

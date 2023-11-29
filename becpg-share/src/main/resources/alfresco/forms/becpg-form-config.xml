@@ -129,7 +129,39 @@
 	</config>
 
 
-   <config evaluator="model-type" condition="cm:content">
+	<config evaluator="model-type" condition="bcpg:externalLink">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:externalLinkUrl" />
+					<show id="bcpg:externalLinkTarget"/>
+					<show id="bcpg:externalLinkMediaType" />
+				</field-visibility>
+
+			</form>
+		</forms>
+	</config>
+
+
+	<config evaluator="node-type" condition="bcpg:externalLink">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="cm:name" />
+					<show id="cm:title" force="true" />
+					<show id="bcpg:externalLinkUrl" />
+					<show id="bcpg:externalLinkTarget"/>
+					<show id="bcpg:externalLinkMediaType" />
+				</field-visibility>
+
+			</form>
+		</forms>
+	</config>
+	
+	
+	 <config evaluator="model-type" condition="cm:content">
 		<forms>
 				<form id="content-validation">
 					<field-visibility>
@@ -138,6 +170,7 @@
 			</form>
 		</forms>
 	</config>
+	
 
    <config evaluator="node-type" condition="cm:folder">
 		<forms>

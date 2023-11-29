@@ -270,7 +270,8 @@ public class ProjectListExtractor extends SimpleExtractor {
 
 					List<NodeRef> projectResults = null;
 
-					if (FILTER_MY_PROJECTS.equals(dataListFilter.getFilterId()) || !(FILTER_MY_TASKS.equals(dataListFilter.getFilterId())
+					if (FILTER_MY_PROJECTS.equals(dataListFilter.getFilterId()) || !(FILTER_TASKS.equals(dataListFilter.getFilterId()) ||
+							FILTER_MY_TASKS.equals(dataListFilter.getFilterId())
 							|| (VIEW_RESOURCES.equals(dataListFilter.getExtraParams()) || VIEW_TASKS.equals(dataListFilter.getExtraParams())))) {
 						projectResults = getProjectResults(dataListFilter, beCPGQueryBuilder, pagination);
 					}

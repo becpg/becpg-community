@@ -97,9 +97,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	private AssociationService associationService;
 
 	private SpelFormulaService formulaService;
-	
+
 	private SystemConfigurationService systemConfigurationService;
-	
+
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
 	}
@@ -234,25 +234,24 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(formulatedProduct, labelingFormulaContext);
 
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();
-			
-			  // Apply Prefs first
-	        Comparator<LabelingRuleListDataItem> customComparator = (item1, item2) -> {
-	            LabelingRuleType type1 = item1.getLabelingRuleType();
-	            LabelingRuleType type2 = item2.getLabelingRuleType();
-	            
-	            // Compare based on the desired order
-	            if (LabelingRuleType.Prefs.equals(type1) && !LabelingRuleType.Prefs.equals(type2)) {
-	                return -1; // item1 comes before item2
-	            } else if (!LabelingRuleType.Prefs.equals(type1) && LabelingRuleType.Prefs.equals(type2)) {
-	                return 1; // item2 comes before item1
-	            } else {
-	                return 0; // They have the same type or neither is Prefs
-	            }
-	        };
-	        
-	        // Sort the list using the custom comparator
-	        Collections.sort(labelingRuleLists, customComparator);
-			
+
+			// Apply Prefs first
+			Comparator<LabelingRuleListDataItem> customComparator = (item1, item2) -> {
+				LabelingRuleType type1 = item1.getLabelingRuleType();
+				LabelingRuleType type2 = item2.getLabelingRuleType();
+
+				// Compare based on the desired order
+				if (LabelingRuleType.Prefs.equals(type1) && !LabelingRuleType.Prefs.equals(type2)) {
+					return -1; // item1 comes before item2
+				} else if (!LabelingRuleType.Prefs.equals(type1) && LabelingRuleType.Prefs.equals(type2)) {
+					return 1; // item2 comes before item1
+				} else {
+					return 0; // They have the same type or neither is Prefs
+				}
+			};
+
+			// Sort the list using the custom comparator
+			Collections.sort(labelingRuleLists, customComparator);
 
 			// Apply before formula
 			int groupSortOrder = 0;
@@ -308,7 +307,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			CompositeLabeling compositeLabeling = new CompositeLabeling(CompositeLabeling.ROOT);
 
 			visitCompoList(compositeLabeling, compositeDefaultVariant, labelingFormulaContext, 1d,
-					labelingFormulaContext.getYield() != null ? labelingFormulaContext.getYield() : formulatedProduct.getYield(), true);
+					labelingFormulaContext.getYield() != null ? labelingFormulaContext.getYield()
+							: (labelingFormulaContext.isUseSecondaryYield() ? formulatedProduct.getSecondaryYield() : formulatedProduct.getYield()),
+					true);
 
 			if (logger.isTraceEnabled()) {
 				logger.trace(" Before aggrate \n " + compositeLabeling.toString());
@@ -1678,7 +1679,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if (DeclarationType.Declare.equals(declarationType)) {
 							if (isMultiLevel && (qty != null) && !isLocalSemiFinished) {
 
-								Double qtyTotal = FormulationHelper.getQtyFromComposition(productData,null, FormulationHelper.DEFAULT_NET_WEIGHT);
+								Double qtyTotal = FormulationHelper.getQtyInKgFromComposition(productData, null,
+										FormulationHelper.DEFAULT_NET_WEIGHT);
 
 								if ((qtyTotal != null) && (qtyTotal != 0d)) {
 									computedRatio = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR);
@@ -1705,7 +1707,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							if (!isLocalSemiFinished) {
 
-								recurYield =  productData.getYield() != null ? productData.getYield() : 100d;
+								recurYield = productData.getYield() != null ? productData.getYield() : 100d;
 								if (recurYield != null) {
 
 									if ((calculatedYield != null) && (calculatedYield != 100d)) {
@@ -1844,7 +1846,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 	}
-
 
 	private String getName(CompositeLabeling component) {
 		if (component instanceof IngItem) {

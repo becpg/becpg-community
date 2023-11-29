@@ -482,10 +482,14 @@ if (beCPG.module.EntityDataGridRenderers) {
   
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold","bcpg:allergenInVoluntaryRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
+      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold","bcpg:allergenInVoluntaryRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield","bcpg:ingListQtyPercWithSecondaryYield"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
-			var forceUnit=oColumn.forceUnit;  
+			var forceUnit=oColumn.forceUnit; 
+
+			if (oColumn.hidden) {
+				oColumn.showAfterRender = true;
+			}
 			  
       		var unit, qty;
       		if(data.value == 0){
@@ -1527,10 +1531,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var url;
 			
 			if (data.displayValue) {
-				var recipeId = oRecord.getData("itemData")["prop_bcpg_regulatoryRecipeId"].value;
 				var usages = oRecord.getData("itemData")["dt_bcpg_regulatoryUsageRef"];
 				var countries = oRecord.getData("itemData")["dt_bcpg_regulatoryCountries"];
-				if (usages && countries && recipeId) {
+				if (oRecord.getData("itemData")["prop_bcpg_regulatoryRecipeId"]) {
+					var recipeId = oRecord.getData("itemData")["prop_bcpg_regulatoryRecipeId"].value;
+				}
+				if (usages && countries) {
 					var countriesParam = "";
 					for (var i in countries) {
 						var country = countries[i];
@@ -1540,7 +1546,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 						var usage = usages[i];
 						if (usage.nodeRef == data.value) {
 							var usageID = usage.itemData["prop_bcpg_regulatoryId"].value;
-							url = "https://formula.decernis.com/recipes-analysis/analyze?recipe=" + recipeId + "&moduleId=1&removeRecipe=false&usage=" + usageID + countriesParam;
+							if (recipeId) {
+								url = "https://formula.decernis.com/recipes-analysis/analyze?recipe=" + recipeId + "&moduleId=1&removeRecipe=false&usage=" + usageID + countriesParam;
+							}
 						}
 					}
 				}

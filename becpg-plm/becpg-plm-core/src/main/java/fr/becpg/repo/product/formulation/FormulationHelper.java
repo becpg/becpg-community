@@ -416,8 +416,8 @@ public class FormulationHelper {
 	 * @param defaultValue a {@link java.lang.Double} object.
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public static Double getQtyFromComposition(ProductData formulatedProduct, VariantData variant, Double defaultValue) {
-		return getQtyFromComposition(formulatedProduct, variant, formulatedProduct.getUnit(), defaultValue);
+	public static Double getQtyInKgFromComposition(ProductData formulatedProduct, VariantData variant, Double defaultValue) {
+		return getQtyFromComposition(formulatedProduct, variant, null, defaultValue);
 
 	}
 

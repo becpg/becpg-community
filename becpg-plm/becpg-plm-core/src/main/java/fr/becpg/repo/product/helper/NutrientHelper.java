@@ -190,7 +190,7 @@ public class NutrientHelper {
 			Map<String, NodeRef> missingCharacts = visitCharactLists(productData, nutriScoreContext, alfrescoRepository, nodeService);
 			
 			if (!missingCharacts.isEmpty()) {
-				productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("nutriscore.message.missingCharacts"), null, new ArrayList<>(missingCharacts.values()), RequirementDataType.Formulation));
+				productData.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("nutriscore.message.missingCharacts"), null, new ArrayList<>(missingCharacts.values()), RequirementDataType.Nutrient));
 			}
 			
 			return nutriScoreContext;

@@ -103,24 +103,24 @@ public class ExcelHelper {
 					if (obj != null) {
 
 						if (field.isFormulaField() && field.getFieldName().startsWith("excel")) {
-							cell.setCellFormula(shiftFormula((String) obj, rowNum-1, sheet));
-						} else if(field.isFormulaField() && field.getFieldName().startsWith("image") && obj instanceof byte[]) {
-							
+							cell.setCellFormula(shiftFormula((String) obj, rowNum - 1, sheet));
+						} else if (field.isFormulaField() && field.getFieldName().startsWith("image") && obj instanceof byte[]) {
+
 							byte[] imageBytes = (byte[]) obj;
 							int pictureID = sheet.getWorkbook().addPicture(imageBytes, Workbook.PICTURE_TYPE_PNG);
 							XSSFDrawing drawing = sheet.createDrawingPatriarch();
 							XSSFClientAnchor imgAnchor = new XSSFClientAnchor();
 							imgAnchor.setCol1(cell.getColumnIndex()); // Sets the column (0 based) of the first cell.
-							imgAnchor.setCol2(cell.getColumnIndex()+1); // Sets the column (0 based) of the Second cell.
+							imgAnchor.setCol2(cell.getColumnIndex() + 1); // Sets the column (0 based) of the Second cell.
 							imgAnchor.setRow1(cell.getRowIndex()); // Sets the row (0 based) of the first cell.
-							imgAnchor.setRow2(cell.getRowIndex()+1); // Sets the row (0 based) of the Second cell.
-							
+							imgAnchor.setRow2(cell.getRowIndex() + 1); // Sets the row (0 based) of the Second cell.
+
 							drawing.createPicture(imgAnchor, pictureID);
 							sheet.autoSizeColumn(cell.getColumnIndex());
-							cell.getRow().setHeight((short)1000);
-							
+							cell.getRow().setHeight((short) 1000);
+
 						} else if (obj instanceof Date) {
-						
+
 							cell.setCellValue((Date) obj);
 							if (DataTypeDefinition.DATETIME.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())) {
 								cell.setCellStyle(createDateStyle(sheet.getWorkbook(), true));
@@ -129,6 +129,7 @@ public class ExcelHelper {
 							}
 						} else if (obj instanceof Boolean) {
 							cell.setCellValue((boolean) obj);
+							cell.setCellStyle(createBooleanStyle(sheet.getWorkbook()));
 						} else if (obj instanceof String) {
 							cell.setCellValue((String) obj);
 						} else if (obj instanceof Double) {
@@ -184,6 +185,12 @@ public class ExcelHelper {
 		return style;
 	}
 
+	private static CellStyle createBooleanStyle(XSSFWorkbook workbook) {
+		XSSFCellStyle style = workbook.createCellStyle();
+		style.setDataFormat(workbook.getCreationHelper().createDataFormat().getFormat("BOOLEAN"));
+		return style;
+	}
+
 	/**
 	 * <p>isExcelType.</p>
 	 *
@@ -224,15 +231,15 @@ public class ExcelHelper {
 							&& DataTypeDefinition.MLTEXT.toString().equals(((PropertyDefinition) field.getFieldDef()).getDataType().toString())) {
 
 						int groupFirstColumn = cellnum;
-						
+
 						// put default locale in first position
 						Locale defaultLocale = getDefaultLocale(supportedLocales);
-						
+
 						if (defaultLocale != null) {
 							supportedLocales.remove(defaultLocale);
 							supportedLocales.add(0, defaultLocale);
 						}
-						
+
 						for (Locale locale : supportedLocales) {
 
 							Cell cell = headerRow.createCell(cellnum);
@@ -285,22 +292,21 @@ public class ExcelHelper {
 		return cellnum;
 
 	}
-	
+
 	private static Locale getDefaultLocale(List<Locale> locales) {
 		for (Locale locale : locales) {
 			if (MLTextHelper.isDefaultLocale(locale)) {
 				return locale;
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	public static XSSFColor createGreenColor() {
 		byte[] rgb = { (byte) 0, (byte) 255, (byte) 0 };
 		return new XSSFColor(rgb, new DefaultIndexedColorMap());
 	}
-	
 
 	public static XSSFColor createRedColor() {
 		byte[] rgb = { (byte) 255, (byte) 0, (byte) 0 };
@@ -312,13 +318,9 @@ public class ExcelHelper {
 		return new XSSFColor(rgb, new DefaultIndexedColorMap());
 	}
 
-	
 	public static XSSFColor beCPGHeaderTextColor() {
 		byte[] rgb = { (byte) 0, (byte) 66, (byte) 84 };
 		return new XSSFColor(rgb, new DefaultIndexedColorMap());
 	}
-
-
-
 
 }

@@ -123,7 +123,7 @@ test() {
 reindex() {
     docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml stop solr
     docker compose  -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml rm -v solr
-    docker volume rm $BECPG_VERSION_PROFILE_solr_data
+    docker volume rm ${BECPG_VERSION_PROFILE}_solr_data
 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d solr
 }
 

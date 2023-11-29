@@ -24,6 +24,4 @@ public interface DecernisAnalysisPlugin {
 
 	JSONObject postRecipeAnalysis(RegulatoryContext productContext, Set<String> countries, String usage, Integer moduleId);
 
-	String extractAnalysisResult(JSONObject analysis);
-	
 }

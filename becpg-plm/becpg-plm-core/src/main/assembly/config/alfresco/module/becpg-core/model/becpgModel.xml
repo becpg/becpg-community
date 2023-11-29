@@ -36,6 +36,7 @@
 					<value>Fats</value>
 					<value>Beverages</value>
 					<value>Cheeses</value>
+					<value>RedMeats</value>
 					<value>NonApplicable</value>
 				</list>
 			</parameter>
@@ -816,6 +817,27 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:externalLinkTargets" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>_self</value>
+					<value>_blank</value>
+				</list>
+			</parameter>
+		</constraint>
+		
+		<constraint name="bcpg:externalLinkMediaTypes" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>html</value>
+					<value>file</value>
+					<value>folder</value>
+					<value>img</value>
+				</list>
+			</parameter>
+		</constraint>
+		
 	</constraints>
 	
 	<types>
@@ -1449,6 +1471,7 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<!-- deprecated -->
 				<property name="bcpg:isNutPropagateUp">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
@@ -2457,6 +2480,11 @@
 					<mandatory>false</mandatory>
 					<index enabled="false" />
 				</property>
+				<property name="bcpg:ingListQtyPercWithSecondaryYield">
+					<type>d:double</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
 				<property name="bcpg:ingListQtyMini">
 					<type>d:double</type>
 					<mandatory>false</mandatory>
@@ -3311,6 +3339,7 @@
 					<type>d:double</type>
 					<index enabled="false" />
 				</property>
+				<!-- Deprecated -->
 				<property name="bcpg:isLabelClaimPropagateUp">
 					<type>d:boolean</type>
 					<mandatory>false</mandatory>
@@ -3341,6 +3370,35 @@
                 </property>
 			</properties>
 		</type>
+		
+	
+		<type name="bcpg:externalLink">
+			<parent>cm:content</parent>
+			<properties>
+				<property name="bcpg:externalLinkUrl">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="false"/>
+				</property>
+				<property name="bcpg:externalLinkTarget">
+					<type>d:text</type>
+					<default>_blank</default>
+					<index enabled="false"/>
+					<constraints>
+                        <constraint ref="bcpg:externalLinkTargets" />
+                    </constraints>
+				</property>
+				<property name="bcpg:externalLinkMediaType">
+					<type>d:text</type>
+					<default>page</default>
+					<index enabled="false"/>
+					<constraints>
+                        <constraint ref="bcpg:externalLinkMediaTypes" />
+                    </constraints>
+				</property>
+			</properties>
+		</type>
+		
 
 		<type name="bcpg:storageConditions">
 			<parent>bcpg:charact</parent>
@@ -3552,6 +3610,28 @@
 
 		<type name="bcpg:regulatoryList">
 			<parent>bcpg:entityListItem</parent>
+			<properties>
+				<property name="bcpg:regulatoryMaximumDosage">
+					<type>d:double</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
+				</property>
+			</properties>
+			<associations>
+				<association name="bcpg:limitingIngredient">
+					<source>
+						<mandatory>false</mandatory>
+						<many>true</many>
+					</source>
+					<target>
+						<class>bcpg:ing</class>
+						<mandatory>false</mandatory>
+						<many>false</many>
+					</target>
+				</association>
+			</associations>
 			<mandatory-aspects>
 				<aspect>bcpg:regulatoryAspect</aspect>
 			</mandatory-aspects>
@@ -5614,6 +5694,13 @@
 		</aspect>
 
 		<aspect name="bcpg:propagateUpAspect">
+		    <properties>
+		       <property name="bcpg:isCharactPropagateUp">
+					<type>d:boolean</type>
+					<mandatory>false</mandatory>
+					<index enabled="false" />
+				</property>
+		    </properties>
 			<associations>
 				<association name="bcpg:propagatedCharacts">
 					<source>

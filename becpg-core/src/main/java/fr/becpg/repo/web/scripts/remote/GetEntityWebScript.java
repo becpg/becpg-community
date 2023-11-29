@@ -101,7 +101,7 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 				if (jsonParams == null) {
 					jsonParams = new JSONObject();
 				}
-				jsonParams.put(jsonParamName, req.getParameter(parameterName));
+				jsonParams.put(jsonParamName, JSONObject.stringToValue(req.getParameter(parameterName)));
 			}
 		}
 		
@@ -114,7 +114,7 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			
 			if (split.length > 1) {
 				String jsonParamName = split[1];
-				char c[] = jsonParamName.toCharArray();
+				char[] c = jsonParamName.toCharArray();
 				c[0] = Character.toLowerCase(c[0]);
 				return new String(c);
 			}
