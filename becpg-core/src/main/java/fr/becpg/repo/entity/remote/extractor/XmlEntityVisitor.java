@@ -67,6 +67,7 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
+import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
@@ -451,8 +452,8 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 								&& (mlNodeService.getProperty(nodeRef, propertyDefinition.getName()) instanceof MLText)) {
 							mlValues = (MLText) mlNodeService.getProperty(nodeRef, propertyDefinition.getName());
 							visitMltextAttributes(xmlw, mlValues);
-						} else if (DataTypeDefinition.TEXT.equals(propertyDefinition.getDataType().getName())) {
-							if (!propertyDefinition.getConstraints().isEmpty()) {
+						} else if (DataTypeDefinition.TEXT.equals(propertyDefinition.getDataType().getName()) 
+								&& !propertyDefinition.getConstraints().isEmpty() && !propertyDefinition.isMultiValued()) {
 								for (ConstraintDefinition constraint : propertyDefinition.getConstraints()) {
 									if (constraint.getConstraint() instanceof DynListConstraint) {
 										mlValues = ((DynListConstraint) constraint.getConstraint()).getMLDisplayLabel((String)entry.getValue());
@@ -460,7 +461,6 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 										break;
 									}
 								}
-							}
 						}
 						cachedAssocRef = null;
 						try {

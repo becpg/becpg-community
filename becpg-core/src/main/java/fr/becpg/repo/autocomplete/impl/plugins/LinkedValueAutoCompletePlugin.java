@@ -154,8 +154,8 @@ public class LinkedValueAutoCompletePlugin extends TargetAssocAutoCompletePlugin
 				ret = new ArrayList<>();
 			} else {
 				NodeRef parentNodeRef = (parent != null) && NodeRef.isNodeRef(parent) ? new NodeRef(parent) : null;
-
-				ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query);
+				Boolean includeDeleted = props.containsKey(AutoCompleteService.PROP_INCLUDE_DELETED) && (Boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
+				ret = hierarchyService.getHierarchiesByPath(path, parentNodeRef, query, includeDeleted != null && includeDeleted.booleanValue());
 			}
 		} else if ((extras != null) && extras.containsKey(AutoCompleteService.EXTRA_PARAM_DEPTH_LEVEL)) {
 			String depthLevel = extras.get(AutoCompleteService.EXTRA_PARAM_DEPTH_LEVEL);

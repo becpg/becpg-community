@@ -32,6 +32,7 @@ public class IngListExtractor extends SimpleCharactListExtractor {
 
 	private static final String TOTAL_KEY = "prop_bcpg_ingListQtyPerc";
 	private static final String TOTAL_WITHYIELD_KEY = "prop_bcpg_ingListQtyPercWithYield";
+	private static final String TOTAL_WITHYIELDSECONDARY_KEY = "prop_bcpg_ingListQtyPercWithSecondaryYield";
 
 	/** {@inheritDoc} */
 	@Override
@@ -63,6 +64,7 @@ public class IngListExtractor extends SimpleCharactListExtractor {
 			
 			Double totalQtyPerc = 0d;
 			Double totalQtyPercWithYield= 0d;
+			Double totalQtyPercWithSecondaryYield= 0d;
 
 			for (Map<String, Object> row : ret.getPageItems()) {
 				
@@ -79,6 +81,11 @@ public class IngListExtractor extends SimpleCharactListExtractor {
 						Double yieldValue = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERCWITHYIELD);
 						if (yieldValue != null) {
 							totalQtyPercWithYield += yieldValue;
+						}
+						
+						Double secondaryYieldValue = (Double) nodeService.getProperty(nodeRef, PLMModel.PROP_INGLIST_QTY_PERCWITHSECONDARYYIELD);
+						if (secondaryYieldValue != null) {
+							totalQtyPercWithSecondaryYield += secondaryYieldValue;
 						}
 					}
 				}
@@ -109,6 +116,14 @@ public class IngListExtractor extends SimpleCharactListExtractor {
 			tmp.put("value", totalQtyPercWithYield);
 
 			totalNodeDataRow.put(TOTAL_WITHYIELD_KEY, tmp);
+			
+			
+			tmp = new HashMap<>(3);
+			tmp.put("metadata", "double");
+			tmp.put("displayValue", attributeExtractorService.getPropertyFormats(FormatMode.JSON, false).formatDecimal(totalQtyPercWithSecondaryYield));
+			tmp.put("value", totalQtyPercWithSecondaryYield);
+
+			totalNodeDataRow.put(TOTAL_WITHYIELDSECONDARY_KEY, tmp);
 
 			totalRow.put(PROP_NODEDATA, totalNodeDataRow);
 

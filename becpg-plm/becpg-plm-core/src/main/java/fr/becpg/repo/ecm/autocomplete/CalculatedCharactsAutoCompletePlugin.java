@@ -14,6 +14,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.autocomplete.AutoCompletePage;
+import fr.becpg.repo.autocomplete.AutoCompleteService;
 import fr.becpg.repo.autocomplete.impl.plugins.TargetAssocAutoCompletePlugin;
 import fr.becpg.repo.product.data.constraints.LabelingRuleType;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
@@ -68,10 +69,14 @@ public class CalculatedCharactsAutoCompletePlugin extends TargetAssocAutoComplet
 		
 				}
 				
-				ret.addAll(BeCPGQueryBuilder.createQuery().inType(PLMModel.TYPE_NUT).inType(PLMModel.TYPE_COST).inType(PLMModel.TYPE_PHYSICO_CHEM)
-						.inType(PLMModel.TYPE_LABEL_CLAIM).andPropQuery(BeCPGModel.PROP_CHARACT_NAME, prepareQuery(query)).excludeProp(BeCPGModel.PROP_IS_DELETED, "true").ftsLanguage().list());
-				
-
+			BeCPGQueryBuilder beCPGQueryBuilder = BeCPGQueryBuilder.createQuery().inType(PLMModel.TYPE_NUT).inType(PLMModel.TYPE_COST).inType(PLMModel.TYPE_PHYSICO_CHEM)
+					.inType(PLMModel.TYPE_LABEL_CLAIM).andPropQuery(BeCPGModel.PROP_CHARACT_NAME, prepareQuery(query)).ftsLanguage();
+			Boolean includeDeleted = props != null && props.containsKey(AutoCompleteService.PROP_INCLUDE_DELETED) && (Boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
+			if (!includeDeleted.booleanValue()) {
+				beCPGQueryBuilder.excludeProp(BeCPGModel.PROP_IS_DELETED, "true");
+			}
+			
+			ret.addAll(beCPGQueryBuilder.list());
 		
 		
 		return new AutoCompletePage(ret, pageNum, pageSize, calculatedCharactsValueExtractor );

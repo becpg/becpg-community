@@ -6,6 +6,7 @@ package fr.becpg.repo.product.formulation;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -20,7 +21,6 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
-import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * The Class CostCalculatingVisitor.
@@ -234,6 +234,14 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 	@Override
 	protected QName getCostUnitPropName() {
 		return PLMModel.PROP_COSTCURRENCY;
+	}
+
+
+	@Override
+	protected CostListDataItem newSimpleListDataItem(NodeRef charactNodeRef) {
+		CostListDataItem costListDataItem = new CostListDataItem();
+		costListDataItem.setCharactNodeRef(charactNodeRef);
+		return costListDataItem;
 	}
 
 }

@@ -50,7 +50,7 @@ public interface HierarchyService {
 	 * @param value a {@link java.lang.String} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	List<NodeRef> getHierarchiesByPath(String path, NodeRef parentNodeRef, String value);
+	List<NodeRef> getHierarchiesByPath(String path, NodeRef parentNodeRef, String value, boolean includeDeleted);
 	/**
 	 * <p>getAllHierarchiesByPath.</p>
 	 *

@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -32,6 +34,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisAnalysisPlugin;
 import fr.becpg.repo.decernis.DecernisService;
+import fr.becpg.repo.decernis.helper.DecernisHelper;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -43,6 +46,8 @@ import fr.becpg.repo.system.SystemConfigurationService;
 @Service
 public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
+	private static final Pattern THRESHOLD_PATTERN = Pattern.compile("<=([0-9.]+)\\s*(mg/l|mg/kg)");
+	
 	private static final String THRESHOLD = "threshold";
 
 	private static final String RESULT_INDICATOR = "resultIndicator";
@@ -106,42 +111,6 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	}
 
 	@Override
-	public String extractAnalysisResult(JSONObject analysisResults) {
-		
-		boolean notListed = false;
-		
-		if (analysisResults.has(RECIPE_ANALAYSIS_REPORT)) {
-			JSONObject recipeAnalaysisReport = analysisResults.getJSONObject(RECIPE_ANALAYSIS_REPORT);
-			if (recipeAnalaysisReport.has(RECIPE_REPORT)) {
-				JSONArray recipeReport = recipeAnalaysisReport.getJSONArray(RECIPE_REPORT);
-				
-				for (int i = 0; i < recipeReport.length(); i++) {
-					JSONObject report = recipeReport.getJSONObject(i);
-						
-					JSONArray matrixReports = report.getJSONArray("matrixReport");
-					
-					for (int j = 0; j < matrixReports.length(); j++) {
-						JSONObject matrixReport = matrixReports.getJSONObject(j);
-						String resultIndicator = matrixReport.getString(RESULT_INDICATOR);
-						if (resultIndicator.toLowerCase().startsWith("prohibited") || resultIndicator.toLowerCase().startsWith("over limit")) {
-							return "prohibited";
-						}
-						if (resultIndicator.toLowerCase().startsWith("not listed")) {
-							notListed = true;
-						}
-					}
-				}
-			}
-		}
-		
-		if (notListed) {
-			return "not listed";
-		}
-		
-		return "permitted";
-	}
-
-	@Override
 	public JSONObject postRecipeAnalysis(RegulatoryContext context, Set<String> countries, String usage, Integer moduleId) throws JSONException {
 		
 		String recipeAnalysisResult = "";
@@ -180,7 +149,7 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 						String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
 						String ingName = (legalName != null) && !legalName.isEmpty() ? legalName
 								: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
-						Double ingQtyPerc = ingListDataItem.getQtyPerc();
+						Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());
 						JSONObject ingredient = new JSONObject();
 						ingredient.put("name", ingName);
 						ingredient.put("spec", ingName);
@@ -320,6 +289,19 @@ public class V5DecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 							MLText reqMessage = MLTextHelper.getI18NMessage(MESSAGE_PROHIBITED_ING, threshold);
 							ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem.getIng(), reqMessage, RequirementType.Forbidden);
 							reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
+							reqCtrlItem.setReqMaxQty(0d);
+							if (!threshold.isBlank()) {
+								Matcher matcher = THRESHOLD_PATTERN.matcher(threshold);
+								if (matcher.find()) {
+									String extracted = matcher.group(1);
+									try {
+										Double numberThreshold =  Double.parseDouble(extracted.trim()) / 10000;
+										reqCtrlItem.setReqMaxQty(numberThreshold);
+									} catch (NumberFormatException e) {
+										logger.error("Error while parsing number: " + extracted);
+									}
+								}
+							}
 							
 							requirements.add(reqCtrlItem);
 							if (logger.isDebugEnabled()) {

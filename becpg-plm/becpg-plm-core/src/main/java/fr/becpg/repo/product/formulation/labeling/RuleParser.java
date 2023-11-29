@@ -38,6 +38,9 @@ public abstract class RuleParser {
 	protected final NodeService mlNodeService;
 	protected final Set<Locale> availableLocales;
 	protected final Map<NodeRef, TextFormatRule> textFormaters = new HashMap<>();
+	
+	protected final  Map<String, TextFormatRule> formatsByName = new HashMap<>();
+	
 	protected final Map<NodeRef, List<DeclarationFilterRule>> nodeDeclarationFilters = new HashMap<>();
 	protected final List<DeclarationFilterRule> declarationFilters = new ArrayList<>();
 	protected final List<SeparatorRule> separatorRules = new ArrayList<>();
@@ -355,12 +358,16 @@ public abstract class RuleParser {
 				textFormaters.put(component, new TextFormatRule(textFormat, locales));
 			}
 		} else {
-			updateDefaultFormat(textFormat);
+			if(textFormat.contains("|")) {
+				formatsByName.put(textFormat.split("\\|")[0], new TextFormatRule(textFormat.split("\\|")[1],locales));
+			} else {
+				updateDefaultFormat(new TextFormatRule(textFormat, locales));
+			}
 		}
 		return true;
 	}
 
-	abstract void updateDefaultFormat(String textFormat);
+	abstract void updateDefaultFormat(TextFormatRule textFormatRule);
 
 	private void addLocale(String value, List<String> locales) {
 		if (((locales == null) || locales.isEmpty()) && (value != null)) {
