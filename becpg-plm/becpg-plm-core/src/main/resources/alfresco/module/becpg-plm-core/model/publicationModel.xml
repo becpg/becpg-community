@@ -238,7 +238,7 @@
 					</source>
 					<target>
 						<class>bp:pubChannel</class>
-						<mandatory>false</mandatory>
+						<mandatory>true</mandatory>
 						<many>false</many>
 					</target>
 				</association>
