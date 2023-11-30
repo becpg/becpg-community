@@ -1300,7 +1300,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (classMapping != null) {
 			if (assoc != null) {
 				assocPath = classMapping.getPaths().get(assoc);
-			} else {
+			} else if(propDef!=null) {
 				assocPath = classMapping.getPaths().get(propDef.getName());
 			}
 		}
