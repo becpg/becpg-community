@@ -173,7 +173,7 @@ public class ImportEntityListItemVisitor extends AbstractImportVisitor implement
 
 					AssociationDefinition associationDef = entityDictionaryService.getAssociation(qName);
 					List<NodeRef> targetRefs = findTargetNodesByValue(importContext, associationDef.isTargetMany(),
-							associationDef.getTargetClass().getName(), value, null);
+							associationDef.getTargetClass().getName(), value, qName);
 					dataListColumnsAssocs.put(qName, targetRefs);
 				}
 			}
