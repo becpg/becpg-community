@@ -163,7 +163,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			NodeRef listContainerNodeRef = entityListDAO.getListContainer(finishedProductNodeRef);
-			if(entityListDAO.getList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE) == null) {
+			if (entityListDAO.getList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE) == null) {
 				entityListDAO.createList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE);
 			}
 			productService.formulate(finishedProductNodeRef);
@@ -204,8 +204,6 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 		}, false, true);
 
 	}
-	
-	
 
 	private void initPart() {
 
@@ -255,8 +253,8 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 			PF1.setUnit(ProductUnit.g);
 
 			List<PackMaterialListDataItem> packMaterial = new ArrayList<>();
-			packMaterial.add(new PackMaterialListDataItem(packMaterial1NodeRef, 10d, 5d, PackagingLevel.Primary));
-			packMaterial.add(new PackMaterialListDataItem(packMaterial2NodeRef, 20d, null, PackagingLevel.Primary));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial1NodeRef, 10d, 5d, null, PackagingLevel.Primary));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial2NodeRef, 20d, null, null, PackagingLevel.Primary));
 			PF1.setPackMaterialList(packMaterial);
 			PF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), PF1).getNodeRef();
 
@@ -272,8 +270,8 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 			SF1.setUnit(ProductUnit.g);
 
 			packMaterial = new ArrayList<>();
-			packMaterial.add(new PackMaterialListDataItem(packMaterial3NodeRef, 30d, null, PackagingLevel.Primary));
-			packMaterial.add(new PackMaterialListDataItem(packMaterial4NodeRef, 40d, 10d, PackagingLevel.Primary));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial3NodeRef, 30d, null, null, PackagingLevel.Primary));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial4NodeRef, 40d, null, 10d, PackagingLevel.Primary));
 			SF1.setPackMaterialList(packMaterial);
 			SF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF1).getNodeRef();
 
@@ -289,7 +287,7 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 			rawMaterial1.setUnit(ProductUnit.g);
 
 			packMaterial = new ArrayList<>();
-			packMaterial.add(new PackMaterialListDataItem(packMaterial5NodeRef, 50d, null, PackagingLevel.Primary));
+			packMaterial.add(new PackMaterialListDataItem(packMaterial5NodeRef, 50d, null, null, PackagingLevel.Primary));
 			rawMaterial1.setPackMaterialList(packMaterial);
 			rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
 
@@ -310,7 +308,8 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 			packagingMaterial1.setLegalName("Legal Packaging material 1");
 			packagingMaterial1.setTare(0.015d);
 			packagingMaterial1.setTareUnit(TareUnit.kg);
-			packagingMaterial1.setPackMaterialList(new ArrayList<>(Arrays.asList(new PackMaterialListDataItem(packMaterial1NodeRef,0.015d*1000, 50d, null))));			
+			packagingMaterial1.setPackMaterialList(
+					new ArrayList<>(Arrays.asList(new PackMaterialListDataItem(packMaterial1NodeRef, 0.015d * 1000, null, 50d, null))));
 			packaging1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial1).getNodeRef();
 
 			/*-- Packaging 2 --*/
@@ -319,8 +318,9 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 			packagingMaterial2.setLegalName("Legal Packaging material 2");
 			packagingMaterial2.setTare(0.5d);
 			packagingMaterial2.setTareUnit(TareUnit.oz);
-			
-			packagingMaterial2.setPackMaterialList(new ArrayList<>(Arrays.asList(new PackMaterialListDataItem(packMaterial2NodeRef, 14.1748d, null, null))));	
+
+			packagingMaterial2.setPackMaterialList(
+					new ArrayList<>(Arrays.asList(new PackMaterialListDataItem(packMaterial2NodeRef, 14.1748d, null, null, null))));
 			packaging2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial2).getNodeRef();
 
 			/*-- Packaging 3 --*/
@@ -329,8 +329,9 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 			packagingMaterial3.setLegalName("Legal Packaging material 3");
 			packagingMaterial3.setTare(1d);
 			packagingMaterial3.setTareUnit(TareUnit.kg);
-			packagingMaterial3.setPackMaterialList(new ArrayList<>(Arrays.asList(new PackMaterialListDataItem(packMaterial3NodeRef, 500d,null , null),
-					new PackMaterialListDataItem(packMaterial4NodeRef, 500d,null, null))));	
+			packagingMaterial3
+					.setPackMaterialList(new ArrayList<>(Arrays.asList(new PackMaterialListDataItem(packMaterial3NodeRef, 500d, null, null, null),
+							new PackMaterialListDataItem(packMaterial4NodeRef, 500d, null, null, null))));
 			packaging3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
 
 			return null;
