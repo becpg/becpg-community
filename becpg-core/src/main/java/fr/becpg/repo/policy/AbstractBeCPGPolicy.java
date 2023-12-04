@@ -225,7 +225,7 @@ public abstract class AbstractBeCPGPolicy implements CopyServicePolicies.OnCopyN
 			return false;
 		}
 		Set<NodeRef> nodesPendingDelete = TransactionalResourceHelper.getSet(KEY_PENDING_DELETE_NODES);
-		return nodesPendingDelete.contains(nodeRef);
+		return nodesPendingDelete.stream().anyMatch(n -> n.getId().equals(nodeRef.getId()));
 	}
 	
 	/**
