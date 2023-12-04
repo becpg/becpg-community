@@ -30,6 +30,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private Double pmlPerc;
 	private Double pmlWeight;
 	private Double pmlRecycledPercentage;
 	private NodeRef pmlMaterial;
@@ -103,6 +104,18 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		this.pmlWeight = pmlWeight;
 	}
 	
+	
+	
+	@AlfProp
+	@AlfQname(qname="pack:pmlPerc")
+	public Double getPmlPerc() {
+		return pmlPerc;
+	}
+
+	public void setPmlPerc(Double pmlPerc) {
+		this.pmlPerc = pmlPerc;
+	}
+
 	/**
 	 * <p>Getter for the field <code>pmlMaterial</code>.</p>
 	 *
@@ -139,9 +152,10 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	 * @param pmlMaterial a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param pmlWeight a {@link java.lang.Double} object.
 	 */
-	public PackMaterialListDataItem(NodeRef pmlMaterial,Double pmlWeight, Double pmlRecycledPercentage, PackagingLevel pkgLevel){
+	public PackMaterialListDataItem(NodeRef pmlMaterial,Double pmlWeight, Double pmlPerc, Double pmlRecycledPercentage, PackagingLevel pkgLevel){
 		super();
 		this.pmlMaterial = pmlMaterial;
+		this.pmlPerc = pmlPerc;
 		this.pmlWeight = pmlWeight;
 		this.pkgLevel = pkgLevel;
 		this.pmlRecycledPercentage = pmlRecycledPercentage;
@@ -150,6 +164,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	public PackMaterialListDataItem(PackMaterialListDataItem o) {
 		super(o);
 		this.pmlMaterial = o.pmlMaterial;
+		this.pmlPerc = o.pmlPerc;
 		this.pmlWeight = o.pmlWeight;
 		this.pkgLevel = o.pkgLevel;
 		this.pmlRecycledPercentage = o.pmlRecycledPercentage;
@@ -169,7 +184,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(pkgLevel, pmlMaterial, pmlRecycledPercentage, pmlWeight);
+		result = prime * result + Objects.hash(pkgLevel, pmlMaterial, pmlPerc, pmlRecycledPercentage, pmlWeight);
 		return result;
 	}
 
@@ -182,7 +197,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		if (getClass() != obj.getClass())
 			return false;
 		PackMaterialListDataItem other = (PackMaterialListDataItem) obj;
-		return pkgLevel == other.pkgLevel && Objects.equals(pmlMaterial, other.pmlMaterial)
+		return pkgLevel == other.pkgLevel && Objects.equals(pmlMaterial, other.pmlMaterial) && Objects.equals(pmlPerc, other.pmlPerc)
 				&& Objects.equals(pmlRecycledPercentage, other.pmlRecycledPercentage) && Objects.equals(pmlWeight, other.pmlWeight);
 	}
 
