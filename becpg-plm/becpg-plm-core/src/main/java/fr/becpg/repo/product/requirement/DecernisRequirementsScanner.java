@@ -75,7 +75,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 			Set<String> countries = new HashSet<>(formulatedProduct.getRegulatoryCountries());
 			Set<String> usages = new HashSet<>(formulatedProduct.getRegulatoryUsages());
 
-			String checkSum = decernisService.createDecernisChecksum(countries, usages);
+			String checkSum = decernisService.createDecernisChecksum(formulatedProduct);
 
 			shouldLaunchDecernis = !CheckSumHelper.isSameChecksum(DECERNIS_KEY, formulatedProduct.getRequirementChecksum(), checkSum);
 

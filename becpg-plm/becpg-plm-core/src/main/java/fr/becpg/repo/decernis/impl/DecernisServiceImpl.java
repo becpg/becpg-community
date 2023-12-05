@@ -622,17 +622,32 @@ public class DecernisServiceImpl implements DecernisService {
 
 	/** {@inheritDoc} */
 	@Override
-	public String createDecernisChecksum(Set<String> countries, Set<String> usages) {
+	public String createDecernisChecksum(ProductData formulatedProduct) {
+		
+		List<String> productCountries = formulatedProduct.getRegulatoryCountries();
+		List<String> productUsages = formulatedProduct.getRegulatoryUsages();
+		StringBuilder checksumBuilder = new StringBuilder();
+		checksumBuilder.append(createRequirementChecksum(productCountries, productUsages));
+		
+		if (formulatedProduct.getIngList() != null) {
+			formulatedProduct.getIngList().stream()
+			.filter(ing -> ing != null && ing.getNodeRef() != null)
+			.map(ing -> ing.getNodeRef().toString() + ing.getIng() + ing.getValue())
+			.sorted()
+			.forEach(checksumBuilder::append);
+		}
+		
+		return checksumBuilder.toString();
+	}
+	
+	private String createRequirementChecksum(List<String> countries, List<String> usages) {
 		StringBuilder key = new StringBuilder();
-
 		if (countries != null) {
 			countries.stream().filter(c -> (c != null) && !c.isEmpty()).sorted().forEach(key::append);
 		}
-
 		if (usages != null) {
 			usages.stream().filter(c -> (c != null) && !c.isEmpty()).sorted().forEach(key::append);
 		}
-
 		return key.toString();
 	}
 }
