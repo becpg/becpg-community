@@ -28,13 +28,6 @@ public interface DecernisService {
 	 */
 	List<ReqCtrlListDataItem> extractDecernisRequirements(ProductData product, Set<String> countries, Set<String> usages);
 
-	/**
-	 * <p>createDecernisChecksum.</p>
-	 *
-	 * @param countries a {@link java.util.Set} object.
-	 * @param usages a {@link java.util.Set} object.
-	 * @return a {@link java.lang.String} object.
-	 */
-	String createDecernisChecksum(Set<String> countries, Set<String> usages);
+	String createDecernisChecksum(ProductData formulatedProduct);
 	
 }
