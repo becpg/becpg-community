@@ -80,7 +80,7 @@ public class DecernisServiceImpl implements DecernisService {
 	@Value("${beCPG.decernis.module}")
 	private String module;
 
-	@Value("#{new Boolean('${beCPG.formulation.specification.addInfoReqCtrll}'.trim())}")
+	@Value("#{new Boolean('${beCPG.formulation.specification.addInfoReqCtrl}'.trim())}")
 	private Boolean addInfoReqCtrl;
 
 	private RestTemplate restTemplate;
