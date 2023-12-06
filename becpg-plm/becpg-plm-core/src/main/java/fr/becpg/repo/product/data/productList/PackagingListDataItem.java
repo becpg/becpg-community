@@ -276,6 +276,7 @@ public class PackagingListDataItem extends AbstractEffectiveVariantListDataItem 
 		this.isMaster = c.isMaster;
 		this.isRecycle = c.isRecycle;
 		this.product = c.product;
+		this.lossPerc = c.lossPerc;
 	}
 
 	/** {@inheritDoc} */
