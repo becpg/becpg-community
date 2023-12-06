@@ -126,6 +126,8 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	private static final Log logger = LogFactory.getLog(EntityReportServiceImpl.class);
 
 	private static final String REPORT_KIND_SPLIT_REGEXP = "\\s*,\\s*";
+	
+	private static final List<String> SEMICOLON_SEPARATED_PROPERTIES = List.of("extraImagePaths");
 
 	@Autowired
 	private SystemConfigurationService systemConfigurationService;
@@ -683,7 +685,11 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 									prefs.put(tmp.getKey(), tmp.getValue());
 								}
 							} else {
-								ret += "," + tmp.getValue();
+								if (SEMICOLON_SEPARATED_PROPERTIES.contains(tmp.getKey())) {
+									ret += ";" + tmp.getValue();
+								} else {
+									ret += "," + tmp.getValue();
+								}
 								prefs.put(tmp.getKey(), ret);
 							}
 
@@ -1384,7 +1390,6 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		List<NodeRef> tplsNodeRef = reportTplService.getSystemReportTemplates(ReportType.Document, nodeType);
 
 		for (NodeRef tplNodeRef : tplsNodeRef) {
-
 			tplsToReturnNodeRef.add(tplNodeRef);
 		}
 
@@ -1392,9 +1397,10 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		List<AssociationRef> assocRefs = nodeService.getTargetAssocs(nodeRef, ReportModel.ASSOC_REPORT_TEMPLATES);
 
 		for (AssociationRef assocRef : assocRefs) {
-
 			NodeRef tplNodeRef = assocRef.getTargetRef();
-			tplsToReturnNodeRef.add(tplNodeRef);
+			if (!tplsToReturnNodeRef.contains(tplNodeRef)) {
+				tplsToReturnNodeRef.add(tplNodeRef);
+			}
 		}
 
 		return tplsToReturnNodeRef;
