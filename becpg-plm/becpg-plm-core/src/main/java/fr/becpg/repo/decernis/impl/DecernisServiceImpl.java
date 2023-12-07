@@ -215,7 +215,7 @@ public class DecernisServiceImpl implements DecernisService {
 
 				String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
 
-				String ingName = (legalName != null) && !legalName.isEmpty() ? legalName
+				String ingName = (legalName != null) && !legalName.isBlank() ? legalName
 						: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
 				String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
 
@@ -484,7 +484,9 @@ public class DecernisServiceImpl implements DecernisService {
 								IngListDataItem ingItem = null;
 
 								for (IngListDataItem ing : ingList) {
-									String ingName = (String) nodeService.getProperty(ing.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME);
+									String legalName = (String) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_LEGAL_NAME);
+									String ingName = (legalName != null) && !legalName.isBlank() ? legalName
+											: (String) nodeService.getProperty(ing.getIng(), BeCPGModel.PROP_CHARACT_NAME);
 									if (result.getString("ingredient").contains(ingName)) {
 										ingItem = ing;
 										break;
