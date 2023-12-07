@@ -1,13 +1,8 @@
 package fr.becpg.repo.decernis;
 
-import java.util.List;
-import java.util.Set;
-
-import org.json.JSONObject;
 
 import fr.becpg.repo.decernis.model.RegulatoryContext;
-import fr.becpg.repo.product.data.productList.IngListDataItem;
-import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 
 public interface DecernisAnalysisPlugin {
 
@@ -20,8 +15,8 @@ public interface DecernisAnalysisPlugin {
 	
 	boolean needsRecipeId();
 	
-	List<ReqCtrlListDataItem> extractRequirements(JSONObject analysisResults, List<IngListDataItem> ings, String country, Integer moduleId);
+	void extractRequirements(RegulatoryContext productContext, RegulatoryContextItem contextItem);
+	
 
-	JSONObject postRecipeAnalysis(RegulatoryContext productContext, Set<String> countries, String usage, Integer moduleId);
 
 }

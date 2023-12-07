@@ -36,9 +36,10 @@ import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
+import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingListDataItem;
-import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
@@ -74,7 +75,7 @@ import fr.becpg.repo.variant.model.VariantEntity;
  * @version $Id: $Id
  */
 @BeCPGPublicApi
-public class ProductData extends AbstractScorableEntity implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity {
+public class ProductData extends AbstractScorableEntity implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity {
 
 	
 	private static final long serialVersionUID = 764534088277737617L;
@@ -243,6 +244,8 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private List<PackMaterialListDataItem> packMaterialList;
 	private List<StockListDataItem> stockList;
 	private List<RegulatoryListDataItem> regulatoryList;
+	private List<IngRegulatoryListDataItem> ingRegulatoryList;
+	
 
 	/*
 	 * View
@@ -2010,6 +2013,16 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	
 	public void setRegulatoryList(List<RegulatoryListDataItem> regulatoryList) {
 		this.regulatoryList = regulatoryList;
+	}
+	
+	@DataList
+	@AlfQname(qname = "bcpg:ingRegulatoryList")
+	public List<IngRegulatoryListDataItem> getIngRegulatoryList() {
+		return ingRegulatoryList;
+	}
+
+	public void setIngRegulatoryList(List<IngRegulatoryListDataItem> ingRegulatoryList) {
+		this.ingRegulatoryList = ingRegulatoryList;
 	}
 
 	/**
