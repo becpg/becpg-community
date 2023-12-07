@@ -1,48 +1,51 @@
 package fr.becpg.repo.decernis.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
-import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
+import org.alfresco.service.cmr.repository.NodeRef;
+
+import fr.becpg.repo.product.data.RegulatoryEntity;
 
 public class RegulatoryContextItem {
 
-	private RegulatoryListDataItem item;
-	private Set<String> countries = new HashSet<>();
-	private Set<String> usages = new HashSet<>();
+	private RegulatoryEntity item;
+	private Map<String, NodeRef> countries = new HashMap<>();
+	private Map<String, NodeRef> usages = new HashMap<>();
 	private Integer moduleId;
-	private String analysisResult;
-	public RegulatoryListDataItem getItem() {
+
+	public RegulatoryEntity getItem() {
 		return item;
 	}
-	public void setItem(RegulatoryListDataItem item) {
+
+	public void setItem(RegulatoryEntity item) {
 		this.item = item;
 	}
-	public Set<String> getCountries() {
+
+	public Map<String, NodeRef> getCountries() {
 		return countries;
 	}
-	public void setCountries(Set<String> countries) {
+
+	public void setCountries(Map<String, NodeRef> countries) {
 		this.countries = countries;
 	}
-	public Set<String> getUsages() {
+
+	public Map<String, NodeRef> getUsages() {
 		return usages;
 	}
-	public void setUsages(Set<String> usages) {
+
+	public void setUsages(Map<String, NodeRef> usages) {
 		this.usages = usages;
 	}
+
 	public Integer getModuleId() {
 		return moduleId;
 	}
+
 	public void setModuleId(Integer moduleId) {
 		this.moduleId = moduleId;
 	}
-	public String getAnalysisResult() {
-		return analysisResult;
-	}
-	public void setAnalysisResult(String analysisResult) {
-		this.analysisResult = analysisResult;
-	}
-	
+
 	public boolean isEmpty() {
 		return countries.isEmpty() || usages.isEmpty();
 	}

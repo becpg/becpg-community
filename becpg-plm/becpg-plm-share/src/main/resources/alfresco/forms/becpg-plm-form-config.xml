@@ -1513,6 +1513,7 @@
                     <show id="bcpg:femaNumber" force="true"/>
                     <show id="bcpg:flNumber" force="true"/>
                     <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="bcpg:regulatoryComment" force="true"/>
                     <show id="bcpg:ingTypeV2" force="true"/>
                     <show id="bcpg:ingAllergens" force="true" />
                     <show id="bcpg:ingAllergensQtyPerc" force="true" />
@@ -1544,6 +1545,7 @@
                     <field id="bcpg:femaNumber" set="2-col-1" />
                     <field id="bcpg:flNumber" set="2-col-1" />
                     <field id="bcpg:regulatoryCode" set="2-col-1" />
+                    <field id="bcpg:regulatoryComment" set="2-col-1" />
                     <field id="bcpg:erpCode" set="1-col-2" />
                     <field id="bcpg:ingTypeV2" set="1-col-2" >
                         <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -1590,6 +1592,7 @@
                     <show id="bcpg:femaNumber"  force="true"/>
                     <show id="bcpg:flNumber"  force="true"/>
                     <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="bcpg:regulatoryComment" force="true"/>
                     <show id="bcpg:ingTypeV2"  force="true"/>
                     <show id="bcpg:ingAllergens" />
                     <show id="bcpg:ingAllergensQtyPerc" />
@@ -1621,6 +1624,7 @@
                     <field id="bcpg:femaNumber" set="2-col-1" />
                     <field id="bcpg:flNumber" set="2-col-1" />
                     <field id="bcpg:regulatoryCode" set="2-col-1" />
+                    <field id="bcpg:regulatoryComment" set="2-col-1" />
                     <field id="bcpg:erpCode" set="1-col-2" />
                     <field id="bcpg:ingTypeV2" set="1-col-2" >
                         <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
@@ -1718,6 +1722,7 @@
                     <show id="bcpg:femaNumber" force="true"/>
                     <show id="bcpg:flNumber" force="true"/>
                     <show id="bcpg:regulatoryCode" force="true"/>
+                    <show id="bcpg:regulatoryComment" force="true"/>
                     <show id="bcpg:ingTypeV2" force="true"/>
                     <show id="gs1:productActivityTypeCode" force="true"/>
                     <show id="bcpg:linkedSearchAssociation" force="true" />
@@ -9601,6 +9606,80 @@
 			</form>
 		</forms>
 	</config>
-		
-
+	
+	
+	<config evaluator="model-type" condition="bcpg:ingRegulatoryList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:irlIng" />
+					<show id="bcpg:regulatoryCountries"  force="true"/>
+					<show id="bcpg:irlCitation" />			
+					<show id="bcpg:regulatoryResult" force="true" />	
+					<show id="bcpg:irlUsages" force="true" />	
+					<show id="bcpg:irlRestrictionLevels" />	
+				    <show id="bcpg:irlSources" />			
+				</field-visibility>				
+			</form>
+			<form id="filter">
+				<field-visibility>
+					<show id="bcpg:irlIng" />
+					<show id="bcpg:regulatoryCountries" />
+					<show id="bcpg:regulatoryResult" />	
+					<show id="bcpg:regulatoryUsageRef" />							
+				</field-visibility>			
+			</form>
+			<form id="datagrid">
+				<field-visibility>
+				    <show id="bcpg:irlIng" />
+					<show id="bcpg:regulatoryCountries" force="true"/>
+					<show id="bcpg:irlCitation" />			
+					<show id="bcpg:regulatoryResult" force="true"/>	
+					<show id="bcpg:irlUsages" force="true"/>
+					<show id="bcpg:irlRestrictionLevels" />	
+				    <show id="bcpg:regulatoryComment" force="true"/>
+				    <show id="bcpg:irlSources" />	
+				    <show id="dataList_bcpg:reqCtrlList" />				
+				</field-visibility>			
+				<appearance>
+					<field id="bcpg:irlIng"  read-only="true"/>
+					<field id="bcpg:regulatoryCountries"  read-only="true"/>
+					
+					<field id="bcpg:irlCitation"  read-only="true"/>			
+					<field id="bcpg:regulatoryResult"  read-only="true"/>	
+					<field id="bcpg:irlUsages"  read-only="true"/>	
+					<field id="bcpg:regulatoryComment"  read-only="true"/>	
+					<field id="bcpg:irlRestrictionLevels"  read-only="true"/>	
+				    <field id="bcpg:irlSources"  read-only="true"/>		
+				    <field id="dataList_bcpg:reqCtrlList" label-id="hidden" />
+				</appearance>		
+			</form>
+		</forms>
+	</config>
+	<config evaluator="node-type" condition="bcpg:ingRegulatoryList">
+		<forms>
+			<form>
+				<field-visibility>
+					<show id="bcpg:irlIng" />
+					<show id="bcpg:regulatoryCountries" force="true"/>
+					<show id="bcpg:irlCitation" />			
+					<show id="bcpg:regulatoryResult" force="true"/>	
+					<show id="bcpg:irlUsages" force="true"/>	
+					<show id="bcpg:irlRestrictionLevels" />	
+				    <show id="bcpg:regulatoryComment" force="true" />
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:irlIng"  read-only="true"/>
+					<field id="bcpg:regulatoryCountries"  read-only="true"/>
+					<field id="bcpg:irlCitation"  read-only="true"/>			
+					<field id="bcpg:regulatoryResult"  read-only="true"/>	
+					<field id="bcpg:regulatoryUsageRef"  read-only="true"/>	
+					<field id="bcpg:irlRestrictionLevels"  read-only="true"/>	
+				    <field id="bcpg:regulatoryComment"  read-only="true"/>
+				</appearance>			
+			</form>
+		</forms>
+	</config>
+	
+	
 </alfresco-config>
