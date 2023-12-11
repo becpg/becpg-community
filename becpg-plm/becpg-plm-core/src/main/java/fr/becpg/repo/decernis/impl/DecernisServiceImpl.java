@@ -1,13 +1,13 @@
 package fr.becpg.repo.decernis.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -30,8 +30,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import com.ibm.icu.util.Calendar;
-
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisAnalysisPlugin;
@@ -44,9 +42,11 @@ import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationChainPlugin;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RegulatoryEntity;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.system.SystemConfigurationService;
@@ -54,7 +54,7 @@ import fr.becpg.repo.system.SystemConfigurationService;
 /**
  * <p>DecernisServiceImpl class.</p>
  *
- * @author matthieu
+ * @author matthieu,valentin
  * @version $Id: $Id
  */
 @Service("decernisService")
@@ -83,8 +83,6 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 
 	private final SystemConfigurationService systemConfigurationService;
 
-	private static final int DECERNIS_MAX_COUNTRIES = 20;
-	
 	private static final Map<String, Integer> moduleIdMap = new HashMap<>();
 
 	private static final Map<QName, String> ingNumbers = new HashMap<>();
@@ -123,7 +121,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	private String token() {
 		return systemConfigurationService.confValue("beCPG.decernis.token");
 	}
-	
+
 	@Override
 	public String getChainId() {
 		return DECERNIS_CHAIN_ID;
@@ -144,13 +142,16 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	public List<ReqCtrlListDataItem> extractRequirements(ProductData product) {
 
 		try {
+
 			RegulatoryContext context = createContext(product);
 
 			if (context.isTreatable()) {
-				
+
 				checkIngredients(context);
-				
+
 				boolean recipeCreated = false;
+				
+				logger.debug("Launch decernis in mode :"+ context.getRegulatoryMode());
 
 				if (DecernisMode.BOTH.equals(context.getRegulatoryMode()) || DecernisMode.DECERNIS_ONLY.equals(context.getRegulatoryMode())) {
 					createRecipe(context);
@@ -172,15 +173,80 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				}
 			}
 
+			if(product.getIngRegulatoryList()!=null) {
+				processRegulatoryList(context);
+			}
+
 			return context.getRequirements();
 
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
 			logger.error("Decernis HTTP ERROR STATUS: " + e.getStatusText());
 			logger.error("- error body: " + e.getResponseBodyAsString());
-			throw new FormulateException("Error calling decernis service: " + e.getMessage(), e);
+			throw new FormulateException("Error calling decernis service: " + e.getStatusText(), e);
 		} catch (Exception e) {
 			throw new FormulateException("Unexpected decernis error: " + e.getMessage(), e);
 		}
+	}
+
+	public void processRegulatoryList(RegulatoryContext context) {
+		Map<NodeRef, Map<NodeRef, List<IngRegulatoryListDataItem>>> groupedByIngAndCountry = context.getIngRegulatoryList().stream().collect(
+				Collectors.groupingBy(IngRegulatoryListDataItem::getIng, Collectors.groupingBy(item -> item.getRegulatoryCountries().get(0))));
+
+		for (Map<NodeRef, List<IngRegulatoryListDataItem>> countryGroup : groupedByIngAndCountry.values()) {
+			for (List<IngRegulatoryListDataItem> items : countryGroup.values()) {
+				mergeItems(context, items);
+			}
+		}
+		
+		List<IngRegulatoryListDataItem> filteredList = context.getProduct().getIngRegulatoryList().stream()
+		        .filter(item -> context.getIngRegulatoryList().stream()
+		                .anyMatch(ingRegulatoryListDataItem ->
+		                        Objects.equals(item.getIng(), ingRegulatoryListDataItem.getIng()) &&
+		                                Objects.equals(item.getRegulatoryCountries(), ingRegulatoryListDataItem.getRegulatoryCountries())))
+		        .collect(Collectors.toList());
+
+		context.getProduct().getIngRegulatoryList().retainAll(filteredList);
+
+	}
+
+	private IngRegulatoryListDataItem mergeItems(RegulatoryContext context, List<IngRegulatoryListDataItem> items) {
+
+		// Assuming all items have the same ing and country
+		IngRegulatoryListDataItem sampleItem = items.get(0);
+
+		IngRegulatoryListDataItem mergedItem = context.getProduct().getIngRegulatoryList().stream()
+	        .filter(item ->
+	                Objects.equals(item.getIng(), sampleItem.getIng()) &&
+	                Objects.equals(item.getRegulatoryCountries(), sampleItem.getRegulatoryCountries()))
+	        .findFirst()
+	        .orElseGet(() -> {
+	            IngRegulatoryListDataItem newItem = new IngRegulatoryListDataItem();
+	            newItem.setIng(sampleItem.getIng());
+	            newItem.setRegulatoryCountries(sampleItem.getRegulatoryCountries());
+	            context.getProduct().getIngRegulatoryList().add(newItem);
+	            return newItem;
+	        });
+
+		String citation = items.stream().map(item -> item.getCitation().getDefaultValue()).collect(Collectors.joining(", "));
+		String usages = items.stream().map(item -> item.getUsages().getDefaultValue()).collect(Collectors.joining(", "));
+		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue()).collect(Collectors.joining(", "));
+
+		mergedItem.setCitation(new MLText(citation));
+		mergedItem.setUsages(new MLText(usages));
+		mergedItem.setRestrictionLevels(new MLText(restrictionLevels));
+
+	//	List<RegulatoryResult> regulatoryResults = items.stream().map(IngRegulatoryListDataItem::getRegulatoryResult).collect(Collectors.toList());
+
+	//	RegulatoryResult worstResult = regulatoryResults.stream().min(Comparator.comparing(RegulatoryResult::getSeverity)).orElse(null);
+
+	//	mergedItem.setRegulatoryResult(worstResult);
+
+		// Assuming you want to concatenate all regulatoryUsages
+		List<NodeRef> regulatoryUsages = items.stream().flatMap(item -> item.getRegulatoryUsages().stream()).collect(Collectors.toList());
+
+		mergedItem.setRegulatoryUsages(Arrays.asList(regulatoryUsages.toArray(new NodeRef[0])));
+
+		return mergedItem;
 	}
 
 	private DecernisAnalysisPlugin getAnalysisPlugin() {
@@ -195,56 +261,13 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	private void analyzeRecipe(RegulatoryContext productContext) {
 		for (RegulatoryContextItem contextItem : productContext.getContextItems()) {
 			if (!contextItem.isEmpty()) {
-				analyzeContext(productContext, contextItem.getUsages(), contextItem.getCountries(), contextItem.getModuleId());
+				getAnalysisPlugin().extractRequirements(productContext, contextItem);
 			}
-		}
-		if (!productContext.isEmpty()) {
-			analyzeContext(productContext, productContext.getUsages(), productContext.getCountries(), productContext.getModuleId());
-		}
-	}
-
-	private void analyzeContext(RegulatoryContext productContext, Set<String> usages, Set<String> countries, Integer moduleId) {
-		for (String usage : usages) {
-			
-			Set<String> countriesBatch = new HashSet<>();
-
-			for (String country : countries) {
-			    countriesBatch.add(country);
-			    if (countriesBatch.size() == DECERNIS_MAX_COUNTRIES) {
-			    	analyzeSubContext(productContext, moduleId, usage, countriesBatch);
-			        countriesBatch.clear();
-			    }
-			}
-
-			if (!countriesBatch.isEmpty()) {
-				analyzeSubContext(productContext, moduleId, usage, countriesBatch);
-			}
-		}
-	}
-
-	private void analyzeSubContext(RegulatoryContext productContext, Integer moduleId, String usage, Set<String> countries) {
-		try {
-			JSONObject analysis = getAnalysisPlugin().postRecipeAnalysis(productContext, countries, usage, moduleId);
-			if (analysis != null) {
-				for (String countryBatch : countries) {
-					productContext.getRequirements()
-					.addAll(getAnalysisPlugin().extractRequirements(analysis, productContext.getProduct().getIngList(), countryBatch, moduleId));
-				}
-			}
-		} catch (HttpClientErrorException | HttpServerErrorException e) {
-			logger.error("Error while analyzing with Decernis", e);
-			ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-					MLTextHelper.getI18NMessage("message.decernis.error", e.getMessage()), null, new ArrayList<>(),
-					RequirementDataType.Specification);
-			req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
-			productContext.getRequirements().add(req);
 		}
 	}
 
 	private void checkUsagesID(RegulatoryContext context) {
-		for (NodeRef usageRef : context.getProduct().getRegulatoryUsages()) {
-			updateUsageID(usageRef, context.getModuleId());
-		}
+
 		for (RegulatoryContextItem contextItem : context.getContextItems()) {
 			for (NodeRef usageRef : contextItem.getItem().getRegulatoryUsages()) {
 				updateUsageID(usageRef, contextItem.getModuleId());
@@ -272,6 +295,8 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				recipeId = jsonObject.get("id").toString();
 			}
 		}
+		
+		logger.debug("Create decernis recipe : "+recipeId);
 
 		context.getProduct().setRegulatoryRecipeId(recipeId);
 
@@ -331,7 +356,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 					logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getStatusText());
 				} catch (Exception e) {
 					logger.error(e, e);
-					throw new FormulateException("Unexpected Decernis error: " + e.getMessage(), e);
+					throw new FormulateException("Unexpected decernis error", e);
 				}
 			}
 		}
@@ -352,8 +377,8 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				}
 				NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
 				if (ingType == null) {
-					context.getRequirements().add(createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_NO_FUNCTION_ING),
-							RequirementType.Tolerated));
+					context.getRequirements().add(
+							createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_NO_FUNCTION_ING), RequirementType.Tolerated));
 				}
 			}
 		}
@@ -369,7 +394,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	}
 
 	private String cleanToken(String token) {
-		return token!=null ? token.replace("Bearer ", "").strip() : "";
+		return token != null ? token.replace("Bearer ", "").strip() : "";
 	}
 
 	private boolean buildQuery(IngListDataItem ingListDataItem, Map<String, String> params) {
@@ -447,10 +472,8 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				} else {
 					result = getRidByIngName(results, ingName);
 				}
-				if (result == null) {
-					if (results.toList().stream().map(o -> ((Map<?, ?>) o).get("did")).distinct().count() == 1) {
-						result = results.getJSONObject(0);
-					}
+				if (result == null && results.toList().stream().map(o -> ((Map<?, ?>) o).get("did")).distinct().count() == 1) {
+					result = results.getJSONObject(0);
 				}
 				if (result != null) {
 					ingredientId = result.get("did").toString();
@@ -465,7 +488,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 							QName numberPropName = entry.getKey();
 							String numberPropValue = entry.getValue();
 							String ingNumberToFill = (String) nodeService.getProperty(ingListDataItem.getIng(), numberPropName);
-							
+
 							if ((ingNumberToFill == null || ingNumberToFill.isEmpty()) && libidents.has(numberPropValue)) {
 								JSONArray numbers = libidents.getJSONArray(numberPropValue);
 								String number = null;
@@ -481,7 +504,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 										logger.debug("Set ingredient RID: " + params.get(PARAM_QUERY) + " " + ingListDataItem.getIng() + " "
 												+ numberPropName + " " + number);
 									}
-									
+
 									nodeService.setProperty(ingListDataItem.getIng(), numberPropName, number);
 								}
 							}
@@ -490,7 +513,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 
 				} else {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Several RIDs for ingredient " + params.get(PARAM_QUERY));
+						logger.debug("Several RIDs for ingredient " + params.get(PARAM_QUERY)+ " "+results.toString());
 					}
 					requirements.add(
 							createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_SEVERAL_RID_ING), RequirementType.Tolerated));
@@ -532,19 +555,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		RegulatoryContext context = new RegulatoryContext();
 		context.setProduct(product);
 
-		Set<String> countries = new HashSet<>();
-		Set<String> usages = new HashSet<>();
-
-		for (NodeRef nodeRef : product.getRegulatoryCountries()) {
-			extractCodes(context, countries, nodeRef);
-		}
-		for (NodeRef nodeRef : product.getRegulatoryUsages()) {
-			extractCodes(context, usages, nodeRef);
-		}
-
-		context.setCountries(countries);
-		context.setUsages(usages);
-		context.setModuleId(extractModuleId(product.getRegulatoryUsages()));
+		context.getContextItems().add(createContextItem(product, context));
 
 		for (RegulatoryListDataItem item : product.getRegulatoryList()) {
 			context.getContextItems().add(createContextItem(item, context));
@@ -553,13 +564,13 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		return context;
 	}
 
-	private RegulatoryContextItem createContextItem(RegulatoryListDataItem item, RegulatoryContext context) {
+	private RegulatoryContextItem createContextItem(RegulatoryEntity item, RegulatoryContext context) {
 
 		RegulatoryContextItem contextItem = new RegulatoryContextItem();
 		contextItem.setItem(item);
 
-		Set<String> countries = new HashSet<>();
-		Set<String> usages = new HashSet<>();
+		Map<String, NodeRef> countries = new HashMap<>();
+		Map<String, NodeRef> usages = new HashMap<>();
 		Integer moduleId = null;
 
 		for (NodeRef nodeRef : item.getRegulatoryCountries()) {
@@ -577,14 +588,14 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		return contextItem;
 	}
 
-	private void extractCodes(RegulatoryContext context, Set<String> codes, NodeRef nodeRef) {
+	private void extractCodes(RegulatoryContext context, Map<String, NodeRef> codes, NodeRef nodeRef) {
 		String code = extractCode(nodeRef);
 		if (code == null || code.isBlank()) {
 			String name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME);
 			logger.warn("charact " + name + " has no regulatoryCode");
 			context.getRequirements().add(createReqCtrl(null, MLTextHelper.getI18NMessage(MESSAGE_NO_CODE_CHARACT, name), RequirementType.Tolerated));
 		} else {
-			codes.add(code);
+			codes.put(code, nodeRef);
 		}
 	}
 
