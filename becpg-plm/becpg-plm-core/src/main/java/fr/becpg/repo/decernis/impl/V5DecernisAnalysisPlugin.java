@@ -5,8 +5,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -42,8 +40,6 @@ import fr.becpg.repo.system.SystemConfigurationService;
 
 @Service
 public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
-
-	private static final Pattern THRESHOLD_PATTERN = Pattern.compile("<=([0-9.]+)\\s*(mg/l|mg/kg)");
 
 	private static final String RESULT_INDICATOR = "resultIndicator";
 
@@ -289,16 +285,10 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 															RequirementType.Forbidden);
 													reqCtrlItem.setRegulatoryCode(country + (!usage.isEmpty() ? " - " + usage : ""));
 													reqCtrlItem.setReqMaxQty(0d);
-													if (!threshold.isBlank()) {
-														Matcher matcher = THRESHOLD_PATTERN.matcher(threshold);
-														if (matcher.find()) {
-															String extracted = matcher.group(1);
-															try {
-																Double numberThreshold = Double.parseDouble(extracted.trim()) / 10000;
-																reqCtrlItem.setReqMaxQty(numberThreshold);
-															} catch (NumberFormatException e) {
-																logger.error("Error while parsing number: " + extracted);
-															}
+													if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != 0d) {
+														Double thresholdValue = DecernisHelper.extractThresholdValue(threshold);
+														if (thresholdValue != null) {
+															reqCtrlItem.setReqMaxQty((thresholdValue / ingItem.getQtyPerc()) * 100d);
 														}
 													}
 
