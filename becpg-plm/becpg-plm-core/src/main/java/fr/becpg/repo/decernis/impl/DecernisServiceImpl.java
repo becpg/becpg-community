@@ -1,5 +1,6 @@
 package fr.becpg.repo.decernis.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -143,8 +144,6 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	public List<ReqCtrlListDataItem> extractRequirements(ProductData product) {
 
 		try {
-			resetRegulatoryResults(product);
-			
 			RegulatoryContext context = createContext(product);
 
 			if (context.isTreatable()) {
@@ -178,16 +177,9 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
 			logger.error("Decernis HTTP ERROR STATUS: " + e.getStatusText());
 			logger.error("- error body: " + e.getResponseBodyAsString());
-			throw new FormulateException("Error calling decernis service: " + e.getStatusText(), e);
+			throw new FormulateException("Error calling decernis service: " + e.getMessage(), e);
 		} catch (Exception e) {
 			throw new FormulateException("Unexpected decernis error: " + e.getMessage(), e);
-		}
-	}
-
-	private void resetRegulatoryResults(ProductData product) {
-		product.setRegulatoryResult(null);
-		for (RegulatoryListDataItem regulatoryItem : product.getRegulatoryList()) {
-			regulatoryItem.setRegulatoryResult(null);
 		}
 	}
 
@@ -231,12 +223,21 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	}
 
 	private void analyzeSubContext(RegulatoryContext productContext, Integer moduleId, String usage, Set<String> countries) {
-		JSONObject analysis = getAnalysisPlugin().postRecipeAnalysis(productContext, countries, usage, moduleId);
-		if (analysis != null) {
-			for (String countryBatch : countries) {
-				productContext.getRequirements()
-						.addAll(getAnalysisPlugin().extractRequirements(analysis, productContext.getProduct().getIngList(), countryBatch, moduleId));
+		try {
+			JSONObject analysis = getAnalysisPlugin().postRecipeAnalysis(productContext, countries, usage, moduleId);
+			if (analysis != null) {
+				for (String countryBatch : countries) {
+					productContext.getRequirements()
+					.addAll(getAnalysisPlugin().extractRequirements(analysis, productContext.getProduct().getIngList(), countryBatch, moduleId));
+				}
 			}
+		} catch (HttpClientErrorException | HttpServerErrorException e) {
+			logger.error("Error while analyzing with Decernis", e);
+			ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+					MLTextHelper.getI18NMessage("message.decernis.error", e.getMessage()), null, new ArrayList<>(),
+					RequirementDataType.Specification);
+			req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+			productContext.getRequirements().add(req);
 		}
 	}
 
@@ -330,7 +331,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 					logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getStatusText());
 				} catch (Exception e) {
 					logger.error(e, e);
-					throw new FormulateException("Unexpected decernis error", e);
+					throw new FormulateException("Unexpected Decernis error: " + e.getMessage(), e);
 				}
 			}
 		}

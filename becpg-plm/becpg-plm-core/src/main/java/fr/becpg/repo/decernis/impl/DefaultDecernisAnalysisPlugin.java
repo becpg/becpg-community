@@ -36,6 +36,7 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisAnalysisPlugin;
 import fr.becpg.repo.decernis.DecernisService;
+import fr.becpg.repo.decernis.helper.DecernisHelper;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -47,8 +48,6 @@ import fr.becpg.repo.system.SystemConfigurationService;
 
 @Service
 public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
-
-	private static final Pattern THRESHOLD_PATTERN = Pattern.compile("\\(?<=([0-9.]+)\\s*(mg/l|mg/kg)\\)?");
 
 	private Map<Integer, Set<String>> availableCountries = new HashMap<>();
 	
@@ -264,16 +263,10 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 					ReqCtrlListDataItem reqCtrlItem = createReqCtrl(ingItem == null ? null : ingItem.getIng(), reqMessage, RequirementType.Forbidden);
 					reqCtrlItem.setRegulatoryCode(regulatoryCode);
 					reqCtrlItem.setReqMaxQty(0d);
-					if (!threshold.isBlank()) {
-						Matcher matcher = THRESHOLD_PATTERN.matcher(threshold);
-						if (matcher.find()) {
-							String extracted = matcher.group(1);
-							try {
-								Double numberThreshold =  Double.parseDouble(extracted.trim()) / 10000;
-								reqCtrlItem.setReqMaxQty(numberThreshold);
-							} catch (NumberFormatException e) {
-								logger.error("Error while parsing number: " + extracted);
-							}
+					if (!threshold.isBlank() && ingItem != null && ingItem.getQtyPerc() != 0d) {
+						Double thresholdValue = DecernisHelper.extractThresholdValue(threshold);
+						if (thresholdValue != null) {
+							reqCtrlItem.setReqMaxQty((thresholdValue / ingItem.getQtyPerc()) * 100d);
 						}
 					}
 					reqCtrlList.add(reqCtrlItem);
