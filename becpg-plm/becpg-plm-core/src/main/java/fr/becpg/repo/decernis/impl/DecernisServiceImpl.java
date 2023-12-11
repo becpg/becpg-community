@@ -180,7 +180,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 			return context.getRequirements();
 
 		} catch (HttpClientErrorException | HttpServerErrorException e) {
-			logger.error("Decernis HTTP ERROR STATUS: " + e.getStatusText());
+			logger.error("Decernis HTTP ERROR STATUS: " + e.getMessage());
 			logger.error("- error body: " + e.getResponseBodyAsString());
 			throw new FormulateException("Error calling decernis service: " + e.getStatusText(), e);
 		} catch (Exception e) {
@@ -356,7 +356,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 					logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getStatusText());
 				} catch (Exception e) {
 					logger.error(e, e);
-					throw new FormulateException("Unexpected decernis error", e);
+					throw new FormulateException("Unexpected decernis error: " + e.getMessage(), e);
 				}
 			}
 		}
