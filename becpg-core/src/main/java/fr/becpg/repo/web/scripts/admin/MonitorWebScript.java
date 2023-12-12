@@ -39,6 +39,8 @@ import fr.becpg.repo.license.BeCPGLicenseManager;
  */
 public class MonitorWebScript extends DeclarativeWebScript {
 
+	private static final double BYTES_TO_MEGA_BYTES = 1048576d;
+
 	private static final Log logger = LogFactory.getLog(MonitorWebScript.class);
 	
 	private ContentService contentService;
@@ -64,7 +66,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 			
 			Map<String, Object> ret = new HashMap<>();
 			
-			fillMonitoringInformation(ret);
+			fillMonitoringInformation(ret, true);
 			
 			if ("beCPG Monitors".equals(req.getHeader(HttpHeaders.USER_AGENT))) {
 				ret.put("authenticated", true);
@@ -79,7 +81,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		
 	}
 
-	protected Set<String> fillMonitoringInformation(Map<String, Object> ret) {
+	protected Set<String> fillMonitoringInformation(Map<String, Object> ret, boolean includeTenantUsers) {
 		
 		long concurrentReadUsers = 0;
 		long concurrentSupplierUsers = 0;
@@ -92,8 +94,9 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		for (Iterator<String> iterator = users.iterator(); iterator.hasNext();) {
 			String user = iterator.next();
 			if ((AuthenticationUtil.getGuestUserName().equals(user) || AuthenticationUtil.getSystemUserName().equals(user))
-					|| (tenantAdminService.isEnabled()
-							&& !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user)))) {
+					|| !includeTenantUsers && (tenantAdminService.isEnabled()
+							&& !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user)))
+					) {
 				iterator.remove();
 			}
 		}
@@ -124,10 +127,10 @@ public class MonitorWebScript extends DeclarativeWebScript {
 	
 		ret.put("diskFreeSpace", contentService.getStoreFreeSpace());
 		ret.put("diskTotalSpace", contentService.getStoreTotalSpace());
-		ret.put("totalMemory", runtime.totalMemory() / 1000000d);
-		ret.put("freeMemory", runtime.freeMemory() / 1000000d);
-		ret.put("maxMemory", runtime.maxMemory() / 1000000d);
-		ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / 1000000d);
+		ret.put("totalMemory", runtime.totalMemory() / BYTES_TO_MEGA_BYTES);
+		ret.put("freeMemory", runtime.freeMemory() / BYTES_TO_MEGA_BYTES);
+		ret.put("maxMemory", runtime.maxMemory() / BYTES_TO_MEGA_BYTES);
+		ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / BYTES_TO_MEGA_BYTES);
 		ret.put("connectedUsers", users.size());
 		ret.put("concurrentReadUsers", concurrentReadUsers);
 		ret.put("concurrentWriteUsers", concurrentWriteUsers);
