@@ -112,6 +112,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 				
 				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
+				updateChecksums(formulatedProduct);
 				formulatedProduct.setRegulatoryFormulatedDate(new Date());
 				updateChecksums(formulatedProduct);
 				
@@ -128,7 +129,6 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				return Arrays.asList(req);
 
 			} finally {
-				
 				if (logger.isDebugEnabled() && (watch != null)) {
 					watch.stop();
 					logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds() + "s");
