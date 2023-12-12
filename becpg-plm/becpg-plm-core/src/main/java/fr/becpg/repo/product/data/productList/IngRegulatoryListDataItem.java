@@ -9,15 +9,12 @@ import java.util.Objects;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
-import fr.becpg.repo.product.data.constraints.RegulatoryResult;
 import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
-import fr.becpg.repo.repository.model.CopiableDataItem;
-import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 
 @AlfType
 @AlfQname(qname = "bcpg:ingRegulatoryList")
@@ -34,6 +31,8 @@ public class IngRegulatoryListDataItem extends BeCPGDataObject {
 	private MLText comment;
 
 	private MLText usages;
+	
+	private MLText resultIndicator;
 
 	private List<NodeRef> sources;
 
@@ -41,7 +40,6 @@ public class IngRegulatoryListDataItem extends BeCPGDataObject {
 
 	private List<NodeRef> regulatoryUsages;
 
-	private RegulatoryResult regulatoryResult;
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:irlIng")
@@ -74,6 +72,18 @@ public class IngRegulatoryListDataItem extends BeCPGDataObject {
 
 	public void setRestrictionLevels(MLText restrictionLevels) {
 		this.restrictionLevels = restrictionLevels;
+	}
+	
+	
+	@AlfProp
+	@AlfMlText
+	@AlfQname(qname = "bcpg:irlResultIndicator")
+	public MLText getResultIndicator() {
+		return resultIndicator;
+	}
+
+	public void setResultIndicator(MLText resultIndicator) {
+		this.resultIndicator = resultIndicator;
 	}
 
 	@AlfProp
@@ -117,15 +127,6 @@ public class IngRegulatoryListDataItem extends BeCPGDataObject {
 		this.regulatoryUsages = regulatoryUsages;
 	}
 
-	@AlfProp
-	@AlfQname(qname = "bcpg:regulatoryResult")
-	public RegulatoryResult getRegulatoryResult() {
-		return regulatoryResult;
-	}
-
-	public void setRegulatoryResult(RegulatoryResult regulatoryResult) {
-		this.regulatoryResult = regulatoryResult;
-	}
 
 	@AlfProp
 	@AlfMlText
@@ -143,7 +144,7 @@ public class IngRegulatoryListDataItem extends BeCPGDataObject {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result
-				+ Objects.hash(citation, comment, ing, regulatoryCountries, regulatoryResult, regulatoryUsages, restrictionLevels, sources, usages);
+				+ Objects.hash(citation, comment, ing, regulatoryCountries, regulatoryUsages, restrictionLevels, resultIndicator, sources, usages);
 		return result;
 	}
 
@@ -157,17 +158,19 @@ public class IngRegulatoryListDataItem extends BeCPGDataObject {
 			return false;
 		IngRegulatoryListDataItem other = (IngRegulatoryListDataItem) obj;
 		return Objects.equals(citation, other.citation) && Objects.equals(comment, other.comment) && Objects.equals(ing, other.ing)
-				&& Objects.equals(regulatoryCountries, other.regulatoryCountries) && regulatoryResult == other.regulatoryResult
-				&& Objects.equals(regulatoryUsages, other.regulatoryUsages) && Objects.equals(restrictionLevels, other.restrictionLevels)
+				&& Objects.equals(regulatoryCountries, other.regulatoryCountries) && Objects.equals(regulatoryUsages, other.regulatoryUsages)
+				&& Objects.equals(restrictionLevels, other.restrictionLevels) && Objects.equals(resultIndicator, other.resultIndicator)
 				&& Objects.equals(sources, other.sources) && Objects.equals(usages, other.usages);
 	}
 
 	@Override
 	public String toString() {
 		return "IngRegulatoryListDataItem [ing=" + ing + ", citation=" + citation + ", restrictionLevels=" + restrictionLevels + ", comment="
-				+ comment + ", usages=" + usages + ", sources=" + sources + ", regulatoryCountries=" + regulatoryCountries + ", regulatoryUsages="
-				+ regulatoryUsages + ", regulatoryResult=" + regulatoryResult + "]";
+				+ comment + ", usages=" + usages + ", resultIndicator=" + resultIndicator + ", sources=" + sources + ", regulatoryCountries="
+				+ regulatoryCountries + ", regulatoryUsages=" + regulatoryUsages + "]";
 	}
+
+    
 
 
 }

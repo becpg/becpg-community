@@ -82,7 +82,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		RestTemplate restTemplate = new LogRestTemplate();
 		DecernisAnalysisPlugin[] decernisPlugins = { new DefaultDecernisAnalysisPlugin(nodeService, systemConfigurationService, restTemplate),
 				new V5DecernisAnalysisPlugin(nodeService, systemConfigurationService, restTemplate) };
-		decernisService = new DecernisServiceImpl(restTemplate, nodeService, decernisPlugins, systemConfigurationService);
+		decernisService = new DecernisServiceImpl(restTemplate, nodeService, decernisPlugins, systemConfigurationService, alfrescoRepository);
 		super.setUp();
 		initParts();
 		

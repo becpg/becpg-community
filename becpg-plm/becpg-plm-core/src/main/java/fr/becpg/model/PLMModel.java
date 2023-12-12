@@ -730,6 +730,8 @@ public interface PLMModel {
 	
 	QName TYPE_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryList");
 	
+	QName TYPE_ING_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "ingRegulatoryList");
+	
 	//Chemical code
 	/** Constant <code>PROP_CAS_NUMBER</code> */
 	QName PROP_CAS_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "casNumber");
@@ -770,6 +772,7 @@ public interface PLMModel {
 	QName PROP_BEST_BEFORE_DATE =  QName.createQName(BeCPGModel.BECPG_URI, "bestBeforeDate");
 	QName PROP_USE_BY_DATE =  QName.createQName(BeCPGModel.BECPG_URI, "useByDate");
 	QName PROP_PERIOD_AFTER_OPENING =  QName.createQName(BeCPGModel.BECPG_URI, "periodAfterOpening");
+
 
 		
 }

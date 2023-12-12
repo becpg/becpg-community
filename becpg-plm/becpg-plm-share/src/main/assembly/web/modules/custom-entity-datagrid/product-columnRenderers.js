@@ -135,7 +135,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName : [ "cm:cmobject_bcpg:allergenListVolSources", "cm:cmobject_bcpg:allergenListInVolSources" ],
+		propertyName : [ "cm:cmobject_bcpg:allergenListVolSources", "cm:cmobject_bcpg:allergenListInVolSources","bcpg:irlIng","bcpg:irlSources" ],
 		renderer : function(oRecord, data, label, scope) {
 			if (data.metadata == "ing") {
 				return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';

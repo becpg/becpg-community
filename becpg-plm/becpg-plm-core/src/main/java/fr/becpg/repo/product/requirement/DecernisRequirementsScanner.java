@@ -113,12 +113,14 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				
 				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
 				formulatedProduct.setRegulatoryFormulatedDate(new Date());
+				updateChecksums(formulatedProduct);
+				
 				return requirements;
-
 			} catch (FormulateException e) {
 				if (logger.isWarnEnabled()) {
 					logger.warn(e, e);
 				}
+				
 				ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
 						MLTextHelper.getI18NMessage("message.decernis.error", e.getMessage()), null, new ArrayList<>(),
 						RequirementDataType.Specification);
@@ -126,7 +128,7 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				return Arrays.asList(req);
 
 			} finally {
-				updateChecksums(formulatedProduct);
+				
 				if (logger.isDebugEnabled() && (watch != null)) {
 					watch.stop();
 					logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds() + "s");
