@@ -252,6 +252,10 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 						) {
 
 							JSONObject countryResults = analysisResults.getJSONObject(PARAM_ANALYSIS_RESULTS).getJSONObject(country);
+							
+							if(logger.isTraceEnabled()) {
+								logger.trace(countryResults.toString(3));
+							}
 
 							if (countryResults.has(TABULAR) && countryResults.getJSONObject(TABULAR).has(INGREDIENT_DATA_PDF)) {
 
@@ -278,7 +282,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 										ingRegulatoryListDataItem.setCitation(new MLText(result.getString(CITATION)));
 										ingRegulatoryListDataItem.setUsages(new MLText(result.getString(USAGE_NAME)));
 										ingRegulatoryListDataItem.setRestrictionLevels(new MLText(result.getString(THRESHOLD)));
-//										ingRegulatoryListDataItem.setRegulatoryResult(RegulatoryResult.valueOf(result.getString(RESULT_INDICATOR)));
+										ingRegulatoryListDataItem.setResultIndicator(new MLText(result.getString(RESULT_INDICATOR)));
 
 										productContext.getIngRegulatoryList().add(ingRegulatoryListDataItem);
 
@@ -405,12 +409,6 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		
 		IngRegulatoryListDataItem ingRegulatoryListDataItem = new IngRegulatoryListDataItem();
 		ingRegulatoryListDataItem.setIng(ing);
-		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
-		try {
-			ingRegulatoryListDataItem.setComment((MLText) nodeService.getProperty(ing, PLMModel.PROP_REGULATORY_COMMENT));
-		} finally {
-			MLPropertyInterceptor.setMLAware(mlAware);
-		}
 		ingRegulatoryListDataItem
 				.setRegulatoryCountries(Arrays.asList(country));
 

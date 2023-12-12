@@ -241,7 +241,11 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 						if (isAvailableCountry(country) && analysisResults.has(RECIPE_ANALAYSIS_REPORT)) {
 
 							JSONObject recipeAnalaysisReport = analysisResults.getJSONObject(RECIPE_ANALAYSIS_REPORT);
-
+							
+							if(logger.isTraceEnabled()) {
+								logger.trace(recipeAnalaysisReport.toString(3));
+							}
+							
 							if (recipeAnalaysisReport.has(RECIPE_REPORT)) {
 
 								JSONArray recipeReport = recipeAnalaysisReport.getJSONArray(RECIPE_REPORT);
@@ -261,7 +265,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 											String function = tabularReport.getString("function");
 											String ingredientName = tabularReport.getString(PARAM_NAME);
 
-											IngListDataItem ingItem = findIngredientItem(productContext.getProduct().getIngList(), decernisID,
+											IngListDataItem ingItem = findIngredientItemV5(productContext.getProduct().getIngList(), decernisID,
 													function, ingredientName);
 
 											if (ingItem != null) {
@@ -272,8 +276,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 												ingRegulatoryListDataItem.setUsages(new MLText(usage));
 												
 												ingRegulatoryListDataItem.setRestrictionLevels(new MLText(tabularReport.getString(THRESHOLD)));
-//												ingRegulatoryListDataItem
-//														.setRegulatoryResult(RegulatoryResult.valueOf(tabularReport.getString(RESULT_INDICATOR)));
+												ingRegulatoryListDataItem.setResultIndicator(new MLText(tabularReport.getString(RESULT_INDICATOR)));
 
 												productContext.getIngRegulatoryList().add(ingRegulatoryListDataItem);
 
@@ -349,7 +352,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 	}
 
 
-	private IngListDataItem findIngredientItem(List<IngListDataItem> ingList, String decernisID, String function, String ingredientName) {
+	private IngListDataItem findIngredientItemV5(List<IngListDataItem> ingList, String decernisID, String function, String ingredientName) {
 		for (IngListDataItem ing : ingList) {
 			if (decernisID.equals(nodeService.getProperty(ing.getIng(), PLMModel.PROP_REGULATORY_CODE))) {
 				NodeRef ingType = (NodeRef) nodeService.getProperty(ing.getIng(), PLMModel.PROP_ING_TYPE_V2);
@@ -371,6 +374,8 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		}
 		return null;
 	}
+	
+
 
 	private boolean isAvailableCountry(String country) {
 		if (availableCountries == null) {

@@ -1,14 +1,18 @@
 package fr.becpg.repo.decernis.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -41,15 +45,19 @@ import fr.becpg.repo.decernis.model.RegulatoryContextItem;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationChainPlugin;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RegulatoryEntity;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.system.SystemConfigurationService;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
  * <p>DecernisServiceImpl class.</p>
@@ -82,6 +90,8 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	private final DecernisAnalysisPlugin[] decernisPlugins;
 
 	private final SystemConfigurationService systemConfigurationService;
+	
+	private final AlfrescoRepository<ProductData> alfrescoRepository;
 
 	private static final Map<String, Integer> moduleIdMap = new HashMap<>();
 
@@ -102,12 +112,13 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	}
 
 	public DecernisServiceImpl(@Qualifier("logRestTemplate") RestTemplate restTemplate, NodeService nodeService,
-			DecernisAnalysisPlugin[] decernisPlugins, SystemConfigurationService systemConfigurationService) {
+			DecernisAnalysisPlugin[] decernisPlugins, SystemConfigurationService systemConfigurationService, AlfrescoRepository<ProductData> alfrescoRepository) {
 		super();
 		this.restTemplate = restTemplate;
 		this.nodeService = nodeService;
 		this.decernisPlugins = decernisPlugins;
 		this.systemConfigurationService = systemConfigurationService;
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	private String serverUrl() {
@@ -173,7 +184,8 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				}
 			}
 
-			if(product.getIngRegulatoryList()!=null) {
+			if( alfrescoRepository.hasDataList(product, PLMModel.TYPE_ING_REGULATORY_LIST) 
+					&& product.getIngRegulatoryList()!=null) {
 				processRegulatoryList(context);
 			}
 
@@ -227,26 +239,58 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	            return newItem;
 	        });
 
-		String citation = items.stream().map(item -> item.getCitation().getDefaultValue()).collect(Collectors.joining(", "));
-		String usages = items.stream().map(item -> item.getUsages().getDefaultValue()).collect(Collectors.joining(", "));
-		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue()).collect(Collectors.joining(", "));
+		String citation = items.stream().map(item -> item.getCitation().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
+		String usages = items.stream().map(item -> item.getUsages().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
+		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
+		String resultIndicators = items.stream().map(item -> item.getResultIndicator().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
 
+		mergedItem.setResultIndicator(new MLText(resultIndicators));
 		mergedItem.setCitation(new MLText(citation));
 		mergedItem.setUsages(new MLText(usages));
 		mergedItem.setRestrictionLevels(new MLText(restrictionLevels));
+		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
+		try {
+			MLText comment =	(MLText) nodeService.getProperty(mergedItem.getIng(), PLMModel.PROP_REGULATORY_COMMENT);
+			mergedItem.setComment(comment);
+		} finally {
+			MLPropertyInterceptor.setMLAware(mlAware);
+		}
 
-	//	List<RegulatoryResult> regulatoryResults = items.stream().map(IngRegulatoryListDataItem::getRegulatoryResult).collect(Collectors.toList());
-
-	//	RegulatoryResult worstResult = regulatoryResults.stream().min(Comparator.comparing(RegulatoryResult::getSeverity)).orElse(null);
-
-	//	mergedItem.setRegulatoryResult(worstResult);
-
-		// Assuming you want to concatenate all regulatoryUsages
 		List<NodeRef> regulatoryUsages = items.stream().flatMap(item -> item.getRegulatoryUsages().stream()).collect(Collectors.toList());
 
 		mergedItem.setRegulatoryUsages(Arrays.asList(regulatoryUsages.toArray(new NodeRef[0])));
+		
+		mergedItem.setSources(extractSources(mergedItem.getIng(), context.getProduct()));
+		
 
 		return mergedItem;
+	}
+
+	private List<NodeRef> extractSources(NodeRef ing, ProductData formulatedProduct) {
+
+		Set<NodeRef> sources = new HashSet<>();
+		
+		List<CompoListDataItem> compoList = formulatedProduct
+				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
+
+		if (compoList != null) {
+			for (CompoListDataItem compoItem : compoList) {
+
+				if ((compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
+					ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
+					if(componentProductData.getIngList()!=null) {
+					
+						for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
+							if(ingListDataItem.getIng().equals(ing)) {
+								sources.add(compoItem.getProduct());
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		return new ArrayList<>(sources);
 	}
 
 	private DecernisAnalysisPlugin getAnalysisPlugin() {
