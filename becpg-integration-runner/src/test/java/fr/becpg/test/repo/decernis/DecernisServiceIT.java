@@ -645,7 +645,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			                        "\"functionCode\": \"Margarine and fat spreads\"," +
 			                        "\"resultIndicator\": \"Prohibited\"," +
 			                        "\"percentage\": \"2.0\"," +
-			                        "\"threshold\": \"<=100 mg/l or mg/kg\"," +
+			                        "\"threshold\": \"<=5.0%\"," +
 			                        "\"citation\": \"Regulation (EC) No 1333/2008: Food Additives (Consolidated 2022-10-31)(English) - FoodAdditives\"," +
 			                        "\"citationLink\": \"doc=e21ad59e-4080-4c59-841d-8758921400b4&pg=80\"," +
 			                        "\"function_help_text\": null," +
@@ -681,7 +681,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 			                        "\"function\": \"Preservative - Food Additive\"," +
 			                        "\"usage\": \"Margarine and fat spreads - 02.2.2 Other fat and oil emulsions including spreads as defined by Regulation (EC) No 1234/2007 and liquid emulsions: only spreadable fats as defined in Article 115 of and Annex XV to Regulation (EC) No 1234/2007, having a fat content of 41 % or less\"," +
 			                        "\"resultIndicator\": \"Prohibited\"," +
-			                        "\"threshold\": \"<=100 mg/l or mg/kg\"," +
+			                        "\"threshold\": \"<=5.0%\"," +
 			                        "\"ingredientPercent\": \"2.0\"," +
 			                        "\"citation\": \"Regulation (EC) No 1333/2008: Food Additives (Consolidated 2022-10-31)(English) - FoodAdditives\"," +
 			                        "\"comments\": \"\"," +
@@ -742,9 +742,9 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				assertEquals(2, requirements.size());
 				
 				assertEquals(RequirementType.Forbidden, requirements.get(0).getReqType());
-				assertEquals(0.01, requirements.get(0).getReqMaxQty());
+				assertEquals(0.01 / 2 * 100, requirements.get(0).getReqMaxQty());
 				assertEquals(RequirementType.Forbidden, requirements.get(1).getReqType());
-				assertEquals(0.01, requirements.get(1).getReqMaxQty());
+				assertEquals(5.0 / 2 * 100, requirements.get(1).getReqMaxQty());
 				
 				assertEquals(RequirementDataType.Specification, requirements.get(0).getReqDataType());
 				assertEquals(RequirementDataType.Specification, requirements.get(1).getReqDataType());
@@ -861,7 +861,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 					          "\"resultIndicator\": \"Prohibited\"," +
 					          "\"percentage\": \"2.0\"," +
 					          "\"usage\": \"Margarine and fat spreads\"," +
-					          "\"threshold\": \"<=100 mg/l or mg/kg\"," +
+					          "\"threshold\": \"<=5.0%\"," +
 					          "\"citation\": \"Regulation (EC) No 1333/2008: Food Additives (Consolidated 2022-10-31)(English) - FoodAdditives\"," +
 					          "\"idType\": \"Decernis ID\"," +
 					          "\"idValue\": \"4476\"," +
@@ -899,7 +899,7 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 					          "\"function\": \"Preservative - Food Additive\"," +
 					          "\"usage\": \"Margarine and fat spreads - 02.2.2 Other fat and oil emulsions including spreads as defined by Regulation (EC) No 1234/2007 and liquid emulsions: only spreadable fats as defined in Article 115 of and Annex XV to Regulation (EC) No 1234/2007, having a fat content of 41 % or less\"," +
 					          "\"resultIndicator\": \"Prohibited\"," +
-					          "\"threshold\": \"<=100 mg/l or mg/kg\"," +
+					          "\"threshold\": \"<=5.0%\"," +
 					          "\"citation\": \"Regulation (EC) No 1333/2008: Food Additives (Consolidated 2022-10-31)(English) - FoodAdditives\"," +
 					          "\"comments\": \"\"," +
 					          "\"expressedAs\": \"\"," +
@@ -945,9 +945,9 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 				assertEquals(2, requirements.size());
 				
 				assertEquals(RequirementType.Forbidden, requirements.get(0).getReqType());
-				assertEquals(0.01, requirements.get(0).getReqMaxQty());
+				assertEquals(0.01 / 2 * 100, requirements.get(0).getReqMaxQty());
 				assertEquals(RequirementType.Forbidden, requirements.get(1).getReqType());
-				assertEquals(0.01, requirements.get(1).getReqMaxQty());
+				assertEquals(5.0 / 2 * 100, requirements.get(1).getReqMaxQty());
 				
 				assertEquals(RequirementDataType.Specification, requirements.get(0).getReqDataType());
 				assertEquals(RequirementDataType.Specification, requirements.get(1).getReqDataType());
