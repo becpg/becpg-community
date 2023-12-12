@@ -3653,6 +3653,13 @@
 					<type>d:mltext</type>
 					<index enabled="false"></index>
 				</property>
+				<property name="bcpg:irlResultIndicator">
+					<type>d:mltext</type>
+					 <index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>true</facetable>
+					</index>
+				</property>
 				<property name="bcpg:irlUsages">
 					<type>d:mltext</type>
 					<index enabled="false"></index>
