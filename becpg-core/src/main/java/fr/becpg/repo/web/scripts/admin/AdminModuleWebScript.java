@@ -122,7 +122,7 @@ public class AdminModuleWebScript extends MonitorWebScript {
 			throw new WebScriptException(Status.STATUS_BAD_REQUEST, "'action' argument cannot be null or empty");
 		}
 		
-		Set<String> users = fillMonitoringInformation(ret);
+		Set<String> users = fillMonitoringInformation(ret, false);
 		
 		// #378 : force to use server locale
 		Locale currentLocal = I18NUtil.getLocale();
