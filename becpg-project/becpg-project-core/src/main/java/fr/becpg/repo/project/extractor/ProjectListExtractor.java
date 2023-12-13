@@ -319,7 +319,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						}
 
 						if (projectResults != null) {
-
 							for (Iterator<NodeRef> iterator = results.iterator(); iterator.hasNext();) {
 								NodeRef nodeRef = iterator.next();
 								NodeRef entityNodeRef = entityListDAO.getEntity(nodeRef);
@@ -335,7 +334,6 @@ public class ProjectListExtractor extends ActivityListExtractor {
 							}
 							results.retainAll(associationService.getSourcesAssocs(currentUserNodeRef, ProjectModel.ASSOC_TL_RESOURCES));
 						}
-
 					} else {
 						results = projectResults;
 					}
@@ -345,9 +343,8 @@ public class ProjectListExtractor extends ActivityListExtractor {
 						results.retainAll(favorites);
 					}
 				}
-
 			}
-
+			
 			if (dataListFilter.getSortId() != null) {
 				DataListSortPlugin plugin = dataListSortRegistry.getPluginById(dataListFilter.getSortId());
 				if (plugin != null) {
