@@ -490,6 +490,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			if (oColumn.hidden) {
 				oColumn.showAfterRender = true;
 			}
+			var sigFig = 5;
 			  
       		var unit, qty;
       		if(data.value == 0){
@@ -502,11 +503,12 @@ if (beCPG.module.EntityDataGridRenderers) {
       			unit = " %";
       		}
       		
+      		
       		if(oRecord.getData("itemType") == "total"){
-				  return '<span class="total">'+qty.toLocaleString( beCPG.util.getJSLocale() ) + unit+"</span>";
+				  return '<span class="total">'+beCPG.util.sigFigs(qty,sigFig).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit+"</span>";
 			 }
       		
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,5).toLocaleString( beCPG.util.getJSLocale() ) + unit);
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,sigFig).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit);
       	}      
       	return "";
       }
