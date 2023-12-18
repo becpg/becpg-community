@@ -5,8 +5,10 @@ package fr.becpg.repo.product.data.productList;
 
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -28,15 +30,16 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 
 	private static final long serialVersionUID = 6048458461427271748L;
 
-	private String textCriteria;
+	private MLText textCriteria;
 
 	private NodeRef organo;
 
 	/** {@inheritDoc} */
 	@Override
 	@AlfProp
+	@AlfMlText
 	@AlfQname(qname = "bcpg:organoListValue")
-	public String getTextCriteria() {
+	public MLText getTextCriteria() {
 		return textCriteria;
 	}
 
@@ -45,7 +48,7 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 	 *
 	 * @param textCriteria a {@link java.lang.String} object.
 	 */
-	public void setTextCriteria(String textCriteria) {
+	public void setTextCriteria(MLText textCriteria) {
 		this.textCriteria = textCriteria;
 	}
 
@@ -109,7 +112,7 @@ public class OrganoListDataItem extends BeCPGDataObject implements ControlableLi
 	 * @param textCriteria a {@link java.lang.String} object.
 	 * @param organo a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	public OrganoListDataItem(NodeRef nodeRef, String textCriteria, NodeRef organo) {
+	public OrganoListDataItem(NodeRef nodeRef, MLText textCriteria, NodeRef organo) {
 		super();
 		setNodeRef(nodeRef);
 		setTextCriteria(textCriteria);

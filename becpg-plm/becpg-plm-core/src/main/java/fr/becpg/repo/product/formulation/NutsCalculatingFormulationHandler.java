@@ -73,7 +73,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) {
-
+		
 		boolean accept = accept(formulatedProduct);
 
 		if (accept) {
@@ -279,11 +279,13 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	@Override
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();
-		for (Map.Entry<NodeRef, List<NodeRef>> kv : getMandatoryCharactsFromList(formulatedProduct.getNutList()).entrySet()) {
-			if (kv.getKey() != null) {
-				String formula = (String) nodeService.getProperty(kv.getKey(), PLMModel.PROP_NUT_FORMULA);
-				if ((formula == null) || formula.isEmpty()) {
-					mandatoryCharacts.put(kv.getKey(), kv.getValue());
+			if(PLMModel.TYPE_RAWMATERIAL.equals(componentType)) {
+			for (Map.Entry<NodeRef, List<NodeRef>> kv : getMandatoryCharactsFromList(formulatedProduct.getNutList()).entrySet()) {
+				if (kv.getKey() != null) {
+					String formula = (String) nodeService.getProperty(kv.getKey(), PLMModel.PROP_NUT_FORMULA);
+					if ((formula == null) || formula.isEmpty()) {
+						mandatoryCharacts.put(kv.getKey(), kv.getValue());
+					}
 				}
 			}
 		}

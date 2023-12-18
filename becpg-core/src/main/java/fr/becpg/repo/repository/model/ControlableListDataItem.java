@@ -1,5 +1,7 @@
 package fr.becpg.repo.repository.model;
 
+import org.alfresco.service.cmr.repository.MLText;
+
 /**
  * <p>ControlableListDataItem interface.</p>
  *
@@ -13,6 +15,6 @@ public interface ControlableListDataItem extends SimpleCharactDataItem {
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String getTextCriteria();
+	public MLText getTextCriteria();
 	
 }
