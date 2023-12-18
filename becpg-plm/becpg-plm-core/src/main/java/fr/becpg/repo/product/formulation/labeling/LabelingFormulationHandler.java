@@ -1453,11 +1453,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				if (qty != null) {
 					qty *= LabelingFormulaContext.PRECISION_FACTOR;
-					if (!isLocalSemiFinished) {
-						if (componentYield != null) {
-							qty *= componentYield / 100d;
-						}
-					}
 
 					if (ratio != null) {
 						qty *= ratio;
@@ -1468,21 +1463,31 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (volume != null) {
 					volume *= LabelingFormulaContext.PRECISION_FACTOR;
 
-					if (!isLocalSemiFinished) {
-						if (componentYield != null) {
-							volume *= componentYield / 100d;
-						}
-					}
-
 					if (ratio != null) {
 						volume *= ratio;
 					}
 
+				
 				}
 
+
+				
 				Double qtyWithYield = qty != null && !DeclarationType.Group.equals(declarationType) ? qty / calculatedYield * 100d : qty;
 				Double volumeWithYield = volume != null && !DeclarationType.Group.equals(declarationType) ? volume / calculatedYield * 100d : volume;
 
+				
+
+				if (!isLocalSemiFinished) {
+					if (qty != null && componentYield != null) {
+						qty *= componentYield / 100d;
+					}
+					
+					if (volume != null && componentYield != null) {
+						volume *= componentYield / 100d;
+					}
+				}
+
+				
 				//Water loss
 				if ((qty != null) && (calculatedYield != null) && (calculatedYield != 100d)
 						&& nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
@@ -2096,6 +2101,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								logger.trace("Detected water lost");
 							}
 
+							qtyWithYield = qty;
+							volumeWithYield = volume;
+							
 							EvaporatedDataItem evaporatedDataItem = null;
 							for (EvaporatedDataItem tmp : labelingFormulaContext.getEvaporatedDataItems()) {
 								if (tmp.getProductNodeRef().equals(ingNodeRef)) {
@@ -2212,7 +2220,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						if ((ingLabelItem.getQtyWithYield() != null) && (qtyWithYield != null)) {
-							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100));
+							
+							if (logger.isTraceEnabled()) {
+								logger.trace(" -- new qtyWithYield to add to " + getName(ingLabelItem) + ": " + ((qtyWithYield * qtyPerc) / 100));
+							}
+							
+							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100));						
+							
+					
 
 						}
 

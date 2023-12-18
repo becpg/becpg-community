@@ -220,13 +220,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 				Double totalQtyIngWithYield = totalQtyIngMap.get(ingListDataItem.getName() + YIELD_SUFFIX);
 				if ((totalQtyIngWithYield != null) && !formulatedProduct.isGeneric()) {
-
+					Double x = (formulatedProduct.getYield() != null ? formulatedProduct.getYield() / 100d : 1d);
+					
 					Double qtyPercWithYield = (totalQtyIngWithYield)
-							/ (totalQtyUsedWithYield * (formulatedProduct.getYield() != null ? formulatedProduct.getYield() / 100d : 1d));
+							/ (totalQtyUsedWithYield );
 
 					if ((formulatedProduct.getYield() != null) && nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-						qtyPercWithYield = ((totalQtyIngWithYield / totalQtyUsed) - (100 - (formulatedProduct.getYield())))
-								/ (formulatedProduct.getYield() / 100d);
+						qtyPercWithYield = qtyPercWithYield /x + (100d - 100d/x);
+					} else {
+						qtyPercWithYield = qtyPercWithYield/x;
 					}
 					ingListDataItem.setQtyPercWithYield(qtyPercWithYield);
 				} else {
@@ -238,13 +240,15 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 					Double qtyPercWithSecondaryYield = ingListDataItem.getQtyPercWithYield() != null ? ingListDataItem.getQtyPercWithYield()
 							: ingListDataItem.getQtyPerc();
+					 Double x= (formulatedProduct.getSecondaryYield() / 100d);
 					if (nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-						qtyPercWithSecondaryYield = qtyPercWithSecondaryYield
-								- (100d - formulatedProduct.getSecondaryYield()) / (formulatedProduct.getSecondaryYield() / 100d);
+					
+						qtyPercWithSecondaryYield = qtyPercWithSecondaryYield /x + (100d - 100d/x);
+						
 					} else {
 
 						if (qtyPercWithSecondaryYield != null) {
-							qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / (formulatedProduct.getSecondaryYield() / 100d);
+							qtyPercWithSecondaryYield = qtyPercWithSecondaryYield / x;
 						}
 					}
 
@@ -447,7 +451,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 
 				if ((qtyIngWithYield != null)) {
-
+                              
 					double valueToAdd = qty * qtyIngWithYield;
 
 					if (totalQtyIngWithYield == null) {
@@ -456,8 +460,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 					if ((FormulationHelper.getYield(compoListDataItem) != null)
 							&& nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-						valueToAdd = (qty * (qtyIngWithYield - (100d - FormulationHelper.getYield(compoListDataItem))))
-								/ (FormulationHelper.getYield(compoListDataItem) / 100d);
+						 valueToAdd = qty *  (( qtyIngWithYield ) - (100d - FormulationHelper.getYield(compoListDataItem)) );	
 					}
 
 					totalQtyIngWithYield += valueToAdd;

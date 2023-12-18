@@ -3,8 +3,10 @@
  */
 package fr.becpg.repo.product.data.productList;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
@@ -37,7 +39,7 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	
 	private Double maxi;
 	
-	private String textCriteria;
+	private MLText textCriteria;
 	
 	private NodeRef microbio;
 	
@@ -113,8 +115,9 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
+	@AlfMlText
 	@AlfQname(qname="bcpg:mblTextCriteria")
-	public String getTextCriteria() {
+	public MLText getTextCriteria() {
 		return textCriteria;
 	}
 
@@ -123,7 +126,7 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	 *
 	 * @param textCriteria a {@link java.lang.String} object.
 	 */
-	public void setTextCriteria(String textCriteria) {
+	public void setTextCriteria(MLText textCriteria) {
 		this.textCriteria = textCriteria;
 	}
 
@@ -182,7 +185,7 @@ public class MicrobioListDataItem extends BeCPGDataObject implements Controlable
 	 * @param microbio the microbio
 	 * @param textCriteria a {@link java.lang.String} object.
 	 */
-	public MicrobioListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, String textCriteria, NodeRef microbio){
+	public MicrobioListDataItem(NodeRef nodeRef, Double value, String unit, Double maxi, MLText textCriteria, NodeRef microbio){
 		this.nodeRef = nodeRef;
 		this.value = value;
 		this.unit = unit;

@@ -135,7 +135,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName : [ "cm:cmobject_bcpg:allergenListVolSources", "cm:cmobject_bcpg:allergenListInVolSources" ],
+		propertyName : [ "cm:cmobject_bcpg:allergenListVolSources", "cm:cmobject_bcpg:allergenListInVolSources","bcpg:irlIng","bcpg:irlSources" ],
 		renderer : function(oRecord, data, label, scope) {
 			if (data.metadata == "ing") {
 				return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
@@ -490,6 +490,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			if (oColumn.hidden) {
 				oColumn.showAfterRender = true;
 			}
+			var sigFig = 5;
 			  
       		var unit, qty;
       		if(data.value == 0){
@@ -502,11 +503,12 @@ if (beCPG.module.EntityDataGridRenderers) {
       			unit = " %";
       		}
       		
+      		
       		if(oRecord.getData("itemType") == "total"){
-				  return '<span class="total">'+qty.toLocaleString( beCPG.util.getJSLocale() ) + unit+"</span>";
+				  return '<span class="total">'+beCPG.util.sigFigs(qty,sigFig).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit+"</span>";
 			 }
       		
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,5).toLocaleString( beCPG.util.getJSLocale() ) + unit);
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,sigFig).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit);
       	}      
       	return "";
       }

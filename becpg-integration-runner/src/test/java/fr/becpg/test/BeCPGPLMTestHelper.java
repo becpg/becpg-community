@@ -20,8 +20,10 @@ package fr.becpg.test;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.security.PermissionService;
@@ -235,7 +237,11 @@ public class BeCPGPLMTestHelper {
 		// Organos
 		List<OrganoListDataItem> organoList = new ArrayList<>();
 		for (int j = 0; j < PLMBaseTestCase.INSTANCE2.organos.size(); j++) {
-			OrganoListDataItem organoListItemData = new OrganoListDataItem(null, "Descr organo....", PLMBaseTestCase.INSTANCE2.organos.get(j));
+
+			MLText title = new MLText();
+			title.addValue(Locale.getDefault(), "Descr organo....");
+			
+			OrganoListDataItem organoListItemData = new OrganoListDataItem(null, title, PLMBaseTestCase.INSTANCE2.organos.get(j));
 			organoList.add(organoListItemData);
 		}
 		rawMaterial.setOrganoList(organoList);
