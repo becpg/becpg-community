@@ -20,9 +20,11 @@ package fr.becpg.repo.quality.data.dataList;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.quality.data.QualityControlState;
+import fr.becpg.repo.repository.annotation.AlfMlText;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
@@ -30,6 +32,7 @@ import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
+
 /**
  * <p>ControlListDataItem class.</p>
  *
@@ -38,28 +41,28 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  */
 @AlfType
 @AlfQname(qname = "qa:controlList")
-public class ControlListDataItem extends BeCPGDataObject{
+public class ControlListDataItem extends BeCPGDataObject {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7794847133363024701L;
-	String type;
-	Double mini;
-	Double maxi;
-	Boolean required;
-	String sampleId;
-	Double value;
-	Double target;
-	String unit;
-	String textCriteria;
-	QualityControlState state;	
-	String temperature;
-	String timePeriod;
-	NodeRef method;
-	List<NodeRef> characts = new ArrayList<>();
-	NodeRef controlPoint;
-	
+	private String type;
+	private Double mini;
+	private Double maxi;
+	private Boolean required;
+	private String sampleId;
+	private Double value;
+	private Double target;
+	private String unit;
+	private MLText textCriteria;
+	private QualityControlState state;
+	private String temperature;
+	private String timePeriod;
+	private NodeRef method;
+	private List<NodeRef> characts = new ArrayList<>();
+	private NodeRef controlPoint;
+
 	/**
 	 * <p>Getter for the field <code>type</code>.</p>
 	 *
@@ -79,8 +82,6 @@ public class ControlListDataItem extends BeCPGDataObject{
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	
 
 	/**
 	 * <p>Getter for the field <code>mini</code>.</p>
@@ -181,16 +182,16 @@ public class ControlListDataItem extends BeCPGDataObject{
 	public void setValue(Double value) {
 		this.value = value;
 	}
-	
-	
+
 	/**
 	 * <p>Getter for the field <code>textCriteria</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
+	@AlfMlText
 	@AlfQname(qname = "qa:clTextCriteria")
-	public String getTextCriteria() {
+	public MLText getTextCriteria() {
 		return textCriteria;
 	}
 
@@ -199,7 +200,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	 *
 	 * @param textCriteria a {@link java.lang.String} object.
 	 */
-	public void setTextCriteria(String textCriteria) {
+	public void setTextCriteria(MLText textCriteria) {
 		this.textCriteria = textCriteria;
 	}
 
@@ -262,7 +263,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	public void setState(QualityControlState state) {
 		this.state = state;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>temperature</code>.</p>
 	 *
@@ -289,7 +290,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	@AlfSingleAssoc
-	@DataListIdentifierAttr(isDefaultPivotAssoc=true)
+	@DataListIdentifierAttr(isDefaultPivotAssoc = true)
 	@AlfQname(qname = "qa:clMethod")
 	public NodeRef getMethod() {
 		return method;
@@ -310,7 +311,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	 * @return a {@link java.util.List} object.
 	 */
 	@AlfMultiAssoc
-	@DataListIdentifierAttr(isDefaultPivotAssoc=true)
+	@DataListIdentifierAttr(isDefaultPivotAssoc = true)
 	@AlfQname(qname = "qa:clCharacts")
 	public List<NodeRef> getCharacts() {
 		return characts;
@@ -324,7 +325,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	public void setCharacts(List<NodeRef> characts) {
 		this.characts = characts;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>controlPoint</code>.</p>
 	 *
@@ -344,7 +345,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 	public void setControlPoint(NodeRef controlPoint) {
 		this.controlPoint = controlPoint;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>timePeriod</code>.</p>
 	 *
@@ -401,8 +402,10 @@ public class ControlListDataItem extends BeCPGDataObject{
 	 * @param characts a {@link java.util.List} object.
 	 * @param controlPoint a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target, String unit,String textCriteria, QualityControlState state, String temperature, String timePeriod, NodeRef method, List<NodeRef> characts, NodeRef controlPoint){
-		
+	public ControlListDataItem(NodeRef nodeRef, String type, Double mini, Double maxi, Boolean required, String sampleId, Double value, Double target,
+			String unit, MLText textCriteria, QualityControlState state, String temperature, String timePeriod, NodeRef method,
+			List<NodeRef> characts, NodeRef controlPoint) {
+
 		setNodeRef(nodeRef);
 		setType(type);
 		setMini(mini);
@@ -420,7 +423,7 @@ public class ControlListDataItem extends BeCPGDataObject{
 		setCharacts(characts);
 		setControlPoint(controlPoint);
 	}
-	
+
 	/**
 	 * <p>Constructor for ControlListDataItem.</p>
 	 *
@@ -432,19 +435,20 @@ public class ControlListDataItem extends BeCPGDataObject{
 	 * @param state a {@link fr.becpg.repo.quality.data.QualityControlState} object.
 	 * @param controlDefListDataItem a {@link fr.becpg.repo.quality.data.dataList.ControlDefListDataItem} object.
 	 */
-	public ControlListDataItem(NodeRef nodeRef, String sampleId, Double value, Double target, String unit, QualityControlState state, ControlDefListDataItem controlDefListDataItem){
-		
+	public ControlListDataItem(NodeRef nodeRef, String sampleId, Double value, Double target, String unit, QualityControlState state,
+			ControlDefListDataItem controlDefListDataItem) {
+
 		setNodeRef(nodeRef);
 		setSampleId(sampleId);
 		setValue(value);
 		setTarget(target);
 		setUnit(unit);
 		setState(state);
-		
+
 		setType(controlDefListDataItem.getType());
 		setMini(controlDefListDataItem.getMini());
 		setMaxi(controlDefListDataItem.getMaxi());
-		setRequired(controlDefListDataItem.getRequired());		
+		setRequired(controlDefListDataItem.getRequired());
 		setMethod(controlDefListDataItem.getMethod());
 		setCharacts(controlDefListDataItem.getCharacts());
 	}
@@ -539,9 +543,9 @@ public class ControlListDataItem extends BeCPGDataObject{
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "ControlListDataItem [type=" + type + ", mini=" + mini + ", maxi=" + maxi + ", required=" + required + ", sampleId=" + sampleId + ", value=" + value + ", target="
-				+ target + ", unit=" + unit + ", state=" + state + ", method=" + method + ", characts=" + characts + "]";
+		return "ControlListDataItem [type=" + type + ", mini=" + mini + ", maxi=" + maxi + ", required=" + required + ", sampleId=" + sampleId
+				+ ", value=" + value + ", target=" + target + ", unit=" + unit + ", state=" + state + ", method=" + method + ", characts=" + characts
+				+ "]";
 	}
-	
-	
+
 }

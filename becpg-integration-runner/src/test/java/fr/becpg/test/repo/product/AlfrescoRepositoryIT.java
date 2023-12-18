@@ -165,7 +165,10 @@ public class AlfrescoRepositoryIT extends PLMBaseTestCase {
 			
 			Assert.assertFalse(rawMaterial.getAspects().contains(PLMModel.ASPECT_NUTRIENT_PROFILING_SCORE));
 			
-			rawMaterial.setTitle("Test update property");
+			MLText title = new MLText();
+			title.addValue(Locale.getDefault(),"Test update property");
+			
+			rawMaterial.setTitle(title);
 
 			alfrescoRepository.save(rawMaterial);
 			

@@ -1170,7 +1170,7 @@
                                         {
                                             newFilter = window.unescape(newFilter);
                                         }
-
+										this.queryExecutionId = null;
                                         this._updateDataGrid.call(this,
                                         {
                                             filter : fnDecodeBookmarkedFilter(newFilter)
@@ -2785,8 +2785,8 @@
                                 if (this.options.usePagination)
                                 {
                                     this.currentPage = 1;
-                                    this.queryExecutionId = null;
                                 }
+                                this.queryExecutionId = null;
 
                                 // Initial navigation won't fire the History
                                 // event

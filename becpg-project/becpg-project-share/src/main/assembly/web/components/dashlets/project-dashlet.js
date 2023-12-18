@@ -297,12 +297,10 @@
 
                      if (this.searchTerm !== null && this.searchTerm.length > 0) {
 						if(isTask){
-							req += "AND  +@pjt\\:tlTaskName:(" + this.searchTerm + ")";
+							req += " AND  +@pjt\\:tlTaskName:(" + this.searchTerm + ")";
 						} else {
-							req += "AND (" + this.searchTerm + ")";
+							req += " AND (" + this.searchTerm + ")";
 						}
-		
-                       
                      }
 
                      req += ')';
@@ -853,6 +851,8 @@
                   onSearchChange : function ProjectDashlet_onSearchChange() {
 
                      this.currentPage = 1;
+                     
+                     this.queryExecutionId = null;
 
                      this._cleanSearchText();
 

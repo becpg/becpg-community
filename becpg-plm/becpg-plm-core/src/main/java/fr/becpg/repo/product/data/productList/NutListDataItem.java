@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
@@ -560,7 +561,7 @@ public class NutListDataItem extends VariantAwareDataItem implements SimpleListD
 
 	/** {@inheritDoc} */
 	@Override
-	public String getTextCriteria() {
+	public MLText getTextCriteria() {
 		return null;
 	}
 

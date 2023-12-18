@@ -228,6 +228,7 @@
 			<form>
 				<field-visibility>
 					<show id="pack:pmlMaterial" />
+					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />
 				</field-visibility>
@@ -245,6 +246,7 @@
 				<field-visibility>
 					<show id="pack:pmlLevel" />
 					<show id="pack:pmlMaterial" />
+					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />	
 					<show id="fm:commentCount" force="true" />
@@ -282,6 +284,7 @@
 			<form>
 				<field-visibility>
 					<show id="pack:pmlMaterial" />
+					<show id="pack:pmlPerc" />
 					<show id="pack:pmlWeight" />
 					<show id="pack:pmlRecycledPercentage" />
 				</field-visibility>
