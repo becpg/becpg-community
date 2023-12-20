@@ -172,24 +172,25 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		Set<NodeRef> visited = new HashSet<>();
 
+		Double totalQtyUsedWithYield = 0d;
 		Double totalQtyUsed = 0d;
-		double totalQtyUsedWithoutYield = 0d;
-		double totalVolumeUsed = 0d;
+		Double totalVolumeUsed = 0d;
 		if (compoList != null) {
 			for (CompoListDataItem compoItem : compoList) {
 
 				if ((compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
 					ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
 
-					if ((!DeclarationType.Omit.equals(compoItem.getDeclType())) && (!(componentProductData instanceof LocalSemiFinishedProductData))) {
+					if ((!DeclarationType.Omit.equals(compoItem.getDeclType()))
+							&& (!(componentProductData instanceof LocalSemiFinishedProductData))) {
 
 						visitILOfPart(formulatedProduct, compoItem, componentProductData, retainNodes, totalQtyIngMap, totalQtyVolMap, reqCtrlMap,
 								visited);
 
 						Double qty = FormulationHelper.getQtyInKg(compoItem);
 						if (qty != null) {
-							totalQtyUsed += (qty * FormulationHelper.getYield(compoItem)) / 100d;
-							totalQtyUsedWithoutYield += qty;
+							totalQtyUsed += qty;
+							totalQtyUsedWithYield += (qty * FormulationHelper.getYield(compoItem)) / 100d;
 						}
 
 						Double vol = compoItem.getVolume();
@@ -206,12 +207,12 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		formulatedProduct.getIngList().retainAll(retainNodes);
 
-		if (totalQtyUsed != 0) {
+		if (totalQtyUsedWithYield != 0d) {
 			for (IngListDataItem ingListDataItem : formulatedProduct.getIngList()) {
 
 				Double totalQtyIng = totalQtyIngMap.get(ingListDataItem.getName());
 				if (totalQtyIng != null) {
-					ingListDataItem.setQtyPerc(totalQtyIng / totalQtyUsed);
+					ingListDataItem.setQtyPerc(totalQtyIng / totalQtyUsedWithYield);
 				} else {
 					ingListDataItem.setQtyPerc(null);
 				}
@@ -221,11 +222,9 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					Double x = (formulatedProduct.getYield() != null ? formulatedProduct.getYield() / 100d : 1d);
 					
 					Double qtyPercWithYield = (totalQtyIngWithYield)
-
 							/ (totalQtyUsedWithYield );
 
 					if ((formulatedProduct.getYield() != null) && nodeService.hasAspect(ingListDataItem.getIng(), PLMModel.ASPECT_WATER)) {
-
 						qtyPercWithYield = qtyPercWithYield /x + (100d - 100d/x);
 					} else {
 						qtyPercWithYield = qtyPercWithYield/x;
@@ -236,12 +235,13 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 				}
 
 
+
 				Double totalQtyMini = totalQtyIngMap.get(ingListDataItem.getName() + MINI_SUFFIX);
 				if (totalQtyMini != null) {
 					if (formulatedProduct.isGeneric()) {
 						ingListDataItem.setMini(totalQtyMini);
 					} else {
-						ingListDataItem.setMini(totalQtyMini / totalQtyUsed);
+						ingListDataItem.setMini(totalQtyMini / totalQtyUsedWithYield);
 					}
 				}
 
@@ -250,7 +250,7 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 					if (formulatedProduct.isGeneric()) {
 						ingListDataItem.setMaxi(totalQtyMaxi);
 					} else {
-						ingListDataItem.setMaxi(totalQtyMaxi / totalQtyUsed);
+						ingListDataItem.setMaxi(totalQtyMaxi / totalQtyUsedWithYield);
 					}
 				}
 
