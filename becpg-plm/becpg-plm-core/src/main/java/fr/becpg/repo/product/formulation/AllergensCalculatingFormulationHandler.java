@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -40,6 +41,7 @@ import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.requirement.AllergenRequirementScanner;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantDataItem;
 
 /**
@@ -471,6 +473,8 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 							}
 						}
 					} else {
+						
+						if(isDefaultVariant(variantDataItem,formulatedProduct)) {
 						String message = I18NUtil.getMessage(MESSAGE_NULL_PERC, extractName(allergenNodeRef));
 						ReqCtrlListDataItem error = errors.get(message);
 
@@ -533,7 +537,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 								newAllergenListDataItem.setQtyPerc(0d);
 							}
 						}
-
+						}
 					}
 
 					// Add variants if it adds an allergen
@@ -555,6 +559,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		}
 
 		return ret;
+	}
+
+	private boolean isDefaultVariant(VariantDataItem variantDataItem, ProductData formulatedProduct) {
+		VariantFilters<VariantDataItem> filter = new VariantFilters<>();
+		Predicate<VariantDataItem> predicate  = filter.createPredicate(formulatedProduct);
+		return predicate.test(variantDataItem);
 	}
 
 	private void addEmptyError(Map<String, ReqCtrlListDataItem> errors, List<ReqCtrlListDataItem> ret, ProductData partProduct) {
