@@ -33,17 +33,18 @@ import java.util.List;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.model.RenditionModel;
+import org.alfresco.repo.action.executer.ActionExecuter;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.repo.download.ContentServiceHelper;
 import org.alfresco.repo.download.DownloadCancelledException;
 import org.alfresco.repo.download.DownloadServiceException;
 import org.alfresco.repo.download.DownloadStatusUpdateService;
 import org.alfresco.repo.download.DownloadStorage;
-import org.alfresco.repo.download.ZipDownloadExporter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authentication.AuthenticationUtil.RunAsWork;
 import org.alfresco.repo.transaction.RetryingTransactionHelper;
 import org.alfresco.repo.transaction.RetryingTransactionHelper.RetryingTransactionCallback;
+import org.alfresco.repo.version.Version2Model;
 import org.alfresco.service.cmr.action.Action;
 import org.alfresco.service.cmr.action.ParameterDefinition;
 import org.alfresco.service.cmr.coci.CheckOutCheckInService;
@@ -55,6 +56,7 @@ import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.ContentIOException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.view.ExporterCrawlerParameters;
 import org.alfresco.service.cmr.view.ExporterService;
 import org.alfresco.service.cmr.view.Location;
@@ -64,6 +66,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.becpg.model.BeCPGModel;
+import fr.becpg.repo.entity.EntityService;
 
 /**
  * {@link ActionExecuter} for creating an archive (ie. zip) file containing
@@ -92,6 +95,8 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
     private RetryingTransactionHelper transactionHelper;
     private DownloadStatusUpdateService updateService;
     private DictionaryService dictionaryService;
+    private EntityService entityService;
+    private PermissionService permissionService;
 
     private long maximumContentSize = -1l;
     
@@ -135,6 +140,13 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
         this.checkOutCheckInService = checkOutCheckInService;
     }
     
+    public void setPermissionService(PermissionService permissionService) {
+		this.permissionService = permissionService;
+	}
+    
+    public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
+	}
     
     public void setContentServiceHelper(ContentServiceHelper contentServiceHelper)
     {
@@ -211,7 +223,9 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
                 crawlerParameters.setExportFrom(exportFrom);
                 
                 crawlerParameters.setCrawlSelf(true);
-                crawlerParameters.setExcludeChildAssocs(new QName[] {RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION});
+				crawlerParameters.setExcludeChildAssocs(
+						new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION,
+								Version2Model.CHILD_QNAME_VERSIONED_ASSOCS, BeCPGModel.ASSOC_ENTITYLISTS });
                 crawlerParameters.setExcludeAspects(new QName[] {ContentModel.ASPECT_WORKING_COPY , BeCPGModel.ASPECT_ENTITY_FORMAT});
         
                 // Get an estimate of the size for statuses
@@ -263,7 +277,7 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
         
         // perform the actual export
         final File tempFile = TempFileProvider.createTempFile(TEMP_FILE_PREFIX, TEMP_FILE_SUFFIX);
-        final ZipDownloadExporter handler = new ZipDownloadExporter(tempFile, checkOutCheckInService, nodeService, transactionHelper, updateService, downloadStorage, dictionaryService, actionedUponNodeRef, estimator.getSize(), estimator.getFileCount());
+        final BeCPGZipDownloadExporter handler = new BeCPGZipDownloadExporter(permissionService, entityService, tempFile, checkOutCheckInService, nodeService, transactionHelper, updateService, downloadStorage, dictionaryService, actionedUponNodeRef, estimator.getSize(), estimator.getFileCount());
         
         try {
             exporterService.exportView(handler, crawlerParameters, null);
@@ -284,7 +298,7 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
 
 
     private void archiveCreationComplete(final NodeRef actionedUponNodeRef, final File tempFile,
-                final ZipDownloadExporter handler)
+                final BeCPGZipDownloadExporter handler)
     {
         //Update the content and set the status to done. 
         transactionHelper.doInTransaction(new RetryingTransactionCallback<Object>()
@@ -311,7 +325,7 @@ public class BeCPGCreateDownloadArchiveAction extends ActionExecuterAbstractBase
     }
 
 
-    private void downloadCancelled(final NodeRef actionedUponNodeRef, final ZipDownloadExporter handler)
+    private void downloadCancelled(final NodeRef actionedUponNodeRef, final BeCPGZipDownloadExporter handler)
     {
         //Update the content and set the status to done. 
         transactionHelper.doInTransaction(new RetryingTransactionCallback<Object>()
