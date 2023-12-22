@@ -826,6 +826,16 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="bcpg:filQtyPercMaxiUnits" type="LIST">
+			<parameter name="allowedValues">
+				<list>
+					<value>%</value>
+					<value>mg/kg</value>
+					<value>mg/L</value>
+				</list>
+			</parameter>
+		</constraint>
 
 		<constraint name="bcpg:externalLinkMediaTypes" type="LIST">
 			<parameter name="allowedValues">
@@ -2936,6 +2946,14 @@
 					<type>d:double</type>
 					<mandatory>false</mandatory>
 					<index enabled="false" />
+				</property>
+				<property name="bcpg:filQtyPercMaxiUnit">
+					<type>d:text</type>
+					<mandatory>true</mandatory>
+					<index enabled="false" />
+					<constraints>
+						<constraint ref="bcpg:filQtyPercMaxiUnits" />
+					</constraints>
 				</property>
 				<property name="bcpg:filIsGMO">
 					<type>d:text</type>
