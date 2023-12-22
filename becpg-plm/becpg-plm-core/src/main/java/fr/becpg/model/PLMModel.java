@@ -299,6 +299,8 @@ public interface PLMModel {
 	QName PROP_FIL_REQ_MESSAGE = QName.createQName(BeCPGModel.BECPG_URI, "filReqMessage");
 	/** Constant <code>PROP_FIL_QTY_PERC_MAXI</code> */
 	QName PROP_FIL_QTY_PERC_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "filQtyPercMaxi");
+	
+	QName PROP_FIL_QTY_PERC_MAXI_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "filQtyPercMaxiUnit");
 	/** Constant <code>PROP_FIL_IS_GMO</code> */
 	QName PROP_FIL_IS_GMO = QName.createQName(BeCPGModel.BECPG_URI, "filIsGMO");
 	/** Constant <code>PROP_FIL_IS_IONIZED</code> */
