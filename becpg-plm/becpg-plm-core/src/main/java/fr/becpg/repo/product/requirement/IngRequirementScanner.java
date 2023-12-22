@@ -127,10 +127,11 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 								
 								if (fil.getIngs().contains(ingListDataItem.getIng())) {
 									
-									if ((qtyPerc == null) || ((fil.getQtyPercMaxi() != null) && (fil.getQtyPercMaxi() <= qtyPerc))
+									Double filMaxQtyPerc = getFilMaxQtyPerc(productData, fil);
+									if ((qtyPerc == null) || ((filMaxQtyPerc != null) && (filMaxQtyPerc <= qtyPerc))
 											|| Boolean.TRUE.equals(addInfoReqCtrl)) {
 
-										boolean isInfo = qtyPerc != null && fil.getQtyPercMaxi() != null && (fil.getQtyPercMaxi() > qtyPerc);
+										boolean isInfo = qtyPerc != null && filMaxQtyPerc != null && (filMaxQtyPerc > qtyPerc);
 										
 										// req not respecte
 										ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, isInfo ? RequirementType.Info : fil.getReqType(),
@@ -148,8 +149,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 											reqCtrl.setRegulatoryCode(specification.getName());
 										}
 
-										if (!isInfo && (qtyPerc != null) && (fil.getQtyPercMaxi() != null) && (qtyPerc != 0)) {
-											reqCtrl.setReqMaxQty((fil.getQtyPercMaxi() / qtyPerc) * 100d);
+										if (!isInfo && (qtyPerc != null) && (filMaxQtyPerc != null) && (qtyPerc != 0)) {
+											reqCtrl.setReqMaxQty((filMaxQtyPerc / qtyPerc) * 100d);
 										}
 
 									}
@@ -217,6 +218,24 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 
 		return reqCtrlMap;
 
+	}
+	
+	private Double getFilMaxQtyPerc(ProductData product, ForbiddenIngListDataItem fil) {
+		String unit = fil.getQtyPercMaxiUnit();
+		if ("%".equals(unit)) {
+			return fil.getQtyPercMaxi();
+		}
+		if ("mg/kg".equals(unit)) {
+			return fil.getQtyPercMaxi() / 10000;
+		}
+		if ("mg/L".equals(unit)) {
+			Double density = product.getDensity();
+			if (density == null || density == 0d) {
+				density = 1d;
+			}
+			return fil.getQtyPercMaxi() / density / 10000;
+		}
+		return fil.getQtyPercMaxi();
 	}
 	
 	private String extractRegulatoryId(ForbiddenIngListDataItem fil, ProductSpecificationData specification) {
