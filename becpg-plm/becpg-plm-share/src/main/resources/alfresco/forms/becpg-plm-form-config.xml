@@ -7723,6 +7723,7 @@
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
 					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filQtyPercMaxiUnit" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
@@ -7743,10 +7744,6 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpg:filQtyPercMaxi">
-						<control
-							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">perc</control-param>
-						</control>
 					</field>
 					<field id="bcpg:filIsGMO">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
@@ -7789,6 +7786,7 @@
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
 					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filQtyPercMaxiUnit" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="entity_bcpg:filIngs_bcpg:ing" />
@@ -7844,6 +7842,7 @@
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
 					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filQtyPercMaxiUnit" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
@@ -7878,6 +7877,7 @@
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
 					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filQtyPercMaxiUnit" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
@@ -7898,10 +7898,6 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpg:filQtyPercMaxi">
-						<control
-							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">perc</control-param>
-						</control>
 					</field>
 					<field id="bcpg:filIsGMO">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
