@@ -49,6 +49,7 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	private RequirementType reqType;
 	private MLText reqMessage;
 	private Double qtyPercMaxi;
+	private String qtyPercMaxiUnit;
 	private String isGMO;
 	private String isIonized;
 	private List<NodeRef> ings = new ArrayList<>();
@@ -58,6 +59,10 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	private List<NodeRef> bioOrigins = new ArrayList<>();
 	private List<NodeRef> regulatoryCountries = new ArrayList<>();
 	private List<NodeRef> regulatoryUsages = new ArrayList<>();
+	
+	public void setQtyPercMaxiUnit(String qtyPercMaxiUnit) {
+		this.qtyPercMaxiUnit = qtyPercMaxiUnit;
+	}
 	
 	@AlfMultiAssoc
 	@AlfQname(qname = "bcpg:regulatoryCountries")
@@ -131,6 +136,12 @@ public class ForbiddenIngListDataItem extends BeCPGDataObject{
 	@AlfQname(qname="bcpg:filQtyPercMaxi")
 	public Double getQtyPercMaxi() {
 		return qtyPercMaxi;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:filQtyPercMaxiUnit")
+	public String getQtyPercMaxiUnit() {
+		return qtyPercMaxiUnit;
 	}
 
 	/**
