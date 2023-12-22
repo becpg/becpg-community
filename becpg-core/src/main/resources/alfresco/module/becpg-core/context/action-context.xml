@@ -48,6 +48,8 @@
 		<property name="transactionHelper" ref="retryingTransactionHelper" />
 		<property name="updateService" ref="downloadStatusUpdateService" />
 		<property name="dictionaryService" ref="dictionaryService" />
+		<property name="entityService" ref="entityService" />
+		<property name="permissionService" ref="permissionService" />
 	</bean>  
 	
     <!-- Export Search actions -->
