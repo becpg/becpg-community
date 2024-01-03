@@ -17,6 +17,8 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,8 @@ import fr.becpg.repo.supplier.SupplierPortalService;
 @Service
 public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
+	private static final Log logger = LogFactory.getLog(SupplierSignatureProjectPlugin.class);
+	
 	@Autowired
 	private NodeService nodeService;
 
@@ -84,6 +88,10 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		NodeRef supplierDocumentsFolder = supplierPortalService.getOrCreateSupplierDocumentsFolder(entityNodeRef);
 
 		List<NodeRef> reports = entityReportService.getOrRefreshReportsOfKind(entityNodeRef, SUPPLIER_REPORT_KIND);
+		
+		if (reports.isEmpty()) {
+			logger.warn("No report with 'Supplier Sheet' type was found for entity: " + entityNodeRef);
+		}
 		
 		List<NodeRef> suppliers = associationService.getTargetAssocs(projectNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 
