@@ -324,7 +324,9 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 
 						Date newEffectivity = (Date) nodeService.getProperty(entityNodeRef, BeCPGModel.PROP_AUTO_MERGE_DATE);
 
-						entityVersionService.mergeBranch(entityNodeRef, newEffectivity);
+						NodeRef newEntityNodeRef = entityVersionService.mergeBranch(entityNodeRef, newEffectivity);
+
+						nodeService.removeAspect(newEntityNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT);
 
 						return true;
 					});
