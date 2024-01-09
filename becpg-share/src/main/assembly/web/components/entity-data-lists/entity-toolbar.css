@@ -140,6 +140,12 @@
    padding-left: 24px;
 }
 
+.datalist-toolbar .import-lca span.first-child
+{
+   background: url(../images/publish-external-16.png) no-repeat 12px 4px;
+   padding-left: 24px;
+}
+
 
 .datalist-toolbar .product-metadata span.first-child,
 .datalist-toolbar .project-metadata span.first-child
