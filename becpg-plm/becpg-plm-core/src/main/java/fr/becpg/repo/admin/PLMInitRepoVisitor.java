@@ -350,6 +350,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// NutDatabases
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_NUT_DATABASES);
+		
+		// LCADatabases
+		visitFolder(systemNodeRef, PlmRepoConsts.PATH_LCA_DATABASES);
 
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
@@ -553,6 +556,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			} else {
 				contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/nuts/en/*.csv");
 			}
+		}
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_LCA_DATABASES)) {
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/ecoscore/agribalyse_3_0.csv");
 		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
@@ -1102,6 +1108,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_NUT_GROUPS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_FACTS_METHODS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_LCA_LIST_METHODS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_LABELING_POSITIONS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_LABELING_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_LABEL_TYPES, BeCPGModel.TYPE_LIST_VALUE);
