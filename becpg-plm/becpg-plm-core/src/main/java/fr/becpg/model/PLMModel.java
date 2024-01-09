@@ -414,6 +414,9 @@ public interface PLMModel {
 	QName PROP_LCATYPE = QName.createQName(BeCPGModel.BECPG_URI, "lcaType");
 	QName ASSOC_LCALIST_LCA = QName.createQName(BeCPGModel.BECPG_URI, "lcaListLca");
 	QName TYPE_LCALIST = QName.createQName(BeCPGModel.BECPG_URI, "lcaList");
+	QName PROP_LCA_NORMALIZATION = QName.createQName(BeCPGModel.BECPG_URI, "lcaNormalization");
+	QName PROP_LCA_PONDERATION = QName.createQName(BeCPGModel.BECPG_URI, "lcaPonderation");
+	QName PROP_LCA_CODE = QName.createQName(BeCPGModel.BECPG_URI, "lcaCode");
 
 	// ing
 	/** Constant <code>TYPE_ING</code> */
