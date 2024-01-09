@@ -601,6 +601,62 @@
 					}
 				});
 
+		YAHOO.Bubbling
+			.fire(
+				"registerToolbarButtonAction",
+				{
+					actionName: "import-lca",
+					right: false,
+					evaluate: function(asset, entity) {
+						return (entity != null && entity.userAccess.edit && asset.name != null && asset.name === "lcaList" && beCPG.util.contains(entity.aspects,
+							"bcpg:productAspect"));
+
+					},
+					fn: function(instance) {
+						var lcaImporter = new Alfresco.module.SimpleDialog(this.id + "-lcaImporter");
+
+						lcaImporter.setOptions({
+							width: this.options.formWidth,
+							templateUrl: Alfresco.constants.URL_SERVICECONTEXT + "modules/lca-database/lca-importer?entityNodeRef=" + this.options.entityNodeRef,
+							actionUrl: Alfresco.constants.PROXY_URI + "becpg/product/lcadatabaseimport?dest=" + this.options.entityNodeRef,
+							validateOnSubmit: false,
+							firstFocus: this.id + "-lcaImporter-supplier-field",
+							doBeforeFormSubmit: {
+								fn: function FormulationView_onActionEntityImport_doBeforeFormSubmit(form) {
+									Alfresco.util.PopupManager.displayMessage({
+										text: this.msg("message.rapid-link.import.please-wait")
+									});
+								},
+								scope: this
+							},
+							onSuccess: {
+								fn: function FormulationView_onActionEntityImport_success(response) {
+									if (response.json) {
+										YAHOO.Bubbling.fire("refreshDataGrids");
+										Alfresco.util.PopupManager.displayMessage({
+											text: this.msg("message.rapid-link.lca-import.success")
+										});
+									}
+
+								},
+								scope: this
+							},
+							onFailure: {
+								fn: function FormulationView_onActionEntityImport_failure(response) {
+									Alfresco.util.PopupManager.displayMessage({
+										text: this.msg("message.import.failure")
+									});
+								},
+								scope: this
+							}
+						});
+
+						lcaImporter.show();
+
+
+					}
+				});
+
 
 	}
 })();
