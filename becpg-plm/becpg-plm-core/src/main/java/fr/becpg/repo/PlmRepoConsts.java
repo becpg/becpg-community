@@ -35,6 +35,9 @@ public class PlmRepoConsts {
 	public static final String PATH_COSTS = "Costs";
 	
 	public static final String PATH_LCA = "LifeCycleAnalysis";
+	
+	public static final String PATH_LCA_LIST_METHODS = "LcaListMethods";
+
 	/** Constant <code>PATH_PHYSICO_CHEM="PhysicoChems"</code> */
 	public static final String PATH_PHYSICO_CHEM = "PhysicoChems";
 	/** Constant <code>PATH_MICROBIO_CONTROL_STEPS="MicrobioControlSteps"</code> */
@@ -260,6 +263,8 @@ public class PlmRepoConsts {
 	public static final String PATH_MEAT_TYPES = "MeatTypes";
 	
 	public static final String PATH_LCA_UNITS = "LCAUnits";
+	
+	public static final String PATH_LCA_DATABASES = "LCADatabases";
 	
 	
 	//GS1

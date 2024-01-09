@@ -192,6 +192,10 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private String ecoScoreClass;
 	private String ecoScoreCategory;
 	private String ecoScoreDetails;
+	
+	
+	private String lcaScoreMethod;
+	private Double lcaScore;
 
 	/*
 	 * Meat aspect
@@ -297,6 +301,26 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	/** {@inheritDoc} */
 	public void setGlopData(GlopData glopData) {
 		this.glopData = glopData;
+	}
+	
+	public void setLcaScore(Double lcaScore) {
+		this.lcaScore = lcaScore;
+	}
+	
+	public void setLcaScoreMethod(String lcaScoreMethod) {
+		this.lcaScoreMethod = lcaScoreMethod;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:lcaScore")
+	public Double getLcaScore() {
+		return lcaScore;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:lcaScoreMethod")
+	public String getLcaScoreMethod() {
+		return lcaScoreMethod;
 	}
 	
 	/** {@inheritDoc} */
