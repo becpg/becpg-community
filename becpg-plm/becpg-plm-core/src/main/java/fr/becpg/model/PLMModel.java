@@ -299,6 +299,8 @@ public interface PLMModel {
 	QName PROP_FIL_REQ_MESSAGE = QName.createQName(BeCPGModel.BECPG_URI, "filReqMessage");
 	/** Constant <code>PROP_FIL_QTY_PERC_MAXI</code> */
 	QName PROP_FIL_QTY_PERC_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "filQtyPercMaxi");
+	
+	QName PROP_FIL_QTY_PERC_MAXI_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "filQtyPercMaxiUnit");
 	/** Constant <code>PROP_FIL_IS_GMO</code> */
 	QName PROP_FIL_IS_GMO = QName.createQName(BeCPGModel.BECPG_URI, "filIsGMO");
 	/** Constant <code>PROP_FIL_IS_IONIZED</code> */
@@ -412,6 +414,9 @@ public interface PLMModel {
 	QName PROP_LCATYPE = QName.createQName(BeCPGModel.BECPG_URI, "lcaType");
 	QName ASSOC_LCALIST_LCA = QName.createQName(BeCPGModel.BECPG_URI, "lcaListLca");
 	QName TYPE_LCALIST = QName.createQName(BeCPGModel.BECPG_URI, "lcaList");
+	QName PROP_LCA_NORMALIZATION = QName.createQName(BeCPGModel.BECPG_URI, "lcaNormalization");
+	QName PROP_LCA_PONDERATION = QName.createQName(BeCPGModel.BECPG_URI, "lcaPonderation");
+	QName PROP_LCA_CODE = QName.createQName(BeCPGModel.BECPG_URI, "lcaCode");
 
 	// ing
 	/** Constant <code>TYPE_ING</code> */

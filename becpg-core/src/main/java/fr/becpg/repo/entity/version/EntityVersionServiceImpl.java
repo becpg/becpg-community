@@ -819,8 +819,6 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 									nodeService.removeAspect(branchNodeRef, BeCPGModel.ASPECT_ENTITY_BRANCH);
 								}
 								
-								nodeService.removeAspect(branchNodeRef, BeCPGModel.ASPECT_AUTO_MERGE_ASPECT);
-								
 								nodeService.removeProperty(internalBranchToNodeRef, BeCPGModel.PROP_MANUAL_VERSION_LABEL);
 								
 								// Deattach other branches

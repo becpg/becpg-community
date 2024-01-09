@@ -1400,6 +1400,7 @@
 		<forms>
 			<form>
 				<field-visibility>
+					<show id="bcpg:lcaCode" />
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
@@ -1408,6 +1409,7 @@
 					<show id="bcpg:lcaFixed" />
 					<show id="bcpg:lcaFormula" />
 					<show id="bcpg:lcaPonderation" />
+					<show id="bcpg:lcaNormalization" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -1434,6 +1436,7 @@
 			<!-- Create item form -->
 			<form>
 				<field-visibility>
+					<show id="bcpg:lcaCode" />
 					<show id="bcpg:charactName" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:legalName" />
@@ -1442,6 +1445,7 @@
 					<show id="bcpg:lcaFixed" />
 					<show id="bcpg:lcaFormula" />
 					<show id="bcpg:lcaPonderation" />
+					<show id="bcpg:lcaNormalization" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -1464,6 +1468,7 @@
 			<!-- Data Grid view -->
 			<form id="filter">
 				<field-visibility>
+					<show id="bcpg:lcaCode" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:lcaFixed" />
 					<show id="bcpg:erpCode" force="true" />
@@ -1481,12 +1486,14 @@
 
 			<form id="datagrid">
 				<field-visibility>
+					<show id="bcpg:lcaCode" />
 					<show id="bcpg:charactName" />
 					<show id="bcpg:legalName" />
 					<show id="bcpg:lcaType" />
 					<show id="bcpg:lcaUnit" />
 					<show id="bcpg:lcaFixed" />
 					<show id="bcpg:lcaPonderation" />
+					<show id="bcpg:lcaNormalization" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
@@ -6069,6 +6076,7 @@
 					<show id="bcpg:lcaListComponent" />
 					<show id="bcpg:lcaListSimulatedValue" />
 					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:lcaListMethod" />
 				</field-visibility>
 
 				<appearance>
@@ -6095,6 +6103,7 @@
 					</field>
 					<field id="bcpg:lcaListSimulatedValue" set="2-col" />
 					<field id="bcpg:isManualListItem" set="2-col" />
+					<field id="bcpg:lcaListMethod" set="2-col" />
 				</appearance>
 			</form>
 			<!-- Data Grid view -->
@@ -6115,6 +6124,7 @@
 					<show id="bcpg:variantColumn4" force="true" />
 					<show id="bcpg:variantColumn5" force="true" />
 					<show id="bcpg:isManualListItem" force="true" />
+					<show id="bcpg:lcaListMethod" force="true" />
 					<show id="bcpg:plants" force="true" />
 					<show id="bcpg:lcaListComponent" />
 					<show id="bcpg:lcaListSimulatedValue" />
@@ -7723,6 +7733,7 @@
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
 					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filQtyPercMaxiUnit" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
@@ -7743,10 +7754,6 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpg:filQtyPercMaxi">
-						<control
-							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">perc</control-param>
-						</control>
 					</field>
 					<field id="bcpg:filIsGMO">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
@@ -7789,6 +7796,7 @@
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
 					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filQtyPercMaxiUnit" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="entity_bcpg:filIngs_bcpg:ing" />
@@ -7844,6 +7852,7 @@
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
 					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filQtyPercMaxiUnit" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
@@ -7878,6 +7887,7 @@
 					<show id="bcpg:filReqType" />
 					<show id="bcpg:filReqMessage" />
 					<show id="bcpg:filQtyPercMaxi" />
+					<show id="bcpg:filQtyPercMaxiUnit" />
 					<show id="bcpg:filIsGMO" />
 					<show id="bcpg:filIsIonized" />
 					<show id="bcpg:filIngs" />
@@ -7898,10 +7908,6 @@
 						<control template="/org/alfresco/components/form/controls/textarea.ftl" />
 					</field>
 					<field id="bcpg:filQtyPercMaxi">
-						<control
-							template="/org/alfresco/components/form/controls/number-unit.ftl">
-							<control-param name="unit">perc</control-param>
-						</control>
 					</field>
 					<field id="bcpg:filIsGMO">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">

@@ -21,6 +21,8 @@ public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 	
 	private static final long serialVersionUID = 4160545876076772520L;
 
+	private String method;
+
 	public LCAListDataItem() {
 		super();
 	}
@@ -40,6 +42,16 @@ public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 	@Override
 	public LCAListDataItem copy() {
 		return new LCAListDataItem(this);
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:lcaListMethod")
+	public String getMethod() {
+		return method;
+	}
+	
+	public void setMethod(String method) {
+		this.method = method;
 	}
 	
 	@AlfProp
@@ -80,6 +92,14 @@ public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 		return cost;
 	}
 	
+	public NodeRef getLCA() {
+		return getCost();
+	}
+	
+	public void setLCA(NodeRef lca) {
+		setCost(lca);
+	}
+	
 	@AlfProp
 	@AlfQname(qname="bcpg:lcaListMaxi")
 	public Double getMaxi() {
@@ -108,7 +128,7 @@ public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 
 	@Override
 	public String toString() {
-		return "LcaListDataItem [value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", cost=" + cost + "]";
+		return "LcaListDataItem [value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", method=" + method + ", cost=" + cost + "]";
 	}
 
 }
