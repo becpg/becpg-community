@@ -835,6 +835,13 @@ span.costList {
     padding-left: 20px;
     background-repeat: no-repeat
 }
+
+span.lca,
+span.lcaList {
+    background-image: url("../../components/images/filetypes/generic-lca-16.png") !important;
+    padding-left: 20px;
+    background-repeat: no-repeat
+}
 span.ing,
 span.ingList {
     background-image: url("../../components/images/filetypes/generic-ing-16.png") !important;
