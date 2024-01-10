@@ -190,9 +190,12 @@
 				},
 
 				onVersionChanged: function FormDataGrid_onVersionChanged(layer, args) {
+                    YAHOO.Bubbling.unsubscribe("versionChangeFilter", this.onVersionChanged, this);
 					var obj = args[1];
 					if ((obj !== null) && obj.filterId !== null && obj.filterId === "version" && obj.filterData !== null) {
-						this.options.currVersionNodeRef = this.options.nodeRef;
+						if(this.options.currVersionNodeRef == null) {
+							this.options.currVersionNodeRef = this.options.nodeRef;
+						}
 						this.options.nodeRef = obj.filterData;
 					} else if (this.options.currVersionNodeRef != null) {
 						this.options.nodeRef = this.options.currVersionNodeRef;
