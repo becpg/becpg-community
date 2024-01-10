@@ -655,6 +655,12 @@
                               template : "cost['{item1}']?.{item2}"
                            },
                            {
+                              name : "lcaList",
+                              type : "bcpg:lca",
+                              subType : "fr.becpg.repo.product.data.productList.LCAListDataItem",
+                              template : "lca['{item1}']?.{item2}"
+                           },
+                           {
                               name : "nutList",
                               type : "bcpg:nut",
                               subType : "fr.becpg.repo.product.data.productList.NutListDataItem",
