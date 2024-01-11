@@ -53,7 +53,7 @@ import fr.becpg.test.repo.product.AbstractFinishedProductTest;
  */
 public class FormulationVariantColumnsIT extends AbstractFinishedProductTest {
 
-	protected static final Log logger = LogFactory.getLog(FormulationCostsIT.class);
+	protected static final Log logger = LogFactory.getLog(FormulationVariantColumnsIT.class);
 
 
 	@Override

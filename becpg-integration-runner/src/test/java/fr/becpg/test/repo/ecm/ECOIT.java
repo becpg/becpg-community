@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -45,8 +46,6 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
