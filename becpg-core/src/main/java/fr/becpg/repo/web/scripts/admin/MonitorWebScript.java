@@ -24,6 +24,7 @@ import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceException;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -124,7 +125,8 @@ public class MonitorWebScript extends DeclarativeWebScript {
 				try (java.sql.ResultSet res = statement.executeQuery()) {
 					while (res.next()) {
 						JSONObject volumetryJson = new JSONObject();
-						volumetryJson.put("qname", QName.createQName("{" + res.getString("uri") + "}" + res.getString("local_name")).toPrefixString(namespaceService));
+						QName qname = QName.createQName("{" + res.getString("uri") + "}" + res.getString("local_name"));
+						volumetryJson.put("qname", extractQNameString(qname));
 						volumetryJson.put("identifier", res.getString("identifier"));
 						volumetryJson.put("protocol", res.getString("protocol"));
 						volumetryJson.put("node_count", res.getInt("node_count"));
@@ -138,6 +140,14 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		ret.put("volumetry", volumetryArray.toString());
 	}
 
+	private String extractQNameString(QName qname) {
+		try {
+			return qname.toPrefixString(namespaceService);
+		} catch (NamespaceException e) {
+			return qname.toString();
+		}
+	}
+	
 	protected Set<String> fillMonitoringInformation(Map<String, Object> ret, boolean includeTenantUsers) {
 		
 		long concurrentReadUsers = 0;
