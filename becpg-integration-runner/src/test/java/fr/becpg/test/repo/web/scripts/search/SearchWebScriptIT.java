@@ -19,8 +19,6 @@ package fr.becpg.test.repo.web.scripts.search;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 
 import fr.becpg.test.utils.TestWebscriptExecuters;
@@ -35,8 +33,7 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
  */
 public class SearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
-	
-	private static final Log logger = LogFactory.getLog(SearchWebScriptIT.class);
+
 
 	@Test
 	public void testSearch() throws IOException {
@@ -46,8 +43,6 @@ public class SearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
 		
 		assertEquals(response.getStatus(),200);
-
-		logger.debug("response: " + response.getContentAsString());
 
 	}
 
