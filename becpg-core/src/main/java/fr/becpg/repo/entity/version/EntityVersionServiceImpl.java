@@ -27,6 +27,8 @@ import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.rule.RuntimeRuleService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport;
+import org.alfresco.repo.transaction.AlfrescoTransactionSupport.TxnReadState;
 import org.alfresco.repo.version.Version2Model;
 import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.repo.version.common.VersionImpl;
@@ -87,6 +89,7 @@ import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.jscript.BeCPGStateHelper.ActionStateContext;
 import fr.becpg.repo.report.entity.EntityReportService;
+import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
  * Store the entity version history in the SpacesStore otherwise we cannot use
@@ -403,7 +406,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS, nodeRef.getId());
 
-			if (vhNodeRef == null) {
+			if (vhNodeRef == null && AlfrescoTransactionSupport.getTransactionReadState() == TxnReadState.TXN_READ_WRITE) {
 				return AuthenticationUtil.runAsSystem(() -> {
 					Map<QName, Serializable> props = new HashMap<>();
 					props.put(ContentModel.PROP_NAME, nodeRef.getId());
@@ -437,10 +440,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			//Backward compatibility
 			if (entitiesHistoryNodeRef == null) {
-				entitiesHistoryNodeRef = nodeService.getChildByName(storeNodeRef, ContentModel.ASSOC_CHILDREN, RepoConsts.ENTITIES_HISTORY_NAME);
+				entitiesHistoryNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(storeNodeRef,
+											RepoConsts.ENTITIES_HISTORY_XPATH);
 			}
 
-			if (entitiesHistoryNodeRef == null) {
+			if (entitiesHistoryNodeRef == null && AlfrescoTransactionSupport.getTransactionReadState() == TxnReadState.TXN_READ_WRITE) {
 				return AuthenticationUtil.runAsSystem(() -> {
 					HashMap<QName, Serializable> props = new HashMap<>();
 					props.put(ContentModel.PROP_NAME, RepoConsts.ENTITIES_HISTORY_NAME);
