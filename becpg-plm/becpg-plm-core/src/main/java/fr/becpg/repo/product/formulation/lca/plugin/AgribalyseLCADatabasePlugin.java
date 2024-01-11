@@ -10,6 +10,8 @@ import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ import fr.becpg.repo.product.formulation.lca.LCADatabasePlugin;
 
 @Service
 public class AgribalyseLCADatabasePlugin implements LCADatabasePlugin {
+
+	private static final Log logger = LogFactory.getLog(AgribalyseLCADatabasePlugin.class);
 
 	@Autowired
 	private ContentService contentService;
@@ -54,7 +58,7 @@ public class AgribalyseLCADatabasePlugin implements LCADatabasePlugin {
 				}
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Error while reading content of: " + databaseNodeRef, e);
 		}
 		
 		return lcaData;
