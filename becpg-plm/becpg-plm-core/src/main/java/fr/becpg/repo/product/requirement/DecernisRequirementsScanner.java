@@ -114,7 +114,6 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
 				updateChecksums(formulatedProduct);
 				formulatedProduct.setRegulatoryFormulatedDate(new Date());
-				updateChecksums(formulatedProduct);
 				
 				return requirements;
 			} catch (FormulateException e) {
