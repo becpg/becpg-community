@@ -73,6 +73,8 @@
 		<property name="becpgSchema" value="${becpg.schema}"/> 
 		<property name="authorityService" ref="authorityService"/>
 		<property name="batchQueueService" ref="batchQueueService"/>
+		<property name="dataSource" ref="dataSource"/>
+		<property name="namespaceService" ref="NamespaceService"/>
 	</bean>
 
 	<bean id="webscript.fr.becpg.admin.adminTenant.get" class="fr.becpg.repo.web.scripts.admin.AdminTenantWebScript" parent="webscript">
