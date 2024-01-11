@@ -111,10 +111,15 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
 			if (ingType != null) {
 				String functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_VALUE);
-				String function = findFunction(moduleId, functionValue);
+				String function = null;
+				if (functionValue != null) {
+					function = findFunction(moduleId, functionValue);
+				}
 				if (function == null) {
 					functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE);
-					function = findFunction(moduleId, functionValue);
+					if (functionValue != null) {
+						function = findFunction(moduleId, functionValue);
+					}
 				}
 				if (function != null) {
 					String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
