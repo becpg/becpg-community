@@ -342,7 +342,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 		
 		while(!Boolean.TRUE.equals(batch.getIsCompleted()) && (j < 60)) {
 			logger.info("Wait for batch: "+ batch.getBatchId());
-			Thread.sleep(2000);
+			Thread.sleep(5000);
 			j++;
 		}
 		
