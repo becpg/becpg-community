@@ -1,6 +1,7 @@
 package fr.becpg.repo.quality.formulation;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,7 +14,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.QualityModel;
 import fr.becpg.model.SystemState;
