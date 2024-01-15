@@ -1553,7 +1553,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					&&  oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value !=null) {
 						var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
 						var jsonData = JSON.parse( oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value );
-						if(jsonData.ul[key]){
+						if(jsonData.ul && jsonData.ul[key]){
 							ul = jsonData.ul[key];
 							percentValue = jsonData.gda[key];
 						}
