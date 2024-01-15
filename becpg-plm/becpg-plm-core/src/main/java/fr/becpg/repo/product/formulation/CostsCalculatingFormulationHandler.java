@@ -194,7 +194,7 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 		formulatedProduct.setPreviousUnitTotalCost(previousTotalVariableCost);
 		formulatedProduct.setFutureUnitTotalCost(futureTotalVariableCost);
 	
-		if ((formulatedProduct.getUnitPrice() != null) && (formulatedProduct.getUnitTotalCost() != null)) {
+		if ((formulatedProduct.getUnitPrice() != null) && formulatedProduct.getUnitPrice()!=0d && (formulatedProduct.getUnitTotalCost() != null)) {
 	
 			// profitability
 			double profit = formulatedProduct.getUnitPrice() - formulatedProduct.getUnitTotalCost();
