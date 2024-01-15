@@ -64,6 +64,11 @@
 					 * @required
 					 */
 					nodeRef: null,
+					
+					/**
+					 * Current version nodeRef
+					 */
+					currVersionNodeRef : null,
 
 					/**
 					 * The form id for the form to use.
