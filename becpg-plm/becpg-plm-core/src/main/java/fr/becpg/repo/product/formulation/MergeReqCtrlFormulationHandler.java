@@ -17,8 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -102,7 +102,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 
 				for (ReqCtrlListDataItem r : scorableEntity.getReqCtrlList()) {
 					if (r.getSources() != null) {
-						r.setSources(new LinkedList<>(r.getSources().subList(0, Math.min(r.getSources().size(), maxRclSourcesToKeep()))));
+						r.setSources(new ArrayList<>(r.getSources().subList(0, Math.min(r.getSources().size(), maxRclSourcesToKeep()))));
 					}
 				}
 			}

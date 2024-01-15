@@ -245,7 +245,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	
 	public void addSource(NodeRef sourceNodeRef) {
 		if(sources == null) {
-			sources = new LinkedList<>();
+			sources = new ArrayList<>();
 		}
 		if(!sources.contains(sourceNodeRef)) {
 			sources.add(sourceNodeRef);
