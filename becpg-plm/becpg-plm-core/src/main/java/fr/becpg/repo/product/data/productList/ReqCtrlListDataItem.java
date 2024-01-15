@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.productList;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -51,7 +51,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	private MLText reqMlMessage;
 	private Double reqMaxQty;
 	private NodeRef charact;
-	private List<NodeRef> sources = new LinkedList<>();
+	private List<NodeRef> sources = new ArrayList<>();
 	private RequirementDataType reqDataType;
 	private String regulatoryCode;
 	
