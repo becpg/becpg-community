@@ -15,6 +15,7 @@ import org.alfresco.service.cmr.repository.datatype.DefaultTypeConverter;
 import org.alfresco.service.cmr.repository.datatype.TypeConversionException;
 
 import fr.becpg.repo.cache.BeCPGCacheService;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Class used to load supported currencies constraints
@@ -32,12 +33,14 @@ public class CurrencyConstraint extends ListOfValuesConstraint {
 	
 	private static BeCPGCacheService beCPGCacheService;
 	
-	private static String propConstraints;
+	private static SystemConfigurationService systemConfigurationService;
 	
 	private List<String> allowedValuesSuffix = null;
 	
-
-
+	private static String propConstraints() {
+		return systemConfigurationService.confValue("beCPG.currency.supported");
+	}
+	
 	/**
 	 * <p>Setter for the field <code>beCPGCacheService</code>.</p>
 	 *
@@ -47,13 +50,8 @@ public class CurrencyConstraint extends ListOfValuesConstraint {
 		CurrencyConstraint.beCPGCacheService = beCPGCacheService;
 	}
 	
-	/**
-	 * <p>Setter for the field <code>propConstraints</code>.</p>
-	 *
-	 * @param propConstraints a {@link java.lang.String} object.
-	 */
-	public void setPropConstraints(String propConstraints) {
-		CurrencyConstraint.propConstraints = propConstraints;
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		CurrencyConstraint.systemConfigurationService = systemConfigurationService;
 	}
 	
 	/**
@@ -108,9 +106,9 @@ public class CurrencyConstraint extends ListOfValuesConstraint {
 	 */
 	public  List<String> getAllowedValuesFromCache() {
 		return beCPGCacheService.getFromCache(CurrencyConstraint.class.getName(), getShortName(), () -> {
-			if(propConstraints !=  null) {
+			if(propConstraints() !=  null) {
 				final List<String> allowedValueList =  new ArrayList<>();
-				List<String> supportedCurrencies = Arrays.asList(propConstraints.split(","));
+				List<String> supportedCurrencies = Arrays.asList(propConstraints().split(","));
 				
 				if(allowedValuesSuffix != null) {
 					supportedCurrencies.forEach(constraint -> {

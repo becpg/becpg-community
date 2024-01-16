@@ -280,6 +280,9 @@
                         			             '@beCPG.assocPropValues($nodeRef?,"bcpg:client","cm:name")',
 												 '@beCPG.assocAssocValues($nodeRef?,"bcpg:client","bcpg:plant")',
                         			             '@beCPG.setValue($entity?, $qname, $value)',
+                        			             '@beCPG.propMLValue($nodeRef, $qname, $locale)',
+                        			             '@beCPG.propMLValue($entity, $qname, $locale)',
+                        			             '@beCPG.propMLValue($mltext, $locale)',
                         			             '@beCPG.updateMLText($mlText,$locale,$value)',
                         			             '@beCPG.copy($fromNodeRef,propQnames,listQNames)',
                         			             '@beCPG.runScript($scriptNodeRef)',
@@ -650,6 +653,12 @@
                               type : "bcpg:cost",
                               subType : "fr.becpg.repo.product.data.productList.CostListDataItem",
                               template : "cost['{item1}']?.{item2}"
+                           },
+                           {
+                              name : "lcaList",
+                              type : "bcpg:lca",
+                              subType : "fr.becpg.repo.product.data.productList.LCAListDataItem",
+                              template : "lca['{item1}']?.{item2}"
                            },
                            {
                               name : "nutList",

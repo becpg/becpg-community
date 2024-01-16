@@ -56,6 +56,8 @@ public class IngListDataItem extends AbstractManualDataItem
 
 	private Double qtyPercWithYield = null;
 
+	private Double qtyPercWithSecondaryYield = null;
+
 	private Double volumeQtyPerc;
 
 	private List<NodeRef> geoOrigin = new LinkedList<>();
@@ -114,6 +116,16 @@ public class IngListDataItem extends AbstractManualDataItem
 
 	public void setQtyPercWithYield(Double qtyPercWithYield) {
 		this.qtyPercWithYield = qtyPercWithYield;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "bcpg:ingListQtyPercWithSecondaryYield")
+	public Double getQtyPercWithSecondaryYield() {
+		return qtyPercWithSecondaryYield;
+	}
+
+	public void setQtyPercWithSecondaryYield(Double qtyPercWithSecondaryYield) {
+		this.qtyPercWithSecondaryYield = qtyPercWithSecondaryYield;
 	}
 
 	/**
@@ -516,6 +528,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		super(i);
 		this.qtyPerc = i.qtyPerc;
 		this.qtyPercWithYield = i.qtyPercWithYield;
+		this.qtyPercWithSecondaryYield = i.qtyPercWithSecondaryYield;
 		this.volumeQtyPerc = i.volumeQtyPerc;
 		this.geoOrigin = this.geoOrigin != null ? new LinkedList<>(i.geoOrigin) : null;
 		this.geoTransfo = this.geoTransfo != null ? new LinkedList<>(i.geoTransfo) : null;
@@ -547,7 +560,7 @@ public class IngListDataItem extends AbstractManualDataItem
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(bioOrigin, claims, depthLevel, geoOrigin, geoTransfo, ing, isGMO, isIonized, isProcessingAid,
-				isSupport, maxi, mini, parent, qtyPerc, qtyPercWithYield, volumeQtyPerc);
+				isSupport, maxi, mini, parent, qtyPerc, qtyPercWithYield, qtyPercWithSecondaryYield, volumeQtyPerc);
 		return result;
 	}
 
@@ -566,14 +579,15 @@ public class IngListDataItem extends AbstractManualDataItem
 				&& Objects.equals(isProcessingAid, other.isProcessingAid) && Objects.equals(isSupport, other.isSupport)
 				&& Objects.equals(maxi, other.maxi) && Objects.equals(mini, other.mini) && Objects.equals(parent, other.parent)
 				&& Objects.equals(qtyPerc, other.qtyPerc) && Objects.equals(qtyPercWithYield, other.qtyPercWithYield)
-				&& Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
+				&& Objects.equals(qtyPercWithSecondaryYield, other.qtyPercWithSecondaryYield) && Objects.equals(volumeQtyPerc, other.volumeQtyPerc);
 	}
 
 	@Override
 	public String toString() {
-		return "IngListDataItem [qtyPerc=" + qtyPerc + ", qtyPercWithYield=" + qtyPercWithYield + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin="
-				+ geoOrigin + ", geoTransfo=" + geoTransfo + ", bioOrigin=" + bioOrigin + ", claims=" + claims + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing="
-				+ ing + ", isProcessingAid=" + isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent
+		return "IngListDataItem [qtyPerc=" + qtyPerc + ", qtyPercWithYield=" + qtyPercWithYield + ", qtyPercWithSecondaryYield="
+				+ qtyPercWithSecondaryYield + ", volumeQtyPerc=" + volumeQtyPerc + ", geoOrigin=" + geoOrigin + ", geoTransfo=" + geoTransfo
+				+ ", bioOrigin=" + bioOrigin + ", claims=" + claims + ", isGMO=" + isGMO + ", isIonized=" + isIonized + ", ing=" + ing
+				+ ", isProcessingAid=" + isProcessingAid + ", isSupport=" + isSupport + ", depthLevel=" + depthLevel + ", parent=" + parent
 				+ ", mini=" + mini + ", maxi=" + maxi + "]";
 	}
 

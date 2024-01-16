@@ -246,6 +246,7 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private String extractDeliverableProp(NodeRef nodeRef, String[] splitted) {
 		NodeRef ret = null;
 		if (splitted.length > 1) {
@@ -257,7 +258,22 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 				return type != null ? type.getLocalName() : "";
 			} else {
 				Serializable tmp = nodeService.getProperty(nodeRef, QName.createQName(splitted[1], namespaceService));
-				return tmp != null ? tmp.toString().replace("$", "\\$") : "";
+				StringBuilder strRet = new StringBuilder();
+				
+				if(tmp instanceof List) {
+					for (Serializable subEl : (List<Serializable>) tmp) {
+						if (subEl.toString().length() > 0) {
+							strRet.append(",");
+						}
+						strRet.append(subEl.toString());
+					}
+					
+				} else if(tmp!=null) {
+					strRet.append(tmp.toString());
+				}
+				
+				
+				return strRet.toString().replace("$", "\\$");
 			}
 		} else {
 			ret = nodeRef;

@@ -22,6 +22,7 @@ import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.jscript.BeCPGStateHelper;
 import fr.becpg.repo.policy.AbstractBeCPGPolicy;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>EntityCopyPolicy class.</p>
@@ -35,13 +36,18 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 
 	private NamespaceService namespaceService;
 	
-	private String propertiesToReset;
 	
 	private EntityService entityService;
 	
 	private AssociationService associationService;
 	
 	private DictionaryService dictionaryService;
+	
+	private SystemConfigurationService systemConfigurationService;
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
 	
 	public void setDictionaryService(DictionaryService dictionaryService) {
 		this.dictionaryService = dictionaryService;
@@ -60,13 +66,8 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 		this.namespaceService = namespaceService;
 	}
 
-	/**
-	 * <p>Setter for the field <code>propertiesToReset</code>.</p>
-	 *
-	 * @param propertiesToReset a {@link java.lang.String} object.
-	 */
-	public void setPropertiesToReset(String propertiesToReset) {
-		this.propertiesToReset = propertiesToReset;
+	private String propertiesToReset() {
+		return systemConfigurationService.confValue("beCPG.copyOrBranch.propertiesToReset");
 	}
 
 	/**
@@ -105,8 +106,8 @@ public class EntityCopyPolicy extends AbstractBeCPGPolicy implements CopyService
 			
 			entityService.changeEntityListStates(destinationRef, EntityListState.ToValidate);
 			
-			if (propertiesToReset != null) {
-		        for(String propertyToReset : propertiesToReset.split(",")) {	        	
+			if (propertiesToReset() != null) {
+		        for(String propertyToReset : propertiesToReset().split(",")) {	        	
 		        	QName propertyQname = QName.createQName(propertyToReset, namespaceService);	
 		        	
 		        	if (dictionaryService.getProperty(propertyQname) != null) {

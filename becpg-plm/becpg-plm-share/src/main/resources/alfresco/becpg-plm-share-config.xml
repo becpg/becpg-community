@@ -134,6 +134,7 @@
 			<list id="plant" index="210"/>
 			<list id="surveyList" index="211"/>
 			<list id="regulatoryList" index="212"/>
+			<list id="ingRegulatoryList" index="213"/>
 			
 			<list id="wUsedList" index="220" />
 			<list id="calculatedCharactList" index="230" />
@@ -192,6 +193,7 @@
 			<list id="SortingBonusCriteria" index="210"/>
 			<list id="SortingMalusCriteria" index="220"/> 
 			<list id="LCAUnits" index="230"/>
+			<list id="LcaListMethods" index="240"/>
 		</lists>
 	</config>
 	

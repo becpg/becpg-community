@@ -19,6 +19,7 @@ import fr.becpg.repo.entity.datalist.data.DataListFilter;
 import fr.becpg.repo.entity.datalist.impl.SimpleExtractor;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
+import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -68,6 +69,8 @@ public class SimpleCharactListExtractor extends SimpleExtractor {
 										charact = ((SimpleCharactDataItem) item).getCharactNodeRef();
 									} else if (item instanceof LabelClaimListDataItem) {
 										charact = ((LabelClaimListDataItem) item).getLabelClaim();
+									}  else if (item instanceof IngRegulatoryListDataItem) {
+										charact = ((IngRegulatoryListDataItem) item).getIng();
 									}
 
 									NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityListDAO.getEntity(nodeRef));

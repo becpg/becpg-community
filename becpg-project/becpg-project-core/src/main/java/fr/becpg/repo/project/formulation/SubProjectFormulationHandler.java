@@ -24,6 +24,7 @@ import fr.becpg.repo.project.data.projectList.TaskListDataItem;
 import fr.becpg.repo.project.data.projectList.TaskState;
 import fr.becpg.repo.project.impl.ProjectHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>SubProjectFormulationHandler class.</p>
@@ -39,15 +40,25 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 
 	private EntityDictionaryService entityDictionaryService;
 
-	private String propsToCopyFromParent = null;
-
-	private String propsToCopyToParent = null;
+	private String propsToCopyFromParent() {
+		return systemConfigurationService.confValue("project.subProject.propsToCopyFromParent");
+	}
+	
+	private String propsToCopyToParent() {
+		return systemConfigurationService.confValue("project.subProject.propsToCopyToParent");
+	}
 
 	private NodeService nodeService;
 
 	private NamespaceService namespaceService;
 
 	private AssociationService associationService;
+	
+	private SystemConfigurationService systemConfigurationService;
+	
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
 
 	/**
 	 * <p>Setter for the field <code>nodeService</code>.</p>
@@ -85,24 +96,6 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 		this.projectActivityService = projectActivityService;
 	}
 
-	/**
-	 * <p>Setter for the field <code>propsToCopyToParent</code>.</p>
-	 *
-	 * @param propsToCopyToParent a {@link java.lang.String} object.
-	 */
-	public void setPropsToCopyToParent(String propsToCopyToParent) {
-		this.propsToCopyToParent = propsToCopyToParent;
-	}
-
-	/**
-	 * <p>Setter for the field <code>propsToCopyFromParent</code>.</p>
-	 *
-	 * @param propsToCopyFromParent a {@link java.lang.String} object.
-	 */
-	public void setPropsToCopyFromParent(String propsToCopyFromParent) {
-		this.propsToCopyFromParent = propsToCopyFromParent;
-	}
-
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProjectData projectData) {
@@ -138,8 +131,8 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 					ProjectHelper.setTaskState(task, subProjectState, projectActivityService);
 				}
 
-				if ((propsToCopyFromParent != null) && !propsToCopyFromParent.isEmpty()) {
-					for (String propertyToCopy : propsToCopyFromParent.split(",")) {
+				if ((propsToCopyFromParent() != null) && !propsToCopyFromParent().isEmpty()) {
+					for (String propertyToCopy : propsToCopyFromParent().split(",")) {
 						QName propertyQname = QName.createQName(propertyToCopy, namespaceService);
 
 						ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyQname);
@@ -163,8 +156,8 @@ public class SubProjectFormulationHandler extends FormulationBaseHandler<Project
 					}
 				}
 
-				if ((propsToCopyToParent != null) && !propsToCopyToParent.isEmpty()) {
-					for (String propertyToCopy : propsToCopyToParent.split(",")) {
+				if ((propsToCopyToParent() != null) && !propsToCopyToParent().isEmpty()) {
+					for (String propertyToCopy : propsToCopyToParent().split(",")) {
 						QName propertyQname = QName.createQName(propertyToCopy, namespaceService);
 
 						ClassAttributeDefinition propDef = entityDictionaryService.getPropDef(propertyQname);

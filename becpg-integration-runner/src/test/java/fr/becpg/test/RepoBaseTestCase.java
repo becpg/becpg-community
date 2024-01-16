@@ -48,6 +48,7 @@ import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.MethodRule;
@@ -324,6 +325,10 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 				Thread.sleep(2000);
 				j++;
 			}
+			
+			if(j == 30) {
+				Assert.fail("Solr is taking too long!");
+			}
 
 			return null;
 
@@ -335,12 +340,15 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	public void waitForBatchEnd(BatchInfo batch) throws InterruptedException {
 		int j = 0;
 		
-		while(!Boolean.TRUE.equals(batch.getIsCompleted()) && (j < 30)) {
+		while(!Boolean.TRUE.equals(batch.getIsCompleted()) && (j < 60)) {
 			logger.info("Wait for batch: "+ batch.getBatchId());
-			Thread.sleep(2000);
+			Thread.sleep(5000);
 			j++;
 		}
 		
+		if(j == 60) {
+			Assert.fail("Batch is taking too long!");
+		}
 		
 	}
 	

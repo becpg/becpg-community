@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences.NON_FULL_SCREEN_PAGE_MODE;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
@@ -21,10 +21,12 @@ public class NutriScoreContext {
 	public static final String VALUE = "value"; 
 	private static final String IS_WATER = "isWater";
 	private static final String HAS_PROTEIN_SCORE = "hasProteinScore";
+	private static final String DISPLAY_SALT_SCORE = "displaySaltScore";
 	private static final String PARTS_STRING = "parts";
 	public static final String SCORE = "score";
 	public static final String UPPER_VALUE = "upperValue";
 	public static final String LOWER_VALUE = "lowerValue";
+	public static final String INCLUDE_LOWER = "includeLower";
 	private static final String CATEGORY_STRING = "category";
 	private static final String CLASS_UPPER_VALUE = "classUpperValue";
 	private static final String CLASS_LOWER_VALUE = "classLowerValue";
@@ -63,12 +65,13 @@ public class NutriScoreContext {
 	private boolean isWater;
 	
 	private boolean hasProteinScore = false;
-	private boolean hasSaltScore = false;
+	private boolean displaySaltScore = false;
 	
 	private List<String> nonNutritiveSugars = new ArrayList<>();
+	
+	private String version;
 
 	public NutriScoreContext() {
-		
 		createPartValue(ENERGY_CODE, 0d);
 		createPartValue(SATFAT_CODE, 0d);
 		createPartValue(FAT_CODE, 0d);
@@ -82,7 +85,6 @@ public class NutriScoreContext {
 
 	public NutriScoreContext(Double energyValue, Double satFatValue, Double totalFatValue, Double totalSugarValue, Double sodiumValue,
 			Double percFruitsAndVetgsValue, Double nspFibreValue, Double aoacFibreValue, Double proteinValue, String category) {
-
 		createPartValue(ENERGY_CODE, energyValue);
 		createPartValue(SATFAT_CODE, satFatValue);
 		createPartValue(FAT_CODE, totalFatValue);
@@ -92,8 +94,15 @@ public class NutriScoreContext {
 		createPartValue(NSP_CODE, nspFibreValue);
 		createPartValue(AOAC_CODE, aoacFibreValue);
 		createPartValue(PROTEIN_CODE, proteinValue);
-		
 		this.category = category;
+	}
+	
+	public String getVersion() {
+		return version;
+	}
+	
+	public void setVersion(String version) {
+		this.version = version;
 	}
 	
 	public List<String> getNonNutritiveSugars() {
@@ -110,12 +119,8 @@ public class NutriScoreContext {
 		return parts;
 	}
 	
-	public boolean hasSaltScore() {
-		return hasSaltScore;
-	}
-
-	public void setHasSaltScore(boolean hasSaltScore) {
-		this.hasSaltScore = hasSaltScore;
+	public void setDisplaySaltScore(boolean displaySaltScore) {
+		this.displaySaltScore = displaySaltScore;
 	}
 	
 	public boolean getHasProteinScore() {
@@ -125,7 +130,7 @@ public class NutriScoreContext {
 	public void setHasProteinScore(boolean hasProtein) {
 		this.hasProteinScore = hasProtein;
 	}
-
+	
 	public boolean isWater() {
 		return isWater;
 	}
@@ -208,8 +213,9 @@ public class NutriScoreContext {
 		json.put(IS_WATER, isWater);
 		
 		json.put(HAS_PROTEIN_SCORE, hasProteinScore);
+		json.put(DISPLAY_SALT_SCORE, displaySaltScore);
 		
-		json.put(NON_NUTRITIVE_SUGARS, nonNutritiveSugars);
+		json.put(NON_NUTRITIVE_SUGARS, new JSONArray(nonNutritiveSugars));
 		
 		return json;
 	}
@@ -231,7 +237,8 @@ public class NutriScoreContext {
 		nutriScoreContext.parts = jsonValue.getJSONObject(PARTS_STRING);
 		
 		nutriScoreContext.setWater(jsonValue.getBoolean(IS_WATER));
-		
+		nutriScoreContext.setDisplaySaltScore(jsonValue.getBoolean(DISPLAY_SALT_SCORE));
+		nutriScoreContext.setHasProteinScore(jsonValue.getBoolean(HAS_PROTEIN_SCORE));
 		nutriScoreContext.getNonNutritiveSugars().addAll(jsonValue.getJSONArray(NON_NUTRITIVE_SUGARS).toList().stream().map(Object::toString).collect(Collectors.toList()));
 
 		return nutriScoreContext;
@@ -257,7 +264,13 @@ public class NutriScoreContext {
 		}
 		
 		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.totalsugar", parts.getJSONObject(SUGAR_CODE).get(LOWER_VALUE), parts.getJSONObject(SUGAR_CODE).get(VALUE), parts.getJSONObject(SUGAR_CODE).get(UPPER_VALUE), parts.getJSONObject(SUGAR_CODE).get(SCORE)));
-		sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.sodium", parts.getJSONObject(SODIUM_CODE).get(LOWER_VALUE), parts.getJSONObject(SODIUM_CODE).get(VALUE), parts.getJSONObject(SODIUM_CODE).get(UPPER_VALUE), parts.getJSONObject(SODIUM_CODE).get(SCORE)));
+		String saltSodiumKey = displaySaltScore ? "nutriscore.display.salt" : "nutriscore.display.sodium";
+		sb.append("<li>" + I18NUtil.getMessage(saltSodiumKey, parts.getJSONObject(SODIUM_CODE).get(LOWER_VALUE), parts.getJSONObject(SODIUM_CODE).get(VALUE), parts.getJSONObject(SODIUM_CODE).get(UPPER_VALUE), parts.getJSONObject(SODIUM_CODE).get(SCORE)));
+		
+		if (!nonNutritiveSugars.isEmpty()) {
+			sb.append("<li>" + I18NUtil.getMessage("nutriscore.display.nns", nonNutritiveSugars));
+		}
+		
 		sb.append("</ul>");
 		
 		sb.append("</br>");

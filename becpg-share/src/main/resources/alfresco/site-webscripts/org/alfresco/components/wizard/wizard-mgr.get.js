@@ -37,6 +37,7 @@ function main() {
         if(wizard.attributes["id"] == page.url.args.id){
         	model.comments =  wizard.attributes["comments"] == "true";
         	model.draft = wizard.attributes["draft"] == "true";
+        	model.allSteps = wizard.attributes["allSteps"] == "true";
             var steps = wizard.childrenMap["step"];
             for(var j = 0, step; j < steps.size(); j++){
                 step = steps.get(j);
@@ -66,6 +67,7 @@ function main() {
          destination :  (page.url.args.destination != null) ? page.url.args.destination : "",
          nodeRef :  (page.url.args.nodeRef != null) ? page.url.args.nodeRef : "",
          draft : model.draft, 
+         allSteps : model.allSteps,
          wizardStruct : wizardStruct
       }
    };

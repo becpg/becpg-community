@@ -9,20 +9,18 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.product.data.EffectiveFilters;
-import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
 import fr.becpg.repo.product.data.ProductData;
-import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -37,8 +35,12 @@ public class SimulationCostHelper implements InitializingBean {
 	@Autowired
 	private AlfrescoRepository<ProductData> alfrescoRepository;
 
-	@Value("${beCPG.formulation.costList.keepProductUnit}")
-	private boolean keepProductUnit = false;
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
+	private boolean keepProductUnit() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.costList.keepProductUnit"));
+	}
 
 	static SimulationCostHelper INSTANCE;
 
@@ -195,7 +197,7 @@ public class SimulationCostHelper implements InitializingBean {
 		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct);
 
 		if (componentData instanceof PackagingMaterialData) {
-			return getPackagingListQty(formulatedProduct, componentData.getNodeRef(), 1, netQty);
+			return getPackagingListQty(formulatedProduct, componentData.getNodeRef(), netQty);
 		}
 
 		return getCompoListQty(formulatedProduct, componentData.getNodeRef(), netQty);
@@ -213,7 +215,7 @@ public class SimulationCostHelper implements InitializingBean {
 
 				ProductData componentProduct = INSTANCE.alfrescoRepository.findOne(productNodeRef);
 
-				Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, INSTANCE.keepProductUnit);
+				Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, INSTANCE.keepProductUnit());
 				if (logger.isDebugEnabled()) {
 					logger.debug("Get CompoListQty " + componentProduct.getName() + "qty: " + qty + " netQty " + netQty);
 				}
@@ -231,7 +233,7 @@ public class SimulationCostHelper implements InitializingBean {
 		return totalQty;
 	}
 
-	private static double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, Integer palletBoxesPerPallet, Double parentQty) {
+	private static double getPackagingListQty(ProductData productData, NodeRef componentNodeRef, Double parentQty) {
 		double totalQty = 0d;
 		if (productData.hasPackagingListEl()) {
 
@@ -239,10 +241,14 @@ public class SimulationCostHelper implements InitializingBean {
 
 			for (PackagingListDataItem packList : productData
 					.getPackagingList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))) {
+				
+				
 
 				ProductData subProductData = INSTANCE.alfrescoRepository.findOne(packList.getProduct());
 
-				Double qty = FormulationHelper.getQtyForCost(packList, productData.getComponentLossPerc() , subProductData);
+				Double qty = FormulationHelper.getQtyForCostByPackagingLevel(productData, packList, subProductData);
+
+				
 				if (qty != null) {
 					if ((netQty != null) && (netQty != 0d) && parentQty != null) {
 						qty = (parentQty * qty) / netQty;
@@ -251,15 +257,9 @@ public class SimulationCostHelper implements InitializingBean {
 						logger.debug("Get packagingListQty " + subProductData.getName() + "qty: " + qty);
 					}
 					if (subProductData.getNodeRef().equals(componentNodeRef)) {
-						if (PackagingLevel.Tertiary.equals(packList.getPkgLevel()) && palletBoxesPerPallet != null) {
-							totalQty = qty / palletBoxesPerPallet;
-						} else {
-							totalQty += qty;
-						}
-						break;
-					} else if (subProductData instanceof PackagingKitData) {
-						totalQty = qty * getPackagingListQty(subProductData, componentNodeRef,
-								((PackagingKitData) subProductData).getPalletBoxesPerPallet(), null);
+						totalQty += qty;
+					} else if (subProductData.isPackagingKit()) {
+						totalQty += qty * getPackagingListQty(subProductData, componentNodeRef, null);
 
 					}
 				}
@@ -272,13 +272,13 @@ public class SimulationCostHelper implements InitializingBean {
 
 					ProductData componentProduct = INSTANCE.alfrescoRepository.findOne(productNodeRef);
 
-					Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, INSTANCE.keepProductUnit);
+					Double qty = FormulationHelper.getQtyForCost(compoList, 0d, componentProduct, INSTANCE.keepProductUnit());
 					if (logger.isDebugEnabled()) {
 						logger.debug("Get packagingListQty " + componentProduct.getName() + "qty: " + qty + " netQty " + netQty);
 					}
 					if ((qty != null) && (netQty != null) && (netQty != 0d) && parentQty != null) {
 						qty = (parentQty * qty) / netQty;
-						totalQty += getPackagingListQty(componentProduct, componentNodeRef, palletBoxesPerPallet, qty);
+						totalQty += getPackagingListQty(componentProduct, componentNodeRef, qty);
 
 					}
 				}

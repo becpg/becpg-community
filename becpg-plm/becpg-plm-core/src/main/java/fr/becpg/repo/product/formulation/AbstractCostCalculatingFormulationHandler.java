@@ -43,18 +43,27 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	protected PackagingHelper packagingHelper;
 
 	protected AlfrescoRepository<ProductData> alfrescoRepositoryProductData;
-
-	/** Constant <code>keepProductUnit=false</code> */
-	public static boolean keepProductUnit = false;
-
-	/**
-	 * <p>Setter for the field <code>keepProductUnit</code>.</p>
-	 *
-	 * @param keepProductUnit a boolean.
-	 */
-	public void setKeepProductUnit(boolean keepProductUnit) {
-		AbstractCostCalculatingFormulationHandler.keepProductUnit = keepProductUnit;
+	
+	private static AbstractCostCalculatingFormulationHandler<?> instance;
+	
+	public AbstractCostCalculatingFormulationHandler() {
+		instance = this;
 	}
+
+	protected boolean internalKeepProductUnit() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.costList.keepProductUnit"));
+	}
+	
+	public static boolean keepProductUnit() {
+		return instance.internalKeepProductUnit();
+	}
+	
+
+	@Override
+	protected boolean propagateModeEnable(ProductData formulatedProduct) {
+		return false;
+	}
+
 
 	/**
 	 * <p>Setter for the field <code>entityTplService</code>.</p>
@@ -142,12 +151,12 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 						c.setUnit(calculateUnit(unit, (String) nodeService.getProperty(c.getCost(), getCostUnitPropName()), fixed));
 
 						if (!Boolean.TRUE.equals(fixed) && hasCompoEl) {
-							if (!keepProductUnit && unit.isLb()) {
+							if (!internalKeepProductUnit() && unit.isLb()) {
 								c.setValue(ProductUnit.lbToKg(c.getValue()));
 								c.setMaxi(ProductUnit.lbToKg(c.getMaxi()));
 								c.setPreviousValue(ProductUnit.lbToKg(c.getPreviousValue()));
 								c.setFutureValue(ProductUnit.lbToKg(c.getFutureValue()));
-							} else if (!keepProductUnit && unit.isGal()) {
+							} else if (!internalKeepProductUnit() && unit.isGal()) {
 								c.setValue(ProductUnit.GalToL(c.getValue()));
 								c.setMaxi(ProductUnit.GalToL(c.getMaxi()));
 								c.setPreviousValue(ProductUnit.GalToL(c.getPreviousValue()));
@@ -197,7 +206,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	 * @return a {@link java.lang.String} object.
 	 */
 	public static String calculateSuffixUnit(ProductUnit productUnit) {
-		if (!keepProductUnit) {
+		if (!instance.internalKeepProductUnit()) {
 			return UNIT_SEPARATOR + productUnit.getMainUnit().toString();
 		}
 		return UNIT_SEPARATOR + productUnit.toString();
@@ -472,40 +481,40 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	private void calculateSimulationCosts(ProductData formulatedProduct) {
 		Double netQty = FormulationHelper.getNetQtyForCost(formulatedProduct,null);
 
-		for (T c : getDataListVisited(formulatedProduct)) {
-			if ((c.getComponentNodeRef() != null) && (c.getParent() != null)) {
+		for (T simulatedCost : getDataListVisited(formulatedProduct)) {
+			if ((simulatedCost.getComponentNodeRef() != null) && (simulatedCost.getParent() != null)) {
 
-				ProductData componentData = alfrescoRepositoryProductData.findOne(c.getComponentNodeRef());
+				ProductData componentData = alfrescoRepositoryProductData.findOne(simulatedCost.getComponentNodeRef());
 				Double qtyComponent = SimulationCostHelper.getComponentQuantity(formulatedProduct, componentData);
 
-				if ((c.getSimulatedValue() != null) && c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
-					c.getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+				if ((simulatedCost.getSimulatedValue() != null) && simulatedCost.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
+					simulatedCost.getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 				}
 
 				for (T c2 : getDataListVisited(componentData)) {
-					if (c2.getCost().equals(c.getParent().getCost()) && (c.getSimulatedValue() != null)) {
+					if (c2.getCost().equals(simulatedCost.getParent().getCost()) && (simulatedCost.getSimulatedValue() != null) ) {
 
 						if (logger.isDebugEnabled()) {
-							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + c.getSimulatedValue()
+							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + simulatedCost.getSimulatedValue()
 									+ " qty component " + qtyComponent + " netQty " + netQty);
 						}
 						if (c2.getValue() != null) {
-							c.setValue(((c.getSimulatedValue() - c2.getValue()) * qtyComponent) / (netQty != 0 ? netQty : 1d));
+							simulatedCost.setValue(((simulatedCost.getSimulatedValue() - c2.getValue()) * qtyComponent) / (netQty != 0 ? netQty : 1d));
 						} else {
-							c.setValue(((c.getSimulatedValue()) * qtyComponent) / (netQty != 0 ? netQty : 1d));
+							simulatedCost.setValue(((simulatedCost.getSimulatedValue()) * qtyComponent) / (netQty != 0 ? netQty : 1d));
 						}
-						if (c.getParent().getValue() != null) {
-							c.getParent().setValue(c.getParent().getValue() + c.getValue());
+						if (simulatedCost.getParent().getValue() != null) {
+							simulatedCost.getParent().setValue(simulatedCost.getParent().getValue() + simulatedCost.getValue());
 						} else {
-							c.getParent().setValue(c.getValue());
+							simulatedCost.getParent().setValue(simulatedCost.getValue());
 						}
 						break;
 					}
 				}
 			}
-			if (c.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM) && (c.getSimulatedValue() == null) && (c.getParent() != null)
-					&& !nodeService.hasAspect(c.getParent().getCost(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
-				c.getParent().getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
+			if (simulatedCost.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM) && (simulatedCost.getSimulatedValue() == null) && (simulatedCost.getParent() != null)
+					&& !nodeService.hasAspect(simulatedCost.getParent().getCost(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
+				simulatedCost.getParent().getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 			}
 		}
 	}

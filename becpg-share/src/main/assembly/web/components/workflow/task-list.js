@@ -158,12 +158,12 @@
           var columns = ["bpm_priority", "bpm_status", "bpm_dueDate", "bpm_description","bpm_completionDate"];
           var columnDefs = 
               [
-                  { key: "id", sortable: true,label:"", formatter: this.bind(this.renderCellPriority), width: 16 },
+                  { key: "priority", sortable: true,label:"", formatter: this.bind(this.renderCellPriority), width: 16 },
                   { key: "isPooled", sortable: false,label:"", formatter: this.bind(this.renderCellPooled), width: 16 },      
                   { key: "description", sortable: true, label:this.msg("label.description"), formatter: this.bind(this.renderTitleCell) },
-                  { key: "title", sortable: true, label:this.msg("label.type"), formatter: this.bind(this.renderTaskTypeCell) },
-                  { key: "path", sortable: true, label:this.msg("label.due"), formatter: this.bind(this.renderDueDateCell) },
-                  { key: "state", sortable: true, label:this.msg("label.started"), formatter: this.bind(this.renderStartDateCell) },
+                  { key: "type", sortable: true, label:this.msg("label.type"), formatter: this.bind(this.renderTaskTypeCell) },
+                  { key: "dueDate", sortable: true, label:this.msg("label.due"), formatter: this.bind(this.renderDueDateCell) },
+                  { key: "startDate", sortable: true, label:this.msg("label.started"), formatter: this.bind(this.renderStartDateCell) },
                   { key: "completionDate", sortable: true, label:this.msg("label.ended"), formatter: this.bind(this.renderCompletionDateCell) },
                   { key: "owner", sortable: true, label:this.msg("label.initiator"), formatter: this.bind(this.renderInitiatorCell) }
                  

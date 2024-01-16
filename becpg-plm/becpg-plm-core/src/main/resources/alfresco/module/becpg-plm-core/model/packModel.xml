@@ -188,6 +188,10 @@
       <type name="pack:packMaterialList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
+			    <property name="pack:pmlPerc">
+					<type>d:double</type>
+					<index enabled="false"/>
+				</property>
 				<property name="pack:pmlWeight">
 					<type>d:double</type>
 					<index enabled="false"/>

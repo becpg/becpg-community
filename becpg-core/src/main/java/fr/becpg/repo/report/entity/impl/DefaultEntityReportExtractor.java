@@ -60,7 +60,6 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
@@ -89,6 +88,7 @@ import fr.becpg.repo.repository.RepositoryEntityDefReader;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.CompositionDataItem;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * <p>DefaultEntityReportExtractor class.</p>
@@ -102,7 +102,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	private static final Log logger = LogFactory.getLog(DefaultEntityReportExtractor.class);
 
 	/** Constant <code>TAG_ENTITY="entity"</code> */
-	protected static final String TAG_ENTITY = "entity";
+	public static final String TAG_ENTITY = "entity";
 
 	/** Constant <code>TAG_DATALISTS="dataLists"</code> */
 	protected static final String TAG_DATALISTS = "dataLists";
@@ -114,6 +114,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String TAG_VERSIONS = "versions";
 	/** Constant <code>TAG_VERSION="version"</code> */
 	protected static final String TAG_VERSION = "version";
+	
+	public static final String TAG_REPORT_PARAMS= "reportParams";
 	/** Constant <code>ATTR_SET="set"</code> */
 	protected static final String ATTR_SET = "set";
 	/** Constant <code>ATTR_NAME="name"</code> */
@@ -134,6 +136,8 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	protected static final String ATTR_ENTITY_TYPE = "entityType";
 	/** Constant <code>PRODUCT_IMG_ID="Img%d"</code> */
 	protected static final String PRODUCT_IMG_ID = "Img%d";
+	
+	
 
 	protected static final String EXTRA_IMG_ID = "Extra%d";
 	/** Constant <code>ATTR_IMAGE_ID="id"</code> */
@@ -164,29 +168,40 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			Arrays.asList(ContentModel.PROP_CREATED, ContentModel.PROP_CREATOR, ContentModel.PROP_MODIFIED, ContentModel.PROP_MODIFIER));
 	private static final QName FORUM_TO_TOPIC_ASSOC_QNAME = QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, "Comments");
 
-	@Value("${beCPG.entity.report.mltext.fields}")
-	private String mlTextFields;
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
+	
+	private String mlTextFields() {
+		return systemConfigurationService.confValue("beCPG.entity.report.mltext.fields");
+	}
 
-	@Value("${beCPG.entity.report.mltext.locales}")
-	private String mlTextLocales;
+	private String mlTextLocales() {
+		return systemConfigurationService.confValue("beCPG.entity.report.mltext.locales");
+	}
 
-	@Value("${beCPG.product.report.assocsToExtractWithDataList}")
-	protected String assocsToExtractWithDataList = "";
+	protected String assocsToExtractWithDataList() {
+		return systemConfigurationService.confValue("beCPG.product.report.assocsToExtractWithDataList");
+	}
 
-	@Value("${beCPG.product.report.assocsToExtractWithImage}")
-	protected String assocsToExtractWithImage = "";
+	protected String assocsToExtractWithImage() {
+		return systemConfigurationService.confValue("beCPG.product.report.assocsToExtractWithImage");
+	}
 
-	@Value("${beCPG.product.report.extraImagePaths:#{null}}")
-	protected String extraImagePaths = "";
+	private String extraImagePaths() {
+		return systemConfigurationService.confValue("beCPG.product.report.extraImagePaths");
+	}
 
-	@Value("${beCPG.product.report.assocsToExtract}")
-	protected String assocsToExtract = "";
+	protected String assocsToExtract() {
+		return systemConfigurationService.confValue("beCPG.product.report.assocsToExtract");
+	}
 
-	@Value("${beCPG.product.report.assocsToExtractInDataList}")
-	protected String assocsToExtractInDataList = "";
+	protected String assocsToExtractInDataList() {
+		return systemConfigurationService.confValue("beCPG.product.report.assocsToExtractInDataList");
+	}
 
-	@Value("${beCPG.product.report.multilineProperties}")
-	protected String multilineProperties = "";
+	protected String multilineProperties() {
+		return systemConfigurationService.confValue("beCPG.product.report.multilineProperties");
+	}
 
 	@Autowired
 	protected DictionaryService dictionaryService;
@@ -344,9 +359,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			}
 		}
 
-		if (context.isNotEmptyPrefs("extraImagePaths", extraImagePaths)) {
+		if (context.isNotEmptyPrefs("extraImagePaths", extraImagePaths())) {
 			String entityPath = nodeService.getPath(entityNodeRef).toPrefixString(namespaceService);
-			String[] paths = context.getPrefValue("extraImagePaths", extraImagePaths).split(";");
+			String[] paths = context.getPrefValue("extraImagePaths", extraImagePaths()).split(";");
 			for (String path : paths) {
 				List<NodeRef> imgNodeRefs = BeCPGQueryBuilder.createQuery().selectNodesByPath(entityNodeRef,
 						expressionService.extractExpr(entityNodeRef, path));
@@ -428,16 +443,16 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 			boolean extractAssoc = false;
 			String prefixedAssocName = entityDictionaryService.toPrefixString(assocDef.getName());
 
-			if (context.prefsContains("assocsToExtractWithDataList", assocsToExtractWithDataList, prefixedAssocName)) {
+			if (context.prefsContains("assocsToExtractWithDataList", assocsToExtractWithDataList(), prefixedAssocName)) {
 				extractDataList = true;
 			}
 
 			if (context.isInDataListContext()) {
-				if (context.prefsContains("assocsToExtractInDataList", assocsToExtractInDataList, prefixedAssocName)) {
+				if (context.prefsContains("assocsToExtractInDataList", assocsToExtractInDataList(), prefixedAssocName)) {
 					extractAssoc = true;
 				}
 			} else {
-				if (context.prefsContains("assocsToExtract", assocsToExtract, prefixedAssocName)) {
+				if (context.prefsContains("assocsToExtract", assocsToExtract(), prefixedAssocName)) {
 					extractAssoc = true;
 				}
 			}
@@ -449,7 +464,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				isExtracted = true;
 			}
 
-			if (context.prefsContains("assocsToExtractWithImage", assocsToExtractWithImage, prefixedAssocName)) {
+			if (context.prefsContains("assocsToExtractWithImage", assocsToExtractWithImage(), prefixedAssocName)) {
 				List<NodeRef> nodeRefs = associationService.getTargetAssocs(entityNodeRef, assocDef.getName());
 				Element imgsElt = (Element) entityElt.getDocument().selectSingleNode(TAG_ENTITY + "/" + TAG_IMAGES);
 				if (imgsElt != null) {
@@ -477,7 +492,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 	 * @return a boolean.
 	 */
 	protected boolean isMultiLinesAttribute(QName attribute, DefaultExtractorContext context) {
-		return context.prefsContains("multilineProperties", multilineProperties, entityDictionaryService.toPrefixString(attribute));
+		return context.prefsContains("multilineProperties", multilineProperties(), entityDictionaryService.toPrefixString(attribute));
 	}
 
 	/**
@@ -724,7 +739,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 				}
 
 				if (DataTypeDefinition.NODE_REF.toString().equals(propertyDef.getDataType().toString())
-						&& context.prefsContains("assocsToExtract", assocsToExtract, propertyDef.getName().toPrefixString(namespaceService))) {
+						&& context.prefsContains("assocsToExtract", assocsToExtract(), propertyDef.getName().toPrefixString(namespaceService))) {
 
 					NodeRef dNodeRef = (NodeRef) property.getValue();
 
@@ -779,7 +794,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 					}
 				}
 
-				if (context.prefsContains("mlTextFields", mlTextFields, entityDictionaryService.toPrefixString(propertyDef.getName()))) {
+				if (context.prefsContains("mlTextFields", mlTextFields(), entityDictionaryService.toPrefixString(propertyDef.getName()))) {
 					MLText mlValues = null;
 
 					if (DataTypeDefinition.MLTEXT.equals(propertyDef.getDataType().getName())) {
@@ -787,7 +802,7 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 
 					} else if (DataTypeDefinition.TEXT.equals(propertyDef.getDataType().getName())) {
 						if (dynListConstraint != null) {
-							mlValues = dynListConstraint.getMLAwareAllowedValues().get(property.getValue());
+							mlValues = dynListConstraint.getMLDisplayLabel((String)property.getValue());
 						}
 					}
 
@@ -798,9 +813,9 @@ public class DefaultEntityReportExtractor implements EntityReportExtractorPlugin
 							if ((mlEntry.getKey().getCountry() != null) && !mlEntry.getKey().getCountry().isEmpty()) {
 								code += "_" + mlEntry.getKey().getCountry();
 							}
-							if ((((mlTextLocales == null) || "".equals(mlTextLocales)) && ((context.getPreferences() == null)
+							if ((((mlTextLocales() == null) || "".equals(mlTextLocales())) && ((context.getPreferences() == null)
 									|| ((context.getPreferences() != null) && !context.getPreferences().containsKey("mlTextLocales"))))
-									|| context.prefsContains("mlTextLocales", mlTextLocales, code)) {
+									|| context.prefsContains("mlTextLocales", mlTextLocales(), code)) {
 								if ((code != null) && !code.isEmpty()) {
 									Element ret = addData(nodeElt, useCData, propertyDef.getName(), mlEntry.getValue(), code, context);
 									if (isDyn && (ret != null)) {

@@ -35,10 +35,10 @@ public class MLTextHelperTest {
 		Assert.assertTrue(Locale.CANADA_FRENCH.equals(MLTextHelper.getNearestLocale(Locale.FRANCE, locales)));
 
 		MLTextHelper helper = new MLTextHelper();
-		helper.setSupportedLocales("fr,en_US,en");
-
-		Assert.assertTrue(MLTextHelper.isSupportedLocale(Locale.US));
-		Assert.assertFalse(MLTextHelper.isSupportedLocale(Locale.UK));
+		helper.setSupportedLocalesInstance("fr,en_US,en");
+		
+		Assert.assertTrue(helper.isSupportedLocaleInstance(Locale.US));
+		Assert.assertFalse(helper.isSupportedLocaleInstance(Locale.UK));
 
 	}
 

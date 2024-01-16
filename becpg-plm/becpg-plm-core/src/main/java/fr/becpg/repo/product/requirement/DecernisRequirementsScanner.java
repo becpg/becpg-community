@@ -1,10 +1,9 @@
 package fr.becpg.repo.product.requirement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,15 +16,12 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.decernis.DecernisService;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.CheckSumHelper;
-import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -78,11 +74,6 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 	@Override
 	public List<ReqCtrlListDataItem> checkRequirements(ProductData formulatedProduct, List<ProductSpecificationData> specifications) {
 
-		if (!decernisService.isEnabled()) {
-			logger.debug("Decernis service is not enabled");
-			return Collections.emptyList();
-		}
-		
 		if (FormulationService.FAST_FORMULATION_CHAINID.equals(formulatedProduct.getFormulationChainId())) {
 			logger.debug("Fast formulation skipping decernis");
 			return Collections.emptyList();
@@ -92,7 +83,21 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 			logger.debug("Skip decernis in reformulateCount " + formulatedProduct.getCurrentReformulateCount());
 			return Collections.emptyList();
 		}
-			
+		
+		if (!decernisService.isEnabled()) {
+			logger.debug("Decernis service is not enabled");
+			return Collections.emptyList();
+		}
+		
+		if (DecernisMode.DISABLED.equals(formulatedProduct.getRegulatoryMode())) {
+			logger.debug("Decernis service is disabled for this product");
+			return Collections.emptyList();
+		}
+		
+		if (formulatedProduct.getRegulatoryList() == null) {
+			formulatedProduct.setRegulatoryList(new LinkedList<>());
+		}
+		
 		updateProductFromRegulatoryList(formulatedProduct);
 		
 		boolean isDirty = isDirty(formulatedProduct);
@@ -103,23 +108,15 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 					watch = new StopWatch();
 					watch.start();
 				}
+				
 				formulatedProduct.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+				
 				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
-				formulatedProduct.setRegulatoryFormulatedDate(new Date());
-				return requirements;
-
-			} catch (FormulateException e) {
-				if (logger.isWarnEnabled()) {
-					logger.warn(e, e);
-				}
-				ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-						MLTextHelper.getI18NMessage("message.decernis.error", e.getMessage()), null, new ArrayList<>(),
-						RequirementDataType.Specification);
-				req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
-				return Arrays.asList(req);
-
-			} finally {
 				updateChecksums(formulatedProduct);
+				formulatedProduct.setRegulatoryFormulatedDate(new Date());
+				
+				return requirements;
+			} finally {
 				if (logger.isDebugEnabled() && (watch != null)) {
 					watch.stop();
 					logger.debug("Running decernis requirement scanner in: " + watch.getTotalTimeSeconds() + "s");
@@ -167,12 +164,19 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		Set<String> usages = formulatedProduct.getRegulatoryUsages().stream().map(this::extractCode).collect(Collectors.toSet());
 		StringBuilder checksumBuilder = new StringBuilder();
 		checksumBuilder.append(createRequirementChecksum(countries, usages));
+		for (RegulatoryListDataItem regulatoryListDataItem : formulatedProduct.getRegulatoryList()) {
+			Set<String> itemCountries = regulatoryListDataItem.getRegulatoryCountries().stream().map(this::extractCode).collect(Collectors.toSet());
+			Set<String> itemUsages = regulatoryListDataItem.getRegulatoryUsages().stream().map(this::extractCode).collect(Collectors.toSet());
+			checksumBuilder.append(createRequirementChecksum(itemCountries, itemUsages));
+		}
 		
-		formulatedProduct.getIngList().stream()
+		if (formulatedProduct.getIngList() != null) {
+			formulatedProduct.getIngList().stream()
 			.filter(ing -> ing != null && ing.getNodeRef() != null)
 			.map(ing -> ing.getNodeRef().toString() + ing.getIng() + ing.getValue())
 			.sorted()
 			.forEach(checksumBuilder::append);
+		}
 		
 		return checksumBuilder.toString();
 	}
@@ -214,6 +218,11 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 
 	private boolean isDirty(ProductData formulatedProduct) {
 		
+		if (!isProductCompatibleWithDecernis(formulatedProduct)) {
+			logger.debug("Product is not compatible with Decernis");
+			return false;
+		}
+			
 		if (!isSameRequirementChecksum(formulatedProduct)) {
 			logger.debug("Decernis checksum doesn't match: " + formulatedProduct.getRequirementChecksum());
 			return true;
@@ -229,6 +238,21 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 		}
 		
 		return true;
+	}
+
+	private boolean isProductCompatibleWithDecernis(ProductData product) {
+		if (product.getRequirementChecksum() != null) {
+			return true;
+		}
+		if (!product.getRegulatoryCountries().isEmpty() && !product.getRegulatoryUsages().isEmpty()) {
+			return true;
+		}
+		for (RegulatoryListDataItem item : product.getRegulatoryList()) {
+			if (!item.getRegulatoryCountries().isEmpty() && !item.getRegulatoryUsages().isEmpty()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private boolean isIngListDirty(LazyLoadingDataList<IngListDataItem> dataList) {

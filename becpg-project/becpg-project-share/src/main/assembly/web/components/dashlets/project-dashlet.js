@@ -49,6 +49,10 @@
                   currentPage : 1,
 
                   queryExecutionId : null,
+                  
+                  options :{  
+                 	 maxResults : 256
+				  },
 
                   /**
                    * Fired by YUI when parent element is available for scripting
@@ -258,9 +262,9 @@
                    */
                   getWebscriptUrl : function ProjectDashlet_getWebscriptUrl() {
                      if (Alfresco.constants.SITE !== null && Alfresco.constants.SITE.length > 0) {
-                        return Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node?itemType=pjt:project&site=" + Alfresco.constants.SITE + "&pageSize=" + this.options.maxItems + "&dataListName=projectList&container=documentLibrary&repo=false";
+                        return Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node?itemType=pjt:project&site=" + Alfresco.constants.SITE + "&pageSize=" + this.options.maxItems + "&maxResults=" + this.options.maxResults+ "&dataListName=projectList&container=documentLibrary&repo=false";
                      }
-                     return Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node?itemType=pjt:project&pageSize=" + this.options.maxItems + "&dataListName=projectList&repo=true";
+                     return Alfresco.constants.PROXY_URI + "becpg/entity/datalists/data/node?itemType=pjt:project&pageSize=" + this.options.maxItems + "&maxResults=" + this.options.maxResults + "&dataListName=projectList&repo=true";
                   },
 
                   /**
@@ -293,12 +297,10 @@
 
                      if (this.searchTerm !== null && this.searchTerm.length > 0) {
 						if(isTask){
-							req += "AND  +@pjt\\:tlTaskName:(" + this.searchTerm + ")";
+							req += " AND  +@pjt\\:tlTaskName:(" + this.searchTerm + ")";
 						} else {
-							req += "AND (" + this.searchTerm + ")";
+							req += " AND (" + this.searchTerm + ")";
 						}
-		
-                       
                      }
 
                      req += ')';
@@ -351,6 +353,7 @@
                      if (menuItem) {
                         this.widgets.filter.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                         this.widgets.filter.value = menuItem.value;
+                        this.queryExecutionId = null;
                         this.currentPage = 1;
 
                         this.services.preferences.set(PREFERENCES_PROJECT__DASHLET_FILTER, this.widgets.filter.value);
@@ -365,6 +368,7 @@
                         this.widgets.view.set("label", menuItem.cfg.getProperty("text")+ " " + Alfresco.constants.MENU_ARROW_SYMBOL);
                         this.widgets.view.value = menuItem.value;
                         this.currentPage = 1;
+                        this.queryExecutionId = null;
 
                         this.services.preferences.set(PREFERENCES_PROJECT__DASHLET_VIEW, this.widgets.view.value);
 
@@ -847,6 +851,8 @@
                   onSearchChange : function ProjectDashlet_onSearchChange() {
 
                      this.currentPage = 1;
+                     
+                     this.queryExecutionId = null;
 
                      this._cleanSearchText();
 

@@ -8,6 +8,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -70,6 +71,7 @@ import fr.becpg.repo.product.data.spel.LabelingFormulaFilterContext;
 import fr.becpg.repo.product.formulation.FormulationHelper;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
@@ -96,7 +98,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 	private SpelFormulaService formulaService;
 
-	private boolean ingsCalculatingWithYield = false;
+	private SystemConfigurationService systemConfigurationService;
+
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
+
+	private boolean ingsCalculatingWithYield() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("beCPG.formulation.ingsCalculatingWithYield"));
+	}
 
 	/**
 	 * <p>
@@ -146,18 +156,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	 */
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
-	}
-
-	/**
-	 * <p>
-	 * Setter for the field <code>ingsCalculatingWithYield</code>.
-	 * </p>
-	 *
-	 * @param ingsCalculatingWithYield
-	 *            a boolean.
-	 */
-	public void setIngsCalculatingWithYield(boolean ingsCalculatingWithYield) {
-		this.ingsCalculatingWithYield = ingsCalculatingWithYield;
 	}
 
 	/**
@@ -230,19 +228,36 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			LabelingFormulaContext labelingFormulaContext = new LabelingFormulaContext(mlNodeService, associationService, alfrescoRepository,
 					formulaService);
 
-			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield);
+			labelingFormulaContext.setIngsLabelingWithYield(ingsCalculatingWithYield());
 
 			ExpressionParser parser = new SpelExpressionParser();
 			StandardEvaluationContext dataContext = formulaService.createCustomSpelContext(formulatedProduct, labelingFormulaContext);
 
 			List<LabelingRuleListDataItem> labelingRuleLists = labelingRuleListsGroup.getValue();
 
+			// Apply Prefs first
+			Comparator<LabelingRuleListDataItem> customComparator = (item1, item2) -> {
+				LabelingRuleType type1 = item1.getLabelingRuleType();
+				LabelingRuleType type2 = item2.getLabelingRuleType();
+
+				// Compare based on the desired order
+				if (LabelingRuleType.Prefs.equals(type1) && !LabelingRuleType.Prefs.equals(type2)) {
+					return -1; // item1 comes before item2
+				} else if (!LabelingRuleType.Prefs.equals(type1) && LabelingRuleType.Prefs.equals(type2)) {
+					return 1; // item2 comes before item1
+				} else {
+					return 0; // They have the same type or neither is Prefs
+				}
+			};
+
+			// Sort the list using the custom comparator
+			Collections.sort(labelingRuleLists, customComparator);
+
 			// Apply before formula
 			int groupSortOrder = 0;
 			for (LabelingRuleListDataItem labelingRuleListDataItem : labelingRuleLists) {
 				if (Boolean.TRUE.equals(labelingRuleListDataItem.getIsActive())) {
 					LabelingRuleType type = labelingRuleListDataItem.getLabelingRuleType();
-
 					if (LabelingRuleType.Prefs.equals(type)) {
 						try {
 							Expression exp = parser.parseExpression(SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()));
@@ -255,7 +270,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 													labelingRuleListDataItem.getName(), e.getLocalizedMessage()),
 											null, new ArrayList<>(), RequirementDataType.Labelling));
 							if (logger.isDebugEnabled()) {
-								logger.debug("Error label rule formula : [" + labelingRuleListDataItem.getName() + "] - "
+								logger.warn("Error label rule formula : [" + labelingRuleListDataItem.getName() + "] - "
 										+ SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
 							}
 						}
@@ -292,7 +307,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 			CompositeLabeling compositeLabeling = new CompositeLabeling(CompositeLabeling.ROOT);
 
 			visitCompoList(compositeLabeling, compositeDefaultVariant, labelingFormulaContext, 1d,
-					labelingFormulaContext.getYield() != null ? labelingFormulaContext.getYield() : formulatedProduct.getYield(), true);
+					labelingFormulaContext.getYield() != null ? labelingFormulaContext.getYield()
+							: (labelingFormulaContext.isUseSecondaryYield() ? formulatedProduct.getSecondaryYield() : formulatedProduct.getYield()),
+					true);
 
 			if (logger.isTraceEnabled()) {
 				logger.trace(" Before aggrate \n " + compositeLabeling.toString());
@@ -391,7 +408,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 													null, new ArrayList<>(), RequirementDataType.Labelling));
 
 									if (logger.isDebugEnabled()) {
-										logger.debug("Error in formula : (" + labelingRuleListDataItem.getNodeRef() + ")"
+										logger.warn("Error in formula : (" + labelingRuleListDataItem.getNodeRef() + ")"
 												+ SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
 									}
 								} finally {
@@ -1436,11 +1453,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				if (qty != null) {
 					qty *= LabelingFormulaContext.PRECISION_FACTOR;
-					if (!isLocalSemiFinished) {
-						if (componentYield != null) {
-							qty *= componentYield / 100d;
-						}
-					}
 
 					if (ratio != null) {
 						qty *= ratio;
@@ -1451,21 +1463,31 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				if (volume != null) {
 					volume *= LabelingFormulaContext.PRECISION_FACTOR;
 
-					if (!isLocalSemiFinished) {
-						if (componentYield != null) {
-							volume *= componentYield / 100d;
-						}
-					}
-
 					if (ratio != null) {
 						volume *= ratio;
 					}
 
+				
 				}
 
+
+				
 				Double qtyWithYield = qty != null && !DeclarationType.Group.equals(declarationType) ? qty / calculatedYield * 100d : qty;
 				Double volumeWithYield = volume != null && !DeclarationType.Group.equals(declarationType) ? volume / calculatedYield * 100d : volume;
 
+				
+
+				if (!isLocalSemiFinished) {
+					if (qty != null && componentYield != null) {
+						qty *= componentYield / 100d;
+					}
+					
+					if (volume != null && componentYield != null) {
+						volume *= componentYield / 100d;
+					}
+				}
+
+				
 				//Water loss
 				if ((qty != null) && (calculatedYield != null) && (calculatedYield != 100d)
 						&& nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
@@ -1662,7 +1684,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if (DeclarationType.Declare.equals(declarationType)) {
 							if (isMultiLevel && (qty != null) && !isLocalSemiFinished) {
 
-								Double qtyTotal = FormulationHelper.getQtyFromComposition(productData,null, FormulationHelper.DEFAULT_NET_WEIGHT);
+								Double qtyTotal = FormulationHelper.getQtyInKgFromComposition(productData, null,
+										FormulationHelper.DEFAULT_NET_WEIGHT);
 
 								if ((qtyTotal != null) && (qtyTotal != 0d)) {
 									computedRatio = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR);
@@ -1689,7 +1712,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							if (!isLocalSemiFinished) {
 
-								recurYield =  productData.getYield() != null ? productData.getYield() : 100d;
+								recurYield = productData.getYield() != null ? productData.getYield() : 100d;
 								if (recurYield != null) {
 
 									if ((calculatedYield != null) && (calculatedYield != 100d)) {
@@ -1828,7 +1851,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 	}
-
 
 	private String getName(CompositeLabeling component) {
 		if (component instanceof IngItem) {
@@ -2079,6 +2101,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								logger.trace("Detected water lost");
 							}
 
+							qtyWithYield = qty;
+							volumeWithYield = volume;
+							
 							EvaporatedDataItem evaporatedDataItem = null;
 							for (EvaporatedDataItem tmp : labelingFormulaContext.getEvaporatedDataItems()) {
 								if (tmp.getProductNodeRef().equals(ingNodeRef)) {
@@ -2195,7 +2220,14 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						if ((ingLabelItem.getQtyWithYield() != null) && (qtyWithYield != null)) {
-							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100));
+							
+							if (logger.isTraceEnabled()) {
+								logger.trace(" -- new qtyWithYield to add to " + getName(ingLabelItem) + ": " + ((qtyWithYield * qtyPerc) / 100));
+							}
+							
+							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100));						
+							
+					
 
 						}
 

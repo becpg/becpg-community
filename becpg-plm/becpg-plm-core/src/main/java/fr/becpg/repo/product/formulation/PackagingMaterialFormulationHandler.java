@@ -25,6 +25,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -85,7 +86,9 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 						.hasCompoListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()))
 						&& !formulatedProduct
 								.hasPackagingListEl(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>())))) {
-					logger.debug("no compoList, no packagingList => no formulation");
+
+					calculateMaterialWeight(formulatedProduct);
+
 					return true;
 				}
 				// CompoList
@@ -107,20 +110,23 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 					if (!toUpdate.containsKey(key)) {
 						toRemove.add(packmaterial);
 					} else {
-						if(toUpdate.get(key).getFirst().doubleValue()!=0d) {
+						if (toUpdate.get(key).getFirst().doubleValue() != 0d) {
 							packmaterial.setPmlWeight(toUpdate.get(key).getFirst().doubleValue());
+							packmaterial.setPmlPerc(calculatePerc(formulatedProduct, key.getFirst(), toUpdate.get(key).getFirst()));
 							packmaterial.setPmlRecycledPercentage(toUpdate.get(key).getSecond()
-									.divide(toUpdate.get(key).getFirst(),MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue());
+									.divide(toUpdate.get(key).getFirst(), MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue());
 							toUpdate.remove(key);
 						}
 					}
 				}
 
 				for (Map.Entry<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> entry : toUpdate.entrySet()) {
-					if(entry.getValue().getFirst().doubleValue()!=0d) {
+					if (entry.getValue().getFirst().doubleValue() != 0d) {
 						formulatedProduct.getPackMaterialList().add(new PackMaterialListDataItem(entry.getKey().getSecond(),
 								entry.getValue().getFirst().doubleValue(),
-								entry.getValue().getSecond().divide(entry.getValue().getFirst(),MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue() , entry.getKey().getFirst()));
+								calculatePerc(formulatedProduct, entry.getKey().getFirst(), entry.getValue().getFirst()), entry.getValue().getSecond()
+										.divide(entry.getValue().getFirst(), MathContext.DECIMAL64).multiply(BigDecimal.valueOf(100d)).doubleValue(),
+								entry.getKey().getFirst()));
 					}
 				}
 
@@ -137,6 +143,42 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 			}
 		}
 		return true;
+	}
+
+	private Double calculatePerc(ProductData formulatedProduct, PackagingLevel packLevel, BigDecimal weight) {
+		BigDecimal tare = null;
+		VariantPackagingData variantPackagingData = formulatedProduct.getDefaultVariantPackagingData();
+		if (PackagingLevel.Secondary.equals(packLevel)) {
+			tare = variantPackagingData.getTareSecondary();
+		} else if (PackagingLevel.Tertiary.equals(packLevel)) {
+			tare = variantPackagingData.getTareTertiary();
+		} else {
+			tare = FormulationHelper.getTareInKg(formulatedProduct);
+		}
+
+		if (tare != null && tare.doubleValue() != 0d && weight != null) {
+			return weight.divide(tare, MathContext.DECIMAL64).multiply(BigDecimal.valueOf(0.1d),
+					MathContext.DECIMAL64).doubleValue();
+		}
+		return null;
+	}
+
+	private void calculateMaterialWeight(ProductData formulatedProduct) {
+		BigDecimal tare = FormulationHelper.getTareInKg(formulatedProduct);
+
+		if (tare != null && tare.doubleValue() != 0d) {
+
+			for (PackMaterialListDataItem packMateriDataItem : formulatedProduct.getPackMaterialList()) {
+				if (packMateriDataItem.getPmlPerc() != null) {
+
+					BigDecimal plmWeight = tare.multiply(BigDecimal.valueOf(packMateriDataItem.getPmlPerc())).multiply(BigDecimal.valueOf(10d),
+							MathContext.DECIMAL64);
+					packMateriDataItem.setPmlWeight(plmWeight.doubleValue());
+				}
+			}
+
+		}
+
 	}
 
 	private Map<Pair<PackagingLevel, NodeRef>, Pair<BigDecimal, BigDecimal>> calculateMaterialOfComposition(ProductData formulatedProduct) {
@@ -247,7 +289,7 @@ public class PackagingMaterialFormulationHandler extends FormulationBaseHandler<
 						BigDecimal plmWeight = BigDecimal.valueOf(packMateriDataItem.getPmlWeight()).multiply(tare);
 
 						BigDecimal productTare = FormulationHelper.getTareInKg(packagingProduct);
-						if (productTare != null && productTare.doubleValue()!=0d ) {
+						if (productTare != null && productTare.doubleValue() != 0d) {
 							plmWeight = plmWeight.divide(productTare.multiply(BigDecimal.valueOf(1000d)), MathContext.DECIMAL64);
 						}
 						BigDecimal pmlRecycledPercentage = BigDecimal

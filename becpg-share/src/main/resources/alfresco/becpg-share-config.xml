@@ -278,10 +278,13 @@
 		</types>
 	
 		<create-content>
-			<content id="entity" label="menu.create-content.entity" type="pagelink" index="170" icon="entity">
-				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:entityV2&amp;formId=create-entity&amp;isEntity=true
-				</param>
+			<content id="entity" label="menu.create-content.entity" type="pagelink" index="200" icon="entity">
+				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:entityV2&amp;formId=create-entity&amp;isEntity=true</param>
 			</content>
+			
+			<content id="externalLink" label="menu.create-content.externalLink" type="pagelink" index="210" icon="link">
+               <param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:externalLink</param>
+         	</content>
 		</create-content>
 		
 	</config>
@@ -302,6 +305,7 @@
 			<action id="entity-compare" type="javascript" label="actions.entity.compare">
 				<param name="function">onActionCompareEntity</param>
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
 			</action>
 			<action id="entity-view-datalists" type="javascript" label="actions.entity.view-datalists">
 				<param name="function">onActionShowCharact</param>
@@ -319,6 +323,7 @@
 			<action id="entity-wused" type="pagelink" label="actions.entity.wused">
 				<param name="page">wused?nodeRefs={node.nodeRef}&amp;type={node.type}</param>
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
 			</action>
 			
 			
@@ -420,11 +425,13 @@
 				 <permission allow="true">Write</permission>
 			</permissions>
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
+            <evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
          </action>
          
           <action id="datalist-import-from" type="javascript" label="actions.datalist.import-from">
             <param name="function">onActionImportDataListFrom</param>
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
+            <evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
          </action>
 			
 		</actions>
@@ -482,6 +489,26 @@
 				<action index="131" id="reportTpl-refresh" />
 				<action index="371" id="reportTpl-update-permissions" />
 			</actionGroup>
+
+			 <actionGroup id="document-externallink-browse">
+	            <action index="110" id="document-edit-properties" appendEvaluators="true">
+	                <evaluator>evaluator.doclib.action.DocumentEnableInSmartFolder</evaluator>
+	            </action>
+	            <action index="120" id="document-copy-to" />
+	            <action index="130" id="document-move-to" />
+	            <action index="140" id="document-delete" label="actions.link.delete" />
+	         </actionGroup>
+	
+	         <actionGroup id="document-externallink-details">
+	            <action index="110" id="document-edit-properties" appendEvaluators="true">
+	                <evaluator>evaluator.doclib.action.DocumentEnableInSmartFolder</evaluator>
+	            </action>
+	            <action index="120" id="document-copy-to" />
+	            <action index="130" id="document-move-to" />
+	            <action index="140" id="document-delete" label="actions.link.delete" />
+	         </actionGroup>
+					
+			
 		</actionGroups>
 	</config>
 	

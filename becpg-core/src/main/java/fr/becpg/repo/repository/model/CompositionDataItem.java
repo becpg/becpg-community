@@ -29,7 +29,7 @@ import fr.becpg.repo.variant.model.VariantDataItem;
  * @author matthieu
  * @version $Id: $Id
  */
-public interface CompositionDataItem extends RepositoryEntity, CopiableDataItem, EffectiveDataItem, VariantDataItem {
+public interface CompositionDataItem extends RepositoryEntity, CopiableDataItem, EffectiveDataItem, VariantDataItem, AspectAwareDataItem {
 
 	/**
 	 * <p>getComponent.</p>

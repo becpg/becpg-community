@@ -93,6 +93,7 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.entity.catalog.EntityCatalogService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.ContentHelper;
+import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.TranslateHelper;
 import fr.becpg.repo.hierarchy.HierarchyHelper;
 import fr.becpg.repo.mail.BeCPGMailService;
@@ -126,6 +127,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	/** Constant <code>logger</code> */
 	protected static final Log logger = LogFactory.getLog(PLMInitRepoVisitor.class);
 
+	private static List<String> supportedLocale = Arrays.asList("fr", "en", "es", "en_US", "it", "nl", "sv_SE", "fi", "ru", "pt");
+
 	private static final String SIMULATION_SITE_ID = "simulation";
 	private static final String VALID_SITE_ID = "valid";
 	private static final String ARCHIVED_SITE_ID = "archived";
@@ -141,10 +144,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RD_PATH = "beCPG/birt/document/product/default/ProductReport_RD.rptdesign";
 	private static final String PRODUCT_REPORT_RD_NAME = "path.productreportrdtemplate";
 	private static final String PRODUCT_REPORT_TECHNICAL_SHEET_NAME = "path.productreporttechnicalsheettemplate";
-	
+
 	private static final String PRODUCT_REPORT_SUPPLIER_PATH = "beCPG/birt/document/product/default/SupplierReport.rptdesign";
 	private static final String PRODUCT_REPORT_SUPPLIER_NAME = "path.productreportsuppliertemplate";
-	
+
 	private static final String NC_REPORT_PATH = "beCPG/birt/document/nonconformity/NCReport.rptdesign";
 	private static final String QUALITY_CONTROL_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlReport.rptdesign";
 	private static final String QUALITY_CONTROL_AGING_REPORT_PATH = "beCPG/birt/document/qualitycontrol/QualityControlAgingReport.rptdesign";
@@ -175,7 +178,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		reportKindCodes.put(PRODUCT_REPORT_SUPPLIER_PATH, "SupplierSheet");
 		reportKindCodes.put(NONE_KIND_REPORT, "None");
 	}
-	
+
 	private static final String EXPORT_LABELLING_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportLabelling.xlsx";
 	private static final String EXPORT_CITEO_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportCiteo.xlsx";
 	private static final String EXPORT_ALLERGENS_XLSX_PATH = "beCPG/birt/exportsearch/product/%s/ExportAllergens.xlsx";
@@ -279,7 +282,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		visitSystemHierachiesEntity(systemNodeRef, RepoConsts.PATH_PRODUCT_HIERARCHY);
 
 		// Lists of characteristics for Quality
-		visitSystemQualityListValuesEntity(systemNodeRef, PlmRepoConsts.PATH_QUALITY_LISTS);
+		NodeRef qualityListNodeRef = visitSystemQualityListValuesEntity(systemNodeRef, PlmRepoConsts.PATH_QUALITY_LISTS);
+		fillSystemQualityList(qualityListNodeRef);
 
 		//Lists of characteristics security
 		visitSystemSecurityListValuesEntity(systemNodeRef, PlmRepoConsts.PATH_SECURITY_LISTS);
@@ -346,6 +350,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// NutDatabases
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_NUT_DATABASES);
+		
+		// LCADatabases
+		visitFolder(systemNodeRef, PlmRepoConsts.PATH_LCA_DATABASES);
 
 		// Property catalogs
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_CATALOGS);
@@ -358,7 +365,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_WORKFLOW_SCRIPTS);
 
 		addClassifyRule(companyHome);
-		
+
 		// signature scripts
 		NodeRef scriptsFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, "./app:dictionary/app:scripts");
 		contentHelper.addFilesResources(scriptsFolderNodeRef, "classpath*:beCPG/signature/*.js");
@@ -368,6 +375,38 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	}
 
+	private void fillSystemQualityList(NodeRef qualityListNodeRef) {
+		
+		NodeRef controTypesFolder = entitySystemService.getSystemEntityDataList(qualityListNodeRef,PlmRepoConsts.PATH_CONTROL_TYPES );
+
+		if(controTypesFolder!=null) {
+
+			for (String value : Arrays.asList( "bcpg_allergenList", "bcpg_microbioList", "bcpg_nutList", 
+					"bcpg_physicoChemList", "bcpg_organoList", "dimension", "weight", 
+					"composition", "packaging", "volume", "performance", 
+					"counter_analysis", "contaminant")) {
+
+				NodeRef nodeRef = nodeService.getChildByName(controTypesFolder, ContentModel.ASSOC_CONTAINS, value);
+				if (nodeRef == null) {
+
+					MLText mltValue = new MLText();
+
+					for(String locKey : supportedLocale) {
+						String i18NKey = I18NUtil.getMessage( "listconstraint.qa_controlTypes."+value, MLTextHelper.parseLocale(locKey));
+						if(i18NKey!=null) {
+							mltValue.put(MLTextHelper.parseLocale(locKey), i18NKey);
+						}
+					}
+					Map<QName, Serializable> properties = new HashMap<>();
+					properties.put(ContentModel.PROP_NAME, value);
+					properties.put(BeCPGModel.PROP_LV_CODE, value);
+					properties.put(BeCPGModel.PROP_LV_VALUE, mltValue);
+					mlNodeService.createNode(controTypesFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_LIST_VALUE, properties);
+				}
+			}
+		}
+	}
+	
 	private void addClassifyRule(NodeRef companyHome) {
 
 		NodeRef scriptsFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, "./app:dictionary/app:scripts");
@@ -518,6 +557,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/nuts/en/*.csv");
 			}
 		}
+		if (Objects.equals(folderName, PlmRepoConsts.PATH_LCA_DATABASES)) {
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/databases/ecoscore/agribalyse_3_0.csv");
+		}
 		if (Objects.equals(folderName, PlmRepoConsts.PATH_CATALOGS)) {
 			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json");
 		}
@@ -602,7 +644,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrTimeNumber"), 0);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequency"), 7);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrConditions"),
-					"{\"query\":\"+@{http://www.bcpg.fr/model/becpg/1.0}rclDataType:\\\"Formulation\\\"\"}");
+					"{\"query\":\"+@{http://www.bcpg.fr/model/becpg/1.0}rclDataType:\\\"Formulation\\\" AND +@{http://www.bcpg.fr/model/becpg/1.0}rclReqType:\\\"Forbidden\\\"\"}");
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrFrequencyStartDate"), new Date());
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrVersionFilter"), VersionFilterType.NONE);
 			properties.put(QName.createQName(BeCPGModel.BECPG_URI, "nrForceNotification"), false);
@@ -1021,6 +1063,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_LABEL, PackModel.TYPE_LABEL);
 		entityLists.put(PlmRepoConsts.PATH_GS1_TARGET_MARKETS, GS1Model.TYPE_TARGET_MARKET);
 		entityLists.put(PlmRepoConsts.PATH_GS1_DUTY_FEE_TAXES, GS1Model.TYPE_DUTY_FEE_TAX);
+		entityLists.put(PlmRepoConsts.PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS, GS1Model.TYPE_ALCOHOL_BEVERAGE_CONTAINER);
 		entityLists.put(PlmRepoConsts.PATH_CONTACTS, PLMModel.TYPE_CONTACTLIST);
 		entityLists.put(PlmRepoConsts.PATH_REGULATORY_USAGES, PLMModel.TYPE_REGULATORY_USAGE);
 
@@ -1065,6 +1108,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_NUT_GROUPS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_NUT_FACTS_METHODS, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_LCA_LIST_METHODS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_LABELING_POSITIONS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_LABELING_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_LABEL_TYPES, BeCPGModel.TYPE_LIST_VALUE);
@@ -1072,7 +1116,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_MICROBIO_CONTROL_STEPS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_MICROBIO_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_MICROBIO_TYPES, BeCPGModel.TYPE_LIST_VALUE);
-		
+
 		entityLists.put(PlmRepoConsts.PATH_RESOURCE_PARAM_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_PHYSICO_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_PHYSICO_TYPES, BeCPGModel.TYPE_LIST_VALUE);
@@ -1082,18 +1126,18 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_VANISHS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_MEAT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
-		
+
 		entityLists.put(PlmRepoConsts.PATH_LCA_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 
 		entityLists.put(PlmRepoConsts.PATH_GS1_PACKAGING_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
-		
+
 		entityLists.put(PlmRepoConsts.PATH_GS1_PACKAGING_RECYCLING_SCHEME_CODES, BeCPGModel.TYPE_LIST_VALUE);
-		
+
 		entityLists.put(PlmRepoConsts.PATH_GS1_PALLET_TYPE_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_PLATFORM_TERM_AND_CONDITIONS_CODES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_SORTING_BONUS_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_SORTING_MALUS_CRITERIA, BeCPGModel.TYPE_LIST_VALUE);
-		
+
 		entityLists.put(PlmRepoConsts.PATH_GS1_HANDLING_INSTRUCTIONS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_GS1_PREPARATION_TYPE, BeCPGModel.TYPE_LIST_VALUE);
 
@@ -1143,6 +1187,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_CONTROL_CHARACTS, QualityModel.TYPE_CONTROL_CHARACT);
 		entityLists.put(PlmRepoConsts.PATH_CONTROL_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_CONTROL_TEMPERATURES, BeCPGModel.TYPE_LIST_VALUE);
+		entityLists.put(PlmRepoConsts.PATH_CONTROL_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 
 		return entitySystemService.createSystemEntity(parentNodeRef, path, entityLists);
 	}
@@ -1172,9 +1217,9 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		subFolders.add(RepoConsts.PATH_DOCUMENTS);
 
 		for (QName productType : productTypes) {
-			
+
 			subFolders.remove(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
-			
+
 			// datalists
 			Set<QName> dataLists = new LinkedHashSet<>();
 			QName wusedQName = null;
@@ -1191,7 +1236,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
-				
+
 				subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 
 			} else if (productType.equals(PLMModel.TYPE_PACKAGINGMATERIAL)) {
@@ -1205,7 +1250,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
-				
+
 				subFolders.add(RepoConsts.PATH_SUPPLIER_DOCUMENTS);
 
 			} else if (productType.equals(PLMModel.TYPE_RESOURCEPRODUCT)) {
@@ -1407,8 +1452,6 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 			List<NodeRef> commonResources = new ArrayList<>();
 
-			List<String> supportedLocale = Arrays.asList("fr", "en", "es", "en_US", "it", "nl", "sv_SE", "fi", "ru", "pt");
-
 			QName[] productTypes = { PLMModel.TYPE_FINISHEDPRODUCT, PLMModel.TYPE_RAWMATERIAL, PLMModel.TYPE_SEMIFINISHEDPRODUCT,
 					PLMModel.TYPE_PACKAGINGMATERIAL, PLMModel.TYPE_SUPPLIER };
 			String[] defaultReport = { PRODUCT_REPORT_CLIENT_PATH, PRODUCT_REPORT_RAWMATERIAL_PATH, PRODUCT_REPORT_PRODUCTION_PATH,
@@ -1433,7 +1476,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			defaultKindReport.add(NONE_KIND_REPORT);
 
 			for (String reportKind : defaultKindReport) {
-				if (PRODUCT_REPORT_PACKAGING_PATH.equals(reportKind) || PRODUCT_REPORT_COST_PATH.equals(reportKind) || PRODUCT_REPORT_RD_PATH.equals(reportKind)) {
+				if (PRODUCT_REPORT_PACKAGING_PATH.equals(reportKind) || PRODUCT_REPORT_COST_PATH.equals(reportKind)
+						|| PRODUCT_REPORT_RD_PATH.equals(reportKind)) {
 					continue;
 				}
 
@@ -1442,7 +1486,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				MLText mltValue = new MLText();
 				mltValue.put(Locale.FRENCH, I18NUtil.getMessage("becpg.reportkind." + reportKindCode.toLowerCase() + ".value", Locale.FRENCH));
 				mltValue.put(Locale.ENGLISH, I18NUtil.getMessage("becpg.reportkind." + reportKindCode.toLowerCase() + ".value", Locale.ENGLISH));
-				
+
 				// for aspect on report template
 				Map<QName, Serializable> reportKindTplProps = new HashMap<>();
 				reportKindTplProps.put(ReportModel.PROP_REPORT_KINDS, reportKindCode);
@@ -1455,7 +1499,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				reportKindListProps.put(BeCPGModel.PROP_LV_VALUE, mltValue);
 				reportKindDefaultValues.put(reportKind, reportKindListProps);
 			}
-			
+
 			visitReportKindList(reportKindDefaultValues);
 
 			List<NodeRef> resources = new ArrayList<>();
@@ -1558,8 +1602,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			resources.add(reportTplService.createTplRessource(qualityFolderNodeRef, QUALITY_REPORT_RESOURCE, false));
 
 			for (String lang : supportedLocale) {
-				resources
-						.add(reportTplService.createTplRessource(qualityFolderNodeRef, String.format(QUALITY_REPORT_RESOURCE_BY_LOCALE, lang), false));
+				resources.add(
+						reportTplService.createTplRessource(qualityFolderNodeRef, String.format(QUALITY_REPORT_RESOURCE_BY_LOCALE, lang), false));
 			}
 
 			reportTplInformation = new ReportTplInformation();
@@ -1645,7 +1689,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PHYSICOCHEMICALLIST),
 					TranslateHelper.getLocaleAwarePath(EXPORT_PHYSICOCHEMICALLIST_XLSX_PATH), reportTplInformation, false);
-			
+
 			reportTplService.createTplRptDesign(exportSearchProductsNodeRef,
 					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_COMPOSITIONPACKAGING),
 					TranslateHelper.getLocaleAwarePath(EXPORT_COMPOSITIONPACKAGING_XLSX_PATH), reportTplInformation, false);
@@ -1690,10 +1734,10 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		String[] groups = { PLMGroup.RDUser.toString(), PLMGroup.RDMgr.toString(), PLMGroup.QualityUser.toString(), PLMGroup.QualityMgr.toString(),
 				PLMGroup.ProductionUser.toString(), PLMGroup.ProductionMgr.toString(), PLMGroup.PackagingMgr.toString(),
-				PLMGroup.PackagingUser.toString(), PLMGroup.ReferencingMgr.toString(), PLMGroup.TradeUser.toString(), PLMGroup.ProductValidationStart.toString(),
-				NCGroup.ClaimStart.toString(), 	NCGroup.ClaimAnalysis.toString(), NCGroup.ClaimClassification.toString(), NCGroup.ClaimTreatment.toString(),
-				NCGroup.ClaimResponse.toString(), NCGroup.ClaimClosing.toString(), ECMGroup.CreateChangeOrder.toString(),
-				ECMGroup.ApplyChangeOrder.toString() };
+				PLMGroup.PackagingUser.toString(), PLMGroup.ReferencingMgr.toString(), PLMGroup.TradeUser.toString(),
+				PLMGroup.ProductValidationStart.toString(), NCGroup.ClaimStart.toString(), NCGroup.ClaimAnalysis.toString(),
+				NCGroup.ClaimClassification.toString(), NCGroup.ClaimTreatment.toString(), NCGroup.ClaimResponse.toString(),
+				NCGroup.ClaimClosing.toString(), ECMGroup.CreateChangeOrder.toString(), ECMGroup.ApplyChangeOrder.toString() };
 
 		createGroups(groups);
 
