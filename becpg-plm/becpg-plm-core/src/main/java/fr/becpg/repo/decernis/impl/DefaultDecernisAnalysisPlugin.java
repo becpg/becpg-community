@@ -26,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -38,6 +39,7 @@ import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.decernis.helper.DecernisHelper;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
 import fr.becpg.repo.decernis.model.RegulatoryContextItem;
+import fr.becpg.repo.decernis.model.UsageContext;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
@@ -233,17 +235,31 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 	@Override
 	public void extractRequirements(RegulatoryContext productContext, RegulatoryContextItem contextItem) {
 
-		for (Map.Entry<String, NodeRef> usageEntry : contextItem.getUsages().entrySet()) {
+		for (UsageContext usageContext : contextItem.getUsages()) {
 
 			List<List<String>> countriesBatch = Lists.partition(new ArrayList<>(contextItem.getCountries().keySet()), DECERNIS_MAX_COUNTRIES);
 
 			for (List<String> countries : countriesBatch) {
 
-				JSONObject analysisResults = postRecipeAnalysis(productContext, countries, usageEntry.getKey(), contextItem.getModuleId());
+				JSONObject analysisResults = null;
+				
+				try {
+					analysisResults = postRecipeAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
+				} catch (HttpStatusCodeException e) {
+					logger.error("Error during Decernis analysis: " + e.getMessage(), e);
+					for (String country : countries) {
+						ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+								MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + e.getMessage()), null, new ArrayList<>(),
+								RequirementDataType.Formulation);
+						req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+						req.setRegulatoryCode(country + (!usageContext.getName().isEmpty() ? " - " + usageContext.getName() : ""));
+						productContext.getRequirements().add(req);
+					}
+				}
 				if (analysisResults != null) {
 					for (String country : countries) {
 
-						if (isAvailableCountry(country, contextItem.getModuleId()) && analysisResults.has(PARAM_ANALYSIS_RESULTS)
+						if (isAvailableCountry(country, usageContext.getModuleId()) && analysisResults.has(PARAM_ANALYSIS_RESULTS)
 								&& analysisResults.getJSONObject(PARAM_ANALYSIS_RESULTS).has(country)
 
 						) {
@@ -274,7 +290,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
 										String regulatoryCode = country + (!usage.isEmpty() ? " - " + usage : "");
 
-										IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(), contextItem.getCountries().get(country),usageEntry.getValue());
+										IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(), contextItem.getCountries().get(country),usageContext.getNodeRef());
 										
 										ingRegulatoryListDataItem.setCitation(new MLText(result.getString(CITATION)));
 										ingRegulatoryListDataItem.setUsages(new MLText(result.getString(USAGE_NAME)));

@@ -21,6 +21,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Lists;
@@ -28,10 +29,13 @@ import com.google.common.collect.Lists;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisAnalysisPlugin;
+import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.decernis.helper.DecernisHelper;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
 import fr.becpg.repo.decernis.model.RegulatoryContextItem;
+import fr.becpg.repo.decernis.model.UsageContext;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
@@ -87,26 +91,26 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 	private JSONObject postV5RecipeAnalysis(RegulatoryContext context, List<String> countries, String usage, Integer moduleId) throws JSONException {
 
 		String recipeAnalysisResult = "";
-
+		
 		JSONObject payload = new JSONObject();
-
+		
 		JSONObject transaction = new JSONObject();
 		payload.put("transaction", transaction);
-
+		
 		JSONObject recipe = new JSONObject();
 		transaction.put("recipe", recipe);
-
+		
 		String code = (String) nodeService.getProperty(context.getProduct().getNodeRef(), BeCPGModel.PROP_CODE);
 		code += Calendar.getInstance().getTimeInMillis();
-
+		
 		recipe.put("spec", code);
 		String name = code + " " + context.getProduct().getName();
-
+		
 		recipe.put(PARAM_NAME, name);
-
+		
 		JSONArray ingredients = new JSONArray();
 		recipe.put("ingredients", ingredients);
-
+		
 		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
 			NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
 			if (ingType != null) {
@@ -146,38 +150,38 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 				logger.debug("Ingredient has no type: "+(String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 			}
 		}
-
+		
 		if (!ingredients.isEmpty()) {
 			JSONObject scope = new JSONObject();
 			transaction.put("scope", scope);
-
+			
 			scope.put(PARAM_NAME, name);
-
+			
 			JSONArray country = new JSONArray();
 			scope.put(PARAM_COUNTRY, country);
 			countries.forEach(country::put);
-
+			
 			JSONArray topics = new JSONArray();
 			scope.put("topic", topics);
-
+			
 			JSONObject topic = new JSONObject();
 			topics.put(topic);
-
+			
 			topic.put(PARAM_NAME, moduleIdMap.get(moduleId));
 			JSONObject scopeDetail = new JSONObject();
 			topic.put("scopeDetail", scopeDetail);
-
+			
 			JSONArray usages = new JSONArray();
 			usages.put(usage);
-
+			
 			scopeDetail.put("usage", usages);
-
+			
 			String url = analysisUrl() + "/recipe-analysis/transaction";
-
+			
 			HttpEntity<String> entity = createEntity(payload.toString());
-
+			
 			recipeAnalysisResult = restTemplate.postForObject(url, entity, String.class, new HashMap<>());
-
+			
 			return new JSONObject(recipeAnalysisResult);
 		}
 
@@ -228,14 +232,27 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 	@Override
 	public void extractRequirements(RegulatoryContext productContext, RegulatoryContextItem contextItem) {
 
-		for (Map.Entry<String, NodeRef> usageEntry : contextItem.getUsages().entrySet()) {
+		for (UsageContext usageContext : contextItem.getUsages()) {
 	
-
 			List<List<String>> countriesBatch = Lists.partition(new ArrayList<>(contextItem.getCountries().keySet()), DECERNIS_MAX_COUNTRIES);
 
 			for (List<String> countries : countriesBatch) {
 
-				JSONObject analysisResults = postV5RecipeAnalysis(productContext, countries, usageEntry.getKey(), contextItem.getModuleId());
+				JSONObject analysisResults = null;
+				
+				try {
+					analysisResults = postV5RecipeAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
+				} catch (HttpStatusCodeException e) {
+					logger.error("Error during Decernis analysis: " + e.getMessage(), e);
+					for (String country : countries) {
+						ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+								MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + e.getMessage()), null, new ArrayList<>(),
+								RequirementDataType.Formulation);
+						req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+						req.setRegulatoryCode(country + (!usageContext.getName().isEmpty() ? " - " + usageContext.getName() : ""));
+						productContext.getRequirements().add(req);
+					}
+				}
 				if (analysisResults != null) {
 					for (String country : countries) {
 
@@ -271,7 +288,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 
 											if (ingItem != null) {
 
-												IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(), contextItem.getCountries().get(country),usageEntry.getValue());
+												IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(), contextItem.getCountries().get(country),usageContext.getNodeRef());
 											
 												ingRegulatoryListDataItem.setCitation(new MLText(tabularReport.getString(CITATION)));
 												ingRegulatoryListDataItem.setUsages(new MLText(usage));

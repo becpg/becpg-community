@@ -527,6 +527,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 				color = "rgb(255, 106, 106)";
 			} else if (data.value == "PERMITTED") {
 				color = "rgb(190, 229, 84)";
+			} else if (data.value == "ERROR") {
+				color = "orange";
 			}
 			
 			if (color) {

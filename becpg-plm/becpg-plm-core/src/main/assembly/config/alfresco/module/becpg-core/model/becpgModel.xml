@@ -805,6 +805,7 @@
 					<value>BECPG_ONLY</value>
 					<value>DECERNIS_ONLY</value>
 					<value>BOTH</value>
+					<value>DISABLED</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -815,6 +816,7 @@
 					<value>PROHIBITED</value>
 					<value>PERMITTED</value>
 					<value>NOT_LISTED</value>
+					<value>ERROR</value>
 				</list>
 			</parameter>
 		</constraint>
