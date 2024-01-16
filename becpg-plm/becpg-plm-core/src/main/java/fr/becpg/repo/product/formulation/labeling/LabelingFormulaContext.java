@@ -37,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -1060,14 +1061,29 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private boolean showPerc(LabelingComponent lblComponent) {
-		if (renameRules.containsKey(lblComponent.getNodeRef())) {
+	    if (showPercRules.isEmpty() || showPercRules.containsKey(lblComponent.getNodeRef())) {
+	        return true;
+	    }
+
+	    if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
-			if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null)) {
-				return showPercRules.isEmpty() || showPercRules.containsKey(renameRule.getReplacement());
+			if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null) && showPercRules.containsKey(renameRule.getReplacement())) {
+				return true;
 			}
 		}
-		return showPercRules.isEmpty() || showPercRules.containsKey(lblComponent.getNodeRef());
+	    
+	    for (Map.Entry<NodeRef, RenameRule> entry : renameRules.entrySet()) {
+	        NodeRef nodeRef = entry.getKey();
+	        RenameRule renameRule = entry.getValue();
+
+	        if (Objects.equals(renameRule.getReplacement(), lblComponent.getNodeRef()) && renameRule.matchLocale(I18NUtil.getLocale())) {
+	            return showPercRules.containsKey(nodeRef);
+	        }
+	    }
+
+	    return false;
 	}
+
 
 	private Pair<DecimalFormat, RoundingMode> getDecimalFormat(LabelingComponent lblComponent, Double qty) {
 		DecimalFormat decimalFormat = null;
@@ -2710,7 +2726,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		boolean keepOrder = false;
 		for (CompositeLabeling lblComponent : compositeLabeling.getIngList().values()) {
-			IngTypeItem ingType = lblComponent.getIngType();
+			IngTypeItem ingType = lblComponent.getIngType()!=null ? lblComponent.getIngType().createCopy(): null;
 
 			if (aggregateRules.containsKey(lblComponent.getNodeRef())) {
 				for (AggregateRule aggregateRule : aggregateRules.get(lblComponent.getNodeRef())) {

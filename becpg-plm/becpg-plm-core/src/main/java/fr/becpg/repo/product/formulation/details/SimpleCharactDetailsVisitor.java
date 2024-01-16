@@ -43,6 +43,7 @@ import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
 import fr.becpg.repo.product.formulation.FormulatedQties;
 import fr.becpg.repo.product.formulation.FormulationHelper;
+import fr.becpg.repo.product.formulation.NutsCalculatingFormulationHandler;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.repository.model.ForecastValueDataItem;
@@ -177,7 +178,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 
 					FormulatedQties qties = new FormulatedQties(weightUsed, volUsed, netQty, subWeight);
 
-					visitPart(rootProductData, subProductData, compoListProduct, compoListDataItem.getNodeRef(), ret, qties, currLevel, null);
+					visitPart(rootProductData, subProductData, compoListProduct, compoListDataItem.getNodeRef(), ret, qties, currLevel,null);
 					if (((maxLevel < 0) || (currLevel < maxLevel))
 							&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
 						visitRecur(rootProductData, compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
@@ -254,6 +255,7 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 				if (unit == null) {
 					unit = provideUnit();
 				}
+				
 
 				// calculate charact from qty or vol ?
 				boolean formulateInVol = (partProduct.getUnit() != null) && partProduct.getUnit().isVolume();
@@ -267,6 +269,11 @@ public class SimpleCharactDetailsVisitor implements CharactDetailsVisitor {
 						forceWeight = true;
 					}
 				} else if (simpleCharact instanceof NutListDataItem) {
+					
+					if(unit!=null) {
+						unit = NutsCalculatingFormulationHandler.calculateUnit(rootProduct.getUnit(), rootProduct.getServingSizeUnit(), unit.split("/")[0]);
+					}
+					
 					if (formulateInVol && (partProduct.getServingSizeUnit() != null) && partProduct.getServingSizeUnit().isWeight()) {
 						if ((formulatedProduct.getServingSizeUnit() != null) && formulatedProduct.getServingSizeUnit().isWeight()) {
 							formulateInVol = false;
