@@ -17,12 +17,10 @@
  ******************************************************************************/
 package fr.becpg.repo.entity.policy;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.alfresco.model.ContentModel;
@@ -33,7 +31,6 @@ import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.node.NodeArchiveServicePolicies;
 import org.alfresco.repo.node.NodeArchiveServicePolicies.BeforePurgeNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies;
-import org.alfresco.repo.policy.Behaviour;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.version.VersionServicePolicies;
 import org.alfresco.repo.version.common.VersionUtil;
@@ -113,10 +110,6 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 	public void doInit() {
 		logger.debug("Init EntityVersionPolicy...");
 
-		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckOut.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
-				new JavaBehaviour(this, "onCheckOut"));
-		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCheckIn.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
-				new JavaBehaviour(this, "beforeCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
 				new JavaBehaviour(this, "onCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCancelCheckOut.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
@@ -129,24 +122,17 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 				new JavaBehaviour(this, "afterCreateVersion"));
 		
 		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onRemoveAspect"), ContentModel.ASPECT_VERSIONABLE,
-				new JavaBehaviour(this, "onRemoveAspect", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
+				new JavaBehaviour(this, "onRemoveAspect"));
 
 		this.policyComponent.bindClassBehaviour(BeforePurgeNodePolicy.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
-				new JavaBehaviour(this, "beforePurgeNode", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
+				new JavaBehaviour(this, "beforePurgeNode"));
 
 		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onDeleteNode"), ContentModel.ASPECT_VERSIONABLE,
-				new JavaBehaviour(this, "onDeleteNode", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
+				new JavaBehaviour(this, "onDeleteNode"));
 
 	}
 
-	/** {@inheritDoc} */
-	@Deprecated
-	public void onCheckOut(final NodeRef workingCopyNodeRef) {
-	}
 
-	@Deprecated
-	public void beforeCheckIn(NodeRef workingCopyNodeRef, Map<String, Serializable> versionProperties, String contentUrl, boolean keepCheckedOut) {
-	}
 
 	/** {@inheritDoc} */
 	@Override

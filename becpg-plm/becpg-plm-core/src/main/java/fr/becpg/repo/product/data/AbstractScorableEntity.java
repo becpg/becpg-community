@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -137,7 +138,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
 					dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
 					dbKV.getValue().setReqMaxQty(newReqCtrlListDataItem.getReqMaxQty());
-					dbKV.getValue().setSources(newReqCtrlListDataItem.getSources());
+					dbKV.getValue().setSources(new ArrayList<>(newReqCtrlListDataItem.getSources()));
 					dbKV.getValue().setCharact(newReqCtrlListDataItem.getCharact());
 					dbKV.getValue().setReqDataType(newReqCtrlListDataItem.getReqDataType());
 					dbKV.getValue().setFormulationChainId(newReqCtrlListDataItem.getFormulationChainId());
@@ -205,6 +206,26 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 		reqCtrlList.stream().sorted(Comparator.comparing(ReqCtrlListDataItem::getReqType, Comparator.nullsFirst(Comparator.naturalOrder())))
 				.forEach(r -> r.setSort(index.getAndIncrement()));
 
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(reqCtrlList);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		AbstractScorableEntity other = (AbstractScorableEntity) obj;
+		return Objects.equals(reqCtrlList, other.reqCtrlList);
 	}
 
 	
