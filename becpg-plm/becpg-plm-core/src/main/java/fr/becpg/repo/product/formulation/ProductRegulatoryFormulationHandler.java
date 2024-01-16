@@ -13,7 +13,9 @@ import org.alfresco.service.cmr.repository.NodeService;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.formulation.FormulationBaseHandler;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RegulatoryEntity;
 import fr.becpg.repo.product.data.constraints.RegulatoryResult;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -34,30 +36,43 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 			for (RegulatoryListDataItem regulatoryListItem : formulatedProduct.getRegulatoryList()) {
 				computeRegulatoryResults(regulatoryListItem, formulatedProduct.getReqCtrlList());
 			}
+			computeRegulatoryResults(formulatedProduct, formulatedProduct.getReqCtrlList());
 		}
 
 		return true;
 
 	}
 
-	private void computeRegulatoryResults(RegulatoryListDataItem regulatoryListItem, List<ReqCtrlListDataItem> reqCtrlList) {
-		List<String> regulatoryIds = extractRegulatoryIds(regulatoryListItem);
+	private void computeRegulatoryResults(RegulatoryEntity regulatoryEntity, List<ReqCtrlListDataItem> reqCtrlList) {
+		List<String> regulatoryIds = extractRegulatoryIds(regulatoryEntity);
 		for (String regulatoryId : regulatoryIds) {
 			List<ReqCtrlListDataItem> matchingRequirements = reqCtrlList.stream().filter(req -> regulatoryId.equals(req.getRegulatoryCode())).collect(Collectors.toList());
-			ReqCtrlListDataItem maximumDosageRequirement = getMaximumDosageRequirement(matchingRequirements);
-			if (maximumDosageRequirement != null) {
-				regulatoryListItem.setRegulatoryResult(RegulatoryResult.PROHIBITED);
-				regulatoryListItem.setLimitingIngredient(maximumDosageRequirement.getCharact());
-				regulatoryListItem.setMaximumDosage(maximumDosageRequirement.getReqMaxQty());
+			if (hasError(matchingRequirements)) {
+				regulatoryEntity.setRegulatoryResult(RegulatoryResult.ERROR);
+				if (regulatoryEntity instanceof RegulatoryListDataItem) {
+					((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredient(null);
+					((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(null);
+				}
 			} else {
-				regulatoryListItem.setLimitingIngredient(null);
-				regulatoryListItem.setMaximumDosage(null);
-				regulatoryListItem.setRegulatoryResult(RegulatoryResult.PERMITTED);
+				ReqCtrlListDataItem maximumDosageRequirement = getMaximumDosageRequirement(matchingRequirements);
+				if (maximumDosageRequirement != null) {
+					regulatoryEntity.setRegulatoryResult(RegulatoryResult.PROHIBITED);
+					if (regulatoryEntity instanceof RegulatoryListDataItem) {
+						((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredient(maximumDosageRequirement.getCharact());
+						((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(maximumDosageRequirement.getReqMaxQty());
+					}
+				} else {
+					if (regulatoryEntity instanceof RegulatoryListDataItem) {
+						((RegulatoryListDataItem) regulatoryEntity).setLimitingIngredient(null);
+						((RegulatoryListDataItem) regulatoryEntity).setMaximumDosage(null);
+					}
+					regulatoryEntity.setRegulatoryResult(RegulatoryResult.PERMITTED);
+				}
 			}
 		}
 	}
 	
-	private List<String> extractRegulatoryIds(RegulatoryListDataItem regulatoryListItem) {
+	private List<String> extractRegulatoryIds(RegulatoryEntity regulatoryListItem) {
 		List<String> regulatoryIds = new ArrayList<>();
 		if (regulatoryListItem.getRegulatoryCountries() != null && regulatoryListItem.getRegulatoryUsages() != null) {
 			for (NodeRef country : regulatoryListItem.getRegulatoryCountries()) {
@@ -71,11 +86,23 @@ public class ProductRegulatoryFormulationHandler extends FormulationBaseHandler<
 		return regulatoryIds;
 	}
 	
+	private boolean hasError(List<ReqCtrlListDataItem> reqList) {
+		for (ReqCtrlListDataItem req : reqList) {
+			if (RequirementType.Forbidden.equals(req.getReqType())
+					&& RequirementDataType.Formulation.equals(req.getReqDataType())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private ReqCtrlListDataItem getMaximumDosageRequirement(List<ReqCtrlListDataItem> reqList) {
 		double minValue = Double.POSITIVE_INFINITY;
 		ReqCtrlListDataItem maximumDosageRequirement = null;
 		for (ReqCtrlListDataItem req : reqList) {
-			if (RequirementType.Forbidden.equals(req.getReqType()) && req.getReqMaxQty() != null && req.getReqMaxQty() < minValue) {
+			if (RequirementType.Forbidden.equals(req.getReqType())
+					&& RequirementDataType.Specification.equals(req.getReqDataType()) && req.getReqMaxQty() != null
+					&& req.getReqMaxQty() < minValue) {
 				maximumDosageRequirement = req;
 				minValue = req.getReqMaxQty();
 			}
