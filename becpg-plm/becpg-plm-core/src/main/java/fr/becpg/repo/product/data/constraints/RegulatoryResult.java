@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.data.constraints;
 
 public enum RegulatoryResult {
+		ERROR(3),
 	    PROHIBITED(2),
 	    PERMITTED(1),
 	    NOT_LISTED(0);
