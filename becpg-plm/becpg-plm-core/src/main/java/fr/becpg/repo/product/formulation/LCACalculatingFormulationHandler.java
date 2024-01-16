@@ -6,6 +6,7 @@ package fr.becpg.repo.product.formulation;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 
 import fr.becpg.model.BeCPGModel;
@@ -23,7 +24,30 @@ public class LCACalculatingFormulationHandler extends AbstractCostCalculatingFor
 	
 	@Override
 	protected void afterProcess(ProductData formulatedProduct) {
-		// nothing
+		if (shouldCalculateScore(formulatedProduct)) {
+			
+			Double singleScore = null;
+			
+			if (formulatedProduct.getLcaList() != null) {
+				for (LCAListDataItem lcaItem : formulatedProduct.getLcaList()) {
+					Double normalizationFactor = (Double) nodeService.getProperty(lcaItem.getLCA(), PLMModel.PROP_LCA_NORMALIZATION);
+					Double ponderationFactor = (Double) nodeService.getProperty(lcaItem.getLCA(), PLMModel.PROP_LCA_PONDERATION);
+					if (lcaItem.getValue() != null && normalizationFactor != null && ponderationFactor != null) {
+						double partScore = lcaItem.getValue() / normalizationFactor * ponderationFactor * 10;
+						if (singleScore == null) {
+							singleScore = 0d;
+						}
+						singleScore += partScore;
+					}
+				}
+			}
+			
+			formulatedProduct.setLcaScore(singleScore);
+		}
+	}
+
+	private boolean shouldCalculateScore(ProductData formulatedProduct) {
+		return formulatedProduct.getLcaScoreMethod() == null || "Formulation".equals(formulatedProduct.getLcaScoreMethod());
 	}
 
 	@Override
@@ -39,6 +63,13 @@ public class LCACalculatingFormulationHandler extends AbstractCostCalculatingFor
 	@Override
 	protected Class<LCAListDataItem> getInstanceClass() {
 		return LCAListDataItem.class;
+	}
+	
+	@Override
+	protected LCAListDataItem newSimpleListDataItem(NodeRef charactNodeRef) {
+		LCAListDataItem lcaListDataItem = new LCAListDataItem();
+		lcaListDataItem.setCharactNodeRef(charactNodeRef);
+		return lcaListDataItem;
 	}
 
 	@Override

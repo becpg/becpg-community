@@ -1,0 +1,51 @@
+package fr.becpg.repo.decernis.helper;
+
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+public class DecernisHelper {
+	
+	private static final Pattern THRESHOLD_PATTERN_1 = Pattern.compile("\\(?<=([0-9.]+)\\s*(mg/l|mg/kg)\\)?");
+	private static final Pattern THRESHOLD_PATTERN_2 = Pattern.compile("\\(?<=([0-9.]+)\\s*%\\)?");
+	
+	private static final DecimalFormat decimalFormat = new DecimalFormat("#.########################", new DecimalFormatSymbols(Locale.ENGLISH)); // 24 decimal places
+
+	private static final Log logger = LogFactory.getLog(DecernisHelper.class);
+
+	private DecernisHelper() {
+		
+	}
+	
+	public static Double truncateDoubleValue(Double ingQtyPerc) {
+		if (ingQtyPerc == null) {
+			return null;
+		}
+		String formattedValue = decimalFormat.format(ingQtyPerc);
+		return Double.parseDouble(formattedValue);
+	}
+	
+	public static Double extractThresholdValue(String threshold) {
+		try {
+			Matcher matcher = THRESHOLD_PATTERN_1.matcher(threshold);
+			if (matcher.find()) {
+				String extracted = matcher.group(1);
+				return Double.parseDouble(extracted.trim()) / 10000;
+			}
+			matcher = THRESHOLD_PATTERN_2.matcher(threshold);
+			if (matcher.find()) {
+				String extracted = matcher.group(1);
+				return Double.parseDouble(extracted.trim());
+			}
+		} catch (NumberFormatException e) {
+			logger.error("Cannot parse threshold number: " + threshold);
+		}
+		
+		return null;
+	}
+}

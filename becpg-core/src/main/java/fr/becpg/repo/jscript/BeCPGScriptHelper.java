@@ -95,6 +95,7 @@ import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.search.PaginatedSearchCache;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * Utility script methods
@@ -165,11 +166,19 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	private FileFolderService fileFolderService;
 	
+	private SystemConfigurationService systemConfigurationService;
+	
 	private boolean useBrowserLocale;
 
-	private boolean showEntitiesInTree = false;
-
 	private boolean showUnauthorizedWarning = true;
+
+	private boolean showEntitiesInTree() {
+		return Boolean.parseBoolean(systemConfigurationService.confValue("becpg.doclibtree.showEntities"));
+	}
+
+	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
+		this.systemConfigurationService = systemConfigurationService;
+	}
 	
 	public void setFileFolderService(FileFolderService fileFolderService) {
 		this.fileFolderService = fileFolderService;
@@ -378,16 +387,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @return a boolean.
 	 */
 	public boolean isShowEntitiesInTree() {
-		return showEntitiesInTree;
-	}
-
-	/**
-	 * <p>Setter for the field <code>showEntitiesInTree</code>.</p>
-	 *
-	 * @param showEntitiesInTree a boolean.
-	 */
-	public void setShowEntitiesInTree(boolean showEntitiesInTree) {
-		this.showEntitiesInTree = showEntitiesInTree;
+		return showEntitiesInTree();
 	}
 
 	/**
@@ -434,6 +434,11 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public boolean isShowUnauthorizedWarning() {
 		return showUnauthorizedWarning;
 	}
+	
+	public boolean isShowLicenceWarning() {
+		return isShowUnauthorizedWarning();
+	}
+
 
 	/**
 	 * <p>Setter for the field <code>showUnauthorizedWarning</code>.</p>

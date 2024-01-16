@@ -37,6 +37,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -420,6 +421,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private boolean shouldBreakIngType = false;
 	private boolean labelingByLanguage = false;
 	private boolean force100Perc = false;
+	private boolean useSecondaryYield = false;
 
 	private Double yield = null;
 
@@ -526,7 +528,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public Double getYield() {
 		return yield;
 	}
-
+	
 	/**
 	 * <p>
 	 * Setter for the field <code>yield</code>.
@@ -538,6 +540,16 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public void setYield(Double yield) {
 		this.yield = yield;
 		this.ingsLabelingWithYield = true;
+	}
+	
+	
+
+	public boolean isUseSecondaryYield() {
+		return useSecondaryYield;
+	}
+
+	public void setUseSecondaryYield(boolean useSecondaryYield) {
+		this.useSecondaryYield = useSecondaryYield;
 	}
 
 	public void setGeoPlaceOfActivityFormat(String geoPlaceOfActivityFormat) {
@@ -852,10 +864,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	@Override
-	void updateDefaultFormat(String textFormat) {
+	void updateDefaultFormat(TextFormatRule textFormatRule) {
 
-		ingDefaultFormat = textFormat;
-		detailsDefaultFormat = textFormat;
+		formatsByName.put("ingDefaultFormat", textFormatRule);
+		formatsByName.put("detailsDefaultFormat", textFormatRule);
 
 	}
 
@@ -872,26 +884,36 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		if (lblComponent instanceof CompositeLabeling) {
 			if (((CompositeLabeling) lblComponent).isGroup()) {
-				return applyRoundingMode(new MessageFormat(groupDefaultFormat, getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(getTextFormatByName("groupDefaultFormat",groupDefaultFormat), getContentLocale()), qty);
 			}
 			if (DeclarationType.Detail.equals(((CompositeLabeling) lblComponent).getDeclarationType())) {
 				if ((lblComponent instanceof IngItem) && !((CompositeLabeling) lblComponent).getIngList().isEmpty()) {
-					return applyRoundingMode(new MessageFormat(subIngsDefaultFormat, getContentLocale()), qty);
+					return applyRoundingMode(new MessageFormat(getTextFormatByName("subIngsDefaultFormat",subIngsDefaultFormat), getContentLocale()), qty);
 				}
-				return applyRoundingMode(new MessageFormat(detailsDefaultFormat, getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(getTextFormatByName("detailsDefaultFormat",detailsDefaultFormat), getContentLocale()), qty);
 			}
 
-			return applyRoundingMode(new MessageFormat(ingDefaultFormat, getContentLocale()), qty);
+			return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat",ingDefaultFormat), getContentLocale()), qty);
 		} else if (lblComponent instanceof IngTypeItem) {
 			if (isDoNotDetails((IngTypeItem) lblComponent)) {
-				return applyRoundingMode(new MessageFormat(ingTypeDecThresholdFormat, getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeDecThresholdFormat",ingTypeDecThresholdFormat), getContentLocale()), qty);
 			} else if (ingTypeSingleValueFormat != null && !multiple) {
-				return applyRoundingMode(new MessageFormat(ingTypeSingleValueFormat, getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeSingleValueFormat",ingTypeSingleValueFormat), getContentLocale()), qty);
 			}
-			return applyRoundingMode(new MessageFormat(ingTypeDefaultFormat, getContentLocale()), qty);
+			return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeDefaultFormat",ingTypeDefaultFormat), getContentLocale()), qty);
 		}
 
-		return applyRoundingMode(new MessageFormat(ingDefaultFormat, getContentLocale()), qty);
+		return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat",ingDefaultFormat), getContentLocale()), qty);
+	}
+
+	private String getTextFormatByName(String formatName, String defaultFormat) {
+		if(formatsByName.containsKey(formatName)) {
+			TextFormatRule textFormatRule = formatsByName.get(formatName);
+			if (textFormatRule.matchLocale(I18NUtil.getLocale())) {
+				return textFormatRule.getTextFormat();
+			}
+		}		
+		return defaultFormat;
 	}
 
 	private MessageFormat applyRoundingMode(MessageFormat messageFormat, Double qty) {
@@ -1039,14 +1061,29 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private boolean showPerc(LabelingComponent lblComponent) {
-		if (renameRules.containsKey(lblComponent.getNodeRef())) {
+	    if (showPercRules.isEmpty() || showPercRules.containsKey(lblComponent.getNodeRef())) {
+	        return true;
+	    }
+
+	    if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
-			if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null)) {
-				return showPercRules.isEmpty() || showPercRules.containsKey(renameRule.getReplacement());
+			if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null) && showPercRules.containsKey(renameRule.getReplacement())) {
+				return true;
 			}
 		}
-		return showPercRules.isEmpty() || showPercRules.containsKey(lblComponent.getNodeRef());
+	    
+	    for (Map.Entry<NodeRef, RenameRule> entry : renameRules.entrySet()) {
+	        NodeRef nodeRef = entry.getKey();
+	        RenameRule renameRule = entry.getValue();
+
+	        if (Objects.equals(renameRule.getReplacement(), lblComponent.getNodeRef()) && renameRule.matchLocale(I18NUtil.getLocale())) {
+	            return showPercRules.containsKey(nodeRef);
+	        }
+	    }
+
+	    return false;
 	}
+
 
 	private Pair<DecimalFormat, RoundingMode> getDecimalFormat(LabelingComponent lblComponent, Double qty) {
 		DecimalFormat decimalFormat = null;
@@ -1406,7 +1443,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				Double subQty = computeQtyPerc(compositeParent.parent, compositeParent.component, compositeParent.ratio);
 
-				if (compositeParent.component.getFootNotes() != null && compositeParent.component.getFootNotes().contains(f)) {
+				if (subQty!=null && compositeParent.component.getFootNotes() != null && compositeParent.component.getFootNotes().contains(f)) {
 					qtyPerc += subQty;
 
 				}
@@ -2689,7 +2726,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		boolean keepOrder = false;
 		for (CompositeLabeling lblComponent : compositeLabeling.getIngList().values()) {
-			IngTypeItem ingType = lblComponent.getIngType();
+			IngTypeItem ingType = lblComponent.getIngType()!=null ? lblComponent.getIngType().createCopy(): null;
 
 			if (aggregateRules.containsKey(lblComponent.getNodeRef())) {
 				for (AggregateRule aggregateRule : aggregateRules.get(lblComponent.getNodeRef())) {
@@ -2732,7 +2769,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						}
 					}
 					if (shouldBreak) {
-						break;
+						continue;
 					}
 
 				}

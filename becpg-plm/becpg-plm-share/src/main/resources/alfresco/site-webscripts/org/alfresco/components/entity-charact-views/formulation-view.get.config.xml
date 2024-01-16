@@ -2,12 +2,14 @@
    <customLists>
    	    <customList id="nutList" type="bcpg:nutList"  selected="true" filter="!qa:batch" />
    	    <customList id="costList" type="bcpg:costList" filter="!qa:batch" />
+   	    <customList id="lcaList" type="bcpg:lcaList" filter="!qa:batch" />
    	    <customList id="physicoChemList" type="bcpg:physicoChemList"  filter="!qa:batch" />
    	    <customList id="ingList" type="bcpg:ingList"  filter="!qa:batch" />
    	    <customList id="labelClaimList" type="bcpg:labelClaimList"  filter="!qa:batch" />
    	    <customList id="allergenList" type="bcpg:allergenList"  filter="!qa:batch" />
    	    <customList id="organoList" type="bcpg:organoList"  filter="!qa:batch" />
    	    <customList id="processList" type="mpm:processList"  filter="!qa:batch" />
+   	    <customList id="packMaterialList" type="pack:packMaterialList" selected="true" filter="!qa:batch" />
    	    <customList id="batchAllocationList" type="qa:batchAllocationList" selected="true" filter="qa:batch" />
    </customLists>
  

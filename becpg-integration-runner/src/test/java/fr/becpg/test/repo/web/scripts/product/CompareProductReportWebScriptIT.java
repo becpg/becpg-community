@@ -169,8 +169,9 @@ public class CompareProductReportWebScriptIT extends AbstractCompareProductTest 
 
 		Assert.assertNotNull(response);
 		
-		logger.debug("response: " + response.getContentAsString());
 
 	}
+	
+	
 
 }

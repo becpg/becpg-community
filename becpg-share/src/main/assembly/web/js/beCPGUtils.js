@@ -92,45 +92,46 @@
     beCPG.util.entityDocumentsURL = function(siteId, path, name, isFullPath)
     {
         var url = null;
-
-        if (Alfresco.constants.PAGECONTEXT == "mine")
-        {
-            url = "/myfiles";
-        }
-        else if (Alfresco.constants.PAGECONTEXT == "shared")
-        {
-            url = "/sharedfiles";
-        }
-        else
-        {
-            url = Alfresco.util.isValueSet(siteId) ? "/documentlibrary" : "/repository";
-        }
-
-        if (isFullPath && Alfresco.constants.PAGECONTEXT != "mine")
-        {
-            url += '?path=' + encodeURIComponent(path + '/' + name);
-        }
-        else
-        {
-            if (url.indexOf("repository") > 0  || url.indexOf("sharedfiles")>0)
-            {
-                url += '?path=' + encodeURIComponent('/' + path.split('/').slice(2).join('/') + '/' + name);
-            } else if( url.indexOf("myfiles")>0) {
-                url += '?path=' + encodeURIComponent('/' + path.split('/').slice(4).join('/') + '/' + name);
-            }
-            else
-            {
-                url += '?path=' + encodeURIComponent('/' + path + '/' + name);
-            }
-
-        }
-
-        if (url !== null)
-        {
-            url = $siteURL(url,
-            {
-                site : siteId
-            });
+		if(path!=null){
+	        if (Alfresco.constants.PAGECONTEXT == "mine")
+	        {
+	            url = "/myfiles";
+	        }
+	        else if (Alfresco.constants.PAGECONTEXT == "shared")
+	        {
+	            url = "/sharedfiles";
+	        }
+	        else
+	        {
+	            url = Alfresco.util.isValueSet(siteId) ? "/documentlibrary" : "/repository";
+	        }
+	
+	        if (isFullPath && Alfresco.constants.PAGECONTEXT != "mine")
+	        {
+	            url += '?path=' + encodeURIComponent(path + '/' + name);
+	        }
+	        else
+	        {
+	            if (url.indexOf("repository") > 0  || url.indexOf("sharedfiles")>0)
+	            {
+	                url += '?path=' + encodeURIComponent('/' + path.split('/').slice(2).join('/') + '/' + name);
+	            } else if( url.indexOf("myfiles")>0) {
+	                url += '?path=' + encodeURIComponent('/' + path.split('/').slice(4).join('/') + '/' + name);
+	            }
+	            else
+	            {
+	                url += '?path=' + encodeURIComponent('/' + path + '/' + name);
+	            }
+	
+	        }
+	
+	        if (url !== null)
+	        {
+	            url = $siteURL(url,
+	            {
+	                site : siteId
+	            });
+	        }
         }
         return url;
 

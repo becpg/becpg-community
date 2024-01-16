@@ -130,7 +130,7 @@
           <field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/product-unit.ftl">
-              <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,kg,mL,cp,fl_oz</control-param>
+              <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,in,ft,g,kg,mL,cp,fl_oz</control-param>
             </control>
           </field>
           <field id="bcpg:componentLossPerc" mandatory="false" read-only="false" set="mainInfo"/>
@@ -599,7 +599,7 @@
           <show force="true" id="bcpg:certificateDate"/>
           <show force="true" id="pack:tare"/>
           <show force="true" id="pack:tareUnit"/>
-             <show force="true" id="gs1:packagingShapeCode"/>
+          <show force="true" id="gs1:packagingShapeCode"/>
           <show force="true" id="pack:length"/>
           <show force="true" id="pack:width"/>
           <show force="true" id="pack:height"/>
@@ -658,7 +658,7 @@
           <field id="bcpg:productState" mandatory="false" read-only="false" set="mainInfo"/>
           <field id="bcpg:productUnit" mandatory="false" read-only="false" set="mainInfo">
             <control template="/org/alfresco/components/form/controls/product-unit.ftl">
-              <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,ft,g,kg,mL,cp,fl_oz
+              <control-param name="options">P|becpg.forms.field.productUnit,m,m2,m3,in,ft,g,kg,mL,cp,fl_oz
 							</control-param>
             </control>
           </field>
@@ -788,6 +788,7 @@
 							</control-param>
               <control-param name="multiple">true</control-param>
               <control-param name="forceEditable">true</control-param>
+              <control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:productState" mandatory="false" read-only="false" set="2-col-product-criteria">
@@ -800,6 +801,7 @@
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
               <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:packagingMaterial?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
               </control-param>
+              <control-param name="isSearch">true</control-param>
             </control>
           </field>
           <field id="bcpg:code" mandatory="false" read-only="false" set="2-col-product-criteria"/>
@@ -816,6 +818,7 @@
           <field id="pack:llLabel" mandatory="false" read-only="false" set="labeling-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
           		<control-param name="forceEditable">true</control-param>
+          		<control-param name="isSearch">true</control-param>
           	</control>
           </field>
           <field id="pack:llPosition" mandatory="false" read-only="false" set="labeling-criteria">
@@ -829,6 +832,7 @@
           <field id="bcpg:lclLabelClaim" mandatory="false" read-only="false" set="labelClaim-criteria">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
           		<control-param name="forceEditable">true</control-param>
+          		<control-param name="isSearch">true</control-param>
           	</control>
           </field>
           

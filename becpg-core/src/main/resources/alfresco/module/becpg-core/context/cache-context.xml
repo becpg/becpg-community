@@ -42,9 +42,9 @@
 			  <entry key="fr.becpg.repo.search.PaginatedSearchCache" value="300" />
 			  <entry key="fr.becpg.repo.search.PaginatedSearchCache.multiLevel" value="300" />
 			  <entry key="fr.becpg.repo.entity.datalist.MultiLevelDataListService" value="50" />
-			  <entry key="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" value="500" />
+			  <entry key="fr.becpg.repo.entity.impl.EntityDictionaryServiceImpl" value="1000" />
 			  <entry key="fr.becpg.repo.license.BeCPGLicenseManager" value="20" />
-			  <entry key="fr.becpg.repo.dictionary.constraint.DynListConstraint" value="100" />
+			  <entry key="fr.becpg.repo.dictionary.constraint.DynListConstraint" value="500" />
 			  <entry key="fr.becpg.repo.dictionary.constraint.CurrencyConstraint" value="100" />
 			  <entry key="fr.becpg.repo.entity.impl.AutoNumServiceImpl" value="10" />
 			  <entry key="fr.becpg.repo.report.entity.impl.EntityReportServiceImpl" value="10" />

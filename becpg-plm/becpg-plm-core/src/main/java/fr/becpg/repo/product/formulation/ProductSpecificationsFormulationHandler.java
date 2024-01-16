@@ -247,6 +247,7 @@ public class ProductSpecificationsFormulationHandler extends FormulationBaseHand
 
 				formulatedProduct.getReqCtrlList().addAll(scanner.checkRequirements(formulatedProduct, formulatedProduct.getProductSpecifications()));
 			}
+			
 		}
 
 		return true;

@@ -204,6 +204,7 @@ public final class SupplierPortalHelper extends BaseScopableProcessorExtension {
 									permissionService.setPermission(task.getNodeRef(),
 											(String) nodeService.getProperty(resourceRef, ContentModel.PROP_USERNAME),
 											PermissionService.CONTRIBUTOR, true);
+									
 									for (DeliverableListDataItem deliverable : ProjectHelper.getDeliverables(project,
 											task.getNodeRef())) {
 										permissionService.setPermission(deliverable.getNodeRef(),

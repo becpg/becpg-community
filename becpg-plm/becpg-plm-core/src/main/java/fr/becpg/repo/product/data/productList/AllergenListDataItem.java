@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import javax.annotation.Nullable;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
@@ -207,7 +208,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	
 	/** {@inheritDoc} */
 	@Override
-	public String getTextCriteria() {
+	public MLText getTextCriteria() {
 		return null;
 	}
 

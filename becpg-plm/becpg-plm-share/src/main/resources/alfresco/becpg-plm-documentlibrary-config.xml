@@ -16,11 +16,13 @@
 				<aspect name="gs1:gs1Aspect" />
 				<aspect name="gs1:organicAspect" />
 				<aspect name="gs1:innerPackAspect" />
+				<aspect name="gs1:alcoholInformationAspect" />
 				<aspect name="pack:palletAspect" />
 				<aspect name="pack:sizeAspect" />
 				<aspect name="pack:tareAspect" />
 				<aspect name="bcpg:nutrientProfilingScoreAspect" />
 				<aspect name="bcpg:ecoScoreAspect" />
+				<aspect name="bcpg:lcaScoreAspect" />
 				<aspect name="pack:pmThicknessAspect" />
 				<aspect name="pack:pmMaterialAspect" />
 				<aspect name="pack:pmIntSizeAspect" />
@@ -95,6 +97,7 @@
 				<subtype name="bcpg:organoList" />
 				<subtype name="bcpg:physicoChemList" />
 				<subtype name="bcpg:regulatoryList" />
+				<subtype name="bcpg:ingRegulatoryList" />
 			</type>
 			<type name="trx:transferTarget">
 				<subtype name="trx:fileTransferTarget" />
@@ -243,6 +246,9 @@
 			<content id="entity" label="menu.create-content.entity" type="pagelink" index="200" icon="entity">
 				<param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:entityV2&amp;formId=create-entity&amp;isEntity=true</param>
 			</content>
+			<content id="externalLink" label="menu.create-content.externalLink" type="pagelink" index="210" icon="link">
+               <param name="page">create-content?destination={nodeRef}&amp;itemId=bcpg:externalLink</param>
+         	</content>
 		</create-content>
 		<create-content-by-template>true</create-content-by-template>
 

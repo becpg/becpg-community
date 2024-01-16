@@ -2,13 +2,17 @@ package fr.becpg.repo.decernis.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -19,7 +23,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -27,37 +30,43 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
-
-import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisAnalysisPlugin;
 import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.decernis.DecernisService;
+import fr.becpg.repo.decernis.helper.DecernisHelper;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
 import fr.becpg.repo.decernis.model.RegulatoryContextItem;
+import fr.becpg.repo.decernis.model.UsageContext;
 import fr.becpg.repo.formulation.FormulateException;
+import fr.becpg.repo.formulation.FormulationChainPlugin;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.RegulatoryEntity;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
+import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
+import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.system.SystemConfigurationService;
+import fr.becpg.repo.variant.filters.VariantFilters;
 
 /**
  * <p>DecernisServiceImpl class.</p>
  *
- * @author matthieu
+ * @author matthieu,valentin
  * @version $Id: $Id
  */
 @Service("decernisService")
-public class DecernisServiceImpl implements DecernisService {
+public class DecernisServiceImpl implements DecernisService, FormulationChainPlugin {
 
 	private static final Log logger = LogFactory.getLog(DecernisServiceImpl.class);
 
@@ -65,10 +74,6 @@ public class DecernisServiceImpl implements DecernisService {
 	private static final String MESSAGE_NO_FUNCTION_ING = "message.decernis.ingredient.noFunction";
 	private static final String MESSAGE_NO_CODE_CHARACT = "message.decernis.charact.noCode";
 	private static final String MESSAGE_SEVERAL_RID_ING = "message.decernis.ingredient.severalRid";
-
-	private static final String PROHIBITED = "message.decernis.ingredient.result.prohibited";
-	private static final String PERMITTED = "message.decernis.ingredient.result.permitted";
-	private static final String NOT_LISTED = "message.decernis.ingredient.result.notListed";
 
 	private static final String PARAM_COMPANY = "company";
 	private static final String PARAM_FORMULA = "formula";
@@ -85,6 +90,8 @@ public class DecernisServiceImpl implements DecernisService {
 	private final DecernisAnalysisPlugin[] decernisPlugins;
 
 	private final SystemConfigurationService systemConfigurationService;
+	
+	private final AlfrescoRepository<ProductData> alfrescoRepository;
 
 	private static final Map<String, Integer> moduleIdMap = new HashMap<>();
 
@@ -105,12 +112,13 @@ public class DecernisServiceImpl implements DecernisService {
 	}
 
 	public DecernisServiceImpl(@Qualifier("logRestTemplate") RestTemplate restTemplate, NodeService nodeService,
-			DecernisAnalysisPlugin[] decernisPlugins, SystemConfigurationService systemConfigurationService) {
+			DecernisAnalysisPlugin[] decernisPlugins, SystemConfigurationService systemConfigurationService, AlfrescoRepository<ProductData> alfrescoRepository) {
 		super();
 		this.restTemplate = restTemplate;
 		this.nodeService = nodeService;
 		this.decernisPlugins = decernisPlugins;
 		this.systemConfigurationService = systemConfigurationService;
+		this.alfrescoRepository = alfrescoRepository;
 	}
 
 	private String serverUrl() {
@@ -126,6 +134,16 @@ public class DecernisServiceImpl implements DecernisService {
 	}
 
 	@Override
+	public String getChainId() {
+		return DECERNIS_CHAIN_ID;
+	}
+
+	@Override
+	public boolean isChainActiveOnEntity(NodeRef entityNodeRef) {
+		return isEnabled();
+	}
+
+	@Override
 	public boolean isEnabled() {
 		return serverUrl() != null && !serverUrl().isBlank() && token() != null && !token().isBlank();
 	}
@@ -135,18 +153,24 @@ public class DecernisServiceImpl implements DecernisService {
 	public List<ReqCtrlListDataItem> extractRequirements(ProductData product) {
 
 		try {
+
 			RegulatoryContext context = createContext(product);
 
 			if (context.isTreatable()) {
-				boolean recipeCreated = false;
 
-				if (!context.getRegulatoryMode().equals(DecernisMode.BECPG_ONLY)) {
+				checkIngredients(context);
+
+				boolean recipeCreated = false;
+				
+				logger.debug("Launch decernis in mode :"+ context.getRegulatoryMode());
+
+				if (DecernisMode.BOTH.equals(context.getRegulatoryMode()) || DecernisMode.DECERNIS_ONLY.equals(context.getRegulatoryMode())) {
 					createRecipe(context);
 					updateContextItemsRecipeId(context);
 					recipeCreated = true;
 				}
 
-				if (!DecernisMode.DECERNIS_ONLY.equals(context.getRegulatoryMode())) {
+				if (DecernisMode.BOTH.equals(context.getRegulatoryMode()) || DecernisMode.BECPG_ONLY.equals(context.getRegulatoryMode())) {
 					if (getAnalysisPlugin().needsRecipeId() && !recipeCreated) {
 						createRecipe(context);
 					}
@@ -154,21 +178,115 @@ public class DecernisServiceImpl implements DecernisService {
 					checkUsagesID(context);
 				}
 
-				if (context.getRegulatoryMode().equals(DecernisMode.BECPG_ONLY) && context.getRegulatoryRecipeId() != null) {
+				if (DecernisMode.BECPG_ONLY.equals(context.getRegulatoryMode()) && context.getRegulatoryRecipeId() != null) {
 					deleteRecipe(context.getRegulatoryRecipeId());
 					context.getProduct().setRegulatoryRecipeId(null);
 				}
 			}
 
+			if( alfrescoRepository.hasDataList(product, PLMModel.TYPE_ING_REGULATORY_LIST) 
+					&& product.getIngRegulatoryList()!=null) {
+				processRegulatoryList(context);
+			}
+
 			return context.getRequirements();
 
-		} catch (HttpClientErrorException | HttpServerErrorException e) {
-			logger.error("Decernis HTTP ERROR STATUS: " + e.getStatusText());
-			logger.error("- error body: " + e.getResponseBodyAsString());
-			throw new FormulateException("Error calling decernis service: " + e.getStatusText(), e);
 		} catch (Exception e) {
 			throw new FormulateException("Unexpected decernis error: " + e.getMessage(), e);
 		}
+	}
+
+	public void processRegulatoryList(RegulatoryContext context) {
+		Map<NodeRef, Map<NodeRef, List<IngRegulatoryListDataItem>>> groupedByIngAndCountry = context.getIngRegulatoryList().stream().collect(
+				Collectors.groupingBy(IngRegulatoryListDataItem::getIng, Collectors.groupingBy(item -> item.getRegulatoryCountries().get(0))));
+
+		for (Map<NodeRef, List<IngRegulatoryListDataItem>> countryGroup : groupedByIngAndCountry.values()) {
+			for (List<IngRegulatoryListDataItem> items : countryGroup.values()) {
+				mergeItems(context, items);
+			}
+		}
+		
+		List<IngRegulatoryListDataItem> filteredList = context.getProduct().getIngRegulatoryList().stream()
+		        .filter(item -> context.getIngRegulatoryList().stream()
+		                .anyMatch(ingRegulatoryListDataItem ->
+		                        Objects.equals(item.getIng(), ingRegulatoryListDataItem.getIng()) &&
+		                                Objects.equals(item.getRegulatoryCountries(), ingRegulatoryListDataItem.getRegulatoryCountries())))
+		        .collect(Collectors.toList());
+
+		context.getProduct().getIngRegulatoryList().retainAll(filteredList);
+
+	}
+
+	private IngRegulatoryListDataItem mergeItems(RegulatoryContext context, List<IngRegulatoryListDataItem> items) {
+
+		// Assuming all items have the same ing and country
+		IngRegulatoryListDataItem sampleItem = items.get(0);
+
+		IngRegulatoryListDataItem mergedItem = context.getProduct().getIngRegulatoryList().stream()
+	        .filter(item ->
+	                Objects.equals(item.getIng(), sampleItem.getIng()) &&
+	                Objects.equals(item.getRegulatoryCountries(), sampleItem.getRegulatoryCountries()))
+	        .findFirst()
+	        .orElseGet(() -> {
+	            IngRegulatoryListDataItem newItem = new IngRegulatoryListDataItem();
+	            newItem.setIng(sampleItem.getIng());
+	            newItem.setRegulatoryCountries(sampleItem.getRegulatoryCountries());
+	            context.getProduct().getIngRegulatoryList().add(newItem);
+	            return newItem;
+	        });
+
+		String citation = items.stream().map(item -> item.getCitation().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
+		String usages = items.stream().map(item -> item.getUsages().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
+		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
+		String resultIndicators = items.stream().map(item -> item.getResultIndicator().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
+
+		mergedItem.setResultIndicator(new MLText(resultIndicators));
+		mergedItem.setCitation(new MLText(citation));
+		mergedItem.setUsages(new MLText(usages));
+		mergedItem.setRestrictionLevels(new MLText(restrictionLevels));
+		boolean mlAware = MLPropertyInterceptor.setMLAware(true);
+		try {
+			MLText comment =	(MLText) nodeService.getProperty(mergedItem.getIng(), PLMModel.PROP_REGULATORY_COMMENT);
+			mergedItem.setComment(comment);
+		} finally {
+			MLPropertyInterceptor.setMLAware(mlAware);
+		}
+
+		List<NodeRef> regulatoryUsages = items.stream().flatMap(item -> item.getRegulatoryUsages().stream()).collect(Collectors.toList());
+
+		mergedItem.setRegulatoryUsages(Arrays.asList(regulatoryUsages.toArray(new NodeRef[0])));
+		
+		mergedItem.setSources(extractSources(mergedItem.getIng(), context.getProduct()));
+		
+
+		return mergedItem;
+	}
+
+	private List<NodeRef> extractSources(NodeRef ing, ProductData formulatedProduct) {
+
+		Set<NodeRef> sources = new HashSet<>();
+		
+		List<CompoListDataItem> compoList = formulatedProduct
+				.getCompoList(Arrays.asList(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE), new VariantFilters<>()));
+
+		if (compoList != null) {
+			for (CompoListDataItem compoItem : compoList) {
+
+				if ((compoItem.getQtySubFormula() != null) && (compoItem.getQtySubFormula() > 0)) {
+					ProductData componentProductData = (ProductData) alfrescoRepository.findOne(compoItem.getProduct());
+					if(componentProductData.getIngList()!=null) {
+					
+						for (IngListDataItem ingListDataItem : componentProductData.getIngList()) {
+							if(ingListDataItem.getIng().equals(ing)) {
+								sources.add(compoItem.getProduct());
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+		return new ArrayList<>(sources);
 	}
 
 	private DecernisAnalysisPlugin getAnalysisPlugin() {
@@ -183,59 +301,15 @@ public class DecernisServiceImpl implements DecernisService {
 	private void analyzeRecipe(RegulatoryContext productContext) {
 		for (RegulatoryContextItem contextItem : productContext.getContextItems()) {
 			if (!contextItem.isEmpty()) {
-				List<JSONObject> analysisList = analyzeContext(productContext, contextItem.getUsages(), contextItem.getCountries(),
-						contextItem.getModuleId());
-				contextItem.getItem().setRegulatoryResult(extractResult(analysisList));
+				getAnalysisPlugin().extractRequirements(productContext, contextItem);
 			}
 		}
-		List<JSONObject> analysisList = analyzeContext(productContext, productContext.getUsages(), productContext.getCountries(),
-				productContext.getModuleId());
-		productContext.getProduct().setRegulatoryResult(extractResult(analysisList));
-	}
-
-	private String extractResult(List<JSONObject> analysisList) {
-
-		boolean notListed = false;
-
-		for (JSONObject analysis : analysisList) {
-			String result = getAnalysisPlugin().extractAnalysisResult(analysis);
-			if (result.startsWith("prohibited")) {
-				return I18NUtil.getMessage(PROHIBITED);
-			}
-			if (result.startsWith("not listed")) {
-				notListed = true;
-			}
-		}
-
-		if (notListed) {
-			return I18NUtil.getMessage(NOT_LISTED);
-		}
-
-		return I18NUtil.getMessage(PERMITTED);
-	}
-
-	private List<JSONObject> analyzeContext(RegulatoryContext productContext, Set<String> usages, Set<String> countries, Integer moduleId) {
-		List<JSONObject> analysisList = new ArrayList<>();
-		for (String usage : usages) {
-			JSONObject analysis = getAnalysisPlugin().postRecipeAnalysis(productContext, countries, usage, moduleId);
-			if (analysis != null) {
-				for (String country : countries) {
-					productContext.getRequirements()
-							.addAll(getAnalysisPlugin().extractRequirements(analysis, productContext.getProduct().getIngList(), country, moduleId));
-				}
-				analysisList.add(analysis);
-			}
-		}
-		return analysisList;
 	}
 
 	private void checkUsagesID(RegulatoryContext context) {
-		for (NodeRef usageRef : context.getProduct().getRegulatoryUsages()) {
-			updateUsageID(usageRef, context.getModuleId());
-		}
 		for (RegulatoryContextItem contextItem : context.getContextItems()) {
 			for (NodeRef usageRef : contextItem.getItem().getRegulatoryUsages()) {
-				updateUsageID(usageRef, contextItem.getModuleId());
+				updateUsageID(usageRef);
 			}
 		}
 	}
@@ -248,23 +322,34 @@ public class DecernisServiceImpl implements DecernisService {
 
 	private void createRecipe(RegulatoryContext context) {
 
-		JSONObject recipePayload = createRecipePayload(context);
-
-		String recipeId = null;
-
-		if (recipePayload != null) {
-			String url = serverUrl() + "/formulas";
-			HttpEntity<String> request = createEntity(recipePayload.toString());
-			JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
-			if (jsonObject.has("id")) {
-				recipeId = jsonObject.get("id").toString();
+		try {
+			JSONObject recipePayload = createRecipePayload(context);
+			
+			String recipeId = null;
+			
+			if (recipePayload != null) {
+				String url = serverUrl() + "/formulas";
+				HttpEntity<String> request = createEntity(recipePayload.toString());
+				JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
+				if (jsonObject.has("id")) {
+					recipeId = jsonObject.get("id").toString();
+				}
 			}
-		}
-
-		context.getProduct().setRegulatoryRecipeId(recipeId);
-
-		for (RegulatoryContextItem contextItem : context.getContextItems()) {
-			contextItem.getItem().setRegulatoryRecipeId(recipeId);
+			
+			logger.debug("Create decernis recipe : "+recipeId);
+			
+			context.getProduct().setRegulatoryRecipeId(recipeId);
+			
+			for (RegulatoryContextItem contextItem : context.getContextItems()) {
+				contextItem.getItem().setRegulatoryRecipeId(recipeId);
+			}
+		} catch (HttpStatusCodeException e) {
+			logger.error("Error while creating Decernis recipe: " + e.getMessage(), e);
+			ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
+					MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + e.getMessage()), null, new ArrayList<>(),
+					RequirementDataType.Specification);
+			req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+			context.getRequirements().add(req);
 		}
 	}
 
@@ -292,7 +377,7 @@ public class DecernisServiceImpl implements DecernisService {
 						: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
 				String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
 
-				Double ingQtyPerc = ingListDataItem.getQtyPerc();
+				Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());
 
 				NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
 				String function = null;
@@ -315,11 +400,11 @@ public class DecernisServiceImpl implements DecernisService {
 								RequirementType.Tolerated));
 					}
 
-				} catch (HttpClientErrorException | HttpServerErrorException e) {
+				} catch (HttpStatusCodeException e) {
 					logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getStatusText());
 				} catch (Exception e) {
 					logger.error(e, e);
-					throw new FormulateException("Unexpected decernis error", e);
+					throw new FormulateException("Unexpected decernis error: " + e.getMessage(), e);
 				}
 			}
 		}
@@ -330,7 +415,7 @@ public class DecernisServiceImpl implements DecernisService {
 		return null;
 	}
 
-	private void checkIngredientIds(RegulatoryContext context) {
+	private void checkIngredients(RegulatoryContext context) {
 		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
 			if (ingListDataItem.getIng() != null) {
 				String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
@@ -338,10 +423,11 @@ public class DecernisServiceImpl implements DecernisService {
 					rid = fetchIngredientId(ingListDataItem, context.getRequirements());
 					nodeService.setProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE, rid);
 				}
-				if (context.getIngRegulatoryMapping().get(rid) == null) {
-					context.getIngRegulatoryMapping().put(rid, new ArrayList<>());
+				NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
+				if (ingType == null) {
+					context.getRequirements().add(
+							createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_NO_FUNCTION_ING), RequirementType.Tolerated));
 				}
-				context.getIngRegulatoryMapping().get(rid).add(ingListDataItem);
 			}
 		}
 	}
@@ -356,7 +442,7 @@ public class DecernisServiceImpl implements DecernisService {
 	}
 
 	private String cleanToken(String token) {
-		return token!=null ? token.replace("Bearer ", "").strip() : "";
+		return token != null ? token.replace("Bearer ", "").strip() : "";
 	}
 
 	private boolean buildQuery(IngListDataItem ingListDataItem, Map<String, String> params) {
@@ -429,8 +515,13 @@ public class DecernisServiceImpl implements DecernisService {
 			if (jsonObject.has(PARAM_COUNT) && (jsonObject.getInt(PARAM_COUNT) >= 1) && jsonObject.has(PARAM_RESULTS)) {
 				JSONArray results = jsonObject.getJSONArray(PARAM_RESULTS);
 				JSONObject result = null;
-				if (jsonObject.getInt(PARAM_COUNT) > 1) {
+				if (jsonObject.getInt(PARAM_COUNT) == 1) {
+					result = results.getJSONObject(0);
+				} else {
 					result = getRidByIngName(results, ingName);
+				}
+				if (result == null && results.toList().stream().map(o -> ((Map<?, ?>) o).get("did")).distinct().count() == 1) {
+					result = results.getJSONObject(0);
 				}
 				if (result != null) {
 					ingredientId = result.get("did").toString();
@@ -438,32 +529,31 @@ public class DecernisServiceImpl implements DecernisService {
 						logger.debug("RID of ingredient " + params.get(PARAM_QUERY) + ": " + ingredientId);
 					}
 					nodeService.setProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE, ingredientId);
-					// Get ingredient numbers (CAS, FEMA,
-					// CE)
+					// Get ingredient numbers (CAS, FEMA, CE)
 					if (result.has("libidents")) {
 						JSONObject libidents = result.getJSONObject("libidents");
-						for (Map.Entry<QName, String> ingNumber : ingNumbers.entrySet()) {
-							if ((ingNumber.getKey() == PLMModel.PROP_CAS_NUMBER) || (ingNumber.getKey() == PLMModel.PROP_CE_NUMBER)
-									|| (ingNumber.getKey() == PLMModel.PROP_FEMA_NUMBER)) {
-								String ingNumberToFill = (String) nodeService.getProperty(ingListDataItem.getIng(), ingNumber.getKey());
-								if (((ingNumberToFill == null) || ingNumberToFill.isEmpty()) && libidents.has(ingNumber.getValue())) {
-									JSONArray numbers = libidents.getJSONArray(ingNumber.getValue());
-									String number = null;
-									if (numbers.length() > 0) {
-										StringBuilder sb = new StringBuilder();
-										for (int i = 0; i < numbers.length(); i++) {
-											sb.append(numbers.getString(i)).append(",");
-										}
-										number = sb.deleteCharAt(sb.length() - 1).toString();
-									}
-									if ((number != null) && !number.isEmpty()) {
-										if (logger.isDebugEnabled()) {
-											logger.debug("Set ingredient RID: " + params.get(PARAM_QUERY) + " " + ingListDataItem.getIng() + " "
-													+ ingNumber.getKey() + " " + number);
-										}
+						for (Map.Entry<QName, String> entry : ingNumbers.entrySet()) {
+							QName numberPropName = entry.getKey();
+							String numberPropValue = entry.getValue();
+							String ingNumberToFill = (String) nodeService.getProperty(ingListDataItem.getIng(), numberPropName);
 
-										nodeService.setProperty(ingListDataItem.getIng(), ingNumber.getKey(), number);
+							if ((ingNumberToFill == null || ingNumberToFill.isEmpty()) && libidents.has(numberPropValue)) {
+								JSONArray numbers = libidents.getJSONArray(numberPropValue);
+								String number = null;
+								if (numbers.length() > 0) {
+									StringBuilder sb = new StringBuilder();
+									for (int i = 0; i < numbers.length(); i++) {
+										sb.append(numbers.getString(i)).append(",");
 									}
+									number = sb.deleteCharAt(sb.length() - 1).toString();
+								}
+								if ((number != null) && !number.isEmpty()) {
+									if (logger.isDebugEnabled()) {
+										logger.debug("Set ingredient RID: " + params.get(PARAM_QUERY) + " " + ingListDataItem.getIng() + " "
+												+ numberPropName + " " + number);
+									}
+
+									nodeService.setProperty(ingListDataItem.getIng(), numberPropName, number);
 								}
 							}
 						}
@@ -471,7 +561,7 @@ public class DecernisServiceImpl implements DecernisService {
 
 				} else {
 					if (logger.isDebugEnabled()) {
-						logger.debug("Several RIDs for ingredient " + params.get(PARAM_QUERY));
+						logger.debug("Several RIDs for ingredient " + params.get(PARAM_QUERY)+ " "+results.toString());
 					}
 					requirements.add(
 							createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_SEVERAL_RID_ING), RequirementType.Tolerated));
@@ -513,79 +603,77 @@ public class DecernisServiceImpl implements DecernisService {
 		RegulatoryContext context = new RegulatoryContext();
 		context.setProduct(product);
 
-		Set<String> countries = new HashSet<>();
-		Set<String> usages = new HashSet<>();
-
-		for (NodeRef nodeRef : product.getRegulatoryCountries()) {
-			extractCodes(context, countries, nodeRef);
-		}
-		for (NodeRef nodeRef : product.getRegulatoryUsages()) {
-			extractCodes(context, usages, nodeRef);
-		}
-
-		context.setCountries(countries);
-		context.setUsages(usages);
-		context.setModuleId(extractModuleId(product.getRegulatoryUsages()));
+		context.getContextItems().add(createContextItem(product, context));
 
 		for (RegulatoryListDataItem item : product.getRegulatoryList()) {
 			context.getContextItems().add(createContextItem(item, context));
 		}
 
-		checkIngredientIds(context);
-
 		return context;
 	}
 
-	private RegulatoryContextItem createContextItem(RegulatoryListDataItem item, RegulatoryContext context) {
+	private RegulatoryContextItem createContextItem(RegulatoryEntity item, RegulatoryContext context) {
 
 		RegulatoryContextItem contextItem = new RegulatoryContextItem();
 		contextItem.setItem(item);
 
-		Set<String> countries = new HashSet<>();
-		Set<String> usages = new HashSet<>();
-		Integer moduleId = null;
+		Map<String, NodeRef> countries = new HashMap<>();
+		List<UsageContext> usages = new ArrayList<>();
 
 		for (NodeRef nodeRef : item.getRegulatoryCountries()) {
 			extractCodes(context, countries, nodeRef);
 		}
 		for (NodeRef nodeRef : item.getRegulatoryUsages()) {
-			extractCodes(context, usages, nodeRef);
+			UsageContext usageContext = createUsage(context, nodeRef);
+			if (usageContext != null) {
+				usages.add(usageContext);
+			}
 		}
-		moduleId = extractModuleId(item.getRegulatoryUsages());
 
 		contextItem.setCountries(countries);
 		contextItem.setUsages(usages);
-		contextItem.setModuleId(moduleId);
 
 		return contextItem;
 	}
 
-	private void extractCodes(RegulatoryContext context, Set<String> countries, NodeRef nodeRef) {
+	private UsageContext createUsage(RegulatoryContext context, NodeRef nodeRef) {
 		String code = extractCode(nodeRef);
-		if (code == null) {
+		if (code == null || code.isBlank()) {
+			String name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME);
+			logger.warn("charact " + name + " has no regulatoryCode");
+			context.getRequirements().add(createReqCtrl(null, MLTextHelper.getI18NMessage(MESSAGE_NO_CODE_CHARACT, name), RequirementType.Tolerated));
+			return null;
+		}
+		UsageContext usage = new UsageContext();
+		usage.setName(code);
+		usage.setNodeRef(nodeRef);
+		Integer moduleId = moduleIdMap.get(nodeService.getProperty(nodeRef, PLMModel.PROP_REGULATORY_MODULE));
+		usage.setModuleId(moduleId);
+		return usage;
+	}
+	
+	private void extractCodes(RegulatoryContext context, Map<String, NodeRef> codes, NodeRef nodeRef) {
+		String code = extractCode(nodeRef);
+		if (code == null || code.isBlank()) {
 			String name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME);
 			logger.warn("charact " + name + " has no regulatoryCode");
 			context.getRequirements().add(createReqCtrl(null, MLTextHelper.getI18NMessage(MESSAGE_NO_CODE_CHARACT, name), RequirementType.Tolerated));
 		} else {
-			countries.add(code);
+			codes.put(code, nodeRef);
 		}
-	}
-
-	private Integer extractModuleId(List<NodeRef> regulatoryUsages) {
-		return regulatoryUsages.stream().map(usage -> nodeService.getProperty(usage, PLMModel.PROP_REGULATORY_MODULE)).map(moduleIdMap::get)
-				.findFirst().orElse(null);
 	}
 
 	private String extractCode(NodeRef node) {
 		return (String) nodeService.getProperty(node, PLMModel.PROP_REGULATORY_CODE);
 	}
 
-	private void updateUsageID(NodeRef usageRef, Integer moduleId) {
-
+	private void updateUsageID(NodeRef usageRef) {
+		
 		if (nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_ID) instanceof String) {
 			return;
 		}
-
+		
+		Integer moduleId = moduleIdMap.get(nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_MODULE));
 		String usageCode = extractCode(usageRef);
 
 		ResponseEntity<String> response = restTemplate.exchange(

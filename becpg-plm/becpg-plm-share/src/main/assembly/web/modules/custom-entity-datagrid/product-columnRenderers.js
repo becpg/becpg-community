@@ -135,7 +135,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-		propertyName : [ "cm:cmobject_bcpg:allergenListVolSources", "cm:cmobject_bcpg:allergenListInVolSources" ],
+		propertyName : [ "cm:cmobject_bcpg:allergenListVolSources", "cm:cmobject_bcpg:allergenListInVolSources","bcpg:irlIng","bcpg:irlSources" ],
 		renderer : function(oRecord, data, label, scope) {
 			if (data.metadata == "ing") {
 				return '<span class="' + data.metadata + '" >' + Alfresco.util.encodeHTML(data.displayValue) + '</span>';
@@ -428,23 +428,25 @@ if (beCPG.module.EntityDataGridRenderers) {
 						for (var i = 0; i < keys.length; i++) {
 							var k = keys[i];
 							var value = jsonData.v[k];
-							var toleranceMin = jsonData.tl[k] || '';
-							var toleranceMax = jsonData.tu[k] || '';
-							var min = jsonData.min[k] || '';
-							var max = jsonData.max[k] || '';
-							var gda = jsonData.gda[k] || '';
-							var vps = jsonData.vps[k] || '';
-	
-							ret += '<div>' +
-								'<h3>'+  scope.msg( "nutrient.details.header", k+ ' <img  title="'+k+'" src="'+Alfresco.constants.URL_CONTEXT+'res/components/images/flags/'+k.split("_")[0].toLowerCase()+'.png" />'  )+ '</h3>' +
-								'<p>'+scope.msg("nutrient.details.value" ,  value.toLocaleString( beCPG.util.getJSLocale() ) ) + '</p>' +
-								(toleranceMin ? '<p>'+ scope.msg( "nutrient.details.tl" ,toleranceMin.toLocaleString( beCPG.util.getJSLocale() ))+ '</p>' : '') +
-								(toleranceMax ? '<p>'+ scope.msg( "nutrient.details.tu" ,toleranceMax.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
-								(min ? '<p>'+ scope.msg( "nutrient.details.min" , min.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
-								(max ? '<p>'+ scope.msg( "nutrient.details.max" , max.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
-								(gda ? '<p>'+ scope.msg( "nutrient.details.gda" , gda.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
-								(vps ? '<p>'+ scope.msg( "nutrient.details.vps" , vps.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
-								'</div>';
+							if(k && value){
+							    var toleranceMin = jsonData.tl ? jsonData.tl[k] || '' : '';
+								var toleranceMax = jsonData.tu ? jsonData.tu[k] || '' : '';
+								var min = jsonData.min ? jsonData.min[k] || '' : '';
+								var max = jsonData.max ? jsonData.max[k] || '' : '';
+								var gda = jsonData.gda ? jsonData.gda[k] || '' : '';
+								var vps = jsonData.vps ? jsonData.vps[k] || '' : '';
+		
+								ret += '<div>' +
+									'<h3>'+  scope.msg( "nutrient.details.header", k+ ' <img  title="'+k+'" src="'+Alfresco.constants.URL_CONTEXT+'res/components/images/flags/'+k.split("_")[0].toLowerCase()+'.png" />'  )+ '</h3>' +
+									'<p>'+scope.msg("nutrient.details.value" ,  value.toLocaleString( beCPG.util.getJSLocale() ) ) + '</p>' +
+									(toleranceMin ? '<p>'+ scope.msg( "nutrient.details.tl" ,toleranceMin.toLocaleString( beCPG.util.getJSLocale() ))+ '</p>' : '') +
+									(toleranceMax ? '<p>'+ scope.msg( "nutrient.details.tu" ,toleranceMax.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+									(min ? '<p>'+ scope.msg( "nutrient.details.min" , min.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+									(max ? '<p>'+ scope.msg( "nutrient.details.max" , max.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+									(gda ? '<p>'+ scope.msg( "nutrient.details.gda" , gda.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+									(vps ? '<p>'+ scope.msg( "nutrient.details.vps" , vps.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+									'</div>';
+							}
 						}
 						ret += '</div></div>';
 	
@@ -482,13 +484,20 @@ if (beCPG.module.EntityDataGridRenderers) {
   
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:filQtyPercMaxi", "bcpg:allergenRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield"],
+      propertyName : ["bcpg:allergenListQtyPerc", "bcpg:allergenRegulatoryThreshold","bcpg:allergenInVoluntaryRegulatoryThreshold", "bcpg:ingListQtyPerc", "bcpg:ingListQtyPercWithYield","bcpg:ingListQtyPercWithSecondaryYield"],
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
+			var forceUnit=oColumn.forceUnit; 
+
+			if (oColumn.hidden) {
+				oColumn.showAfterRender = true;
+			}
+			var sigFig = 5;
+			  
       		var unit, qty;
       		if(data.value == 0){
       			return "0";
-      		} else if(Math.abs(data.value) < 0.01){
+      		} else if((Math.abs(data.value) < 0.01 && !forceUnit=== "perc") || forceUnit === "ppm"){
       			qty = data.value * 10000;
       			unit = " ppm";
       		}  else{
@@ -496,11 +505,38 @@ if (beCPG.module.EntityDataGridRenderers) {
       			unit = " %";
       		}
       		
+      		
       		if(oRecord.getData("itemType") == "total"){
-				  return '<span class="total">'+qty.toLocaleString( beCPG.util.getJSLocale() ) + unit+"</span>";
+				  return '<span class="total">'+beCPG.util.sigFigs(qty,sigFig).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit+"</span>";
 			 }
       		
-      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,5).toLocaleString( beCPG.util.getJSLocale() ) + unit);
+      		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,sigFig).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit);
+      	}      
+      	return "";
+      }
+  });
+
+	YAHOO.Bubbling.fire("registerDataGridRenderer", {
+      propertyName : ["", "bcpg:regulatoryResult"],
+      renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
+      	if(data.value != null && data.displayValue != null){
+			
+			var color = null;
+			
+			if (data.value == "PROHIBITED") {
+				color = "rgb(255, 106, 106)";
+			} else if (data.value == "PERMITTED") {
+				color = "rgb(190, 229, 84)";
+			} else if (data.value == "ERROR") {
+				color = "orange";
+			}
+			
+			if (color) {
+				elCell.style = 'background-color:' + color + ';';
+			}
+			
+			return Alfresco.util.encodeHTML(data.displayValue);
+			
       	}      
       	return "";
       }
@@ -1190,7 +1226,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 		        if( scope.subCache!=null && scope.subCache["idx_"+oColumn.getKeyIndex()]!=null){
 		              for (var j = 0; j <  scope.subCache["idx_"+oColumn.getKeyIndex()].length; j++) {
                         var path =  scope.subCache["idx_"+oColumn.getKeyIndex()][j].path;
-                        if(path == oRecord.getData("itemData")["path"] && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value !=null){
+                        if(path == oRecord.getData("itemData")["path"] && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value  && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value !=null){
                         	 return  beCPG.util.formatNumber(oColumn.numberFormat, scope.subCache["idx_"+oColumn.getKeyIndex()][j].value);	  
              			
                         }
@@ -1208,10 +1244,12 @@ if (beCPG.module.EntityDataGridRenderers) {
                                 scope.subCache = [];
                             }
                             scope.subCache["idx_"+oColumn.getKeyIndex()] = json.sub;
-                            if(json.value!=null){
+                            if(json.value && json.value!=null){
             				    return  beCPG.util.formatNumber(oColumn.numberFormat, json.value);	   
-            				} 
+            				}
+            			  return "";	 
                         }
+                        
     			    }
 			    }
 			    
@@ -1309,15 +1347,6 @@ if (beCPG.module.EntityDataGridRenderers) {
 	});
 	
 	
-	YAHOO.Bubbling.fire("registerDataGridRenderer", {
-        propertyName : ["bcpg:packagingListQty"],
-        renderer : function(oRecord, data, label, scope) {
-        	if (data.value != null) {
-        		return data.value.toLocaleString( beCPG.util.getJSLocale() );
-        	}
-        	return "";
-        }
-    });
 	
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
       propertyName : [ "bcpg:instruction"],
@@ -1475,10 +1504,12 @@ if (beCPG.module.EntityDataGridRenderers) {
 			var url;
 			
 			if (data.displayValue) {
-				var recipeId = oRecord.getData("itemData")["prop_bcpg_regulatoryRecipeId"].value;
 				var usages = oRecord.getData("itemData")["dt_bcpg_regulatoryUsageRef"];
 				var countries = oRecord.getData("itemData")["dt_bcpg_regulatoryCountries"];
-				if (usages && countries && recipeId) {
+				if (oRecord.getData("itemData")["prop_bcpg_regulatoryRecipeId"]) {
+					var recipeId = oRecord.getData("itemData")["prop_bcpg_regulatoryRecipeId"].value;
+				}
+				if (usages && countries) {
 					var countriesParam = "";
 					for (var i in countries) {
 						var country = countries[i];
@@ -1488,7 +1519,9 @@ if (beCPG.module.EntityDataGridRenderers) {
 						var usage = usages[i];
 						if (usage.nodeRef == data.value) {
 							var usageID = usage.itemData["prop_bcpg_regulatoryId"].value;
-							url = "https://formula.decernis.com/recipes-analysis/analyze?recipe=" + recipeId + "&moduleId=1&removeRecipe=false&usage=" + usageID + countriesParam;
+							if (recipeId) {
+								url = "https://formula.decernis.com/recipes-analysis/analyze?recipe=" + recipeId + "&moduleId=1&removeRecipe=false&usage=" + usageID + countriesParam;
+							}
 						}
 					}
 				}
@@ -1522,7 +1555,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					&&  oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value !=null) {
 						var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
 						var jsonData = JSON.parse( oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value );
-						if(jsonData.ul[key]){
+						if(jsonData.ul && jsonData.ul[key]){
 							ul = jsonData.ul[key];
 							percentValue = jsonData.gda[key];
 						}

@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.model.Repository;
+import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.repository.ContentWriter;
@@ -17,11 +18,14 @@ import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.PersonService;
 import org.alfresco.service.namespace.QName;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.extensions.surf.util.I18NUtil;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.artworks.signature.model.SignatureModel;
+import fr.becpg.artworks.signature.model.SignatureStatus;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.helper.AssociationService;
@@ -39,6 +43,8 @@ import fr.becpg.repo.supplier.SupplierPortalService;
 @Service
 public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 
+	private static final Log logger = LogFactory.getLog(SupplierSignatureProjectPlugin.class);
+	
 	@Autowired
 	private NodeService nodeService;
 
@@ -84,6 +90,10 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		NodeRef supplierDocumentsFolder = supplierPortalService.getOrCreateSupplierDocumentsFolder(entityNodeRef);
 
 		List<NodeRef> reports = entityReportService.getOrRefreshReportsOfKind(entityNodeRef, SUPPLIER_REPORT_KIND);
+		
+		if (reports.isEmpty()) {
+			logger.warn("No report with 'Supplier Sheet' type was found for entity: " + entityNodeRef);
+		}
 		
 		List<NodeRef> suppliers = associationService.getTargetAssocs(projectNodeRef, PLMModel.ASSOC_SUPPLIER_ACCOUNTS);
 
@@ -175,19 +185,16 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 	}
 
 	private NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
-		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
-
-		int lastDotIndex = reportName.lastIndexOf(".");
-
-		if (lastDotIndex != -1) {
-			String nameWithoutExtension = reportName.substring(0, lastDotIndex);
-			String extension = reportName.substring(lastDotIndex);
-			String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(0, 10);
-			reportName = nameWithoutExtension + " - " + date + extension;
+		String reportName = extractReportName(reportNodeRef);
+		
+		NodeRef existingReportCopy = nodeService.getChildByName(parentFolder, ContentModel.ASSOC_CONTAINS, reportName);
+		
+		if (existingReportCopy != null && SignatureStatus.Initialized.toString().equals(nodeService.getProperty(existingReportCopy, SignatureModel.PROP_STATUS))) {
+			return existingReportCopy;
 		}
-
+		
 		reportName = repoService.getAvailableName(parentFolder, reportName, false, true);
-
+		
 		Map<QName, Serializable> props = new HashMap<>();
 
 		props.put(ContentModel.PROP_NAME, reportName);
@@ -195,6 +202,8 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		NodeRef reportCopy = nodeService
 				.createNode(parentFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_CONTENT, props)
 				.getChildRef();
+		
+		nodeService.setProperty(reportCopy, ContentModel.PROP_OWNER, AuthenticationUtil.SYSTEM_USER_NAME);
 
 		ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
 		ContentWriter writer = contentService.getWriter(reportCopy, ContentModel.PROP_CONTENT, true);
@@ -204,5 +213,19 @@ public class SupplierSignatureProjectPlugin implements SignatureProjectPlugin {
 		writer.putContent(reader);
 		
 		return reportCopy;
+	}
+
+	private String extractReportName(NodeRef reportNodeRef) {
+		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
+
+		int lastDotIndex = reportName.lastIndexOf(".");
+		
+		if (lastDotIndex != -1) {
+			String nameWithoutExtension = reportName.substring(0, lastDotIndex);
+			String extension = reportName.substring(lastDotIndex);
+			String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date()).substring(0, 10);
+			reportName = nameWithoutExtension + " - " + date + extension;
+		}
+		return reportName;
 	}
 }

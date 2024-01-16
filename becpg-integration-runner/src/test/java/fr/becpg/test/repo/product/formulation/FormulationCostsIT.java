@@ -49,8 +49,8 @@ import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
-import fr.becpg.repo.product.formulation.CostsCalculatingFormulationHandler;
 import fr.becpg.repo.repository.AlfrescoRepository;
+import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
 
 /**
@@ -68,6 +68,9 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private AssociationService associationService;
+	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 
 	@Override
 	public void setUp() throws Exception {
@@ -144,15 +147,14 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			return finishedProduct.getNodeRef();
 
 		}, false, true);
+		
+		waitForSolr();
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			productService.formulate(finishedProductNodeRef);
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
-
-			assertEquals(5, formulatedProduct.getCostList().size());
-			assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
-
+			
 			for (CostListDataItem c1 : formulatedProduct.getCostList()) {
 				String trace1 = "cost: " + nodeService.getProperty(c1.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + c1.getValue()
 						+ " - unit: " + c1.getUnit() + " level: " + c1.getDepthLevel();
@@ -179,6 +181,11 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 					assertFalse(true);
 				}
 			}
+
+			assertEquals(5, formulatedProduct.getCostList().size());
+			assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
+
+			
 
 			assertEquals(44d, formulatedProduct.getUnitTotalCost());
 
@@ -393,7 +400,11 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 	@Test
 	public void testFormulationCostsWithKeepProductUnit() throws Exception {
 		try {
-			CostsCalculatingFormulationHandler.keepProductUnit = true;
+			
+			inWriteTx(() -> {
+				systemConfigurationService.updateConfValue("beCPG.formulation.costList.keepProductUnit", "true");
+				return null;
+			});
 
 			final NodeRef rawMaterialNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -457,8 +468,7 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 
 			}, false, true);
 		} finally {
-
-			CostsCalculatingFormulationHandler.keepProductUnit = false;
+			systemConfigurationService.resetConfValue("beCPG.formulation.costList.keepProductUnit");
 		}
 	}
 

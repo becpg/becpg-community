@@ -35,6 +35,9 @@ public class PlmRepoConsts {
 	public static final String PATH_COSTS = "Costs";
 	
 	public static final String PATH_LCA = "LifeCycleAnalysis";
+	
+	public static final String PATH_LCA_LIST_METHODS = "LcaListMethods";
+
 	/** Constant <code>PATH_PHYSICO_CHEM="PhysicoChems"</code> */
 	public static final String PATH_PHYSICO_CHEM = "PhysicoChems";
 	/** Constant <code>PATH_MICROBIO_CONTROL_STEPS="MicrobioControlSteps"</code> */
@@ -169,7 +172,8 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_CONTROL_TEMPERATURES="clTemperatures"</code> */
 	public static final String PATH_CONTROL_TEMPERATURES= "clTemperatures";
 
-	
+	public static final String PATH_CONTROL_TYPES= "ControlTypes";
+
 
 	// GHS
 	/** Constant <code>PATH_SECURITY_LISTS="SecurityLists"</code> */
@@ -260,6 +264,8 @@ public class PlmRepoConsts {
 	
 	public static final String PATH_LCA_UNITS = "LCAUnits";
 	
+	public static final String PATH_LCA_DATABASES = "LCADatabases";
+	
 	
 	//GS1
 	/** Constant <code>PATH_GS1_PACKAGING_TYPE_CODES="PackagingTypeCodes"</code> */
@@ -292,6 +298,7 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
 	public static final String PATH_PUBCHANNELS = "PubChannels";
 	public static final String PATH_MICROBIO_TYPES = "MicrobioTypes";
+	public static final String PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS = "AlcoholBeverageContainers";
 
 
 
