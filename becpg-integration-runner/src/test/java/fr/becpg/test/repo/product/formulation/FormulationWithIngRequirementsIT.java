@@ -224,7 +224,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 				if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_NON_VALIDATED_STATE).equals(reqCtrlList.getReqMessage())) {
 					assertEquals(RequirementType.Tolerated, reqCtrlList.getReqType());
 					assertEquals(RequirementDataType.Validation, reqCtrlList.getReqDataType());
-					assertEquals(9, reqCtrlList.getSources().size());
+					assertEquals(10, reqCtrlList.getSources().size());
 
 					checks++;
 				} else if (reqCtrlList.getReqMessage().equals("OGM interdit")) {

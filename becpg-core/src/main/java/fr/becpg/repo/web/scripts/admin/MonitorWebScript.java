@@ -5,12 +5,18 @@ package fr.becpg.repo.web.scripts.admin;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sql.DataSource;
+
+import org.activiti.engine.impl.util.json.JSONArray;
 import org.alfresco.repo.batch.BatchMonitor;
 import org.alfresco.repo.security.authentication.AbstractAuthenticationService;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -18,8 +24,12 @@ import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.service.cmr.repository.ContentService;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.security.PermissionService;
+import org.alfresco.service.namespace.NamespaceException;
+import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.simple.JSONObject;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
 import org.springframework.extensions.webscripts.Status;
@@ -39,6 +49,17 @@ import fr.becpg.repo.license.BeCPGLicenseManager;
  */
 public class MonitorWebScript extends DeclarativeWebScript {
 
+	private static final String VOLUMETRY_QUERY = 
+			"SELECT alf_namespace.uri, alf_qname.local_name, alf_store.protocol, alf_store.identifier, COUNT(alf_node.id) AS node_count "
+			+ "FROM alf_node "
+			+ "JOIN alf_qname ON alf_node.type_qname_id = alf_qname.id "
+			+ "JOIN alf_store ON alf_node.store_id = alf_store.id "
+			+ "JOIN alf_namespace ON alf_qname.ns_id = alf_namespace.id "
+			+ "GROUP BY alf_qname.local_name, alf_node.store_id "
+			+ "ORDER BY node_count DESC";
+	
+	private static final double BYTES_TO_MEGA_BYTES = 1048576d;
+
 	private static final Log logger = LogFactory.getLog(MonitorWebScript.class);
 	
 	private ContentService contentService;
@@ -54,6 +75,18 @@ public class MonitorWebScript extends DeclarativeWebScript {
 	private AuthorityService authorityService;
 
 	private BatchQueueService batchQueueService;
+	
+	private DataSource dataSource;
+	
+	private NamespaceService namespaceService;
+	
+	public void setNamespaceService(NamespaceService namespaceService) {
+		this.namespaceService = namespaceService;
+	}
+	
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -64,7 +97,11 @@ public class MonitorWebScript extends DeclarativeWebScript {
 			
 			Map<String, Object> ret = new HashMap<>();
 			
-			fillMonitoringInformation(ret, false);
+			fillMonitoringInformation(ret, true);
+			
+			if ("true".equals(req.getParameter("volumetry"))) {
+				fillVolumetry(ret);
+			}
 			
 			if ("beCPG Monitors".equals(req.getHeader(HttpHeaders.USER_AGENT))) {
 				ret.put("authenticated", true);
@@ -79,7 +116,39 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		
 	}
 
-	protected Set<String> fillMonitoringInformation(Map<String, Object> ret, boolean isAuthenticated) {
+	@SuppressWarnings("unchecked")
+	private void fillVolumetry(Map<String, Object> ret) {
+		JSONArray volumetryArray = new JSONArray();
+		try (Connection con = dataSource.getConnection()) {
+
+			try (PreparedStatement statement = con.prepareStatement(VOLUMETRY_QUERY)) {
+				try (java.sql.ResultSet res = statement.executeQuery()) {
+					while (res.next()) {
+						JSONObject volumetryJson = new JSONObject();
+						QName qname = QName.createQName("{" + res.getString("uri") + "}" + res.getString("local_name"));
+						volumetryJson.put("qname", extractQNameString(qname));
+						volumetryJson.put("identifier", res.getString("identifier"));
+						volumetryJson.put("protocol", res.getString("protocol"));
+						volumetryJson.put("node_count", res.getInt("node_count"));
+						volumetryArray.put(volumetryJson);
+					}
+				}
+			}
+		} catch (SQLException e) {
+			logger.error("Error running : " + VOLUMETRY_QUERY, e);
+		}
+		ret.put("volumetry", volumetryArray.toString());
+	}
+
+	private String extractQNameString(QName qname) {
+		try {
+			return qname.toPrefixString(namespaceService);
+		} catch (NamespaceException e) {
+			return qname.toString();
+		}
+	}
+	
+	protected Set<String> fillMonitoringInformation(Map<String, Object> ret, boolean includeTenantUsers) {
 		
 		long concurrentReadUsers = 0;
 		long concurrentSupplierUsers = 0;
@@ -92,8 +161,9 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		for (Iterator<String> iterator = users.iterator(); iterator.hasNext();) {
 			String user = iterator.next();
 			if ((AuthenticationUtil.getGuestUserName().equals(user) || AuthenticationUtil.getSystemUserName().equals(user))
-					|| (tenantAdminService.isEnabled()
-							&& !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user)))) {
+					|| !includeTenantUsers && (tenantAdminService.isEnabled()
+							&& !tenantAdminService.getCurrentUserDomain().equals(tenantAdminService.getUserDomain(user)))
+					) {
 				iterator.remove();
 			}
 		}
@@ -124,11 +194,11 @@ public class MonitorWebScript extends DeclarativeWebScript {
 	
 		ret.put("diskFreeSpace", contentService.getStoreFreeSpace());
 		ret.put("diskTotalSpace", contentService.getStoreTotalSpace());
-		ret.put("totalMemory", runtime.totalMemory() / 1000000d);
-		ret.put("freeMemory", runtime.freeMemory() / 1000000d);
-		ret.put("maxMemory", runtime.maxMemory() / 1000000d);
-		ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / 1000000d);
-		ret.put("connectedUsers", isAuthenticated ? users.size() : users.size() + 1);
+		ret.put("totalMemory", runtime.totalMemory() / BYTES_TO_MEGA_BYTES);
+		ret.put("freeMemory", runtime.freeMemory() / BYTES_TO_MEGA_BYTES);
+		ret.put("maxMemory", runtime.maxMemory() / BYTES_TO_MEGA_BYTES);
+		ret.put("nonHeapMemoryUsage", memoryMXBean.getNonHeapMemoryUsage().getUsed() / BYTES_TO_MEGA_BYTES);
+		ret.put("connectedUsers", users.size());
 		ret.put("concurrentReadUsers", concurrentReadUsers);
 		ret.put("concurrentWriteUsers", concurrentWriteUsers);
 		ret.put("concurrentSupplierUsers", concurrentSupplierUsers);

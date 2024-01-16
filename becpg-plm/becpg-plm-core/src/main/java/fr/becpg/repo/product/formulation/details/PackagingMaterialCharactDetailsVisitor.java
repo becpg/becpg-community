@@ -250,10 +250,10 @@ public class PackagingMaterialCharactDetailsVisitor extends SimpleCharactDetails
 				FormulatedQties qties = new FormulatedQties(weightUsed, volUsed, compoProductQty, compoProductQty);
 				
 
-				visitPart(subProductData, compoListProduct, compoListDataItem.getNodeRef(), ret, qties, currLevel, null);
+				visitPart(subProductData, subProductData, compoListProduct, compoListDataItem.getNodeRef(), ret, qties, currLevel, null);
 				if (((maxLevel < 0) || (currLevel < maxLevel))
 						&& !entityDictionaryService.isMultiLevelLeaf(nodeService.getType(compoListDataItem.getProduct()))) {
-					visitRecur(compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
+					visitRecur(subProductData, compoListProduct, ret, currLevel + 1, maxLevel, weightUsed, volUsed, netQty);
 				}
 
 			}

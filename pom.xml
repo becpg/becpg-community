@@ -164,7 +164,7 @@
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 		<sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
 		<sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-		<sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths>
+		<!-- <sonar.jacoco.reportPaths>${maven.multiModuleProjectDirectory}/target/jacoco.exec</sonar.jacoco.reportPaths> -->
 		<sonar.coverage.jacoco.xmlReportPaths>${maven.multiModuleProjectDirectory}/becpg-integration-runner/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 	    <sonar.dependencyCheck.xmlReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.xml</sonar.dependencyCheck.xmlReportPath>
 		<sonar.dependencyCheck.jsonReportPath>${maven.multiModuleProjectDirectory}/target/dependency-check-report.json</sonar.dependencyCheck.jsonReportPath>
@@ -172,10 +172,11 @@
 	    <sonar.dependencyCheck.severity.blocker>9.0</sonar.dependencyCheck.severity.blocker>
         <sonar.dependencyCheck.severity.critical>7.0</sonar.dependencyCheck.severity.critical>
         <sonar.dependencyCheck.severity.major>4.0</sonar.dependencyCheck.severity.major>
+        <sonar.junit.reportPaths>${project.basedir}/target/surefire-reports/,${project.basedir}/target/failsafe-reports/</sonar.junit.reportPaths>
 		<sonar.scm.disabled>true</sonar.scm.disabled>
 		<sonar.ws.timeout>3600</sonar.ws.timeout>
 		<sonar.language>java</sonar.language>
-		<becpg.artworks.version>4.2.1.0</becpg.artworks.version>
+		<becpg.artworks.version>4.2.1.2</becpg.artworks.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -459,7 +460,7 @@
 			<plugin>
 				<groupId>org.owasp</groupId>
 				<artifactId>dependency-check-maven</artifactId>
-				<version>8.2.1</version>
+				<version>8.4.0</version>
 				<configuration>
 					<skipProvidedScope>false</skipProvidedScope>
 					<skipRuntimeScope>true</skipRuntimeScope>
@@ -475,7 +476,7 @@
 			<plugin>
 				<groupId>org.sonarsource.scanner.maven</groupId>
 				<artifactId>sonar-maven-plugin</artifactId>
-				<version>3.9.1.2184</version>
+				<version>3.10.0.2594</version>
 			</plugin>
 		</plugins>
 		
@@ -518,7 +519,7 @@
 			<plugin>
 				<groupId>org.owasp</groupId>
 				<artifactId>dependency-check-maven</artifactId>
-				<version>8.2.1</version>
+				<version>8.4.0</version>
 				<configuration>
 					<skipProvidedScope>false</skipProvidedScope>
 					<skipRuntimeScope>true</skipRuntimeScope>

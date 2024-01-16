@@ -27,6 +27,7 @@ import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.glop.model.GlopData;
 import fr.becpg.repo.hierarchy.HierarchicalEntity;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.RegulatoryResult;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.ing.IngTypeItem;
 import fr.becpg.repo.product.data.meat.MeatContentData;
@@ -35,9 +36,10 @@ import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
+import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
+import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.product.data.productList.LabelClaimListDataItem;
 import fr.becpg.repo.product.data.productList.LabelingListDataItem;
-import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.product.data.productList.MicrobioListDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.OrganoListDataItem;
@@ -73,7 +75,7 @@ import fr.becpg.repo.variant.model.VariantEntity;
  * @version $Id: $Id
  */
 @BeCPGPublicApi
-public class ProductData extends AbstractScorableEntity implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity {
+public class ProductData extends AbstractScorableEntity implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity {
 
 	
 	private static final long serialVersionUID = 764534088277737617L;
@@ -83,7 +85,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private NodeRef hierarchy2;
 	private MLText legalName;
 	private MLText pluralLegalName;
-	private String title;
+	private MLText title;
 	private String erpCode;
 	private SystemState state = SystemState.Simulation;
 	private ProductUnit unit = ProductUnit.kg;
@@ -178,6 +180,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private String nutrientDetails;
 	private NodeRef nutrientProfile;
 	private String nutrientProfileCategory;
+	private String nutrientProfileVersion;
 
 	
 	
@@ -189,6 +192,10 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private String ecoScoreClass;
 	private String ecoScoreCategory;
 	private String ecoScoreDetails;
+	
+	
+	private String lcaScoreMethod;
+	private Double lcaScore;
 
 	/*
 	 * Meat aspect
@@ -205,7 +212,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private Date regulatoryFormulatedDate;
 	private DecernisMode regulatoryMode = DecernisMode.BECPG_ONLY;
 	private String regulatoryRecipeId;
-	private String regulatoryResult;
+	private RegulatoryResult regulatoryResult;
 	private String regulatoryUrl;
 	
 	/** 
@@ -241,6 +248,8 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private List<PackMaterialListDataItem> packMaterialList;
 	private List<StockListDataItem> stockList;
 	private List<RegulatoryListDataItem> regulatoryList;
+	private List<IngRegulatoryListDataItem> ingRegulatoryList;
+	
 
 	/*
 	 * View
@@ -292,6 +301,26 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	/** {@inheritDoc} */
 	public void setGlopData(GlopData glopData) {
 		this.glopData = glopData;
+	}
+	
+	public void setLcaScore(Double lcaScore) {
+		this.lcaScore = lcaScore;
+	}
+	
+	public void setLcaScoreMethod(String lcaScoreMethod) {
+		this.lcaScoreMethod = lcaScoreMethod;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:lcaScore")
+	public Double getLcaScore() {
+		return lcaScore;
+	}
+	
+	@AlfProp
+	@AlfQname(qname="bcpg:lcaScoreMethod")
+	public String getLcaScoreMethod() {
+		return lcaScoreMethod;
 	}
 	
 	/** {@inheritDoc} */
@@ -643,8 +672,9 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
+	@AlfMlText
 	@AlfQname(qname = "cm:title")
-	public String getTitle() {
+	public MLText getTitle() {
 		return title;
 	}
 
@@ -653,7 +683,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 *
 	 * @param title a {@link java.lang.String} object.
 	 */
-	public void setTitle(String title) {
+	public void setTitle(MLText title) {
 		this.title = title;
 	}
 
@@ -1557,6 +1587,16 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setNutrientProfileCategory(String nutrientProfileCategory) {
 		this.nutrientProfileCategory = nutrientProfileCategory;
 	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:nutrientProfileVersion")
+	public String getNutrientProfileVersion() {
+		return nutrientProfileVersion;
+	}
+	
+	public void setNutrientProfileVersion(String nutrientProfileVersion) {
+		this.nutrientProfileVersion = nutrientProfileVersion;
+	}
 
 	/**
 	 * <p>Getter for the field <code>meatContentData</code>.</p>
@@ -1998,6 +2038,16 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setRegulatoryList(List<RegulatoryListDataItem> regulatoryList) {
 		this.regulatoryList = regulatoryList;
 	}
+	
+	@DataList
+	@AlfQname(qname = "bcpg:ingRegulatoryList")
+	public List<IngRegulatoryListDataItem> getIngRegulatoryList() {
+		return ingRegulatoryList;
+	}
+
+	public void setIngRegulatoryList(List<IngRegulatoryListDataItem> ingRegulatoryList) {
+		this.ingRegulatoryList = ingRegulatoryList;
+	}
 
 	/**
 	 * <p>Getter for the field <code>compoListView</code>.</p>
@@ -2072,11 +2122,11 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryResult")
-	public String getRegulatoryResult() {
+	public RegulatoryResult getRegulatoryResult() {
 		return regulatoryResult;
 	}
 	
-	public void setRegulatoryResult(String regulatoryResult) {
+	public void setRegulatoryResult(RegulatoryResult regulatoryResult) {
 		this.regulatoryResult = regulatoryResult;
 	}
 

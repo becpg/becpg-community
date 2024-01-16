@@ -126,6 +126,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
+			
+			productData.getLabelClaimList().forEach(labelClaimItem -> labelClaimItem.getMissingLabelClaims().clear());
+			
 			List<CompositionDataItem> compoItems = new ArrayList<>();
 
 			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -143,8 +146,6 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 
 				productData.getLabelClaimList().forEach(labelClaimItem -> {
 
-					labelClaimItem.getMissingLabelClaims().clear();
-
 					labelClaimItem.setType((String) nodeService.getProperty(labelClaimItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_TYPE));
 
 					Boolean isManual = (Boolean) nodeService.getProperty(labelClaimItem.getLabelClaim(), BeCPGModel.PROP_IS_MANUAL_LISTITEM);
@@ -156,7 +157,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					if((labelClaimItem.getIsManual() == null) || !Boolean.TRUE.equals(labelClaimItem.getIsManual())){
 					
 						Boolean isPropagateUp = (Boolean) nodeService.getProperty(labelClaimItem.getLabelClaim(),
-								PLMModel.PROP_LABELCLAIM_PROPAGATE_UP);
+								PLMModel.PROP_IS_CHARACT_PROPAGATE_UP);
 
 						if (Boolean.TRUE.equals(isPropagateUp)) {
 							toRemove.add(labelClaimItem);
@@ -278,7 +279,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				.filter(n -> ((n.getLabelClaim() != null) && n.getLabelClaim().equals(subLabelClaimItem.getLabelClaim()))).findFirst().orElse(null);
 
 		if ((labelClaimItem == null)
-				&& Boolean.TRUE.equals(nodeService.getProperty(subLabelClaimItem.getLabelClaim(), PLMModel.PROP_LABELCLAIM_PROPAGATE_UP))) {
+				&& Boolean.TRUE.equals(nodeService.getProperty(subLabelClaimItem.getLabelClaim(), PLMModel.PROP_IS_CHARACT_PROPAGATE_UP))) {
 
 			labelClaimItem = subLabelClaimItem.copy();
 			labelClaimItem.setName(null);

@@ -42,9 +42,9 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 @Deprecated 
 public class PurgeNodesWebscript extends AbstractWebScript {
 
-	private final static Log logger = LogFactory.getLog(PurgeNodesWebscript.class);
+	private static  final  Log logger = LogFactory.getLog(PurgeNodesWebscript.class);
 
-	private final static String PARAM_FOLDER_NODEREF = "folderNodeRef";
+	private static final  String PARAM_FOLDER_NODEREF = "folderNodeRef";
 
 	private TransactionService transactionService;
 
@@ -114,8 +114,8 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 
 
 
-	private final int batchThreads = 3;
-	private final int batchSize = 40;
+	private static final int BATCH_THREADS = 3;
+	private static final int BATCH_SIZE = 40;
 
 	/** {@inheritDoc} */
 	@Override
@@ -144,12 +144,12 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 					@Override
 					public Collection<NodeRef> getNextWork() {
 
-						int skipOffset = (currentPage - 1) * batchSize;
-						int requestTotalCountMax = skipOffset + batchSize;
+						int skipOffset = (currentPage - 1) * BATCH_SIZE;
+						int requestTotalCountMax = skipOffset + BATCH_SIZE;
 
 						result.clear();
 
-						PagingRequest pageRequest = new PagingRequest(skipOffset, batchSize, null);
+						PagingRequest pageRequest = new PagingRequest(skipOffset, BATCH_SIZE, null);
 						pageRequest.setRequestTotalCountMax(requestTotalCountMax);
 
 						BeCPGQueryBuilder query = BeCPGQueryBuilder.createQuery().parent(parentNodeRef);
@@ -171,7 +171,7 @@ public class PurgeNodesWebscript extends AbstractWebScript {
 				};
 
 				BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("PurgeNodesWebscript",
-						transactionService.getRetryingTransactionHelper(), workProvider, batchThreads, batchSize, null, logger, 1000);
+						transactionService.getRetryingTransactionHelper(), workProvider, BATCH_THREADS, BATCH_SIZE, null, logger, 1000);
 
 				BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 

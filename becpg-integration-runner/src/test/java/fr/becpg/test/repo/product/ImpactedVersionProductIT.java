@@ -1,6 +1,7 @@
 package fr.becpg.test.repo.product;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -18,7 +19,6 @@ import org.json.JSONObject;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ECMModel;
@@ -209,7 +209,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 		
 		boolean aspectsRemoved = false;
 		
-		while (!aspectsRemoved && i < 20) {
+		while (!aspectsRemoved && i < 60) {
 			i++;
 			Thread.sleep(1000);
 			logger.debug("waiting for unclocking...");
@@ -227,7 +227,7 @@ public class ImpactedVersionProductIT extends PLMBaseTestCase {
 	private NodeRef waitForVersion(final NodeRef product, String versionLabel) throws InterruptedException {
 		NodeRef versionNodeRef = null;
 		int i = 0;
-		while (versionNodeRef == null && i < 20) {
+		while (versionNodeRef == null && i < 50) {
 			Thread.sleep(1000);
 			logger.debug("waiting for version created...");
 			i++;

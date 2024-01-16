@@ -17,7 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.product.data.productList;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -51,7 +51,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	private MLText reqMlMessage;
 	private Double reqMaxQty;
 	private NodeRef charact;
-	private List<NodeRef> sources = new LinkedList<>();
+	private List<NodeRef> sources = new ArrayList<>();
 	private RequirementDataType reqDataType;
 	private String regulatoryCode;
 	
@@ -245,7 +245,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	
 	public void addSource(NodeRef sourceNodeRef) {
 		if(sources == null) {
-			sources = new LinkedList<>();
+			sources = new ArrayList<>();
 		}
 		if(!sources.contains(sourceNodeRef)) {
 			sources.add(sourceNodeRef);
@@ -350,7 +350,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		ReqCtrlListDataItem other = (ReqCtrlListDataItem) obj;
-		return Objects.equals(charact, other.charact) && Objects.equals(reqMaxQty, other.reqMaxQty)
+		return Objects.equals(charact, other.charact) && Objects.equals(reqMaxQty, other.reqMaxQty) && Objects.equals(formulationChainId, other.formulationChainId)
 				&& Objects.equals(regulatoryCode, other.regulatoryCode) && reqDataType == other.reqDataType
 				&& Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType && Objects.equals(sources, other.sources);
 	}

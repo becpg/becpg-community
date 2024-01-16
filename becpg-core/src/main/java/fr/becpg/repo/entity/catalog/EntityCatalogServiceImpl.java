@@ -450,6 +450,8 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 
 						JSONArray nonUniqueFields = extractNonUniqueFields(entityType, entityNodeRef, uniqueFields, i18nMessages);
 
+						
+						boolean isFirst = true;
 						for (String lang : langs) {
 
 							JSONObject catalogDesc = new JSONObject();
@@ -459,7 +461,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 							}
 
 							JSONArray missingFields = extractMissingFields(formulatedEntity, properties, reqFields, i18nMessages,
-									defaultLocale.equals(lang) ? null : lang);
+									defaultLocale.equals(lang) ? null : lang, isFirst);
 							if ((missingFields.length() > 0) || (nonUniqueFields.length() > 0)) {
 
 								catalogDesc.put(EntityCatalogService.PROP_MISSING_FIELDS, missingFields.length() > 0 ? missingFields : null);
@@ -482,7 +484,7 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 								}
 							}
 							ret.put(catalogDesc);
-
+							isFirst = false;
 						}
 					}
 				}
@@ -603,8 +605,10 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 	}
 
 	private JSONArray extractMissingFields(RepositoryEntity formulatedEntity, Map<QName, Serializable> properties, JSONArray reqFields,
-			JSONObject i18nMessages, String lang) throws JSONException {
+			JSONObject i18nMessages, String lang, boolean isFirstLang) throws JSONException {
 		JSONArray ret = new JSONArray();
+		
+		
 
 		for (int i = 0; i < reqFields.length(); i++) {
 			String field = reqFields.getString(i);
@@ -612,32 +616,27 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 			List<String> splitFields = Arrays.asList(field.split(Pattern.quote("|")));
 			boolean present = false;
 
-			// if this field can be ignored (do not raise ctrl if absent)
-			boolean ignore = false;
-
 			String currLang = null;
 			StringBuilder id = new StringBuilder();
 			MLText displayName = new MLText();
 
-			if ((splitFields.size() == 2) && splitFields.get(0).startsWith("formula")) {
-				present = testCondition(splitFields.get(1), formulatedEntity);
-				id.append(splitFields.get(0));
-				String i18nkey = i18nMessages.has(splitFields.get(0)) ? i18nMessages.getString(splitFields.get(0)) : splitFields.get(0);
+			for (String currentField : splitFields) {
 
-				for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
-					if (MLTextHelper.getSupportedLocalesList().contains(key)) {
-						Locale loc = MLTextHelper.parseLocale(key);
-						String label = I18NUtil.getMessage(i18nkey, loc);
-						if ((label != null) && !label.isBlank()) {
-							displayName.addValue(loc, label);
-						} else {
-							displayName.addValue(loc, i18nkey);
-						}
+				boolean isFormula = false;
+
+				String i18nKey = i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null;
+
+				if (currentField.startsWith("formula") && splitFields.size() == 2) {
+					isFormula = true;
+					present = testCondition(splitFields.get(1), formulatedEntity);
+					if (i18nKey == null) {
+						i18nKey = currentField;
 					}
 				}
-			} else {
 
-				for (String currentField : splitFields) {
+				ClassAttributeDefinition propDef = null;
+
+				if (!isFormula) {
 
 					if (currentField.contains("_")) {
 						currLang = currentField.split("_")[1];
@@ -645,100 +644,87 @@ public class EntityCatalogServiceImpl implements EntityCatalogService {
 					}
 
 					QName fieldQname = null;
+					
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("Test field qname: " + currentField + ", lang: " + lang);
+					}
 
 					try {
 						fieldQname = QName.createQName(currentField, namespaceService);
-						String i18nKey = i18nMessages.has(currentField) ? i18nMessages.getString(currentField) : null;
 
-						if (logger.isDebugEnabled()) {
-							logger.debug("Test missing field qname: " + fieldQname + ", lang: " + lang);
-						}
-
-						ClassAttributeDefinition propDef = dictionaryService.getProperty(fieldQname);
-
-						if ((propDef instanceof PropertyDefinition)
-								&& (DataTypeDefinition.MLTEXT.equals(((PropertyDefinition) propDef).getDataType().getName()))) {
-							// prop is present
-							if (mlTextIsPresent(fieldQname, formulatedEntity.getNodeRef(), lang, currLang, properties)) {
-								logger.debug("mlProp is present");
-								present = true;
-							}
-
-						} else if ((propDef instanceof PropertyDefinition) && (lang == null)) {
-							// non ML field case
-							if ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty()) {
-								logger.debug("regular prop is present");
-								present = true;
-							}
-						} else if ((propDef instanceof PropertyDefinition)
-								&& !DataTypeDefinition.MLTEXT.equals(((PropertyDefinition) propDef).getDataType().getName()) && (lang != null)) {
-							logger.debug("Non ml prop with non null lang, skipping");
-							// case non ml prop with not null lang, we don't care
-							ignore = true;
-
-						} else if ((propDef == null) && (lang == null)) {
-
-							propDef = dictionaryService.getAssociation(fieldQname);
-
-							if (propDef == null) {
-								ignore = true;
-							} else {
-								// only check assoc when lang is null
-								logger.debug("Checking if assoc is found");
-								if (associationService.getTargetAssoc(formulatedEntity.getNodeRef(), fieldQname) != null) {
+						propDef = dictionaryService.getProperty(fieldQname);
+						if (propDef instanceof PropertyDefinition) {
+							if ((DataTypeDefinition.MLTEXT.equals(((PropertyDefinition) propDef).getDataType().getName()))) {
+								if (mlTextIsPresent(fieldQname, formulatedEntity.getNodeRef(), lang, currLang, properties)) {
+									logger.debug(" - mlProp is present");
 									present = true;
-								}
+								} 
+							} else {
+								if (!isFirstLang || ((properties.get(fieldQname) != null) && !properties.get(fieldQname).toString().isEmpty())) {
+									logger.debug(" - regular prop is present: " + properties.get(fieldQname));
+									present = true;
+								} 
 							}
 
 						} else {
-							// lang is not null and it's not a prop
-							logger.debug("Skipping associations on localized catalogs");
-							ignore = true;
-						}
-
-						if (!ignore) {
-							if (!id.toString().isBlank()) {
-								id.append("|");
-							}
-							id.append(currentField);
-
-							for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
-								if (MLTextHelper.getSupportedLocalesList().contains(key)) {
-									Locale loc = MLTextHelper.parseLocale(key);
-									String label = displayName.get(loc) != null ? displayName.get(loc) : "";
-									Locale old = I18NUtil.getLocale();
-									try {
-										I18NUtil.setLocale(loc);
-										if (!label.isBlank()) {
-											label += " " + I18NUtil.getMessage(MESSAGE_OR) + " ";
-										}
-										label += getFieldDisplayName(propDef, i18nKey);
-
-										displayName.addValue(loc, label);
-									} finally {
-										I18NUtil.setLocale(old);
-									}
-
-								}
-							}
-
+							propDef = dictionaryService.getAssociation(fieldQname);
+							// only check assoc when lang is null
+							if (isFirstLang && propDef != null) {
+								if (associationService.getTargetAssoc(formulatedEntity.getNodeRef(), fieldQname) != null) {
+									logger.debug(" - assoc is present");
+									present = true;
+								} 
+							} else {
+								present = true;							}
 						}
 
 					} catch (NamespaceException e) {
+						logger.error(" - Error namespace doesn't exists in catalog " + currentField);
+						present = true;
 						// happens if namespace does not exist
-						ignore = true;
 					}
 				}
+				
+				
+				if (!present) {
+					if (!id.toString().isBlank()) {
+						id.append("|");
+					}
+					id.append(currentField);
 
-				if (ignore) {
-					continue;
+					for (String key : RepoConsts.SUPPORTED_UI_LOCALES.split(",")) {
+						if (MLTextHelper.getSupportedLocalesList().contains(key)) {
+							Locale loc = MLTextHelper.parseLocale(key);
+							String label = displayName.get(loc) != null ? displayName.get(loc) : "";
+							Locale old = I18NUtil.getLocale();
+							try {
+								I18NUtil.setLocale(loc);
+								if (!label.isBlank()) {
+									label += " " + I18NUtil.getMessage(MESSAGE_OR) + " ";
+								}
+								label += getFieldDisplayName(propDef, i18nKey);
+
+								displayName.addValue(loc, label);
+							} finally {
+								I18NUtil.setLocale(old);
+							}
+
+						}
+					}
+
+				} 
+				
+				if( isFormula) {
+					break;
 				}
+
 
 			}
 
-			if (!present && !ignore) {
+			if (!present) {
 				if (logger.isDebugEnabled()) {
-					logger.debug("\tfield " + field + " is absent...");
+					logger.debug(" - field " + field + " is absent...");
 				}
 
 				JSONObject missingField = new JSONObject();

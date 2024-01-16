@@ -37,8 +37,7 @@
 		parent="abstractBeCPGPolicy" depends-on="bcpg.plm.dictionaryBootstrap">
 		<property name="automaticECOService" ref="automaticECOService"/>
 		<property name="entityVersionService" ref="entityVersionService"></property>
-		<property name="enable" value="${beCPG.eco.automatic.enable}"/>
-		<property name="automaticRecordVersionType" value="${beCPG.eco.automatic.record.version.type}"/>
+		<property name="systemConfigurationService" ref="systemConfigurationService"></property>
 	</bean>
 	
    	<bean id="changeOrderPolicy" class="fr.becpg.repo.ecm.policy.ChangeOrderPolicy"

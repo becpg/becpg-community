@@ -55,6 +55,7 @@ import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.BeCPGQueryHelper;
+import fr.becpg.repo.helper.impl.EntitySourceAssoc;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 /**
@@ -224,7 +225,10 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 		
-		queryBuilder.excludeProp(BeCPGModel.PROP_IS_DELETED, "true");
+		Boolean includeDeleted = props != null && props.containsKey(AutoCompleteService.PROP_INCLUDE_DELETED) && (Boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
+		if (!includeDeleted.booleanValue()) {
+			queryBuilder.excludeProp(BeCPGModel.PROP_IS_DELETED, "true");
+		}
 
 		String template = DEFAULT_SEARCH_TEMPLATE;
 		if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_CHARACT)) {
@@ -365,9 +369,10 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 	private List<NodeRef> extractAllSources(NodeRef source, QName fieldQname, List<NodeRef> allSources) {
 		if (!allSources.contains(source)) {
 			allSources.add(source);
-			List<NodeRef> sourceSources = associationService.getSourcesAssocs(source, fieldQname);
-			for (NodeRef sourceSource : sourceSources) {
-				extractAllSources(sourceSource, fieldQname, allSources);
+			List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(Arrays.asList(source),
+					fieldQname, null, true, null);
+			for (EntitySourceAssoc sourceSource : entitySourceAssocs) {
+				extractAllSources(sourceSource.getDataListItemNodeRef(), fieldQname, allSources);
 			}
 		}
 		return allSources;
@@ -403,14 +408,14 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 			List<NodeRef> tmp = queryBuilder.maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list();
 			List<NodeRef> nodesToKeep = new ArrayList<>();
 
-			if (isOrOperand) {
-				for (NodeRef assocNodeRef : targetNodeRefs) {
-					nodesToKeep.addAll(associationService.getSourcesAssocs(assocNodeRef, assocQName));
-				}
-			} else if (!targetNodeRefs.isEmpty()) {
-				nodesToKeep.addAll(associationService.getSourcesAssocs(targetNodeRefs.get(0), assocQName));
-			}
+			
 
+			List<EntitySourceAssoc> entitySourceAssocs = associationService.getEntitySourceAssocs(new ArrayList<>(targetNodeRefs),
+						assocQName, null, isOrOperand, null);
+			for (EntitySourceAssoc assocRef : entitySourceAssocs) {
+				nodesToKeep.add(assocRef.getDataListItemNodeRef());
+			}
+			
 			tmp.retainAll(nodesToKeep);
 			if (!RepoConsts.MAX_RESULTS_UNLIMITED.equals(pageSize)) {
 				ret = tmp.subList(0, Math.min(RepoConsts.MAX_SUGGESTIONS, tmp.size()));

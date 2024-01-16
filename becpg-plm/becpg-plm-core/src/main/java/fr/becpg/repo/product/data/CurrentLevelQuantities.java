@@ -86,7 +86,7 @@ public class CurrentLevelQuantities {
 		this.lossRatio = FormulationHelper.getComponentLossPerc(componentProductData, compoListItem);
 		this.qtyForProduct = compoListItem.getQty() != null ? compoListItem.getQty() : 0d;
 		this.qtyForCost = FormulationHelper.getQtyForCost(compoListItem, 0d, componentProductData,
-				CostsCalculatingFormulationHandler.keepProductUnit);
+				CostsCalculatingFormulationHandler.keepProductUnit());
 		this.netQtyForCost = 1d;
 
 	}
@@ -106,7 +106,7 @@ public class CurrentLevelQuantities {
 		this.qtyForProduct = compoListItem.getQty() != null ? compoListItem.getQty() : 0d;
 		this.netQtyForCost = FormulationHelper.getNetQtyForCost(productData);
 		this.qtyForCost = FormulationHelper.getQtyForCost(compoListItem, productData.getProductLossPerc(), componentProductData,
-				CostsCalculatingFormulationHandler.keepProductUnit);
+				CostsCalculatingFormulationHandler.keepProductUnit());
 
 	}
 

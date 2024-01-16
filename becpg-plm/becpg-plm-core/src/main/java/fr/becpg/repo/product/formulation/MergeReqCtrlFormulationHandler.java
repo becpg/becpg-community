@@ -17,8 +17,8 @@
  ******************************************************************************/
 package fr.becpg.repo.product.formulation;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -27,6 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.repo.formulation.FormulationBaseHandler;
+import fr.becpg.repo.formulation.FormulationExecutor;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.PackagingKitData;
 import fr.becpg.repo.product.data.PackagingMaterialData;
@@ -58,6 +59,11 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 
 	private SystemConfigurationService systemConfigurationService;
 	
+	private FormulationExecutor formulationExecutor;
+	
+	public void setFormulationExecutor(FormulationExecutor formulationExecutor) {
+		this.formulationExecutor = formulationExecutor;
+	}
 
 	public void setSystemConfigurationService(SystemConfigurationService systemConfigurationService) {
 		this.systemConfigurationService = systemConfigurationService;
@@ -90,13 +96,13 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 				appendChildReq((ProductData) scorableEntity, scorableEntity.getReqCtrlList());
 			}
 
-			scorableEntity.merge();
+			scorableEntity.merge(formulationExecutor.getDisabledFormulationChainIds(scorableEntity));
 			
 			if (maxRclSourcesToKeep() != null && maxRclSourcesToKeep() > 0) {
 
 				for (ReqCtrlListDataItem r : scorableEntity.getReqCtrlList()) {
 					if (r.getSources() != null) {
-						r.setSources(new LinkedList<>(r.getSources().subList(0, Math.min(r.getSources().size(), maxRclSourcesToKeep()))));
+						r.setSources(new ArrayList<>(r.getSources().subList(0, Math.min(r.getSources().size(), maxRclSourcesToKeep()))));
 					}
 				}
 			}
@@ -150,6 +156,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 						(addChildRclSources() == null || Boolean.TRUE.equals(addChildRclSources())) ? tmp.getSources() : null,
 						tmp.getReqDataType() != null ? tmp.getReqDataType() : RequirementDataType.Nutrient);
 				reqCtl.setRegulatoryCode(tmp.getRegulatoryCode());
+				reqCtl.setFormulationChainId(tmp.getFormulationChainId());
 				toAdd.add(reqCtl);
 			}
 		}
@@ -158,7 +165,7 @@ public class MergeReqCtrlFormulationHandler extends FormulationBaseHandler<Scora
 
 	@Override
 	public void onError(ScorableEntity repositoryEntity) {
-		repositoryEntity.merge();
+		repositoryEntity.merge(formulationExecutor.getDisabledFormulationChainIds(repositoryEntity));
 		super.onError(repositoryEntity);
 	}
 

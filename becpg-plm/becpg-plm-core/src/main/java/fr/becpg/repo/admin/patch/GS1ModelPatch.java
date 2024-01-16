@@ -180,7 +180,7 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>(GS1ModelPatch.class.getSimpleName(), transactionService.getRetryingTransactionHelper(),
-				workProvider, BATCH_THREAD, BATCH_SIZE, applicationEventPublisher, logger, INC);
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<>() {
 
@@ -220,7 +220,7 @@ public class GS1ModelPatch extends AbstractBeCPGPatch {
 
 		};
 		
-		batchProcessor.process(worker, true);
+		batchProcessor.processLong(worker, true);
 	
 
 	}

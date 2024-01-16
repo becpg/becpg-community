@@ -158,6 +158,10 @@ public interface PLMModel {
 	QName PROP_INGLIST_QTY_PERC = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyPerc");
 	
 	QName PROP_INGLIST_QTY_PERCWITHYIELD = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyPercWithYield");
+	
+	QName PROP_INGLIST_QTY_PERCWITHSECONDARYYIELD = QName.createQName(BeCPGModel.BECPG_URI, "ingListQtyPercWithSecondaryYield");
+	
+
 	/** Constant <code>PROP_INGLIST_IS_GMO</code> */
 	QName PROP_INGLIST_IS_GMO = QName.createQName(BeCPGModel.BECPG_URI, "ingListIsGMO");
 	/** Constant <code>PROP_INGLIST_IS_IONIZED</code> */
@@ -295,6 +299,8 @@ public interface PLMModel {
 	QName PROP_FIL_REQ_MESSAGE = QName.createQName(BeCPGModel.BECPG_URI, "filReqMessage");
 	/** Constant <code>PROP_FIL_QTY_PERC_MAXI</code> */
 	QName PROP_FIL_QTY_PERC_MAXI = QName.createQName(BeCPGModel.BECPG_URI, "filQtyPercMaxi");
+	
+	QName PROP_FIL_QTY_PERC_MAXI_UNIT = QName.createQName(BeCPGModel.BECPG_URI, "filQtyPercMaxiUnit");
 	/** Constant <code>PROP_FIL_IS_GMO</code> */
 	QName PROP_FIL_IS_GMO = QName.createQName(BeCPGModel.BECPG_URI, "filIsGMO");
 	/** Constant <code>PROP_FIL_IS_IONIZED</code> */
@@ -384,7 +390,9 @@ public interface PLMModel {
 	QName PROP_ALLERGEN_TYPE = QName.createQName(BeCPGModel.BECPG_URI, "allergenType");
 	/** Constant <code>PROP_ALLERGEN_REGULATORY_THRESHOLD</code> */
 	QName PROP_ALLERGEN_REGULATORY_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "allergenRegulatoryThreshold");
-
+	
+	QName PROP_ALLERGEN_INVOL_REGULATORY_THRESHOLD = QName.createQName(BeCPGModel.BECPG_URI, "allergenInVoluntaryRegulatoryThreshold");
+	
 	// cost
 	/** Constant <code>TYPE_COST</code> */
 	QName TYPE_COST = QName.createQName(BeCPGModel.BECPG_URI, "cost");
@@ -406,6 +414,9 @@ public interface PLMModel {
 	QName PROP_LCATYPE = QName.createQName(BeCPGModel.BECPG_URI, "lcaType");
 	QName ASSOC_LCALIST_LCA = QName.createQName(BeCPGModel.BECPG_URI, "lcaListLca");
 	QName TYPE_LCALIST = QName.createQName(BeCPGModel.BECPG_URI, "lcaList");
+	QName PROP_LCA_NORMALIZATION = QName.createQName(BeCPGModel.BECPG_URI, "lcaNormalization");
+	QName PROP_LCA_PONDERATION = QName.createQName(BeCPGModel.BECPG_URI, "lcaPonderation");
+	QName PROP_LCA_CODE = QName.createQName(BeCPGModel.BECPG_URI, "lcaCode");
 
 	// ing
 	/** Constant <code>TYPE_ING</code> */
@@ -684,6 +695,8 @@ public interface PLMModel {
 	
 	QName PROP_NUTRIENT_PROFILE_CATEGORY = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileCategory");
 	
+	QName PROP_NUTRIENT_PROFILE_VERSION = QName.createQName(BeCPGModel.BECPG_URI, "nutrientProfileVersion");
+	
 	
 	
 	//Eco score
@@ -711,11 +724,19 @@ public interface PLMModel {
 	QName PROP_REGULATORY_CODE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryCode");
 	
 	QName TYPE_REGULATORY_USAGE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryUsage");
+	
+	QName PROP_REGULATORY_COMMENT = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryComment");
 
 	QName PROP_REGULATORY_MODULE = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryModule");
 	
 	QName PROP_REGULATORY_ID = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryId");
-
+	
+	QName PROP_REGULATORY_RESULT = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryResult");
+	
+	QName TYPE_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "regulatoryList");
+	
+	QName TYPE_ING_REGULATORY_LIST = QName.createQName(BeCPGModel.BECPG_URI, "ingRegulatoryList");
+	
 	//Chemical code
 	/** Constant <code>PROP_CAS_NUMBER</code> */
 	QName PROP_CAS_NUMBER= QName.createQName(BeCPGModel.BECPG_URI, "casNumber");
@@ -747,13 +768,16 @@ public interface PLMModel {
 	
 	QName PROP_GLOP_VALUE =  QName.createQName(BeCPGModel.BECPG_URI, "glopValue");
 	
-	QName PROP_LABELCLAIM_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "isLabelClaimPropagateUp");
+	QName PROP_IS_CHARACT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "isCharactPropagateUp");
 	
 	QName ASPECT_PROPAGATE_UP = QName.createQName(BeCPGModel.BECPG_URI, "propagateUpAspect");
 
 	QName ASSOC_PROPAGATED_CHARACTS = QName.createQName(BeCPGModel.BECPG_URI, "propagatedCharacts");
 	
-	
-	
-	
+	QName PROP_BEST_BEFORE_DATE =  QName.createQName(BeCPGModel.BECPG_URI, "bestBeforeDate");
+	QName PROP_USE_BY_DATE =  QName.createQName(BeCPGModel.BECPG_URI, "useByDate");
+	QName PROP_PERIOD_AFTER_OPENING =  QName.createQName(BeCPGModel.BECPG_URI, "periodAfterOpening");
+
+
+		
 }

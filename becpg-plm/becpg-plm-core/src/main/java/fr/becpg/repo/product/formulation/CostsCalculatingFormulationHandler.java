@@ -6,6 +6,7 @@ package fr.becpg.repo.product.formulation;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +32,6 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 
 	private static final String MESSAGE_FORMULATE_COST_LIST_ERROR = "message.formulate.costList.error";
 	private static final Log logger = LogFactory.getLog(CostsCalculatingFormulationHandler.class);
-
 
 	/** {@inheritDoc} */
 	@Override
@@ -194,7 +194,7 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 		formulatedProduct.setPreviousUnitTotalCost(previousTotalVariableCost);
 		formulatedProduct.setFutureUnitTotalCost(futureTotalVariableCost);
 	
-		if ((formulatedProduct.getUnitPrice() != null) && (formulatedProduct.getUnitTotalCost() != null)) {
+		if ((formulatedProduct.getUnitPrice() != null) && formulatedProduct.getUnitPrice()!=0d && (formulatedProduct.getUnitTotalCost() != null)) {
 	
 			// profitability
 			double profit = formulatedProduct.getUnitPrice() - formulatedProduct.getUnitTotalCost();
@@ -234,6 +234,14 @@ public class CostsCalculatingFormulationHandler extends AbstractCostCalculatingF
 	@Override
 	protected QName getCostUnitPropName() {
 		return PLMModel.PROP_COSTCURRENCY;
+	}
+
+
+	@Override
+	protected CostListDataItem newSimpleListDataItem(NodeRef charactNodeRef) {
+		CostListDataItem costListDataItem = new CostListDataItem();
+		costListDataItem.setCharactNodeRef(charactNodeRef);
+		return costListDataItem;
 	}
 
 }

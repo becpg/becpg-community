@@ -10,15 +10,18 @@ import java.util.Objects;
 import org.alfresco.service.cmr.repository.NodeRef;
 
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.product.data.RegulatoryEntity;
+import fr.becpg.repo.product.data.constraints.RegulatoryResult;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
+import fr.becpg.repo.repository.annotation.AlfSingleAssoc;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
 @AlfQname(qname = "bcpg:regulatoryList")
-public class RegulatoryListDataItem extends BeCPGDataObject {
+public class RegulatoryListDataItem  extends BeCPGDataObject implements RegulatoryEntity {
 
 	private static final long serialVersionUID = 6048458461427271748L;
 
@@ -26,7 +29,7 @@ public class RegulatoryListDataItem extends BeCPGDataObject {
 	
 	private List<NodeRef> regulatoryUsages;
 	
-	private String regulatoryResult;
+	private RegulatoryResult regulatoryResult;
 	
 	private SystemState regulatoryState;
 	
@@ -35,6 +38,30 @@ public class RegulatoryListDataItem extends BeCPGDataObject {
 	private String requirementChecksum;
 	
 	private String regulatoryRecipeId;
+	
+	private NodeRef limitingIngredient;
+	
+	private Double maximumDosage;
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:regulatoryMaximumDosage")
+	public Double getMaximumDosage() {
+		return maximumDosage;
+	}
+	
+	public void setMaximumDosage(Double maximumDosage) {
+		this.maximumDosage = maximumDosage;
+	}
+	
+	@AlfSingleAssoc
+	@AlfQname(qname = "bcpg:limitingIngredient")
+	public NodeRef getLimitingIngredient() {
+		return limitingIngredient;
+	}
+	
+	public void setLimitingIngredient(NodeRef limitingIngredient) {
+		this.limitingIngredient = limitingIngredient;
+	}
 	
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryRecipeId")
@@ -78,11 +105,11 @@ public class RegulatoryListDataItem extends BeCPGDataObject {
 
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryResult")
-	public String getRegulatoryResult() {
+	public RegulatoryResult getRegulatoryResult() {
 		return regulatoryResult;
 	}
 
-	public void setRegulatoryResult(String regulatoryResult) {
+	public void setRegulatoryResult(RegulatoryResult regulatoryResult) {
 		this.regulatoryResult = regulatoryResult;
 	}
 

@@ -17,6 +17,7 @@
  ******************************************************************************/
 package fr.becpg.repo.project.impl;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -25,7 +26,6 @@ import org.alfresco.util.ISO8601DateFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.ibm.icu.util.Calendar;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;

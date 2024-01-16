@@ -44,9 +44,6 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 
 	private IntegrityChecker integrityChecker;
 
-	private final int batchThreads = 3;
-	private final int batchSize = 40;
-	private final long count = batchThreads * batchSize;
 
 	/** {@inheritDoc} */
 	@Override
@@ -60,7 +57,7 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 			final long maxNodeId = getNodeDAO().getMaxNodeId();
 
 			long minSearchNodeId = 0;
-			long maxSearchNodeId = count;
+			long maxSearchNodeId = INC;
 
 			final Pair<Long, QName> val = getQnameDAO().getQName(PLMModel.TYPE_LABELCLAIMLIST);
 
@@ -89,8 +86,8 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 								result.add(status.getNodeRef());
 							}
 						}
-						minSearchNodeId = minSearchNodeId + count;
-						maxSearchNodeId = maxSearchNodeId + count;
+						minSearchNodeId = minSearchNodeId + INC;
+						maxSearchNodeId = maxSearchNodeId + INC;
 					}
 				}
 
@@ -99,7 +96,7 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 		};
 
 		BatchProcessor<NodeRef> batchProcessor = new BatchProcessor<>("ClaimListValuePatch", transactionService.getRetryingTransactionHelper(),
-				workProvider, batchThreads, batchSize, applicationEventPublisher, logger, 1000);
+				workProvider, BATCH_THREADS, BATCH_SIZE, applicationEventPublisher, logger, 1000);
 
 		BatchProcessWorker<NodeRef> worker = new BatchProcessWorker<NodeRef>() {
 
@@ -139,7 +136,7 @@ public class ClaimListValuePatch extends AbstractBeCPGPatch {
 
 		integrityChecker.setEnabled(false);
 		try {
-			batchProcessor.process(worker, true);
+			batchProcessor.processLong(worker, true);
 		} finally {
 			integrityChecker.setEnabled(true);
 		}

@@ -17,9 +17,11 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.alfresco.model.ContentModel;
@@ -1025,9 +1027,12 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(type);
 
 		boolean doQuery = false;
+		boolean hasParent = false;
 
 		// nodeColumnKeys
 		if ((classMapping != null) && !classMapping.getNodeColumnKeys().isEmpty()) {
+			
+			Set<QName> nullAttributes = new HashSet<>();
 
 			for (QName attribute : classMapping.getNodeColumnKeys()) {
 
@@ -1044,16 +1049,19 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 								AbstractBeCPGQueryBuilder.encodePath(importContext.getPath()));
 						if(folderNodeRef == null) {
 							logger.warn("No folder found for :"+importContext.getPath());
-						} else {
+						} else if(!hasParent){
 							queryBuilder.parent(folderNodeRef);
+							hasParent = true;
 						}
 					}
 
-					if (BeCPGModel.PROP_LV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LKV_VALUE.isMatch(attribute)) {
+					if (BeCPGModel.PROP_LV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LKV_VALUE.isMatch(attribute) || BeCPGModel.PROP_LV_CODE.isMatch(attribute)) {
 						if ( (properties.get(attribute) instanceof MLText)) {
 							queryBuilder.andPropEquals(attribute, ((MLText) properties.get(attribute)).getDefaultValue());
 						} else if (properties.get(attribute) != null) {
 							queryBuilder.andPropEquals(attribute, properties.get(attribute).toString());
+						} else {
+							logger.debug("Value of NodeColumnKey " + attribute + " is null (or it is not a property).");
 						}
 					}
 
@@ -1079,9 +1087,13 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 						queryBuilder.andPropEquals(attribute, value);
 					}
 					doQuery = true;
-				} else if (!doQuery) {
-					logger.warn("Value of NodeColumnKey " + attribute + " is null (or it is not a property).");
+				} else {
+					nullAttributes.add(attribute);
 				}
+			}
+			
+			 if (!doQuery && !nullAttributes.isEmpty()) {
+				logger.warn("Value of NodeColumnKeys " + nullAttributes.toString() + " is null (or it is not a property). For "+ type);
 			}
 
 		} else {
@@ -1116,6 +1128,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 					// #3433 by default look by path or provide mapping
 					if (ContentModel.PROP_NAME.equals(propName) && !((propDef != null) && BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName()))) {
 						queryBuilder.parent(importContext.getParentNodeRef());
+						hasParent = true;
 					}
 					doQuery = true;
 				}
@@ -1131,16 +1144,16 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (doQuery) {
 
 			// #3433
-			if (entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && (propDef != null)
+			if (!hasParent && entityDictionaryService.isSubClass(type, BeCPGModel.TYPE_ENTITYLIST_ITEM) && (propDef != null)
 					&& BeCPGModel.PROP_PARENT_LEVEL.equals(propDef.getName())) {
 				queryBuilder.parent(importContext.getParentNodeRef());
-			}
-
-			if (parentRef != null) {
+			} else if (parentRef != null && ! hasParent) {
 				queryBuilder.inParent(parentRef);
 			}
-			logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
-
+			if(logger.isDebugEnabled()) {
+				logger.debug("findNodeByKeyOrCode: " + queryBuilder.toString());
+			}
+			
 			for (NodeRef tmpNodeRef : queryBuilder.inDB().ftsLanguage().list()) {
 				if (!nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION)
 						&& !nodeService.hasAspect(tmpNodeRef, BeCPGModel.ASPECT_ENTITY_TPL)) {
@@ -1294,7 +1307,7 @@ public class AbstractImportVisitor implements ImportVisitor, ApplicationContextA
 		if (classMapping != null) {
 			if (assoc != null) {
 				assocPath = classMapping.getPaths().get(assoc);
-			} else {
+			} else if(propDef!=null) {
 				assocPath = classMapping.getPaths().get(propDef.getName());
 			}
 		}

@@ -549,7 +549,7 @@ var g; // gantt var
                          */
                         onFilterChanged : function PL_onFilterChanged(layer, args)
                         {
-                        	
+                        	this.queryExecutionId = null;
                             var filter = Alfresco.util.cleanBubblingObject(args[1]);
                             filter = (this.options.filter.filterId && filter.filterId != "filterform") ? this.options.filter : filter; 
                             this.options.filter = filter;
@@ -581,7 +581,7 @@ var g; // gantt var
                         onMenuFilterChanged : function PTL_onFilterChange(p_sType, p_aArgs) {
                            var menuItem = p_aArgs[1];
                            if (menuItem) {
-                          	 
+                          	 this.queryExecutionId = null;
                           	var value = menuItem.value;
                               var me = this
 
@@ -610,7 +610,7 @@ var g; // gantt var
 
                         onSimpleDetailed : function PL_onSimpleDetailed(layer, args) {
                         	 var simpleViewMode = Alfresco.util.cleanBubblingObject(args[1]);
-                        	 
+                        	 this.queryExecutionId = null;
                         	 if(this.view == "dataTable"){
                         		 if(simpleViewMode.simpleView){
                         			 this.options.simpleView = true;
@@ -640,7 +640,7 @@ var g; // gantt var
                         	var obj = args[1], instance = this;
                             if (obj && (obj.nodeRef !== null))
                             {
-                               
+                                this.queryExecutionId = null;
                                 window.location = beCPG.util.entityURL(instance.options.siteId,
                                 		obj.nodeRef , "pjt:project",null,"View-properties");
                                                 

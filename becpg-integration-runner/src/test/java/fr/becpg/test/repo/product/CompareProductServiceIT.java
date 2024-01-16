@@ -35,6 +35,7 @@ import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.AllergenListDataItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
+import fr.becpg.repo.system.SystemConfigurationService;
 
 /**
  * The Class CompareProductServiceTest.
@@ -50,6 +51,9 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 	
 	@Autowired
 	private EntityVersionService entityVersionService;
+	
+	@Autowired
+	private SystemConfigurationService systemConfigurationService;
 	
 	private final QName ASSOC_PRODUCT_GEO_ORIGIN = QName.createQName(BeCPGModel.BECPG_URI, "productGeoOrigin");
 	
@@ -324,10 +328,12 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 	@Test
 	public void testStructComparison() {
 
-		String previousNameFormat = nameExtractor.getProductNameFormat();
 		try {
 
-			nameExtractor.setProductNameFormat("{cm:name}");
+			inWriteTx(() -> {
+				systemConfigurationService.updateConfValue("beCPG.product.name.format", "{cm:name}");
+				return null;
+			});
 
 			fp1NodeRef = inWriteTx(() -> {
 
@@ -442,7 +448,7 @@ public class CompareProductServiceIT extends AbstractCompareProductTest {
 			});
 
 		} finally {
-			nameExtractor.setProductNameFormat(previousNameFormat);
+			systemConfigurationService.resetConfValue("beCPG.product.name.format");
 		}
 	}
 

@@ -117,7 +117,7 @@
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:batch?classNames=bcpg:entityTplAspect
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:batch?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
@@ -216,10 +216,11 @@
 					</field>
 					<field id="bcpg:entityTplRef" set="mainInfo" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:batch?classNames=bcpg:entityTplAspect
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:batch?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="qa:batchId" set="mainInfo" >
@@ -242,6 +243,7 @@
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
+							<control-param name="isSearch">true</control-param>
 						</control>
 					</field>
 					<field id="qa:batchQty" set="product-info" />
@@ -323,7 +325,7 @@
 					<field id="bcpg:entityTplRef" set="mainInfo">
 						<control
 							template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
-							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:batch?classNames=bcpg:entityTplAspect
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/qa:batch?classNames=bcpg:entityTplAspect&amp;excludeProps=bcpg:entityTplEnabled%7Cfalse
 							</control-param>
 							<control-param name="pageLinkTemplate">entity-data-lists?list=View-properties&amp;nodeRef={nodeRef}
 							</control-param>
@@ -1761,7 +1763,7 @@
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="qa:slControlPoint" set="2-col"/>
 					<field id="qa:sdlQty" set="2-col"/>
-					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)" set="2-col"/>
+					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M,0.5BBD,2UBD,0.75PAO (1D: 1 day, 2W: 2 weeks, 3M: 3 months, 0.5BBD: 0.5 * bestBeforeDate, 2UBD: 2 * useByDate, 0.75PAO: 0.75 * periodAfterOpening)" set="2-col"/>
 					<field id="qa:sdlFreq" set="2-col"/>
 					<field id="qa:sdlFreqUnit" set="2-col"/>
 					<field id="qa:slControlStep" set="2-col"/>
@@ -1799,7 +1801,7 @@
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="qa:slControlPoint" set="2-col"/>
 					<field id="qa:sdlQty" set="2-col"/>
-					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)" set="2-col"/>
+					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M,0.5BBD,2UBD,0.75PAO (1D: 1 day, 2W: 2 weeks, 3M: 3 months, 0.5BBD: 0.5 * bestBeforeDate, 2UBD: 2 * useByDate, 0.75PAO: 0.75 * periodAfterOpening)" set="2-col"/>
 					<field id="qa:sdlFreq" set="2-col"/>
 					<field id="qa:sdlFreqUnit" set="2-col"/>
 					<field id="qa:slControlStep" set="2-col"/>
@@ -1831,7 +1833,7 @@
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="qa:slControlPoint" set="2-col"/>
 					<field id="qa:sdlQty" set="2-col"/>
-					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)" set="2-col"/>
+					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M,0.5BBD,2UBD,0.75PAO (1D: 1 day, 2W: 2 weeks, 3M: 3 months, 0.5BBD: 0.5 * bestBeforeDate, 2UBD: 2 * useByDate, 0.75PAO: 0.75 * periodAfterOpening)" set="2-col"/>
 					<field id="qa:sdlFreq" set="2-col"/>
 					<field id="qa:sdlFreqUnit" set="2-col"/>
 					<field id="qa:slControlStep" set="2-col"/>
@@ -1843,7 +1845,7 @@
 							<control-param name="rows">3</control-param>
 						</control>
 					</field>
-					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M (1D: 1 day, 2W: 2 weeks, 3M : 3 months)"  set="2-col"/>
+					<field id="qa:sdlFreqText" help="eg: 1D,2W,3M,0.5BBD,2UBD,0.75PAO (1D: 1 day, 2W: 2 weeks, 3M: 3 months, 0.5BBD: 0.5 * bestBeforeDate, 2UBD: 2 * useByDate, 0.75PAO: 0.75 * periodAfterOpening)"  set="2-col"/>
 					<field id="qa:slReaction"  set="2-col">
 						<control template="/org/alfresco/components/form/controls/textarea.ftl">
 							<control-param name="rows">3</control-param>
@@ -1966,14 +1968,19 @@
 					<show id="qa:clTextCriteriaLimit" />
 					<show id="qa:clTemperature" />
 					<show id="qa:clMethod" />
-					<show id="rep:reportKinds" />
+					<show id="rep:reportKinds" force="true" />
 					<show id="qa:clRequired" />
 				</field-visibility>
 
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="1-col" />
-					<field id="qa:clCharacts" set="2-col"/>
+					<field id="qa:clCharacts" set="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/characts</control-param>
+							</control>
+					</field>
 					<field id="qa:cdlQty" set="2-col"/>
 					<field id="qa:cdlFreq" set="2-col"/>
 					<field id="qa:cdlFreqUnit" set="2-col"/>
@@ -2048,7 +2055,12 @@
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="1-col" />
-					<field id="qa:clCharacts" set="2-col"/>
+					<field id="qa:clCharacts" set="2-col">
+						<control
+							template="/org/alfresco/components/form/controls/autocomplete-association.ftl" >
+							<control-param name="ds">becpg/autocomplete/characts</control-param>
+						</control>
+					</field>
 					<field id="qa:cdlQty" set="2-col"/>
 					<field id="qa:cdlFreq" set="2-col"/>
 					<field id="qa:cdlFreqUnit" set="2-col"/>

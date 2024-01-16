@@ -104,7 +104,10 @@ public class HierarchyServiceImpl implements HierarchyService {
 
 	/** {@inheritDoc} */
 	@Override
-	public List<NodeRef> getHierarchiesByPath(String path, NodeRef parentNodeRef, String value) {
+	public List<NodeRef> getHierarchiesByPath(String path, NodeRef parentNodeRef, String value, boolean includeDeleted) {
+		if (includeDeleted) {
+			return getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value, false).list();
+		}
 		return getLuceneQuery(path, parentNodeRef, BeCPGModel.PROP_LKV_VALUE, value, false).andPropEquals(BeCPGModel.PROP_IS_DELETED, "false").list();
 	}
 
