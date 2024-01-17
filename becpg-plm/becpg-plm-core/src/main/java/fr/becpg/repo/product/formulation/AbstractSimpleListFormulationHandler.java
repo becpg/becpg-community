@@ -297,7 +297,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		List<T> toRemove = new ArrayList<>();
 
 		cleanSimpleList( simpleListDataList, isFormulatedProduct, toRemove);
-		synchronizeTemplate(formulatedProduct, simpleListDataList);
+		synchronizeTemplate(formulatedProduct, simpleListDataList, toRemove);
 
 		if (isFormulatedProduct) {
 			visitComposition(formulatedProduct, simpleListDataList, simpleListQtyProvider, null, toRemove);
@@ -934,7 +934,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 	 * @param simpleListDataList a {@link java.util.List} object.
 	 */
 	@SuppressWarnings("unchecked")
-	protected void synchronizeTemplate(ProductData formulatedProduct, List<T> simpleListDataList) {
+	protected void synchronizeTemplate(ProductData formulatedProduct, List<T> simpleListDataList, List<T> toRemove) {
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 
 			List<T> templateSimpleListDataList = getDataListVisited(formulatedProduct.getEntityTpl());
@@ -954,7 +954,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 									((CompositeDataItem<T>) sl).setParent(null);
 								}
 							}
-							
+							toRemove.remove(sl);
 							break;
 						}
 					}
