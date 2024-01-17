@@ -85,7 +85,7 @@ function main()
 	      
 	    model.widgets.push(entityCatalog);  
 	    
-	       var entitySuggestions = {
+/*	       var entitySuggestions = {
 	 	         id : "EntitySuggestions", 
 	 	         name : "beCPG.component.EntitySuggestions",
 	 	         initArgs :  ["\"" + args.htmlid+"_sug\""],
@@ -94,7 +94,7 @@ function main()
 	 	         }
 	 	   };
 	      
-	    model.widgets.push(entitySuggestions);  
+	    model.widgets.push(entitySuggestions);  */
       }
       
       
