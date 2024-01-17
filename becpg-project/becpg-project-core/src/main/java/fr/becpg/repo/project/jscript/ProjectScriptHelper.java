@@ -44,6 +44,7 @@ import fr.becpg.model.ProjectModel;
 import fr.becpg.repo.data.hierarchicalList.Composite;
 import fr.becpg.repo.data.hierarchicalList.CompositeHelper;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.project.ProjectService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.projectList.BudgetListDataItem;
@@ -72,6 +73,12 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 	private ProjectService projectService;
 	
 	private ServiceRegistry serviceRegistry;
+	
+	private EntityService entityService;
+	
+	public void setEntityService(EntityService entityService) {
+		this.entityService = entityService;
+	}
 
 	public void setServiceRegistry(ServiceRegistry serviceRegistry) {
 		this.serviceRegistry = serviceRegistry;
@@ -197,47 +204,52 @@ public final class ProjectScriptHelper extends BaseScopableProcessorExtension {
 			if (taskAssocs != null && !taskAssocs.isEmpty()) {
 				NodeRef taskNodeRef = taskAssocs.get(0).getTargetRef();
 
+				NodeRef projectNodeRef = null;
+
 				List<AssociationRef> projectAssocs = nodeService.getSourceAssocs(taskNodeRef,
 						ProjectModel.ASSOC_PROJECT_CUR_TASKS);
-
+				
 				if (projectAssocs != null && !projectAssocs.isEmpty()) {
-					NodeRef projectNodeRef = projectAssocs.get(0).getSourceRef();
-					if ((url != null) && url.contains("{")) {
-						Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(url);
-						StringBuffer sb = new StringBuffer();
-						while (patternMatcher.find()) {
+					projectNodeRef = projectAssocs.get(0).getSourceRef();
+				} else {
+					projectNodeRef = entityService.getEntityNodeRef(taskNodeRef, nodeService.getType(taskNodeRef));
+				}
+				
+				if (projectNodeRef != null && (url != null) && url.contains("{")) {
+					Matcher patternMatcher = Pattern.compile("\\{([^}]+)\\}").matcher(url);
+					StringBuffer sb = new StringBuffer();
+					while (patternMatcher.find()) {
 
-							String assocQname = patternMatcher.group(1);
-							StringBuilder replacement = new StringBuilder();
-							if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)) {
-								String[] splitted = assocQname.split("\\|");
-								replacement.append(extractDeliverableProp(projectNodeRef, splitted));
+						String assocQname = patternMatcher.group(1);
+						StringBuilder replacement = new StringBuilder();
+						if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.NODEREF_URL_PARAM)) {
+							String[] splitted = assocQname.split("\\|");
+							replacement.append(extractDeliverableProp(projectNodeRef, splitted));
 
-							} else if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM)) {
-								String[] splitted = assocQname.split("\\|");
-								replacement.append(extractDeliverableProp(taskNodeRef, splitted));
+						} else if ((assocQname != null) && assocQname.startsWith(DeliverableUrl.TASK_URL_PARAM)) {
+							String[] splitted = assocQname.split("\\|");
+							replacement.append(extractDeliverableProp(taskNodeRef, splitted));
 
-							} else if (assocQname != null) {
-								String[] splitted = assocQname.split("\\|");
-								List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef,
-										QName.createQName(splitted[0], namespaceService));
-								if (assocs != null) {
-									for (AssociationRef assoc : assocs) {
-										if (replacement.length() > 0) {
-											replacement.append(",");
-										}
-										replacement.append(extractDeliverableProp(assoc.getTargetRef(), splitted));
+						} else if (assocQname != null) {
+							String[] splitted = assocQname.split("\\|");
+							List<AssociationRef> assocs = nodeService.getTargetAssocs(projectNodeRef,
+									QName.createQName(splitted[0], namespaceService));
+							if (assocs != null) {
+								for (AssociationRef assoc : assocs) {
+									if (replacement.length() > 0) {
+										replacement.append(",");
 									}
+									replacement.append(extractDeliverableProp(assoc.getTargetRef(), splitted));
 								}
 							}
-
-							patternMatcher.appendReplacement(sb, replacement != null ? replacement.toString() : "");
-
 						}
-						patternMatcher.appendTail(sb);
 
-						return sb.toString();
+						patternMatcher.appendReplacement(sb, replacement != null ? replacement.toString() : "");
+
 					}
+					patternMatcher.appendTail(sb);
+
+					return sb.toString();
 				}
 			}
 
