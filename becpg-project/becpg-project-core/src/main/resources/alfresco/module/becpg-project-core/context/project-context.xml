@@ -242,6 +242,7 @@
 		<property name="entityListDAO" ref="entityListDAO" />
 		<property name="projectService" ref="projectService" />
 		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="entityService" ref="entityService" />
 	</bean>
     
 
