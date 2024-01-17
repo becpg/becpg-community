@@ -214,11 +214,11 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 
 	/** {@inheritDoc} */
 	@Override
-	protected void synchronizeTemplate(ProductData formulatedProduct, List<T> simpleListDataList) {
+	protected void synchronizeTemplate(ProductData formulatedProduct, List<T> simpleListDataList, List<T> toRemove) {
 
 		if ((formulatedProduct.getEntityTpl() != null) && !formulatedProduct.getEntityTpl().equals(formulatedProduct)) {
 			getDataListVisited(formulatedProduct.getEntityTpl())
-					.forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, true));
+					.forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, true, toRemove));
 
 			// check sorting
 			int lastSort = 0;
@@ -242,7 +242,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		}
 		if (formulatedProduct.getClients() != null) {
 			for (ClientData client : formulatedProduct.getClients()) {
-				getDataListVisited(client).forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false));
+				getDataListVisited(client).forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false, toRemove));
 			}
 		}
 		
@@ -250,7 +250,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 		if (formulatedProduct.getSuppliers() != null) {
 			for (NodeRef supplierNodeRef : formulatedProduct.getSuppliers()) {
 				SupplierData supplier = (SupplierData) alfrescoRepository.findOne(supplierNodeRef);
-				getDataListVisited(supplier).forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false));
+				getDataListVisited(supplier).forEach(templateCostList -> synchronizeCost(formulatedProduct, templateCostList, simpleListDataList, false, toRemove));
 			}
 		}
 
@@ -279,7 +279,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	}
 	
 	private void synchronizeCost(ProductData formulatedProduct, T templateCostListItem, List<T> costList,
-			boolean isTemplateCost) {
+			boolean isTemplateCost, List<T> toRemove) {
 
 		boolean addCost = !costList.isEmpty() || templateCostListItem.getPlants().isEmpty() || !Collections.disjoint(templateCostListItem.getPlants(), formulatedProduct.getAllPlants());
 		for (T costListItem : costList) {
@@ -299,6 +299,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 					if (!Boolean.TRUE.equals(costListItem.getIsManual())) {
 						copyTemplateCost(formulatedProduct, templateCostListItem, costListItem);
 					}
+					toRemove.remove(costListItem);
 					addCost = false;
 					break;
 				}
