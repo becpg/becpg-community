@@ -14,9 +14,9 @@
    <#include "../form/form.js.ftl"/>  
    <@script src="${url.context}/res/components/comments/comments-list.js" group="properties-view"/>
    <@script src="${url.context}/res/components/entity-catalog/entity-catalog.js" group="properties-view"/>
-   <@script src="${url.context}/res/components/entity-suggestions/stomp.js" group="properties-view"/>
-   <@script src="${url.context}/res/components/entity-suggestions/entity-suggestions.js" group="properties-view"/>
-    <#--  <@script src="${url.context}/res/components/entity-charact-views/properties-view.js" group="properties-view"/> -->
+   <#--  <@script src="${url.context}/res/components/entity-suggestions/stomp.js" group="properties-view"/> -->
+   <#--  <@script src="${url.context}/res/components/entity-suggestions/entity-suggestions.js" group="properties-view"/> -->
+   <@script src="${url.context}/res/components/entity-charact-views/properties-view.js" group="properties-view"/>
 </@>
 
 
