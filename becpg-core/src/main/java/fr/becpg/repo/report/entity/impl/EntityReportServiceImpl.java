@@ -68,6 +68,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Attribute;
 import org.dom4j.Element;
+import org.dom4j.Node;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -517,7 +518,6 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		}
 
 		String reportKindCode = "";
-		String reportKindNoneCode = "None";
 		if (tplNodeRef != null) {
 			List<String> reportKindProp = (List<String>) nodeService.getProperty(tplNodeRef, ReportModel.PROP_REPORT_KINDS);
 			if ((reportKindProp != null) && !reportKindProp.isEmpty()) {
@@ -526,44 +526,17 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		}
 
 		// Filter XML report by reportKind
+		List<Node> dataListsElements = dataXml.selectNodes("//dataLists");
+		if (dataListsElements != null) {
+			for (Node dataListsElement : dataListsElements) {
+				if (dataListsElement.getName().equals("dataLists") && dataListsElement instanceof Element) {
+					filterDatalistsByReportKind(reportKindCode, (Element) dataListsElement);
+				}
+			}
+		}
 		String[] entityParams = null;
 		for (Iterator<Element> entityIterator = dataXml.elementIterator(); entityIterator.hasNext();) {
 			Element entityEl = entityIterator.next();
-			if (entityEl.getName().equals("dataLists")) {
-
-				for (Iterator<Element> datalistsIterator = entityEl.elementIterator(); datalistsIterator.hasNext();) {
-					Element dlEl = datalistsIterator.next();
-					boolean hasReportKindAspect = false;
-
-					for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
-						Element itemEl = elIterator.next();
-						String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName())
-								.split(REPORT_KIND_SPLIT_REGEXP);
-
-						if (Arrays.asList(repKindCodes).contains(reportKindNoneCode)) {
-							dlEl.remove(itemEl);
-							continue;
-						}
-
-						if (Arrays.asList(repKindCodes).contains(reportKindCode)) {
-							hasReportKindAspect = true;
-						}
-
-					}
-
-					if (hasReportKindAspect) {
-						for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
-							Element itemEl = elIterator.next();
-							String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName())
-									.split(REPORT_KIND_SPLIT_REGEXP);
-							if (!Arrays.asList(repKindCodes).contains(reportKindCode) || (repKindCodes == null)) {
-								dlEl.remove(itemEl);
-							}
-						}
-					}
-				}
-			}
-
 			// get report parameters
 			if (entityEl.getName().equals(ReportModel.PROP_REPORT_PARAMETERS.getLocalName())) {
 				entityParams = entityEl.getStringValue().split(REPORT_KIND_SPLIT_REGEXP);
@@ -592,6 +565,40 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			logger.debug("Filter XML takes : " + stopWatch.getTotalTimeSeconds() + "s");
 		}
 
+	}
+
+	private void filterDatalistsByReportKind(String reportKindCode, Element entityEl) {
+		for (Iterator<Element> datalistsIterator = entityEl.elementIterator(); datalistsIterator.hasNext();) {
+			Element dlEl = datalistsIterator.next();
+			boolean hasReportKindAspect = false;
+
+			for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
+				Element itemEl = elIterator.next();
+				String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName())
+						.split(REPORT_KIND_SPLIT_REGEXP);
+
+				if (Arrays.asList(repKindCodes).contains("None")) {
+					dlEl.remove(itemEl);
+					continue;
+				}
+
+				if (Arrays.asList(repKindCodes).contains(reportKindCode)) {
+					hasReportKindAspect = true;
+				}
+
+			}
+
+			if (hasReportKindAspect) {
+				for (Iterator<Element> elIterator = dlEl.elementIterator(); elIterator.hasNext();) {
+					Element itemEl = elIterator.next();
+					String[] repKindCodes = itemEl.valueOf("@" + ReportModel.PROP_REPORT_KINDS_CODE.getLocalName())
+							.split(REPORT_KIND_SPLIT_REGEXP);
+					if (!Arrays.asList(repKindCodes).contains(reportKindCode) || (repKindCodes == null)) {
+						dlEl.remove(itemEl);
+					}
+				}
+			}
+		}
 	}
 
 	/**
