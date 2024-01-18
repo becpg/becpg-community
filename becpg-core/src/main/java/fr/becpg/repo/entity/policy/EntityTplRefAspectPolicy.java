@@ -5,12 +5,11 @@ package fr.becpg.repo.entity.policy;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.NodeServicePolicies;
 import org.alfresco.repo.policy.JavaBehaviour;
-import org.alfresco.repo.version.Version2Model;
-import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -138,11 +137,11 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 	@Override
 	public void beforeDeleteNode(NodeRef nodeRef) {
 		
-		List<NodeRef> sourcesAssocs = associationService.getSourcesAssocs(nodeRef, BeCPGModel.ASSOC_ENTITY_TPL_REF);
+		List<NodeRef> sourcesAssocs = associationService
+				.getEntitySourceAssocs(List.of(nodeRef), BeCPGModel.ASSOC_ENTITY_TPL_REF, null, true, null, 5).stream()
+				.map(e -> e.getEntityNodeRef()).collect(Collectors.toList());
 		
-		sourcesAssocs.removeIf(this::isVersion);
-		
-		if (!sourcesAssocs.isEmpty()) {
+		if (sourcesAssocs != null && !sourcesAssocs.isEmpty()) {
 			
 			StringBuilder sb = new StringBuilder();
 
@@ -171,10 +170,4 @@ public class EntityTplRefAspectPolicy extends AbstractBeCPGPolicy
 		return "";
 	}
 	
-	private boolean isVersion(NodeRef nodeRef) {
-		return nodeRef.getStoreRef().getProtocol().contains(VersionBaseModel.STORE_PROTOCOL)
-				|| nodeRef.getStoreRef().getIdentifier().contains(Version2Model.STORE_ID) 
-				|| nodeService.hasAspect(nodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
-	}
-
 }
