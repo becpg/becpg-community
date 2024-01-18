@@ -406,6 +406,10 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CONTAINS, nodeRef.getId());
 
+			if (vhNodeRef == null) {
+				vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CHILDREN, nodeRef.getId());
+			}
+			
 			if (vhNodeRef == null && AlfrescoTransactionSupport.getTransactionReadState() == TxnReadState.TXN_READ_WRITE) {
 				return AuthenticationUtil.runAsSystem(() -> {
 					Map<QName, Serializable> props = new HashMap<>();
@@ -464,17 +468,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	/** {@inheritDoc} */
 	@Override
 	public void deleteVersionHistory(NodeRef entityNodeRef) {
-		NodeRef versionHistoryRef = getVersionHistoryNodeRef(entityNodeRef);
-		if (versionHistoryRef != null) {
-			if (logger.isDebugEnabled()) {
-				logger.debug("delete versionHistoryRef " + versionHistoryRef);
-			}
-			nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
-			nodeService.deleteNode(versionHistoryRef);
-		}
-
 		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
-
 		if (versionHistory != null) {
 			Collection<Version> versions = versionHistory.getAllVersions();
 
@@ -488,6 +482,14 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 					nodeService.deleteNode(extractedVersion);
 				}
 			}
+		}
+		NodeRef versionHistoryRef = getVersionHistoryNodeRef(entityNodeRef);
+		if (versionHistoryRef != null) {
+			if (logger.isDebugEnabled()) {
+				logger.debug("delete versionHistoryRef " + versionHistoryRef);
+			}
+			nodeService.addAspect(versionHistoryRef, ContentModel.ASPECT_TEMPORARY, null);
+			nodeService.deleteNode(versionHistoryRef);
 		}
 	}
 
