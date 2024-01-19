@@ -140,7 +140,7 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(final ProductData productData)  {
+	public boolean process(final ProductData productData) {
 
 		if (productData.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)) {
 			return true;
@@ -301,8 +301,8 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 
 	private JSONObject getJSONValue(ProductData toCompareWith, Object value, NodeRef itemNodeRef) throws JSONException {
 		JSONObject jsonObject = new JSONObject();
-		
-		if(toCompareWith!=null) {
+
+		if (toCompareWith != null) {
 			jsonObject.put(JsonFormulaHelper.JSON_NODEREF, toCompareWith.getNodeRef());
 			jsonObject.put("name", toCompareWith.getName());
 			jsonObject.put("itemType", nodeService.getType(toCompareWith.getNodeRef()).toPrefixString(namespaceService));
@@ -317,7 +317,6 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 		}
 
 		jsonObject.put(JsonFormulaHelper.JSON_VALUE, value);
-		
 
 		return jsonObject;
 	}
@@ -419,9 +418,10 @@ public class CompareFormulationHandler extends FormulationBaseHandler<ProductDat
 				} catch (FormulateException e) {
 					logger.warn(e, e);
 					productData.getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-									MLTextHelper.getI18NMessage("message.formulate.comparewith.formulate.entity.error", tmpData.getName()), null,
-									new ArrayList<>(), RequirementDataType.Nutrient));
+							.add(ReqCtrlListDataItem.tolerated()
+									.withMessage(
+											MLTextHelper.getI18NMessage("message.formulate.comparewith.formulate.entity.error", tmpData.getName()))
+									.ofDataType(RequirementDataType.Nutrient));
 				}
 			}
 

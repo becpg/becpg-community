@@ -522,10 +522,12 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 		for (Map.Entry<NodeRef, List<NodeRef>> mandatoryCharact : mandatoryCharacts.entrySet()) {
 			if ((mandatoryCharact.getValue() != null) && !mandatoryCharact.getValue().isEmpty()) {
 
-				reqCtrlList.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-						MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_CHARACT,
-								mlNodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME)),
-						mandatoryCharact.getKey(), mandatoryCharact.getValue(), dataType));
+				reqCtrlList.add( ReqCtrlListDataItem.build().ofType( RequirementType.Tolerated)
+					.withMessage(MLTextHelper.getI18NMessage(MESSAGE_UNDEFINED_CHARACT,
+							mlNodeService.getProperty(mandatoryCharact.getKey(), BeCPGModel.PROP_CHARACT_NAME)))
+					.withCharact(mandatoryCharact.getKey())
+					.withSources( mandatoryCharact.getValue())
+					.ofDataType(dataType));
 			}
 		}
 	}
@@ -915,11 +917,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				if (error != null) {
 					formulatedCharactDataItem.setValue(null);
 
-					ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-							MLTextHelper.getI18NMessage(errorKey,
-									mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error),
-							formulatedCharactDataItem.getCharactNodeRef(), new ArrayList<>(), getRequirementDataType());
-					formulatedProduct.getReqCtrlList().add(rclDataItem);
+					formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.build()
+							.ofType( RequirementType.Tolerated)
+							.withMessage(MLTextHelper.getI18NMessage(errorKey,
+									mlNodeService.getProperty(formulatedCharactDataItem.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME), error))
+							.withCharact(formulatedCharactDataItem.getCharactNodeRef()).ofDataType(getRequirementDataType()));
 				}
 
 			}

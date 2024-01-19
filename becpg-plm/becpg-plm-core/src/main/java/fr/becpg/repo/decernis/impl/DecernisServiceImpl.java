@@ -345,10 +345,9 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 			}
 		} catch (HttpStatusCodeException e) {
 			logger.error("Error while creating Decernis recipe: " + e.getMessage(), e);
-			ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-					MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + e.getMessage()), null, new ArrayList<>(),
-					RequirementDataType.Specification);
-			req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+			ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
+					.withMessage(MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + e.getMessage()))
+					.ofDataType(RequirementDataType.Specification).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
 			context.getRequirements().add(req);
 		}
 	}
