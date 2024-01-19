@@ -528,7 +528,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	public Double getYield() {
 		return yield;
 	}
-	
+
 	/**
 	 * <p>
 	 * Setter for the field <code>yield</code>.
@@ -541,8 +541,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		this.yield = yield;
 		this.ingsLabelingWithYield = true;
 	}
-	
-	
 
 	public boolean isUseSecondaryYield() {
 		return useSecondaryYield;
@@ -884,35 +882,39 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		if (lblComponent instanceof CompositeLabeling) {
 			if (((CompositeLabeling) lblComponent).isGroup()) {
-				return applyRoundingMode(new MessageFormat(getTextFormatByName("groupDefaultFormat",groupDefaultFormat), getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(getTextFormatByName("groupDefaultFormat", groupDefaultFormat), getContentLocale()), qty);
 			}
 			if (DeclarationType.Detail.equals(((CompositeLabeling) lblComponent).getDeclarationType())) {
 				if ((lblComponent instanceof IngItem) && !((CompositeLabeling) lblComponent).getIngList().isEmpty()) {
-					return applyRoundingMode(new MessageFormat(getTextFormatByName("subIngsDefaultFormat",subIngsDefaultFormat), getContentLocale()), qty);
+					return applyRoundingMode(new MessageFormat(getTextFormatByName("subIngsDefaultFormat", subIngsDefaultFormat), getContentLocale()),
+							qty);
 				}
-				return applyRoundingMode(new MessageFormat(getTextFormatByName("detailsDefaultFormat",detailsDefaultFormat), getContentLocale()), qty);
+				return applyRoundingMode(new MessageFormat(getTextFormatByName("detailsDefaultFormat", detailsDefaultFormat), getContentLocale()),
+						qty);
 			}
 
-			return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat",ingDefaultFormat), getContentLocale()), qty);
+			return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat", ingDefaultFormat), getContentLocale()), qty);
 		} else if (lblComponent instanceof IngTypeItem) {
 			if (isDoNotDetails((IngTypeItem) lblComponent)) {
-				return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeDecThresholdFormat",ingTypeDecThresholdFormat), getContentLocale()), qty);
+				return applyRoundingMode(
+						new MessageFormat(getTextFormatByName("ingTypeDecThresholdFormat", ingTypeDecThresholdFormat), getContentLocale()), qty);
 			} else if (ingTypeSingleValueFormat != null && !multiple) {
-				return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeSingleValueFormat",ingTypeSingleValueFormat), getContentLocale()), qty);
+				return applyRoundingMode(
+						new MessageFormat(getTextFormatByName("ingTypeSingleValueFormat", ingTypeSingleValueFormat), getContentLocale()), qty);
 			}
-			return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeDefaultFormat",ingTypeDefaultFormat), getContentLocale()), qty);
+			return applyRoundingMode(new MessageFormat(getTextFormatByName("ingTypeDefaultFormat", ingTypeDefaultFormat), getContentLocale()), qty);
 		}
 
-		return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat",ingDefaultFormat), getContentLocale()), qty);
+		return applyRoundingMode(new MessageFormat(getTextFormatByName("ingDefaultFormat", ingDefaultFormat), getContentLocale()), qty);
 	}
 
 	private String getTextFormatByName(String formatName, String defaultFormat) {
-		if(formatsByName.containsKey(formatName)) {
+		if (formatsByName.containsKey(formatName)) {
 			TextFormatRule textFormatRule = formatsByName.get(formatName);
 			if (textFormatRule.matchLocale(I18NUtil.getLocale())) {
 				return textFormatRule.getTextFormat();
 			}
-		}		
+		}
 		return defaultFormat;
 	}
 
@@ -1061,29 +1063,29 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private boolean showPerc(LabelingComponent lblComponent) {
-	    if (showPercRules.isEmpty() || showPercRules.containsKey(lblComponent.getNodeRef())) {
-	        return true;
-	    }
+		if (showPercRules.isEmpty() || showPercRules.containsKey(lblComponent.getNodeRef())) {
+			return true;
+		}
 
-	    if (renameRules.containsKey(lblComponent.getNodeRef())) {
+		if (renameRules.containsKey(lblComponent.getNodeRef())) {
 			RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
-			if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null) && showPercRules.containsKey(renameRule.getReplacement())) {
+			if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null)
+					&& showPercRules.containsKey(renameRule.getReplacement())) {
 				return true;
 			}
 		}
-	    
-	    for (Map.Entry<NodeRef, RenameRule> entry : renameRules.entrySet()) {
-	        NodeRef nodeRef = entry.getKey();
-	        RenameRule renameRule = entry.getValue();
 
-	        if (Objects.equals(renameRule.getReplacement(), lblComponent.getNodeRef()) && renameRule.matchLocale(I18NUtil.getLocale())) {
-	            return showPercRules.containsKey(nodeRef);
-	        }
-	    }
+		for (Map.Entry<NodeRef, RenameRule> entry : renameRules.entrySet()) {
+			NodeRef nodeRef = entry.getKey();
+			RenameRule renameRule = entry.getValue();
 
-	    return false;
+			if (Objects.equals(renameRule.getReplacement(), lblComponent.getNodeRef()) && renameRule.matchLocale(I18NUtil.getLocale())) {
+				return showPercRules.containsKey(nodeRef);
+			}
+		}
+
+		return false;
 	}
-
 
 	private Pair<DecimalFormat, RoundingMode> getDecimalFormat(LabelingComponent lblComponent, Double qty) {
 		DecimalFormat decimalFormat = null;
@@ -1443,7 +1445,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 				Double subQty = computeQtyPerc(compositeParent.parent, compositeParent.component, compositeParent.ratio);
 
-				if (subQty!=null && compositeParent.component.getFootNotes() != null && compositeParent.component.getFootNotes().contains(f)) {
+				if (subQty != null && compositeParent.component.getFootNotes() != null && compositeParent.component.getFootNotes().contains(f)) {
 					qtyPerc += subQty;
 
 				}
@@ -2726,7 +2728,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		boolean keepOrder = false;
 		for (CompositeLabeling lblComponent : compositeLabeling.getIngList().values()) {
-			IngTypeItem ingType = lblComponent.getIngType()!=null ? lblComponent.getIngType().createCopy(): null;
+			IngTypeItem ingType = lblComponent.getIngType() != null ? lblComponent.getIngType().createCopy() : null;
 
 			if (aggregateRules.containsKey(lblComponent.getNodeRef())) {
 				for (AggregateRule aggregateRule : aggregateRules.get(lblComponent.getNodeRef())) {
@@ -2957,8 +2959,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			if (repositoryEntity instanceof IngTypeItem) {
 				ingType = (IngTypeItem) repositoryEntity;
 			}
-		} else if(aggregateRule.getLabel()!=null && !MLTextHelper.isEmpty(aggregateRule.getLabel())){
-			
+		} else if (aggregateRule.getLabel() != null && !MLTextHelper.isEmpty(aggregateRule.getLabel())) {
+
 			ingType = new IngTypeItem();
 			ingType.setLegalName(aggregateRule.getLabel());
 			ingType.setNodeRef(new NodeRef(RepoConsts.SPACES_STORE, "ingType-" + aggregateRule.getLabel().getDefaultValue()));
@@ -3000,11 +3002,14 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 					return ret;
 				} catch (Exception e) {
 
-					getEntity().getReqCtrlList()
-							.add(new ReqCtrlListDataItem(
-									null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
-											formulaFilter.getRuleName(), e.getLocalizedMessage()),
-									null, new ArrayList<>(), RequirementDataType.Labelling));
+					getEntity()
+							.getReqCtrlList().add(
+									ReqCtrlListDataItem
+											.forbidden().withMessage(MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
+													formulaFilter.getRuleName(), e.getLocalizedMessage()))
+											.ofDataType(RequirementDataType.Labelling)
+
+							);
 					if (logger.isDebugEnabled()) {
 						logger.debug("Cannot evaluate formula :" + formulaFilter.getFormula() + " on " + formulaFilterContext.toString(), e);
 					}

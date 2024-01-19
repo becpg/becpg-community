@@ -132,11 +132,10 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		} else {
 			productData.setReqCtrlList(new LinkedList<>());
 		}
-		
+
 		if ((productData.hasCompoListEl(new VariantFilters<>())) || (productData.hasPackagingListEl(new VariantFilters<>()))
 				|| (productData.hasProcessListEl(new VariantFilters<>()))) {
 
-			
 			if (formulateChildren) {
 				checkShouldFormulateComponents(true, productData);
 			}
@@ -342,6 +341,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private void addMessingReq(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg, RequirementDataType reqDataType) {
-		reqCtrlListDataItem.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage(reqMsg), null, new ArrayList<>(Arrays.asList(sourceNodeRef)), reqDataType));
+		reqCtrlListDataItem.add(ReqCtrlListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(reqMsg))
+				.withSources(Arrays.asList(sourceNodeRef)).ofDataType(reqDataType));
 	}
 }
