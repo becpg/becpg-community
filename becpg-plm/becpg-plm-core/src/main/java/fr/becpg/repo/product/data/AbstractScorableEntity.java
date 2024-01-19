@@ -131,7 +131,9 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
 					dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
 					dbKV.getValue().setReqMaxQty(newReqCtrlListDataItem.getReqMaxQty());
-					dbKV.getValue().setSources(new ArrayList<>(newReqCtrlListDataItem.getSources()));
+					if(newReqCtrlListDataItem.getSources()!=null) {
+						dbKV.getValue().setSources(new ArrayList<>(newReqCtrlListDataItem.getSources()));
+					}
 					dbKV.getValue().setCharact(newReqCtrlListDataItem.getCharact());
 					dbKV.getValue().setReqDataType(newReqCtrlListDataItem.getReqDataType());
 
