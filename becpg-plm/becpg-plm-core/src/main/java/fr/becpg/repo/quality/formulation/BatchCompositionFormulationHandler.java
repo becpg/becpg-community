@@ -74,8 +74,7 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 	public void setAlfrescoRepository(AlfrescoRepository<ProductData> alfrescoRepository) {
 		this.alfrescoRepository = alfrescoRepository;
 	}
-	
-	
+
 	public void setNodeService(NodeService nodeService) {
 		this.nodeService = nodeService;
 	}
@@ -106,11 +105,11 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 				Double productNetWeight = FormulationHelper.getNetWeight(productData, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 				// 500 product of 5 Kg
-				
+
 				Double ratio;
-				if(batchData.getUnit() != null && batchData.getUnit().isP()) {
+				if (batchData.getUnit() != null && batchData.getUnit().isP()) {
 					ratio = batchQty;
-				} else if(batchData.getUnit() != null && batchData.getUnit().isPerc()) {
+				} else if (batchData.getUnit() != null && batchData.getUnit().isPerc()) {
 					ratio = batchQty / 100;
 				} else {
 					ratio = batchQty / productNetWeight;
@@ -126,7 +125,7 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 					toAdd.setVariants(new ArrayList<>());
 					toAdd.setDeclType(DeclarationType.DoNotDetails);
 					if (toAdd.getQtySubFormula() != null) {
-						if(!ProductUnit.Perc.equals(compoListItem.getCompoListUnit())){
+						if (!ProductUnit.Perc.equals(compoListItem.getCompoListUnit())) {
 							toAdd.setQtySubFormula(toAdd.getQtySubFormula() * ratio);
 						}
 					}
@@ -351,13 +350,12 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 							dynamicCharactListItem.setValue("#Error");
 						}
 						dynamicCharactListItem.setErrorLog(e.getLocalizedMessage());
-						
-						batchData.getReqCtrlList()
-						.add(new ReqCtrlListDataItem(
-								null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.formula.error",
-										dynamicCharactListItem.getTitle(), e.getLocalizedMessage()),
-								null, new ArrayList<>(), RequirementDataType.Formulation));
 
+						batchData.getReqCtrlList()
+								.add(ReqCtrlListDataItem.forbidden()
+										.withMessage(MLTextHelper.getI18NMessage("message.formulate.formula.error",
+												dynamicCharactListItem.getTitle(), e.getLocalizedMessage()))
+										.ofDataType(RequirementDataType.Formulation));
 
 						if (logger.isDebugEnabled()) {
 							logger.warn("Error in formula : [" + dynamicCharactListItem.getTitle() + "] - " + dynamicCharactListItem.getFormula());
@@ -480,10 +478,12 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 						boolean isFound = false;
 						for (DynamicCharactListItem targetItem : targetList) {
 							// charact renamed
-							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getTitle()!=null && !sourceItem.getTitle().equals(targetItem.getTitle())) {
+							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getTitle() != null
+									&& !sourceItem.getTitle().equals(targetItem.getTitle())) {
 								targetItem.setTitle(sourceItem.getTitle());
 							}
-							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getMlTitle()!=null && !sourceItem.getMlTitle().equals(targetItem.getMlTitle())) {
+							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getMlTitle() != null
+									&& !sourceItem.getMlTitle().equals(targetItem.getMlTitle())) {
 								targetItem.setMlTitle(sourceItem.getMlTitle());
 							}
 							// update formula
@@ -534,7 +534,5 @@ public class BatchCompositionFormulationHandler extends FormulationBaseHandler<B
 			});
 		}
 	}
-	
-	
 
 }

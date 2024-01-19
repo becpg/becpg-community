@@ -52,23 +52,21 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	private Double reqMaxQty;
 	private NodeRef charact;
 	private List<NodeRef> sources = new ArrayList<>();
-	private RequirementDataType reqDataType;
+	private RequirementDataType reqDataType = RequirementDataType.Nutrient;
 	private String regulatoryCode;
-	
+
 	// Do not put in hashCode and equals
 	private String formulationChainId;
 	// Do not put in hashCode and equals
 	private Integer sort;
-	
-	
-	
+
 	/**
 	 * <p>Getter for the field <code>formulationChainId</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:rclFormulationChainId")
+	@AlfQname(qname = "bcpg:rclFormulationChainId")
 	public String getFormulationChainId() {
 		return formulationChainId;
 	}
@@ -82,14 +80,13 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		this.formulationChainId = formulationChainId;
 	}
 
-	
 	/**
 	 * <p>Getter for the field <code>rclReqMaxQty</code>.</p>
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:rclReqMaxQty")
+	@AlfQname(qname = "bcpg:rclReqMaxQty")
 	public Double getReqMaxQty() {
 		return reqMaxQty;
 	}
@@ -109,7 +106,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:rclReqType")
+	@AlfQname(qname = "bcpg:rclReqType")
 	public RequirementType getReqType() {
 		return reqType;
 	}
@@ -129,10 +126,8 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getReqMessage() {
-		return reqMlMessage!=null ? MLTextHelper.getClosestValue(reqMlMessage, Locale.getDefault()) : null;
+		return reqMlMessage != null ? MLTextHelper.getClosestValue(reqMlMessage, Locale.getDefault()) : null;
 	}
-	
-	
 
 	/**
 	 * <p>getReqMessage.</p>
@@ -140,10 +135,9 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String getContentLocaleReqMessage() {
-		return reqMlMessage!=null ? MLTextHelper.getClosestValue(reqMlMessage, I18NUtil.getContentLocale()) : null;
+		return reqMlMessage != null ? MLTextHelper.getClosestValue(reqMlMessage, I18NUtil.getContentLocale()) : null;
 	}
-	
-	
+
 	/**
 	 * <p>getKey.</p>
 	 *
@@ -151,26 +145,25 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	 */
 	public String getKey() {
 		String key = "key-";
-		if(getReqMessage()!=null){
-			key +=getReqMessage();
-		} 
-		if(reqType!=null){
-			key+= reqType.toString();
+		if (getReqMessage() != null) {
+			key += getReqMessage();
 		}
-		if(reqDataType!=null){
-			key+= reqDataType.toString();
+		if (reqType != null) {
+			key += reqType.toString();
 		}
-		if(regulatoryCode!=null){
-			key+= regulatoryCode;
+		if (reqDataType != null) {
+			key += reqDataType.toString();
 		}
-		if(charact!=null){
-			key+= charact;
+		if (regulatoryCode != null) {
+			key += regulatoryCode;
 		}
-		
+		if (charact != null) {
+			key += charact;
+		}
+
 		return key;
 	}
-	
-	
+
 	/**
 	 * <p>Getter for the field <code>reqMlMessage</code>.</p>
 	 *
@@ -178,7 +171,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	 */
 	@AlfProp
 	@AlfMlText
-	@AlfQname(qname="bcpg:rclReqMessage")
+	@AlfQname(qname = "bcpg:rclReqMessage")
 	public MLText getReqMlMessage() {
 		return reqMlMessage;
 	}
@@ -198,7 +191,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.lang.Integer} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:sort")
+	@AlfQname(qname = "bcpg:sort")
 	public Integer getSort() {
 		return sort;
 	}
@@ -218,7 +211,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	@AlfSingleAssoc
-	@AlfQname(qname="bcpg:rclCharact")
+	@AlfQname(qname = "bcpg:rclCharact")
 	public NodeRef getCharact() {
 		return charact;
 	}
@@ -238,16 +231,16 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	 * @return a {@link java.util.List} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:rclSourcesV2")
+	@AlfQname(qname = "bcpg:rclSourcesV2")
 	public List<NodeRef> getSources() {
 		return sources;
 	}
-	
+
 	public void addSource(NodeRef sourceNodeRef) {
-		if(sources == null) {
+		if (sources == null) {
 			sources = new ArrayList<>();
 		}
-		if(!sources.contains(sourceNodeRef)) {
+		if (!sources.contains(sourceNodeRef)) {
 			sources.add(sourceNodeRef);
 		}
 	}
@@ -267,7 +260,7 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	 * @return a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:rclDataType")
+	@AlfQname(qname = "bcpg:rclDataType")
 	public RequirementDataType getReqDataType() {
 		return reqDataType;
 	}
@@ -280,15 +273,14 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	public void setReqDataType(RequirementDataType reqDataType) {
 		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
 	}
-	
-	
+
 	/**
 	 * <p>Getter for the field <code>regulatoryCode</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:regulatoryCode")
+	@AlfQname(qname = "bcpg:regulatoryCode")
 	public String getRegulatoryCode() {
 		return regulatoryCode;
 	}
@@ -309,27 +301,63 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		super();
 	}
 
-
-	/**
-	 * <p>Constructor for ReqCtrlListDataItem.</p>
-	 *
-	 * @param nodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param reqType a {@link fr.becpg.repo.product.data.constraints.RequirementType} object.
-	 * @param reqMessage a {@link org.alfresco.service.cmr.repository.MLText} object.
-	 * @param charact a {@link org.alfresco.service.cmr.repository.NodeRef} object.
-	 * @param sources a {@link java.util.List} object.
-	 * @param reqDataType a {@link fr.becpg.repo.product.data.constraints.RequirementDataType} object.
-	 */
-	public ReqCtrlListDataItem(NodeRef nodeRef, RequirementType reqType, MLText reqMessage, NodeRef charact, List<NodeRef> sources, RequirementDataType reqDataType){
-		super();
-		this.nodeRef = nodeRef;
-		this.reqType = reqType;
-		this.reqMlMessage = reqMessage;
-		this.charact = charact;
-		this.sources = sources;
-		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
+	public static ReqCtrlListDataItem build() {
+		return new ReqCtrlListDataItem();
 	}
 	
+
+	public static  ReqCtrlListDataItem forbidden() {
+		return build().ofType(RequirementType.Forbidden);
+	}
+
+	public static  ReqCtrlListDataItem tolerated() {
+		return build().ofType(RequirementType.Tolerated);
+	}
+
+	public static  ReqCtrlListDataItem info() {
+		return build().ofType(RequirementType.Info);
+	}
+
+	public ReqCtrlListDataItem ofType(RequirementType reqType) {
+		this.reqType = reqType;
+		return this;
+	}
+
+
+	public ReqCtrlListDataItem withMessage(MLText reqMlMessage) {
+		this.reqMlMessage = reqMlMessage;
+		return this;
+	}
+
+	public ReqCtrlListDataItem withCharact(NodeRef charact) {
+		this.charact = charact;
+		return this;
+	}
+
+	public ReqCtrlListDataItem withRegulatoryCode(String regulatoryCode) {
+		this.regulatoryCode = regulatoryCode;
+		return this;
+	}
+
+	public ReqCtrlListDataItem withFormulationChainId(String formulationChainId) {
+		this.formulationChainId = formulationChainId;
+		return this;
+	}
+
+	public ReqCtrlListDataItem withSources(List<NodeRef> sources) {
+		if (sources != null) {
+			for (NodeRef sourceNodeRef : sources) {
+				addSource(sourceNodeRef);
+			}
+
+		}
+		return this;
+	}
+
+	public ReqCtrlListDataItem ofDataType(RequirementDataType reqDataType) {
+		this.reqDataType = reqDataType != null ? reqDataType : RequirementDataType.Nutrient;
+		return this;
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -350,18 +378,18 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 		if (getClass() != obj.getClass())
 			return false;
 		ReqCtrlListDataItem other = (ReqCtrlListDataItem) obj;
-		return Objects.equals(charact, other.charact) && Objects.equals(reqMaxQty, other.reqMaxQty) && Objects.equals(formulationChainId, other.formulationChainId)
-				&& Objects.equals(regulatoryCode, other.regulatoryCode) && reqDataType == other.reqDataType
-				&& Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType && Objects.equals(sources, other.sources);
+		return Objects.equals(charact, other.charact) && Objects.equals(reqMaxQty, other.reqMaxQty)
+				&& Objects.equals(formulationChainId, other.formulationChainId) && Objects.equals(regulatoryCode, other.regulatoryCode)
+				&& reqDataType == other.reqDataType && Objects.equals(reqMlMessage, other.reqMlMessage) && reqType == other.reqType
+				&& Objects.equals(sources, other.sources);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "ReqCtrlListDataItem [reqType=" + reqType + ", reqMlMessage=" + reqMlMessage + ", rclReqMaxQty=" + reqMaxQty + ", charact="
-				+ charact + ", sources=" + sources + ", reqDataType=" + reqDataType + ", regulatoryCode=" + regulatoryCode + ", formulationChainId="
+		return "ReqCtrlListDataItem [reqType=" + reqType + ", reqMlMessage=" + reqMlMessage + ", rclReqMaxQty=" + reqMaxQty + ", charact=" + charact
+				+ ", sources=" + sources + ", reqDataType=" + reqDataType + ", regulatoryCode=" + regulatoryCode + ", formulationChainId="
 				+ formulationChainId + ", sort=" + sort + "]";
 	}
-	
-	
+
 }

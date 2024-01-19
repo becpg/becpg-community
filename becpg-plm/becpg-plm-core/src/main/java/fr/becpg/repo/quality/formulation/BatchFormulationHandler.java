@@ -142,9 +142,10 @@ public class BatchFormulationHandler extends FormulationBaseHandler<BatchData> {
 							item.setState(SystemState.Refused);
 
 							if (reqCtrl == null) {
-								reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-										new MLText(I18NUtil.getMessage(MESSAGE_MISSING_STOCK)), null, new ArrayList<>(),
-										RequirementDataType.Formulation);
+								reqCtrl = ReqCtrlListDataItem.forbidden()
+										.withMessage(new MLText(I18NUtil.getMessage(MESSAGE_MISSING_STOCK)))
+										.ofDataType(RequirementDataType.Formulation);
+										
 								batchData.getReqCtrlList().add(reqCtrl);
 							}
 

@@ -3,7 +3,6 @@
  */
 package fr.becpg.repo.product.formulation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -73,7 +72,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	/** {@inheritDoc} */
 	@Override
 	public boolean process(ProductData formulatedProduct) {
-		
+
 		boolean accept = accept(formulatedProduct);
 
 		if (accept) {
@@ -121,8 +120,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 				}
 
 			}, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
-			
-			
+
 			if (formulatedProduct.getNutList() != null) {
 
 				calculateNutListDataItem(formulatedProduct, false, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
@@ -191,13 +189,11 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 							n.setGdaPerc((100 * n.getValuePerServing()) / gda);
 						}
 						Double ul = nut.getNutUL();
-						if (ul != null) {
-							if (n.getValuePerServing() > ul) {
-								MLText message = MLTextHelper.getI18NMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nut.getCharactName());
+						if (ul != null && n.getValuePerServing() > ul) {
+							MLText message = MLTextHelper.getI18NMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nut.getCharactName());
 
-								formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, n.getNut(),
-										new ArrayList<>(), RequirementDataType.Specification));
-							}
+							formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.forbidden()
+									.withMessage(message).withCharact(n.getNut()).ofDataType(RequirementDataType.Specification));
 						}
 
 					} else {
@@ -279,7 +275,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 	@Override
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
 		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();
-			if(PLMModel.TYPE_RAWMATERIAL.equals(componentType)) {
+		if (PLMModel.TYPE_RAWMATERIAL.equals(componentType)) {
 			for (Map.Entry<NodeRef, List<NodeRef>> kv : getMandatoryCharactsFromList(formulatedProduct.getNutList()).entrySet()) {
 				if (kv.getKey() != null) {
 					String formula = (String) nodeService.getProperty(kv.getKey(), PLMModel.PROP_NUT_FORMULA);

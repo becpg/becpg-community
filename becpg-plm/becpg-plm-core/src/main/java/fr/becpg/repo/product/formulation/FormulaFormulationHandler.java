@@ -63,7 +63,6 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
@@ -253,20 +252,15 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 										JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
 										String jsonValue = jsonTree.toString();
-										
+
 										if ((jsonValue.length() > LargeTextHelper.TEXT_SIZE_LIMIT)) {
 											dataListItem.getExtraProperties().put(columnName, (Serializable) value);
-											
-											
+
 											productData.getReqCtrlList()
-											.add(new ReqCtrlListDataItem(
-													null, RequirementType.Info, MLTextHelper.getI18NMessage("message.formulate.formula.toolong",
-															dynamicCharactListItem.getTitle()),
-													null, new ArrayList<>(), RequirementDataType.Formulation));
-											
-											
-											
-											
+													.add(ReqCtrlListDataItem.info().withMessage(MLTextHelper
+															.getI18NMessage("message.formulate.formula.toolong", dynamicCharactListItem.getTitle()))
+															.ofDataType(RequirementDataType.Formulation));
+
 										} else {
 											dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
 											if (logger.isDebugEnabled()) {
@@ -326,10 +320,10 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						dynamicCharactListItem.setErrorLog(e.getLocalizedMessage());
 
 						productData.getReqCtrlList()
-								.add(new ReqCtrlListDataItem(
-										null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.formula.error",
-												dynamicCharactListItem.getTitle(), e.getLocalizedMessage()),
-										null, new ArrayList<>(Arrays.asList(productData.getNodeRef())), RequirementDataType.Formulation));
+								.add(ReqCtrlListDataItem.info()
+										.withMessage(MLTextHelper.getI18NMessage("message.formulate.formula.error", dynamicCharactListItem.getTitle(),
+												e.getLocalizedMessage()))
+										.withSources(Arrays.asList(productData.getNodeRef())).ofDataType(RequirementDataType.Formulation));
 
 						if (logger.isDebugEnabled()) {
 							logger.warn("Error in formula : [" + dynamicCharactListItem.getTitle() + "] - " + dynamicCharactListItem.getFormula());
@@ -363,12 +357,11 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (dataListItem instanceof PackagingListDataItem) {
 			VariantPackagingData variantPackagingData = productData.getDefaultVariantPackagingData();
 
-			if (ProductUnit.PP.equals(((PackagingListDataItem)dataListItem).getPackagingListUnit()) && (dataListItem.getQty() != null)
-					 && dataListItem.getQty()!=0d) {
-				return 1/ dataListItem.getQty();
+			if (ProductUnit.PP.equals(((PackagingListDataItem) dataListItem).getPackagingListUnit()) && (dataListItem.getQty() != null)
+					&& dataListItem.getQty() != 0d) {
+				return 1 / dataListItem.getQty();
 			}
-			
-			
+
 			if ((variantPackagingData != null) && (dataListItem.getQty() != null)) {
 				if (PackagingLevel.Secondary.equals(((PackagingListDataItem) dataListItem).getPkgLevel())
 						&& (variantPackagingData.getProductPerBoxes() != null)) {
@@ -390,7 +383,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		JSONArray subList = new JSONArray();
 
 		String path = JSON_PATH_SEPARATOR + dataListItem.getNodeRef().getId();
-		
+
 		if (dataListItem instanceof CompoListDataItem && ((CompoListDataItem) dataListItem).getParent() != null) {
 			path = JSON_PATH_SEPARATOR + ((CompoListDataItem) dataListItem).getParent().getNodeRef().getId() + path;
 		}
@@ -535,10 +528,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						boolean isFound = false;
 						for (DynamicCharactListItem targetItem : targetList) {
 							// charact renamed
-							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getTitle()!=null && !sourceItem.getTitle().equals(targetItem.getTitle())) {
+							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getTitle() != null
+									&& !sourceItem.getTitle().equals(targetItem.getTitle())) {
 								targetItem.setTitle(sourceItem.getTitle());
 							}
-							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getMlTitle()!=null && !sourceItem.getMlTitle().equals(targetItem.getMlTitle())) {
+							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getMlTitle() != null
+									&& !sourceItem.getMlTitle().equals(targetItem.getMlTitle())) {
 								targetItem.setMlTitle(sourceItem.getMlTitle());
 							}
 							// update formula

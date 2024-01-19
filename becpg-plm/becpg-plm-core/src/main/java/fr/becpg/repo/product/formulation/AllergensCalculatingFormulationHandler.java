@@ -156,9 +156,9 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 									List<NodeRef> sourceNodeRefs = new LinkedList<>();
 									if (error == null) {
-										error = new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-												MLTextHelper.getI18NMessage(MESSAGE_NOT_VALIDATED_ALLERGEN), null, sourceNodeRefs,
-												RequirementDataType.Allergen);
+										error = ReqCtrlListDataItem.tolerated()
+												.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NOT_VALIDATED_ALLERGEN)).withSources(sourceNodeRefs)
+												.ofDataType(RequirementDataType.Allergen);
 									} else {
 										if (error.getSources() != null) {
 											sourceNodeRefs.addAll(error.getSources());
@@ -218,7 +218,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 			for (IngListDataItem ing : formulatedProduct.getIngList()) {
 
 				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
-				
+
 				for (NodeRef allergenNodeRef : ingItem.getAllergenList()) {
 					AllergenListDataItem allergen = findAllergen(formulatedProduct, allergenNodeRef);
 
@@ -244,11 +244,11 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 						}
 
 						if (allergenRate != null) {
-							if(!visitedAllergens.contains(allergenNodeRef)) {
+							if (!visitedAllergens.contains(allergenNodeRef)) {
 								allergen.setQtyPerc(0d);
 								visitedAllergens.add(allergenNodeRef);
 							}
-							allergen.setQtyPerc(allergen.getQtyPerc()+(ing.getQtyPerc() * allergenRate / 100));
+							allergen.setQtyPerc(allergen.getQtyPerc() + (ing.getQtyPerc() * allergenRate / 100));
 						}
 					}
 				}
@@ -473,70 +473,70 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 							}
 						}
 					} else {
-						
-						if(isDefaultVariant(variantDataItem,formulatedProduct)) {
-						String message = I18NUtil.getMessage(MESSAGE_NULL_PERC, extractName(allergenNodeRef));
-						ReqCtrlListDataItem error = errors.get(message);
 
-						if ((allergenListDataItem.getQtyPerc() != null) && (qtyUsed != null)
-								&& ((newAllergenListDataItem.getQtyPerc() != null) || (error == null))) {
-							if (newAllergenListDataItem.getQtyPerc() == null) {
-								newAllergenListDataItem.setQtyPerc(0d);
-							}
+						if (isDefaultVariant(variantDataItem, formulatedProduct)) {
+							String message = I18NUtil.getMessage(MESSAGE_NULL_PERC, extractName(allergenNodeRef));
+							ReqCtrlListDataItem error = errors.get(message);
 
-							Double value = allergenListDataItem.getQtyPerc() * qtyUsed;
-							if ((netQty != null) && (netQty != 0d)) {
-								value = value / netQty;
-							}
-
-							if (logger.isDebugEnabled()) {
-								logger.debug("Add " + extractName(allergenNodeRef) + "[" + partProduct.getName() + "] - "
-										+ allergenListDataItem.getQtyPerc() + "% * " + qtyUsed + " / " + netQty + "(=" + value + " ) kg to "
-										+ newAllergenListDataItem.getQtyPerc());
-							}
-
-							value += newAllergenListDataItem.getQtyPerc();
-
-							if (value > 100d) {
-								value = 100d;
-							}
-
-							newAllergenListDataItem.setQtyPerc(value);
-
-						} else {
-
-							Double regulatoryThreshold = (Double) nodeService.getProperty(allergenListDataItem.getAllergen(),
-									PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
-
-							if (error != null) {
-								if ((allergenListDataItem.getQtyPerc() == null) || (qtyUsed == null)) {
-									error.addSource(partProduct.getNodeRef());
+							if ((allergenListDataItem.getQtyPerc() != null) && (qtyUsed != null)
+									&& ((newAllergenListDataItem.getQtyPerc() != null) || (error == null))) {
+								if (newAllergenListDataItem.getQtyPerc() == null) {
+									newAllergenListDataItem.setQtyPerc(0d);
 								}
+
+								Double value = allergenListDataItem.getQtyPerc() * qtyUsed;
+								if ((netQty != null) && (netQty != 0d)) {
+									value = value / netQty;
+								}
+
+								if (logger.isDebugEnabled()) {
+									logger.debug("Add " + extractName(allergenNodeRef) + "[" + partProduct.getName() + "] - "
+											+ allergenListDataItem.getQtyPerc() + "% * " + qtyUsed + " / " + netQty + "(=" + value + " ) kg to "
+											+ newAllergenListDataItem.getQtyPerc());
+								}
+
+								value += newAllergenListDataItem.getQtyPerc();
+
+								if (value > 100d) {
+									value = 100d;
+								}
+
+								newAllergenListDataItem.setQtyPerc(value);
+
 							} else {
-								List<NodeRef> sourceNodeRefs = new ArrayList<>();
-								sourceNodeRefs.add(partProduct.getNodeRef());
 
-								error = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-										MLTextHelper.getI18NMessage(MESSAGE_NULL_PERC,
-												mlNodeService.getProperty(allergenNodeRef, BeCPGModel.PROP_CHARACT_NAME)),
-										allergenNodeRef, sourceNodeRefs, RequirementDataType.Allergen);
-								errors.put(message, error);
+								Double regulatoryThreshold = (Double) nodeService.getProperty(allergenListDataItem.getAllergen(),
+										PLMModel.PROP_ALLERGEN_REGULATORY_THRESHOLD);
 
-								if (regulatoryThreshold != null) {
-									if (logger.isDebugEnabled()) {
-										logger.debug("Adding allergen error " + error.toString());
+								if (error != null) {
+									if ((allergenListDataItem.getQtyPerc() == null) || (qtyUsed == null)) {
+										error.addSource(partProduct.getNodeRef());
 									}
+								} else {
+									List<NodeRef> sourceNodeRefs = new ArrayList<>();
+									sourceNodeRefs.add(partProduct.getNodeRef());
 
-									ret.add(error);
+									error = ReqCtrlListDataItem.forbidden()
+											.withMessage(MLTextHelper.getI18NMessage(MESSAGE_NULL_PERC,
+													mlNodeService.getProperty(allergenNodeRef, BeCPGModel.PROP_CHARACT_NAME)))
+											.withCharact(allergenNodeRef).withSources(sourceNodeRefs).ofDataType(RequirementDataType.Allergen);
+									errors.put(message, error);
+
+									if (regulatoryThreshold != null) {
+										if (logger.isDebugEnabled()) {
+											logger.debug("Adding allergen error " + error.toString());
+										}
+
+										ret.add(error);
+									}
+								}
+								if (regulatoryThreshold == null) {
+									// Reset
+									newAllergenListDataItem.setQtyPerc(null);
+								} else if (newAllergenListDataItem.getQtyPerc() == null) {
+									newAllergenListDataItem.setQtyPerc(0d);
 								}
 							}
-							if (regulatoryThreshold == null) {
-								// Reset
-								newAllergenListDataItem.setQtyPerc(null);
-							} else if (newAllergenListDataItem.getQtyPerc() == null) {
-								newAllergenListDataItem.setQtyPerc(0d);
-							}
-						}
 						}
 					}
 
@@ -563,7 +563,7 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 
 	private boolean isDefaultVariant(VariantDataItem variantDataItem, ProductData formulatedProduct) {
 		VariantFilters<VariantDataItem> filter = new VariantFilters<>();
-		Predicate<VariantDataItem> predicate  = filter.createPredicate(formulatedProduct);
+		Predicate<VariantDataItem> predicate = filter.createPredicate(formulatedProduct);
 		return predicate.test(variantDataItem);
 	}
 
@@ -571,21 +571,12 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 		String message = I18NUtil.getMessage(MESSAGE_EMPTY_ALLERGEN);
 		ReqCtrlListDataItem error = errors.get(message);
 
-		List<NodeRef> sourceNodeRefs = new LinkedList<>();
 		if (error == null) {
-			error = new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage(MESSAGE_EMPTY_ALLERGEN), null,
-					sourceNodeRefs, RequirementDataType.Allergen);
+			error = ReqCtrlListDataItem.build().ofType(RequirementType.Forbidden).withMessage(MLTextHelper.getI18NMessage(MESSAGE_EMPTY_ALLERGEN))
+					.ofDataType(RequirementDataType.Allergen);
 			ret.add(error);
-		} else {
-			if (error.getSources() != null) {
-				sourceNodeRefs.addAll(error.getSources());
-			}
-
 		}
-
-		if (!sourceNodeRefs.contains(partProduct.getNodeRef())) {
-			sourceNodeRefs.add(partProduct.getNodeRef());
-		}
+		error.addSource(partProduct.getNodeRef());
 
 		errors.put(message, error);
 
