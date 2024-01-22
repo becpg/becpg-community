@@ -409,7 +409,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			if (vhNodeRef == null) {
 				vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CHILDREN, nodeRef.getId());
 			}
-			
+
 			if (vhNodeRef == null && AlfrescoTransactionSupport.getTransactionReadState() == TxnReadState.TXN_READ_WRITE) {
 				return AuthenticationUtil.runAsSystem(() -> {
 					Map<QName, Serializable> props = new HashMap<>();
@@ -444,8 +444,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			//Backward compatibility
 			if (entitiesHistoryNodeRef == null) {
-				entitiesHistoryNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(storeNodeRef,
-											RepoConsts.ENTITIES_HISTORY_XPATH);
+				entitiesHistoryNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(storeNodeRef, RepoConsts.ENTITIES_HISTORY_XPATH);
 			}
 
 			if (entitiesHistoryNodeRef == null && AlfrescoTransactionSupport.getTransactionReadState() == TxnReadState.TXN_READ_WRITE) {
@@ -1459,18 +1458,18 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef extractVersion(NodeRef versionNodeRef) {
 
-		NodeRef extractedVersion = findExtractedVersion(versionNodeRef);
+		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-		if (extractedVersion == null || !nodeService.exists(extractedVersion)) {
+			NodeRef extractedVersion = findExtractedVersion(versionNodeRef);
 
-			extractedVersion = transactionService.getRetryingTransactionHelper().doInTransaction(() ->
+			if (extractedVersion == null || !nodeService.exists(extractedVersion)) {
 
-			createExtractedVersion(versionNodeRef)
+				extractedVersion = createExtractedVersion(versionNodeRef);
 
-					, false, false);
-		}
+			}
+			return extractedVersion;
+		}, false, false);
 
-		return extractedVersion;
 	}
 
 	private NodeRef findExtractedVersion(final NodeRef versionNodeRef) {

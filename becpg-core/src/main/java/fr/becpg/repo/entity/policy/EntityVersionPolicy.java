@@ -31,6 +31,7 @@ import org.alfresco.repo.coci.CheckOutCheckInServicePolicies;
 import org.alfresco.repo.node.NodeArchiveServicePolicies;
 import org.alfresco.repo.node.NodeArchiveServicePolicies.BeforePurgeNodePolicy;
 import org.alfresco.repo.node.NodeServicePolicies;
+import org.alfresco.repo.policy.Behaviour;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.version.VersionServicePolicies;
 import org.alfresco.repo.version.common.VersionUtil;
@@ -110,6 +111,7 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 	public void doInit() {
 		logger.debug("Init EntityVersionPolicy...");
 
+	
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.OnCheckIn.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
 				new JavaBehaviour(this, "onCheckIn"));
 		policyComponent.bindClassBehaviour(CheckOutCheckInServicePolicies.BeforeCancelCheckOut.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
@@ -122,17 +124,15 @@ public class EntityVersionPolicy extends AbstractBeCPGPolicy
 				new JavaBehaviour(this, "afterCreateVersion"));
 		
 		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onRemoveAspect"), ContentModel.ASPECT_VERSIONABLE,
-				new JavaBehaviour(this, "onRemoveAspect"));
+				new JavaBehaviour(this, "onRemoveAspect", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
 
 		this.policyComponent.bindClassBehaviour(BeforePurgeNodePolicy.QNAME, BeCPGModel.ASPECT_ENTITYLISTS,
-				new JavaBehaviour(this, "beforePurgeNode"));
+				new JavaBehaviour(this, "beforePurgeNode", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
 
 		this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onDeleteNode"), ContentModel.ASPECT_VERSIONABLE,
-				new JavaBehaviour(this, "onDeleteNode"));
+				new JavaBehaviour(this, "onDeleteNode", Behaviour.NotificationFrequency.TRANSACTION_COMMIT));
 
 	}
-
-
 
 	/** {@inheritDoc} */
 	@Override
