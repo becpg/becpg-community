@@ -27,7 +27,6 @@ ENV JAVA_HOME=/usr/java/default
 ENV PATH $JAVA_HOME/bin:$PATH
 
 
-
 #Debuging 
 COPY alfresco/log4j.properties $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes
 COPY alfresco/hotswap-agent.properties $TOMCAT_DIR/webapps/alfresco/WEB-INF/classes
@@ -40,7 +39,6 @@ COPY becpg-core-${project.version}.amp $TOMCAT_DIR/amps/
 COPY becpg-project-core-${project.version}.amp  $TOMCAT_DIR/amps/
 COPY becpg-designer-core-${project.version}.amp  $TOMCAT_DIR/amps/
 COPY becpg-plm-core-${project.version}.amp  $TOMCAT_DIR/amps/
-
 
 RUN  java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-core-${project.version}.amp webapps/alfresco -nobackup -force && \
 	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-project-core-${project.version}.amp webapps/alfresco -nobackup -force && \
