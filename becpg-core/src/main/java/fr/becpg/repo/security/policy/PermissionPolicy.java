@@ -67,13 +67,15 @@ public class PermissionPolicy extends AbstractBeCPGPolicy implements NodeService
 	
 
 	private void updatePermissions(NodeRef nodeRef, String permission) {
-		List<NodeRef> readGroups = associationService.getTargetAssocs(nodeRef, SecurityModel.ASSOC_READ_GROUPS);
-	
-		if (readGroups.isEmpty()) {
-			clearPermissions(nodeRef, true);
-		} else {
-			clearPermissions(nodeRef, false);
-			setPermissions(nodeRef, readGroups, permission);
+		if (nodeService.exists(nodeRef)) {
+			List<NodeRef> readGroups = associationService.getTargetAssocs(nodeRef, SecurityModel.ASSOC_READ_GROUPS);
+			
+			if (readGroups.isEmpty()) {
+				clearPermissions(nodeRef, true);
+			} else {
+				clearPermissions(nodeRef, false);
+				setPermissions(nodeRef, readGroups, permission);
+			}
 		}
 	}
 
