@@ -19,8 +19,9 @@ define(["dojo/_base/declare",
         "dojo/_base/lang",
         "dojo/dom-construct",
         "alfresco/core/CoreXhr",
-        "dojo/on"], 
-        function(declare, _WidgetBase, _TemplatedMixin, template, AlfCore, domStyle, array, lang, domConstruct, AlfXhr, on) {
+        "dojo/on", 
+        "dojo/dom-class"],
+        function(declare, _WidgetBase, _TemplatedMixin, template, AlfCore, domStyle, array, lang, domConstruct, AlfXhr, on, domClass) {
    
    return declare([_WidgetBase, _TemplatedMixin, AlfCore, AlfXhr], {
 
@@ -87,6 +88,7 @@ define(["dojo/_base/declare",
     	  this.messageBox.innerHTML = this.message("unauthorized.warning.bar.message");
     	  this.stopRecording.style.display = "none";
     	  domStyle.set(this.domNode, "display", "block");
+    	  domClass.add(this.warningsNode, "licence-warning");
       },
       
       
@@ -94,7 +96,9 @@ define(["dojo/_base/declare",
        * @instance
        */
       postCreate: function alfresco_header_WarningBar__postCreate() {
-    	  	
+    	  
+    	  domClass.remove(this.warningsNode, "licence-warning");
+    	  
     	  if(this.warningType == "NoLicenseWarning"){
     	  		this.createNoLicenseWarningBar();
     	  		return;
