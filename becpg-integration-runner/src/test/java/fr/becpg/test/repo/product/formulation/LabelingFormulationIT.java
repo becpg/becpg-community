@@ -1641,7 +1641,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// ├──[ing3 french - 5.0]
 		// └──[ing4 french - 1.0]
 
-		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>pâte french 50%</b>, <b>garniture french 50%</b>", Locale.FRENCH);
+		checkILL(finishedProductNodeRef1, labelingRuleList, "<b>garniture french 50%</b>, <b>pâte french 50%</b>", Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
 		labelingRuleList.add(new LabelingRuleListDataItem("Rendu 1", "render()", LabelingRuleType.Render));
