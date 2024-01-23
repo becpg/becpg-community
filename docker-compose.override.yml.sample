@@ -3,11 +3,10 @@ services:
   becpg:
     environment:
       CATALINA_OPTS: "-Xmx4G -Duser.language=fr -Duser.country=FR 
-                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888"
-                          
-  busybox-chown:
-    image: busybox
-    volumes:
-      - becpg_data: /data2
-      - becpg_share_data:/data1      
-    command: sh -c "chown -R alfresco:alfresco /data1 && chown -R alfresco:alfresco /data2"                      
+                      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888"                          
+#  busybox-chown:
+#    image: busybox
+#    volumes:
+#      - becpg_data:/data2
+#      - becpg_share_data:/data1      
+#    command: sh -c "chown -R 33000:1000 /data1 && chown -R alfresco:alfresco /data2"                      
