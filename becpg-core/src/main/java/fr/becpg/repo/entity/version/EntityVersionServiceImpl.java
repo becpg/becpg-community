@@ -399,7 +399,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 * Gets a reference to the version history node for a given 'real' node.
 	 */
 	@Override
-	public NodeRef getVersionHistoryNodeRef(NodeRef nodeRef) {
+	public synchronized NodeRef getVersionHistoryNodeRef(NodeRef nodeRef) {
 		NodeRef vhNodeRef = null;
 		if (nodeRef != null) {
 			final NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
