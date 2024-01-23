@@ -169,7 +169,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		}
 	
 		for (String user : users) {
-			if (!AuthenticationUtil.getAdminUserName().equals(user)) {
+			if (!AuthenticationUtil.getAdminUserName().equals(user) && !user.endsWith("@becpg.fr")) {
 				Set<String> userAuthorities = authorityService.getAuthoritiesForUser(user);
 				if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser)
 						&& userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent)) {
