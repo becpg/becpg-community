@@ -399,7 +399,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	 * Gets a reference to the version history node for a given 'real' node.
 	 */
 	@Override
-	public synchronized NodeRef getVersionHistoryNodeRef(NodeRef nodeRef) {
+	public  NodeRef getVersionHistoryNodeRef(NodeRef nodeRef, boolean shouldCreate) {
 		NodeRef vhNodeRef = null;
 		if (nodeRef != null) {
 			final NodeRef entitiesHistoryFolder = getEntitiesHistoryFolder();
@@ -410,7 +410,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				vhNodeRef = nodeService.getChildByName(entitiesHistoryFolder, ContentModel.ASSOC_CHILDREN, nodeRef.getId());
 			}
 
-			if (vhNodeRef == null && AlfrescoTransactionSupport.getTransactionReadState() == TxnReadState.TXN_READ_WRITE) {
+			if (shouldCreate && vhNodeRef == null && AlfrescoTransactionSupport.getTransactionReadState() == TxnReadState.TXN_READ_WRITE) {
 				return AuthenticationUtil.runAsSystem(() -> {
 					Map<QName, Serializable> props = new HashMap<>();
 					props.put(ContentModel.PROP_NAME, nodeRef.getId());
@@ -482,7 +482,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				}
 			}
 		}
-		NodeRef versionHistoryRef = getVersionHistoryNodeRef(entityNodeRef);
+		NodeRef versionHistoryRef = getVersionHistoryNodeRef(entityNodeRef, false);
 		if (versionHistoryRef != null) {
 			if (logger.isDebugEnabled()) {
 				logger.debug("delete versionHistoryRef " + versionHistoryRef);
@@ -689,7 +689,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	}
 
 	private List<ChildAssociationRef> getVersionAssocs(NodeRef entityNodeRef) {
-		NodeRef versionHistoryNodeRef = getVersionHistoryNodeRef(entityNodeRef);
+		NodeRef versionHistoryNodeRef = getVersionHistoryNodeRef(entityNodeRef, false);
 		return versionHistoryNodeRef != null ? getVersionAssocs(versionHistoryNodeRef, false) : new ArrayList<>();
 	}
 
@@ -1474,19 +1474,9 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	private NodeRef findExtractedVersion(final NodeRef versionNodeRef) {
 
-		NodeRef versionHistoryRef = getVersionHistoryNodeRef(versionNodeRef);
+		NodeRef versionHistoryRef = getVersionHistoryNodeRef(versionNodeRef,false);
 
 		final String versionLabel = (String) dbNodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL);
-
-		// check if this is an old version node which has already been converted
-		if (versionHistoryRef == null) {
-			NodeRef parentNode = nodeService.getPrimaryParent(versionNodeRef).getParentRef();
-
-			String name = (String) nodeService.getProperty(parentNode, ContentModel.PROP_NAME);
-
-			versionHistoryRef = nodeService.getChildByName(getEntitiesHistoryFolder(), ContentModel.ASSOC_CONTAINS, name);
-
-		}
 
 		if (versionHistoryRef != null) {
 			List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(versionHistoryRef);
@@ -1510,7 +1500,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 			final String versionLabel = (String) dbNodeService.getProperty(versionNodeRef, Version2Model.PROP_QNAME_VERSION_LABEL);
 
-			NodeRef versionHistoryRef = getVersionHistoryNodeRef(versionNodeRef);
+			NodeRef versionHistoryRef = getVersionHistoryNodeRef(versionNodeRef, true);
 
 			((RuleService) ruleService).disableRules();
 
