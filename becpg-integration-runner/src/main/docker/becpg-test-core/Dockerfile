@@ -18,7 +18,7 @@ RUN curl -sL  https://github.com/TravaOpenJDK/trava-jdk-11-dcevm-newgen/releases
     ln -sfn /usr/java/dcevm-11.0.10+5 /usr/java/default
 
 #Jacoco Agent
-RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.8/org.jacoco.agent-0.8.8-runtime.jar -o /root/jacoco-runtime.jar
+RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.8/org.jacoco.agent-0.8.8-runtime.jar -o $TOMCAT_DIR/jacoco-runtime.jar
 
 FROM becpg-base-test-core
 
