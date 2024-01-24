@@ -18,14 +18,13 @@ RUN curl -sL  https://github.com/TravaOpenJDK/trava-jdk-11-dcevm-newgen/releases
     ln -sfn /usr/java/dcevm-11.0.10+5 /usr/java/default
 
 #Jacoco Agent
-RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.8/org.jacoco.agent-0.8.8-runtime.jar -o /root/jacoco-runtime.jar
+RUN curl -sL https://repo1.maven.org/maven2/org/jacoco/org.jacoco.agent/0.8.8/org.jacoco.agent-0.8.8-runtime.jar -o $TOMCAT_DIR/jacoco-runtime.jar
 
 FROM becpg-base-test-core
 
 
 ENV JAVA_HOME=/usr/java/default
 ENV PATH $JAVA_HOME/bin:$PATH
-
 
 
 #Debuging 
@@ -40,7 +39,6 @@ COPY becpg-core-${project.version}.amp $TOMCAT_DIR/amps/
 COPY becpg-project-core-${project.version}.amp  $TOMCAT_DIR/amps/
 COPY becpg-designer-core-${project.version}.amp  $TOMCAT_DIR/amps/
 COPY becpg-plm-core-${project.version}.amp  $TOMCAT_DIR/amps/
-
 
 RUN  java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-core-${project.version}.amp webapps/alfresco -nobackup -force && \
 	 java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install  $TOMCAT_DIR/amps/becpg-project-core-${project.version}.amp webapps/alfresco -nobackup -force && \
