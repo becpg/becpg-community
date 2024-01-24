@@ -187,7 +187,7 @@ grant {
 };
 
  //beCPG Jacoco 
-grant codeBase "file:/root/jacoco-runtime.jar" {
+grant codeBase "file:/usr/local/tomcat/jacoco-runtime.jar" {
 	permission java.security.AllPermission;
 };
 
