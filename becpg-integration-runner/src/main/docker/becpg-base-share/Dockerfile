@@ -6,9 +6,6 @@ ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
 
 USER root
 
-#RUN yum update -y && yum -y install glibc-locale-source glibc-langpack-en  && yum clean all && \
-#    rm -rf /var/cache/yum
-
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
 
@@ -36,7 +33,6 @@ COPY tomcat/share.xml $TOMCAT_DIR/conf/Catalina/localhost/
 COPY becpg/classes $TOMCAT_DIR/shared/classes
 
 RUN chmod +x /usr/local/tomcat/shared/classes/alfresco/substituter.sh
+RUN mkdir -p ${TOMCAT_DIR}/data
 
 RUN rm -rf  $TOMCAT_DIR/amps_share/*
-
-USER ${USERNAME}
