@@ -32,6 +32,8 @@ services:
 #                     -Djava.rmi.server.hostname=127.0.0.1"
 #      JAVA_HOME: /usr/java/dcevm-11.0.11+1
       JAVA_TOOL_OPTIONS: "${keystore.settings}"
+    depends_on:
+     - becpg-db
     ports:
       - "${acs.port}:8080"
       - "${acs.debug.port}:8888"
