@@ -428,23 +428,25 @@ if (beCPG.module.EntityDataGridRenderers) {
 						for (var i = 0; i < keys.length; i++) {
 							var k = keys[i];
 							var value = jsonData.v[k];
-							var toleranceMin = jsonData.tl[k] || '';
-							var toleranceMax = jsonData.tu[k] || '';
-							var min = jsonData.min[k] || '';
-							var max = jsonData.max[k] || '';
-							var gda = jsonData.gda[k] || '';
-							var vps = jsonData.vps[k] || '';
-	
-							ret += '<div>' +
-								'<h3>'+  scope.msg( "nutrient.details.header", k+ ' <img  title="'+k+'" src="'+Alfresco.constants.URL_CONTEXT+'res/components/images/flags/'+k.split("_")[0].toLowerCase()+'.png" />'  )+ '</h3>' +
-								'<p>'+scope.msg("nutrient.details.value" ,  value.toLocaleString( beCPG.util.getJSLocale() ) ) + '</p>' +
-								(toleranceMin ? '<p>'+ scope.msg( "nutrient.details.tl" ,toleranceMin.toLocaleString( beCPG.util.getJSLocale() ))+ '</p>' : '') +
-								(toleranceMax ? '<p>'+ scope.msg( "nutrient.details.tu" ,toleranceMax.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
-								(min ? '<p>'+ scope.msg( "nutrient.details.min" , min.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
-								(max ? '<p>'+ scope.msg( "nutrient.details.max" , max.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
-								(gda ? '<p>'+ scope.msg( "nutrient.details.gda" , gda.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
-								(vps ? '<p>'+ scope.msg( "nutrient.details.vps" , vps.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
-								'</div>';
+							if(k && value){
+							    var toleranceMin = jsonData.tl ? jsonData.tl[k] || '' : '';
+								var toleranceMax = jsonData.tu ? jsonData.tu[k] || '' : '';
+								var min = jsonData.min ? jsonData.min[k] || '' : '';
+								var max = jsonData.max ? jsonData.max[k] || '' : '';
+								var gda = jsonData.gda ? jsonData.gda[k] || '' : '';
+								var vps = jsonData.vps ? jsonData.vps[k] || '' : '';
+		
+								ret += '<div>' +
+									'<h3>'+  scope.msg( "nutrient.details.header", k+ ' <img  title="'+k+'" src="'+Alfresco.constants.URL_CONTEXT+'res/components/images/flags/'+k.split("_")[0].toLowerCase()+'.png" />'  )+ '</h3>' +
+									'<p>'+scope.msg("nutrient.details.value" ,  value.toLocaleString( beCPG.util.getJSLocale() ) ) + '</p>' +
+									(toleranceMin ? '<p>'+ scope.msg( "nutrient.details.tl" ,toleranceMin.toLocaleString( beCPG.util.getJSLocale() ))+ '</p>' : '') +
+									(toleranceMax ? '<p>'+ scope.msg( "nutrient.details.tu" ,toleranceMax.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+									(min ? '<p>'+ scope.msg( "nutrient.details.min" , min.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+									(max ? '<p>'+ scope.msg( "nutrient.details.max" , max.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+									(gda ? '<p>'+ scope.msg( "nutrient.details.gda" , gda.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+									(vps ? '<p>'+ scope.msg( "nutrient.details.vps" , vps.toLocaleString( beCPG.util.getJSLocale() ) )+ '</p>' : '') +
+									'</div>';
+							}
 						}
 						ret += '</div></div>';
 	
@@ -525,6 +527,8 @@ if (beCPG.module.EntityDataGridRenderers) {
 				color = "rgb(255, 106, 106)";
 			} else if (data.value == "PERMITTED") {
 				color = "rgb(190, 229, 84)";
+			} else if (data.value == "ERROR") {
+				color = "orange";
 			}
 			
 			if (color) {
@@ -1584,7 +1588,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 					&&  oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value !=null) {
 						var key = beCPG.util.getRegulatoryCountryKey(Alfresco.constants.JS_LOCALE);
 						var jsonData = JSON.parse( oRecord.getData("itemData")["prop_bcpg_nutListRoundedValue"].value );
-						if(jsonData.ul[key]){
+						if(jsonData.ul && jsonData.ul[key]){
 							ul = jsonData.ul[key];
 							percentValue = jsonData.gda[key];
 						}

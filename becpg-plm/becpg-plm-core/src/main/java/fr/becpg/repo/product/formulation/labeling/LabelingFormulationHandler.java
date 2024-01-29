@@ -265,10 +265,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 						} catch (Exception e) {
 							formulatedProduct.getReqCtrlList()
-									.add(new ReqCtrlListDataItem(
-											null, RequirementType.Tolerated, MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
-													labelingRuleListDataItem.getName(), e.getLocalizedMessage()),
-											null, new ArrayList<>(), RequirementDataType.Labelling));
+									.add(ReqCtrlListDataItem.tolerated()
+											.withMessage(MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
+													labelingRuleListDataItem.getName(), e.getLocalizedMessage()))
+											.ofDataType(RequirementDataType.Labelling)
+
+									);
 							if (logger.isDebugEnabled()) {
 								logger.warn("Error label rule formula : [" + labelingRuleListDataItem.getName() + "] - "
 										+ SpelHelper.formatFormula(labelingRuleListDataItem.getFormula()), e);
@@ -402,10 +404,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 								} catch (Exception e) {
 									formulatedProduct.getReqCtrlList()
-											.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-													MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
-															labelingRuleListDataItem.getName(), e.getLocalizedMessage()),
-													null, new ArrayList<>(), RequirementDataType.Labelling));
+											.add(ReqCtrlListDataItem.tolerated().withMessage(MLTextHelper.getI18NMessage("message.formulate.labelRule.error",
+													labelingRuleListDataItem.getName(), e.getLocalizedMessage())).ofDataType(RequirementDataType.Labelling));
 
 									if (logger.isDebugEnabled()) {
 										logger.warn("Error in formula : (" + labelingRuleListDataItem.getNodeRef() + ")"
@@ -1266,8 +1266,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		}
 
 		if ((qty == null) && (current != null)) {
-			return new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage(NULL_ING_ERROR, getName(current)), null,
-					new ArrayList<>(), RequirementDataType.Labelling);
+			return ReqCtrlListDataItem.forbidden()
+					.withMessage(MLTextHelper.getI18NMessage(NULL_ING_ERROR, getName(current))).ofDataType(RequirementDataType.Labelling);
+
 		}
 
 		return null;
@@ -1467,27 +1468,21 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						volume *= ratio;
 					}
 
-				
 				}
 
-
-				
 				Double qtyWithYield = qty != null && !DeclarationType.Group.equals(declarationType) ? qty / calculatedYield * 100d : qty;
 				Double volumeWithYield = volume != null && !DeclarationType.Group.equals(declarationType) ? volume / calculatedYield * 100d : volume;
-
-				
 
 				if (!isLocalSemiFinished) {
 					if (qty != null && componentYield != null) {
 						qty *= componentYield / 100d;
 					}
-					
+
 					if (volume != null && componentYield != null) {
 						volume *= componentYield / 100d;
 					}
 				}
 
-				
 				//Water loss
 				if ((qty != null) && (calculatedYield != null) && (calculatedYield != 100d)
 						&& nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
@@ -2103,7 +2098,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 							qtyWithYield = qty;
 							volumeWithYield = volume;
-							
+
 							EvaporatedDataItem evaporatedDataItem = null;
 							for (EvaporatedDataItem tmp : labelingFormulaContext.getEvaporatedDataItems()) {
 								if (tmp.getProductNodeRef().equals(ingNodeRef)) {
@@ -2220,14 +2215,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						if ((ingLabelItem.getQtyWithYield() != null) && (qtyWithYield != null)) {
-							
+
 							if (logger.isTraceEnabled()) {
 								logger.trace(" -- new qtyWithYield to add to " + getName(ingLabelItem) + ": " + ((qtyWithYield * qtyPerc) / 100));
 							}
-							
-							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100));						
-							
-					
+
+							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100));
 
 						}
 
@@ -2349,8 +2342,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		if (productNodeRef != null) {
 			sourceNodeRefs.add(productNodeRef);
 		}
-		return new ReqCtrlListDataItem(null, RequirementType.Forbidden, MLTextHelper.getI18NMessage(NULL_ING_ERROR, getName(ingItem)), null,
-				sourceNodeRefs, RequirementDataType.Labelling);
+		return ReqCtrlListDataItem.forbidden()
+				.withMessage(MLTextHelper.getI18NMessage(NULL_ING_ERROR, getName(ingItem))).ofDataType(RequirementDataType.Labelling)
+				.withSources(sourceNodeRefs);
 
 	}
 

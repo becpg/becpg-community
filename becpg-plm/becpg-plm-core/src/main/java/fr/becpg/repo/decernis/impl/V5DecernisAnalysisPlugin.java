@@ -21,6 +21,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Lists;
@@ -28,10 +29,13 @@ import com.google.common.collect.Lists;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.decernis.DecernisAnalysisPlugin;
+import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.decernis.helper.DecernisHelper;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
 import fr.becpg.repo.decernis.model.RegulatoryContextItem;
+import fr.becpg.repo.decernis.model.UsageContext;
 import fr.becpg.repo.helper.MLTextHelper;
+import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.IngRegulatoryListDataItem;
@@ -111,10 +115,15 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
 			if (ingType != null) {
 				String functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_VALUE);
-				String function = findFunction(moduleId, functionValue);
+				String function = null;
+				if (functionValue != null) {
+					function = findFunction(moduleId, functionValue);
+				}
 				if (function == null) {
 					functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_CODE);
-					function = findFunction(moduleId, functionValue);
+					if (functionValue != null) {
+						function = findFunction(moduleId, functionValue);
+					}
 				}
 				if (function != null) {
 					String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
@@ -136,9 +145,9 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 					context.getRequirements().add(createReqCtrl(ingListDataItem.getIng(),
 							MLTextHelper.getI18NMessage(MESSAGE_FUNCTION_NOT_RECOGNIZED, functionValue), RequirementType.Tolerated));
 				}
-			} else if(logger.isDebugEnabled()) {
-				
-				logger.debug("Ingredient has no type: "+(String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
+			} else if (logger.isDebugEnabled()) {
+
+				logger.debug("Ingredient has no type: " + (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 			}
 		}
 
@@ -223,25 +232,39 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 	@Override
 	public void extractRequirements(RegulatoryContext productContext, RegulatoryContextItem contextItem) {
 
-		for (Map.Entry<String, NodeRef> usageEntry : contextItem.getUsages().entrySet()) {
-	
+		for (UsageContext usageContext : contextItem.getUsages()) {
 
 			List<List<String>> countriesBatch = Lists.partition(new ArrayList<>(contextItem.getCountries().keySet()), DECERNIS_MAX_COUNTRIES);
 
 			for (List<String> countries : countriesBatch) {
 
-				JSONObject analysisResults = postV5RecipeAnalysis(productContext, countries, usageEntry.getKey(), contextItem.getModuleId());
+				JSONObject analysisResults = null;
+
+				try {
+					analysisResults = postV5RecipeAnalysis(productContext, countries, usageContext.getName(), usageContext.getModuleId());
+				} catch (HttpStatusCodeException e) {
+					logger.error("Error during Decernis analysis: " + e.getMessage(), e);
+					for (String country : countries) {
+						ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
+								.withMessage(MLTextHelper.getI18NMessage("message.decernis.error",
+										"Error while creating Decernis recipe: " + e.getMessage()))
+								.ofDataType(RequirementDataType.Formulation).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID)
+								.withRegulatoryCode(country + (!usageContext.getName().isEmpty() ? " - " + usageContext.getName() : ""));
+
+						productContext.getRequirements().add(req);
+					}
+				}
 				if (analysisResults != null) {
 					for (String country : countries) {
 
 						if (isAvailableCountry(country) && analysisResults.has(RECIPE_ANALAYSIS_REPORT)) {
 
 							JSONObject recipeAnalaysisReport = analysisResults.getJSONObject(RECIPE_ANALAYSIS_REPORT);
-							
-							if(logger.isTraceEnabled()) {
+
+							if (logger.isTraceEnabled()) {
 								logger.trace(recipeAnalaysisReport.toString(3));
 							}
-							
+
 							if (recipeAnalaysisReport.has(RECIPE_REPORT)) {
 
 								JSONArray recipeReport = recipeAnalaysisReport.getJSONArray(RECIPE_REPORT);
@@ -256,7 +279,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 											JSONObject tabularReport = tabularReports.getJSONObject(j);
 
 											String usage = tabularReport.getString("usage");
-										
+
 											String decernisID = tabularReport.getString("did");
 											String function = tabularReport.getString("function");
 											String ingredientName = tabularReport.getString(PARAM_NAME);
@@ -266,11 +289,12 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 
 											if (ingItem != null) {
 
-												IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(ingItem.getIng(), contextItem.getCountries().get(country),usageEntry.getValue());
-											
+												IngRegulatoryListDataItem ingRegulatoryListDataItem = createIngRegulatoryListDataItem(
+														ingItem.getIng(), contextItem.getCountries().get(country), usageContext.getNodeRef());
+
 												ingRegulatoryListDataItem.setCitation(new MLText(tabularReport.getString(CITATION)));
 												ingRegulatoryListDataItem.setUsages(new MLText(usage));
-												
+
 												ingRegulatoryListDataItem.setRestrictionLevels(new MLText(tabularReport.getString(THRESHOLD)));
 												ingRegulatoryListDataItem.setResultIndicator(new MLText(tabularReport.getString(RESULT_INDICATOR)));
 
@@ -341,7 +365,6 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		}
 	}
 
-
 	private IngListDataItem findIngredientItemV5(List<IngListDataItem> ingList, String decernisID, String function, String ingredientName) {
 		for (IngListDataItem ing : ingList) {
 			if (decernisID.equals(nodeService.getProperty(ing.getIng(), PLMModel.PROP_REGULATORY_CODE))) {
@@ -364,8 +387,6 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		}
 		return null;
 	}
-	
-
 
 	private boolean isAvailableCountry(String country) {
 		if (availableCountries == null) {

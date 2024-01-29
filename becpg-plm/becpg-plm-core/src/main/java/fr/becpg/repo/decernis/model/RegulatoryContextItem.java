@@ -1,6 +1,8 @@
 package fr.becpg.repo.decernis.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -11,8 +13,7 @@ public class RegulatoryContextItem {
 
 	private RegulatoryEntity item;
 	private Map<String, NodeRef> countries = new HashMap<>();
-	private Map<String, NodeRef> usages = new HashMap<>();
-	private Integer moduleId;
+	private List<UsageContext> usages = new ArrayList<>();
 
 	public RegulatoryEntity getItem() {
 		return item;
@@ -30,20 +31,12 @@ public class RegulatoryContextItem {
 		this.countries = countries;
 	}
 
-	public Map<String, NodeRef> getUsages() {
+	public List<UsageContext> getUsages() {
 		return usages;
 	}
 
-	public void setUsages(Map<String, NodeRef> usages) {
+	public void setUsages(List<UsageContext> usages) {
 		this.usages = usages;
-	}
-
-	public Integer getModuleId() {
-		return moduleId;
-	}
-
-	public void setModuleId(Integer moduleId) {
-		this.moduleId = moduleId;
 	}
 
 	public boolean isEmpty() {
