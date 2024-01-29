@@ -43,7 +43,6 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
@@ -207,13 +206,11 @@ public class FormulaHelper {
 											
 											
 											entity.getReqCtrlList()
-											.add(new ReqCtrlListDataItem(
-													null, RequirementType.Info, MLTextHelper.getI18NMessage("message.formulate.formula.toolong",
-															dynamicCharactListItem.getTitle()),
-													null, new ArrayList<>(), RequirementDataType.Formulation));
-											
-											
-											
+													.add(ReqCtrlListDataItem.info()
+															.withMessage(MLTextHelper.getI18NMessage(
+																	"message.formulate.formula.toolong",
+																	dynamicCharactListItem.getTitle()))
+															.ofDataType(RequirementDataType.Formulation));											
 											
 										} else {
 											dataListItem.getExtraProperties().put(columnName, jsonValue);
@@ -273,11 +270,13 @@ public class FormulaHelper {
 						}
 						dynamicCharactListItem.setErrorLog(e.getLocalizedMessage());
 
+						
 						entity.getReqCtrlList()
-								.add(new ReqCtrlListDataItem(
-										null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.formula.error",
-												dynamicCharactListItem.getTitle(), e.getLocalizedMessage()),
-										null, new ArrayList<>(Arrays.asList(entity.getNodeRef())), RequirementDataType.Formulation));
+						.add(ReqCtrlListDataItem.forbidden()
+								.withMessage(MLTextHelper.getI18NMessage(
+										"message.formulate.formula.error",
+										dynamicCharactListItem.getTitle(), e.getLocalizedMessage()))
+								.ofDataType(RequirementDataType.Formulation).withSources(new ArrayList<>(Arrays.asList(entity.getNodeRef()))));
 
 						if (logger.isDebugEnabled()) {
 							logger.warn("Error in formula : [" + dynamicCharactListItem.getTitle() + "] - " + dynamicCharactListItem.getFormula());
