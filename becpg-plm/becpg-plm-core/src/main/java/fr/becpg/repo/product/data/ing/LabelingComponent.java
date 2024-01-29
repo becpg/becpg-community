@@ -42,7 +42,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
  * @author matthieu
  * @version $Id: $Id
  */
-public abstract class LabelingComponent extends BeCPGDataObject implements RepositoryEntity, Comparable<LabelingComponent> {
+public abstract class LabelingComponent extends BeCPGDataObject implements RepositoryEntity{
 
 	private static final long serialVersionUID = 270866664168102414L;
 
@@ -61,11 +61,11 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 	protected MLText pluralLegalName;
 
 	private Set<NodeRef> allergens = new HashSet<>();
-	
-	private Map<PlaceOfActivityTypeCode,Set<NodeRef>> geoOriginsByPlaceOfActivity = new EnumMap<>(PlaceOfActivityTypeCode.class);
+
+	private Map<PlaceOfActivityTypeCode, Set<NodeRef>> geoOriginsByPlaceOfActivity = new EnumMap<>(PlaceOfActivityTypeCode.class);
 
 	private Set<NodeRef> bioOrigins = new HashSet<>();
-	
+
 	private Set<FootNoteRule> footNotes = new HashSet<>();
 
 	/**
@@ -247,7 +247,6 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.volumeWithYield = volumeWithYield;
 	}
 
-
 	public void setQties(Double value) {
 		this.qty = value;
 		this.qtyWithYield = value;
@@ -255,7 +254,6 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.volumeWithYield = value;
 	}
 
-	
 	/**
 	 * <p>Getter for the field <code>allergens</code>.</p>
 	 *
@@ -308,15 +306,14 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		this.geoOriginsByPlaceOfActivity = geoOriginsByPlaceOfActivity;
 	}
 
-
 	public abstract LabelingComponent createCopy();
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = (prime * result)
-				+ Objects.hash(footNotes, allergens, bioOrigins, geoOriginsByPlaceOfActivity, isPlural, legalName, pluralLegalName, qty, qtyWithYield, volume, volumeWithYield);
+		result = (prime * result) + Objects.hash(footNotes, allergens, bioOrigins, geoOriginsByPlaceOfActivity, isPlural, legalName, pluralLegalName,
+				qty, qtyWithYield, volume, volumeWithYield);
 		return result;
 	}
 
@@ -329,8 +326,9 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 			return false;
 		}
 		LabelingComponent other = (LabelingComponent) obj;
-		return Objects.equals(allergens, other.allergens) && Objects.equals(bioOrigins, other.bioOrigins) && Objects.equals(footNotes, other.footNotes)
-				&& Objects.equals(geoOriginsByPlaceOfActivity, other.geoOriginsByPlaceOfActivity) && (isPlural == other.isPlural) && Objects.equals(legalName, other.legalName)
+		return Objects.equals(allergens, other.allergens) && Objects.equals(bioOrigins, other.bioOrigins)
+				&& Objects.equals(footNotes, other.footNotes) && Objects.equals(geoOriginsByPlaceOfActivity, other.geoOriginsByPlaceOfActivity)
+				&& (isPlural == other.isPlural) && Objects.equals(legalName, other.legalName)
 				&& Objects.equals(pluralLegalName, other.pluralLegalName) && Objects.equals(qty, other.qty)
 				&& Objects.equals(qtyWithYield, other.qtyWithYield) && Objects.equals(volume, other.volume)
 				&& Objects.equals(volumeWithYield, other.volumeWithYield);
@@ -341,30 +339,5 @@ public abstract class LabelingComponent extends BeCPGDataObject implements Repos
 		return "LabelingComponent [qty=" + qty + ", qtyWithYield=" + qtyWithYield + ", volume=" + volume + ", volumeWithYield=" + volumeWithYield
 				+ ", legalName=" + legalName + ", nodeRef=" + nodeRef + ", name=" + name + "]";
 	}
-
-	/** {@inheritDoc} */
-	@Override
-	public int compareTo(LabelingComponent lblComponent) {
-
-		if ((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).isGroup()
-				&& !((this instanceof CompositeLabeling) && ((CompositeLabeling) this).isGroup())) {
-			return 1;
-		}
-
-		if (!((lblComponent instanceof CompositeLabeling) && ((CompositeLabeling) lblComponent).isGroup())
-				&& ((this instanceof CompositeLabeling) && ((CompositeLabeling) this).isGroup())) {
-			return -1;
-		}
-
-		if ((lblComponent.getQty() != null) && (this.getQty() != null)) {
-			return Double.compare(lblComponent.getQty(), this.getQty());
-		} else if ((this.getQty() == null) && (lblComponent.getQty() != null)) {
-			return 1; // after
-		} else if ((this.getQty() != null) && (lblComponent.getQty() == null)) {
-			return -1; // before
-		}
-		return 0;// equals
-	}
-
 
 }

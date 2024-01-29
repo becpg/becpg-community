@@ -4888,12 +4888,24 @@
 				<field-visibility>
 					<show id="bcpg:depthLevel" />
 					<show id="entity_bcpg:compoListProduct_bcpg:product" />
+					<show id="bcpg:startEffectivity" force="true" />
+					<show id="bcpg:endEffectivity" force="true" />
 				</field-visibility>
 				<appearance>
 					<field id="bcpg:depthLevel">
 						<control template="/org/alfresco/components/form/controls/selectone.ftl">
 							<control-param name="options">0|,1|1,2|2,3|3,4|4,All|data.level.all
 							</control-param>
+						</control>
+					</field>
+					<field id="bcpg:startEffectivity" >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
+						</control>
+					</field>
+					<field id="bcpg:endEffectivity" >
+						<control template="/org/alfresco/components/form/controls/date.ftl">
+							<control-param name="showTime">false</control-param>
 						</control>
 					</field>
 				</appearance>

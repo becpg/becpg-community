@@ -297,8 +297,10 @@ public class IngsCalculatingFormulationHandler extends FormulationBaseHandler<Pr
 
 		ReqCtrlListDataItem reqCtrl = reqCtrlMap.get(reqNodeRef);
 		if (reqCtrl == null) {
-			reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<>(), requirementDataType);
-			reqCtrlMap.put(reqNodeRef, reqCtrl);
+			reqCtrl = ReqCtrlListDataItem.build().ofType(requirementType)
+					.withMessage(message).ofDataType(requirementDataType);
+			
+			reqCtrlMap.put(reqNodeRef, reqCtrl	);
 		} else {
 			reqCtrl.setReqDataType(requirementDataType);
 		}

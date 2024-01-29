@@ -65,7 +65,7 @@ public interface EntityVersionService {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	NodeRef getVersionHistoryNodeRef(NodeRef entityNodeRef);
+	NodeRef getVersionHistoryNodeRef(NodeRef entityNodeRef, boolean shouldCreate);
 
 	/**
 	 * <p>buildVersionHistory.</p>

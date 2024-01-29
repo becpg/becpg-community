@@ -30,8 +30,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.model.BeCPGModel;
@@ -42,6 +41,7 @@ import fr.becpg.repo.decernis.DecernisService;
 import fr.becpg.repo.decernis.helper.DecernisHelper;
 import fr.becpg.repo.decernis.model.RegulatoryContext;
 import fr.becpg.repo.decernis.model.RegulatoryContextItem;
+import fr.becpg.repo.decernis.model.UsageContext;
 import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationChainPlugin;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -191,10 +191,6 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 
 			return context.getRequirements();
 
-		} catch (HttpClientErrorException | HttpServerErrorException e) {
-			logger.error("Decernis HTTP ERROR STATUS: " + e.getMessage());
-			logger.error("- error body: " + e.getResponseBodyAsString());
-			throw new FormulateException("Error calling decernis service: " + e.getStatusText(), e);
 		} catch (Exception e) {
 			throw new FormulateException("Unexpected decernis error: " + e.getMessage(), e);
 		}
@@ -311,10 +307,9 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	}
 
 	private void checkUsagesID(RegulatoryContext context) {
-
 		for (RegulatoryContextItem contextItem : context.getContextItems()) {
 			for (NodeRef usageRef : contextItem.getItem().getRegulatoryUsages()) {
-				updateUsageID(usageRef, contextItem.getModuleId());
+				updateUsageID(usageRef);
 			}
 		}
 	}
@@ -327,25 +322,33 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 
 	private void createRecipe(RegulatoryContext context) {
 
-		JSONObject recipePayload = createRecipePayload(context);
-
-		String recipeId = null;
-
-		if (recipePayload != null) {
-			String url = serverUrl() + "/formulas";
-			HttpEntity<String> request = createEntity(recipePayload.toString());
-			JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
-			if (jsonObject.has("id")) {
-				recipeId = jsonObject.get("id").toString();
+		try {
+			JSONObject recipePayload = createRecipePayload(context);
+			
+			String recipeId = null;
+			
+			if (recipePayload != null) {
+				String url = serverUrl() + "/formulas";
+				HttpEntity<String> request = createEntity(recipePayload.toString());
+				JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
+				if (jsonObject.has("id")) {
+					recipeId = jsonObject.get("id").toString();
+				}
 			}
-		}
-		
-		logger.debug("Create decernis recipe : "+recipeId);
-
-		context.getProduct().setRegulatoryRecipeId(recipeId);
-
-		for (RegulatoryContextItem contextItem : context.getContextItems()) {
-			contextItem.getItem().setRegulatoryRecipeId(recipeId);
+			
+			logger.debug("Create decernis recipe : "+recipeId);
+			
+			context.getProduct().setRegulatoryRecipeId(recipeId);
+			
+			for (RegulatoryContextItem contextItem : context.getContextItems()) {
+				contextItem.getItem().setRegulatoryRecipeId(recipeId);
+			}
+		} catch (HttpStatusCodeException e) {
+			logger.error("Error while creating Decernis recipe: " + e.getMessage(), e);
+			ReqCtrlListDataItem req = ReqCtrlListDataItem.forbidden()
+					.withMessage(MLTextHelper.getI18NMessage("message.decernis.error", "Error while creating Decernis recipe: " + e.getMessage()))
+					.ofDataType(RequirementDataType.Specification).withFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
+			context.getRequirements().add(req);
 		}
 	}
 
@@ -396,7 +399,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 								RequirementType.Tolerated));
 					}
 
-				} catch (HttpClientErrorException | HttpServerErrorException e) {
+				} catch (HttpStatusCodeException e) {
 					logger.warn("Cannot retrieve ingredient " + ingName + " error:" + e.getStatusText());
 				} catch (Exception e) {
 					logger.error(e, e);
@@ -614,24 +617,40 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		contextItem.setItem(item);
 
 		Map<String, NodeRef> countries = new HashMap<>();
-		Map<String, NodeRef> usages = new HashMap<>();
-		Integer moduleId = null;
+		List<UsageContext> usages = new ArrayList<>();
 
 		for (NodeRef nodeRef : item.getRegulatoryCountries()) {
 			extractCodes(context, countries, nodeRef);
 		}
 		for (NodeRef nodeRef : item.getRegulatoryUsages()) {
-			extractCodes(context, usages, nodeRef);
+			UsageContext usageContext = createUsage(context, nodeRef);
+			if (usageContext != null) {
+				usages.add(usageContext);
+			}
 		}
-		moduleId = extractModuleId(item.getRegulatoryUsages());
 
 		contextItem.setCountries(countries);
 		contextItem.setUsages(usages);
-		contextItem.setModuleId(moduleId);
 
 		return contextItem;
 	}
 
+	private UsageContext createUsage(RegulatoryContext context, NodeRef nodeRef) {
+		String code = extractCode(nodeRef);
+		if (code == null || code.isBlank()) {
+			String name = (String) nodeService.getProperty(nodeRef, BeCPGModel.PROP_CHARACT_NAME);
+			logger.warn("charact " + name + " has no regulatoryCode");
+			context.getRequirements().add(createReqCtrl(null, MLTextHelper.getI18NMessage(MESSAGE_NO_CODE_CHARACT, name), RequirementType.Tolerated));
+			return null;
+		}
+		UsageContext usage = new UsageContext();
+		usage.setName(code);
+		usage.setNodeRef(nodeRef);
+		Integer moduleId = moduleIdMap.get(nodeService.getProperty(nodeRef, PLMModel.PROP_REGULATORY_MODULE));
+		usage.setModuleId(moduleId);
+		return usage;
+	}
+	
 	private void extractCodes(RegulatoryContext context, Map<String, NodeRef> codes, NodeRef nodeRef) {
 		String code = extractCode(nodeRef);
 		if (code == null || code.isBlank()) {
@@ -643,21 +662,17 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		}
 	}
 
-	private Integer extractModuleId(List<NodeRef> regulatoryUsages) {
-		return regulatoryUsages.stream().map(usage -> nodeService.getProperty(usage, PLMModel.PROP_REGULATORY_MODULE)).map(moduleIdMap::get)
-				.findFirst().orElse(null);
-	}
-
 	private String extractCode(NodeRef node) {
 		return (String) nodeService.getProperty(node, PLMModel.PROP_REGULATORY_CODE);
 	}
 
-	private void updateUsageID(NodeRef usageRef, Integer moduleId) {
-
+	private void updateUsageID(NodeRef usageRef) {
+		
 		if (nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_ID) instanceof String) {
 			return;
 		}
-
+		
+		Integer moduleId = moduleIdMap.get(nodeService.getProperty(usageRef, PLMModel.PROP_REGULATORY_MODULE));
 		String usageCode = extractCode(usageRef);
 
 		ResponseEntity<String> response = restTemplate.exchange(

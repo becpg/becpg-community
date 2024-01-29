@@ -660,14 +660,18 @@ public class NutrientRoundingRulesTestIT {
 		assertEquals(41.6d, RegulationFormulationHelper.round(41.59d, NutrientCode.Sugar, MLTextHelper.parseLocale("hi_IN"), "g/100g"), 0);
 	}
 	
+
 	@Test
 	public void testGSORoundingRules() {
-		assertEquals(35d, RegulationFormulationHelper.round(35.24d, NutrientCode.EnergykJ, MLTextHelper.parseLocale("ar_AE"), "kJ/100g"), 0);
-		assertEquals(36d, RegulationFormulationHelper.round(35.88d, NutrientCode.Energykcal, MLTextHelper.parseLocale("ar_AE"), "kCal/100g"), 0);
+		
+		Locale aeLocale = MLTextHelper.parseLocale("ar_AE");
+		
+		assertEquals(35d, RegulationFormulationHelper.round(35.24d, NutrientCode.EnergykJ, aeLocale, "kJ/100g"), 0);
+		assertEquals(36d, RegulationFormulationHelper.round(35.88d, NutrientCode.Energykcal, aeLocale, "kCal/100g"), 0);
 		assertEquals(17d, RegulationFormulationHelper.round(16.58d, NutrientCode.Fat, MLTextHelper.parseLocale("ar_BH"), "g/100g"), 0);
 		assertEquals(8.8d, RegulationFormulationHelper.round(8.76d, NutrientCode.CarbohydrateByDiff, MLTextHelper.parseLocale("ar_BH"), "g/100g"), 0);
 		assertEquals(0d, RegulationFormulationHelper.round(0.09d, NutrientCode.Sugar, MLTextHelper.parseLocale("ar_BH"), "g/100g"), 0);
-		
+
 		assertEquals(19d, RegulationFormulationHelper.round(19.35d, NutrientCode.FatSaturated, MLTextHelper.parseLocale("ar_SA"), "g/100g"), 0);
 		assertEquals(6.2d, RegulationFormulationHelper.round(6.24d, NutrientCode.FatMonounsaturated, MLTextHelper.parseLocale("ar_SA"), "g/100g"), 0);
 		assertEquals(0d, RegulationFormulationHelper.round(0.04d, NutrientCode.FatPolyunsaturated, MLTextHelper.parseLocale("ar_SA"), "g/100g"), 0);
@@ -678,7 +682,62 @@ public class NutrientRoundingRulesTestIT {
 
 		assertEquals(3.78d, RegulationFormulationHelper.round(3.7777d, NutrientCode.VitA, MLTextHelper.parseLocale("ar_KW"), "µg/100g"), 0);
 		assertEquals(3.8d, RegulationFormulationHelper.round(3.7777d, NutrientCode.VitD, MLTextHelper.parseLocale("ar_KW"), "µg/100g"), 0);
+		
+		//EU
+
+		assertEquals(11d, RegulationFormulationHelper.round(11.45d, NutrientCode.Fat, aeLocale, null), 0);
+		assertEquals(4254d, RegulationFormulationHelper.round(4253.6d, NutrientCode.Energykcal, aeLocale, "kcal"), 0);
+
+		assertEquals(null, RegulationFormulationHelper.round(null, NutrientCode.Fat, aeLocale, "g/100g"));
+		assertEquals(0d, RegulationFormulationHelper.round(0.2d, NutrientCode.Fat, aeLocale, "g/100g"), 0);
+		assertEquals(4.3d, RegulationFormulationHelper.round(4.33d, NutrientCode.Fat, aeLocale, "g/100g"), 0);
+
+		assertEquals(null, RegulationFormulationHelper.round(null, NutrientCode.FatSaturated, aeLocale, null));
+		assertEquals(12d, RegulationFormulationHelper.round(11.6d, NutrientCode.FatSaturated, aeLocale, null), 0);
+		assertEquals(12d, RegulationFormulationHelper.round(11.6d, NutrientCode.FatSaturated, Locale.GERMAN, null), 0);
+		assertEquals(12d, RegulationFormulationHelper.round(12.4d, NutrientCode.FatSaturated, aeLocale, null), 0);
+
+		assertEquals(8.6d, RegulationFormulationHelper.round(8.63d, NutrientCode.FatSaturated, aeLocale, null), 0);
+		assertEquals(0.2d, RegulationFormulationHelper.round(0.2d, NutrientCode.FatSaturated, aeLocale, null), 0);
+		assertEquals(0.0d, RegulationFormulationHelper.round(0.01d, NutrientCode.FatSaturated, aeLocale, null), 0);
+		assertEquals(0d, RegulationFormulationHelper.round(0d, NutrientCode.FatSaturated, aeLocale, null), 0);
+
+		
+		//Display in mg
+		assertEquals(null, RegulationFormulationHelper.round(null, NutrientCode.Sodium, aeLocale, "mg/100g"));
+		assertEquals(10.4d, RegulationFormulationHelper.round(10.36d, NutrientCode.Sodium, aeLocale, "mg/100g"), 0);
+		assertEquals(0.34d, RegulationFormulationHelper.round(0.337d, NutrientCode.Sodium, aeLocale, "mg/100g"), 0);
+		assertEquals(0.0d, RegulationFormulationHelper.round(0.002d, NutrientCode.Sodium, aeLocale, "mg/100g"), 0);
+		assertEquals(0d, RegulationFormulationHelper.round(0d, NutrientCode.Sodium, aeLocale, "mg/100g"), 0);
+		
+		
+		assertEquals(null, RegulationFormulationHelper.round(null, NutrientCode.Salt, aeLocale, "g/100g"));
+		assertEquals(1.5d, RegulationFormulationHelper.round(1.46d, NutrientCode.Salt, aeLocale, "g/100g"), 0);
+		assertEquals(0.04d, RegulationFormulationHelper.round(0.037d, NutrientCode.Salt, aeLocale, "g/100g"), 0);
+		assertEquals(0.0d, RegulationFormulationHelper.round(0.0125d, NutrientCode.Salt, aeLocale, "g/100g"), 0);
+		assertEquals(0.0d, RegulationFormulationHelper.round(0.002d, NutrientCode.Salt, aeLocale, "g/100g"), 0);
+
+
+		assertEquals(null, RegulationFormulationHelper.round(null, NutrientCode.Salt, aeLocale, "g/100g"));
+		assertEquals(1.5d, RegulationFormulationHelper.round(1.46d, NutrientCode.Salt, aeLocale, "g/100g"), 0);
+		assertEquals(0.04d, RegulationFormulationHelper.round(0.037d, NutrientCode.Salt, aeLocale, "g/100g"), 0);
+		assertEquals(0.0d, RegulationFormulationHelper.round(0.0125d, NutrientCode.Salt, aeLocale, "g/100g"), 0);
+		assertEquals(0.0d, RegulationFormulationHelper.round(0.002d, NutrientCode.Salt, aeLocale, "g/100g"), 0);
+		
+		assertEquals(15d, RegulationFormulationHelper.tolerances(12d, NutrientCode.Protein,aeLocale, null).getFirst(), 0d);
+		assertEquals(9.2d, RegulationFormulationHelper.tolerances(12d, NutrientCode.Protein,aeLocale, null).getSecond(),
+				0d);
+
+		assertEquals(23d, RegulationFormulationHelper.tolerances(18.9d, NutrientCode.Fat,aeLocale, null).getFirst(), 0d);
+		assertEquals(15d, RegulationFormulationHelper.tolerances(18.9d, NutrientCode.Fat,aeLocale, null).getSecond(), 0d);
+
+		assertEquals(1.60d, RegulationFormulationHelper.tolerances(1.23d, NutrientCode.Salt,aeLocale, null).getFirst(), 0d);
+		assertEquals(0.78d, RegulationFormulationHelper.tolerances(1.23d, NutrientCode.Salt,aeLocale, null).getSecond(),
+				0d);
+
+		assertEquals(2.9d, RegulationFormulationHelper.tolerances(0.9d, NutrientCode.Sugar,aeLocale, null).getFirst(), 0d);
+		assertEquals(0d, RegulationFormulationHelper.tolerances(0.9d, NutrientCode.Sugar,aeLocale, null).getSecond(), 0d);
+
 	}
-	
 
 }
