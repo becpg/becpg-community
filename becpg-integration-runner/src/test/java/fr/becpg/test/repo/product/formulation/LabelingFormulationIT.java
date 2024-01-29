@@ -293,7 +293,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		labelingRuleList.add(new LabelingRuleListDataItem("Param1bis", "detailsDefaultFormat = \"{0} ({2})\"", LabelingRuleType.Prefs, null, null));
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"pâte french (legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%)", Locale.FRENCH);
+				"pâte french 100% (legal Raw material 1 (<b>allergen1</b>) 50%, legal Raw material 2 (<b>allergen1</b>) 50%)", Locale.FRENCH);
 
 		// En ingrédient:
 		//		Qty	Meo	netQty	Rdmt	Qty perc	Qty with yield
@@ -1668,7 +1668,7 @@ public class LabelingFormulationIT extends AbstractFinishedProductTest {
 		// └──[ing4 french - 1.0]
 
 		checkILL(finishedProductNodeRef1, labelingRuleList,
-				"<b>pâte french (50%) :</b> legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%<br/><b>garniture french (50%) :</b> ing3 french 41,7%, ing4 french 8,3%",
+				"<b>garniture french (50%) :</b> ing3 french 41,7%, ing4 french 8,3%<br/><b>pâte french (50%) :</b> legal Raw material 12 33,3% (ing2 french 25%, ing1 french 8,3%), ing2 french 11,1%, ing1 french 5,6%",
 				Locale.FRENCH);
 
 		labelingRuleList = new ArrayList<>();
