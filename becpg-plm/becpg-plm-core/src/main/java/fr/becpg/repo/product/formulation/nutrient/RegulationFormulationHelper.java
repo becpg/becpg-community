@@ -90,7 +90,11 @@ public class RegulationFormulationHelper {
 		regulations.put("UY", new BrazilianNutrientRegulation("beCPG/databases/nuts/UruguayanNutrientRegulation.csv"));
 		regulations.put("BR", new BrazilianNutrientRegulation("beCPG/databases/nuts/BrazilianNutrientRegulation.csv"));
 		regulations.put("CTA", new CentralAmericanNutrientRegulation("beCPG/databases/nuts/CentralAmericanNutrientRegulation.csv"));
-
+		
+		
+		regulations.put("TW", new TaiwanNutrientRegulation("beCPG/databases/nuts/TaiwanNutrientRegulation.csv"));
+		regulations.put("JP", new JapanNutrientRegulation("beCPG/databases/nuts/JapanNutrientRegulation.csv"));
+		regulations.put("VN", new VietnamNutrientRegulation("beCPG/databases/nuts/VietnamNutrientRegulation.csv"));
 	}
 
 	/**
@@ -251,7 +255,9 @@ public class RegulationFormulationHelper {
 				|| locale.getCountry().equals("PK") || locale.getCountry().equals("ZA") || locale.getCountry().equals("TN")
 				|| locale.getCountry().equals("EG") || locale.getCountry().equals("CL") || locale.getCountry().equals("UY")
 				|| locale.getCountry().equals("BR") || locale.getCountry().equals("TT") || locale.getCountry().equals("DO")
-				|| locale.getCountry().equals("PE")) {
+				|| locale.getCountry().equals("PE") || locale.getCountry().equals("TW") || locale.getCountry().equals("JP")
+				 || locale.getCountry().equals("VN")
+				) {
 			return locale.getCountry();
 		} else if (locale.getLanguage().equals("zh")) {
 			return "CN";

@@ -739,5 +739,23 @@ public class NutrientRoundingRulesTestIT {
 		assertEquals(0d, RegulationFormulationHelper.tolerances(0.9d, NutrientCode.Sugar,aeLocale, null).getSecond(), 0d);
 
 	}
+	
 
+	@Test
+	public void testVietnamRoundingRules() {
+		//TODO
+	}
+
+	@Test
+	public void testJapanRoundingRules() {
+		//TODO
+	}
+
+
+	@Test
+	public void testTaiwanRoundingRules() {
+		//TODO
+	}
+	
+	
 }
