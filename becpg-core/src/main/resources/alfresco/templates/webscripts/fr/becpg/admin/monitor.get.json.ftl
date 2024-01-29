@@ -24,6 +24,19 @@
 			"withoutLicenseUsers": ${withoutLicenseUsers?c},
 			"becpgSchema": "${becpgSchema}",
 			"batchCounts": ${batchCounts?c}
+			<#if volumetry??>,
+			   "volumetry": [
+			      <#assign volumetryArray = volumetry?eval>
+			      <#list volumetryArray as vol>
+			         {
+			            "qname": "${vol.qname}",
+			            "protocol": "${vol.protocol}",
+			            "identifier": "${vol.identifier}",
+			            "node_count": ${vol.node_count?c}
+			         }<#if vol_has_next>,</#if>
+			      </#list>
+			   ]
+			</#if>
 	   }
 	</#if>
 }

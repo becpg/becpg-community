@@ -46,6 +46,7 @@ import fr.becpg.repo.autocomplete.AutoCompleteEntry;
 import fr.becpg.repo.autocomplete.AutoCompletePage;
 import fr.becpg.repo.product.ProductService;
 import fr.becpg.repo.product.data.FinishedProductData;
+import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
@@ -733,6 +734,73 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 		
 	}
 	
+	@Test
+	public void testDocumentViewPermissions() {
+		
+		initParts();
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef ret = createDocumentViewSecurityRule();
+			securityService.refreshAcls();
+			return ret;
+		}, false, true);
+		
+		ProductData entityTpl = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData templateFinishedProduct = new FinishedProductData();
+			templateFinishedProduct.setName("FP TPL");
+			templateFinishedProduct.getAspects().add(BeCPGModel.ASPECT_ENTITY_TPL);
+			return (ProductData) alfrescoRepository.create(getTestFolderNodeRef(), templateFinishedProduct);
+		}, false, true);
+		
+		NodeRef productNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			FinishedProductData productData = new FinishedProductData();
+			productData.setParentNodeRef(getTestFolderNodeRef());
+			productData.setName("FP testDocumentViewPermissions");
+			productData.setEntityTpl(entityTpl);
+			return alfrescoRepository.save(productData).getNodeRef();
+		}, false, true);
+		
+		// grp1 write and grp2 read
+		Set<AccessPermission> beforeTemplatePermissions = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			productService.formulate(productNodeRef);
+			NodeRef folderNodeRef = nodeService.getChildByName(productNodeRef, ContentModel.ASSOC_CONTAINS, "Brief");
+			assertFalse(permissionService.getInheritParentPermissions(folderNodeRef));
+			return permissionService.getAllSetPermissions(folderNodeRef);
+		}, false, true);
+		
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef folderNodeRef = nodeService.getChildByName(entityTpl.getNodeRef(), ContentModel.ASSOC_CONTAINS, "Brief");
+			permissionService.setInheritParentPermissions(folderNodeRef, false);
+			permissionService.setPermission(folderNodeRef, "TEST_AUTHORITY", PermissionService.READ, true);
+			return null;
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			productService.formulate(productNodeRef);
+			NodeRef folderNodeRef = nodeService.getChildByName(productNodeRef, ContentModel.ASSOC_CONTAINS, "Brief");
+			assertFalse(permissionService.getInheritParentPermissions(folderNodeRef));
+			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(folderNodeRef);
+			assertEquals(1, permissions.size());
+			assertEquals("TEST_AUTHORITY", permissions.iterator().next().getAuthority());
+			assertEquals(PermissionService.READ, permissions.iterator().next().getPermission());
+			return null;
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef tplFolderNodeRef = nodeService.getChildByName(entityTpl.getNodeRef(), ContentModel.ASSOC_CONTAINS, "Brief");
+			permissionService.setInheritParentPermissions(tplFolderNodeRef, true);
+			permissionService.clearPermission(tplFolderNodeRef, "TEST_AUTHORITY");
+			productService.formulate(productNodeRef);
+			NodeRef folderNodeRef = nodeService.getChildByName(productNodeRef, ContentModel.ASSOC_CONTAINS, "Brief");
+			assertFalse(permissionService.getInheritParentPermissions(folderNodeRef));
+			Set<AccessPermission> permissions = permissionService.getAllSetPermissions(folderNodeRef);
+			assertEquals(beforeTemplatePermissions, permissions);
+			return null;
+		}, false, true);
+		
+	}
+	
 	private void checkPermissions(NodeRef productNodeRef, Set<AccessPermission> permissions, List<String> allowedRead, List<String> allowedWrite) {
 		
 		int readChecks = 0;
@@ -782,6 +850,29 @@ public class SecurityServiceIT extends AbstractFinishedProductTest {
 
 		return alfrescoRepository.create(getTestFolderNodeRef(), rmAclGroupData).getNodeRef();
 
+	}
+	
+	private NodeRef createDocumentViewSecurityRule() {
+		createUsers();
+		List<NodeRef> group1s = new ArrayList<>();
+		group1s.add(authorityService.getAuthorityNodeRef(grp1));
+		List<NodeRef> group2s = new ArrayList<>();
+		group2s.add(authorityService.getAuthorityNodeRef(grp2));
+		
+		ACLGroupData rmAclGroupData = new ACLGroupData();
+		rmAclGroupData.setName("Test Document View ACL");
+		rmAclGroupData.setNodeType(PLMModel.TYPE_FINISHEDPRODUCT.toPrefixString(namespaceService));
+		rmAclGroupData.setIsLocalPermission(false);
+		
+		List<ACLEntryDataItem> permissionList = new ArrayList<>();
+		
+		permissionList.add(new ACLEntryDataItem("View-documents", PermissionModel.READ_WRITE, group1s));
+		permissionList.add(new ACLEntryDataItem("View-documents", PermissionModel.READ_ONLY, group2s));
+		
+		rmAclGroupData.setAcls(permissionList);
+		
+		return alfrescoRepository.create(getTestFolderNodeRef(), rmAclGroupData).getNodeRef();
+		
 	}
 	
 	private void checkPermissionsAreSameAfterReformulation(NodeRef productNodeRef, Set<AccessPermission> expectedPermissions) {

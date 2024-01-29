@@ -147,15 +147,13 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 			return finishedProduct.getNodeRef();
 
 		}, false, true);
+		
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
 			productService.formulate(finishedProductNodeRef);
 			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
-
-			assertEquals(5, formulatedProduct.getCostList().size());
-			assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
-
+			
 			for (CostListDataItem c1 : formulatedProduct.getCostList()) {
 				String trace1 = "cost: " + nodeService.getProperty(c1.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " - value: " + c1.getValue()
 						+ " - unit: " + c1.getUnit() + " level: " + c1.getDepthLevel();
@@ -182,6 +180,11 @@ public class FormulationCostsIT extends AbstractFinishedProductTest {
 					assertFalse(true);
 				}
 			}
+
+			assertEquals(5, formulatedProduct.getCostList().size());
+			assertEquals(TareUnit.g, formulatedProduct.getTareUnit());
+
+			
 
 			assertEquals(44d, formulatedProduct.getUnitTotalCost());
 

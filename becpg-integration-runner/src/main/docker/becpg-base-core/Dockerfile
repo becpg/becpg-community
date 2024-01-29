@@ -4,14 +4,11 @@ ENV TOMCAT_DIR=/usr/local/tomcat
 
 USER root
 
-#RUN yum update -y && yum -y install glibc-locale-source glibc-langpack-en  && yum clean all && \
-#    rm -rf /var/cache/yum
-
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV AOS_VERSION=${alfresco.aos.version}
 ENV MYSQL_CONNECTOR=${mysql.connector.version}
 ENV SUPPORT_TOOLS_VERSION=1.3.0.0-beCPG-amp
-ENV I18_VERSION=1.0-116
+ENV I18_VERSION=1.0-118
    
 ## JDBC - MYSQL
 RUN curl --silent --location \
@@ -54,7 +51,6 @@ RUN set -x && \
 COPY tomcat/server.xml $TOMCAT_DIR/conf/server.xml
 COPY becpg/classes $TOMCAT_DIR/shared/classes
 RUN rm -rf  $TOMCAT_DIR/amps/*
+RUN mkdir -p ${TOMCAT_DIR}/data && rm -rf  $TOMCAT_DIR/alf_data
 
 ENV JAVA_OPTS "-Ddir.root=/usr/local/tomcat/data"
-
-USER ${USERNAME}

@@ -1,7 +1,5 @@
 package fr.becpg.repo.product.requirement;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -18,15 +16,12 @@ import org.springframework.util.StopWatch;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.decernis.DecernisMode;
 import fr.becpg.repo.decernis.DecernisService;
-import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.CheckSumHelper;
-import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
@@ -94,6 +89,11 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 			return Collections.emptyList();
 		}
 		
+		if (DecernisMode.DISABLED.equals(formulatedProduct.getRegulatoryMode())) {
+			logger.debug("Decernis service is disabled for this product");
+			return Collections.emptyList();
+		}
+		
 		if (formulatedProduct.getRegulatoryList() == null) {
 			formulatedProduct.setRegulatoryList(new LinkedList<>());
 		}
@@ -114,20 +114,8 @@ public class DecernisRequirementsScanner implements RequirementScanner {
 				List<ReqCtrlListDataItem> requirements = decernisService.extractRequirements(formulatedProduct);
 				updateChecksums(formulatedProduct);
 				formulatedProduct.setRegulatoryFormulatedDate(new Date());
-				updateChecksums(formulatedProduct);
 				
 				return requirements;
-			} catch (FormulateException e) {
-				if (logger.isWarnEnabled()) {
-					logger.warn(e, e);
-				}
-				
-				ReqCtrlListDataItem req = new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-						MLTextHelper.getI18NMessage("message.decernis.error", e.getMessage()), null, new ArrayList<>(),
-						RequirementDataType.Specification);
-				req.setFormulationChainId(DecernisService.DECERNIS_CHAIN_ID);
-				return Arrays.asList(req);
-
 			} finally {
 				if (logger.isDebugEnabled() && (watch != null)) {
 					watch.stop();

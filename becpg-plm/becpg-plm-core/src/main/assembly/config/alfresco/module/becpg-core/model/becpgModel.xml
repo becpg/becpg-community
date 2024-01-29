@@ -133,6 +133,7 @@
 					<value>P</value>
 					<value>m</value>
 					<value>ft</value>
+					<value>in</value>
 					<value>m2</value>
 					<value>m3</value>
 					<value>h</value>
@@ -804,6 +805,7 @@
 					<value>BECPG_ONLY</value>
 					<value>DECERNIS_ONLY</value>
 					<value>BOTH</value>
+					<value>DISABLED</value>
 				</list>
 			</parameter>
 		</constraint>
@@ -814,6 +816,7 @@
 					<value>PROHIBITED</value>
 					<value>PERMITTED</value>
 					<value>NOT_LISTED</value>
+					<value>ERROR</value>
 				</list>
 			</parameter>
 		</constraint>

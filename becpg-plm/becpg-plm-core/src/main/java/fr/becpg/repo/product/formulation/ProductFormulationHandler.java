@@ -19,13 +19,13 @@ package fr.becpg.repo.product.formulation;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.alfresco.service.cmr.lock.LockService;
 import org.alfresco.service.cmr.lock.LockStatus;
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.apache.commons.logging.Log;
@@ -132,11 +132,10 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 		} else {
 			productData.setReqCtrlList(new LinkedList<>());
 		}
-		
+
 		if ((productData.hasCompoListEl(new VariantFilters<>())) || (productData.hasPackagingListEl(new VariantFilters<>()))
 				|| (productData.hasProcessListEl(new VariantFilters<>()))) {
 
-			
 			if (formulateChildren) {
 				checkShouldFormulateComponents(true, productData);
 			}
@@ -342,11 +341,7 @@ public class ProductFormulationHandler extends FormulationBaseHandler<ProductDat
 	}
 
 	private void addMessingReq(List<ReqCtrlListDataItem> reqCtrlListDataItem, NodeRef sourceNodeRef, String reqMsg, RequirementDataType reqDataType) {
-		MLText message = MLTextHelper.getI18NMessage(reqMsg);
-		ArrayList<NodeRef> sources = new ArrayList<>(1);
-		if (sourceNodeRef != null) {
-			sources.add(sourceNodeRef);
-		}
-		reqCtrlListDataItem.add(new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, null, sources, reqDataType));
+		reqCtrlListDataItem.add(ReqCtrlListDataItem.forbidden().withMessage(MLTextHelper.getI18NMessage(reqMsg))
+				.withSources(Arrays.asList(sourceNodeRef)).ofDataType(reqDataType));
 	}
 }
