@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# Git commit-msg hook
+
+commit_msg_file="$1"
+
+# First Part [Optional]:
+
+ticket_ref=$(grep -E -o "^\s*(InProgress|Fix)\s+#[0-9]+" "$commit_msg_file")
+if [ -n "$ticket_ref" ]; then
+  echo "Ticket reference found: $ticket_ref"
+else
+  echo "No ticket reference found."
+fi
+
+# Second Part [Required]:
+
+valid_commit_types="[Feature]|[Bug]|[Setup]|[Cleanup]|[Migration]|[Security]|[Release]"
+commit_type=$(head -n 2 "$commit_msg_file" | grep -E -o "$valid_commit_types")
+if [ -z "$commit_type" ]; then
+  echo "Invalid commit type. Expected one of: [Feature], [Bug], [Setup], [Cleanup], [Migration], [Security]"
+  exit 1
+fi
+
+# Third Part [Required]:
+
+description_line=$(head -n 8 "$commit_msg_file" | tail -n 1)
+if [ -z "$description_line" ]; then
+  echo "Description is missing."
+  exit 1
+fi

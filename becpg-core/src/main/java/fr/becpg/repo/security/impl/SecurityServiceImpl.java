@@ -289,8 +289,12 @@ public class SecurityServiceImpl implements SecurityService {
 					List<ACLEntryDataItem> aclEntries = aclGrp.getAcls();
 					if (aclEntries != null) {
 						for (ACLEntryDataItem aclEntry : aclEntries) {
-							String key = computeNodeTypePropKey(nodeType, aclEntry.getPropName());
-							permissionMap.computeIfAbsent(key, k -> new ArrayList<>()).add(new PermissionModel(aclEntry.getAclPermission(), aclEntry.getGroupsAssignee()));
+							if(aclEntry.getPropName()!=null) {
+								String key = computeNodeTypePropKey(nodeType, aclEntry.getPropName());
+								permissionMap.computeIfAbsent(key, k -> new ArrayList<>()).add(new PermissionModel(aclEntry.getAclPermission(), aclEntry.getGroupsAssignee()));
+							} else {
+								logger.warn("Acl has no propName: "+aclEntry.toString());
+							}
 						}
 					}
 				}
