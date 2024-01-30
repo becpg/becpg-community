@@ -168,9 +168,6 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 					if ((formulatedProduct.getSecondaryYield() != null) && (formulatedProduct.getSecondaryYield() != 0d)) {
 						Double preparedValue = n.getValue();
 						if (preparedValue != null) {
-							if ((formulatedProduct.getYield() != null) && (formulatedProduct.getYield() != 0d)) {
-								preparedValue = preparedValue * (formulatedProduct.getYield() / 100d);
-							}
 							preparedValue = preparedValue / (formulatedProduct.getSecondaryYield() / 100d);
 							n.setPreparedValue(preparedValue);
 						}

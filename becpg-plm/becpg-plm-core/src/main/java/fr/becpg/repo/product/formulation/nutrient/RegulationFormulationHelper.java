@@ -31,7 +31,7 @@ import fr.becpg.repo.repository.model.VariantAwareDataItem;
  * @version $Id: $Id
  */
 public class RegulationFormulationHelper {
-	
+
 	private RegulationFormulationHelper() {
 		//Do nothing
 	}
@@ -90,7 +90,11 @@ public class RegulationFormulationHelper {
 		regulations.put("UY", new BrazilianNutrientRegulation("beCPG/databases/nuts/UruguayanNutrientRegulation.csv"));
 		regulations.put("BR", new BrazilianNutrientRegulation("beCPG/databases/nuts/BrazilianNutrientRegulation.csv"));
 		regulations.put("CTA", new CentralAmericanNutrientRegulation("beCPG/databases/nuts/CentralAmericanNutrientRegulation.csv"));
-
+		
+		
+		regulations.put("TW", new TaiwanNutrientRegulation("beCPG/databases/nuts/TaiwanNutrientRegulation.csv"));
+		regulations.put("JP", new JapanNutrientRegulation("beCPG/databases/nuts/JapanNutrientRegulation.csv"));
+		regulations.put("VN", new VietnamNutrientRegulation("beCPG/databases/nuts/VietnamNutrientRegulation.csv"));
 	}
 
 	/**
@@ -151,9 +155,7 @@ public class RegulationFormulationHelper {
 	public static Double extractPreparedValuePerServing(String roundedValue, String key) {
 		return extractValueByKey(roundedValue, KEY_SECONDARY_VALUE_PER_SERVING, key);
 	}
-	
-	
-	
+
 	/**
 	 * <p>extractValuePerContainer.</p>
 	 *
@@ -225,7 +227,7 @@ public class RegulationFormulationHelper {
 	}
 
 	private static Double extractValueByKey(String roundedValue, String item, String key) {
-		if(roundedValue!=null) {
+		if (roundedValue != null) {
 			try {
 				JSONTokener tokener = new JSONTokener(roundedValue);
 				JSONObject jsonRound = new JSONObject(tokener);
@@ -235,7 +237,7 @@ public class RegulationFormulationHelper {
 						return parseDouble(value.get(key));
 					}
 				}
-	
+
 			} catch (JSONException e) {
 				logger.error(e, e);
 			}
@@ -253,7 +255,9 @@ public class RegulationFormulationHelper {
 				|| locale.getCountry().equals("PK") || locale.getCountry().equals("ZA") || locale.getCountry().equals("TN")
 				|| locale.getCountry().equals("EG") || locale.getCountry().equals("CL") || locale.getCountry().equals("UY")
 				|| locale.getCountry().equals("BR") || locale.getCountry().equals("TT") || locale.getCountry().equals("DO")
-				|| locale.getCountry().equals("PE")) {
+				|| locale.getCountry().equals("PE") || locale.getCountry().equals("TW") || locale.getCountry().equals("JP")
+				 || locale.getCountry().equals("VN")
+				) {
 			return locale.getCountry();
 		} else if (locale.getLanguage().equals("zh")) {
 			return "CN";
@@ -295,11 +299,11 @@ public class RegulationFormulationHelper {
 		if (roundedValue != null) {
 			String localKey = getLocalKey(locale);
 			String nutCode = nutListElt.attributeValue(ATTR_NUT_CODE);
-			String measurementPrecision =  nutListElt.attributeValue(PLMModel.PROP_NUTLIST_MEASUREMENTPRECISION.getLocalName());
+			String measurementPrecision = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_MEASUREMENTPRECISION.getLocalName());
 			String nutListValue = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE.getLocalName());
 			String nutListValuePerServing = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PER_SERVING.getLocalName());
 			String nutListValuePrepared = nutListElt.attributeValue(PLMModel.PROP_NUTLIST_VALUE_PREPARED.getLocalName());
-			
+
 			try {
 				JSONTokener tokener = new JSONTokener(roundedValue);
 				JSONObject jsonRound = new JSONObject(tokener);
@@ -358,35 +362,36 @@ public class RegulationFormulationHelper {
 							}
 						}
 
-						if ((nutListValue != null) && (!nutListValue.equals(""))) {
-							nutListElt.addAttribute("roundedDisplayValue" + suffix, RegulationFormulationHelper
-									.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey), nutCode,measurementPrecision, locale, locKey));
+						if ((nutListValue != null) && (!nutListValue.isBlank())) {
+							nutListElt.addAttribute("roundedDisplayValue" + suffix,
+									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValue), extractValue(roundedValue, locKey),
+											nutCode, measurementPrecision, locale, locKey));
 							if (locKey.equals("US")) {
 								nutListElt.addAttribute("roundedDisplayValuePerContainer" + suffix,
 										RegulationFormulationHelper.displayValue(extractValuePerContainer(roundedValue, locKey),
-												extractValuePerContainer(roundedValue, locKey), nutCode,measurementPrecision, locale, locKey));
+												extractValuePerContainer(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey));
 							}
 						}
-						if ((nutListValuePerServing != null) && (!nutListValuePerServing.equals(""))) {
+						if ((nutListValuePerServing != null) && (!nutListValuePerServing.isBlank())) {
 							nutListElt.addAttribute("roundedDisplayValuePerServing" + suffix,
 									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing),
-											extractValuePerServing(roundedValue, locKey),measurementPrecision, nutCode, locale, locKey));
+											extractValuePerServing(roundedValue, locKey), measurementPrecision, nutCode, locale, locKey));
 						}
-						
-						
-						
-						if ((nutListValuePrepared != null) && (!nutListValuePrepared.equals(""))) {
-							nutListElt.addAttribute("roundedDisplayValuePrepared" + suffix, RegulationFormulationHelper
-									.displayValue(Double.parseDouble(nutListValue), extractPreparedValue(roundedValue, locKey), nutCode,measurementPrecision, locale, locKey));
-							
-							
-							if ((nutListValuePerServing != null) && (!nutListValuePerServing.equals(""))) {
+
+						if ((nutListValuePrepared != null) && (!nutListValuePrepared.isBlank())) {
+							nutListElt.addAttribute("roundedDisplayValuePrepared" + suffix,
+									RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePrepared),
+											extractPreparedValue(roundedValue, locKey), nutCode, measurementPrecision, locale, locKey));
+
+							Double nutListValuePreparedPerServing = extractPreparedValuePerServing(roundedValue, locKey);
+
+							if (nutListValuePreparedPerServing != null) {
 								nutListElt.addAttribute("roundedDisplayValuePreparedPerServing" + suffix,
-										RegulationFormulationHelper.displayValue(Double.parseDouble(nutListValuePerServing),
-												extractPreparedValuePerServing(roundedValue, locKey),measurementPrecision, nutCode, locale, locKey));
+										RegulationFormulationHelper.displayValue(nutListValuePreparedPerServing, nutListValuePreparedPerServing,
+												measurementPrecision, nutCode, locale, locKey));
 							}
 						}
-						
+
 					}
 				}
 			} catch (JSONException e) {
@@ -426,7 +431,7 @@ public class RegulationFormulationHelper {
 		case KEY_TOLERANCE_MAX:
 			return "Tmax";
 		case KEY_TOLERANCE_MIN:
-			return "Tmin";	
+			return "Tmin";
 		case KEY_VALUE_PER_SERVING:
 			return "ValuePerServing";
 		case KEY_GDA_PERC:
@@ -495,13 +500,12 @@ public class RegulationFormulationHelper {
 				secondaryValue.put(key, regulation.round(n.getPreparedValue(), nutCode, nutUnit));
 				mini.put(key, regulation.round(n.getMini(), nutCode, nutUnit));
 				maxi.put(key, regulation.round(n.getMaxi(), nutCode, nutUnit));
-				
-				Pair<Double,Double> tolerances =  regulation.tolerances(n.getValue(), nutCode,nutUnit);
-				if(tolerances!=null) {
+
+				Pair<Double, Double> tolerances = regulation.tolerances(n.getValue(), nutCode, nutUnit);
+				if (tolerances != null) {
 					tmin.put(key, tolerances.getFirst());
-					tmax.put(key, tolerances.getSecond());				
+					tmax.put(key, tolerances.getSecond());
 				}
-			
 
 				if (n instanceof VariantAwareDataItem) {
 					for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
@@ -518,10 +522,10 @@ public class RegulationFormulationHelper {
 
 				if ((n.getValue() != null) && (servingSize != null)) {
 					Double valuePerserving = (n.getValue() * (servingSize * 1000d)) / 100;
-					if(n.getManualValuePerServing()!=null) {
+					if (n.getManualValuePerServing() != null) {
 						valuePerserving = n.getManualValuePerServing();
 					}
-					
+
 					Double vps = regulation.round(valuePerserving, nutCode, nutUnit);
 					valuePerServing.put(key, vps);
 					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
@@ -536,7 +540,7 @@ public class RegulationFormulationHelper {
 				}
 
 				Double containerQty = FormulationHelper.getNetQtyInLorKg(formulatedProduct, 0d);
-				if ((key.equals("US") ) && (n.getValue() != null)) {
+				if ((key.equals("US")) && (n.getValue() != null)) {
 					Double vpc = regulation.round(n.getValue() * containerQty * 10, nutCode, nutUnit);
 					valuePerContainer.put(key, vpc);
 					if ((def != null) && (def.getGda() != null) && (def.getGda() != 0)) {
@@ -735,11 +739,11 @@ public class RegulationFormulationHelper {
 		return getRegulation(key).round(value, nutCode, nutUnit);
 	}
 
-	public static Pair<Double,Double> tolerances(Double value, String nutCode, Locale locale, String nutUnit) {
+	public static Pair<Double, Double> tolerances(Double value, String nutCode, Locale locale, String nutUnit) {
 		return tolerances(value, nutCode, getLocalKey(locale), nutUnit);
 	}
 
-	private static 	Pair<Double,Double> tolerances(Double value, String nutCode, String key, String nutUnit) {
+	private static Pair<Double, Double> tolerances(Double value, String nutCode, String key, String nutUnit) {
 		if (value == null) {
 			return null;
 		}
@@ -759,10 +763,9 @@ public class RegulationFormulationHelper {
 		if (value == null) {
 			return null;
 		}
-		return getRegulation(getLocalKey(locale)).displayValue(value, roundedValue, nutCode,null, locale);
+		return getRegulation(getLocalKey(locale)).displayValue(value, roundedValue, nutCode, null, locale);
 	}
 
-	
 	/**
 	 * <p>displayValue.</p>
 	 *
@@ -772,7 +775,7 @@ public class RegulationFormulationHelper {
 	 * @param locale a {@link java.util.Locale} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public static String displayValue(Double value, Double roundedValue, String nutCode, String  measurementPrecision, Locale locale) {
+	public static String displayValue(Double value, Double roundedValue, String nutCode, String measurementPrecision, Locale locale) {
 		if (value == null) {
 			return null;
 		}
@@ -789,11 +792,12 @@ public class RegulationFormulationHelper {
 	 * @param regulation a {@link java.lang.String} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public static String displayValue(Double value, Double roundedValue, String nutCode, String measurementPrecision, Locale locale, String regulation) {
+	public static String displayValue(Double value, Double roundedValue, String nutCode, String measurementPrecision, Locale locale,
+			String regulation) {
 		if (value == null) {
 			return null;
 		}
-		return getRegulation(regulation).displayValue(value, roundedValue,nutCode, measurementPrecision, locale);
+		return getRegulation(regulation).displayValue(value, roundedValue, nutCode, measurementPrecision, locale);
 	}
 
 	/**
