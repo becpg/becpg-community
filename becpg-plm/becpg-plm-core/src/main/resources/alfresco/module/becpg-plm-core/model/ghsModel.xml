@@ -92,19 +92,6 @@
 			</parameter>
 		</constraint>
 		
-		<constraint name="ghs:sdsStandardCodes" type="LIST">
-			<parameter name="allowedValues">
-				<list>
-					<value>ANSI</value>
-					<value>FITPC</value>
-					<value>GHS</value>
-					<value>OSHA</value>
-					<value>OTHER</value>
-					<value>REACH</value>
-					<value>RETAILER_REQUESTED</value>
-				</list>
-			</parameter>
-		</constraint>
 		
 	</constraints>
 
