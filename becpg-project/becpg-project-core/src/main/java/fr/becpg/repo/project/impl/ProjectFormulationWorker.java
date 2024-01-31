@@ -81,6 +81,7 @@ public class ProjectFormulationWorker {
 			
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
 					.excludeVersions()
+					.excludeArchivedEntities()
 					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString())
 					.andBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", ISO8601DateFormat.format(cal.getTime()));
 
@@ -88,6 +89,7 @@ public class ProjectFormulationWorker {
 
 			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
 					.excludeVersions()
+					.excludeArchivedEntities()
 					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.OnHold.toString())
 					.andBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", ISO8601DateFormat.format(cal.getTime()));
 			
@@ -96,6 +98,7 @@ public class ProjectFormulationWorker {
 			// query
 			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
 					.excludeVersions()
+					.excludeArchivedEntities()
 					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
 					.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(Calendar.getInstance().getTime()));
 

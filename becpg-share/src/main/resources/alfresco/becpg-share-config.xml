@@ -302,6 +302,24 @@
 	
 	<config evaluator="string-compare" condition="DocLibActions">
 		<actions>
+	         <action id="document-edit-properties" type="javascript" label="actions.document.edit-metadata">
+	            <param name="function">onActionDetails</param>
+	            <permissions>
+	               <permission allow="true">Write</permission>
+	            </permissions>
+	            <evaluator negate="true">evaluator.doclib.metadata.isLocked</evaluator>
+	            <evaluator negate="true">evaluator.doclib.action.checkedOutAspect</evaluator>
+	            <evaluator negate="true">evaluator.becpg.doclib.action.isArchivedEntity</evaluator>
+	         </action>
+	         <action id="document-edit-metadata" type="pagelink" label="actions.document.edit-metadata">
+	            <param name="page">edit-metadata?nodeRef={node.nodeRef}</param>
+	            <permissions>
+	               <permission allow="true">Write</permission>
+	            </permissions>
+	            <evaluator negate="true">evaluator.doclib.metadata.isLocked</evaluator>
+	            <evaluator negate="true">evaluator.doclib.action.checkedOutAspect</evaluator>
+	            <evaluator negate="true">evaluator.becpg.doclib.action.isArchivedEntity</evaluator>
+	         </action>
 			<action id="entity-compare" type="javascript" label="actions.entity.compare">
 				<param name="function">onActionCompareEntity</param>
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
@@ -318,6 +336,7 @@
 				</permissions>
 				<evaluator>evaluator.becpg.doclib.action.generateReport</evaluator>
 				<evaluator negate="true">evaluator.becpg.doclib.action.entityTpl</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.isArchivedEntity</evaluator>
 			</action>
 
 			<action id="entity-wused" type="pagelink" label="actions.entity.wused">
@@ -338,6 +357,7 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
 				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.isArchivedEntity</evaluator>
 			</action>
 		
 			<action id="entity-branch" type="javascript" label="actions.document.branch-entity">
@@ -346,6 +366,7 @@
 				<evaluator negate="true">evaluator.becpg.doclib.action.entity.isWorkingCopy</evaluator>
 				<evaluator negate="true">evaluator.doclib.action.notEditable</evaluator>
 				<evaluator>evaluator.becpg.doclib.action.entity</evaluator>
+				<evaluator negate="true">evaluator.becpg.doclib.action.isArchivedEntity</evaluator>
 			</action>
 			
 
@@ -426,12 +447,14 @@
 			</permissions>
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
             <evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
+            <evaluator negate="true">evaluator.becpg.doclib.action.isArchivedEntity</evaluator>
          </action>
          
           <action id="datalist-import-from" type="javascript" label="actions.datalist.import-from">
             <param name="function">onActionImportDataListFrom</param>
             <evaluator>evaluator.doclib.action.editableByCurrentUser</evaluator>
             <evaluator negate="true">evaluator.becpg.doclib.action.entity.isSystemEntity</evaluator>
+            <evaluator negate="true">evaluator.becpg.doclib.action.isArchivedEntity</evaluator>
          </action>
 			
 		</actions>

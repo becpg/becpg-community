@@ -84,6 +84,13 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 			</list>
 		</property>
 	</bean>
+	<bean id="evaluator.becpg.doclib.action.isArchivedEntity" parent="evaluator.doclib.action.hasAspect">
+		<property name="aspects">
+			<list>
+				<value>bcpg:archivedEntityAspect</value>
+			</list>
+		</property>
+	</bean>
 	<bean id="evaluator.becpg.doclib.action.generateReport" parent="evaluator.doclib.action.hasAspect">
 		<property name="aspects">
 			<list>
