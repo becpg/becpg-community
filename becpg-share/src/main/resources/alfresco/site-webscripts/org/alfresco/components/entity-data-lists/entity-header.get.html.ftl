@@ -65,6 +65,10 @@
                      </#if>
                      </div>
                   </#if>
+               <#elseif (node.aspects?? && node.aspects?seq_contains("bcpg:archivedEntityAspect"))>
+					<div class="status-banner theme-bg-color-2 theme-border-4">
+						<span class="locked">${msg("banner.archived")}</span>
+					</div>
                </#if>
                <div class="node-info">
                <div id="${el}-bcpath" class="node-bcpath hidden"></div>

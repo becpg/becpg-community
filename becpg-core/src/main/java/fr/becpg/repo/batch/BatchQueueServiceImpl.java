@@ -246,6 +246,7 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 						jsonBatch.put("batchDescId", batchInfo.getBatchDescId());
 						jsonBatch.put("batchUser", batchInfo.getBatchUser());
 						jsonBatch.put("entityDescription", batchInfo.getEntityDescription());
+						jsonBatch.put("stepDescId", batchStep.getStepDescId());
 
 						if (stepCount != null) {
 							jsonBatch.put("stepCount", stepCount);
