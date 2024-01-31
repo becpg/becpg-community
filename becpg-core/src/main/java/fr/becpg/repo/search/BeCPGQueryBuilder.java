@@ -898,6 +898,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 		return this;
 	}
+	
+	public BeCPGQueryBuilder excludeArchivedEntities() {
+		excludeAspect(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
+		return this;
+	}
 
 	/**
 	 * <p>

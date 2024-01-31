@@ -39,8 +39,9 @@ import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.EntityFormatService;
+import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.helper.AssociationService;
+import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service("versionCleanerService")
@@ -51,7 +52,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	private static final Log logger = LogFactory.getLog(VersionCleanerServiceImpl.class);
 
 	@Autowired
-	private EntityFormatService entityFormatService;
+	private EntityVersionService entityVersionService;
 
 	@Autowired
 	private TransactionService transactionService;
@@ -76,6 +77,9 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	@Autowired
 	private EntityDictionaryService entityDictionaryService;
+	
+	@Autowired
+	private RepoService repoService;
 	
 	@Override
 	public boolean cleanVersions(int maxProcessedNodes, String path) {
@@ -180,7 +184,6 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 		public Collection<NodeRef> getNextWork() {
 			
 			nextWork.clear();
-			
 			for (NodeRef node : toTreat) {
 				if (nextWork.size() >= BatchInfo.BATCH_SIZE) {
 					break;
@@ -196,24 +199,23 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 					
 					if (nodeService.exists(initialNode)) {
 						
-						logger.trace("find convertible relatives of " + initialNode);
+						if (logger.isTraceEnabled()) {
+							logger.trace("find convertible relatives of " + initialNode);
+						}
 						
-						Set<NodeRef> convertibleRelatives = entityFormatService.findConvertibleRelatives(initialNode, new HashSet<>(), nextWork, maxProcessedNodes, new AtomicInteger(treated.size() + toTreat.size()), path);
-						
-						for (NodeRef convertibleRelative : convertibleRelatives) {
-							
+						Set<NodeRef> oldVersionWUsedList = entityVersionService.findOldVersionWUsed(initialNode, new HashSet<>(), nextWork, maxProcessedNodes, new AtomicInteger(treated.size() + toTreat.size()), path);
+						for (NodeRef oldVersionWUsed : oldVersionWUsedList) {
 							if (treated.size() + toTreat.size() >= maxProcessedNodes) {
 								break;
 							}
-							
-							if (!toTreat.contains(convertibleRelative) && !treated.contains(convertibleRelative)) {
-								Date modified = (Date) nodeService.getProperty(convertibleRelative, ContentModel.PROP_MODIFIED);
+							if (!toTreat.contains(oldVersionWUsed) && !treated.contains(oldVersionWUsed)) {
+								Date modified = (Date) nodeService.getProperty(oldVersionWUsed, ContentModel.PROP_MODIFIED);
 								if (cal.getTime().compareTo(modified) > 0) {
 									if (nextWork.size() < BatchInfo.BATCH_SIZE) {
-										nextWork.add(convertibleRelative);
-										treated.add(convertibleRelative);
+										nextWork.add(oldVersionWUsed);
+										treated.add(oldVersionWUsed);
 									} else {
-										toTreat.add(convertibleRelative);
+										toTreat.add(oldVersionWUsed);
 									}
 								}
 							}
@@ -248,7 +250,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 								transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 									
-									entityFormatService.moveToImportToDoFolder(entityNodeRef);
+									moveToImportToDoFolder(entityNodeRef);
 									
 									nodeService.removeAspect(entityNodeRef, BeCPGModel.ASPECT_COMPOSITE_VERSION);
 								
@@ -269,6 +271,23 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 		batchQueueService.queueBatch(batchInfo, new CleanVersionWorkProvider(maxProcessedNodes, path), processWorker, null);
 
+	}
+	
+	private void moveToImportToDoFolder(NodeRef toMove) {
+		NodeRef originalParent = nodeService.getPrimaryParent(toMove).getParentRef();
+		String parentName = (String) nodeService.getProperty(originalParent, ContentModel.PROP_NAME);
+		
+		NodeRef rootNode = nodeService.getRootNode(RepoConsts.SPACES_STORE);
+		NodeRef importToDoNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(rootNode,RemoteEntityService.FULL_PATH_IMPORT_TO_DO);
+		
+		NodeRef newParent = nodeService.getChildByName(importToDoNodeRef, ContentModel.ASSOC_CONTAINS, parentName);
+		
+		if (newParent == null) {
+			newParent = nodeService.createNode(importToDoNodeRef, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS, ContentModel.TYPE_FOLDER).getChildRef();
+			nodeService.setProperty(newParent, ContentModel.PROP_NAME, parentName);
+		}
+		
+		repoService.moveEntity(toMove, newParent);
 	}
 
 	@Override
@@ -419,7 +438,7 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 		if (nodeService.exists(originalNode)) {
 			logger.debug("Converting node " + notConvertedNode + ", tenant : " + tenantDomain);
-			entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
+			entityVersionService.convertVersion(notConvertedNode);
 		} else {
 			logger.debug("deleting version history node : '" + name + "' because the original node doesn't exist anymore, tenant : " + tenantDomain);
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {

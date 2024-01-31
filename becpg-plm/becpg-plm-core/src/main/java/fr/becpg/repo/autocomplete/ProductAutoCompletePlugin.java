@@ -186,6 +186,7 @@ public class ProductAutoCompletePlugin extends TargetAssocAutoCompletePlugin {
 		}
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(PLMModel.TYPE_PRODUCT).excludeDefaults()
+				.excludeArchivedEntities()
 				.inSearchTemplate(productSearchTemplate()).locale(I18NUtil.getContentLocale()).andOperator().ftsLanguage();
 
 		StringBuilder ftsQuery = new StringBuilder();
