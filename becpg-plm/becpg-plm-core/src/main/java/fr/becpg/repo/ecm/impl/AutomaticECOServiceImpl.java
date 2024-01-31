@@ -380,6 +380,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		batchInfo.setBatchSize(reformulateBatchSize != null ? reformulateBatchSize : 1);
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
+				.excludeArchivedEntities()
 				.ofType(PLMModel.TYPE_PRODUCT).orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX").inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
 		logger.info("modified products size: " + nodeRefs.size());
 		

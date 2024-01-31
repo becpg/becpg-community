@@ -310,6 +310,11 @@ public class ImportEntityJsonVisitor {
 
 			return entityNodeRef;
 		}
+		
+		if (JsonVisitNodeType.ENTITY.equals(jsonType) && entityNodeRef != null
+				&& nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ARCHIVED_ENTITY)) {
+			throw new BeCPGException("Cannot update entity since it is archived: " + entityNodeRef);
+		}
 
 		if (entity.has(RemoteEntityService.ELEM_ATTRIBUTES)) {
 			properties.putAll(jsonToProperties(entity.getJSONObject(RemoteEntityService.ELEM_ATTRIBUTES), context));

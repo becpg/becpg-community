@@ -160,6 +160,8 @@ public interface EntityReportService {
 	 */
 	NodeRef getAssociatedDocumentNodeRef(NodeRef entityNodeRef, NodeRef tplNodeRef, EntityReportParameters reportParameters, Locale locale, ReportFormat reportFormat);
 
+	void generateReports(NodeRef nodeRefFrom, boolean generateAllReports);
+
 
 	
 }
