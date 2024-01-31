@@ -36,6 +36,7 @@
 				<aspect name="ghs:sdsAspect" />
 				<aspect name="bcpg:undeletableAspect" />
 				<aspect name="bcpg:regulatoryAspect" />
+				<aspect name="bcpg:archivedEntityAspect" />
 				
 			</visible>
 			<!-- Aspects that a user can add. Same as "visible" if left empty -->

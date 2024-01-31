@@ -225,6 +225,8 @@ public class TargetAssocAutoCompletePlugin implements AutoCompletePlugin {
 
 		BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery();
 		
+		queryBuilder.excludeArchivedEntities();
+		
 		Boolean includeDeleted = props != null && props.containsKey(AutoCompleteService.PROP_INCLUDE_DELETED) && (Boolean) props.get(AutoCompleteService.PROP_INCLUDE_DELETED);
 		if (!includeDeleted.booleanValue()) {
 			queryBuilder.excludeProp(BeCPGModel.PROP_IS_DELETED, "true");

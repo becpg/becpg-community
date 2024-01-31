@@ -5832,6 +5832,9 @@
 		<aspect name="bcpg:undeletableAspect">
 		</aspect>
 
+		<aspect name="bcpg:archivedEntityAspect">
+		</aspect>
+		
 		<aspect name="bcpg:regulatoryAspect">
 			<properties>
 				<property name="bcpg:regulatoryMode">
