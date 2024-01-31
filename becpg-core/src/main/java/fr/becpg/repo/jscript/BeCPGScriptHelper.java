@@ -72,7 +72,6 @@ import fr.becpg.model.EntityListState;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -144,8 +143,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private SiteService siteService;
 
-	private EntityFormatService entityFormatService;
-
 	private TenantAdminService tenantAdminService;
 
 	private ContentService contentService;
@@ -198,10 +195,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public void setBeCPGLicenseManager(BeCPGLicenseManager beCPGLicenseManager) {
 		this.beCPGLicenseManager = beCPGLicenseManager;
-	}
-	
-	public void setEntityFormatService(EntityFormatService entityFormatService) {
-		this.entityFormatService = entityFormatService;
 	}
 	
 	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
@@ -1331,7 +1324,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		long start = System.currentTimeMillis();
 
-		NodeRef convertedNode = entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
+		NodeRef convertedNode = entityVersionService.convertVersion(notConvertedNode);
 
 		if (convertedNode != null) {
 			long timeElapsed = System.currentTimeMillis() - start;
