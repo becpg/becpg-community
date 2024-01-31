@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jms.IllegalStateException;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;

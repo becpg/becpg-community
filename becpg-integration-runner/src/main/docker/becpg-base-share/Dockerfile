@@ -1,13 +1,13 @@
 FROM ${docker.share.image}:${alfresco.share.docker.version}
 
-ENV TOMCAT_DIR=/usr/local/tomcat
-ENV I18_VERSION=1.0-118
-ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
 
 USER root
 
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
+ENV TOMCAT_DIR=/usr/local/tomcat
+ENV I18_VERSION=${becpg.i18n.version}
+
 
 #Javascript console
 RUN curl --silent --location \

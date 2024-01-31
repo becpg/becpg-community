@@ -104,7 +104,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	public static RepoBaseTestCase INSTANCE;
 
-	public static final Wiser wiser = new Wiser(2500);
+	public static final Wiser wiser = Wiser.port(2500);
 
 	/**
 	 * Print the test we are currently running, useful if the test is running
