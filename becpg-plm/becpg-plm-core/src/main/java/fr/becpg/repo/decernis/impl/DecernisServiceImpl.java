@@ -111,7 +111,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 		moduleIdMap.put("FORMULATION_CHECK", 100);
 	}
 
-	public DecernisServiceImpl(@Qualifier("logRestTemplate") RestTemplate restTemplate, NodeService nodeService,
+	public DecernisServiceImpl(@Qualifier("logRestTemplate") RestTemplate restTemplate, @Qualifier("nodeService") NodeService nodeService,
 			DecernisAnalysisPlugin[] decernisPlugins, SystemConfigurationService systemConfigurationService, AlfrescoRepository<ProductData> alfrescoRepository) {
 		super();
 		this.restTemplate = restTemplate;
