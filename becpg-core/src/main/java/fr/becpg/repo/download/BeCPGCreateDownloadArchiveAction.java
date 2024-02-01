@@ -33,7 +33,6 @@ import java.util.List;
 import org.alfresco.model.ContentModel;
 import org.alfresco.model.ForumModel;
 import org.alfresco.model.RenditionModel;
-import org.alfresco.repo.action.executer.ActionExecuter;
 import org.alfresco.repo.action.executer.ActionExecuterAbstractBase;
 import org.alfresco.repo.download.ContentServiceHelper;
 import org.alfresco.repo.download.DownloadCancelledException;
