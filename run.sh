@@ -91,7 +91,7 @@ build() {
    if [ -d becpg-enterprise ]; then
     cd becpg-enterprise
    	 $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="enterprise-test"
-     docker compose -f ./distribution/target/docker-compose-build.yml build --no-cache
+     docker compose -f ./distribution/target/docker-compose-build.yml build
    	 cd ..
    else
    	 $MVN_EXEC clean package $EXTRA_ENV -DskipTests=true -Dbecpg.dockerbuild.name="test"

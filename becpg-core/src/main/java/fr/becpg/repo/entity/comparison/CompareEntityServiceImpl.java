@@ -915,6 +915,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				comparisonPosition, isDifferent);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void compareValues(QName dataListType, String charactName, String privotKey, QName propertyQName, Serializable oValue1,
 			Serializable oValue2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap,
 			PropertyFormats propertyFormats) {
