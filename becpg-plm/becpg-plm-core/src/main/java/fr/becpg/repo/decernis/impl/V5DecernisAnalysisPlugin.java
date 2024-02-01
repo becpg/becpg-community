@@ -55,7 +55,7 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 
 	private static final Log logger = LogFactory.getLog(V5DecernisAnalysisPlugin.class);
 
-	public V5DecernisAnalysisPlugin(NodeService nodeService, SystemConfigurationService systemConfigurationService,
+	public V5DecernisAnalysisPlugin(@Qualifier("nodeService") NodeService nodeService, SystemConfigurationService systemConfigurationService,
 			@Qualifier("logRestTemplate") RestTemplate restTemplate) {
 
 		super(nodeService, systemConfigurationService, restTemplate);
