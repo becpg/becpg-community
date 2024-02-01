@@ -1,8 +1,6 @@
 package fr.becpg.repo.authentication.provider;
 
 import org.alfresco.service.cmr.security.AuthorityService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +9,7 @@ import fr.becpg.repo.authentication.BeCPGUserAccount;
 @Service
 public class IdentityServiceAccountProvider {
 
-	private static Log logger = LogFactory.getLog(IdentityServiceAccountProvider.class);
+//	private static Log logger = LogFactory.getLog(IdentityServiceAccountProvider.class);
 
 	@Value("${identity-service.create-user.enabled:false}")
 	private Boolean enabled;
