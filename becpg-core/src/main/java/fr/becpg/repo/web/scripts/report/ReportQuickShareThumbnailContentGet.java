@@ -178,7 +178,7 @@ public class ReportQuickShareThumbnailContentGet extends QuickShareContentGet {
 				boolean ph = false;
 				String phString = req.getParameter("ph");
 				if (phString != null) {
-					ph = new Boolean(phString);
+					ph =  Boolean.valueOf(phString);
 				}
 
 				// Queue the creation of the thumbnail if appropriate

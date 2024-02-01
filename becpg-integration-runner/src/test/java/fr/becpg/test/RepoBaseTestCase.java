@@ -112,7 +112,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	 */
 	@Rule
 	public MethodRule testAnnouncer = (base, method, target) -> {
-		System.out.println("Running " + getClassName() + " Integration Test: " + method.getName() + "()");
+		logger.info("Running " + getClassName() + " Integration Test: " + method.getName() + "()");
 		return base;
 	};
 
