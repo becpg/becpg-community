@@ -40,7 +40,7 @@ import fr.becpg.repo.repository.RepositoryEntity;
  * @version $Id: $Id
  */
 public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
-		implements NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
+		implements NodeServicePolicies.OnDeleteNodePolicy, NodeServicePolicies.OnCreateNodePolicy,
 		NodeServicePolicies.OnCreateAssociationPolicy, NodeServicePolicies.OnDeleteAssociationPolicy, NodeServicePolicies.OnUpdatePropertiesPolicy {
 
 	private static final String KEY_LIST_ITEM = "AuditEntityListItemPolicy.KeyListItem";
@@ -90,8 +90,8 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		logger.debug("Init AuditEntityListItemPolicy...");
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnDeleteNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
 				new JavaBehaviour(this, "onDeleteNode"));
-		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
-				new JavaBehaviour(this, "onUpdateNode"));
+		policyComponent.bindClassBehaviour(NodeServicePolicies.OnUpdatePropertiesPolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
+				new JavaBehaviour(this, "onUpdateListProperties"));
 		policyComponent.bindClassBehaviour(NodeServicePolicies.OnCreateNodePolicy.QNAME, BeCPGModel.TYPE_ENTITYLIST_ITEM,
 				new JavaBehaviour(this, "onCreateNode"));
 
@@ -121,11 +121,6 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 		queueListNodeRef(KEY_LIST, childAssocRef.getParentRef());
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public void onUpdateNode(NodeRef listItemNodeRef) {
-		queueListNodeRef(KEY_LIST_ITEM, listItemNodeRef);
-	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -238,6 +233,17 @@ public class AuditEntityListItemPolicy extends AbstractBeCPGPolicy
 				pendingDiff.addAll(changedEntries);
 				TransactionSupportUtil.bindResource(diffKey, pendingDiff);
 				queueNode(CHANGED_CATALOG_ENTRIES, nodeRef);
+			}
+		}
+	}
+	
+	public void onUpdateListProperties(NodeRef nodeRef, Map<QName, Serializable> before, Map<QName, Serializable> after) {
+		if (!isVersionNode(nodeRef) && isNotLocked(nodeRef) && before != null && after != null) {
+
+			MapDifference<QName, Serializable> diff = Maps.difference(before, after);
+			
+			if (!diff.areEqual()) {
+				queueListNodeRef(KEY_LIST_ITEM,nodeRef);
 			}
 		}
 	}
