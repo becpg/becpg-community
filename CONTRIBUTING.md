@@ -1,6 +1,4 @@
-Certainly! It looks like there are some issues with the links. Here's the corrected version:
-
-## Contributing
+# Contributing
 
 We welcome and appreciate your contributions to beCPG PLM! Whether it's code, translations, or suggestions, your help is essential for the project's success. Please follow the guidelines below to contribute effectively.
 
