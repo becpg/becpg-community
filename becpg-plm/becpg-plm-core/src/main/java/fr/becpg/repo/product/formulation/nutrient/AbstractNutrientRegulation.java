@@ -214,10 +214,14 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	 * @return a {@link java.lang.Double} object.
 	 */
 	protected Double roundValue(Double value, Double delta) {
-		if (value != null && delta!=null) {
+		if (value != null && delta!=null ) {
 			
-			return BigDecimal.valueOf(value).divide(BigDecimal.valueOf(delta), MathContext.DECIMAL64)
-			        .setScale(0, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(delta)).doubleValue();
+			if(delta == 0) {
+				return 0d;
+			}
+			
+			return BigDecimal.valueOf(delta).multiply(BigDecimal.valueOf(value).divide(BigDecimal.valueOf(delta), MathContext.DECIMAL64)
+			        .setScale(0, RoundingMode.HALF_DOWN)).doubleValue();
 
 		} else {
 			return null;
