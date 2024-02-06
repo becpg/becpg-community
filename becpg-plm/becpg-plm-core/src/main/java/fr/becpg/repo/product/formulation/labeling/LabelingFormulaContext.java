@@ -1728,6 +1728,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			firstQtyPerc = roundeedValue(firstLabelingComponent, firstQtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale()))
 					.add(diffValue).doubleValue();
+		
 
 		}
 
@@ -1784,7 +1785,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						((DecimalFormat) format).applyPattern(decimalFormat.getFirst().toPattern());
 						applyAutomaticPrecicion((DecimalFormat) format, qtyPerc, decimalFormat.getSecond(), false);
 					} else {
-						applyAutomaticPrecicion(((DecimalFormat) format), qty, defaultRoundingMode, isFirst && isForce100Perc);
+						if((isFirst && isForce100Perc)) {
+							applyAutomaticPrecicion(((DecimalFormat) format), totalPrecision, defaultRoundingMode, true);
+						} else {
+							applyAutomaticPrecicion(((DecimalFormat) format), qty, defaultRoundingMode, false);
+						}
 					}
 
 					isFirst = false;
