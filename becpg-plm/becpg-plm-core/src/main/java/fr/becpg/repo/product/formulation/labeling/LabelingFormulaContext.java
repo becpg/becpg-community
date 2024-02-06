@@ -2906,6 +2906,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				if (result == 0) {
 					result = compareIngredientNames(a.getKey(), b.getKey());
 				}
+				if (result == 0 && !a.getValue().isEmpty() && !b.getValue().isEmpty()) {
+					result = compareIngredientNames(a.getValue().get(0), b.getValue().get(0));
+				}
 				return result;
 			});
 
