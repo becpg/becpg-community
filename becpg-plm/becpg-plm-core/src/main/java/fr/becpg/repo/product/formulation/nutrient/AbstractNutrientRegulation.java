@@ -221,7 +221,7 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 			}
 			
 			return BigDecimal.valueOf(delta).multiply(BigDecimal.valueOf(value).divide(BigDecimal.valueOf(delta), MathContext.DECIMAL64)
-			        .setScale(0, RoundingMode.HALF_DOWN)).doubleValue();
+			        .setScale(0, RoundingMode.HALF_UP)).doubleValue();
 
 		} else {
 			return null;
