@@ -2900,25 +2900,33 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		 */
 
 		if (!keepOrder) {
+			
+			for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : entries) {
+				sort(entry.getValue());
+			}
 
 			Collections.sort(entries, (a, b) -> {
 				int result = compareLabelingComponents(a.getKey(), b.getKey());
 				if (result == 0) {
-					result = compareIngredientNames(a.getKey(), b.getKey());
-				}
-				if (result == 0 && !a.getValue().isEmpty() && !b.getValue().isEmpty()) {
-					result = compareIngredientNames(a.getValue().get(0), b.getValue().get(0));
+					String nameA = getLegalIngName(a.getKey());
+					if(nameA == null && !a.getValue().isEmpty()) {
+						nameA = getLegalIngName(a.getValue().get(0));
+					}
+					
+					String nameB = getLegalIngName(b.getKey());
+					if(nameB == null && !b.getValue().isEmpty()) {
+						nameB = getLegalIngName(b.getValue().get(0));
+					}
+					
+					 result = Comparator.nullsLast(String::compareTo).compare(nameA, nameB);
 				}
 				return result;
 			});
 
 		}
+		
 		Map<IngTypeItem, List<LabelingComponent>> sortedIngListByType = new LinkedHashMap<>();
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : entries) {
-
-			if (!keepOrder) {
-				sort(entry.getValue());
-			}
 			sortedIngListByType.put(entry.getKey(), entry.getValue());
 		}
 
