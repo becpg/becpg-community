@@ -132,32 +132,29 @@ public class GetActivitiesWebScript extends AbstractEntityWebScript {
 		}
 
 		try (OutputStream out = resp.getOutputStream()) {
-
-			PagingResults<ActivityFeedEntity> feedEntries = activityService.getPagedUserFeedEntries(feedUserId, null, false, false, feedDBID,
-					new PagingRequest(1000));
+			resp.setContentEncoding("UTF-8");
 
 			RemoteActivityVisitor remoteActivityVisitor = null;
 
 			RemoteEntityFormat format = getFormat(req);
 
 			switch (format) {
-			case xml:
-			case xml_all:
-			case xml_light:
+			case xml, xml_all, xml_light:
 				remoteActivityVisitor = new XmlActivityVisitor(siteService, nodeService, namespaceService, contentService);
 				break;
 
-			case json:
-			case json_all:
+			case json, json_all:
 				remoteActivityVisitor = new JsonActivityVisitor(siteService, nodeService, namespaceService, contentService);
 				break;
 			default:
 				throw new BeCPGException("Unknown format " + format.toString());
 			}
 
-			remoteActivityVisitor.visit(feedEntries.getPage(), out);
+			PagingResults<ActivityFeedEntity> feedEntries = activityService.getPagedUserFeedEntries(feedUserId, null, false, false, feedDBID,
+					new PagingRequest(1000));
+
 			resp.setContentType(remoteActivityVisitor.getContentType());
-			resp.setContentEncoding("UTF-8");
+			remoteActivityVisitor.visit(feedEntries.getPage(), out);
 
 			resp.setStatus(Status.STATUS_OK);
 
