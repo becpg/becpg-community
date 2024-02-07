@@ -311,7 +311,7 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			reportTplInformation.setReportType(ReportType.Compare);
 			reportTplInformation.setReportFormat(ReportFormat.PDF);
 			reportTplInformation.setNodeType(null);
-			reportTplInformation.setDefaultTpl(true);
+			reportTplInformation.setDefaultTpl(false);
 			reportTplInformation.setSystemTpl(false);
 			reportTplInformation.setResources(resources);
 			
