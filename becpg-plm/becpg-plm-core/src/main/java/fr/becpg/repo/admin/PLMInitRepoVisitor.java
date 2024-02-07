@@ -145,6 +145,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	private static final String PRODUCT_REPORT_RD_NAME = "path.productreportrdtemplate";
 	private static final String PRODUCT_REPORT_TECHNICAL_SHEET_NAME = "path.productreporttechnicalsheettemplate";
 
+	private static final String COMPARE_PRODUCTS_REPORT_PATH = "beCPG/birt/system/CompareProducts.rptdesign";
+
 	private static final String PRODUCT_REPORT_SUPPLIER_PATH = "beCPG/birt/document/product/default/SupplierReport.rptdesign";
 	private static final String PRODUCT_REPORT_SUPPLIER_NAME = "path.productreportsuppliertemplate";
 
@@ -1719,6 +1721,19 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					TranslateHelper.getLocaleAwarePath(EXPORT_NC_REPORT_RPTFILE_PATH), reportTplInformation, false);
 
 			reportTplService.createTplRessource(exportNCSynthesisNodeRef, TranslateHelper.getLocaleAwarePath(EXPORT_NC_REPORT_XMLFILE_PATH), false);
+		
+			reportTplInformation = new ReportTplInformation();
+			reportTplInformation.setReportType(ReportType.Compare);
+			reportTplInformation.setReportFormat(ReportFormat.PDF);
+			reportTplInformation.setNodeType(null);
+			reportTplInformation.setDefaultTpl(true);
+			reportTplInformation.setSystemTpl(false);
+			
+			NodeRef compareProductFolderNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_COMPARE_ENTITIES);
+			
+			reportTplService.createTplRptDesign(compareProductFolderNodeRef,
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_SIMPLIFIED_COMPARISON_REPORT), COMPARE_PRODUCTS_REPORT_PATH, reportTplInformation, false);
+			
 		} catch (IOException e) {
 			logger.error(e, e);
 		}
