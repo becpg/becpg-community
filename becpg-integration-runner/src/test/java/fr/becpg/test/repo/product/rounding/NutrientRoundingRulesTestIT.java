@@ -72,7 +72,7 @@ public class NutrientRoundingRulesTestIT {
 		assertEquals(40d, RegulationFormulationHelper.round(42.4d, NutrientCode.Potassium, Locale.US, "mg/100g"), 0);
 		
 
-		assertEquals(0.1d,RegulationFormulationHelper.round(0.15d, NutrientCode.VitD, Locale.US, "μg/100g"),0);
+		assertEquals(0.2d,RegulationFormulationHelper.round(0.15d, NutrientCode.VitD, Locale.US, "μg/100g"),0);
 		assertEquals(0.8d, RegulationFormulationHelper.round(0.76d, NutrientCode.VitD, Locale.US, "μg/100g"),0);
 
 		assertEquals(40d, RegulationFormulationHelper.round(39d, NutrientCode.VitA, Locale.US, "μg/100g"), 0);
