@@ -454,6 +454,8 @@ public class SupplierPortalServiceImpl implements SupplierPortalService {
 			if ((email == null) || email.isBlank()) {
 				throw new IllegalStateException(I18NUtil.getMessage("message.supplier.missing-email"));
 			}
+			
+			email = email.toLowerCase();
 
 			if ((firstName == null) || firstName.isBlank()) {
 				firstName = email;
