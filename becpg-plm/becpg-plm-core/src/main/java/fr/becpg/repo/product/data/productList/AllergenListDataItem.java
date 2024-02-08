@@ -4,8 +4,11 @@
 package fr.becpg.repo.product.data.productList;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.annotation.Nullable;
 
@@ -21,6 +24,7 @@ import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.ControlableListDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
+import fr.becpg.repo.variant.model.VariantDataItem;
 
 /**
  * <p>AllergenListDataItem class.</p>
@@ -30,7 +34,8 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:allergenList")
-public class AllergenListDataItem extends AbstractManualVariantListDataItem implements SimpleCharactDataItem, AspectAwareDataItem, ControlableListDataItem {
+public class AllergenListDataItem extends AbstractManualVariantListDataItem
+		implements SimpleCharactDataItem, AspectAwareDataItem, ControlableListDataItem {
 
 	private static final long serialVersionUID = -6746076643301742367L;
 	private Double qtyPerc;
@@ -39,13 +44,30 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	private Boolean onSite = null;
 	private Boolean onLine = null;
 	private Boolean isCleaned = null;
-	
-	private String allergenValue = null; 
+
+	private String allergenValue = null;
 	private List<NodeRef> voluntarySources = new ArrayList<>();
 	private List<NodeRef> inVoluntarySources = new ArrayList<>();
 	private NodeRef allergen;
-	
-	
+
+	Map<NodeRef, Double> qtyByVariant = null;
+
+	@InternalField
+	public void addQtyPerc(VariantDataItem variantDataItem, Double toAdd) {
+		if (variantDataItem != null && variantDataItem.getVariants()!=null &&  !variantDataItem.getVariants().isEmpty()) {
+	        if (qtyByVariant == null) qtyByVariant = new HashMap<>();
+	        
+	        variantDataItem.getVariants().forEach(variant -> {
+	            Double qty = qtyByVariant.computeIfAbsent(variant, v -> 0d) + toAdd;
+	            qtyByVariant.put(variant, qty > 100d ? 100d : qty);
+	        });
+	    } else {
+	        if (qtyPerc == null) qtyPerc = 0d;
+	        qtyPerc = Math.min(qtyPerc + toAdd, 100d);
+	    }
+
+	}
+
 	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef nodeRef) {
@@ -70,8 +92,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	public Double getValue() {
 		return getQtyPerc();
 	}
-	
-	
+
 	/**
 	 * <p>Getter for the field <code>qtyPerc</code>.</p>
 	 *
@@ -79,8 +100,15 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	 */
 	@AlfProp
 	@InternalField
-	@AlfQname(qname="bcpg:allergenListQtyPerc")
+	@AlfQname(qname = "bcpg:allergenListQtyPerc")
 	public Double getQtyPerc() {
+		if (qtyByVariant != null) {
+			Optional<Double> maxQtyOptional = qtyByVariant.values().stream().max(Double::compareTo);
+			if (maxQtyOptional.isPresent()) {
+				return maxQtyOptional.get();
+			}
+		}
+
 		return qtyPerc;
 	}
 
@@ -93,19 +121,17 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 		this.qtyPerc = qtyPerc;
 	}
 
-
 	/**
 	 * <p>Getter for the field <code>voluntary</code>.</p>
 	 *
 	 * @return a {@link java.lang.Boolean} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:allergenListVoluntary")
+	@AlfQname(qname = "bcpg:allergenListVoluntary")
 	@Nullable
 	public Boolean getVoluntary() {
 		return voluntary;
 	}
-	
 
 	/**
 	 * <p>Setter for the field <code>voluntary</code>.</p>
@@ -115,7 +141,6 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	public void setVoluntary(Boolean voluntary) {
 		this.voluntary = voluntary;
 	}
-	
 
 	/**
 	 * <p>Getter for the field <code>inVoluntary</code>.</p>
@@ -123,13 +148,12 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	 * @return a {@link java.lang.Boolean} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:allergenListInVoluntary")
+	@AlfQname(qname = "bcpg:allergenListInVoluntary")
 	@Nullable
 	public Boolean getInVoluntary() {
 		return inVoluntary;
 	}
-	
-	
+
 	/**
 	 * <p>Setter for the field <code>inVoluntary</code>.</p>
 	 *
@@ -138,10 +162,9 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	public void setInVoluntary(Boolean inVoluntary) {
 		this.inVoluntary = inVoluntary;
 	}
-	
-	
+
 	@AlfProp
-	@AlfQname(qname="bcpg:allergenListOnSite")
+	@AlfQname(qname = "bcpg:allergenListOnSite")
 	@Nullable
 	public Boolean getOnSite() {
 		return onSite;
@@ -152,7 +175,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	}
 
 	@AlfProp
-	@AlfQname(qname="bcpg:allergenListOnLine")
+	@AlfQname(qname = "bcpg:allergenListOnLine")
 	@Nullable
 	public Boolean getOnLine() {
 		return onLine;
@@ -163,7 +186,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	}
 
 	@AlfProp
-	@AlfQname(qname="bcpg:allergenListIsCleaned")
+	@AlfQname(qname = "bcpg:allergenListIsCleaned")
 	@Nullable
 	public Boolean getIsCleaned() {
 		return isCleaned;
@@ -174,7 +197,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	}
 
 	@AlfProp
-	@AlfQname(qname="bcpg:allergenValue")
+	@AlfQname(qname = "bcpg:allergenValue")
 	public String getAllergenValue() {
 		return allergenValue;
 	}
@@ -190,12 +213,11 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	 */
 	@AlfMultiAssoc
 	@InternalField
-	@AlfQname(qname="bcpg:allergenListVolSources")
+	@AlfQname(qname = "bcpg:allergenListVolSources")
 	public List<NodeRef> getVoluntarySources() {
 		return voluntarySources;
 	}
-	
-	
+
 	/**
 	 * <p>Setter for the field <code>voluntarySources</code>.</p>
 	 *
@@ -204,7 +226,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	public void setVoluntarySources(List<NodeRef> voluntarySources) {
 		this.voluntarySources = voluntarySources;
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public String getTextCriteria() {
@@ -218,12 +240,11 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	 */
 	@AlfMultiAssoc
 	@InternalField
-	@AlfQname(qname="bcpg:allergenListInVolSources")
+	@AlfQname(qname = "bcpg:allergenListInVolSources")
 	public List<NodeRef> getInVoluntarySources() {
 		return inVoluntarySources;
 	}
-	
-	
+
 	/**
 	 * <p>Setter for the field <code>inVoluntarySources</code>.</p>
 	 *
@@ -232,7 +253,6 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	public void setInVoluntarySources(List<NodeRef> inVoluntarySources) {
 		this.inVoluntarySources = inVoluntarySources;
 	}
-	
 
 	/**
 	 * <p>Getter for the field <code>allergen</code>.</p>
@@ -241,13 +261,12 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	 */
 	@AlfSingleAssoc
 	@InternalField
-	@AlfQname(qname="bcpg:allergenListAllergen")
+	@AlfQname(qname = "bcpg:allergenListAllergen")
 	@DataListIdentifierAttr
 	public NodeRef getAllergen() {
 		return allergen;
 	}
-	
-	
+
 	/**
 	 * <p>Setter for the field <code>allergen</code>.</p>
 	 *
@@ -256,16 +275,14 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	public void setAllergen(NodeRef allergen) {
 		this.allergen = allergen;
 	}
-	
-	
-	
+
 	/**
 	 * <p>Constructor for AllergenListDataItem.</p>
 	 */
-	public AllergenListDataItem(){
+	public AllergenListDataItem() {
 		super();
 	}
-	
+
 	/**
 	 * <p>Constructor for AllergenListDataItem.</p>
 	 *
@@ -278,30 +295,29 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	 * @param allergen a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param isManual a {@link java.lang.Boolean} object.
 	 */
-	public AllergenListDataItem(NodeRef nodeRef,Double qtyPerc, Boolean voluntary, Boolean inVoluntary, List<NodeRef> voluntarySources, List<NodeRef> inVoluntarySources, NodeRef allergen, Boolean isManual){
+	public AllergenListDataItem(NodeRef nodeRef, Double qtyPerc, Boolean voluntary, Boolean inVoluntary, List<NodeRef> voluntarySources,
+			List<NodeRef> inVoluntarySources, NodeRef allergen, Boolean isManual) {
 		super();
 		this.nodeRef = nodeRef;
 		this.qtyPerc = qtyPerc;
-		this.voluntary  = voluntary;
+		this.voluntary = voluntary;
 		this.inVoluntary = inVoluntary;
-		this.voluntarySources = voluntarySources;	
+		this.voluntarySources = voluntarySources;
 		this.inVoluntarySources = inVoluntarySources;
 		this.allergen = allergen;
 		this.isManual = isManual;
 	}
-	
-	
-	
+
 	public AllergenListDataItem(AllergenListDataItem allergenListDataItem) {
 		super(allergenListDataItem);
-		
+
 		this.qtyPerc = allergenListDataItem.qtyPerc;
 		this.voluntary = allergenListDataItem.voluntary;
 		this.inVoluntary = allergenListDataItem.inVoluntary;
 		this.onSite = allergenListDataItem.onSite;
 		this.onLine = allergenListDataItem.onLine;
 		this.isCleaned = allergenListDataItem.isCleaned;
-		this.allergenValue = allergenListDataItem.allergenValue; 
+		this.allergenValue = allergenListDataItem.allergenValue;
 		this.voluntarySources = new ArrayList<>(allergenListDataItem.voluntarySources);
 		this.inVoluntarySources = new ArrayList<>(allergenListDataItem.inVoluntarySources);
 		this.allergen = allergenListDataItem.allergen;
@@ -311,7 +327,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 	public AllergenListDataItem copy() {
 		return new AllergenListDataItem(this);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -337,8 +353,6 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 				&& Objects.equals(voluntarySources, other.voluntarySources);
 	}
 
-
-
 	@Override
 	public String toString() {
 		return "AllergenListDataItem [qtyPerc=" + qtyPerc + ", voluntary=" + voluntary + ", inVoluntary=" + inVoluntary + ", allergenValue="
@@ -346,6 +360,4 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem impl
 				+ "]";
 	}
 
-
-	
 }
