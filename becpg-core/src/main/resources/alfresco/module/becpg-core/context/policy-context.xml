@@ -106,6 +106,14 @@
 		<property name="authenticationService" ref="authenticationService" />
 		<property name="entityCatalogService" ref="entityCatalogService" />
 	</bean>
+	<bean id="entityListsRulePolicy" class="fr.becpg.repo.entity.datalist.policy.EntityListsRulePolicy" parent="abstractBeCPGPolicy">
+		<property name="repositoryHelper" ref="repositoryHelper" />
+		<property name="fileFolderService" ref="fileFolderService" />
+		<property name="scriptService" ref="scriptService" />
+		<property name="beCPGCacheService" ref="beCPGCacheService" />
+		<property name="ruleService" ref="ruleService" />
+		<property name="dictionaryService" ref="dictionaryService" />
+	</bean>
 	<bean id="sortableListPolicy" class="fr.becpg.repo.entity.datalist.policy.SortableListPolicy" parent="abstractBeCPGPolicy">
 		<property name="dataListSortService" ref="dataListSortService" />
 		<property name="entityDictionaryService" ref="cachedDictionaryService" />
