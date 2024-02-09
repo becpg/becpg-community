@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.DictionaryService;
@@ -37,6 +35,7 @@ import fr.becpg.repo.importer.ImportContext;
 import fr.becpg.repo.importer.MappingLoader;
 import fr.becpg.repo.importer.MappingLoaderFactory;
 import fr.becpg.repo.importer.MappingType;
+import jakarta.annotation.PostConstruct;
 
 
 /**

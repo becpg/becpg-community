@@ -1277,5 +1277,8 @@
 		<aspect name="bcpg:undeletableAspect">
 		</aspect>
 		
+		<aspect name="bcpg:archivedEntityAspect">
+		</aspect>
+		
 	</aspects>
 </model>

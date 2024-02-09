@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.mail.MessagingException;
-
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.workflow.WorkflowModel;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -35,6 +33,7 @@ import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import jakarta.mail.MessagingException;
 
 /**
  * The Class ProjectNotificationTest.

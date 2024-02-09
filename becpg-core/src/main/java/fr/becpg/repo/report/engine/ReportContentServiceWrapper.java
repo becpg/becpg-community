@@ -179,4 +179,9 @@ public class ReportContentServiceWrapper implements ContentService {
 		return contentService.requestContentDirectUrl(nodeRef, propertyQName, attachment, validFor);
 	}
 
+	@Override
+	public DirectAccessUrl requestContentDirectUrl(NodeRef nodeRef, QName propertyQName, boolean attachment, Long validFor, String fileName) {
+		return contentService.requestContentDirectUrl(nodeRef, propertyQName, attachment, validFor,fileName);
+	}
+
 }

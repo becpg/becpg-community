@@ -29,7 +29,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.alfresco.web.site.servlet.MTAuthenticationFilter;
 import org.apache.commons.logging.Log;
@@ -50,7 +50,7 @@ import org.springframework.extensions.webscripts.connector.RemoteClient;
  * <p>
  * The user name from the header is also used by {@link org.alfresco.web.site.servlet.SSOAuthenticationFilter}
  * for incoming request to Share to return the user name from
- * {@link javax.servlet.http.HttpServletRequest#getRemoteUser}.
+ * {@link jakarta.servlet.http.HttpServletRequest#getRemoteUser}.
  * <p>
  * The name of the header to be used is defined in the userHeader element of the
  * Alfresco Connector definition (see share-config-custom.xml.sample). Also note
