@@ -1,9 +1,12 @@
-package fr.becpg.repo.activity.extractor;
+package fr.becpg.repo.activity.remote;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.domain.activities.ActivityFeedEntity;
@@ -21,19 +24,14 @@ import org.apache.commons.logging.LogFactory;
 import org.json.JSONException;
 import org.springframework.extensions.surf.util.ISO8601DateFormat;
 
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
 /**
- * Visitor for retrieving Activities in Json format
  * 
- * @author frederic
  */
-public class JsonActivityVisitor implements RemoteActivityVisitor {
+public class XmlActivityVisitor implements RemoteActivityVisitor {
 
-	private static Log logger = LogFactory.getLog(JsonActivityVisitor.class);
+	private static Log logger = LogFactory.getLog(XmlActivityVisitor.class);
 
 	private SiteService siteService;
 
@@ -49,8 +47,7 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 	 * @param namespaceService
 	 * @param contentService
 	 */
-	public JsonActivityVisitor(SiteService siteService, NodeService nodeService, NamespaceService namespaceService, ContentService contentService) {
-		super();
+	public XmlActivityVisitor(SiteService siteService, NodeService nodeService, NamespaceService namespaceService, ContentService contentService) {
 		this.siteService = siteService;
 		this.nodeService = nodeService;
 		this.namespaceService = namespaceService;
@@ -62,48 +59,59 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 	 *
 	 * @param feedEntries a {@link org.alfresco.query.PagingResults} object.
 	 * @param result a {@link java.io.OutputStream} object.
-	 * @throws java.io.IOException if any.
+	 * @throws javax.xml.stream.XMLStreamException if any.
 	 */
 	@Override
-	public void visit(List<ActivityFeedEntity> feedEntries, OutputStream result) throws IOException {
+	public void visit(List<ActivityFeedEntity> feedEntries, OutputStream result) throws XMLStreamException {
 
-		JsonFactory factory = new JsonFactory();
-		try (JsonGenerator generator = factory.createGenerator(result, JsonEncoding.UTF8);) {
-			logger.debug("Writing activities to outputStream...");
+		// Create an output factory
+		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+		xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
+		// Create an XML stream writer
+		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
 
-			generator.setCodec(new ObjectMapper());
-			generator.writeStartObject();
-			generator.writeArrayFieldStart("activities");
+		if (logger.isDebugEnabled()) {
+			logger.debug("Indent xml formater ON");
+			xmlw = new IndentingXMLStreamWriter(xmlw);
+		}
 
-			if (!feedEntries.isEmpty()) {
+		// Write XML prologue
+		xmlw.writeStartDocument();
+		// Visit node
 
-				for (ActivityFeedEntity feedEntry : feedEntries) {
-					writeFeedEntry(generator, feedEntry);
-				}
+		xmlw.writeStartElement("activities");
+
+		if (!feedEntries.isEmpty()) {
+
+			for (ActivityFeedEntity feedEntry : feedEntries) {
+				writeFeedEntry(xmlw, feedEntry);
 			}
 
-			generator.writeEndArray();
-			generator.writeEndObject();
 		}
+		xmlw.writeEndElement();
+
+		// Write document end. This closes all open structures
+		xmlw.writeEndDocument();
+		// Close the writer to flush the output
+		xmlw.close();
+
 	}
 
 	/**
-	 * @param generator
+	 * @param xmlw
 	 * @param feedEntry
-	 * @throws IOException
+	 * @throws XMLStreamException
 	 */
-	private void writeFeedEntry(JsonGenerator generator, ActivityFeedEntity feedEntry) throws IOException {
+	private void writeFeedEntry(XMLStreamWriter xmlw, ActivityFeedEntity feedEntry) throws XMLStreamException {
 		try {
-
-			generator.writeStartObject();
-
 			String type = feedEntry.getActivityType();
 
-			generator.writeStringField("id", feedEntry.getId().toString());
-			generator.writeStringField("site", feedEntry.getSiteNetwork());
-			generator.writeStringField("type", type.substring(type.lastIndexOf(".") + 1));
-			generator.writeStringField("user", feedEntry.getPostUserId());
-			generator.writeStringField("date", ISO8601DateFormat.format(feedEntry.getPostDate()));
+			xmlw.writeStartElement("activity");
+			xmlw.writeAttribute("id", feedEntry.getId().toString());
+			xmlw.writeAttribute("site", feedEntry.getSiteNetwork());
+			xmlw.writeAttribute("type", type.substring(type.lastIndexOf(".") + 1));
+			xmlw.writeAttribute("user", feedEntry.getPostUserId());
+			xmlw.writeAttribute("date", ISO8601DateFormat.format(feedEntry.getPostDate()));
 
 			Map<String, Object> summary = JSONtoFmModel.convertJSONObjectToMap(feedEntry.getActivitySummary());
 
@@ -115,32 +123,32 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 				nodeRef = new NodeRef(toString(summary.get("entityNodeRef")));
 			}
 			if (nodeRef != null && (nodeService.exists(nodeRef))) {
-				if (nodeService.hasAspect(nodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
+				if ((nodeRef != null) && nodeService.hasAspect(nodeRef, VirtualContentModel.ASPECT_VIRTUAL_DOCUMENT)) {
 					nodeRef = new NodeRef((String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
 				}
 
-				generator.writeStringField("nodeRef", nodeRef.toString());
+				xmlw.writeAttribute("nodeRef", nodeRef.toString());
 
-				generator.writeStringField("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));
+				xmlw.writeAttribute("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));
 				ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 				if ((contentReader != null) && (contentReader.getMimetype() != null)) {
-					generator.writeStringField("mimeType", contentReader.getMimetype());
+					xmlw.writeAttribute("mimeType", contentReader.getMimetype());
 				}
 			}
 
-			generator.writeStringField("title", toString(summary.get("title")));
-			generator.writeStringField("lastName", toString(summary.get("lastName")));
-			generator.writeStringField("firstName", toString(summary.get("firstName")));
+			xmlw.writeAttribute("title", toString(summary.get("title")));
+			xmlw.writeAttribute("lastName", toString(summary.get("lastName")));
+			xmlw.writeAttribute("firstName", toString(summary.get("firstName")));
 			if (feedEntry.getSiteNetwork() != null) {
 				SiteInfo siteInfo = siteService.getSite(feedEntry.getSiteNetwork());
 				if (siteInfo != null) {
-					generator.writeStringField("siteTitle", siteInfo.getTitle());
+					xmlw.writeAttribute("siteTitle", siteInfo.getTitle());
 				}
 			}
-			// Writing activitySummary
-			generator.writeObjectField("activitySummary", summary);
 
-			generator.writeEndObject(); // End of feedEntry
+			xmlw.writeCData(feedEntry.getActivitySummary());
+
+			xmlw.writeEndElement();
 
 		} catch (JSONException je) {
 			// skip this feed entry
@@ -157,6 +165,7 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 
 	@Override
 	public String getContentType() {
-		return "application/json";
+		return "application/xml";
 	}
+
 }
