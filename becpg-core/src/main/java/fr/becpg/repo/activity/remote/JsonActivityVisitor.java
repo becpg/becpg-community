@@ -26,6 +26,8 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fr.becpg.common.BeCPGException;
+
 /**
  * Visitor for retrieving Activities in Json format
  * 
@@ -34,6 +36,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class JsonActivityVisitor implements RemoteActivityVisitor {
 
 	private static Log logger = LogFactory.getLog(JsonActivityVisitor.class);
+
+	public static final String NODE_REF = "nodeRef";
 
 	private SiteService siteService;
 
@@ -65,7 +69,7 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 	 * @throws java.io.IOException if any.
 	 */
 	@Override
-	public void visit(List<ActivityFeedEntity> feedEntries, OutputStream result) throws IOException {
+	public void visit(List<ActivityFeedEntity> feedEntries, OutputStream result) throws BeCPGException {
 
 		JsonFactory factory = new JsonFactory();
 		try (JsonGenerator generator = factory.createGenerator(result, JsonEncoding.UTF8);) {
@@ -84,6 +88,9 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 
 			generator.writeEndArray();
 			generator.writeEndObject();
+		} catch (IOException e) {
+			logger.debug("Exception while writing JSON to response", e);
+			throw new BeCPGException("Error while writing JSON to response : ", e);
 		}
 	}
 
@@ -92,7 +99,7 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 	 * @param feedEntry
 	 * @throws IOException
 	 */
-	private void writeFeedEntry(JsonGenerator generator, ActivityFeedEntity feedEntry) throws IOException {
+	private void writeFeedEntry(JsonGenerator generator, ActivityFeedEntity feedEntry) throws IOException, JSONException {
 		try {
 
 			generator.writeStartObject();
@@ -109,8 +116,8 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 
 			NodeRef nodeRef = null;
 
-			if (summary.containsKey("nodeRef")) {
-				nodeRef = new NodeRef(toString(summary.get("nodeRef")));
+			if (summary.containsKey(NODE_REF)) {
+				nodeRef = new NodeRef(toString(summary.get(NODE_REF)));
 			} else if (summary.containsKey("entityNodeRef")) {
 				nodeRef = new NodeRef(toString(summary.get("entityNodeRef")));
 			}
@@ -119,7 +126,7 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 					nodeRef = new NodeRef((String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
 				}
 
-				generator.writeStringField("nodeRef", nodeRef.toString());
+				generator.writeStringField(NODE_REF, nodeRef.toString());
 
 				generator.writeStringField("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));
 				ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
@@ -144,7 +151,9 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 
 		} catch (JSONException je) {
 			// skip this feed entry
-			logger.warn("Skip feed entry : " + je.getMessage());
+			logger.warn("An error occured while creating the Json response : " + je.getMessage());
+			throw new JSONException("Error while writing JSON to response : ", je);
+
 		}
 	}
 
