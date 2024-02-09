@@ -133,6 +133,8 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		// AutoNum
 		visitFolder(systemNodeRef, RepoConsts.PATH_AUTO_NUM);
+		
+		visitFolder(systemNodeRef, RepoConsts.PATH_ENTITY_LISTS_RULES);
 
 		visitReports(systemNodeRef);
 
