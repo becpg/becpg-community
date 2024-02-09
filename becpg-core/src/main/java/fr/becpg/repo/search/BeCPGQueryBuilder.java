@@ -64,7 +64,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -897,6 +896,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeType(ApplicationModel.TYPE_FILELINK);
 		excludeAspect(ContentModel.ASPECT_HIDDEN);
 
+		return this;
+	}
+	
+	public BeCPGQueryBuilder excludeArchivedEntities() {
+		excludeAspect(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
 		return this;
 	}
 

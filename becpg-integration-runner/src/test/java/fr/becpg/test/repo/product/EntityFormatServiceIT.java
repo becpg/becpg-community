@@ -15,65 +15,41 @@ import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.test.BeCPGPLMTestHelper;
 import fr.becpg.test.PLMBaseTestCase;
 
-/**
- * The Class JSONProductIT.
- *
- * @author valentinLeblanc
- */
-public class JSONProductIT extends PLMBaseTestCase {
+public class EntityFormatServiceIT extends PLMBaseTestCase {
 
 	@Autowired
 	private EntityFormatService entityFormatService;
-	
 
-	/**
-	 * Test create product.
-	 */
 	@Test
-	public void testJsonProduct() {
+	public void convertToJsonTest() {
 
 		NodeRef rawMaterialNoderef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			
 			NodeRef result = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
-			
 			return result;
-
 		}, false, true);
 
-		
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
-			entityFormatService.convert(rawMaterialNoderef, EntityFormat.JSON);
-			
+			entityFormatService.convertToFormat(rawMaterialNoderef, EntityFormat.JSON);
 			String format = entityFormatService.getEntityFormat(rawMaterialNoderef);
-			
 			assertEquals(EntityFormat.JSON.toString(), format);
-			
+
 			String entityJson = entityFormatService.getEntityData(rawMaterialNoderef);
-			
 			assertNotNull(entityJson);
-			
+
 			JSONObject root = new JSONObject(entityJson);
-			
 			assertNotNull(root);
-			
+
 			JSONObject entity = (JSONObject) root.get("entity");
-			
 			assertNotNull(entity);
-			
+
 			JSONObject datalists = (JSONObject) entity.get("datalists");
-			
 			assertNotNull(datalists);
-			
+
 			JSONArray ingList = (JSONArray) datalists.get("bcpg:" + PLMModel.TYPE_INGLIST.getLocalName());
-			
 			assertNotNull(ingList);
-			
+
 			return true;
-
 		}, false, true);
-		
 	}
-	}
-
-	
+}

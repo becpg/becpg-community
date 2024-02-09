@@ -7,8 +7,8 @@ USER root
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV AOS_VERSION=${alfresco.aos.version}
 ENV MYSQL_CONNECTOR=${mysql.connector.version}
-ENV SUPPORT_TOOLS_VERSION=1.3.0.0-beCPG-amp
-ENV I18_VERSION=1.0-118
+ENV SUPPORT_TOOLS_VERSION=${becpg.supporttools.version}
+ENV I18_VERSION=${becpg.i18n.version}
    
 ## JDBC - MYSQL
 RUN curl --silent --location \
@@ -16,15 +16,6 @@ RUN curl --silent --location \
 	-o $TOMCAT_DIR/lib/mysql-connector-j-${MYSQL_CONNECTOR}.jar && \
 	rm $TOMCAT_DIR/lib/postgres*
 
-
-#Javascript console
-RUN curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/javascript-console-repo-0.7.0.amp  \
-      -o $TOMCAT_DIR/amps/javascript-console-repo-0.7.0.amp && \
-    java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps/ $TOMCAT_DIR/webapps/alfresco -nobackup -directory && \
-    rm $TOMCAT_DIR/amps/javascript-console-repo-0.7.0.amp  
-    
-    
 #Support tools
 RUN curl --silent --location \
       https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/support-tools-repo-${SUPPORT_TOOLS_VERSION}.amp  \

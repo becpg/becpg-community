@@ -46,6 +46,9 @@ public final class BeCPGModel {
 	
 	public static final QName PROP_ENTITY_DATA = QName.createQName(BECPG_URI, "entityData");
 
+	// archived entity aspect
+	public static final QName ASPECT_ARCHIVED_ENTITY = QName.createQName(BECPG_URI, "archivedEntityAspect");
+
 	public enum EntityFormat {
 		NODE, JSON, XML
 	}

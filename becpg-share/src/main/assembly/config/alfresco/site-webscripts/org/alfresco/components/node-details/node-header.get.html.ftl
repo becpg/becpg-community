@@ -129,7 +129,7 @@
                     <script type="text/javascript">
                        function downloadNode(){
                             var request = new XMLHttpRequest();
-                            var relativeUrl = "${url.context}/proxy/alfresco${node.contentURL?html}?a=true";
+                            var relativeUrl = "${url.context}/proxy/alfresco/${node.contentURL?html}?a=true";
                             var url = window.location.protocol + "//" + window.location.host + relativeUrl;
 
                             request.onreadystatechange = function() {
