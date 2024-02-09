@@ -1,6 +1,5 @@
 package fr.becpg.repo.product.formulation.score;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 import org.alfresco.service.cmr.repository.MLText;
@@ -13,7 +12,6 @@ import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ScorableEntity;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.product.helper.NutrientRegulatoryHelper;
 import fr.becpg.repo.repository.model.BeCPGDataObject;

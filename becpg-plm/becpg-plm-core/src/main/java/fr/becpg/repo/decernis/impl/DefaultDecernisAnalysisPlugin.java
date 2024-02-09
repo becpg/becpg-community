@@ -85,7 +85,7 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
 	protected final RestTemplate restTemplate;
 
-	public DefaultDecernisAnalysisPlugin(NodeService nodeService, SystemConfigurationService systemConfigurationService,
+	public DefaultDecernisAnalysisPlugin(@Qualifier("nodeService") NodeService nodeService, SystemConfigurationService systemConfigurationService,
 			@Qualifier("logRestTemplate") RestTemplate restTemplate) {
 		super();
 		this.nodeService = nodeService;
