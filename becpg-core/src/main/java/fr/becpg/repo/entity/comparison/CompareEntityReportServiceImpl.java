@@ -271,7 +271,6 @@ public class CompareEntityReportServiceImpl implements CompareEntityReportServic
 		for (String comparison : structCompareResults.keySet()) {
 			List<StructCompareResultDataItem> structCompareResult = structCompareResults.get(comparison);
 			
-			Map<String, BecpgFormDefinition> defs = new HashMap<>();
 			
 			// each structCompareResultDataItem
 			for (StructCompareResultDataItem c : structCompareResult) {

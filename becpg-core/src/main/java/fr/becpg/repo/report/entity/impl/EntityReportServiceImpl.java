@@ -237,15 +237,24 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	public void generateReports(final NodeRef entityNodeRef) {
 		generateReports(null, entityNodeRef);
 	}
+	
+	@Override
+	public void generateReports(final NodeRef entityNodeRef, boolean generateAllReports) {
+		generateReports(null, entityNodeRef, generateAllReports);
+	}
 
 	@Override
 	public void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo) {
+		generateReports(nodeRefFrom, nodeRefTo, false);
+	}
+	
+	private void generateReports(final NodeRef nodeRefFrom, final NodeRef nodeRefTo, boolean generateAllReports) {
 
 		ReentrantLock lock = mutexFactory.getMutex(nodeRefTo.toString());
 
 		try {
 			if (lock.tryLock()) {
-				internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, false);
+				internalGenerateReports(nodeRefFrom != null ? nodeRefFrom : nodeRefTo, nodeRefTo, generateAllReports);
 			} else {
 				lock.lock();
 			}
@@ -1468,6 +1477,13 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 			
 			if (entityNodeRef.getStoreRef().getProtocol().equals(VersionBaseModel.STORE_PROTOCOL)
 					|| entityNodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID)) {
+				return false;
+			}
+			
+			if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ARCHIVED_ENTITY)) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Skip report generation because entity is archived");
+				}
 				return false;
 			}
 			

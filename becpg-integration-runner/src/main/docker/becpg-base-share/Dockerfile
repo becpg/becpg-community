@@ -1,27 +1,19 @@
 FROM ${docker.share.image}:${alfresco.share.docker.version}
 
-ENV TOMCAT_DIR=/usr/local/tomcat
-ENV I18_VERSION=1.0-118
-ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
 
 USER root
 
 ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
-ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
+ENV SUPPORT_TOOLS_VERSION=${becpg.supporttools.version}
+ENV TOMCAT_DIR=/usr/local/tomcat
+ENV I18_VERSION=${becpg.i18n.version}
 
-#Javascript console
-RUN curl --silent --location \
-      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/javascript-console-share-0.7.0.amp  \
-      -o $TOMCAT_DIR/amps_share/javascript-console-share-0.7.0.amp && \
-    java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/ webapps/share -nobackup -directory && \
-    rm $TOMCAT_DIR/amps_share/javascript-console-share-0.7.0.amp 
-    
 #Support tools
-#RUN curl --silent --location \
-#      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/support-tools-share-${SUPPORT_TOOLS_VERSION}.amp  \
-#      -o $TOMCAT_DIR/amps_share/support-tools-share-${SUPPORT_TOOLS_VERSION}.amp && \
-#    java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/ webapps/share -nobackup -directory && \
-#    rm $TOMCAT_DIR/amps_share/support-tools-share-${SUPPORT_TOOLS_VERSION}.amp  
+RUN curl --silent --location \
+      https://readonly:YLdy9W5v@www.becpg.fr/becpg-repo/releases/addons/support-tools-share-${SUPPORT_TOOLS_VERSION}.amp  \
+      -o $TOMCAT_DIR/amps_share/support-tools-share-${SUPPORT_TOOLS_VERSION}.amp && \
+    java -jar $TOMCAT_DIR/alfresco-mmt/alfresco-mmt*.jar install $TOMCAT_DIR/amps_share/ webapps/share -nobackup -directory && \
+    rm $TOMCAT_DIR/amps_share/support-tools-share-${SUPPORT_TOOLS_VERSION}.amp  
 
 # I18N
 RUN curl --silent --location \
