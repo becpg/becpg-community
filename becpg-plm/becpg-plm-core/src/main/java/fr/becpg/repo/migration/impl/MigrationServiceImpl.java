@@ -254,6 +254,7 @@ public class MigrationServiceImpl implements MigrationService {
 	}
 
 	/** {@inheritDoc} */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void migratePropertyInMt(final QName classQName, final QName sourceProp, final QName targetProp) {
 		PropertyCheck.mandatory(this, "tenantAdminService", tenantAdminService);

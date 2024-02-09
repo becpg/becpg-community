@@ -3,6 +3,9 @@ package fr.becpg.repo.product.formulation.nutrient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.LinkedHashMap;
@@ -241,11 +244,15 @@ public abstract class AbstractNutrientRegulation implements NutrientRegulation {
 	 * @return a {@link java.lang.Double} object.
 	 */
 	protected Double roundValue(Double value, Double delta) {
-		if (value != null) {
-			// round by delta (eg: 0.5)
-			double roundedValue = (delta * Math.round(value / delta));
-			// sometime roundedValue is 0.3000000001 when 0.1 * 3 --> we round twice
-			return (Math.round(roundedValue * 1000d) / 1000d);
+		if (value != null && delta!=null ) {
+			
+			if(delta == 0) {
+				return 0d;
+			}
+			
+			return BigDecimal.valueOf(delta).multiply(BigDecimal.valueOf(value).divide(BigDecimal.valueOf(delta), MathContext.DECIMAL64)
+			        .setScale(0, RoundingMode.HALF_UP)).doubleValue();
+
 		} else {
 			return null;
 		}

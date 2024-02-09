@@ -39,7 +39,6 @@ import fr.becpg.repo.entity.catalog.EntityCatalogServiceImpl;
 import fr.becpg.repo.formulation.FormulatedEntity;
 import fr.becpg.repo.formulation.FormulationService;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ClientData;
 import fr.becpg.repo.product.data.RawMaterialData;
 import fr.becpg.repo.product.data.SemiFinishedProductData;
