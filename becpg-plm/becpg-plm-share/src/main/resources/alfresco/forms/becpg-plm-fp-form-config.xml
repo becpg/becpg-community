@@ -1274,6 +1274,30 @@
           <field id="bcpg:profitability" mandatory="false" read-only="true"/>
         </appearance>
       </form>
+      <form id="lcaList">
+        <field-visibility>
+          <show force="true" id="bcpg:lcaScore"/>
+          <show force="true" id="bcpg:lcaScoreMethod"/>
+          <show force="true" id="bcpg:ecoScore"/>
+          <show force="true" id="bcpg:ecoScoreDetails"/>
+          <show force="true" id="bcpg:ecoScoreCategory"/>
+        </field-visibility>
+        <appearance>
+          <field id="bcpg:lcaScore" mandatory="false" read-only="true"/>
+          <field id="bcpg:lcaScoreMethod" mandatory="false" read-only="false"/>
+          <field id="bcpg:ecoScore" mandatory="false" read-only="true"/>
+          <field id="bcpg:ecoScoreCategory" mandatory="false" read-only="false">
+            <control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+              <control-param name="ds">becpg/autocomplete/ecoscore</control-param>
+              <control-param name="showTooltip">false</control-param>
+              <control-param name="saveTitle">false</control-param>
+            </control>
+          </field>
+          <field id="bcpg:ecoScoreDetails" mandatory="false" read-only="true">
+            <control template="/org/alfresco/components/form/controls/ecoscore-class.ftl"/>
+          </field>
+        </appearance>
+      </form>
     </forms>
   </config>
   <config condition="bcpg:finishedProduct" evaluator="model-type" replace="false">
