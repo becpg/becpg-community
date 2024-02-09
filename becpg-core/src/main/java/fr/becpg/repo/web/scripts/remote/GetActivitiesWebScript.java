@@ -27,9 +27,7 @@ import org.alfresco.repo.domain.activities.ActivityFeedEntity;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.activities.ActivityService;
 import org.alfresco.service.cmr.repository.ContentService;
-import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.site.SiteService;
-import org.alfresco.service.namespace.NamespaceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.extensions.webscripts.Status;
@@ -58,7 +56,6 @@ public class GetActivitiesWebScript extends AbstractEntityWebScript {
 	private SiteService siteService;
 
 	private ContentService contentService;
-
 
 	/**
 	 * <p>Setter for the field <code>contentService</code>.</p>
@@ -144,7 +141,7 @@ public class GetActivitiesWebScript extends AbstractEntityWebScript {
 			if (logger.isInfoEnabled()) {
 				logger.info("Client aborted stream read:\n\tcontent", e1);
 			}
-		} catch (Exception e) {
+		} catch (BeCPGException e) {
 			logger.error(e, e);
 		}
 
