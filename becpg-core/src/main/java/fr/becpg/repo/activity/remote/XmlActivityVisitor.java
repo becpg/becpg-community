@@ -26,6 +26,8 @@ import org.springframework.extensions.surf.util.ISO8601DateFormat;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 
+import fr.becpg.common.BeCPGException;
+
 /**
  * 
  */
@@ -62,38 +64,44 @@ public class XmlActivityVisitor implements RemoteActivityVisitor {
 	 * @throws javax.xml.stream.XMLStreamException if any.
 	 */
 	@Override
-	public void visit(List<ActivityFeedEntity> feedEntries, OutputStream result) throws XMLStreamException {
+	public void visit(List<ActivityFeedEntity> feedEntries, OutputStream result) throws BeCPGException {
 
-		// Create an output factory
-		XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-		xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
-		// Create an XML stream writer
-		XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
+		try {
 
-		if (logger.isDebugEnabled()) {
-			logger.debug("Indent xml formater ON");
-			xmlw = new IndentingXMLStreamWriter(xmlw);
-		}
+			// Create an output factory
+			XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+			xmlof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
+			// Create an XML stream writer
+			XMLStreamWriter xmlw = xmlof.createXMLStreamWriter(result);
 
-		// Write XML prologue
-		xmlw.writeStartDocument();
-		// Visit node
-
-		xmlw.writeStartElement("activities");
-
-		if (!feedEntries.isEmpty()) {
-
-			for (ActivityFeedEntity feedEntry : feedEntries) {
-				writeFeedEntry(xmlw, feedEntry);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Indent xml formater ON");
+				xmlw = new IndentingXMLStreamWriter(xmlw);
 			}
 
-		}
-		xmlw.writeEndElement();
+			// Write XML prologue
+			xmlw.writeStartDocument();
+			// Visit node
 
-		// Write document end. This closes all open structures
-		xmlw.writeEndDocument();
-		// Close the writer to flush the output
-		xmlw.close();
+			xmlw.writeStartElement("activities");
+
+			if (!feedEntries.isEmpty()) {
+
+				for (ActivityFeedEntity feedEntry : feedEntries) {
+					writeFeedEntry(xmlw, feedEntry);
+				}
+
+			}
+			xmlw.writeEndElement();
+
+			// Write document end. This closes all open structures
+			xmlw.writeEndDocument();
+			// Close the writer to flush the output
+			xmlw.close();
+		} catch (XMLStreamException e) {
+			logger.debug("Exception while writing XML response", e);
+			throw new BeCPGException("Error while writing XML response : ", e);
+		}
 
 	}
 
