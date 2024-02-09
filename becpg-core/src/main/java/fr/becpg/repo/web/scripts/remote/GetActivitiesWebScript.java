@@ -37,9 +37,9 @@ import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
 import fr.becpg.common.BeCPGException;
-import fr.becpg.repo.activity.extractor.JsonActivityVisitor;
-import fr.becpg.repo.activity.extractor.RemoteActivityVisitor;
-import fr.becpg.repo.activity.extractor.XmlActivityVisitor;
+import fr.becpg.repo.activity.remote.JsonActivityVisitor;
+import fr.becpg.repo.activity.remote.RemoteActivityVisitor;
+import fr.becpg.repo.activity.remote.XmlActivityVisitor;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 
 /**
@@ -57,29 +57,8 @@ public class GetActivitiesWebScript extends AbstractEntityWebScript {
 
 	private SiteService siteService;
 
-	private NodeService nodeService;
-
-	private NamespaceService namespaceService;
-
 	private ContentService contentService;
 
-	/**
-	 * <p>Setter for the field <code>nodeService</code>.</p>
-	 *
-	 * @param nodeService a {@link org.alfresco.service.cmr.repository.NodeService} object.
-	 */
-	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>namespaceService</code>.</p>
-	 *
-	 * @param namespaceService a {@link org.alfresco.service.namespace.NamespaceService} object.
-	 */
-	public void setNamespaceService(NamespaceService namespaceService) {
-		this.namespaceService = namespaceService;
-	}
 
 	/**
 	 * <p>Setter for the field <code>contentService</code>.</p>
