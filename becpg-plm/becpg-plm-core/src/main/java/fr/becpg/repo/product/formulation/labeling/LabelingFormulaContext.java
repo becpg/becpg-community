@@ -1795,6 +1795,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			firstQtyPerc = roundeedValue(firstLabelingComponent, firstQtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale()))
 					.add(diffValue).doubleValue();
+		
 
 		}
 
@@ -1851,7 +1852,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						((DecimalFormat) format).applyPattern(decimalFormat.getFirst().toPattern());
 						applyAutomaticPrecicion((DecimalFormat) format, qtyPerc, decimalFormat.getSecond(), false);
 					} else {
-						applyAutomaticPrecicion(((DecimalFormat) format), qty, defaultRoundingMode, isFirst && isForce100Perc);
+						if((isFirst && isForce100Perc)) {
+							applyAutomaticPrecicion(((DecimalFormat) format), totalPrecision, defaultRoundingMode, true);
+						} else {
+							applyAutomaticPrecicion(((DecimalFormat) format), qty, defaultRoundingMode, false);
+						}
 					}
 
 					isFirst = false;
@@ -2894,22 +2899,33 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		 */
 
 		if (!keepOrder) {
+			
+			for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : entries) {
+				sort(entry.getValue());
+			}
 
 			Collections.sort(entries, (a, b) -> {
 				int result = compareLabelingComponents(a.getKey(), b.getKey());
 				if (result == 0) {
-					result = compareIngredientNames(a.getKey(), b.getKey());
+					String nameA = getLegalIngName(a.getKey());
+					if(nameA == null && !a.getValue().isEmpty()) {
+						nameA = getLegalIngName(a.getValue().get(0));
+					}
+					
+					String nameB = getLegalIngName(b.getKey());
+					if(nameB == null && !b.getValue().isEmpty()) {
+						nameB = getLegalIngName(b.getValue().get(0));
+					}
+					
+					 result = Comparator.nullsLast(String::compareTo).compare(nameA, nameB);
 				}
 				return result;
 			});
 
 		}
+		
 		Map<IngTypeItem, List<LabelingComponent>> sortedIngListByType = new LinkedHashMap<>();
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : entries) {
-
-			if (!keepOrder) {
-				sort(entry.getValue());
-			}
 			sortedIngListByType.put(entry.getKey(), entry.getValue());
 		}
 
