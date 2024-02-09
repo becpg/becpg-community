@@ -1,4 +1,4 @@
-package fr.becpg.repo.activity.extractor;
+package fr.becpg.repo.activity.remote;
 
 import java.io.OutputStream;
 import java.util.List;

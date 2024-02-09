@@ -31,7 +31,7 @@
 	<@script src="${url.context}/res/components/entity-charact-views/dashlet-resizer.js" />
 	<@script src="${url.context}/res/components/entity-catalog/entity-catalog.js" group="wizard"/>
 
-    <@script src="${url.context}/res/components/wizard/jquery.js" group="wizard"/>
+    <@script src="${url.context}/res/js/lib/jquery-1.12.4/jquery-1.12.4.min.js" group="wizard"/>
     <@script src="${url.context}/res/components/wizard/jquery-steps.js" group="wizard"/>
     <@script src="${url.context}/res/components/wizard/wizard-mgr.js" group="wizard"/>
 
