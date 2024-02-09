@@ -114,6 +114,8 @@ public class RepoConsts
 	/** Constant <code>CONTAINER_DATALISTS="DataLists"</code> */
 	public static final String CONTAINER_DATALISTS = "DataLists";	
 	
+	public static final String PATH_ENTITY_LISTS_RULES = "EntityListsRules";
+
 	/** Constant <code>ARCHIVE_STORE</code> */
 	public static final StoreRef ARCHIVE_STORE =  new StoreRef(StoreRef.PROTOCOL_ARCHIVE, "SpacesStore");
 	/** Constant <code>SPACES_STORE</code> */
