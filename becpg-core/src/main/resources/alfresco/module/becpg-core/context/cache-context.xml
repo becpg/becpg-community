@@ -50,7 +50,6 @@
 			  <entry key="fr.becpg.repo.report.entity.impl.EntityReportServiceImpl" value="10" />
 			  <entry key="fr.becpg.repo.search.AdvSearchService" value="100" />
 			  <entry key="fr.becpg.repo.system.SystemConfigurationService" value="100" />
-			  <entry key="fr.becpg.repo.entity.datalist.policy.EntityListsRulePolicy" value="100" />
 			</map>
 		</property>
 	</bean>
