@@ -63,6 +63,7 @@ import org.subethamail.wiser.Wiser;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.admin.InitVisitorService;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.cache.BeCPGCacheService;
 import fr.becpg.repo.entity.EntityListDAO;
@@ -104,7 +105,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	public static RepoBaseTestCase INSTANCE;
 
-	public static final Wiser wiser = new Wiser(2500);
+	public static final Wiser wiser = Wiser.port(2500);
 
 	/**
 	 * Print the test we are currently running, useful if the test is running
@@ -112,7 +113,7 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 	 */
 	@Rule
 	public MethodRule testAnnouncer = (base, method, target) -> {
-		System.out.println("Running " + getClassName() + " Integration Test: " + method.getName() + "()");
+		logger.info("Running " + getClassName() + " Integration Test: " + method.getName() + "()");
 		return base;
 	};
 
@@ -208,6 +209,9 @@ public abstract class RepoBaseTestCase extends TestCase implements InitializingB
 
 	@Autowired
 	protected EntityListDAO entityListDAO;
+	
+	@Autowired
+	protected BeCPGAuditService beCPGAuditService;
 	
 
 	@Autowired
