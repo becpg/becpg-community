@@ -13,6 +13,7 @@ function main() {
 		"beCPG.datalist.effectiveFilterEnabled",
 		"beCPG.spel.security.authorizedTypes",
 		"beCPG.copyOrBranch.propertiesToReset",
+		"mail.logo.url",
 	].forEach(function(p) {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "system" }
 			});
