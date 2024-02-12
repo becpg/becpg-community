@@ -1063,29 +1063,10 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	}
 
 	private boolean showPerc(LabelingComponent lblComponent) {
-		if (showPercRules.isEmpty() || showPercRules.containsKey(lblComponent.getNodeRef())) {
-			return true;
-		}
-
-		if (renameRules.containsKey(lblComponent.getNodeRef())) {
-			RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
-			if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null)
-					&& showPercRules.containsKey(renameRule.getReplacement())) {
-				return true;
-			}
-		}
-
-		for (Map.Entry<NodeRef, RenameRule> entry : renameRules.entrySet()) {
-			NodeRef nodeRef = entry.getKey();
-			RenameRule renameRule = entry.getValue();
-
-			if (Objects.equals(renameRule.getReplacement(), lblComponent.getNodeRef()) && renameRule.matchLocale(I18NUtil.getLocale())) {
-				return showPercRules.containsKey(nodeRef);
-			}
-		}
-
-		return false;
+		return showPercRules.isEmpty() || (getSelectedRule(lblComponent, null) != null);
 	}
+	
+	
 
 	private Pair<DecimalFormat, RoundingMode> getDecimalFormat(LabelingComponent lblComponent, Double qty) {
 		DecimalFormat decimalFormat = null;
@@ -1093,34 +1074,15 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		DecimalFormatSymbols symbols = new DecimalFormatSymbols(getContentLocale());
 		if ((lblComponent != null)) {
-			ShowRule selectedRule = null;
 
 			boolean applyAllPerc = true;
-			NodeRef nodeRef = lblComponent.getNodeRef();
 
 			if (lblComponent instanceof IngTypeItem && !isDoNotDetails((IngTypeItem) lblComponent)) {
 				applyAllPerc = false;
 			}
-
-			if (renameRules.containsKey(lblComponent.getNodeRef())) {
-				RenameRule renameRule = renameRules.get(lblComponent.getNodeRef());
-				if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null)
-						&& showPercRules.containsKey(renameRule.getReplacement())) {
-					for (ShowRule showRule : showPercRules.get(renameRule.getReplacement())) {
-						if (isShowRuleMatch(selectedRule, showRule, qty)) {
-							selectedRule = showRule;
-						}
-
-					}
-
-				}
-			} else if (showPercRules.get(nodeRef) != null) {
-				for (ShowRule showRule : showPercRules.get(nodeRef)) {
-					if (isShowRuleMatch(selectedRule, showRule, qty)) {
-						selectedRule = showRule;
-					}
-				}
-			}
+			
+			ShowRule selectedRule = getSelectedRule(lblComponent, qty);
+			
 
 			if (selectedRule == null && applyAllPerc) {
 				for (ShowRule showRule : showAllPerc) {
@@ -1146,6 +1108,54 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		}
 		return null;
 	}
+	
+	
+	private ShowRule getSelectedRule(LabelingComponent lblComponent, Double qty) {
+		  NodeRef nodeRef = lblComponent.getNodeRef();
+
+		  ShowRule selectedRule = null;
+		
+		if ( showPercRules.containsKey(nodeRef)) {
+			for (ShowRule showRule : showPercRules.get(nodeRef)) {
+				if (isShowRuleMatch(selectedRule, showRule, qty)) {
+					selectedRule = showRule;
+				}
+			}
+		} else {
+
+			if (renameRules.containsKey(nodeRef)) {
+				RenameRule renameRule = renameRules.get(nodeRef);
+				if (renameRule.matchLocale(I18NUtil.getLocale()) && (renameRule.getReplacement() != null)
+						&& showPercRules.containsKey(renameRule.getReplacement())) {
+					for (ShowRule showRule : showPercRules.get(renameRule.getReplacement())) {
+						if (isShowRuleMatch(selectedRule, showRule, qty)) {
+							selectedRule = showRule;
+						}
+	
+					}
+				}
+			}
+	
+			for (Map.Entry<NodeRef, RenameRule> entry : renameRules.entrySet()) {
+				NodeRef entryNodeRef = entry.getKey();
+				RenameRule renameRule = entry.getValue();
+	
+				if (Objects.equals(renameRule.getReplacement(), nodeRef) && renameRule.matchLocale(I18NUtil.getLocale())) {
+					
+					for (ShowRule showRule : showPercRules.get(entryNodeRef)) {
+						if (isShowRuleMatch(selectedRule, showRule, qty)) {
+							selectedRule = showRule;
+						}
+					}
+				}
+			}
+		}
+		
+		return  selectedRule;
+	}
+	
+	
+
 
 	private boolean isShowRuleMatch(ShowRule selectedRule, ShowRule showRule, Double qty) {
 		if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
