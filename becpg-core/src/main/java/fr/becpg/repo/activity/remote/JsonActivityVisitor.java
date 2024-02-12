@@ -2,8 +2,9 @@ package fr.becpg.repo.activity.remote;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.domain.activities.ActivityFeedEntity;
@@ -15,16 +16,12 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.namespace.NamespaceService;
-import org.alfresco.util.JSONtoFmModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.extensions.surf.util.ISO8601DateFormat;
-
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fr.becpg.common.BeCPGException;
 
@@ -38,6 +35,9 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 	private static Log logger = LogFactory.getLog(JsonActivityVisitor.class);
 
 	public static final String NODE_REF = "nodeRef";
+	public static final String TITLE = "title";
+	public static final String LAST_NAME = "lastName";
+	public static final String FIRST_NAME = "firstName";
 
 	private SiteService siteService;
 
@@ -71,23 +71,23 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 	@Override
 	public void visit(List<ActivityFeedEntity> feedEntries, OutputStream result) throws BeCPGException {
 
-		JsonFactory factory = new JsonFactory();
-		try (JsonGenerator generator = factory.createGenerator(result, JsonEncoding.UTF8);) {
+		try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
+
+			JSONObject jsonResp = new JSONObject();
+
 			logger.debug("Writing activities to outputStream...");
 
-			generator.setCodec(new ObjectMapper());
-			generator.writeStartObject();
-			generator.writeArrayFieldStart("activities");
-
 			if (!feedEntries.isEmpty()) {
-
+				JSONArray activitiesJson = new JSONArray();
 				for (ActivityFeedEntity feedEntry : feedEntries) {
-					writeFeedEntry(generator, feedEntry);
+					activitiesJson.put(createFeedEntityJson(feedEntry));
 				}
+
+				jsonResp.put("activities", activitiesJson);
 			}
 
-			generator.writeEndArray();
-			generator.writeEndObject();
+			jsonResp.write(out);
+
 		} catch (IOException e) {
 			logger.debug("Exception while writing JSON to response", e);
 			throw new BeCPGException("Error while writing JSON to response : ", e);
@@ -99,26 +99,26 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 	 * @param feedEntry
 	 * @throws IOException
 	 */
-	private void writeFeedEntry(JsonGenerator generator, ActivityFeedEntity feedEntry) throws BeCPGException {
+	private JSONObject createFeedEntityJson(ActivityFeedEntity feedEntry) throws BeCPGException {
 		try {
 
-			generator.writeStartObject();
+			JSONObject feedEntityJson = new JSONObject();
 
 			String type = feedEntry.getActivityType();
 
-			generator.writeStringField("id", feedEntry.getId().toString());
-			generator.writeStringField("site", feedEntry.getSiteNetwork());
-			generator.writeStringField("type", type.substring(type.lastIndexOf(".") + 1));
-			generator.writeStringField("user", feedEntry.getPostUserId());
-			generator.writeStringField("date", ISO8601DateFormat.format(feedEntry.getPostDate()));
+			feedEntityJson.put("id", feedEntry.getId().toString());
+			feedEntityJson.put("site", feedEntry.getSiteNetwork());
+			feedEntityJson.put("type", type.substring(type.lastIndexOf(".") + 1));
+			feedEntityJson.put("user", feedEntry.getPostUserId());
+			feedEntityJson.put("date", ISO8601DateFormat.format(feedEntry.getPostDate()));
 
-			Map<String, Object> summary = JSONtoFmModel.convertJSONObjectToMap(feedEntry.getActivitySummary());
+			JSONObject summary = new JSONObject(feedEntry.getActivitySummary());
 
 			NodeRef nodeRef = null;
 
-			if (summary.containsKey(NODE_REF)) {
+			if (summary.keySet().contains(NODE_REF)) {
 				nodeRef = new NodeRef(toString(summary.get(NODE_REF)));
-			} else if (summary.containsKey("entityNodeRef")) {
+			} else if (summary.keySet().contains("entityNodeRef")) {
 				nodeRef = new NodeRef(toString(summary.get("entityNodeRef")));
 			}
 			if (nodeRef != null && (nodeService.exists(nodeRef))) {
@@ -126,30 +126,31 @@ public class JsonActivityVisitor implements RemoteActivityVisitor {
 					nodeRef = new NodeRef((String) nodeService.getProperty(nodeRef, VirtualContentModel.PROP_ACTUAL_NODE_REF));
 				}
 
-				generator.writeStringField(NODE_REF, nodeRef.toString());
+				feedEntityJson.put(NODE_REF, nodeRef.toString());
 
-				generator.writeStringField("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));
+				feedEntityJson.put("nodeType", nodeService.getType(nodeRef).toPrefixString(namespaceService));
 				ContentReader contentReader = contentService.getReader(nodeRef, ContentModel.PROP_CONTENT);
 				if ((contentReader != null) && (contentReader.getMimetype() != null)) {
-					generator.writeStringField("mimeType", contentReader.getMimetype());
+					feedEntityJson.put("mimeType", contentReader.getMimetype());
 				}
 			}
 
-			generator.writeStringField("title", toString(summary.get("title")));
-			generator.writeStringField("lastName", toString(summary.get("lastName")));
-			generator.writeStringField("firstName", toString(summary.get("firstName")));
+			feedEntityJson.put(TITLE, toString(summary.opt(TITLE)));
+			feedEntityJson.put(LAST_NAME, toString(summary.opt(LAST_NAME)));
+			feedEntityJson.put(FIRST_NAME, toString(summary.opt(FIRST_NAME)));
+
 			if (feedEntry.getSiteNetwork() != null) {
 				SiteInfo siteInfo = siteService.getSite(feedEntry.getSiteNetwork());
 				if (siteInfo != null) {
-					generator.writeStringField("siteTitle", siteInfo.getTitle());
+					feedEntityJson.put("siteTitle", siteInfo.getTitle());
 				}
 			}
 			// Writing activitySummary
-			generator.writeObjectField("activitySummary", summary);
+			feedEntityJson.put("activitySummary", summary);
 
-			generator.writeEndObject(); // End of feedEntry
+			return feedEntityJson;
 
-		} catch (IOException | JSONException je) {
+		} catch (JSONException je) {
 			// skip this feed entry
 			logger.warn("An error occured while creating the Json : " + je.getMessage());
 			throw new BeCPGException("An error occured while creating the Json : ", je);
