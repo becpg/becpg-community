@@ -289,7 +289,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
             
-            var title = Alfresco.util.encodeHTML(data.metadata);
+            var title = "";
             var cssClass = data.metadata;
             var isFormulated = oRecord.getData("itemData")["prop_bcpg_physicoChemIsFormulated"].value;
             var error = oRecord.getData("itemData")["prop_bcpg_physicoChemFormulaErrorLog"].value;
@@ -321,7 +321,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
             
-            var title = Alfresco.util.encodeHTML(data.metadata);
+            var title = "";
             var cssClass = data.metadata;
             if(oRecord.getData("itemData")["prop_bcpg_nutListIsFormulated"]){
 	            if( oRecord.getData("itemData")["prop_bcpg_nutListFormulaErrorLog"]  &&  oRecord.getData("itemData")["prop_bcpg_nutListFormulaErrorLog"].value  != null){
@@ -506,7 +506,7 @@ if (beCPG.module.EntityDataGridRenderers) {
       		
       		
       		if(oRecord.getData("itemType") == "total"){
-				  return '<span class="total">'+beCPG.util.sigFigs(qty,sigFig).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit+"</span>";
+				  return '<span class="total">'+beCPG.util.sigFigs(qty,7).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit+"</span>";
 			 }
       		
       		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,sigFig).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit);
@@ -525,7 +525,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
     	  
-          var title = Alfresco.util.encodeHTML(data.metadata);
+          var title = "";
           var cssClass = data.metadata;
           
           if(oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"]!=null){
@@ -560,7 +560,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
     	  
-          var title = Alfresco.util.encodeHTML(data.metadata);
+          var title = "";
           var cssClass = data.metadata;
           
           if(oRecord.getData("itemData")["prop_bcpg_lcaListIsFormulated"]!=null){
