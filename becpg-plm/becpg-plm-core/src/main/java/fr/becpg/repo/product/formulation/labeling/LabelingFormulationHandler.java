@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -1490,11 +1488,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 					// Override declaration type
 					declarationType = DeclarationType.DoNotDetails;
-					
-					Optional<EvaporatedDataItem> evaporatedDataItem = labelingFormulaContext.getEvaporatedDataItems().stream()
-							.filter(tmp -> tmp.getProductNodeRef().equals(productNodeRef)).findFirst();
 
-					if (evaporatedDataItem.isEmpty()) {
+
+					if (labelingFormulaContext.getEvaporatedDataItems().isEmpty()) {
 						labelingFormulaContext.getEvaporatedDataItems().add(new EvaporatedDataItem(productNodeRef, 100d));
 					}
 					
@@ -2100,15 +2096,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								logger.trace("Detected water lost");
 							}
 
-							EvaporatedDataItem evaporatedDataItem = null;
-							for (EvaporatedDataItem tmp : labelingFormulaContext.getEvaporatedDataItems()) {
-								if (tmp.getProductNodeRef().equals(ingNodeRef)) {
-									evaporatedDataItem = tmp;
-									break;
-								}
-							}
 
-							if (evaporatedDataItem == null) {
+
+							if (labelingFormulaContext.getEvaporatedDataItems().isEmpty()) {
 								labelingFormulaContext.getEvaporatedDataItems().add(new EvaporatedDataItem(ingNodeRef, 100d));
 							}
 
