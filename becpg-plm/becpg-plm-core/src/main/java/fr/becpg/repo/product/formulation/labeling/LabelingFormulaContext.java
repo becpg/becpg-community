@@ -1140,7 +1140,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				NodeRef entryNodeRef = entry.getKey();
 				RenameRule renameRule = entry.getValue();
 	
-				if (Objects.equals(renameRule.getReplacement(), nodeRef) && renameRule.matchLocale(I18NUtil.getLocale())) {
+				if (Objects.equals(renameRule.getReplacement(), nodeRef) && renameRule.matchLocale(I18NUtil.getLocale())
+						&& showPercRules.get(entryNodeRef)!=null
+						) {
 					
 					for (ShowRule showRule : showPercRules.get(entryNodeRef)) {
 						if (isShowRuleMatch(selectedRule, showRule, qty)) {
