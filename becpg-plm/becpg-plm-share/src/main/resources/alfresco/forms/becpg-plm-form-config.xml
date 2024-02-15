@@ -6840,7 +6840,7 @@
 					<field id="bcpg:variantIds" label="hidden"></field>
 					<field id="bcpg:ingListVolumeQtyPerc" read-only="true" label="hidden"></field>
 					<field id="bcpg:ingListQtyPercWithYield" read-only="true"  ></field>
-					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true"   label="hidden"></field>
+					<field id="bcpg:ingListQtyPercWithSecondaryYield" read-only="true"  ></field>
 					<field id="bcpg:depthLevel" label="hidden"></field>
 				</appearance>
 			</form>
