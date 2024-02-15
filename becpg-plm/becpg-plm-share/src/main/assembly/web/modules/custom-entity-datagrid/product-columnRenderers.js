@@ -488,7 +488,8 @@ if (beCPG.module.EntityDataGridRenderers) {
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
 			var forceUnit=oColumn.forceUnit; 
-
+			
+			
 			if (oColumn.hidden) {
 				oColumn.showAfterRender = true;
 			}
@@ -509,6 +510,11 @@ if (beCPG.module.EntityDataGridRenderers) {
       		if(oRecord.getData("itemType") == "total"){
 				  return '<span class="total">'+beCPG.util.sigFigs(qty,7).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit+"</span>";
 			 }
+			 
+			 if(oColumn.numberFormat){
+		        return  Alfresco.util.encodeHTML(beCPG.util.formatNumber(oColumn.numberFormat, data.value)+ unit);
+		    }
+
       		
       		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,sigFig).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit);
       	}      
