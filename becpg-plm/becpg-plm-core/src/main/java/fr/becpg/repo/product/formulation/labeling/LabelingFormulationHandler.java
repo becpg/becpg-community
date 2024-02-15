@@ -1484,10 +1484,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					// Override declaration type
 					declarationType = DeclarationType.DoNotDetails;
 
-					Optional<EvaporatedDataItem> evaporatedDataItem = labelingFormulaContext.getEvaporatedDataItems().stream()
-							.filter(tmp -> tmp.getProductNodeRef().equals(productNodeRef)).findFirst();
-
-					if (evaporatedDataItem.isEmpty()) {
+					if (labelingFormulaContext.getEvaporatedDataItems().isEmpty()) {
 						labelingFormulaContext.getEvaporatedDataItems().add(new EvaporatedDataItem(productNodeRef, 100d));
 					}
 
@@ -2085,19 +2082,11 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							if (logger.isTraceEnabled()) {
 								logger.trace("Detected water lost");
 							}
+//
+//							qtyWithYield = qty;
+//							volumeWithYield = volume;
 
-							qtyWithYield = qty;
-							volumeWithYield = volume;
-							
-							EvaporatedDataItem evaporatedDataItem = null;
-							for (EvaporatedDataItem tmp : labelingFormulaContext.getEvaporatedDataItems()) {
-								if (tmp.getProductNodeRef().equals(ingNodeRef)) {
-									evaporatedDataItem = tmp;
-									break;
-								}
-							}
-
-							if (evaporatedDataItem == null) {
+							if (labelingFormulaContext.getEvaporatedDataItems().isEmpty()) {
 								labelingFormulaContext.getEvaporatedDataItems().add(new EvaporatedDataItem(ingNodeRef, 100d));
 							}
 
