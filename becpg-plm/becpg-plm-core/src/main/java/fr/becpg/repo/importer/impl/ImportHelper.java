@@ -365,7 +365,7 @@ public class ImportHelper {
 		return value;
 	}
 	
-	private static final  Pattern NUMBER_PATTERN = Pattern.compile("^[0-9\\s.,]+$");
+	private static final Pattern NUMBER_PATTERN = Pattern.compile("^-?[0-9\\s.,]+$");
 
 	public static Number parseNumber(ImportContext importContext, String val) throws ParseException {
 		
