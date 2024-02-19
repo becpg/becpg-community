@@ -476,11 +476,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param sourceNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 * @param propQName a {@link java.lang.String} object.
 	 * @param locale a {@link java.lang.String} object.
+	 * @param exactLocale a {@link java.lang.Boolean} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
+	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale, Boolean exactLocale) {
 		
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
+		
+		if(Boolean.TRUE.equals(exactLocale)) {
+			return mlText.get(MLTextHelper.parseLocale(locale));
+		}
 		
 		if (mlText != null) {
 			return MLTextHelper.getClosestValue(mlText, MLTextHelper.parseLocale(locale));
