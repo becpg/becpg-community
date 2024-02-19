@@ -41,6 +41,7 @@ import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.data.hierarchicalList.CompositeDataItem;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityListDAO;
+import fr.becpg.repo.formulation.FormulateException;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.AttributeExtractorService;
 import fr.becpg.repo.helper.MLTextHelper;
@@ -147,6 +148,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public Serializable propValue(NodeRef nodeRef, String qname) {
 			if (nodeRef != null) {
+				assertIsNotMappedQname(getQName(qname));
 				return nodeService.getProperty(nodeRef, getQName(qname));
 			}
 			return null;
@@ -161,6 +163,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public Serializable propValue(RepositoryEntity item, String qname) {
 			if (item != null) {
+				assertIsNotMappedQname(getQName(qname));
 				Serializable value = item.getExtraProperties().get(getQName(qname));
 				if (value == null) {
 					value = nodeService.getProperty(item.getNodeRef(), getQName(qname));
@@ -257,6 +260,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public Serializable setValue(RepositoryEntity item, String qname, Serializable value) {
 			if (item != null) {
+				assertIsNotMappedQname(getQName(qname));
 				item.getExtraProperties().put(getQName(qname), value);
 				return value;
 			}
@@ -284,15 +288,16 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param assocNodeRefs
 		 */
 		public void setAssocs(NodeRef nodeRef, String qname, List<NodeRef> assocNodeRefs) {
+			assertIsNotMappedQname(getQName(qname));
 			associationService.update(nodeRef, getQName(qname), assocNodeRefs);
 		}
 
 		public void setAssocs(RepositoryEntity entity, String qname, List<NodeRef> assocNodeRefs) {
-			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRefs);
+			setAssocs(entity.getNodeRef(), qname, assocNodeRefs);
 		}
 
 		public void setAssocs(String qname, List<NodeRef> assocNodeRefs) {
-			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRefs);
+			setAssocs(entity.getNodeRef(), qname, assocNodeRefs);
 		}
 
 		/**
@@ -303,15 +308,16 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param assocNodeRef
 		 */
 		public void setAssoc(NodeRef nodeRef, String qname, NodeRef assocNodeRef) {
+			assertIsNotMappedQname(getQName(qname));
 			associationService.update(nodeRef, getQName(qname), assocNodeRef);
 		}
 
 		public void setAssoc(String qname, NodeRef assocNodeRef) {
-			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRef);
+			setAssoc(entity.getNodeRef(), qname, assocNodeRef);
 		}
 
 		public void setAssoc(RepositoryEntity entity, String qname, NodeRef assocNodeRef) {
-			associationService.update(entity.getNodeRef(), getQName(qname), assocNodeRef);
+			setAssoc(entity.getNodeRef(), qname, assocNodeRef);
 		}
 
 		/**
@@ -323,6 +329,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public NodeRef assocValue(NodeRef nodeRef, String qname) {
 			if (nodeRef != null) {
+				assertIsNotMappedQname(getQName(qname));
 				return associationService.getTargetAssoc(nodeRef, getQName(qname));
 			}
 			return null;
@@ -345,6 +352,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public List<NodeRef> assocValues(NodeRef nodeRef, String qname) {
 			if (nodeRef != null) {
+				assertIsNotMappedQname(getQName(qname));
 				return associationService.getTargetAssocs(nodeRef, getQName(qname));
 			}
 			return null;
@@ -1023,6 +1031,13 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				}
 			}
 
+		}
+
+		private void assertIsNotMappedQname(QName qName) {
+			if (repositoryEntityDefReader.isRegisteredQName(qName)) {
+				throw new FormulateException(String.format("QName is %s mapped in entity. Please use entity.%s to access it ",
+						qName.getPrefixedQName(namespaceService), qName.getLocalName()));
+			}
 		}
 
 	}
