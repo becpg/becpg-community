@@ -2464,6 +2464,7 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show  id="bcpg:eanCode" force="true"/>
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:plantTel" />
@@ -2482,6 +2483,7 @@
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="cm:name" set="2-col"/>
+					<field id="bcpg:eanCode" set="2-col"/>
 					<field id="cm:title" set="2-col"/>
 					<field id="cm:description" set="2-col">
 						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
@@ -2523,6 +2525,8 @@
 			<form id="edit-systemEntity">
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:eanCode" force="true"/>
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:plantTel" />
@@ -2538,12 +2542,14 @@
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
 					<show id="sec:readGroups" force="true"/>
-					<show id="bcpg:erpCode" force="true" />
+					
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="cm:name" set="2-col"/>
+					<field id="bcpg:erpCode" set="2-col"/>
+					<field id="bcpg:eanCode" set="2-col"/>
 					<field id="cm:title" set="2-col"/>
 					<field id="cm:description" set="2-col">
 						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
@@ -2555,6 +2561,7 @@
 					<field id="bcpg:plantApprovalNumbers" set="2-col"/>
 					<field id="sec:readGroups" set="2-col"/>
 					<field id="bcpg:erpCode" set="2-col"/>
+					<field id="bcpg:eanCode" set="2-col"/>
 					<field id="bcpg:isDeleted" set="2-col"/>
 					 <field id="bcpg:plantCertifications" mandatory="false" read-only="false"  set="2-col">
 			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2595,6 +2602,7 @@
 
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:eanCode" force="true"/>
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:plantTel" />
@@ -2613,6 +2621,7 @@
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="cm:name" set="2-col"/>
+					<field id="bcpg:eanCode" set="2-col"/>
 					<field id="cm:title" set="2-col"/>
 					<field id="cm:description" set="2-col">
 						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
@@ -2655,6 +2664,8 @@
 
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:eanCode" force="true"/>
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:plantTel" />
@@ -2670,12 +2681,14 @@
 					<show id="bcpg:plantCertifications" />
 					<show id="bcpg:plantApprovalNumbers" />
 					<show id="sec:readGroups" force="true"/>
-					<show id="bcpg:erpCode" force="true" />
+					
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
 					<set id="2-col" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<field id="cm:name" set="2-col"/>
+					<field id="bcpg:erpCode" set="2-col"/>
+					<field id="bcpg:eanCode" set="2-col"/>
 					<field id="cm:title" set="2-col"/>
 					<field id="cm:description" set="2-col">
 						 <control template="/org/alfresco/components/form/controls/textarea.ftl">
@@ -2686,7 +2699,7 @@
 					<field id="bcpg:plantPackerCode" set="2-col"/>
 					<field id="bcpg:plantApprovalNumbers" set="2-col"/>
 					<field id="sec:readGroups" set="2-col"/>
-					<field id="bcpg:erpCode" set="2-col"/>
+					
 					<field id="bcpg:isDeleted" set="2-col"/>
 					 <field id="bcpg:plantCertifications" mandatory="false" read-only="false"  set="2-col">
 			            <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -2738,6 +2751,7 @@
 				<field-visibility>
 					<show id="cm:name" />
 					<show id="cm:title" force="true" />
+					<show id="bcpg:eanCode" force="true"/>
 					<show id="bcpg:plantTel" />
 					<!-- bcpg:location type -->
 					<show id="bcpg:locationAddress1" />
@@ -2777,6 +2791,7 @@
 					<show id="fm:commentCount" />
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:eanCode" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2797,11 +2812,20 @@
 			<form>
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
+					<show force="true" id="bcpg:eanCode"/>
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:subsidiaryCertifications"/>
+					<show id="bcpg:locationAddress1" force="true"  />
+					<show id="bcpg:locationAddress2"  force="true" />
+					<show id="bcpg:locationAddress3"  force="true" />
+					<show id="bcpg:locationCity"  force="true" />
+					<show id="bcpg:locationZip"  force="true" />
+					<show id="bcpg:locationState"  force="true" />
+					<show id="bcpg:locationCountry"  force="true" />
+					
 					<show id="sec:readGroups" force="true"/>
-					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2815,6 +2839,27 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:certification?path=cm:System/cm:Characts/bcpg:entityLists/cm:Certifications&amp;attributeName=cm:name
 							</control-param>
 						</control>
+					</field>
+					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1"  >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2"   >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress3"  >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCity" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationZip" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationState" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCountry"  >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
 					</field>
 				</appearance>
 			</form>
@@ -2828,11 +2873,19 @@
 
 				<field-visibility>
 					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
+					<show force="true" id="bcpg:eanCode"/>
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:subsidiaryCertifications"/>
+					<show id="bcpg:locationAddress1" force="true"  />
+					<show id="bcpg:locationAddress2"  force="true" />
+					<show id="bcpg:locationAddress3"  force="true" />
+					<show id="bcpg:locationCity"  force="true" />
+					<show id="bcpg:locationZip"  force="true" />
+					<show id="bcpg:locationState"  force="true" />
+					<show id="bcpg:locationCountry"  force="true" />
 					<show id="sec:readGroups" force="true"/>
-					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 
@@ -2847,6 +2900,28 @@
 							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:certification?path=cm:System/cm:Characts/bcpg:entityLists/cm:Certifications&amp;attributeName=cm:name
 							</control-param>
 						</control>
+					</field>
+					
+					<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1"  >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2"   >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress3"  >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCity" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationZip" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationState" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCountry"  >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
 					</field>
 				</appearance>
 			</form>
@@ -2861,10 +2936,19 @@
 			<form id="datagrid">
 				<field-visibility>
 					<show id="cm:name" />
+				    <show id="bcpg:erpCode" force="true" />
+					<show force="true" id="bcpg:eanCode"/>
 					<show id="cm:title" />
 					<show id="cm:description" />
+					<show id="bcpg:locationAddress1" force="true"  />
+					<show id="bcpg:locationAddress2"  force="true" />
+					<show id="bcpg:locationAddress3"  force="true" />
+					<show id="bcpg:locationCity"  force="true" />
+					<show id="bcpg:locationZip"  force="true" />
+					<show id="bcpg:locationState"  force="true" />
+					<show id="bcpg:locationCountry"  force="true" />
+					
 					<show id="sec:readGroups" force="true"/>
-					<show id="bcpg:erpCode" force="true" />
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
@@ -2889,6 +2973,15 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 					<show id="bcpg:contacts" force="true" />
+					<show id="bcpg:locationAddress1" force="true"  />
+					<show id="bcpg:locationAddress2"  force="true" />
+					<show id="bcpg:locationAddress3"  force="true" />
+					<show id="bcpg:locationCity"  force="true" />
+					<show id="bcpg:locationZip"  force="true" />
+					<show id="bcpg:locationState"  force="true" />
+					<show id="bcpg:locationCountry"  force="true" />
+					
+					
 					<!-- hide exif:exif -->
 					<hide id="exif:dateTimeOriginal" />
 					<hide id="exif:pixelXDimension" />
@@ -2920,6 +3013,27 @@
 								<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:contactList?path=System/Characts/bcpg:entityLists/Contacts</control-param>
 						</control>
 					</field>
+						<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1"  >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2"   >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress3"  >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCity" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationZip" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationState" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCountry"  >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
 				</appearance>
 			</form>
 		</forms>
@@ -2939,6 +3053,15 @@
 					<show id="cm:title" force="true" />
 					<show id="cm:description"  />
 					<show id="bcpg:contacts" force="true" />
+					<show id="bcpg:locationAddress1" force="true"  />
+					<show id="bcpg:locationAddress2"  force="true" />
+					<show id="bcpg:locationAddress3"  force="true" />
+					<show id="bcpg:locationCity"  force="true" />
+					<show id="bcpg:locationZip"  force="true" />
+					<show id="bcpg:locationState"  force="true" />
+					<show id="bcpg:locationCountry"  force="true" />
+					
+					
 					<show id="sec:readGroups" force="true"/>
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
@@ -2954,6 +3077,27 @@
 						<control>
 							<control-param name="activateLinks">true</control-param>
 						</control>
+					</field>
+						<field id="bcpg:locationAddress1" help-id="becpg.forms.help.locationAddress1"  >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress2" help-id="becpg.forms.help.locationAddress2"   >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationAddress3"  >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCity" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationZip" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationState" >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
+					</field>
+					<field id="bcpg:locationCountry"  >
+						<control template="/org/alfresco/components/form/controls/textfield.ftl"></control>
 					</field>
 				</appearance>
 			</form>
@@ -2977,15 +3121,24 @@
 
 			<form id="datagrid">
 				<field-visibility>
-					<show force="true" id="bcpg:eanCode"/>
 					<show id="cm:name" />
+					<show id="bcpg:erpCode" force="true" />
+					<show id="bcpg:eanCode" force="true"/>
 					<show id="bcpg:trademarkType"  />
 					<show id="cm:title" force="true" />
 					<show id="cm:description" force="true" />
 				    <show id="bcpg:contacts" force="true" />
+				    <show id="bcpg:locationAddress1" force="true"  />
+					<show id="bcpg:locationAddress2"  force="true" />
+					<show id="bcpg:locationAddress3"  force="true" />
+					<show id="bcpg:locationCity"  force="true" />
+					<show id="bcpg:locationZip"  force="true" />
+					<show id="bcpg:locationState"  force="true" />
+					<show id="bcpg:locationCountry"  force="true" />
+				    
 					<show id="cm:content"  />
 					<show id="sec:readGroups" force="true"/>
-					<show id="bcpg:erpCode" force="true" />
+					
 					<show id="bcpg:isDeleted"/>
 				</field-visibility>
 				<appearance>
