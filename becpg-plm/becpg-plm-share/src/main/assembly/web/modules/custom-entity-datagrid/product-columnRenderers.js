@@ -512,7 +512,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 			 }
 			 
 			 if(oColumn.numberFormat){
-		        return  Alfresco.util.encodeHTML(beCPG.util.formatNumber(oColumn.numberFormat, data.value)+ unit);
+		        return  beCPG.util.formatNumber(oColumn.numberFormat, data.value)+ unit;
 		    }
 
       		
