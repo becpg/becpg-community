@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -306,7 +305,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 			CompositeLabeling compositeLabeling = new CompositeLabeling(CompositeLabeling.ROOT);
 
-			visitCompoList(compositeLabeling, compositeDefaultVariant, labelingFormulaContext, 1d,
+			visitCompoList(compositeLabeling, compositeDefaultVariant, labelingFormulaContext, BigDecimal.valueOf(1d),
 					labelingFormulaContext.getYield() != null ? labelingFormulaContext.getYield()
 							: (labelingFormulaContext.isUseSecondaryYield() ? formulatedProduct.getSecondaryYield() : formulatedProduct.getYield()),
 					true);
@@ -1419,7 +1418,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 	}
 
 	private void visitCompoList(CompositeLabeling parent, Composite<CompoListDataItem> parentComposite, LabelingFormulaContext labelingFormulaContext,
-			final Double ratio, final Double currYield, final boolean apply) {
+			final BigDecimal ratio, final Double currYield, final boolean apply) {
 
 		Map<String, ReqCtrlListDataItem> errors = new HashMap<>();
 
@@ -1455,7 +1454,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					qty *= LabelingFormulaContext.PRECISION_FACTOR;
 
 					if (ratio != null) {
-						qty *= ratio;
+						qty *= ratio.doubleValue();
 					}
 
 				}
@@ -1464,32 +1463,29 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					volume *= LabelingFormulaContext.PRECISION_FACTOR;
 
 					if (ratio != null) {
-						volume *= ratio;
+						volume *= ratio.doubleValue();
 					}
 
-				
 				}
 
-
-				
-				Double qtyWithYield = qty != null && !DeclarationType.Group.equals(declarationType) ? qty / calculatedYield * 100d : qty;
-				Double volumeWithYield = volume != null && !DeclarationType.Group.equals(declarationType) ? volume / calculatedYield * 100d : volume;
-
-				
+				Double qtyWithYield = qty != null && !DeclarationType.Group.equals(declarationType) ? BigDecimal.valueOf(qty)
+						.divide(BigDecimal.valueOf(calculatedYield), 10, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100d)).doubleValue() : qty;
+				Double volumeWithYield = volume != null && !DeclarationType.Group.equals(declarationType) ? BigDecimal.valueOf(volume)
+						.divide(BigDecimal.valueOf(calculatedYield), 10, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100d)).doubleValue()
+						: volume;
 
 				if (!isLocalSemiFinished) {
 					if (qty != null && componentYield != null) {
 						qty *= componentYield / 100d;
 					}
-					
+
 					if (volume != null && componentYield != null) {
 						volume *= componentYield / 100d;
 					}
 				}
 
-				
 				//Water loss
-				if ((qty != null) && (calculatedYield != null) && (calculatedYield != 100d)
+				if ((qty != null) && (calculatedYield != null) && (calculatedYield.doubleValue() != 100d)
 						&& nodeService.hasAspect(productNodeRef, PLMModel.ASPECT_WATER)) {
 
 					if (logger.isTraceEnabled()) {
@@ -1677,7 +1673,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									qty, volume, qtyWithYield, volumeWithYield, labelingFormulaContext, compoListDataItem, errors);
 						}
 
-						Double computedRatio = 1d;
+						BigDecimal computedRatio = BigDecimal.valueOf(1d);
 						if (DeclarationType.Declare.equals(declarationType)) {
 							if (isMultiLevel && (qty != null) && !isLocalSemiFinished) {
 
@@ -1685,7 +1681,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 										FormulationHelper.DEFAULT_NET_WEIGHT);
 
 								if ((qtyTotal != null) && (qtyTotal != 0d)) {
-									computedRatio = qty / (qtyTotal * LabelingFormulaContext.PRECISION_FACTOR);
+									computedRatio = BigDecimal.valueOf(qty)
+											.divide(BigDecimal.valueOf(qtyTotal * LabelingFormulaContext.PRECISION_FACTOR), 10, RoundingMode.HALF_UP);
 								}
 
 								if (logger.isTraceEnabled()) {
@@ -1701,23 +1698,26 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						// Recur
 						if (!composite.isLeaf()) {
 
-							Double recurYield = calculatedYield;
+							BigDecimal recurYield = BigDecimal.valueOf(calculatedYield);
 
 							if (componentYield != 100d) {
-								recurYield *= (componentYield / 100d);
+								recurYield = recurYield.multiply(BigDecimal.valueOf(componentYield)).divide(BigDecimal.valueOf(100d), 10,
+										RoundingMode.HALF_UP);
 							}
 
 							if (!isLocalSemiFinished) {
 
-								recurYield = productData.getYield() != null ? productData.getYield() : 100d;
+								recurYield = productData.getYield() != null ? BigDecimal.valueOf(productData.getYield()) : BigDecimal.valueOf(100d);
 								if (recurYield != null) {
 
 									if ((calculatedYield != null) && (calculatedYield != 100d)) {
-										recurYield *= (calculatedYield / 100);
+										recurYield = recurYield.multiply(BigDecimal.valueOf(calculatedYield)).divide(BigDecimal.valueOf(100d), 10,
+												RoundingMode.HALF_UP);
 									}
 
 									if ((componentYield != null) && (componentYield != 100d)) {
-										recurYield *= (componentYield / 100d);
+										recurYield = recurYield.multiply(BigDecimal.valueOf(componentYield)).divide(BigDecimal.valueOf(100d), 10,
+												RoundingMode.HALF_UP);
 									}
 								}
 
@@ -1728,8 +1728,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								logger.trace(" --- prevCalculatedYield " + calculatedYield + " componentYield " + componentYield);
 							}
 
-							visitCompoList(compositeLabeling, composite, labelingFormulaContext, computedRatio, recurYield,
-									!parent.equals(compositeLabeling));
+							visitCompoList(compositeLabeling, composite, labelingFormulaContext, computedRatio,
+									recurYield != null ? recurYield.doubleValue() : null, !parent.equals(compositeLabeling));
 						}
 					}
 
@@ -2097,9 +2097,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							if (logger.isTraceEnabled()) {
 								logger.trace("Detected water lost");
 							}
-//
-//							qtyWithYield = qty;
-//							volumeWithYield = volume;
+							//
+							//							qtyWithYield = qty;
+							//							volumeWithYield = volume;
 
 							if (labelingFormulaContext.getEvaporatedDataItems().isEmpty()) {
 								labelingFormulaContext.getEvaporatedDataItems().add(new EvaporatedDataItem(ingNodeRef, 100d));
@@ -2209,14 +2209,12 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						}
 
 						if ((ingLabelItem.getQtyWithYield() != null) && (qtyWithYield != null)) {
-							
+
 							if (logger.isTraceEnabled()) {
 								logger.trace(" -- new qtyWithYield to add to " + getName(ingLabelItem) + ": " + ((qtyWithYield * qtyPerc) / 100));
 							}
-							
-							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100));						
-							
-					
+
+							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100));
 
 						}
 
@@ -2265,8 +2263,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 									" -- Adding subings " + ingListItem.getChildren().size() + " to current " + ingLabelItem.getIngList().size());
 						}
 
-						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qty, volume,
-								labelingFormulaContext, compoListDataItem, errors);
+						visitIngList(ingLabelItem, product, ingListItem, omitQtyPerc, qty, volume, qty, volume, labelingFormulaContext,
+								compoListDataItem, errors);
 
 					} else if (DeclarationType.Detail.equals(ingDeclarationType) && ingLabelItem.getIngList().isEmpty()) {
 						ingLabelItem.setDeclarationType(DeclarationType.DoNotDetails);
