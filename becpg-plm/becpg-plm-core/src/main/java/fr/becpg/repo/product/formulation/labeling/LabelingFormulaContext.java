@@ -1065,8 +1065,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	private boolean showPerc(LabelingComponent lblComponent) {
 		return showPercRules.isEmpty() || (getSelectedRule(lblComponent, null) != null);
 	}
-	
-	
 
 	private Pair<DecimalFormat, RoundingMode> getDecimalFormat(LabelingComponent lblComponent, Double qty) {
 		DecimalFormat decimalFormat = null;
@@ -1080,9 +1078,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			if (lblComponent instanceof IngTypeItem && !isDoNotDetails((IngTypeItem) lblComponent)) {
 				applyAllPerc = false;
 			}
-			
+
 			ShowRule selectedRule = getSelectedRule(lblComponent, qty);
-			
 
 			if (selectedRule == null && applyAllPerc) {
 				for (ShowRule showRule : showAllPerc) {
@@ -1108,14 +1105,13 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		}
 		return null;
 	}
-	
-	
-	private ShowRule getSelectedRule(LabelingComponent lblComponent, Double qty) {
-		  NodeRef nodeRef = lblComponent.getNodeRef();
 
-		  ShowRule selectedRule = null;
-		
-		if ( showPercRules.containsKey(nodeRef)) {
+	private ShowRule getSelectedRule(LabelingComponent lblComponent, Double qty) {
+		NodeRef nodeRef = lblComponent.getNodeRef();
+
+		ShowRule selectedRule = null;
+
+		if (showPercRules.containsKey(nodeRef)) {
 			for (ShowRule showRule : showPercRules.get(nodeRef)) {
 				if (isShowRuleMatch(selectedRule, showRule, qty)) {
 					selectedRule = showRule;
@@ -1131,19 +1127,18 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						if (isShowRuleMatch(selectedRule, showRule, qty)) {
 							selectedRule = showRule;
 						}
-	
+
 					}
 				}
 			}
-	
+
 			for (Map.Entry<NodeRef, RenameRule> entry : renameRules.entrySet()) {
 				NodeRef entryNodeRef = entry.getKey();
 				RenameRule renameRule = entry.getValue();
-	
+
 				if (Objects.equals(renameRule.getReplacement(), nodeRef) && renameRule.matchLocale(I18NUtil.getLocale())
-						&& showPercRules.get(entryNodeRef)!=null
-						) {
-					
+						&& showPercRules.get(entryNodeRef) != null) {
+
 					for (ShowRule showRule : showPercRules.get(entryNodeRef)) {
 						if (isShowRuleMatch(selectedRule, showRule, qty)) {
 							selectedRule = showRule;
@@ -1152,12 +1147,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				}
 			}
 		}
-		
-		return  selectedRule;
-	}
-	
-	
 
+		return selectedRule;
+	}
 
 	private boolean isShowRuleMatch(ShowRule selectedRule, ShowRule showRule, Double qty) {
 		if (showRule.matchLocale(I18NUtil.getLocale()) && showRule.matchQty(qty)) {
@@ -1549,11 +1541,31 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 			return 1;
 		}
 
-		int result = b.getQty(ingsLabelingWithYield).compareTo(a.getQty(ingsLabelingWithYield));
 		if (useVolume) {
-			result = b.getVolume(ingsLabelingWithYield).compareTo(a.getVolume(ingsLabelingWithYield));
+			Double volumeA = a.getVolume(ingsLabelingWithYield);
+			Double volumeB = b.getVolume(ingsLabelingWithYield);
+			if (volumeA == null && volumeB == null) {
+				return 0;
+			} else if (volumeA == null) {
+				return 1; // b is considered greater if a is null
+			} else if (volumeB == null) {
+				return -1; // a is considered greater if b is null
+			}
+			return Double.compare(volumeB, volumeA); // Comparing b
 		}
-		return result;
+
+		Double qtyA = a.getQty(ingsLabelingWithYield);
+		Double qtyB = b.getQty(ingsLabelingWithYield);
+
+		if (qtyA == null && qtyB == null) {
+			return 0;
+		} else if (qtyA == null) {
+			return 1; // b is considered greater if a is null
+		} else if (qtyB == null) {
+			return -1; // a is considered greater if b is null
+		}
+
+		return Double.compare(qtyB, qtyA);
 
 	}
 
@@ -1808,7 +1820,6 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 			firstQtyPerc = roundeedValue(firstLabelingComponent, firstQtyPerc, new MessageFormat(htmlTableRowFormat, getContentLocale()))
 					.add(diffValue).doubleValue();
-		
 
 		}
 
@@ -1865,7 +1876,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 						((DecimalFormat) format).applyPattern(decimalFormat.getFirst().toPattern());
 						applyAutomaticPrecicion((DecimalFormat) format, qtyPerc, decimalFormat.getSecond(), false);
 					} else {
-						if((isFirst && isForce100Perc)) {
+						if ((isFirst && isForce100Perc)) {
 							applyAutomaticPrecicion(((DecimalFormat) format), totalPrecision, defaultRoundingMode, true);
 						} else {
 							applyAutomaticPrecicion(((DecimalFormat) format), qty, defaultRoundingMode, false);
@@ -2912,7 +2923,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		 */
 
 		if (!keepOrder) {
-			
+
 			for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : entries) {
 				sort(entry.getValue());
 			}
@@ -2921,22 +2932,22 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 				int result = compareLabelingComponents(a.getKey(), b.getKey());
 				if (result == 0) {
 					String nameA = getLegalIngName(a.getKey());
-					if(nameA == null && !a.getValue().isEmpty()) {
+					if (nameA == null && !a.getValue().isEmpty()) {
 						nameA = getLegalIngName(a.getValue().get(0));
 					}
-					
+
 					String nameB = getLegalIngName(b.getKey());
-					if(nameB == null && !b.getValue().isEmpty()) {
+					if (nameB == null && !b.getValue().isEmpty()) {
 						nameB = getLegalIngName(b.getValue().get(0));
 					}
-					
-					 result = Comparator.nullsLast(String::compareTo).compare(nameA, nameB);
+
+					result = Comparator.nullsLast(String::compareTo).compare(nameA, nameB);
 				}
 				return result;
 			});
 
 		}
-		
+
 		Map<IngTypeItem, List<LabelingComponent>> sortedIngListByType = new LinkedHashMap<>();
 		for (Map.Entry<IngTypeItem, List<LabelingComponent>> entry : entries) {
 			sortedIngListByType.put(entry.getKey(), entry.getValue());
