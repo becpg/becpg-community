@@ -1425,6 +1425,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				if (logger.isTraceEnabled()) {
 					logger.info("#########  Parse :" + productData.getName());
+					logger.info("Calculated yield :" + calculatedYield);
 					if ((aggregateRules != null) && !aggregateRules.isEmpty()) {
 						logger.trace(aggregateRules.toString() + " match ");
 					}
@@ -1439,36 +1440,35 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				Double componentYield = FormulationHelper.getYield(compoListDataItem);
 
 				if (qty != null) {
-					qty *= LabelingFormulaContext.PRECISION_FACTOR;
-
 					if (ratio != null) {
-						qty *= ratio.doubleValue();
+						qty = BigDecimal.valueOf(qty).multiply(ratio).doubleValue();
 					}
 
 				}
 
 				if (volume != null) {
-					volume *= LabelingFormulaContext.PRECISION_FACTOR;
-
 					if (ratio != null) {
-						volume *= ratio.doubleValue();
+						volume = BigDecimal.valueOf(volume).multiply(ratio).doubleValue();
 					}
 
 				}
 
 				Double qtyWithYield = qty != null && !DeclarationType.Group.equals(declarationType) ? BigDecimal.valueOf(qty)
-						.divide(BigDecimal.valueOf(calculatedYield), 10, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100d)).doubleValue() : qty;
+						.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP)
+						.multiply(BigDecimal.valueOf(100d)).doubleValue() : qty;
 				Double volumeWithYield = volume != null && !DeclarationType.Group.equals(declarationType) ? BigDecimal.valueOf(volume)
-						.divide(BigDecimal.valueOf(calculatedYield), 10, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100d)).doubleValue()
-						: volume;
+						.divide(BigDecimal.valueOf(calculatedYield), LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP)
+						.multiply(BigDecimal.valueOf(100d)).doubleValue() : volume;
 
 				if (!isLocalSemiFinished) {
 					if (qty != null && componentYield != null) {
-						qty *= componentYield / 100d;
+						qty = BigDecimal.valueOf(qty).multiply(BigDecimal.valueOf(componentYield))
+								.divide(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP).doubleValue();
 					}
 
 					if (volume != null && componentYield != null) {
-						volume *= componentYield / 100d;
+						volume = BigDecimal.valueOf(volume).multiply(BigDecimal.valueOf(componentYield))
+								.divide(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP).doubleValue();
 					}
 				}
 
@@ -1668,8 +1668,8 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 								Double qtyTotal = FormulationHelper.getQtyInKgFromComposition(productData,null, FormulationHelper.DEFAULT_NET_WEIGHT);
 
 								if ((qtyTotal != null) && (qtyTotal != 0d)) {
-									computedRatio = BigDecimal.valueOf(qty)
-											.divide(BigDecimal.valueOf(qtyTotal * LabelingFormulaContext.PRECISION_FACTOR), 10, RoundingMode.HALF_UP);
+									computedRatio = BigDecimal.valueOf(qty).divide(BigDecimal.valueOf(qtyTotal),
+											LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP);
 								}
 
 								if (logger.isTraceEnabled()) {
@@ -1688,25 +1688,23 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							BigDecimal recurYield = BigDecimal.valueOf(calculatedYield);
 
 							if (componentYield != 100d) {
-								recurYield = recurYield.multiply(BigDecimal.valueOf(componentYield)).divide(BigDecimal.valueOf(100d), 10,
-										RoundingMode.HALF_UP);
+								recurYield = recurYield.multiply(BigDecimal.valueOf(componentYield)).divide(BigDecimal.valueOf(100d),
+										LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP);
 							}
 
 							if (!isLocalSemiFinished) {
 
 
 								recurYield = productData.getYield() != null ? BigDecimal.valueOf(productData.getYield()) : BigDecimal.valueOf(100d);
-								if (recurYield != null) {
 
-									if ((calculatedYield != null) && (calculatedYield != 100d)) {
-										recurYield = recurYield.multiply(BigDecimal.valueOf(calculatedYield)).divide(BigDecimal.valueOf(100d), 10,
-												RoundingMode.HALF_UP);
-									}
+								if ((calculatedYield != null) && (calculatedYield != 100d)) {
+									recurYield = recurYield.multiply(BigDecimal.valueOf(calculatedYield)).divide(BigDecimal.valueOf(100d),
+											LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP);
+								}
 
-									if ((componentYield != null) && (componentYield != 100d)) {
-										recurYield = recurYield.multiply(BigDecimal.valueOf(componentYield)).divide(BigDecimal.valueOf(100d), 10,
-												RoundingMode.HALF_UP);
-									}
+								if ((componentYield != null) && (componentYield != 100d)) {
+									recurYield = recurYield.multiply(BigDecimal.valueOf(componentYield)).divide(BigDecimal.valueOf(100d),
+											LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP);
 								}
 
 							}
@@ -1732,7 +1730,6 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 				if (logger.isTraceEnabled()) {
 					logger.info("#########  End :" + productData.getName());
-
 				}
 
 			}
@@ -1906,7 +1903,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						BigDecimal diluentQty = productQty.multiply(rate).subtract(productQty);
 						BigDecimal realDiluentQty = ingQty.min(diluentQty);
 						BigDecimal realDiluentQtyRatio = (diluentQty.compareTo(BigDecimal.ZERO) == 0) ? (BigDecimal.valueOf(1d))
-								: realDiluentQty.divide(diluentQty, 10, RoundingMode.HALF_UP);
+								: realDiluentQty.divide(diluentQty, LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP);
 						BigDecimal realQty = realDiluentQty.add(productQty.multiply(realDiluentQtyRatio)).divide(rate, 10, RoundingMode.HALF_UP);
 						ingLabelItem.setQty(ingQty.subtract(realDiluentQty).doubleValue());
 						productLabelItem.setQty(productQty.subtract(realQty).doubleValue());
@@ -1916,9 +1913,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						BigDecimal diluentQtyWithYield = productQtyWithYield.multiply(rate).subtract(productQtyWithYield);
 						BigDecimal realDiluentQtyWithYield = ingQtyWithYield.min(diluentQtyWithYield);
 						BigDecimal realDiluentQtyRatioWithYield = (diluentQtyWithYield.compareTo(BigDecimal.ZERO) == 0) ? (BigDecimal.valueOf(1d))
-								: realDiluentQtyWithYield.divide(diluentQtyWithYield, 10, RoundingMode.HALF_UP);
+								: realDiluentQtyWithYield.divide(diluentQtyWithYield, LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP);
 						BigDecimal realQtyWithYield = realDiluentQtyWithYield.add(productQtyWithYield.multiply(realDiluentQtyRatioWithYield))
-								.divide(rate, 10, RoundingMode.HALF_UP);
+								.divide(rate, LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP);
 						ingLabelItem.setQtyWithYield(ingQtyWithYield.subtract(realDiluentQtyWithYield).doubleValue());
 						productLabelItem.setQtyWithYield(productQtyWithYield.subtract(realQtyWithYield).doubleValue());
 
@@ -1927,9 +1924,9 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						BigDecimal diluentVolume = rate.multiply(productVol).subtract(productVol);
 						BigDecimal readlDiluentvolume = ingVol.min(diluentVolume);
 						BigDecimal readlDiluentvolumeRatio = (diluentVolume.compareTo(BigDecimal.ZERO) == 0) ? (BigDecimal.valueOf(1d))
-								: readlDiluentvolume.divide(diluentVolume, 10, RoundingMode.HALF_UP);
-						BigDecimal realVol = readlDiluentvolume.add(productVol.multiply(readlDiluentvolumeRatio)).divide(rate, 10,
-								RoundingMode.HALF_UP);
+								: readlDiluentvolume.divide(diluentVolume, LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP);
+						BigDecimal realVol = readlDiluentvolume.add(productVol.multiply(readlDiluentvolumeRatio)).divide(rate,
+								LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP);
 						ingLabelItem.setVolume(ingVol.subtract(readlDiluentvolume).doubleValue());
 						productLabelItem.setVolume(productVol.subtract(realVol).doubleValue());
 
@@ -1939,9 +1936,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						BigDecimal readlDiluentvolumeWithYield = ingVol.min(diluentVolumeWithYield);
 						BigDecimal readlDiluentvolumeRatioWithYield = (diluentVolumeWithYield.compareTo(BigDecimal.ZERO) == 0)
 								? (BigDecimal.valueOf(1d))
-								: readlDiluentvolumeWithYield.divide(diluentVolumeWithYield, 10, RoundingMode.HALF_UP);
+								: readlDiluentvolumeWithYield.divide(diluentVolumeWithYield, LabelingFormulaContext.PRECISION_FACTOR,
+										RoundingMode.HALF_UP);
 						BigDecimal realVolWithYield = readlDiluentvolumeWithYield.add(productVolWithYield.multiply(readlDiluentvolumeRatioWithYield))
-								.divide(rate, 10, RoundingMode.HALF_UP);
+								.divide(rate, LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP);
 						ingLabelItem.setVolumeWithYield(ingVolWithYield.subtract(readlDiluentvolumeWithYield).doubleValue());
 						productLabelItem.setVolumeWithYield(productVolWithYield.subtract(realVolWithYield).doubleValue());
 
@@ -2180,10 +2178,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if ((ingLabelItem.getQty() != null) && (qty != null)) {
 
 							if (logger.isTraceEnabled()) {
-								logger.trace(" -- new qty to add to " + getName(ingLabelItem) + ": " + ((qty * qtyPerc) / 100));
+								logger.trace(" -- new qty to add to " + getName(ingLabelItem) + ": " + ((qty * qtyPerc) / 100d));
 							}
 
-							ingLabelItem.setQty(ingLabelItem.getQty() + ((qty * qtyPerc) / 100));
+							ingLabelItem.setQty(ingLabelItem.getQty() + ((qty * qtyPerc) / 100d));
 							ingLabelItem.setQtyTotal(ingLabelItem.getQty());
 
 						}
@@ -2191,10 +2189,10 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if ((ingLabelItem.getVolume() != null) && (volume != null)) {
 
 							if (logger.isTraceEnabled()) {
-								logger.trace(" -- new volume to add: " + ((volume * qtyPerc) / 100));
+								logger.trace(" -- new volume to add: " + ((volume * qtyPerc) / 100d));
 							}
 
-							ingLabelItem.setVolume(ingLabelItem.getVolume() + ((volume * qtyPerc) / 100));
+							ingLabelItem.setVolume(ingLabelItem.getVolume() + ((volume * qtyPerc) / 100d));
 							ingLabelItem.setVolumeTotal(ingLabelItem.getVolume());
 
 						}
@@ -2202,15 +2200,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 						if ((ingLabelItem.getQtyWithYield() != null) && (qtyWithYield != null)) {
 
 							if (logger.isTraceEnabled()) {
-								logger.trace(" -- new qtyWithYield to add to " + getName(ingLabelItem) + ": " + ((qtyWithYield * qtyPerc) / 100));
+								logger.trace(" -- new qtyWithYield to add to " + getName(ingLabelItem) + ": " + ((qtyWithYield * qtyPerc) / 100d));
 							}
 
-							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100));
+							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100d));
 
 						}
 
 						if ((ingLabelItem.getVolumeWithYield() != null) && (volumeWithYield != null)) {
-							ingLabelItem.setVolumeWithYield(ingLabelItem.getVolumeWithYield() + ((volumeWithYield * volumeWithYield) / 100));
+							ingLabelItem.setVolumeWithYield(ingLabelItem.getVolumeWithYield() + ((volumeWithYield * volumeWithYield) / 100d));
 
 						}
 
