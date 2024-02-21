@@ -95,9 +95,11 @@ import fr.becpg.repo.repository.RepositoryEntity;
 public class LabelingFormulaContext extends RuleParser implements SpelFormulaContext<ProductData> {
 
 	private static final Log logger = LogFactory.getLog(LabelingFormulaContext.class);
+	
 
-	/** Constant <code>PRECISION_FACTOR=100</code> */
-	public static final int PRECISION_FACTOR = 100;
+	/** Constant <code>PRECISION_FACTOR=10</code> */
+	public static final int PRECISION_FACTOR = 10;
+
 
 	public static final Pattern ALLERGEN_DETECTION_PATTERN = Pattern.compile(
 			"(<\\s*up[^>]*>.*?<\\s*/\\s*up>|<\\s*b[^>]*>.*?<\\s*/\\s*b>|<\\s*u[^>]*>.*?<\\s*/\\s*u>|<\\s*i[^>]*>.*?<\\s*/\\s*i>|[A-Z]{4,}|\\p{Lu}{4,})");
@@ -432,9 +434,9 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	 */
 	private String disableAllergensForLocales = "";
 
-	private Double qtyPrecisionThreshold = (1d / (PRECISION_FACTOR * PRECISION_FACTOR));
-
 	private Integer maxPrecision = 4;
+	
+	private Double qtyPrecisionThreshold = 1d / Math.pow(10, (double) maxPrecision + (double) 2);
 
 	/**
 	 * <p>
@@ -2289,7 +2291,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		return I18NUtil.getContentLocale();
 	}
 
-	Double totalPrecision = 1 / Math.pow(10, (double) maxPrecision + (double) 2);
+	Double totalPrecision = 1d / Math.pow(10, (double) maxPrecision + (double) 2);
 
 	private StringBuilder renderLabelingComponent(CompositeLabeling parent, List<LabelingComponent> subComponents, boolean isIngType, Double ratio,
 			BigDecimal total, boolean hideGeo, boolean hideBio) {
@@ -2750,7 +2752,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		if ((parent.getQtyTotal() != null) && (parent.getQtyTotal() > 0) && (qty != null)) {
 
-			return BigDecimal.valueOf(qty).divide(BigDecimal.valueOf(parent.getQtyTotal()), 10, RoundingMode.HALF_UP)
+			return BigDecimal.valueOf(qty).divide(BigDecimal.valueOf(parent.getQtyTotal()), PRECISION_FACTOR, RoundingMode.HALF_UP)
 					.multiply(BigDecimal.valueOf(ratio)).doubleValue();
 		}
 		return qty;
@@ -2782,7 +2784,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		Double volume = component.getVolume(withYield);
 		if ((parent.getVolumeTotal() != null) && (parent.getVolumeTotal() > 0) && (volume != null)) {
-			return (volume / parent.getVolumeTotal()) * ratio;
+			return BigDecimal.valueOf(volume).divide(BigDecimal.valueOf(parent.getVolumeTotal()), PRECISION_FACTOR, RoundingMode.HALF_UP)
+					.multiply(BigDecimal.valueOf(ratio)).doubleValue();
 		}
 		return volume;
 	}
