@@ -230,25 +230,6 @@ public class AllergensCalculatingFormulationHandler extends FormulationBaseHandl
 					}
 					allergen.setVoluntary(true);
 
-
-					if (!ingItem.getAllergensQtyMap().isEmpty()
-							&& !formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
-						String code = (String) nodeService.getProperty(allergenNodeRef, PLMModel.PROP_ALLERGEN_CODE);
-						Double allergenRate = null;
-						if (ingItem.getAllergensQtyMap().containsKey(code)) {
-							allergenRate = ingItem.getAllergensQtyMap().get(code);
-						} else if (ingItem.getAllergensQtyMap().containsKey("ALL")) {
-							allergenRate = ingItem.getAllergensQtyMap().get("ALL");
-						}
-
-						if (allergenRate != null) {
-							if (!visitedAllergens.contains(allergenNodeRef)) {
-								allergen.setQtyPerc(0d);
-								visitedAllergens.add(allergenNodeRef);
-							}
-							allergen.setQtyPerc(allergen.getQtyPerc() + (ing.getQtyPerc() * allergenRate / 100));
-						}
-					}
 				}
 			}
 		}
