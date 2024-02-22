@@ -99,7 +99,7 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 	
 
 	/** Constant <code>PRECISION_FACTOR=10</code> */
-	public static final int PRECISION_FACTOR = 6;
+	public static final int PRECISION_FACTOR = 8;
 	public static final BigDecimal DEFAULT_RATIO = BigDecimal.valueOf(1d);
 	
 
@@ -2759,8 +2759,11 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 
 		if ((parent.getQtyTotal() != null) && (parent.getQtyTotal() > 0) && (qty != null)) {
 			
-			return BigDecimal.valueOf(qty).divide(BigDecimal.valueOf(parent.getQtyTotal()), PRECISION_FACTOR, RoundingMode.HALF_UP)
-					.multiply(ratio);
+			
+			return  BigDecimal.valueOf(qty)
+			        .divide(BigDecimal.valueOf(parent.getQtyTotal()), PRECISION_FACTOR, RoundingMode.HALF_UP)
+			        .multiply(ratio, MathContext.DECIMAL64)
+			        .setScale(PRECISION_FACTOR, RoundingMode.HALF_UP);
 		}
 		return qty !=null ? BigDecimal.valueOf(qty) : null;
 	}
@@ -2792,7 +2795,8 @@ public class LabelingFormulaContext extends RuleParser implements SpelFormulaCon
 		Double volume = component.getVolume(withYield);
 		if ((parent.getVolumeTotal() != null) && (parent.getVolumeTotal() > 0) && (volume != null)) {
 			return BigDecimal.valueOf(volume).divide(BigDecimal.valueOf(parent.getVolumeTotal()), PRECISION_FACTOR, RoundingMode.HALF_UP)
-					.multiply(ratio);
+					.multiply(ratio, MathContext.DECIMAL64)
+					.setScale(PRECISION_FACTOR, RoundingMode.HALF_UP);
 		}
 		return volume!=null ? BigDecimal.valueOf(volume) : null;
 	}
