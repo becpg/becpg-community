@@ -535,12 +535,12 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						existingItem = targetList.stream().filter(item -> sourceItem.getName().equals(item.getName())).findFirst();
 					}
 
-					if (existingItem.isPresent() && !sourceItem.isSynchronisable()) {
+					if (existingItem.isPresent() && sourceItem.isSynchronisable()) {
 						updateItem(existingItem.get(), sourceItem);
 					} else {
 						sourceItem.setNodeRef(null);
 						sourceItem.setParentNodeRef(null);
-						sourceItem.setTransient(sourceItem.isSynchronisable());
+						sourceItem.setTransient(!sourceItem.isSynchronisable());
 						targetList.add(sourceItem);
 					}
 				}
