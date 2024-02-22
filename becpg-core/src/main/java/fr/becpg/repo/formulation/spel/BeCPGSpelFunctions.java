@@ -182,7 +182,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param locale
 		 * @return
 		 */
-		public String propMLValue(RepositoryEntity item, String qname, String locale) {
+		public Serializable propMLValue(RepositoryEntity item, String qname, String locale) {
 			Serializable value;
 
 			boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
@@ -193,6 +193,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 
 			if (value instanceof MLText) {
+				if(locale ==null) {
+					return value;
+				}
+				
 				return MLTextHelper.getClosestValue((MLText) value, MLTextHelper.parseLocale(locale));
 			}
 
@@ -207,13 +211,17 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param locale
 		 * @return
 		 */
-		public String propMLValue(NodeRef nodeRef, String qname, String locale) {
+		public Serializable propMLValue(NodeRef nodeRef, String qname, String locale) {
 			MLText value;
 
 			boolean isMLAware = MLPropertyInterceptor.setMLAware(true);
 			try {
 				value = (MLText) nodeService.getProperty(nodeRef, getQName(qname));
 				if (value != null) {
+					if(locale == null) {
+						return value;
+					}
+					
 					return MLTextHelper.getClosestValue(value, MLTextHelper.parseLocale(locale));
 				}
 
