@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
@@ -803,15 +804,15 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				CompositeLabeling compositeLabeling = component;
 				for (CompositeLabeling subComponent : compositeLabeling.getIngList().values()) {
 
-					Double qty = labelingFormulaContext.computeQtyPerc(compositeLabeling, subComponent,
-							compositeLabeling.getQty() != null ? compositeLabeling.getQty() : 1d);
-					Double volume = labelingFormulaContext.computeVolumePerc(compositeLabeling, subComponent,
-							compositeLabeling.getVolume() != null ? compositeLabeling.getVolume() : 1d);
+					Double qty = computeQtyPerc(labelingFormulaContext, compositeLabeling, subComponent,
+							compositeLabeling.getQty());
+					Double volume = computeVolumePerc(labelingFormulaContext,compositeLabeling, subComponent,
+							compositeLabeling.getVolume());
 
-					Double qtyWithYield = labelingFormulaContext.computeQtyPerc(compositeLabeling, subComponent,
-							compositeLabeling.getQtyWithYield() != null ? compositeLabeling.getQtyWithYield() : 1d);
-					Double volumeWithYield = labelingFormulaContext.computeVolumePerc(compositeLabeling, subComponent,
-							compositeLabeling.getVolumeWithYield() != null ? compositeLabeling.getVolumeWithYield() : 1d);
+					Double qtyWithYield = computeQtyPerc(labelingFormulaContext,compositeLabeling, subComponent,
+							compositeLabeling.getQtyWithYield() );
+					Double volumeWithYield = computeVolumePerc(labelingFormulaContext, compositeLabeling, subComponent,
+							compositeLabeling.getVolumeWithYield() );
 
 					CompositeLabeling toMerged = merged.get(subComponent.getNodeRef());
 
@@ -853,6 +854,16 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 
 		return merged;
 
+	}
+
+	private Double computeVolumePerc(LabelingFormulaContext labelingFormulaContext, CompositeLabeling parent, CompositeLabeling component, Double ratio) {
+		BigDecimal ret =  labelingFormulaContext.computeVolumePerc(parent, component, ratio!=null ? BigDecimal.valueOf(ratio): LabelingFormulaContext.DEFAULT_RATIO);
+		return ret!=null ? ret.doubleValue() : null;
+	}
+
+	private Double computeQtyPerc(LabelingFormulaContext labelingFormulaContext, CompositeLabeling parent, CompositeLabeling component, Double ratio) {
+		BigDecimal ret =  labelingFormulaContext.computeQtyPerc(parent, component, ratio!=null ? BigDecimal.valueOf(ratio): LabelingFormulaContext.DEFAULT_RATIO);
+		return ret!=null ? ret.doubleValue() : null;
 	}
 
 	private Map<String, List<LabelingRuleListDataItem>> getLabelingRules(ProductData formulatedProduct) {
@@ -1806,29 +1817,25 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 				compositeLabeling.setVolumeTotal(volume + compositeLabeling.getVolumeTotal());
 			}
 
-			if (qty != null && qtyWithYield != null && !qty.equals(qtyWithYield)) {
-
-				if (compositeLabeling.getEvaporatedQty() != null) {
-					double evaporatedQty = qtyWithYield - qty;
+			if (qty != null && qtyWithYield != null && !qty.equals(qtyWithYield)
+					&& compositeLabeling.getEvaporatedQty() != null) {
+					BigDecimal evaporatedQty = BigDecimal.valueOf(qtyWithYield).subtract(BigDecimal.valueOf(qty));
 					if (logger.isTraceEnabled()) {
-						logger.trace("Add to evaporate qty: " + evaporatedQty);
+						logger.trace("Add to evaporate qty: " + evaporatedQty.doubleValue());
 					}
-					compositeLabeling.setEvaporatedQty(evaporatedQty + compositeLabeling.getEvaporatedQty());
-				}
-
+					compositeLabeling.setEvaporatedQty(evaporatedQty.add(BigDecimal.valueOf(compositeLabeling.getEvaporatedQty())).doubleValue());
 			}
 
-			if (volumeWithYield != null && volume != null && !volume.equals(volumeWithYield)) {
-
-				if (compositeLabeling.getEvaporatedVolume() != null) {
-					double evaporatedVolume = volumeWithYield - volume;
-
+			if (volumeWithYield != null && volume != null && !volume.equals(volumeWithYield) && 
+					compositeLabeling.getEvaporatedVolume() != null) {
+				
+				BigDecimal evaporatedVolume = BigDecimal.valueOf(volumeWithYield).subtract(BigDecimal.valueOf(volume));
+					
 					if (logger.isTraceEnabled()) {
 						logger.trace("Add to evaporate volume: " + evaporatedVolume);
 
 					}
-					compositeLabeling.setEvaporatedVolume(evaporatedVolume + compositeLabeling.getEvaporatedVolume());
-				}
+					compositeLabeling.setEvaporatedVolume(evaporatedVolume.add(BigDecimal.valueOf(compositeLabeling.getEvaporatedVolume())).doubleValue());
 
 			}
 
@@ -2102,10 +2109,7 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 							if (logger.isTraceEnabled()) {
 								logger.trace("Detected water lost");
 							}
-							//
-							//							qtyWithYield = qty;
-							//							volumeWithYield = volume;
-
+							
 							if (labelingFormulaContext.getEvaporatedDataItems().isEmpty()) {
 								labelingFormulaContext.getEvaporatedDataItems().add(new EvaporatedDataItem(ingNodeRef, 100d));
 							}
@@ -2191,44 +2195,21 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 					} else {
 
 						qtyPerc += omitQtyPerc;
-
-						// if one ingItem has null perc -> must be null
+						
+						
+						updateIfNotNull(ingLabelItem.getQty(), qty, qtyPerc, ingLabelItem::setQty, "qty");
+						updateIfNotNull(ingLabelItem.getVolume(), volume, qtyPerc, ingLabelItem::setVolume, "volume" );
+						
 						if ((ingLabelItem.getQty() != null) && (qty != null)) {
-
-							if (logger.isTraceEnabled()) {
-								logger.trace(" -- new qty to add to " + getName(ingLabelItem) + ": " + ((qty * qtyPerc) / 100d));
-							}
-
-							ingLabelItem.setQty(ingLabelItem.getQty() + ((qty * qtyPerc) / 100d));
 							ingLabelItem.setQtyTotal(ingLabelItem.getQty());
-
 						}
-
 						if ((ingLabelItem.getVolume() != null) && (volume != null)) {
-
-							if (logger.isTraceEnabled()) {
-								logger.trace(" -- new volume to add: " + ((volume * qtyPerc) / 100d));
-							}
-
-							ingLabelItem.setVolume(ingLabelItem.getVolume() + ((volume * qtyPerc) / 100d));
 							ingLabelItem.setVolumeTotal(ingLabelItem.getVolume());
-
 						}
-
-						if ((ingLabelItem.getQtyWithYield() != null) && (qtyWithYield != null)) {
-
-							if (logger.isTraceEnabled()) {
-								logger.trace(" -- new qtyWithYield to add to " + getName(ingLabelItem) + ": " + ((qtyWithYield * qtyPerc) / 100d));
-							}
-
-							ingLabelItem.setQtyWithYield(ingLabelItem.getQtyWithYield() + ((qtyWithYield * qtyPerc) / 100d));
-
-						}
-
-						if ((ingLabelItem.getVolumeWithYield() != null) && (volumeWithYield != null)) {
-							ingLabelItem.setVolumeWithYield(ingLabelItem.getVolumeWithYield() + ((volumeWithYield * volumeWithYield) / 100d));
-
-						}
+						
+						updateIfNotNull(ingLabelItem.getQtyWithYield(), qtyWithYield, qtyPerc, ingLabelItem::setQtyWithYield, "qtyWithYield");
+						updateIfNotNull(ingLabelItem.getVolumeWithYield(), volumeWithYield, qtyPerc, ingLabelItem::setVolumeWithYield , "volumeWithYield");
+						
 
 						if ((ingLabelItem.getQty() == null) && (qty == null)) {
 
@@ -2284,6 +2265,17 @@ public class LabelingFormulationHandler extends FormulationBaseHandler<ProductDa
 		return parent;
 	}
 
+	private void updateIfNotNull(Double oldValue, Double newValue, Double qtyPerc, Consumer<Double> updateFunction, String name) {
+	    if (oldValue != null && newValue != null) {
+	        BigDecimal valueToAdd = BigDecimal.valueOf(newValue).multiply(BigDecimal.valueOf(qtyPerc)).divide(BigDecimal.valueOf(100d), LabelingFormulaContext.PRECISION_FACTOR, RoundingMode.HALF_UP);
+	        if (logger.isTraceEnabled()) {
+	            logger.trace(" -- new value to add: " + valueToAdd.doubleValue()+ " - to :"+name);
+	        }
+	        updateFunction.accept(oldValue + valueToAdd.doubleValue());
+	    }
+	}
+
+	
 	private boolean allergenMatchSubIngs(List<NodeRef> voluntarySources, Composite<IngListDataItem> ingListItem) {
 		if ((voluntarySources != null) && !voluntarySources.isEmpty() && !ingListItem.isLeaf()) {
 			for (Composite<IngListDataItem> child : ingListItem.getChildren()) {
