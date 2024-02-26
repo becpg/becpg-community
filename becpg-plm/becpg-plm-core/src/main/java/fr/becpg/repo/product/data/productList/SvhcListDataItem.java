@@ -91,9 +91,6 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 		this.ing = ing;
 	}
 
-	//	
-	//	TODO : VOIR S'IL FAUT METTRE LA CONTRAINTE ICI POUR LA PARTIE SVHCREASONSFORINCLUSIONS 
-	//		isManualField est dans la classe mère, comment faire pour l'autre ?
 	/**
 	 * <p>
 	 * Getter for the field <code>reasonsForInclusion</code>.
