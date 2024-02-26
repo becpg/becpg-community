@@ -48,6 +48,8 @@ public class IngItem extends CompositeLabeling {
 
 	private IngTypeItem ingType;
 
+	private Boolean isSubstanceOfVeryHighConcern;
+
 	private Set<NodeRef> pluralParents = new HashSet<>();
 
 	private List<NodeRef> allergenList = new LinkedList<>();
@@ -70,6 +72,7 @@ public class IngItem extends CompositeLabeling {
 		this.ingType = ingItem.ingType;
 		this.charactName = ingItem.charactName;
 		this.ingAllergensQtyPerc = ingItem.ingAllergensQtyPerc;
+		this.isSubstanceOfVeryHighConcern = ingItem.isSubstanceOfVeryHighConcern;
 	}
 
 	/**
@@ -215,6 +218,26 @@ public class IngItem extends CompositeLabeling {
 	}
 
 	/**
+	 * <p>Getter for the field <code>isSubstanceOfVeryHighConcern</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@AlfProp
+	@AlfQname(qname = "bcpg:isSubstanceOfVeryHighConcern")
+	public Boolean getIsSubstanceOfVeryHighConcern() {
+		return isSubstanceOfVeryHighConcern;
+	}
+
+	/**
+	 * <p>Setter for the field <code>isSubstanceOfVeryHighConcern</code>.</p>
+	 *
+	 * @param ingCEECode a {@link java.lang.String} object.
+	 */
+	public void setIsSubstanceOfVeryHighConcern(Boolean isSubstanceOfVeryHighConcern) {
+		this.isSubstanceOfVeryHighConcern = isSubstanceOfVeryHighConcern;
+	}
+
+	/**
 	 * <p>Getter for the field <code>pluralParents</code>.</p>
 	 *
 	 * @return a {@link java.util.Set} object.
@@ -254,6 +277,7 @@ public class IngItem extends CompositeLabeling {
 		result = prime * result + ((ingCEECode == null) ? 0 : ingCEECode.hashCode());
 		result = prime * result + ((ingRID == null) ? 0 : ingRID.hashCode());
 		result = prime * result + ((ingType == null) ? 0 : ingType.hashCode());
+		result = prime * result + ((isSubstanceOfVeryHighConcern == null) ? 0 : isSubstanceOfVeryHighConcern.hashCode());
 		result = prime * result + ((ingAllergensQtyPerc == null) ? 0 : ingAllergensQtyPerc.hashCode());
 
 		return result;
@@ -298,6 +322,11 @@ public class IngItem extends CompositeLabeling {
 			if (other.ingType != null)
 				return false;
 		} else if (!ingType.equals(other.ingType))
+			return false;
+		if (isSubstanceOfVeryHighConcern == null) {
+			if (other.isSubstanceOfVeryHighConcern != null)
+				return false;
+		} else if (!isSubstanceOfVeryHighConcern.equals(other.isSubstanceOfVeryHighConcern))
 			return false;
 		return true;
 	}
