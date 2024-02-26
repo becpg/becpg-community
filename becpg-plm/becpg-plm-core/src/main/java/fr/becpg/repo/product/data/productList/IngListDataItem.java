@@ -460,6 +460,21 @@ public class IngListDataItem extends AbstractManualDataItem
 	public IngListDataItem() {
 		super();
 	}
+	
+	public static IngListDataItem build() {
+		return new IngListDataItem();
+	}
+
+	public IngListDataItem withIngredient(NodeRef ing) {
+		this.ing = ing;
+		return this;
+	}
+
+	public IngListDataItem withQtyPerc(Double qtyPerc) {
+		this.qtyPerc = qtyPerc;
+		return this;
+	}
+	
 
 	/**
 	 * <p>Constructor for IngListDataItem.</p>
@@ -474,6 +489,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param isManual a {@link java.lang.Boolean} object.
 	 */
+	@Deprecated
 	public IngListDataItem(NodeRef nodeRef, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized,
 			Boolean processingAid, NodeRef ing, Boolean isManual) {
 		setNodeRef(nodeRef);
@@ -503,6 +519,7 @@ public class IngListDataItem extends AbstractManualDataItem
 	 * @param ing a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param isManual a {@link java.lang.Boolean} object.
 	 */
+	@Deprecated
 	public IngListDataItem(NodeRef nodeRef, IngListDataItem ingList, Double qtyPerc, List<NodeRef> geoOrigin, List<NodeRef> geoTransfo,
 			List<NodeRef> bioOrigin, Boolean isGMO, Boolean isIonized, Boolean processingAid, Boolean isSupport, NodeRef ing, Boolean isManual) {
 		setNodeRef(nodeRef);

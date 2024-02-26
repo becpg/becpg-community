@@ -50,6 +50,7 @@ import fr.becpg.repo.product.data.productList.PriceListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
+import fr.becpg.repo.product.data.productList.SvhcListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
@@ -75,12 +76,12 @@ import fr.becpg.repo.variant.model.VariantEntity;
  * @version $Id: $Id
  */
 @BeCPGPublicApi
-public class ProductData extends AbstractScorableEntity implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity {
+public class ProductData extends AbstractScorableEntity
+		implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity {
 
-	
 	private static final long serialVersionUID = 764534088277737617L;
 	private static final Log logger = LogFactory.getLog(ProductData.class);
-	
+
 	private NodeRef hierarchy1;
 	private NodeRef hierarchy2;
 	private MLText legalName;
@@ -94,12 +95,13 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 
 	protected Date startEffectivity;
 	protected Date endEffectivity;
-	
-	/* Glop
+
+	/*
+	 * Glop
 	 * 
 	 */
 	private GlopData glopData;
-	
+
 	/*
 	 * Transformable properties
 	 */
@@ -140,12 +142,11 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private Double profitability;
 	private Long breakEven;
 	private Long projectedQty;
-	
-	/* 
+
+	/*
 	 * Parent entity
 	 */
 	private ProductData parentEntity;
-	
 
 	/*
 	 * Formulation
@@ -157,7 +158,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private String formulationChainId;
 	private Boolean isUpToDate = false;
 	private Boolean updateFormulatedDate = true;
-	
+
 	/*
 	 * Nutlist formulation
 	 */
@@ -166,11 +167,10 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	/*
 	 * Labeling formulation
 	 */
-	
+
 	private IngTypeItem ingType;
 	private Boolean isIngListManual;
-	
-	
+
 	/*
 	 * Nutrient Score
 	 */
@@ -182,8 +182,6 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private String nutrientProfileCategory;
 	private String nutrientProfileVersion;
 
-	
-	
 	/*
 	 * Eco Score
 	 */
@@ -192,8 +190,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private String ecoScoreClass;
 	private String ecoScoreCategory;
 	private String ecoScoreDetails;
-	
-	
+
 	private String lcaScoreMethod;
 	private Double lcaScore;
 
@@ -203,9 +200,9 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 
 	private Map<String, MeatContentData> meatContentData = new HashMap<>();
 	private String meatType;
-	
+
 	/*
-	 * Compliance 
+	 * Compliance
 	 */
 	private List<NodeRef> regulatoryCountries = new ArrayList<>();
 	private List<NodeRef> regulatoryUsages = new ArrayList<>();
@@ -214,7 +211,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private String regulatoryRecipeId;
 	private RegulatoryResult regulatoryResult;
 	private String regulatoryUrl;
-	
+
 	/** 
 	 * JSON Data { 
 	 *   decernis: "checksum" 
@@ -222,12 +219,11 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 * 
 	 */
 	private String requirementChecksum;
-	
+
 	/**
 	 * Specify that a product isGeneric
 	 */
 	private Boolean isGeneric;
-	
 
 	/*
 	 * DataList
@@ -249,7 +245,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private List<StockListDataItem> stockList;
 	private List<RegulatoryListDataItem> regulatoryList;
 	private List<IngRegulatoryListDataItem> ingRegulatoryList;
-	
+	private List<SvhcListDataItem> svhcList;
 
 	/*
 	 * View
@@ -273,11 +269,9 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 
 	private List<ProductSpecificationData> productSpecifications;
 	private List<ClientData> clients;
-	
 
-	private List<NodeRef> suppliers = new ArrayList<>();	
+	private List<NodeRef> suppliers = new ArrayList<>();
 	private List<NodeRef> supplierPlants = new ArrayList<>();
-
 
 	/*
 	 * Origin geo
@@ -292,46 +286,45 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	private List<String> reportLocales;
 	private List<ProductData> compareWithEntities;
 
-	
 	/** {@inheritDoc} */
 	public GlopData getGlopData() {
 		return glopData;
 	}
-	
+
 	/** {@inheritDoc} */
 	public void setGlopData(GlopData glopData) {
 		this.glopData = glopData;
 	}
-	
+
 	public void setLcaScore(Double lcaScore) {
 		this.lcaScore = lcaScore;
 	}
-	
+
 	public void setLcaScoreMethod(String lcaScoreMethod) {
 		this.lcaScoreMethod = lcaScoreMethod;
 	}
-	
+
 	@AlfProp
-	@AlfQname(qname="bcpg:lcaScore")
+	@AlfQname(qname = "bcpg:lcaScore")
 	public Double getLcaScore() {
 		return lcaScore;
 	}
-	
+
 	@AlfProp
-	@AlfQname(qname="bcpg:lcaScoreMethod")
+	@AlfQname(qname = "bcpg:lcaScoreMethod")
 	public String getLcaScoreMethod() {
 		return lcaScoreMethod;
 	}
-	
+
 	/** {@inheritDoc} */
 	@AlfProp
-	@AlfQname(qname="bcpg:startEffectivity")
+	@AlfQname(qname = "bcpg:startEffectivity")
 	@InternalField
 	@Override
 	public Date getStartEffectivity() {
 		return startEffectivity;
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void setStartEffectivity(Date startEffectivity) {
@@ -340,13 +333,13 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 
 	/** {@inheritDoc} */
 	@AlfProp
-	@AlfQname(qname="bcpg:endEffectivity")
+	@AlfQname(qname = "bcpg:endEffectivity")
 	@InternalField
 	@Override
 	public Date getEndEffectivity() {
 		return endEffectivity;
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void setEndEffectivity(Date endEffectivity) {
@@ -385,14 +378,14 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public List<ClientData> getClients() {
 		return clients;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>suppliers</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:suppliers")
+	@AlfQname(qname = "bcpg:suppliers")
 	public List<NodeRef> getSuppliers() {
 		return suppliers;
 	}
@@ -406,15 +399,13 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		this.suppliers = suppliers;
 	}
 
-	
-
 	/**
 	 * <p>Getter for the field <code>supplierPlants</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	@AlfMultiAssoc
-	@AlfQname(qname="bcpg:supplierPlants")
+	@AlfQname(qname = "bcpg:supplierPlants")
 	public List<NodeRef> getSupplierPlants() {
 		return supplierPlants;
 	}
@@ -427,8 +418,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setSupplierPlants(List<NodeRef> supplierPlants) {
 		this.supplierPlants = supplierPlants;
 	}
-	
-	
+
 	/**
 	 * <p>Setter for the field <code>clients</code>.</p>
 	 *
@@ -479,14 +469,14 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setLocalVariants(List<VariantData> localVariants) {
 		this.localVariants = localVariants;
 	}
-	
+
 	/**
 	 * <p>Getter for the all variants.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	public List<VariantData> getVariants() {
-		List<VariantData> variants = localVariants != null ? new ArrayList<>(localVariants): new ArrayList<>();
+		List<VariantData> variants = localVariants != null ? new ArrayList<>(localVariants) : new ArrayList<>();
 		if (entityTpl != null) {
 			List<VariantData> entityTplVariants = entityTpl.getLocalVariants();
 			if (entityTplVariants != null && !entityTplVariants.isEmpty()) {
@@ -561,8 +551,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setFormulatedDate(Date formulatedDate) {
 		this.formulatedDate = formulatedDate;
 	}
-	
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public boolean shouldUpdateFormulatedDate() {
@@ -635,7 +624,6 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		this.legalName = legalName;
 	}
 
-	
 	/**
 	 * <p>Setter for the field <code>legalName</code>.</p>
 	 *
@@ -644,7 +632,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setLegalName(String legalName) {
 		this.legalName = new MLText(legalName);
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>pluralLegalName</code>.</p>
 	 *
@@ -764,10 +752,9 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
 	public NodeRef getFormulatedEntityTpl() {
-		return entityTpl!=null ? entityTpl.getNodeRef() : null;
+		return entityTpl != null ? entityTpl.getNodeRef() : null;
 	}
 
-	
 	/**
 	 * <p>Setter for the field <code>entityTpl</code>.</p>
 	 *
@@ -776,8 +763,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setEntityTpl(ProductData entityTpl) {
 		this.entityTpl = entityTpl;
 	}
-	
-	
+
 	@AlfSingleAssoc(isEntity = true)
 	@AlfQname(qname = "bcpg:parentEntityRef")
 	public ProductData getParentEntity() {
@@ -808,19 +794,17 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		this.plants = plants;
 	}
 
-	
-
 	public List<NodeRef> getAllPlants() {
 		List<NodeRef> ret = new ArrayList<>();
-		if(plants!=null) {
+		if (plants != null) {
 			ret.addAll(plants);
 		}
-		if(supplierPlants!=null) {
+		if (supplierPlants != null) {
 			ret.addAll(supplierPlants);
 		}
 		return ret;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:isIngListManual")
 	public Boolean getIsIngListManual() {
@@ -1002,8 +986,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setProductLossPerc(Double lossPerc) {
 		this.productLossPerc = lossPerc;
 	}
-	
-	
+
 	/**
 	 * <p>Getter for the field <code>componentLossPerc</code>.</p>
 	 *
@@ -1191,7 +1174,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setWeightTertiary(Double weightTertiary) {
 		this.weightTertiary = weightTertiary;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>dropPackagingOfComponents</code>.</p>
 	 *
@@ -1211,7 +1194,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setDropPackagingOfComponents(Boolean dropPackagingOfComponents) {
 		this.dropPackagingOfComponents = dropPackagingOfComponents;
 	}
-	
+
 	/**
 	 * <p>Getter for the field <code>netVolume</code>.</p>
 	 *
@@ -1251,8 +1234,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setServingSize(Double servingSize) {
 		this.servingSize = servingSize;
 	}
-	
-	
+
 	/**
 	 * <p>Getter for the field <code>servingSizeByCountry</code>.</p>
 	 *
@@ -1453,7 +1435,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setProfitability(Double profitability) {
 		this.profitability = profitability;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientPreparationState")
 	public List<String> getPreparationStates() {
@@ -1463,9 +1445,9 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setPreparationStates(List<String> preparationStates) {
 		this.preparationStates = preparationStates;
 	}
-	
+
 	public boolean isPrepared() {
-		return preparationStates!=null && preparationStates.contains("Prepared");
+		return preparationStates != null && preparationStates.contains("Prepared");
 	}
 
 	@AlfProp
@@ -1497,13 +1479,13 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setEcoScoreCategory(String ecoScoreCategory) {
 		this.ecoScoreCategory = ecoScoreCategory;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:ecoScoreDetails")
 	public String getEcoScoreDetails() {
 		return ecoScoreDetails;
 	}
-	
+
 	public void setEcoScoreDetails(String ecoScoreDetails) {
 		this.ecoScoreDetails = ecoScoreDetails;
 	}
@@ -1547,13 +1529,13 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setNutrientClass(String nutrientClass) {
 		this.nutrientClass = nutrientClass;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientProfilingDetails")
 	public String getNutrientDetails() {
 		return nutrientDetails;
 	}
-	
+
 	public void setNutrientDetails(String nutrientDetails) {
 		this.nutrientDetails = nutrientDetails;
 	}
@@ -1577,23 +1559,23 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setNutrientProfile(NodeRef nutrientProfile) {
 		this.nutrientProfile = nutrientProfile;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientProfileCategory")
 	public String getNutrientProfileCategory() {
 		return nutrientProfileCategory;
 	}
-	
+
 	public void setNutrientProfileCategory(String nutrientProfileCategory) {
 		this.nutrientProfileCategory = nutrientProfileCategory;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:nutrientProfileVersion")
 	public String getNutrientProfileVersion() {
 		return nutrientProfileVersion;
 	}
-	
+
 	public void setNutrientProfileVersion(String nutrientProfileVersion) {
 		this.nutrientProfileVersion = nutrientProfileVersion;
 	}
@@ -1607,7 +1589,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	@AlfQname(qname = "bcpg:meatContentData")
 	@InternalField
 	public String getMeatContentData() {
-		if(meatContentData==null  || meatContentData.isEmpty()) {
+		if (meatContentData == null || meatContentData.isEmpty()) {
 			return null;
 		} else {
 			try {
@@ -1627,18 +1609,17 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		try {
 			meatContentData = MeatContentData.parseJsonString(meatContentdata);
 		} catch (JSONException e) {
-			logger.warn("Cannot parse meatContent JSON",e);
+			logger.warn("Cannot parse meatContent JSON", e);
 		}
 	}
 
-	
 	/**
 	 * <p>Getter for the field <code>meatType</code>.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	@AlfProp
-	@AlfQname(qname="bcpg:meatType")
+	@AlfQname(qname = "bcpg:meatType")
 	public String getMeatType() {
 		return meatType;
 	}
@@ -1662,22 +1643,20 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public MeatContentData meatContentByType(String type) {
 		return meatContentData.get(type);
 	}
-	
+
 	/**
 	 * <p>meatContentApplied.</p>
 	 *
 	 * @return a {@link java.lang.String} object.
 	 */
 	public String meatContentApplied() {
-	  StringBuilder ret  = new StringBuilder();
-	  for(Map.Entry<String, MeatContentData> val : meatContentData.entrySet()) {
-		  ret.append(val.getKey() +": "+ val.getValue().getMeatContent()+"%\n");
-	   }
-	  return ret.toString();
-		
+		StringBuilder ret = new StringBuilder();
+		for (Map.Entry<String, MeatContentData> val : meatContentData.entrySet()) {
+			ret.append(val.getKey() + ": " + val.getValue().getMeatContent() + "%\n");
+		}
+		return ret.toString();
+
 	}
-	
-	
 
 	/**
 	 * <p>getMeatContents.</p>
@@ -1767,13 +1746,13 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setCostList(List<CostListDataItem> costList) {
 		this.costList = costList;
 	}
-	
+
 	@DataList
 	@AlfQname(qname = "bcpg:lcaList")
 	public List<LCAListDataItem> getLcaList() {
 		return lcaList;
 	}
-	
+
 	public void setLcaList(List<LCAListDataItem> lcaList) {
 		this.lcaList = lcaList;
 	}
@@ -2017,7 +1996,6 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setPackMaterialList(List<PackMaterialListDataItem> packMaterialList) {
 		this.packMaterialList = packMaterialList;
 	}
-	
 
 	@DataList
 	@AlfQname(qname = "qa:stockList")
@@ -2028,17 +2006,17 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setStockList(List<StockListDataItem> stockList) {
 		this.stockList = stockList;
 	}
-	
+
 	@DataList
 	@AlfQname(qname = "bcpg:regulatoryList")
 	public List<RegulatoryListDataItem> getRegulatoryList() {
 		return regulatoryList;
 	}
-	
+
 	public void setRegulatoryList(List<RegulatoryListDataItem> regulatoryList) {
 		this.regulatoryList = regulatoryList;
 	}
-	
+
 	@DataList
 	@AlfQname(qname = "bcpg:ingRegulatoryList")
 	public List<IngRegulatoryListDataItem> getIngRegulatoryList() {
@@ -2047,6 +2025,26 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 
 	public void setIngRegulatoryList(List<IngRegulatoryListDataItem> ingRegulatoryList) {
 		this.ingRegulatoryList = ingRegulatoryList;
+	}
+
+	/**
+	 * <p>Getter for the field <code>svhcList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@DataList
+	@AlfQname(qname = "bcpg:svhcList")
+	public List<SvhcListDataItem> getSvhcList() {
+		return svhcList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>svhcList</code>.</p>
+	 *
+	 * @param svhcList a {@link java.util.List} object.
+	 */
+	public void setSvhcList(List<SvhcListDataItem> svhcList) {
+		this.svhcList = svhcList;
 	}
 
 	/**
@@ -2099,7 +2097,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setReportLocales(List<String> reportLocales) {
 		this.reportLocales = reportLocales;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryMode")
 	public DecernisMode getRegulatoryMode() {
@@ -2109,23 +2107,23 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public void setRegulatoryMode(DecernisMode regulatoryMode) {
 		this.regulatoryMode = regulatoryMode;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryUrl")
 	public String getRegulatoryUrl() {
 		return regulatoryUrl;
 	}
-	
+
 	public void setRegulatoryUrl(String regulatoryUrl) {
 		this.regulatoryUrl = regulatoryUrl;
 	}
-	
+
 	@AlfProp
 	@AlfQname(qname = "bcpg:regulatoryResult")
 	public RegulatoryResult getRegulatoryResult() {
 		return regulatoryResult;
 	}
-	
+
 	public void setRegulatoryResult(RegulatoryResult regulatoryResult) {
 		this.regulatoryResult = regulatoryResult;
 	}
@@ -2140,7 +2138,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public String getRegulatoryRecipeId() {
 		return this.regulatoryRecipeId;
 	}
-	
+
 	/**
 	 * <p>Setter for the field <code>regulatoryRecipeId</code>.</p>
 	 *
@@ -2488,16 +2486,15 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		return state != null ? state.toString() : null;
 	}
 
-	
 	/**
 	 * <p>isLiquid.</p>
 	 *
 	 * @return a boolean.
 	 */
 	public boolean isLiquid() {
-		if(servingSizeUnit != null && !servingSizeUnit.equals(ProductUnit.kg) && servingSizeUnit.isVolume()){
+		if (servingSizeUnit != null && !servingSizeUnit.equals(ProductUnit.kg) && servingSizeUnit.isVolume()) {
 			return true;
-		}else{
+		} else {
 			return (unit != null && unit.isVolume());
 		}
 	}
@@ -2510,8 +2507,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public boolean isRawMaterial() {
 		return this instanceof RawMaterialData;
 	}
-	
-	
+
 	public boolean isGeneric() {
 		return isRawMaterial() || Boolean.TRUE.equals(isGeneric);
 	}
@@ -2555,7 +2551,7 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public boolean isLocalSemiFinished() {
 		return this instanceof LocalSemiFinishedProductData;
 	}
-	
+
 	/**
 	 * <p>isFinishedProduct.</p>
 	 *
@@ -2565,7 +2561,6 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		return this instanceof FinishedProductData;
 	}
 
-	
 	public boolean isEntityTemplate() {
 		return getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL);
 	}
@@ -2594,7 +2589,6 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		this.currentReformulateCount = currentReformulateCount;
 	}
 
-	
 	/**
 	 * <p>Getter for the field <code>formulationChainId</code>.</p>
 	 *
@@ -2615,6 +2609,8 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public ProductData() {
 		super();
 	}
+	
+
 
 	/** {@inheritDoc} */
 	@Override
@@ -2628,11 +2624,12 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(clients, suppliers, supplierPlants, density, erpCode, formulatedDate, futureUnitTotalCost, hierarchy1, hierarchy2, ingType,
-				legalName, netVolume, netWeight, netWeightSecondary, netWeightTertiary, nutrientClass, nutrientProfile, nutrientScore, plants,
-				profitability, projectedQty, qty, recipeQtyUsed, recipeQtyUsedWithLossPerc, recipeVolumeUsed, reformulateCount, regulatoryCountries,
-				regulatoryUsages, regulatoryMode, regulatoryRecipeId, reportLocales, servingSize, servingSizeByCountry, servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice,
-				unitTotalCost, updateFormulatedDate, weightPrimary, weightSecondary, weightTertiary, yield, yieldVolume, suppliers);
+		result = prime * result + Objects.hash(clients, suppliers, supplierPlants, density, erpCode, formulatedDate, futureUnitTotalCost, hierarchy1,
+				hierarchy2, ingType, legalName, netVolume, netWeight, netWeightSecondary, netWeightTertiary, nutrientClass, nutrientProfile,
+				nutrientScore, plants, profitability, projectedQty, qty, recipeQtyUsed, recipeQtyUsedWithLossPerc, recipeVolumeUsed, reformulateCount,
+				regulatoryCountries, regulatoryUsages, regulatoryMode, regulatoryRecipeId, reportLocales, servingSize, servingSizeByCountry,
+				servingSizeUnit, state, tare, tareUnit, title, unit, unitPrice, unitTotalCost, updateFormulatedDate, weightPrimary, weightSecondary,
+				weightTertiary, yield, yieldVolume, suppliers);
 		return result;
 	}
 
@@ -2646,10 +2643,12 @@ public class ProductData extends AbstractScorableEntity implements EffectiveData
 		if (getClass() != obj.getClass())
 			return false;
 		ProductData other = (ProductData) obj;
-		return Objects.equals(clients, other.clients) && Objects.equals(suppliers, other.suppliers) && Objects.equals(supplierPlants, other.supplierPlants) && Objects.equals(density, other.density) && Objects.equals(erpCode, other.erpCode)
-				&& Objects.equals(formulatedDate, other.formulatedDate) && Objects.equals(futureUnitTotalCost, other.futureUnitTotalCost)
-				&& Objects.equals(hierarchy1, other.hierarchy1) && Objects.equals(hierarchy2, other.hierarchy2)
-				&& Objects.equals(ingType, other.ingType) && Objects.equals(legalName, other.legalName) && Objects.equals(netVolume, other.netVolume)
+		return Objects.equals(clients, other.clients) && Objects.equals(suppliers, other.suppliers)
+				&& Objects.equals(supplierPlants, other.supplierPlants) && Objects.equals(density, other.density)
+				&& Objects.equals(erpCode, other.erpCode) && Objects.equals(formulatedDate, other.formulatedDate)
+				&& Objects.equals(futureUnitTotalCost, other.futureUnitTotalCost) && Objects.equals(hierarchy1, other.hierarchy1)
+				&& Objects.equals(hierarchy2, other.hierarchy2) && Objects.equals(ingType, other.ingType)
+				&& Objects.equals(legalName, other.legalName) && Objects.equals(netVolume, other.netVolume)
 				&& Objects.equals(netWeight, other.netWeight) && Objects.equals(netWeightSecondary, other.netWeightSecondary)
 				&& Objects.equals(netWeightTertiary, other.netWeightTertiary) && Objects.equals(nutrientClass, other.nutrientClass)
 				&& Objects.equals(nutrientProfile, other.nutrientProfile) && Objects.equals(nutrientScore, other.nutrientScore)

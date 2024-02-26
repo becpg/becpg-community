@@ -11,7 +11,7 @@ package fr.becpg.repo;
  */
 public class PlmRepoConsts {
 
-	/*-- Path query --*/			
+	/*-- Path query --*/
 
 	/** Constant <code>PATH_ING_TYPES="ingTypeItem"</code> */
 	public static final String PATH_ING_TYPES = "ingTypeItem";
@@ -33,9 +33,9 @@ public class PlmRepoConsts {
 	public static final String PATH_ALLERGENS = "Allergens";
 	/** Constant <code>PATH_COSTS="Costs"</code> */
 	public static final String PATH_COSTS = "Costs";
-	
+
 	public static final String PATH_LCA = "LifeCycleAnalysis";
-	
+
 	public static final String PATH_LCA_LIST_METHODS = "LcaListMethods";
 
 	/** Constant <code>PATH_PHYSICO_CHEM="PhysicoChems"</code> */
@@ -43,17 +43,17 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_MICROBIO_CONTROL_STEPS="MicrobioControlSteps"</code> */
 	public static final String PATH_MICROBIO_CONTROL_STEPS = "MicrobioControlSteps";
 	/** Constant <code>PATH_MICROBIOS="Microbios"</code> */
-	public static final String PATH_MICROBIOS = "Microbios";	
+	public static final String PATH_MICROBIOS = "Microbios";
 	/** Constant <code>PATH_GEO_ORIGINS="GeoOrigins"</code> */
 	public static final String PATH_GEO_ORIGINS = "GeoOrigins";
 	/** Constant <code>PATH_BIO_ORIGINS="BioOrigins"</code> */
 	public static final String PATH_BIO_ORIGINS = "BioOrigins";
 	/** Constant <code>PATH_SUBSIDIARIES="Subsidiaries"</code> */
-	public static final String PATH_SUBSIDIARIES = "Subsidiaries";	
+	public static final String PATH_SUBSIDIARIES = "Subsidiaries";
 	/** Constant <code>PATH_TRADEMARKS="Trademarks"</code> */
-	public static final String PATH_TRADEMARKS = "Trademarks";	
+	public static final String PATH_TRADEMARKS = "Trademarks";
 	/** Constant <code>PATH_PLANTS="Plants"</code> */
-	public static final String PATH_PLANTS = "Plants";	
+	public static final String PATH_PLANTS = "Plants";
 	/** Constant <code>PATH_CUSTOMSCODES="CustomsCodes"</code> */
 	public static final String PATH_CUSTOMSCODES = "CustomsCodes";
 	/** Constant <code>PATH_CERTIFICATIONS="Certifications"</code> */
@@ -63,7 +63,7 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_RESOURCEPARAMS="ResourceParams"</code> */
 	public static final String PATH_RESOURCEPARAMS = "ResourceParams";
 	/** Constant <code>PATH_LABELCLAIMS="LabelClaims"</code> */
-	public static final String PATH_LABELCLAIMS = "LabelClaims";	
+	public static final String PATH_LABELCLAIMS = "LabelClaims";
 	/** Constant <code>PATH_LABELCLAIMS_TYPES="LabelClaimTypes"</code> */
 	public static final String PATH_LABELCLAIMS_TYPES = "LabelClaimTypes";
 	/** Constant <code>PATH_STORAGE_CONDITIONS="StorageConditions"</code> */
@@ -76,14 +76,14 @@ public class PlmRepoConsts {
 	public static final String PATH_LABELING_POSITIONS = "LabelingPositions";
 	/** Constant <code>PATH_LABELING_TYPES="LabelingTypes"</code> */
 	public static final String PATH_LABELING_TYPES = "LabelingTypes";
-	
+
 	/** Constant <code>PATH_MICROBIO_UNITS="MicrobioUnits"</code> */
 	public static final String PATH_MICROBIO_UNITS = "MicrobioUnits";
 	/** Constant <code>PATH_PHYSICO_UNITS="PhysicoUnits"</code> */
 	public static final String PATH_PHYSICO_UNITS = "PhysicoUnits";
 	/** Constant <code>PATH_PHYSICO_TYPES="PhysicoTypes"</code> */
 	public static final String PATH_PHYSICO_TYPES = "PhysicoTypes";
-	
+
 	/** Constant <code>PATH_PM_MATERIALS="pmMaterials"</code> */
 	public static final String PATH_PM_MATERIALS = "pmMaterials";
 	/** Constant <code>PATH_PM_PRINT_TYPES="pmPrintTypes"</code> */
@@ -92,11 +92,14 @@ public class PlmRepoConsts {
 	public static final String PATH_PM_PRINT_VANISHS = "pmPrintVarnishs";
 	/** Constant <code>PATH_GS1_HIERARCHY="gs1_Hierarchy"</code> */
 	public static final String PATH_GS1_HIERARCHY = "gs1_Hierarchy";
-	
+
+	/** Constant <code>PATH_SVHC_REASONS_FOR_INCLUSIONS="SvhcReasonsForInclusions"</code> */
+	public static final String PATH_SVHC_REASONS_FOR_INCLUSIONS = "SvhcReasonsForInclusions";
+
 	/** Constant <code>PATH_LABEL="Labels"</code> */
 	public static final String PATH_LABEL = "Labels";
 	/** Constant <code>PATH_LABEL_TYPES="LabelTypes"</code> */
-	public static final String PATH_LABEL_TYPES = "LabelTypes";	
+	public static final String PATH_LABEL_TYPES = "LabelTypes";
 	/** Constant <code>PATH_PRODUCT_TEMPLATES="ProductTemplates"</code> */
 	public static final String PATH_PRODUCT_TEMPLATES = "ProductTemplates";
 	/** Constant <code>PATH_QUALITY_TEMPLATES="QualityTemplates"</code> */
@@ -108,9 +111,9 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_IMPORT="Import"</code> */
 	public static final String PATH_IMPORT = "Import";
 	/** Constant <code>PATH_IMPORT_TO_TREAT="ImportToTreat"</code> */
-	public static final String PATH_IMPORT_TO_TREAT	= "ImportToTreat";
+	public static final String PATH_IMPORT_TO_TREAT = "ImportToTreat";
 	/** Constant <code>PATH_IMPORT_TO_DO="ImportToDo"</code> */
-	public static final String PATH_IMPORT_TO_DO	= "ImportToDo";
+	public static final String PATH_IMPORT_TO_DO = "ImportToDo";
 	/** Constant <code>PATH_IMPORT_SUCCEEDED="ImportSucceeded"</code> */
 	public static final String PATH_IMPORT_SUCCEEDED = "ImportSucceeded";
 	/** Constant <code>PATH_IMPORT_FAILED="ImportFailed"</code> */
@@ -130,22 +133,22 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_QUALITY="Quality"</code> */
 	public static final String PATH_QUALITY = "Quality";
 	/** Constant <code>PATH_REGULATIONS="Regulations"</code> */
-	public static final String PATH_REGULATIONS = "Regulations";	
+	public static final String PATH_REGULATIONS = "Regulations";
 	/** Constant <code>PATH_PRODUCT_MICROBIO_CRITERIA="ProductMicrobioCriteria"</code> */
 	public static final String PATH_PRODUCT_MICROBIO_CRITERIA = "ProductMicrobioCriteria";
 	/** Constant <code>PATH_QUALITY_SPECIFICATIONS="QualitySpecifications"</code> */
-	public static final String PATH_QUALITY_SPECIFICATIONS = "QualitySpecifications";	
+	public static final String PATH_QUALITY_SPECIFICATIONS = "QualitySpecifications";
 	/** Constant <code>PATH_PRODUCT_SPECIFICATIONS="ProductSpecifications"</code> */
 	public static final String PATH_PRODUCT_SPECIFICATIONS = "ProductSpecifications";
 	/** Constant <code>PATH_CONTROL_PLANS="ControlPlans"</code> */
 	public static final String PATH_CONTROL_PLANS = "ControlPlans";
 	/** Constant <code>PATH_CONTROL_POINTS="ControlPoints"</code> */
-	public static final String PATH_CONTROL_POINTS = "ControlPoints";		
+	public static final String PATH_CONTROL_POINTS = "ControlPoints";
 	/** Constant <code>PATH_QUALITY_CONTROLS="QualityControls"</code> */
-	public static final String PATH_QUALITY_CONTROLS = "QualityControls";	
+	public static final String PATH_QUALITY_CONTROLS = "QualityControls";
 	/** Constant <code>PATH_NC="NonConformities"</code> */
 	public static final String PATH_NC = "NonConformities";
-	
+
 	//Quality Lists
 	/** Constant <code>PATH_QUALITY_LISTS="QualityLists"</code> */
 	public static final String PATH_QUALITY_LISTS = "QualityLists";
@@ -170,23 +173,22 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_CLAIM_DISTRIBUTION_NETWORKS="ClaimDistributionNetworks"</code> */
 	public static final String PATH_CLAIM_DISTRIBUTION_NETWORKS = "ClaimDistributionNetworks";
 	/** Constant <code>PATH_CONTROL_TEMPERATURES="clTemperatures"</code> */
-	public static final String PATH_CONTROL_TEMPERATURES= "clTemperatures";
+	public static final String PATH_CONTROL_TEMPERATURES = "clTemperatures";
 
-	public static final String PATH_CONTROL_TYPES= "ControlTypes";
-
+	public static final String PATH_CONTROL_TYPES = "ControlTypes";
 
 	// GHS
 	/** Constant <code>PATH_SECURITY_LISTS="SecurityLists"</code> */
 	public static final String PATH_SECURITY_LISTS = "SecurityLists";
-	
+
 	/** Constant <code>PATH_PERSONAL_PROTECTIONS="PersonalProtections"</code> */
-	public static final String PATH_PERSONAL_PROTECTIONS= "PersonalProtections";
+	public static final String PATH_PERSONAL_PROTECTIONS = "PersonalProtections";
 	/** Constant <code>PATH_PICTOGRAMS="Pictograms"</code> */
-	public static final String PATH_PICTOGRAMS= "Pictograms";
+	public static final String PATH_PICTOGRAMS = "Pictograms";
 	/** Constant <code>PATH_HAZARD_STATEMENTS="HazardStatements"</code> */
-	public static final String PATH_HAZARD_STATEMENTS= "HazardStatements";
+	public static final String PATH_HAZARD_STATEMENTS = "HazardStatements";
 	/** Constant <code>PATH_PRECAUTIONARY_STATEMENTS="PrecautionaryStatements"</code> */
-	public static final String PATH_PRECAUTIONARY_STATEMENTS= "PrecautionaryStatements";
+	public static final String PATH_PRECAUTIONARY_STATEMENTS = "PrecautionaryStatements";
 	/** Constant <code>PATH_HAZARD_CATEGORIES="HazardCategories"</code> */
 	public static final String PATH_HAZARD_CATEGORIES = "HazardCategories";
 	/** Constant <code>PATH_HAZARD_CATEGORIES="OnuCodes"</code> */
@@ -196,20 +198,19 @@ public class PlmRepoConsts {
 	/** Constant <code>PATH_HAZARD_CATEGORIES="PackagingGroupCodes"</code> */
 	public static final String PATH_PACKAGING_GROUP_CODES = "PackagingGroupCodes";
 
-	
 	/** Constant <code>PATH_COMPANIES="Companies"</code> */
 	public static final String PATH_COMPANIES = "Companies";
 	/** Constant <code>PATH_SUPPLIERS="Suppliers"</code> */
 	public static final String PATH_SUPPLIERS = "Suppliers";
 	/** Constant <code>PATH_CLIENTS="Clients"</code> */
-	public static final String PATH_CLIENTS	= "Clients";
-	
+	public static final String PATH_CLIENTS = "Clients";
+
 	public static final String PATH_CONTACTS = "Contacts";
-	
+
 	public static final String PATH_REGULATORY_USAGES = "RegulatoryUsages";
-	
+
 	public static final String PATH_CONTACT_TYPES = "ContactTypes";
-	
+
 	/** Constant <code>PATH_PRODUCT_REPORTTEMPLATES="ProductReportTemplates"</code> */
 	public static final String PATH_PRODUCT_REPORTTEMPLATES = "ProductReportTemplates";
 	/** Constant <code>PATH_QUALITY_REPORTTEMPLATES="QualityReportTemplates"</code> */
@@ -218,16 +219,15 @@ public class PlmRepoConsts {
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PRODUCTS = "ExportProducts";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_RAWMATERIAL_INGLIST="ExportRawMaterialIngList"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_INGLIST = "ExportIngList";
-	
+
 	public static final String PATH_SIMPLIFIED_COMPARISON_REPORT = "SimplifiedComparisonReport";
-	
+
 	public static final String PATH_REPORTS_EXPORT_SEARCH_LABELCLAIMLIST = "ExportLabelClaimList";
-	
+
 	public static final String PATH_REPORTS_EXPORT_SEARCH_PHYSICOCHEMICALLIST = "ExportPhysicoChemicalList";
-	
+
 	public static final String PATH_REPORTS_EXPORT_SEARCH_COMPOSITIONPACKAGING = "ExportCompositionPackaging";
-	
-	
+
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_INGLABELING="ExportIngLabeling"</code> */
 	public static final String PATH_REPORTS_EXPORT_SEARCH_LABELLING = "ExportLabelling";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_NON_CONFORMITIES="ExportNCSynthesis"</code> */
@@ -238,21 +238,20 @@ public class PlmRepoConsts {
 	public static final String PATH_REPORTS_EXPORT_SEARCH_QUALITY_CONTROLS = "ExportQualityControls";
 	/** Constant <code>PATH_REPORTS_ECO="ECOReports"</code> */
 	public static final String PATH_REPORTS_ECO = "ECOReports";
-	
-	public static final String PATH_REPORTS_EXPORT_SEARCH_CITEO= "ExportCiteo";
+
+	public static final String PATH_REPORTS_EXPORT_SEARCH_CITEO = "ExportCiteo";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_ALLERGENS="ExportAllergens"</code> */
-	public static final String PATH_REPORTS_EXPORT_SEARCH_ALLERGENS= "ExportAllergens";
+	public static final String PATH_REPORTS_EXPORT_SEARCH_ALLERGENS = "ExportAllergens";
 	/** Constant <code>PATH_REPORTS_EXPORT_SEARCH_NUTRIENTS="ExportNutrients"</code> */
-	public static final String PATH_REPORTS_EXPORT_SEARCH_NUTRIENTS= "ExportNutrients";
-	
-		
+	public static final String PATH_REPORTS_EXPORT_SEARCH_NUTRIENTS = "ExportNutrients";
+
 	// ECO
 	/** Constant <code>PATH_ECO="ECO"</code> */
 	public static final String PATH_ECO = "ECO";
-	
+
 	/** Constant <code>PATH_PRODUCT_HIERARCHY="/app:company_home/cm:System/cm:ProductH"{trunked}</code> */
 	public static final String PATH_PRODUCT_HIERARCHY = "/app:company_home/cm:System/cm:ProductHierarchy/bcpg:entityLists/";
-	
+
 	/** Constant <code>PATH_NUT_DATABASES="NutritionalDatabases"</code> */
 	public static final String PATH_NUT_DATABASES = "NutritionalDatabases";
 	/** Constant <code>PATH_CATALOGS="PropertyCatalogs"</code> */
@@ -263,12 +262,11 @@ public class PlmRepoConsts {
 	public static final String PATH_WORKFLOW_SCRIPTS = "WorkflowScripts";
 	/** Constant <code>PATH_MEAT_TYPES="MeatTypes"</code> */
 	public static final String PATH_MEAT_TYPES = "MeatTypes";
-	
+
 	public static final String PATH_LCA_UNITS = "LCAUnits";
-	
+
 	public static final String PATH_LCA_DATABASES = "LCADatabases";
-	
-	
+
 	//GS1
 	/** Constant <code>PATH_GS1_PACKAGING_TYPE_CODES="PackagingTypeCodes"</code> */
 	public static final String PATH_GS1_PACKAGING_TYPE_CODES = "PackagingTypeCodes";
@@ -278,15 +276,14 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_PLATFORM_TERM_AND_CONDITIONS_CODES = "PlatformTermsAndConditionsCodes";
 	/** Constant <code>PATH_GS1_SORTING_BONUS_CRITERIA="SortingBonusCriteria"</code> */
 	public static final String PATH_GS1_SORTING_BONUS_CRITERIA = "SortingBonusCriteria";
-	
+
 	/** Constant <code>PATH_GS1_SORTING_MALUS_CRITERIA="SortingMalusCriteria"</code> */
 	public static final String PATH_GS1_SORTING_MALUS_CRITERIA = "SortingMalusCriteria";
 	/** Constant <code>PATH_GS1_TARGET_MARKETS="SortingBonusCriteria"</code> */
 	public static final String PATH_GS1_TARGET_MARKETS = "TargetMarkets";
 	/** Constant <code>PATH_GS1_TARGET_MARKETS="PATH_GS1_DUTY_FEE_TAXES"</code> */
 	public static final String PATH_GS1_DUTY_FEE_TAXES = "DutyFeeTaxes";
-	
-	
+
 	public static final String PATH_GS1_DATA_CARRIER_TYPE_CODES = "DataCarrierTypeCode";
 	public static final String PATH_GS1_TRADE_ITEM_UNIT_DESCRIPTOR_CODES = "TradeItemUnitDescriptorCode";
 	public static final String PATH_GS1_PACKAGING_TERMS_AND_CONDITIONS_CODES = "PackagingTermsAndConditionsCode";
@@ -294,14 +291,12 @@ public class PlmRepoConsts {
 	public static final String PATH_GS1_TRADE_ITEM_TRADE_CHANNELS = "TradeItemTradeChannel";
 	public static final String PATH_GS1_SELLING_UNITS = "SellingUnitOfMeasure";
 	public static final String PATH_GS1_HANDLING_INSTRUCTIONS = "HandlingInstructions";
-	public static final String PATH_GS1_PREPARATION_TYPE ="PreparationType";
+	public static final String PATH_GS1_PREPARATION_TYPE = "PreparationType";
 	public static final String PATH_GS1_SPECIES_FOR_FISHERY = "SpeciesForFishery";
 	public static final String PATH_GS1_CATCH_METHID_CODES = "CatchMethodCodes";
 	public static final String PATH_GS1_CATCH_AREA_CODES = "CatchAreaCodes";
 	public static final String PATH_PUBCHANNELS = "PubChannels";
 	public static final String PATH_MICROBIO_TYPES = "MicrobioTypes";
 	public static final String PATH_GS1_ALCOHOL_BEVERAGE_CONTAINERS = "AlcoholBeverageContainers";
-
-
 
 }
