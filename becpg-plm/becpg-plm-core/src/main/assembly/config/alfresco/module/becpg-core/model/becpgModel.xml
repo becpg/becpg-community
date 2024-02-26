@@ -3386,8 +3386,7 @@
 			</properties>
 		</type>
 		
-<!-- 		TODO -->
-		<!-- List of Substances of Very High Concern -->
+		
 		<type name="bcpg:svhcList">
 			<parent>bcpg:productListItem</parent>
 			<properties>
@@ -3410,6 +3409,9 @@
 					</target>
 				</association>
 			</associations>
+			<mandatory-aspects>
+				<aspect>bcpg:svhcAspect</aspect>
+			</mandatory-aspects>
 		</type>
 
 
