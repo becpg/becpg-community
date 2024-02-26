@@ -16,19 +16,15 @@ import org.apache.commons.logging.LogFactory;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
-import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
-import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 import fr.becpg.repo.variant.model.VariantData;
 
@@ -41,18 +37,6 @@ import fr.becpg.repo.variant.model.VariantData;
 public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormulationHandler<SvhcListDataItem> {
 
 	private static final Log logger = LogFactory.getLog(SvhcCalculatingFormulationHandler.class);
-
-	private EntityTplService entityTplService;
-
-	private AlfrescoRepository<ProductData> alfrescoRepositoryProductData;
-
-	public void setEntityTplService(EntityTplService entityTplService) {
-		this.entityTplService = entityTplService;
-	}
-
-	public void setAlfrescoRepositoryProductData(AlfrescoRepository<ProductData> alfrescoRepositoryProductData) {
-		this.alfrescoRepositoryProductData = alfrescoRepositoryProductData;
-	}
 
 	/** {@inheritDoc} */
 	protected Class<SvhcListDataItem> getInstanceClass() {
@@ -128,40 +112,40 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 		return true;
 	}
-
-	/**
-	 * WORK IN PROGRESS : be implemented in future versions
-	 * @param formulatedProduct
-	 */
-	private void addIngredientsToSvhcList(ProductData formulatedProduct) {
-		List<SvhcListDataItem> svhcList = formulatedProduct.getSvhcList();
-
-		for (IngListDataItem ing : formulatedProduct.getIngList()) {
-
-			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
-
-			if (Boolean.TRUE.equals(ingItem.getIsSubstanceOfVeryHighConcern())) {
-
-				// if ing exists in the svhc list
-				if (svhcList.stream().map(SvhcListDataItem::getIng).anyMatch(svhcIngNodeRef -> svhcIngNodeRef.equals(ing.getIng()))) {
-					SvhcListDataItem substance = svhcList.stream().filter(sub -> sub.getIng().equals(ing.getIng())).findFirst().get();
-					substance.setQtyPerc(substance.getQtyPerc() + ing.getQtyPerc());
-
-				} else {
-					SvhcListDataItem svhcItem = SvhcListDataItem.build();
-					svhcItem.withIngredient(ing.getIng());
-					svhcItem.withQtyPerc(ing.getQtyPerc());
-
-					formulatedProduct.getSvhcList().add(svhcItem);
-				}
-
-				//				IngListDataItem ingSvhc = ingList.stream().filter(ing -> ing.getNodeRef().equals(svhc.getIng())).findFirst().get();
-
-			}
-
-		}
-
-	}
+//
+//	/**
+//	 * WORK IN PROGRESS : be implemented in future versions
+//	 * @param formulatedProduct
+//	 */
+//	private void addIngredientsToSvhcList(ProductData formulatedProduct) {
+//		List<SvhcListDataItem> svhcList = formulatedProduct.getSvhcList();
+//
+//		for (IngListDataItem ing : formulatedProduct.getIngList()) {
+//
+//			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
+//
+//			if (Boolean.TRUE.equals(ingItem.getIsSubstanceOfVeryHighConcern())) {
+//
+//				// if ing exists in the svhc list
+//				if (svhcList.stream().map(SvhcListDataItem::getIng).anyMatch(svhcIngNodeRef -> svhcIngNodeRef.equals(ing.getIng()))) {
+//					SvhcListDataItem substance = svhcList.stream().filter(sub -> sub.getIng().equals(ing.getIng())).findFirst().get();
+//					substance.setQtyPerc(substance.getQtyPerc() + ing.getQtyPerc());
+//
+//				} else {
+//					SvhcListDataItem svhcItem = SvhcListDataItem.build();
+//					svhcItem.withIngredient(ing.getIng());
+//					svhcItem.withQtyPerc(ing.getQtyPerc());
+//
+//					formulatedProduct.getSvhcList().add(svhcItem);
+//				}
+//
+//				//				IngListDataItem ingSvhc = ingList.stream().filter(ing -> ing.getNodeRef().equals(svhc.getIng())).findFirst().get();
+//
+//			}
+//
+//		}
+//
+//	}
 
 	/** {@inheritDoc} */
 	@Override

@@ -277,7 +277,6 @@ public class IngItem extends CompositeLabeling {
 		result = prime * result + ((ingCEECode == null) ? 0 : ingCEECode.hashCode());
 		result = prime * result + ((ingRID == null) ? 0 : ingRID.hashCode());
 		result = prime * result + ((ingType == null) ? 0 : ingType.hashCode());
-		// TODO : do I have to regenerate directly with Eclipse or do I change just the method
 		result = prime * result + ((isSubstanceOfVeryHighConcern == null) ? 0 : isSubstanceOfVeryHighConcern.hashCode());
 		result = prime * result + ((ingAllergensQtyPerc == null) ? 0 : ingAllergensQtyPerc.hashCode());
 
@@ -324,7 +323,6 @@ public class IngItem extends CompositeLabeling {
 				return false;
 		} else if (!ingType.equals(other.ingType))
 			return false;
-		//TODO : same as before, do I have to regenerate the equals or just modify the method
 		if (isSubstanceOfVeryHighConcern == null) {
 			if (other.isSubstanceOfVeryHighConcern != null)
 				return false;
