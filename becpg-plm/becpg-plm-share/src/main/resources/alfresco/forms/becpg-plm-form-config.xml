@@ -1636,10 +1636,7 @@
 					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="1-col-2" />
 					<field id="gs1:productActivityTypeCode" set="1-col-2" />
 					<field id="bcpg:isSubstanceOfVeryHighConcern" set="2-col-2" />
-					<field id="bcpg:svhcReasonsForInclusion" set="2-col-2">
-<!-- 						<control template="/org/alfresco/components/form/controls/selectone.ftl"> -->
-<!-- 						</control>                     -->
-					</field>
+					<field id="bcpg:svhcReasonsForInclusion" set="2-col-2"/>
 					<field id="bcpg:isDeleted" set="2-col-3" />
 					<field id="sec:readGroups" set="2-col-3" />
 				</appearance>
@@ -9584,69 +9581,42 @@
 					<show id="bcpg:isManualListItem" force="true" />
 				</field-visibility>
 				<appearance>
-					<set id="1-col-1" />
-					<field id="bcpg:svhcListIng" set="1-col-1">
+					<field id="bcpg:svhcListIng" >
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">
 								becpg/autocomplete/targetassoc/associations/bcpg:ing?filter=bcpg:isSubstanceOfVeryHighConcern%7Ctrue
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:svhcListQtyPerc" set="1-col-1">
+					<field id="bcpg:svhcListQtyPerc" >
 						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">perc</control-param>
 						</control>
 					</field>
-					<field id="bcpg:isManualListItem" set="1-col-1" />
+					<field id="bcpg:isManualListItem" />
 				</appearance>
 			</form>
 			
 			<!-- Data Grid view -->
 			<form id="datagrid">
 				<field-visibility>
-					<show id="bcpg:entityDataListState" force="true" />
-					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:svhcListIng" />
 					<show id="bcpg:svhcListQtyPerc" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="bcpg:svhcReasonsForInclusion" force="true" />
 				</field-visibility>
-				<appearance>
-					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
-				</appearance>
 			</form>
 			
 			<form id="customListDatagrid">
 				<field-visibility>
-					<show id="bcpg:entityDataListState" force="true" />
 					<show id="bcpg:variantIds" force="true" />
 					<show id="bcpg:svhcListIng" />
 					<show id="bcpg:svhcListQtyPerc" />
 					<show id="bcpg:isManualListItem" force="true" />
 					<show id="bcpg:svhcReasonsForInclusion" force="true" />
 				</field-visibility>
-				<appearance>
-					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
-				</appearance>
 			</form>
 
-			<form id="datagrid-rawMaterial">
-				<field-visibility>
-					<show id="bcpg:entityDataListState" force="true" />
-					<show id="bcpg:variantIds" force="true" />
-					<show id="bcpg:svhcListIng" />
-					<show id="bcpg:svhcListQtyPerc" />
-					<show id="bcpg:isManualListItem" force="true" />
-					<show id="bcpg:svhcReasonsForInclusion" force="true" />
-				</field-visibility>
-				<appearance>
-					<field id="bcpg:entityDataListState" label="hidden" />
-					<field id="bcpg:variantIds" label="hidden"></field>
-				</appearance>
-			</form>
-			
 			<form id="filter">
 				<field-visibility>
 					<show id="bcpg:svhcListIng" />
@@ -9656,20 +9626,19 @@
 				</field-visibility>
 
 				<appearance>
-					<set id="1-col-1" />
-					<field id="bcpg:svhcListIng" set="1-col-1">
+					<field id="bcpg:svhcListIng">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">
 								becpg/autocomplete/targetassoc/associations/bcpg:ing?filter=bcpg:isSubstanceOfVeryHighConcern%7Ctrue
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:svhcListQtyPerc" set="1-col-1">
+					<field id="bcpg:svhcListQtyPerc" >
 						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">perc</control-param>
 						</control>
 					</field>
-					<field id="bcpg:isManualListItem" set="1-col-1" />
+					<field id="bcpg:isManualListItem" />
 				</appearance>
 			</form>
 		</forms>
@@ -9687,20 +9656,19 @@
 				</field-visibility>
 
 				<appearance>
-					<set id="1-col-1" />
-					<field id="bcpg:svhcListIng" set="1-col-1">
+					<field id="bcpg:svhcListIng">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
 							<control-param name="ds">
 								becpg/autocomplete/targetassoc/associations/bcpg:ing?filter=bcpg:isSubstanceOfVeryHighConcern%7Ctrue
 							</control-param>
 						</control>
 					</field>
-					<field id="bcpg:svhcListQtyPerc" set="1-col-1">
+					<field id="bcpg:svhcListQtyPerc">
 						<control template="/org/alfresco/components/form/controls/number-unit.ftl">
 							<control-param name="unit">perc</control-param>
 						</control>
 					</field>
-					<field id="bcpg:isManualListItem" set="1-col-1" />
+					<field id="bcpg:isManualListItem" />
 				</appearance>
 			</form>
 		</forms>
