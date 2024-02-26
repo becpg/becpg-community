@@ -112,7 +112,7 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 			}, formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
 
 			// TODO : 
-			//			addIngredientsToSvhcList(formulatedProduct);
+			// addIngredientsToSvhcList(formulatedProduct);
 
 		}
 
@@ -130,6 +130,7 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 	}
 
 	/**
+	 * WORK IN PROGRESS : be implemented in future versions
 	 * @param formulatedProduct
 	 */
 	private void addIngredientsToSvhcList(ProductData formulatedProduct) {
@@ -203,25 +204,6 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 	/** {@inheritDoc} */
 	@Override
 	protected Map<NodeRef, List<NodeRef>> getMandatoryCharacts(ProductData formulatedProduct, QName componentType) {
-
-		// TODO : tu m'avais dit de ne pas reprendre cette méthode mais sinon j'ai des NPE, je ne sais pas si je dois retourner une liste 
-		// vide ou pas. Du coup j'ai repris le code qui était fait
-		Map<NodeRef, List<NodeRef>> mandatoryCharacts = new HashMap<>();
-		//				NodeRef entityTplNodeRef = entityTplService.getEntityTpl(componentType);
-		//		
-		//				if (entityTplNodeRef != null) {
-		//		
-		//					List<SvhcListDataItem> svhcList = alfrescoRepositoryProductData.findOne(entityTplNodeRef).getSvhcList();
-		//		
-		//					for (SvhcListDataItem svhcListDataItem : formulatedProduct.getSvhcList()) {
-		//						for (SvhcListDataItem s : svhcList) {
-		//							if ((s.getIng() != null) && s.getIng().equals(svhcListDataItem.getIng()) && isCharactFormulated(svhcListDataItem)) {
-		//								mandatoryCharacts.put(s.getIng(), new ArrayList<>());
-		//								break;
-		//							}
-		//						}
-		//					}
-		//				}
-		return mandatoryCharacts;
+		return new HashMap<>();
 	}
 }
