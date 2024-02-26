@@ -20,15 +20,10 @@ import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.PhysicoChemListDataItem;
-import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
-import fr.becpg.repo.variant.model.VariantData;
 
 /**
  * <p>PhysicoChemCalculatingFormulationHandler class.</p>
@@ -43,11 +38,11 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 	private EntityTplService entityTplService;
 
 	private AlfrescoRepository<ProductData> alfrescoRepositoryProductData;
-	
+
 	public void setEntityTplService(EntityTplService entityTplService) {
 		this.entityTplService = entityTplService;
 	}
-	
+
 	public void setAlfrescoRepositoryProductData(AlfrescoRepository<ProductData> alfrescoRepositoryProductData) {
 		this.alfrescoRepositoryProductData = alfrescoRepositoryProductData;
 	}
@@ -71,46 +66,12 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 				formulatedProduct.setPhysicoChemList(new LinkedList<>());
 			}
 
-			formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList(), new SimpleListQtyProvider() {
-				
-				@Override
-				public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-					return FormulationHelper.getQtyInKg(compoListDataItem);
-				}
-				
-				@Override
-				public Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-					return FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
-				}
+			boolean hasCompoEl = formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
+					|| formulatedProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
+					|| formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE));
 
-				@Override
-				public Double getNetWeight(VariantData variant) {
-					return FormulationHelper.getNetWeight(formulatedProduct, variant, FormulationHelper.DEFAULT_NET_WEIGHT);
-				}
-
-				@Override
-				public Double getNetQty(VariantData variant) {
-					return  FormulationHelper.getNetQtyInLorKg(formulatedProduct ,variant , FormulationHelper.DEFAULT_NET_WEIGHT);
-				}
-
-				@Override
-				public Boolean omitElement(CompoListDataItem compoListDataItem) {
-					return DeclarationType.Omit.equals(compoListDataItem.getDeclType());
-				}
-
-				@Override
-				public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
-					return  FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, componentProduct);
-				}
-
-				@Override
-				public Double getQty(ProcessListDataItem processListDataItem, VariantData variant) {
-					return FormulationHelper.getQty(formulatedProduct, variant , processListDataItem);
-				}
-
-				
-			},
-					formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
+			formulateSimpleList(formulatedProduct, formulatedProduct.getPhysicoChemList(), new DefaultSimpleListQtyProvider(formulatedProduct),
+					hasCompoEl);
 
 			computeFormulatedList(formulatedProduct, formulatedProduct.getPhysicoChemList(), PLMModel.PROP_PHYSICO_CHEM_FORMULA,
 					"message.formulate.physicoChemList.error");
@@ -168,7 +129,8 @@ public class PhysicoChemCalculatingFormulationHandler extends AbstractSimpleList
 
 			for (PhysicoChemListDataItem physicoChemListDataItem : formulatedProduct.getPhysicoChemList()) {
 				for (PhysicoChemListDataItem pC : physicoChemList) {
-					if ((pC.getPhysicoChem() != null) && pC.getPhysicoChem().equals(physicoChemListDataItem.getPhysicoChem()) && isCharactFormulated(physicoChemListDataItem)) {
+					if ((pC.getPhysicoChem() != null) && pC.getPhysicoChem().equals(physicoChemListDataItem.getPhysicoChem())
+							&& isCharactFormulated(physicoChemListDataItem)) {
 						mandatoryCharacts.put(pC.getPhysicoChem(), new ArrayList<>());
 						break;
 					}

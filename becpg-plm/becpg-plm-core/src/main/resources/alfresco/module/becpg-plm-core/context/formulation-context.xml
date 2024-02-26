@@ -175,6 +175,7 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
+				
 				<bean class="fr.becpg.repo.product.formulation.MeatContentFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
@@ -203,6 +204,7 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="nodeService" ref="nodeService" />
 				</bean>
+				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.SvhcCalculatingFormulationHandler" />
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService" />
