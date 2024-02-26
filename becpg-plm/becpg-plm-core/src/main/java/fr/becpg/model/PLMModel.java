@@ -378,9 +378,9 @@ public interface PLMModel {
 	/** Constant <code>TYPE_SVHCLIST</code> */
 	QName TYPE_SVHCLIST = QName.createQName(BeCPGModel.BECPG_URI, "svhcList");
 	/** Constant <code>TYPE_SVHC_LIST_QTY_PERC</code> */
-	QName TYPE_SVHC_LIST_QTY_PERC = QName.createQName(BeCPGModel.BECPG_URI, "svhcListQtyPerc");
+	QName PROP_SVHC_LIST_QTY_PERC = QName.createQName(BeCPGModel.BECPG_URI, "svhcListQtyPerc");
 	/** Constant <code>TYPE_SVHC_LIST_ING</code> */
-	QName TYPE_SVHC_LIST_ING = QName.createQName(BeCPGModel.BECPG_URI, "svhcListIng");
+	QName ASSOC_SVHC_LIST_ING = QName.createQName(BeCPGModel.BECPG_URI, "svhcListIng");
 
 	/** Constant <code>PROP_SVHC_REASONS_FOR_INCLUSION</code> */
 	QName PROP_SVHC_REASONS_FOR_INCLUSION = QName.createQName(BeCPGModel.BECPG_URI, "svhcReasonsForInclusion");
