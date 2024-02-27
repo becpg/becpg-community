@@ -97,6 +97,11 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 
 	}
 
+	@Override
+	public boolean isRegisteredQName(QName qname) {
+		return qnameCache.containsValue(qname);
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void registerEntity(Class<T> clazz) {
 		logger.debug("Register entity : " + clazz.getName());
