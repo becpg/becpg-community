@@ -257,6 +257,7 @@ public class AuditActivityPatch extends AbstractBeCPGPatch {
 							auditScope.putAttribute("prop_bcpg_alData", activityListData);
 						}
 						
+						nodeService.addAspect(activityNodeRef, ContentModel.ASPECT_TEMPORARY, null);
 						nodeService.deleteNode(activityNodeRef);
 						
 					} else {
