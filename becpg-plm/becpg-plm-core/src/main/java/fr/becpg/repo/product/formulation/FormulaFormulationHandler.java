@@ -21,8 +21,10 @@ package fr.becpg.repo.product.formulation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 
@@ -261,6 +263,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 															.getI18NMessage("message.formulate.formula.toolong", dynamicCharactListItem.getTitle()))
 															.ofDataType(RequirementDataType.Formulation));
 
+
 										} else {
 											dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
 											if (logger.isDebugEnabled()) {
@@ -324,6 +327,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 										.withMessage(MLTextHelper.getI18NMessage("message.formulate.formula.error", dynamicCharactListItem.getTitle(),
 												e.getLocalizedMessage()))
 										.withSources(Arrays.asList(productData.getNodeRef())).ofDataType(RequirementDataType.Formulation));
+
 
 						if (logger.isDebugEnabled()) {
 							logger.warn("Error in formula : [" + dynamicCharactListItem.getTitle() + "] - " + dynamicCharactListItem.getFormula());
@@ -524,64 +528,45 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		if ((sourceList != null) && (targetList != null)) {
 			for (DynamicCharactListItem sourceItem : sourceList) {
 				if (sourceItem.getTitle() != null) {
-					if (sourceItem.isSynchronisable()) {
-						boolean isFound = false;
-						for (DynamicCharactListItem targetItem : targetList) {
-							// charact renamed
-							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getTitle() != null
-									&& !sourceItem.getTitle().equals(targetItem.getTitle())) {
-								targetItem.setTitle(sourceItem.getTitle());
-							}
-							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getMlTitle() != null
-									&& !sourceItem.getMlTitle().equals(targetItem.getMlTitle())) {
-								targetItem.setMlTitle(sourceItem.getMlTitle());
-							}
-							// update formula
-							if (sourceItem.getName().equals(targetItem.getName())) {
 
-								targetItem.setName(sourceItem.getName());
-								targetItem.setTitle(sourceItem.getTitle());
-								targetItem.setSort(sourceItem.getSort());
-								if (!Boolean.TRUE.equals(targetItem.getIsManual())) {
-									targetItem.setFormula(sourceItem.getFormula());
-									targetItem.setColumnName(sourceItem.getColumnName());
-									targetItem.setGroupColor(sourceItem.getGroupColor());
-									targetItem.setColor(sourceItem.getColor());
-									targetItem.setSynchronisableState(sourceItem.getSynchronisableState());
-									targetItem.setExecOrder(sourceItem.getExecOrder());
-									targetItem.setMultiLevelFormula(sourceItem.getMultiLevelFormula());
-								}
-								isFound = true;
-								break;
-							}
-						}
+					Optional<DynamicCharactListItem> existingItem = targetList.stream().filter(item -> sourceItem.getTitle().equals(item.getTitle()))
+							.findFirst();
 
-						if (!isFound) {
-							sourceItem.setNodeRef(null);
-							sourceItem.setParentNodeRef(null);
-							targetList.add(sourceItem);
-						}
+					if (!existingItem.isPresent()) {
+						existingItem = targetList.stream().filter(item -> sourceItem.getName().equals(item.getName())).findFirst();
+					}
+
+					if (existingItem.isPresent() && sourceItem.isSynchronisable()) {
+						updateItem(existingItem.get(), sourceItem);
 					} else {
 						sourceItem.setNodeRef(null);
 						sourceItem.setParentNodeRef(null);
-						sourceItem.setTransient(true);
+						sourceItem.setTransient(!sourceItem.isSynchronisable());
 						targetList.add(sourceItem);
 					}
 				}
 			}
 
-			targetList.sort((o1, o2) -> {
-				if ((o1.getSort() == null) && (o2.getSort() == null)) {
-					return 0;
-				}
-				if ((o1.getSort() == null) && (o2.getSort() != null)) {
-					return -1;
-				}
-				if ((o2.getSort() == null) && (o1.getSort() != null)) {
-					return 1;
-				}
-				return o1.getSort().compareTo(o2.getSort());
-			});
+			targetList.sort(Comparator.comparing(DynamicCharactListItem::getSort, Comparator.nullsFirst(Comparator.naturalOrder())));
+		}
+
+	}
+
+	private void updateItem(DynamicCharactListItem targetItem, DynamicCharactListItem sourceItem) {
+
+		targetItem.setTitle(sourceItem.getTitle());
+		targetItem.setMlTitle(sourceItem.getMlTitle());
+		targetItem.setSort(sourceItem.getSort());
+
+		if (!Boolean.TRUE.equals(targetItem.getIsManual())) {
+			targetItem.setName(sourceItem.getName());
+			targetItem.setFormula(sourceItem.getFormula());
+			targetItem.setColumnName(sourceItem.getColumnName());
+			targetItem.setGroupColor(sourceItem.getGroupColor());
+			targetItem.setColor(sourceItem.getColor());
+			targetItem.setSynchronisableState(sourceItem.getSynchronisableState());
+			targetItem.setExecOrder(sourceItem.getExecOrder());
+			targetItem.setMultiLevelFormula(sourceItem.getMultiLevelFormula());
 		}
 	}
 }
