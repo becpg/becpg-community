@@ -367,6 +367,8 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	@Override
 	public void convert(final NodeRef from, final NodeRef to, EntityFormat toFormat) {
 
+		long start = System.currentTimeMillis();
+		
 		integrityChecker.setEnabled(false);
 		
 		try {
@@ -388,6 +390,10 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				return null;
 			}, false, true);
 			
+			if (logger.isDebugEnabled()) {
+				logger.debug("VersionExporter, time elapsed : " + (System.currentTimeMillis() - start) + " ms");
+			}
+			start = System.currentTimeMillis();
 			
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				
@@ -405,6 +411,11 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				
 			}, false, true);
 			
+			if (logger.isDebugEnabled()) {
+				logger.debug("extractEntityData, time elapsed : " + (System.currentTimeMillis() - start) + " ms");
+			}
+			start = System.currentTimeMillis();
+			
 			AuthenticationUtil.runAs(() -> {
 				
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
@@ -416,6 +427,11 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				}, false, true);
 				return null;
 			}, AuthenticationUtil.getAdminUserName());
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("generateReports, time elapsed : " + (System.currentTimeMillis() - start) + " ms");
+			}
+			start = System.currentTimeMillis();
 			
 			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 				
@@ -434,6 +450,10 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				return null;
 				
 			}, false, true);
+			
+			if (logger.isDebugEnabled()) {
+				logger.debug("delete links, time elapsed : " + (System.currentTimeMillis() - start) + " ms");
+			}
 		} finally {
 			integrityChecker.setEnabled(true);
 		}
@@ -517,24 +537,34 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 	@Override
 	public NodeRef convertVersionHistoryNodeRef(NodeRef node) {
 		
+		if (logger.isDebugEnabled()) {
+			logger.debug("converting history nodeRef " + node);
+		}
+		
 		long start = System.currentTimeMillis();
 		
 		Set<NodeRef> relatives = findConvertibleRelatives(node, new HashSet<>(), null, -1, new AtomicInteger(0), null);
 		
+		if (logger.isDebugEnabled()) {
+			logger.debug("findConvertibleRelatives, time elapsed : " + (System.currentTimeMillis() - start) + " ms");
+		}
+		
+		start = System.currentTimeMillis();
+		
 		if (relatives.size() > 1) {
 			String name = (String) nodeService.getProperty(node, ContentModel.PROP_NAME);
-
-			StringBuilder sb = new StringBuilder();
 			
-			sb.append("Couldn't convert entity '" + name + "' because it is used by not converted entities :");
-			
-			for (NodeRef relative : relatives) {
-				if (!relative.equals(node)) {
-					String relativeName = (String) nodeService.getProperty(relative, ContentModel.PROP_NAME);
-					sb.append(" '" + relativeName + "' ");
+			if (logger.isDebugEnabled()) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("Couldn't convert entity '" + name + "' because it is used by not converted entities :");
+				for (NodeRef relative : relatives) {
+					if (!relative.equals(node)) {
+						String relativeName = (String) nodeService.getProperty(relative, ContentModel.PROP_NAME);
+						sb.append(" '" + relativeName + "' ");
+					}
 				}
+				logger.debug(sb.toString());
 			}
-			logger.debug(sb.toString());
 			
 			return null;
 		}
@@ -584,9 +614,10 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 				tenantName = "default";
 			}
 			
-			long stop = System.currentTimeMillis();
-
-			logger.debug("Converted entity '" + name + "', from " + node + " to " + versionNode + ", tenant : " + tenantName + ", time elapsed : " + (stop - start) + " ms");
+			if (logger.isDebugEnabled()) {
+				logger.debug("Converted entity '" + name + "', from " + node + " to " + versionNode + ", tenant : "
+						+ tenantName + ", time elapsed : " + (System.currentTimeMillis() - start) + " ms");
+			}
 
 			return versionNode;
 		}
