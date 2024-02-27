@@ -50,6 +50,12 @@ public class BatchInfo {
 	public static final String BATCH_USER = "batchUser";
 	
 	public static final String BATCH_ID = "batchId";
+	
+	public static final int LOW_PRIORITY = 2;
+	public static final int MEDIUM_PRIORITY = 1;
+	public static final int HIGH_PRIORITY = 0;
+	
+	private int priority = MEDIUM_PRIORITY;
 
 	public BatchInfo(String batchId, String batchDescId) {
 		super();
@@ -62,6 +68,14 @@ public class BatchInfo {
 	public BatchInfo(String batchId, String batchDescId, String entityDescription) {
 		this(batchId, batchDescId);
 		this.entityDescription = entityDescription;
+	}
+	
+	public int getPriority() {
+		return priority;
+	}
+	
+	public void setPriority(int priority) {
+		this.priority = priority;
 	}
 	
 	public String getTenant() {
@@ -157,7 +171,7 @@ public class BatchInfo {
 	
 	@Override
 	public int hashCode() {
-		return Objects.hash(batchDescId, batchId, batchSize, batchUser, mailAction, mailActionUrl, notifyByMail, runAsSystem, workerThreads);
+		return Objects.hash(priority, batchDescId, batchId, batchSize, batchUser, mailAction, mailActionUrl, notifyByMail, runAsSystem, workerThreads);
 	}
 
 	@Override
@@ -171,7 +185,7 @@ public class BatchInfo {
 		BatchInfo other = (BatchInfo) obj;
 		return Objects.equals(batchDescId, other.batchDescId) && Objects.equals(batchId, other.batchId) && batchSize == other.batchSize
 				&& Objects.equals(batchUser, other.batchUser) && Objects.equals(mailAction, other.mailAction)
-				&& Objects.equals(mailActionUrl, other.mailActionUrl) && Objects.equals(notifyByMail, other.notifyByMail)
+				&& Objects.equals(mailActionUrl, other.mailActionUrl) && Objects.equals(notifyByMail, other.notifyByMail) && Objects.equals(priority, other.priority)
 				&& Objects.equals(runAsSystem, other.runAsSystem) && workerThreads == other.workerThreads;
 	}
 
