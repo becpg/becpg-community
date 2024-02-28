@@ -281,7 +281,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 					Locale currentContentLocal = I18NUtil.getContentLocale();
 					try {
 
-						StopWatchSupport.stopWatch(() -> {
+						StopWatchSupport.build().logger(logger).run(() -> {
 							Locale defaultLocale = MLTextHelper.getNearestLocale(Locale.getDefault());
 							
 							I18NUtil.setLocale(defaultLocale);
@@ -533,7 +533,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	@SuppressWarnings("unchecked")
 	private void filterByReportKind(Element dataXml, NodeRef tplNodeRef) {
 		
-		StopWatchSupport.stopWatch(() -> {
+		StopWatchSupport.build().logger(logger).run(() -> {
 			if (getFromCacheListFolderNodeRef(RepoConsts.PATH_REPORT_KINDLIST) == null) {
 				return null;
 			}
@@ -1197,7 +1197,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 		final Map<String, String> finalPreferences = preferences;
 		final EntityReportParameters finalReportParameters = reportParameters;
 		
-		return StopWatchSupport.stopWatch(() -> {
+		return StopWatchSupport.build().logger(logger).run(() -> {
 			
 			try {
 				I18NUtil.setLocale(locale);
@@ -1473,7 +1473,7 @@ public class EntityReportServiceImpl implements EntityReportService, Formulation
 	@Override
 	public boolean shouldGenerateReport(NodeRef entityNodeRef, NodeRef documentNodeRef) {
 		
-		return StopWatchSupport.stopWatch(() -> {
+		return StopWatchSupport.build().logger(logger).run(() -> {
 			
 			if (entityNodeRef.getStoreRef().getProtocol().equals(VersionBaseModel.STORE_PROTOCOL)
 					|| entityNodeRef.getStoreRef().getIdentifier().equals(Version2Model.STORE_ID)) {
