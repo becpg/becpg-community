@@ -26,6 +26,8 @@ import org.alfresco.rest.framework.resource.parameters.where.WhereCompiler;
 import org.alfresco.util.ISO8601DateFormat;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.tree.CommonTree;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,6 +35,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.audit.exception.BeCPGAuditException;
+import fr.becpg.repo.audit.helper.StopWatchSupport;
 import fr.becpg.repo.audit.model.AuditDataType;
 import fr.becpg.repo.audit.model.AuditQuery;
 import fr.becpg.repo.audit.plugin.AuditPlugin;
@@ -44,6 +47,8 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	
 	private static final String BECPG_AUDIT_PATH = "/becpg/audit";
 
+	private static final Log logger = LogFactory.getLog(DatabaseAuditServiceImpl.class);
+
 	@Autowired
 	@Qualifier("auditApi")
 	@Lazy
@@ -54,37 +59,42 @@ public class DatabaseAuditServiceImpl implements DatabaseAuditService {
 	
 	@Override
 	public int recordAuditEntry(DatabaseAuditPlugin auditPlugin, Map<String, Serializable> auditValues, boolean deleteOldEntry) {
-		
-		auditPlugin.beforeRecordAuditEntry(auditValues);
-		
-		try {
+		return StopWatchSupport.build().logger(logger).run(() -> {
+			auditPlugin.beforeRecordAuditEntry(auditValues);
 			
-			AuditEntry entryToDelete = null;
-			
-			int id = (int) auditValues.get(AuditPlugin.ID);
-
-			if (deleteOldEntry) {
+			try {
 				
-				AuditQuery auditFilter = AuditQuery.createQuery().filter(AuditPlugin.ID, String.valueOf(id)).maxResults(1);
+				AuditEntry entryToDelete = null;
 				
-				Collection<AuditEntry> entries = internalListAuditEntries(auditPlugin, auditFilter);
+				int id = (int) auditValues.get(AuditPlugin.ID);
 				
-				if (!entries.isEmpty()) {
-					entryToDelete = entries.iterator().next();
+				if (deleteOldEntry) {
+					
+					AuditQuery auditFilter = AuditQuery.createQuery().filter(AuditPlugin.ID, String.valueOf(id)).maxResults(1);
+					
+					Collection<AuditEntry> entries = internalListAuditEntries(auditPlugin, auditFilter);
+					
+					if (!entries.isEmpty()) {
+						entryToDelete = entries.iterator().next();
+					}
+					
 				}
+				
+				auditComponent.recordAuditValues(BECPG_AUDIT_PATH, recreateAuditMap(auditPlugin, auditValues, false));
+				
+				StopWatchSupport.addCheckpoint("recordAuditValues");
+				
+				if (entryToDelete != null) {
+					auditComponent.deleteAuditEntries(Arrays.asList(entryToDelete.getId()));
+					StopWatchSupport.addCheckpoint("deleteAuditEntries");
+				}
+				
+				return id;
+				
+			} finally {
+				auditPlugin.afterRecordAuditEntry(auditValues);
 			}
-			
-			auditComponent.recordAuditValues(BECPG_AUDIT_PATH, recreateAuditMap(auditPlugin, auditValues, false));
-			
-			if (entryToDelete != null) {
-				auditComponent.deleteAuditEntries(Arrays.asList(entryToDelete.getId()));
-			}
-			
-			return id;
-			
-		} finally {
-			auditPlugin.afterRecordAuditEntry(auditValues);
-		}
+		});
 		
 	}
 
