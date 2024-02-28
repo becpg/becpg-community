@@ -793,7 +793,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 				state.addToState(branchNodeRef);
 
-				return StopWatchSupport.stopWatch(() ->
+				return StopWatchSupport.build().logger(logger).scopeName(branchToNodeRef.toString()).run(() ->
 					AuthenticationUtil.runAsSystem(() ->
 						transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 							
@@ -1007,8 +1007,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							}
 							
 						}, false, false)
-					)
-				, branchToNodeRef);
+					));
 				
 			} finally {
 				MLPropertyInterceptor.setMLAware(mlAware);
@@ -1393,7 +1392,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			final Date finalNewEffectivity = newEffectivity;
 			final Date finalOldEffectivity = oldEffectivity;
 			
-			return StopWatchSupport.stopWatch(() -> {
+			return StopWatchSupport.build().logger(logger).run(() -> {
 				
 				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
 					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, finalOldEffectivity);
@@ -1535,7 +1534,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 
 	private NodeRef createEmptyBranch(NodeRef entityNodeRef, NodeRef parentRef) {
 
-		return StopWatchSupport.stopWatch(() -> {
+		return StopWatchSupport.build().logger(logger).scopeName(entityNodeRef.toString()).run(() -> {
 			boolean mlAware = MLPropertyInterceptor.setMLAware(true);
 			try {
 				
@@ -1569,7 +1568,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			} finally {
 				MLPropertyInterceptor.setMLAware(mlAware);
 			}
-		}, entityNodeRef);
+		});
 		
 	}
 
@@ -1577,7 +1576,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef createBranch(NodeRef entityNodeRef, NodeRef parentRef) {
 
-		return StopWatchSupport.stopWatch(() -> {
+		return StopWatchSupport.build().logger(logger).scopeName(entityNodeRef.toString()).run(() -> {
 			
 			boolean mlAware = MLPropertyInterceptor.setMLAware(true);
 			try (ActionStateContext state = BeCPGStateHelper.onBranchEntity(entityNodeRef)) {
@@ -1629,7 +1628,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			} finally {
 				MLPropertyInterceptor.setMLAware(mlAware);
 			}
-		}, entityNodeRef);
+		});
 	}
 
 	/** {@inheritDoc} */
