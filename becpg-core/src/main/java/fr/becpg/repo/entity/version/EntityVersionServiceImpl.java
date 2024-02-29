@@ -1240,43 +1240,55 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	
 	private void exportEntityToVersion(final NodeRef entityNodeRef, final NodeRef versionNodeRef) {
 
-		integrityChecker.setEnabled(false);
-		
-		try {
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
-				Location exportFrom = new Location(entityNodeRef);
-				crawlerParameters.setExportFrom(exportFrom);
-				crawlerParameters.setCrawlSelf(true);
-				crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION,
-						BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS });
-				crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
-				exporterService.exportView(new VersionExporter(entityNodeRef, versionNodeRef, dbNodeService, entityDictionaryService), crawlerParameters, null);
-				return null;
-			}, false, true);
+		StopWatchSupport.build().logger(logger).scopeName("convert entity version").run(() -> {
+			integrityChecker.setEnabled(false);
 			
-			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-				String fromName = (String) dbNodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
-				dbNodeService.setProperty(versionNodeRef, ContentModel.PROP_NAME, fromName);
-				String versionLabel = (String) dbNodeService.getProperty(versionNodeRef, BeCPGModel.PROP_VERSION_LABEL);
-				dbNodeService.setProperty(versionNodeRef, ContentModel.PROP_VERSION_LABEL, versionLabel);
-				String generateEntityData = entityFormatService.generateEntityData(entityNodeRef, EntityFormat.JSON);
-				entityFormatService.updateEntityFormat(versionNodeRef, EntityFormat.JSON, generateEntityData);
-				return null;
-			}, false, true);
-			
-			AuthenticationUtil.runAs(() -> {
+			try {
 				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					entityReportService.generateReports(entityNodeRef, versionNodeRef);
+					ExporterCrawlerParameters crawlerParameters = new ExporterCrawlerParameters();
+					Location exportFrom = new Location(entityNodeRef);
+					crawlerParameters.setExportFrom(exportFrom);
+					crawlerParameters.setCrawlSelf(true);
+					crawlerParameters.setExcludeChildAssocs(new QName[] { RenditionModel.ASSOC_RENDITION, ForumModel.ASSOC_DISCUSSION,
+							BeCPGModel.ASSOC_ENTITYLISTS, ContentModel.ASSOC_RATINGS });
+					crawlerParameters.setExcludeNamespaceURIs(Arrays.asList(ReportModel.TYPE_REPORT.getNamespaceURI()).toArray(new String[0]));
+					exporterService.exportView(new VersionExporter(entityNodeRef, versionNodeRef, dbNodeService, entityDictionaryService), crawlerParameters, null);
 					return null;
 				}, false, true);
-				return null;
-			}, AuthenticationUtil.getAdminUserName());
-			
-			deleteNodeRef(entityNodeRef);
-		} finally {
-			integrityChecker.setEnabled(true);
-		}
+				
+				StopWatchSupport.addCheckpoint("export version");
+				
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					String fromName = (String) dbNodeService.getProperty(entityNodeRef, ContentModel.PROP_NAME);
+					dbNodeService.setProperty(versionNodeRef, ContentModel.PROP_NAME, fromName);
+					String versionLabel = (String) dbNodeService.getProperty(versionNodeRef, BeCPGModel.PROP_VERSION_LABEL);
+					dbNodeService.setProperty(versionNodeRef, ContentModel.PROP_VERSION_LABEL, versionLabel);
+					String generateEntityData = entityFormatService.generateEntityData(entityNodeRef, EntityFormat.JSON);
+					entityFormatService.updateEntityFormat(versionNodeRef, EntityFormat.JSON, generateEntityData);
+					return null;
+				}, false, true);
+				
+				StopWatchSupport.addCheckpoint("update format");
+				
+				AuthenticationUtil.runAs(() -> {
+					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+						entityReportService.generateReports(entityNodeRef, versionNodeRef);
+						return null;
+					}, false, true);
+					return null;
+				}, AuthenticationUtil.getAdminUserName());
+				
+				StopWatchSupport.addCheckpoint("generate reports");
+				
+				deleteNodeRef(entityNodeRef);
+				
+				StopWatchSupport.addCheckpoint("delete node");
+			} finally {
+				integrityChecker.setEnabled(true);
+			}
+			return null;
+		});
+		
 
 	}
 	
