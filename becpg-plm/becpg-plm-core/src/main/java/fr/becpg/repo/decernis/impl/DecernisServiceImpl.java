@@ -237,7 +237,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 
 		String citation = items.stream().map(item -> item.getCitation().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
 		String usages = items.stream().map(item -> item.getUsages().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
-		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
+		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue()).filter(r -> r != null && !r.equals("-")).distinct().sorted().collect(Collectors.joining(", "));
 		String resultIndicators = items.stream().map(item -> item.getResultIndicator().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
 
 		mergedItem.setResultIndicator(new MLText(resultIndicators));
