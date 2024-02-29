@@ -529,7 +529,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 			for (DynamicCharactListItem sourceItem : sourceList) {
 				if (sourceItem.getTitle() != null) {
 
-					Optional<DynamicCharactListItem> existingItem = targetList.stream().filter(item -> sourceItem.getTitle().equals(item.getTitle()))
+					Optional<DynamicCharactListItem> existingItem = targetList.stream().filter(item -> sourceItem.getTitle().equals(item.getTitle()) 
+							&&( sourceItem.isColumn().equals(item.isColumn())) )
 							.findFirst();
 
 					if (!existingItem.isPresent()) {
