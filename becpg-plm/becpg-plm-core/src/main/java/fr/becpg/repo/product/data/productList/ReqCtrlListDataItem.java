@@ -230,6 +230,15 @@ public class ReqCtrlListDataItem extends BeCPGDataObject {
 	public List<NodeRef> getSources() {
 		return sources;
 	}
+	
+	public void addSource(NodeRef sourceNodeRef) {
+		if(sources == null) {
+			sources = new ArrayList<>();
+		}
+		if(!sources.contains(sourceNodeRef)) {
+			sources.add(sourceNodeRef);
+		}
+	}
 
 	/**
 	 * <p>Setter for the field <code>sources</code>.</p>
