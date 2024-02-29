@@ -1,5 +1,6 @@
 package fr.becpg.repo.batch;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -113,10 +114,27 @@ public class BatchQueueServiceImpl implements BatchQueueService, ApplicationList
 		
 		Runnable command = new BatchCommand<>(batchInfo, batchSteps, closingHook);
 		if (!threadExecutor.getQueue().contains(command) && !command.equals(runningCommand)) {
+			
+			List<Runnable> reorderedCommands = new ArrayList<>();
+			
+			for (Runnable batch : threadExecutor.getQueue()) {
+				if (batch instanceof BatchCommand && ((BatchCommand<?>) batch).getBatchInfo().getPriority() > batchInfo.getPriority()) {
+					reorderedCommands.add(batch);
+				}
+			}
+			
+			for (Runnable reorderedCommand : reorderedCommands) {
+				threadExecutor.remove(reorderedCommand);
+			}
+			
 			if(logger.isDebugEnabled()) {
 				logger.debug("Batch " + batchInfo.getBatchId() + " added to execution queue");
 			}
 			threadExecutor.execute(command);
+			
+			for (Runnable reorderedCommand : reorderedCommands) {
+				threadExecutor.execute(reorderedCommand);
+			}
 		} else {
 			String label = I18NUtil.getMessage(batchInfo.getBatchDescId(), batchInfo.getEntityDescription());
 			logger.warn("Same batch already in queue " + (label != null ? label : batchInfo.getBatchDescId()) + " (" + batchInfo.getBatchId() + ")");
