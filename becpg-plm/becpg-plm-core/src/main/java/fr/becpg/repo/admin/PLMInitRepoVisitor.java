@@ -352,7 +352,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 
 		// NutDatabases
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_NUT_DATABASES);
-		
+
 		// LCADatabases
 		visitFolder(systemNodeRef, PlmRepoConsts.PATH_LCA_DATABASES);
 
@@ -378,24 +378,22 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 	}
 
 	private void fillSystemQualityList(NodeRef qualityListNodeRef) {
-		
-		NodeRef controTypesFolder = entitySystemService.getSystemEntityDataList(qualityListNodeRef,PlmRepoConsts.PATH_CONTROL_TYPES );
 
-		if(controTypesFolder!=null) {
+		NodeRef controTypesFolder = entitySystemService.getSystemEntityDataList(qualityListNodeRef, PlmRepoConsts.PATH_CONTROL_TYPES);
 
-			for (String value : Arrays.asList( "bcpg_allergenList", "bcpg_microbioList", "bcpg_nutList", 
-					"bcpg_physicoChemList", "bcpg_organoList", "dimension", "weight", 
-					"composition", "packaging", "volume", "performance", 
-					"counter_analysis", "contaminant")) {
+		if (controTypesFolder != null) {
+
+			for (String value : Arrays.asList("bcpg_allergenList", "bcpg_microbioList", "bcpg_nutList", "bcpg_physicoChemList", "bcpg_organoList",
+					"dimension", "weight", "composition", "packaging", "volume", "performance", "counter_analysis", "contaminant")) {
 
 				NodeRef nodeRef = nodeService.getChildByName(controTypesFolder, ContentModel.ASSOC_CONTAINS, value);
 				if (nodeRef == null) {
 
 					MLText mltValue = new MLText();
 
-					for(String locKey : supportedLocale) {
-						String i18NKey = I18NUtil.getMessage( "listconstraint.qa_controlTypes."+value, MLTextHelper.parseLocale(locKey));
-						if(i18NKey!=null) {
+					for (String locKey : supportedLocale) {
+						String i18NKey = I18NUtil.getMessage("listconstraint.qa_controlTypes." + value, MLTextHelper.parseLocale(locKey));
+						if (i18NKey != null) {
 							mltValue.put(MLTextHelper.parseLocale(locKey), i18NKey);
 						}
 					}
@@ -403,12 +401,13 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					properties.put(ContentModel.PROP_NAME, value);
 					properties.put(BeCPGModel.PROP_LV_CODE, value);
 					properties.put(BeCPGModel.PROP_LV_VALUE, mltValue);
-					mlNodeService.createNode(controTypesFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_LIST_VALUE, properties);
+					mlNodeService.createNode(controTypesFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CHILDREN, BeCPGModel.TYPE_LIST_VALUE,
+							properties);
 				}
 			}
 		}
 	}
-	
+
 	private void addClassifyRule(NodeRef companyHome) {
 
 		NodeRef scriptsFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, "./app:dictionary/app:scripts");
@@ -1123,6 +1122,8 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 		entityLists.put(PlmRepoConsts.PATH_PHYSICO_UNITS, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_PHYSICO_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 
+		entityLists.put(PlmRepoConsts.PATH_SVHC_REASONS_FOR_INCLUSIONS, BeCPGModel.TYPE_LIST_VALUE);
+
 		entityLists.put(PlmRepoConsts.PATH_PM_MATERIALS, PackModel.TYPE_PACKAGING_MATERIAL);
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_TYPES, BeCPGModel.TYPE_LIST_VALUE);
 		entityLists.put(PlmRepoConsts.PATH_PM_PRINT_VANISHS, BeCPGModel.TYPE_LIST_VALUE);
@@ -1236,6 +1237,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PLMModel.TYPE_SVHCLIST);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
 
@@ -1248,6 +1250,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_PRICELIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PackModel.TYPE_LABELING_LIST);
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
@@ -1277,6 +1280,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
@@ -1299,6 +1303,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_ORGANOLIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
 				dataLists.add(PLMModel.TYPE_LABELCLAIMLIST);
+				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_COMPOLIST;
@@ -1309,6 +1314,7 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 				dataLists.add(PLMModel.TYPE_COSTLIST);
 				dataLists.add(PLMModel.TYPE_LCALIST);
 				dataLists.add(PLMModel.TYPE_PHYSICOCHEMLIST);
+				dataLists.add(PLMModel.TYPE_SVHCLIST);
 				dataLists.add(PackModel.PACK_MATERIAL_LIST_TYPE);
 
 				wusedQName = PLMModel.TYPE_PACKAGINGLIST;
@@ -1721,19 +1727,20 @@ public class PLMInitRepoVisitor extends AbstractInitVisitorImpl {
 					TranslateHelper.getLocaleAwarePath(EXPORT_NC_REPORT_RPTFILE_PATH), reportTplInformation, false);
 
 			reportTplService.createTplRessource(exportNCSynthesisNodeRef, TranslateHelper.getLocaleAwarePath(EXPORT_NC_REPORT_XMLFILE_PATH), false);
-		
+
 			reportTplInformation = new ReportTplInformation();
 			reportTplInformation.setReportType(ReportType.Compare);
 			reportTplInformation.setReportFormat(ReportFormat.PDF);
 			reportTplInformation.setNodeType(null);
 			reportTplInformation.setDefaultTpl(true);
 			reportTplInformation.setSystemTpl(false);
-			
+
 			NodeRef compareProductFolderNodeRef = visitFolder(reportsNodeRef, RepoConsts.PATH_REPORTS_COMPARE_ENTITIES);
-			
+
 			reportTplService.createTplRptDesign(compareProductFolderNodeRef,
-					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_SIMPLIFIED_COMPARISON_REPORT), COMPARE_PRODUCTS_REPORT_PATH, reportTplInformation, false);
-			
+					TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_SIMPLIFIED_COMPARISON_REPORT), COMPARE_PRODUCTS_REPORT_PATH,
+					reportTplInformation, false);
+
 		} catch (IOException e) {
 			logger.error(e, e);
 		}
