@@ -29,7 +29,7 @@ import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
 import fr.becpg.common.BeCPGException;
 
 /**
- * 
+ * author Matthieu
  */
 public class XmlActivityVisitor implements RemoteActivityVisitor {
 
