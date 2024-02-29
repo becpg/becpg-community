@@ -115,11 +115,13 @@ public class GetActivitiesWebScript extends AbstractEntityWebScript {
 			RemoteEntityFormat format = getFormat(req);
 
 			switch (format) {
-			case xml, xml_all, xml_light:
+			case xml:
+			case xml_all:
+			case xml_light:
 				remoteActivityVisitor = new XmlActivityVisitor(siteService, nodeService, namespaceService, contentService);
 				break;
-
-			case json, json_all:
+			case json:
+			case json_all:
 				remoteActivityVisitor = new JsonActivityVisitor(siteService, nodeService, namespaceService, contentService);
 				break;
 			default:
