@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.model.ContentModel;
@@ -231,8 +232,9 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 
 
 	private void convertAndDeleteVersions(int maxProcessedNodes, String tenantDomain, String path) {
-		BatchInfo batchInfo = new BatchInfo("cleanVersions." + tenantDomain, "becpg.batch.versionCleaner.cleanVersions");
+		BatchInfo batchInfo = new BatchInfo("cleanVersions." + tenantDomain + "." + UUID.randomUUID(), "becpg.batch.versionCleaner.cleanVersions");
 		batchInfo.setRunAsSystem(true);
+		batchInfo.setPriority(BatchInfo.LOW_PRIORITY);
 
 		BatchProcessWorker<NodeRef> processWorker = new BatchProcessor.BatchProcessWorkerAdaptor<>() {
 
