@@ -30,9 +30,11 @@ import java.util.Map;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.admin.SysAdminParams;
+import org.alfresco.repo.dictionary.constraint.ListOfValuesConstraint;
 import org.alfresco.repo.dictionary.constraint.NumericRangeConstraint;
 import org.alfresco.repo.dictionary.constraint.StringLengthConstraint;
 import org.alfresco.repo.rule.RuleModel;
+import org.alfresco.service.cmr.dictionary.AspectDefinition;
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
 import org.alfresco.service.cmr.dictionary.ConstraintDefinition;
@@ -54,6 +56,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.becpg.common.BeCPGException;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.DataListModel;
 import fr.becpg.model.ReportModel;
@@ -95,7 +98,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	private static final String PROP_FORMAT = "format";
 	private static final String PROP_REQUIRED = "required";
 
-	SysAdminParams sysAdminParams;
+	private SysAdminParams sysAdminParams;
 
 	public JsonSchemaEntityVisitor(SysAdminParams sysAdminParams, NodeService mlNodeService, NodeService nodeService,
 			NamespaceService namespaceService, EntityDictionaryService entityDictionaryService, ContentService contentService,
@@ -111,12 +114,128 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 	public void visit(NodeRef entityNodeRef, OutputStream result) throws JSONException, IOException {
 
 		JSONObject root = new JSONObject();
+		QName nodeType = nodeService.getType(entityNodeRef).getPrefixedQName(namespaceService);
+		JSONObject entity = createEntity(root, nodeType, entityNodeRef);
+
+		try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
+
+			RemoteJSONContext context = new RemoteJSONContext(entityNodeRef);
+			visitNode(entityNodeRef, entity, JsonVisitNodeType.ENTITY, context);
+			visitLists(entityNodeRef, entity, context);
+			root.write(out);
+		}
+
+	}
+
+	public void visit(QName entityType, OutputStream result) throws IOException {
+		JSONObject root = new JSONObject();
+
+		JSONObject entity = createEntity(root, entityType, null);
+
+		try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
+			visitType(entity, entityType, null);
+			root.write(out);
+		}
+
+	}
+
+	private void visitType(JSONObject entity, QName entityType, QName assocName) {
+		TypeDefinition typeDef = entityDictionaryService.getType(entityType);
+		if (typeDef != null) {
+
+			JSONObject attributes = addProperty(entity, RemoteEntityService.ELEM_ATTRIBUTES, TYPE_OBJECT, "Entity attributes", null);
+
+			Map<QName, AssociationDefinition> assocs = new HashMap<>(typeDef.getAssociations());
+
+			Map<QName, PropertyDefinition> properties = new HashMap<>(typeDef.getProperties());
+
+			for (AspectDefinition aspectDefinition : typeDef.getDefaultAspects()) {
+				assocs.putAll(aspectDefinition.getAssociations());
+				properties.putAll(aspectDefinition.getProperties());
+			}
+
+			for (QName propQname : params.getFilteredProperties()) {
+				if (entityDictionaryService.getPropDef(propQname) instanceof PropertyDefinition) {
+					properties.put(propQname, (PropertyDefinition) entityDictionaryService.getPropDef(propQname));
+				}
+			}
+
+			for (Map.Entry<QName, AssociationDefinition> entry : assocs.entrySet()) {
+				AssociationDefinition assocDef = entry.getValue();
+
+				if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
+						&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+						&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
+						&& !assocDef.getName().equals(BeCPGModel.ASSOC_ENTITYLISTS) && assocDef.isChild()) {
+					QName nodeType = assocDef.getTargetClass().getName().getPrefixedQName(namespaceService);
+					// fields & child assocs filter
+					if (((params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()
+							&& !params.getFilteredProperties().contains(nodeType))) {
+						continue;
+					}
+
+					JSONObject jsonAssocNode = new JSONObject();
+
+					if (assocDef.isTargetMany()) {
+						JSONObject jsonAssocs = new JSONObject();
+						addProperty(attributes, entityDictionaryService.toPrefixString(nodeType), TYPE_ARRAY,
+								assocDef.getTitle(entityDictionaryService), assocDef.getDescription(entityDictionaryService), jsonAssocs);
+						jsonAssocs.put(PROP_ITEMS, jsonAssocNode);
+					} else {
+						addProperty(attributes, entityDictionaryService.toPrefixString(nodeType), TYPE_OBJECT,
+								assocDef.getTitle(entityDictionaryService), assocDef.getDescription(entityDictionaryService), jsonAssocNode);
+					}
+
+					visitType(jsonAssocNode, nodeType, assocDef.getName());
+
+				}
+			}
+
+			for (Map.Entry<QName, PropertyDefinition> entry : properties.entrySet()) {
+				QName propQName = entry.getKey();
+				QName propName = entry.getKey().getPrefixedQName(namespaceService);
+				if (!propQName.getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
+						&& !propQName.getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
+						&& (!propQName.getNamespaceURI().equals(ReportModel.REPORT_URI)) && !propQName.equals(ContentModel.PROP_CONTENT)
+						&& params.shouldExtractField(propQName)) {
+					
+					if (!matchProp(assocName, propName, false)) {
+						continue;
+					}
+					
+					PropertyDefinition propertyDefinition = entityDictionaryService.getProperty(entry.getKey());
+
+					if (propertyDefinition != null) {
+
+						if (propertyDefinition.isMultiValued()) {
+							JSONObject arrayDef = addProperty(entity, entityDictionaryService.toPrefixString(propName), TYPE_ARRAY,
+									propertyDefinition.getTitle(entityDictionaryService), propertyDefinition.getDescription(entityDictionaryService));
+							addProperty(arrayDef, entityDictionaryService.toPrefixString(propName), propertyDefinition);
+						} else {
+							addProperty(attributes, entityDictionaryService.toPrefixString(propName), propertyDefinition);
+						}
+
+					} else {
+						logger.debug("Properties not in dictionnary: " + entry.getKey());
+					}
+				}
+			}
+
+		} else {
+			throw new BeCPGException("No typeDef for : " + entityType);
+		}
+	}
+
+	private JSONObject createEntity(JSONObject root, QName nodeType, NodeRef entityNodeRef) {
+
 		root.put("$schema", "https://json-schema.org/draft/2020-12/schema");
-		root.put("$id", sysAdminParams.getAlfrescoProtocol() + "://" + sysAdminParams.getAlfrescoHost() + ":" + sysAdminParams.getAlfrescoPort()
-				+ "/alfresco/service/becpg/remote/entity?nodeRef=" + entityNodeRef + "&format=json_schema");
+		if (entityNodeRef != null) {
+			root.put("$id", sysAdminParams.getAlfrescoProtocol() + "://" + sysAdminParams.getAlfrescoHost() + ":" + sysAdminParams.getAlfrescoPort()
+					+ "/alfresco/service/becpg/remote/entity?nodeRef=" + entityNodeRef + "&format=json_schema");
+		}
 		root.put("$locale", MLTextHelper.localeKey(MLTextHelper.getNearestLocale(Locale.getDefault())));
 		List<String> supportedLocales = new ArrayList<>();
-		if (nodeService.hasAspect(entityNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
+		if (entityNodeRef != null && nodeService.hasAspect(entityNodeRef, ReportModel.ASPECT_REPORT_LOCALES)) {
 			@SuppressWarnings("unchecked")
 			List<String> langs = (List<String>) nodeService.getProperty(entityNodeRef, ReportModel.PROP_REPORT_LOCALES);
 			if (langs != null) {
@@ -134,21 +253,10 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		root.put(PROP_TITLE, "Entity");
 		root.put(PROP_DESCRIPTION, "Entity schema object");
 
-		QName nodeType = nodeService.getType(entityNodeRef).getPrefixedQName(namespaceService);
 		ClassDefinition classDefinition = entityDictionaryService.getClass(nodeType);
 
-		JSONObject entity = addProperty(root, RemoteEntityService.ELEM_ENTITY, TYPE_OBJECT, classDefinition.getTitle(entityDictionaryService),
+		return addProperty(root, RemoteEntityService.ELEM_ENTITY, TYPE_OBJECT, classDefinition.getTitle(entityDictionaryService),
 				classDefinition.getDescription(entityDictionaryService));
-
-		try (OutputStreamWriter out = new OutputStreamWriter(result, StandardCharsets.UTF_8)) {
-
-			RemoteJSONContext context = new RemoteJSONContext(entityNodeRef);
-
-			visitNode(entityNodeRef, entity, JsonVisitNodeType.ENTITY, context);
-			visitLists(entityNodeRef, entity, context);
-
-			root.write(out);
-		}
 
 	}
 
@@ -297,7 +405,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 				if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
 						&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
-						&& !assocDef.getName().equals(BeCPGModel.ASSOC_ENTITYLISTS) && assocDef.isChild()) {
+						&& !assocDef.getName().equals(BeCPGModel.ASSOC_ENTITYLISTS) && !assocDef.isChild()) {
 					QName nodeType = assocDef.getName().getPrefixedQName(namespaceService);
 					// fields & child assocs filter
 					if (((params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()
@@ -397,7 +505,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 						if (!matchProp(assocName, propName, false)) {
 							continue;
 						}
-		
+
 						visitPropValue(propName, entity, entry.getValue(), context, propertyDefinition);
 					} else {
 						logger.debug("Properties not in dictionnary: " + entry.getKey());
@@ -407,7 +515,6 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 		}
 
 	}
-
 
 	@SuppressWarnings("unchecked")
 	private void visitPropValue(QName propType, JSONObject entity, Serializable value, RemoteJSONContext context,
@@ -499,7 +606,6 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 			} else {
 				entity.put(PROP_REQUIRED, required);
 			}
-
 			required.put(attr);
 		}
 
@@ -507,12 +613,17 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 			if (constraint.getConstraint() instanceof StringLengthConstraint) {
 				object.put("maxLength", ((StringLengthConstraint) constraint.getConstraint()).getMaxLength());
 				object.put("minLength", ((StringLengthConstraint) constraint.getConstraint()).getMinLength());
-			}
-
-			if (constraint.getConstraint() instanceof NumericRangeConstraint) {
+			} else if (constraint.getConstraint() instanceof NumericRangeConstraint) {
 				object.put("maximum", ((NumericRangeConstraint) constraint.getConstraint()).getMaxValue());
 				object.put("minimum", ((NumericRangeConstraint) constraint.getConstraint()).getMinValue());
+			} else if (constraint.getConstraint() instanceof ListOfValuesConstraint) {
+				JSONArray enumList = new JSONArray();
+				for (String constraintValue : ((ListOfValuesConstraint) constraint.getConstraint()).getAllowedValues()) {
+					enumList.put(constraintValue);
+				}
+				object.put("enum", enumList);
 			}
+
 		}
 
 		object.put(PROP_TITLE, propertyDefinition.getTitle(entityDictionaryService));

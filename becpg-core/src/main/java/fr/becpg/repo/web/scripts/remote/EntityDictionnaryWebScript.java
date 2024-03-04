@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import java.net.SocketException;
 import java.nio.file.AccessDeniedException;
 
-import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.extensions.webscripts.Status;
@@ -34,19 +34,24 @@ import fr.becpg.common.BeCPGException;
 import fr.becpg.repo.entity.remote.RemoteParams;
 
 /**
- * Get entity as XML
  *
  * @author matthieu
  * @version $Id: $Id
  */
-public class GetEntityWebScript extends AbstractEntityWebScript {
+public class EntityDictionnaryWebScript extends AbstractEntityWebScript {
+
+	
 
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
-		NodeRef entityNodeRef = findEntity(req);
+		String type = req.getParameter(PARAM_TYPE);
+		
+		if (type == null || type.isEmpty()) {
+			throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "Type parameter is mandatory");
+		}
 
-		logger.debug("Get entity: " + entityNodeRef);
+		logger.debug("Get dictionnary schema:  for type" + type);
 
 		try (OutputStream out = resp.getOutputStream()) {
 
@@ -57,14 +62,12 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 			resp.setContentType(getContentType(req));
 			resp.setContentEncoding("UTF-8");
 
-			remoteEntityService.getEntity(entityNodeRef, out, params);
+			remoteEntityService.getEntitySchema(QName.createQName(type, namespaceService), out, params);
 
 			resp.setStatus(Status.STATUS_OK);
 		} catch (BeCPGException e) {
-			logger.error("Cannot export entity", e);
+			logger.error("Cannot export entity schema", e);
 			throw new WebScriptException(e.getMessage());
-		} catch (AccessDeniedException e) {
-			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You have no right to see this node");
 		} catch (SocketException e1) {
 
 			// the client cut the connection - our mission was accomplished
@@ -77,6 +80,5 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 
 	}
 
-	
-	
+
 }
