@@ -3,6 +3,7 @@ package fr.becpg.repo.entity.datalist.impl;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -399,6 +400,9 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 			
 			displayName = extractJsonNodeRefProp(seri);
 			
+		} else if (metadata.equals("text") && attribute.isMultiValued()) {
+			seri = (Serializable) convertStringToList(seri.toString());
+			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
 		} else {
 			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
 		}
@@ -409,6 +413,12 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 		return tmp;
 
 	}
+	
+    private static List<String> convertStringToList(String inputString) {
+        String cleanString = inputString.replaceAll("[\\[\\]\"]", "");
+        String[] stringArray = cleanString.split(",");
+        return Arrays.asList(stringArray);
+    }
 
 	private String extractJsonNodeRefProp(Serializable seri) {
 		
