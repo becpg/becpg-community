@@ -31,6 +31,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
@@ -97,11 +98,11 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	}
 
 	@Override
-	public boolean isRegisteredQName(Class<? extends RepositoryEntity> clazz, QName qname) {
+	public boolean isRegisteredQName(RepositoryEntity entity, QName qname) {
 		if (qnameCache.containsValue(qname)) {
-			Method[] methods = clazz.getMethods();
+			Method[] methods = AopProxyUtils.ultimateTargetClass(entity).getMethods();
 			for (Method method : methods) {
-				if (method.isAnnotationPresent(AlfQname.class) && readQName(method).isMatch(qname)) {
+				if (method != null && method.isAnnotationPresent(AlfQname.class) && readQName(method).isMatch(qname)) {
 					return true;
 				}
 			}

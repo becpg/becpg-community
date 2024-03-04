@@ -156,7 +156,7 @@ public interface RepositoryEntityDefReader<T> {
 	 * @param qname
 	 * @return
 	 */
-	boolean isRegisteredQName(Class<? extends RepositoryEntity> clazz, QName qname);
+	boolean isRegisteredQName(RepositoryEntity entity, QName qname);
 	
 	
 	
