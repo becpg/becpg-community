@@ -179,7 +179,7 @@
                                                         
                                                         <td>
                                                             <p class="title" style="color: #0f515f; font-weight: bold; margin-bottom:0px;" >${args.project.name}</p>
-                                                            <#if (args.project.properties["cm:modifier"])??>
+                                                            <#if (args.project.properties["cm:modifier"])?? && people.getPerson(args.project.properties["cm:modifier"])??>
                                                                 <#assign projectModifier = people.getPerson(args.project.properties["cm:modifier"])>
                                                                 <p class="Stitle" style="color: #ff642d; font-weight: bold; margin-top:1px;">a été mis à jour par ${projectModifier.properties["cm:firstName"]!""} ${projectModifier.properties["cm:lastName"]!""}</p>
                                                                 <#else> 
