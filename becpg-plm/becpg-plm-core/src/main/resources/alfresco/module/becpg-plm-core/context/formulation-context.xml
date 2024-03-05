@@ -46,6 +46,7 @@
 	<bean id="packagingMaterialCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.PackagingMaterialCharactDetailsVisitor">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
 
 	<bean id="nutCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.NutCharactDetailsVisitor">
