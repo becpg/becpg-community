@@ -124,11 +124,11 @@ function runAction(p_params) {
 								}
 							}
 							
-
 							var result =
 							{
 								nodeRef: currentChild.nodeRef.toString(),
 								oldNodeRef: currentChild.nodeRef.toString(),
+								parentSort:  itemNode.properties["bcpg:sort"],
 								action: "duplicateItem",
 								success: false
 							};
@@ -236,7 +236,15 @@ function runAction(p_params) {
 							}
 						}
 
-						itemNode.properties["bcpg:sort"] = ++oldSort;
+
+						if(results[index].parentSort!=null ){
+							itemNode.properties["bcpg:sort"] = (results[index].parentSort*1000) +oldSort;
+						} else {
+							itemNode.properties["bcpg:sort"] = 1 + oldSort;
+						}
+
+						delete results[index].parentSort;
+						
 						itemNode.save();
 					}
 
@@ -267,7 +275,21 @@ function runAction(p_params) {
 		}
 	}
 
-
+	// Sort the list based on the sort values
+	parentNode.children.sort(function(a, b) {
+	    // Handle cases where bcpg:sort is null
+	    var sortA = a.properties["bcpg:sort"] || 0;
+	    var sortB = b.properties["bcpg:sort"] || 0;
+	    return sortA - sortB;
+	});
+	
+	// Increment the sorting values by 10
+	for (var i = 0; i < parentNode.children.length; i++) {
+	    var child = parentNode.children[i];
+	    child.properties["bcpg:sort"] = (i * 10);
+	    child.save();
+	}
+	
 	return results;
 }
 
