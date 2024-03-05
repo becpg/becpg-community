@@ -920,6 +920,16 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							if (impactWused) {
 								versionProperties.put(EntityVersionPlugin.POST_UPDATE_HISTORY_NODEREF, null);
 							}
+							
+							VersionHistory originalVersionHistory = versionService.getVersionHistory(internalBranchToNodeRef);
+							
+							if (originalVersionHistory != null) {
+								Version lastVersion = originalVersionHistory.getVersion(versionLabel);
+								if (lastVersion != null) {
+									NodeRef lastVersionNodeRef = getEntityVersion(lastVersion);
+									dbNodeService.setProperty(lastVersionNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
+								}
+							}
 
 							internalCreateVersion(internalBranchToNodeRef, versionProperties, newEffectivity, manualVersionLabelFrom, false);
 
@@ -1181,19 +1191,24 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 						newEffectivity = oldEffectivity;
 					}
 
-					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, oldEffectivity);
-					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
+					if (isInitialVersion) {
+						nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, oldEffectivity);
+						nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, newEffectivity);
+					} else {
+						nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, newEffectivity);
+					}
 				}
 
 				// create the version node
 				Version newVersion = versionService.createVersion(entityNodeRef, versionProperties);
 
-				Map<String, Object> extraParams = null;
+				Map<String, Object> extraParams = new HashMap<>();
 
 				if (isInitialVersion) {
-					extraParams = new HashMap<>();
 					extraParams.put(RemoteParams.PARAM_IS_INITIAL_VERSION, true);
 				}
+				
+				extraParams.put(RemoteParams.PARAM_APPEND_REPORT_PROPS, true);
 
 				// extract the JSON data of the current node
 				String jsonData = entityFormatService.extractEntityData(entityNodeRef, EntityFormat.JSON, extraParams);
@@ -1235,7 +1250,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				dbNodeService.setProperty(versionNode, Version2Model.PROP_QNAME_FROZEN_MODIFIED, new Date());
 
 				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
-					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, newEffectivity == null ? new Date() : newEffectivity);
+					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, newEffectivity);
 					nodeService.removeProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
 				}
 

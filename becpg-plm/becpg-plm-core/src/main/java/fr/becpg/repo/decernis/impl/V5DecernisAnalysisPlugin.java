@@ -112,10 +112,10 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		recipe.put("ingredients", ingredients);
 		
 		for (IngListDataItem ingListDataItem : context.getProduct().getIngList()) {
+			String function = null;
 			NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
 			if (ingType != null) {
 				String functionValue = (String) nodeService.getProperty(ingType, BeCPGModel.PROP_LV_VALUE);
-				String function = null;
 				if (functionValue != null) {
 					function = findFunction(moduleId, functionValue);
 				}
@@ -125,29 +125,23 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 						function = findFunction(moduleId, functionValue);
 					}
 				}
+			}
+			String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
+			if (rid != null && !rid.isBlank()) {
+				String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
+				String ingName = (legalName != null) && !legalName.isEmpty() ? legalName
+						: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
+				Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());
+				JSONObject ingredient = new JSONObject();
+				ingredient.put(PARAM_NAME, ingName);
+				ingredient.put("spec", ingName);
+				ingredient.put("idType", "Decernis ID");
+				ingredient.put("idValue", rid);
+				ingredient.put("percentage", ingQtyPerc);
 				if (function != null) {
-					String rid = (String) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE);
-					if (rid != null && !rid.isBlank()) {
-						String legalName = (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_LEGAL_NAME);
-						String ingName = (legalName != null) && !legalName.isEmpty() ? legalName
-								: (String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME);
-						Double ingQtyPerc = DecernisHelper.truncateDoubleValue(ingListDataItem.getQtyPerc());
-						JSONObject ingredient = new JSONObject();
-						ingredient.put(PARAM_NAME, ingName);
-						ingredient.put("spec", ingName);
-						ingredient.put("idType", "Decernis ID");
-						ingredient.put("idValue", rid);
-						ingredient.put("percentage", ingQtyPerc);
-						ingredient.put("function", function);
-						ingredients.put(ingredient);
-					}
-				} else {
-					context.getRequirements().add(createReqCtrl(ingListDataItem.getIng(),
-							MLTextHelper.getI18NMessage(MESSAGE_FUNCTION_NOT_RECOGNIZED, functionValue), RequirementType.Tolerated));
+					ingredient.put("function", function);
 				}
-			} else if(logger.isDebugEnabled()) {
-				
-				logger.debug("Ingredient has no type: "+(String) nodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
+				ingredients.put(ingredient);
 			}
 		}
 		
