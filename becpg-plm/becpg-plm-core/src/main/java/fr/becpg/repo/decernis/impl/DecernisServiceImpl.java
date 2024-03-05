@@ -71,7 +71,6 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 	private static final Log logger = LogFactory.getLog(DecernisServiceImpl.class);
 
 	private static final String MESSAGE_NO_RID_ING = "message.decernis.ingredient.noRid";
-	private static final String MESSAGE_NO_FUNCTION_ING = "message.decernis.ingredient.noFunction";
 	private static final String MESSAGE_NO_CODE_CHARACT = "message.decernis.charact.noCode";
 	private static final String MESSAGE_SEVERAL_RID_ING = "message.decernis.ingredient.severalRid";
 
@@ -237,7 +236,7 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 
 		String citation = items.stream().map(item -> item.getCitation().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
 		String usages = items.stream().map(item -> item.getUsages().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
-		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
+		String restrictionLevels = items.stream().map(item -> item.getRestrictionLevels().getDefaultValue()).filter(r -> r != null && !r.equals("-")).distinct().sorted().collect(Collectors.joining(", "));
 		String resultIndicators = items.stream().map(item -> item.getResultIndicator().getDefaultValue()).distinct().sorted().collect(Collectors.joining(", "));
 
 		mergedItem.setResultIndicator(new MLText(resultIndicators));
@@ -385,19 +384,18 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 					function = (String) nodeService.getProperty(ingType, PLMModel.PROP_REGULATORY_CODE);
 				}
 				try {
-					if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE) && ((function != null) && !function.isEmpty())
+					if ((rid != null) && !rid.isEmpty() && !rid.equals(MISSING_VALUE)
 							&& ((ingName != null) && !ingName.isEmpty()) && (ingQtyPerc != null)) {
 						JSONObject ingredient = new JSONObject();
 						ingredient.put("name", ingName);
 						ingredient.put("percentage", ingQtyPerc);
 						ingredient.put("ingredient_did", rid);
-						ingredient.put("function", function);
+						if (function != null) {
+							ingredient.put("function", function);
+						}
 						ingredient.put("spec_parameters", JSONObject.NULL);
 						ingredient.put("upper_limit", JSONObject.NULL);
 						ingredients.put(ingredient);
-					} else if (function == null || function.isBlank()) {
-						context.getRequirements().add(createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_NO_FUNCTION_ING),
-								RequirementType.Tolerated));
 					}
 
 				} catch (HttpStatusCodeException e) {
@@ -422,11 +420,6 @@ public class DecernisServiceImpl implements DecernisService, FormulationChainPlu
 				if (rid == null || rid.isEmpty()) {
 					rid = fetchIngredientId(ingListDataItem, context.getRequirements());
 					nodeService.setProperty(ingListDataItem.getIng(), PLMModel.PROP_REGULATORY_CODE, rid);
-				}
-				NodeRef ingType = (NodeRef) nodeService.getProperty(ingListDataItem.getIng(), PLMModel.PROP_ING_TYPE_V2);
-				if (ingType == null) {
-					context.getRequirements().add(
-							createReqCtrl(ingListDataItem.getIng(), MLTextHelper.getI18NMessage(MESSAGE_NO_FUNCTION_ING), RequirementType.Tolerated));
 				}
 			}
 		}

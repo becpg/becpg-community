@@ -9798,7 +9798,21 @@
 					<show id="bcpg:regulatoryCountries" />
 					<show id="bcpg:irlResultIndicator" />	
 					<show id="bcpg:regulatoryUsageRef" />							
-				</field-visibility>			
+				</field-visibility>
+				<appearance>
+					<field id="bcpg:irlIng" >
+						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
+                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing
+                            </control-param>
+                        </control>
+					</field>
+					<field id="bcpg:regulatoryCountries">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+					<field id="bcpg:regulatoryUsageRef">
+						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
+					</field>
+				</appearance>
 			</form>
 			<form id="datagrid">
 				<field-visibility>
