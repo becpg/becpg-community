@@ -13,7 +13,6 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.client.RestTemplate;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
@@ -32,7 +31,6 @@ import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ReqCtrlListDataItem;
 import fr.becpg.repo.system.SystemConfigurationService;
 import fr.becpg.test.repo.product.AbstractFinishedProductTest;
-import fr.becpg.util.rest.LogRestTemplate;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 
@@ -79,10 +77,9 @@ public class DecernisServiceIT extends AbstractFinishedProductTest {
 		mockWebAnalysis = new MockWebServer();
 		mockWebAnalysis.start();
 		mockAnalysisUrl = "http://" + mockWebAnalysis.getHostName() + ":" + mockWebAnalysis.getPort();
-		RestTemplate restTemplate = new LogRestTemplate();
-		DecernisAnalysisPlugin[] decernisPlugins = { new DefaultDecernisAnalysisPlugin(nodeService, systemConfigurationService, restTemplate),
-				new V5DecernisAnalysisPlugin(nodeService, systemConfigurationService, restTemplate) };
-		decernisService = new DecernisServiceImpl(restTemplate, nodeService, decernisPlugins, systemConfigurationService, alfrescoRepository);
+		DecernisAnalysisPlugin[] decernisPlugins = { new DefaultDecernisAnalysisPlugin(nodeService, systemConfigurationService),
+				new V5DecernisAnalysisPlugin(nodeService, systemConfigurationService) };
+		decernisService = new DecernisServiceImpl(nodeService, decernisPlugins, systemConfigurationService, alfrescoRepository);
 		super.setUp();
 		initParts();
 		
