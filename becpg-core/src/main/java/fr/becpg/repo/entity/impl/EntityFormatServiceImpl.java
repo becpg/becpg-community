@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ApplicationModel;
 import org.alfresco.model.ContentModel;
@@ -23,7 +25,6 @@ import org.alfresco.repo.model.Repository;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.node.integrity.IntegrityChecker;
 import org.alfresco.repo.policy.BehaviourFilter;
-import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.tenant.TenantAdminService;
 import org.alfresco.repo.tenant.TenantService;
 import org.alfresco.repo.version.Version2Model;
@@ -70,7 +71,6 @@ import fr.becpg.repo.entity.remote.RemoteEntityService;
 import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.entity.version.VersionExporter;
 import fr.becpg.repo.helper.AssociationService;
-import fr.becpg.repo.report.entity.EntityReportService;
 import fr.becpg.repo.search.BeCPGQueryBuilder;
 
 @Service("entityFormatService")
@@ -91,9 +91,6 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 
 	@Autowired
 	protected NamespaceService namespaceService;
-	
-	@Autowired
-	private EntityReportService entityReportService;
 	
 	@Autowired
 	private TransactionService transactionService;
@@ -416,20 +413,16 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			}
 			start = System.currentTimeMillis();
 			
-			AuthenticationUtil.runAs(() -> {
-				
-				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-					
-					entityReportService.generateReports(from, to);
-					
-					return null;
-					
-				}, false, true);
+			transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+				NodeRef documentsFolder = nodeService.getChildByName(to, ContentModel.ASSOC_CONTAINS, "Documents");
+				List<NodeRef> reports = associationService.getTargetAssocs(from, ReportModel.ASSOC_REPORTS);
+				List<NodeRef> reportCopyList = reports.stream().map(n -> copyReport(documentsFolder, n)).collect(Collectors.toList());
+				associationService.update(to, ReportModel.ASSOC_REPORTS, reportCopyList);
 				return null;
-			}, AuthenticationUtil.getAdminUserName());
+			}, false, true);
 			
 			if (logger.isDebugEnabled()) {
-				logger.debug("generateReports, time elapsed : " + (System.currentTimeMillis() - start) + " ms");
+				logger.debug("copy reprots, time elapsed : " + (System.currentTimeMillis() - start) + " ms");
 			}
 			start = System.currentTimeMillis();
 			
@@ -458,6 +451,26 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 			integrityChecker.setEnabled(true);
 		}
 
+	}
+	
+	private NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
+		
+		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
+
+		Map<QName, Serializable> props = new HashMap<>();
+		props.put(ContentModel.PROP_NAME, reportName);
+
+		NodeRef reportCopy = nodeService.createNode(parentFolder, ContentModel.ASSOC_CONTAINS,
+				ContentModel.ASSOC_CONTAINS, ReportModel.TYPE_REPORT, props).getChildRef();
+
+		ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
+		ContentWriter writer = contentService.getWriter(reportCopy, ContentModel.PROP_CONTENT, true);
+		writer.setEncoding(reader.getEncoding());
+		writer.setMimetype("application/pdf");
+
+		writer.putContent(reader);
+
+		return reportCopy;
 	}
 
 	private List<NodeRef> getFileLinks(NodeRef parent) {
