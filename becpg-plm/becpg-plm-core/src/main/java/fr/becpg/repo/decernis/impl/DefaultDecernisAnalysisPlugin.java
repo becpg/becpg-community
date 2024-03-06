@@ -83,14 +83,12 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 
 	protected final SystemConfigurationService systemConfigurationService;
 
-	protected final RestTemplate restTemplate;
+	protected final RestTemplate restTemplate = new RestTemplate();
 
-	public DefaultDecernisAnalysisPlugin(NodeService nodeService, SystemConfigurationService systemConfigurationService,
-			@Qualifier("logRestTemplate") RestTemplate restTemplate) {
+	public DefaultDecernisAnalysisPlugin(@Qualifier("nodeService") NodeService nodeService, SystemConfigurationService systemConfigurationService) {
 		super();
 		this.nodeService = nodeService;
 		this.systemConfigurationService = systemConfigurationService;
-		this.restTemplate = restTemplate;
 	}
 
 	public String serverUrl() {
@@ -175,6 +173,9 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 				+ countryParam.toString());
 
 		HttpEntity<String> entity = createEntity(null);
+		if (logger.isTraceEnabled()) {
+			logger.trace("POST url: " + url + " params: " + params);
+		}
 		JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
 		if (jsonObject.has(PARAM_ANALYSIS_RESULTS) && (jsonObject.getJSONObject(PARAM_ANALYSIS_RESULTS).length() > 0)) {
 			return jsonObject;
@@ -216,6 +217,9 @@ public class DefaultDecernisAnalysisPlugin implements DecernisAnalysisPlugin {
 		params.put(PARAM_COMPANY, companyName());
 		params.put(PARAM_MODULE, moduleId);
 
+		if (logger.isTraceEnabled()) {
+			logger.trace("GET url: " + url + " params: " + params);
+		}
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
