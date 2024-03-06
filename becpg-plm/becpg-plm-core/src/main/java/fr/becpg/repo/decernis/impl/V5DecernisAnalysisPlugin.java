@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Lists;
 
@@ -55,10 +54,8 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 
 	private static final Log logger = LogFactory.getLog(V5DecernisAnalysisPlugin.class);
 
-	public V5DecernisAnalysisPlugin(@Qualifier("nodeService") NodeService nodeService, SystemConfigurationService systemConfigurationService,
-			@Qualifier("logRestTemplate") RestTemplate restTemplate) {
-
-		super(nodeService, systemConfigurationService, restTemplate);
+	public V5DecernisAnalysisPlugin(@Qualifier("nodeService") NodeService nodeService, SystemConfigurationService systemConfigurationService) {
+		super(nodeService, systemConfigurationService);
 	}
 
 	private static final Map<Integer, String> moduleIdMap = new HashMap<>();
@@ -173,7 +170,10 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 			String url = analysisUrl() + "/recipe-analysis/transaction";
 
 			HttpEntity<String> entity = createEntity(payload.toString());
-
+			
+			if (logger.isTraceEnabled()) {
+				logger.trace("POST url: " + url + " body: " + payload);
+			}
 			recipeAnalysisResult = restTemplate.postForObject(url, entity, String.class, new HashMap<>());
 
 			return new JSONObject(recipeAnalysisResult);
@@ -207,7 +207,10 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setBearerAuth(token().trim());
-
+		
+		if (logger.isTraceEnabled()) {
+			logger.trace("GET url: " + url);
+		}
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
@@ -398,6 +401,9 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 		HttpHeaders headers = new HttpHeaders();
 		headers.setBearerAuth(token().trim());
 
+		if (logger.isTraceEnabled()) {
+			logger.trace("GET url: " + url);
+		}
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class, new HashMap<>());
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
