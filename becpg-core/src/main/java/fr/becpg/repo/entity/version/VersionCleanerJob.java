@@ -24,12 +24,8 @@ public class VersionCleanerJob extends AbstractScheduledLockedJob implements Job
 
 	@Override
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
-
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();
-
 		VersionCleanerService versionCleanerService = (VersionCleanerService) jobData.get("versionCleanerService");
-
-		versionCleanerService.cleanVersions(VersionCleanerService.MAX_PROCESSED_NODES, null);
-
+		versionCleanerService.cleanVersions(500, null);
 	}
 }
