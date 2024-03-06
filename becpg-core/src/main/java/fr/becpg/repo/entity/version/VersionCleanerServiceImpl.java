@@ -80,7 +80,15 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	@Override
 	public boolean cleanVersions(int maxProcessedNodes, String path) {
-		
+		while (maxProcessedNodes > 0) {
+			int nextBatch = Math.min(50, maxProcessedNodes);
+			internalCleanVersion(nextBatch, path);
+			maxProcessedNodes -= nextBatch;
+		}
+		return true;
+	}
+
+	private boolean internalCleanVersion(int maxProcessedNodes, String path) {
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 		
 		if (path == null) {
