@@ -31,11 +31,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.BufferingClientHttpRequestFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
@@ -92,16 +88,7 @@ public class DecernisServiceImpl implements DecernisService {
 	 */
 	public DecernisServiceImpl() {
 		super();
-
-		restTemplate = new RestTemplate(new BufferingClientHttpRequestFactory(new SimpleClientHttpRequestFactory()));
-
-		List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-		if (CollectionUtils.isEmpty(interceptors)) {
-			interceptors = new ArrayList<>();
-		}
-		interceptors.add(new DecernisRequestInterceptor());
-		restTemplate.setInterceptors(interceptors);
-
+		restTemplate = new RestTemplate();
 	}
 
 	// 1, Food Additives
@@ -148,6 +135,9 @@ public class DecernisServiceImpl implements DecernisService {
 		params.put(PARAM_COMPANY, companyName);
 		params.put(PARAM_MODULE, module);
 
+		if (logger.isTraceEnabled()) {
+			logger.trace("GET url: " + url + " params: " + params);
+		}
 		ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
 		if (HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
@@ -257,6 +247,9 @@ public class DecernisServiceImpl implements DecernisService {
 								logger.debug("Look for ingredients in decernis by " + params.get("type") + ": " + params.get(PARAM_QUERY));
 							}
 
+							if (logger.isTraceEnabled()) {
+								logger.trace("GET url: " + url + " params: " + params);
+							}
 							ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, createEntity(null), String.class, params);
 
 							if ((response != null) && HttpStatus.OK.equals(response.getStatusCode()) && (response.getBody() != null)) {
@@ -382,6 +375,9 @@ public class DecernisServiceImpl implements DecernisService {
 		String url = serverUrl + "formulas";
 		if (data != null) {
 			HttpEntity<String> request = createEntity(data.toString());
+			if (logger.isTraceEnabled()) {
+				logger.trace("POST url: " + url + " body: " + data);
+			}
 			JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, request, String.class));
 			if (jsonObject.has("id")) {
 				return jsonObject.get("id").toString();
@@ -397,7 +393,11 @@ public class DecernisServiceImpl implements DecernisService {
 		params.put(PARAM_FORMULA, recipeId);
 		params.put(PARAM_MODULE, module);
 
-		restTemplate.exchange(serverUrl + "formulas/" + recipeId + "?current_company={company}", HttpMethod.DELETE, createEntity(null), String.class,
+		String url = serverUrl + "formulas/" + recipeId + "?current_company={company}";
+		if (logger.isTraceEnabled()) {
+			logger.trace("DELETE url: " + url);
+		}
+		restTemplate.exchange(url, HttpMethod.DELETE, createEntity(null), String.class,
 				params);
 
 	}
@@ -446,6 +446,9 @@ public class DecernisServiceImpl implements DecernisService {
 
 		logger.debug("Get recipe analysis from decernis : " + recipeId + ", usage : " + usage);
 
+		if (logger.isTraceEnabled()) {
+			logger.trace("POST url: " + url + " params: " + params);
+		}
 		HttpEntity<String> entity = createEntity(null);
 		JSONObject jsonObject = new JSONObject(restTemplate.postForObject(url, entity, String.class, params));
 		if (jsonObject.has(PARAM_ANALYSIS_RESULTS) && (jsonObject.getJSONObject(PARAM_ANALYSIS_RESULTS).length() > 0)) {
