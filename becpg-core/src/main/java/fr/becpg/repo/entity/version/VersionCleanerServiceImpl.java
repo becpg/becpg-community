@@ -38,6 +38,8 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.BatchStep;
+import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.EntityFormatService;
@@ -276,8 +278,18 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			}
 
 		};
+		
+		BatchStep<NodeRef> batchStep = new BatchStep<>();
+		
+		batchStep.setProcessWorker(processWorker);
+		batchStep.setBatchStepListener(new BatchStepAdapter() {
+			@Override
+			public void beforeStep() {
+				batchStep.setWorkProvider(new CleanVersionWorkProvider(maxProcessedNodes, path));
+			}
+		});
 
-		batchQueueService.queueBatch(batchInfo, new CleanVersionWorkProvider(maxProcessedNodes, path), processWorker, null);
+		batchQueueService.queueBatch(batchInfo, List.of(batchStep));
 
 	}
 
