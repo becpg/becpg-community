@@ -42,6 +42,7 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.namespace.NamespaceService;
+import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,6 +80,10 @@ import fr.becpg.repo.repository.L2CacheSupport;
  */
 @Service("remoteEntityService")
 public class RemoteEntityServiceImpl implements RemoteEntityService {
+
+	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
+
+	private static final String UNKNOW_FORMAT_ERROR = "Unknown format %s";
 
 	@Autowired
 	@Qualifier("ServiceRegistry")
@@ -126,17 +131,15 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 	@Autowired
 	private EntityListDAO entityListDAO;
-	
+
 	@Autowired
 	private VersionService versionService;
-	
+
 	@Autowired
 	private SysAdminParams sysAdminParams;
-	
+
 	@Autowired
 	private LockService lockService;
-
-	private static final Log logger = LogFactory.getLog(RemoteEntityServiceImpl.class);
 
 	/**
 	 * <p>Getter for the field <code>transactionService</code>.</p>
@@ -181,8 +184,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 					siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
 			break;
 		case json_schema:
-			remoteEntityVisitor = new JsonSchemaEntityVisitor(sysAdminParams, mlNodeService, nodeService, namespaceService, entityDictionaryService, contentService,
-					siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
+			remoteEntityVisitor = new JsonSchemaEntityVisitor(sysAdminParams, mlNodeService, nodeService, namespaceService, entityDictionaryService,
+					contentService, siteService, attributeExtractor, versionService, lockService, associationService, entityListDAO);
 			break;
 		case xsd:
 		case xsd_excel:
@@ -190,7 +193,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			remoteSchemaGenerator.generateSchema(out);
 			break;
 		default:
-			throw new BeCPGException("Unknown format " + format.toString());
+			throw new BeCPGException(String.format(UNKNOW_FORMAT_ERROR, format.toString()));
 
 		}
 
@@ -202,6 +205,33 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			} catch (Exception e) {
 				throw new BeCPGException("Cannot export entity :" + entityNodeRef + " at format " + format, e);
 			}
+		}
+
+	}
+
+	@Override
+	public void getEntitySchema(QName type, OutputStream out, RemoteParams params) {
+		RemoteEntityFormat format = params.getFormat();
+		switch (format) {
+		case xsd:
+		case xsd_excel:
+			remoteSchemaGenerator.generateSchema(out);
+			break;
+		case json_schema:
+		case json:
+			try {
+				JsonSchemaEntityVisitor jsonSchemaVisitor = new JsonSchemaEntityVisitor(sysAdminParams, mlNodeService, nodeService, namespaceService,
+						entityDictionaryService, contentService, siteService, attributeExtractor, versionService, lockService, associationService,
+						entityListDAO);
+				jsonSchemaVisitor.setParams(params);
+
+				jsonSchemaVisitor.visit(type, out);
+			} catch (Exception e) {
+				throw new BeCPGException("Cannot export schema for type :" + type + " at format " + format, e);
+			}
+		default:
+			throw new BeCPGException(String.format(UNKNOW_FORMAT_ERROR, format.toString()));
+
 		}
 
 	}
@@ -221,7 +251,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 				rets.add(internalCreateOrUpdateEntity(entityNodeRef, null, in, params, entityProviderCallBack, cache));
 
 			}, false, false);
-			
+
 			if (rets.isEmpty()) {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format + " -  results is empty");
 			}
@@ -230,7 +260,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 		}
 
-		throw new BeCPGException("Unknown format " + format.toString());
+		throw new BeCPGException(String.format(UNKNOW_FORMAT_ERROR, format.toString()));
 	}
 
 	/** {@inheritDoc} */
@@ -251,8 +281,8 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 
 			try {
 				if (RemoteEntityFormat.json.equals(format)) {
-					ImportEntityJsonVisitor jsonEntityVisitor = new ImportEntityJsonVisitor(serviceRegistry, entityDictionaryService, namespaceService,
-							associationService, mlNodeService, entityListDAO);
+					ImportEntityJsonVisitor jsonEntityVisitor = new ImportEntityJsonVisitor(serviceRegistry, entityDictionaryService,
+							namespaceService, associationService, mlNodeService, entityListDAO);
 
 					return jsonEntityVisitor.visit(entityNodeRef, in);
 				} else {
@@ -362,7 +392,7 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 				throw new BeCPGException("Cannot create or update entity :" + entityNodeRef + " at format " + format, e);
 			}
 		} else {
-			throw new BeCPGException("Unknown format " + format.toString());
+			throw new BeCPGException(String.format(UNKNOW_FORMAT_ERROR, format.toString()));
 		}
 
 	}
