@@ -327,9 +327,11 @@
 	           <entry key="versionCleanerService">
                     <ref bean="versionCleanerService" />
                </entry>
+	           <entry key="systemConfigurationService">
+                    <ref bean="systemConfigurationService" />
+               </entry>
 			</map>
 		</property>
-        
 	</bean>
 	
 	<bean id="versionCleanerSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">

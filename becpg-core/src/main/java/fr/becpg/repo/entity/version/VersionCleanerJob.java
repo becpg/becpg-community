@@ -8,6 +8,8 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.PersistJobDataAfterExecution;
 
+import fr.becpg.repo.system.SystemConfigurationService;
+
 /**
  * <p>VersionCleanerJob class.</p>
  *
@@ -26,6 +28,7 @@ public class VersionCleanerJob extends AbstractScheduledLockedJob implements Job
 	public void executeJob(JobExecutionContext context) throws JobExecutionException {
 		JobDataMap jobData = context.getJobDetail().getJobDataMap();
 		VersionCleanerService versionCleanerService = (VersionCleanerService) jobData.get("versionCleanerService");
-		versionCleanerService.cleanVersions(500, null);
+		SystemConfigurationService systemConfigurationService = (SystemConfigurationService) jobData.get("systemConfigurationService");
+		versionCleanerService.cleanVersions(Integer.parseInt(systemConfigurationService.confValue("beCPG.version.cleaner.maxProcessedNodes")), null);
 	}
 }
