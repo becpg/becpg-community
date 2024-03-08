@@ -18,7 +18,7 @@
 <webscript>
 	<shortname>Get entity type schema</shortname>
 	<description>Get entity type schema</description>	
-	<url>/becpg/remote/dictionnary?type={type}</url>
+	<url>/becpg/remote/dictionary?type={type}</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
 	<transaction allow="readonly" >required</transaction>

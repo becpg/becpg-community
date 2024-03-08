@@ -221,7 +221,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 						}
 
 					} else {
-						logger.debug("Properties not in dictionnary: " + entry.getKey());
+						logger.debug("Properties not in dictionary: " + entry.getKey());
 					}
 				}
 			}
@@ -513,7 +513,7 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 						visitPropValue(propName, entity, entry.getValue(), context, propertyDefinition);
 					} else {
-						logger.debug("Properties not in dictionnary: " + entry.getKey());
+						logger.debug("Properties not in dictionary: " + entry.getKey());
 					}
 				}
 			}

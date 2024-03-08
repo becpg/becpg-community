@@ -38,7 +38,7 @@ import fr.becpg.repo.entity.remote.RemoteParams;
  * @author matthieu
  * @version $Id: $Id
  */
-public class EntityDictionnaryWebScript extends AbstractEntityWebScript {
+public class EntityDictionaryWebScript extends AbstractEntityWebScript {
 
 	
 
@@ -51,7 +51,7 @@ public class EntityDictionnaryWebScript extends AbstractEntityWebScript {
 			throw new WebScriptException(Status.STATUS_NOT_IMPLEMENTED, "Type parameter is mandatory");
 		}
 
-		logger.debug("Get dictionnary schema:  for type" + type);
+		logger.debug("Get dictionary schema:  for type" + type);
 
 		try (OutputStream out = resp.getOutputStream()) {
 

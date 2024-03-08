@@ -571,7 +571,7 @@ public class JsonEntityVisitor extends AbstractEntityVisitor {
 						visitPropValue(propName, entity, entry.getValue(), context);
 
 					} else {
-						logger.debug("Properties not in dictionnary: " + entry.getKey());
+						logger.debug("Properties not in dictionary: " + entry.getKey());
 					}
 
 				}
