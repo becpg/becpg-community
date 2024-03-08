@@ -229,9 +229,9 @@ public class RemoteEntityServiceImpl implements RemoteEntityService {
 			} catch (Exception e) {
 				throw new BeCPGException("Cannot export schema for type :" + type + " at format " + format, e);
 			}
+			break;
 		default:
 			throw new BeCPGException(String.format(UNKNOW_FORMAT_ERROR, format.toString()));
-
 		}
 
 	}
