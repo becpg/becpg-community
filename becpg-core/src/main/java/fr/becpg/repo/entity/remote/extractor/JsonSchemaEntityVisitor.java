@@ -165,28 +165,33 @@ public class JsonSchemaEntityVisitor extends JsonEntityVisitor {
 
 				if (!assocDef.getName().getNamespaceURI().equals(NamespaceService.RENDITION_MODEL_1_0_URI)
 						&& !assocDef.getName().getNamespaceURI().equals(NamespaceService.SYSTEM_MODEL_1_0_URI)
-						&& !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL) && !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER)
-						&& !assocDef.getName().equals(BeCPGModel.ASSOC_ENTITYLISTS) && assocDef.isChild()) {
-					QName nodeType = assocDef.getTargetClass().getName().getPrefixedQName(namespaceService);
-					// fields & child assocs filter
-					if (((params.getFilteredProperties() != null) && !params.getFilteredProperties().isEmpty()
-							&& !params.getFilteredProperties().contains(nodeType))) {
+						&& !assocDef.getName().equals(RuleModel.ASSOC_RULE_FOLDER) && !assocDef.getName().equals(ContentModel.ASSOC_ORIGINAL)
+						&& !assocDef.isChild() && params.shouldExtractField(assocDef.getName())
+
+				) {
+
+					QName assocQname = assocDef.getName().getPrefixedQName(namespaceService);
+
+					if (!matchProp(assocName, assocQname, false)) {
 						continue;
 					}
+
+					
+					QName targetType = assocDef.getTargetClass().getName().getPrefixedQName(namespaceService);
 
 					JSONObject jsonAssocNode = new JSONObject();
 
 					if (assocDef.isTargetMany()) {
 						JSONObject jsonAssocs = new JSONObject();
-						addProperty(attributes, entityDictionaryService.toPrefixString(nodeType), TYPE_ARRAY,
+						addProperty(attributes, entityDictionaryService.toPrefixString(assocQname), TYPE_ARRAY,
 								assocDef.getTitle(entityDictionaryService), assocDef.getDescription(entityDictionaryService), jsonAssocs);
 						jsonAssocs.put(PROP_ITEMS, jsonAssocNode);
 					} else {
-						addProperty(attributes, entityDictionaryService.toPrefixString(nodeType), TYPE_OBJECT,
+						addProperty(attributes, entityDictionaryService.toPrefixString(assocQname), TYPE_OBJECT,
 								assocDef.getTitle(entityDictionaryService), assocDef.getDescription(entityDictionaryService), jsonAssocNode);
 					}
 
-					visitType(jsonAssocNode, nodeType, assocDef.getName());
+					visitType(jsonAssocNode, targetType, assocDef.getName());
 
 				}
 			}
