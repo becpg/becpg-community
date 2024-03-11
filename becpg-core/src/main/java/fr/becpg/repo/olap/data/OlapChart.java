@@ -191,7 +191,6 @@ public class OlapChart {
 		JSONObject obj = new JSONObject();
 		obj.put("queryName", queryName);
 		obj.put("queryId", queryId);
-		// obj.put("mdx",mdx);
 		obj.put("cube", cube);
 		obj.put("type", type);
 		obj.put("noderef", nodeRef);

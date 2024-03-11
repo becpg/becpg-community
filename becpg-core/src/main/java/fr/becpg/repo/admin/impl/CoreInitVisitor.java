@@ -141,11 +141,12 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 		// MailTemplates
 		contentHelper.addFilesResources(beCPGMailService.getEmailNotifyTemplatesFolder(), "classpath*:beCPG/mails/notify/*.ftl");
-		contentHelper.addFilesResources(beCPGMailService.getEmailActivitiesTemplatesFolder(), "classpath*:alfresco/templates/activities-email-templates/*.ftl");
-		contentHelper.addFilesResources(beCPGMailService.getEmailInviteTemplatesFolder(), "classpath*:alfresco/templates/invite-email-templates/*.ftl");
+		contentHelper.addFilesResources(beCPGMailService.getEmailActivitiesTemplatesFolder(),
+				"classpath*:alfresco/templates/activities-email-templates/*.ftl");
+		contentHelper.addFilesResources(beCPGMailService.getEmailInviteTemplatesFolder(),
+				"classpath*:alfresco/templates/invite-email-templates/*.ftl");
 		contentHelper.addFilesResources(beCPGMailService.getEmailInviteTemplatesFolder(), "classpath*:alfresco/templates/new-user-templates/*.ftl");
 
-		
 		// license
 		visitFolder(systemNodeRef, RepoConsts.PATH_LICENSE);
 
@@ -192,8 +193,9 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 
 	private void visitGroups() {
 
-		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(),SystemGroup.ExternalUserMgr.toString(), SystemGroup.ExternalUser.toString(),
-				SystemGroup.SecurityRole.toString(), SystemGroup.LanguageMgr.toString() });
+		createGroups(new String[] { SystemGroup.SystemMgr.toString(), SystemGroup.OlapUser.toString(), SystemGroup.AiUser.toString(),
+				SystemGroup.ExternalUserMgr.toString(), SystemGroup.ExternalUser.toString(), SystemGroup.SecurityRole.toString(),
+				SystemGroup.LanguageMgr.toString() });
 
 		createGroups(new String[] { SystemGroup.LicenseReadConcurrent.toString(), SystemGroup.LicenseWriteConcurrent.toString(),
 				SystemGroup.LicenseReadNamed.toString(), SystemGroup.LicenseWriteNamed.toString(),
@@ -314,12 +316,11 @@ public class CoreInitVisitor extends AbstractInitVisitorImpl {
 			reportTplInformation.setDefaultTpl(false);
 			reportTplInformation.setSystemTpl(false);
 			reportTplInformation.setResources(resources);
-			
-			
-			reportTplService.createTplRptDesign(compareProductFolderNodeRef,
-					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES), COMPARE_ENTITIES_REPORT_PATH, reportTplInformation, false);
 
-			
+			reportTplService.createTplRptDesign(compareProductFolderNodeRef,
+					TranslateHelper.getTranslatedPath(RepoConsts.PATH_REPORTS_COMPARE_ENTITIES), COMPARE_ENTITIES_REPORT_PATH, reportTplInformation,
+					false);
+
 		} catch (IOException e) {
 			logger.error("Failed to create compare entity report tpl.", e);
 		}
