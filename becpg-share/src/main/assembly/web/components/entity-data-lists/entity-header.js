@@ -220,7 +220,7 @@
                       {
                          var protocolPrefix = (window.location.protocol === 'https:') ? 'wss:' : 'ws:', me = this;
                          
-                         me.ws = new WebSocket(protocolPrefix + '//' + location.host + "/share/becpgws/"+this.options.nodeRef.replace(":/","")+"/"+encodeURIComponent(Alfresco.constants.USERNAME));
+                         me.ws = new WebSocket(protocolPrefix + '//' + location.host + Alfresco.constants.URL_CONTEXT +  "becpgws/"+this.options.nodeRef.replace(":/","")+"/"+encodeURIComponent(Alfresco.constants.USERNAME));
           		
                          me.ws.onmessage = function (evt) 
                          { 

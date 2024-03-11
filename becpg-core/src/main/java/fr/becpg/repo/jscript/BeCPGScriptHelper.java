@@ -69,6 +69,7 @@ import org.springframework.extensions.webscripts.ScriptValueConverter;
 import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.EntityListState;
+import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
@@ -165,6 +166,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	
 	private SystemConfigurationService systemConfigurationService;
 	
+	private BeCPGTicketService beCPGTicketService;
+	
 	private boolean useBrowserLocale;
 
 	private boolean showUnauthorizedWarning = true;
@@ -207,6 +210,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
 		this.tenantAdminService = tenantAdminService;
+	}
+	
+	
+
+	public void setBeCPGTicketService(BeCPGTicketService beCPGTicketService) {
+		this.beCPGTicketService = beCPGTicketService;
 	}
 
 	/**
@@ -950,6 +959,15 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 */
 	public String getOlapSSOUrl() {
 		return olapService.getSSOUrl();
+	}
+	
+	/**
+	 * <p>getBeCPGAuthTocken.</p>
+	 * 
+	 * @return a {@link java.lang.String} object.
+	 */
+	public String getBeCPGAuthTocken() {
+		return beCPGTicketService.getCurrentAuthToken();
 	}
 
 	/**

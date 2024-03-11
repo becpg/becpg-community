@@ -49,6 +49,7 @@ function main()
       var count = documentDetails.item.node.properties["fm:commentCount"];
       model.commentCount = (count != undefined ? count : null);
       model.hasScore = documentDetails.item.node.aspects.indexOf("bcpg:entityScoreAspect") > 0;
+      model.isAIEnable =   (!documentDetails.item.node.isLocked && documentDetails.item.node.permissions.user["Write"] && user.capabilities["isAIUser"] !=null && user.capabilities["isAIUser"] == true) || false;
    // Widget instantiation 
       
       var propertiesView = {
@@ -85,7 +86,8 @@ function main()
 	      
 	    model.widgets.push(entityCatalog);  
 	    
-/*	       var entitySuggestions = {
+	    if(model.isAIEnable){
+	       var entitySuggestions = {
 	 	         id : "EntitySuggestions", 
 	 	         name : "beCPG.component.EntitySuggestions",
 	 	         initArgs :  ["\"" + args.htmlid+"_sug\""],
@@ -94,7 +96,8 @@ function main()
 	 	         }
 	 	   };
 	      
-	    model.widgets.push(entitySuggestions);  */
+	    	model.widgets.push(entitySuggestions);
+	    } 
       }
       
       
