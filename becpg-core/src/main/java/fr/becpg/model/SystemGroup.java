@@ -10,6 +10,7 @@ public enum SystemGroup {
 
 	SystemMgr,
 	OlapUser,
+	AiUser,
 	ExternalUser,
 	ExternalUserMgr,
 	SecurityRole,
