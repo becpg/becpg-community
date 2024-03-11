@@ -42,8 +42,12 @@ import fr.becpg.repo.olap.impl.OlapServiceImpl;
  */
 public class OlapUtils {
 
-	private static final Log logger = LogFactory.getLog(OlapServiceImpl.class);
+	private static final Log logger = LogFactory.getLog(OlapUtils.class);
 
+	
+	private OlapUtils() {
+		//DO Nothing
+	}
 	/**
 	 * <p>readJsonFromUrl.</p>
 	 *
@@ -117,7 +121,6 @@ public class OlapUtils {
 
 	}
 
-	// TODO crappy !!!
 	/**
 	 * <p>convert.</p>
 	 *
@@ -126,7 +129,7 @@ public class OlapUtils {
 	 */
 	public static Object convert(String value) {
 		if (value == null || value.isEmpty()) {
-			return (Long)0L;
+			return 0L;
 		}
 		try {
 			return Long.parseLong(value);
@@ -134,6 +137,7 @@ public class OlapUtils {
 			try {
 				return Double.parseDouble(value.replace(",", "."));
 			} catch (NumberFormatException ignored) {
+				//DO NOthing
 			}
 		}
 		return value;

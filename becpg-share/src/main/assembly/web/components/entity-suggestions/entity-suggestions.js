@@ -124,8 +124,7 @@
 		connectToStomp: function() {
 			var protocolPrefix = (window.location.protocol === 'https:') ? 'wss:' : 'ws:', me = this;
 
-			//var socket = new WebSocket(protocolPrefix + '//' + location.host + ":8081/ws/");
-			var socket = new WebSocket(protocolPrefix + '//localhost:8081/ws/');
+			var socket = new WebSocket(protocolPrefix + location.host + Alfresco.constants.URL_CONTEXT + "aiws");
 			
 			me.stompClient = Stomp.over(socket);
 			me.stompClient.connect({}, function() {
