@@ -82,6 +82,7 @@
 		<property name="hierarchyService" ref="hierarchyService" />
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="beCPGMailService" ref="beCPGMailService" />
+		<property name="beCPGTicketService" ref="beCPGTicketService" />
 	</bean>
 	
 	<bean id="beCPGStateHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.BeCPGStateHelper">

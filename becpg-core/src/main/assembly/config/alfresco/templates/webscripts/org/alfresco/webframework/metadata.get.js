@@ -58,6 +58,9 @@ else if (args["user"] != null)
        if("GROUP_OlapUser" == groups[i].properties["cm:authorityName"]){
     	   isOlapUser = true;
        }
+       if("GROUP_AiUser" == groups[i].properties["cm:authorityName"]){
+    	  model.capabilities["isAIUser"] = true;
+       }
        if("GROUP_ALFRESCO_ADMINISTRATORS" == groups[i].properties["cm:authorityName"]){
     	   isAdmin = true;
        }
