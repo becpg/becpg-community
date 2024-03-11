@@ -9,6 +9,19 @@ if [[ $REPO_PORT == "" ]]; then
    REPO_PORT=8080
 fi
 
+if [[ $AI_HOST == "" ]]; then
+   AI_HOST=becpg-ai
+fi
+
+if [[ $AI_PORT == "" ]]; then
+   AI_PORT=8087
+fi
+
+if [[ $BECPG_INSTANCE == "" ]]; then
+   BECPG_INSTANCE=default
+fi
+
+
 BECPG_CONNECTOR_ID="alfresco"
 BECPG_EXTERNAL_AUTH="false"
 
@@ -21,6 +34,8 @@ fi
 echo "Replace 'REPO_HOST' with '$REPO_HOST' and 'REPO_PORT' with '$REPO_PORT'"
 
 sed -i -e 's/REPO_HOST:REPO_PORT/'"$REPO_HOST:$REPO_PORT"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
+sed -i -e 's/AI_HOST:AI_PORT/'"$AI_HOST:$AI_PORT"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
+sed -i -e 's/BECPG_INSTANCE/'"$BECPG_INSTANCE"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 sed -i -e 's/BECPG_CONNECTOR_ID/'"$BECPG_CONNECTOR_ID"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 sed -i -e 's/BECPG_EXTERNAL_AUTH/'"$BECPG_EXTERNAL_AUTH"'/g' /usr/local/tomcat/shared/classes/alfresco/web-extension/share-config-custom.xml
 
