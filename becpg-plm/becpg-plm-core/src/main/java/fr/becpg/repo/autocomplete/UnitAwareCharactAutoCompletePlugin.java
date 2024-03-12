@@ -55,6 +55,7 @@ public class UnitAwareCharactAutoCompletePlugin extends TargetAssocAutoCompleteP
 	/** {@inheritDoc} */
 	@Override
 	public AutoCompletePage suggest(String sourceType, String query, Integer pageNum, Integer pageSize, Map<String, Serializable> props) {
+		
 		if (SOURCE_TYPE_NUT.equals(sourceType)) {
 			return suggestTargetAssoc(null, PLMModel.TYPE_NUT, query, pageNum, pageSize, null, props);
 		} else if (SOURCE_TYPE_PHYSICO_CHEM.equals(sourceType)) {
@@ -62,7 +63,9 @@ public class UnitAwareCharactAutoCompletePlugin extends TargetAssocAutoCompleteP
 		} else if (SOURCE_TYPE_MICROBIO.equals(sourceType)) {
 			return suggestTargetAssoc(null, PLMModel.TYPE_MICROBIO, query, pageNum, pageSize, null, props);
 		} else {
-			return suggestTargetAssoc(null, BeCPGModel.TYPE_CHARACT, query, pageNum, pageSize, null, props);
+			String classNames = (String) props.get(AutoCompleteService.PROP_CLASS_NAMES);
+			String[] arrClassNames = classNames != null ? classNames.split(PARAM_VALUES_SEPARATOR) : null;
+			return suggestTargetAssoc(null, BeCPGModel.TYPE_CHARACT, query, pageNum, pageSize, arrClassNames, props);
 		}
 	}
 
