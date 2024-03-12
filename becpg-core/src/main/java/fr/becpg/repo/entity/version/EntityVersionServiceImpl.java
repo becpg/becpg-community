@@ -778,7 +778,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		return internalMergeBranch(branchNodeRef, branchToNodeRef, versionType, description, impactWused, rename, null);
 	}
 
-	public NodeRef internalMergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description,
+	private NodeRef internalMergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description,
 			boolean impactWused, boolean rename, Date newEffectivity) {
 
 		if (branchToNodeRef == null) {
