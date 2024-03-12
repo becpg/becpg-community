@@ -296,7 +296,7 @@ public class ExcelXmlEntityVisitor  extends AbstractEntityVisitor{
 						visitPropValue(entry.getValue(), xmlw);
 						xmlw.writeEndElement();
 					} else {
-						logger.warn("Properties not in dictionnary: " + entry.getKey());
+						logger.warn("Properties not in dictionary: " + entry.getKey());
 					}
 
 				}

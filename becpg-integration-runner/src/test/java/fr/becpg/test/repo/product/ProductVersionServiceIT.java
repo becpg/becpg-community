@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotEquals;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -968,6 +969,75 @@ public class ProductVersionServiceIT extends PLMBaseTestCase {
 		assertTrue(mergedModifiedDate.getTime() - originalModifiedDate.getTime() >= waitTime);
 		
 		assertTrue(mergedModifiedDate.getTime() - branchModifiedDate.getTime() >= waitTime);
+		
+	}
+	
+	@Test
+	public void testEffectivityAfterMerge() {
+		
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MONTH, -1);
+		Date firstDate = cal.getTime();
+		
+		NodeRef entity = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef nodeRef = BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "Test effectivity date after merge");
+			nodeService.setProperty(nodeRef, BeCPGModel.PROP_START_EFFECTIVITY, firstDate);
+			return nodeRef;
+		}, false, true);
+		
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		Date secondDate = cal.getTime();
+		
+		NodeRef branch1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef branch = entityVersionService.createBranch(entity, getTestFolderNodeRef());
+			associationService.update(branch, BeCPGModel.ASSOC_AUTO_MERGE_TO, entity);
+			return branch;
+		}, false, true);
+		
+		NodeRef merged1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			return entityVersionService.mergeBranch(branch1, secondDate);
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			VersionHistory versionHistory = versionService.getVersionHistory(merged1);
+			Version version = versionHistory.getVersion("1.0");
+			NodeRef entityVersion = entityVersionService.getEntityVersion(version);
+			assertEquals(firstDate, nodeService.getProperty(entityVersion, BeCPGModel.PROP_START_EFFECTIVITY));
+			assertEquals(secondDate, nodeService.getProperty(entityVersion, BeCPGModel.PROP_END_EFFECTIVITY));
+			
+			version = versionHistory.getVersion("1.1");
+			entityVersion = entityVersionService.getEntityVersion(version);
+			assertEquals(secondDate, nodeService.getProperty(entityVersion, BeCPGModel.PROP_START_EFFECTIVITY));
+			
+			return null;
+		}, false, true);
+		
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		Date thirdDate = cal.getTime();
+		
+		NodeRef branch2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			NodeRef branch = entityVersionService.createBranch(entity, getTestFolderNodeRef());
+			associationService.update(branch, BeCPGModel.ASSOC_AUTO_MERGE_TO, entity);
+			return branch;
+		}, false, true);
+		
+		NodeRef merged2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			return entityVersionService.mergeBranch(branch2, thirdDate);
+		}, false, true);
+		
+		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			VersionHistory versionHistory = versionService.getVersionHistory(merged2);
+			Version version = versionHistory.getVersion("1.1");
+			NodeRef entityVersion = entityVersionService.getEntityVersion(version);
+			assertEquals(secondDate, nodeService.getProperty(entityVersion, BeCPGModel.PROP_START_EFFECTIVITY));
+			assertEquals(thirdDate, nodeService.getProperty(entityVersion, BeCPGModel.PROP_END_EFFECTIVITY));
+			
+			version = versionHistory.getVersion("1.2");
+			entityVersion = entityVersionService.getEntityVersion(version);
+			assertEquals(thirdDate, nodeService.getProperty(entityVersion, BeCPGModel.PROP_START_EFFECTIVITY));
+			
+			return null;
+		}, false, true);
 		
 	}
 
