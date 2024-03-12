@@ -46,6 +46,7 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 	private static final long serialVersionUID = -2710240943326822672L;
 
 	private Double qtyPerc = 0d;
+	private Double migrationPerc;
 	private NodeRef ing;
 	private List<String> reasonsForInclusion;
 
@@ -67,6 +68,16 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 	 */
 	public void setQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
+	}
+	
+	@AlfProp
+	@AlfQname(qname = "bcpg:svhcListMigrationPerc")
+	public Double getMigrationPerc() {
+		return migrationPerc;
+	}
+
+	public void setMigrationPerc(Double migrationPerc) {
+		this.migrationPerc = migrationPerc;
 	}
 
 	/**
@@ -112,7 +123,6 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 	 * @param reasonsForInclusion
 	 */
 	public void setReasonsForInclusion(List<String> reasonsForInclusion) {
-
 		this.reasonsForInclusion = reasonsForInclusion;
 	}
 
@@ -186,6 +196,7 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 		this.qtyPerc = i.qtyPerc;
 		this.ing = i.ing;
 		this.reasonsForInclusion = i.reasonsForInclusion;
+		this.migrationPerc = i.migrationPerc;
 	}
 
 	@Override
@@ -201,7 +212,7 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + Objects.hash(ing, qtyPerc, reasonsForInclusion);
+		result = prime * result + Objects.hash(ing, migrationPerc, qtyPerc, reasonsForInclusion);
 		return result;
 	}
 
@@ -214,13 +225,14 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 		if (getClass() != obj.getClass())
 			return false;
 		SvhcListDataItem other = (SvhcListDataItem) obj;
-		return Objects.equals(ing, other.ing) && Objects.equals(qtyPerc, other.qtyPerc)
+		return Objects.equals(ing, other.ing) && Objects.equals(migrationPerc, other.migrationPerc) && Objects.equals(qtyPerc, other.qtyPerc)
 				&& Objects.equals(reasonsForInclusion, other.reasonsForInclusion);
 	}
 
 	@Override
 	public String toString() {
-		return "SvhcListDataItem [qtyPerc=" + qtyPerc + ", ing=" + ing + ", reasonsForInclusion=" + reasonsForInclusion + "]";
+		return "SvhcListDataItem [qtyPerc=" + qtyPerc + ", migrationPerc=" + migrationPerc + ", ing=" + ing + ", reasonsForInclusion="
+				+ reasonsForInclusion + "]";
 	}
 
 	/** {@inheritDoc} */
