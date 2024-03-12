@@ -39,14 +39,14 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.EntityDictionaryService;
 
 /**
- * <p>EntityDictionnaryWebScript class.</p>
+ * <p>EntityDictinnaryWebScript class.</p>
  *
  * @author matthieu
  * @version $Id: $Id
  */
-public class EntityDictionnaryWebScript extends AbstractWebScript {
+public class EntityDictionaryWebScript extends AbstractWebScript {
 
-	private static final Log logger = LogFactory.getLog(EntityDictionnaryWebScript.class);
+	private static final Log logger = LogFactory.getLog(EntityDictionaryWebScript.class);
 
 	/** Constant <code>PARAM_ITEMTYPE="itemType"</code> */
 	protected static final String PARAM_ITEMTYPE = "itemType";
@@ -94,7 +94,7 @@ public class EntityDictionnaryWebScript extends AbstractWebScript {
 		if (logger.isDebugEnabled()) {
 			watch = new StopWatch();
 			watch.start();
-			logger.debug("EntityDictionnaryWebScript executeImpl()");
+			logger.debug("EntityDictionaryWebScript executeImpl()");
 		}
 
 		String itemType = req.getParameter(PARAM_ITEMTYPE);
@@ -154,7 +154,7 @@ public class EntityDictionnaryWebScript extends AbstractWebScript {
 		} finally {
 			if (logger.isDebugEnabled()) {
 				watch.stop();
-				logger.debug("EntityDictionnaryWebScript execute in " + watch.getTotalTimeSeconds() + "s");
+				logger.debug("EntityDictionaryWebScript execute in " + watch.getTotalTimeSeconds() + "s");
 			}
 		}
 

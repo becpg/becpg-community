@@ -15,7 +15,7 @@ import fr.becpg.test.repo.product.lexer.CompositionLexerIT;
 import fr.becpg.test.repo.project.NPDServiceIT;
 import fr.becpg.test.repo.project.ProjectListSortIT;
 import fr.becpg.test.repo.web.scripts.admin.AdminModuleWebScriptIT;
-import fr.becpg.test.repo.web.scripts.entity.EntityDictionnaryWebScriptIT;
+import fr.becpg.test.repo.web.scripts.entity.EntityDictionaryWebScriptIT;
 import fr.becpg.test.repo.web.scripts.entity.EntityListsWebScriptIT;
 import fr.becpg.test.repo.web.scripts.entity.EntityVersionWebScriptIT;
 import fr.becpg.test.repo.web.scripts.listvalue.AutoCompleteWebScriptIT;
@@ -28,7 +28,7 @@ import fr.becpg.test.repo.web.scripts.search.SearchWebScriptIT;
 @RunWith(Suite.class)
 @SuiteClasses(value = { AdminModuleWebScriptIT.class, CompoListAutoCompletePluginIT.class, TargetAssocAutoCompletePluginIT.class, CompositionLexerIT.class,
 
-		ProductServiceIT.class, EntityDictionnaryWebScriptIT.class, EntityListsWebScriptIT.class, AutoCompleteWebScriptIT.class,
+		ProductServiceIT.class, EntityDictionaryWebScriptIT.class, EntityListsWebScriptIT.class, AutoCompleteWebScriptIT.class,
 		ProductWUsedWebScriptIT.class,
 
 		SearchWebScriptIT.class,
