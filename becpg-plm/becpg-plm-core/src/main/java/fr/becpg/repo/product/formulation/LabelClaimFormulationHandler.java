@@ -503,9 +503,13 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 									if (ret instanceof Boolean) {
 										labelClaimListDataItem.setIsClaimed((Boolean) ret);
 									} else {
-										labelClaimListDataItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-										labelClaimListDataItem.setErrorLog(
-												I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault()));
+										if(ret instanceof String) {
+											labelClaimListDataItem.setLabelClaimValue((String) ret);
+										} else {
+											labelClaimListDataItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
+											labelClaimListDataItem.setErrorLog(
+													I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault()));
+										}
 									}
 								}
 							}

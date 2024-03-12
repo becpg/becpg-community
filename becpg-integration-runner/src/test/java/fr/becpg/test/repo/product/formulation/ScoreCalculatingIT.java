@@ -32,6 +32,7 @@ import java.util.Calendar;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
 import fr.becpg.model.SystemState;
+import fr.becpg.repo.helper.ContentHelper;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
@@ -58,6 +59,10 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private ContentService contentService;
+	
+
+	@Autowired
+	private ContentHelper contentHelper;
 
 	private NodeRef familyNodeRef;
 
@@ -273,37 +278,12 @@ public class ScoreCalculatingIT extends AbstractFinishedProductTest {
 
 	private void restoreCatalogs() {
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			String catalogJSONString = "[{\"entityType\":[\"bcpg:finishedProduct\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoFinishedProduct\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\",\"bcpg:precautionOfUseRef\",\"bcpg:useByDate|bcpg:bestBeforeDate\",\"bcpg:storageConditionsRef\",\"cm:title\"]},{\"entityType\":[\"bcpg:rawMaterial\"],\"uniqueFields\":[\"bcpg:erpCode\"],\"id\":\"incoRawMaterials\",\"label\":\"EU 1169/2011 (INCO)\",\"fields\":[\"bcpg:legalName\"]}]";
-
-			NodeRef folder = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
+			
+			NodeRef folderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(repositoryHelper.getCompanyHome(),
 					"/app:company_home/cm:System/cm:PropertyCatalogs");
 
-			List<FileInfo> files = fileFolderService.list(folder);
-			if (!files.isEmpty()) {
-
-				NodeRef catalogFile = files.get(0).getNodeRef();
-				ContentReader reader = contentService.getReader(catalogFile, ContentModel.PROP_CONTENT);
-
-				String content = reader.getContentString();
-
-				JSONArray catalogs = new JSONArray();
-
-				try {
-					catalogs = new JSONArray(catalogJSONString);
-					ContentWriter writer = contentService.getWriter(catalogFile, ContentModel.PROP_CONTENT, true);
-					PrintWriter printWriter = new PrintWriter(writer.getContentOutputStream());
-
-					printWriter.write(catalogs.toString());
-					printWriter.flush();
-					printWriter.close();
-				} catch (JSONException e) {
-					logger.error("unable to parse content " + content + " to jsonarray", e);
-				}
-
-			} else {
-				logger.error("No catalog in folder, do init repo");
-			}
-
+			contentHelper.addFilesResources(folderNodeRef, "classpath*:beCPG/catalogs/*.json", true);
+			
 			return null;
 		}, false, true);
 	}

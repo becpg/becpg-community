@@ -57,7 +57,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 	
 	private static final String PATH_CONFIGS = "configs";
 
-	private static final String XPATH_DICTIONNARY = "./app:dictionary";
+	private static final String XPATH_DICTIONARY = "./app:dictionary";
 
 	private static final String PATH_MODELS = "../app:models";
 	
@@ -72,7 +72,7 @@ public class DesignerInitVisitor extends AbstractInitVisitorImpl  {
 		logger.info("Run DesignerInitVisitor");
 		
 		// System
-		NodeRef dictionaryNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DICTIONNARY);
+		NodeRef dictionaryNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DICTIONARY);
 		
 
 		// Security
