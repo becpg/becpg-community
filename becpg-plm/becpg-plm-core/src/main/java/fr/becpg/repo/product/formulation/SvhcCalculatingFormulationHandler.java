@@ -4,6 +4,7 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,7 @@ import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
+import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
@@ -28,6 +30,7 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
+import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantData;
 
 /**
@@ -87,7 +90,11 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 				@Override
 				public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
-					return FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, componentProduct);
+					if(PackagingLevel.Primary.equals(packagingListDataItem.getPkgLevel())) {
+						return FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, componentProduct);
+					}
+					return null;
+					
 				}
 
 				@Override
@@ -97,7 +104,12 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 			}, formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
 
-			addMPIngredientsToSvhcList(formulatedProduct);
+
+
+			if (formulatedProduct.isRawMaterial()) {
+				addMPIngredientsToSvhcList(formulatedProduct);
+			}
+
 
 		}
 
@@ -123,39 +135,48 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 	private void addMPIngredientsToSvhcList(ProductData formulatedProduct) {
 		List<SvhcListDataItem> svhcList = formulatedProduct.getSvhcList();
 
-		QName nodeType = nodeService.getType(formulatedProduct.getNodeRef());
+		for (IngListDataItem ing : formulatedProduct.getIngList()) {
 
-		if (PLMModel.TYPE_RAWMATERIAL.equals(nodeType)) {
+			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
 
-			for (IngListDataItem ing : formulatedProduct.getIngList()) {
+			if (Boolean.TRUE.equals(ingItem.getIsSubstanceOfVeryHighConcern())) {
 
-				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
+				// if ing exists in the svhc list
+				if (svhcList.stream().map(SvhcListDataItem::getIng).anyMatch(svhcIngNodeRef -> svhcIngNodeRef.equals(ing.getIng()))) {
+					SvhcListDataItem substance = svhcList.stream().filter(sub -> sub.getIng().equals(ing.getIng())).findFirst().get();
+					substance.setQtyPerc(ing.getQtyPerc());
 
-				if (Boolean.TRUE.equals(ingItem.getIsSubstanceOfVeryHighConcern())) {
+				} else {
+					SvhcListDataItem svhcItem = SvhcListDataItem.build().withIngredient(ing.getIng()).withQtyPerc(ing.getQtyPerc());
 
-					// if ing exists in the svhc list
-					if (svhcList.stream().map(SvhcListDataItem::getIng).anyMatch(svhcIngNodeRef -> svhcIngNodeRef.equals(ing.getIng()))) {
-						SvhcListDataItem substance = svhcList.stream().filter(sub -> sub.getIng().equals(ing.getIng())).findFirst().get();
-						substance.setQtyPerc(ing.getQtyPerc());
-
-					} else {
-						SvhcListDataItem svhcItem = SvhcListDataItem.build();
-						svhcItem.withIngredient(ing.getIng());
-						svhcItem.withQtyPerc(ing.getQtyPerc());
-
-						formulatedProduct.getSvhcList().add(svhcItem);
-					}
+					formulatedProduct.getSvhcList().add(svhcItem);
 				}
 			}
 		}
+	}
+
+	@Override
+	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem slDataItem) {
+		if (partProduct.isPackaging() && slDataItem instanceof SvhcListDataItem) {
+
+			Double migrationPerc = ((SvhcListDataItem) slDataItem).getMigrationPerc();
+			if (migrationPerc == null) {
+				migrationPerc = 0d;
+			}
+
+			if (slDataItem.getValue() != null) {
+				return migrationPerc * slDataItem.getValue() / 100d;
+			}
+
+		}
+		return super.extractValue(formulatedProduct, partProduct, slDataItem);
 	}
 
 	/** {@inheritDoc} */
 	@Override
 	protected boolean accept(ProductData formulatedProduct) {
 		return !(formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL) || (formulatedProduct instanceof ProductSpecificationData)
-				|| ((formulatedProduct.getPhysicoChemList() == null)
-						&& !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_PHYSICOCHEMLIST)));
+				|| ((formulatedProduct.getSvhcList() == null) && !alfrescoRepository.hasDataList(formulatedProduct, PLMModel.TYPE_SVHCLIST)));
 	}
 
 	/** {@inheritDoc} */
