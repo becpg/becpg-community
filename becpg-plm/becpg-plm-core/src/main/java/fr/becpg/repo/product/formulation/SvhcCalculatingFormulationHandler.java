@@ -21,7 +21,9 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
+import fr.becpg.repo.product.data.ing.IngItem;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
+import fr.becpg.repo.product.data.productList.IngListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
@@ -95,8 +97,7 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 			}, formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
 
-			// TODO : 
-			// addIngredientsToSvhcList(formulatedProduct);
+			addMPIngredientsToSvhcList(formulatedProduct);
 
 		}
 
@@ -105,47 +106,49 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 			formulatedProduct.getSvhcList().forEach(n -> {
 				List<String> reasonsForInclusion = (List<String>) nodeService.getProperty(n.getIng(), PLMModel.PROP_SVHC_REASONS_FOR_INCLUSION);
-				n.setReasonsForInclusion(new ArrayList<>(reasonsForInclusion));
+				if (reasonsForInclusion != null) {
+					n.setReasonsForInclusion(new ArrayList<>(reasonsForInclusion));
+				} else {
+					n.setReasonsForInclusion(new ArrayList<>());
+				}
 			});
-
 		}
 
 		return true;
 	}
-//
-//	/**
-//	 * WORK IN PROGRESS : be implemented in future versions
-//	 * @param formulatedProduct
-//	 */
-//	private void addIngredientsToSvhcList(ProductData formulatedProduct) {
-//		List<SvhcListDataItem> svhcList = formulatedProduct.getSvhcList();
-//
-//		for (IngListDataItem ing : formulatedProduct.getIngList()) {
-//
-//			IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
-//
-//			if (Boolean.TRUE.equals(ingItem.getIsSubstanceOfVeryHighConcern())) {
-//
-//				// if ing exists in the svhc list
-//				if (svhcList.stream().map(SvhcListDataItem::getIng).anyMatch(svhcIngNodeRef -> svhcIngNodeRef.equals(ing.getIng()))) {
-//					SvhcListDataItem substance = svhcList.stream().filter(sub -> sub.getIng().equals(ing.getIng())).findFirst().get();
-//					substance.setQtyPerc(substance.getQtyPerc() + ing.getQtyPerc());
-//
-//				} else {
-//					SvhcListDataItem svhcItem = SvhcListDataItem.build();
-//					svhcItem.withIngredient(ing.getIng());
-//					svhcItem.withQtyPerc(ing.getQtyPerc());
-//
-//					formulatedProduct.getSvhcList().add(svhcItem);
-//				}
-//
-//				//				IngListDataItem ingSvhc = ingList.stream().filter(ing -> ing.getNodeRef().equals(svhc.getIng())).findFirst().get();
-//
-//			}
-//
-//		}
-//
-//	}
+
+	/**
+	 * @param formulatedProduct
+	 */
+	private void addMPIngredientsToSvhcList(ProductData formulatedProduct) {
+		List<SvhcListDataItem> svhcList = formulatedProduct.getSvhcList();
+
+		QName nodeType = nodeService.getType(formulatedProduct.getNodeRef());
+
+		if (PLMModel.TYPE_RAWMATERIAL.equals(nodeType)) {
+
+			for (IngListDataItem ing : formulatedProduct.getIngList()) {
+
+				IngItem ingItem = (IngItem) alfrescoRepository.findOne(ing.getIng());
+
+				if (Boolean.TRUE.equals(ingItem.getIsSubstanceOfVeryHighConcern())) {
+
+					// if ing exists in the svhc list
+					if (svhcList.stream().map(SvhcListDataItem::getIng).anyMatch(svhcIngNodeRef -> svhcIngNodeRef.equals(ing.getIng()))) {
+						SvhcListDataItem substance = svhcList.stream().filter(sub -> sub.getIng().equals(ing.getIng())).findFirst().get();
+						substance.setQtyPerc(ing.getQtyPerc());
+
+					} else {
+						SvhcListDataItem svhcItem = SvhcListDataItem.build();
+						svhcItem.withIngredient(ing.getIng());
+						svhcItem.withQtyPerc(ing.getQtyPerc());
+
+						formulatedProduct.getSvhcList().add(svhcItem);
+					}
+				}
+			}
+		}
+	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -159,12 +162,6 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 	@Override
 	protected List<SvhcListDataItem> getDataListVisited(ProductData partProduct) {
 		return partProduct.getSvhcList();
-	}
-
-	/** {@inheritDoc} */
-	@Override
-	protected boolean isCharactFormulated(SimpleListDataItem sl) {
-		return false;
 	}
 
 	/** {@inheritDoc} */
