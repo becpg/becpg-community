@@ -55,6 +55,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
@@ -1451,6 +1453,18 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		if (entityVersionService.isVersion(versionNode) && (nodeService.getProperty(versionNode, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
 			NodeRef extractedNode = entityVersionService.extractVersion(versionNode);
 			entityReportService.generateReports(extractedNode, versionNode);
+		}
+	}
+	
+	public void generateVersionReports(ScriptNode node) {
+		NodeRef entityNodeRef = node.getNodeRef();
+		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+		for (Version version : versionHistory.getAllVersions()) {
+			NodeRef versionNode = VersionUtil.convertNodeRef(version.getFrozenStateNodeRef());
+			if (entityVersionService.isVersion(versionNode) && (nodeService.getProperty(versionNode, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
+				NodeRef extractedNode = entityVersionService.extractVersion(versionNode);
+				entityReportService.generateReports(extractedNode, versionNode);
+			}
 		}
 	}
 	

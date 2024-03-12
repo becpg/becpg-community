@@ -232,11 +232,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 				path = req.getParameter(PARAM_PATH);
 			}
 			
-			while (maxProcessedNodes > 0) {
-				int nextBatch = Math.min(50, maxProcessedNodes);
-				versionCleanerService.cleanVersions(nextBatch, path);
-				maxProcessedNodes -= nextBatch;
-			}
+			versionCleanerService.cleanVersions(maxProcessedNodes, path);
 			
 		
 		} else if (ACTION_CLEAN_VERSION_STORE.equals(action)) {

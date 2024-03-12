@@ -14,6 +14,7 @@ function main() {
 		"beCPG.spel.security.authorizedTypes",
 		"beCPG.copyOrBranch.propertiesToReset",
 		"mail.logo.url",
+		"beCPG.version.cleaner.maxProcessedNodes",
 	].forEach(function(p) {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "system" }
 			});
@@ -25,7 +26,7 @@ function main() {
 		"beCPG.quality.sampleId.format",
 		"beCPG.sendToSupplier.entityName.format",
 		"beCPG.sendToSupplier.projectName.format",
-		"beCPG.report.name.format"
+		"beCPG.report.name.format",
 	].forEach(function(p) {
 				model.sysBeCPGAttributes[p] = { "type": "java.lang.String", "readonly": false, "qname": p, "name": p, "value": bSys.confValue(p), "set": "format"  }
 			});

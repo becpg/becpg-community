@@ -30,20 +30,20 @@ import fr.becpg.test.utils.TestWebscriptExecuters.Response;
 /**
  * @author matthieu
  */
-public class EntityDictionnaryWebScriptIT extends PLMBaseTestCase {
+public class EntityDictionaryWebScriptIT extends PLMBaseTestCase {
 
-	private static final Log logger = LogFactory.getLog(EntityDictionnaryWebScriptIT.class);
+	private static final Log logger = LogFactory.getLog(EntityDictionaryWebScriptIT.class);
 
 	@Test
-	public void testEntityDictionnary() throws Exception {
+	public void testEntityDictionary() throws Exception {
 
-		Response response = TestWebscriptExecuters.sendRequest(new GetRequest("/becpg/dictionnary/entity?itemType=bcpg:ing"), 200, "admin");
+		Response response = TestWebscriptExecuters.sendRequest(new GetRequest("/becpg/dictionary/entity?itemType=bcpg:ing"), 200, "admin");
 		String respString = response.getContentAsString();
 
 		logger.info("content : " + respString);
 		Assert.assertTrue(respString.contains("bcpg:ingListIng"));
 
-		response = TestWebscriptExecuters.sendRequest(new GetRequest("/becpg/dictionnary/entity?assocName=assoc_bcpg_allergenListAllergen"), 200,
+		response = TestWebscriptExecuters.sendRequest(new GetRequest("/becpg/dictionary/entity?assocName=assoc_bcpg_allergenListAllergen"), 200,
 				"admin");
 		respString = response.getContentAsString();
 
