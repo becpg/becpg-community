@@ -16,9 +16,9 @@
   You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 -->
 <webscript>
-	<shortname>EntityDictionnary</shortname>
-	<description>Entity Dictionnary Component - retrieve association definition</description>
-	<url>/becpg/dictionnary/entity?itemType={itemType}</url>
+	<shortname>EntityDictionary</shortname>
+	<description>Entity Dictionary Component - retrieve association definition</description>
+	<url>/becpg/dictionary/entity?itemType={itemType}</url>
 	<format default="json">argument</format>
 	<authentication>user</authentication>
 	<transaction allow="readonly" >required</transaction>

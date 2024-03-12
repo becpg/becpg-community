@@ -31,6 +31,7 @@ import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.PropertyAccessorFactory;
@@ -65,16 +66,15 @@ import fr.becpg.repo.repository.model.BaseObject;
  * @version $Id: $Id
  */
 @Repository("repositoryEntityDefReader")
-public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefReader<T> , ApplicationListener<ContextRefreshedEvent> {
+public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefReader<T>, ApplicationListener<ContextRefreshedEvent> {
 
 	private static final Log logger = LogFactory.getLog(RepositoryEntityDefReaderImpl.class);
 
 	@Autowired
 	private NamespaceService namespaceService;
 
-	
 	private final Map<QName, Class<T>> domainMapping = new ConcurrentHashMap<>();
-	
+
 	private final Map<String, QName> qnameCache = new ConcurrentHashMap<>();
 
 	/** {@inheritDoc} */
@@ -98,16 +98,23 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	}
 
 	@Override
-	public boolean isRegisteredQName(QName qname) {
-		return qnameCache.containsValue(qname);
+	public boolean isRegisteredQName(RepositoryEntity entity, QName qname) {
+		if (qnameCache.containsValue(qname)) {
+			Method[] methods = AopProxyUtils.ultimateTargetClass(entity).getMethods();
+			for (Method method : methods) {
+				if (method != null && method.isAnnotationPresent(AlfQname.class) && readQName(method).isMatch(qname)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void registerEntity(Class<T> clazz) {
 		logger.debug("Register entity : " + clazz.getName());
 		domainMapping.put(getType((Class<? extends RepositoryEntity>) clazz), clazz);
 	}
-	
 
 	/** {@inheritDoc} */
 	@Override
@@ -157,16 +164,15 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		return readValueMap(entity, DataListIdentifierAttr.class, Serializable.class);
 	}
 
-
 	/** {@inheritDoc} */
 	@Override
 	public QName getType(Class<? extends RepositoryEntity> clazz) {
 		if (clazz.getAnnotation(AlfQname.class) != null) {
 
 			String qName = clazz.getAnnotation(AlfQname.class).qname();
-			return  qnameCache.computeIfAbsent(qName, id -> QName.createQName(id, namespaceService)) ;
+			return qnameCache.computeIfAbsent(qName, id -> QName.createQName(id, namespaceService));
 		}
-		throw new IllegalStateException("No @AlfQname annotation in class : "+clazz.getName());
+		throw new IllegalStateException("No @AlfQname annotation in class : " + clazz.getName());
 	}
 
 	/** {@inheritDoc} */
@@ -179,26 +185,27 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	@SuppressWarnings("unchecked")
 	private <R, Z> Map<QName, R> readValueMap(Z entity, Class<? extends Annotation> annotationClass, Class<?> returnType) {
 		Map<QName, R> ret = new HashMap<>();
-		
-			BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(entity);
-			for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
-				Method readMethod = pd.getReadMethod();
-				if (readMethod != null) {
-					if (readMethod.isAnnotationPresent(annotationClass) && readMethod.isAnnotationPresent(AlfQname.class) && !readMethod.isAnnotationPresent(AlfReadOnly.class)) {
-						Object o = evaluateObject(pd.getPropertyType(), beanWrapper.getPropertyValue(pd.getName()));
-						QName qname = readQName(readMethod);
-						if (o != null) {
-							if (returnType.isAssignableFrom(o.getClass())) {
-								ret.put(qname, (R) returnType.cast(o));
-							} else {
-								logger.debug("Cannot cast from :" + o.getClass().getName() + " to " + returnType.getName() + " for " + qname);
-							}
+
+		BeanWrapper beanWrapper = PropertyAccessorFactory.forBeanPropertyAccess(entity);
+		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
+			Method readMethod = pd.getReadMethod();
+			if (readMethod != null) {
+				if (readMethod.isAnnotationPresent(annotationClass) && readMethod.isAnnotationPresent(AlfQname.class)
+						&& !readMethod.isAnnotationPresent(AlfReadOnly.class)) {
+					Object o = evaluateObject(pd.getPropertyType(), beanWrapper.getPropertyValue(pd.getName()));
+					QName qname = readQName(readMethod);
+					if (o != null) {
+						if (returnType.isAssignableFrom(o.getClass())) {
+							ret.put(qname, (R) returnType.cast(o));
 						} else {
-							ret.put(qname, null);
+							logger.debug("Cannot cast from :" + o.getClass().getName() + " to " + returnType.getName() + " for " + qname);
 						}
+					} else {
+						ret.put(qname, null);
 					}
 				}
 			}
+		}
 		return ret;
 	}
 
@@ -220,7 +227,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	public QName getDefaultPivoAssocName(QName entityDataListQname) {
 		Class<T> entityClass = getEntityClass(entityDataListQname);
 		if (entityClass == null) {
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("Type is not registered : " + entityDataListQname);
 			}
 			return null;
@@ -231,15 +238,14 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
 			Method readMethod = pd.getReadMethod();
 			if (readMethod != null) {
-				if (readMethod.isAnnotationPresent(DataListIdentifierAttr.class) && readMethod.isAnnotationPresent(AlfQname.class) 
-						&& readMethod.getAnnotation(DataListIdentifierAttr.class).isDefaultPivotAssoc()
-					 ) {
+				if (readMethod.isAnnotationPresent(DataListIdentifierAttr.class) && readMethod.isAnnotationPresent(AlfQname.class)
+						&& readMethod.getAnnotation(DataListIdentifierAttr.class).isDefaultPivotAssoc()) {
 					return readQName(readMethod);
 				}
 			}
 		}
-		if(logger.isDebugEnabled()){
-			logger.debug("No default pivot assoc found for "+entityDataListQname);
+		if (logger.isDebugEnabled()) {
+			logger.debug("No default pivot assoc found for " + entityDataListQname);
 		}
 		return null;
 	}
@@ -262,12 +268,12 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	@Override
 	public QName getMultiLevelSecondaryPivot(QName dataListItemType) {
 		Class<T> entityClass = getEntityClass(dataListItemType);
-		if(entityClass != null && entityClass.isAnnotationPresent(MultiLevelDataList.class)){
+		if (entityClass != null && entityClass.isAnnotationPresent(MultiLevelDataList.class)) {
 			String qName = entityClass.getAnnotation(MultiLevelDataList.class).secondaryPivot();
-			if(qName!=null && !qName.isEmpty()){
+			if (qName != null && !qName.isEmpty()) {
 				return qnameCache.computeIfAbsent(qName, id -> QName.createQName(id, namespaceService));
 			}
-			
+
 		}
 		return null;
 	}
@@ -277,7 +283,7 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 	public QName getMultiLevelGroupProperty(QName entityDataListQname) {
 		Class<T> entityClass = getEntityClass(entityDataListQname);
 		if (entityClass == null) {
-			if(logger.isDebugEnabled()){
+			if (logger.isDebugEnabled()) {
 				logger.debug("Type is not registered : " + entityDataListQname);
 			}
 			return null;
@@ -288,14 +294,13 @@ public class RepositoryEntityDefReaderImpl<T> implements RepositoryEntityDefRead
 		for (PropertyDescriptor pd : beanWrapper.getPropertyDescriptors()) {
 			Method readMethod = pd.getReadMethod();
 			if (readMethod != null) {
-				if (readMethod.isAnnotationPresent(MultiLevelGroup.class) && readMethod.isAnnotationPresent(AlfQname.class) 
-					 ) {
+				if (readMethod.isAnnotationPresent(MultiLevelGroup.class) && readMethod.isAnnotationPresent(AlfQname.class)) {
 					return readQName(readMethod);
 				}
 			}
 		}
-		if(logger.isDebugEnabled()){
-			logger.debug("No MultiLevelGroup found for "+entityDataListQname);
+		if (logger.isDebugEnabled()) {
+			logger.debug("No MultiLevelGroup found for " + entityDataListQname);
 		}
 		return null;
 	}

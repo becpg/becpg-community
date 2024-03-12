@@ -32,7 +32,7 @@ import fr.becpg.repo.repository.RepositoryEntityDefReader;
 /**
  * <p>EntityDictionaryServiceImpl class.</p>
  *
- * @author matthieu Fast and cached access to dataDictionnary
+ * @author matthieu Fast and cached access to dataDictionary
  * @version $Id: $Id
  */
 public class EntityDictionaryServiceImpl extends DictionaryComponent implements DictionaryService, EntityDictionaryService, RefreshableCacheListener, InitializingBean {
