@@ -761,7 +761,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef mergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description, boolean impactWused,
 			boolean rename) {
-		return internalMergeBranch(branchNodeRef, branchToNodeRef, versionType, description, impactWused, rename, null);
+		return internalMergeBranch(branchNodeRef, branchToNodeRef, versionType, description, impactWused, rename, new Date());
 	}
 
 	public NodeRef internalMergeBranch(NodeRef branchNodeRef, NodeRef branchToNodeRef, VersionType versionType, String description,
@@ -981,8 +981,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 							associationService.removeAllCacheAssocs(internalBranchToNodeRef);
 
 							if (nodeService.hasAspect(internalBranchToNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
-								nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_START_EFFECTIVITY,
-										newEffectivity == null ? new Date() : newEffectivity);
+								nodeService.setProperty(internalBranchToNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, newEffectivity);
 								nodeService.removeProperty(internalBranchToNodeRef, BeCPGModel.PROP_END_EFFECTIVITY);
 							}
 
