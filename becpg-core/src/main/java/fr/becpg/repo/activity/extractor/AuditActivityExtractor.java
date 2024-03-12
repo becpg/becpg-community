@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.alfresco.service.ServiceRegistry;
+import org.alfresco.util.ISO8601DateFormat;
 import org.json.JSONObject;
 
 import fr.becpg.model.BeCPGModel;
@@ -71,7 +73,29 @@ public class AuditActivityExtractor implements DataListExtractor {
 				.sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
 				.filter(ActivityAuditPlugin.ENTITY_NODEREF, dataListFilter.getEntityNodeRef().toString());
 		
-		List<JSONObject> results = dataListFilter.getPagination().paginate(beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery));
+		List<JSONObject> listAuditEntries = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditQuery);
+		
+		if (dataListFilter.getCriteriaMap() != null && !dataListFilter.getCriteriaMap().isEmpty()) {
+			for (Entry<String, String> entry : dataListFilter.getCriteriaMap().entrySet()) {
+				String key = entry.getKey();
+				String value = entry.getValue();
+				if ("prop_bcpg_alType".equals(key)) {
+					listAuditEntries = listAuditEntries.stream().filter(e -> value.equals("="+e.getString("prop_bcpg_alType"))).toList();
+				} else if ("prop_bcpg_alUserId".equals(key)) {
+					listAuditEntries = listAuditEntries.stream().filter(e -> value.equals(e.getString("prop_bcpg_alUserId"))).toList();
+				} else if ("prop_cm_created-date-range".equals(key)) {
+					String[] split = value.split("\\|");
+					Date from = !split[0].isBlank() ? ISO8601DateFormat.parse(split[0]) : null;
+					Date to = split.length > 1 && !split[1].isBlank() ? ISO8601DateFormat.parse(split[1]) : null;
+					listAuditEntries = listAuditEntries.stream().filter(e -> {
+						Date date = ISO8601DateFormat.parse(e.getString("completedAt"));
+						return (from == null || date.after(from)) && (to == null || date.before(to));
+					}).toList();
+				}
+			}
+		}
+		
+		List<JSONObject> results = dataListFilter.getPagination().paginate(listAuditEntries);
 
 		for (JSONObject result : results) {
 
