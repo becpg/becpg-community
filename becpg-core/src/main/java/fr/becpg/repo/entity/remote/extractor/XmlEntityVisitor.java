@@ -472,7 +472,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 						xmlw.writeEndElement();
 
 					} else {
-						logger.debug("Properties not in dictionnary: " + entry.getKey());
+						logger.debug("Properties not in dictionary: " + entry.getKey());
 					}
 
 				}

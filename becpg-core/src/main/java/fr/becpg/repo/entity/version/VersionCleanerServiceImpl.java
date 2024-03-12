@@ -38,6 +38,8 @@ import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.RepoConsts;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.batch.BatchQueueService;
+import fr.becpg.repo.batch.BatchStep;
+import fr.becpg.repo.batch.BatchStepAdapter;
 import fr.becpg.repo.batch.EntityListBatchProcessWorkProvider;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
@@ -84,7 +86,15 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 	
 	@Override
 	public boolean cleanVersions(int maxProcessedNodes, String path) {
-		
+		while (maxProcessedNodes > 0) {
+			int nextBatch = Math.min(50, maxProcessedNodes);
+			internalCleanVersion(nextBatch, path);
+			maxProcessedNodes -= nextBatch;
+		}
+		return true;
+	}
+
+	private boolean internalCleanVersion(int maxProcessedNodes, String path) {
 		String currentUser = AuthenticationUtil.getFullyAuthenticatedUser();
 		
 		if (path == null) {
@@ -270,8 +280,18 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			}
 
 		};
+		
+		BatchStep<NodeRef> batchStep = new BatchStep<>();
+		
+		batchStep.setProcessWorker(processWorker);
+		batchStep.setBatchStepListener(new BatchStepAdapter() {
+			@Override
+			public void beforeStep() {
+				batchStep.setWorkProvider(new CleanVersionWorkProvider(maxProcessedNodes, path));
+			}
+		});
 
-		batchQueueService.queueBatch(batchInfo, new CleanVersionWorkProvider(maxProcessedNodes, path), processWorker, null);
+		batchQueueService.queueBatch(batchInfo, List.of(batchStep));
 
 	}
 	
