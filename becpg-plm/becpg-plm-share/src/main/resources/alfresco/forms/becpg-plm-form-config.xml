@@ -1555,6 +1555,8 @@
 
 
 					<field id="gs1:productActivityTypeCode" set="1-col-2" />
+					<field id="bcpg:isSubstanceOfVeryHighConcern" set="1-col-2" />
+					<field id="bcpg:svhcReasonsForInclusion" set="1-col-2"/>
 					<field id="bcpg:isDeleted" set="2-col-2" />
 					<field id="sec:readGroups" set="2-col-2" />
 				</appearance>
@@ -1596,7 +1598,6 @@
 					<set id="1-col-1" />
 					<set id="2-col-1" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="1-col-2" />
-					<set id="2-col-2" template="/org/alfresco/components/form/2-column-set.ftl" />
 					<set id="2-col-3" template="/org/alfresco/components/form/2-column-set.ftl" />
 
 					<field id="bcpg:charactName" set="1-col-1" />
@@ -1635,8 +1636,8 @@
 					</field>
 					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="1-col-2" />
 					<field id="gs1:productActivityTypeCode" set="1-col-2" />
-					<field id="bcpg:isSubstanceOfVeryHighConcern" set="2-col-2" />
-					<field id="bcpg:svhcReasonsForInclusion" set="2-col-2" />
+					<field id="bcpg:isSubstanceOfVeryHighConcern" set="1-col-2" />
+					<field id="bcpg:svhcReasonsForInclusion" set="1-col-2"/>
 					<field id="bcpg:isDeleted" set="2-col-3" />
 					<field id="sec:readGroups" set="2-col-3" />
 				</appearance>
