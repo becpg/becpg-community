@@ -298,7 +298,7 @@ public class FormulationWithIngRequirementsIT extends AbstractFinishedProductTes
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());
 					checks++;
 					checks++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
+				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation ou Conseils de préparation et d'utilisation",
 						"EU 1169/2011 (INCO)").equals(reqCtrlList.getReqMessage())) {
 
 					assertEquals(RequirementType.Forbidden, reqCtrlList.getReqType());

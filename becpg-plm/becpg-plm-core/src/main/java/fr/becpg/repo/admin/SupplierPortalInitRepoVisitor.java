@@ -53,7 +53,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 
 	private static final String SUPPLIER_SITE_PRESET = "supplier-site-dashboard";
 
-	private static final String XPATH_DICTIONNARY_SCRIPTS = "./app:dictionary/app:scripts";
+	private static final String XPATH_DICTIONARY_SCRIPTS = "./app:dictionary/app:scripts";
 
 	@Autowired
 	private SiteService siteService;
@@ -104,7 +104,7 @@ public class SupplierPortalInitRepoVisitor extends AbstractInitVisitorImpl {
 		}
 
 		if (entityTplNodeRef == null) {
-			NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DICTIONNARY_SCRIPTS);
+			NodeRef scriptFolderNodeRef = BeCPGQueryBuilder.createQuery().selectNodeByPath(companyHome, XPATH_DICTIONARY_SCRIPTS);
 
 			List<NodeRef> scriptResources = contentHelper.addFilesResources(scriptFolderNodeRef, "classpath*:beCPG/supplier/*.js");
 
