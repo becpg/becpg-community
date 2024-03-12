@@ -246,3 +246,7 @@
 	height:16px;
 	padding-right: 5px;
 }
+
+.labeling-view u {
+   text-underline-position: under;
+}

@@ -45,6 +45,7 @@ import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
+import org.alfresco.service.cmr.repository.ContentWriter;
 import org.alfresco.service.cmr.repository.CopyService;
 import org.alfresco.service.cmr.repository.DuplicateChildNodeNameException;
 import org.alfresco.service.cmr.repository.NodeRef;
@@ -1270,15 +1271,15 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				
 				StopWatchSupport.addCheckpoint("update format");
 				
-				AuthenticationUtil.runAs(() -> {
-					transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-						entityReportService.generateReports(entityNodeRef, versionNodeRef);
-						return null;
-					}, false, true);
+				transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+					NodeRef documentsFolder = nodeService.getChildByName(versionNodeRef, ContentModel.ASSOC_CONTAINS, "Documents");
+					List<NodeRef> reports = associationService.getTargetAssocs(entityNodeRef, ReportModel.ASSOC_REPORTS);
+					List<NodeRef> reportCopyList = reports.stream().map(n -> copyReport(documentsFolder, n)).toList();
+					associationService.update(versionNodeRef, ReportModel.ASSOC_REPORTS, reportCopyList);
 					return null;
-				}, AuthenticationUtil.getAdminUserName());
+				}, false, true);
 				
-				StopWatchSupport.addCheckpoint("generate reports");
+				StopWatchSupport.addCheckpoint("copy reports");
 				
 				deleteNodeRef(entityNodeRef);
 				
@@ -1290,6 +1291,26 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 		});
 		
 
+	}
+	
+	private NodeRef copyReport(NodeRef parentFolder, NodeRef reportNodeRef) {
+		
+		String reportName = (String) nodeService.getProperty(reportNodeRef, ContentModel.PROP_NAME);
+
+		Map<QName, Serializable> props = new HashMap<>();
+		props.put(ContentModel.PROP_NAME, reportName);
+
+		NodeRef reportCopy = nodeService.createNode(parentFolder, ContentModel.ASSOC_CONTAINS,
+				ContentModel.ASSOC_CONTAINS, ReportModel.TYPE_REPORT, props).getChildRef();
+
+		ContentReader reader = contentService.getReader(reportNodeRef, ContentModel.PROP_CONTENT);
+		ContentWriter writer = contentService.getWriter(reportCopy, ContentModel.PROP_CONTENT, true);
+		writer.setEncoding(reader.getEncoding());
+		writer.setMimetype("application/pdf");
+
+		writer.putContent(reader);
+
+		return reportCopy;
 	}
 	
 	private void deleteNodeRef(final NodeRef originalNodeRef) {
@@ -1414,12 +1435,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				// create the version node
 				Version newVersion = versionService.createVersion(entityNodeRef, versionProperties);
 
-				Map<String, Object> extraParams = null;
+				Map<String, Object> extraParams = new HashMap<>();
 
 				if (isInitialVersion) {
-					extraParams = new HashMap<>();
 					extraParams.put(RemoteParams.PARAM_IS_INITIAL_VERSION, true);
 				}
+				
+				extraParams.put(RemoteParams.PARAM_APPEND_REPORT_PROPS, true);
 
 				// extract the JSON data of the current node
 				String jsonData = entityFormatService.generateEntityData(entityNodeRef, EntityFormat.JSON, extraParams);

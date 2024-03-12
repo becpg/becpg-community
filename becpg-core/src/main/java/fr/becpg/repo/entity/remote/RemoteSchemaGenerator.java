@@ -108,7 +108,7 @@ public class RemoteSchemaGenerator {
 		if (!cache.contains(type)) {
 			cache.add(type);
 			AspectDefinition aspectDefinition = dictionaryService.getAspect(type);
-			if(aspectDefinition.getAssociations().keySet().size()>0 || ! isEmpty(aspectDefinition.getProperties().keySet())){
+			if(!aspectDefinition.getAssociations().keySet().isEmpty() || ! isEmpty(aspectDefinition.getProperties().keySet())){
 				
 				for (QName assocName : aspectDefinition.getAssociations().keySet()) {
 					

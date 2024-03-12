@@ -567,7 +567,7 @@ public class FormulationSpecMergeIT extends AbstractFinishedProductTest {
 						.equals(r.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, r.getReqType());
 					checkMissingFields++;
-				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation",
+				} else if (I18NUtil.getMessage(CompletionReqCtrlCalculatingFormulationHandler.MESSAGE_MANDATORY_FIELD_MISSING, "Conditions de conservation ou Conseils de préparation et d'utilisation",
 						"EU 1169/2011 (INCO)").equals(r.getReqMessage())) {
 					assertEquals(RequirementType.Forbidden, r.getReqType());
 					checkMissingFields++;
