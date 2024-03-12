@@ -1,6 +1,3 @@
-/*
- *  Copyright (C) 2010-2011 beCPG. All rights reserved.
- */
 
  /* ----- HEADER ----- */
  /* used*/
@@ -281,4 +278,9 @@
 
 .color-adress-website {
 	color:#126683;
+}
+
+/** labeling **/
+u {
+   text-underline-position: under;
 }
