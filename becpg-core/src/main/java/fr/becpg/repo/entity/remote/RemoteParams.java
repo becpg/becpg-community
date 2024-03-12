@@ -45,6 +45,8 @@ public class RemoteParams {
 	
 	public static final String PARAM_APPEND_NESTED_DATALIST_TYPE = "appendNestedDataListType";
 
+	public static final String PARAM_APPEND_REPORT_PROPS = "appendReportProps";
+
 	private RemoteEntityFormat format;
 
 	private JSONObject jsonParams;
