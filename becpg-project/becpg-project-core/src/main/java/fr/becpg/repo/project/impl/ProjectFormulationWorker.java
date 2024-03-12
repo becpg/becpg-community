@@ -20,6 +20,7 @@ package fr.becpg.repo.project.impl;
 import java.util.Calendar;
 import java.util.List;
 
+import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
@@ -121,7 +122,7 @@ public class ProjectFormulationWorker {
 				}, false, true);
 
 			} catch (Exception e) {
-				logger.error("Cannot reformulate project:" + projectNodeRef, e);
+				logger.error("Cannot reformulate project:" + projectNodeRef+ " "+ TenantUtil.getCurrentDomain(), e);
 			}
 
 		}

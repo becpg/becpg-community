@@ -148,7 +148,6 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public Serializable propValue(NodeRef nodeRef, String qname) {
 			if (nodeRef != null) {
-				assertIsNotMappedQname(getQName(qname));
 				return nodeService.getProperty(nodeRef, getQName(qname));
 			}
 			return null;
@@ -163,7 +162,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public Serializable propValue(RepositoryEntity item, String qname) {
 			if (item != null) {
-				assertIsNotMappedQname(getQName(qname));
+				assertIsNotMappedQname(item, getQName(qname));
 				Serializable value = item.getExtraProperties().get(getQName(qname));
 				if (value == null) {
 					value = nodeService.getProperty(item.getNodeRef(), getQName(qname));
@@ -193,10 +192,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 
 			if (value instanceof MLText) {
-				if(locale ==null) {
+				if (locale == null) {
 					return value;
 				}
-				
+
 				return MLTextHelper.getClosestValue((MLText) value, MLTextHelper.parseLocale(locale));
 			}
 
@@ -218,10 +217,10 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			try {
 				value = (MLText) nodeService.getProperty(nodeRef, getQName(qname));
 				if (value != null) {
-					if(locale == null) {
+					if (locale == null) {
 						return value;
 					}
-					
+
 					return MLTextHelper.getClosestValue(value, MLTextHelper.parseLocale(locale));
 				}
 
@@ -268,7 +267,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public Serializable setValue(RepositoryEntity item, String qname, Serializable value) {
 			if (item != null) {
-				assertIsNotMappedQname(getQName(qname));
+				assertIsNotMappedQname(item, getQName(qname));
 				item.getExtraProperties().put(getQName(qname), value);
 				return value;
 			}
@@ -296,15 +295,16 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param assocNodeRefs
 		 */
 		public void setAssocs(NodeRef nodeRef, String qname, List<NodeRef> assocNodeRefs) {
-			assertIsNotMappedQname(getQName(qname));
 			associationService.update(nodeRef, getQName(qname), assocNodeRefs);
 		}
 
 		public void setAssocs(RepositoryEntity entity, String qname, List<NodeRef> assocNodeRefs) {
+			assertIsNotMappedQname(entity, getQName(qname));
 			setAssocs(entity.getNodeRef(), qname, assocNodeRefs);
 		}
 
 		public void setAssocs(String qname, List<NodeRef> assocNodeRefs) {
+			assertIsNotMappedQname(entity, getQName(qname));
 			setAssocs(entity.getNodeRef(), qname, assocNodeRefs);
 		}
 
@@ -316,15 +316,17 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 * @param assocNodeRef
 		 */
 		public void setAssoc(NodeRef nodeRef, String qname, NodeRef assocNodeRef) {
-			assertIsNotMappedQname(getQName(qname));
+
 			associationService.update(nodeRef, getQName(qname), assocNodeRef);
 		}
 
 		public void setAssoc(String qname, NodeRef assocNodeRef) {
+			assertIsNotMappedQname(entity, getQName(qname));
 			setAssoc(entity.getNodeRef(), qname, assocNodeRef);
 		}
 
 		public void setAssoc(RepositoryEntity entity, String qname, NodeRef assocNodeRef) {
+			assertIsNotMappedQname(entity, getQName(qname));
 			setAssoc(entity.getNodeRef(), qname, assocNodeRef);
 		}
 
@@ -337,17 +339,19 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public NodeRef assocValue(NodeRef nodeRef, String qname) {
 			if (nodeRef != null) {
-				assertIsNotMappedQname(getQName(qname));
+
 				return associationService.getTargetAssoc(nodeRef, getQName(qname));
 			}
 			return null;
 		}
 
 		public NodeRef assocValue(String qname) {
+			assertIsNotMappedQname(entity, getQName(qname));
 			return assocValue(entity.getNodeRef(), qname);
 		}
 
 		public NodeRef assocValue(RepositoryEntity entity, String qname) {
+			assertIsNotMappedQname(entity, getQName(qname));
 			return assocValue(entity.getNodeRef(), qname);
 		}
 
@@ -360,17 +364,18 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 */
 		public List<NodeRef> assocValues(NodeRef nodeRef, String qname) {
 			if (nodeRef != null) {
-				assertIsNotMappedQname(getQName(qname));
 				return associationService.getTargetAssocs(nodeRef, getQName(qname));
 			}
 			return null;
 		}
 
 		public List<NodeRef> assocValues(RepositoryEntity entity, String qname) {
+			assertIsNotMappedQname(entity, getQName(qname));
 			return assocValues(entity.getNodeRef(), qname);
 		}
 
 		public List<NodeRef> assocValues(String qname) {
+			assertIsNotMappedQname(entity, getQName(qname));
 			return assocValues(entity.getNodeRef(), qname);
 		}
 
@@ -1041,8 +1046,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 		}
 
-		private void assertIsNotMappedQname(QName qName) {
-			if (repositoryEntityDefReader.isRegisteredQName(qName)) {
+		private void assertIsNotMappedQname(RepositoryEntity item, QName qName) {
+			if (item!=null && repositoryEntityDefReader.isRegisteredQName(item, qName)) {
 				throw new FormulateException(String.format("QName is %s mapped in entity. Please use entity.%s to access it ",
 						qName.getPrefixedQName(namespaceService), qName.getLocalName()));
 			}
