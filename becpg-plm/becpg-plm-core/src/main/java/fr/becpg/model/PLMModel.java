@@ -379,6 +379,9 @@ public interface PLMModel {
 	QName TYPE_SVHCLIST = QName.createQName(BeCPGModel.BECPG_URI, "svhcList");
 	/** Constant <code>TYPE_SVHC_LIST_QTY_PERC</code> */
 	QName PROP_SVHCLIST_QTY_PERC = QName.createQName(BeCPGModel.BECPG_URI, "svhcListQtyPerc");
+	
+	QName PROP_IS_SVHC = QName.createQName(BeCPGModel.BECPG_URI, "isSubstanceOfVeryHighConcern");
+	
 	/** Constant <code>TYPE_SVHC_LIST_ING</code> */
 	QName ASSOC_SVHCLIST_ING = QName.createQName(BeCPGModel.BECPG_URI, "svhcListIng");
 
