@@ -207,9 +207,9 @@ public class FormulationSVHCIT extends PLMBaseTestCase {
 				checks++;
 			} else if (svhcListDataItem.getIng().equals(ings.get(2))) {
 				// SVHC percentage for Ingredient 3 is directly provided
-				assertEquals( 40 /4d + 5* 50 /4 , svhcListDataItem.getQtyPerc());
+				assertEquals( 40d /4d + 5d* 50d /4d , svhcListDataItem.getQtyPerc());
 				checks++;
-			}	else if (svhcListDataItem.getIng().equals(ings.get(2))) {
+			}	else if (svhcListDataItem.getIng().equals(ings.get(3))) {
 					// SVHC percentage for Ingredient 3 is directly provided
 					assertEquals(10 * 1 / 4d , svhcListDataItem.getQtyPerc());
 					checks++;
