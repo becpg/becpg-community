@@ -2609,6 +2609,8 @@ public class ProductData extends AbstractScorableEntity
 	public ProductData() {
 		super();
 	}
+	
+
 
 	/** {@inheritDoc} */
 	@Override
