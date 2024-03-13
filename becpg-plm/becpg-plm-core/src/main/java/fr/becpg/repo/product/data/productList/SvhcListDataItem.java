@@ -30,6 +30,7 @@ import fr.becpg.repo.repository.annotation.DataListIdentifierAttr;
 import fr.becpg.repo.repository.annotation.InternalField;
 import fr.becpg.repo.repository.model.AbstractManualDataItem;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
+import fr.becpg.repo.repository.model.MinMaxValueDataItem;
 import fr.becpg.repo.repository.model.SimpleCharactDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
 
@@ -41,11 +42,11 @@ import fr.becpg.repo.repository.model.SimpleListDataItem;
  */
 @AlfType
 @AlfQname(qname = "bcpg:svhcList")
-public class SvhcListDataItem extends AbstractManualDataItem implements SimpleListDataItem, SimpleCharactDataItem, AspectAwareDataItem {
+public class SvhcListDataItem extends AbstractManualDataItem implements SimpleListDataItem, MinMaxValueDataItem, SimpleCharactDataItem, AspectAwareDataItem {
 
 	private static final long serialVersionUID = -2710240943326822672L;
 
-	private Double qtyPerc = 0d;
+	private Double qtyPerc;
 	private Double migrationPerc;
 	private NodeRef ing;
 	private List<String> reasonsForInclusion;
@@ -152,7 +153,34 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 	@Override
 	public void setValue(Double value) {
 		setQtyPerc(value);
+	}
+	
 
+	@Override
+	public Double getMini() {
+		return null;
+	}
+
+	@Override
+	public void setMini(Double value) {
+		//Do Nothing
+	}
+	
+
+	private Double maxQtyPerc = null;
+
+	@Override
+	public Double getMaxi() {
+		if(maxQtyPerc == null) {
+			maxQtyPerc = qtyPerc;
+		}
+		return maxQtyPerc;
+	}
+
+	@Override
+	public void setMaxi(Double maxi) {
+		this.maxQtyPerc = maxi;
+		
 	}
 
 	/**
@@ -173,6 +201,12 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 
 	public SvhcListDataItem withQtyPerc(Double qtyPerc) {
 		this.qtyPerc = qtyPerc;
+		return this;
+	}
+	
+
+	public SvhcListDataItem withMigrationPerc(Double migrationPerc) {
+		this.migrationPerc = migrationPerc;
 		return this;
 	}
 
@@ -240,4 +274,5 @@ public class SvhcListDataItem extends AbstractManualDataItem implements SimpleLi
 	public Boolean shouldDetailIfZero() {
 		return true;
 	}
+
 }

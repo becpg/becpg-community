@@ -4,11 +4,11 @@
 package fr.becpg.repo.product.formulation;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
@@ -20,7 +20,6 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.product.data.EffectiveFilters;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
 import fr.becpg.repo.product.data.ing.IngItem;
@@ -30,7 +29,6 @@ import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
 import fr.becpg.repo.repository.model.SimpleListDataItem;
-import fr.becpg.repo.variant.filters.VariantFilters;
 import fr.becpg.repo.variant.model.VariantData;
 
 /**
@@ -52,71 +50,58 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 	@Override
 	public boolean process(ProductData formulatedProduct) {
 
-		boolean accept = accept(formulatedProduct);
-
-		if (accept) {
+		if (accept(formulatedProduct)) {
 			logger.debug("Substances of Very High Concerns calculating visitor");
 
 			if (formulatedProduct.getSvhcList() == null) {
 				formulatedProduct.setSvhcList(new LinkedList<>());
 			}
 
-			formulateSimpleList(formulatedProduct, formulatedProduct.getSvhcList(), new SimpleListQtyProvider() {
+			boolean hasCompoEl = formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
+					|| formulatedProduct.hasPackagingListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))
+					|| formulatedProduct.hasProcessListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE));
 
-				@Override
-				public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-					return FormulationHelper.getQtyInKg(compoListDataItem);
-				}
+			formulateSimpleList(formulatedProduct, formulatedProduct.getSvhcList(),
 
-				@Override
-				public Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-					return FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
-				}
+					new DefaultSimpleListQtyProvider(formulatedProduct) {
 
-				@Override
-				public Double getNetWeight(VariantData variant) {
-					return FormulationHelper.getNetWeight(formulatedProduct, variant, FormulationHelper.DEFAULT_NET_WEIGHT);
-				}
+						@Override
+						public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
+							if(formulatedProduct.isGeneric()) {
+								return 100d;
+							}
+							return super.getQty(compoListDataItem, parentLossRatio, componentProduct);
+						}
+				
+						@Override
+						public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
+							if (PackagingLevel.Primary.equals(packagingListDataItem.getPkgLevel())) {
+								return FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, componentProduct);
+							}
+							return null;
+						}
 
-				@Override
-				public Double getNetQty(VariantData variant) {
-					return FormulationHelper.getNetQtyInLorKg(formulatedProduct, variant, FormulationHelper.DEFAULT_NET_WEIGHT);
-				}
+						@Override
+						public Double getQty(ProcessListDataItem processListDataItem, VariantData variant) {
+							return 0d;
+						}
 
-				@Override
-				public Boolean omitElement(CompoListDataItem compoListDataItem) {
-					return DeclarationType.Omit.equals(compoListDataItem.getDeclType());
-				}
+					}, hasCompoEl);
 
-				@Override
-				public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
-					if(PackagingLevel.Primary.equals(packagingListDataItem.getPkgLevel())) {
-						return FormulationHelper.getQtyForCostByPackagingLevel(formulatedProduct, packagingListDataItem, componentProduct);
-					}
-					return null;
-					
-				}
-
-				@Override
-				public Double getQty(ProcessListDataItem processListDataItem, VariantData variant) {
-					return FormulationHelper.getQty(formulatedProduct, variant, processListDataItem);
-				}
-
-			}, formulatedProduct.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE)));
-
-
-
-			if (formulatedProduct.isRawMaterial()) {
+			if (formulatedProduct.isRawMaterial() && !hasCompoEl) {
 				addMPIngredientsToSvhcList(formulatedProduct);
+			} else if(formulatedProduct.isGeneric()) {
+				formulatedProduct.getSvhcList().forEach(n -> {
+					n.setValue(n.getMaxi());
+				});
 			}
-
 
 		}
 
-		if (accept || formulatedProduct.getAspects().contains(BeCPGModel.ASPECT_ENTITY_TPL)
-				|| (formulatedProduct instanceof ProductSpecificationData)) {
+		if (formulatedProduct.getSvhcList() != null) {
 
 			formulatedProduct.getSvhcList().forEach(n -> {
+				@SuppressWarnings("unchecked")
 				List<String> reasonsForInclusion = (List<String>) nodeService.getProperty(n.getIng(), PLMModel.PROP_SVHC_REASONS_FOR_INCLUSION);
 				if (reasonsForInclusion != null) {
 					n.setReasonsForInclusion(new ArrayList<>(reasonsForInclusion));
@@ -142,10 +127,9 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 			if (Boolean.TRUE.equals(ingItem.getIsSubstanceOfVeryHighConcern())) {
 
 				// if ing exists in the svhc list
-				if (svhcList.stream().map(SvhcListDataItem::getIng).anyMatch(svhcIngNodeRef -> svhcIngNodeRef.equals(ing.getIng()))) {
-					SvhcListDataItem substance = svhcList.stream().filter(sub -> sub.getIng().equals(ing.getIng())).findFirst().get();
-					substance.setQtyPerc(ing.getQtyPerc());
-
+				Optional<SvhcListDataItem> substance = svhcList.stream().filter(sub -> sub.getIng().equals(ing.getIng())).findFirst();
+				if (substance.isPresent()) {
+					substance.get().setQtyPerc(ing.getQtyPerc());
 				} else {
 					SvhcListDataItem svhcItem = SvhcListDataItem.build().withIngredient(ing.getIng()).withQtyPerc(ing.getQtyPerc());
 
@@ -157,17 +141,18 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	@Override
 	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem slDataItem) {
-		if (partProduct.isPackaging() && slDataItem instanceof SvhcListDataItem) {
+		if (partProduct.isPackaging() && slDataItem instanceof SvhcListDataItem svhcListDataItem) {
 
-			Double migrationPerc = ((SvhcListDataItem) slDataItem).getMigrationPerc();
-			if (migrationPerc == null) {
-				migrationPerc = 0d;
+			Double migrationPerc = svhcListDataItem.getMigrationPerc();
+			if (migrationPerc == null || migrationPerc == 0d) {
+				return null;
 			}
 
-			if (slDataItem.getValue() != null) {
-				return migrationPerc * slDataItem.getValue() / 100d;
+			if (svhcListDataItem.getQtyPerc() != null) {
+				return migrationPerc * svhcListDataItem.getQtyPerc() / 100d;
 			}
 
+			return null;
 		}
 		return super.extractValue(formulatedProduct, partProduct, slDataItem);
 	}
