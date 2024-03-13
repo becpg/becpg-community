@@ -14,6 +14,15 @@ echo -e " \e[91mCopyright (C) 2010-2024 beCPG.\e[0m"
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 export MVN_EXEC="${PWD}/mvnw"
 export BECPG_VERSION_PROFILE=becpg_23_1_0
+export BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+
+case "$2" in
+  branch)
+    export BECPG_VERSION_PROFILE="${BECPG_VERSION_PROFILE}_${BRANCH_NAME}"
+    ;;
+  *)
+    ;;
+esac
 
 start() {
    	 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
