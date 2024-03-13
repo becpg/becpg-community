@@ -14,7 +14,7 @@
 		<version>4.2.3</version>
 		<relativePath>../</relativePath>
 	</parent>
-	<version>4.2.3.63-SNAPSHOT</version>
+	<version>4.2.3.63</version>
 
 	<dependencies>
 		<dependency>
@@ -442,4 +442,8 @@
 			</build>
 		</profile>
 	</profiles>
+
+  <scm>
+    <tag>4.2.3.63</tag>
+  </scm>
 </project>
