@@ -15,19 +15,17 @@
  *
  * You should have received a copy of the GNU Lesser General Public License along with beCPG. If not, see <http://www.gnu.org/licenses/>.
  ******************************************************************************/
+
 package fr.becpg.test.repo.product.formulation;
 
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
@@ -35,7 +33,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.extensions.surf.util.I18NUtil;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PackModel;
@@ -58,26 +55,16 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 
 	private static final Log logger = LogFactory.getLog(FormulationPackMaterialIT.class);
 
-	/** The product service. */
 	@Autowired
 	protected ProductService productService;
 
-	/** The pf noderef. */
 	protected NodeRef PF1NodeRef;
-
-	/** The sf noderef. */
 	protected NodeRef SF1NodeRef;
-
-	/** The raw material noderef. */
 	protected NodeRef rawMaterial1NodeRef;
 	protected NodeRef rawMaterial2NodeRef;
-
-	/** The packaging noderef. */
 	protected NodeRef packaging1NodeRef;
 	protected NodeRef packaging2NodeRef;
 	protected NodeRef packaging3NodeRef;
-
-	/** The packaging material noderef. */
 	protected NodeRef packMaterial1NodeRef;
 	protected NodeRef packMaterial2NodeRef;
 	protected NodeRef packMaterial3NodeRef;
@@ -87,256 +74,159 @@ public class FormulationPackMaterialIT extends PLMBaseTestCase {
 	@Override
 	public void setUp() throws Exception {
 		super.setUp();
-		// Creation of compo and packaging noderef
 		initPart();
 	}
 
-	/**
-	 * Test formulate product.
-	 *
-	 * @throws Exception
-	 *             the exception
-	 */
 	@Test
 	public void testFormulationPackMaterial() throws Exception {
-
-		logger.info("testFormulationPackMaterial");
-
-		final NodeRef finishedProductNodeRef = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			logger.info("/*-- Create finished product --*/");
-			FinishedProductData finishedProduct = new FinishedProductData();
-			finishedProduct.setName("Produit fini 1");
-			finishedProduct.setLegalName("Legal Produit fini 1");
-			finishedProduct.setUnit(ProductUnit.kg);
-			finishedProduct.setQty(1d);
-			finishedProduct.setDensity(1d);
-			List<CompoListDataItem> compoList = new ArrayList<>();
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.kg, 0d, DeclarationType.Declare, PF1NodeRef));// Allu
-																																// 20
-																																// /
-																																// Carton
-																																// 40
-			compoList.add(new CompoListDataItem(null, null, null, 500d, ProductUnit.g, 0d, DeclarationType.Declare, SF1NodeRef));// Fer
-																																	// 60
-																																	// /
-																																	// Plastique
-																																	// 80
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.lb, 0d, DeclarationType.Declare, rawMaterial1NodeRef));// Verre
-																																			// 56.699
-			compoList.add(new CompoListDataItem(null, null, null, 1d, ProductUnit.oz, 0d, DeclarationType.Declare, rawMaterial2NodeRef));// no
-																																			// material
-			finishedProduct.getCompoListView().setCompoList(compoList);
-
-			List<PackagingListDataItem> packList = new ArrayList<>();
-			packList.add(new PackagingListDataItem(null, 3d, ProductUnit.g, PackagingLevel.Primary, true, packaging1NodeRef));// Allu
-																																// 20
-																																// +
-																																// 3g
-																																// =
-																																// 23
-			packList.add(new PackagingListDataItem(null, 1d, ProductUnit.oz, PackagingLevel.Primary, true, packaging2NodeRef));// Carton
-																																// 40
-																																// +
-																																// 28.349523125g
-																																// =
-																																// 68.35
-			packList.add(new PackagingListDataItem(null, 1d, ProductUnit.lb, PackagingLevel.Primary, true, packaging3NodeRef));// Fer
-																																// 60
-																																// +
-																																// 226.80
-																																// =
-																																// 286.80
-																																// /
-																																// Plastique
-																																// =
-																																// 80
-																																// +
-																																// 226.8
-																																// =
-																																// 306.8
-			finishedProduct.getPackagingListView().setPackagingList(packList);
+		logger.info("Starting testFormulationPackMaterial");
+		final NodeRef finishedProductNodeRef = inWriteTx(() -> {
+			logger.info("Creating finished product");
+			FinishedProductData finishedProduct = createFinishedProduct();
 			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct).getNodeRef();
+		});
 
-		}, false, true);
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			NodeRef listContainerNodeRef = entityListDAO.getListContainer(finishedProductNodeRef);
-			if (entityListDAO.getList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE) == null) {
-				entityListDAO.createList(listContainerNodeRef, PackModel.PACK_MATERIAL_LIST_TYPE);
-			}
+		inWriteTx(() -> {
 			productService.formulate(finishedProductNodeRef);
-
-			ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
-
-			// Mon test
-			int checks = 0;
-			assertEquals(formulatedProduct.getPackMaterialList().size(), 5);
-			DecimalFormat df = new DecimalFormat("0.###");
-			for (PackMaterialListDataItem packMaterialListDataItem : formulatedProduct.getPackMaterialList()) {
-				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial1NodeRef)) {
-					assertEquals(df.format(23d), df.format(packMaterialListDataItem.getPmlWeight()));
-					checks++;
-				}
-				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial2NodeRef)) {
-					assertEquals(df.format(40d + 28.349523125d), df.format(packMaterialListDataItem.getPmlWeight()));
-					checks++;
-				}
-				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial3NodeRef)) {
-					assertEquals(df.format(60d + (453.592 / 2)), df.format(packMaterialListDataItem.getPmlWeight()));
-					checks++;
-				}
-				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial4NodeRef)) {
-					assertEquals(df.format(80d + (453.592 / 2)), df.format(packMaterialListDataItem.getPmlWeight()));
-					checks++;
-				}
-				if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial5NodeRef)) {
-					assertEquals(df.format(56.699d), df.format(packMaterialListDataItem.getPmlWeight()));
-					checks++;
-				}
-			}
-
-			assertEquals("Verify checks done", 5, checks);
-
+			verifyFormulatedPackMaterial(finishedProductNodeRef);
 			return null;
+		});
+	}
 
-		}, false, true);
+	private FinishedProductData createFinishedProduct() {
+		return FinishedProductData.build().withName("Produit fini 1").withUnit(ProductUnit.kg).withQty(1d).withDensity(1d).withCompoList(List.of(
+				CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.kg).withDeclarationType(DeclarationType.Declare).withProduct(PF1NodeRef),
+				CompoListDataItem.build().withQtyUsed(500d).withUnit(ProductUnit.g).withDeclarationType(DeclarationType.Declare).withProduct(SF1NodeRef),
+				CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.lb).withDeclarationType(DeclarationType.Declare)
+						.withProduct(rawMaterial1NodeRef),
+				CompoListDataItem.build().withQtyUsed(1d).withUnit(ProductUnit.oz).withDeclarationType(DeclarationType.Declare)
+						.withProduct(rawMaterial2NodeRef)))
+				.withPackagingList(List.of(
+						PackagingListDataItem.build().withQty(3d).withUnit(ProductUnit.g).withPkgLevel(PackagingLevel.Primary)
+								.withProduct(packaging1NodeRef),
+						PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.oz).withPkgLevel(PackagingLevel.Primary)
+								.withProduct(packaging2NodeRef),
+						PackagingListDataItem.build().withQty(1d).withUnit(ProductUnit.lb).withPkgLevel(PackagingLevel.Primary)
+								.withProduct(packaging3NodeRef)));
+	}
 
+	private void verifyFormulatedPackMaterial(NodeRef finishedProductNodeRef) {
+		logger.info("Verifying formulated pack materials");
+		ProductData formulatedProduct = alfrescoRepository.findOne(finishedProductNodeRef);
+		int checks = 0;
+		DecimalFormat df = new DecimalFormat("0.###");
+
+		for (PackMaterialListDataItem packMaterialListDataItem : formulatedProduct.getPackMaterialList()) {
+			if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial1NodeRef)) {
+				assertEquals(df.format(23d), df.format(packMaterialListDataItem.getPmlWeight()));
+				checks++;
+			}
+			if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial2NodeRef)) {
+				assertEquals(df.format(40d + 28.349523125d), df.format(packMaterialListDataItem.getPmlWeight()));
+				checks++;
+			}
+			if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial3NodeRef)) {
+				assertEquals(df.format(60d + (453.592 / 2)), df.format(packMaterialListDataItem.getPmlWeight()));
+				checks++;
+			}
+			if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial4NodeRef)) {
+				assertEquals(df.format(80d + (453.592 / 2)), df.format(packMaterialListDataItem.getPmlWeight()));
+				checks++;
+			}
+			if (packMaterialListDataItem.getPmlMaterial().equals(packMaterial5NodeRef)) {
+				assertEquals(df.format(56.699d), df.format(packMaterialListDataItem.getPmlWeight()));
+				checks++;
+			}
+		}
+		assertEquals("Verify checks done", 5, checks);
 	}
 
 	private void initPart() {
-
-		logger.info("/*-- Create compo product --*/");
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			/*-- Characteristics --*/
-			Map<QName, Serializable> properties = new HashMap<>();
-
-			/*-- Pack materials --*/
-			properties.put(BeCPGModel.PROP_LV_VALUE, "Alluminium");
-			packMaterial1NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
-			properties.clear();
-			properties.put(BeCPGModel.PROP_LV_VALUE, "Carton");
-			packMaterial2NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
-			properties.clear();
-			properties.put(BeCPGModel.PROP_LV_VALUE, "Fer");
-			packMaterial3NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
-			properties.clear();
-			properties.put(BeCPGModel.PROP_LV_VALUE, "Plastique");
-			packMaterial4NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
-			properties.clear();
-			properties.put(BeCPGModel.PROP_LV_VALUE, "Verre");
-			packMaterial5NodeRef = nodeService.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
-					QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, (String) properties.get(BeCPGModel.PROP_LV_VALUE)),
-					PackModel.TYPE_PACKAGING_MATERIAL, properties).getChildRef();
-
-			/*-- Creation of CompoList Elements --*/
-
-			/*-- Finished product 1 --*/
-			FinishedProductData PF1 = new FinishedProductData();
-			PF1.setName("Finished product 1");
-			MLText mlName = new MLText();
-			mlName.addValue(I18NUtil.getContentLocaleLang(), "Garniture default");
-			mlName.addValue(Locale.ENGLISH, "Garniture english");
-			mlName.addValue(Locale.FRENCH, "Garniture french");
-			PF1.setLegalName(mlName);
-			PF1.setQty(500d);
-			PF1.setUnit(ProductUnit.g);
-
-			List<PackMaterialListDataItem> packMaterial = new ArrayList<>();
-			packMaterial.add(new PackMaterialListDataItem(packMaterial1NodeRef, 10d, 5d, null, PackagingLevel.Primary));
-			packMaterial.add(new PackMaterialListDataItem(packMaterial2NodeRef, 20d, null, null, PackagingLevel.Primary));
-			PF1.setPackMaterialList(packMaterial);
-			PF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), PF1).getNodeRef();
-
-			/*-- Semi finished product 1 --*/
-			SemiFinishedProductData SF1 = new SemiFinishedProductData();
-			SF1.setName("Semi finished 1");
-			mlName = new MLText();
-			mlName.addValue(I18NUtil.getContentLocaleLang(), "Pâte default");
-			mlName.addValue(Locale.ENGLISH, "Pâte english");
-			mlName.addValue(Locale.FRENCH, "Pâte french");
-			SF1.setLegalName(mlName);
-			SF1.setQty(250d);
-			SF1.setUnit(ProductUnit.g);
-
-			packMaterial = new ArrayList<>();
-			packMaterial.add(new PackMaterialListDataItem(packMaterial3NodeRef, 30d, null, null, PackagingLevel.Primary));
-			packMaterial.add(new PackMaterialListDataItem(packMaterial4NodeRef, 40d, null, 10d, PackagingLevel.Primary));
-			SF1.setPackMaterialList(packMaterial);
-			SF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF1).getNodeRef();
-
-			/*-- Raw material 1 --*/
-			RawMaterialData rawMaterial1 = new RawMaterialData();
-			rawMaterial1.setName("Raw material 1");
-			rawMaterial1.setDensity(1d);
-			MLText legalName = new MLText("Legal Raw material 1");
-			legalName.addValue(Locale.FRENCH, "Legal Raw material 1");
-			legalName.addValue(Locale.ENGLISH, "Legal Raw material 1");
-			rawMaterial1.setLegalName(legalName);
-			rawMaterial1.setQty(400d);
-			rawMaterial1.setUnit(ProductUnit.g);
-
-			packMaterial = new ArrayList<>();
-			packMaterial.add(new PackMaterialListDataItem(packMaterial5NodeRef, 50d, null, null, PackagingLevel.Primary));
-			rawMaterial1.setPackMaterialList(packMaterial);
-			rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
-
-			/*-- Raw material 2 (no packMaterial list) --*/
-			RawMaterialData rawMaterial2 = new RawMaterialData();
-			rawMaterial2.setName("Raw material 2");
-			legalName = new MLText("Legal Raw material 2");
-			legalName.addValue(Locale.FRENCH, "Legal Raw material 2");
-			legalName.addValue(Locale.ENGLISH, "Legal Raw material 2");
-			rawMaterial2.setLegalName(legalName);
-			rawMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
-
-			/*-- Creation of PackagingList Elements --*/
-
-			/*-- Packaging 1 --*/
-			PackagingMaterialData packagingMaterial1 = new PackagingMaterialData();
-			packagingMaterial1.setName("Packaging material 1");
-			packagingMaterial1.setLegalName("Legal Packaging material 1");
-			packagingMaterial1.setTare(0.015d);
-			packagingMaterial1.setTareUnit(TareUnit.kg);
-			packagingMaterial1.setPackMaterialList(
-					new ArrayList<>(Arrays.asList(new PackMaterialListDataItem(packMaterial1NodeRef, 0.015d * 1000, null, 50d, null))));
-			packaging1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial1).getNodeRef();
-
-			/*-- Packaging 2 --*/
-			PackagingMaterialData packagingMaterial2 = new PackagingMaterialData();
-			packagingMaterial2.setName("Packaging material 2");
-			packagingMaterial2.setLegalName("Legal Packaging material 2");
-			packagingMaterial2.setTare(0.5d);
-			packagingMaterial2.setTareUnit(TareUnit.oz);
-
-			packagingMaterial2.setPackMaterialList(
-					new ArrayList<>(Arrays.asList(new PackMaterialListDataItem(packMaterial2NodeRef, 14.1748d, null, null, null))));
-			packaging2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial2).getNodeRef();
-
-			/*-- Packaging 3 --*/
-			PackagingMaterialData packagingMaterial3 = new PackagingMaterialData();
-			packagingMaterial3.setName("Packaging material 3");
-			packagingMaterial3.setLegalName("Legal Packaging material 3");
-			packagingMaterial3.setTare(1d);
-			packagingMaterial3.setTareUnit(TareUnit.kg);
-			packagingMaterial3
-					.setPackMaterialList(new ArrayList<>(Arrays.asList(new PackMaterialListDataItem(packMaterial3NodeRef, 500d, null, null, null),
-							new PackMaterialListDataItem(packMaterial4NodeRef, 500d, null, null, null))));
-			packaging3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
-
+		logger.info("Initializing test data");
+		inWriteTx(() -> {
+			createPackMaterials();
+			createCompoProducts();
+			createPackagingMaterials();
 			return null;
+		});
+	}
 
-		}, false, true);
+	private void createPackMaterials() {
+		packMaterial1NodeRef = createPackMaterialNode("Alluminium");
+		packMaterial2NodeRef = createPackMaterialNode("Carton");
+		packMaterial3NodeRef = createPackMaterialNode("Fer");
+		packMaterial4NodeRef = createPackMaterialNode("Plastique");
+		packMaterial5NodeRef = createPackMaterialNode("Verre");
+	}
+
+	private NodeRef createPackMaterialNode(String materialName) {
+		Map<QName, Serializable> properties = new HashMap<>();
+		properties.put(BeCPGModel.PROP_LV_VALUE, materialName);
+		return nodeService
+				.createNode(getTestFolderNodeRef(), ContentModel.ASSOC_CONTAINS,
+						QName.createQName(NamespaceService.CONTENT_MODEL_1_0_URI, materialName), PackModel.TYPE_PACKAGING_MATERIAL, properties)
+				.getChildRef();
+	}
+
+	private void createCompoProducts() {
+		FinishedProductData PF1 = FinishedProductData.build().withName("Finished product 1").withQty(500d).withUnit(ProductUnit.g);
+
+		PF1.setPackMaterialList(Arrays.asList(
+				PackMaterialListDataItem.build().withMaterial(packMaterial1NodeRef).withWeight(10d).withPerc(5d).withPkgLevel(PackagingLevel.Primary),
+				PackMaterialListDataItem.build().withMaterial(packMaterial2NodeRef).withWeight(20d).withPkgLevel(PackagingLevel.Primary)));
+
+		PF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), PF1).getNodeRef();
+
+		/*-- Semi finished product 1 --*/
+
+		SemiFinishedProductData SF1 = SemiFinishedProductData.build().withName("Semi finished 1").withQty(250d).withUnit(ProductUnit.g);
+
+		SF1.setPackMaterialList(
+				List.of(PackMaterialListDataItem.build().withMaterial(packMaterial3NodeRef).withWeight(30d).withPkgLevel(PackagingLevel.Primary),
+						PackMaterialListDataItem.build().withMaterial(packMaterial4NodeRef).withWeight(40d).withRecycledPerc(10d)
+								.withPkgLevel(PackagingLevel.Primary)));
+
+		SF1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), SF1).getNodeRef();
+
+		/*-- Raw material 1 --*/
+
+		RawMaterialData rawMaterial1 = RawMaterialData.build().withName("Raw material 1").withQty(400d).withUnit(ProductUnit.g);
+
+		rawMaterial1.setPackMaterialList(
+				List.of(PackMaterialListDataItem.build().withMaterial(packMaterial5NodeRef).withWeight(50d).withPkgLevel(PackagingLevel.Primary)));
+
+		rawMaterial1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial1).getNodeRef();
+
+		/*-- Raw material 2 (no packMaterial list) --*/
+		RawMaterialData rawMaterial2 = RawMaterialData.build().withName("Raw material 2");
+
+		rawMaterial2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), rawMaterial2).getNodeRef();
+
+	}
+
+	private void createPackagingMaterials() {
+		PackagingMaterialData packagingMaterial1 = PackagingMaterialData.build().withName("Packaging material 1").withTare(0.015d, TareUnit.kg)
+				.withPackMaterialList(List.of(PackMaterialListDataItem.build().withMaterial(packMaterial1NodeRef).withWeight(0.015d * 1000)
+						.withRecycledPerc(50d).withPkgLevel(PackagingLevel.Primary)));
+
+		packaging1NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial1).getNodeRef();
+
+		/*-- Packaging 2 --*/
+
+		PackagingMaterialData packagingMaterial2 = PackagingMaterialData.build().withName("Packaging material 2").withTare(0.5d, TareUnit.oz)
+				.withPackMaterialList(List.of(PackMaterialListDataItem.build().withMaterial(packMaterial2NodeRef).withWeight(14.1748d)
+						.withPkgLevel(PackagingLevel.Primary)));
+		packaging2NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial2).getNodeRef();
+
+		/*-- Packaging 3 --*/
+
+		PackagingMaterialData packagingMaterial3 = PackagingMaterialData.build().withName("Packaging material 3").withTare(1d, TareUnit.kg)
+				.withPackMaterialList(List.of(
+						PackMaterialListDataItem.build().withMaterial(packMaterial3NodeRef).withWeight(500d).withPkgLevel(PackagingLevel.Primary),
+						PackMaterialListDataItem.build().withMaterial(packMaterial4NodeRef).withWeight(500d).withPkgLevel(PackagingLevel.Primary)));
+
+		packaging3NodeRef = alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial3).getNodeRef();
+
 	}
 
 }
