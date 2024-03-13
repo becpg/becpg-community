@@ -3,13 +3,9 @@
  */
 package fr.becpg.repo.product.data;
 
-import java.util.List;
-
 import org.alfresco.service.cmr.repository.MLText;
 
 import fr.becpg.repo.product.data.constraints.ProductUnit;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.repository.annotation.AlfCacheable;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
