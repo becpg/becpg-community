@@ -571,7 +571,7 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 						SimpleListDataItem slDataItem = simpleListDataList.stream()
 								.filter(s -> componentSimpleListDataItem.getCharactNodeRef().equals(s.getCharactNodeRef())).findFirst().orElse(null);
 						if(slDataItem == null) {
-							if( componentSimpleListDataItem.getValue()!=null) {
+							if( extractValue(formulatedProduct, partProduct, componentSimpleListDataItem)!=null) {
 								simpleListDataList.add( newSimpleListDataItem(componentSimpleListDataItem.getCharactNodeRef()));
 							}
 						} else {
