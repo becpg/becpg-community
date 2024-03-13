@@ -20,10 +20,8 @@ import fr.becpg.model.PLMModel;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
-import fr.becpg.repo.product.data.constraints.DeclarationType;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -81,17 +79,7 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 				formulatedProduct.setNutList(new LinkedList<>());
 			}
 
-			formulateSimpleList(formulatedProduct, formulatedProduct.getNutList(), new SimpleListQtyProvider() {
-
-				@Override
-				public Double getQty(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-					return FormulationHelper.getQtyInKg(compoListDataItem);
-				}
-
-				@Override
-				public Double getVolume(CompoListDataItem compoListDataItem, Double parentLossRatio, ProductData componentProduct) {
-					return FormulationHelper.getNetVolume(compoListDataItem, componentProduct);
-				}
+			formulateSimpleList(formulatedProduct, formulatedProduct.getNutList(), new DefaultSimpleListQtyProvider(formulatedProduct) {
 
 				@Override
 				public Double getQty(PackagingListDataItem packagingListDataItem, ProductData componentProduct) {
@@ -104,18 +92,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 				}
 
 				@Override
-				public Double getNetWeight(VariantData variant) {
-					return FormulationHelper.getNetWeight(formulatedProduct, variant, FormulationHelper.DEFAULT_NET_WEIGHT);
-				}
-
-				@Override
 				public Double getNetQty(VariantData variant) {
 					return FormulationHelper.getNetQtyForNuts(formulatedProduct, variant);
-				}
-
-				@Override
-				public Boolean omitElement(CompoListDataItem compoListDataItem) {
-					return DeclarationType.Omit.equals(compoListDataItem.getDeclType());
 				}
 
 			}, formulatedProduct.hasCompoListEl(new VariantFilters<>()));
@@ -188,8 +166,8 @@ public class NutsCalculatingFormulationHandler extends AbstractSimpleListFormula
 						if (ul != null && n.getValuePerServing() > ul) {
 							MLText message = MLTextHelper.getI18NMessage(MESSAGE_MAXIMAL_DAILY_VALUE, nut.getCharactName());
 
-							formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.forbidden()
-									.withMessage(message).withCharact(n.getNut()).ofDataType(RequirementDataType.Specification));
+							formulatedProduct.getReqCtrlList().add(ReqCtrlListDataItem.forbidden().withMessage(message).withCharact(n.getNut())
+									.ofDataType(RequirementDataType.Specification));
 						}
 
 					} else {
