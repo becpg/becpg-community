@@ -1556,7 +1556,7 @@
 
 					<field id="gs1:productActivityTypeCode" set="1-col-2" />
 					<field id="bcpg:isSubstanceOfVeryHighConcern" set="1-col-2" />
-					<field id="bcpg:svhcReasonsForInclusion" set="1-col-2"/>
+					<field id="bcpg:svhcReasonsForInclusion" set="1-col-2" />
 					<field id="bcpg:isDeleted" set="2-col-2" />
 					<field id="sec:readGroups" set="2-col-2" />
 				</appearance>
@@ -1637,7 +1637,7 @@
 					<field id="bcpg:ingAllergensQtyPerc" help-id="becpg.forms.help.ingAllergensQtyPerc" set="1-col-2" />
 					<field id="gs1:productActivityTypeCode" set="1-col-2" />
 					<field id="bcpg:isSubstanceOfVeryHighConcern" set="1-col-2" />
-					<field id="bcpg:svhcReasonsForInclusion" set="1-col-2"/>
+					<field id="bcpg:svhcReasonsForInclusion" set="1-col-2" />
 					<field id="bcpg:isDeleted" set="2-col-3" />
 					<field id="sec:readGroups" set="2-col-3" />
 				</appearance>
@@ -5908,7 +5908,7 @@
 					<show id="bcpg:allergenListAllergen" />
 					<show id="bcpg:allergenListQtyPerc" />
 					<show id="bcpg:allergenListVoluntary" />
-					<show id="bcpg:allergenListDecisionTree" />
+					<!--  <show id="bcpg:allergenListDecisionTree" /> -->
 					<show id="bcpg:allergenListInVoluntary" />
 
 					<show id="bcpg:allergenListOnLine" />
@@ -5935,8 +5935,9 @@
 						</control>
 					</field>
 
-					<field id="bcpg:allergenListDecisionTree">
-						<control template="/org/alfresco/components/form/controls/decision-tree.ftl">
+					<!-- <field id="bcpg:allergenListDecisionTree">
+						<control
+							template="/org/alfresco/components/form/controls/decision-tree.ftl">
 							<control-param name="prefix">allergenList</control-param>
 							<control-param name="data">
 								[{id:"q1",choices :
@@ -5946,8 +5947,7 @@
 								[{id : "yes" , cid : "q3", comment : true}, {id:"no", cid : "r1"},
 								{id:"-", cid : "q3"}]},
 								{id:"q3",choices :
-								[{id : "yes" ,
-								cid : "q4"}, {id:"no", cid :"r1"}, {id:"-", cid :
+								[{id : "yes" , cid : "q4"}, {id:"no", cid :"r1"}, {id:"-", cid :
 								"q4"}]},
 								{id:"q4",choices :
 								[{id : "yes", cid :"r1"}, {id:"no", cid:"r2"}, {id:"-"}]},
@@ -5955,7 +5955,7 @@
 								]
 							</control-param>
 						</control>
-					</field>
+					</field>   -->
 
 					<field id="bcpg:allergenListInVoluntary" help-id="becpg.forms.help.allergenListInVoluntary" set="2-col">
 						<control template="/org/alfresco/components/form/controls/boolean.ftl" />
@@ -5986,7 +5986,7 @@
 			</form>
 		</forms>
 	</config>
-
+	
 	<!-- bcpg:costList type -->
 	<config evaluator="model-type" condition="bcpg:costList">
 		<forms>
@@ -9671,15 +9671,15 @@
 				<field-visibility>
 					<show id="bcpg:irlIng" />
 					<show id="bcpg:regulatoryCountries" />
-					<show id="bcpg:irlResultIndicator" />	
-					<show id="bcpg:regulatoryUsageRef" />							
+					<show id="bcpg:irlResultIndicator" />
+					<show id="bcpg:regulatoryUsageRef" />
 				</field-visibility>
 				<appearance>
-					<field id="bcpg:irlIng" >
+					<field id="bcpg:irlIng">
 						<control template="/org/alfresco/components/form/controls/autocomplete.ftl">
-                            <control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing
-                            </control-param>
-                        </control>
+							<control-param name="ds">becpg/autocomplete/targetassoc/associations/bcpg:ing
+							</control-param>
+						</control>
 					</field>
 					<field id="bcpg:regulatoryCountries">
 						<control template="/org/alfresco/components/form/controls/autocomplete-association.ftl" />
@@ -9768,7 +9768,7 @@
 					<field id="bcpg:isManualListItem" />
 				</appearance>
 			</form>
-			
+
 			<form id="packagingMaterial">
 				<field-visibility>
 					<show id="bcpg:svhcListIng" />
@@ -9792,8 +9792,8 @@
 					</field>
 				</appearance>
 			</form>
-			
-			
+
+
 			<form id="datagrid-packagingMaterial">
 				<field-visibility>
 					<show id="bcpg:svhcListIng" />
@@ -9868,7 +9868,7 @@
 					</field>
 				</appearance>
 			</form>
-			
+
 			<form id="packagingMaterial">
 				<field-visibility>
 					<show id="bcpg:svhcListIng" />
@@ -9892,9 +9892,9 @@
 					</field>
 				</appearance>
 			</form>
-			
-			
-			
+
+
+
 		</forms>
 	</config>
 
