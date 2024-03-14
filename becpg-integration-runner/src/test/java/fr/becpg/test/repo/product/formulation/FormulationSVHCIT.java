@@ -221,7 +221,7 @@ public class FormulationSVHCIT extends PLMBaseTestCase {
 		}
 
 		// Ensure checks for ing1 and ing3 are performed
-		assertEquals("Verify checks done", 2, checks);
+		assertEquals("Verify checks done", 3, checks);
 	}
 
 }
