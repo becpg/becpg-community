@@ -105,7 +105,7 @@ public class AllergenListDataItem extends AbstractManualVariantListDataItem
 		if (qtyByVariant != null) {
 			Optional<Double> maxQtyOptional = qtyByVariant.values().stream().max(Double::compareTo);
 			if (maxQtyOptional.isPresent()) {
-				return maxQtyOptional.get();
+				return qtyPerc == null ? maxQtyOptional.get() : qtyPerc + maxQtyOptional.get();
 			}
 		}
 
