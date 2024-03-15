@@ -141,15 +141,15 @@ public class SvhcCalculatingFormulationHandler extends AbstractSimpleListFormula
 
 	@Override
 	protected Double extractValue(ProductData formulatedProduct, ProductData partProduct, SimpleListDataItem slDataItem) {
-		if (partProduct.isPackaging() && slDataItem instanceof SvhcListDataItem svhcListDataItem) {
+		if (partProduct.isPackaging() && slDataItem instanceof SvhcListDataItem) {
 
-			Double migrationPerc = svhcListDataItem.getMigrationPerc();
+			Double migrationPerc = ((SvhcListDataItem)slDataItem).getMigrationPerc();
 			if (migrationPerc == null || migrationPerc == 0d) {
 				return null;
 			}
 
-			if (svhcListDataItem.getQtyPerc() != null) {
-				return migrationPerc * svhcListDataItem.getQtyPerc() / 100d;
+			if (((SvhcListDataItem)slDataItem).getQtyPerc() != null) {
+				return migrationPerc * ((SvhcListDataItem)slDataItem).getQtyPerc() / 100d;
 			}
 
 			return null;
