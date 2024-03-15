@@ -254,22 +254,22 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				if (isCharactFormulated(sl)) {
 					sl.setValue(null);
 
-					if (sl instanceof MinMaxValueDataItem minMaxValueDataItem) {
-						minMaxValueDataItem.setMini(null);
-						minMaxValueDataItem.setMaxi(null);
+					if (sl instanceof MinMaxValueDataItem) {
+						((MinMaxValueDataItem) sl).setMini(null);
+						((MinMaxValueDataItem) sl).setMaxi(null);
 					}
-					if (sl instanceof ForecastValueDataItem forecastValueDataItem) {
-						forecastValueDataItem.setPreviousValue(null);
-						forecastValueDataItem.setFutureValue(null);
+					if (sl instanceof ForecastValueDataItem) {
+						((ForecastValueDataItem) sl).setPreviousValue(null);
+						((ForecastValueDataItem) sl).setFutureValue(null);
 					}
-					if (sl instanceof VariantAwareDataItem variantAwareDataItem) {
+					if (sl instanceof VariantAwareDataItem) {
 						for (int i = 1; i <= VariantAwareDataItem.VARIANT_COLUMN_SIZE; i++) {
-							variantAwareDataItem.setValue(null, VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
+							((VariantAwareDataItem) sl).setValue(null, VariantAwareDataItem.VARIANT_COLUMN_NAME + i);
 						}
 					}
 
-					if (sl instanceof SourceableDataItem sourceableDataItem) {
-						sourceableDataItem.getSources().clear();
+					if (sl instanceof SourceableDataItem) {
+						((SourceableDataItem) sl).getSources().clear();
 					}
 					
 					// add detailable aspect
@@ -308,9 +308,11 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 				visitComposition(formulatedProduct, simpleListDataList, simpleListQtyProvider, variant, toRemove);
 				visitPackaging(formulatedProduct, simpleListDataList, simpleListQtyProvider, variant, toRemove);
 				visitProcess(formulatedProduct, simpleListDataList, simpleListQtyProvider, variant, toRemove);
+
 			}
 			
 		   simpleListDataList.removeAll(toRemove);
+			
 			
 		}
 
@@ -478,8 +480,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 					Double value = null;
 					
-					if (newSimpleListDataItem instanceof FormulatedCharactDataItem formulatedCharactDataItem) {
-						value = formulatedCharactDataItem.getFormulatedValue();
+					if (newSimpleListDataItem instanceof FormulatedCharactDataItem) {
+						value = ((FormulatedCharactDataItem) newSimpleListDataItem).getFormulatedValue();
 					} else {
 						value = newSimpleListDataItem.getValue();
 					}
@@ -489,16 +491,16 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 								.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64)).doubleValue());
 					}
 
-					if (newSimpleListDataItem instanceof ForecastValueDataItem forecastValueDataItem) {
-						if (forecastValueDataItem.getPreviousValue() != null) {
-							forecastValueDataItem.setPreviousValue(BigDecimal
-									.valueOf(forecastValueDataItem.getPreviousValue())
+					if (newSimpleListDataItem instanceof ForecastValueDataItem) {
+						if (((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue() != null) {
+							((ForecastValueDataItem) newSimpleListDataItem).setPreviousValue(BigDecimal
+									.valueOf(((ForecastValueDataItem) newSimpleListDataItem).getPreviousValue())
 									.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64)).doubleValue());
 						}
 
-						if (forecastValueDataItem.getFutureValue() != null) {
-							forecastValueDataItem.setFutureValue(BigDecimal
-									.valueOf(forecastValueDataItem.getFutureValue())
+						if (((ForecastValueDataItem) newSimpleListDataItem).getFutureValue() != null) {
+							((ForecastValueDataItem) newSimpleListDataItem).setFutureValue(BigDecimal
+									.valueOf(((ForecastValueDataItem) newSimpleListDataItem).getFutureValue())
 									.multiply(BigDecimal.valueOf(netQty).divide(BigDecimal.valueOf(totalQty), MathContext.DECIMAL64)).doubleValue());
 						}
 
@@ -593,8 +595,8 @@ public abstract class AbstractSimpleListFormulationHandler<T extends SimpleListD
 
 						// is it a mandatory charact ?
 						if ((slDataItem == null) || (slDataItem.getValue() == null)) {
-							if (!(slDataItem instanceof MinMaxValueDataItem minMaxValueDataItem) || (((minMaxValueDataItem).getMaxi() == null)
-									&& ((minMaxValueDataItem).getMini() == null))) {
+							if (!(slDataItem instanceof MinMaxValueDataItem) || ((((MinMaxValueDataItem) slDataItem).getMaxi() == null)
+									&& (((MinMaxValueDataItem) slDataItem).getMini() == null))) {
 								addMissingMandatoryCharact(mandatoryCharacts, newSimpleListDataItem.getCharactNodeRef(), partProduct.getNodeRef());
 							}
 						}
