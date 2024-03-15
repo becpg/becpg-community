@@ -141,8 +141,15 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 				}
 				
 				if(!variantPackagingData.isManualPalletInformations()) {
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PALLET_TYPE_CODE, variantPackagingData.getPalletTypeCode());
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PLATFORMTERMSANSCONDITION_CODE, variantPackagingData.getPlatformTermsAndConditionsCode());
+					if( variantPackagingData.getPalletTypeCode()!=null 
+							&& ! variantPackagingData.getPalletTypeCode().isEmpty()) {
+						formulatedProduct.getExtraProperties().put(GS1Model.PROP_PALLET_TYPE_CODE, variantPackagingData.getPalletTypeCode());
+					}
+					
+					if( variantPackagingData.getPlatformTermsAndConditionsCode()!=null 
+							&& ! variantPackagingData.getPlatformTermsAndConditionsCode().isEmpty()) {
+						formulatedProduct.getExtraProperties().put(GS1Model.PROP_PLATFORMTERMSANSCONDITION_CODE, variantPackagingData.getPlatformTermsAndConditionsCode());
+					}
 				
 
 					if (formulatedProduct instanceof FinishedProductData || formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
