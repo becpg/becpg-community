@@ -1,7 +1,7 @@
 FROM ${docker.share.image}:${alfresco.share.docker.version}
 
 ENV TOMCAT_DIR=/usr/local/tomcat
-ENV I18_VERSION=1.0-118
+ENV I18_VERSION=1.0-122
 ENV SUPPORT_TOOLS_VERSION=1.2.0.0-beCPG-amp
 
 USER root

@@ -8,7 +8,7 @@ ENV NEXUS=https://artifacts.alfresco.com/nexus/content/groups/public
 ENV AOS_VERSION=${alfresco.aos.version}
 ENV MYSQL_CONNECTOR=${mysql.connector.version}
 ENV SUPPORT_TOOLS_VERSION=1.3.0.0-beCPG-amp
-ENV I18_VERSION=1.0-118
+ENV I18_VERSION=1.0-122
    
 ## JDBC - MYSQL
 RUN curl --silent --location \
