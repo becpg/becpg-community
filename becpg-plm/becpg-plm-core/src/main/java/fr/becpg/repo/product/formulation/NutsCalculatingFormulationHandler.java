@@ -23,11 +23,7 @@ import fr.becpg.repo.product.data.ProductData;
 import fr.becpg.repo.product.data.ProductSpecificationData;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-<<<<<<< 4.2.3
 import fr.becpg.repo.product.data.constraints.RequirementType;
-import fr.becpg.repo.product.data.productList.CompoListDataItem;
-=======
->>>>>>> 5eca80c Fix #20640 - [Feature] Add SVHC List support
 import fr.becpg.repo.product.data.productList.NutDataItem;
 import fr.becpg.repo.product.data.productList.NutListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
