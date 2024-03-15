@@ -122,8 +122,12 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_DEPTH, variantPackagingData.getDepth());
 					formulatedProduct.getExtraProperties().put(GS1Model.PROP_HEIGHT, variantPackagingData.getHeight());
 					
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PACKAGING_TYPE_CODE, variantPackagingData.getPackagingTypeCode());
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PACKAGINGTERMSANSCONDITION_CODE, variantPackagingData.getPackagingTermsAndConditionsCode());
+					if(variantPackagingData.getPackagingTypeCode()!=null && !variantPackagingData.getPackagingTypeCode().isEmpty()) {
+						formulatedProduct.getExtraProperties().put(GS1Model.PROP_PACKAGING_TYPE_CODE, variantPackagingData.getPackagingTypeCode());
+					}
+					if(variantPackagingData.getPackagingTermsAndConditionsCode()!=null && !variantPackagingData.getPackagingTermsAndConditionsCode().isEmpty()) {
+						formulatedProduct.getExtraProperties().put(GS1Model.PROP_PACKAGINGTERMSANSCONDITION_CODE, variantPackagingData.getPackagingTermsAndConditionsCode());
+					}
 				}
 				
 				formulatedProduct.getExtraProperties().put(GS1Model.PROP_SECONDARY_WEIGHT, formulatedProduct.getWeightSecondary());
@@ -145,8 +149,15 @@ public class TareFormulationHandler extends FormulationBaseHandler<ProductData> 
 				}
 				
 				if(!variantPackagingData.isManualPalletInformations()) {
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PALLET_TYPE_CODE, variantPackagingData.getPalletTypeCode());
-					formulatedProduct.getExtraProperties().put(GS1Model.PROP_PLATFORMTERMSANSCONDITION_CODE, variantPackagingData.getPlatformTermsAndConditionsCode());
+					if( variantPackagingData.getPalletTypeCode()!=null 
+							&& ! variantPackagingData.getPalletTypeCode().isEmpty()) {
+						formulatedProduct.getExtraProperties().put(GS1Model.PROP_PALLET_TYPE_CODE, variantPackagingData.getPalletTypeCode());
+					}
+					
+					if( variantPackagingData.getPlatformTermsAndConditionsCode()!=null 
+							&& ! variantPackagingData.getPlatformTermsAndConditionsCode().isEmpty()) {
+						formulatedProduct.getExtraProperties().put(GS1Model.PROP_PLATFORMTERMSANSCONDITION_CODE, variantPackagingData.getPlatformTermsAndConditionsCode());
+					}
 				
 
 					if (formulatedProduct instanceof FinishedProductData || formulatedProduct.getAspects().contains(PackModel.ASPECT_PALLET)) {
