@@ -30,8 +30,8 @@ public class LCACalculatingFormulationHandler extends AbstractCostCalculatingFor
 			
 			if (formulatedProduct.getLcaList() != null) {
 				for (LCAListDataItem lcaItem : formulatedProduct.getLcaList()) {
-					Double normalizationFactor = (Double) nodeService.getProperty(lcaItem.getLCA(), PLMModel.PROP_LCA_NORMALIZATION);
-					Double ponderationFactor = (Double) nodeService.getProperty(lcaItem.getLCA(), PLMModel.PROP_LCA_PONDERATION);
+					Double normalizationFactor = (Double) nodeService.getProperty(lcaItem.getLca(), PLMModel.PROP_LCA_NORMALIZATION);
+					Double ponderationFactor = (Double) nodeService.getProperty(lcaItem.getLca(), PLMModel.PROP_LCA_PONDERATION);
 					if (lcaItem.getValue() != null && normalizationFactor != null && ponderationFactor != null) {
 						double partScore = lcaItem.getValue() / normalizationFactor * ponderationFactor * 10;
 						if (singleScore == null) {

@@ -83,8 +83,8 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 		SimpleCharactUnitProvider unitProvider = item -> {
 			AbstractCostListDataItem<?> c = (AbstractCostListDataItem<?>) item;
 			return CostsCalculatingFormulationHandler.calculateUnit(formulatedProduct.getUnit(),
-					(String) nodeService.getProperty(c.getCost(), getCostUnitPropName()),
-					(Boolean) nodeService.getProperty(c.getCost(), getCostFixedPropName()));
+					(String) nodeService.getProperty(c.getCharactNodeRef(), getCostUnitPropName()),
+					(Boolean) nodeService.getProperty(c.getCharactNodeRef(), getCostFixedPropName()));
 		};
 
 		visitRecurCost(formulatedProduct, formulatedProduct, ret, 0, level, 1d, unitProvider);
@@ -92,7 +92,7 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 		if ((formulatedProduct.getUnit() != null) && (formulatedProduct.getUnit().isLb() || formulatedProduct.getUnit().isGal())) {
 			for (NodeRef costItemNodeRef : dataListItems) {
 				AbstractCostListDataItem<?> c = (AbstractCostListDataItem<?>) alfrescoRepository.findOne(costItemNodeRef);
-				Boolean fixed = (Boolean) nodeService.getProperty(c.getCost(), getCostFixedPropName());
+				Boolean fixed = (Boolean) nodeService.getProperty(c.getCharactNodeRef(), getCostFixedPropName());
 				if (!Boolean.TRUE.equals(fixed)) {
 					if (ret.getData().containsKey(c.getCharactNodeRef())) {
 
@@ -301,8 +301,8 @@ public abstract class AbstractCostCharactDetailsVisitor<T extends AbstractCostLi
 					Double value = FormulationHelper.calculateValue(0d, qtyUsed, templateCostList.getValue(), netQty);
 
 					String unit = CostsCalculatingFormulationHandler.calculateUnit(formulatedProduct.getUnit(),
-							(String) nodeService.getProperty(templateCostList.getCost(), getCostUnitPropName()),
-							(Boolean) nodeService.getProperty(templateCostList.getCost(), getCostFixedPropName()));
+							(String) nodeService.getProperty(templateCostList.getCharactNodeRef(), getCostUnitPropName()),
+							(Boolean) nodeService.getProperty(templateCostList.getCharactNodeRef(), getCostFixedPropName()));
 
 					CharactDetailsValue key = new CharactDetailsValue(formulatedProduct.getNodeRef(), entityNodeRef, null, value, 0, unit);
 					if (!ret.isMultiple()) {
