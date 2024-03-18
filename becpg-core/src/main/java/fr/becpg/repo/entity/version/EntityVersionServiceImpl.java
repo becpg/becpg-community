@@ -1173,12 +1173,13 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 				// create the version node
 				Version newVersion = versionService.createVersion(entityNodeRef, versionProperties);
 				
-				Map<String, Object> extraParams = null;
+				Map<String, Object> extraParams = new HashMap<>();
 				
 				if (isInitialVersion) {
-					extraParams = new HashMap<>();
 					extraParams.put(RemoteParams.PARAM_IS_INITIAL_VERSION, true);
 				}
+				
+				extraParams.put(RemoteParams.PARAM_APPEND_REPORT_PROPS, true);
 				
 				// extract the JSON data of the current node
 				String jsonData = entityFormatService.extractEntityData(entityNodeRef, EntityFormat.JSON, extraParams);
