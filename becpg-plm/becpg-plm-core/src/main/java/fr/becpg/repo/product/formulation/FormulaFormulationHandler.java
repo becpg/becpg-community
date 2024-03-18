@@ -96,6 +96,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	static {
 		SpelHelper
 				.registerShortcut(new SpelShortcut("cost\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "costList.^[cost.toString() == '$1']"));
+		SpelHelper
+		.registerShortcut(new SpelShortcut("lca\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "lcaList.^[lca.toString() == '$1']"));
 		SpelHelper.registerShortcut(new SpelShortcut("nut\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "nutList.^[nut.toString() == '$1']"));
 		SpelHelper.registerShortcut(
 				new SpelShortcut("allergen\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "allergenList.^[allergen.toString() == '$1']"));
