@@ -1437,9 +1437,11 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 			
 			return StopWatchSupport.build().logger(logger).run(() -> {
 				
-				if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_EFFECTIVITY)) {
+				if (isInitialVersion) {
 					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, finalOldEffectivity);
 					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_END_EFFECTIVITY, finalNewEffectivity);
+				} else {
+					nodeService.setProperty(entityNodeRef, BeCPGModel.PROP_START_EFFECTIVITY, finalNewEffectivity);
 				}
 				
 				// create the version node
