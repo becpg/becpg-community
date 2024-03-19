@@ -128,7 +128,11 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	@InternalField
 	@DataListIdentifierAttr
 	public NodeRef getCost() {
-		return cost;
+		return getCharactNodeRef();
+	}
+	
+	public void setCost(NodeRef cost) {
+		setCharactNodeRef(cost);
 	}
 	
 	/**
@@ -263,7 +267,7 @@ public class CostListDataItem extends AbstractCostListDataItem<CostListDataItem>
 	/** {@inheritDoc} */
 	@Override
 	public String toString() {
-		return "CostListDataItem [value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", cost=" + cost + "]";
+		return "CostListDataItem [value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", cost=" + charact + "]";
 	}
 
 }

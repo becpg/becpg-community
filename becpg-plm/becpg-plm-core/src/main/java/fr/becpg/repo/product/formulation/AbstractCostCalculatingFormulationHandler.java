@@ -145,10 +145,10 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 				ProductUnit unit = formulatedProduct.getUnit();
 
 				for (T c : getDataListVisited(formulatedProduct)) {
-					if ((unit != null) && (c.getCost() != null)) {
-						Boolean fixed = (Boolean) nodeService.getProperty(c.getCost(), getCostFixedPropName());
+					if ((unit != null) && (c.getCharactNodeRef() != null)) {
+						Boolean fixed = (Boolean) nodeService.getProperty(c.getCharactNodeRef(), getCostFixedPropName());
 
-						c.setUnit(calculateUnit(unit, (String) nodeService.getProperty(c.getCost(), getCostUnitPropName()), fixed));
+						c.setUnit(calculateUnit(unit, (String) nodeService.getProperty(c.getCharactNodeRef(), getCostUnitPropName()), fixed));
 
 						if (!Boolean.TRUE.equals(fixed) && hasCompoEl) {
 							if (!internalKeepProductUnit() && unit.isLb()) {
@@ -268,8 +268,8 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	
 			for (T costListDataItem : getDataListVisited(formulatedProduct)) {
 				for (T c : costList) {
-					if ((c.getCost() != null) && c.getCost().equals(costListDataItem.getCost()) && isCharactFormulated(costListDataItem)) {
-						mandatoryCharacts.put(c.getCost(), new ArrayList<>());
+					if ((c.getCharactNodeRef() != null) && c.getCharactNodeRef().equals(costListDataItem.getCharactNodeRef()) && isCharactFormulated(costListDataItem)) {
+						mandatoryCharacts.put(c.getCharactNodeRef(), new ArrayList<>());
 						break;
 					}
 				}
@@ -287,7 +287,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 			if (templateCostListItem.getPlants().isEmpty()
 					|| !Collections.disjoint(templateCostListItem.getPlants(), formulatedProduct.getAllPlants())) {
 				// same cost
-				if ((costListItem.getCost() != null) && costListItem.getCost().equals(templateCostListItem.getCost())) {
+				if ((costListItem.getCharactNodeRef() != null) && costListItem.getCharactNodeRef().equals(templateCostListItem.getCharactNodeRef())) {
 					if (isTemplateCost) {
 						if (templateCostListItem.getParent() != null) {
 							costListItem.setParent(findParentByCharactName(costList, templateCostListItem.getParent().getCharactNodeRef()));
@@ -326,7 +326,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	private void copyTemplateCost(ProductData formulatedProduct, T templateCostList, T costList) {
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("copy cost " + nodeService.getProperty(templateCostList.getCost(), BeCPGModel.PROP_CHARACT_NAME) + " unit "
+			logger.debug("copy cost " + nodeService.getProperty(templateCostList.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME) + " unit "
 					+ templateCostList.getUnit() + " PackagingData " + formulatedProduct.getDefaultVariantPackagingData());
 		}
 		boolean isCalculated = false;
@@ -371,7 +371,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 	private void calculateValues(T templateCostList, T costList, Boolean divide, Double qty) {
 
 		if (logger.isDebugEnabled()) {
-			logger.debug("calculateValues " + nodeService.getProperty(templateCostList.getCost(), BeCPGModel.PROP_CHARACT_NAME));
+			logger.debug("calculateValues " + nodeService.getProperty(templateCostList.getCharactNodeRef(), BeCPGModel.PROP_CHARACT_NAME));
 		}
 
 		Double value = templateCostList.getValue();
@@ -493,7 +493,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 				}
 
 				for (T c2 : getDataListVisited(componentData)) {
-					if (c2.getCost().equals(simulatedCost.getParent().getCost()) && (simulatedCost.getSimulatedValue() != null) ) {
+					if (c2.getCharactNodeRef().equals(simulatedCost.getParent().getCharactNodeRef()) && (simulatedCost.getSimulatedValue() != null) ) {
 
 						if (logger.isDebugEnabled()) {
 							logger.debug("add simulationCost " + "c2 value " + c2.getValue() + "c simulated value " + simulatedCost.getSimulatedValue()
@@ -514,7 +514,7 @@ public abstract class AbstractCostCalculatingFormulationHandler<T extends Abstra
 				}
 			}
 			if (simulatedCost.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM) && (simulatedCost.getSimulatedValue() == null) && (simulatedCost.getParent() != null)
-					&& !nodeService.hasAspect(simulatedCost.getParent().getCost(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
+					&& !nodeService.hasAspect(simulatedCost.getParent().getCharactNodeRef(), BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
 				simulatedCost.getParent().getAspectsToRemove().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
 			}
 		}
