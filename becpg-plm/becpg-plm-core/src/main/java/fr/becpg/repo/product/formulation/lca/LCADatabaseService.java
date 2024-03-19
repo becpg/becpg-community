@@ -207,7 +207,7 @@ public class LCADatabaseService {
 			List<NodeRef> lca = BeCPGQueryBuilder.createQuery().inDB().ofType(PLMModel.TYPE_LCA).andPropEquals(PLMModel.PROP_LCA_CODE, lcaCode).list();
 			if (lca != null && !lca.isEmpty()) {
 				LCAListDataItem item = new LCAListDataItem();
-				item.setCost(lca.get(0));
+				item.setLca(lca.get(0));
 				item.setValue(lcaValue);
 				return item;
 			}
