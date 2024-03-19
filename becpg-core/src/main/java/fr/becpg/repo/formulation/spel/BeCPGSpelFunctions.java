@@ -17,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
+import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -56,6 +57,7 @@ import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.annotation.DataListView;
 import fr.becpg.repo.repository.impl.LazyLoadingDataList;
 import fr.becpg.repo.repository.model.BaseObject;
+import fr.becpg.repo.repository.model.CopiableDataItem;
 
 /**
  *
@@ -919,7 +921,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 				if (from != null) {
 
 					copyLists(to, from, listQNames, treatedList);
-					copyEntityProperties(to, from, propQNames, treatedProp, treatedList);
+					copyEntityProperties(to, from, propQNames, listQNames, treatedProp, treatedList);
 					copyExtraProperties(to, from, propQNames, treatedProp);
 
 				}
@@ -946,8 +948,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 		}
 
-		public void copyEntityProperties(RepositoryEntity to, RepositoryEntity from, Collection<String> propQNames, Set<QName> treatedProp,
-				Set<QName> treatedList) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		public void copyEntityProperties(RepositoryEntity to, RepositoryEntity from, Collection<String> listQNames, Collection<String> propQNames,
+				Set<QName> treatedProp, Set<QName> treatedList) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
 			BeanWrapper beanWrapper = new BeanWrapperImpl(to);
 
@@ -972,87 +974,128 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 						}
 					} else if (readMethod.isAnnotationPresent(DataList.class)) {
-						QName qname = repositoryEntityDefReader.readQName(readMethod);
+						  QName qname = repositoryEntityDefReader.readQName(readMethod);
 
-						for (QName listQName : treatedList) {
-							if (qname.equals(listQName)) {
-								logger.debug("Reloading list : " + listQName + " from repository");
-								Object oldData = PropertyUtils.getProperty(to, pd.getName());
-								if (oldData instanceof LazyLoadingDataList) {
-									((LazyLoadingDataList<?>) oldData).refresh();
-								}
-							}
-						}
+						    for (String listQName1 : listQNames) {
+						        QName listQName = QName.createQName(listQName1, namespaceService);
+						        if (qname.equals(listQName)) {
+						            handleList(listQName, from, to, pd, treatedList);
+						        }
+						    }
 					} else if (readMethod.isAnnotationPresent(DataListView.class)) {
+						 for (String listQName1 : listQNames) {
+						        QName listQName = QName.createQName(listQName1, namespaceService);
+						        BaseObject fromView = (BaseObject) PropertyUtils.getProperty(from, pd.getName());
+						        BaseObject toView = (BaseObject) PropertyUtils.getProperty(to, pd.getName());
 
-						for (QName listQName : treatedList) {
+						        for (final PropertyDescriptor pdView : (new BeanWrapperImpl(toView)).getPropertyDescriptors()) {
+						            Method viewReadMethod = pdView.getReadMethod();
+						            if (viewReadMethod.isAnnotationPresent(DataList.class)) {
+						                QName viewQname = repositoryEntityDefReader.readQName(viewReadMethod);
+						                if (viewQname.equals(listQName)) {
+						                    handleList(listQName, fromView, toView, pdView, treatedList);
+						                }
+						            }
+						        }
+						    }
+	
 
-							BaseObject toView = (BaseObject) PropertyUtils.getProperty(to, pd.getName());
-
-							for (final PropertyDescriptor pdView : (new BeanWrapperImpl(toView)).getPropertyDescriptors()) {
-
-								Method viewReadMethod = pdView.getReadMethod();
-
-								if (viewReadMethod.isAnnotationPresent(DataList.class)) {
-									QName viewQname = repositoryEntityDefReader.readQName(viewReadMethod);
-									if (viewQname.equals(listQName) && treatedList.contains(listQName)) {
-										logger.debug("Reloading list : " + listQName + " from repository");
-
-										Object oldData = PropertyUtils.getProperty(toView, pdView.getName());
-
-										if (oldData instanceof LazyLoadingDataList) {
-											((LazyLoadingDataList<?>) oldData).refresh();
-										}
-									}
-								}
-
-							}
-
-						}
 					}
 				}
-			}
+
 
 		}
+	
 
-		private void copyExtraProperties(RepositoryEntity to, RepositoryEntity from, Collection<String> propQNames, Set<QName> treatedProp) {
-			if (to.getNodeRef() != null) {
+	}
+	
+	private void handleList(QName listQName, Object from, Object to, PropertyDescriptor pd, Set<QName> treatedList) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException  {
+	    if (!treatedList.contains(listQName)) {
+	        logger.debug("Setting list : " + listQName + " from repository entity");
+	        Object data = PropertyUtils.getProperty(from, pd.getName());
+	        Object oldData = PropertyUtils.getProperty(to, pd.getName());
+	        setDataList(data, oldData, to, pd);
+	        treatedList.add(listQName);
+	    } else {
+	        logger.debug("Reloading list : " + listQName + " from repository");
+	        Object oldData = PropertyUtils.getProperty(to, pd.getName());
+	        if (oldData instanceof LazyLoadingDataList) {
+	            ((LazyLoadingDataList<?>) oldData).refresh();
+	        }
+	    }
+	}
 
-				Map<QName, Serializable> extraPropToCopy = nodeService.getProperties(from.getNodeRef());
+	private void setDataList(Object data, Object oldData, Object to, PropertyDescriptor pd) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	    if (data instanceof LazyLoadingDataList) {
+	        if (oldData instanceof LazyLoadingDataList) {
+	            ((LazyLoadingDataList) oldData).clear();
+	            ((LazyLoadingDataList) oldData).addAll(clone((LazyLoadingDataList) data));
+	        } else {
+	            PropertyUtils.setProperty(to, pd.getName(), clone((LazyLoadingDataList) data));
+	        }
+	    } else if (data instanceof Collection) {
+	        if (oldData instanceof LazyLoadingDataList) {
+	            ((LazyLoadingDataList) oldData).clear();
+	            ((LazyLoadingDataList) oldData).addAll(clone((Collection) data));
+	        } else {
+	            PropertyUtils.setProperty(to, pd.getName(), clone((Collection) data));
+	        }
+	    }
+	}
 
-				for (String propQName2 : propQNames) {
-					QName propQName = QName.createQName(propQName2, namespaceService);
-					if (!treatedProp.contains(propQName)) {
-						PropertyDefinition propertyDef = entityDictionaryService.getProperty(propQName);
-						if (propertyDef != null) {
-							if (extraPropToCopy.containsKey(propQName)) {
-								logger.debug("Setting property : " + propQName + " from nodeRef");
-								nodeService.setProperty(to.getNodeRef(), propQName, extraPropToCopy.get(propQName));
-							} else {
-								logger.debug("Removing property : " + propQName);
-								nodeService.removeProperty(to.getNodeRef(), propQName);
-							}
+	private List<Object> clone( Collection<?>  data) {
+		   List<Object> ret = new java.util.LinkedList<>();
+		   	for(Object item : data) {
+		   		if(item instanceof CopiableDataItem) {
+		   			item = ((CopiableDataItem)item).copy();
+		   		} 
+		   		if(item instanceof RepositoryEntity) {
+		   			((RepositoryEntity)item).setNodeRef(null);
+		   			((RepositoryEntity)item).setParentNodeRef(null);
+		   		}
+		   		ret.add(item);
+		   	}
+			return ret;
+	}
+	
+	private void copyExtraProperties(RepositoryEntity to, RepositoryEntity from, Collection<String> propQNames, Set<QName> treatedProp) {
+		if (to.getNodeRef() != null) {
 
+			Map<QName, Serializable> extraPropToCopy = nodeService.getProperties(from.getNodeRef());
+
+			for (String propQName2 : propQNames) {
+				QName propQName = QName.createQName(propQName2, namespaceService);
+				if (!treatedProp.contains(propQName)) {
+					PropertyDefinition propertyDef = entityDictionaryService.getProperty(propQName);
+					if (propertyDef != null) {
+						if (extraPropToCopy.containsKey(propQName)) {
+							logger.debug("Setting property : " + propQName + " from nodeRef");
+							nodeService.setProperty(to.getNodeRef(), propQName, extraPropToCopy.get(propQName));
 						} else {
-							logger.debug("Setting association : " + propQName + " from nodeRef");
-							associationService.update(to.getNodeRef(), propQName, associationService.getTargetAssocs(from.getNodeRef(), propQName));
+							logger.debug("Removing property : " + propQName);
+							nodeService.removeProperty(to.getNodeRef(), propQName);
 						}
-						treatedProp.add(propQName);
 
+					} else {
+						logger.debug("Setting association : " + propQName + " from nodeRef");
+						associationService.update(to.getNodeRef(), propQName, associationService.getTargetAssocs(from.getNodeRef(), propQName));
 					}
+					treatedProp.add(propQName);
 
 				}
-			}
 
-		}
-
-		private void assertIsNotMappedQname(RepositoryEntity item, QName qName) {
-			if (item!=null && repositoryEntityDefReader.isRegisteredQName(item, qName)) {
-				throw new FormulateException(String.format("QName is %s mapped in entity. Please use entity.%s to access it ",
-						qName.getPrefixedQName(namespaceService), qName.getLocalName()));
 			}
 		}
 
 	}
+
+	private void assertIsNotMappedQname(RepositoryEntity item, QName qName) {
+		if (item != null && repositoryEntityDefReader.isRegisteredQName(item, qName)) {
+			throw new FormulateException(String.format("QName is %s mapped in entity. Please use entity.%s to access it ",
+					qName.getPrefixedQName(namespaceService), qName.getLocalName()));
+		}
+	}
+
+}
 
 }
