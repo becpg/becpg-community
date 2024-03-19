@@ -130,23 +130,50 @@ public class FormulaFormulationIT extends AbstractFinishedProductTest {
 			return finishedProductData2.getNodeRef();
 
 		});
+		
+
+		NodeRef finishedProductData3NodeRef = inWriteTx(() -> {
+
+			FinishedProductData finishedProductData2 = new FinishedProductData();
+			finishedProductData2.setName("Test Spel Formula 3");
+
+			List<DynamicCharactListItem> dynamicCharactListItems = new ArrayList<>();
+			// Product
+			dynamicCharactListItems.add(new DynamicCharactListItem("Sync method", "@beCPG.copy(@beCPG.findOne(\"" + finishedProductData1NodeRef
+					+ "\"),{\"bcpg:suppliers\",\"bcpg:legalName\",\"bcpg:clients\" },{\"bcpg:costList\",\"bcpg:compoList|true\"})"));
+
+			finishedProductData2.getCompoListView().setDynamicCharactList(dynamicCharactListItems);
+
+			alfrescoRepository.create(getTestFolderNodeRef(), finishedProductData2);
+			return finishedProductData2.getNodeRef();
+
+		});
+
 
 		inWriteTx(() -> {
 
 			FinishedProductData finishedProductData2 = (FinishedProductData) alfrescoRepository.findOne(finishedProductData2NodeRef);
 			FinishedProductData finishedProductData1 = (FinishedProductData) alfrescoRepository.findOne(finishedProductData1NodeRef);
+			FinishedProductData finishedProductData3 = (FinishedProductData) alfrescoRepository.findOne(finishedProductData3NodeRef);
 			
 
 			assertEquals(2, finishedProductData1.getSuppliers().size());
 			assertEquals("Client 1", finishedProductData1.getClients().get(0).getName());
 
 			productService.formulate(finishedProductData2);
+			
+			productService.formulate(finishedProductData3);
 
 			logger.debug(finishedProductData2.toString());
 
 			assertEquals("Test Spel Formula 1", MLTextHelper.getClosestValue(finishedProductData2.getLegalName(), Locale.FRENCH));
 			assertEquals(1, finishedProductData2.getCostList().size());
 			assertEquals(2, finishedProductData2.getCompoList().size());
+			assertEquals(1, finishedProductData2.getCompoListView().getDynamicCharactList().size());
+			
+			assertEquals(2, finishedProductData3.getCompoList().size());
+			assertEquals(1, finishedProductData3.getCompoListView().getDynamicCharactList().size());
+			
 			assertEquals("Client 1", finishedProductData2.getClients().get(0).getName());
 			assertEquals(2, finishedProductData2.getSuppliers().size());
 			assertEquals(1, associationService.getTargetAssocs(finishedProductData2.getNodeRef(), PLMModel.ASSOC_CLIENTS).size());
