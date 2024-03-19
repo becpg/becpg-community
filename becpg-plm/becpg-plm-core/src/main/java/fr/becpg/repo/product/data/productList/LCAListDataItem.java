@@ -88,16 +88,12 @@ public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 	@AlfQname(qname="bcpg:lcaListLca")
 	@InternalField
 	@DataListIdentifierAttr
-	public NodeRef getCost() {
-		return cost;
+	public NodeRef getLca() {
+		return getCharactNodeRef();
 	}
 	
-	public NodeRef getLCA() {
-		return getCost();
-	}
-	
-	public void setLCA(NodeRef lca) {
-		setCost(lca);
+	public void setLca(NodeRef lca) {
+		setCharactNodeRef(lca);
 	}
 	
 	@AlfProp
@@ -128,7 +124,7 @@ public class LCAListDataItem extends AbstractCostListDataItem<LCAListDataItem> {
 
 	@Override
 	public String toString() {
-		return "LcaListDataItem [value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", method=" + method + ", cost=" + cost + "]";
+		return "LcaListDataItem [value=" + value + ", unit=" + unit + ", maxi=" + maxi + ", method=" + method + ", lca=" + charact + "]";
 	}
 
 }
