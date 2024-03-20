@@ -78,6 +78,11 @@ else if (args["user"] != null)
    if(olapSSOUrl!=null && isOlapUser){
        model.capabilities["olapSSOUrl_"+olapSSOUrl] = true;
    }
+   
+    var authTocken = bcpg.getBeCPGAuthTocken();
+   if(authTocken!=null){
+       model.capabilities["beCPGAuthTocken_"+authTocken] = true;
+   }
     
   var personNodeRef = object.nodeRef;
   if(personNodeRef!=null){
