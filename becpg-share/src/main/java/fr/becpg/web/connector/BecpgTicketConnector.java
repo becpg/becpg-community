@@ -19,6 +19,15 @@ public class BecpgTicketConnector extends RequestCachingConnector {
 
 	@Override
 	protected void applyRequestAuthentication(RemoteClient remoteClient, ConnectorContext context) {
+		String currentAuthToken = getCurrentAuthToken(remoteClient, context);
+
+		if (currentAuthToken != null) {
+			remoteClient.setTicket(currentAuthToken);
+			remoteClient.setTicketName(PARAM_TICKETNAME_TICKET);
+		}
+	}
+
+	public String getCurrentAuthToken(RemoteClient remoteClient, ConnectorContext context) {
 		String alfTicket = null;
 		String userName = "guest";
 		String instanceName = null;
@@ -43,10 +52,7 @@ public class BecpgTicketConnector extends RequestCachingConnector {
 			instanceName = remoteConfig.getConfigElementValue("becpg-instance");
 		}
 
-		if (alfTicket != null) {
-			remoteClient.setTicket(getCurrentAuthToken(alfTicket, userName, instanceName));
-			remoteClient.setTicketName(PARAM_TICKETNAME_TICKET);
-		}
+		return getCurrentAuthToken(alfTicket, userName, instanceName);
 	}
 
 	public String getCurrentAuthToken(String alfTicket, String userName, String instanceName) {
@@ -58,7 +64,5 @@ public class BecpgTicketConnector extends RequestCachingConnector {
 
 		return java.util.Base64.getEncoder().encodeToString(currentUserName.getBytes());
 	}
-	
-	
 
 }
