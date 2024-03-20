@@ -59,7 +59,9 @@
 			 * @type string
 			 * @default ""
 			 */
-			entityNodeRef: ""
+			entityNodeRef: "",
+			
+			ticket: null
 		},
 
 		stompClient: null,
@@ -86,7 +88,7 @@
 		},
 
 		subscribeToSuggestions: function() {
-			stompClient.subscribe('/queue/suggestions', function(suggestionResponse) {
+			me.stompClient.subscribe('/queue/suggestions', function(suggestionResponse) {
 				var suggestions = JSON.parse(suggestionResponse.body);
 				var suggestionHtml = "";
 				for (var i = 0; i < suggestions.length; i++) {
@@ -124,9 +126,12 @@
 		connectToStomp: function() {
 			var protocolPrefix = (window.location.protocol === 'https:') ? 'wss:' : 'ws:', me = this;
 
-			var socket = new WebSocket(protocolPrefix + location.host + Alfresco.constants.URL_CONTEXT + "aiws");
+			var socket = new WebSocket(protocolPrefix + location.host + Alfresco.constants.URL_CONTEXT + "aiws?ticket="+me.options.ticket, "v10.stomp");
 			
 			me.stompClient = Stomp.over(socket);
+			//TODO Remove that
+			me.stompClient.debug = function(str) {console.log(str)};
+			
 			me.stompClient.connect({}, function() {
 				console.log('Stomp connected!');
 				me.isStompConnected = true;
@@ -135,6 +140,7 @@
 				console.log('Stomp error:', error);
 				me.isStompConnected = false;
 			});
+			
 		},
 
 		launchSuggestions: function() {
@@ -147,7 +153,7 @@
 			var checkStompConnectionInterval = setInterval(function() {
 				if (me.isStompConnected) {
 					clearInterval(checkStompConnectionInterval);
-					me.stompClient.send("/app/suggestions", {}, JSON.stringify({ entityId: me.entityNodeRef }));
+					me.stompClient.send("/app/suggestions", {}, JSON.stringify({ entityId: me.options.entityNodeRef, locale: Alfresco.constants.JS_LOCALE  }));
 				}
 			}, 100);
 		}
