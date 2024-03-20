@@ -1,5 +1,14 @@
 <import resource="classpath:/alfresco/templates/org/alfresco/import/alfresco-util.js">
 
+    function getBeCPGAuthTocken(user){
+	    for(var i  in user.capabilities){
+	       if(i.indexOf("beCPGAuthTocken_") == 0){
+	           return i.substring(16);
+	       }
+	    }
+	    return null;
+	}
+
 
 function getActivityParameters(nodeRef, defaultValue)
 {
@@ -50,6 +59,10 @@ function main()
       model.commentCount = (count != undefined ? count : null);
       model.hasScore = documentDetails.item.node.aspects.indexOf("bcpg:entityScoreAspect") > 0;
       model.isAIEnable =   (!documentDetails.item.node.isLocked && documentDetails.item.node.permissions.user["Write"] && user.capabilities["isAIUser"] !=null && user.capabilities["isAIUser"] == true) || false;
+      
+
+      
+      
    // Widget instantiation 
       
       var propertiesView = {
@@ -92,7 +105,8 @@ function main()
 	 	         name : "beCPG.component.EntitySuggestions",
 	 	         initArgs :  ["\"" + args.htmlid+"_sug\""],
 	 	         options : {
-	 	        	 entityNodeRef : model.nodeRef
+	 	        	 entityNodeRef : model.nodeRef,
+	 	        	 ticket: getBeCPGAuthTocken(user)
 	 	         }
 	 	   };
 	      
