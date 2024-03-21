@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -17,7 +18,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
-import org.alfresco.repo.jscript.ScriptNode;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.service.cmr.dictionary.PropertyDefinition;
@@ -115,6 +115,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 	public class BeCPGSpelFunctionsWrapper {
 
+		private static final String SPEL_COPY_FORCE_INDICATOR = "|true";
+		
 		RepositoryEntity entity;
 
 		public BeCPGSpelFunctionsWrapper(RepositoryEntity entity) {
@@ -898,6 +900,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 		 *  entity
 		 *
 		 *  Example: @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList"});
+		 *  Example: @beCPG.copy(compoListView.compoList[0].product,{"bcpg:suppliers","bcpg:legalName"},{"bcpg:costList|true"}); // Force full copy of costList
 		 *
 		 * @param fromNodeRef
 		 * @param propQNames
@@ -920,8 +923,9 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 
 				if (from != null) {
 
-					copyLists(to, from, listQNames, treatedList);
-					copyEntityProperties(to, from, propQNames, listQNames, treatedProp, treatedList);
+					copyLists(to, from, listQNames, treatedList, true);
+					copyEntityProperties(to, from, listQNames, propQNames, treatedProp, treatedList);
+					copyLists(to, from, listQNames, treatedList, false);
 					copyExtraProperties(to, from, propQNames, treatedProp);
 
 				}
@@ -930,21 +934,24 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 			}
 		}
 
-		private void copyLists(RepositoryEntity to, RepositoryEntity from, Collection<String> listQNames, Set<QName> treatedList) {
+		private void copyLists(RepositoryEntity to, RepositoryEntity from, Collection<String> listQNames, Set<QName> treatedList, boolean force) {
 			if ((to.getNodeRef() != null) && (from.getNodeRef() != null)) {
+			
 				NodeRef listContainerNodeRef = entityListDAO.getListContainer(from.getNodeRef());
 
 				for (String listQName2 : listQNames) {
-					QName listQName = QName.createQName(listQName2, namespaceService);
-
-					if (!treatedList.contains(listQName)) {
-						logger.debug("Copy list : " + listQName);
-						entityListDAO.copyDataList(entityListDAO.getList(listContainerNodeRef, listQName), to.getNodeRef(), true);
-
-						treatedList.add(listQName);
+					if(!force || listQName2.endsWith(SPEL_COPY_FORCE_INDICATOR)) {
+						
+						QName listQName = QName.createQName(listQName2.replace("|true", ""), namespaceService);
+	
+						if (!treatedList.contains(listQName)) {
+							logger.debug("Copy list : " + listQName);
+							entityListDAO.copyDataList(entityListDAO.getList(listContainerNodeRef, listQName), to.getNodeRef(), true);
+	
+							treatedList.add(listQName);
+						}
 					}
 				}
-
 			}
 		}
 
@@ -971,20 +978,18 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 									treatedProp.add(propQName);
 								}
 							}
-
 						}
 					} else if (readMethod.isAnnotationPresent(DataList.class)) {
 						  QName qname = repositoryEntityDefReader.readQName(readMethod);
-
 						    for (String listQName1 : listQNames) {
-						        QName listQName = QName.createQName(listQName1, namespaceService);
+						        QName listQName = QName.createQName(listQName1.replace(SPEL_COPY_FORCE_INDICATOR, ""), namespaceService);
 						        if (qname.equals(listQName)) {
 						            handleList(listQName, from, to, pd, treatedList);
 						        }
 						    }
 					} else if (readMethod.isAnnotationPresent(DataListView.class)) {
 						 for (String listQName1 : listQNames) {
-						        QName listQName = QName.createQName(listQName1, namespaceService);
+						        QName listQName = QName.createQName(listQName1.replace(SPEL_COPY_FORCE_INDICATOR, ""), namespaceService);
 						        BaseObject fromView = (BaseObject) PropertyUtils.getProperty(from, pd.getName());
 						        BaseObject toView = (BaseObject) PropertyUtils.getProperty(to, pd.getName());
 
@@ -998,12 +1003,8 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 						            }
 						        }
 						    }
-	
-
 					}
 				}
-
-
 		}
 	
 
@@ -1012,9 +1013,7 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 	private void handleList(QName listQName, Object from, Object to, PropertyDescriptor pd, Set<QName> treatedList) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException  {
 	    if (!treatedList.contains(listQName)) {
 	        logger.debug("Setting list : " + listQName + " from repository entity");
-	        Object data = PropertyUtils.getProperty(from, pd.getName());
-	        Object oldData = PropertyUtils.getProperty(to, pd.getName());
-	        setDataList(data, oldData, to, pd);
+	        cloneDataList(PropertyUtils.getProperty(from, pd.getName()), PropertyUtils.getProperty(to, pd.getName()), to, pd);
 	        treatedList.add(listQName);
 	    } else {
 	        logger.debug("Reloading list : " + listQName + " from repository");
@@ -1025,38 +1024,49 @@ public class BeCPGSpelFunctions implements CustomSpelFunctions {
 	    }
 	}
 
-	private void setDataList(Object data, Object oldData, Object to, PropertyDescriptor pd) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-	    if (data instanceof LazyLoadingDataList) {
-	        if (oldData instanceof LazyLoadingDataList) {
-	            ((LazyLoadingDataList) oldData).clear();
-	            ((LazyLoadingDataList) oldData).addAll(clone((LazyLoadingDataList) data));
-	        } else {
-	            PropertyUtils.setProperty(to, pd.getName(), clone((LazyLoadingDataList) data));
-	        }
-	    } else if (data instanceof Collection) {
-	        if (oldData instanceof LazyLoadingDataList) {
-	            ((LazyLoadingDataList) oldData).clear();
-	            ((LazyLoadingDataList) oldData).addAll(clone((Collection) data));
-	        } else {
-	            PropertyUtils.setProperty(to, pd.getName(), clone((Collection) data));
-	        }
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	private void cloneDataList(Object data, Object oldData, Object to, PropertyDescriptor pd) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	    if (oldData instanceof LazyLoadingDataList) {
+	        LazyLoadingDataList lazyDataList = (LazyLoadingDataList) oldData;
+	        lazyDataList.clear();
+	        lazyDataList.addAll(clone((Collection) data));
+	    } else {
+	        PropertyUtils.setProperty(to, pd.getName(), clone((Collection) data));
 	    }
 	}
 
-	private List<Object> clone( Collection<?>  data) {
-		   List<Object> ret = new java.util.LinkedList<>();
-		   	for(Object item : data) {
-		   		if(item instanceof CopiableDataItem) {
-		   			item = ((CopiableDataItem)item).copy();
-		   		} 
-		   		if(item instanceof RepositoryEntity) {
-		   			((RepositoryEntity)item).setNodeRef(null);
-		   			((RepositoryEntity)item).setParentNodeRef(null);
-		   		}
-		   		ret.add(item);
-		   	}
-			return ret;
+	@SuppressWarnings({"unchecked", "rawtypes"} )
+	private <T extends RepositoryEntity> List<T> clone(Collection<T> data) {
+	    List<T> clonedList = new LinkedList<>();
+	    Map<NodeRef, T> origDataItemMap = new HashMap<>();
+
+	    for (T originalData : data) {
+	    	NodeRef origNodeRef = originalData.getNodeRef();
+	        T clonedItem = originalData instanceof CopiableDataItem ? (T) ((CopiableDataItem) originalData).copy() : originalData;
+	        clonedItem.setName(originalData.getName());
+	        clonedItem.setNodeRef(null);
+	        clonedItem.setParentNodeRef(null);
+	        origDataItemMap.put(origNodeRef, clonedItem);
+	        clonedList.add(clonedItem);
+	    }
+
+	    for (T item : clonedList) {
+	        if (item instanceof CompositeDataItem) {
+	            CompositeDataItem compositeItem = (CompositeDataItem) item;
+	            T parent = (T) compositeItem.getParent();
+	            if (parent != null) {
+	                if (parent.getNodeRef() != null) {
+	                    compositeItem.setParent(origDataItemMap.get(parent.getNodeRef()));
+	                } else {
+	                    parent.setParentNodeRef(null);
+	                }
+	            }
+	        }
+	    }
+
+	    return clonedList;
 	}
+
 	
 	private void copyExtraProperties(RepositoryEntity to, RepositoryEntity from, Collection<String> propQNames, Set<QName> treatedProp) {
 		if (to.getNodeRef() != null) {
