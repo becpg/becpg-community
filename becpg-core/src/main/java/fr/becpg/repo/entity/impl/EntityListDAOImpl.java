@@ -419,7 +419,6 @@ public class EntityListDAOImpl implements EntityListDAO {
 		isIgnoredTypes.add(BeCPGModel.PROP_SORT);
 		isIgnoredTypes.add(BeCPGModel.PROP_DEPTH_LEVEL);
 
-		NodeRef matchingItemNodeRef = null;
 		Map<QName, Serializable> targetPropertiesAndAssocs = nodeService.getProperties(targetItemNodeRef);
 		for (AssociationRef ref : this.nodeService.getTargetAssocs(targetItemNodeRef, RegexQNamePattern.MATCH_ALL)) {
 			List<NodeRef> nodes = (List<NodeRef>) targetPropertiesAndAssocs.get(ref.getTypeQName());
@@ -458,7 +457,7 @@ public class EntityListDAOImpl implements EntityListDAO {
 
 		}
 
-		return matchingItemNodeRef;
+		return null;
 	}
 
 	@Override
