@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.8'
 volumes:
   becpg_data_db:
   solr_data:
@@ -68,7 +68,7 @@ services:
  
  
   alfresco-transform-core-aio:
-      image: alfresco/alfresco-transform-core-aio:latest
+      image: alfresco/alfresco-transform-core-aio:5.1.0
       environment:
           JAVA_OPTS: " -Xms256m -Xmx256m"
       ports:

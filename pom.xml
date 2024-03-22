@@ -102,7 +102,7 @@
 		
 	
 	 <!-- Alfresco Maven Plugin version to use -->
-		<alfresco.sdk.version>4.7.0</alfresco.sdk.version>
+		<alfresco.sdk.version>4.8.0</alfresco.sdk.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -112,21 +112,21 @@
         
         
          <!-- Alfresco 7.2 -->
-		<alfresco.platform.version>23.1.0</alfresco.platform.version>
-		<alfresco.share.docker.version>23.1.0</alfresco.share.docker.version>
+		<alfresco.platform.version>23.2.1</alfresco.platform.version>
+		<alfresco.share.docker.version>23.2.1</alfresco.share.docker.version>
 		
-        <alfresco.share.version>23.1.0.269</alfresco.share.version>
-        <alfresco-repository.version>23.1.0.255</alfresco-repository.version>
-		<alfresco-remote-api.version>23.1.0.255</alfresco-remote-api.version>
-		<alfresco-data-model.version>23.1.0.255</alfresco-data-model.version>
-		<alfresco-core.version>23.1.0.255</alfresco-core.version>
+        <alfresco.share.version>23.2.0.72</alfresco.share.version>
+        <alfresco-repository.version>23.2.0.60</alfresco-repository.version>
+		<alfresco-remote-api.version>23.2.0.60</alfresco-remote-api.version>
+		<alfresco-data-model.version>23.2.0.60</alfresco-data-model.version>
+		<alfresco-core.version>23.2.0.60</alfresco-core.version>
 		<spring-surf.version>9.0</spring-surf.version>
 	    <spring-webscripts.version>9.0</spring-webscripts.version>
-	    <spring-webscripts-share.version>9.0</spring-webscripts-share.version>
+	    <spring-webscripts-share.version>9.1</spring-webscripts-share.version>
 	
 
 
-		<alfresco.aos.version>2.0.0</alfresco.aos.version>
+		<alfresco.aos.version>3.0.0</alfresco.aos.version>
 		<mysql.connector.version>8.3.0</mysql.connector.version>
         
     
