@@ -106,7 +106,7 @@ public class ImportExcelFileReader implements ImportFileReader {
 						line.add(new DecimalFormat("#########.###").format(cell.getNumericCellValue()));
 					} else	
 					if (DateUtil.isCellDateFormatted(cell) || DateUtil.isCellInternalDateFormatted(cell)) {
-						line.add(propertyFormats.formatDate(cell.getDateCellValue()));
+						line.add(propertyFormats.formatDateTime(cell.getDateCellValue()));
 					} else {
 						line.add(propertyFormats.formatDecimal(cell.getNumericCellValue()));
 					}
