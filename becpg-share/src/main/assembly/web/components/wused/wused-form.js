@@ -185,7 +185,8 @@
 						dataList : {
 							name : "WUsed-" + me.options.assocType.replace(":", "_"),
 							itemType : me.options.itemType,
-							entity : null
+							entity : null,
+							entityName : me._getNames(),
 						}
 					});
 
@@ -270,6 +271,10 @@
 
 		_getNodeRefs : function WUsedForm__getNodeRefs() {
 			return this.widgets.entitiesPicker.getValues();
+		},
+
+		_getNames : function WUsedForm__getNames() {
+			return this.widgets.entitiesPicker.getInnerText();
 		}
 
 	}, true);
