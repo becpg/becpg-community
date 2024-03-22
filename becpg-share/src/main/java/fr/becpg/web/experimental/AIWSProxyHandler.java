@@ -40,12 +40,20 @@ public class AIWSProxyHandler {
 	public class AIWSProxyClient {
 
 		private Session localSession;
+		
+
+		public AIWSProxyClient(Session localSession) {
+			super();
+			this.localSession = localSession;
+		}
 
 		@OnMessage
 		public void onMessage(String message, Session session) {
 			try {
-				
-				logger.debug("Forward message to becpg-ai: " + message);
+				if(logger.isTraceEnabled()) {
+					logger.trace("Forward message to becpg-ai: ");
+					logger.trace(message);
+				}
 				
 				forwardMessage(localSession, message);
 			} catch (IOException e) {
@@ -55,6 +63,7 @@ public class AIWSProxyHandler {
 
 		@OnClose
 		public void onClose(CloseReason reason) {
+			logger.debug("Remote closing: "+reason.toString());
 			if (localSession != null && localSession.isOpen()) {
 				closeSession(localSession);
 			}
@@ -72,10 +81,13 @@ public class AIWSProxyHandler {
 		try {
 			EndpointDescriptor desc = connectorService.getRemoteConfig().getEndpointDescriptor(AI_ENDPOINT);
 			String wsUrl = createWSURL(desc.getEndpointUrl(), session.getQueryString());
-
+			
 			logger.debug("Connecting to: " + wsUrl);
 
-			remoteSession = ContainerProvider.getWebSocketContainer().connectToServer(new AIWSProxyClient(), new URI(wsUrl));
+			remoteSession = ContainerProvider.getWebSocketContainer().connectToServer(new AIWSProxyClient(session), new URI(wsUrl));
+			remoteSession.setMaxTextMessageBufferSize(5 * 1024 * 1024); // Set the buffer size to 5MB
+			remoteSession.setMaxIdleTimeout(60000);
+			
 		} catch (DeploymentException | IOException | URISyntaxException e) {
 			handleError("Error connecting to AI server: " + e.getMessage(), e, session);
 		}
@@ -89,7 +101,10 @@ public class AIWSProxyHandler {
 	@OnMessage
 	public void onMessage(String message, Session session) {
 		try {
-			logger.debug("Forward response from becpg-ai: " + message);
+			if(logger.isTraceEnabled()) {
+				logger.trace("Forward response from becpg-ai: " );
+				logger.trace(message);
+			}
 			
 			forwardMessage(remoteSession, message);
 		} catch (IOException e) {
@@ -105,13 +120,14 @@ public class AIWSProxyHandler {
 
 	private String createWSURL(String endpointUrl, String queryString) {
 		String protocol = endpointUrl.contains("443") ? WSS_PROTOCOL : WS_PROTOCOL;
-		return endpointUrl.replace("http", protocol).replace("/api", "/ws") + "?" + queryString;
+		return endpointUrl.replace("http", protocol).replace("/api", "/ws") + (queryString!=null  ? "?" + queryString : "");
 	}
 
 	private void forwardMessage(Session session, String message) throws IOException {
 		if (session != null && session.isOpen()) {
 			session.getBasicRemote().sendText(message);
 		} else {
+			logger.debug("Session is not OPEN");
 			closeSession(session);
 		}
 	}
