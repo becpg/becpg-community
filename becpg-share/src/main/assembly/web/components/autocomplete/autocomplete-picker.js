@@ -809,6 +809,12 @@
                             return this.getValuesFromId(this.controlId);
                         },
                         
+                        getInnerText : function AutoCompletePicker_getInnerText()
+                        {
+                            var basket = Dom.get(this.controlId + "-basket");
+                            return basket.innerText;
+                        },
+                        
                         getValuesFromId : function AutoCompletePicker_getValues(controlId)
                         {
                             var inputAdded = Dom.get(controlId + "-added");
