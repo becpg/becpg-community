@@ -1367,7 +1367,9 @@ public class EntityActivityServiceImpl implements EntityActivityService {
 					JSONObject data = new JSONObject();
 
 					data.put(PROP_TITLE, fileName);
-					data.put(PROP_CLASSNAME, attributeExtractorService.extractMetadata(dataType, datalistNodeRef));
+					if (datalistNodeRef != null) {
+						data.put(PROP_CLASSNAME, attributeExtractorService.extractMetadata(dataType, datalistNodeRef));
+					}
 
 					activityListDataItem.setActivityType(ActivityType.Export);
 					activityListDataItem.setActivityData(data.toString());
