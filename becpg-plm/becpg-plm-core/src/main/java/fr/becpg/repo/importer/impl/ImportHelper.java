@@ -303,12 +303,29 @@ public class ImportHelper {
 					}
 				}
 				// Date
-				else if (dataType.isMatch(DataTypeDefinition.DATE) || dataType.isMatch(DataTypeDefinition.DATETIME)) {
+				else if (dataType.isMatch(DataTypeDefinition.DATE)) {
 
 					if (values.get(pos).isEmpty()) {
 						value = null;
 					} else {
-						value = importContext.getPropertyFormats().parseDate(values.get(pos));
+						try {
+							value = importContext.getPropertyFormats().parseDate(values.get(pos));
+						} catch (ParseException e) {
+							value = importContext.getPropertyFormats().parseDateTime(values.get(pos));
+						}
+					}
+				}
+				// Datetime
+				else if (dataType.isMatch(DataTypeDefinition.DATETIME)) {
+					
+					if (values.get(pos).isEmpty()) {
+						value = null;
+					} else {
+						try {
+							value = importContext.getPropertyFormats().parseDateTime(values.get(pos));
+						} catch (ParseException e) {
+							value = importContext.getPropertyFormats().parseDate(values.get(pos));
+						}
 					}
 				}
 				// int, long
