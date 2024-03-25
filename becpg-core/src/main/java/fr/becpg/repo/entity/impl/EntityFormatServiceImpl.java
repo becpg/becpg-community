@@ -556,7 +556,7 @@ public class EntityFormatServiceImpl implements EntityFormatService {
 		
 		long start = System.currentTimeMillis();
 		
-		Set<NodeRef> relatives = findConvertibleRelatives(node, new HashSet<>(), null, -1, new AtomicInteger(0), null);
+		Set<NodeRef> relatives = findConvertibleRelatives(node, new HashSet<>(), null, 2, new AtomicInteger(0), null);
 		
 		if (logger.isDebugEnabled()) {
 			logger.debug("findConvertibleRelatives, time elapsed : " + (System.currentTimeMillis() - start) + " ms");
