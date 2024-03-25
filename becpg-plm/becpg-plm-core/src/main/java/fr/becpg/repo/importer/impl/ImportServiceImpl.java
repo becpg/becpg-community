@@ -185,10 +185,7 @@ public class ImportServiceImpl implements ImportService {
 		
 		BatchInfo batchInfo = new BatchInfo("import_" + importContext.getImportFileName(), "becpg.batch.import", importContext.getImportFileName());
 		
-		batchInfo.setRunAsSystem(true);
-		
 		batchInfo.setWorkerThreads(1);
-		
 		batchInfo.setBatchSize(1);
 		
 		BatchStep<Integer> batchStep = new BatchStep<>();
