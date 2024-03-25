@@ -66,6 +66,10 @@
 	<bean id="webscript.fr.becpg.admin.monitor.get" class="fr.becpg.repo.web.scripts.admin.MonitorWebScript" parent="webscript">
 		<property name="authenticationService" ref="authenticationService" />
 		<property name="contentService" ref="contentService"/>
+		<property name="tenantAdminService" ref="tenantAdminService" />
+		<property name="licenseManager" ref="becpgLicenseManager"/>
+		<property name="becpgSchema" value="${becpg.schema}"/> 
+		<property name="authorityService" ref="authorityService"/>
 	</bean>
 
 	<bean id="webscript.fr.becpg.admin.adminTenant.get" class="fr.becpg.repo.web.scripts.admin.AdminTenantWebScript" parent="webscript">
