@@ -1108,7 +1108,7 @@ public class EntityVersionServiceImpl implements EntityVersionService {
 	@Override
 	public NodeRef convertVersion(NodeRef nodeRef) {
 		
-		Set<NodeRef> oldVersionWUsed = findOldVersionWUsed(nodeRef);
+		Set<NodeRef> oldVersionWUsed = findOldVersionWUsed(nodeRef, new HashSet<>(), null, 2, new AtomicInteger(0), null);
 		
 		if (oldVersionWUsed.size() > 1) {
 			String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
