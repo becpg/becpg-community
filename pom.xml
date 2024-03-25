@@ -5,7 +5,7 @@
 	<groupId>fr.becpg</groupId>
 	<artifactId>becpg-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>23.1.0</version>
+	<version>23.2.0</version>
 	<name>beCPG</name>
 	
 	<description>BeCPG Parent Project</description>
@@ -154,7 +154,7 @@
 		<test.acs.endpoint.path />
 
 		<becpg.dockerbuild.name>test</becpg.dockerbuild.name>
-		<becpg.version>23.1.0</becpg.version>
+		<becpg.version>23.2.0</becpg.version>
 		<docker.becpg.url>becpg</docker.becpg.url>
 		<docker.becpg.version>${becpg.version}</docker.becpg.version>
 		<docker.becpg.tag>${project.version}</docker.becpg.tag>
