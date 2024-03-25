@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   becpg-base-core:
     image: ${docker.becpg.url}/becpg-base-core:${docker.becpg.tag}

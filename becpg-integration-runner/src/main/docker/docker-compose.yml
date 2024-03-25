@@ -1,4 +1,3 @@
-version: '3.8'
 volumes:
   becpg_data_db:
   solr_data:
