@@ -38,5 +38,16 @@
 	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/becpg-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/becpg-plm-core"/>
+	<classpathentry kind="src" path="target/generated-sources/annotations">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" output="target/test-classes" path="target/generated-test-sources/test-annotations">
+		<attributes>
+			<attribute name="optional" value="true"/>
+			<attribute name="test" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
