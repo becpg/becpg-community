@@ -1,9 +1,12 @@
 package fr.becpg.web.experimental;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 import org.springframework.extensions.webscripts.connector.ConnectorService;
 
+import jakarta.websocket.HandshakeResponse;
+import jakarta.websocket.server.HandshakeRequest;
 import jakarta.websocket.server.ServerEndpointConfig;
 
 public class AIWSProxyConfigurator extends ServerEndpointConfig.Configurator{
@@ -14,6 +17,16 @@ public class AIWSProxyConfigurator extends ServerEndpointConfig.Configurator{
 		AIWSProxyConfigurator.connectorService = connectorService;
 	}
 
+//	 @Override
+//	    public void modifyHandshake(ServerEndpointConfig sec, HandshakeRequest request, HandshakeResponse response) {
+//	        
+//
+//	        response.getHeaders().put(HandshakeRequest.SEC_WEBSOCKET_PROTOCOL, Arrays.asList("v10.stomp", "v11.stomp","v12.stomp"));
+//	        
+//	        // Call super method to proceed with the default handshake modification
+//	        super.modifyHandshake(sec, request, response);
+//	    }
+	
 	@Override
 	public <T> T getEndpointInstance(Class<T> endpointClass) throws InstantiationException {
 		T endpoint = super.getEndpointInstance(endpointClass);
