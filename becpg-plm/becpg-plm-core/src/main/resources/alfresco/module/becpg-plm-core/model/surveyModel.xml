@@ -136,7 +136,7 @@
 						<constraint ref="survey:responseCommentTypes" />
 					</constraints>
 				</property>
-				<property name="pjt:slCriterion">
+				<property name="survey:questionCriterion">
 					<type>d:text</type>
 					<index enabled="true">
 		                  <tokenised>false</tokenised>

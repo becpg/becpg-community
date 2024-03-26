@@ -205,15 +205,15 @@
 					<property name="nodeService" ref="nodeService" />
 				</bean>
 				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.SvhcCalculatingFormulationHandler" />
+				<bean class="fr.becpg.repo.product.formulation.ScoreListFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService" />
 					<property name="formulaService" ref="formulaService" />
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Post" />
-				</bean>
-				<bean class="fr.becpg.repo.product.formulation.ScoreListFormulationHandler">
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
 				<ref bean="productSpecificationsFormulationHandler" />
 				<bean class="fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler">
