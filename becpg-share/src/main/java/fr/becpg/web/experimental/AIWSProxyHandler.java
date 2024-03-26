@@ -88,6 +88,7 @@ public class AIWSProxyHandler {
 			remoteSession.setMaxTextMessageBufferSize(5 * 1024 * 1024); // Set the buffer size to 5MB
 			remoteSession.setMaxIdleTimeout(60000);
 			
+			
 		} catch (DeploymentException | IOException | URISyntaxException e) {
 			handleError("Error connecting to AI server: " + e.getMessage(), e, session);
 		}
