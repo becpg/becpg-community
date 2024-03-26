@@ -114,7 +114,7 @@
 					<show id="survey:questionUpperNote" />
 					<show id="survey:questionLowerNote" />
 					<show id="survey:questionUrl" />
-					<show id="pjt:slCriterion" force="true"/>
+					<show id="survey:questionCriterion" force="true"/>
 					<show id="survey:questionScore" />
 					
 					<show id="survey:responseType" />
@@ -164,7 +164,7 @@
 					<show id="survey:questionUpperNote" />
 					<show id="survey:questionLowerNote" />
 					<show id="survey:questionUrl" />
-					<show id="pjt:slCriterion" force="true"/>
+					<show id="survey:questionCriterion" force="true"/>
 					<show id="survey:questionScore" />
 					
 					<show id="survey:responseType" />
@@ -222,7 +222,7 @@
 					
 					<show id="survey:responseCommentType" />
 					<show id="survey:responseCommentLabel" />
-					<show id="pjt:slCriterion" force="true"/>
+					<show id="survey:questionCriterion" force="true"/>
 					<show id="survey:questionScore" />
 					<show id="survey:questionIsMandatory" />
 					<show id="survey:questionIsVisible" />
