@@ -28,6 +28,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 
 	private String questionLowerNote;
 	private String questionUrl;
+	private String surveyCriterion;
 	private Integer questionScore;
 	private Boolean isMandatory;
 	private Boolean isVisible;
@@ -35,11 +36,10 @@ public class SurveyQuestion extends BeCPGDataObject {
 	private String responseCommentType;
 	private String responseCommentLabel;
 	private List<SurveyQuestion> nextQuestions;
-	
-    private Integer sort;
-    
-    
-    @AlfProp
+
+	private Integer sort;
+
+	@AlfProp
 	@AlfQname(qname = "bcpg:sort")
 	public Integer getSort() {
 		return sort;
@@ -83,6 +83,12 @@ public class SurveyQuestion extends BeCPGDataObject {
 	@AlfQname(qname = "survey:questionUrl")
 	public String getQuestionUrl() {
 		return questionUrl;
+	}
+
+	@AlfProp
+	@AlfQname(qname = "pjt:slCriterion")
+	public String getSurveyCriterion() {
+		return surveyCriterion;
 	}
 
 	@AlfProp
@@ -131,8 +137,6 @@ public class SurveyQuestion extends BeCPGDataObject {
 	public List<SurveyQuestion> getNextQuestions() {
 		return nextQuestions;
 	}
-	
-	
 
 	public void setParent(SurveyQuestion parent) {
 		this.parent = parent;
@@ -158,6 +162,10 @@ public class SurveyQuestion extends BeCPGDataObject {
 		this.questionUrl = questionUrl;
 	}
 
+	public void setSurveyCriterion(String surveyCriterion) {
+		this.surveyCriterion = surveyCriterion;
+	}
+
 	public void setQuestionScore(Integer questionScore) {
 		this.questionScore = questionScore;
 	}
@@ -181,14 +189,13 @@ public class SurveyQuestion extends BeCPGDataObject {
 	public void setNextQuestions(List<SurveyQuestion> nextQuestions) {
 		this.nextQuestions = nextQuestions;
 	}
-	
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
 		result = prime * result + Objects.hash(isMandatory, isVisible, label, nextQuestions, parent, questionLowerNote, questionNote, questionScore,
-				questionUpperNote, questionUrl, responseCommentLabel, responseCommentType, responseType, sort);
+				questionUpperNote, questionUrl, surveyCriterion, responseCommentLabel, responseCommentType, responseType, sort);
 		return result;
 	}
 
@@ -205,19 +212,17 @@ public class SurveyQuestion extends BeCPGDataObject {
 				&& Objects.equals(nextQuestions, other.nextQuestions) && Objects.equals(parent, other.parent)
 				&& Objects.equals(questionLowerNote, other.questionLowerNote) && Objects.equals(questionNote, other.questionNote)
 				&& Objects.equals(questionScore, other.questionScore) && Objects.equals(questionUpperNote, other.questionUpperNote)
-				&& Objects.equals(questionUrl, other.questionUrl) && Objects.equals(responseCommentLabel, other.responseCommentLabel)
-				&& Objects.equals(responseCommentType, other.responseCommentType) && Objects.equals(responseType, other.responseType)
-				&& Objects.equals(sort, other.sort);
+				&& Objects.equals(questionUrl, other.questionUrl) && Objects.equals(surveyCriterion, other.surveyCriterion)
+				&& Objects.equals(responseCommentLabel, other.responseCommentLabel) && Objects.equals(responseCommentType, other.responseCommentType)
+				&& Objects.equals(responseType, other.responseType) && Objects.equals(sort, other.sort);
 	}
 
 	@Override
 	public String toString() {
 		return "SurveyQuestion [parent=" + parent + ", label=" + label + ", questionNote=" + questionNote + ", questionUpperNote=" + questionUpperNote
-				+ ", questionLowerNote=" + questionLowerNote + ", questionUrl=" + questionUrl + ", questionScore=" + questionScore + ", isMandatory="
-				+ isMandatory + ", responseType=" + responseType + ", responseCommentType=" + responseCommentType + ", responseCommentLabel="
-				+ responseCommentLabel + ", nextQuestion=" + nextQuestions + ", sort=" + sort + "]";
+				+ ", questionLowerNote=" + questionLowerNote + ", questionUrl=" + questionUrl + ", surveyCriterion=" + surveyCriterion
+				+ ", questionScore=" + questionScore + ", isMandatory=" + isMandatory + ", responseType=" + responseType + ", responseCommentType="
+				+ responseCommentType + ", responseCommentLabel=" + responseCommentLabel + ", nextQuestion=" + nextQuestions + ", sort=" + sort + "]";
 	}
-	
-	
 
 }

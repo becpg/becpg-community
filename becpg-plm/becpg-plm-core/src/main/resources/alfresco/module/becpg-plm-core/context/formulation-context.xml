@@ -212,6 +212,9 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="execOrder" value="Post" />
 				</bean>
+				<bean class="fr.becpg.repo.product.formulation.ScoreListFormulationHandler">
+					<property name="alfrescoRepository" ref="alfrescoRepository" />
+				</bean>
 				<ref bean="productSpecificationsFormulationHandler" />
 				<bean class="fr.becpg.repo.product.formulation.CompletionReqCtrlCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
