@@ -86,7 +86,7 @@ public class SurveyQuestion extends BeCPGDataObject {
 	}
 
 	@AlfProp
-	@AlfQname(qname = "pjt:slCriterion")
+	@AlfQname(qname = "survey:questionCriterion")
 	public String getSurveyCriterion() {
 		return surveyCriterion;
 	}

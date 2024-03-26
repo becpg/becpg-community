@@ -52,7 +52,8 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<ProductD
 				SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(s.getQuestion());
 
 				if (!scoresPerCriterion.containsKey(question.getSurveyCriterion())) {
-					scoresPerCriterion.computeIfAbsent(question.getSurveyCriterion(), value -> question.getQuestionScore());
+					scoresPerCriterion.computeIfAbsent(question.getSurveyCriterion(),
+							value -> question.getQuestionScore() == null ? 0 : question.getQuestionScore());
 					nbOfQuestionsPerCriterion.computeIfAbsent(question.getSurveyCriterion(), value -> 1);
 				} else {
 					scoresPerCriterion.computeIfPresent(question.getSurveyCriterion(), (key, value) -> value + question.getQuestionScore());
