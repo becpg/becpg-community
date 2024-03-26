@@ -25,6 +25,7 @@
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.alfresco.org/model/datalist/1.0" prefix="dl" />
 		<import uri="http://www.bcpg.fr/model/becpg/1.0" prefix="bcpg" />
+		<import uri="http://www.bcpg.fr/model/project/1.0" prefix="pjt" />
 	</imports>
 	<namespaces>
 		<namespace uri="http://www.bcpg.fr/model/survey/1.0" prefix="survey" />
@@ -133,6 +134,16 @@
 					<default>none</default>
 					<constraints>
 						<constraint ref="survey:responseCommentTypes" />
+					</constraints>
+				</property>
+				<property name="pjt:slCriterion">
+					<type>d:text</type>
+					<index enabled="true">
+		                  <tokenised>false</tokenised>
+		                  <facetable>false</facetable>
+		            </index>
+					<constraints>
+						<constraint ref="pjt:scoreCriteria" />
 					</constraints>
 				</property>
 				<property name="survey:responseCommentLabel">
