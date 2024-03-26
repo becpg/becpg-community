@@ -1165,8 +1165,7 @@
 							b.doc->>"$.metadata_siteId" as siteId,
 							b.doc->>"$.metadata_siteName" as siteName	
 						from
-							nutList a inner join bcpg_product b on a.entityNodeRef = b.nodeRef 
-
+							nutList a inner join bcpg_product b on a.entityNodeRef = b.nodeRef
 					</SQL>
 		</View>
 	
@@ -1299,7 +1298,7 @@
 						doc->>"$.bcpg_unitPrice" as unitPrice,
 						doc->>"$.cm_versionLabel" as versionLabel,
 						doc->>"$.cm_creator" as creator,
-						doc->>"$.cm_modifier" as modifier,
+						doc->>"$.cm_modifier" as modifier
 					from
 						bcpg_product
 				</SQL>
