@@ -79,7 +79,7 @@ import fr.becpg.repo.variant.model.VariantEntity;
  */
 @BeCPGPublicApi
 public class ProductData extends AbstractScorableEntity
-		implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity {
+		implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity, SurveyableEntity {
 
 	private static final long serialVersionUID = 764534088277737617L;
 	private static final Log logger = LogFactory.getLog(ProductData.class);
