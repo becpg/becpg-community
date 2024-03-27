@@ -51,13 +51,14 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 				SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(s.getQuestion());
 
-				if (!scoresPerCriterion.containsKey(question.getSurveyCriterion())) {
-					scoresPerCriterion.computeIfAbsent(question.getSurveyCriterion(),
-							value -> question.getQuestionScore() == null ? 0 : question.getQuestionScore());
-					nbOfQuestionsPerCriterion.computeIfAbsent(question.getSurveyCriterion(), value -> 1);
+				String criterion = question.getSurveyCriterion() == null ? "" : question.getSurveyCriterion();
+
+				if (!scoresPerCriterion.containsKey(criterion)) {
+					scoresPerCriterion.computeIfAbsent(criterion, value -> question.getQuestionScore() == null ? 0 : question.getQuestionScore());
+					nbOfQuestionsPerCriterion.computeIfAbsent(criterion, value -> 1);
 				} else {
-					scoresPerCriterion.computeIfPresent(question.getSurveyCriterion(), (key, value) -> value + question.getQuestionScore());
-					nbOfQuestionsPerCriterion.computeIfPresent(question.getSurveyCriterion(), (key, value) -> value + 1);
+					scoresPerCriterion.computeIfPresent(criterion, (key, value) -> value + question.getQuestionScore());
+					nbOfQuestionsPerCriterion.computeIfPresent(criterion, (key, value) -> value + 1);
 				}
 			}
 
@@ -67,7 +68,7 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<Surveyab
 
 				Integer score = (int) (criterionScore.getValue() / nbOfQuestionsPerCriterion.get(criterionScore.getKey()));
 
-				Optional<ScoreListDataItem> scoreForCriterion = scoreList.stream().filter(sl -> sl.getCriterion().equals(criterionScore.getKey()))
+				Optional<ScoreListDataItem> scoreForCriterion = scoreList.stream().filter(sl -> criterionScore.getKey().equals(sl.getCriterion()))
 						.findFirst();
 				if (scoreForCriterion.isPresent()) {
 					scoreForCriterion.get().setScore(score);
