@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import fr.becpg.repo.formulation.FormulationBaseHandler;
-import fr.becpg.repo.product.data.ProductData;
+import fr.becpg.repo.product.data.SurveyableEntity;
 import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.AlfrescoRepository;
 import fr.becpg.repo.repository.RepositoryEntity;
@@ -17,7 +17,7 @@ import fr.becpg.repo.survey.data.SurveyQuestion;
 /**
  * 
  */
-public class ScoreListFormulationHandler extends FormulationBaseHandler<ProductData> {
+public class ScoreListFormulationHandler extends FormulationBaseHandler<SurveyableEntity> {
 
 	protected AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 
@@ -37,17 +37,17 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<ProductD
 
 	/** {@inheritDoc} */
 	@Override
-	public boolean process(ProductData formulatedProduct) {
+	public boolean process(SurveyableEntity formulatedEntity) {
 
-		List<ScoreListDataItem> scoreList = formulatedProduct.getScoreList();
+		List<ScoreListDataItem> scoreList = formulatedEntity.getScoreList();
 
 		// If surveyList is empty, we do nothing
-		if ((formulatedProduct.getSurveyList() != null) && !formulatedProduct.getSurveyList().isEmpty()) {
+		if ((formulatedEntity.getSurveyList() != null) && !formulatedEntity.getSurveyList().isEmpty()) {
 
 			Map<String, Integer> scoresPerCriterion = new HashMap<>();
 			Map<String, Integer> nbOfQuestionsPerCriterion = new HashMap<>();
 
-			for (Survey s : formulatedProduct.getSurveyList()) {
+			for (Survey s : formulatedEntity.getSurveyList()) {
 
 				SurveyQuestion question = (SurveyQuestion) alfrescoRepository.findOne(s.getQuestion());
 
@@ -83,4 +83,5 @@ public class ScoreListFormulationHandler extends FormulationBaseHandler<ProductD
 		}
 		return true;
 	}
+
 }
