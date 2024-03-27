@@ -1,6 +1,5 @@
 package fr.becpg.repo.product.data;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +17,7 @@ import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
+import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.StateableEntity;
 import fr.becpg.repo.survey.data.Survey;
 
@@ -29,7 +29,7 @@ import fr.becpg.repo.survey.data.Survey;
  */
 @AlfType
 @AlfQname(qname = "bcpg:supplier")
-public class SupplierData extends AbstractScorableEntity implements HierarchicalEntity, StateableEntity, SurveyableEntity {
+public class SupplierData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity, SurveyableEntity {
 
 	private static final long serialVersionUID = -2554133542406623412L;
 	private NodeRef hierarchy1;
@@ -46,8 +46,6 @@ public class SupplierData extends AbstractScorableEntity implements Hierarchical
 
 	private SupplierData entityTpl;
 
-	private String entityScore;
-
 	/*
 	 * Formulation
 	 */
@@ -58,16 +56,9 @@ public class SupplierData extends AbstractScorableEntity implements Hierarchical
 	private Boolean updateFormulatedDate = true;
 	private String requirementChecksum;
 
-	private CompoListView compoListView = new CompoListView();
-
 	// Survey Entity
 	private List<ScoreListDataItem> scoreList;
 	private List<Survey> surveyList;
-
-	@Override
-	public List<AbstractProductDataView> getViews() {
-		return Arrays.asList(compoListView);
-	}
 
 	/**
 	 * <p>Getter for the field <code>state</code>.</p>
@@ -226,28 +217,6 @@ public class SupplierData extends AbstractScorableEntity implements Hierarchical
 	@Override
 	public String toString() {
 		return "SupplierData [name=" + name + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state=" + state + "]";
-	}
-
-	/**
-	 * <p>Getter for the field <code>entityScore</code>.</p>
-	 *
-	 * @return a {@link java.lang.String} object.
-	 */
-	@Override
-	@AlfProp
-	@AlfQname(qname = "bcpg:entityScore")
-	public String getEntityScore() {
-		return entityScore;
-	}
-
-	/**
-	 * <p>Setter for the field <code>entityScore</code>.</p>
-	 *
-	 * @param string a {@link java.lang.String} object.
-	 */
-	@Override
-	public void setEntityScore(String string) {
-		this.entityScore = string;
 	}
 
 	/**
