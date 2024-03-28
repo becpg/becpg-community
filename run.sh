@@ -14,10 +14,11 @@ echo -e " \e[91mCopyright (C) 2010-2024 beCPG.\e[0m"
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 export MVN_EXEC="${PWD}/mvnw"
 export BECPG_VERSION_PROFILE=becpg_23_1_0
-export BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
 
 case "$2" in
   branch)
+    BECPG_VERSION_PROFILE=$(echo "$BECPG_VERSION_PROFILE" | sed 's/\//_/g; s/\./-/g')
+    BRANCH_NAME=$(echo "$(git rev-parse --abbrev-ref HEAD)" | sed 's/\//_/g; s/\./-/g')
     export BECPG_VERSION_PROFILE="${BECPG_VERSION_PROFILE}_${BRANCH_NAME}"
     ;;
   *)
@@ -187,4 +188,3 @@ case "$1" in
   *)
     echo "Usage: $0 {install|build_start|build_test|start|stop|purge|tail|test|deploy_fast|visualvm|reindex}"
 esac
-
