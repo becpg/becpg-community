@@ -77,7 +77,7 @@ public class XmlMappingLoader implements MappingLoader {
 
 		Node datetimeFormat = mappingsElt.selectSingleNode(ImportHelper.QUERY_XPATH_DATETIME_FORMAT);
 		if (datetimeFormat != null) {
-			importContext.getPropertyFormats().setDateFormat(datetimeFormat.getStringValue());
+			importContext.getPropertyFormats().setDatetimeFormat(datetimeFormat.getStringValue());
 		}
 
 		Node decimalFormatPattern = mappingsElt.selectSingleNode(ImportHelper.QUERY_XPATH_DECIMAL_PATTERN);
