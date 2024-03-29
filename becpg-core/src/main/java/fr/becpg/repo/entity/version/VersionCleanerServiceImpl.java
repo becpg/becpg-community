@@ -27,6 +27,7 @@ import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.namespace.QName;
 import org.alfresco.service.namespace.RegexQNamePattern;
 import org.alfresco.service.transaction.TransactionService;
 import org.apache.commons.logging.Log;
@@ -144,43 +145,74 @@ public class VersionCleanerServiceImpl implements VersionCleanerService {
 			
 			cal.add(Calendar.DAY_OF_YEAR, -1);
 			
-			NodeRef parentNode = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE), path);
-			
-			if (parentNode != null && nodeService.exists(parentNode)) {
+			if (initialList.size() < maxProcessedNodes) {
+				fillInitialListForType(QName.createQName(BeCPGModel.BECPG_URI, "finishedProduct"));
+			}
+			if (initialList.size() < maxProcessedNodes) {
+				fillInitialListForType(QName.createQName(BeCPGModel.BECPG_URI, "semiFinishedProduct"));
+			}
+			if (initialList.size() < maxProcessedNodes) {
+				fillInitialListForType(QName.createQName(BeCPGModel.BECPG_URI, "rawMaterial"));
+			}
+			if (initialList.size() < maxProcessedNodes) {
+				NodeRef parentNode = BeCPGQueryBuilder.createQuery().selectNodeByPath(nodeService.getRootNode(RepoConsts.SPACES_STORE), path);
 				
-				List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(parentNode, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
-				
-				for (ChildAssociationRef childAssoc : childAssocs) {
-					
-					List<ChildAssociationRef> subChildAssocs = nodeService.getChildAssocs(childAssoc.getChildRef(), ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
-					
-					if (subChildAssocs.isEmpty()) {
-						deleteNode(childAssoc.getChildRef());
-						logger.debug("delete empty folder : " + childAssoc.getChildRef());
-					}
-					
-					for (ChildAssociationRef subChildAssoc : subChildAssocs) {
-						
-						Date modified = (Date) nodeService.getProperty(subChildAssoc.getChildRef(), ContentModel.PROP_MODIFIED);
-						if (cal.getTime().compareTo(modified) > 0) {
-							if (entityDictionaryService.isSubClass(nodeService.getType(subChildAssoc.getChildRef()), BeCPGModel.TYPE_ENTITY_V2)) {
-								initialList.add(subChildAssoc.getChildRef());
+				if (parentNode != null && nodeService.exists(parentNode)) {
+					List<ChildAssociationRef> childAssocs = nodeService.getChildAssocs(parentNode, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
+					for (ChildAssociationRef childAssoc : childAssocs) {
+						List<ChildAssociationRef> subChildAssocs = nodeService.getChildAssocs(childAssoc.getChildRef(), ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL, maxProcessedNodes, false);
+						if (subChildAssocs.isEmpty()) {
+							deleteNode(childAssoc.getChildRef());
+							logger.debug("delete empty folder : " + childAssoc.getChildRef());
+						}
+						for (ChildAssociationRef subChildAssoc : subChildAssocs) {
+							NodeRef childRef = subChildAssoc.getChildRef();
+							if (shouldAddToInitialList(childRef)) {
+								if (logger.isDebugEnabled()) {
+									logger.debug("adding '" + childRef + "' to converting list, from parsing parent folder");
+								}
+								initialList.add(childRef);
+							}
+							if (initialList.size() >= maxProcessedNodes) {
+								break;
 							}
 						}
-						
 						if (initialList.size() >= maxProcessedNodes) {
 							break;
 						}
 					}
-					if (initialList.size() >= maxProcessedNodes) {
-						break;
-					}
+				} else {
+					logger.warn("node doen't exist for path : " + path);
 				}
-			} else {
-				logger.warn("node doen't exist for path : " + path);
 			}
+			
 		}
 
+		private void fillInitialListForType(QName type) {
+			List<NodeRef> nodeRefs = BeCPGQueryBuilder.createQuery()
+					.withAspect(BeCPGModel.ASPECT_COMPOSITE_VERSION)
+					.excludeAspect(BeCPGModel.ASPECT_ENTITY_FORMAT)
+					.excludeAspect(ContentModel.ASPECT_TEMPORARY)
+					.ofType(type)
+					.list();
+			for (NodeRef nodeRef : nodeRefs) {
+				if (shouldAddToInitialList(nodeRef)) {
+					initialList.add(nodeRef);
+					if (logger.isDebugEnabled()) {
+						logger.debug("adding '" + nodeRef + "' to converting list, type is: " + type.getLocalName());
+					}
+				}
+				if (initialList.size() >= maxProcessedNodes) {
+					return;
+				}
+			}
+		}
+		
+		private boolean shouldAddToInitialList(NodeRef nodeRef) {
+			Date modified = (Date) nodeService.getProperty(nodeRef, ContentModel.PROP_MODIFIED);
+			return cal.getTime().compareTo(modified) > 0 && entityDictionaryService.isSubClass(nodeService.getType(nodeRef), BeCPGModel.TYPE_ENTITY_V2);
+		}
+		
 		@Override
 		public int getTotalEstimatedWorkSize() {
 			return initialList.size();
