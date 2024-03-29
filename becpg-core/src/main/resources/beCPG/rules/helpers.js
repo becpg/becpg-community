@@ -23,6 +23,14 @@
  * 
  * mlPropConstraint(propValue, propName, locale) alias getMLConstraint(propValue, propName, locale) display value or empty for multilingual constraint value
  * 
+ * incrementAndGetAutoNumValue(autoNumClassName, propName) alias autoNumValue(autoNumClassName, propName) increments and return the autonum value of the property's classname provided
+ * 
+ * incrementAndGetAutoNumCounter(autoNumClassName, propName) alias autoNumCounter(autoNumClassName, propName) increments and return the counter value of the property's classname provided (without prefix)
+ * 
+ * getAutoNumNodeRef(autoNumClassName, propName) alias autoNumNodeRef(autoNumClassName, propName) returns the NodeRef of the counter for the property's classname provided
+ * 
+ * setAutoNumValue(autoNumClassName, propName, counter) sets the value of the counter of the autonum value for the property's classname provided
+ * 
  * assocValue(node, assocName) returns first matching nodeRef for given assocName
  * 
  * assocValues(node, assocName) returns nodeRef array for given assocName
@@ -234,6 +242,50 @@ function mlPropValue(node, propName, locale, exactLocale) {
  */
 function getMLConstraint(propValue, propName, locale) {
 	return isEmpty(propValue) ? "" : orEmpty(bcpg.getMLConstraint(propValue, propName, locale));
+}
+
+/**
+ * (alias autoNumValue)
+ *
+ * @param {string} autoNumClassName
+ * @param {string} propName
+ * @returns {string} increments and return the autonum value of the property's classname provided
+ */
+function incrementAndGetAutoNumValue(autoNumClassName, propName) {
+	return isEmpty(autoNumClassName) ? "" : orEmpty(bcpg.getAutoNumValue(autoNumClassName, propName));
+}
+
+/**
+ * (alias autoNumCounter)
+ *
+ * @param {string} autoNumClassName
+ * @param {string} propName
+ * @returns {string} increments and return the counter value of the property's classname provided (without prefix)
+ */
+function incrementAndGetAutoNumCounter(autoNumClassName, propName) {
+	return isEmpty(autoNumClassName) ? "" : orEmpty(bcpg.getAutoNumCounter(autoNumClassName, propName));
+}
+
+/**
+ * (alias autoNumNodeRef)
+ *
+ * @param {string} autoNumClassName
+ * @param {string} propName
+ * @returns {string} the NodeRef of the counter for the property's classname provided
+ */
+function getAutoNumNodeRef(autoNumClassName, propName) {
+	return isEmpty(autoNumClassName) ? "" : orEmpty(bcpg.getAutoNumNodeRef(autoNumClassName, propName));
+}
+
+/**
+ *
+ * @param {string} autoNumClassName
+ * @param {string} propName
+ * @param {number} counter
+ * @returns {boolean} if the counter for the property's classname provided has been set to the desired value
+ */
+function setAutoNumValue(autoNumClassName, propName, counter) {
+	return isEmpty(autoNumClassName) ? "" : orEmpty(bcpg.setAutoNumValue(autoNumClassName, propName, counter));
 }
 
 /**
