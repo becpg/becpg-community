@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.RestTemplate;
 
 import com.google.common.collect.Lists;
 
@@ -57,6 +58,8 @@ public class V5DecernisAnalysisPlugin extends DefaultDecernisAnalysisPlugin impl
 	public V5DecernisAnalysisPlugin(@Qualifier("nodeService") NodeService nodeService, SystemConfigurationService systemConfigurationService) {
 		super(nodeService, systemConfigurationService);
 	}
+	
+	private final RestTemplate restTemplate = new RestTemplate();
 
 	private static final Map<Integer, String> moduleIdMap = new HashMap<>();
 
