@@ -65,7 +65,7 @@ public class AutoNumServiceImpl implements AutoNumService {
 
 	@Autowired
 	private BeCPGCacheService beCPGCacheService;
-	
+
 	@Autowired
 	private BehaviourFilter policyBehaviourFilter;
 
@@ -102,6 +102,29 @@ public class AutoNumServiceImpl implements AutoNumService {
 		}
 
 		return formatCode(prefix, autoNumValue);
+	}
+
+	/**
+	 * <p>setAutoNumValue.</p>
+	 *
+	 * @param className a {@link java.lang.String} object.
+	 * @param propertyName a {@link java.lang.String} object.
+	 * @param counter a {@link Long} with the value of the new counter to create.
+	 * @return a {@link boolean} telling if the new value has been set
+	 */
+	@Override
+	public synchronized boolean setAutoNumValue(QName className, QName propertyName, Long counter) {
+
+		NodeRef autoNumNodeRef = getAutoNumNodeRef(className, propertyName);
+
+		// get value store in db
+		if ((autoNumNodeRef != null) && nodeService.exists(autoNumNodeRef) && (counter != null)) {
+			// update autonum node in db
+			nodeService.setProperty(autoNumNodeRef, BeCPGModel.PROP_AUTO_NUM_VALUE, counter);
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -166,24 +189,24 @@ public class AutoNumServiceImpl implements AutoNumService {
 	/** {@inheritDoc} */
 	@Override
 	public synchronized String getOrCreateCode(NodeRef nodeRef, QName codeQName) {
-		
+
 		try {
-			
+
 			policyBehaviourFilter.disableBehaviour(ContentModel.ASPECT_AUDITABLE);
-			
+
 			// check code is already taken. If yes : this object is a copy of an
 			// existing node
 			String code = (String) nodeService.getProperty(nodeRef, codeQName);
 			boolean generateCode = true;
 			QName typeQName = nodeService.getType(nodeRef);
-			
+
 			if ((code != null) && !code.isEmpty()) {
-				
+
 				generateCode = BeCPGQueryBuilder.createQuery().ofType(typeQName).andPropEquals(codeQName, code).andNotID(nodeRef).inDB()
 						.singleValue() != null;
-				
+
 			}
-			
+
 			// generate a new code
 			if (generateCode) {
 				code = getAutoNumValue(typeQName, codeQName);
@@ -253,7 +276,8 @@ public class AutoNumServiceImpl implements AutoNumService {
 	 *            the property name
 	 * @return the auto num node ref
 	 */
-	private NodeRef getAutoNumNodeRef(final QName className, final QName propertyName) {
+	@Override
+	public NodeRef getAutoNumNodeRef(final QName className, final QName propertyName) {
 
 		return beCPGCacheService.getFromCache(AutoNumServiceImpl.class.getName(), className.toString() + "-" + propertyName.toString(),
 				() -> BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_AUTO_NUM)
