@@ -73,14 +73,13 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 							}
 							if (isForbidden || Boolean.TRUE.equals(addInfoReqCtrl)) {
 								MLText message = MLTextHelper.getI18NMessage(MESSAGE_NOT_CLAIM, extractName(listDataItem.getLabelClaim()), extractClaimValue(specDataItem.getLabelClaimValue()));
-								ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, isForbidden ? RequirementType.Forbidden : RequirementType.Info, message, listDataItem.getLabelClaim(), new ArrayList<>(),
-										RequirementDataType.Specification);
 								
-								if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
-									reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
-								} else {
-									reqCtrl.setRegulatoryCode(specification.getName());
-								}
+								ReqCtrlListDataItem reqCtrl = ReqCtrlListDataItem.build().ofType(isForbidden ? RequirementType.Forbidden : RequirementType.Info)
+										.withMessage(message).withCharact(listDataItem.getLabelClaim()).ofDataType(RequirementDataType.Specification).withRegulatoryCode(
+												(specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
+												? specification.getRegulatoryCode()
+												: specification.getName());
+							
 								
 								ret.add(reqCtrl);
 							}
@@ -112,16 +111,12 @@ public class ClaimRequirementScanner extends AbstractRequirementScanner<LabelCla
 	private void addMissingLabelClaim(List<ReqCtrlListDataItem> ret, ProductSpecificationData specification, LabelClaimListDataItem labelClaim) {
 		MLText message = MLTextHelper.getI18NMessage(LabelClaimFormulationHandler.MESSAGE_MISSING_CLAIM, extractName(labelClaim.getLabelClaim()));
 
-		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, RequirementType.Forbidden, message, labelClaim.getLabelClaim(), new ArrayList<>(),
-				RequirementDataType.Specification);
-
-		if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
-			reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
-		} else {
-			reqCtrl.setRegulatoryCode(specification.getName());
-		}
-
-		ret.add(reqCtrl);
+		ret.add(ReqCtrlListDataItem.forbidden()
+				.withMessage(message).withCharact( labelClaim.getLabelClaim()).ofDataType(RequirementDataType.Specification)
+				.withRegulatoryCode(
+						(specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
+						? specification.getRegulatoryCode()
+						: specification.getName()));
 	}
 
 	/** {@inheritDoc} */

@@ -20,8 +20,12 @@ package fr.becpg.repo.product.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.alfresco.service.cmr.repository.MLText;
 import org.alfresco.service.cmr.repository.NodeRef;
 
+import fr.becpg.repo.product.data.constraints.ProductUnit;
+import fr.becpg.repo.product.data.constraints.TareUnit;
+import fr.becpg.repo.product.data.productList.PackMaterialListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMultiAssoc;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -36,26 +40,19 @@ import fr.becpg.repo.repository.annotation.MultiLevelLeaf;
 @AlfType
 @AlfQname(qname = "bcpg:packagingMaterial")
 @MultiLevelLeaf
-public class PackagingMaterialData extends ProductData   {
+public class PackagingMaterialData extends ProductData {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1386599003766479590L;
 
-
-	
 	private List<NodeRef> packagingMaterials = new ArrayList<>();
 
-	
-	
 	/**
 	 * <p>Getter for the field <code>packagingMaterials</code>.</p>
 	 *
 	 * @return a {@link java.util.List} object.
 	 */
 	@AlfMultiAssoc
-	@AlfQname(qname="pack:pmMaterialRefs")
+	@AlfQname(qname = "pack:pmMaterialRefs")
 	public List<NodeRef> getPackagingMaterials() {
 		return packagingMaterials;
 	}
@@ -67,6 +64,48 @@ public class PackagingMaterialData extends ProductData   {
 	 */
 	public void setPackagingMaterials(List<NodeRef> packagingMaterials) {
 		this.packagingMaterials = packagingMaterials;
+	}
+
+	public static PackagingMaterialData build() {
+		return new PackagingMaterialData();
+	}
+
+	public PackagingMaterialData withName(String name) {
+		setName(name);
+		return this;
+	}
+
+	public PackagingMaterialData withLegalName(String legalName) {
+		setLegalName(legalName);
+		return this;
+	}
+
+	public PackagingMaterialData withLegalName(MLText legalName) {
+		setLegalName(legalName);
+		return this;
+	}
+
+	public PackagingMaterialData withUnit(ProductUnit unit) {
+		setUnit(unit);
+		return this;
+	}
+
+	public PackagingMaterialData withQty(Double qty) {
+		setQty(qty);
+		return this;
+	}
+
+
+	public PackagingMaterialData withTare(Double tare, TareUnit tareUnit) {
+		setTare(tare);
+		setTareUnit(tareUnit);
+		return this;
+	}
+	
+
+	public PackagingMaterialData withPackMaterialList(List<PackMaterialListDataItem> packMaterialList) {
+		setPackMaterialList(packMaterialList);
+		return this;
 	}
 
 	/** {@inheritDoc} */
@@ -97,5 +136,5 @@ public class PackagingMaterialData extends ProductData   {
 	}
 
 
-	
+
 }

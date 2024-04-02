@@ -45,9 +45,6 @@
 		<property name="paginatedSearchCache" ref="paginatedSearchCache" />
 		<property name="entityDictionaryService" ref="entityDictionaryService" />
 		<property name="nodeService" ref="nodeService" />
-		<property name="entityActivityService" ref="entityActivityService" />
-		<property name="dictionaryService" ref="cachedDictionaryService" />
-		<property name="securityService" ref="securityService" />
 		<property name="defaultExtractor" value="false" />
 		<property name="advSearchService" ref="AdvSearchService" />
 		<property name="services" ref="ServiceRegistry" />
@@ -327,9 +324,11 @@
 	           <entry key="versionCleanerService">
                     <ref bean="versionCleanerService" />
                </entry>
+	           <entry key="systemConfigurationService">
+                    <ref bean="systemConfigurationService" />
+               </entry>
 			</map>
 		</property>
-        
 	</bean>
 	
 	<bean id="versionCleanerSchedulerAccessor" class="org.alfresco.schedule.AlfrescoSchedulerAccessorBean">
@@ -368,8 +367,11 @@
          </list>
       </property>
    </bean>
-   
-   
+
+    <bean name="auditModel.extractor.stringExtractor" class="fr.becpg.repo.audit.extractor.StringExtractor">
+      <property name="registry" ref="auditModel.extractorRegistry" />
+    </bean>
+    
    <!-- 
     <bean id="search.fts.alfresco.db" class="org.alfresco.repo.search.impl.solr.DbAftsQueryLanguage" >
         <property name="dictionaryService" ref="cachedDictionaryService" />

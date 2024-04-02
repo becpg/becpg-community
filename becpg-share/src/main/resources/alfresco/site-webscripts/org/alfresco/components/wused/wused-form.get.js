@@ -25,7 +25,7 @@ function main()
 
    model.itemTypes = [];
    
-   var url = "/becpg/dictionnary/entity";
+   var url = "/becpg/dictionary/entity";
    if(model.type){
       url+="?itemType=" + model.type;
    } else if(model.assocName){

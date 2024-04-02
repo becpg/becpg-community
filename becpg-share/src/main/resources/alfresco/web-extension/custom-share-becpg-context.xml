@@ -84,6 +84,13 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 			</list>
 		</property>
 	</bean>
+	<bean id="evaluator.becpg.doclib.action.isArchivedEntity" parent="evaluator.doclib.action.hasAspect">
+		<property name="aspects">
+			<list>
+				<value>bcpg:archivedEntityAspect</value>
+			</list>
+		</property>
+	</bean>
 	<bean id="evaluator.becpg.doclib.action.generateReport" parent="evaluator.doclib.action.hasAspect">
 		<property name="aspects">
 			<list>
@@ -149,10 +156,16 @@ http://www.springframework.org/schema/context/spring-context-2.5.xsd">
 		<property name="endpoint" value="alfresco" />
 	</bean>
    
+  
    
   	<!-- Locale resolver -->
-	<bean id="localeResolver" class="fr.becpg.web.resolver.BeCPGLocaleResolver" />
-	
+   <bean id="localeResolver" class="fr.becpg.web.resolver.BeCPGLocaleResolver" />   
+   
+    <!-- WS AI Proxy -->
+	<bean id="aiWSProxyConfigurator" class="fr.becpg.web.experimental.AIWSProxyConfigurator" >
+	  <property name="connectorService" ref="connector.service"/>
+	</bean>
+
 	
 	<!-- Share override -->
 	<bean id="evaluator.doclib.action.isSiteConsumer" parent="evaluator.doclib.action.chainedMatchOne">

@@ -49,14 +49,32 @@ import fr.becpg.repo.license.BeCPGLicenseManager;
  */
 public class MonitorWebScript extends DeclarativeWebScript {
 
-	private static final String VOLUMETRY_QUERY = 
-			"SELECT alf_namespace.uri, alf_qname.local_name, alf_store.protocol, alf_store.identifier, COUNT(alf_node.id) AS node_count "
-			+ "FROM alf_node "
-			+ "JOIN alf_qname ON alf_node.type_qname_id = alf_qname.id "
-			+ "JOIN alf_store ON alf_node.store_id = alf_store.id "
-			+ "JOIN alf_namespace ON alf_qname.ns_id = alf_namespace.id "
-			+ "GROUP BY alf_qname.local_name, alf_node.store_id "
-			+ "ORDER BY node_count DESC";
+	private static final String VOLUMETRY_QUERY = "SELECT "
+            + "ns.uri, "
+            + "qn.local_name, "
+            + "st.protocol, "
+            + "st.identifier, "
+            + "node_count "
+            + "FROM ( "
+            + "SELECT "
+            + "n.type_qname_id, "
+            + "n.store_id, "
+            + "COUNT(1) AS node_count "
+            + "FROM "
+            + "alf_node n "
+            + "GROUP BY "
+            + "n.type_qname_id, "
+            + "n.store_id "
+            + ") AS counted_nodes "
+            + "JOIN "
+            + "alf_qname qn ON counted_nodes.type_qname_id = qn.id "
+            + "JOIN "
+            + "alf_store st ON counted_nodes.store_id = st.id "
+            + "JOIN "
+            + "alf_namespace ns ON qn.ns_id = ns.id "
+            + "ORDER BY "
+            + "node_count DESC;";
+
 	
 	private static final double BYTES_TO_MEGA_BYTES = 1048576d;
 
@@ -169,7 +187,7 @@ public class MonitorWebScript extends DeclarativeWebScript {
 		}
 	
 		for (String user : users) {
-			if (!AuthenticationUtil.getAdminUserName().equals(user)) {
+			if (!AuthenticationUtil.getAdminUserName().equals(user) && !user.endsWith("@becpg.fr")) {
 				Set<String> userAuthorities = authorityService.getAuthoritiesForUser(user);
 				if (userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.ExternalUser)
 						&& userAuthorities.contains(PermissionService.GROUP_PREFIX + SystemGroup.LicenseSupplierConcurrent)) {

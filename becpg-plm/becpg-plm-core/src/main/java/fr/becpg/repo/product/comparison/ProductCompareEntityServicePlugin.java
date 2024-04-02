@@ -4,8 +4,6 @@ import java.util.Map;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.namespace.QName;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.BeCPGModel;
@@ -26,8 +24,6 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 @Service
 public class ProductCompareEntityServicePlugin extends DefaultCompareEntityServicePlugin {
 
-
-	private static final Log logger = LogFactory.getLog(ProductCompareEntityServicePlugin.class);
 	
 	@Override
 	protected void multiLevelComparison(QName dataListType, String charactName, String pivotKey, NodeRef entity1NodeRef,

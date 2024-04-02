@@ -14,8 +14,8 @@
    <#include "../form/form.js.ftl"/>  
    <@script src="${url.context}/res/components/comments/comments-list.js" group="properties-view"/>
    <@script src="${url.context}/res/components/entity-catalog/entity-catalog.js" group="properties-view"/>
-   <@script src="${url.context}/res/components/entity-suggestions/stomp.js" group="properties-view"/>
-   <@script src="${url.context}/res/components/entity-suggestions/entity-suggestions.js" group="properties-view"/>
+   <@script src="${url.context}/res/components/entity-suggestions/stomp.js" group="properties-view"/> 
+   <@script src="${url.context}/res/components/entity-suggestions/entity-suggestions.js" group="properties-view"/> 
    <@script src="${url.context}/res/components/entity-charact-views/properties-view.js" group="properties-view"/>
 </@>
 
@@ -68,7 +68,7 @@
 								   	<ul class="yui-nav" >
 								   		<li class="selected" ><a href="#${el}-comments" ><em>${msg("header.comments")}</em></a></li>
 								   		<li ><a href="#${el}-catalogs"><em>${msg("label.tab.completion")}</em></a></li>
-								   		<li ><a href="#${el}-suggestions"><em>${msg("label.tab.suggestions")}</em></a></li>
+								   		  <#if isAIEnable >  <li ><a href="#${el}-suggestions"><em>${msg("label.tab.suggestions")}</em></a></li> </#if>
 								   	</ul>
 								   	
 								   	<div class="yui-content properties-tab">
@@ -106,11 +106,14 @@
 								   				<div id="${el}_cat-entity-catalog"></div> 
 								   		  </div>	
 								   		</div>
-								   		<div id="tab_${el}-suggestions">
-									   		<div id="${el}_sug">
-								   				<div id="${el}_sug-entity-suggestions"></div> 
-								   		  </div>	
-								   		</div>
+								   		
+								   		 <#if isAIEnable >
+									     	 <div id="tab_${el}-suggestions">
+										   		<div id="${el}_sug">
+									   				<div id="${el}_sug-entity-suggestions"></div> 
+									   		   </div>	
+									   		</div> 
+								   		</#if>
 								   	</div>
 							   </div>
 					   <#else >

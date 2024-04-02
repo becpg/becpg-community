@@ -23,7 +23,7 @@ import fr.becpg.repo.repository.model.SimpleCharactDataItem;
  */
 @AlfType
 @AlfQname(qname = "pack:packMaterialList")
-public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleCharactDataItem,AspectAwareDataItem {
+public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleCharactDataItem, AspectAwareDataItem {
 
 	/**
 	 * 
@@ -35,8 +35,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	private Double pmlRecycledPercentage;
 	private NodeRef pmlMaterial;
 	private PackagingLevel pkgLevel = PackagingLevel.Primary;
-	
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public void setCharactNodeRef(NodeRef nodeRef) {
@@ -62,9 +61,8 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		return getPmlWeight();
 	}
 
-	
 	@AlfProp
-	@AlfQname(qname="pack:pmlRecycledPercentage")
+	@AlfQname(qname = "pack:pmlRecycledPercentage")
 	public Double getPmlRecycledPercentage() {
 		return pmlRecycledPercentage;
 	}
@@ -74,7 +72,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	}
 
 	@AlfProp
-	@AlfQname(qname="pack:pmlLevel")
+	@AlfQname(qname = "pack:pmlLevel")
 	public PackagingLevel getPkgLevel() {
 		return pkgLevel;
 	}
@@ -90,7 +88,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	 */
 	@AlfProp
 	@InternalField
-	@AlfQname(qname="pack:pmlWeight")
+	@AlfQname(qname = "pack:pmlWeight")
 	public Double getPmlWeight() {
 		return pmlWeight;
 	}
@@ -103,11 +101,9 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	public void setPmlWeight(Double pmlWeight) {
 		this.pmlWeight = pmlWeight;
 	}
-	
-	
-	
+
 	@AlfProp
-	@AlfQname(qname="pack:pmlPerc")
+	@AlfQname(qname = "pack:pmlPerc")
 	public Double getPmlPerc() {
 		return pmlPerc;
 	}
@@ -123,13 +119,12 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	 */
 	@AlfSingleAssoc
 	@InternalField
-	@AlfQname(qname="pack:pmlMaterial")
+	@AlfQname(qname = "pack:pmlMaterial")
 	@DataListIdentifierAttr
 	public NodeRef getPmlMaterial() {
 		return pmlMaterial;
 	}
-	
-	
+
 	/**
 	 * <p>Setter for the field <code>pmlMaterial</code>.</p>
 	 *
@@ -146,13 +141,43 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		super();
 	}
 
+	public static PackMaterialListDataItem build() {
+		return new PackMaterialListDataItem();
+	}
+
+	public PackMaterialListDataItem withMaterial(NodeRef pmlMaterial) {
+		this.pmlMaterial = pmlMaterial;
+		return this;
+	}
+
+	public PackMaterialListDataItem withWeight(Double pmlWeight) {
+		this.pmlWeight = pmlWeight;
+		return this;
+	}
+
+	public PackMaterialListDataItem withPerc(Double pmlPerc) {
+		this.pmlPerc = pmlPerc;
+		return this;
+	}
+
+	public PackMaterialListDataItem withRecycledPerc(Double pmlRecycledPercentage) {
+		this.pmlRecycledPercentage = pmlRecycledPercentage;
+		return this;
+	}
+
+	public PackMaterialListDataItem withPkgLevel(PackagingLevel pkgLevel) {
+		this.pkgLevel = pkgLevel;
+		return this;
+	}
+
 	/**
 	 * <p>Constructor for PackMaterialListDataItem.</p>
 	 *
 	 * @param pmlMaterial a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @param pmlWeight a {@link java.lang.Double} object.
 	 */
-	public PackMaterialListDataItem(NodeRef pmlMaterial,Double pmlWeight, Double pmlPerc, Double pmlRecycledPercentage, PackagingLevel pkgLevel){
+	@Deprecated
+	public PackMaterialListDataItem(NodeRef pmlMaterial, Double pmlWeight, Double pmlPerc, Double pmlRecycledPercentage, PackagingLevel pkgLevel) {
 		super();
 		this.pmlMaterial = pmlMaterial;
 		this.pmlPerc = pmlPerc;
@@ -160,7 +185,7 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		this.pkgLevel = pkgLevel;
 		this.pmlRecycledPercentage = pmlRecycledPercentage;
 	}
-	
+
 	public PackMaterialListDataItem(PackMaterialListDataItem o) {
 		super(o);
 		this.pmlMaterial = o.pmlMaterial;
@@ -176,9 +201,8 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 		ret.setName(null);
 		ret.setNodeRef(null);
 		ret.setParentNodeRef(null);
-		return ret;	
+		return ret;
 	}
-
 
 	@Override
 	public int hashCode() {
@@ -206,7 +230,5 @@ public class PackMaterialListDataItem extends BeCPGDataObject implements SimpleC
 	public String toString() {
 		return "PackMaterialListDataItem [pmlWeight=" + pmlWeight + ", pmlMaterial=" + pmlMaterial + "]";
 	}
-
-
 
 }
