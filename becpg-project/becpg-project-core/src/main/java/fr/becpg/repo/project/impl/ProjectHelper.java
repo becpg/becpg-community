@@ -185,7 +185,6 @@ public class ProjectHelper {
 	 * @param nextTask a {@link fr.becpg.repo.project.data.projectList.TaskListDataItem} object.
 	 * @return a {@link java.util.List} object.
 	 */
-	@Deprecated
 	public static List<TaskListDataItem> getBrethrenTask(ProjectData projectData, TaskListDataItem nextTask) {
 		List<TaskListDataItem> taskList = new ArrayList<>();
 		for (TaskListDataItem t : projectData.getTaskList()) {

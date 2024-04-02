@@ -447,7 +447,7 @@ public class DesignerServiceImpl implements DesignerService {
 				logger.error(e, e);
 			}
 		} else {
-			logger.warn("Node is not of type : dictionnary model");
+			logger.warn("Node is not of type : dictionary model");
 		}
 		return null;
 	}

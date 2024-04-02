@@ -41,34 +41,29 @@ public class AllergenRequirementScanner extends AbstractRequirementScanner<Aller
 
 				requirements.forEach(specDataItem -> {
 					formulatedProduct.getAllergenList().forEach(listDataItem -> {
-						if (listDataItem.getAllergen() != null && listDataItem.getAllergen().equals(specDataItem.getAllergen())) {
-							if ((Boolean.TRUE.equals(listDataItem.getInVoluntary()) || Boolean.TRUE.equals(listDataItem.getVoluntary()))) {
+						if (listDataItem.getAllergen() != null && listDataItem.getAllergen().equals(specDataItem.getAllergen())
+								&& ((Boolean.TRUE.equals(listDataItem.getInVoluntary()) || Boolean.TRUE.equals(listDataItem.getVoluntary())))) {
 
-								boolean isAllergenAllowed = false;
-								if ((Boolean.TRUE.equals(specDataItem.getVoluntary()) && Boolean.TRUE.equals(listDataItem.getVoluntary()))
-										|| (Boolean.TRUE.equals(specDataItem.getInVoluntary())
-												&& Boolean.TRUE.equals(listDataItem.getInVoluntary()))) {
-									isAllergenAllowed = true;
-								}
+							boolean isAllergenAllowed = false;
+							if ((Boolean.TRUE.equals(specDataItem.getVoluntary()) && Boolean.TRUE.equals(listDataItem.getVoluntary()))
+									|| (Boolean.TRUE.equals(specDataItem.getInVoluntary()) && Boolean.TRUE.equals(listDataItem.getInVoluntary()))) {
+								isAllergenAllowed = true;
+							}
 
-								if (!isAllergenAllowed || Boolean.TRUE.equals(addInfoReqCtrl)) {
-									MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
-									ReqCtrlListDataItem rclDataItem = new ReqCtrlListDataItem(null,
-											isAllergenAllowed ? RequirementType.Info : RequirementType.Forbidden, message, listDataItem.getAllergen(),
-											new ArrayList<>(), RequirementDataType.Specification);
+							if (!isAllergenAllowed || Boolean.TRUE.equals(addInfoReqCtrl)) {
+								MLText message = MLTextHelper.getI18NMessage(MESSAGE_FORBIDDEN_ALLERGEN, extractName(listDataItem.getAllergen()));
 
-									if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
-										rclDataItem.setRegulatoryCode(specification.getRegulatoryCode());
-									} else {
-										rclDataItem.setRegulatoryCode(specification.getName());
-									}
+								ReqCtrlListDataItem rclDataItem = ReqCtrlListDataItem.build()
+										.ofType(isAllergenAllowed ? RequirementType.Info : RequirementType.Forbidden).withMessage(message)
+										.withCharact(listDataItem.getAllergen()).ofDataType(RequirementDataType.Specification)
+										.withSources(Stream.of(listDataItem.getVoluntarySources(), listDataItem.getInVoluntarySources())
+												.flatMap(List::stream).distinct().collect(Collectors.toList()))
+										.withRegulatoryCode(
+												(specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
+														? specification.getRegulatoryCode()
+														: specification.getName());
 
-									rclDataItem.setSources(Stream
-											.of(listDataItem.getVoluntarySources(), listDataItem.getInVoluntarySources(), rclDataItem.getSources())
-											.flatMap(List::stream).distinct().collect(Collectors.toList()));
-
-									ret.add(rclDataItem);
-								}
+								ret.add(rclDataItem);
 							}
 						}
 					});

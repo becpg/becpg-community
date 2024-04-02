@@ -17,7 +17,8 @@ import org.alfresco.service.cmr.model.FileFolderService;
 import org.alfresco.service.cmr.model.FileNotFoundException;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.cmr.repository.StoreRef;
+import org.alfresco.service.cmr.rule.Rule;
+import org.alfresco.service.cmr.rule.RuleService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.apache.commons.logging.Log;
@@ -61,6 +62,12 @@ public class RepoServiceImpl implements RepoService {
 	@Autowired
 	private AccessControlListDAO accessControlListDAO;
 
+	@Autowired
+	protected Repository repositoryHelper;
+
+	@Autowired
+	protected RuleService ruleService;
+	
 	/** {@inheritDoc} */
 	@Override
 	public NodeRef getOrCreateFolderByPaths(NodeRef parentNodeRef, List<String> paths) {
@@ -204,6 +211,31 @@ public class RepoServiceImpl implements RepoService {
 	@Override
 	public String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename) {
 		return getAvailableName(folderNodeRef, name, forceRename, false);
+	}
+	
+	@Override
+	public boolean moveEntity(NodeRef entityNodeRef, NodeRef destinationFolder) {
+		Rule classifyRule = null;
+		
+		List<Rule> rules = ruleService.getRules(repositoryHelper.getCompanyHome(), false);
+		for (Rule rule : rules) {
+			if (!rule.getRuleDisabled() && "classifyEntityRule".equals(rule.getTitle())) {
+				classifyRule = rule;
+				break;
+			}
+		}
+
+		if (classifyRule != null) {
+			ruleService.disableRule(classifyRule);
+		}
+		
+		nodeService.moveNode(entityNodeRef, destinationFolder, ContentModel.ASSOC_CONTAINS, ContentModel.ASSOC_CONTAINS);
+		
+		if (classifyRule != null) {
+			ruleService.enableRule(classifyRule);
+		}
+		
+		return true;
 	}
 
 }

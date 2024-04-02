@@ -9,11 +9,21 @@ echo -e "888 \"88b d8P  Y8b  \e[38;2;0;92;102m888        8888888P\"  888  88888\
 echo -e "888  888 88888888  \e[38;2;0;92;102m888    888 888        888    888\e[38;2;0;255;189m" 
 echo -e "888 d88P Y8b.      \e[38;2;0;92;102mY88b  d88P 888        Y88b  d88P\e[38;2;0;255;189m" 
 echo -e "88888P\"   \"Y8888    \e[38;2;0;92;102m\"Y8888P\"  888         \"Y8888P88\e[0m" 
-echo -e " \e[91mCopyright (C) 2010-2023 beCPG.\e[0m"
+echo -e " \e[91mCopyright (C) 2010-2024 beCPG.\e[0m"
 
 export COMPOSE_FILE_PATH=${PWD}/becpg-integration-runner/target/docker-compose.yml
 export MVN_EXEC="${PWD}/mvnw"
-export BECPG_VERSION_PROFILE=becpg_4_0
+export BECPG_VERSION_PROFILE=becpg_23_1_0
+
+case "$2" in
+  branch)
+    BECPG_VERSION_PROFILE=$(echo "$BECPG_VERSION_PROFILE" | sed 's/\//_/g; s/\./-/g')
+    BRANCH_NAME=$(echo "$(git rev-parse --abbrev-ref HEAD)" | sed 's/\//_/g; s/\./-/g')
+    export BECPG_VERSION_PROFILE="${BECPG_VERSION_PROFILE}_${BRANCH_NAME}"
+    ;;
+  *)
+    ;;
+esac
 
 start() {
    	 	docker compose -p $BECPG_VERSION_PROFILE -f $COMPOSE_FILE_PATH -f docker-compose.override.yml up -d --remove-orphans
@@ -178,4 +188,3 @@ case "$1" in
   *)
     echo "Usage: $0 {install|build_start|build_test|start|stop|purge|tail|test|deploy_fast|visualvm|reindex}"
 esac
-

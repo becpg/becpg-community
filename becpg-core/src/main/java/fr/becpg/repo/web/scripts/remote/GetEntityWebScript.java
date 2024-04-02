@@ -41,9 +41,6 @@ import fr.becpg.repo.entity.remote.RemoteParams;
  */
 public class GetEntityWebScript extends AbstractEntityWebScript {
 
-	private static final String JSON_PARAM = "jsonParam";
-	private static final String PARAM_PARAMS = "params";
-
 	/** {@inheritDoc} */
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
@@ -80,47 +77,6 @@ public class GetEntityWebScript extends AbstractEntityWebScript {
 
 	}
 
-	private JSONObject extractParams(WebScriptRequest req) {
-
-		JSONObject jsonParams = null;
-		
-		String params = req.getParameter(PARAM_PARAMS);
-		if ((params != null) && !params.isEmpty()) {
-
-			try {
-				jsonParams = new JSONObject(params);
-			} catch (JSONException e) {
-				logger.error("Cannot parse params:" + params);
-			}
-		}
-		
-		for (String parameterName : req.getParameterNames()) {
-			
-			String jsonParamName = extractJsonParamName(parameterName);
-			if (jsonParamName != null && !jsonParamName.isBlank()) {
-				if (jsonParams == null) {
-					jsonParams = new JSONObject();
-				}
-				jsonParams.put(jsonParamName, JSONObject.stringToValue(req.getParameter(parameterName)));
-			}
-		}
-		
-		return jsonParams;
-	}
-
-	private String extractJsonParamName(String parameterName) {
-		if (parameterName.startsWith(JSON_PARAM)) {
-			String[] split = parameterName.split(JSON_PARAM);
-			
-			if (split.length > 1) {
-				String jsonParamName = split[1];
-				char[] c = jsonParamName.toCharArray();
-				c[0] = Character.toLowerCase(c[0]);
-				return new String(c);
-			}
-		}
-		
-		return null;
-	}
+	
 	
 }

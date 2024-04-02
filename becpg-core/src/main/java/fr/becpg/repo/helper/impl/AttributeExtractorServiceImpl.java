@@ -900,7 +900,6 @@ public class AttributeExtractorServiceImpl implements AttributeExtractorService 
 						if (!((PropertyDefinition) attribute).isMultiValued()) {
 							metadata = extractMetadata(nodeService.getType((NodeRef) value), (NodeRef) value);
 						} else {
-							@SuppressWarnings("unchecked")
 							List<NodeRef> values = (List<NodeRef>) value;
 							for (NodeRef tempValue : values) {
 								if (tempValue != null) {

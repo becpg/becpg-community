@@ -55,6 +55,8 @@ import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteService;
+import org.alfresco.service.cmr.version.Version;
+import org.alfresco.service.cmr.version.VersionHistory;
 import org.alfresco.service.cmr.version.VersionService;
 import org.alfresco.service.cmr.version.VersionType;
 import org.alfresco.service.namespace.NamespaceService;
@@ -69,10 +71,10 @@ import org.springframework.extensions.webscripts.ScriptValueConverter;
 import fr.becpg.api.BeCPGPublicApi;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.EntityListState;
+import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.AutoNumService;
 import fr.becpg.repo.entity.EntityDictionaryService;
-import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.EntityListDAO;
 import fr.becpg.repo.entity.EntityService;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -144,8 +146,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private SiteService siteService;
 
-	private EntityFormatService entityFormatService;
-
 	private TenantAdminService tenantAdminService;
 
 	private ContentService contentService;
@@ -167,6 +167,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	private FileFolderService fileFolderService;
 	
 	private SystemConfigurationService systemConfigurationService;
+	
+	private BeCPGTicketService beCPGTicketService;
 	
 	private boolean useBrowserLocale;
 
@@ -200,10 +202,6 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		this.beCPGLicenseManager = beCPGLicenseManager;
 	}
 	
-	public void setEntityFormatService(EntityFormatService entityFormatService) {
-		this.entityFormatService = entityFormatService;
-	}
-	
 	public void setBeCPGMailService(BeCPGMailService beCPGMailService) {
 		this.beCPGMailService = beCPGMailService;
 	}
@@ -214,6 +212,12 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	public void setTenantAdminService(TenantAdminService tenantAdminService) {
 		this.tenantAdminService = tenantAdminService;
+	}
+	
+	
+
+	public void setBeCPGTicketService(BeCPGTicketService beCPGTicketService) {
+		this.beCPGTicketService = beCPGTicketService;
 	}
 
 	/**
@@ -476,11 +480,16 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	 * @param sourceNode a {@link org.alfresco.repo.jscript.ScriptNode} object.
 	 * @param propQName a {@link java.lang.String} object.
 	 * @param locale a {@link java.lang.String} object.
+	 * @param exactLocale a {@link java.lang.Boolean} object.
 	 * @return a {@link java.lang.String} object.
 	 */
-	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale) {
+	public String getMLProperty(ScriptNode sourceNode, String propQName, String locale, Boolean exactLocale) {
 		
 		MLText mlText = (MLText) mlNodeService.getProperty(sourceNode.getNodeRef(), getQName(propQName));
+		
+		if(Boolean.TRUE.equals(exactLocale)) {
+			return mlText.get(MLTextHelper.parseLocale(locale));
+		}
 		
 		if (mlText != null) {
 			return MLTextHelper.getClosestValue(mlText, MLTextHelper.parseLocale(locale));
@@ -953,6 +962,15 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 	public String getOlapSSOUrl() {
 		return olapService.getSSOUrl();
 	}
+	
+	/**
+	 * <p>getBeCPGAuthTocken.</p>
+	 * 
+	 * @return a {@link java.lang.String} object.
+	 */
+	public String getBeCPGAuthTocken() {
+		return beCPGTicketService.getCurrentAuthToken();
+	}
 
 	/**
 	 * <p>createBranch.</p>
@@ -1331,7 +1349,7 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		long start = System.currentTimeMillis();
 
-		NodeRef convertedNode = entityFormatService.convertVersionHistoryNodeRef(notConvertedNode);
+		NodeRef convertedNode = entityVersionService.convertVersion(notConvertedNode);
 
 		if (convertedNode != null) {
 			long timeElapsed = System.currentTimeMillis() - start;
@@ -1435,6 +1453,18 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 		if (entityVersionService.isVersion(versionNode) && (nodeService.getProperty(versionNode, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
 			NodeRef extractedNode = entityVersionService.extractVersion(versionNode);
 			entityReportService.generateReports(extractedNode, versionNode);
+		}
+	}
+	
+	public void generateVersionReports(ScriptNode node) {
+		NodeRef entityNodeRef = node.getNodeRef();
+		VersionHistory versionHistory = versionService.getVersionHistory(entityNodeRef);
+		for (Version version : versionHistory.getAllVersions()) {
+			NodeRef versionNode = VersionUtil.convertNodeRef(version.getFrozenStateNodeRef());
+			if (entityVersionService.isVersion(versionNode) && (nodeService.getProperty(versionNode, BeCPGModel.PROP_ENTITY_FORMAT) != null)) {
+				NodeRef extractedNode = entityVersionService.extractVersion(versionNode);
+				entityReportService.generateReports(extractedNode, versionNode);
+			}
 		}
 	}
 	

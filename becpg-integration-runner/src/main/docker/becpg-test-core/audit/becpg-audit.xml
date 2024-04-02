@@ -1,0 +1,164 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<Audit
+    xmlns="http://www.alfresco.org/repo/audit/model/3.2"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.alfresco.org/repo/audit/model/3.2 alfresco-audit-3.2.xsd"
+    >
+
+    <DataExtractors>
+       <DataExtractor name="simpleValue" registeredName="auditModel.extractor.simpleValue"/>
+       <DataExtractor name="stringExtractor" registeredName="auditModel.extractor.stringExtractor"/>
+    </DataExtractors>
+
+    <DataGenerators>
+       <DataGenerator name="personFullName" registeredName="auditModel.generator.personFullName"/>
+    </DataGenerators>
+    
+    <PathMappings>
+        <PathMap source="/becpg/audit/batch/id" target="/beCPGBatchAudit/batch/id"/>
+        <PathMap source="/becpg/audit/batch/batchUser" target="/beCPGBatchAudit/batch/batchUser"/>
+        <PathMap source="/becpg/audit/batch/batchId" target="/beCPGBatchAudit/batch/batchId"/>
+        <PathMap source="/becpg/audit/batch/isCompleted" target="/beCPGBatchAudit/batch/isCompleted"/>
+        <PathMap source="/becpg/audit/batch/totalItems" target="/beCPGBatchAudit/batch/totalItems"/>
+        <PathMap source="/becpg/audit/batch/totalErrors" target="/beCPGBatchAudit/batch/totalErrors"/>
+        <PathMap source="/becpg/audit/batch/duration" target="/beCPGBatchAudit/batch/duration"/>
+        <PathMap source="/becpg/audit/batch/startedAt" target="/beCPGBatchAudit/batch/startedAt"/>
+        <PathMap source="/becpg/audit/batch/completedAt" target="/beCPGBatchAudit/batch/completedAt"/>
+        <PathMap source="/becpg/audit/formulation/id" target="/beCPGFormulationAudit/formulation/id"/>
+        <PathMap source="/becpg/audit/formulation/chainId" target="/beCPGFormulationAudit/formulation/chainId"/>
+        <PathMap source="/becpg/audit/formulation/startedAt" target="/beCPGFormulationAudit/formulation/startedAt"/>
+        <PathMap source="/becpg/audit/formulation/completedAt" target="/beCPGFormulationAudit/formulation/completedAt"/>
+        <PathMap source="/becpg/audit/formulation/entityNodeRef" target="/beCPGFormulationAudit/formulation/entityNodeRef"/>
+        <PathMap source="/becpg/audit/formulation/entityName" target="/beCPGFormulationAudit/formulation/entityName"/>
+        <PathMap source="/becpg/audit/formulation/duration" target="/beCPGFormulationAudit/formulation/duration"/>
+        <PathMap source="/becpg/audit/activity/id" target="/beCPGActivityAudit/activity/id"/>
+        <PathMap source="/becpg/audit/activity/prop_bcpg_alUserId" target="/beCPGActivityAudit/activity/prop_bcpg_alUserId"/>
+        <PathMap source="/becpg/audit/activity/prop_bcpg_alType" target="/beCPGActivityAudit/activity/prop_bcpg_alType"/>
+        <PathMap source="/becpg/audit/activity/prop_bcpg_alData" target="/beCPGActivityAudit/activity/prop_bcpg_alData"/>
+        <PathMap source="/becpg/audit/activity/prop_cm_created" target="/beCPGActivityAudit/activity/prop_cm_created"/>
+       <PathMap source="/becpg/audit/activity/entityNodeRef" target="/beCPGActivityAudit/activity/entityNodeRef"/>
+        <PathMap source="/becpg/audit/report/startedAt" target="/beCPGReportAudit/report/startedAt"/>
+       <PathMap source="/becpg/audit/report/completedAt" target="/beCPGReportAudit/report/completedAt"/>
+       <PathMap source="/becpg/audit/report/duration" target="/beCPGReportAudit/report/duration"/>
+       <PathMap source="/becpg/audit/report/entityNodeRef" target="/beCPGReportAudit/report/entityNodeRef"/>
+       <PathMap source="/becpg/audit/report/locale" target="/beCPGReportAudit/report/locale"/>
+       <PathMap source="/becpg/audit/report/format" target="/beCPGReportAudit/report/format"/>
+       <PathMap source="/becpg/audit/report/name" target="/beCPGReportAudit/report/name"/>
+       <PathMap source="/becpg/audit/report/datasourceSize" target="/beCPGReportAudit/report/datasourceSize"/>
+    </PathMappings>
+
+    <Application name="beCPGBatchAudit" key="beCPGBatchAudit">
+        <AuditPath key="batch">
+        	<AuditPath key="id">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGBatchAudit/batch/id"/>
+	        </AuditPath>
+        	<AuditPath key="batchUser">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGBatchAudit/batch/batchUser"/>
+	        </AuditPath>
+        	<AuditPath key="batchId">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGBatchAudit/batch/batchId"/>
+	        </AuditPath>
+        	<AuditPath key="isCompleted">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGBatchAudit/batch/isCompleted"/>
+	        </AuditPath>
+        	<AuditPath key="totalItems">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGBatchAudit/batch/totalItems"/>
+	        </AuditPath>
+        	<AuditPath key="totalErrors">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGBatchAudit/batch/totalErrors"/>
+	        </AuditPath>
+        	<AuditPath key="duration">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGBatchAudit/batch/duration"/>
+	        </AuditPath>
+        	<AuditPath key="startedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGBatchAudit/batch/startedAt"/>
+	        </AuditPath>
+        	<AuditPath key="completedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGBatchAudit/batch/completedAt"/>
+	        </AuditPath>
+        </AuditPath>
+    </Application>
+    
+    <Application name="beCPGFormulationAudit" key="beCPGFormulationAudit">
+        <AuditPath key="formulation">
+        	<AuditPath key="id">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/id"/>
+	        </AuditPath>
+        	<AuditPath key="chainId">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/chainId"/>
+	        </AuditPath>
+        	<AuditPath key="entityNodeRef">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/entityNodeRef"/>
+	        </AuditPath>
+        	<AuditPath key="startedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGFormulationAudit/formulation/startedAt"/>
+	        </AuditPath>
+        	<AuditPath key="completedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGFormulationAudit/formulation/completedAt"/>
+	        </AuditPath>
+        	<AuditPath key="duration">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/duration"/>
+	        </AuditPath>
+        	<AuditPath key="entityName">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGFormulationAudit/formulation/entityName"/>
+	        </AuditPath>
+        </AuditPath>
+    </Application>
+    
+    <Application name="beCPGActivityAudit" key="beCPGActivityAudit">
+        <AuditPath key="activity">
+        	<AuditPath key="id">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/id"/>
+	        </AuditPath>
+        	<AuditPath key="prop_bcpg_alUserId">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/prop_bcpg_alUserId"/>
+	        </AuditPath>
+        	<AuditPath key="prop_bcpg_alType">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/prop_bcpg_alType"/>
+	        </AuditPath>
+        	<AuditPath key="prop_bcpg_alData">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/prop_bcpg_alData"/>
+	        </AuditPath>
+        	<AuditPath key="prop_cm_created">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/prop_cm_created"/>
+	        </AuditPath>
+        	<AuditPath key="entityNodeRef">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGActivityAudit/activity/entityNodeRef"/>
+	        </AuditPath>
+        </AuditPath>
+    </Application>
+    
+    <Application name="beCPGReportAudit" key="beCPGReportAudit">
+        <AuditPath key="report">
+        	<AuditPath key="id">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/id"/>
+	        </AuditPath>
+	        <AuditPath key="startedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGReportAudit/report/startedAt"/>
+	        </AuditPath>
+        	<AuditPath key="completedAt">
+	            <RecordValue key="value" dataExtractor="simpleValue" dataSource="/beCPGReportAudit/report/completedAt"/>
+	        </AuditPath>
+            <AuditPath key="duration">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/duration"/>
+	        </AuditPath>
+        	<AuditPath key="entityNodeRef">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/entityNodeRef"/>
+	        </AuditPath>
+        	<AuditPath key="locale">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/locale"/>
+	        </AuditPath>
+        	<AuditPath key="format">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/format"/>
+	        </AuditPath>
+        	<AuditPath key="name">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/name"/>
+	        </AuditPath>
+        	<AuditPath key="datasourceSize">
+	            <RecordValue key="value" dataExtractor="stringExtractor" dataSource="/beCPGReportAudit/report/datasourceSize"/>
+	        </AuditPath>
+        </AuditPath>
+    </Application>
+
+</Audit>

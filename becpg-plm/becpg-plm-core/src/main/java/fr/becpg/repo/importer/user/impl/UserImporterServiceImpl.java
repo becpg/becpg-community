@@ -241,7 +241,10 @@ public class UserImporterServiceImpl implements UserImporterService {
 		if ((splitted != null) && (headers != null)) {
 			BeCPGUserAccount userAccount = new BeCPGUserAccount();
 
-			userAccount.setUserName(splitted[headers.get(USERNAME)]);
+			String username = splitted[headers.get(USERNAME)];
+			username = username != null ? username.toLowerCase() : null;
+			
+			userAccount.setUserName(username);
 			userAccount.setPassword(splitted[headers.get(PASSWORD)]);
 			userAccount.setNotify(headers.containsKey(NOTIFY) && Boolean.parseBoolean(splitted[headers.get(NOTIFY)]));
 

@@ -105,6 +105,25 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	private String customNames() {
 		return systemConfigurationService.confValue("beCPG.comparison.name.format");
 	}
+	
+	private static final Set<QName> NON_COMPARABLE_PROPERTIES = Set.of(ContentModel.PROP_NODE_REF,
+			ContentModel.PROP_NODE_DBID, ContentModel.PROP_NODE_UUID, ContentModel.PROP_STORE_IDENTIFIER,
+			ContentModel.PROP_STORE_NAME, ContentModel.PROP_STORE_PROTOCOL, ContentModel.PROP_CONTENT,
+			ContentModel.PROP_AUTO_VERSION, ContentModel.PROP_AUTO_VERSION_PROPS, ContentModel.ASSOC_ORIGINAL,
+			ForumModel.PROP_COMMENT_COUNT,
+			// System properties
+			BeCPGModel.PROP_PARENT_LEVEL, BeCPGModel.PROP_START_EFFECTIVITY, BeCPGModel.PROP_END_EFFECTIVITY,
+			ReportModel.PROP_REPORT_ENTITY_GENERATED, ReportModel.ASSOC_REPORTS, BeCPGModel.PROP_VERSION_LABEL,
+			BeCPGModel.PROP_COLOR, ContentModel.PROP_IS_INDEXED, ContentModel.PROP_IS_CONTENT_INDEXED,
+			BeCPGModel.PROP_ENTITY_SCORE);
+	
+	private static final Set<QName> NON_COMPARABLE_DATALIST_PROPERTIES = Set.of(ContentModel.PROP_NAME,
+			ContentModel.PROP_CREATOR, ContentModel.PROP_CREATED, ContentModel.PROP_MODIFIER,
+			ContentModel.PROP_MODIFIED, BeCPGModel.PROP_SORT);
+	
+	private static final Set<String> NON_COMPARABLE_PROPERTY_STRINGS = Set.of("compareWithDynColumn",
+			"nutListRoundedValue", "ErrorLog", "requirementChecksum", "meatContentData", "nutrientProfilingDetails",
+			"ecoScoreDetails");
 
 	/** {@inheritDoc} */
 	@Override
@@ -915,6 +934,7 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 				comparisonPosition, isDifferent);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void compareValues(QName dataListType, String charactName, String privotKey, QName propertyQName, Serializable oValue1,
 			Serializable oValue2, int nbEntities, int comparisonPosition, Map<String, CompareResultDataItem> comparisonMap,
 			PropertyFormats propertyFormats) {
@@ -983,36 +1003,13 @@ public class CompareEntityServiceImpl implements CompareEntityService {
 	}
 
 	private boolean isCompareableProperty(QName qName, boolean isDataList) {
-
-		boolean isCompareable = true;
-
-		if (qName.equals(ContentModel.PROP_NODE_REF) || qName.equals(ContentModel.PROP_NODE_DBID) || qName.equals(ContentModel.PROP_NODE_UUID)
-				|| qName.equals(ContentModel.PROP_STORE_IDENTIFIER) || qName.equals(ContentModel.PROP_STORE_NAME)
-				|| qName.equals(ContentModel.PROP_STORE_PROTOCOL) || qName.equals(ContentModel.PROP_CONTENT)
-				|| qName.equals(ContentModel.PROP_AUTO_VERSION) || qName.equals(ContentModel.PROP_AUTO_VERSION_PROPS)
-				|| qName.equals(ContentModel.ASSOC_ORIGINAL) || qName.equals(ForumModel.PROP_COMMENT_COUNT) ||
-				// system properties
-				qName.equals(BeCPGModel.PROP_PARENT_LEVEL) || qName.equals(BeCPGModel.PROP_START_EFFECTIVITY)
-				|| qName.equals(BeCPGModel.PROP_END_EFFECTIVITY) || qName.equals(ReportModel.PROP_REPORT_ENTITY_GENERATED)
-				|| qName.equals(ReportModel.ASSOC_REPORTS) || qName.equals(BeCPGModel.PROP_VERSION_LABEL) || qName.equals(BeCPGModel.PROP_COLOR)
-				// TODO plugin
-				|| qName.getLocalName().contains("compareWithDynColumn")
-				|| qName.getLocalName().contains("nutListRoundedValue")
-				|| qName.getLocalName().contains("ErrorLog")
-				|| qName.equals(ContentModel.PROP_IS_INDEXED) || qName.equals(ContentModel.PROP_IS_CONTENT_INDEXED)) {
-
-			isCompareable = false;
+		if (NON_COMPARABLE_PROPERTIES.contains(qName) || NON_COMPARABLE_PROPERTY_STRINGS.contains(qName.getLocalName())) {
+			return false;
 		}
-
-		if (isDataList && isCompareable) {
-			if (qName.equals(ContentModel.PROP_NAME) || qName.equals(ContentModel.PROP_CREATOR) || qName.equals(ContentModel.PROP_CREATED)
-					|| qName.equals(ContentModel.PROP_MODIFIER) || qName.equals(ContentModel.PROP_MODIFIED) || qName.equals(BeCPGModel.PROP_SORT)) {
-
-				isCompareable = false;
-			}
+		if (isDataList && NON_COMPARABLE_DATALIST_PROPERTIES.contains(qName)) {
+			return false;
 		}
-
-		return isCompareable;
+		return true;
 	}
 
 	/**

@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.service.cmr.repository.NodeRef;
+import org.alfresco.service.namespace.QName;
 import org.alfresco.service.transaction.TransactionService;
 
 /**
@@ -177,6 +178,15 @@ public interface RemoteEntityService {
 	 * @throws fr.becpg.common.BeCPGException if any.
 	 */
 	void addOrUpdateEntityData(NodeRef entityNodeRef, InputStream inputStream, RemoteParams params);
+	
+	
+	/**
+	 * Return schema for type
+	 * @param type
+	 * @param out
+	 * @param params
+	 */
+	void getEntitySchema(QName type, OutputStream out, RemoteParams params);
 
 	/**
 	 * Accessors
@@ -193,5 +203,6 @@ public interface RemoteEntityService {
 	 */
 	@Deprecated
 	BehaviourFilter getPolicyBehaviourFilter();
+
 
 }

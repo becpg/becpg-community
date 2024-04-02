@@ -19,7 +19,9 @@ package fr.becpg.test.repo.web.scripts.report;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,8 +40,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.extensions.surf.util.I18NUtil;
-
-import com.google.gdata.util.common.net.UriEncoder;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.PlmRepoConsts;
@@ -104,12 +104,11 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		NodeRef exportSearchProductsNodeRef = repoService.getOrCreateFolderByPath(exportSearchNodeRef,
 				PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS,
 				TranslateHelper.getTranslatedPath(PlmRepoConsts.PATH_REPORTS_EXPORT_SEARCH_PRODUCTS));
-		
-		
+
 		ReportTplInformation reportTplInformation = new ReportTplInformation();
 		reportTplInformation.setReportType(ReportType.ExportSearch);
 		reportTplInformation.setReportFormat(ReportFormat.XLSX);
-		reportTplInformation.setNodeType( PLMModel.TYPE_PRODUCT);
+		reportTplInformation.setNodeType(PLMModel.TYPE_PRODUCT);
 		reportTplInformation.setDefaultTpl(true);
 		reportTplInformation.setSystemTpl(false);
 
@@ -168,7 +167,6 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		// TODO : merge CompareProductReportWebScript avec
 		// CompareProductServiceTest => beaucoup de code en commun !
 		// init objects
-
 
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 
@@ -327,8 +325,9 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		try {
 
 			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/") + "/Excel.xlsx?repo=true&term=&query="
-					+ UriEncoder.encode(
-							"{\"prop_cm_name\":\"\",\"prop_bcpg_legalName\":\"\",\"prop_bcpg_productHierarchy1\":\"\",\"prop_bcpg_productHierarchy2\":\"\",\"prop_bcpg_productState\":\"\",\"prop_bcpg_productCode\":\"\",\"prop_bcpg_eanCode\":\"\",\"assoc_bcpg_supplierAssoc\":\"\",\"assoc_bcpg_supplierAssoc_added\":\"\",\"assoc_bcpg_supplierAssoc_removed\":\"\",\"prop_cm_modified-date-range\":\"2011-04-17T00:00:00%2B02:00|2011-05-23T00:00:00%2B02:00\",\"prop_cm_modifier\":\"\",\"assoc_bcpg_ingListIng\":\"\",\"assoc_bcpg_ingListIng_added\":\"\",\"assoc_bcpg_ingListIng_removed\":\"\",\"assoc_bcpg_ingListGeoOrigin\":\"\",\"assoc_bcpg_ingListGeoOrigin_added\":\"\",\"assoc_bcpg_ingListGeoOrigin_removed\":\"\",\"assoc_bcpg_ingListBioOrigin\":\"\",\"assoc_bcpg_ingListBioOrigin_added\":\"\",\"assoc_bcpg_ingListBioOrigin_removed\":\"\",\"datatype\":\"bcpg:product\"}");
+					+ URLEncoder.encode(
+							"{\"prop_cm_name\":\"\",\"prop_bcpg_legalName\":\"\",\"prop_bcpg_productHierarchy1\":\"\",\"prop_bcpg_productHierarchy2\":\"\",\"prop_bcpg_productState\":\"\",\"prop_bcpg_productCode\":\"\",\"prop_bcpg_eanCode\":\"\",\"assoc_bcpg_supplierAssoc\":\"\",\"assoc_bcpg_supplierAssoc_added\":\"\",\"assoc_bcpg_supplierAssoc_removed\":\"\",\"prop_cm_modified-date-range\":\"2011-04-17T00:00:00%2B02:00|2011-05-23T00:00:00%2B02:00\",\"prop_cm_modifier\":\"\",\"assoc_bcpg_ingListIng\":\"\",\"assoc_bcpg_ingListIng_added\":\"\",\"assoc_bcpg_ingListIng_removed\":\"\",\"assoc_bcpg_ingListGeoOrigin\":\"\",\"assoc_bcpg_ingListGeoOrigin_added\":\"\",\"assoc_bcpg_ingListGeoOrigin_removed\":\"\",\"assoc_bcpg_ingListBioOrigin\":\"\",\"assoc_bcpg_ingListBioOrigin_added\":\"\",\"assoc_bcpg_ingListBioOrigin_removed\":\"\",\"datatype\":\"bcpg:product\"}",
+							StandardCharsets.UTF_8.toString());
 
 			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
 			assertNotNull(response.getContentAsString());
@@ -343,8 +342,9 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 		try {
 
 			String url = "/becpg/report/exportsearch/" + exportProductReportTpl.toString().replace("://", "/") + "/Excel.xlsx?repo=true&term=&query="
-					+ UriEncoder.encode(
-							"{\"prop_cm_name\":\"FP\",\"prop_cm_title\":\"\",\"prop_cm_description\":\"\",\"prop_mimetype\":\"\",\"prop_cm_modified-date-range\":\"\",\"prop_cm_modifier\":\"\",\"datatype\":\"cm:content\"}");
+					+ URLEncoder.encode(
+							"{\"prop_cm_name\":\"FP\",\"prop_cm_title\":\"\",\"prop_cm_description\":\"\",\"prop_mimetype\":\"\",\"prop_cm_modified-date-range\":\"\",\"prop_cm_modifier\":\"\",\"datatype\":\"cm:content\"}",
+							StandardCharsets.UTF_8.toString());
 
 			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
 			assertNotNull(response.getContentAsString());
@@ -396,8 +396,7 @@ public class ExportSearchWebScriptIT extends fr.becpg.test.PLMBaseTestCase {
 
 			Response response = TestWebscriptExecuters.sendRequest(new GetRequest(url), 200, "admin");
 			assertTrue(response.getStatus() == 200);
-			
-			
+
 		} catch (Exception e) {
 			logger.error("Failed to execute webscript", e);
 		}

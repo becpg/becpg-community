@@ -180,14 +180,14 @@ grant {
     permission java.lang.RuntimePermission "accessClassInPackage.org.apache.tomcat.websocket";
     permission java.lang.RuntimePermission "accessClassInPackage.org.apache.tomcat.websocket.server";
     
-    //beCPG DCVEM
-    permission java.util.PropertyPermission "org.graalvm.nativeimage.imagecode", "read";
+    //beCPG HotSWAP
     permission java.security.AllPermission;
     
 };
 
+
  //beCPG Jacoco 
-grant codeBase "file:/root/jacoco-runtime.jar" {
+grant codeBase "file:/usr/local/tomcat/jacoco-runtime.jar" {
 	permission java.security.AllPermission;
 };
 

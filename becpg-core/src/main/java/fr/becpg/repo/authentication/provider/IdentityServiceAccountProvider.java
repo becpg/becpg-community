@@ -11,12 +11,11 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.keycloak.OAuth2Constants;
-import org.keycloak.adapters.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -60,14 +59,14 @@ public class IdentityServiceAccountProvider {
 
 	public boolean registerAccount(BeCPGUserAccount userAccount) {
 		try {
-			HttpClientBuilder builder = new HttpClientBuilder();
+			HttpClientBuilder builder = HttpClientBuilder.create();
 
 			try (CloseableHttpClient httpClient = (CloseableHttpClient) builder.build()) {
 
 				HttpPost request = new HttpPost(authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token");
 
 				ArrayList<BasicNameValuePair> parameters = new ArrayList<>();
-				parameters.add(new BasicNameValuePair("grant_type", OAuth2Constants.PASSWORD));
+				parameters.add(new BasicNameValuePair("grant_type", "password"));
 				parameters.add(new BasicNameValuePair("client_id", clientId));
 				parameters.add(new BasicNameValuePair("username", identityServiceUserName));
 				parameters.add(new BasicNameValuePair("password", identityServicePassword));
@@ -98,7 +97,7 @@ public class IdentityServiceAccountProvider {
 
 								JSONObject credentialrepresentation = new JSONObject();
 	
-								credentialrepresentation.put("type", OAuth2Constants.PASSWORD);
+								credentialrepresentation.put("type", "password");
 								credentialrepresentation.put("value", userAccount.getPassword());
 								credentialrepresentation.put("temporary", true);
 								

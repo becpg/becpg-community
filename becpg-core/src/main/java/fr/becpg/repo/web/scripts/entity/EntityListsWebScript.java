@@ -29,8 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.jms.IllegalStateException;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.MLPropertyInterceptor;
 import org.alfresco.repo.policy.BehaviourFilter;
@@ -330,7 +328,7 @@ public class EntityListsWebScript extends AbstractWebScript {
 
 	private JSONArray makeDatalists(Iterable<NodeRef> lists, NodeRef entity, boolean hasWritePermission, Map<NodeRef, Boolean> accessMap)
 			throws JSONException {
-		final boolean entityIsLocked = lockService.isLocked(entity);
+		boolean entityIsLocked = lockService.isLocked(entity);
 
 		JSONArray datalist = new JSONArray();
 		for (NodeRef list : lists) {
@@ -380,10 +378,11 @@ public class EntityListsWebScript extends AbstractWebScript {
 		result.put(KEY_NAME_NAME, nodeService.getProperty(entity, ContentModel.PROP_NAME));
 
 		JSONObject userAccess = new JSONObject();
-		final boolean entityIsLocked = lockService.isLocked(entity);
-		userAccess.put(KEY_NAME_CREATE, (permissionService.hasPermission(entity, "CreateChildren") == AccessStatus.ALLOWED) && !entityIsLocked);
-		userAccess.put(KEY_NAME_EDIT, (permissionService.hasPermission(entity, "Write") == AccessStatus.ALLOWED) && !entityIsLocked);
-		userAccess.put(KEY_NAME_DELETE, (permissionService.hasPermission(entity, "Delete") == AccessStatus.ALLOWED) && !entityIsLocked);
+		boolean entityIsLocked = lockService.isLocked(entity);
+		boolean isArchived = nodeService.hasAspect(entity, BeCPGModel.ASPECT_ARCHIVED_ENTITY);
+		userAccess.put(KEY_NAME_CREATE, (permissionService.hasPermission(entity, "CreateChildren") == AccessStatus.ALLOWED) && !entityIsLocked && !isArchived);
+		userAccess.put(KEY_NAME_EDIT, (permissionService.hasPermission(entity, "Write") == AccessStatus.ALLOWED) && !entityIsLocked && !isArchived);
+		userAccess.put(KEY_NAME_DELETE, (permissionService.hasPermission(entity, "Delete") == AccessStatus.ALLOWED) && !entityIsLocked && !isArchived);
 		result.put(KEY_NAME_USER_ACCESS, userAccess);
 
 		JSONArray userSecurityRoles = new JSONArray();

@@ -11,7 +11,7 @@ import org.alfresco.service.namespace.QName;
 public final class BeCPGModel {
 
 	private BeCPGModel() {
-	  throw new IllegalStateException("Constants class helper only");
+		throw new IllegalStateException("Constants class helper only");
 	}
 
 	/** Constant <code>BECPG_URI="http://www.bcpg.fr/model/becpg/1.0"</code> */
@@ -38,17 +38,21 @@ public final class BeCPGModel {
 
 	/** Constant <code>PROP_ENTITYLIST_STATE</code> */
 	public static final QName PROP_ENTITYLIST_STATE = QName.createQName(BECPG_URI, "entityDataListState");
-	
+
 	// Format
 	public static final QName ASPECT_ENTITY_FORMAT = QName.createQName(BECPG_URI, "entityFormatAspect");
-	
+
 	public static final QName PROP_ENTITY_FORMAT = QName.createQName(BECPG_URI, "entityFormat");
-	
+
 	public static final QName PROP_ENTITY_DATA = QName.createQName(BECPG_URI, "entityData");
+
+	// archived entity aspect
+	public static final QName ASPECT_ARCHIVED_ENTITY = QName.createQName(BECPG_URI, "archivedEntityAspect");
 
 	public enum EntityFormat {
 		NODE, JSON, XML
 	}
+
 	// Caract
 	/** Constant <code>TYPE_CHARACT</code> */
 	public static final QName TYPE_CHARACT = QName.createQName(BeCPGModel.BECPG_URI, "charact");
@@ -180,8 +184,6 @@ public final class BeCPGModel {
 	/** Constant <code>ASSOC_PARENT_ENTITY</code> */
 	public static final QName ASSOC_PARENT_ENTITY = QName.createQName(BECPG_URI, "parentEntityRef");
 
-	
-	
 	// systemFolder
 	/** Constant <code>ASPECT_SYSTEM_FOLDER</code> */
 	public static final QName ASPECT_SYSTEM_FOLDER = QName.createQName(BECPG_URI, "systemFolderAspect");
@@ -244,9 +246,9 @@ public final class BeCPGModel {
 	public static final QName PROP_AUTO_MERGE_COMMENTS = QName.createQName(BECPG_URI, "autoMergeComments");
 	/** Constant <code>PROP_AUTO_MERGE_IMPACTWUSED</code> */
 	public static final QName PROP_AUTO_MERGE_IMPACTWUSED = QName.createQName(BECPG_URI, "autoMergeImpactWUsed");
-	
+
 	public static final QName PROP_AUTO_MERGE_DATE = QName.createQName(BECPG_URI, "autoMergeDate");
-	
+
 	/** Constant <code>ASPECT_AUTO_MERGE_ASPECT</code> */
 	public static final QName ASPECT_AUTO_MERGE_ASPECT = QName.createQName(BeCPGModel.BECPG_URI, "autoMergeAspect");
 
@@ -293,13 +295,12 @@ public final class BeCPGModel {
 	/** Constant <code>PROP_IS_DEFAULT_VARIANT</code> */
 	public static final QName PROP_VARIANT_COLUMN = QName.createQName(BECPG_URI, "variantColumn");
 
-	
 	//forms
-	
+
 	public static final QName ASPECT_CUSTOM_FORM_DEFINITIONS = QName.createQName(BECPG_URI, "customFormDefinitionsAspect");
-	
+
 	public static final QName PROP_CUSTOM_FORM_DEFINITIONS = QName.createQName(BECPG_URI, "customFormDefinitions");
 
 	public static final QName ASPECT_UNDELETABLE_ASPECT = QName.createQName(BECPG_URI, "undeletableAspect");
-	
+
 }
