@@ -14,7 +14,7 @@ import fr.becpg.repo.repository.model.BeCPGDataObject;
 
 @AlfType
 @AlfQname(qname = "survey:surveyList")
-public class Survey extends BeCPGDataObject  {
+public class Survey extends BeCPGDataObject {
 
 	/**
 	 * 
@@ -22,20 +22,20 @@ public class Survey extends BeCPGDataObject  {
 	private static final long serialVersionUID = -6180023906108178900L;
 
 	private String comment;
-	
+
 	private NodeRef question;
-	
+
 	private List<NodeRef> choices;
-	
-    private Integer sort;
-    
-    @AlfProp
+
+	private Integer sort;
+
+	@AlfProp
 	@AlfQname(qname = "bcpg:sort")
 	public Integer getSort() {
 		return sort;
 	}
-    
-    public void setSort(Integer sort) {
+
+	public void setSort(Integer sort) {
 		this.sort = sort;
 	}
 
@@ -93,7 +93,5 @@ public class Survey extends BeCPGDataObject  {
 	public String toString() {
 		return "Survey [comment=" + comment + ", question=" + question + ", choices=" + choices + "]";
 	}
-	
-	
-	
+
 }

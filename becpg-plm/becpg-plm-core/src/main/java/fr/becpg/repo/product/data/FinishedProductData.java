@@ -10,8 +10,10 @@ import org.alfresco.service.cmr.repository.MLText;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
+import fr.becpg.repo.survey.data.Survey;
 
 /**
  * <p>FinishedProductData class.</p>
@@ -38,7 +40,7 @@ public class FinishedProductData extends ProductData {
 		setLegalName(legalName);
 		return this;
 	}
-	
+
 	public FinishedProductData withLegalName(MLText legalName) {
 		setLegalName(legalName);
 		return this;
@@ -69,5 +71,14 @@ public class FinishedProductData extends ProductData {
 		return this;
 	}
 
+	public FinishedProductData withSurveyList(List<Survey> surveyList) {
+		setSurveyList(surveyList);
+		return this;
+	}
+
+	public FinishedProductData withScoreList(List<ScoreListDataItem> scoreList) {
+		setScoreList(scoreList);
+		return this;
+	}
 
 }
