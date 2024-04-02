@@ -1,5 +1,6 @@
 package fr.becpg.repo.product.data;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,12 +12,14 @@ import fr.becpg.repo.product.data.productList.ContactListDataItem;
 import fr.becpg.repo.product.data.productList.CostListDataItem;
 import fr.becpg.repo.product.data.productList.LCAListDataItem;
 import fr.becpg.repo.product.data.productList.PlantListDataItem;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
 import fr.becpg.repo.repository.annotation.DataList;
 import fr.becpg.repo.repository.model.BeCPGDataObject;
 import fr.becpg.repo.repository.model.StateableEntity;
+import fr.becpg.repo.survey.data.Survey;
 
 /**
  * <p>SupplierData class.</p>
@@ -26,7 +29,7 @@ import fr.becpg.repo.repository.model.StateableEntity;
  */
 @AlfType
 @AlfQname(qname = "bcpg:supplier")
-public class SupplierData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity {
+public class SupplierData extends BeCPGDataObject implements HierarchicalEntity, StateableEntity, SurveyableEntity {
 
 	private static final long serialVersionUID = -2554133542406623412L;
 	private NodeRef hierarchy1;
@@ -36,10 +39,26 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	private List<CostListDataItem> costList;
 
 	private List<PlantListDataItem> plantList;
-	
+
 	private List<ContactListDataItem> contactList;
 
 	private List<LCAListDataItem> lcaList;
+
+	private SupplierData entityTpl;
+
+	/*
+	 * Formulation
+	 */
+	private Date formulatedDate;
+	private Integer reformulateCount;
+	private Integer currentReformulateCount;
+	private String formulationChainId;
+	private Boolean updateFormulatedDate = true;
+	private String requirementChecksum;
+
+	// Survey Entity
+	private List<ScoreListDataItem> scoreList;
+	private List<Survey> surveyList;
 
 	/**
 	 * <p>Getter for the field <code>state</code>.</p>
@@ -141,7 +160,6 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 		this.plantList = plantList;
 	}
 
-	
 	/**
 	 * <p>Getter for the field <code>contactList</code>.</p>
 	 *
@@ -167,11 +185,11 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	public List<LCAListDataItem> getLcaList() {
 		return lcaList;
 	}
-	
+
 	public void setLcaList(List<LCAListDataItem> lcaList) {
 		this.lcaList = lcaList;
 	}
-	
+
 	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
@@ -199,6 +217,164 @@ public class SupplierData extends BeCPGDataObject implements HierarchicalEntity,
 	@Override
 	public String toString() {
 		return "SupplierData [name=" + name + ", hierarchy1=" + hierarchy1 + ", hierarchy2=" + hierarchy2 + ", state=" + state + "]";
+	}
+
+	/**
+	 * <p>Getter for the field <code>reformulateCount</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
+	@Override
+	public Integer getReformulateCount() {
+		return reformulateCount;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setReformulateCount(Integer reformulateCount) {
+		this.reformulateCount = reformulateCount;
+	}
+
+	/**
+	 * <p>Getter for the field <code>currentReformulateCount</code>.</p>
+	 *
+	 * @return a {@link java.lang.Integer} object.
+	 */
+	@Override
+	public Integer getCurrentReformulateCount() {
+		return currentReformulateCount;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setCurrentReformulateCount(Integer currentReformulateCount) {
+		this.currentReformulateCount = currentReformulateCount;
+	}
+
+	/**
+	 * <p>Getter for the field <code>formulationChainId</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@Override
+	public String getFormulationChainId() {
+		return formulationChainId;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setFormulationChainId(String formulationChainId) {
+		this.formulationChainId = formulationChainId;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public boolean shouldUpdateFormulatedDate() {
+		return updateFormulatedDate;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setUpdateFormulatedDate(boolean updateFormulatedDate) {
+		this.updateFormulatedDate = updateFormulatedDate;
+	}
+
+	/**
+	 * <p>getFormulatedEntityTpl.</p>
+	 *
+	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	@Override
+	public NodeRef getFormulatedEntityTpl() {
+		return entityTpl != null ? entityTpl.getNodeRef() : null;
+	}
+
+	/**
+	 * <p>Setter for the field <code>projectTpl</code>.</p>
+	 *
+	 * @param projectTpl a {@link org.alfresco.service.cmr.repository.NodeRef} object.
+	 */
+	public void setEntityTpl(SupplierData entityTpl) {
+		this.entityTpl = entityTpl;
+	}
+
+	/**
+	 * <p>Getter for the field <code>requirementChecksum</code>.</p>
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	@Override
+	@AlfProp
+	@AlfQname(qname = "bcpg:requirementChecksum")
+	public String getRequirementChecksum() {
+		return requirementChecksum;
+	}
+
+	/**
+	 * <p>Setter for the field <code>requirementChecksum</code>.</p>
+	 *
+	 * @param requirementChecksum a {@link java.lang.String} object.
+	 */
+	public void setRequirementChecksum(String requirementChecksum) {
+		this.requirementChecksum = requirementChecksum;
+	}
+
+	/**
+	 * <p>Getter for the field <code>formulatedDate</code>.</p>
+	 *
+	 * @return a {@link java.util.Date} object.
+	 */
+	@Override
+	@AlfProp
+	@AlfQname(qname = "bcpg:formulatedDate")
+	public Date getFormulatedDate() {
+		return formulatedDate;
+	}
+
+	/** {@inheritDoc} */
+	@Override
+	public void setFormulatedDate(Date formulatedDate) {
+		this.formulatedDate = formulatedDate;
+	}
+
+	/**
+	 * <p>Getter for the field <code>scoreList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@DataList
+	@AlfQname(qname = "pjt:scoreList")
+	public List<ScoreListDataItem> getScoreList() {
+		return scoreList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>scoreList</code>.</p>
+	 *
+	 * @param scoreList a {@link java.util.List} object.
+	 */
+	public void setScoreList(List<ScoreListDataItem> scoreList) {
+		this.scoreList = scoreList;
+	}
+
+	/**
+	 * <p>Getter for the field <code>surveyList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@DataList
+	@AlfQname(qname = "survey:surveyList")
+	public List<Survey> getSurveyList() {
+		return surveyList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>surveyList</code>.</p>
+	 *
+	 * @param scoreList a {@link java.util.List} object.
+	 */
+	public void setSurveyList(List<Survey> surveyList) {
+		this.surveyList = surveyList;
 	}
 
 }
