@@ -70,7 +70,7 @@ public interface ProjectModel {
 	QName ASSOC_PROJECT_CUR_TASKS = QName.createQName(PROJECT_URI, "projectCurrentTasks");
 	/** Constant <code>ASSOC_PROJECT_CUR_COMMENTS</code> */
 	QName ASSOC_PROJECT_CUR_COMMENTS = QName.createQName(PROJECT_URI, "projectCurrentComments");
-	
+
 	QName PROP_PROJECT_CUR_COMMENT = QName.createQName(PROJECT_URI, "projectCurrentComment");
 
 	/** Constant <code>TYPE_TASK_LIST</code> */
@@ -104,9 +104,9 @@ public interface ProjectModel {
 	/** Constant <code>PROP_TL_STATE</code> */
 	QName PROP_TL_STATE = QName.createQName(PROJECT_URI, "tlState");
 	/** Constant <code>PROP_TL_PREVIOUS_STATE</code> */
-        QName PROP_TL_PREVIOUS_STATE = QName.createQName(PROJECT_URI, "tlPreviousState");
-	/** Constant <code>ASSOC_TL_PREV_TASKS</code> */	
-        QName ASSOC_TL_PREV_TASKS = QName.createQName(PROJECT_URI, "tlPrevTasks");
+	QName PROP_TL_PREVIOUS_STATE = QName.createQName(PROJECT_URI, "tlPreviousState");
+	/** Constant <code>ASSOC_TL_PREV_TASKS</code> */
+	QName ASSOC_TL_PREV_TASKS = QName.createQName(PROJECT_URI, "tlPrevTasks");
 	/** Constant <code>ASSOC_TL_REFUSED_TASK_REF</code> */
 	QName ASSOC_TL_REFUSED_TASK_REF = QName.createQName(PROJECT_URI, "tlRefusedTaskRef");
 	/** Constant <code>ASSOC_TL_RESOURCES</code> */
@@ -237,11 +237,15 @@ public interface ProjectModel {
 	QName PROP_QNAME_REASSIGN_TASK = QName.createQName(PROJECT_URI, "reassignCurrentTasks");
 	/** Constant <code>PROP_QNAME_REASSIGN_RESOURCE</code> */
 	QName PROP_QNAME_REASSIGN_RESOURCE = QName.createQName(PROJECT_URI, "reassignTo");
-	
+
 	//notification
-	
+
 	QName PROP_NOTIFICATION_FREQUENCY_VALUE = QName.createQName(PROJECT_URI, "notificationFrequencyValue");
 	QName PROP_NOTIFICATION_INITIAL_VALUE = QName.createQName(PROJECT_URI, "notificationInitialValue");
 	QName ASSOC_NOTIFICATION_AUTHORITIES = QName.createQName(PROJECT_URI, "notificationAuthorities");
+
+	// Project survey
+	/** Constant <code>PROP_QNAME_DELEGATION_STATE</code> */
+	QName PROP_QNAME_SURVEY_CRITERION = QName.createQName(PROJECT_URI, "slCriterion");
 
 }

@@ -51,6 +51,7 @@ import fr.becpg.repo.product.data.productList.ProcessListDataItem;
 import fr.becpg.repo.product.data.productList.RegulatoryListDataItem;
 import fr.becpg.repo.product.data.productList.ResourceParamListItem;
 import fr.becpg.repo.product.data.productList.SvhcListDataItem;
+import fr.becpg.repo.project.data.projectList.ScoreListDataItem;
 import fr.becpg.repo.quality.data.dataList.ControlDefListDataItem;
 import fr.becpg.repo.quality.data.dataList.StockListDataItem;
 import fr.becpg.repo.repository.annotation.AlfMlText;
@@ -66,6 +67,7 @@ import fr.becpg.repo.repository.filters.DataListFilter;
 import fr.becpg.repo.repository.model.AspectAwareDataItem;
 import fr.becpg.repo.repository.model.EffectiveDataItem;
 import fr.becpg.repo.repository.model.StateableEntity;
+import fr.becpg.repo.survey.data.Survey;
 import fr.becpg.repo.variant.model.VariantData;
 import fr.becpg.repo.variant.model.VariantEntity;
 
@@ -77,7 +79,7 @@ import fr.becpg.repo.variant.model.VariantEntity;
  */
 @BeCPGPublicApi
 public class ProductData extends AbstractScorableEntity
-		implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity {
+		implements EffectiveDataItem, HierarchicalEntity, StateableEntity, AspectAwareDataItem, VariantEntity, RegulatoryEntity, SurveyableEntity {
 
 	private static final long serialVersionUID = 764534088277737617L;
 	private static final Log logger = LogFactory.getLog(ProductData.class);
@@ -246,6 +248,8 @@ public class ProductData extends AbstractScorableEntity
 	private List<RegulatoryListDataItem> regulatoryList;
 	private List<IngRegulatoryListDataItem> ingRegulatoryList;
 	private List<SvhcListDataItem> svhcList;
+	private List<ScoreListDataItem> scoreList;
+	private List<Survey> surveyList;
 
 	/*
 	 * View
@@ -2048,6 +2052,46 @@ public class ProductData extends AbstractScorableEntity
 	}
 
 	/**
+	 * <p>Getter for the field <code>scoreList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@DataList
+	@AlfQname(qname = "pjt:scoreList")
+	public List<ScoreListDataItem> getScoreList() {
+		return scoreList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>scoreList</code>.</p>
+	 *
+	 * @param scoreList a {@link java.util.List} object.
+	 */
+	public void setScoreList(List<ScoreListDataItem> scoreList) {
+		this.scoreList = scoreList;
+	}
+
+	/**
+	 * <p>Getter for the field <code>surveyList</code>.</p>
+	 *
+	 * @return a {@link java.util.List} object.
+	 */
+	@DataList
+	@AlfQname(qname = "survey:surveyList")
+	public List<Survey> getSurveyList() {
+		return surveyList;
+	}
+
+	/**
+	 * <p>Setter for the field <code>surveyList</code>.</p>
+	 *
+	 * @param scoreList a {@link java.util.List} object.
+	 */
+	public void setSurveyList(List<Survey> surveyList) {
+		this.surveyList = surveyList;
+	}
+
+	/**
 	 * <p>Getter for the field <code>compoListView</code>.</p>
 	 *
 	 * @return a {@link fr.becpg.repo.product.data.CompoListView} object.
@@ -2609,8 +2653,6 @@ public class ProductData extends AbstractScorableEntity
 	public ProductData() {
 		super();
 	}
-	
-
 
 	/** {@inheritDoc} */
 	@Override
