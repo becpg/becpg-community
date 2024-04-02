@@ -9,8 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.mail.MessagingException;
+import java.util.stream.Collectors;
 
 import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.workflow.WorkflowModel;
@@ -25,11 +24,16 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.subethamail.wiser.WiserMessage;
 
-import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.ProjectModel;
+import fr.becpg.repo.activity.helper.AuditActivityHelper;
+import fr.becpg.repo.audit.model.AuditQuery;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.project.data.ProjectData;
 import fr.becpg.repo.project.data.ProjectState;
 import fr.becpg.repo.project.data.projectList.TaskState;
+import jakarta.mail.MessagingException;
 
 /**
  * The Class ProjectNotificationTest.
@@ -42,6 +46,9 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 	
 	@Autowired
 	CommentService commentService;
+	
+	@Autowired
+	protected BeCPGAuditService beCPGAuditService;
 	
 	/**
 	 * Test observers get notifications
@@ -263,27 +270,14 @@ public class ProjectNotificationIT extends AbstractProjectTestCase {
 	protected void checkActivity(NodeRef entityNodeRef, int size) {
 
 		assertEquals(size, transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+			
+			AuditQuery auditFilter = AuditQuery.createQuery().asc(false).dbAsc(false)
+					.sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
+					.filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
 
-			List<NodeRef> ret = new ArrayList<>();
-			NodeRef activityListNodeRef = null;
+		return beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
+						.map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList());
 
-			NodeRef listContainerNodeRef = entityListDAO.getListContainer(entityNodeRef);
-			if (listContainerNodeRef != null) {
-				activityListNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-			}
-			if (activityListNodeRef != null) {
-				ret = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-
-				ret.forEach(tmp -> {
-					logger.info("Data: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_DATA) + " user: "
-							+ nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_USERID));
-				});
-
-			} else {
-				logger.error("No activity list");
-			}
-
-			return ret;
 		}, false, true).size());
 	}
 

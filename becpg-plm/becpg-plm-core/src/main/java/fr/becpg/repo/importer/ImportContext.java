@@ -34,6 +34,8 @@ public class ImportContext {
 
 	private static final String FORMAT_DATE_FRENCH = "dd/MM/yyyy";
 	private static final String FORMAT_DATE_ENGLISH = "yyyy/MM/dd";
+	private static final String FORMAT_DATETIME_FRENCH = "dd/MM/yyyy HH:mm:ss";
+	private static final String FORMAT_DATETIME_ENGLISH = "yyyy/MM/dd HH:mm:ss";
 	private static final String MSG_ERROR_IMPORT_LINE = "import_service.error.err_import_line";
 	private static final String MSG_INFO_IMPORT_LINE = "import_service.info.import_line";
 
@@ -433,6 +435,10 @@ public class ImportContext {
 		String dateFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATE_FRENCH
 				: FORMAT_DATE_ENGLISH;
 		propertyFormats.setDateFormat(dateFormat);
+		
+		String datetimeFormat = (Locale.getDefault().equals(Locale.FRENCH) || Locale.getDefault().equals(Locale.FRANCE)) ? FORMAT_DATETIME_FRENCH
+				: FORMAT_DATETIME_ENGLISH;
+		propertyFormats.setDatetimeFormat(datetimeFormat);
 
 	}
 

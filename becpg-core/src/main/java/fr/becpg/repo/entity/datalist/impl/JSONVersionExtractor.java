@@ -3,6 +3,7 @@ package fr.becpg.repo.entity.datalist.impl;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
@@ -32,7 +33,6 @@ import fr.becpg.config.format.FormatMode;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.BeCPGModel.EntityFormat;
 import fr.becpg.repo.RepoConsts;
-import fr.becpg.repo.activity.extractor.ActivityListExtractor;
 import fr.becpg.repo.entity.EntityFormatService;
 import fr.becpg.repo.entity.datalist.PaginatedExtractedItems;
 import fr.becpg.repo.entity.datalist.data.DataListFilter;
@@ -41,7 +41,7 @@ import fr.becpg.repo.helper.SiteHelper;
 import fr.becpg.repo.helper.impl.AttributeExtractorField;
 import fr.becpg.repo.helper.impl.AttributeExtractorServiceImpl.AttributeExtractorStructure;
 
-public class JSONVersionExtractor extends ActivityListExtractor {
+public class JSONVersionExtractor extends SimpleExtractor {
 
 	private static final Log logger = LogFactory.getLog(JSONVersionExtractor.class);
 	
@@ -399,6 +399,9 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 			
 			displayName = extractJsonNodeRefProp(seri);
 			
+		} else if (metadata.equals("text") && attribute.isMultiValued()) {
+			seri = (Serializable) convertStringToList(seri.toString());
+			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
 		} else {
 			displayName = attributeExtractorService.getStringValue(attribute, seri, attributeExtractorService.getPropertyFormats(mode, false));
 		}
@@ -409,6 +412,12 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 		return tmp;
 
 	}
+	
+    private static List<String> convertStringToList(String inputString) {
+        String cleanString = inputString.replaceAll("[\\[\\]\"]", "");
+        String[] stringArray = cleanString.split(",");
+        return Arrays.asList(stringArray);
+    }
 
 	private String extractJsonNodeRefProp(Serializable seri) {
 		
@@ -492,7 +501,6 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 		return ret;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Map<String, Object> extractJSON(DataListFilter dataListFilter, JSONObject object, List<AttributeExtractorStructure> metadataFields, AttributeExtractorStructure field) throws JSONException {
 		StopWatch watch = null;
 		if (logger.isDebugEnabled()) {
@@ -564,8 +572,6 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 			ret.put(PROP_NODEDATA, doExtract(field == null ? null : field.getFieldQname(), metadataFields, FormatMode.JSON, properties));
 			
 			if (dataListFilter != null) {
-				QName dataListFilterQName = QName.createQName(BeCPGModel.BECPG_URI, dataListFilter.getDataListName());
-				
 				Map<QName, Serializable> propertiesMap = new HashMap<>();
 				
 				Iterator<?> it = properties.keys();
@@ -579,10 +585,6 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 						QName qname = QName.createQName(BeCPGModel.BECPG_URI, name.split(BCPG_PREFIX)[1]);
 						propertiesMap.put(qname, properties.get(name).toString());
 					}
-				}
-				
-				if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListFilterQName)) {
-					postLookupActivity(dataListFilter.getEntityNodeRef(), (Map<String, Object>) ret.get(PROP_NODEDATA), propertiesMap, FormatMode.JSON);
 				}
 			}
 			
@@ -632,45 +634,41 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 			
 			JSONObject datalists = (JSONObject) entity.get("datalists");
 			
-			if (!datalists.has(dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString())) {
+			QName dataListFilterQName = QName.createQName(BeCPGModel.BECPG_URI, dataListFilter.getDataListName());
+			
+			if (BeCPGModel.TYPE_ACTIVITY_LIST.equals(dataListFilterQName)) {
 				return ret;
 			}
 			
-			String filterName = dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString();
+			JSONArray dataListJsonArray = extractDataList(datalists, dataListFilter);
 			
-			if (dataListFilter.getDataListName().contains("@")) {
-				filterName += "|" + dataListFilter.getDataListName();
-			}
-			
-			JSONArray dataListJsonArray = (JSONArray) datalists.get(filterName);
-
-			JSONArray filteredList = filterList(dataListJsonArray, dataListFilter);
-			
-			JSONArray results = sortList(filteredList, dataListFilter);
-
-
-			if (results.length() == 0) {
-				logger.warn("List is empty");
-			}
-			
-			for (int i = 0; i < results.length(); i++) {
-				JSONObject object = results.getJSONObject(i);
+			if (dataListJsonArray != null) {
+				JSONArray filteredList = filterList(dataListJsonArray, dataListFilter);
 				
-				if (ret.getComputedFields() == null) {
-					ret.setComputedFields(attributeExtractorService.readExtractStructure(QName.createQName(object.getString(TYPE), namespaceService), metadataFields));
+				JSONArray results = sortList(filteredList, dataListFilter);
+	
+				if (results.length() == 0) {
+					logger.warn("List is empty");
 				}
 				
-				if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
-					logger.warn("CSV and XLSX unimplemented!");
-				} else {
+				for (int i = 0; i < results.length(); i++) {
+					JSONObject object = results.getJSONObject(i);
 					
-					Map<String, Object> item = extractJSON(dataListFilter, object, ret.getComputedFields(), null);
-					ret.addItem(item);
+					if (ret.getComputedFields() == null) {
+						ret.setComputedFields(attributeExtractorService.readExtractStructure(QName.createQName(object.getString(TYPE), namespaceService), metadataFields));
+					}
+					
+					if (RepoConsts.FORMAT_CSV.equals(dataListFilter.getFormat()) || RepoConsts.FORMAT_XLSX.equals(dataListFilter.getFormat())) {
+						logger.warn("CSV and XLSX unimplemented!");
+					} else {
+						
+						Map<String, Object> item = extractJSON(dataListFilter, object, ret.getComputedFields(), null);
+						ret.addItem(item);
+					}
 				}
 				
+				ret.setFullListSize(dataListFilter.getPagination().getFullListSize());
 			}
-
-			ret.setFullListSize(dataListFilter.getPagination().getFullListSize());
 
 		} catch (JSONException e) {
 			logger.error("Failed to extract", e);
@@ -680,6 +678,28 @@ public class JSONVersionExtractor extends ActivityListExtractor {
 			logger.debug("First itemData is " + ret.getPageItems().get(0).get(PROP_NODEDATA));
 		}
 		return ret;
+	}
+	
+	private JSONArray extractDataList(JSONObject datalists, DataListFilter dataListFilter) {
+		
+		String dataListType = dataListFilter.getDataType().getPrefixedQName(namespaceService).getPrefixString();
+		
+		if (dataListFilter.getDataListName().contains("@")) {
+			dataListType += "|" + dataListFilter.getDataListName();
+		}
+		
+		if (datalists.has(dataListType)) {
+			return datalists.getJSONArray(dataListType);
+		}
+		
+		String dataListNestedType = dataListFilter.getDataListName() + "@" + dataListType;
+		
+		for (String key : datalists.keySet()) {
+			if (key.endsWith(dataListNestedType) && datalists.has(key)) {
+				return datalists.getJSONArray(key);
+			}
+		}
+		return null;
 	}
 
 	@Override

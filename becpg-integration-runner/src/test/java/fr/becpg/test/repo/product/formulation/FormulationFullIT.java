@@ -133,13 +133,13 @@ public class FormulationFullIT extends AbstractFinishedProductTest {
 			// Spel method
 			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG findOne", "@beCPG.findOne(nodeRef).qty"));
 
-			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG propValue", "@beCPG.propValue(nodeRef,'bcpg:productQty')\n"));
+			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG propValue", "@beCPG.propValue(nodeRef,'bcpg:bestBeforeDate')\n"));
 
 			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG SUM ",
 					"@beCPG.sum(compoListView.compoList.?[parent == null],\"entity.costList[0].value + dataListItem.qty\")"));
 
 			dynamicCharactListItems.add(new DynamicCharactListItem(" beCPG SUM++ ",
-					"@beCPG.sum(compoListView.compoList.?[parent == null],\"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQty')\")"));
+					"@beCPG.sum(compoListView.compoList.?[parent == null],\"@beCPG.propValue(dataListItem.nodeRef,'bcpg:compoListQtyPercForSF')\")"));
 
 			// Static fonction
 			dynamicCharactListItems.add(new DynamicCharactListItem("Autonum V1 ",

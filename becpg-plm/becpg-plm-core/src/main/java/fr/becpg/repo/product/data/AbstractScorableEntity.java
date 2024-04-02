@@ -73,16 +73,17 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	}
 
 	private void addMessage(MLText msg, RequirementType type) {
-		reqCtrlList.add(new ReqCtrlListDataItem(null, type, msg, null, new ArrayList<>(), RequirementDataType.Formulation));
+		reqCtrlList.add(ReqCtrlListDataItem.build().ofType(type).withMessage(msg).ofDataType(RequirementDataType.Formulation));
+
 	}
 
 	@Override
 	public void addError(MLText msg, String formulationChainId, List<NodeRef> sources) {
-		ReqCtrlListDataItem item = new ReqCtrlListDataItem(null, RequirementType.Forbidden, msg, null, new ArrayList<>(sources), RequirementDataType.Formulation);
-		item.setFormulationChainId(formulationChainId);
-		reqCtrlList.add(item);
+
+		reqCtrlList.add(ReqCtrlListDataItem.forbidden().withMessage(msg)
+				.ofDataType(RequirementDataType.Formulation).withFormulationChainId(formulationChainId));
 	}
-	
+
 	@Override
 	public boolean merge() {
 		return merge(null);
@@ -92,7 +93,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	public boolean merge(List<String> disabledChainIds) {
 
 		String currentChainId = getFormulationChainId();
-		
+
 		boolean hasChanged = false;
 
 		if (reqCtrlList != null) {
@@ -138,7 +139,9 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 					ReqCtrlListDataItem newReqCtrlListDataItem = newReqCtrlList.get(dbKV.getKey());
 					dbKV.getValue().setReqType(newReqCtrlListDataItem.getReqType());
 					dbKV.getValue().setReqMaxQty(newReqCtrlListDataItem.getReqMaxQty());
-					dbKV.getValue().setSources(new ArrayList<>(newReqCtrlListDataItem.getSources()));
+					if (newReqCtrlListDataItem.getSources() != null) {
+						dbKV.getValue().setSources(new ArrayList<>(newReqCtrlListDataItem.getSources()));
+					}
 					dbKV.getValue().setCharact(newReqCtrlListDataItem.getCharact());
 					dbKV.getValue().setReqDataType(newReqCtrlListDataItem.getReqDataType());
 					dbKV.getValue().setFormulationChainId(newReqCtrlListDataItem.getFormulationChainId());
@@ -146,20 +149,20 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 					reqCtrlList.remove(newReqCtrlListDataItem);
 				}
 			}
-			
+
 			// sort
 			sort(reqCtrlList);
-			
+
 			if (disabledChainIds != null) {
-				
+
 				List<ReqCtrlListDataItem> toRemove = new ArrayList<>();
-				
+
 				for (ReqCtrlListDataItem reqCtrl : reqCtrlList) {
 					if (reqCtrl.getFormulationChainId() != null && disabledChainIds.contains(reqCtrl.getFormulationChainId())) {
 						toRemove.add(reqCtrl);
 					}
 				}
-				
+
 				if (!toRemove.isEmpty()) {
 					reqCtrlList.removeAll(toRemove);
 					hasChanged = true;
@@ -176,7 +179,7 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 
 			duplicates.add(r);
 			// Merge sources
-			if(r.getSources()!=null) {
+			if (r.getSources() != null) {
 				for (NodeRef tmpref : r.getSources()) {
 					dbReq.addSource(tmpref);
 				}
@@ -194,10 +197,10 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 	 *
 	 */
 	private void sort(List<ReqCtrlListDataItem> reqCtrlList) {
-		
+
 		//Sort sources
-		for(ReqCtrlListDataItem r : reqCtrlList) {
-			if(r.getSources()!=null) {
+		for (ReqCtrlListDataItem r : reqCtrlList) {
+			if (r.getSources() != null) {
 				r.getSources().sort(Comparator.comparing(NodeRef::getId));
 			}
 		}
@@ -227,7 +230,5 @@ public abstract class AbstractScorableEntity extends BeCPGDataObject implements 
 		AbstractScorableEntity other = (AbstractScorableEntity) obj;
 		return Objects.equals(reqCtrlList, other.reqCtrlList);
 	}
-
-	
 
 }

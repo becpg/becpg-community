@@ -5,7 +5,6 @@ package fr.becpg.repo.product.formulation;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.util.ArrayList;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -21,7 +20,6 @@ import fr.becpg.repo.product.data.ResourceProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.constraints.TareUnit;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.PackagingListDataItem;
@@ -175,8 +173,8 @@ public class FormulationHelper {
 	public static Double getQtyForCost(PackagingListDataItem packagingListDataItem, Double parentLossRatio, ProductData componentProduct) {
 
 		Double lossPerc = FormulationHelper.calculateLossPerc(parentLossRatio != null ? parentLossRatio : 0d,
-				FormulationHelper.getComponentLossPerc(componentProduct, packagingListDataItem));		
-		
+				FormulationHelper.getComponentLossPerc(componentProduct, packagingListDataItem));
+
 		return FormulationHelper.getQtyWithLoss(FormulationHelper.getQty(packagingListDataItem), lossPerc);
 	}
 
@@ -242,8 +240,10 @@ public class FormulationHelper {
 						&& (formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes() != null)) {
 					productQtyToTransform = productQtyToTransform / formulatedProduct.getDefaultVariantPackagingData().getProductPerBoxes();
 				} else {
-					formulatedProduct.getReqCtrlList().add(new ReqCtrlListDataItem(null, RequirementType.Forbidden,
-							MLTextHelper.getI18NMessage(MISSING_NUMBER_OF_PRODUCT_PER_BOX), null, new ArrayList<>(), RequirementDataType.Packaging));
+					formulatedProduct.getReqCtrlList()
+							.add(ReqCtrlListDataItem.forbidden()
+									.withMessage(MLTextHelper.getI18NMessage(MISSING_NUMBER_OF_PRODUCT_PER_BOX))
+									.ofDataType(RequirementDataType.Packaging));
 				}
 			}
 
@@ -438,10 +438,10 @@ public class FormulationHelper {
 	}
 
 	public static Double getNetVolume(ProductData formulatedProduct, Double defaultValue) {
-		return getNetVolume(formulatedProduct, null,defaultValue);
-		
+		return getNetVolume(formulatedProduct, null, defaultValue);
+
 	}
-	
+
 	/**
 	 * <p>getNetVolume.</p>
 	 *
@@ -659,9 +659,9 @@ public class FormulationHelper {
 			return (BigDecimal.valueOf(tare)).divide(BigDecimal.valueOf(tareUnit.getUnitFactor()), MathContext.DECIMAL64);
 		}
 	}
-	
+
 	public static Double getNetQtyForCost(ProductData formulatedProduct) {
-		return getNetQtyForCost(formulatedProduct,null);
+		return getNetQtyForCost(formulatedProduct, null);
 	}
 
 	/**
@@ -706,8 +706,8 @@ public class FormulationHelper {
 	 */
 	public static Double getQtyForCostByPackagingLevel(ProductData formulatedProduct, PackagingListDataItem packagingListDataItem,
 			ProductData componentProduct) {
-		
-		Double qty = FormulationHelper.getQtyForCost( packagingListDataItem, formulatedProduct.getProductLossPerc(), componentProduct);
+
+		Double qty = FormulationHelper.getQtyForCost(packagingListDataItem, formulatedProduct.getProductLossPerc(), componentProduct);
 
 		return getQtyByPackagingLevel(qty, formulatedProduct, packagingListDataItem, componentProduct);
 
@@ -789,7 +789,7 @@ public class FormulationHelper {
 		}
 		return componentProduct.getComponentLossPerc() != null ? componentProduct.getComponentLossPerc() : 0d;
 	}
-	
+
 	public static Double getComponentLossPerc(ProductData componentProduct, PackagingListDataItem packagingListDataItem) {
 		if (packagingListDataItem.getLossPerc() != null) {
 			return packagingListDataItem.getLossPerc();
@@ -810,6 +810,5 @@ public class FormulationHelper {
 		}
 		return formulatedValue;
 	}
-
 
 }

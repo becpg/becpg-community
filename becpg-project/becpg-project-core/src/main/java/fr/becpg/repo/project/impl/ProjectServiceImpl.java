@@ -32,6 +32,7 @@ import org.alfresco.repo.forum.CommentService;
 import org.alfresco.repo.policy.BehaviourFilter;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
 import org.alfresco.repo.security.authority.AuthorityDAO;
+import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.service.cmr.repository.AssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
@@ -73,7 +74,6 @@ import fr.becpg.repo.search.BeCPGQueryBuilder;
 import fr.becpg.repo.security.data.PermissionModel;
 import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 
-
 /**
  * Project service that manage project
  *
@@ -85,7 +85,7 @@ import fr.becpg.repo.security.plugins.SecurityServicePlugin;
 public class ProjectServiceImpl implements ProjectService, FormulationPlugin, SecurityServicePlugin {
 
 	private static final Log logger = LogFactory.getLog(ProjectServiceImpl.class);
-	
+
 	@Autowired
 	private AlfrescoRepository<RepositoryEntity> alfrescoRepository;
 	@Autowired
@@ -118,7 +118,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	private PersonService personService;
 	@Autowired
 	private EntityListDAO entityListDAO;
-	
+
 	@Autowired
 	SysAdminParams sysAdminParams;
 
@@ -151,71 +151,72 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 		nodeService.setProperty(taskNodeRef, ProjectModel.PROP_TL_TASK_COMMENT, null);
 
 	}
-	
 
 	@Override
 	public Set<NodeRef> updateProjectState(NodeRef projectNodeRef, String beforeState, String afterState) {
 		Set<NodeRef> toReformulates = new HashSet<>();
-		
+
 		try {
 			// Disable notifications
 			policyBehaviourFilter.disableBehaviour(BeCPGModel.TYPE_ACTIVITY_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_TASK_LIST);
 			policyBehaviourFilter.disableBehaviour(ProjectModel.ASPECT_BUDGET);
-				if (ProjectState.InProgress.toString().equals(afterState)) {
-					if(beforeState == null || beforeState.isEmpty() || ProjectState.Planned.toString().equals(beforeState)) {
-		
-						Date startDate = ProjectHelper.removeTime(new Date());
-						nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
-						ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-						for (TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null)) {
-							if(taskListDataItem.getSubProject() == null) {
-								nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
-							}
-						}
-					} else {
-						ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-						for(TaskListDataItem taskListDataItem : projectData.getTaskList()) {
-							String previousState = (String) nodeService.getProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE);
-							if(previousState!=null && !previousState.isEmpty()) {
-								nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE,null);
-								if(taskListDataItem.getSubProject()!=null) {
-									nodeService.setProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_PROJECT_STATE, previousState);
-									updateProjectState(taskListDataItem.getSubProject(),  taskListDataItem.getState(),  previousState) ;
-									toReformulates.add(taskListDataItem.getSubProject());
-									
-								}
-								nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, previousState);
-								
-							}
-							
-						}
-						
-					}
-					toReformulates.add(projectNodeRef);
-				} else if (ProjectState.Cancelled.toString().equals(afterState) || ProjectState.OnHold.toString().equals(afterState)  || ProjectState.Completed.toString().equals(beforeState)) {
-					
+			if (ProjectState.InProgress.toString().equals(afterState)) {
+				if (beforeState == null || beforeState.isEmpty() || ProjectState.Planned.toString().equals(beforeState)) {
+
+					Date startDate = ProjectHelper.removeTime(new Date());
+					nodeService.setProperty(projectNodeRef, ProjectModel.PROP_PROJECT_START_DATE, startDate);
 					ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
-					for(TaskListDataItem taskListDataItem : projectData.getTaskList()) {
-						if(TaskState.InProgress.equals(taskListDataItem.getTaskState())) {
-							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE, taskListDataItem.getState());
-							if(taskListDataItem.getSubProject()!=null) {
-								String previousState  =  (String) nodeService.getProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_TL_PREVIOUS_STATE);
-								if(!afterState.equals(previousState)) {
-									nodeService.setProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_PROJECT_STATE,afterState);
-									updateProjectState(taskListDataItem.getSubProject(),  previousState,  afterState) ;
-									toReformulates.add(taskListDataItem.getSubProject());
-								}
+					for (TaskListDataItem taskListDataItem : ProjectHelper.getNextTasks(projectData, null)) {
+						if (taskListDataItem.getSubProject() == null) {
+							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_START, startDate);
+						}
+					}
+				} else {
+					ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+					for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {
+						String previousState = (String) nodeService.getProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE);
+						if (previousState != null && !previousState.isEmpty()) {
+							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE, null);
+							if (taskListDataItem.getSubProject() != null) {
+								nodeService.setProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_PROJECT_STATE, previousState);
+								updateProjectState(taskListDataItem.getSubProject(), taskListDataItem.getState(), previousState);
+								toReformulates.add(taskListDataItem.getSubProject());
+
 							}
-							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, afterState);
-							
+							nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, previousState);
+
 						}
 
 					}
-					
-					toReformulates.add(projectNodeRef);
-					
+
 				}
+				toReformulates.add(projectNodeRef);
+			} else if (ProjectState.Cancelled.toString().equals(afterState) || ProjectState.OnHold.toString().equals(afterState)
+					|| ProjectState.Completed.toString().equals(beforeState)) {
+
+				ProjectData projectData = (ProjectData) alfrescoRepository.findOne(projectNodeRef);
+				for (TaskListDataItem taskListDataItem : projectData.getTaskList()) {
+					if (TaskState.InProgress.equals(taskListDataItem.getTaskState())) {
+						nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_PREVIOUS_STATE, taskListDataItem.getState());
+						if (taskListDataItem.getSubProject() != null) {
+							String previousState = (String) nodeService.getProperty(taskListDataItem.getSubProject(),
+									ProjectModel.PROP_TL_PREVIOUS_STATE);
+							if (!afterState.equals(previousState)) {
+								nodeService.setProperty(taskListDataItem.getSubProject(), ProjectModel.PROP_PROJECT_STATE, afterState);
+								updateProjectState(taskListDataItem.getSubProject(), previousState, afterState);
+								toReformulates.add(taskListDataItem.getSubProject());
+							}
+						}
+						nodeService.setProperty(taskListDataItem.getNodeRef(), ProjectModel.PROP_TL_STATE, afterState);
+
+					}
+
+				}
+
+				toReformulates.add(projectNodeRef);
+
+			}
 
 		} finally {
 			policyBehaviourFilter.enableBehaviour(ProjectModel.ASPECT_BUDGET);
@@ -243,7 +244,11 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 
 	/** {@inheritDoc} */
 	@Override
-	public void formulate(NodeRef projectNodeRef)  {
+	public void formulate(NodeRef projectNodeRef) {
+		formulate(projectNodeRef, new HashSet<>());
+	}
+
+	private void formulate(NodeRef projectNodeRef, Set<NodeRef> visited) {
 		if (nodeService.getType(projectNodeRef).equals(ProjectModel.TYPE_PROJECT)) {
 			try {
 
@@ -261,14 +266,20 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 
 				L2CacheSupport.doInCacheContext(() -> {
 					AuthenticationUtil.runAsSystem(() -> {
-						
+
 						formulationService.formulate(projectNodeRef);
+
+						visited.add(projectNodeRef);
 
 						NodeRef parentProjectNodeRef = associationService.getTargetAssoc(projectNodeRef, ProjectModel.ASSOC_PARENT_PROJECT);
 
 						// Check for parent project
 						if (parentProjectNodeRef != null) {
-							formulate(parentProjectNodeRef);
+							if (!visited.contains(parentProjectNodeRef)) {
+								formulate(parentProjectNodeRef, visited);
+							} else {
+								throw new StackOverflowError("Loop in parent project formulation :" + parentProjectNodeRef);
+							}
 						}
 
 						return true;
@@ -299,7 +310,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 		// update prevTasks assoc of next tasks
 		List<NodeRef> deleteTaskPrevTaskNodeRefs = associationService.getTargetAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
 		List<NodeRef> nextTaskAssociationRefs = associationService.getSourcesAssocs(taskListNodeRef, ProjectModel.ASSOC_TL_PREV_TASKS);
-		
+
 		for (NodeRef nextTaskAssociationRef : nextTaskAssociationRefs) {
 
 			if (!nodeService.hasAspect(nextTaskAssociationRef, ContentModel.ASPECT_PENDING_DELETE)) {
@@ -426,7 +437,8 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 			NodeRef userNodeRef = authorityDAO.getAuthorityNodeRefOrNull(user);
 			if (userNodeRef != null) {
 				List<NodeRef> resources = associationService.getTargetAssocs(taskNodeRef, ProjectModel.ASSOC_TL_RESOURCES);
-				if ((resources.size() == 1) && !resources.contains(userNodeRef) && !resources.contains(getReassignedResource(userNodeRef, new HashSet<>()))) {
+				if ((resources.size() == 1) && !resources.contains(userNodeRef)
+						&& !resources.contains(getReassignedResource(userNodeRef, new HashSet<>()))) {
 					QName type = nodeService.getType(resources.get(0));
 					if (!type.equals(ContentModel.TYPE_AUTHORITY_CONTAINER)) {
 						associationService.update(taskNodeRef, ProjectModel.ASSOC_TL_RESOURCES, Arrays.asList(userNodeRef));
@@ -509,19 +521,19 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 					&& ((delegationEnd == null) || delegationEnd.after(new Date()) || delegationEnd.equals(new Date())))) {
 
 				NodeRef reassignedResource = associationService.getTargetAssoc(resource, ProjectModel.PROP_QNAME_REASSIGN_RESOURCE);
-				
+
 				if (reassignedCandidates.contains(reassignedResource)) {
 					return resource;
 				}
-				
+
 				reassignedCandidates.add(reassignedResource);
-					
+
 				NodeRef nextReassignResource = getReassignedResource(reassignedResource, reassignedCandidates);
-				
+
 				if (nextReassignResource != null) {
 					return nextReassignResource;
 				}
-				
+
 				return reassignedResource;
 			}
 		}
@@ -535,7 +547,6 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 
 		return QName.createQName(propName, namespaceService);
 	}
-
 
 	/** {@inheritDoc} */
 	@Override
@@ -584,7 +595,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	public void runScript(ProjectData project, TaskListDataItem task, DeliverableListDataItem deliverable) {
 
 		NodeRef scriptNode = deliverable.getContent();
-		
+
 		if ((scriptNode != null) && nodeService.exists(scriptNode)
 				&& nodeService.getPath(scriptNode).toPrefixString(namespaceService).startsWith(RepoConsts.SCRIPTS_FULL_PATH)) {
 
@@ -593,7 +604,6 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 			Map<String, Object> model = new HashMap<>();
 
 			logger.debug("Run task script ");
-		
 
 			model.put("currentUser", userName);
 			model.put("task", task);
@@ -603,7 +613,7 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 					+ "/" + sysAdminParams.getShareContext());
 			try {
 				policyBehaviourFilter.enableBehaviour(ProjectModel.TYPE_PROJECT);
-	
+
 				scriptService.executeScript(scriptNode, ContentModel.PROP_CONTENT, model);
 			} finally {
 				policyBehaviourFilter.disableBehaviour(ProjectModel.TYPE_PROJECT);
@@ -638,25 +648,24 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 
 	/** {@inheritDoc} */
 	@Override
-	public void runFormulation(NodeRef entityNodeRef, String chainId)  {
+	public void runFormulation(NodeRef entityNodeRef, String chainId) {
 		formulate(entityNodeRef);
 	}
 
 	@Override
 	public boolean checkIsInSecurityGroup(NodeRef nodeRef, PermissionModel permissionModel) {
-		if(nodeRef!=null ) {
-			for(NodeRef groupNodeRef : permissionModel.getGroups()) {
-				String authorityName = authorityDAO.getAuthorityName(groupNodeRef);						
-				if(ProjectHelper.isRoleAuhtority(authorityName)) {
+		if (nodeRef != null) {
+			for (NodeRef groupNodeRef : permissionModel.getGroups()) {
+				String authorityName = authorityDAO.getAuthorityName(groupNodeRef);
+				if (ProjectHelper.isRoleAuhtority(authorityName)) {
 					List<NodeRef> resources = extractResources(nodeRef, Arrays.asList(groupNodeRef));
-					if(resources.contains(personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()))) {
+					if (resources.contains(personService.getPerson(AuthenticationUtil.getFullyAuthenticatedUser()))) {
 						return true;
 					}
 				}
 			}
 		}
-		
-		
+
 		return false;
 	}
 
@@ -664,21 +673,21 @@ public class ProjectServiceImpl implements ProjectService, FormulationPlugin, Se
 	public boolean accept(QName nodeType) {
 		return ProjectModel.TYPE_PROJECT.equals(nodeType);
 	}
-	
+
 	@Override
 	public TaskListDataItem createNewTask(ProjectData project) {
 		NodeRef listContainer = entityListDAO.getListContainer(project.getNodeRef());
-		
+
 		NodeRef taskList = entityListDAO.getList(listContainer, ProjectModel.TYPE_TASK_LIST);
-		
+
 		NodeRef newTaskNodeRef = entityListDAO.createListItem(taskList, ProjectModel.TYPE_TASK_LIST, null, new HashMap<>());
 
 		TaskListDataItem newTask = (TaskListDataItem) alfrescoRepository.findOne(newTaskNodeRef);
-		
+
 		project.getTaskList().add(newTask);
-		
+
 		return newTask;
-		
+
 	}
-	
+
 }

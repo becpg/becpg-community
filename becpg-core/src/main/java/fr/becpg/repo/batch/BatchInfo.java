@@ -1,5 +1,6 @@
 package fr.becpg.repo.batch;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -7,8 +8,13 @@ import org.alfresco.repo.tenant.TenantUtil;
 import org.json.JSONObject;
 import org.springframework.extensions.surf.util.I18NUtil;
 
-public class BatchInfo {
-
+public class BatchInfo implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7569652805526586359L;
+	
 	public static final int BATCH_THREAD = 3;
 	public static final int BATCH_SIZE = 15;
 
@@ -50,6 +56,12 @@ public class BatchInfo {
 	public static final String BATCH_USER = "batchUser";
 	
 	public static final String BATCH_ID = "batchId";
+	
+	public static final int LOW_PRIORITY = 2;
+	public static final int MEDIUM_PRIORITY = 1;
+	public static final int HIGH_PRIORITY = 0;
+	
+	private int priority = MEDIUM_PRIORITY;
 
 	public BatchInfo(String batchId, String batchDescId) {
 		super();
@@ -64,10 +76,18 @@ public class BatchInfo {
 		this.entityDescription = entityDescription;
 	}
 	
+	public int getPriority() {
+		return priority;
+	}
+	
+	public void setPriority(int priority) {
+		this.priority = priority;
+	}
+	
 	public String getTenant() {
 		return tenant;
 	}
-
+	
 	public String getBatchId() {
 		return batchId;
 	}
@@ -87,7 +107,7 @@ public class BatchInfo {
 	public String getEntityDescription() {
 		return entityDescription;
 	}
-
+	
 	public void enableNotifyByMail(String mailAction, String mailActionUrl) {
 		this.notifyByMail = Boolean.TRUE;
 		this.mailAction = mailAction;
@@ -133,7 +153,7 @@ public class BatchInfo {
 	public void setBatchSize(int batchSize) {
 		this.batchSize = batchSize;
 	}
-	
+
 	
 
 	public Boolean getIsCompleted() {
@@ -154,10 +174,10 @@ public class BatchInfo {
 		
 		return jsonBatch;
 	}
-	
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(batchDescId, batchId, batchSize, batchUser, mailAction, mailActionUrl, notifyByMail, runAsSystem, workerThreads);
+		return Objects.hash(priority, batchDescId, batchId, batchSize, batchUser, mailAction, mailActionUrl, notifyByMail, runAsSystem, workerThreads);
 	}
 
 	@Override
@@ -171,7 +191,7 @@ public class BatchInfo {
 		BatchInfo other = (BatchInfo) obj;
 		return Objects.equals(batchDescId, other.batchDescId) && Objects.equals(batchId, other.batchId) && batchSize == other.batchSize
 				&& Objects.equals(batchUser, other.batchUser) && Objects.equals(mailAction, other.mailAction)
-				&& Objects.equals(mailActionUrl, other.mailActionUrl) && Objects.equals(notifyByMail, other.notifyByMail)
+				&& Objects.equals(mailActionUrl, other.mailActionUrl) && Objects.equals(notifyByMail, other.notifyByMail) && Objects.equals(priority, other.priority)
 				&& Objects.equals(runAsSystem, other.runAsSystem) && workerThreads == other.workerThreads;
 	}
 

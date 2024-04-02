@@ -126,9 +126,9 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 		StandardEvaluationContext context = formulaService.createEntitySpelContext(productData);
 
 		if ((productData.getLabelClaimList() != null) && !productData.getLabelClaimList().isEmpty()) {
-			
+
 			productData.getLabelClaimList().forEach(labelClaimItem -> labelClaimItem.getMissingLabelClaims().clear());
-			
+
 			List<CompositionDataItem> compoItems = new ArrayList<>();
 
 			if (productData.hasCompoListEl(new EffectiveFilters<>(EffectiveFilters.EFFECTIVE))) {
@@ -149,13 +149,13 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 					labelClaimItem.setType((String) nodeService.getProperty(labelClaimItem.getLabelClaim(), PLMModel.PROP_LABEL_CLAIM_TYPE));
 
 					Boolean isManual = (Boolean) nodeService.getProperty(labelClaimItem.getLabelClaim(), BeCPGModel.PROP_IS_MANUAL_LISTITEM);
-					
+
 					if ((isManual != null) && isManual) {
 						labelClaimItem.setIsManual(true);
 					}
-					
-					if((labelClaimItem.getIsManual() == null) || !Boolean.TRUE.equals(labelClaimItem.getIsManual())){
-					
+
+					if ((labelClaimItem.getIsManual() == null) || !Boolean.TRUE.equals(labelClaimItem.getIsManual())) {
+
 						Boolean isPropagateUp = (Boolean) nodeService.getProperty(labelClaimItem.getLabelClaim(),
 								PLMModel.PROP_IS_CHARACT_PROPAGATE_UP);
 
@@ -194,7 +194,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				}
 
 				productData.getLabelClaimList().removeAll(toRemove);
-				
+
 				for (LabelClaimListDataItem labelClaimDataListItem : productData.getLabelClaimList()) {
 					if (!labelClaimDataListItem.getAspects().contains(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM)) {
 						labelClaimDataListItem.getAspects().add(BeCPGModel.ASPECT_DETAILLABLE_LIST_ITEM);
@@ -203,7 +203,7 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 			}
 
 			computeClaimList(productData, parser, context);
-			
+
 		}
 
 		return true;
@@ -461,10 +461,11 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 	private void addMissingLabelClaimReq(ProductData productData, ProductData partProduct, LabelClaimListDataItem labelClaimItem) {
 
 		productData.getReqCtrlList()
-				.add(new ReqCtrlListDataItem(null, RequirementType.Info,
-						MLTextHelper.getI18NMessage(MESSAGE_MISSING_CLAIM,
-								mlNodeService.getProperty(labelClaimItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME)),
-						labelClaimItem.getLabelClaim(), new ArrayList<>(Arrays.asList(partProduct.getNodeRef())), RequirementDataType.Labelclaim));
+				.add(ReqCtrlListDataItem.build().ofType(RequirementType.Info)
+						.withMessage(MLTextHelper.getI18NMessage(MESSAGE_MISSING_CLAIM,
+								mlNodeService.getProperty(labelClaimItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME)))
+						.withCharact(labelClaimItem.getLabelClaim()).ofDataType(RequirementDataType.Labelclaim)
+						.withSources(Arrays.asList(partProduct.getNodeRef())));
 
 	}
 
@@ -502,9 +503,13 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 									if (ret instanceof Boolean) {
 										labelClaimListDataItem.setIsClaimed((Boolean) ret);
 									} else {
-										labelClaimListDataItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
-										labelClaimListDataItem.setErrorLog(
-												I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault()));
+										if(ret instanceof String) {
+											labelClaimListDataItem.setLabelClaimValue((String) ret);
+										} else {
+											labelClaimListDataItem.setLabelClaimValue(LabelClaimListDataItem.VALUE_EMPTY);
+											labelClaimListDataItem.setErrorLog(
+													I18NUtil.getMessage("message.formulate.formula.incorrect.type.boolean", Locale.getDefault()));
+										}
 									}
 								}
 							}
@@ -521,11 +526,11 @@ public class LabelClaimFormulationHandler extends FormulationBaseHandler<Product
 				if (labelClaimListDataItem.getErrorLog() != null) {
 
 					productData.getReqCtrlList()
-							.add(new ReqCtrlListDataItem(null, RequirementType.Tolerated,
-									MLTextHelper.getI18NMessage(MESSAGE_LABELCLAIM_ERROR,
+							.add(ReqCtrlListDataItem.tolerated()
+									.withMessage(MLTextHelper.getI18NMessage(MESSAGE_LABELCLAIM_ERROR,
 											mlNodeService.getProperty(labelClaimListDataItem.getLabelClaim(), BeCPGModel.PROP_CHARACT_NAME),
-											labelClaimListDataItem.getErrorLog()),
-									labelClaimListDataItem.getLabelClaim(), new ArrayList<>(), RequirementDataType.Labelclaim));
+											labelClaimListDataItem.getErrorLog()))
+									.withCharact(labelClaimListDataItem.getLabelClaim()).ofDataType(RequirementDataType.Labelclaim));
 				}
 
 			}

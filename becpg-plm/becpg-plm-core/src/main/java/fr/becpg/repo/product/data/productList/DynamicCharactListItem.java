@@ -348,6 +348,12 @@ public class DynamicCharactListItem extends BeCPGDataObject implements Synchroni
 		
 	}
 	
+
+	public Boolean isColumn() {
+		return columnName!=null && !columnName.isBlank();
+	}
+
+	
 	/**
 	 * <p>Constructor for DynamicCharactListItem.</p>
 	 */

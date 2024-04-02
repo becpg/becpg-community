@@ -58,6 +58,9 @@ else if (args["user"] != null)
        if("GROUP_OlapUser" == groups[i].properties["cm:authorityName"]){
     	   isOlapUser = true;
        }
+       if("GROUP_AiUser" == groups[i].properties["cm:authorityName"]){
+    	  model.capabilities["isAIUser"] = true;
+       }
        if("GROUP_ALFRESCO_ADMINISTRATORS" == groups[i].properties["cm:authorityName"]){
     	   isAdmin = true;
        }
@@ -74,6 +77,11 @@ else if (args["user"] != null)
    var olapSSOUrl = bcpg.getOlapSSOUrl();
    if(olapSSOUrl!=null && isOlapUser){
        model.capabilities["olapSSOUrl_"+olapSSOUrl] = true;
+   }
+   
+    var authTocken = bcpg.getBeCPGAuthTocken();
+   if(authTocken!=null){
+       model.capabilities["beCPGAuthTocken_"+authTocken] = true;
    }
     
   var personNodeRef = object.nodeRef;
@@ -94,7 +102,7 @@ else if (args["user"] != null)
   }
 	
 	model.capabilities["isLicenseValid"] = !bcpg.isShowLicenceWarning()  || bcpg.isLicenseValid() || !isAdmin;
-	model.capabilities["isMemberOfLicenseGroup"] = !bcpg.isShowUnauthorizedWarning() || userId == "admin"|| isMemberOfAllowedGroup;
+	model.capabilities["isMemberOfLicenseGroup"] = !bcpg.isShowUnauthorizedWarning() || userId == "admin"|| userId.endsWith("@becpg.fr") || isMemberOfAllowedGroup;
 
   model.immutableProperties = people.getImmutableProperties(userId);
 }

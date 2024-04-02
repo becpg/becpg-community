@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.forum.CommentService;
@@ -24,6 +25,11 @@ import fr.becpg.model.SystemState;
 import fr.becpg.repo.activity.EntityActivityService;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.activity.helper.AuditActivityHelper;
+import fr.becpg.repo.audit.model.AuditQuery;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
+import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.entity.version.EntityVersionService;
 import fr.becpg.repo.product.data.FinishedProductData;
 import fr.becpg.repo.product.data.LocalSemiFinishedProductData;
@@ -51,6 +57,9 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 
 	@Autowired
 	private EntityVersionService entityVersionService;
+	
+	@Autowired
+	protected BeCPGAuditService beCPGAuditService;
 
 	protected NodeRef getActivityList(NodeRef productNodeRef) {
 		NodeRef listNodeRef = null;
@@ -62,45 +71,26 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 
 	}
 
-	protected List<NodeRef> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
-		 beCPGCacheService.clearAllCaches();
-			
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			List<NodeRef> ret = new ArrayList<>();
-			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
-			if (activityListNodeRef != null) {
-				// All activities of product
-				ret = sortMap != null ? entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST, sortMap)
-						: entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-	
-				ret.forEach(tmp -> {
-					logger.info("Data: " + nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_DATA) + " user: "
-							+ nodeService.getProperty(tmp, BeCPGModel.PROP_ACTIVITYLIST_USERID));
-				});
-	
-			} else {
-				logger.error("No activity list");
-			}
-	
-			return ret;
-		}, false,true);
+	protected List<ActivityListDataItem> getActivities(NodeRef entityNodeRef, Map<String, Boolean> sortMap) {
+		AuditQuery auditFilter = AuditQuery.createQuery().sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
+				.filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
+
+		return transactionService.getRetryingTransactionHelper().doInTransaction(
+				() -> beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream()
+						.map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList()),
+				false, true);
+
 	}
 
-	protected Map<NodeRef, ActivityListDataItem> getActivityListDataItems(NodeRef entityNodeRef) {
+	protected List<ActivityListDataItem> getActivityListDataItems(NodeRef entityNodeRef) {
 			
 		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-		Map<NodeRef, ActivityListDataItem> ret = new HashMap<>();
-		NodeRef activityListNodeRef = getActivityList(entityNodeRef);
-		if (activityListNodeRef != null) {
-			// All activities of product
-			entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST)
-					.forEach(tmp -> ret.put(tmp, (ActivityListDataItem) alfrescoRepository.findOne(tmp)));
+			
+			AuditQuery auditFilter = AuditQuery.createQuery().asc(false).dbAsc(false)
+					.sortBy(ActivityAuditPlugin.PROP_CM_CREATED).filter("entityNodeRef", entityNodeRef.toString());
 
-		} else {
-			logger.error("No activity list");
-		}
-
-		return ret;
+			return beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter).stream().map(json -> AuditActivityHelper.parseActivity(json)).collect(Collectors.toList());
+			
 		}, false,true);
 	}
 
@@ -251,8 +241,8 @@ public class PlmActivityServiceIT extends AbstractFinishedProductTest {
 		}, false, true);
 
 		// Activity recorded on branch
-		assertEquals("Check update Activity", 1, (int) getActivityListDataItems(productNodeRef).entrySet().stream()
-				.filter(el -> el.getValue().getActivityType().equals(ActivityType.State)).count());
+		assertEquals("Check update Activity", 1, (int) getActivityListDataItems(productNodeRef).stream()
+				.filter(el -> el.getActivityType().equals(ActivityType.State)).count());
 
 	}
 

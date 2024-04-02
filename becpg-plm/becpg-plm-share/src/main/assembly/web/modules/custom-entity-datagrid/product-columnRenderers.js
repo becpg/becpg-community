@@ -289,7 +289,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
             
-            var title = Alfresco.util.encodeHTML(data.metadata);
+            var title = "";
             var cssClass = data.metadata;
             var isFormulated = oRecord.getData("itemData")["prop_bcpg_physicoChemIsFormulated"].value;
 			var error = extractErrorMessage(oRecord.getData("itemData")["dt_bcpg_reqCtrlList"], "Physicochem");
@@ -321,7 +321,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
             
-            var title = Alfresco.util.encodeHTML(data.metadata);
+            var title = "";
 			var cssClass = data.metadata;
 			if (oRecord.getData("itemData")["prop_bcpg_nutListIsFormulated"]) {
 				var message = extractErrorMessage(oRecord.getData("itemData")["dt_bcpg_reqCtrlList"], "Nutrient");
@@ -360,7 +360,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 
 			if ((oColumn.label != null && oColumn.label.indexOf && oColumn.label.indexOf("100g") > 0 )
 			|| (oColumn.field == "prop_bcpg_nutListValuePerServing")) {
-				unit = unit.replace("/100g", "");
+				unit = unit.replace("/100g", "").replace("/100ml", "");
 			}
 
 			if (data.value != null) {
@@ -488,7 +488,8 @@ if (beCPG.module.EntityDataGridRenderers) {
       renderer : function(oRecord, data, label, scope, i, ii, elCell, oColumn) {
       	if(data.value != null){
 			var forceUnit=oColumn.forceUnit; 
-
+			
+			
 			if (oColumn.hidden) {
 				oColumn.showAfterRender = true;
 			}
@@ -507,8 +508,13 @@ if (beCPG.module.EntityDataGridRenderers) {
       		
       		
       		if(oRecord.getData("itemType") == "total"){
-				  return '<span class="total">'+beCPG.util.sigFigs(qty,sigFig).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit+"</span>";
+				  return '<span class="total">'+beCPG.util.sigFigs(qty,7).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit+"</span>";
 			 }
+			 
+			 if(oColumn.numberFormat){
+		        return  beCPG.util.formatNumber(oColumn.numberFormat, data.value)+ unit;
+		    }
+
       		
       		return Alfresco.util.encodeHTML(beCPG.util.sigFigs(qty,sigFig).toLocaleString( beCPG.util.getJSLocale(), { maximumFractionDigits: 20} ) + unit);
       	}      
@@ -552,7 +558,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
     	  
-          var title = Alfresco.util.encodeHTML(data.metadata);
+          var title = "";
           var cssClass = data.metadata;
           
 		  if (oRecord.getData("itemData")["prop_bcpg_costListIsFormulated"]) {
@@ -586,7 +592,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 				url = beCPG.util.entityURL(data.siteId, data.value);
 			}
     	  
-          var title = Alfresco.util.encodeHTML(data.metadata);
+          var title = "";
           var cssClass = data.metadata;
           
           if (oRecord.getData("itemData")["prop_bcpg_lcaListIsFormulated"]) {
@@ -943,7 +949,7 @@ if (beCPG.module.EntityDataGridRenderers) {
 						
 				
 					for (var i = 0; i < json.comp.length; i++) {
-						if (json.comp[i].value != null && json.comp[i].value !== undefined) {
+						if (json.comp[i].value) {
 
 							var newColumn = scope.widgets.dataTable.getColumn("dynCompareWith-" + json.comp[i].nodeRef);
 							scope.widgets.dataTable.updateCell(oRecord, newColumn, {
@@ -1220,23 +1226,78 @@ if (beCPG.module.EntityDataGridRenderers) {
 		    if(!oColumn.numberFormat){
 		       oColumn.numberFormat = NUMBER_FORMAT;
 		    }
-		
 		   
 		    if(oRecord.getData("itemData")["isMultiLevel"]){
+			
+				var parts = oRecord.getData("itemData")["path"].split("/");
+				var lastPart = parts[parts.length - 1];
+				
+		        if( scope.subCompCache!=null && scope.subCompCache["idx_"+oColumn.getKeyIndex()+lastPart]!=null){
+					return scope.subCompCache["idx_"+oColumn.getKeyIndex()+lastPart];
+                }
 		        if( scope.subCache!=null && scope.subCache["idx_"+oColumn.getKeyIndex()]!=null){
 		              for (var j = 0; j <  scope.subCache["idx_"+oColumn.getKeyIndex()].length; j++) {
                         var path =  scope.subCache["idx_"+oColumn.getKeyIndex()][j].path;
                         if(path == oRecord.getData("itemData")["path"] && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value  && scope.subCache["idx_"+oColumn.getKeyIndex()][j].value !=null){
                         	 return  beCPG.util.formatNumber(oColumn.numberFormat, scope.subCache["idx_"+oColumn.getKeyIndex()][j].value);	  
-             			
                         }
                     }
                 }
 		        return "";
 		    }
+
+			if (data.value && data.value.indexOf && data.value.indexOf("\"comp\":") > -1) {
+				var json = JSON.parse(data.value);
+				if (json) {
+					var ret = "", z = 0, refValue = null, className, currValue = null;
+					json.comp.sort(function (a, b) {
+						if( a.name == null){
+								return -1;
+						} else if(b.name == null){
+								return 1;
+						}
+					    return a.name.localeCompare(b.name);
+					});
+					var refTab = [];
+					for (z = 0; z < json.comp.length; z++) {
+						var compareItem = json.comp[z];
+						if (compareItem) {
+							if (compareItem.value) {
+								if (z == 0) {
+									refValue = beCPG.util.sigFigs(parseFloat(compareItem.value),4);
+									ret += '<span>' +  beCPG.util.formatNumber(oColumn.numberFormat, compareItem.value) + '</span>';
+								} else {
+									ret += extractComparison(refValue, compareItem, oColumn);
+								}
+							}
+							if (compareItem.sub) {
+								if (!scope.subCompCache) {
+                                	scope.subCompCache = [];
+                           		}
+								for (var cx = 0; cx < compareItem.sub.length; cx++) {
+									var subItem = compareItem.sub[cx];
+									if (z == 0) {
+										refTab[cx] = subItem.value;
+									} else {
+										var value = refTab[cx];
+										var compValue = '<span>' +  beCPG.util.formatNumber(oColumn.numberFormat, value) + '</span>';
+										value = beCPG.util.sigFigs(parseFloat(compareItem.value),4);
+										compValue += extractComparison(value, subItem, oColumn);
+										
+										var parts = subItem.path.split("/");
+										var lastPart = parts[parts.length - 1];
+										scope.subCompCache["idx_"+oColumn.getKeyIndex()+lastPart] = compValue;
+									}
+								}
+							}
+						}
+					}
+					return ret;
+				}
+			}
 		    
 		    if (data.value != null) {
-			    if(!oRecord.getData("itemData")["isMultiLevel"]){ 
+			    if(!oRecord.getData("itemData")["isMultiLevel"]) {
     			    if (data.value.indexOf && data.value.indexOf("\"sub\":") > -1) {
     			        var json = JSON.parse(data.value);
                         if (json) {
@@ -1252,45 +1313,6 @@ if (beCPG.module.EntityDataGridRenderers) {
                         
     			    }
 			    }
-			    
-				if (data.value.indexOf && data.value.indexOf("\"comp\":") > -1) {
-					var json = JSON.parse(data.value);
-					if (json) {
-						var ret = "", z = 0, refValue = null, className, currValue = null;
-						json.comp.sort(function (a, b) {
-							if( a.name == null){
-									return -1;
-							} else if(b.name == null){
-									return 1;
-							}
-						    return a.name.localeCompare(b.name);
-						});
-						for (z = 0; z < json.comp.length; z++) {
-							if (json.comp[z].value) {
-								if (z == 0) {
-									refValue = beCPG.util.sigFigs(parseFloat(json.comp[z].value),4);
-									ret += '<span>' +  beCPG.util.formatNumber(oColumn.numberFormat, json.comp[z].value) + '</span>';
-								} else {
-									currValue = beCPG.util.sigFigs(parseFloat(json.comp[z].value),4);
-									if (currValue != Number.NaN && refValue != Number.NaN) {
-										if(refValue == currValue){
-											className = "dynaCompEquals";
-										} else {
-											className = (refValue < currValue) ? "dynaCompIncrease" : "dynaCompDecrease";
-										}
-									} else {
-										className = "dynaCompNone";
-									}
-									ret += '<span  class="' + className + '" >(<a title="' + json.comp[z].name + '" href="'
-											+ beCPG.util.entityURL(json.comp[z].siteId, json.comp[z].nodeRef, json.comp[z].itemType) + '">'
-											+  beCPG.util.formatNumber(oColumn.numberFormat,json.comp[z].value) + '</a>)</span>';
-								}
-							}
-						}
-						return ret;
-					}
-				}
-				
 				if(data.value!=null){
 				   return  beCPG.util.formatNumber(oColumn.numberFormat, data.value); 
 				}
@@ -1300,6 +1322,23 @@ if (beCPG.module.EntityDataGridRenderers) {
 		}
 
 	});
+	
+	function extractComparison(refValue, comparisonItem, oColumn) {
+		var currValue = beCPG.util.sigFigs(parseFloat(comparisonItem.value),4);
+		var className = null;
+		if (currValue != Number.NaN && refValue != Number.NaN) {
+			if(refValue == currValue){
+				className = "dynaCompEquals";
+			} else {
+				className = (refValue < currValue) ? "dynaCompIncrease" : "dynaCompDecrease";
+			}
+		} else {
+			className = "dynaCompNone";
+		}
+		return '<span  class="' + className + '" >(<a title="' + comparisonItem.name + '" href="'
+				+ beCPG.util.entityURL(comparisonItem.siteId, comparisonItem.nodeRef, comparisonItem.itemType) + '">'
+				+  beCPG.util.formatNumber(oColumn.numberFormat,comparisonItem.value) + '</a>)</span>';
+	}
 
 	YAHOO.Bubbling.fire("registerDataGridRenderer", {
 		propertyName : "bcpg:compoListQty",
