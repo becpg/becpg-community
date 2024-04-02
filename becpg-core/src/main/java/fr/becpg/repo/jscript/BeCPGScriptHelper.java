@@ -112,6 +112,9 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 	private static Log logger = LogFactory.getLog(BeCPGScriptHelper.class);
 
+	// Matches the counter at the end of the string (exists the prefix and keeps the numbers at the end)
+	private static final Pattern END_COUNTER_PATTERN = Pattern.compile("\\d+$");
+
 	private NodeService nodeService;
 
 	private AutoNumService autoNumService;
@@ -310,11 +313,8 @@ public final class BeCPGScriptHelper extends BaseScopableProcessorExtension {
 
 		String autoNumValue = getAutoNumValue(className, propertyName);
 
-		// Define a regular expression pattern to match the counter at the end of the string
-		Pattern pattern = Pattern.compile("\\d+$");
-
 		// Create a matcher object to find the pattern in the input string
-		Matcher matcher = pattern.matcher(autoNumValue);
+		Matcher matcher = END_COUNTER_PATTERN.matcher(autoNumValue);
 
 		// Check if the pattern is found
 		if (matcher.find()) {
