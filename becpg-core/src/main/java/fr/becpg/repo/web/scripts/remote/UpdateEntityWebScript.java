@@ -26,9 +26,12 @@ import org.alfresco.repo.version.VersionBaseModel;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
 import org.alfresco.service.cmr.version.VersionType;
+import org.springframework.extensions.webscripts.Status;
+import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
 
+import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.entity.remote.RemoteEntityFormat;
 import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.entity.version.EntityVersionService;
@@ -55,6 +58,10 @@ public class UpdateEntityWebScript extends AbstractEntityWebScript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse resp) throws IOException {
 		NodeRef entityNodeRef = findEntity(req);
+		
+		if (nodeService.hasAspect(entityNodeRef, BeCPGModel.ASPECT_ARCHIVED_ENTITY)) {
+			throw new WebScriptException(Status.STATUS_UNAUTHORIZED, "You cannot update this entity since it is archived");
+		}
 
 		if ("true".equals(req.getParameter(PARAM_CREATE_VERSION))) {
 			String description = "";

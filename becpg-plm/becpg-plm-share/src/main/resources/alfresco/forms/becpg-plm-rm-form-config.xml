@@ -98,6 +98,9 @@
           <show for-mode="view" force="false" id="bcpg:nutrientProfilingDetails"/>
           <show force="false" id="bcpg:nutrientProfileCategory"/>
           <show force="false" id="bcpg:nutrientProfileVersion"/>
+          <show force="false" id="ghs:sdsStandardCode"/>
+          <show force="false" id="ghs:sdsSheetNumber"/>
+          <show force="false" id="ghs:sdsSheetEffectiveDate"/>
           <show force="false" id="ghs:sdsSignalWord"/>
           <show force="false" id="ghs:sdsPictograms"/>
           <show force="false" id="ghs:sdsHazardStatements"/>
@@ -384,6 +387,9 @@
             </control>
           </field>
           <set appearance="bordered-panel" id="security" label-id="becpg.forms.set.security.label" template="/org/alfresco/components/form/2-column-set.ftl"/>
+          <field id="ghs:sdsStandardCode" mandatory="false" read-only="false" set="security"/>
+          <field id="ghs:sdsSheetNumber" mandatory="false" read-only="false" set="security"/>
+          <field id="ghs:sdsSheetEffectiveDate" mandatory="false" read-only="false" set="security"/>
           <field id="ghs:sdsSignalWord" mandatory="false" read-only="false" set="security"/>
           <field id="ghs:sdsPictograms" mandatory="false" read-only="false" set="security">
             <control template="/org/alfresco/components/form/controls/autocomplete-association.ftl">
@@ -1297,6 +1303,9 @@
           <show force="true" id="pack:tareUnit"/>
           <show force="true" id="bcpg:nutrientProfileCategory"/>
           <show force="true" id="bcpg:nutrientProfileVersion"/>
+          <show force="true" id="ghs:sdsStandardCode"/>
+          <show force="true" id="ghs:sdsSheetNumber"/>
+          <show force="true" id="ghs:sdsSheetEffectiveDate"/>           
           <show force="true" id="ghs:sdsSignalWord"/>
           <show force="true" id="ghs:sdsPictograms"/>
           <show force="true" id="ghs:sdsHazardStatements"/>

@@ -172,6 +172,10 @@ function isExternalUser(user){
 }
 
 
+function isAIUser(user){
+    return user.capabilities["isAIUser"] !=null && user.capabilities["isAIUser"] == true;
+}
+
 
 function isLanguageMgr(user){
     return user.capabilities["isbeCPGLanguageMgr"] !=null && user.capabilities["isbeCPGLanguageMgr"] == true;

@@ -37,6 +37,8 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 	private static final String STEPS_MAX = "stepsMax";
 
 	private static final String STEP_COUNT = "stepCount";
+	
+	private static final String STEP_DESC_ID = "stepDescId";
 
 	private static final String UNKNOWN = "unknown";
 
@@ -75,7 +77,7 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 					jsonBatch.put(BatchInfo.BATCH_ID, batch.getBatchId());
 					jsonBatch.put(BatchInfo.BATCH_USER, batch.getBatchUser());
 					String label = I18NUtil.getMessage(batch.getBatchDescId(), entityDescription);
-
+					
 					jsonBatch.put(BatchInfo.BATCH_DESC_ID,label!=null ? label :  batch.getBatchDescId());
 					jsonBatches.put(jsonBatch);
 				}
@@ -128,6 +130,11 @@ public class BatchQueueServiceWebScript extends AbstractEntityWebScript {
 			last.put(BatchInfo.BATCH_USER, batchInfo.getString(BatchInfo.BATCH_USER));
 			
 			String descriptionLabel = I18NUtil.getMessage(batchInfo.getString(BatchInfo.BATCH_DESC_ID), entityDescription);
+			
+			if (batchInfo.has(STEP_DESC_ID) && batchInfo.getString(STEP_DESC_ID) != null) {
+				descriptionLabel += " - " + I18NUtil.getMessage(batchInfo.getString(STEP_DESC_ID));
+			}
+			
 			last.put(BatchInfo.BATCH_DESC_ID, descriptionLabel != null ? descriptionLabel : batchInfo.getString(BatchInfo.BATCH_DESC_ID));
 			
 			

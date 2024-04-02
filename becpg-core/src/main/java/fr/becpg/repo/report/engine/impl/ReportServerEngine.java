@@ -61,7 +61,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 	private ContentService contentService;
 
 	private EntityService entityService;
-
+	
 	private String instanceName;
 	
 	private SystemConfigurationService systemConfigurationService;
@@ -127,42 +127,40 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 			watch = new StopWatch();
 			watch.start();
 		}
-
+		
 		final ReportFormat format = (ReportFormat) params.get(ReportParams.PARAM_FORMAT);
-
+		
 		if (format == null) {
 			throw new IllegalArgumentException("Format is a mandatory param");
 		}
-
+		
 		executeInSession(reportSession -> {
-
+			
 			String templateId = (instanceName != null ? instanceName : "") + tplNodeRef.toString();
-
+			
 			sendTplFile(reportSession, templateId, tplNodeRef);
-
+			
 			@SuppressWarnings("unchecked")
 			List<NodeRef> associatedTplFiles = (List<NodeRef>) params.get(ReportParams.PARAM_ASSOCIATED_TPL_FILES);
-
+			
 			if (associatedTplFiles != null) {
 				for (NodeRef nodeRef : associatedTplFiles) {
 					String name = (String) nodeService.getProperty(nodeRef, ContentModel.PROP_NAME);
 					if (name.startsWith("logo")) {
-						EntityImageInfo logoImageInfo = new EntityImageInfo(name, nodeRef);
-						logoImageInfo.setName(name);
-						reportData.getImages().add(logoImageInfo);
+						reportData.getImages().add(new EntityImageInfo(name, nodeRef));
 					} else {
 						String assocFileId = getAssociatedTplFileId(templateId, name);
 						sendTplFile(reportSession, assocFileId, nodeRef);
 					}
 				}
 			}
-
+			
 			reportSession.setTemplateId(templateId);
-
+			
 			for (EntityImageInfo entry : reportData.getImages()) {
 				byte[] imageBytes = entityService.getImage(entry.getImageNodeRef());
 				if (imageBytes != null) {
-
+					
 					if (imageBytes.length > reportImageMaxSizeInBytes()) {
 						
 						reportData.getLogs()
@@ -171,7 +169,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 												FileUtils.byteCountToDisplaySize(imageBytes.length),
 												FileUtils.byteCountToDisplaySize(reportImageMaxSizeInBytes())), List.of(tplNodeRef)));
 					}
-
+					
 					try (InputStream in = new ByteArrayInputStream(imageBytes)) {
 						sendImage(reportSession, entry.getId(), in);
 					} catch (ReportException e) {
@@ -179,14 +177,14 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 					}
 				}
 			}
-
+			
 			reportSession.setFormat(format.toString());
 			reportSession.setLang((String) params.get(ReportParams.PARAM_LANG));
-
+			
 			byte[] datasourceBytes = reportData.getXmlDataSource().asXML().getBytes();
-
+			
 			try (InputStream in = new ByteArrayInputStream(datasourceBytes)) {
-
+				
 				if (datasourceBytes.length > reportDatasourceMaxSizeInBytes()) {
 					reportData.getLogs()
 							.add(new ReportableError(ReportableErrorType.WARNING, "Datasource size exceeds: " + params,
@@ -194,9 +192,9 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 											FileUtils.byteCountToDisplaySize(datasourceBytes.length),
 											FileUtils.byteCountToDisplaySize(reportDatasourceMaxSizeInBytes())), List.of(tplNodeRef)));
 				}
-
+				
 				List<String> errors = generateReport(reportSession, in, out);
-
+				
 				for (String error : errors) {
 					reportData.getLogs().add(
 							new ReportableError(ReportableErrorType.ERROR, error,
@@ -204,6 +202,7 @@ public class ReportServerEngine extends AbstractBeCPGReportClient implements BeC
 				}
 			}
 		});
+
 
 		if (logger.isDebugEnabled() && (watch != null)) {
 			watch.stop();

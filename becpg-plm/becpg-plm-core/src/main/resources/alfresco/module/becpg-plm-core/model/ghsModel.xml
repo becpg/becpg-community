@@ -80,6 +80,19 @@
 				</list>
 			</parameter>
 		</constraint>
+		
+		<constraint name="ghs:sdsStandardCodes" type="fr.becpg.repo.dictionary.constraint.DynListConstraint">
+			<parameter name="path">
+				<list>
+					<value>classpath:/beCPG/databases/gs1/gs1_codes_11_2023.csv</value>
+				</list>
+			</parameter>
+			<parameter name="constraintFilter">
+				<value>SDSStandardCode</value>
+			</parameter>
+		</constraint>
+		
+		
 	</constraints>
 
 	<types>
@@ -234,6 +247,30 @@
 
 		<aspect name="ghs:sdsAspect">
 			<properties>
+				<property name="ghs:sdsStandardCode">
+					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
+				    <constraints>
+						<constraint ref="ghs:sdsStandardCodes" />
+					</constraints>
+				</property>
+				<property name="ghs:sdsSheetNumber">
+					<type>d:text</type>
+					<index enabled="true">
+					  <tokenised>false</tokenised>
+					  <facetable>true</facetable>
+				    </index>
+				</property>
+				<property name="ghs:sdsSheetEffectiveDate">
+					<type>d:date</type>
+					<index enabled="true">
+						<tokenised>false</tokenised>
+						<facetable>false</facetable>
+					</index>
+				</property>
 				<property name="ghs:sdsSafetyInstructions">
 					<type>d:text</type>
 				</property>

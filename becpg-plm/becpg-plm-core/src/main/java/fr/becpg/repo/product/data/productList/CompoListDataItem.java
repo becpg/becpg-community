@@ -348,6 +348,30 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 		super();
 	}
 
+	public static CompoListDataItem build() {
+		return new CompoListDataItem();
+	}
+
+	public CompoListDataItem withUnit(ProductUnit unit) {
+		this.compoListUnit = unit;
+		return this;
+	}
+
+	public CompoListDataItem withQtyUsed(Double qtySubFormula) {
+		this.qtySubFormula = qtySubFormula;
+		return this;
+	}
+
+	public CompoListDataItem withProduct(NodeRef product) {
+		this.product = product;
+		return this;
+	}
+
+	public CompoListDataItem withDeclarationType(DeclarationType declType) {
+		this.declType = declType;
+		return this;
+	}
+
 	/**
 	 * <p>
 	 * Constructor for CompoListDataItem.
@@ -375,6 +399,7 @@ public class CompoListDataItem extends AbstractEffectiveVariantListDataItem
 	 * @param product
 	 *            a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
+	@Deprecated
 	public CompoListDataItem(NodeRef nodeRef, CompoListDataItem parent, Double qty, Double qtySubFormula, ProductUnit compoListUnit, Double lossPerc,
 			DeclarationType declType, NodeRef product) {
 		super();

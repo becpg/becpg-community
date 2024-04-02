@@ -32,6 +32,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -100,15 +101,9 @@ public class ProductServiceIT extends PLMBaseTestCase {
 	 */
 	@Test
 	public void testCreateProduct() {
-
-		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-
-			BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
-
-			return null;
-
-		}, false, true);
-
+		Assert.assertNotNull(inWriteTx(() -> {
+			return BeCPGPLMTestHelper.createRawMaterial(getTestFolderNodeRef(), "MP test report");
+		}));
 	}
 
 	/**
@@ -478,7 +473,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			CompoListDataItem wUsed0 = wUsedProducts.get(0);
 
 			assertEquals("check PF", finishedProductNodeRef, wUsed0.getProduct());
-			assertEquals("check PF level", (Integer)1, wUsed0.getDepthLevel());
+			assertEquals("check PF level", (Integer) 1, wUsed0.getDepthLevel());
 			assertEquals("check PF qty", 3d, wUsed0.getQty());
 			assertEquals("check PF qty sub formula", 0d, wUsed0.getQtySubFormula());
 			assertEquals("check PF unit", ProductUnit.kg, wUsed0.getCompoListUnit());
@@ -533,7 +528,7 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			return alfrescoRepository.create(getTestFolderNodeRef(), packagingMaterial).getNodeRef();
 
 		}, false, true);
-		
+
 		NodeRef finishedProductNodeRef1 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			/*-- Create finished product --*/
 			logger.debug("/*-- Create finished product --*/");
@@ -543,10 +538,10 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			List<PackagingListDataItem> packagingList1 = new ArrayList<>();
 			packagingList1.add(new PackagingListDataItem(null, 1d, ProductUnit.P, PackagingLevel.Primary, true, packagingMaterialNodeRef));
 			finishedProduct1.getPackagingListView().setPackagingList(packagingList1);
-			 return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
+			return alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct1).getNodeRef();
 		}, false, true);
-		
-		NodeRef finishedProductNodeRef2 =  transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
+
+		NodeRef finishedProductNodeRef2 = transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			FinishedProductData finishedProduct2 = new FinishedProductData();
 			finishedProduct2.setName("Finished Product");
 			List<PackagingListDataItem> packagingList2 = new ArrayList<>();
@@ -554,11 +549,10 @@ public class ProductServiceIT extends PLMBaseTestCase {
 			finishedProduct2.getPackagingListView().setPackagingList(packagingList2);
 			alfrescoRepository.create(getTestFolderNodeRef(), finishedProduct2).getNodeRef();
 
-
 			return null;
 
 		}, false, true);
-		
+
 		transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
 			List<PackagingListDataItem> wUsedProducts = getWUsedPackagingList(packagingMaterialNodeRef);
 

@@ -11,6 +11,17 @@
    font-size: 108%;
 }
 
+.warning-bar .licence-warning
+{
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: 99;
+  opacity: 0.8;
+  text-align: center !important;
+  padding-top: 200px !important;
+}
+
 .warning-bar .warnings a {
 	font-weight: bold;
 }

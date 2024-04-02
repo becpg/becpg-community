@@ -1813,6 +1813,7 @@ public class DiffMatchPatch {
      * @return LinkedList of Patch objects.
      * @deprecated Prefer patch_make(String text1, LinkedList&lt;Diff&gt; diffs).
      */
+    @Deprecated
     public LinkedList<Patch> patch_make(String text1, String text2,
             LinkedList<Diff> diffs) {
         return patch_make(text1, diffs);
