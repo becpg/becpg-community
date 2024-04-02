@@ -3,6 +3,9 @@
  */
 package fr.becpg.repo.product.data;
 
+import java.util.List;
+
+import fr.becpg.repo.product.data.productList.PackagingListDataItem;
 import fr.becpg.repo.repository.annotation.AlfProp;
 import fr.becpg.repo.repository.annotation.AlfQname;
 import fr.becpg.repo.repository.annotation.AlfType;
@@ -23,8 +26,25 @@ public class PackagingKitData extends ProductData  {
 	private static final long serialVersionUID = 6154279789978582886L;
 
 	
-	Integer palletBoxesPerPallet;
+	private Integer palletBoxesPerPallet;
+	
+	
 
+	public static PackagingKitData build() {
+		return new PackagingKitData();
+	}
+
+	public PackagingKitData withName(String name) {
+		setName(name);
+		return this;
+	}
+
+
+	public PackagingKitData withPackagingList(List<PackagingListDataItem> packagingList) {
+		getPackagingListView().setPackagingList(packagingList);
+		return this;
+	}
+	
 	/**
 	 * <p>Getter for the field <code>palletBoxesPerPallet</code>.</p>
 	 *

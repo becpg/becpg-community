@@ -30,11 +30,12 @@
 
 	<!-- DataList Extractor -->
 
-	<bean id="activityListExtractor" class="fr.becpg.repo.activity.extractor.ActivityListExtractor" parent="simpleExtractor">
-		<property name="entityActivityService" ref="entityActivityService" />
-		<property name="dictionaryService" ref="cachedDictionaryService" />
-		<property name="securityService" ref="securityService" />
-		<property name="defaultExtractor" value="false" />
+	<bean id="auditActivityExtractor" class="fr.becpg.repo.activity.extractor.AuditActivityExtractor" init-method="init">
+		<property name="dataListExtractorFactory" ref="dataListExtractorFactory" />
+		<property name="beCPGAuditService" ref="beCPGAuditService" />
+		<property name="serviceRegistry" ref="ServiceRegistry" />
+		<property name="attributeExtractorService" ref="attributeExtractorService" />
+		<property name="entityActivityExtractorService" ref="entityActivityExtractorService" />
 	</bean>
 	
 	<!-- Job  -->

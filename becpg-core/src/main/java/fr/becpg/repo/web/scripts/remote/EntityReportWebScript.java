@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.service.cmr.repository.ContentReader;

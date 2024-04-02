@@ -21,8 +21,10 @@ package fr.becpg.repo.product.formulation;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 
@@ -63,7 +65,6 @@ import fr.becpg.repo.product.data.SemiFinishedProductData;
 import fr.becpg.repo.product.data.constraints.PackagingLevel;
 import fr.becpg.repo.product.data.constraints.ProductUnit;
 import fr.becpg.repo.product.data.constraints.RequirementDataType;
-import fr.becpg.repo.product.data.constraints.RequirementType;
 import fr.becpg.repo.product.data.packaging.VariantPackagingData;
 import fr.becpg.repo.product.data.productList.CompoListDataItem;
 import fr.becpg.repo.product.data.productList.DynamicCharactExecOrder;
@@ -95,6 +96,8 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 	static {
 		SpelHelper
 				.registerShortcut(new SpelShortcut("cost\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "costList.^[cost.toString() == '$1']"));
+		SpelHelper
+		.registerShortcut(new SpelShortcut("lca\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "lcaList.^[lca.toString() == '$1']"));
 		SpelHelper.registerShortcut(new SpelShortcut("nut\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "nutList.^[nut.toString() == '$1']"));
 		SpelHelper.registerShortcut(
 				new SpelShortcut("allergen\\['(workspace://SpacesStore/[a-z0-9A-Z\\\\-]*)'\\]", "allergenList.^[allergen.toString() == '$1']"));
@@ -253,20 +256,16 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 
 										JSONObject jsonTree = extractJSONTree(productData, dataListItem, value, exp);
 										String jsonValue = jsonTree.toString();
-										
+
 										if ((jsonValue.length() > LargeTextHelper.TEXT_SIZE_LIMIT)) {
 											dataListItem.getExtraProperties().put(columnName, (Serializable) value);
-											
-											
+
 											productData.getReqCtrlList()
-											.add(new ReqCtrlListDataItem(
-													null, RequirementType.Info, MLTextHelper.getI18NMessage("message.formulate.formula.toolong",
-															dynamicCharactListItem.getTitle()),
-													null, new ArrayList<>(), RequirementDataType.Formulation));
-											
-											
-											
-											
+													.add(ReqCtrlListDataItem.info().withMessage(MLTextHelper
+															.getI18NMessage("message.formulate.formula.toolong", dynamicCharactListItem.getTitle()))
+															.ofDataType(RequirementDataType.Formulation));
+
+
 										} else {
 											dataListItem.getExtraProperties().put(columnName, jsonTree.toString());
 											if (logger.isDebugEnabled()) {
@@ -326,10 +325,11 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 						dynamicCharactListItem.setErrorLog(e.getLocalizedMessage());
 
 						productData.getReqCtrlList()
-								.add(new ReqCtrlListDataItem(
-										null, RequirementType.Forbidden, MLTextHelper.getI18NMessage("message.formulate.formula.error",
-												dynamicCharactListItem.getTitle(), e.getLocalizedMessage()),
-										null, new ArrayList<>(Arrays.asList(productData.getNodeRef())), RequirementDataType.Formulation));
+								.add(ReqCtrlListDataItem.info()
+										.withMessage(MLTextHelper.getI18NMessage("message.formulate.formula.error", dynamicCharactListItem.getTitle(),
+												e.getLocalizedMessage()))
+										.withSources(Arrays.asList(productData.getNodeRef())).ofDataType(RequirementDataType.Formulation));
+
 
 						if (logger.isDebugEnabled()) {
 							logger.warn("Error in formula : [" + dynamicCharactListItem.getTitle() + "] - " + dynamicCharactListItem.getFormula());
@@ -363,12 +363,11 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		if (dataListItem instanceof PackagingListDataItem) {
 			VariantPackagingData variantPackagingData = productData.getDefaultVariantPackagingData();
 
-			if (ProductUnit.PP.equals(((PackagingListDataItem)dataListItem).getPackagingListUnit()) && (dataListItem.getQty() != null)
-					 && dataListItem.getQty()!=0d) {
-				return 1/ dataListItem.getQty();
+			if (ProductUnit.PP.equals(((PackagingListDataItem) dataListItem).getPackagingListUnit()) && (dataListItem.getQty() != null)
+					&& dataListItem.getQty() != 0d) {
+				return 1 / dataListItem.getQty();
 			}
-			
-			
+
 			if ((variantPackagingData != null) && (dataListItem.getQty() != null)) {
 				if (PackagingLevel.Secondary.equals(((PackagingListDataItem) dataListItem).getPkgLevel())
 						&& (variantPackagingData.getProductPerBoxes() != null)) {
@@ -390,7 +389,7 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		JSONArray subList = new JSONArray();
 
 		String path = JSON_PATH_SEPARATOR + dataListItem.getNodeRef().getId();
-		
+
 		if (dataListItem instanceof CompoListDataItem && ((CompoListDataItem) dataListItem).getParent() != null) {
 			path = JSON_PATH_SEPARATOR + ((CompoListDataItem) dataListItem).getParent().getNodeRef().getId() + path;
 		}
@@ -531,62 +530,46 @@ public class FormulaFormulationHandler extends FormulationBaseHandler<ProductDat
 		if ((sourceList != null) && (targetList != null)) {
 			for (DynamicCharactListItem sourceItem : sourceList) {
 				if (sourceItem.getTitle() != null) {
-					if (sourceItem.isSynchronisable()) {
-						boolean isFound = false;
-						for (DynamicCharactListItem targetItem : targetList) {
-							// charact renamed
-							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getTitle()!=null && !sourceItem.getTitle().equals(targetItem.getTitle())) {
-								targetItem.setTitle(sourceItem.getTitle());
-							}
-							if (sourceItem.getName().equals(targetItem.getName()) && sourceItem.getMlTitle()!=null && !sourceItem.getMlTitle().equals(targetItem.getMlTitle())) {
-								targetItem.setMlTitle(sourceItem.getMlTitle());
-							}
-							// update formula
-							if (sourceItem.getName().equals(targetItem.getName())) {
 
-								targetItem.setName(sourceItem.getName());
-								targetItem.setTitle(sourceItem.getTitle());
-								targetItem.setSort(sourceItem.getSort());
-								if (!Boolean.TRUE.equals(targetItem.getIsManual())) {
-									targetItem.setFormula(sourceItem.getFormula());
-									targetItem.setColumnName(sourceItem.getColumnName());
-									targetItem.setGroupColor(sourceItem.getGroupColor());
-									targetItem.setColor(sourceItem.getColor());
-									targetItem.setSynchronisableState(sourceItem.getSynchronisableState());
-									targetItem.setExecOrder(sourceItem.getExecOrder());
-									targetItem.setMultiLevelFormula(sourceItem.getMultiLevelFormula());
-								}
-								isFound = true;
-								break;
-							}
-						}
+					Optional<DynamicCharactListItem> existingItem = targetList.stream().filter(item -> sourceItem.getTitle().equals(item.getTitle()) 
+							&&( sourceItem.isColumn().equals(item.isColumn())) )
+							.findFirst();
 
-						if (!isFound) {
-							sourceItem.setNodeRef(null);
-							sourceItem.setParentNodeRef(null);
-							targetList.add(sourceItem);
-						}
+					if (!existingItem.isPresent()) {
+						existingItem = targetList.stream().filter(item -> sourceItem.getName().equals(item.getName())).findFirst();
+					}
+
+					if (existingItem.isPresent() && sourceItem.isSynchronisable()) {
+						updateItem(existingItem.get(), sourceItem);
 					} else {
 						sourceItem.setNodeRef(null);
 						sourceItem.setParentNodeRef(null);
-						sourceItem.setTransient(true);
+						sourceItem.setTransient(!sourceItem.isSynchronisable());
 						targetList.add(sourceItem);
 					}
 				}
 			}
 
-			targetList.sort((o1, o2) -> {
-				if ((o1.getSort() == null) && (o2.getSort() == null)) {
-					return 0;
-				}
-				if ((o1.getSort() == null) && (o2.getSort() != null)) {
-					return -1;
-				}
-				if ((o2.getSort() == null) && (o1.getSort() != null)) {
-					return 1;
-				}
-				return o1.getSort().compareTo(o2.getSort());
-			});
+			targetList.sort(Comparator.comparing(DynamicCharactListItem::getSort, Comparator.nullsFirst(Comparator.naturalOrder())));
+		}
+
+	}
+
+	private void updateItem(DynamicCharactListItem targetItem, DynamicCharactListItem sourceItem) {
+
+		targetItem.setTitle(sourceItem.getTitle());
+		targetItem.setMlTitle(sourceItem.getMlTitle());
+		targetItem.setSort(sourceItem.getSort());
+
+		if (!Boolean.TRUE.equals(targetItem.getIsManual())) {
+			targetItem.setName(sourceItem.getName());
+			targetItem.setFormula(sourceItem.getFormula());
+			targetItem.setColumnName(sourceItem.getColumnName());
+			targetItem.setGroupColor(sourceItem.getGroupColor());
+			targetItem.setColor(sourceItem.getColor());
+			targetItem.setSynchronisableState(sourceItem.getSynchronisableState());
+			targetItem.setExecOrder(sourceItem.getExecOrder());
+			targetItem.setMultiLevelFormula(sourceItem.getMultiLevelFormula());
 		}
 	}
 }

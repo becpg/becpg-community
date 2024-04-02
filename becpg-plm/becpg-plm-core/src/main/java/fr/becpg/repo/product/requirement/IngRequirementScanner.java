@@ -1,6 +1,7 @@
 package fr.becpg.repo.product.requirement;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -134,10 +135,9 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 										boolean isInfo = qtyPerc != null && filMaxQtyPerc != null && (filMaxQtyPerc > qtyPerc);
 										
 										// req not respecte
-										ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, isInfo ? RequirementType.Info : fil.getReqType(),
-													fil.getReqMessage(), ingListDataItem.getIng(), new ArrayList<>(),
-													RequirementDataType.Specification);
-										reqCtrlMap.add(reqCtrl);
+										ReqCtrlListDataItem reqCtrl = ReqCtrlListDataItem.build().ofType(isInfo ? RequirementType.Info : fil.getReqType())
+												.withMessage(fil.getReqMessage()).withCharact(ingListDataItem.getIng()).ofDataType(RequirementDataType.Specification);
+										
 										
 										String regulatoryId = extractRegulatoryId(fil, specification);
 										
@@ -152,6 +152,8 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 										if (!isInfo && (qtyPerc != null) && (filMaxQtyPerc != null) && (qtyPerc != 0)) {
 											reqCtrl.setReqMaxQty((filMaxQtyPerc / qtyPerc) * 100d);
 										}
+										
+										reqCtrlMap.add(reqCtrl);
 
 									}
 								}
@@ -164,15 +166,14 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 												mlNodeService.getProperty(ingListDataItem.getIng(), BeCPGModel.PROP_CHARACT_NAME));
 									}
 
-									ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, ingListDataItem.getIng(), new ArrayList<>(),
-											RequirementDataType.Specification);
+									ReqCtrlListDataItem reqCtrl = ReqCtrlListDataItem.build().ofType( fil.getReqType())
+											.withMessage(curMessage).withCharact(ingListDataItem.getIng()).ofDataType(RequirementDataType.Specification).withRegulatoryCode(
+													(specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
+													? specification.getRegulatoryCode()
+													: specification.getName());
+									
 									reqCtrlMap.add(reqCtrl);
 
-									if (specification.getRegulatoryCode() != null) {
-										reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
-									} else {
-										reqCtrl.setRegulatoryCode(specification.getName());
-									}
 
 								}
 
@@ -301,17 +302,18 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 									logger.debug("Adding not respected for: " + curMessage);
 								}
 
-								ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, fil.getReqType(), curMessage, ingListDataItem.getIng(), new ArrayList<>(),
-										RequirementDataType.Specification);
+								ReqCtrlListDataItem reqCtrl = ReqCtrlListDataItem.build().ofType(fil.getReqType())
+										.withMessage(curMessage).withCharact(ingListDataItem.getIng()).ofDataType(RequirementDataType.Specification).withRegulatoryCode(
+												(specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
+												? specification.getRegulatoryCode()
+												: specification.getName())
+										.withSources(Arrays.asList(productNodeRef));
+										
+										
+								
 								reqCtrlMap.add(reqCtrl);
 
-								reqCtrl.addSource(productNodeRef);
-
-								if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
-									reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
-								} else {
-									reqCtrl.setRegulatoryCode(specification.getName());
-								}
+								
 							}
 						}
 					}
@@ -412,16 +414,11 @@ public class IngRequirementScanner extends AbstractRequirementScanner<ForbiddenI
 	private void addReqCtrl(List<ReqCtrlListDataItem> reqCtrlMap, RequirementType requirementType, MLText message,
 			NodeRef sourceNodeRef, ProductSpecificationData specification, RequirementDataType requirementDataType) {
 
-		ReqCtrlListDataItem reqCtrl = new ReqCtrlListDataItem(null, requirementType, message, null, new ArrayList<>(), requirementDataType);
-		reqCtrlMap.add(reqCtrl);
-
-		reqCtrl.addSource(sourceNodeRef);
-
-		if ((specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()) {
-			reqCtrl.setRegulatoryCode(specification.getRegulatoryCode());
-		} else {
-			reqCtrl.setRegulatoryCode(specification.getName());
-		}
+		reqCtrlMap.add( ReqCtrlListDataItem.build().ofType(requirementType)
+				.withMessage(message).ofDataType(requirementDataType).withSources(Arrays.asList(sourceNodeRef)).withRegulatoryCode(
+						(specification.getRegulatoryCode() != null) && !specification.getRegulatoryCode().isBlank()
+						? specification.getRegulatoryCode()
+						: specification.getName()));
 
 	}
 

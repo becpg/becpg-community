@@ -3,6 +3,7 @@
  */
 package fr.becpg.repo.product.data.ing;
 
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -33,14 +34,14 @@ public class CompositeLabeling extends LabelingComponent {
 
 	private Map<NodeRef, CompositeLabeling> ingListAtEnd = new LinkedHashMap<>();
 
-	private Double qtyTotal = 0d;
-	private Double qtyTotalWithYield = 0d;
+	private BigDecimal qtyTotal = BigDecimal.valueOf(0d);
+	private BigDecimal qtyTotalWithYield = BigDecimal.valueOf(0d);
 
 	private Double evaporatedQty = 0d;
 	private Double evaporatedVolume = 0d;
 
-	private Double volumeTotal = 0d;
-	private Double volumeTotalWithYield = 0d;
+	private BigDecimal volumeTotal = BigDecimal.valueOf(0d);
+	private BigDecimal volumeTotalWithYield = BigDecimal.valueOf(0d);
 
 	private IngTypeItem ingType;
 
@@ -179,7 +180,7 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public Double getQtyTotal() {
+	public BigDecimal getQtyTotal() {
 		return qtyTotal;
 	}
 
@@ -188,8 +189,13 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @param qtyTotal a {@link java.lang.Double} object.
 	 */
-	public void setQtyTotal(Double qtyTotal) {
+	public void setQtyTotal(BigDecimal qtyTotal) {
 		this.qtyTotal = qtyTotal;
+	}
+	
+
+	public void setDoubleQtyTotal(Double qty) {
+		this.qtyTotal = qty!=null ? BigDecimal.valueOf(qty) : null;
 	}
 
 
@@ -214,7 +220,7 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @return a {@link java.lang.Double} object.
 	 */
-	public Double getVolumeTotal() {
+	public BigDecimal getVolumeTotal() {
 		return volumeTotal;
 	}
 
@@ -223,10 +229,15 @@ public class CompositeLabeling extends LabelingComponent {
 	 *
 	 * @param volumeTotal a {@link java.lang.Double} object.
 	 */
-	public void setVolumeTotal(Double volumeTotal) {
+	public void setVolumeTotal(BigDecimal volumeTotal) {
 		this.volumeTotal = volumeTotal;
 	}
 
+	
+
+	public void setDoubleVolumeTotal(Double volumeTotal) {
+		this.volumeTotal = volumeTotal!=null ? BigDecimal.valueOf(volumeTotal) : null;
+	}
 
 	/**
 	 * <p>add.</p>

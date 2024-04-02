@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.PostConstruct;
-
 import org.alfresco.service.cmr.dictionary.AssociationDefinition;
 import org.alfresco.service.cmr.dictionary.ClassAttributeDefinition;
 import org.alfresco.service.cmr.dictionary.ClassDefinition;
@@ -53,6 +51,7 @@ import fr.becpg.repo.importer.annotation.Formula;
 import fr.becpg.repo.importer.annotation.Hierarchy;
 import fr.becpg.repo.importer.annotation.Key;
 import fr.becpg.repo.importer.annotation.MLText;
+import jakarta.annotation.PostConstruct;
 
 /**
  * Service to load the annotation mapping.

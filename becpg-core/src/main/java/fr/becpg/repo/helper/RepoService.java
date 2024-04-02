@@ -75,4 +75,6 @@ public interface RepoService {
 	/** {@inheritDoc} */
 	String getAvailableName(NodeRef folderNodeRef, String name, boolean forceRename, boolean keepExtension);
 	
+	boolean moveEntity(NodeRef entityNodeRef, NodeRef destinationFolder);
+	
 }

@@ -38,6 +38,7 @@
 				<value>alfresco/module/${pom.artifactId}/messages/paths</value>
 				<value>alfresco/module/${pom.artifactId}/messages/plm</value>
 				<value>alfresco/module/${pom.artifactId}/messages/import-service</value>
+				<value>alfresco/module/${pom.artifactId}/messages/system-configuration</value>
 				<!-- Fix #9672 This is copied for ADF becpg form service it doesn't copy i18n translated 
 				   <value>alfresco/module/${pom.artifactId}/messages/becpg-forms</value> -->				
 			</list>

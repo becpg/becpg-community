@@ -33,7 +33,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.stream.Collectors;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authentication.AuthenticationUtil;
@@ -50,6 +49,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.repo.activity.data.ActivityListDataItem;
 import fr.becpg.repo.activity.data.ActivityType;
+import fr.becpg.repo.activity.helper.AuditActivityHelper;
+import fr.becpg.repo.audit.model.AuditQuery;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 import fr.becpg.repo.ecm.ECOService;
 import fr.becpg.repo.ecm.ECOState;
 import fr.becpg.repo.ecm.data.ChangeOrderData;
@@ -585,31 +588,13 @@ public class ECOIT extends AbstractFinishedProductTest {
 	}
 
 	private List<ActivityType> getActivityTypes(NodeRef entityNodeRef) {
-		 beCPGCacheService.clearAllCaches();
-			
-		return transactionService.getRetryingTransactionHelper().doInTransaction(() -> {
-			List<ActivityType> ret = new ArrayList<>();
-			NodeRef activityListNodeRef = getActivityList(entityNodeRef);
-			if (activityListNodeRef != null) {
-				// All activities of product
-				ret = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST).stream().map(n -> ((ActivityListDataItem) alfrescoRepository.findOne(n)).getActivityType()).collect(Collectors.toList());
-			} else {
-				logger.error("No activity list");
-			}
-			return ret;
-		}, false,true);
+		AuditQuery auditFilter = AuditQuery.createQuery().sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
+				.filter(ActivityAuditPlugin.ENTITY_NODEREF, entityNodeRef.toString());
+		List<ActivityListDataItem> activities = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter)
+				.stream().map(json -> AuditActivityHelper.parseActivity(json)).toList();
+		return activities.stream().map(a -> a.getActivityType()).toList();
 	}
-
-	private NodeRef getActivityList(NodeRef productNodeRef) {
-		NodeRef listNodeRef = null;
-		NodeRef listContainerNodeRef = entityListDAO.getListContainer(productNodeRef);
-		if (listContainerNodeRef != null) {
-			listNodeRef = entityListDAO.getList(listContainerNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-		}
-		return listNodeRef;
 	
-	}
-
 	@Test
 	public void testDeleteNode() throws Exception {
 

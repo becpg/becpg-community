@@ -28,14 +28,14 @@ import java.util.stream.Collectors;
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.security.authority.AuthorityDAO;
 import org.alfresco.repo.site.SiteModel;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
+import org.alfresco.service.cmr.model.FileFolderService;
+import org.alfresco.service.cmr.model.FileInfo;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.security.AccessPermission;
 import org.alfresco.service.cmr.security.PermissionService;
 import org.alfresco.service.cmr.site.SiteInfo;
 import org.alfresco.service.cmr.site.SiteService;
-import org.alfresco.service.namespace.RegexQNamePattern;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -76,6 +76,12 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 	private SiteService siteService;
 	
 	private AssociationService associationService;
+	
+	private FileFolderService fileFolderService;
+	
+	public void setFileFolderService(FileFolderService fileFolderService) {
+		this.fileFolderService = fileFolderService;
+	}
 	
 	public void setAssociationService(AssociationService associationService) {
 		this.associationService = associationService;
@@ -151,13 +157,46 @@ public class SecurityFormulationHandler extends FormulationBaseHandler<ProductDa
 			}
 
 			//Set document permissions
-			PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
-			List<ChildAssociationRef> folders = nodeService.getChildAssocs(productDataNodeRef, ContentModel.ASSOC_CONTAINS, RegexQNamePattern.MATCH_ALL);
-			for (ChildAssociationRef folder : folders) {
-				updatePermissions(siteInfo, folder.getChildRef(), permissionContext.getPermissions());
+			for (FileInfo folder : fileFolderService.listFolders(productDataNodeRef)) {
+				NodeRef templateFolderWithSpecificPermissions = findTemplateFolderWithSpecificPermissions(folder.getNodeRef(), productData.getEntityTpl());
+				if (templateFolderWithSpecificPermissions != null) {
+					updatePermissionsFromTemplateFolder(folder.getNodeRef(), templateFolderWithSpecificPermissions);
+				} else {
+					PermissionContext permissionContext = securityService.getPermissionContext(productDataNodeRef, nodeService.getType(productDataNodeRef), VIEW_DOCUMENTS);
+					updatePermissions(siteInfo, folder.getNodeRef(), permissionContext.getPermissions());
+				}
 			}
 		}
 		return true;
+	}
+
+	private NodeRef findTemplateFolderWithSpecificPermissions(NodeRef folderNodeRef, ProductData entityTpl) {
+		List<FileInfo> templateFolders = null;
+		if (entityTpl != null) {
+			templateFolders = fileFolderService.listFolders(entityTpl.getNodeRef());
+		}
+		if (templateFolders != null) {
+			String folderName = (String) nodeService.getProperty(folderNodeRef, ContentModel.PROP_NAME);
+			for (FileInfo folder : templateFolders) {
+				if (folder.getName().equals(folderName) && !permissionService.getInheritParentPermissions(folder.getNodeRef())) {
+					return folder.getNodeRef();
+				}
+			}
+		}
+		return null;
+	}
+
+	private void updatePermissionsFromTemplateFolder(NodeRef folderNodeRef, NodeRef templateFolder) {
+		if (permissionService.getInheritParentPermissions(folderNodeRef)) {
+			permissionService.setInheritParentPermissions(folderNodeRef, false);
+		}
+		Set<AccessPermission> templateFolderPermissions = permissionService.getAllSetPermissions(templateFolder);
+		Set<AccessPermission> folderPermissions = permissionService.getAllSetPermissions(folderNodeRef);
+		if (!templateFolderPermissions.equals(folderPermissions)) {
+			folderPermissions.forEach(p -> permissionService.clearPermission(folderNodeRef, p.getAuthority()));
+			templateFolderPermissions.forEach(p -> 
+			permissionService.setPermission(folderNodeRef,p.getAuthority(), p.getPermission(), true));
+		}
 	}
 
 	private boolean isSecurityApplicable(ProductData productData) {

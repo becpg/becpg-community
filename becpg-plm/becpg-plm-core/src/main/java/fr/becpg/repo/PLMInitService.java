@@ -1,12 +1,11 @@
 package fr.becpg.repo;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.model.PLMModel;
 import fr.becpg.repo.entity.EntityListDAO;
+import jakarta.annotation.PostConstruct;
 
 /**
  * <p>PLMInitService class.</p>

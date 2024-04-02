@@ -41,6 +41,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fr.becpg.repo.RepoConsts;
+import fr.becpg.repo.authentication.BeCPGTicketService;
 import fr.becpg.repo.helper.RepoService;
 import fr.becpg.repo.olap.OlapService;
 import fr.becpg.repo.olap.OlapUtils;
@@ -62,8 +63,6 @@ public class OlapServiceImpl implements OlapService {
 
 	private static final Log logger = LogFactory.getLog(OlapServiceImpl.class);
 
-	@Value("${becpg.instance.name}")
-	private String instanceName;
 
 	@Value("${becpg.olap.url.public}")
 	private String olapPublicUrl;
@@ -84,73 +83,8 @@ public class OlapServiceImpl implements OlapService {
 	private RepoService repoService;
 
 	@Autowired
-	private AuthenticationService authenticationService;
+	private BeCPGTicketService beCPGTicketService;
 
-	@Autowired
-	private TenantService tenantService;
-
-	/**
-	 * <p>Setter for the field <code>instanceName</code>.</p>
-	 *
-	 * @param instanceName a {@link java.lang.String} object.
-	 */
-	public void setInstanceName(String instanceName) {
-		this.instanceName = instanceName;
-	}
-
-	/**
-	 * <p>Setter for the field <code>tenantService</code>.</p>
-	 *
-	 * @param tenantService a {@link org.alfresco.repo.tenant.TenantService} object.
-	 */
-	public void setTenantService(TenantService tenantService) {
-		this.tenantService = tenantService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>authenticationService</code>.</p>
-	 *
-	 * @param authenticationService a {@link org.alfresco.service.cmr.security.AuthenticationService} object.
-	 */
-	public void setAuthenticationService(AuthenticationService authenticationService) {
-		this.authenticationService = authenticationService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>olapServerUrl</code>.</p>
-	 *
-	 * @param olapServerUrl a {@link java.lang.String} object.
-	 */
-	public void setOlapServerUrl(String olapServerUrl) {
-		this.olapServerUrl = olapServerUrl;
-	}
-
-	/**
-	 * <p>Setter for the field <code>fileFolderService</code>.</p>
-	 *
-	 * @param fileFolderService a {@link org.alfresco.service.cmr.model.FileFolderService} object.
-	 */
-	public void setFileFolderService(FileFolderService fileFolderService) {
-		this.fileFolderService = fileFolderService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>contentService</code>.</p>
-	 *
-	 * @param contentService a {@link org.alfresco.service.cmr.repository.ContentService} object.
-	 */
-	public void setContentService(ContentService contentService) {
-		this.contentService = contentService;
-	}
-
-	/**
-	 * <p>Setter for the field <code>repoService</code>.</p>
-	 *
-	 * @param repoService a {@link fr.becpg.repo.helper.RepoService} object.
-	 */
-	public void setRepoService(RepoService repoService) {
-		this.repoService = repoService;
-	}
 
 	/** {@inheritDoc} */
 	@Override
@@ -189,7 +123,7 @@ public class OlapServiceImpl implements OlapService {
 	public List<OlapChart> retrieveOlapChartsFromSaiku() throws IOException, JSONException {
 
 		List<OlapChart> olapCharts = new ArrayList<>();
-		try (OlapContext olapContext = new OlapContext(getCurrentOlapUserName(), getCurrentAuthToken())) {
+		try (OlapContext olapContext = new OlapContext(beCPGTicketService.getCurrentBeCPGUserName(), beCPGTicketService.getCurrentAuthToken())) {
 
 			JSONArray jsonArray = new JSONArray(OlapUtils.readJsonFromUrl(buildRepositoryUrl(olapContext), olapContext));
 
@@ -241,7 +175,7 @@ public class OlapServiceImpl implements OlapService {
 	@Override
 	public OlapChartData retrieveChartData(String olapQueryId) throws IOException {
 
-		try (OlapContext olapContext = new OlapContext(getCurrentOlapUserName(), getCurrentAuthToken())) {
+		try (OlapContext olapContext = new OlapContext(beCPGTicketService.getCurrentBeCPGUserName(), beCPGTicketService.getCurrentAuthToken())) {
 
 			OlapChart chart = getOlapChart(olapQueryId);
 
@@ -272,12 +206,12 @@ public class OlapServiceImpl implements OlapService {
 												.getString("value")));
 									}
 								} else if (cur.getJSONObject(0).getString("value") != null) {
-									List<Object> record = new ArrayList<>();
+									List<Object> olapRecord = new ArrayList<>();
 									for (int col = lowestLevel; col < cur.length(); col++) {
 										String value = cur.getJSONObject(col).getString("value");
-										record.add(OlapUtils.convert(value));
+										olapRecord.add(OlapUtils.convert(value));
 									}
-									ret.getResultsets().add(record);
+									ret.getResultsets().add(olapRecord);
 								}
 							}
 						}
@@ -295,26 +229,12 @@ public class OlapServiceImpl implements OlapService {
 		}
 	}
 
-	private String getCurrentAuthToken() {
-		String currentUserName = getCurrentOlapUserName();
-		currentUserName += "#" + authenticationService.getCurrentTicket();
-
-		return java.util.Base64.getEncoder().encodeToString(currentUserName.getBytes());
-	}
-
-	private String getCurrentOlapUserName() {
-		String currentUserName = (instanceName != null ? instanceName : "default") + "$" + authenticationService.getCurrentUserName();
-		if (!currentUserName.contains("@") || !tenantService.isEnabled()) {
-			currentUserName += "@default";
-		}
-		return currentUserName;
-	}
 
 	/** {@inheritDoc} */
 	@Override
 	public String getSSOUrl() {
 		if(Boolean.TRUE.equals(enabled)){
-			return olapPublicUrl + "?ticket=" + getCurrentAuthToken();
+			return olapPublicUrl + "?ticket=" + beCPGTicketService.getCurrentAuthToken();
 		} 
 		return null;
 	}
