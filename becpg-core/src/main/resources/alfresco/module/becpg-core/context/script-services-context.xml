@@ -71,7 +71,6 @@
 		<property name="showUnauthorizedWarning" value="${beCPG.licence.showWarning}"/>
 		<property name="alfrescoRepository" ref="alfrescoRepository"/>
 		<property name="siteService" ref="siteService"/>
-		<property name="entityFormatService" ref="entityFormatService" />
 		<property name="tenantAdminService" ref="tenantAdminService" />
 		<property name="versionService" ref="versionService" />
 		<property name="entityReportService" ref="entityReportService" />
@@ -82,6 +81,7 @@
 		<property name="hierarchyService" ref="hierarchyService" />
 		<property name="fileFolderService" ref="fileFolderService" />
 		<property name="beCPGMailService" ref="beCPGMailService" />
+		<property name="beCPGTicketService" ref="beCPGTicketService" />
 	</bean>
 	
 	<bean id="beCPGStateHelper" parent="baseJavaScriptExtension" class="fr.becpg.repo.jscript.BeCPGStateHelper">

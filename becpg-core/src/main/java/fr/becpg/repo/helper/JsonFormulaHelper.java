@@ -89,5 +89,28 @@ public class JsonFormulaHelper {
 		return value;
 	}
 	
+	public static Object extractComponentValue(String value, String componentId) {
+		if (value != null) {
+			if (value.contains(JSON_SUB_VALUES) && value.contains("{")) {
+				try {
+					JSONTokener tokener = new JSONTokener(value);
+					JSONObject jsonObject = new JSONObject(tokener);
+					JSONArray arrayValues = jsonObject.getJSONArray(JSON_SUB_VALUES);
+					for (int i = 0; i < arrayValues.length(); i++) {
+						JSONObject jsonValue = arrayValues.getJSONObject(i);
+						if (jsonValue.getString(JSON_PATH).split("/")[2].equals(componentId)) {
+							return jsonValue.get(JSON_VALUE);
+						}
+					}
+					return "";
+				} catch (Exception e) {
+					logger.debug("Cannot parse " + value, e);
+				}
+			}
+		}
+		
+		return value;
+	}
+	
 
 }

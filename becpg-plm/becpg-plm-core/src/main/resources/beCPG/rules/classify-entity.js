@@ -74,6 +74,10 @@ function main() {
 			wasMoved = classifyByHierarchy(document, site);
 		}
 		
+		if (wasMoved && site.nodeRef.toString() == getDocumentLibraryNodeRef(ARCHIVED_SITE_ID).nodeRef.toString()) {
+			document.addAspect("bcpg:archivedEntityAspect");
+		}
+		
 		// formulate if the document was moved
 		if (wasMoved && document.isSubType("bcpg:product")) {
 			formulate(document);

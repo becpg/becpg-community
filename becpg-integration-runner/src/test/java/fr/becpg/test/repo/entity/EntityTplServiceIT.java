@@ -23,6 +23,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.becpg.model.BeCPGModel;
 import fr.becpg.model.PLMModel;
+import fr.becpg.repo.activity.data.ActivityListDataItem;
+import fr.becpg.repo.activity.helper.AuditActivityHelper;
+import fr.becpg.repo.audit.model.AuditQuery;
+import fr.becpg.repo.audit.model.AuditType;
+import fr.becpg.repo.audit.plugin.impl.ActivityAuditPlugin;
 import fr.becpg.repo.batch.BatchInfo;
 import fr.becpg.repo.entity.EntityTplService;
 import fr.becpg.repo.product.data.FinishedProductData;
@@ -226,9 +231,14 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 		
 		// check that an activity is present for the template
 		inReadTx(() -> {
-			NodeRef activityListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(fpTplNodeRef), BeCPGModel.TYPE_ACTIVITY_LIST);
-			List<NodeRef> activityItems = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-			assertEquals(1, activityItems.size());
+			
+			AuditQuery auditFilter = AuditQuery.createQuery().sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
+					.filter(ActivityAuditPlugin.ENTITY_NODEREF, fpTplNodeRef.toString());
+			
+			List<ActivityListDataItem> activities = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter)
+					.stream().map(json -> AuditActivityHelper.parseActivity(json)).toList();
+			
+			assertEquals(1, activities.size());
 			
 			return null;
 		});
@@ -243,9 +253,11 @@ public class EntityTplServiceIT extends PLMBaseTestCase {
 		
 		// check no extra activity is created during synchronization with template
 		inReadTx(() -> {
-			NodeRef activityListNodeRef = entityListDAO.getList(entityListDAO.getListContainer(fpNodeRef), BeCPGModel.TYPE_ACTIVITY_LIST);
-			List<NodeRef> activityItems = entityListDAO.getListItems(activityListNodeRef, BeCPGModel.TYPE_ACTIVITY_LIST);
-			assertEquals(1, activityItems.size());
+			AuditQuery auditFilter = AuditQuery.createQuery().sortBy(ActivityAuditPlugin.PROP_CM_CREATED)
+					.filter(ActivityAuditPlugin.ENTITY_NODEREF, fpNodeRef.toString());
+			List<ActivityListDataItem> activities = beCPGAuditService.listAuditEntries(AuditType.ACTIVITY, auditFilter)
+					.stream().map(json -> AuditActivityHelper.parseActivity(json)).toList();
+			assertEquals(1, activities.size());
 			
 			return null;
 		});

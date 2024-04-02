@@ -18,7 +18,8 @@
  * 
  * getNode(node) returns node or get the node if node is a nodeRef string
  * 
- * mlPropValue(node, propName, locale) alias getMLProp(node, propName, locale) returns node multilingual property value for given locale or empty
+ * mlPropValue(node, propName, locale, exactLocale? false) alias getMLProp(node, propName, locale, exactLocale? false) returns the node's multilingual property value for the specified locale
+ * or empty if exactLocale = true else it will return the default locale
  * 
  * mlPropConstraint(propValue, propName, locale) alias getMLConstraint(propValue, propName, locale) display value or empty for multilingual constraint value
  * 
@@ -142,7 +143,7 @@ const SUPPLIER_PORTAL_SITE_ID = "supplier-portal";
  * @returns {boolean} true if value is empty or null
  */
 function isNullOrEmpty(value) {
-	return value == null || value == "";
+	 return value == null || value === "" || (typeof value === 'string' && value.trim() === "");
 }
 
 /**
@@ -203,10 +204,11 @@ function getNode(node) {
  * @param {(ScriptNode|NodeRef|string)} node
  * @param {string} propName
  * @param {string} locale
+ * @param {boolean} exactLocale
  * @returns {string} node multilingual property value for given locale or empty
  */
-function getMLProp(node, propName, locale) {
-	return isEmpty(node) ? "" : orEmpty(bcpg.getMLProperty(getNode(node), propName, locale));
+function getMLProp(node, propName, locale, exactLocale) {
+	return isEmpty(node) ? "" : orEmpty(bcpg.getMLProperty(getNode(node), propName, locale, exactLocale));
 }
 
 /**
@@ -215,10 +217,11 @@ function getMLProp(node, propName, locale) {
  * @param {(ScriptNode|NodeRef|string)} node
  * @param {string} propName
  * @param {string} locale
+ * @param {boolean} exactLocale 
  * @returns {string} node multilingual property value for given locale or empty
  */
-function mlPropValue(node, propName, locale) {
-	return getMLProp(node, propName, locale);
+function mlPropValue(node, propName, locale, exactLocale) {
+	return getMLProp(node, propName, locale, exactLocale);
 }
 
 /**

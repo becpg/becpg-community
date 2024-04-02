@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -79,13 +80,13 @@ public abstract class PLMBaseTestCase extends RepoBaseTestCase {
 	protected NodeRef HIERARCHY2_PIZZA_REF;
 	protected NodeRef HIERARCHY2_QUICHE_REF;
 
-	protected List<NodeRef> allergens = new ArrayList<>();
-	protected List<NodeRef> costs = new ArrayList<>();
-	protected List<NodeRef> ings = new ArrayList<>();
+	protected List<NodeRef> allergens = new LinkedList<>();
+	protected List<NodeRef> costs = new LinkedList<>();
+	protected List<NodeRef> ings = new LinkedList<>();
 
-	protected List<NodeRef> nuts = new ArrayList<>();
-	protected List<NodeRef> organos = new ArrayList<>();
-	protected List<NodeRef> labelClaims = new ArrayList<>();
+	protected List<NodeRef> nuts = new LinkedList<>();
+	protected List<NodeRef> organos = new LinkedList<>();
+	protected List<NodeRef> labelClaims = new LinkedList<>();
 
 	protected NodeRef labelingTemplateNodeRef = null;
 

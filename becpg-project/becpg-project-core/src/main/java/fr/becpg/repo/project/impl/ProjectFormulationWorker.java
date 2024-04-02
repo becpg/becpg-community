@@ -20,6 +20,7 @@ package fr.becpg.repo.project.impl;
 import java.util.Calendar;
 import java.util.List;
 
+import org.alfresco.repo.tenant.TenantUtil;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.transaction.TransactionService;
 import org.alfresco.util.ISO8601DateFormat;
@@ -81,6 +82,7 @@ public class ProjectFormulationWorker {
 			
 			BeCPGQueryBuilder queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
 					.excludeVersions()
+					.excludeArchivedEntities()
 					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.InProgress.toString())
 					.andBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", ISO8601DateFormat.format(cal.getTime()));
 
@@ -88,6 +90,7 @@ public class ProjectFormulationWorker {
 
 			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
 					.excludeVersions()
+					.excludeArchivedEntities()
 					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.OnHold.toString())
 					.andBetween(BeCPGModel.PROP_FORMULATED_DATE, "MIN", ISO8601DateFormat.format(cal.getTime()));
 			
@@ -96,6 +99,7 @@ public class ProjectFormulationWorker {
 			// query
 			queryBuilder = BeCPGQueryBuilder.createQuery().ofType(ProjectModel.TYPE_PROJECT)
 					.excludeVersions()
+					.excludeArchivedEntities()
 					.andPropEquals(ProjectModel.PROP_PROJECT_STATE, ProjectState.Planned.toString())
 					.andBetween(ProjectModel.PROP_PROJECT_START_DATE, "MIN", ISO8601DateFormat.format(Calendar.getInstance().getTime()));
 
@@ -118,7 +122,7 @@ public class ProjectFormulationWorker {
 				}, false, true);
 
 			} catch (Exception e) {
-				logger.error("Cannot reformulate project:" + projectNodeRef, e);
+				logger.error("Cannot reformulate project:" + projectNodeRef+ " "+ TenantUtil.getCurrentDomain(), e);
 			}
 
 		}

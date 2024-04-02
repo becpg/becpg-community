@@ -57,6 +57,7 @@ import org.alfresco.service.namespace.QName;
 import org.apache.commons.codec.binary.Base64InputStream;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.staxutils.PrettyPrintXMLStreamWriter;
 import org.springframework.extensions.surf.util.ISO8601DateFormat;
 
 import com.sun.xml.txw2.output.IndentingXMLStreamWriter;
@@ -67,7 +68,6 @@ import fr.becpg.model.ReportModel;
 import fr.becpg.repo.dictionary.constraint.DynListConstraint;
 import fr.becpg.repo.entity.EntityDictionaryService;
 import fr.becpg.repo.entity.remote.RemoteEntityService;
-import fr.becpg.repo.entity.remote.RemoteParams;
 import fr.becpg.repo.helper.AssociationService;
 import fr.becpg.repo.helper.MLTextHelper;
 import fr.becpg.repo.helper.SiteHelper;
@@ -140,7 +140,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 
 		if (logger.isDebugEnabled()) {
 			logger.debug("Indent xml formater ON");
-			xmlw = new IndentingXMLStreamWriter(xmlw);
+			xmlw = new PrettyPrintXMLStreamWriter(xmlw, 3);
 		}
 
 		// Write XML prologue
@@ -472,7 +472,7 @@ public class XmlEntityVisitor extends AbstractEntityVisitor {
 						xmlw.writeEndElement();
 
 					} else {
-						logger.debug("Properties not in dictionnary: " + entry.getKey());
+						logger.debug("Properties not in dictionary: " + entry.getKey());
 					}
 
 				}

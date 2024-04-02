@@ -46,6 +46,7 @@
 	<bean id="packagingMaterialCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.PackagingMaterialCharactDetailsVisitor">
 		<property name="alfrescoRepository" ref="alfrescoRepository" />
 		<property name="nodeService" ref="nodeService" />
+		<property name="entityDictionaryService" ref="entityDictionaryService" />
 	</bean>
 
 	<bean id="nutCharactDetailsVisitor" class="fr.becpg.repo.product.formulation.details.NutCharactDetailsVisitor">
@@ -122,6 +123,7 @@
 					<property name="authorityDAO" ref="authorityDAO"/>
 					<property name="siteService" ref="siteService"/>
 					<property name="associationService" ref="associationService"/>
+					<property name="fileFolderService" ref="fileFolderService"/>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompositionQtyCalculatingFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
@@ -173,6 +175,7 @@
 					<property name="nodeService" ref="nodeService" />
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
+				
 				<bean class="fr.becpg.repo.product.formulation.MeatContentFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 				</bean>
@@ -201,6 +204,7 @@
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="nodeService" ref="nodeService" />
 				</bean>
+				<bean parent="abstractSimpleFormulationHandler" class="fr.becpg.repo.product.formulation.SvhcCalculatingFormulationHandler" />
 				<bean class="fr.becpg.repo.product.formulation.FormulaFormulationHandler">
 					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService" />
@@ -231,7 +235,6 @@
 					</property>
 				</bean>
 				<bean class="fr.becpg.repo.product.formulation.CompareFormulationHandler">
-					<property name="alfrescoRepository" ref="alfrescoRepository" />
 					<property name="namespaceService" ref="namespaceService" />
 					<property name="productService" ref="productService" />
 					<property name="associationService" ref="associationService" />

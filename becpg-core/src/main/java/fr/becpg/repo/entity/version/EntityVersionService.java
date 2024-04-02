@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.version.Version;
@@ -65,7 +67,7 @@ public interface EntityVersionService {
 	 * @param entityNodeRef a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 * @return a {@link org.alfresco.service.cmr.repository.NodeRef} object.
 	 */
-	NodeRef getVersionHistoryNodeRef(NodeRef entityNodeRef);
+	NodeRef getVersionHistoryNodeRef(NodeRef entityNodeRef, boolean shouldCreate);
 
 	/**
 	 * <p>buildVersionHistory.</p>
@@ -192,5 +194,12 @@ public interface EntityVersionService {
 	NodeRef revertVersion(NodeRef versionNodeRef) throws IllegalAccessException;
 
 	void createInitialVersion(NodeRef entityNodeRef, Date effectiveDate);
+
+	NodeRef convertVersion(NodeRef nodeRef);
+
+	Set<NodeRef> findOldVersionWUsed(NodeRef originalEntity, Set<NodeRef> visited, List<NodeRef> ignoredItems,
+			int maxProcessedNodes, AtomicInteger currentCount, String path);
+
+	Set<NodeRef> findOldVersionWUsed(NodeRef sourceEntity);
 
 }

@@ -64,7 +64,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -144,6 +143,7 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 
 	private final Map<QName, String> propQueriesMap = new HashMap<>();
 	private final Map<QName, Pair<String, String>> propBetweenQueriesMap = new HashMap<>();
+	private final Map<QName, Pair<String, String>> propOrBetweenQueriesMap = new HashMap<>();
 	private final Map<QName, Pair<String, String>> propBetweenOrNullQueriesMap = new HashMap<>();
 	private final Map<QName, String> propQueriesEqualMap = new HashMap<>();
 	private final Set<String> ftsQueries = new HashSet<>();
@@ -755,6 +755,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		propBetweenQueriesMap.put(propQName, new Pair<>(start, end));
 		return this;
 	}
+	
+	public BeCPGQueryBuilder orBetween(QName propQName, String start, String end) {
+		propOrBetweenQueriesMap.put(propQName, new Pair<>(start, end));
+		return this;
+	}
 
 	/**
 	 * <p>
@@ -891,6 +896,11 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		excludeType(ApplicationModel.TYPE_FILELINK);
 		excludeAspect(ContentModel.ASPECT_HIDDEN);
 
+		return this;
+	}
+	
+	public BeCPGQueryBuilder excludeArchivedEntities() {
+		excludeAspect(BeCPGModel.ASPECT_ARCHIVED_ENTITY);
 		return this;
 	}
 
@@ -1177,6 +1187,21 @@ public class BeCPGQueryBuilder extends AbstractBeCPGQueryBuilder implements Init
 		for (Map.Entry<QName, Pair<String, String>> propQueryEntry : propBetweenQueriesMap.entrySet()) {
 			runnedQuery.append(mandatory(getCondContainsValue(propQueryEntry.getKey(),
 					String.format("[%s TO %s]", propQueryEntry.getValue().getFirst(), propQueryEntry.getValue().getSecond()))));
+		}
+		
+		
+		if (!propOrBetweenQueriesMap.isEmpty()) {
+			StringBuilder orBetweenQuery = new StringBuilder();
+			for (Map.Entry<QName, Pair<String, String>> propQueryEntry : propOrBetweenQueriesMap.entrySet()) {
+				String propCond = getCondContainsValue(propQueryEntry.getKey(), String.format("[%s TO %s]", propQueryEntry.getValue().getFirst(), propQueryEntry.getValue().getSecond()));
+				if (orBetweenQuery.toString().isEmpty()) {
+					orBetweenQuery.append(startGroup()).append(propCond);
+				} else {
+					orBetweenQuery.append(or(propCond));
+				}
+			}
+			orBetweenQuery.append(endGroup());
+			runnedQuery.append(mandatory(orBetweenQuery.toString()));
 		}
 
 		for (Map.Entry<QName, Pair<String, String>> propQueryEntry : propBetweenOrNullQueriesMap.entrySet()) {

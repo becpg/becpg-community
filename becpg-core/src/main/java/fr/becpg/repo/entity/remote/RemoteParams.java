@@ -42,6 +42,10 @@ public class RemoteParams {
 	public static final String PARAM_IGNORE_PATH_FOR_SEARCH = "ignorePathOnSearch";
 
 	public static final String PARAM_APPEND_MLTEXT = "appendMlText";
+	
+	public static final String PARAM_APPEND_NESTED_DATALIST_TYPE = "appendNestedDataListType";
+
+	public static final String PARAM_APPEND_REPORT_PROPS = "appendReportProps";
 
 	private RemoteEntityFormat format;
 

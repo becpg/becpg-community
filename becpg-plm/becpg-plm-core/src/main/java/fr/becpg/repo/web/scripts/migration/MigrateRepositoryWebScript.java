@@ -233,6 +233,7 @@ public class MigrateRepositoryWebScript extends AbstractWebScript {
 			}
 			
 			versionCleanerService.cleanVersions(maxProcessedNodes, path);
+			
 		
 		} else if (ACTION_CLEAN_VERSION_STORE.equals(action)) {
 

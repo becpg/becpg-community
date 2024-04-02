@@ -443,7 +443,7 @@
                           
                           //Convert to number
                           try {
-                               var number = eval(oData.replace(/,/g, '.').replace(/[^-()\d/*+.]/g, ''));
+                              var number = eval(oData.replace(/,/g, '.').replace(/[^-()\d/*+.eE]/g, ''));
                           } catch(e){
                              return undefined;
                           }
