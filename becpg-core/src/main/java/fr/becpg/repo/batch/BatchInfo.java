@@ -32,6 +32,16 @@ public class BatchInfo implements Serializable {
 	 * User that has launch the batch
 	 */
 	private String batchUser;
+	
+	private String stepDescId;
+	
+	private Integer currentStep;
+	
+	private Integer totalSteps;
+	
+	private Integer currentItem;
+	
+	private Integer totalItems;
 
 	private Boolean runAsSystem = Boolean.FALSE;
 
@@ -51,17 +61,15 @@ public class BatchInfo implements Serializable {
 	
 	private String tenant;
 	
+	private boolean isCancelled = false;
+	
 	public static final String BATCH_DESC_ID = "batchDescId";
 
 	public static final String BATCH_USER = "batchUser";
 	
 	public static final String BATCH_ID = "batchId";
 	
-	public static final int LOW_PRIORITY = 2;
-	public static final int MEDIUM_PRIORITY = 1;
-	public static final int HIGH_PRIORITY = 0;
-	
-	private int priority = MEDIUM_PRIORITY;
+	private BatchPriority priority = BatchPriority.MEDIUM;
 
 	public BatchInfo(String batchId, String batchDescId) {
 		super();
@@ -76,11 +84,59 @@ public class BatchInfo implements Serializable {
 		this.entityDescription = entityDescription;
 	}
 	
-	public int getPriority() {
-		return priority;
+	public void setCancelled(boolean isCancelled) {
+		this.isCancelled = isCancelled;
 	}
 	
-	public void setPriority(int priority) {
+	public boolean isCancelled() {
+		return isCancelled;
+	}
+	
+	public Integer getCurrentItem() {
+		return currentItem;
+	}
+	
+	public void setCurrentItem(Integer currentItem) {
+		this.currentItem = currentItem;
+	}
+	
+	public Integer getTotalItems() {
+		return totalItems;
+	}
+	
+	public void setTotalItems(Integer totalItems) {
+		this.totalItems = totalItems;
+	}
+	
+	public Integer getCurrentStep() {
+		return currentStep;
+	}
+	
+	public void setCurrentStep(Integer currentStep) {
+		this.currentStep = currentStep;
+	}
+	
+	public Integer getTotalSteps() {
+		return totalSteps;
+	}
+	
+	public void setTotalSteps(Integer totalSteps) {
+		this.totalSteps = totalSteps;
+	}
+	
+	public String getStepDescId() {
+		return stepDescId;
+	}
+	
+	public void setStepDescId(String stepDescId) {
+		this.stepDescId = stepDescId;
+	}
+	
+	public int getPriority() {
+		return priority.priority();
+	}
+	
+	public void setPriority(BatchPriority priority) {
 		this.priority = priority;
 	}
 	

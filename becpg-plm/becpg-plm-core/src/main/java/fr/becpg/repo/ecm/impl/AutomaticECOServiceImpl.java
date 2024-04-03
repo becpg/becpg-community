@@ -45,6 +45,7 @@ import fr.becpg.repo.audit.plugin.AuditPlugin;
 import fr.becpg.repo.audit.plugin.impl.BatchAuditPlugin;
 import fr.becpg.repo.audit.service.BeCPGAuditService;
 import fr.becpg.repo.batch.BatchInfo;
+import fr.becpg.repo.batch.BatchPriority;
 import fr.becpg.repo.batch.BatchQueueService;
 import fr.becpg.repo.batch.BatchStep;
 import fr.becpg.repo.batch.BatchStepAdapter;
@@ -326,6 +327,7 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		batchInfo.setRunAsSystem(true);
 		batchInfo.setWorkerThreads(autoMergeWorkerThreads != null ? autoMergeWorkerThreads : 3);
 		batchInfo.setBatchSize(autoMergeBatchSize != null ? autoMergeBatchSize : 1);
+		batchInfo.setPriority(BatchPriority.HIGH);
 
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper()
 				.doInTransaction(() -> BeCPGQueryBuilder.createQuery().ofType(BeCPGModel.TYPE_ENTITY_V2)
@@ -378,7 +380,8 @@ public class AutomaticECOServiceImpl implements AutomaticECOService {
 		batchInfo.setRunAsSystem(true);
 		batchInfo.setWorkerThreads(reformulateWorkerThreads != null ? reformulateWorkerThreads : 2);
 		batchInfo.setBatchSize(reformulateBatchSize != null ? reformulateBatchSize : 1);
-
+		batchInfo.setPriority(BatchPriority.LOW);
+		
 		List<NodeRef> nodeRefs = transactionService.getRetryingTransactionHelper().doInTransaction(() -> BeCPGQueryBuilder.createQuery()
 				.excludeArchivedEntities()
 				.ofType(PLMModel.TYPE_PRODUCT).orBetween(ContentModel.PROP_CREATED, dateRange, "MAX").orBetween(ContentModel.PROP_MODIFIED, dateRange, "MAX").inDBIfPossible().maxResults(RepoConsts.MAX_RESULTS_UNLIMITED).list(), false, true);
