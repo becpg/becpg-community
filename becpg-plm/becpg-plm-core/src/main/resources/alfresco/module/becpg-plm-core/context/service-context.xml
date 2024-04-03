@@ -213,15 +213,6 @@
 	<alias name="webscript.fr.becpg.workflow.startProcess.get" alias="webscript.fr.becpg.workflow.startProcess.post" />
 
 
-    <!-- Survey -->
-    
-    <bean id="webscript.fr.becpg.survey.survey.get" class="fr.becpg.repo.web.scripts.survey.SurveyWebScript" parent="webscript">
-      	<property name="surveyService" ref="surveyService"/>
-      	<property name="nodeService" ref="NodeService"/>
-      	<property name="permissionService" ref="permissionService"/>
-   	</bean>
-   	
-   	<alias alias="webscript.fr.becpg.survey.survey.post" name="webscript.fr.becpg.survey.survey.get"/>
 	
 	<!-- Signature project -->
 

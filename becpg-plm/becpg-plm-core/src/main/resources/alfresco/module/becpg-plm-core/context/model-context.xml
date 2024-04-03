@@ -34,7 +34,6 @@
 				<value>alfresco/module/${artifactId}/model/qualityModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/sampleModel.xml</value>
 				<value>alfresco/module/${artifactId}/model/ghsModel.xml</value>
-				<value>alfresco/module/${artifactId}/model/surveyModel.xml</value>
 			</list>
 		</property>
 
@@ -49,7 +48,6 @@
 				<value>alfresco/module/${artifactId}/model/qualityModel</value>
 				<value>alfresco/module/${artifactId}/model/sampleModel</value>
 				<value>alfresco/module/${artifactId}/model/ghsModel</value>
-				<value>alfresco/module/${artifactId}/model/surveyModel</value>
 			</list>
 		</property>
 	</bean>

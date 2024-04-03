@@ -51,7 +51,6 @@ along with beCPG. If not, see <http://www.gnu.org/licenses/>.
 				<value>classpath:alfresco/forms/becpg-npd-workflow-form-config.xml</value>				
 				<value>classpath:alfresco/forms/becpg-sample-form-config.xml</value>
 				<value>classpath:alfresco/forms/becpg-ghs-form-config.xml</value>
-				<value>classpath:alfresco/forms/becpg-survey-form-config.xml</value>
 				<value>classpath:alfresco/forms/becpg-regulatory-form-config.xml</value>
 			</list>
 		</property>
